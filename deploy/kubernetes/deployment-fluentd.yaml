@@ -1,0 +1,144 @@
+# Deploy singleton fluentd instance in the whole cluster for aggregating and forwarding to sumologic
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+  namespace: sumologic
+data:
+  fluent.conf: |-
+    <source>
+      @type forward
+      port 24224
+      bind 0.0.0.0
+    </source>
+    <match **>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT']}"
+    </match>
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: fluentd
+  namespace: sumologic
+  labels:
+    k8s-app: fluentd-sumologic
+spec:
+  selector:
+    matchLabels:
+      k8s-app: fluentd-sumologic
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd-sumologic
+    spec:
+      serviceAccountName: fluentd
+      volumes:
+      - name: pos-files
+        hostPath:
+          path: /var/run/fluentd-pos
+          type: ""
+      - name: config-volume
+        configMap:
+          name: fluentd-config
+      containers:
+      - name: fluentd
+        image: byisumo/sumologic-fluentd-k8s
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 2Gi
+            cpu: "200m"
+          requests:
+            memory: 2Gi
+            cpu: "200m"
+        ports:
+        - name: forward
+          containerPort: 24224
+          protocol: TCP
+        livenessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
+          initialDelaySeconds: 300
+          periodSeconds: 20
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
+          initialDelaySeconds: 45
+          periodSeconds: 5
+        volumeMounts:
+        - name: config-volume
+          mountPath: /fluentd/etc/
+        - name: pos-files
+          mountPath: /mnt/pos/
+        env:
+        - name: SUMO_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluentd
+  namespace: sumologic
+  labels:
+    k8s-app: fluentd-sumologic
+spec:
+  type: LoadBalancer
+  selector:
+    k8s-app: fluentd-sumologic
+  ports:
+  - name: forward
+    port: 24224
+    targetPort: 24224
+    protocol: TCP
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: fluentd
+subjects:
+- kind: ServiceAccount
+  name: fluentd
+  namespace: sumologic
+roleRef:
+  kind: ClusterRole
+  name: fluentd
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: fluentd
+  labels:
+    k8s-app: fluentd-sumologic
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - namespaces
+  - events
+  - pods
+  - replicasets
+  - statefulsets
+  - deployments
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fluentd
+  namespace: sumologic
+  labels:
+    k8s-app: fluentd-sumologic
+---
