@@ -2,8 +2,8 @@ require "fluent/plugin/parser"
 require 'base64'
 require 'google/protobuf'
 require 'snappy'
-require_relative 'types_pb'
-require_relative 'remote_pb'
+require_relative '../../types_pb'
+require_relative '../../remote_pb'
 
 module Fluent
   module Plugin
