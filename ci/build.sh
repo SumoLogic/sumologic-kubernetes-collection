@@ -10,7 +10,7 @@ set -e
 
 for i in ./fluent-plugin* ; do
   if [ -d "$i" ]; then
-    pushd $i > /dev/null
+    cd $i
     PLUGIN_NAME=$(basename "$i")
     
     echo "Building gems $PLUGIN_NAME in `pwd` ..."
@@ -27,16 +27,16 @@ for i in ./fluent-plugin* ; do
     gem build $PLUGIN_NAME
     mv *.gem ../deploy/docker/gems
     
-    popd > /dev/null
+    cd ..
   fi
 done
 
 echo "Building docker image with $DOCKER_TAG:$VERSION in `pwd`..."
-pushd ./deploy/docker > /dev/null
+cd ./deploy/docker
 docker build . -f ./Dockerfile -t $DOCKER_TAG:$VERSION --no-cache
 docker build . -f ./Dockerfile -t $DOCKER_TAG:latest
 rm -f ./gems/*.gem
-popd > /dev/null
+cd ../..
 
 if [ -z "$DOCKER_PASSWORD" ] || [ -z "$TRAVIS_TAG" ]; then
     echo "Skip Docker pushing"
