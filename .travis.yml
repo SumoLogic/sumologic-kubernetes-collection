@@ -1,0 +1,6 @@
+lang: ruby
+services: docker
+before_install:
+  - rm -f ./Gemfile.lock
+  - gem install bundler
+script: ci/build.sh

@@ -1,7 +1,9 @@
 #!/bin/sh
 
 VERSION="${TRAVIS_TAG:=0.0.0}"
-DOCKER_TAG="sumologic/kubernetes-collection"
+VERSION="${VERSION#v}"
+: "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
+: "${DOCKER_USERNAME:=sumodocker}"
 
 echo "Starting build process in: `pwd` with version tag: $VERSION"
 set -e
@@ -32,7 +34,17 @@ done
 echo "Building docker image with $DOCKER_TAG:$VERSION in `pwd`..."
 pushd ./deploy/docker > /dev/null
 docker build . -f ./Dockerfile -t $DOCKER_TAG:$VERSION --no-cache
+docker build . -f ./Dockerfile -t $DOCKER_TAG:latest
 rm -f ./gems/*.gem
 popd > /dev/null
+
+if [ -z "$DOCKER_PASSWORD" ] || [ -z "$TRAVIS_TAG" ]; then
+    echo "Skip Docker pushing"
+else
+    echo "Pushing docker image with $DOCKER_TAG:$VERSION and $DOCKER_TAG:latest..."
+    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    docker push $DOCKER_TAG:$VERSION
+    docker push $DOCKER_TAG:latest
+fi
 
 echo "DONE"
