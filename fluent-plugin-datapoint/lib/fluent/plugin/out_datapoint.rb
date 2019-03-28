@@ -7,10 +7,6 @@ module Fluent
       Fluent::Plugin.register_output('datapoint', self)
 
       DEFAULT_TAG = 'kubernetes.datapoint'.freeze
-      LABEL_METRIC = '@metric'.freeze
-      LABEL_TIMESTAMP = '@timestamp'.freeze
-      LABEL_VALUE = '@value'.freeze
-      LABEL_NAME = '__name__'.freeze
 
       helpers :compat_parameters, :event_emitter, :record_accessor
 
@@ -21,11 +17,11 @@ module Fluent
         super
       end
 
-      def process(_tag, es)
-        es.each do |time, record|
+      def process(_tag, batch)
+        batch.each do |time, record|
           begin
             write_datapoints(time, record)
-          rescue => exception
+          rescue StandardError => exception
             puts exception.message
             puts exception.backtrace
             log.error('ERROR during processing', error: exception)
@@ -35,35 +31,45 @@ module Fluent
 
       private
 
+      KEY_METRIC = '@metric'.freeze
+      KEY_TIMESTAMP = '@timestamp'.freeze
+      KEY_VALUE = '@value'.freeze
+      ORG_KEY_MERIC = '__name__'.freeze
+      ORG_KEY_LABELS = 'labels'.freeze
+      ORG_KEY_SAMPLES = 'samples'.freeze
+      ORG_KEY_NAME = 'name'.freeze
+      ORG_KEY_VALUE = 'value'.freeze
+      ORG_KEY_TIMESTAMP = 'timestamp'.freeze
+
       def write_datapoints(_time, record)
-        labels = record['labels']
-        samples = record['samples']
+        labels = record[ORG_KEY_LABELS]
+        samples = record[ORG_KEY_SAMPLES]
         template = {}
 
         labels.each do |label|
-          if label['name'] == LABEL_NAME
-            template[LABEL_METRIC] = label['value']
+          if label[ORG_KEY_NAME] == ORG_KEY_MERIC
+            template[KEY_METRIC] = label[ORG_KEY_VALUE]
           else
-            template[label['name']] = label['value']
+            template[label[ORG_KEY_NAME]] = label[ORG_KEY_VALUE]
           end
         end
 
         samples.each do |sample|
           datapoint_record = template.clone
-          timestamp = sample['timestamp']
-          value = sample['value']
-          datapoint_record[LABEL_TIMESTAMP] = timestamp
+          timestamp = sample[ORG_KEY_TIMESTAMP]
+          value = sample[ORG_KEY_VALUE]
+          datapoint_record[KEY_TIMESTAMP] = timestamp
           if value.is_a?(Numeric) && !value.to_f.nan? && !value.to_f.infinite?
-            datapoint_record[LABEL_VALUE] = value.to_f
+            datapoint_record[KEY_VALUE] = value.to_f
             router.emit(@tag, timestamp, datapoint_record)
           elsif @missing_values.nan?
             log.trace(
               "skipping sample with value #{value}",
-              metric: template[LABEL_METRIC],
-              timestamp: template[LABEL_TIMESTAMP]
+              metric: template[KEY_METRIC],
+              timestamp: template[KEY_TIMESTAMP]
             )
           else
-            datapoint_record[LABEL_VALUE] = @missing_values.to_f
+            datapoint_record[KEY_VALUE] = @missing_values.to_f
             router.emit(@tag, timestamp, datapoint_record)
           end
         end

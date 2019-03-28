@@ -93,20 +93,36 @@ class DatapointOutputTest < Test::Unit::TestCase
 
     test '"missing_values" define the value if "value" is missing in sample' do
       config = %([
-        missing_values 6666
+        missing_values 66.66
       ])
       events = read_events(config, 'test/resources/multiple.missing_value.json')
       assert_equal 3, events.length
-      assert_equal 6666, events[1][2]['@value']
+      assert_equal 66.66, events[1][2]['@value']
     end
 
     test '"missing_values" define the value if "value" is NaN in sample' do
       config = %([
-        missing_values 6666
+        missing_values 66.66
       ])
       events = read_events(config, 'test/resources/multiple.nan_value.json')
       assert_equal 3, events.length
-      assert_equal 6666, events[1][2]['@value']
+      assert_equal 66.66, events[1][2]['@value']
+    end
+  end
+
+  sub_test_case 'trasform time series with multiple batches multiple samples' do
+    test 'multiple datapoints multiple samples default config' do
+      config = %([])
+      events = read_events(config, 'test/resources/timeseries.json')
+      assert_equal 60, events.length
+    end
+
+    test 'multiple datapoints multiple samples with missing value overriden' do
+      config = %([
+        missing_values 0
+      ])
+      events = read_events(config, 'test/resources/timeseries.json')
+      assert_equal 108, events.length
     end
   end
 
