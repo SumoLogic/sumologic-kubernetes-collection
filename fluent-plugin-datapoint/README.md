@@ -114,6 +114,6 @@ Override the tag on output event stream. If not specify, will keep the tag on in
 
 ### missing_values (float) (optional)
 
-Override the `@value` in output for the samples without `value` field or `value` field equals `NaN`. If not specify, these samples will be dropped in output event stream.
+Override the `@value` in output for the samples without `value` field or `value` field equals `NaN`. If `missing_values` equals to `NaN` (default), these kind of samples will be dropped in output event stream.
 
 Default value: `NaN`.
