@@ -6,21 +6,19 @@ module Fluent
     class DatapointOutput < Fluent::Plugin::Output
       Fluent::Plugin.register_output('datapoint', self)
 
-      DEFAULT_TAG = 'kubernetes.datapoint'.freeze
-
       helpers :event_emitter
 
-      config_param :tag, :string, default: DEFAULT_TAG
+      config_param :tag, :string, default: nil
       config_param :missing_values, :float, default: Float::NAN
 
       def configure(conf)
         super
       end
 
-      def process(_tag, es)
+      def process(tag, es)
         es.each do |time, record|
           begin
-            write_datapoints(time, record)
+            write_datapoints(tag, time, record)
           rescue StandardError => exception
             log.error('ERROR during processing', error: exception)
           end
@@ -39,9 +37,10 @@ module Fluent
       ORG_KEY_VALUE = 'value'.freeze
       ORG_KEY_TIMESTAMP = 'timestamp'.freeze
 
-      def write_datapoints(_time, record)
+      def write_datapoints(org_tag, _time, record)
         labels = record[ORG_KEY_LABELS]
         samples = record[ORG_KEY_SAMPLES]
+        new_tag = @tag || org_tag
         template = {}
 
         labels.each do |label|
@@ -59,7 +58,7 @@ module Fluent
           datapoint_record[KEY_TIMESTAMP] = timestamp
           if value.is_a?(Numeric) && !value.to_f.nan? && !value.to_f.infinite?
             datapoint_record[KEY_VALUE] = value.to_f
-            router.emit(@tag, timestamp, datapoint_record)
+            router.emit(new_tag, timestamp, datapoint_record)
           elsif @missing_values.nan?
             log.trace(
               "skipping sample with value #{value}",
@@ -68,7 +67,7 @@ module Fluent
             )
           else
             datapoint_record[KEY_VALUE] = @missing_values.to_f
-            router.emit(@tag, timestamp, datapoint_record)
+            router.emit(new_tag, timestamp, datapoint_record)
           end
         end
       end
