@@ -8,7 +8,7 @@ module Fluent
 
       DEFAULT_TAG = 'kubernetes.datapoint'.freeze
 
-      helpers :compat_parameters, :event_emitter, :record_accessor
+      helpers :event_emitter
 
       config_param :tag, :string, default: DEFAULT_TAG
       config_param :missing_values, :float, default: Float::NAN
@@ -17,8 +17,8 @@ module Fluent
         super
       end
 
-      def process(_tag, batch)
-        batch.each do |time, record|
+      def process(_tag, es)
+        es.each do |time, record|
           begin
             write_datapoints(time, record)
           rescue StandardError => exception
