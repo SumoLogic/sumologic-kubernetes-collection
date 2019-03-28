@@ -22,8 +22,6 @@ module Fluent
           begin
             write_datapoints(time, record)
           rescue StandardError => exception
-            puts exception.message
-            puts exception.backtrace
             log.error('ERROR during processing', error: exception)
           end
         end
