@@ -30,7 +30,7 @@ module Fluent
       KEY_METRIC = '@metric'.freeze
       KEY_TIMESTAMP = '@timestamp'.freeze
       KEY_VALUE = '@value'.freeze
-      ORG_KEY_MERIC = '__name__'.freeze
+      ORG_KEY_METRIC = '__name__'.freeze
       ORG_KEY_LABELS = 'labels'.freeze
       ORG_KEY_SAMPLES = 'samples'.freeze
       ORG_KEY_NAME = 'name'.freeze
@@ -44,7 +44,7 @@ module Fluent
         template = {}
 
         labels.each do |label|
-          if label[ORG_KEY_NAME] == ORG_KEY_MERIC
+          if label[ORG_KEY_NAME] == ORG_KEY_METRIC
             template[KEY_METRIC] = label[ORG_KEY_VALUE]
           else
             template[label[ORG_KEY_NAME]] = label[ORG_KEY_VALUE]
