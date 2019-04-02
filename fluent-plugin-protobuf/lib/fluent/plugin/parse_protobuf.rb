@@ -13,16 +13,14 @@ module Fluent
       def parse(text)
         begin
           inflated = Snappy.inflate(text)
-          log.info("HIT PARSER: #{Base64.encode64(inflated)}")
-  
           decoded = Prometheus::WriteRequest.decode(inflated)
           decoded.timeseries.map { |ts|
             log.debug(ts)
-            yield nil, ts
+            ts
           }
         rescue => e
           log.error("ERROR during decoding: #{e.message}")
-          yield nil, nil
+          nil
         end
       end
     end

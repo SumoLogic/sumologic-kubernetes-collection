@@ -1,0 +1,5781 @@
+{
+    "timeseries": [
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "http_request_size_bytes_sum"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "handler",
+                    "value": "prometheus"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10251"
+                },
+                {
+                    "name": "job",
+                    "value": "kube-scheduler"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "pod",
+                    "value": "kube-scheduler-ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kube-scheduler"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1619905,
+                    "timestamp": 1550862304339
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "kube_service_info"
+                },
+                {
+                    "name": "cluster_ip",
+                    "value": "100.65.130.202"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http"
+                },
+                {
+                    "name": "instance",
+                    "value": "100.124.149.15:8080"
+                },
+                {
+                    "name": "job",
+                    "value": "kube-state-metrics"
+                },
+                {
+                    "name": "namespace",
+                    "value": "sumologic"
+                },
+                {
+                    "name": "pod",
+                    "value": "prometheus-operator-kube-state-metrics-5667d896b7-9zd99"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "fluentd-deployment-service"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1,
+                    "timestamp": 1550862305141
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_memory_failures_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.77.239:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-77-239.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "scope",
+                    "value": "container"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "type",
+                    "value": "pgmajfault"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862309107
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_receive_errors_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/besteffort/pod893cea12-3601-11e9-9dd9-06b661a2d196/3562d96acd91b96cc0cb18802897a34c016ae8e7d1b46e3b97304c8dbdf9d623"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.77.239:10255"
+                },
+                {
+                    "name": "interface",
+                    "value": "calic786dc1bfbb"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_prometheus-operator-prometheus-node-exporter-2qbnr_monitoring_893cea12-3601-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-77-239.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "prometheus-operator-prometheus-node-exporter-2qbnr"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862309107
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/besteffort"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.77.239:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-77-239.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "established"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862309107
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/besteffort"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.77.239:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-77-239.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "synrecv"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862309107
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_spec_cpu_shares"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/podb75a7c5c-33cc-11e9-9dd9-06b661a2d196/79c1fc5f9bebbf43c5fe22b94282986b1085cb8c0a230d77c7196835b2a64c43"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.77.239:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_calico-node-95n5k_kube-system_b75a7c5c-33cc-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-77-239.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "calico-node-95n5k"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 2,
+                    "timestamp": 1550862309107
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_spec_cpu_period"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/init.scope"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.49.89:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-49-89.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 100000,
+                    "timestamp": 1550862309198
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_spec_cpu_shares"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/ntp.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.49.89:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-49-89.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1024,
+                    "timestamp": 1550862309198
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "go_memstats_alloc_bytes_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10252"
+                },
+                {
+                    "name": "job",
+                    "value": "kube-controller-manager"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "pod",
+                    "value": "kube-controller-manager-ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kube-controller-manager"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 8783201120,
+                    "timestamp": 1550862309893
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "node_load15"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "metrics"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:9100"
+                },
+                {
+                    "name": "job",
+                    "value": "node-exporter"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "pod",
+                    "value": "prometheus-operator-prometheus-node-exporter-q8bm5"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-prometheus-node-exporter"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 0.45000000000000001,
+                    "timestamp": 1550862310363
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "node_netstat_Udp_OutDatagrams"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "metrics"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:9100"
+                },
+                {
+                    "name": "job",
+                    "value": "node-exporter"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "pod",
+                    "value": "prometheus-operator-prometheus-node-exporter-q8bm5"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-prometheus-node-exporter"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 6207,
+                    "timestamp": 1550862310363
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "node_network_iface_link_mode"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "metrics"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:9100"
+                },
+                {
+                    "name": "interface",
+                    "value": "lo"
+                },
+                {
+                    "name": "job",
+                    "value": "node-exporter"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "pod",
+                    "value": "prometheus-operator-prometheus-node-exporter-q8bm5"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-prometheus-node-exporter"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862310363
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_fs_io_current"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "device",
+                    "value": "/dev/xvda2"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod9a0ffa93-33ec-11e9-9dd9-06b661a2d196/0ff5aa0036a1e06f112a2f97bd2c1e420593f8bcc51701608a4967121128ca64"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_fluentd-sumologic-nc59z_default_9a0ffa93-33ec-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-79.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "fluentd-sumologic-nc59z"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862311400
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/rpcbind.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-79.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "lastack"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862311400
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/systemd-remount-fs.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-79.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "lastack"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862311400
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod90904def-3601-11e9-9dd9-06b661a2d196/d71a379eb5a8ae034dd9d4e6433142725c13a4c8545b247c56d8f214852f110f"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_prometheus-prometheus-operator-prometheus-0_monitoring_90904def-3601-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-79.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "lastack"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862311400
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_spec_memory_limit_bytes"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/podbb6a8793-33cc-11e9-9dd9-06b661a2d196/83348d0d96d72b140489dc13316fbe072eaea2b3ae30a03d7fddf53963a89221"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_calico-node-rdmpd_kube-system_bb6a8793-33cc-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-79.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "calico-node-rdmpd"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862311400
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_spec_memory_reservation_limit_bytes"
+                },
+                {
+                    "name": "container_name",
+                    "value": "grafana-sc-dashboard"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/besteffort/pod8948798c-3601-11e9-9dd9-06b661a2d196/a6b493f56c9d4311bd9c4d98bab536030ebfffbc6baf6986f13630d9890f2ff6"
+                },
+                {
+                    "name": "image",
+                    "value": "sha256:beb080b7344a4741a02a8c2136ba618efe232f257b4a10affbd8899333edf990"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_grafana-sc-dashboard_prometheus-operator-grafana-7d7784645b-sn6cm_monitoring_8948798c-3601-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-79.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "prometheus-operator-grafana-7d7784645b-sn6cm"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862311400
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "go_memstats_sys_bytes"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "metrics"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:9100"
+                },
+                {
+                    "name": "job",
+                    "value": "node-exporter"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "pod",
+                    "value": "prometheus-operator-prometheus-node-exporter-52rrm"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-prometheus-node-exporter"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 71760120,
+                    "timestamp": 1550862311846
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "node_network_receive_compressed_total"
+                },
+                {
+                    "name": "device",
+                    "value": "eth0"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "metrics"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:9100"
+                },
+                {
+                    "name": "job",
+                    "value": "node-exporter"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "pod",
+                    "value": "prometheus-operator-prometheus-node-exporter-52rrm"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-prometheus-node-exporter"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862311846
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "etcd_disk_backend_snapshot_duration_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.192:4001"
+                },
+                {
+                    "name": "job",
+                    "value": "kube-etcd"
+                },
+                {
+                    "name": "le",
+                    "value": "+Inf"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "pod",
+                    "value": "etcd-server-ip-172-20-87-192.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kube-etcd"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862313310
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_cpu_schedstat_run_periods_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/besteffort"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.192:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-192.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862314020
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_fs_inodes_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "device",
+                    "value": "/dev/xvda2"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod3b33bfc69d10e92ba4c7c6c5f3dfed31/b109dddfdcbccf19e294f91e8763b87a16effa9876c95273d0b68b4060624a48"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.192:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_kube-proxy-ip-172-20-87-192.us-west-1.compute.internal_kube-system_3b33bfc69d10e92ba4c7c6c5f3dfed31_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-192.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "kube-proxy-ip-172-20-87-192.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1,
+                    "timestamp": 1550862314020
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_fs_reads_bytes_total"
+                },
+                {
+                    "name": "device",
+                    "value": "/dev/xvdc"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.192:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-192.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 2138112,
+                    "timestamp": 1550862314020
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_fs_writes_total"
+                },
+                {
+                    "name": "device",
+                    "value": "/dev/xvdu"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.192:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-192.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862314020
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_memory_failcnt"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod96e621a4-33cc-11e9-9dd9-06b661a2d196"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.192:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-192.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "calico-node-xh2p5"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862314020
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/systemd-sysctl.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.192:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-192.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "listen"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862314020
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_spec_cpu_shares"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/systemd-sysctl.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.192:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-192.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1024,
+                    "timestamp": 1550862314020
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_start_time_seconds"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/rsyslog.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.192:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-192.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1550528813,
+                    "timestamp": 1550862314020
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "node_network_address_assign_type"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "metrics"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.192:9100"
+                },
+                {
+                    "name": "interface",
+                    "value": "docker0"
+                },
+                {
+                    "name": "job",
+                    "value": "node-exporter"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "pod",
+                    "value": "prometheus-operator-prometheus-node-exporter-6rgqv"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-prometheus-node-exporter"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 3,
+                    "timestamp": 1550862315622
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "+Inf"
+                },
+                {
+                    "name": "name",
+                    "value": "LimitRanger"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "CREATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "services"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "admit"
+                },
+                {
+                    "name": "version",
+                    "value": "v1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 15,
+                    "timestamp": 1550862315684
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "156250"
+                },
+                {
+                    "name": "name",
+                    "value": "LimitRanger"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "UPDATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "configmaps"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "validate"
+                },
+                {
+                    "name": "version",
+                    "value": "v1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1,
+                    "timestamp": 1550862315684
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_count"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "name",
+                    "value": "NodeRestriction"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "CREATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "namespaces"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "admit"
+                },
+                {
+                    "name": "version",
+                    "value": "v1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1,
+                    "timestamp": 1550862315684
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "apiextensions.k8s.io"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "25000"
+                },
+                {
+                    "name": "name",
+                    "value": "Priority"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "UPDATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "customresourcedefinitions"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "subresource",
+                    "value": "status"
+                },
+                {
+                    "name": "type",
+                    "value": "validate"
+                },
+                {
+                    "name": "version",
+                    "value": "v1beta1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 75,
+                    "timestamp": 1550862315684
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "apiextensions.k8s.io"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "390625"
+                },
+                {
+                    "name": "name",
+                    "value": "ResourceQuota"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "UPDATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "customresourcedefinitions"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "subresource",
+                    "value": "status"
+                },
+                {
+                    "name": "type",
+                    "value": "validate"
+                },
+                {
+                    "name": "version",
+                    "value": "v1beta1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 75,
+                    "timestamp": 1550862315684
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_step_admission_latencies_seconds_sum"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "apps"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "CREATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "statefulsets"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "validate"
+                },
+                {
+                    "name": "version",
+                    "value": "v1beta2"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 16929,
+                    "timestamp": 1550862315684
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_request_latencies_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "8e+06"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "resource",
+                    "value": "statefulsets"
+                },
+                {
+                    "name": "scope",
+                    "value": "cluster"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "LIST"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 30,
+                    "timestamp": 1550862315684
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_request_latencies_summary"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "quantile",
+                    "value": "0.5"
+                },
+                {
+                    "name": "resource",
+                    "value": "prometheusrules"
+                },
+                {
+                    "name": "scope",
+                    "value": "cluster"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "WATCH"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 430000576,
+                    "timestamp": 1550862315684
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_response_sizes_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "100000"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "resource",
+                    "value": "limitranges"
+                },
+                {
+                    "name": "scope",
+                    "value": "cluster"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "WATCH"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 806,
+                    "timestamp": 1550862315684
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "reflector_lists_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "name",
+                    "value": "reflector_storage_cacher_go__apiregistration_k8s_io_apiservices_7989"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1,
+                    "timestamp": 1550862315684
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "976562.5"
+                },
+                {
+                    "name": "name",
+                    "value": "DefaultStorageClass"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "CREATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "serviceaccounts"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "admit"
+                },
+                {
+                    "name": "version",
+                    "value": "v1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 11150,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "+Inf"
+                },
+                {
+                    "name": "name",
+                    "value": "ServiceAccount"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "CREATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "configmaps"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "admit"
+                },
+                {
+                    "name": "version",
+                    "value": "v1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 417,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "apiextensions.k8s.io"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "976562.5"
+                },
+                {
+                    "name": "name",
+                    "value": "MutatingAdmissionWebhook"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "DELETE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "customresourcedefinitions"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "admit"
+                },
+                {
+                    "name": "version",
+                    "value": "v1beta1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 22,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "apiregistration.k8s.io"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "25000"
+                },
+                {
+                    "name": "name",
+                    "value": "Initializers"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "UPDATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "apiservices"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "subresource",
+                    "value": "status"
+                },
+                {
+                    "name": "type",
+                    "value": "admit"
+                },
+                {
+                    "name": "version",
+                    "value": "v1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 272452,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "apps"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "25000"
+                },
+                {
+                    "name": "name",
+                    "value": "DefaultStorageClass"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "CREATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "statefulsets"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "admit"
+                },
+                {
+                    "name": "version",
+                    "value": "v1beta2"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 29,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "monitoring.coreos.com"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "25000"
+                },
+                {
+                    "name": "name",
+                    "value": "NodeRestriction"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "DELETE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "prometheuses"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "admit"
+                },
+                {
+                    "name": "version",
+                    "value": "v1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 26,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_controller_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "monitoring.coreos.com"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "62500"
+                },
+                {
+                    "name": "name",
+                    "value": "Priority"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "DELETE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "servicemonitors"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "admit"
+                },
+                {
+                    "name": "version",
+                    "value": "v1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 312,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_step_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "extensions"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "976562.5"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "UPDATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "deployments"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "subresource",
+                    "value": "scale"
+                },
+                {
+                    "name": "type",
+                    "value": "validate"
+                },
+                {
+                    "name": "version",
+                    "value": "v1beta1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_step_admission_latencies_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "monitoring.coreos.com"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "62500"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "DELETE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "alertmanagers"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "validate"
+                },
+                {
+                    "name": "version",
+                    "value": "v1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 26,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_admission_step_admission_latencies_seconds_summary_count"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "group",
+                    "value": "monitoring.coreos.com"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "operation",
+                    "value": "CREATE"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "rejected",
+                    "value": "false"
+                },
+                {
+                    "name": "resource",
+                    "value": "prometheuses"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "type",
+                    "value": "admit"
+                },
+                {
+                    "name": "version",
+                    "value": "v1"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 26,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_request_count"
+                },
+                {
+                    "name": "client",
+                    "value": "kubectl/v1.13.3 (darwin/amd64) kubernetes/721bfa7"
+                },
+                {
+                    "name": "code",
+                    "value": "200"
+                },
+                {
+                    "name": "contentType",
+                    "value": "application/json"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "resource",
+                    "value": "pods"
+                },
+                {
+                    "name": "scope",
+                    "value": "namespace"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "DELETE"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 4,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_request_latencies_summary"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "quantile",
+                    "value": "0.99"
+                },
+                {
+                    "name": "resource",
+                    "value": "deployments"
+                },
+                {
+                    "name": "scope",
+                    "value": "namespace"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "DELETE"
+                }
+            ],
+            "samples": [
+                {
+                    "value":NaN,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_request_latencies_summary_sum"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "resource",
+                    "value": "pods"
+                },
+                {
+                    "name": "scope",
+                    "value": "namespace"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "POST"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 97061,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_request_latencies_summary"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "quantile",
+                    "value": "0.99"
+                },
+                {
+                    "name": "resource",
+                    "value": "secrets"
+                },
+                {
+                    "name": "scope",
+                    "value": "namespace"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "POST"
+                }
+            ],
+            "samples": [
+                {
+                    "value":NaN,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_response_sizes_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "1e+07"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "resource",
+                    "value": "customresourcedefinitions"
+                },
+                {
+                    "name": "scope",
+                    "value": "cluster"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "WATCH"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 731,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_response_sizes_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "le",
+                    "value": "1e+06"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "resource",
+                    "value": "endpoints"
+                },
+                {
+                    "name": "scope",
+                    "value": "namespace"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "GET"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 207875,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "apiserver_response_sizes_sum"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "resource",
+                    "value": "nodes"
+                },
+                {
+                    "name": "scope",
+                    "value": "cluster"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "WATCH"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1059643074,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "etcd_request_cache_add_latencies_summary_sum"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "reflector_list_duration_seconds_count"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "name",
+                    "value": "reflector_storage_cacher_go__clusterroles_11301"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "reflector_watch_duration_seconds_count"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "name",
+                    "value": "reflector_storage_cacher_go__controllerrevisions_11318"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "reflector_watch_duration_seconds"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:443"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "name",
+                    "value": "reflector_storage_cacher_go__networkpolicies_11295"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "quantile",
+                    "value": "0.5"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                }
+            ],
+            "samples": [
+                {
+                    "value":NaN,
+                    "timestamp": 1550862316737
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_cpu_schedstat_run_periods_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/docker"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862317137
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_fs_reads_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "device",
+                    "value": "/dev/xvda2"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod0127334d9523c644f89c1b13407d1af7/4400d14421f3a455ca83f2138184764096ad5cc99ddf930ba94510b88afae96f"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_etcd-server-ip-172-20-36-191.us-west-1.compute.internal_kube-system_0127334d9523c644f89c1b13407d1af7_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "etcd-server-ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862317137
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_last_seen"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/sysstat.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1550862317,
+                    "timestamp": 1550862317137
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_memory_failures_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod0127334d9523c644f89c1b13407d1af7/4400d14421f3a455ca83f2138184764096ad5cc99ddf930ba94510b88afae96f"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_etcd-server-ip-172-20-36-191.us-west-1.compute.internal_kube-system_0127334d9523c644f89c1b13407d1af7_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "etcd-server-ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "scope",
+                    "value": "hierarchy"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "type",
+                    "value": "pgfault"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 373,
+                    "timestamp": 1550862317137
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "cluster_quantile:apiserver_request_latencies:histogram_quantile"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "https"
+                },
+                {
+                    "name": "job",
+                    "value": "apiserver"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "quantile",
+                    "value": "0.9"
+                },
+                {
+                    "name": "resource",
+                    "value": "customresourcedefinitions"
+                },
+                {
+                    "name": "scope",
+                    "value": "cluster"
+                },
+                {
+                    "name": "service",
+                    "value": "kubernetes"
+                },
+                {
+                    "name": "verb",
+                    "value": "POST"
+                }
+            ],
+            "samples": [
+                {
+                    "value": NaN,
+                    "timestamp": 1550862317539
+                },                 
+                {
+                    "value": 0,
+                    "timestamp": 1550862318539
+                },
+                {
+                    "value": 3,
+                    "timestamp": 1550862319539
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_memory_failures_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/cloud-init-local.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.49.89:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-49-89.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "scope",
+                    "value": "container"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "type",
+                    "value": "pgmajfault"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 0,
+                    "timestamp": 1550862316539
+                },
+                {
+                    "timestamp": 1550862317538
+                },
+                {
+                    "value": 5,
+                    "timestamp": 1550862318539
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_memory_failures_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "alertmanager"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod8c6c4471-3601-11e9-9dd9-06b661a2d196/cd53938117c67e758182fa8758a8c021e4dbe0a383264e4fd4403e5576e86d6c"
+                },
+                {
+                    "name": "image",
+                    "value": "sha256:02e0d8e930da585bfe8eda8b0ea0aa50ce37fee3d4932cb57b68ac02d4ee1c18"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.49.89:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_alertmanager_alertmanager-prometheus-operator-alertmanager-0_monitoring_8c6c4471-3601-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-49-89.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "alertmanager-prometheus-operator-alertmanager-0"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "scope",
+                    "value": "hierarchy"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "type",
+                    "value": "pgfault"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 5825,
+                    "timestamp": 1550862317538
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_memory_max_usage_bytes"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.49.89:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-49-89.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 930537472,
+                    "timestamp": 1550862316538
+                },
+                {
+                    "value": 930537472,
+                    "timestamp": 1550862317538
+                },
+                {
+                    "value": 930537472,
+                    "timestamp": 1550862318538
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_receive_errors_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.49.89:10255"
+                },
+                {
+                    "name": "interface",
+                    "value": "eth0"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-49-89.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862317538
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "fluentd"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod9a0e1ca2-33ec-11e9-9dd9-06b661a2d196/36ebe85a66d5b66e1918876db5507e57e899794c48309362be77e535e6b9a460"
+                },
+                {
+                    "name": "image",
+                    "value": "sumologic/fluentd-kubernetes-sumologic@sha256:a8ac3ea58b98f4e5be8977aafa80f793e9d94d51141619567cb9d4d840d59d45"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.49.89:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_fluentd_fluentd-sumologic-29qwd_default_9a0e1ca2-33ec-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-49-89.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "fluentd-sumologic-29qwd"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "close"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862317538
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_udp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod9a0e1ca2-33ec-11e9-9dd9-06b661a2d196"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.49.89:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "namespace",
+                    "value": "default"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-49-89.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "fluentd-sumologic-29qwd"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "udp_state",
+                    "value": "listen"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862317538
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_fs_reads_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "device",
+                    "value": "/dev/xvda2"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/pod171fe2ce-36d3-11e9-9dd9-06b661a2d196/95ff5fba5362c26a39572e7b9bd192049cece14c21c7da1e8f1aa8028e2ecc47"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.49.89:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_fluentd-deployment-76c7759567-gxchb_sumologic_171fe2ce-36d3-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "sumologic"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-49-89.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "fluentd-deployment-76c7759567-gxchb"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value":NaN,
+                    "timestamp": 1550862317538
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "To",
+                    "value": "e5987458574dc057"
+                },
+                {
+                    "name": "__name__",
+                    "value": "etcd_network_peer_round_trip_time_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:4001"
+                },
+                {
+                    "name": "job",
+                    "value": "kube-etcd"
+                },
+                {
+                    "name": "le",
+                    "value": "0.1024"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "pod",
+                    "value": "etcd-server-ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kube-etcd"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 11115,
+                    "timestamp": 1550862317752
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod971e7a8e-33cc-11e9-9dd9-06b661a2d196"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.77.239:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-77-239.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "kube-dns-autoscaler-6b658bd4d5-d6trb"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "established"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862317724
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_tasks_state"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/systemd-remount-fs.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.77.239:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-77-239.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "state",
+                    "value": "sleeping"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862317724
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "http_request_size_bytes_sum"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "handler",
+                    "value": "prometheus"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10251"
+                },
+                {
+                    "name": "job",
+                    "value": "kube-scheduler"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "pod",
+                    "value": "kube-scheduler-ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kube-scheduler"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1620122,
+                    "timestamp": 1550862319243
+                },
+                {
+                    "value": 1620222,
+                    "timestamp": 1550862329243
+                },
+                {
+                    "value": 1620422,
+                    "timestamp": 1550862339243
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_fs_inodes_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "device",
+                    "value": "/dev/xvda2"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/podf4d4fdde0385643b22c6d2ed3cbda862/b5210f14587ef34d903c9ad08fdf291391d04fe0e01b7474b16671bca2861e13"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_etcd-server-ip-172-20-60-195.us-west-1.compute.internal_kube-system_f4d4fdde0385643b22c6d2ed3cbda862_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "etcd-server-ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1,
+                    "timestamp": 1550862320644
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_fs_reads_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "calico-node"
+                },
+                {
+                    "name": "device",
+                    "value": "/dev/xvda"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/poda06948c0-33cc-11e9-9dd9-06b661a2d196/c7e635b9a3791a14630a0937229d90556ec94243e94e7d1c737ef015db592a0e"
+                },
+                {
+                    "name": "image",
+                    "value": "quay.io/calico/node@sha256:da1a7ee6bb1c66950a8a73965cc11bd80fda99c97870c188b08ffb6c646b8ddc"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_calico-node_calico-node-hnptc_kube-system_a06948c0-33cc-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "calico-node-hnptc"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862320644
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/podb6219e20943498110e5f3f5ba8807a98"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "kube-controller-manager-ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "timewait"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862320644
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/systemd-random-seed.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "synsent"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862320644
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_cpu_schedstat_runqueue_seconds_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/cloud-init-local.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862320774
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_cpu_user_seconds_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "node-exporter"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/besteffort/pod89224a32-3601-11e9-9dd9-06b661a2d196/d12b674aa4d31f0e630d14fb958fb07ea211496e4531f8354d0470bed677e91d"
+                },
+                {
+                    "name": "image",
+                    "value": "sha256:b3e7f67a1480979f7c2068c14e4f0d3da6243631b9def8490ed68236a8311f11"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_node-exporter_prometheus-operator-prometheus-node-exporter-4t9rg_monitoring_89224a32-3601-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "prometheus-operator-prometheus-node-exporter-4t9rg"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 38.119999999999997,
+                    "timestamp": 1550862320774
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_memory_failures_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/cloud-init-local.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "scope",
+                    "value": "hierarchy"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "type",
+                    "value": "pgfault"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862320774
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_udp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/systemd-random-seed.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "udp_state",
+                    "value": "txqueued"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862320774
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_udp_usage_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/systemd-udev-trigger.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "udp_state",
+                    "value": "txqueued"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862320774
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_spec_cpu_shares"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/init.scope"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1024,
+                    "timestamp": 1550862320774
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_spec_memory_swap_limit_bytes"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/lvm2-lvmetad.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862320774
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "rest_client_request_latency_seconds_bucket"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.60.195:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "le",
+                    "value": "0.016"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-60-195.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-prometheus-oper-kubelet"
+                },
+                {
+                    "name": "url",
+                    "value": "https://127.0.0.1/%7Bprefix%7D"
+                },
+                {
+                    "name": "verb",
+                    "value": "DELETE"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862321039
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_cpu_schedstat_run_periods_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod37d41543c66f623fda26346f61eb60ab/cb2208bfaad5140f58b4ce18ffc402506db8adf20a8b9b6bc4b9c31a2e6b0024"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_kube-proxy-ip-172-20-87-79.us-west-1.compute.internal_kube-system_37d41543c66f623fda26346f61eb60ab_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-79.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "kube-proxy-ip-172-20-87-79.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862322359
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_cpu_schedstat_runqueue_seconds_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/kmod-static-nodes.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-79.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862322359
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_memory_failures_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/besteffort/pod89388c78-3601-11e9-9dd9-06b661a2d196/d2fd5abaeb880b386be15ac462f04935212f88585a73971db91bff3f50debd39"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.87.79:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_prometheus-operator-prometheus-node-exporter-q8bm5_monitoring_89388c78-3601-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "monitoring"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-87-79.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "prometheus-operator-prometheus-node-exporter-q8bm5"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "scope",
+                    "value": "container"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "type",
+                    "value": "pgfault"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 201,
+                    "timestamp": 1550862322359
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_cpu_user_seconds_total"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 23870.220000000001,
+                    "timestamp": 1550862324543
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_fs_sector_writes_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "POD"
+                },
+                {
+                    "name": "device",
+                    "value": "/dev/xvda2"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod0f04a82db0cb7f4c92c333ce54f314f1/7e2fe9d6366adb209d3412164e0a4040306afc63ea0b177bf25ea1ed6f011951"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/pause-amd64:3.0"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_POD_kube-proxy-ip-172-20-36-191.us-west-1.compute.internal_kube-system_0f04a82db0cb7f4c92c333ce54f314f1_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "kube-proxy-ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862324543
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_fs_writes_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "calico-node"
+                },
+                {
+                    "name": "device",
+                    "value": "/dev/xvda2"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod96cdc1a8-33cc-11e9-9dd9-06b661a2d196/a733137ae1360c4fd509703ae5fc9e354cda6d90ced0d2584e6b8ef5d1127a6e"
+                },
+                {
+                    "name": "image",
+                    "value": "quay.io/calico/node@sha256:da1a7ee6bb1c66950a8a73965cc11bd80fda99c97870c188b08ffb6c646b8ddc"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_calico-node_calico-node-t65cw_kube-system_96cdc1a8-33cc-11e9-9dd9-06b661a2d196_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "calico-node-t65cw"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862324543
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_network_tcp_usage_total"
+                },
+                {
+                    "name": "container_name",
+                    "value": "kube-proxy"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/kubepods/burstable/pod0f04a82db0cb7f4c92c333ce54f314f1/b12799abf23b9c0886ee55d29e36b739226cc46d276a4e0136aa05272e0ed426"
+                },
+                {
+                    "name": "image",
+                    "value": "k8s.gcr.io/kube-proxy@sha256:de320f2611b72465371292c87d892e64b01bf5e27b211b9e8969a239d0f2523a"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "name",
+                    "value": "k8s_kube-proxy_kube-proxy-ip-172-20-36-191.us-west-1.compute.internal_kube-system_0f04a82db0cb7f4c92c333ce54f314f1_0"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "pod_name",
+                    "value": "kube-proxy-ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "tcp_state",
+                    "value": "closing"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862324543
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_spec_cpu_shares"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/systemd-udev-trigger.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1024,
+                    "timestamp": 1550862324543
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_tasks_state"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/cloud-config.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "state",
+                    "value": "stopped"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862324543
+                }
+            ]
+        },
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_tasks_state"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/systemd-user-sessions.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                },
+                {
+                    "name": "state",
+                    "value": "uninterruptible"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862324543
+                }
+            ]
+        }
+    ]
+}

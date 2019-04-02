@@ -1,0 +1,53 @@
+{
+    "timeseries": [
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "http_request_size_bytes_sum"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "handler",
+                    "value": "prometheus"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10251"
+                },
+                {
+                    "name": "job",
+                    "value": "kube-scheduler"
+                },
+                {
+                    "name": "namespace",
+                    "value": "kube-system"
+                },
+                {
+                    "name": "pod",
+                    "value": "kube-scheduler-ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kube-scheduler"
+                }
+            ],
+            "samples": [
+                {
+                    "timestamp": 1550862304339
+                }
+            ]
+        }
+    ]
+}
