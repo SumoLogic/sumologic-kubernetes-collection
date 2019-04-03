@@ -1,41 +1,41 @@
-require "helper"
-require "fluent/plugin/parse_protobuf.rb"
+require 'helper'
+require 'fluent/plugin/parse_protobuf.rb'
 
 class ProtobufParseTest < Test::Unit::TestCase
   setup do
     Fluent::Test.setup
   end
 
-  sub_test_case "single batch single sample" do
-    test "single batch single sample" do
+  sub_test_case 'single batch single sample' do
+    test 'single batch single sample' do
       test_parse_protobuf('test/resources/single.json')
     end
 
-    test "single batch single sample with missing value" do
+    test 'single batch single sample with missing value' do
       test_parse_protobuf('test/resources/single.missing_value.json')
     end
 
-    test "single batch single sample with NaN value" do
+    test 'single batch single sample with NaN value' do
       test_parse_protobuf('test/resources/single.nan_value.json')
     end
   end
 
-  sub_test_case "single batch multiple samples" do
-    test "single batch multiple samples" do
+  sub_test_case 'single batch multiple samples' do
+    test 'single batch multiple samples' do
       test_parse_protobuf('test/resources/multiple.json')
     end
 
-    test "single batch multiple samples with missing value" do
+    test 'single batch multiple samples with missing value' do
       test_parse_protobuf('test/resources/multiple.missing_value.json')
     end
 
-    test "single batch multiple samples with NaN value" do
+    test 'single batch multiple samples with NaN value' do
       test_parse_protobuf('test/resources/multiple.nan_value.json')
     end
   end
 
-  sub_test_case "multiple batches multiple samples" do
-    test "multiple datapoints multiple samples" do
+  sub_test_case 'multiple batches multiple samples' do
+    test 'multiple datapoints multiple samples' do
       test_parse_protobuf('test/resources/timeseries.json')
     end
   end
@@ -48,7 +48,7 @@ class ProtobufParseTest < Test::Unit::TestCase
 
   def test_parse_protobuf(conf = %([]), json_path)
     json_data = JSON.parse!(File.read(json_path))
-    expected = json_data["timeseries"].map { |ts|
+    expected = json_data['timeseries'].map { |ts|
       Prometheus::TimeSeries.new(ts)
     }
 
