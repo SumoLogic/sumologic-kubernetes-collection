@@ -1,7 +1,8 @@
 # fluent-plugin-carbon-v2
 
-[Fluentd](https://fluentd.org/) filter plugin to transform data point to carbon v2 format.
+[Fluentd](https://fluentd.org/) filter plugin to transform data points to carbon v2 format.
 
+- All fields of the metric will be serialized as intrinsic tags (dimensions) in the carbon2 format.
 - Sample of Input
 
 ```json
@@ -63,7 +64,7 @@ bundle
 ### relabel (hash) (optional)
 
 Relabel the field name in the input record.
-For every (`key`, `value`) pairs in the hash, the field named with `key` in the input record will be relabeled to `value`.
+For every (`key`, `value`) pair in the hash, the field named with `key` in the input record will be relabeled to `value`.
 If `key` is not a field in the input record, it will be ignored.
 If `value` is an empty string, the field will be removed from the record.
 
@@ -71,7 +72,7 @@ Default value: `{}`.
 
 ### inclusions (hash) (optional)
 
-White list of the records with regular expression matching on the field(s).
+Whitelist of the records with regular expression matching on the field(s).
 For __all__ (`key`, `value`) pairs in the hash, only following records will be included in the output:
 
 - the value of field named with `key` matches the `value` (as regular expression).
@@ -86,8 +87,8 @@ Default value: `false`
 
 ### exclusions (hash) (optional)
 
-Black list of the records with regular expression matching on the field(s).
-For __any__ (`key`, `value`) pairs in the hash, following records will be excluded in the output:
+Blacklist of the records with regular expression matching on the field(s).
+For __any__ (`key`, `value`) pair in the hash, following records will be excluded in the output:
 
 - the value of field named with `key` matches the `value` (as regular expression).
 
