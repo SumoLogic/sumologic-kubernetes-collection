@@ -1,4 +1,4 @@
-require "fluent/plugin/parser"
+require 'fluent/plugin/parser'
 require 'base64'
 require 'google/protobuf'
 require 'snappy'
@@ -7,22 +7,20 @@ require_relative '../../remote_pb'
 
 module Fluent
   module Plugin
+    # fluentd parser plugin to parse Prometheus metrics into timeseries events.
     class ProtobufParse < Fluent::Plugin::Parser
-      Fluent::Plugin.register_parser("protobuf", self)
+      Fluent::Plugin.register_parser('protobuf', self)
 
       def parse(text)
         begin
           inflated = Snappy.inflate(text)
-          log.info("HIT PARSER: #{Base64.encode64(inflated)}")
-  
           decoded = Prometheus::WriteRequest.decode(inflated)
           decoded.timeseries.map { |ts|
             log.debug(ts)
-            yield nil, ts
+            ts
           }
-        rescue => e
-          log.error("ERROR during decoding: #{e.message}")
-          yield nil, nil
+        rescue StandardError => exception
+          log.error('ERROR during decoding', error: exception)
         end
       end
     end

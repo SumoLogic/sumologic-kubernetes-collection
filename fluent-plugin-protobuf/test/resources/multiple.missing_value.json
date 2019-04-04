@@ -1,0 +1,57 @@
+{
+    "timeseries":[
+        {
+            "labels": [
+                {
+                    "name": "__name__",
+                    "value": "container_spec_cpu_shares"
+                },
+                {
+                    "name": "endpoint",
+                    "value": "http-metrics"
+                },
+                {
+                    "name": "id",
+                    "value": "/system.slice/systemd-udev-trigger.service"
+                },
+                {
+                    "name": "instance",
+                    "value": "172.20.36.191:10255"
+                },
+                {
+                    "name": "job",
+                    "value": "kubelet"
+                },
+                {
+                    "name": "node",
+                    "value": "ip-172-20-36-191.us-west-1.compute.internal"
+                },
+                {
+                    "name": "prometheus",
+                    "value": "monitoring/prometheus-operator-prometheus"
+                },
+                {
+                    "name": "prometheus_replica",
+                    "value": "prometheus-prometheus-operator-prometheus-0"
+                },
+                {
+                    "name": "service",
+                    "value": "prometheus-operator-kubelet"
+                }
+            ],
+            "samples": [
+                {
+                    "value": 1024,
+                    "timestamp": 1550862324543
+                },
+                {
+                    "timestamp": 1550863744525
+                },
+                {
+                    "value": 986,
+                    "timestamp": 1550865342245
+                }
+            ]
+        }
+    ]
+}
