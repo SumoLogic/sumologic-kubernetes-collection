@@ -1,7 +1,7 @@
 require 'helper'
-require 'fluent/plugin/parse_protobuf.rb'
+require 'fluent/plugin/parser_protobuf.rb'
 
-class ProtobufParseTest < Test::Unit::TestCase
+class ProtobufParserTest < Test::Unit::TestCase
   setup do
     Fluent::Test.setup
   end
@@ -43,7 +43,7 @@ class ProtobufParseTest < Test::Unit::TestCase
   private
 
   def create_driver(conf)
-    Fluent::Test::Driver::Parser.new(Fluent::Plugin::ProtobufParse).configure(conf)
+    Fluent::Test::Driver::Parser.new(Fluent::Plugin::ProtobufParser).configure(conf)
   end
 
   def test_parse_protobuf(conf = %([]), json_path)
