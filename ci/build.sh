@@ -38,6 +38,9 @@ docker build . -f ./Dockerfile -t $DOCKER_TAG:latest
 rm -f ./gems/*.gem
 cd ../..
 
+echo "Test docker image locally..."
+ruby deploy/test/test_docker.rb
+
 if [ -z "$DOCKER_PASSWORD" ] || [ -z "$TRAVIS_TAG" ]; then
     echo "Skip Docker pushing"
 else
