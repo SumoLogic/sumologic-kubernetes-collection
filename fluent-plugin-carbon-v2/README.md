@@ -100,4 +100,10 @@ If `true`, records missing any field in keys of `exclusions` will be dropped.
 
 Default value: `false`
 
-__NOTE__ inclusions/exclusions rules are applied after relabeling and flatten
+__NOTE__ inclusions/exclusions rules are applied after relabeling and flatten.
+
+### space_as (string) (optional)
+
+The space (`' '`) in the name or value of fields will be replaced with the given string in output.
+
+Default value: `_`

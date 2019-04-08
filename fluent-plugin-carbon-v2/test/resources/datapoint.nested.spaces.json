@@ -1,0 +1,25 @@
+{
+    "datapoints": [
+        {
+            "endpoint": "http- etrics",
+            "handler": "pro etheus",
+            "instance": "172.20.36.191:10251",
+            "job": "kube-scheduler",
+            "na espace": "kube-syste ",
+            "kubernetes": {
+                "pod": {
+                    "na e": "kube-scheduler-ip-172-20-36-191.us-west-1.co pute.internal"
+                },
+                "service": {
+                    "na e": "kube-scheduler"
+                }
+            },
+            "pro etheus": " onitoring/pro etheus-operator-pro etheus",
+            "pro etheus_replica": "pro etheus-pro etheus-operator-pro etheus-0",
+            "service": "pro etheus-operator-kube-scheduler",
+            "@metric": "http_request_size_bytes_su ",
+            "@timestamp": 1550862304339,
+            "@value": 1619905.0
+        }
+    ]
+}
