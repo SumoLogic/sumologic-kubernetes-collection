@@ -7,14 +7,47 @@ metadata:
   namespace: sumologic
 data:
   fluent.conf: |-
+    @include metrics.conf
+    @include events.conf
+    @include logs.conf
+  metrics.conf: |-
     <source>
-      @type forward
-      port 24224
-      bind 0.0.0.0
+      @type http
+      port 9888
+      <parse>
+        @type protobuf
+      </parse>
     </source>
-    <match **>
+    <match prometheus.metrics>
+      @type datapoint
+      tag "prometheus.datapoint"
+    </match>
+    <filter prometheus.datapoint>
+      @type carbon_v2
+    </filter>    
+    <match prometheus.datapoint>
       @type sumologic
-      endpoint "#{ENV['SUMO_ENDPOINT']}"
+      endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
+      data_type metrics
+      metric_data_format carbon2
+    </match>
+  events.conf: |-
+    <source>
+      @type dummy
+      tag "dummy.events"
+      dummy {"hello":"world"}
+    </source>
+    <match "dummy.events">
+      @type null
+    </match>
+  logs.conf: |-
+    <source>
+      @type dummy
+      tag "dummy.logs"
+      dummy {"hello":"world"}
+    </source>
+    <match "dummy.logs">
+      @type null
     </match>
 ---
 apiVersion: apps/v1beta1
@@ -45,7 +78,7 @@ spec:
           name: fluentd-config
       containers:
       - name: fluentd
-        image: byisumo/sumologic-fluentd-k8s
+        image: sumologic/kubernetes-fluentd
         imagePullPolicy: Always
         resources:
           limits:
@@ -55,8 +88,8 @@ spec:
             memory: 2Gi
             cpu: "200m"
         ports:
-        - name: forward
-          containerPort: 24224
+        - name: prom-write
+          containerPort: 9888
           protocol: TCP
         livenessProbe:
           exec:
@@ -80,11 +113,11 @@ spec:
         - name: pos-files
           mountPath: /mnt/pos/
         env:
-        - name: SUMO_ENDPOINT
+        - name: SUMO_ENDPOINT_METRICS
           valueFrom:
             secretKeyRef:
               name: sumologic
-              key: endpoint
+              key: endpoint-metrics
 ---
 apiVersion: v1
 kind: Service
@@ -98,9 +131,9 @@ spec:
   selector:
     k8s-app: fluentd-sumologic
   ports:
-  - name: forward
-    port: 24224
-    targetPort: 24224
+  - name: prom-write
+    port: 9888
+    targetPort: 9888
     protocol: TCP
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1

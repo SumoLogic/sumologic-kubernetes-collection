@@ -8,7 +8,7 @@ require_relative '../../remote_pb'
 module Fluent
   module Plugin
     # fluentd parser plugin to parse Prometheus metrics into timeseries events.
-    class ProtobufParse < Fluent::Plugin::Parser
+    class ProtobufParser < Fluent::Plugin::Parser
       Fluent::Plugin.register_parser('protobuf', self)
 
       def parse(text)
