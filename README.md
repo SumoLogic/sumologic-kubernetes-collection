@@ -42,7 +42,11 @@ prometheus:
     remoteWrite:
     - url: http://<EXTERNAL-IP>:<PORT>/prometheus.metrics
 ```
-6. Install the `prometheus-operator` using `helm`:
+6. Ensure your `helm` repo is up to date by pulling the latest stable charts
+```
+helm repo update
+```
+7. Install the `prometheus-operator` using `helm`:
 ```
 helm install stable/prometheus-operator --name prometheus-operator --namespace monitoring -f values.yaml
 ```
