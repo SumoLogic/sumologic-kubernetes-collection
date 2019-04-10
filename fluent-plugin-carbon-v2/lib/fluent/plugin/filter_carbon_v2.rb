@@ -64,8 +64,8 @@ module Fluent
       KEY_MESSAGE = 'message'.freeze
       SPLITOR = '.'.freeze
 
-      SOURCE_TYPE_KEY = '_sourceType'.freeze
-      SOURCE_TYPE_VALUE = 'kubernetes'.freeze
+      ORIGIN_KEY = '_origin'.freeze
+      ORIGIN_VALUE = 'kubernetes'.freeze
 
       def to_carbon_line(record)
         metric = @metric_accessor.call(record)
@@ -116,7 +116,7 @@ module Fluent
             record[new_key] = value unless new_key.nil? || new_key.empty?
           end
         end
-        record[SOURCE_TYPE_KEY] = SOURCE_TYPE_VALUE
+        record[ORIGIN_KEY] = ORIGIN_VALUE
         record
       end
 
