@@ -31,6 +31,7 @@ module Fluent
       )
       config_param :strict_inclusions, :bool, default: false
       config_param :strict_exclusions, :bool, default: false
+      config_param :space_as, :string, default: '_'
       config_param :sort_labels, :bool, default: true
 
       def configure(conf)
@@ -68,7 +69,7 @@ module Fluent
       ORIGIN_VALUE = 'kubernetes'.freeze
 
       def to_carbon_line(record)
-        metric = @metric_accessor.call(record)
+        metric = @metric_accessor.call(record).gsub(/\s/, @space_as)
         timestamp = @timestamp_accessor.call(record)
         value = @value_accessor.call(record)
         "metric=#{metric} #{to_tags(record)}   #{value} #{timestamp}"
@@ -123,7 +124,7 @@ module Fluent
       def to_tags(hash)
         array = @sort_labels ? hash.sort : hash.to_a
         array.map do |key, value|
-          "#{key}=#{value}"\
+          "#{key.gsub(/\s/, @space_as)}=#{value.gsub(/\s/, @space_as)}"\
             unless [KEY_METRIC, KEY_TIMESTAMP, KEY_VALUE].include?(key)
         end.compact.join(' ')
       end

@@ -33,7 +33,7 @@
 
 ```json
 {
-    "message": "metric=http_request_size_bytes_sum _sourceType=kubernetes endpoint=http-metrics handler=prometheus instance=172.20.36.191:10251 job=kube-scheduler kubernetes.pod.name=kube-scheduler-ip-172-20-36-191.us-west-1.compute.internal kubernetes.service.name=kube-scheduler namespace=kube-system prometheus=monitoring/prometheus-operator-prometheus prometheus_replica=prometheus-prometheus-operator-prometheus-0 service=prometheus-operator-kube-scheduler   1619905.0 1550862304339"
+    "message": "metric=http_request_size_bytes_sum _origin=kubernetes endpoint=http-metrics handler=prometheus instance=172.20.36.191:10251 job=kube-scheduler kubernetes.pod.name=kube-scheduler-ip-172-20-36-191.us-west-1.compute.internal kubernetes.service.name=kube-scheduler namespace=kube-system prometheus=monitoring/prometheus-operator-prometheus prometheus_replica=prometheus-prometheus-operator-prometheus-0 service=prometheus-operator-kube-scheduler   1619905.0 1550862304339"
 }
 ```
 
@@ -100,4 +100,10 @@ If `true`, records missing any field in keys of `exclusions` will be dropped.
 
 Default value: `false`
 
-__NOTE__ inclusions/exclusions rules are applied after relabeling and flatten
+__NOTE__ inclusions/exclusions rules are applied after relabeling and flatten.
+
+### space_as (string) (optional)
+
+The space (`' '`) in the name or value of fields will be replaced with the given string in output.
+
+Default value: `_`

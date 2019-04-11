@@ -70,6 +70,21 @@ class CarbonV2FilterTest < Test::Unit::TestCase
       assert_equal 1, outputs.length
       verify_with_expected outputs, 'output.datapoint.nested.relabel'
     end
+
+    test 'relabel keys before convert space' do
+      config = %([
+        relabel {
+          "service" : "",
+          "kubernetes.service.na e" : "service_na e",
+          "kubernetes.pod.na e" : "pod_na e"
+        }
+        space_as '*'
+      ])
+      outputs = filter_datapoints(config, 'datapoint.nested.spaces')
+      puts outputs
+      assert_equal 1, outputs.length
+      verify_with_expected outputs, 'output.datapoint.nested.spaces.relabel'
+    end
   end
 
   sub_test_case 'inclusions, non-strict mode' do
