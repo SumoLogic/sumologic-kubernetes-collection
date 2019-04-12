@@ -72,7 +72,7 @@ module Fluent
         metric = @metric_accessor.call(record).gsub(/\s/, @space_as)
         timestamp = @timestamp_accessor.call(record)
         value = @value_accessor.call(record)
-        "metric=#{metric} #{to_tags(record)}   #{value} #{timestamp}"
+        "metric=#{metric} #{to_tags(record)}  #{ORIGIN_KEY}=#{ORIGIN_VALUE} #{value} #{timestamp}"
       end
 
       def valid?(record)
@@ -117,7 +117,6 @@ module Fluent
             record[new_key] = value unless new_key.nil? || new_key.empty?
           end
         end
-        record[ORIGIN_KEY] = ORIGIN_VALUE
         record
       end
 
