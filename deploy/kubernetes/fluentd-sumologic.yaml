@@ -12,9 +12,7 @@ metadata:
   labels:
     k8s-app: fluentd-sumologic
 type: Opaque
-data:
-  # value is base-64 encoded, using following command to get it
-  #   echo -n 'plaintext' | base64
+stringData:
   endpoint-metrics: XXXX
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1

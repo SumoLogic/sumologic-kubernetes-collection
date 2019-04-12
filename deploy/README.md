@@ -1,11 +1,10 @@
 # Deployment Guide (Draft)
 
-## Rre-requests
+## Prerequests
 
 * Make sure a Kubernetes cluster is created and you can use `kubectl` to access it.
-* Make sure Kubernetes cluster enable the DNS service ([steps](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/#dns))
+* Make sure Kubernetes cluster enables the DNS service ([steps](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/#dns))
 * Create HTTP source(s) in your Sumo Logic account and get HTTP Source URL(s).
-* Run `echo -n '<YOUR_HTTP_URL>' | base64` to encode the URL with base-64.
 
 ## Setting up Fluentd
 
@@ -15,7 +14,7 @@
 curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml
 ```
 
-* Open the .yaml file, find line with `endpoint-metrics:`, replace `XXXX` with the encoded URL; save it.
+* Open the .yaml file, find line with `endpoint-metrics:`, replace `XXXX` with the URL of HTTP source; save it.
 * Apply the .yaml file with `kubectl`:
 
 ```sh
