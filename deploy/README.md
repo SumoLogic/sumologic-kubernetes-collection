@@ -3,8 +3,9 @@
 ## Rre-requests
 
 * Make sure a Kubernetes cluster is created and you can use `kubectl` to access it.
+* Make sure Kubernetes cluster enable the DNS service ([steps](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/#dns))
 * Create HTTP source(s) in your Sumo Logic account and get HTTP Source URL(s).
-* Run `echo -n '<YOUR_HTTP_URL>' | base64` to encode URL.
+* Run `echo -n '<YOUR_HTTP_URL>' | base64` to encode the URL with base-64.
 
 ## Setting up Fluentd
 
