@@ -1,4 +1,60 @@
-# Deploy singleton fluentd instance in the whole cluster for aggregating and forwarding to sumologic
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sumologic
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sumologic
+  namespace: sumologic
+  labels:
+    k8s-app: fluentd-sumologic
+type: Opaque
+data:
+  # value is base-64 encoded, using following command to get it
+  #   echo -n 'plaintext' | base64
+  endpoint-metrics: XXXX
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: fluentd
+subjects:
+- kind: ServiceAccount
+  name: fluentd
+  namespace: sumologic
+roleRef:
+  kind: ClusterRole
+  name: fluentd
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: fluentd
+  labels:
+    k8s-app: fluentd-sumologic
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - namespaces
+  - events
+  - pods
+  - replicasets
+  - statefulsets
+  - deployments
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fluentd
+  namespace: sumologic
+  labels:
+    k8s-app: fluentd-sumologic
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -50,7 +106,7 @@ data:
       @type null
     </match>
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fluentd
@@ -127,7 +183,6 @@ metadata:
   labels:
     k8s-app: fluentd-sumologic
 spec:
-  type: LoadBalancer
   selector:
     k8s-app: fluentd-sumologic
   ports:
@@ -135,43 +190,4 @@ spec:
     port: 9888
     targetPort: 9888
     protocol: TCP
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRoleBinding
-metadata:
-  name: fluentd
-subjects:
-- kind: ServiceAccount
-  name: fluentd
-  namespace: sumologic
-roleRef:
-  kind: ClusterRole
-  name: fluentd
-  apiGroup: rbac.authorization.k8s.io
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  name: fluentd
-  labels:
-    k8s-app: fluentd-sumologic
-rules:
-- apiGroups: [""]
-  resources:
-  - nodes
-  - namespaces
-  - events
-  - pods
-  - replicasets
-  - statefulsets
-  - deployments
-  verbs: ["get", "list", "watch"]
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: fluentd
-  namespace: sumologic
-  labels:
-    k8s-app: fluentd-sumologic
 ---

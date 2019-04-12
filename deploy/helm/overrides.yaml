@@ -1,0 +1,4 @@
+prometheus:
+  prometheusSpec:
+    remoteWrite:
+    - url: http://fluentd:9888/prometheus.metrics
