@@ -1,6 +1,6 @@
 # Deployment Guide (Draft)
 
-## Prerequests
+## Prerequisites
 
 * Make sure a Kubernetes cluster is created and you can use `kubectl` to access it.
 * Make sure Kubernetes cluster enables the DNS service ([steps](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/#dns))
