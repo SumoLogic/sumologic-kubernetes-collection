@@ -62,6 +62,8 @@ helm repo update \
    && helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f overrides.yaml
 ```
 
+__NOTE__: If credentials are created earlier, add `--no-crd-hook` at the end.
+
 * Verify the `prometheus-operator` is running:
 
 ```sh
