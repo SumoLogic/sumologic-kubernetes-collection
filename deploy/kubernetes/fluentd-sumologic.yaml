@@ -79,9 +79,6 @@ data:
     <filter prometheus.datapoint>
       @type carbon_v2
     </filter>
-    # <filter prometheus.datapoint>
-    #   @type stdout
-    # </filter>
     <match prometheus.datapoint>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
