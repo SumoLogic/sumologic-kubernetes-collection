@@ -84,17 +84,17 @@ data:
       @type datapoint
       tag "prometheus.datapoint"
     </match>
-    <filter prometheus.datapoint>
-      @type carbon_v2
-    </filter>
     <match prometheus.datapoint>
       @type rewrite_tag_filter
       <rule>
-        key message
-        pattern job=(.*?)\s
+        key job
+        pattern ^(.*)$
         tag ${tag}.$1
       </rule>
     </match>
+    <filter prometheus.datapoint.**>
+      @type carbon_v2
+    </filter>
 
     <match prometheus.datapoint.apiserver**>
       @type sumologic
