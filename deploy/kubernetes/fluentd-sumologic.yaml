@@ -14,6 +14,14 @@ metadata:
 type: Opaque
 stringData:
   endpoint-metrics: XXXX
+  endpoint-metrics-apiserver: XXXX
+  endpoint-metrics-cadvisor: XXXX
+  endpoint-metrics-kubelet: XXXX
+  endpoint-metrics-kube-controller-manager: XXXX
+  endpoint-metrics-kube-scheduler: XXXX
+  endpoint-metrics-kube-state: XXXX
+  endpoint-metrics-node-exporter: XXXX
+  endpoint-metrics-prometheus-operator: XXXX
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -76,10 +84,67 @@ data:
       @type datapoint
       tag prometheus.datapoint
     </match>
-    <filter prometheus.datapoint>
+    <match prometheus.datapoint>
+      @type rewrite_tag_filter
+      <rule>
+        key job
+        pattern ^(.*)$
+        tag ${tag}.$1
+      </rule>
+    </match>
+    <filter prometheus.datapoint.**>
       @type carbon_v2
     </filter>
-    <match prometheus.datapoint>
+
+    <match prometheus.datapoint.apiserver**>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT_METRICS_APISERVER']}"
+      data_type metrics
+      metric_data_format carbon2
+    </match>
+    <match prometheus.datapoint.cadvisor**>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT_METRICS_CADVISOR']}"
+      data_type metrics
+      metric_data_format carbon2
+    </match>
+    <match prometheus.datapoint.kubelet**>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
+      data_type metrics
+      metric_data_format carbon2
+    </match>
+    <match prometheus.datapoint.kube-controller-manager**>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER']}"
+      data_type metrics
+      metric_data_format carbon2
+    </match>
+    <match prometheus.datapoint.kube-scheduler**>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER']}"
+      data_type metrics
+      metric_data_format carbon2
+    </match>
+    <match prometheus.datapoint.kube-state**>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_STATE']}"
+      data_type metrics
+      metric_data_format carbon2
+    </match>
+    <match prometheus.datapoint.node-exporter**>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT_METRICS_NODE_EXPORTER']}"
+      data_type metrics
+      metric_data_format carbon2
+    </match>
+    <match prometheus.datapoint.prometheus-operator**>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT_METRICS_PROMETHEUS_OPERATOR']}"
+      data_type metrics
+      metric_data_format carbon2
+    </match>
+    <match prometheus.datapoint.**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
       data_type metrics
@@ -172,6 +237,46 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-metrics
+        - name: SUMO_ENDPOINT_METRICS_APISERVER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-apiserver
+        - name: SUMO_ENDPOINT_METRICS_CADVISOR
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-cadvisor
+        - name: SUMO_ENDPOINT_METRICS_KUBELET
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kubelet
+        - name: SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kube-controller-manager
+        - name: SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kube-scheduler
+        - name: SUMO_ENDPOINT_METRICS_KUBE_STATE
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kube-state
+        - name: SUMO_ENDPOINT_METRICS_NODE_EXPORTER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-node-exporter
+        - name: SUMO_ENDPOINT_METRICS_PROMETHEUS_OPERATOR
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-prometheus-operator
 ---
 apiVersion: v1
 kind: Service
