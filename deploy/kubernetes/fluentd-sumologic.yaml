@@ -80,9 +80,9 @@ data:
         @type protobuf
       </parse>
     </source>
-    <match prometheus.metrics>
+    <match prometheus.metrics.**>
       @type datapoint
-      tag "prometheus.datapoint"
+      tag prometheus.datapoint
     </match>
     <match prometheus.datapoint>
       @type rewrite_tag_filter
