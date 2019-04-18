@@ -72,13 +72,13 @@ data:
         @type protobuf
       </parse>
     </source>
-    <match prometheus.metrics>
+    <match prometheus.metrics.**>
       @type datapoint
-      tag "prometheus.datapoint"
+      tag prometheus.datapoint
     </match>
     <filter prometheus.datapoint>
       @type carbon_v2
-    </filter>    
+    </filter>
     <match prometheus.datapoint>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
