@@ -12,7 +12,7 @@ class DatapointOutputTest < Test::Unit::TestCase
       events = read_events(config, 'test/resources/single.json')
       assert_equal 1, events.length
       assert_equal 'kubernetes.timeseries', events[0][0] # tag
-      assert_equal 1550862304339, events[0][1] # time
+      assert events[0][1].is_a? Fluent::EventTime # time
       expected = JSON.parse!(File.read('test/resources/single.output.json'))
       assert_equal expected, events[0][2] # record
     end
@@ -66,15 +66,18 @@ class DatapointOutputTest < Test::Unit::TestCase
       assert_equal 3, events.length
       expected = JSON.parse!(File.read('test/resources/multiple.output_part.json'))
       assert_equal 'kubernetes.timeseries', events[0][0] # tag
-      assert_equal 1550862324543, events[0][1] # time
+      assert events[0][1].is_a? Fluent::EventTime # time
+      assert_equal 1550862324543 / 1000, events[0][1].to_i # time
       assert expected < events[0][2] # record
       assert_equal 1024, events[0][2]['@value'] # value
       assert_equal 'kubernetes.timeseries', events[1][0] # tag
-      assert_equal 1550863744525, events[1][1] # time
+      assert events[1][1].is_a? Fluent::EventTime # time
+      assert_equal 1550863744525 / 1000, events[1][1].to_i # time
       assert_equal 1379, events[1][2]['@value'] # value
       assert expected < events[1][2] # record
       assert_equal 'kubernetes.timeseries', events[2][0] # tag
-      assert_equal 1550865342245, events[2][1] # time
+      assert events[2][1].is_a? Fluent::EventTime # time
+      assert_equal 1550865342245 / 1000, events[2][1].to_i # time
       assert_equal 986, events[2][2]['@value'] # value
       assert expected < events[2][2] # record
     end
@@ -137,9 +140,7 @@ class DatapointOutputTest < Test::Unit::TestCase
 
     d = create_driver(config)
     d.run(default_tag: 'kubernetes.timeseries') do
-      input['timeseries'].each do |timeseries|
-        d.feed(timeseries)
-      end
+      d.feed(Fluent::EventTime.now, input)
     end
 
     d.events
