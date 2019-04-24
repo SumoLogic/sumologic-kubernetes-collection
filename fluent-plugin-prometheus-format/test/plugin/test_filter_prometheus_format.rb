@@ -84,6 +84,14 @@ class PrometheusFormatFilterTest < Test::Unit::TestCase
       assert_equal 1, outputs.length
       verify_with_expected outputs, 'output.datapoint.nested.spaces.relabel'
     end
+
+    test 'transform data point with escaped sequences' do
+      config = %([])
+      outputs = filter_datapoints(config, 'datapoint.nested.escape')
+      puts outputs
+      assert_equal 1, outputs.length
+      verify_with_expected outputs, 'output.datapoint.nested.escape'
+    end
   end
 
   sub_test_case 'inclusions, non-strict mode' do

@@ -118,9 +118,13 @@ module Fluent
       def to_tags(hash)
         array = @sort_labels ? hash.sort : hash.to_a
         array.map do |key, value|
-          "#{key}=\"#{value}\""\
+          "#{key}=\"#{escape(value)}\""\
             unless [KEY_METRIC, KEY_TIMESTAMP, KEY_VALUE].include?(key)
         end.compact.join(',')
+      end
+
+      def escape(value)
+        value.gsub(/\\/) { '\\\\' }.gsub(/\n/) { '\\n' }.gsub(/\"/) { '\\"' }
       end
 
       def dotify_record(record)
