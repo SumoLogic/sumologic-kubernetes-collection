@@ -1,5 +1,5 @@
-require "helper"
-require "fluent/plugin/filter_prometheus_format.rb"
+require 'helper'
+require 'fluent/plugin/filter_prometheus_format.rb'
 
 class PrometheusFormatFilterTest < Test::Unit::TestCase
   setup do

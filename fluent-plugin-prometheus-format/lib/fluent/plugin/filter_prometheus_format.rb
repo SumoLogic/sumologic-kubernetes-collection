@@ -67,7 +67,7 @@ module Fluent
         metric = @metric_accessor.call(record)
         timestamp = @timestamp_accessor.call(record)
         value = @value_accessor.call(record)
-        "#{metric}\{#{to_tags(record)},#{ORIGIN_KEY}=#{ORIGIN_VALUE}\} #{value} #{timestamp}"
+        "#{metric}\{#{to_tags(record)},#{ORIGIN_KEY}=\"#{ORIGIN_VALUE}\"\} #{value} #{timestamp}"
       end
 
       def valid?(record)
@@ -118,7 +118,7 @@ module Fluent
       def to_tags(hash)
         array = @sort_labels ? hash.sort : hash.to_a
         array.map do |key, value|
-          "#{key}=#{value}"\
+          "#{key}=\"#{value}\""\
             unless [KEY_METRIC, KEY_TIMESTAMP, KEY_VALUE].include?(key)
         end.compact.join(',')
       end
