@@ -15,9 +15,9 @@ RUN apk add --no-cache --update --virtual .build-deps sudo build-base ruby-dev \
 
 RUN gem install fluent-plugin-sumologic_output \
        && gem install fluent-plugin-carbon-v2 \
+       && gem install fluent-plugin-prometheus-format \
        && gem install fluent-plugin-datapoint \
        && gem install fluent-plugin-rewrite-tag-filter \
-       && gem install fluent-plugin-prometheus-format \
        && gem install fluent-plugin-protobuf
 
 RUN gem sources --clear-all \

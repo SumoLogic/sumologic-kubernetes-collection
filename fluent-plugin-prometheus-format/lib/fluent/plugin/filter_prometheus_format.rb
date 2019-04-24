@@ -1,9 +1,10 @@
-require "fluent/plugin/filter"
+require 'fluent/plugin/filter'
 
 module Fluent
   module Plugin
+    # fluentd plugin for convert data point json to Prometheus format
     class PrometheusFormatFilter < Fluent::Plugin::Filter
-      Fluent::Plugin.register_filter("prometheus_format", self)
+      Fluent::Plugin.register_filter('prometheus_format', self)
 
       helpers :record_accessor
 
@@ -43,10 +44,6 @@ module Fluent
         @metric_accessor = record_accessor_create("$.#{KEY_METRIC}")
         @timestamp_accessor = record_accessor_create("$.#{KEY_TIMESTAMP}")
         @value_accessor = record_accessor_create("$.#{KEY_VALUE}")
-      end
-
-      def multi_workers_ready?
-        true
       end
 
       def filter(_tag, _time, record)
