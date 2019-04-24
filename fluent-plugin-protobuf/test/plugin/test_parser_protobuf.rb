@@ -46,18 +46,19 @@ class ProtobufParserTest < Test::Unit::TestCase
     Fluent::Test::Driver::Parser.new(Fluent::Plugin::ProtobufParser).configure(conf)
   end
 
-  def test_parse_protobuf(conf = %([]), json_path)
+  def test_parse_protobuf(json_path, conf = %([]))
     json_data = JSON.parse!(File.read(json_path))
-    expected = json_data['timeseries'].map { |ts|
+    expected = json_data['timeseries'].map do |ts|
       Prometheus::TimeSeries.new(ts)
-    }
+    end
 
     timeseries = Prometheus::WriteRequest.new(json_data)
     encoded = Prometheus::WriteRequest.encode(timeseries)
     compressed = Snappy.deflate(encoded)
 
-    d = create_driver(conf)
-    output = d.instance.parse(compressed)
-    assert_equal expected, output
+    create_driver(conf).instance.parse(compressed) do |time, record|
+      assert time.is_a? Fluent::EventTime
+      assert_equal expected, record['timeseries']
+    end
   end
 end

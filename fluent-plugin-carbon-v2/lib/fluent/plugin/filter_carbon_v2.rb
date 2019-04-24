@@ -47,10 +47,6 @@ module Fluent
         @value_accessor = record_accessor_create("$.#{KEY_VALUE}")
       end
 
-      def multi_workers_ready?
-        true
-      end
-
       def filter(_tag, _time, record)
         dotified = dotify_record(record)
         relabeled = relabel_record(dotified)

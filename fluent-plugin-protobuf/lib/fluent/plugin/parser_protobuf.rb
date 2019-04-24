@@ -1,5 +1,4 @@
 require 'fluent/plugin/parser'
-require 'base64'
 require 'google/protobuf'
 require 'snappy'
 require_relative '../../types_pb'
@@ -11,17 +10,15 @@ module Fluent
     class ProtobufParser < Fluent::Plugin::Parser
       Fluent::Plugin.register_parser('protobuf', self)
 
+      KEY_TIMESERIES = 'timeseries'.freeze
+
       def parse(text)
-        begin
-          inflated = Snappy.inflate(text)
-          decoded = Prometheus::WriteRequest.decode(inflated)
-          decoded.timeseries.map { |ts|
-            log.debug(ts)
-            ts
-          }
-        rescue StandardError => exception
-          log.error('ERROR during decoding', error: exception)
-        end
+        inflated = Snappy.inflate(text)
+        decoded = Prometheus::WriteRequest.decode(inflated)
+        log.trace "protobuf::parse - in: (#{text.bytesize}/#{inflated.bytesize}), out: #{decoded.timeseries.length}"
+        record = {}
+        record[KEY_TIMESERIES] = decoded.timeseries
+        yield Fluent::EventTime.now, record
       end
     end
   end

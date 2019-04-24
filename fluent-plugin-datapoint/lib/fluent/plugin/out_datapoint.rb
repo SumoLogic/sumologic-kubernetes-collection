@@ -15,18 +15,19 @@ module Fluent
         super
       end
 
+      def multi_workers_ready?
+        true
+      end
+
       def process(tag, es)
-        es.each do |time, record|
-          begin
-            write_datapoints(tag, time, record)
-          rescue StandardError => exception
-            log.error('ERROR during processing', error: exception)
-          end
+        es.each do |_time, record|
+          write_batch(tag, record)
         end
       end
 
       private
 
+      KEY_TIMESERIES = 'timeseries'.freeze
       KEY_METRIC = '@metric'.freeze
       KEY_TIMESTAMP = '@timestamp'.freeze
       KEY_VALUE = '@value'.freeze
@@ -37,10 +38,20 @@ module Fluent
       ORG_KEY_VALUE = 'value'.freeze
       ORG_KEY_TIMESTAMP = 'timestamp'.freeze
 
-      def write_datapoints(org_tag, _time, record)
+      def write_batch(tag, batch)
+        new_tag = @tag || tag
+        records = batch[KEY_TIMESERIES].flat_map do |ts|
+          create_datapoints(ts)
+        end.compact
+        records.each do |time, record|
+          router.emit(new_tag, time, record)
+        end
+        log.trace "datapoint::write_batch - in: #{batch[KEY_TIMESERIES].length}, out: #{records.length}"
+      end
+
+      def create_datapoints(record)
         labels = record[ORG_KEY_LABELS]
         samples = record[ORG_KEY_SAMPLES]
-        new_tag = @tag || org_tag
         template = {}
 
         labels.each do |label|
@@ -51,24 +62,25 @@ module Fluent
           end
         end
 
-        samples.each do |sample|
-          datapoint_record = template.clone
-          timestamp = sample[ORG_KEY_TIMESTAMP]
-          value = sample[ORG_KEY_VALUE]
-          datapoint_record[KEY_TIMESTAMP] = timestamp
-          if value.is_a?(Numeric) && !value.to_f.nan? && !value.to_f.infinite?
-            datapoint_record[KEY_VALUE] = value.to_f
-            router.emit(new_tag, timestamp, datapoint_record)
-          elsif @missing_values.nan?
-            log.trace(
-              "skipping sample with value #{value}",
-              metric: template[KEY_METRIC],
-              timestamp: template[KEY_TIMESTAMP]
-            )
-          else
-            datapoint_record[KEY_VALUE] = @missing_values.to_f
-            router.emit(new_tag, timestamp, datapoint_record)
-          end
+        samples.map do |sample|
+          create_sample(sample, template.clone)
+        end
+      end
+
+      def create_sample(sample, record)
+        timestamp = sample[ORG_KEY_TIMESTAMP]
+        value = sample[ORG_KEY_VALUE]
+        event_time = Fluent::EventTime.new(timestamp / 1000)
+        record[KEY_TIMESTAMP] = timestamp
+        if value.is_a?(Numeric) && !value.to_f.nan? && !value.to_f.infinite?
+          record[KEY_VALUE] = value.to_f
+          return event_time, record
+        elsif @missing_values.nan?
+          log.trace "skipping sample with value #{value} - #{record}"
+          return nil
+        else
+          record[KEY_VALUE] = @missing_values.to_f
+          return event_time, record
         end
       end
     end
