@@ -31,6 +31,7 @@ prometheus:
       - action: keep
         regex: scheduler_e2e_scheduling_latency_microseconds.*|scheduler_binding_latency_microseconds.*|scheduler_scheduling_algorithm_latency_microseconds.*
         sourceLabels: [__name__]
+    # api server metrics
     - url: http://fluentd:9888/prometheus.metrics.apiserver
       writeRelabelConfigs:
       - action: keep
@@ -41,11 +42,17 @@ prometheus:
       - action: keep
         regex: apiserver;etcd_request_cache_(?:get|add)_latencies_summary.*
         sourceLabels: [job, __name__]
+    # kubelet metrics
     - url: http://fluentd:9888/prometheus.metrics.kubelet
       writeRelabelConfigs:
       - action: keep
-        regex: kubelet_docker_operations_errors|kubelet_docker_operations_latency_microseconds.*|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_latency_microseconds.*
-        sourceLabels: [__name__]
+        regex: kubelet;kubelet_docker_operations_(?:errors|latency_microseconds.*)
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.kubelet
+      writeRelabelConfigs:
+      - action: keep
+        regex: kubelet;kubelet_(running_container_count|running_pod_count|runtime_operations_latency_microseconds.*)
+        sourceLabels: [job, __name__]
     # cadvisor container metrics
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
