@@ -15,11 +15,10 @@ type: Opaque
 stringData:
   endpoint-metrics: XXXX
   endpoint-metrics-apiserver: XXXX
-  endpoint-metrics-cadvisor: XXXX
-  endpoint-metrics-kubelet: XXXX
   endpoint-metrics-kube-controller-manager: XXXX
   endpoint-metrics-kube-scheduler: XXXX
   endpoint-metrics-kube-state: XXXX
+  endpoint-metrics-kubelet: XXXX
   endpoint-metrics-node-exporter: XXXX
   endpoint-metrics-prometheus-operator: XXXX
 ---
@@ -99,12 +98,6 @@ data:
     <match prometheus.datapoint.apiserver**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_APISERVER']}"
-      data_type metrics
-      metric_data_format carbon2
-    </match>
-    <match prometheus.datapoint.cadvisor**>
-      @type sumologic
-      endpoint "#{ENV['SUMO_ENDPOINT_METRICS_CADVISOR']}"
       data_type metrics
       metric_data_format carbon2
     </match>
@@ -242,11 +235,6 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-metrics-apiserver
-        - name: SUMO_ENDPOINT_METRICS_CADVISOR
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-metrics-cadvisor
         - name: SUMO_ENDPOINT_METRICS_KUBELET
           valueFrom:
             secretKeyRef:
