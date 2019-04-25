@@ -45,7 +45,7 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
       - action: keep
-        regex: container_cpu_(?:load_average_10s|(?:system|usage)_seconds_total))
+        regex: container_cpu_(?:load_average_10s|(?:system|usage)_seconds_total)
         sourceLabels: [__name__]
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
