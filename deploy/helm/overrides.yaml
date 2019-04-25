@@ -1,5 +1,8 @@
 prometheus:
   prometheusSpec:
+    externalLabels:
+      # Set this to a value to distinguish between different k8s clusters
+      cluser: kubernetes
     remoteWrite:
     # kube state metrics
     - url: http://fluentd:9888/prometheus.metrics.state.daemonset
