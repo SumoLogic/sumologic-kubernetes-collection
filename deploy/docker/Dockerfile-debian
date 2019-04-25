@@ -19,6 +19,8 @@ RUN sudo gem install snappy
 RUN sudo gem install fluent-plugin-sumologic_output \
  && sudo gem install fluent-plugin-carbon-v2 \
  && sudo gem install fluent-plugin-datapoint \
+ && sudo gem install fluent-plugin-rewrite-tag-filter \
+ && sudo gem install fluent-plugin-prometheus-format \
  && sudo gem install fluent-plugin-probuf
 
 RUN sudo gem sources --clear-all \
