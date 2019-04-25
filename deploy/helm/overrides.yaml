@@ -49,7 +49,32 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics.node
       writeRelabelConfigs:
       - action: keep
-        regex: node-exporter;(node_load15|node_load5|node_cpu|node_memory_MemFree|node_memory_MemTotal|node_memory_Buffers|node_memory_Cached|node_ipvs_incoming_packets_total|node_ipvs_outgoing_packets_total|node_ipvs_outgoing_bytes_total|node_ipvs_incoming_bytes_total|node_disk_reads_completed|node_disk_bytes_read|node_disk_writes_completed|node_disk_bytes_written|node_filesystem_avail|node_filesystem_free|node_filesystem_size)
+        regex: node-exporter;node_load(?:1|5|15)
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.node
+      writeRelabelConfigs:
+      - action: keep
+        regex: node-exporter;node_cpu_seconds_total
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.node
+      writeRelabelConfigs:
+      - action: keep
+        regex: node-exporter;node_memory_(?:MemAvailable|MemTotal|Buffers|SwapCached)_bytes
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.node
+      writeRelabelConfigs:
+      - action: keep
+        regex: node-exporter;node_ipvs_(?:incoming|outgoing)_(?:bytes|packets)_total
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.node
+      writeRelabelConfigs:
+      - action: keep
+        regex: node-exporter;node_disk_(?:(?:reads|writes)_completed|(?:read|written)_bytes)_total
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.node
+      writeRelabelConfigs:
+      - action: keep
+        regex: node-exporter;node_filesystem_(?:avail|free|size)_bytes
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.go
       writeRelabelConfigs:
