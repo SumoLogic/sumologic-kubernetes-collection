@@ -41,11 +41,33 @@ prometheus:
       - action: keep
         regex: kubelet_docker_operations_errors|kubelet_docker_operations_latency_microseconds.*|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_latency_microseconds.*
         sourceLabels: [__name__]
+    # cadvisor container metrics
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
       - action: keep
-        regex: container_cpu_load_average_10s|container_cpu_system_seconds_total|container_cpu_usage_seconds_total|container_cpu_cfs_throttled_seconds_total|container_memory_usage_bytes|container_spec_memory_limit_bytes|container_memory_swap|container_spec_memory_swap_limit_bytes|container_spec_memory_reservation_limit_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_fs_writes_bytes_total|container_fs_reads_bytes_total|container_network_receive_bytes_total|container_network_transmit_bytes_total|container_network_receive_errors_total|container_network_transmit_errors_total
+        regex: container_cpu_(?:load_average_10s|(?:system|usage)_seconds_total))
         sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.container
+      writeRelabelConfigs:
+      - action: keep
+        regex: container_memory_(?:usage_bytes|memory_swap)
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.container
+      writeRelabelConfigs:
+      - action: keep
+        regex: container_spec_memory_(?:|swap|reservation)_limit_bytes
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.container
+      writeRelabelConfigs:
+      - action: keep
+        regex: container_fs_(?:(?:usage|limit)_bytes|(?:reads|writes)_bytes_total)
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.container
+      writeRelabelConfigs:
+      - action: keep
+        regex: container_network_(?:receive|transmit)_(?:bytes|errors)_total
+        sourceLabels: [__name__]
+    # node exporter metrics
     - url: http://fluentd:9888/prometheus.metrics.node
       writeRelabelConfigs:
       - action: keep
@@ -76,6 +98,7 @@ prometheus:
       - action: keep
         regex: node-exporter;node_filesystem_(?:avail|free|size)_bytes
         sourceLabels: [job, __name__]
+    # golang related metrics
     - url: http://fluentd:9888/prometheus.metrics.go
       writeRelabelConfigs:
       - action: keep
