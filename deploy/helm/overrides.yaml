@@ -34,7 +34,12 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics.apiserver
       writeRelabelConfigs:
       - action: keep
-        regex: apiserver;(apiserver_request_count|apiserver_request_latencies.*|etcd_request_cache_get_latencies_summary.*|etcd_request_cache_add_latencies_summary.*)
+        regex: apiserver;apiserver_request_(?:count|latencies.*)
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.apiserver
+      writeRelabelConfigs:
+      - action: keep
+        regex: apiserver;etcd_request_cache_(?:get|add)_latencies_summary.*
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.kubelet
       writeRelabelConfigs:
