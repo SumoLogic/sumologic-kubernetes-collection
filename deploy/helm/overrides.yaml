@@ -131,9 +131,3 @@ prometheus:
       - action: keep
         regex: node-exporter;node_filesystem_(?:avail|free|size)_bytes
         sourceLabels: [job, __name__]
-    # golang related metrics
-    - url: http://fluentd:9888/prometheus.metrics.go
-      writeRelabelConfigs:
-      - action: keep
-        regex: go_gc_duration_seconds|go_threads|go_goroutines
-        sourceLabels: [__name__]
