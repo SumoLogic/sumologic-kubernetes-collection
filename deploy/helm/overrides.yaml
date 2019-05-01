@@ -131,3 +131,65 @@ prometheus:
       - action: keep
         regex: node-exporter;node_filesystem_(?:avail|free|size)_bytes
         sourceLabels: [job, __name__]
+    # prometheus operator rules
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: apiserver;cluster_quantile:apiserver_request_latencies:histogram_quantile
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: instance:node_(?:cpu|filesystem_usage|network_receive_bytes|node_network_transmit_bytes):rate:sum
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: instance:node_cpu:ratio|cluster:node_cpu:sum_rate5m|cluster:node_cpu:ratio
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: cluster_quantile:scheduler_(?:e2e_scheduling|scheduling_algorithm|binding)_latency:histogram_quantile
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: 'node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:'
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: 'node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:'
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: ':node_memory_utilisation:|:node_memory_MemFreeCachedBuffers_bytes:sum|:node_memory_MemTotal_bytes:sum|node:node_memory_bytes_available:sum|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate'
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: ':node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate'
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: 'node:node_filesystem_usage:|node:node_filesystem_avail:'
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: ':node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate'
+        sourceLabels: [__name__]
+    - url: http://fluentd:9888/prometheus.metrics.operator.rule
+      writeRelabelConfigs:
+      - action: keep
+        regex: 'node:node_inodes_total:|node:node_inodes_free:'
+        sourceLabels: [__name__]
+    # up metrics
+    - url: http://fluentd:9888/prometheus.metrics
+      writeRelabelConfigs:
+      - action: keep
+        regex: up
+        sourceLabels: [__name__]
