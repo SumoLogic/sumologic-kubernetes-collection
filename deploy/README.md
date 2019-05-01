@@ -78,7 +78,9 @@ kubectl apply -f ./fluentd-sumologic.yaml
 
 Verify the pod(s) are running:
 
-```sh```
+```sh
+kubectl -n sumologic get pod
+```
 
 ## Step 3: Configure Prometheus
 In this step, you configure the Prometheus server to write metrics to Fluentd. 
