@@ -96,55 +96,55 @@ data:
       </rule>
     </match>
     <filter prometheus.datapoint**>
-      @type carbon_v2
+      @type prometheus_format
     </filter>
     <match prometheus.datapoint.apiserver**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_APISERVER']}"
       data_type metrics
-      metric_data_format carbon2
+      metric_data_format prometheus
     </match>
     <match prometheus.datapoint.kubelet**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
       data_type metrics
-      metric_data_format carbon2
+      metric_data_format prometheus
     </match>
     <match prometheus.datapoint.kube-controller-manager**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER']}"
       data_type metrics
-      metric_data_format carbon2
+      metric_data_format prometheus
     </match>
     <match prometheus.datapoint.kube-scheduler**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER']}"
       data_type metrics
-      metric_data_format carbon2
+      metric_data_format prometheus
     </match>
     <match prometheus.datapoint.kube-state**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_STATE']}"
       data_type metrics
-      metric_data_format carbon2
+      metric_data_format prometheus
     </match>
     <match prometheus.datapoint.node-exporter**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_NODE_EXPORTER']}"
       data_type metrics
-      metric_data_format carbon2
+      metric_data_format prometheus
     </match>
     <match prometheus.datapoint.prometheus-operator**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_PROMETHEUS_OPERATOR']}"
       data_type metrics
-      metric_data_format carbon2
+      metric_data_format prometheus
     </match>
     <match prometheus.datapoint**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
       data_type metrics
-      metric_data_format carbon2
+      metric_data_format prometheus
     </match>
   events.conf: |-
     <source>
