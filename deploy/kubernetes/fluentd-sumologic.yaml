@@ -97,6 +97,7 @@ data:
     </match>
     <filter prometheus.datapoint**>
       @type carbon_v2
+      relabel container:container_name,pod:pod_name
     </filter>
     <match prometheus.datapoint.apiserver**>
       @type sumologic
