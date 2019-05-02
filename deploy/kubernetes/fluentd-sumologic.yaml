@@ -79,7 +79,11 @@ data:
         @type protobuf
       </parse>
     </source>
-    <match prometheus.metrics.**>
+    <match prometheus.metrics.operator.rule>
+      @type datapoint
+      tag prometheus.datapoint.operator.rule
+    </match>
+    <match prometheus.metrics**>
       @type datapoint
       tag prometheus.datapoint
     </match>
@@ -91,10 +95,9 @@ data:
         tag ${tag}.$1
       </rule>
     </match>
-    <filter prometheus.datapoint.**>
+    <filter prometheus.datapoint**>
       @type carbon_v2
     </filter>
-
     <match prometheus.datapoint.apiserver**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_APISERVER']}"
@@ -137,7 +140,7 @@ data:
       data_type metrics
       metric_data_format carbon2
     </match>
-    <match prometheus.datapoint.**>
+    <match prometheus.datapoint**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
       data_type metrics
