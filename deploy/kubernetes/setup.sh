@@ -61,6 +61,10 @@ fi
 
 echo "Creating collector '$COLLECTOR_NAME'..."
 COLLECTOR_ID=`create_host_collector $COLLECTOR_NAME`
+if [ ! -n "$COLLECTOR_ID" ]; then
+  echo 'Failed to create collector, please check the endpoint and access id/key are correct.';
+  exit -1;
+fi
 ENDPOINT_METRICS=`create_http_source '(default)' $COLLECTOR_ID`
 ENDPOINT_METRICS_APISERVER=`create_http_source apiserver $COLLECTOR_ID`
 ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER=`create_http_source kube-controller-manager $COLLECTOR_ID`
