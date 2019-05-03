@@ -103,7 +103,6 @@ kubectl -n sumologic create secret generic sumologic \
   --from-literal=endpoint-metrics-node-exporter=$ENDPOINT_METRICS_NODE_EXPORTER
 
 echo "Applying deployment 'fluentd'..."
-DIR=`dirname "$0"`
-kubectl apply -f $DIR/fluentd-sumologic.yaml
+kubectl apply -f https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml
 
 echo "Done."
