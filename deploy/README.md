@@ -34,7 +34,8 @@ In this step you create a Sumo Logic hosted collector with a set of HTTP sources
 This approach requires the access to Sumo Logic Collector API.
 
 ```sh
-curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh | bash -s <api-endpoint> <access-id> <access-key> [collector-name]
+curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
+  | bash -s <api-endpoint> <access-id> <access-key> [collector-name]
 ```
 
 #### Parameters
@@ -69,7 +70,7 @@ Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic
 * **Naming the sources.** You can assign any name you like to the sources, but it’s a good idea to assign a name to each source that reflects the Kubernetes component from which it receives metrics. For example, you might name the source that receives API Server metrics “api-server”.
 * **HTTP Source URLs.** When you configure each HTTP source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service to send data to Sumo.
 
-#### 2.2 Deploy Fluentd
+#### 1.2 Deploy Fluentd
 
 In this step you deploy Fluentd using a Sumo-provided .yaml manifest. This step also creates Kubernetes secrets for the HTTP sources created in the previous step.
 
@@ -128,7 +129,7 @@ This manifest binds the default `cluster-admin` ClusterRole in your Kubernetes c
 Download the Prometheus Operator `overrides.yaml` from GitHub:
 
 ```sh
-  curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/overrides.yaml
 ```
 
 Before installing `prometheus-operator`, edit `overrides.yaml` to define a unique cluster identifier. The default value of the `cluster` field in the `externalLabels` section of `overrides.yaml` is `kubernetes`. Assuming you’ll deploying the metric collection solution to multiple Kubernetes clusters, you want to have a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
