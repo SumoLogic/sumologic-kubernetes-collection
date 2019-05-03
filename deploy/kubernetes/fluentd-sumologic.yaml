@@ -235,11 +235,6 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-metrics-node-exporter
-        - name: SUMO_ENDPOINT_METRICS_PROMETHEUS_OPERATOR
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-metrics-prometheus-operator
 ---
 apiVersion: v1
 kind: Service
