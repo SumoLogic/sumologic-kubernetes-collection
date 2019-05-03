@@ -32,9 +32,8 @@ In this step you create a Sumo Logic hosted collector with a set of HTTP sources
 
 Create a hosted collector, following the instructions on [Configure a Hosted Collector](https://help.sumologic.com/03Send-Data/Hosted-Collectors/Configure-a-Hosted-Collector) in Sumo help. (If you already have a Sumo hosted collector that you want to use, skip this step.)
 
-Create 8 HTTP sources on the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution:
+Create seveb HTTP sources on the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution:
 * API server
-* cAdvisor
 * Kubelet
 * Controller Manager
 * Scheduler
@@ -57,7 +56,6 @@ Locate these lines, in the stanza that defines the Kubernetes secrets:
 stringData:
   endpoint-metrics: XXXX
   endpoint-metrics-apiserver: XXXX
-  endpoint-metrics-cadvisor: XXXX
   endpoint-metrics-kubelet: XXXX
   endpoint-metrics-kube-controller-manager: XXXX
   endpoint-metrics-kube-scheduler: XXXX
