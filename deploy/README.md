@@ -31,7 +31,7 @@ In this step you create a Sumo Logic hosted collector with a set of HTTP sources
 
 ### Automatic with setup script
 
-This approach requires the access to Sumo Logic API.
+This approach requires the access to Sumo Logic Collector API.
 
 ```sh
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh | bash -s <api-endpoint> <access-id> <access-key> [collector-name]
@@ -54,11 +54,12 @@ In this step you create a Sumo Logic hosted collector with a set of HTTP sources
 
 Create a hosted collector, following the instructions on [Configure a Hosted Collector](https://help.sumologic.com/03Send-Data/Hosted-Collectors/Configure-a-Hosted-Collector) in Sumo help. (If you already have a Sumo hosted collector that you want to use, skip this step.)
 
-Create seveb HTTP sources on the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution:
-* API server
-* Kubelet
-* Controller Manager
-* Scheduler
+Create seven HTTP sources on the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution:
+
+* api-server
+* kubelet
+* controller-manager
+* scheduler
 * kube-state-metrics
 * node-exporter
 * default
@@ -143,7 +144,7 @@ helm repo update \
    && helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f overrides.yaml
 ```
 
-__NOTE__ If credentials were created earlier, add `--no-crd-hook` to the end of the command.
+__NOTE__ If Custom Resource Definitions (CRD) were created earlier, add `--no-crd-hook` to the end of the command.
 
 Verify `prometheus-operator` is running:
 
@@ -217,7 +218,7 @@ To delete `prometheus-operator` from the Kubernetes cluster:
 helm del --purge prometheus-operator
 ```
 
-__NOTE__ This command will not remove the credentials created.
+__NOTE__ This command will not remove the Custom Resource Definitions created.
 
 To delete the `fluentd-sumologic` app:
 
