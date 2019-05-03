@@ -90,7 +90,7 @@ kubectl -n sumologic describe secret sumologic &>/dev/null
 retVal=$?
 set -e
 if [ $retVal -eq 0 ]; then
-  echo "Deleteing old secret 'sumologic'..."
+  echo "Deleting old secret 'sumologic'..."
   kubectl -n sumologic delete secret sumologic
 fi
 kubectl -n sumologic create secret generic sumologic \
