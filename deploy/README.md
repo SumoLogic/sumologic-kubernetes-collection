@@ -168,7 +168,7 @@ The `overrides.yaml` file specifies metrics to be collected. If you want to excl
 If you would like to collect other metrics that are not listed in `overrides.yaml`, you can add a new section to the file.
 
 ```yaml
-    - url: http://fluentd:9888/prometheus.metrics.state.node
+    - url: http://fluentd:9888/prometheus.metrics.<some_label>
       writeRelabelConfigs:
       - action: keep
         regex: <metric1>|<metric2>|...
