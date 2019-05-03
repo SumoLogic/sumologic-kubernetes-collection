@@ -42,7 +42,7 @@ curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collect
 * __api-endpoint__ - required. The API endpoint from [this page](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security).
 * __access-id__ - required. Sumo [access id](https://help.sumologic.com/Manage/Security/Access-Keys)
 * __access-key__ - required. Sumo [access key](https://help.sumologic.com/Manage/Security/Access-Keys)
-* __collector-name__ - optional. Name of Sumo collector will be created. If not specified, will be names as `kubernetes-<timestamp>`
+* __collector-name__ - optional. Name of Sumo collector will be created. If not specified, will be named as `kubernetes-<timestamp>`
 
 ### Manual
 
@@ -152,7 +152,7 @@ Verify `prometheus-operator` is running:
 kubectl -n sumologic logs prometheus-prometheus-operator-prometheus-0 prometheus -f
 ```
 
-Since there is a back compatible issue in latest version of chart, you may need following workaround for sending the metrics under controller-manager and scheduler:
+Since there is a backward compatible issue in the current version of chart, you may need following workaround for sending the metrics under `controller-manager` or `scheduler`:
 
 ```sh
 kubectl -n kube-system patch service prometheus-operator-kube-controller-manager -p '{"spec":{"selector":{"k8s-app": "kube-controller-manager"}}}'
