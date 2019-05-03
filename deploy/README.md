@@ -37,7 +37,7 @@ This approach requires the access to Sumo Logic Collector API.
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh | bash -s <api-endpoint> <access-id> <access-key> [collector-name]
 ```
 
-### Parameters
+#### Parameters
 
 * __api-endpoint__ - required. The API endpoint from [this page](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security).
 * __access-id__ - required. Sumo [access id](https://help.sumologic.com/Manage/Security/Access-Keys)
