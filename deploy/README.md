@@ -15,7 +15,7 @@ The diagram below illustrates the components of the Kubernetes metric collection
 * **Controller Manager.** Makes Controller Manager metrics available on an HTTP metrics port.
 * **node-exporter.** The `node_exporter` add-on exposes node metrics, including CPU, memory, disk, and network utilization.
 * **kube-state-metrics.** Listens to the Kubernetes API server; generates metrics about the state of the deployments, nodes and pods in the cluster; and exports the metrics as plaintext on an HTTP endpoint listen port.
-* **Prometheus deployment.** Scrapes the metrics exposed by the n`ode-exporter` add-on for Kubernetes and the `kube-state-metric`s component; writes metrics to a port on the Fluentd deployment.
+* **Prometheus deployment.** Scrapes the metrics exposed by the `node-exporter` add-on for Kubernetes and the `kube-state-metric`s component; writes metrics to a port on the Fluentd deployment.
 * **Fluentd deployment.** Forwards metrics to HTTP sources on a hosted collector. Includes multiple Fluentd plugins that parse and format the metrics and enrich them with metadata.
 
 ## Before you start
@@ -186,7 +186,7 @@ The options you can use are described [here](https://github.com/SumoLogic/sumolo
 
 Make your edits in the `<filter>` stanza in the ConfigMap section of `fluentd-sumologic.yaml`.
 
-```sh
+```xml
 <filter prometheus.datapoint**>
   @type prometheus_format
   relabel container_name:container,pod_name:pod
@@ -196,7 +196,7 @@ Make your edits in the `<filter>` stanza in the ConfigMap section of `fluentd-su
 Sumo is using `relabel` parameter to standardize the metadata fields (`container_name` -> `container`,`pod_name` -> `pod`).
 You can use `inclusion` or `exclusion` configuration options to further filter metrics by labels. For example:
 
-```sh
+```xml
 <filter prometheus.datapoint**>
   @type prometheus_format
   relabel container_name:container,pod_name:pod
