@@ -54,12 +54,11 @@ In this step you create a Sumo Logic hosted collector with a set of HTTP sources
 
 Create a hosted collector, following the instructions on [Configure a Hosted Collector](https://help.sumologic.com/03Send-Data/Hosted-Collectors/Configure-a-Hosted-Collector) in Sumo help. (If you already have a Sumo hosted collector that you want to use, skip this step.)
 
-Create 7 HTTP sources on the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution:
-
-* api-server
-* kubelet
-* controller-manager
-* scheduler
+Create seveb HTTP sources on the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution:
+* API server
+* Kubelet
+* Controller Manager
+* Scheduler
 * kube-state-metrics
 * node-exporter
 * default
