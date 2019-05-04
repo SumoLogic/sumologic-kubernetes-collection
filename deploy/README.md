@@ -200,7 +200,7 @@ You can use `inclusion` or `exclusion` configuration options to further filter m
 ```xml
 <filter prometheus.datapoint**>
   @type prometheus_format
-  relabel container_name:container,pod_name:pod
+  relabel service,container_name:container,pod_name:pod
   inclusions { "namespace" : "kube-system" }
 </filter>
 ```
