@@ -77,26 +77,56 @@ prometheus:
     # cadvisor container metrics
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
+      - action: drop
+        regex: POD
+        sourceLabels: [container]
+      - action: drop
+        regex: POD
+        sourceLabels: [container_name]
       - action: keep
         regex: kubelet;container_cpu_(?:load_average_10s|(?:system|usage)_seconds_total)
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
+      - action: drop
+        regex: POD
+        sourceLabels: [container]
+      - action: drop
+        regex: POD
+        sourceLabels: [container_name]
       - action: keep
         regex: kubelet;container_memory_(?:usage_bytes|memory_swap)
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
+      - action: drop
+        regex: POD
+        sourceLabels: [container]
+      - action: drop
+        regex: POD
+        sourceLabels: [container_name]
       - action: keep
         regex: kubelet;container_spec_memory_(?:|swap|reservation)_limit_bytes
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
+      - action: drop
+        regex: POD
+        sourceLabels: [container]
+      - action: drop
+        regex: POD
+        sourceLabels: [container_name]
       - action: keep
         regex: kubelet;container_fs_(?:(?:usage|limit)_bytes|(?:reads|writes)_bytes_total)
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
+      - action: drop
+        regex: POD
+        sourceLabels: [container]
+      - action: drop
+        regex: POD
+        sourceLabels: [container_name]
       - action: keep
         regex: kubelet;container_network_(?:receive|transmit)_(?:bytes|errors)_total
         sourceLabels: [job, __name__]
