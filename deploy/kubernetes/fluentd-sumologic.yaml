@@ -155,7 +155,7 @@ spec:
   selector:
     matchLabels:
       k8s-app: fluentd-sumologic
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       labels:
