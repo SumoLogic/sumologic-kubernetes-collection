@@ -84,7 +84,7 @@ prometheus:
         regex: POD
         sourceLabels: [container_name]
       - action: keep
-        regex: kubelet;container_cpu_(?:load_average_10s|(?:system|usage)_seconds_total)
+        regex: kubelet;container_cpu_(?:load_average_10s|(?:system|usage|cfs_throttled)_seconds_total)
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
