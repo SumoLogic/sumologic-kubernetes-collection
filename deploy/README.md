@@ -38,6 +38,8 @@ curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collect
   | bash -s <api-endpoint> <access-id> <access-key> [collector-name]
 ```
 
+__NOTE__ This script will be executed in bash and require [jq command-line JSON parser](https://stedolan.github.io/jq/download/) installed.
+
 #### Parameters
 
 * __api-endpoint__ - required. The API endpoint from [this page](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security).
