@@ -28,7 +28,7 @@ create_host_collector()
     echo $RESULT
     exit -1;
   fi
-  echo "Collector created(id=$COLLECTOR_ID, name=$COLLECTOR_NAME)."
+  echo "Collector was created(id=$COLLECTOR_ID, name=$COLLECTOR_NAME)."
 }
 
 create_http_source()
@@ -48,7 +48,7 @@ create_http_source()
     echo $RESULT
     exit -1;
   fi
-  echo "Source created with(id=$SOURCE_ID, name=$SOURCE_NAME)."
+  echo "Source was created(id=$SOURCE_ID, name=$SOURCE_NAME)."
 }
 
 if [ -n "$1" ]; then
