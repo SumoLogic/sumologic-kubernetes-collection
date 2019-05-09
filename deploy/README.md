@@ -4,6 +4,17 @@ This page has instructions for collecting Kubernetes metrics; enriching them wit
 
 __NOTE__ This page describes preview software. If you have comments or issues, please add an issue [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/issues).
 
+## Table of Contents
+* [Solution Overview](#solution-overview)
+* [Before you start](#before-you-start)
+* [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd)
+  * [Automatic with setup script](#automatic-with-setup-script)
+  * [Manual](#manual)
+* [Step 2: Configure Prometheus](#step-2-configure-prometheus)
+* [Filter metrics](#filter-metrics)
+* [Trim and relabel metrics](#trim-and-relabel-metrics)
+* [Tear down](#tear-down)
+
 ## Solution overview
 
 The diagram below illustrates the components of the Kubernetes metric collection solution.
