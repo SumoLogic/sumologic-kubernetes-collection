@@ -5,6 +5,8 @@ This page has instructions for collecting Kubernetes metrics; enriching them wit
 __NOTE__ This page describes preview software. If you have comments or issues, please add an issue [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/issues).
 
 ## Table of Contents
+
+### [Deployment Guide](#deployment-guide)
 * [Solution Overview](#solution-overview)
 * [Before you start](#before-you-start)
 * [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd)
@@ -14,6 +16,16 @@ __NOTE__ This page describes preview software. If you have comments or issues, p
 * [Filter metrics](#filter-metrics)
 * [Trim and relabel metrics](#trim-and-relabel-metrics)
 * [Tear down](#tear-down)
+### [Debugging the Kubernetes Collection Pipeline](#debugging-the-kubernetes-collection-pipeline-1)
+
+* [General steps for debugging issues](#general-steps-for-debugging-issues)
+  * [1. Use `kubectl` to get logs and state](#1-use-kubectl-to-get-logs-and-state)
+  * [2. Send data to Fluentd stdout instead of to Sumo](#2-send-data-to-fluentd-stdout-instead-of-to-sumo)
+  * [3. [Metrics] Check the Prometheus UI](#3-metrics-check-the-prometheus-ui)
+* [Missing `kubelet` metrics](#missing-kubelet-metrics)
+  * [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
+  * [2. Disable the `kubelet.serviceMonitor.https` flag in the `prometheus-operator`](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator)
+* [Missing `kube-scheduler` or `kube-controller-manager` metrics](#missing-kube-scheduler-or-kube-controller-manager-metrics)
 
 ## Solution overview
 
@@ -243,3 +255,29 @@ To delete the `sumologic` namespace and all resources under it:
 ```sh
 kubectl delete namespace sumologic
 ```
+
+# Debugging the Kubernetes Collection Pipeline
+
+## General steps for debugging issues
+
+#### Note about namespaces
+
+### 1. Use `kubectl` to get logs and state
+
+#### Fluentd Logs
+
+#### Pod stuck in `ContainerCreating` state
+
+#### [Metrics] Prometheus Logs
+
+### 2. Send data to Fluentd stdout instead of to Sumo
+
+### 3. [Metrics] Check the Prometheus UI
+
+## Missing `kubelet` metrics
+
+### 1. Enable the `authenticationTokenWebhook` flag in the cluster
+
+### 2. Disable the `kubelet.serviceMonitor.https` flag in the `prometheus-operator`
+
+## Missing `kube-scheduler` or `kube-controller-manager` metrics
