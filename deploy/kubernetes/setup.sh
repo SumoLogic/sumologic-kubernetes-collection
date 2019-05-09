@@ -17,7 +17,18 @@ create_host_collector()
   _P='{"collector":{"collectorType":"Hosted","name":"'
   _S='"}}'
   JSON="$_P$1$_S"
-  curl -s -u "$ACC_ID:$ACC_KEY" -X POST -H "Content-Type: application/json" -d $JSON "$SUMO_ENDPOINT/collectors" | jq -r '.collector.id'
+  COMMAND="curl -s -u $ACC_ID:$ACC_KEY -X POST -H Content-Type:application/json -d $JSON $SUMO_ENDPOINT/collectors"
+  RESULT=$($COMMAND)
+  set +e
+  COLLECTOR_ID=$(echo $RESULT | jq -r '.collector.id')
+  COLLECTOR_NAME=$(echo $RESULT | jq -r '.collector.name')
+  set -e
+  if [ ! -n "$COLLECTOR_ID" -o "null" == "$COLLECTOR_ID" ]; then
+    echo 'Failed to create collector:';
+    echo $RESULT
+    exit -1;
+  fi
+  echo "Collector created(id=$COLLECTOR_ID, name=$COLLECTOR_NAME)."
 }
 
 create_http_source()
@@ -25,7 +36,19 @@ create_http_source()
   _P='{"source":{"sourceType":"HTTP","name":"'
   _S='","messagePerRequest":false,"multilineProcessingEnabled":false}}'
   JSON="$_P$1$_S"
-  curl -s -u "$ACC_ID:$ACC_KEY" -X POST -H "Content-Type: application/json" -d $JSON "$SUMO_ENDPOINT/collectors/$2/sources" | jq -r '.source.url'
+  COMMAND="curl -s -u $ACC_ID:$ACC_KEY -X POST -H Content-Type:application/json -d $JSON $SUMO_ENDPOINT/collectors/$2/sources"
+  RESULT=$($COMMAND)
+  set +e
+  SOURCE_URL=$(echo $RESULT | jq -r '.source.url')
+  SOURCE_ID=$(echo $RESULT | jq -r '.source.id')
+  SOURCE_NAME=$(echo $RESULT | jq -r '.source.name')
+  set -e
+  if [ ! -n "$SOURCE_URL" -o "null" == "$SOURCE_URL" ]; then
+    echo 'Failed to create source:';
+    echo $RESULT
+    exit -1;
+  fi
+  echo "Source created with(id=$SOURCE_ID, name=$SOURCE_NAME)."
 }
 
 if [ -n "$1" ]; then
@@ -60,18 +83,31 @@ else
 fi
 
 echo "Creating collector '$COLLECTOR_NAME'..."
-COLLECTOR_ID=`create_host_collector $COLLECTOR_NAME`
-if [ ! -n "$COLLECTOR_ID" ]; then
-  echo 'Failed to create collector, please check the endpoint and access id/key are correct.';
-  exit -1;
-fi
-ENDPOINT_METRICS=`create_http_source '(default)' $COLLECTOR_ID`
-ENDPOINT_METRICS_APISERVER=`create_http_source apiserver $COLLECTOR_ID`
-ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER=`create_http_source kube-controller-manager $COLLECTOR_ID`
-ENDPOINT_METRICS_KUBE_SCHEDULER=`create_http_source kube-scheduler $COLLECTOR_ID`
-ENDPOINT_METRICS_KUBE_STATE=`create_http_source kube-state $COLLECTOR_ID`
-ENDPOINT_METRICS_KUBELET=`create_http_source kubelet $COLLECTOR_ID`
-ENDPOINT_METRICS_NODE_EXPORTER=`create_http_source node-exporter $COLLECTOR_ID`
+COLLECTOR_ID=
+create_host_collector $COLLECTOR_NAME
+
+echo "Creating sources in '$COLLECTOR_NAME'..."
+SOURCE_URL=
+create_http_source '(default)' $COLLECTOR_ID
+ENDPOINT_METRICS="$SOURCE_URL"
+SOURCE_URL=
+create_http_source apiserver $COLLECTOR_ID
+ENDPOINT_METRICS_APISERVER="$SOURCE_URL"
+SOURCE_URL=
+create_http_source kube-controller-manager $COLLECTOR_ID
+ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER="$SOURCE_URL"
+SOURCE_URL=
+create_http_source kube-scheduler $COLLECTOR_ID
+ENDPOINT_METRICS_KUBE_SCHEDULER="$SOURCE_URL"
+SOURCE_URL=
+create_http_source kube-state $COLLECTOR_ID
+ENDPOINT_METRICS_KUBE_STATE="$SOURCE_URL"
+SOURCE_URL=
+create_http_source kubelet $COLLECTOR_ID
+ENDPOINT_METRICS_KUBELET="$SOURCE_URL"
+SOURCE_URL=
+create_http_source node-exporter $COLLECTOR_ID
+ENDPOINT_METRICS_NODE_EXPORTER="$SOURCE_URL"
 
 set +e
 kubectl describe namespace sumologic &>/dev/null
