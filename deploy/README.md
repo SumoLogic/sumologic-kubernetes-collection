@@ -272,7 +272,7 @@ To run a single command in the `sumologic` namespace, pass in the flag `-n sumol
 
 To set your namespace context more permanently, you can run
 ```
-kubectl config set-context $(kubectl config current-context) --namespace=sumologic>
+kubectl config set-context $(kubectl config current-context) --namespace=sumologic
 ```
 
 ### 1. Use `kubectl` to get logs and state
