@@ -5,6 +5,16 @@ prometheus:
       cluster: kubernetes
     remoteWrite:
     # kube state metrics
+    - url: http://fluentd:9888/prometheus.metrics.state.statefulset
+      writeRelabelConfigs:
+      - action: keep
+        regex: kube-state-metrics;kube_statefulset_status_(?:observed_generation|replicas)
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.state.statefulset
+      writeRelabelConfigs:
+      - action: keep
+        regex: kube-state-metrics;kube_statefulset_(?:replicas|metadata_generation)
+        sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.state.daemonset
       writeRelabelConfigs:
       - action: keep
