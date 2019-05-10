@@ -4,6 +4,29 @@ This page has instructions for collecting Kubernetes metrics; enriching them wit
 
 __NOTE__ This page describes preview software. If you have comments or issues, please add an issue [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/issues).
 
+## Table of Contents
+
+### [Deployment Guide](#deployment-guide)
+* [Solution Overview](#solution-overview)
+* [Before you start](#before-you-start)
+* [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd)
+  * [Automatic with setup script](#automatic-with-setup-script)
+  * [Manual](#manual)
+* [Step 2: Configure Prometheus](#step-2-configure-prometheus)
+* [Filter metrics](#filter-metrics)
+* [Trim and relabel metrics](#trim-and-relabel-metrics)
+* [Tear down](#tear-down)
+### [Debugging the Kubernetes Collection Pipeline](#debugging-the-kubernetes-collection-pipeline-1)
+
+* [General steps for debugging issues](#general-steps-for-debugging-issues)
+  * [1. Use `kubectl` to get logs and state](#1-use-kubectl-to-get-logs-and-state)
+  * [2. Send data to Fluentd stdout instead of to Sumo](#2-send-data-to-fluentd-stdout-instead-of-to-sumo)
+  * [3. [Metrics] Check the Prometheus UI](#3-metrics-check-the-prometheus-ui)
+* [Missing `kubelet` metrics](#missing-kubelet-metrics)
+  * [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
+  * [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator)
+* [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
+
 ## Solution overview
 
 The diagram below illustrates the components of the Kubernetes metric collection solution.
@@ -155,6 +178,8 @@ Verify `prometheus-operator` is running:
 kubectl -n sumologic logs prometheus-prometheus-operator-prometheus-0 prometheus -f
 ```
 
+#### Missing metrics for `controller-manager` or `scheduler`
+
 Since there is a backward compatible issue in the current version of chart, you may need following workaround for sending the metrics under `controller-manager` or `scheduler`:
 
 ```sh
@@ -234,3 +259,152 @@ To delete the `sumologic` namespace and all resources under it:
 ```sh
 kubectl delete namespace sumologic
 ```
+
+# Debugging the Kubernetes Collection Pipeline
+
+## General steps for debugging issues
+
+#### Note about namespaces
+
+The following `kubectl` commands assume you are in the correct namespace `sumologic`. By default, these commands will use the namespace `default`.
+
+To run a single command in the `sumologic` namespace, pass in the flag `-n sumologic`.
+
+To set your namespace context more permanently, you can run
+```
+kubectl config set-context $(kubectl config current-context) --namespace=sumologic>
+```
+
+### 1. Use `kubectl` to get logs and state
+
+First check if your pods are in a healthy state. Run
+```
+kubectl get pods
+```
+to get a list of running pods. If any of them are not in the `Status: running` state, something is wrong. To get the logs for that pod, you can either:
+
+Stream the logs to `stdout`:
+```
+kubectl logs POD_NAME -f
+```
+Or write the current logs to a file:
+```
+kubectl logs POD_NAME > pod_name.log
+```
+
+To get a snapshot of the current state of the pod, you can run
+```
+kubectl describe pods POD_NAME
+```
+
+#### Fluentd Logs
+
+```
+kubectl logs fluentd-xxxxxxxxx-xxxxx -f
+```
+
+To enable more detailed debug and/or trace logs from Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section:
+```
+<system>
+  log_level trace # or debug
+</system>
+```
+After which you'll begin to see the relevant logs.
+
+#### Pod stuck in `ContainerCreating` state
+
+If you are seeing a pod stuck in the `ContainerCreating` state and seeing logs like
+```
+Warning  FailedCreatePodSandBox  29s   kubelet, ip-172-20-87-45.us-west-1.compute.internal  Failed create pod sandbox: rpc error: code = DeadlineExceeded desc = context deadline exceeded
+```
+you have an unhealthy node. Killing the node should resolve this issue.
+
+#### [Metrics] Prometheus Logs
+```
+kubectl logs prometheus-prometheus-operator-prometheus-0 prometheus -f
+```
+
+### 2. Send data to Fluentd stdout instead of to Sumo
+
+To help reduce the points of possible failure, we can write data to Fluentd logs rather than sending to Sumo directly using the Sumo Logic output plugin. To do this, change the following lines in the `fluentd-sumologic.yaml` file under the relevant `.conf` section:
+```
+<match TAG_YOU_ARE_DEBUGGING>
+  @type sumologic
+  endpoint "#{ENV['SUMO_ENDPOINT']}"
+  ...
+</match>
+```
+to
+```
+<match TAG_YOU_ARE_DEBUGGING>
+  @type stdout
+</match>
+```
+
+Then redeploy your `fluentd` deployment:
+```
+kubectl delete deployment fluentd
+kubectl apply -f /path/to/fluentd-sumologic.yaml
+```
+
+__Note__ this `-f` flag stands for "file" rather than "follow" like in the logs command above.
+
+You should see data being sent to Fluentd logs, which you can get using the commands [above](#fluentd-logs).
+
+### 3. [Metrics] Check the Prometheus UI
+
+First run the following command to expose the Prometheus UI:
+```
+kubectl port-forward prometheus-prometheus-operator-prometheus-0 8080:9090
+```
+
+Then, in your browser, go to `localhost:8080`. You should be in the Prometheus UI now.
+
+In the top menu, navigate to section `Status > Targets`. Check if any targets are down or have errors.
+
+## Missing `kubelet` metrics
+
+Navigate to the `kubelet` targets using the steps above. You may see that the targets are down with 401 errors. If so, there are two known workarounds you can try.
+
+### 1. Enable the `authenticationTokenWebhook` flag in the cluster
+
+The goal is to set the flag `--authentication-token-webhook=true` for `kubelet`. One way to do this is:
+```
+kops get cluster -o yaml > NAME_OF_CLUSTER-cluster.yaml
+```
+
+Then in that file make the following change:
+```
+spec:
+  kubelet:
+    anonymousAuth: false
+    authenticationTokenWebhook: true # <- add this line
+```
+
+Then run
+```
+kops replace -f NAME_OF_CLUSTER-cluster.yaml
+kops update cluster --yes
+kops rolling-update cluster --yes
+```
+
+### 2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator
+
+The goal is to set the flag `kubelet.serviceMonitor.https=false` when deploying the prometheus operator.
+
+In your `overrides.yaml` file, add
+```
+kubelet:
+  serviceMonitor:
+    https: false
+```
+
+and redeploy Prometheus:
+```
+helm del --purge prometheus-operator
+helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f /path/to/overrides.yaml
+```
+
+## Missing `kube-controller-manager` or `kube-scheduler` metrics
+
+There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [above](#missing-metrics-for-controller-manager-or-scheduler).
