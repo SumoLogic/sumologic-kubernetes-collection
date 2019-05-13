@@ -1,0 +1,117 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: fluentd
+subjects:
+- kind: ServiceAccount
+  name: fluentd
+  namespace: sumologic
+roleRef:
+  kind: ClusterRole
+  name: fluentd
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: fluentd
+  labels:
+    k8s-app: fluentd-sumologic-events
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - namespaces
+  - events
+  - pods
+  - replicasets
+  - statefulsets
+  - deployments
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fluentd
+  namespace: sumologic
+  labels:
+    k8s-app: fluentd-sumologic-events
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluentd-events
+  namespace: sumologic
+  labels:
+    k8s-app: fluentd-sumologic-events
+spec:
+  selector:
+    matchLabels:
+      k8s-app: fluentd-sumologic-events
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd-sumologic-events
+    spec:
+      volumes:
+      - name: pos-files
+        hostPath:
+          path: /var/run/fluentd-pos
+          type: ""
+      - name: config-volume
+        configMap:
+          name: fluentd-config-events
+      containers:
+      - name: fluentd-events
+        image: maisie-test-events
+        imagePullPolicy: Never
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: "100m"
+          requests:
+            memory: 256Mi
+            cpu: "100m"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /fluentd/etc/
+        - name: pos-files
+          mountPath: /mnt/pos/
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config-events
+  namespace: sumologic
+data:
+  fluent.conf: |-
+    @include events.conf
+  events.conf: |-
+    <source>
+      @type events
+      tag "dummy.events"
+        <watch>
+          resource_name events
+        </watch>
+    </source>
+    <match "dummy.events">
+      @type stdout
+    </match>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluentd
+  namespace: sumologic
+  labels:
+    k8s-app: fluentd-sumologic-events
+spec:
+  selector:
+    k8s-app: fluentd-sumologic-events
+  ports:
+  - name: prom-write
+    port: 9888
+    targetPort: 9888
+    protocol: TCP
+---
