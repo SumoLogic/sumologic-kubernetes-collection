@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This page has instructions for collecting Kubernetes metrics; enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
+This page has instructions for collecting Kubernetes metrics; enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic. It supports Kubernetes versions 1.11+.
 
 __NOTE__ This page describes preview software. If you have comments or issues, please add an issue [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/issues).
 
@@ -45,6 +45,11 @@ The diagram below illustrates the components of the Kubernetes metric collection
 
 * If you haven’t already done so, create your Kubernetes cluster. Verify that you can access the cluster with `kubectl`.
 * Verify that the cluster DNS service is enabled. For more information, see [DNS](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/#dns) in Kubernetes documentation.
+* Verify that you are in the correct context. You can check your current context and set your desired context with:
+```
+kubectl config current-context
+kubectl config use-context DESIRED_CONTEXT_NAME
+```
 
 __NOTE__ These instructions assume that Prometheus is not already running on your Kubernetes cluster.
 
@@ -178,6 +183,8 @@ Verify `prometheus-operator` is running:
 kubectl -n sumologic logs prometheus-prometheus-operator-prometheus-0 prometheus -f
 ```
 
+At this point setup is complete and metrics data is being sent to Sumo Logic.
+
 #### Missing metrics for `controller-manager` or `scheduler`
 
 Since there is a backward compatible issue in the current version of chart, you may need following workaround for sending the metrics under `controller-manager` or `scheduler`:
@@ -189,7 +196,9 @@ kubectl -n kube-system patch service prometheus-operator-kube-controller-manager
 kubectl -n kube-system patch service prometheus-operator-kube-scheduler --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
 ```
 
-## Filter metrics
+## Additional configuration options
+
+### Filter metrics
 
 The `overrides.yaml` file specifies metrics to be collected. If you want to exclude some metrics from collection, or include others, you can edit `overrides.yaml`. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
 
@@ -206,7 +215,7 @@ If you would like to collect other metrics that are not listed in `overrides.yam
 The syntax of `writeRelabelConfigs` can be found [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write).
 You can supply any label you like. You can query Prometheus to see a complete list of metrics it’s scraping.
 
-## Trim and relabel metrics
+### Trim and relabel metrics
 
 You can specify relabeling, and additional inclusion or exclusion options in `fluentd-sumologic.yaml`.
 
@@ -392,7 +401,7 @@ kops rolling-update cluster --yes
 
 The goal is to set the flag `kubelet.serviceMonitor.https=false` when deploying the prometheus operator.
 
-In your `overrides.yaml` file, add
+Add the following lines to the beginning of your `overrides.yaml` file:
 ```
 kubelet:
   serviceMonitor:
