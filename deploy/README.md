@@ -7,6 +7,7 @@ __NOTE__ This page describes preview software. If you have comments or issues, p
 ## Table of Contents
 
 ### [Deployment Guide](#deployment-guide)
+
 * [Solution Overview](#solution-overview)
 * [Before you start](#before-you-start)
 * [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd)
@@ -16,6 +17,7 @@ __NOTE__ This page describes preview software. If you have comments or issues, p
 * [Filter metrics](#filter-metrics)
 * [Trim and relabel metrics](#trim-and-relabel-metrics)
 * [Tear down](#tear-down)
+
 ### [Debugging the Kubernetes Collection Pipeline](#debugging-the-kubernetes-collection-pipeline-1)
 
 * [General steps for debugging issues](#general-steps-for-debugging-issues)
@@ -113,7 +115,7 @@ kubectl create namespace sumologic
 Run following command to create Kubernetes secrets contains 7 HTTP source URLs just created.
 
 ```sh
-kubectl -n sumologic create secret generic sumologic \
+kubectl -n sumologic create secret generic metric-endpoints \
   --from-literal=endpoint-metrics=$ENDPOINT_METRICS \
   --from-literal=endpoint-metrics-apiserver=$ENDPOINT_METRICS_APISERVER \
   --from-literal=endpoint-metrics-kube-controller-manager=$ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER \
@@ -261,6 +263,12 @@ To delete the `fluentd-sumologic` app:
 
 ```sh
 kubectl delete -f ./fluentd-sumologic.yaml
+```
+
+To delete the `metric-endpoints` secrets (for recreating collector/sources):
+
+```sh
+kubectl -n sumologic delete secret metric-endpoints
 ```
 
 To delete the `sumologic` namespace and all resources under it:

@@ -26,7 +26,7 @@ create_host_collector()
   if [ ! -n "$COLLECTOR_ID" -o "null" == "$COLLECTOR_ID" ]; then
     echo 'Failed to create collector:';
     echo $RESULT
-    exit -1;
+    exit -3;
   fi
   echo "Collector was created(id=$COLLECTOR_ID, name=$COLLECTOR_NAME)."
 }
@@ -46,7 +46,7 @@ create_http_source()
   if [ ! -n "$SOURCE_URL" -o "null" == "$SOURCE_URL" ]; then
     echo 'Failed to create source:';
     echo $RESULT
-    exit -1;
+    exit -4;
   fi
   echo "Source was created(id=$SOURCE_ID, name=$SOURCE_NAME)."
 }
@@ -82,6 +82,27 @@ else
   COLLECTOR_NAME="kubernetes-$TIME";
 fi
 
+set +e
+kubectl describe namespace sumologic &>/dev/null
+retVal=$?
+set -e
+if [ $retVal -ne 0 ]; then
+  echo "Creating namespace 'sumologic'..."
+  kubectl create namespace sumologic
+else
+  echo "Namespace 'sumologic' exists, skip creating."
+fi
+
+set +e
+echo "Creating secret 'metric-endpoints'..."
+kubectl -n sumologic describe secret metric-endpoints &>/dev/null
+retVal=$?
+set -e
+if [ $retVal -eq 0 ]; then
+  echo "Secret 'sumologic::metric-endpoints' exists, abort."
+  exit -2;
+fi
+
 echo "Creating collector '$COLLECTOR_NAME'..."
 COLLECTOR_ID=
 create_host_collector $COLLECTOR_NAME
@@ -109,27 +130,7 @@ SOURCE_URL=
 create_http_source node-exporter $COLLECTOR_ID
 ENDPOINT_METRICS_NODE_EXPORTER="$SOURCE_URL"
 
-set +e
-kubectl describe namespace sumologic &>/dev/null
-retVal=$?
-set -e
-if [ $retVal -ne 0 ]; then
-  echo "Creating namespace 'sumologic'..."
-  kubectl create namespace sumologic
-else
-  echo "Namespace 'sumologic' exists, skip creating."
-fi
-
-set +e
-echo "Creating secret 'sumologic'..."
-kubectl -n sumologic describe secret sumologic &>/dev/null
-retVal=$?
-set -e
-if [ $retVal -eq 0 ]; then
-  echo "Deleting old secret 'sumologic'..."
-  kubectl -n sumologic delete secret sumologic
-fi
-kubectl -n sumologic create secret generic sumologic \
+kubectl -n sumologic create secret generic metric-endpoints \
   --from-literal=endpoint-metrics=$ENDPOINT_METRICS \
   --from-literal=endpoint-metrics-apiserver=$ENDPOINT_METRICS_APISERVER \
   --from-literal=endpoint-metrics-kube-controller-manager=$ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER \
