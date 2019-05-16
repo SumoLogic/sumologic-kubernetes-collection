@@ -1,0 +1,14 @@
+backend:
+  type: forward
+  forward:
+    host: fluentd
+    port: 24321
+    tls: "off"
+    tls_verify: "on"
+    tls_debug: 1
+    shared_key:
+
+rawConfig: |-
+  @INCLUDE fluent-bit-service.conf
+  @INCLUDE fluent-bit-input.conf
+  @INCLUDE fluent-bit-output.conf
