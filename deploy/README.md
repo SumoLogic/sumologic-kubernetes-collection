@@ -79,7 +79,7 @@ __NOTE__ This script will be executed in bash and requires [jq command-line JSON
 
 ### Manual Source Creation and Setup
 
-This is a manual alternative approach than the automatic script if you don't have API access or need customized configuration (like using an existing collector).
+This is a manual alternative approach to the automatic script if you don't have API access or need customized configuration, such as reusing an existing collector.
 
 #### 1.1 Create a hosted collector and an HTTP source
 
