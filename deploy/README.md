@@ -245,9 +245,9 @@ You can use `inclusion` or `exclusion` configuration options to further filter m
 
 This filter will:
 
-* Trims the service metadata from the metric datapoint.
-* Rename* the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
-* Filter out metrics for which the namespace is not `kube-system`.
+* Trim the service metadata from the metric datapoint.
+* Rename the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
+* Only apply to metrics with the `kube-system` namespace
 
 ## Tear down
 
