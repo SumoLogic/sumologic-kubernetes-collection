@@ -6,6 +6,8 @@ module Fluent
     class EventsInput < Fluent::Plugin::Input
       Fluent::Plugin.register_input("events", self)
 
+      helpers :storage, :thread
+
       desc 'The tag of the event.'
       config_param :tag, :string, default: 'kubernetes.*'
   
@@ -62,12 +64,22 @@ module Fluent
         super
   
         log.trace { "Configure" }
-        raise Fluent::ConfigError, 'At least one <pull> or <watch> is required, but found none.' if @pull_objects.empty? && @watch_objects.empty?
+        raise Fluent::ConfigError, 'At least <watch> is required, but found none.' if @watch_objects.empty?
   
         @storage = storage_create usage: 'checkpoints'
   
         parse_tag
         initialize_client
+      end
+
+      def parse_tag
+        @tag_prefix, @tag_suffix = @tag.split('*') if @tag.include?('*')
+      end
+
+      def generate_tag(item_name)
+        return @tag unless @tag_prefix
+  
+        [@tag_prefix, item_name, @tag_suffix].join
       end
 
       def start
