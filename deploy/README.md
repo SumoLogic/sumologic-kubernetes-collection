@@ -59,35 +59,35 @@ __NOTE__ These instructions assume that Prometheus is not already running on you
 
 In this step you create a Sumo Logic hosted collector with a set of HTTP sources to receive your Kubernetes metrics; creates Kubernetes secrets for the HTTP sources created; and deploy Fluentd using a Sumo-provided .yaml manifest.
 
-### Automatic with setup script
+### Automatic Source Creation and Setup Script
 
-This approach requires the access to Sumo Logic Collector API.
+This approach requires access to the Sumo Logic Collector API. It will create a hosted collector and multiple HTTP source endpoints and pre-populate Kubernetes secrets detailed in the manual steps below.
 
 ```sh
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
   | bash -s <api-endpoint> <access-id> <access-key> [collector-name]
 ```
 
-__NOTE__ This script will be executed in bash and require [jq command-line JSON parser](https://stedolan.github.io/jq/download/) installed.
+__NOTE__ This script will be executed in bash and requires [jq command-line JSON parser](https://stedolan.github.io/jq/download/) to be installed.
 
 #### Parameters
 
 * __api-endpoint__ - required. The API endpoint from [this page](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security).
 * __access-id__ - required. Sumo [access id](https://help.sumologic.com/Manage/Security/Access-Keys)
 * __access-key__ - required. Sumo [access key](https://help.sumologic.com/Manage/Security/Access-Keys)
-* __collector-name__ - optional. Name of Sumo collector will be created. If not specified, will be named as `kubernetes-<timestamp>`
+* __collector-name__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
 
-### Manual
+### Manual Source Creation and Setup
 
-This is a manual alternative approach for the automatic script if you don't have API access or need customized configuration (like using an exist collector).
+This is a manual alternative approach to the automatic script if you don't have API access or need customized configuration, such as reusing an existing collector.
 
 #### 1.1 Create a hosted collector and an HTTP source
 
 In this step you create a Sumo Logic hosted collector with a set of HTTP sources to receive your Kubernetes metrics.
 
-Create a hosted collector, following the instructions on [Configure a Hosted Collector](https://help.sumologic.com/03Send-Data/Hosted-Collectors/Configure-a-Hosted-Collector) in Sumo help. (If you already have a Sumo hosted collector that you want to use, skip this step.)
+Create a hosted collector, following the instructions on [Configure a Hosted Collector](https://help.sumologic.com/03Send-Data/Hosted-Collectors/Configure-a-Hosted-Collector) in Sumo help. If you already have a Sumo hosted collector that you want to use, skip this step.
 
-Create seven HTTP sources on the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution:
+Create seven HTTP sources under the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution:
 
 * api-server
 * kubelet
@@ -97,22 +97,22 @@ Create seven HTTP sources on the collector you created in the previous step, one
 * node-exporter
 * default
 
-Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) in Sumo help, with the following additions:
+Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create the sources, with the following additions:
 
 * **Naming the sources.** You can assign any name you like to the sources, but it’s a good idea to assign a name to each source that reflects the Kubernetes component from which it receives metrics. For example, you might name the source that receives API Server metrics “api-server”.
-* **HTTP Source URLs.** When you configure each HTTP source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service to send data to Sumo.
+* **HTTP Source URLs.** When you configure each HTTP source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service secrets to send data to Sumo.
 
 #### 1.2 Deploy Fluentd
 
-In this step you deploy Fluentd using a Sumo-provided .yaml manifest. This step also creates Kubernetes secrets for the HTTP sources created in the previous step.
+In this step you will deploy Fluentd using a Sumo-provided .yaml manifest. This step also creates Kubernetes secrets for the HTTP sources created in the previous step.
 
-Run following command to create namespace `sumologic`
+Run the following command to create namespace `sumologic`
 
 ```sh
 kubectl create namespace sumologic
 ```
 
-Run following command to create Kubernetes secrets contains 7 HTTP source URLs just created.
+Run the following command to create a Kubernetes secret containing the 7 HTTP source URLs previously created.
 
 ```sh
 kubectl -n sumologic create secret generic metric-endpoints \
@@ -141,7 +141,7 @@ kubectl -n sumologic get pod
 
 ## Step 2: Configure Prometheus
 
-In this step, you configure the Prometheus server to write metrics to Fluentd.
+In this step, you will configure the Prometheus server to write metrics to Fluentd.
 
 Install Helm:
 
@@ -164,7 +164,7 @@ Download the Prometheus Operator `overrides.yaml` from GitHub:
 curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/overrides.yaml
 ```
 
-Before installing `prometheus-operator`, edit `overrides.yaml` to define a unique cluster identifier. The default value of the `cluster` field in the `externalLabels` section of `overrides.yaml` is `kubernetes`. Assuming you’ll deploying the metric collection solution to multiple Kubernetes clusters, you want to have a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
+Before installing `prometheus-operator`, edit `overrides.yaml` to define a unique cluster identifier. The default value of the `cluster` field in the `externalLabels` section of `overrides.yaml` is `kubernetes`. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
 
 __NOTE__ It’s fine to change the value of the `cluster` field, but don’t change the field name (key).
 
@@ -189,7 +189,7 @@ At this point setup is complete and metrics data is being sent to Sumo Logic.
 
 #### Missing metrics for `controller-manager` or `scheduler`
 
-Since there is a backward compatible issue in the current version of chart, you may need following workaround for sending the metrics under `controller-manager` or `scheduler`:
+Since there is a backward compatibility issue in the current version of chart, you may need to follow a workaround for sending these metrics under `controller-manager` or `scheduler`:
 
 ```sh
 kubectl -n kube-system patch service prometheus-operator-kube-controller-manager -p '{"spec":{"selector":{"k8s-app": "kube-controller-manager"}}}'
@@ -243,11 +243,11 @@ You can use `inclusion` or `exclusion` configuration options to further filter m
 </filter>
 ```
 
-This:
+This filter will:
 
-* Trims the service metadata from the metric datapoint.
-* Rename* the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
-* Filters out metrics for which the namespace is not `kube-system`.
+* Trim the service metadata from the metric datapoint.
+* Rename the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
+* Only apply to metrics with the `kube-system` namespace
 
 ## Tear down
 
@@ -337,6 +337,8 @@ Warning  FailedCreatePodSandBox  29s   kubelet, ip-172-20-87-45.us-west-1.comput
 you have an unhealthy node. Killing the node should resolve this issue.
 
 #### [Metrics] Prometheus Logs
+
+To enable Prometheus logging:
 ```
 kubectl logs prometheus-prometheus-operator-prometheus-0 prometheus -f
 ```
