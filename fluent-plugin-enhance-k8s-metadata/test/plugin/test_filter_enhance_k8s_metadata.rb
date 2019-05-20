@@ -1,9 +1,14 @@
-require "helper"
-require "fluent/plugin/filter_enhance_k8s_metadata.rb"
+require 'helper'
+require 'fluent/plugin/filter_enhance_k8s_metadata.rb'
 
 class EnhanceK8sMetadataFilterTest < Test::Unit::TestCase
   setup do
     Fluent::Test.setup
+  end
+
+  test 'create driver' do
+    conf = %([])
+    create_driver(conf)
   end
 
   private
