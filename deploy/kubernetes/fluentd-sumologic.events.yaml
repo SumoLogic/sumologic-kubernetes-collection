@@ -98,6 +98,10 @@ data:
     <match "dummy.events">
       @type stdout
     </match>
+    <system>
+      log_level trace
+    </system>
+
 ---
 apiVersion: v1
 kind: Service
