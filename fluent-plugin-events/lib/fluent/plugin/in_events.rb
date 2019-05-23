@@ -179,7 +179,7 @@ module Fluent
           end
 
           log.trace { "Get o version: #{o[:resource_version]}"}
-
+          @resource_version = o[:resource_version]
 
           @client.public_send("watch_#{resource_name}", o).tap do |watcher|
            create_watcher_thread resource_name, watcher
