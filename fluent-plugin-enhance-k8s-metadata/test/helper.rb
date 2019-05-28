@@ -4,6 +4,7 @@ require 'fluent/test'
 require 'fluent/test/driver/filter'
 require 'fluent/test/helpers'
 require 'webmock/test_unit'
+require 'kubeclient'
 
 Test::Unit::TestCase.include(Fluent::Test::Helpers)
 Test::Unit::TestCase.extend(Fluent::Test::Helpers)
@@ -20,6 +21,8 @@ def stub_apis
     .to_return(body: test_resource('pod_sumologic.json'), status: 200)
   stub_request(:get, %r{/api/v1/namespaces/kube-system/pods})
     .to_return(body: test_resource('pod_kube-system.json'), status: 200)
+  stub_request(:get, %r{/api/v1/namespaces/non-exist/pods})
+    .to_raise(Kubeclient::ResourceNotFoundError.new(404, nil, nil))
 end
 
 def init_globals

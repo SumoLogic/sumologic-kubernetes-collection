@@ -9,6 +9,7 @@ class ReaderTest < Test::Unit::TestCase
   def setup
     # runs before each test
     stub_apis
+    connect_kubernetes
   end
 
   def teardown
@@ -20,7 +21,6 @@ class ReaderTest < Test::Unit::TestCase
   end
 
   test 'fetch_pod is expected' do
-    connect_kubernetes
     pod = fetch_pod('sumologic', 'somepod')
     assert_not_nil pod
     assert_equal pod['apiVersion'], 'v1'
@@ -28,12 +28,24 @@ class ReaderTest < Test::Unit::TestCase
   end
 
   test 'extract_pod_labels is expected' do
-    connect_kubernetes
     pod = fetch_pod('sumologic', 'somepod')
     assert_not_nil pod
     labels = extract_pod_labels(pod)
     assert_not_nil labels
     assert_equal labels['pod-template-hash'], '1691804713'
     assert_equal labels['run'], 'curl-byi'
+  end
+
+  test 'fetch_pod_labels is expected' do
+    labels = fetch_pod_labels('sumologic', 'somepod')
+    assert_not_nil labels
+    assert_equal labels['pod-template-hash'], '1691804713'
+    assert_equal labels['run'], 'curl-byi'
+  end
+
+  test 'fetch_pod_labels return empty map if resource not found' do
+    labels = fetch_pod_labels('non-exist', 'somepod')
+    assert_not_nil labels
+    assert_equal labels.size, 0
   end
 end
