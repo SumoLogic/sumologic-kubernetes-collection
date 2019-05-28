@@ -34,4 +34,6 @@ def init_globals
   @client_key = nil
   @ssl_partial_chain = false
   @bearer_token_file = nil
+  @cache_size = 1000
+  @cache_ttl = 60 * 60
 end

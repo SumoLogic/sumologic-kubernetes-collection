@@ -17,15 +17,10 @@ module SumoLogic
 
       def get_pod_labels(namespace_name, pod_name)
         key = "#{namespace_name}::#{pod_name}"
-        cache = @all_caches[@CACHE_TYPE_POD_LABELS]
+        cache = @all_caches[CACHE_TYPE_POD_LABELS]
         labels = cache[key]
         if labels.nil?
-          begin
-            labels = fetch_pod_labels(namespace_name, pod_name)
-          rescue Kubeclient::ResourceNotFoundError => e
-            log.error e, "Cannot find pod: #{namespace_name}::#{pod_name}"
-            cache[key] = {}
-          end
+          labels = fetch_pod_labels(namespace_name, pod_name)
           cache[key] = labels
         end
         labels
