@@ -1,0 +1,122 @@
+{
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+        "creationTimestamp": "2019-05-16T20:20:52Z",
+        "generateName": "curl-byi-5bf5d48c57-",
+        "labels": {
+            "pod-template-hash": "1691804713",
+            "run": "curl-byi"
+        },
+        "name": "curl-byi-5bf5d48c57-74ffs",
+        "namespace": "sumologic",
+        "ownerReferences": [
+            {
+                "apiVersion": "extensions/v1beta1",
+                "blockOwnerDeletion": true,
+                "controller": true,
+                "kind": "ReplicaSet",
+                "name": "curl-byi-5bf5d48c57",
+                "uid": "1a1a368a-7818-11e9-90f1-02324f7e0d1e"
+            }
+        ],
+        "resourceVersion": "1374470",
+        "selfLink": "/api/v1/namespaces/sumologic/pods/curl-byi-5bf5d48c57-74ffs",
+        "uid": "1a1e5ad4-7818-11e9-90f1-02324f7e0d1e"
+    },
+    "spec": {
+        "containers": [
+            {
+                "image": "radial/busyboxplus:curl",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "curl-byi",
+                "resources": {},
+                "stdin": true,
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "tty": true,
+                "volumeMounts": [
+                    {
+                        "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                        "name": "default-token-cvm56",
+                        "readOnly": true
+                    }
+                ]
+            }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "nodeName": "ip-172-20-62-242.us-west-1.compute.internal",
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {},
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+            {
+                "effect": "NoExecute",
+                "key": "node.kubernetes.io/not-ready",
+                "operator": "Exists",
+                "tolerationSeconds": 300
+            },
+            {
+                "effect": "NoExecute",
+                "key": "node.kubernetes.io/unreachable",
+                "operator": "Exists",
+                "tolerationSeconds": 300
+            }
+        ],
+        "volumes": [
+            {
+                "name": "default-token-cvm56",
+                "secret": {
+                    "defaultMode": 420,
+                    "secretName": "default-token-cvm56"
+                }
+            }
+        ]
+    },
+    "status": {
+        "conditions": [
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2019-05-16T20:20:52Z",
+                "status": "True",
+                "type": "Initialized"
+            },
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2019-05-16T20:20:56Z",
+                "status": "True",
+                "type": "Ready"
+            },
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2019-05-16T20:20:52Z",
+                "status": "True",
+                "type": "PodScheduled"
+            }
+        ],
+        "containerStatuses": [
+            {
+                "containerID": "docker://f1a679204d61d444e60bbd8752be6f204b2d8902ff50e57db34021252847686d",
+                "image": "radial/busyboxplus:curl",
+                "imageID": "docker-pullable://radial/busyboxplus@sha256:a68c05ab1112fd90ad7b14985a48520e9d26dbbe00cb9c09aa79fdc0ef46b372",
+                "lastState": {},
+                "name": "curl-byi",
+                "ready": true,
+                "restartCount": 0,
+                "state": {
+                    "running": {
+                        "startedAt": "2019-05-16T20:20:55Z"
+                    }
+                }
+            }
+        ],
+        "hostIP": "172.20.62.242",
+        "phase": "Running",
+        "podIP": "100.125.134.219",
+        "qosClass": "BestEffort",
+        "startTime": "2019-05-16T20:20:52Z"
+    }
+}
