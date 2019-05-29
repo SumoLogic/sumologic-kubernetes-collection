@@ -145,6 +145,14 @@ data:
     @include logs.source.systemd.conf
 
   logs.source.containers.conf: |-
+    <filter containers.**>
+      @type concat
+      key log
+      multiline_start_regexp "#{ENV['MULTILINE_START_REGEXP']}"
+      separator "#{ENV['CONCAT_SEPARATOR']}"
+      timeout_label @NORMAL
+    </filter>
+
     <match containers.**>
       @type relabel
       @label @NORMAL

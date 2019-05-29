@@ -18,6 +18,7 @@ RUN gem install fluent-plugin-s3 -v 1.1.4 \
        && gem install fluent-plugin-record-modifier \
        && gem install fluent-plugin-kubernetes_metadata_filter -v 1.0.2 \
        && gem install fluent-plugin-sumologic_output -v 1.4.0 \
+       && gem install fluent-plugin-concat -v 2.3.0 \
        && gem install fluent-plugin-rewrite-tag-filter -v 2.1.0 \
        && gem install fluent-plugin-prometheus -v 1.1.0 \
        && gem install fluent-plugin-kubernetes_sumologic
@@ -44,6 +45,8 @@ ENV SOURCE_CATEGORY_REPLACE_DASH "/"
 ENV SOURCE_NAME "%{namespace}.%{pod}.%{container}"
 ENV KUBERNETES_META "true"
 ENV KUBERNETES_META_REDUCE "false"
+ENV MULTILINE_START_REGEXP "/^\w{3} \d{1,2}, \d{4}/"
+ENV CONCAT_SEPARATOR ""
 ENV ADD_TIMESTAMP "true"
 ENV TIMESTAMP_KEY "timestamp"
 ENV ADD_STREAM "true"
