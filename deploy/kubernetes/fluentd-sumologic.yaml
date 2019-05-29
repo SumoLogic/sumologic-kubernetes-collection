@@ -140,8 +140,115 @@ data:
       port 24321
       bind 0.0.0.0
     </source>
+
+    @include logs.source.containers.conf
+    @include logs.source.systemd.conf
+
+  logs.source.containers.conf: |-
+    <match containers.**>
+      @type relabel
+      @label @NORMAL
+    </match>
+
+    <label @NORMAL>
+      <filter containers.**>
+        @type kubernetes_metadata
+        @log_level warn
+        annotation_match ["sumologic\.com.*"]
+        de_dot false
+        watch "#{ENV['K8S_METADATA_FILTER_WATCH']}"
+        ca_file "#{ENV['K8S_METADATA_FILTER_CA_FILE']}"
+        verify_ssl "#{ENV['K8S_METADATA_FILTER_VERIFY_SSL']}"
+        client_cert "#{ENV['K8S_METADATA_FILTER_CLIENT_CERT']}"
+        client_key "#{ENV['K8S_METADATA_FILTER_CLIENT_KEY']}"
+        bearer_token_file "#{ENV['K8S_METADATA_FILTER_BEARER_TOKEN_FILE']}"
+        cache_size "#{ENV['K8S_METADATA_FILTER_BEARER_CACHE_SIZE']}"
+        cache_ttl "#{ENV['K8S_METADATA_FILTER_BEARER_CACHE_TTL']}"
+        tag_to_kubernetes_name_regexp 'containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
+        merge_json_log false
+      </filter>
+
+      <filter containers.**>
+        @type kubernetes_sumologic
+        source_name "#{ENV['SOURCE_NAME']}"
+        source_host "#{ENV['SOURCE_HOST']}"
+        log_format "#{ENV['LOG_FORMAT']}"
+        kubernetes_meta "#{ENV['KUBERNETES_META']}"
+        kubernetes_meta_reduce "#{ENV['KUBERNETES_META_REDUCE']}"
+        add_stream "#{ENV['ADD_STREAM']}"
+        add_time "#{ENV['ADD_TIME']}"
+        source_category "#{ENV['SOURCE_CATEGORY']}"
+        source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
+        source_category_replace_dash "#{ENV['SOURCE_CATEGORY_REPLACE_DASH']}"
+        exclude_namespace_regex "#{ENV['EXCLUDE_NAMESPACE_REGEX']}"
+        exclude_pod_regex "#{ENV['EXCLUDE_POD_REGEX']}"
+        exclude_container_regex "#{ENV['EXCLUDE_CONTAINER_REGEX']}"
+        exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
+      </filter>
+
+      @include logs.output.conf
+    </label>
+
+  logs.source.systemd.conf: |-
+    <match host.kubelet.**>
+      @type relabel
+      @label @KUBELET
+    </match>
+
+    <label @KUBELET>
+      <filter host.kubelet.**>
+        @type kubernetes_sumologic
+        source_category kubelet
+        source_name k8s_kubelet
+        source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
+        exclude_facility_regex "#{ENV['EXCLUDE_FACILITY_REGEX']}"
+        exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
+        exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
+        exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
+      </filter>
+
+      @include logs.output.conf
+    </label>
+
+    <match host.**>
+      @type relabel
+      @label @SYSTEMD
+    </match>
+
+    <label @SYSTEMD>
+      <filter host.**>
+        @type kubernetes_sumologic
+        source_category system
+        source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
+        exclude_facility_regex "#{ENV['EXCLUDE_FACILITY_REGEX']}"
+        exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
+        exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
+        exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
+      </filter>
+
+      <filter host.**>
+        @type record_modifier
+        <record>
+          _sumo_metadata ${record["_sumo_metadata"][:source] = tag_parts[1]; record["_sumo_metadata"]}
+        </record>
+      </filter>
+
+      @include logs.output.conf
+    </label>
+
+  logs.output.conf: |-
     <match **>
-      @type stdout
+      @type sumologic
+      log_key log
+      endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
+      verify_ssl "#{ENV['VERIFY_SSL']}"
+      log_format "#{ENV['LOG_FORMAT']}"
+      flush_interval "#{ENV['FLUSH_INTERVAL']}"
+      num_threads "#{ENV['NUM_THREADS']}"
+      open_timeout 60
+      add_timestamp "#{ENV['ADD_TIMESTAMP']}"
+      timestamp_key "#{ENV['TIMESTAMP_KEY']}"
+      proxy_uri "#{ENV['PROXY_URI']}"
     </match>
 ---
 apiVersion: apps/v1
@@ -245,6 +352,11 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-metrics-node-exporter
+        - name: SUMO_ENDPOINT_LOGS
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-logs
 ---
 apiVersion: v1
 kind: Service

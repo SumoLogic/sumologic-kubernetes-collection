@@ -8,6 +8,72 @@ backend:
     tls_debug: 1
     shared_key:
 
+trackOffsets: true
+
+input:
+  tail:
+    memBufLimit: 5MB
+    parser: docker
+    path: /var/log/containers/*.log
+  systemd:
+    enabled: true
+    filters:
+      systemdUnit:
+        - addon-config.service
+        - addon-run.service
+        - cfn-etcd-environment.service
+        - cfn-signal.service
+        - clean-ca-certificates.service
+        - containerd.service
+        - coreos-metadata.service
+        - coreos-setup-environment.service
+        - coreos-tmpfiles.service
+        - dbus.service
+        - docker.service
+        - efs.service
+        - etcd-member.service
+        - etcd.service
+        - etcd2.service
+        - etcd3.service
+        - etcdadm-check.service
+        - etcdadm-reconfigure.service
+        - etcdadm-save.service
+        - etcdadm-update-status.service
+        - flanneld.service
+        - format-etcd2-volume.service
+        - kube-node-taint-and-uncordon.service
+        - kubelet.service
+        - ldconfig.service
+        - locksmithd.service
+        - logrotate.service
+        - lvm2-monitor.service
+        - mdmon.service
+        - nfs-idmapd.service
+        - nfs-mountd.service
+        - nfs-server.service
+        - nfs-utils.service
+        - node-problem-detector.service
+        - ntp.service
+        - oem-cloudinit.service
+        - rkt-gc.service
+        - rkt-metadata.service
+        - rpc-idmapd.service
+        - rpc-mountd.service
+        - rpc-statd.service
+        - rpcbind.service
+        - set-aws-environment.service
+        - system-cloudinit.service
+        - systemd-timesyncd.service
+        - update-ca-certificates.service
+        - user-cloudinit.service
+        - var-lib-etcd2.service
+    maxEntries: 1000
+    readFromTail: true
+    tag: host.*
+
+filter:
+  kubeTag: containers
+
 rawConfig: |-
   @INCLUDE fluent-bit-service.conf
   @INCLUDE fluent-bit-input.conf
