@@ -34,7 +34,7 @@ RUN gem sources --clear-all \
        && rm -rf /home/fluent/.gem/ruby/2.5.0/cache/*.gem \
        && rm -f ./*.gem
 
-# Default settings
+# Default settings for log collection
 ENV LOG_FORMAT "json"
 ENV FLUSH_INTERVAL "5s"
 ENV NUM_THREADS "1"
