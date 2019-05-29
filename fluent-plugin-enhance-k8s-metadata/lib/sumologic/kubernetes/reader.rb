@@ -37,31 +37,19 @@ module SumoLogic
         'StatefulSet' => 'statefulsets'
       }.freeze
 
-      def fetch_pod(namespace_name, pod_name)
-        fetch_resource('pods', pod_name, namespace_name)
+      def fetch_pod_metadata(namespace, pod)
+        pod = fetch_resource('pods', pod, namespace)
+        return {} if pod.nil?
+
+        metadata = {}
+
+        labels = pod['metadata']['labels']
+        metadata['Pod'] = { 'labels' => labels } if labels.is_a?(Hash)
+
+        metadata
       end
 
-      def extract_pod_labels(pod)
-        if pod.nil?
-          log.warn 'pod is nil'
-        elsif pod['metadata'].nil?
-          log.warn 'metadata is nil'
-        elsif pod['metadata']['labels'].nil?
-          log.warn 'labels is nil'
-        else
-          pod['metadata']['labels']
-        end
-      end
-
-      def fetch_pod_labels(namespace_name, pod_name)
-        extract_pod_labels(fetch_pod(namespace_name, pod_name))
-      rescue Kubeclient::ResourceNotFoundError => e
-        log.error e
-        # TODO: we now cache empty if not found since some namespace/pod not matching
-        {}
-      end
-
-      def fetch_owners(namespace_name, resource)
+      def fetch_owners(namespace, resource)
         # BFS for owners
         result = []
         depth = 0
@@ -82,7 +70,7 @@ module SumoLogic
                 owner = fetch_resource(
                   RESOURCE_MAPPING[owner_reference['kind']],
                   owner_reference['name'],
-                  namespace_name
+                  namespace
                 )
                 queue.push(owner)
                 visited[owner_reference['uid']] = owner
@@ -101,6 +89,9 @@ module SumoLogic
         resource = @client.get_entity(type, name, namespace)
         log.debug resource.to_s
         resource
+      rescue Kubeclient::ResourceNotFoundError => e
+        log.error e
+        nil
       end
     end
   end

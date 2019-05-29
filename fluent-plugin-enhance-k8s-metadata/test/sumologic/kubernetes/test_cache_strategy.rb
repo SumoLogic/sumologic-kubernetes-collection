@@ -22,32 +22,33 @@ class CacheStrategyTest < Test::Unit::TestCase
     Fluent::Test::TestLogger.new
   end
 
-  test 'get_pod_labels load labels from API' do
-    labels = get_pod_labels('sumologic', 'somepod')
-    assert_not_nil labels
-    assert_equal labels['pod-template-hash'], '1691804713'
-    assert_equal labels['run'], 'curl-byi'
+  test 'get_pod_metadata load labels from API' do
+    metadata = get_pod_metadata('sumologic', 'somepod')
+    assert_not_nil metadata
+    assert_equal metadata['Pod']['labels']['pod-template-hash'], '1691804713'
+    assert_equal metadata['Pod']['labels']['run'], 'curl-byi'
   end
 
-  test 'get_pod_labels load labels from cache if already exist' do
-    cache = @all_caches[CACHE_TYPE_POD_LABELS]
-    assert_not_nil cache
-    cache['sumologic::somepod'] = {
-      'pod-template-hash' => '0',
-      'run' => 'from-cache'
+  test 'get_pod_metadata load labels from cache if already exist' do
+    assert_not_nil @cache
+    @cache['sumologic::somepod'] = {
+      'Pod' => {
+        'labels' => {
+          'pod-template-hash' => '0',
+          'run' => 'from-cache'
+        }
+      }
     }
-    labels = get_pod_labels('sumologic', 'somepod')
-    assert_not_nil labels
-    assert_equal labels['pod-template-hash'], '0'
-    assert_equal labels['run'], 'from-cache'
+    metadata = get_pod_metadata('sumologic', 'somepod')
+    assert_equal metadata['Pod']['labels']['pod-template-hash'], '0'
+    assert_equal metadata['Pod']['labels']['run'], 'from-cache'
   end
 
-  test 'get_pod_labels cache empty result' do
-    cache = @all_caches[CACHE_TYPE_POD_LABELS]
-    assert_not_nil cache
-    cache['sumologic::somepod'] = {}
-    labels = get_pod_labels('sumologic', 'somepod')
-    assert_not_nil labels
-    assert_not_nil labels.size, 0
+  test 'get_pod_metadata cache empty result' do
+    assert_not_nil @cache
+    @cache['sumologic::somepod'] = {}
+    metadata = get_pod_metadata('sumologic', 'somepod')
+    assert_not_nil metadata
+    assert_equal metadata.size, 0
   end
 end

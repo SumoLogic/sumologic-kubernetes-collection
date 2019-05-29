@@ -60,12 +60,11 @@ module Fluent
         elsif pod_name.nil?
           log.debug "Record doesn't have [#{@in_pod_path}] field"
         else
-          labels = get_pod_labels(namespace_name, pod_name)
+          metadata = get_pod_metadata(namespace_name, pod_name)
           if labels.empty?
             log.debug "Cannot get labels on pod #{namespace_name}::#{pod_name}, skip."
           else
-            record[@out_root] = {} if record[@out_root].nil?
-            record[@out_root]['pod.labels'] = labels
+            record[@out_root] = metadata
           end
         end
       end
