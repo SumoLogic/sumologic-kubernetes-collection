@@ -46,7 +46,19 @@ module SumoLogic
         labels = pod['metadata']['labels']
         metadata['Pod'] = { 'labels' => labels } if labels.is_a?(Hash)
 
+        owners = fetch_pod_owners(namespace, pod)
+        metadata.merge!(owners)
+
         metadata
+      end
+
+      def fetch_pod_owners(namespace, pod)
+        owners = fetch_owners(namespace, pod)
+        result = {}
+        owners.each do |owner|
+          result[owner['kind']] = { 'name' => owner['metadata']['name'] }
+        end
+        result
       end
 
       def fetch_owners(namespace, resource)
@@ -61,8 +73,8 @@ module SumoLogic
           size = queue.size
           [1..size].each do
             current = queue.shift
-            result.add(current)
-            owner_references = current['ownerReferences']
+            result << current unless current == resource
+            owner_references = current['metadata']['ownerReferences']
             begin
               owner_references.each do |owner_reference|
                 next if visited.key?(owner_reference['uid'])
