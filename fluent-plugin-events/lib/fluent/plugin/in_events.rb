@@ -40,9 +40,6 @@ module Fluent
         desc 'The namespace of the resource, it watches all namespaces if not set.'
         config_param :namespace, :string, default: nil
 
-        desc 'The name of the entity to watch, use this to watch only one entity.'
-        config_param :entity_name, :string, default: nil
-  
         desc 'A selector to restrict the list of returned objects by labels.'
         config_param :label_selector, :string, default: nil
   
@@ -52,10 +49,6 @@ module Fluent
       
       def configure(conf)
         super
-  
-        log.trace { "Configure" }
-        raise Fluent::ConfigError, 'Missing <watch> config section.' if @watch_objects.empty?
-    
         parse_tag
         initialize_client
       end
