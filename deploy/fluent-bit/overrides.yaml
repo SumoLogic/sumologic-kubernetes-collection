@@ -10,6 +10,10 @@ backend:
 
 trackOffsets: true
 
+tolerations:
+  - key: node-role.kubernetes.io/master
+    effect: NoSchedule
+
 input:
   tail:
     memBufLimit: 5MB
