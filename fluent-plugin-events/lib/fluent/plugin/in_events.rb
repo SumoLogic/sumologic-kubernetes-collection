@@ -37,12 +37,9 @@ module Fluent
 
       desc 'Define a resource to watch.'
       config_section :watch, required: false, init: false, multi: true, param_name: :watch_objects do
-        desc 'The name of the resource, e.g. "events".'
-        config_param :resource_name, :string
-  
         desc 'The namespace of the resource, it watches all namespaces if not set.'
         config_param :namespace, :string, default: nil
-  
+
         desc 'The name of the entity to watch, use this to watch only one entity.'
         config_param :entity_name, :string, default: nil
   
@@ -52,22 +49,13 @@ module Fluent
         desc 'A selector to restrict the list of returned objects by fields.'
         config_param :field_selector, :string, default: nil
       end
-  
-      config_section :storage do
-        # use memory by default
-        config_set_default :usage, 'checkpoints'
-        config_set_default :@type, 'local'
-        config_set_default :persistent, false
-      end
       
       def configure(conf)
         super
   
         log.trace { "Configure" }
-        raise Fluent::ConfigError, 'At least <watch> is required, but found none.' if @watch_objects.empty?
-  
-        @storage = storage_create usage: 'checkpoints'
-  
+        raise Fluent::ConfigError, 'Missing <watch> config section.' if @watch_objects.empty?
+    
         parse_tag
         initialize_client
       end
@@ -84,8 +72,9 @@ module Fluent
 
       def start
         super
-        start_watchers
-        create_configmap_flush_thread
+        initialize_resource_version
+        start_watcher
+        start_configmap_flush_thread
       end
   
       def close
@@ -144,6 +133,20 @@ module Fluent
           end
       end
 
+      def initialize_resource_version
+        # get or create the config map
+        begin
+          @client.public_send("get_config_map", "fluentd-config-resource-version", "sumologic").tap do |resource|
+            log.trace {"Get config maps: #{resource}"}
+            version = resource.data['resource-version']
+            log.trace { "Get version from config map: #{version}"}
+            @resource_version = version if version
+          end
+        rescue Kubeclient::ResourceNotFoundError
+          create_config_maps
+        end
+      end
+
       def create_config_maps
         @resource_version = "0"
         resource = ::Kubeclient::Resource.new
@@ -157,50 +160,42 @@ module Fluent
         end
       end
   
-      def start_watchers
-        log.trace { "Starting watchers" }
+      def start_watcher
+        log.trace { "Starting watcher" }
 
         @watchers = @watch_objects.map do |o|
           o = o.to_h.dup
           o[:as] = :raw
-          resource_name = o.delete(:resource_name)
+          o[:resource_version] = @resource_version
 
-          # get the config map
-          begin
-            @client.public_send("get_config_map", "fluentd-config-resource-version", "sumologic").tap do |resource|
-              log.trace {"Get config maps: #{resource}"}
-              version = resource.data['resource-version']
-              log.trace { "Get version from config map: #{version}"}
-              o[:resource_version] = version if version
-            end
-          rescue Kubeclient::ResourceNotFoundError
-            create_config_maps
-            o[:resource_version] = @resource_version
-          end
-
-          log.trace { "Get o version: #{o[:resource_version]}"}
-
-
-          @client.public_send("watch_#{resource_name}", o).tap do |watcher|
-           create_watcher_thread resource_name, watcher
+          @client.public_send("watch_events", o).tap do |watcher|
+           create_watcher_thread watcher
           end
         end
       end
   
-      def create_watcher_thread(object_name, watcher)
-        thread_create(:"watch_#{object_name}") do
-          tag = generate_tag "#{object_name}.watch"
+      def create_watcher_thread(watcher)
+        thread_create(:"watch_events") do
+          tag = generate_tag "events.watch"
           watcher.each do |entity|
-            log.trace { "Received new object from watching #{object_name}" }
+            log.trace { "Received new object from watching events" }
             entity = JSON.parse(entity)
             router.emit tag, Fluent::Engine.now, entity
             @resource_version = entity['object']['metadata']['resourceVersion']
+
+            if (!@resource_version)
+              @resource_version = 0
+              sleep(5)
+              start_watcher
+              break
+            end
+
             log.trace { "resource version: #{entity['object']['metadata']['resourceVersion']}"}
           end
         end
       end
 
-      def create_configmap_flush_thread
+      def start_configmap_flush_thread
         thread_create(:"update_configmap") do
           resource = ::Kubeclient::Resource.new
           resource.metadata = {
@@ -209,6 +204,7 @@ module Fluent
             # labels: { "k8s-app": "fluentd-sumologic-events" }
           }
           while true do
+            sleep(10)
             log.trace { "resource version #{@resource_version}"}
             resource.data = { "resource-version": "#{@resource_version}"}
 
@@ -216,7 +212,6 @@ module Fluent
             @client.public_send("update_config_map", resource).tap do |maps|
               log.trace {"Updated config maps: #{maps}"}
             end
-            sleep(5)
             log.trace {"Sleep done."}
           end
         end

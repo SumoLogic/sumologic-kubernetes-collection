@@ -64,7 +64,7 @@ spec:
           name: fluentd-config-events
       containers:
       - name: fluentd-events
-        image: maisie-test-events
+        image: sumologic/kubernetes-fluentd
         imagePullPolicy: Never
         resources:
           limits:
@@ -92,15 +92,20 @@ data:
       @type events
       tag "dummy.events"
         <watch>
-          resource_name events
         </watch>
     </source>
-    <match "dummy.events">
-      @type stdout
-    </match>
+    # <match "dummy.events">
+    #   @type stdout
+    # </match>
     <system>
-      log_level trace
+      log_level debug
     </system>
+    <match "dummy.events*">
+      @type sumologic
+      endpoint https://nite-events.sumologic.net/receiver/v1/http/ZaVnC4dhaV3H4O_CP2D6ncBa_rGH3YI7TFSD31KUEB5RU6GQkRQ21WRFGAAXskHv-d4Z87N2vRCVT5bi7bL0XBIa4CNAe-W6KfUn8Zg8G2n1fCmPp56viQ==
+      data_type logs
+      disable_cookies true
+    </match>
 
 ---
 apiVersion: v1

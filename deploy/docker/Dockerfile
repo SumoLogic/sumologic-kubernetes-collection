@@ -18,7 +18,8 @@ RUN gem install fluent-plugin-sumologic_output \
        && gem install fluent-plugin-prometheus-format \
        && gem install fluent-plugin-datapoint \
        && gem install fluent-plugin-rewrite-tag-filter \
-       && gem install fluent-plugin-protobuf
+       && gem install fluent-plugin-protobuf \
+       && gem install fluent-plugin-events
 
 RUN gem sources --clear-all \
        && apk del .build-deps \
