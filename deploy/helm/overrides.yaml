@@ -5,6 +5,16 @@ prometheus:
       cluster: kubernetes
     remoteWrite:
     # kube state metrics
+    - url: http://fluentd:9888/prometheus.metrics.state.statefulset
+      writeRelabelConfigs:
+      - action: keep
+        regex: kube-state-metrics;kube_statefulset_status_(?:observed_generation|replicas)
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.state.statefulset
+      writeRelabelConfigs:
+      - action: keep
+        regex: kube-state-metrics;kube_statefulset_(?:replicas|metadata_generation)
+        sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.state.daemonset
       writeRelabelConfigs:
       - action: keep
@@ -62,6 +72,11 @@ prometheus:
       writeRelabelConfigs:
       - action: keep
         regex: apiserver;etcd_request_cache_(?:get|add)_latencies_summary.*
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.apiserver
+      writeRelabelConfigs:
+      - action: keep
+        regex: apiserver;etcd_helper_cache_(?:hit|miss)_count
         sourceLabels: [job, __name__]
     # kubelet metrics
     - url: http://fluentd:9888/prometheus.metrics.kubelet
@@ -144,7 +159,7 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics.node
       writeRelabelConfigs:
       - action: keep
-        regex: node-exporter;node_memory_(?:MemAvailable|MemTotal|Buffers|SwapCached)_bytes
+        regex: node-exporter;node_memory_(?:MemAvailable|MemTotal|Buffers|SwapCached|Cached|Free)_bytes
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.node
       writeRelabelConfigs:

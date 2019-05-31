@@ -328,37 +328,37 @@ spec:
         - name: SUMO_ENDPOINT_METRICS
           valueFrom:
             secretKeyRef:
-              name: sumologic
+              name: metric-endpoints
               key: endpoint-metrics
         - name: SUMO_ENDPOINT_METRICS_APISERVER
           valueFrom:
             secretKeyRef:
-              name: sumologic
+              name: metric-endpoints
               key: endpoint-metrics-apiserver
         - name: SUMO_ENDPOINT_METRICS_KUBELET
           valueFrom:
             secretKeyRef:
-              name: sumologic
+              name: metric-endpoints
               key: endpoint-metrics-kubelet
         - name: SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER
           valueFrom:
             secretKeyRef:
-              name: sumologic
+              name: metric-endpoints
               key: endpoint-metrics-kube-controller-manager
         - name: SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER
           valueFrom:
             secretKeyRef:
-              name: sumologic
+              name: metric-endpoints
               key: endpoint-metrics-kube-scheduler
         - name: SUMO_ENDPOINT_METRICS_KUBE_STATE
           valueFrom:
             secretKeyRef:
-              name: sumologic
+              name: metric-endpoints
               key: endpoint-metrics-kube-state
         - name: SUMO_ENDPOINT_METRICS_NODE_EXPORTER
           valueFrom:
             secretKeyRef:
-              name: sumologic
+              name: metric-endpoints
               key: endpoint-metrics-node-exporter
         - name: SUMO_ENDPOINT_LOGS
           valueFrom:
