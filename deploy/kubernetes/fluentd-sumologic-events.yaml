@@ -97,9 +97,6 @@ data:
     <source>
       @type events
     </source>
-    <system>
-      log_level trace
-    </system>
     <match kubernetes.**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_EVENTS']}"
