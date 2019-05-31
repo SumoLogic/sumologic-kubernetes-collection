@@ -6,12 +6,10 @@ module SumoLogic
       require_relative 'reader.rb'
 
       CACHE_TYPE_POD_LABELS = 'pod_labels'.freeze
-      CACHE_TYPE_OWNER_REFS = 'owner_refs'.freeze
 
       def init_cache
         @all_caches = {
           CACHE_TYPE_POD_LABELS => LruRedux::TTL::ThreadSafeCache.new(@cache_size, @cache_ttl),
-          CACHE_TYPE_OWNER_REFS => LruRedux::TTL::ThreadSafeCache.new(@cache_size, @cache_ttl)
         }
       end
 
