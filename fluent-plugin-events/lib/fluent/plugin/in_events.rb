@@ -6,72 +6,35 @@ module Fluent
     class EventsInput < Fluent::Plugin::Input
       Fluent::Plugin.register_input("events", self)
 
-      helpers :storage, :thread
+      helpers :thread
 
-      desc 'The tag of the event.'
-      config_param :tag, :string, default: 'kubernetes.*'
-  
-      desc 'URL of the kubernetes API.'
       config_param :kubernetes_url, :string, default: nil
-  
-      desc 'Kubernetes API version.'
       config_param :api_version, :string, default: 'v1'
-  
-      desc 'Path to the certificate file for this client.'
       config_param :client_cert, :string, default: nil
-  
-      desc 'Path to the private key file for this client.'
       config_param :client_key, :string, default: nil
-  
-      desc 'Path to the CA file.'
       config_param :ca_file, :string, default: nil
-  
-      desc "If `insecure_ssl` is set to `true`, it won't verify apiserver's certificate."
       config_param :insecure_ssl, :bool, default: false
-  
-      desc 'Path to the file contains the API token. By default it reads from the file "token" in the `secret_dir`.'
       config_param :bearer_token_file, :string, default: nil
-  
-      desc "Path of the location where pod's service account's credentials are stored."
       config_param :secret_dir, :string, default: '/var/run/secrets/kubernetes.io/serviceaccount'
-
-      desc 'Define a resource to watch.'
-      config_section :watch, required: false, init: false, multi: true, param_name: :watch_objects do
-        desc 'The namespace of the resource, it watches all namespaces if not set.'
-        config_param :namespace, :string, default: nil
-
-        desc 'A selector to restrict the list of returned objects by labels.'
-        config_param :label_selector, :string, default: nil
-  
-        desc 'A selector to restrict the list of returned objects by fields.'
-        config_param :field_selector, :string, default: nil
-      end
+      config_param :tag, :string, default: 'kubernetes.*'
+      config_param :namespace, :string, default: nil
+      config_param :label_selector, :string, default: nil
+      config_param :field_selector, :string, default: nil
       
       def configure(conf)
         super
-        parse_tag
         initialize_client
-      end
-
-      def parse_tag
-        @tag_prefix, @tag_suffix = @tag.split('*') if @tag.include?('*')
-      end
-
-      def generate_tag(item_name)
-        return @tag unless @tag_prefix
-  
-        [@tag_prefix, item_name, @tag_suffix].join
       end
 
       def start
         super
         initialize_resource_version
-        start_watcher
+        start_watcher_thread
         start_configmap_flush_thread
       end
   
       def close
-        @watchers.each &:finish if @watchers
+        @watcher.each &:finish
         super
       end
 
@@ -153,37 +116,31 @@ module Fluent
         end
       end
   
-      def start_watcher
-        log.trace { "Starting watcher" }
+      def start_watcher_thread
+        params = Hash.new
+        params[:as] = :raw
+        params[:resource_version] = @resource_version
+        params[:field_selector] = @field_selector
+        params[:label_selector] = @label_selector
+        params[:namespace] = @namespace
 
-        @watchers = @watch_objects.map do |o|
-          o = o.to_h.dup
-          o[:as] = :raw
-          o[:resource_version] = @resource_version
-
-          @client.public_send("watch_events", o).tap do |watcher|
-           create_watcher_thread watcher
-          end
-        end
-      end
+        @watcher = @client.public_send("watch_events", params).tap do |watcher|
+          thread_create(:"watch_events") do
+            watcher.each do |entity|
+              log.trace { "Received new object from watching events" }
+              entity = JSON.parse(entity)
+              router.emit tag, Fluent::Engine.now, entity
+              @resource_version = entity['object']['metadata']['resourceVersion']
   
-      def create_watcher_thread(watcher)
-        thread_create(:"watch_events") do
-          tag = generate_tag "events.watch"
-          watcher.each do |entity|
-            log.trace { "Received new object from watching events" }
-            entity = JSON.parse(entity)
-            router.emit tag, Fluent::Engine.now, entity
-            @resource_version = entity['object']['metadata']['resourceVersion']
-
-            if (!@resource_version)
-              @resource_version = 0
-              sleep(5)
-              start_watcher
-              break
+              if (!@resource_version)
+                @resource_version = 0
+                sleep(5)
+                start_watcher_thread
+                break
+              end
+  
+              log.trace { "resource version: #{entity['object']['metadata']['resourceVersion']}"}
             end
-
-            log.trace { "resource version: #{entity['object']['metadata']['resourceVersion']}"}
           end
         end
       end
@@ -194,18 +151,15 @@ module Fluent
           resource.metadata = {
             name: "fluentd-config-resource-version",
             namespace: "sumologic"
-            # labels: { "k8s-app": "fluentd-sumologic-events" }
           }
           while true do
             sleep(10)
-            log.trace { "resource version #{@resource_version}"}
             resource.data = { "resource-version": "#{@resource_version}"}
 
             # update the config map
             @client.public_send("update_config_map", resource).tap do |maps|
               log.trace {"Updated config maps: #{maps}"}
             end
-            log.trace {"Sleep done."}
           end
         end
       end 

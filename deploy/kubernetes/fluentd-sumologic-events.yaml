@@ -78,6 +78,12 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
+        env:
+        - name: SUMO_ENDPOINT_EVENTS
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-events
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -90,19 +96,13 @@ data:
   events.conf: |-
     <source>
       @type events
-      tag "dummy.events"
-        <watch>
-        </watch>
     </source>
-    # <match "dummy.events">
-    #   @type stdout
-    # </match>
     <system>
-      log_level debug
+      log_level trace
     </system>
-    <match "dummy.events*">
+    <match kubernetes.**>
       @type sumologic
-      endpoint https://nite-events.sumologic.net/receiver/v1/http/ZaVnC4dhaV3H4O_CP2D6ncBa_rGH3YI7TFSD31KUEB5RU6GQkRQ21WRFGAAXskHv-d4Z87N2vRCVT5bi7bL0XBIa4CNAe-W6KfUn8Zg8G2n1fCmPp56viQ==
+      endpoint "#{ENV['SUMO_ENDPOINT_EVENTS']}"
       data_type logs
       disable_cookies true
     </match>
