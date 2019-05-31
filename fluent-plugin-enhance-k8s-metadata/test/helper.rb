@@ -16,25 +16,29 @@ end
 def stub_apis
   init_globals
   stub_request(:get, %r{/api/v1$})
-    .to_return(body: test_resource('api_list.json'), status: 200)
+    .to_return(body: test_resource('api_list_core_v1.json'), status: 200)
+  stub_request(:get, %r{/apis/apps/v1$})
+    .to_return(body: test_resource('api_list_apps_v1.json'), status: 200)
+  stub_request(:get, %r{/apis/extensions/v1beta1$})
+    .to_return(body: test_resource('api_list_extensions_v1beta1.json'), status: 200)
   stub_request(:get, %r{/api/v1/namespaces/sumologic/pods})
     .to_return(body: test_resource('pod_sumologic.json'), status: 200)
-  stub_request(:get, %r{/api/v1/namespaces/sumologic/replicasets})
+  stub_request(:get, %r{/apis/extensions/v1beta1/namespaces/sumologic/replicasets})
     .to_return(body: test_resource('rs_sumologic.json'), status: 200)
-  stub_request(:get, %r{/api/v1/namespaces/sumologic/deployments})
+  stub_request(:get, %r{/apis/extensions/v1beta1/namespaces/sumologic/deployments})
     .to_return(body: test_resource('deploy_sumologic.json'), status: 200)
   stub_request(:get, %r{/api/v1/namespaces/kube-system/pods})
     .to_return(body: test_resource('pod_kube-system.json'), status: 200)
-  stub_request(:get, %r{/api/v1/namespaces/kube-system/replicasets})
+  stub_request(:get, %r{/apis/extensions/v1beta1/namespaces/kube-system/replicasets})
     .to_return(body: test_resource('rs_kube-system.json'), status: 200)
-  stub_request(:get, %r{/api/v1/namespaces/kube-system/deployments})
+  stub_request(:get, %r{/apis/extensions/v1beta1/namespaces/kube-system/deployments})
     .to_return(body: test_resource('deploy_kube-system.json'), status: 200)
   stub_request(:get, %r{/api/v1/namespaces/non-exist/pods})
     .to_raise(Kubeclient::ResourceNotFoundError.new(404, nil, nil))
 end
 
 def init_globals
-  @kubernetes_url = 'http://localhost:8080/api/'
+  @kubernetes_url = 'http://localhost:8080'
   @apiVersion = 'v1'
   @verify_ssl = false
   @ca_file = nil

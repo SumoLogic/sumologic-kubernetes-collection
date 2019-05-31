@@ -21,13 +21,22 @@ metadata:
 rules:
 - apiGroups: [""]
   resources:
-  - nodes
+  - configmaps
   - namespaces
-  - events
+  - nodes
   - pods
+  - services
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps", "extensions"]
+  resources:
+  - daemonsets
+  - deployments
   - replicasets
   - statefulsets
-  - deployments
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["events.k8s.io"]
+  resources:
+  - events
   verbs: ["get", "list", "watch"]
 ---
 apiVersion: v1
@@ -72,6 +81,9 @@ data:
         tag ${tag}.$1
       </rule>
     </match>
+    <filter prometheus.datapoint**>
+      @type enhance_k8s_metadata
+    </filter>
     <filter prometheus.datapoint**>
       @type prometheus_format
       relabel container_name:container,pod_name:pod
@@ -287,7 +299,7 @@ spec:
           name: fluentd-config
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd
+        image: byisumo/kubernetes-fluentd
         imagePullPolicy: Always
         resources:
           limits:

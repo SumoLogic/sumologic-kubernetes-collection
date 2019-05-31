@@ -14,13 +14,12 @@ module Fluent
       include SumoLogic::Kubernetes::CacheStrategy
 
       # parameters for read/write record
-      config_param :in_namespace_path, :string, default: '$.namespace'
-      config_param :in_pod_path, :string, default: '$.pod'
+      config_param :in_namespace_path, :array, default: ['$.namespace']
+      config_param :in_pod_path, :array, default: ['$.pod', '$.pod_name']
       config_param :out_root, :string, default: 'kubernetes'
 
       # parameters for connecting to k8s api server
       config_param :kubernetes_url, :string, default: nil
-      config_param :apiVersion, :string, default: 'v1'
       config_param :client_cert, :string, default: nil
       config_param :client_key, :string, default: nil
       config_param :ca_file, :string, default: nil
@@ -41,8 +40,8 @@ module Fluent
         normalize_param
         connect_kubernetes
         init_cache
-        @in_namespace_ac = record_accessor_create(@in_namespace_path)
-        @in_pod_ac = record_accessor_create(@in_pod_path)
+        @in_namespace_ac = @in_namespace_path.map { |path| record_accessor_create(path) }
+        @in_pod_ac = @in_pod_path.map { |path| record_accessor_create(path) }
       end
 
       def filter(tag, time, record)
@@ -53,15 +52,17 @@ module Fluent
       private
 
       def decorate_record(record)
-        namespace_name = @in_namespace_ac.call(record)
-        pod_name = @in_pod_ac.call(record)
+        namespace_name = nil
+        pod_name = nil
+        @in_namespace_ac.each { |ac| namespace_name ||= ac.call(record) }
+        @in_pod_ac.each { |ac| pod_name ||= ac.call(record) }
         if namespace_name.nil?
           log.debug "Record doesn't have [#{@in_namespace_path}] field"
         elsif pod_name.nil?
           log.debug "Record doesn't have [#{@in_pod_path}] field"
         else
           metadata = get_pod_metadata(namespace_name, pod_name)
-          if labels.empty?
+          if metadata.empty?
             log.debug "Cannot get labels on pod #{namespace_name}::#{pod_name}, skip."
           else
             record[@out_root] = metadata
@@ -72,18 +73,18 @@ module Fluent
       def normalize_param
         # Use Kubernetes default service account if running in a pod.
         if @kubernetes_url.nil?
-          log.debug 'Kubernetes URL is not set - inspecting environment'
+          log.info 'Kubernetes URL is not set - inspecting environment'
           env_host = ENV['KUBERNETES_SERVICE_HOST']
           env_port = ENV['KUBERNETES_SERVICE_PORT']
-          @kubernetes_url = "https://#{env_host}:#{env_port}/api" unless env_host.nil? || env_port.nil?
+          @kubernetes_url = "https://#{env_host}:#{env_port}" unless env_host.nil? || env_port.nil?
         end
-        log.info "Kubernetes URL: '#{@kubernetes_url}'"
+        log.debug "Kubernetes URL: '#{@kubernetes_url}'"
 
         @ca_file = File.join(@secret_dir, K8_POD_CA_CERT) if @ca_file.nil?
-        log.info "ca_file: '#{@ca_file}', exist: #{File.exist?(@ca_file)}"
+        log.debug "ca_file: '#{@ca_file}', exist: #{File.exist?(@ca_file)}"
 
         @bearer_token_file = File.join(@secret_dir, K8_POD_TOKEN) if @bearer_token_file.nil?
-        log.info "bearer_token_file: '#{@bearer_token_file}', exist: #{File.exist?(@bearer_token_file)}"
+        log.debug "bearer_token_file: '#{@bearer_token_file}', exist: #{File.exist?(@bearer_token_file)}"
 
         @cache_ttl = :none if @cache_ttl <= 0
         log.info "cache_ttl: #{cache_ttl}, cache_size: #{@cache_size}"
