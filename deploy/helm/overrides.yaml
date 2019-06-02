@@ -110,7 +110,7 @@ prometheus:
         regex: POD
         sourceLabels: [container_name]
       - action: keep
-        regex: kubelet;container_memory_(?:usage_bytes|memory_swap)
+        regex: kubelet;container_memory_(?:usage_bytes|memory_swap|working_set_bytes)
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
