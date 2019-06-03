@@ -32,6 +32,7 @@ module Fluent
       config_param :namespace, :string, default: nil
       config_param :label_selector, :string, default: nil
       config_param :field_selector, :string, default: nil
+      config_param :configmap_update_interval_seconds, :integer, default: 10
       
       def configure(conf)
         super
@@ -55,7 +56,7 @@ module Fluent
         # get or create the config map
         begin
           @client.public_send("get_config_map", "fluentd-config-resource-version", "sumologic").tap do |resource|
-            log.info {"Get config maps: #{resource}"}
+            log.info "Get config maps: #{resource}"
             version = resource.data['resource-version']
             @resource_version = version if version
           end
@@ -73,7 +74,7 @@ module Fluent
         }
         resource.data = { "resource-version": "#{@resource_version}" }
         @client.public_send("create_config_map", resource).tap do |maps|
-          log.info {"Created config maps: #{maps}"}
+          log.info "Created config maps: #{maps}"
         end
       end
   
@@ -88,7 +89,7 @@ module Fluent
         @watcher = @client.public_send("watch_events", params).tap do |watcher|
           thread_create(:"watch_events") do
             watcher.each do |entity|
-              log.debug { "Received new object from watching events" }
+              log.debug "Received new object from watching events"
               entity = JSON.parse(entity)
               router.emit tag, Fluent::Engine.now, entity
               @resource_version = entity['object']['metadata']['resourceVersion']
@@ -112,12 +113,12 @@ module Fluent
             namespace: "sumologic"
           }
           while true do
-            sleep(10)
+            sleep(@configmap_update_interval_seconds)
             resource.data = { "resource-version": "#{@resource_version}"}
 
             # update the config map
             @client.public_send("update_config_map", resource).tap do |maps|
-              log.debug {"Updated config maps: #{maps}"}
+              log.debug "Updated config maps: #{maps}"
             end
           end
         end
