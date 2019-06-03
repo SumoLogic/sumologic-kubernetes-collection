@@ -90,10 +90,15 @@ module Fluent
           thread_create(:"watch_events") do
             watcher.each do |entity|
               log.debug "Received new object from watching events"
-              entity = JSON.parse(entity)
-              router.emit tag, Fluent::Engine.now, entity
-              @resource_version = entity['object']['metadata']['resourceVersion']
-  
+
+              begin
+                entity = JSON.parse(entity)
+                router.emit tag, Fluent::Engine.now, entity
+                @resource_version = entity['object']['metadata']['resourceVersion']
+              rescue => e
+                log.error "Got exception #{e} parsing entity #{entity}. Skipping."
+              end
+
               if (!@resource_version)
                 @resource_version = 0
                 sleep(5)
