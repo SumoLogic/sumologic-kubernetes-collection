@@ -19,24 +19,18 @@ metadata:
   labels:
     k8s-app: fluentd-sumologic
 rules:
-- apiGroups: [""]
+- apiGroups: ["", "apps", "extensions", "events.k8s.io"]
   resources:
   - configmaps
+  - daemonsets
+  - deployments
+  - events
   - namespaces
   - nodes
   - pods
-  - services
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["apps", "extensions"]
-  resources:
-  - daemonsets
-  - deployments
   - replicasets
+  - services
   - statefulsets
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["events.k8s.io"]
-  resources:
-  - events
   verbs: ["get", "list", "watch"]
 ---
 apiVersion: v1
@@ -299,7 +293,7 @@ spec:
           name: fluentd-config
       containers:
       - name: fluentd
-        image: byisumo/kubernetes-fluentd
+        image: sumologic/kubernetes-fluentd
         imagePullPolicy: Always
         resources:
           limits:
