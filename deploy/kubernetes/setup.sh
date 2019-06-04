@@ -4,7 +4,7 @@ set -e
 usage() {
   echo
   echo 'Usage:'
-  echo '  setup.sh <endpoint> <access-id> <access-key> [collector-name]'
+  echo '  setup.sh [-c collector-name] [-k cluster-name] <endpoint> <access-id> <access-key>'
   echo
 }
 
@@ -15,8 +15,9 @@ timestamp() {
 create_host_collector()
 {
   _P='{"collector":{"collectorType":"Hosted","name":"'
-  _S='"}}'
-  JSON="$_P$1$_S"
+  _M='","fields":{"cluster":"'
+  _S='"}}}'
+  JSON="$_P$1$_M$2$_S"
   COMMAND="curl -s -u $ACC_ID:$ACC_KEY -X POST -H Content-Type:application/json -d $JSON $SUMO_ENDPOINT/collectors"
   RESULT=$($COMMAND)
   set +e
@@ -51,6 +52,26 @@ create_http_source()
   echo "Source was created(id=$SOURCE_ID, name=$SOURCE_NAME)."
 }
 
+while getopts c:k: option
+do
+ case "${option}"
+ in
+ c) COLLECTOR_NAME=${OPTARG};;
+ k) CLUSTER_NAME=${OPTARG};;
+ esac
+done
+shift "$(($OPTIND -1))"
+
+TIME=`timestamp`;
+
+if [ -z $COLLECTOR_NAME ]; then
+  COLLECTOR_NAME="kubernetes-$TIME";
+fi
+
+if [ -z $CLUSTER_NAME ]; then
+  CLUSTER_NAME="kubernetes-$TIME";
+fi
+
 if [ -n "$1" ]; then
   SUMO_ENDPOINT=${1%/};
 else
@@ -75,13 +96,6 @@ else
   exit -1;
 fi
 
-if [ -n "$4" ]; then
-  COLLECTOR_NAME=$4;
-else
-  TIME=`timestamp`;
-  COLLECTOR_NAME="kubernetes-$TIME";
-fi
-
 set +e
 kubectl describe namespace sumologic &>/dev/null
 retVal=$?
@@ -103,9 +117,9 @@ if [ $retVal -eq 0 ]; then
   exit -2;
 fi
 
-echo "Creating collector '$COLLECTOR_NAME'..."
+echo "Creating collector '$COLLECTOR_NAME' for cluster $CLUSTER_NAME..."
 COLLECTOR_ID=
-create_host_collector $COLLECTOR_NAME
+create_host_collector $COLLECTOR_NAME $CLUSTER_NAME
 
 echo "Creating sources in '$COLLECTOR_NAME'..."
 SOURCE_URL=
