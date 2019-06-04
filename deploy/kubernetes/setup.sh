@@ -94,12 +94,12 @@ else
 fi
 
 set +e
-echo "Creating secret 'metric-endpoints'..."
-kubectl -n sumologic describe secret metric-endpoints &>/dev/null
+echo "Creating secret 'sumologic'..."
+kubectl -n sumologic describe secret sumologic &>/dev/null
 retVal=$?
 set -e
 if [ $retVal -eq 0 ]; then
-  echo "Secret 'sumologic::metric-endpoints' exists, abort."
+  echo "Secret 'sumologic::sumologic' exists, abort."
   exit -2;
 fi
 
@@ -130,7 +130,7 @@ SOURCE_URL=
 create_http_source node-exporter $COLLECTOR_ID
 ENDPOINT_METRICS_NODE_EXPORTER="$SOURCE_URL"
 
-kubectl -n sumologic create secret generic metric-endpoints \
+kubectl -n sumologic create secret generic sumologic \
   --from-literal=endpoint-metrics=$ENDPOINT_METRICS \
   --from-literal=endpoint-metrics-apiserver=$ENDPOINT_METRICS_APISERVER \
   --from-literal=endpoint-metrics-kube-controller-manager=$ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER \
