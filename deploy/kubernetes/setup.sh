@@ -129,6 +129,12 @@ ENDPOINT_METRICS_KUBELET="$SOURCE_URL"
 SOURCE_URL=
 create_http_source node-exporter-metrics $COLLECTOR_ID
 ENDPOINT_METRICS_NODE_EXPORTER="$SOURCE_URL"
+SOURCE_URL=
+create_http_source logs $COLLECTOR_ID
+ENDPOINT_LOGS="$SOURCE_URL"
+SOURCE_URL=
+create_http_source events $COLLECTOR_ID
+ENDPOINT_EVENTS="$SOURCE_URL"
 
 kubectl -n sumologic create secret generic sumologic \
   --from-literal=endpoint-metrics=$ENDPOINT_METRICS \
@@ -137,7 +143,9 @@ kubectl -n sumologic create secret generic sumologic \
   --from-literal=endpoint-metrics-kube-scheduler=$ENDPOINT_METRICS_KUBE_SCHEDULER \
   --from-literal=endpoint-metrics-kube-state=$ENDPOINT_METRICS_KUBE_STATE \
   --from-literal=endpoint-metrics-kubelet=$ENDPOINT_METRICS_KUBELET \
-  --from-literal=endpoint-metrics-node-exporter=$ENDPOINT_METRICS_NODE_EXPORTER
+  --from-literal=endpoint-metrics-node-exporter=$ENDPOINT_METRICS_NODE_EXPORTER \
+  --from-literal=endpoint-logs=$ENDPOINT_LOGS \
+  --from-literal=endpoint-events=$ENDPOINT_EVENTS
 
 echo "Applying deployment 'fluentd'..."
 kubectl apply -f https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml
