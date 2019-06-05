@@ -65,17 +65,18 @@ This approach requires access to the Sumo Logic Collector API. It will create a 
 
 ```sh
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
-  | bash -s <api-endpoint> <access-id> <access-key> [collector-name]
+  | bash -s [-c collector-name] [-k cluster-name] <api-endpoint> <access-id> <access-key>
 ```
 
 __NOTE__ This script will be executed in bash and requires [jq command-line JSON parser](https://stedolan.github.io/jq/download/) to be installed.
 
 #### Parameters
 
+* __-c collector-name__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
+* __-k cluster-name__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
 * __api-endpoint__ - required. The API endpoint from [this page](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security).
 * __access-id__ - required. Sumo [access id](https://help.sumologic.com/Manage/Security/Access-Keys)
 * __access-key__ - required. Sumo [access key](https://help.sumologic.com/Manage/Security/Access-Keys)
-* __collector-name__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
 
 ### Manual Source Creation and Setup
 
@@ -83,23 +84,25 @@ This is a manual alternative approach to the automatic script if you don't have 
 
 #### 1.1 Create a hosted collector and an HTTP source
 
-In this step you create a Sumo Logic hosted collector with a set of HTTP sources to receive your Kubernetes metrics.
+In this step you create a Sumo Logic hosted collector with a set of HTTP sources to receive your Kubernetes data.
 
 Create a hosted collector, following the instructions on [Configure a Hosted Collector](https://help.sumologic.com/03Send-Data/Hosted-Collectors/Configure-a-Hosted-Collector) in Sumo help. If you already have a Sumo hosted collector that you want to use, skip this step.
 
-Create seven HTTP sources under the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution:
+Create nine HTTP sources under the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution, one for logs, and one for events:
 
-* api-server
-* kubelet
-* controller-manager
-* scheduler
+* api-server-metrics
+* kubelet-metrics
+* controller-manager-metrics
+* scheduler-metrics
 * kube-state-metrics
-* node-exporter
-* default
+* node-exporter-metrics
+* default-metrics
+* logs
+* events
 
 Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create the sources, with the following additions:
 
-* **Naming the sources.** You can assign any name you like to the sources, but it’s a good idea to assign a name to each source that reflects the Kubernetes component from which it receives metrics. For example, you might name the source that receives API Server metrics “api-server”.
+* **Naming the sources.** You can assign any name you like to the sources, but it’s a good idea to assign a name to each source that reflects the Kubernetes component from which it receives metrics. For example, you might name the source that receives API Server metrics “api-server-metrics”.
 * **HTTP Source URLs.** When you configure each HTTP source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service secrets to send data to Sumo.
 
 #### 1.2 Deploy Fluentd
@@ -112,17 +115,19 @@ Run the following command to create namespace `sumologic`
 kubectl create namespace sumologic
 ```
 
-Run the following command to create a Kubernetes secret containing the 7 HTTP source URLs previously created.
+Run the following command to create a Kubernetes secret containing the 9 HTTP source URLs previously created.
 
 ```sh
-kubectl -n sumologic create secret generic metric-endpoints \
+kubectl -n sumologic create secret generic sumologic \
   --from-literal=endpoint-metrics=$ENDPOINT_METRICS \
   --from-literal=endpoint-metrics-apiserver=$ENDPOINT_METRICS_APISERVER \
   --from-literal=endpoint-metrics-kube-controller-manager=$ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER \
   --from-literal=endpoint-metrics-kube-scheduler=$ENDPOINT_METRICS_KUBE_SCHEDULER \
   --from-literal=endpoint-metrics-kube-state=$ENDPOINT_METRICS_KUBE_STATE \
   --from-literal=endpoint-metrics-kubelet=$ENDPOINT_METRICS_KUBELET \
-  --from-literal=endpoint-metrics-node-exporter=$ENDPOINT_METRICS_NODE_EXPORTER
+  --from-literal=endpoint-metrics-node-exporter=$ENDPOINT_METRICS_NODE_EXPORTER \
+  --from-literal=endpoint-logs=$ENDPOINT_LOGS \
+  --from-literal=endpoint-events=$ENDPOINT_EVENTS
 ```
 
 Apply `fluentd-sumologic.yaml` manifest with following command:
@@ -249,7 +254,30 @@ This filter will:
 * Rename the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
 * Only apply to metrics with the `kube-system` namespace
 
+## Step 3: Deploy FluentBit
+
+In this step, you will deploy FluentBit to forward logs to Fluentd.
+
+Download the FluentBit `overrides.yaml` from GitHub:
+
+```sh
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/fluent-bit/overrides.yaml
+```
+
+Install `fluent-bit` using Helm:
+
+```sh
+helm repo update \
+   && helm install stable/fluent-bit --name fluent-bit --namespace sumologic -f overrides.yaml
+```
+
 ## Tear down
+
+To delete `fluent-bit` from the Kubernetes cluster:
+
+```sh
+helm del --purge fluent-bit
+```
 
 To delete `prometheus-operator` from the Kubernetes cluster:
 
@@ -265,10 +293,10 @@ To delete the `fluentd-sumologic` app:
 kubectl delete -f ./fluentd-sumologic.yaml
 ```
 
-To delete the `metric-endpoints` secrets (for recreating collector/sources):
+To delete the `sumologic` secret (for recreating collector/sources):
 
 ```sh
-kubectl -n sumologic delete secret metric-endpoints
+kubectl -n sumologic delete secret sumologic
 ```
 
 To delete the `sumologic` namespace and all resources under it:
