@@ -46,7 +46,6 @@ metadata:
 data:
   fluent.conf: |-
     @include metrics.conf
-    @include events.conf
     @include logs.conf
   metrics.conf: |-
     <source>
@@ -124,15 +123,6 @@ data:
       data_type metrics
       metric_data_format prometheus
       disable_cookies true
-    </match>
-  events.conf: |-
-    <source>
-      @type dummy
-      tag "dummy.events"
-      dummy {"hello":"world"}
-    </source>
-    <match "dummy.events">
-      @type null
     </match>
   logs.conf: |-
     <source>
@@ -365,6 +355,73 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-events-config
+  namespace: sumologic
+data:
+  fluent.conf: |-
+    @include events.conf
+  events.conf: |-
+    <source>
+      @type events
+    </source>
+    <match kubernetes.**>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT_EVENTS']}"
+      data_type logs
+      disable_cookies true
+    </match>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluentd-events
+  namespace: sumologic
+  labels:
+    k8s-app: fluentd-sumologic
+spec:
+  selector:
+    matchLabels:
+      k8s-app: fluentd-sumologic
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd-sumologic
+    spec:
+      serviceAccountName: fluentd
+      volumes:
+      - name: pos-files
+        hostPath:
+          path: /var/run/fluentd-pos
+          type: ""
+      - name: config-volume
+        configMap:
+          name: fluentd-events-config
+      containers:
+      - name: fluentd-events
+        image: sumologic/kubernetes-fluentd
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: "100m"
+          requests:
+            memory: 256Mi
+            cpu: "100m"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /fluentd/etc/
+        - name: pos-files
+          mountPath: /mnt/pos/
+        env:
+        - name: SUMO_ENDPOINT_EVENTS
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-events
 ---
 apiVersion: v1
 kind: Service
