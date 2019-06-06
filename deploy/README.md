@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This page has instructions for collecting Kubernetes metrics; enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic. It supports Kubernetes versions 1.11+.
+This page has instructions for collecting Kubernetes metrics, logs and events; enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic. It supports Kubernetes versions 1.11+.
 
 __NOTE__ This page describes preview software. If you have comments or issues, please add an issue [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/issues).
 
@@ -11,10 +11,17 @@ __NOTE__ This page describes preview software. If you have comments or issues, p
 * [Solution Overview](#solution-overview)
 * [Before you start](#before-you-start)
 * [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd)
-  * [Automatic with setup script](#automatic-with-setup-script)
-  * [Manual](#manual)
+  * [Automatic with setup script](#automatic-source-creation-and-setup-script)
+  * [Manual](#manual-source-creation-and-setup)
 * [Step 2: Configure Prometheus](#step-2-configure-prometheus)
-* [Filter metrics](#filter-metrics)
+* [Additional configuration options](#additional-configuration-options)
+  * [Metrics](#metrics)
+    * [Filter metrics](#filter-metrics)
+    * [Trim and relabel metrics](#trim-and-relabel-metrics)
+  * [Events](#events)
+    * [Filter events](#filter-events)
+    * [Control how often the resource version is backed up](#control-how-often-the-resource-version-is-backed-up)
+* [Step 3: Deploy FluentBit](#step-3-deploy-fluentbit)
 * [Trim and relabel metrics](#trim-and-relabel-metrics)
 * [Tear down](#tear-down)
 
@@ -102,7 +109,7 @@ Create nine HTTP sources under the collector you created in the previous step, o
 
 Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create the sources, with the following additions:
 
-* **Naming the sources.** You can assign any name you like to the sources, but it’s a good idea to assign a name to each source that reflects the Kubernetes component from which it receives metrics. For example, you might name the source that receives API Server metrics “api-server-metrics”.
+* **Naming the sources.** You can assign any name you like to the sources, but it’s a good idea to assign a name to each source that reflects the Kubernetes component from which it receives data. For example, you might name the source that receives API Server metrics “api-server-metrics”.
 * **HTTP Source URLs.** When you configure each HTTP source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service secrets to send data to Sumo.
 
 #### 1.2 Deploy Fluentd
@@ -205,7 +212,9 @@ kubectl -n kube-system patch service prometheus-operator-kube-scheduler --type=j
 
 ## Additional configuration options
 
-### Filter metrics
+### Metrics
+
+#### Filter metrics
 
 The `overrides.yaml` file specifies metrics to be collected. If you want to exclude some metrics from collection, or include others, you can edit `overrides.yaml`. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
 
@@ -222,7 +231,7 @@ If you would like to collect other metrics that are not listed in `overrides.yam
 The syntax of `writeRelabelConfigs` can be found [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write).
 You can supply any label you like. You can query Prometheus to see a complete list of metrics it’s scraping.
 
-### Trim and relabel metrics
+#### Trim and relabel metrics
 
 You can specify relabeling, and additional inclusion or exclusion options in `fluentd-sumologic.yaml`.
 
@@ -253,6 +262,34 @@ This filter will:
 * Trim the service metadata from the metric datapoint.
 * Rename the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
 * Only apply to metrics with the `kube-system` namespace
+
+### Events
+
+#### Filter events
+
+By default, the events plugin collects all events from all namespaces. You can filter the events collected by specifying  `namespace`, `label_selector` or `field_selector`. 
+
+Make your edits in the `<source>` stanza in the `fluentd-events-config` ConfigMap section of `fluentd-sumologic.yaml`. For example:
+
+```xml
+<source>
+  @type events
+  namespace my_namespace
+  label_selector my_label
+  field_selector my_field
+</source>
+```
+
+#### Control how often the resource version is backed up
+
+Resource version is used to resume events collection from where it was left off after a container/pod/node restart. The latest resource version of your events is kept in memory and backend up to a ConfigMap at an interval. By default, we back up the resource version by making a ConfigMap API call every 10 seconds. If you want to back up more frequently, reduce the interval. If you want to reduce the number of API calls, increase the interval. For example:
+
+```xml
+<source>
+  @type events
+  configmap_update_interval_seconds 5
+</source>
+```
 
 ## Step 3: Deploy FluentBit
 
