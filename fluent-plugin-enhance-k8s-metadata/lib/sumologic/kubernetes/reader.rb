@@ -55,7 +55,7 @@ module SumoLogic
             owner_references(current).each do |owner_reference|
               begin
                 if visited.key?(owner_reference['uid'])
-                  log.debug "#{owner_reference['name']} visted."
+                  log.debug "#{owner_reference['name']} visited."
                   next
                 end
 
