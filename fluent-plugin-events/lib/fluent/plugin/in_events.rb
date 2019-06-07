@@ -79,31 +79,32 @@ module Fluent
       end
   
       def start_watcher_thread
-        params = Hash.new
-        params[:as] = :raw
-        params[:resource_version] = @resource_version
-        params[:field_selector] = @field_selector
-        params[:label_selector] = @label_selector
-        params[:namespace] = @namespace
+        while true do
+          params = Hash.new
+          params[:as] = :raw
+          params[:resource_version] = @resource_version
+          params[:field_selector] = @field_selector
+          params[:label_selector] = @label_selector
+          params[:namespace] = @namespace
 
-        @watcher = @client.public_send("watch_events", params).tap do |watcher|
-          thread_create(:"watch_events") do
-            watcher.each do |entity|
-              log.debug "Received new object from watching events"
+          @watcher = @client.public_send("watch_events", params).tap do |watcher|
+            thread_create(:"watch_events") do
+              watcher.each do |entity|
+                log.debug "Received new object from watching events"
 
-              begin
-                entity = JSON.parse(entity)
-                router.emit tag, Fluent::Engine.now, entity
-                @resource_version = entity['object']['metadata']['resourceVersion']
-              rescue => e
-                log.error "Got exception #{e} parsing entity #{entity}. Skipping."
-              end
+                begin
+                  entity = JSON.parse(entity)
+                  router.emit tag, Fluent::Engine.now, entity
+                  @resource_version = entity['object']['metadata']['resourceVersion']
+                rescue => e
+                  log.error "Got exception #{e} parsing entity #{entity}. Skipping."
+                end
 
-              if (!@resource_version)
-                @resource_version = 0
-                sleep(5)
-                start_watcher_thread
-                break
+                if (!@resource_version)
+                  @resource_version = 0
+                  sleep(5)
+                  break
+                end
               end
             end
           end
