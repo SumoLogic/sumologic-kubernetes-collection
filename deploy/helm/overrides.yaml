@@ -238,3 +238,9 @@ prometheus:
       - action: keep
         regex: up
         sourceLabels: [__name__]
+    # prometheus metrics
+    - url: http://fluentd:9888/prometheus.metrics
+      writeRelabelConfigs:
+      - action: keep
+        regex: 'prometheus_remote_storage_*'
+        sourceLabels: [__name__]
