@@ -291,11 +291,11 @@ spec:
         imagePullPolicy: Always
         resources:
           limits:
-            memory: 256Mi
-            cpu: "100m"
+            memory: 1000Mi
+            cpu: 1
           requests:
-            memory: 256Mi
-            cpu: "100m"
+            memory: 700Mi
+            cpu: 0.5
         ports:
         - name: prom-write
           containerPort: 9888
