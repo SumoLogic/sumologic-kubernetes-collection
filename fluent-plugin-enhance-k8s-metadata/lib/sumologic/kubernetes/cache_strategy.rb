@@ -5,23 +5,18 @@ module SumoLogic
       require 'lru_redux'
       require_relative 'reader.rb'
 
-      CACHE_TYPE_POD_LABELS = 'pod_labels'.freeze
-
       def init_cache
-        @all_caches = {
-          CACHE_TYPE_POD_LABELS => LruRedux::TTL::ThreadSafeCache.new(@cache_size, @cache_ttl),
-        }
+        @cache = LruRedux::TTL::ThreadSafeCache.new(@cache_size, @cache_ttl)
       end
 
-      def get_pod_labels(namespace_name, pod_name)
+      def get_pod_metadata(namespace_name, pod_name)
         key = "#{namespace_name}::#{pod_name}"
-        cache = @all_caches[CACHE_TYPE_POD_LABELS]
-        labels = cache[key]
-        if labels.nil?
-          labels = fetch_pod_labels(namespace_name, pod_name)
-          cache[key] = labels
+        metadata = @cache[key]
+        if metadata.nil?
+          metadata = fetch_pod_metadata(namespace_name, pod_name)
+          @cache[key] = metadata
         end
-        labels
+        metadata
       end
     end
   end

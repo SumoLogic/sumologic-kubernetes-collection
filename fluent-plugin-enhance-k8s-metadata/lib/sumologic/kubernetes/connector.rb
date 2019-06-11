@@ -7,15 +7,40 @@ module SumoLogic
       K8_POD_CA_CERT = 'ca.crt'.freeze
       K8_POD_TOKEN = 'token'.freeze
 
+      # Need different clients to access deifferent API groups/versions
+      # https://github.com/abonas/kubeclient/issues/208
+      CORE_API_VERSIONS = ['v1'].freeze
+      API_GROUPS = ['apps/v1', 'extensions/v1beta1'].freeze
+
       def connect_kubernetes
-        @client = Kubeclient::Client.new(
-          @kubernetes_url, @apiVersion,
+        @clients = core_clients.merge(group_clients)
+      end
+
+      def core_clients
+        CORE_API_VERSIONS.map do |ver|
+          [ver, create_client('api', ver)]
+        end.to_h
+      end
+
+      def group_clients
+        API_GROUPS.map do |ver|
+          [ver, create_client('apis', ver)]
+        end.to_h
+      end
+
+      def create_client(base, ver)
+        url = "#{@kubernetes_url}/#{base}/#{ver}"
+        log.info "create client with URL: #{url}"
+        client = Kubeclient::Client.new(
+          url,
+          '',
           ssl_options: ssl_options,
           auth_options: auth_options,
           as: :parsed
         )
-        @client.api_valid?
-      rescue Exception => e
+        client.api_valid?
+        client
+      rescue StandardError => e
         log.error e
       end
 
@@ -43,7 +68,7 @@ module SumoLogic
           ssl_options[:client_key] = OpenSSL::PKey::RSA.new(File.read(@client_key))
         end
         ssl_options[:cert_store] = ssl_store if @ssl_partial_chain
-        log.info "ssl_options: #{ssl_options}"
+        log.debug "ssl_options: #{ssl_options}"
         ssl_options
       end
 
@@ -52,7 +77,7 @@ module SumoLogic
         if !@bearer_token_file.nil? && File.exist?(@bearer_token_file)
           auth_options[:bearer_token] = File.read(@bearer_token_file)
         end
-        log.info "auth_options: #{ssl_options}"
+        log.debug "auth_options: #{auth_options}"
         auth_options
       end
     end

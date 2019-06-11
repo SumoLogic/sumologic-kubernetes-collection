@@ -1,0 +1,76 @@
+{
+    "apiVersion": "extensions/v1beta1",
+    "kind": "ReplicaSet",
+    "metadata": {
+        "annotations": {
+            "deployment.kubernetes.io/desired-replicas": "1",
+            "deployment.kubernetes.io/max-replicas": "2",
+            "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2019-05-16T20:20:52Z",
+        "generation": 1,
+        "labels": {
+            "pod-template-hash": "1691804713",
+            "run": "curl-byi"
+        },
+        "name": "curl-byi-5bf5d48c57",
+        "namespace": "sumologic",
+        "ownerReferences": [
+            {
+                "apiVersion": "extensions/v1beta1",
+                "blockOwnerDeletion": true,
+                "controller": true,
+                "kind": "Deployment",
+                "name": "curl-byi",
+                "uid": "1a1658f9-7818-11e9-90f1-02324f7e0d1e"
+            }
+        ],
+        "resourceVersion": "1374471",
+        "selfLink": "/apis/extensions/v1beta1/namespaces/sumologic/replicasets/curl-byi-5bf5d48c57",
+        "uid": "1a1a368a-7818-11e9-90f1-02324f7e0d1e"
+    },
+    "spec": {
+        "replicas": 1,
+        "selector": {
+            "matchLabels": {
+                "pod-template-hash": "1691804713",
+                "run": "curl-byi"
+            }
+        },
+        "template": {
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "pod-template-hash": "1691804713",
+                    "run": "curl-byi"
+                }
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "image": "radial/busyboxplus:curl",
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "curl-byi",
+                        "resources": {},
+                        "stdin": true,
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "tty": true
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 30
+            }
+        }
+    },
+    "status": {
+        "availableReplicas": 1,
+        "fullyLabeledReplicas": 1,
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1
+    }
+}

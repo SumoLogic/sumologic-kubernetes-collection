@@ -19,15 +19,18 @@ metadata:
   labels:
     k8s-app: fluentd-sumologic
 rules:
-- apiGroups: [""]
+- apiGroups: ["", "apps", "extensions", "events.k8s.io"]
   resources:
-  - nodes
-  - namespaces
+  - configmaps
+  - daemonsets
+  - deployments
   - events
+  - namespaces
+  - nodes
   - pods
   - replicasets
+  - services
   - statefulsets
-  - deployments
   verbs: ["get", "list", "watch"]
 ---
 apiVersion: v1
@@ -71,6 +74,9 @@ data:
         tag ${tag}.$1
       </rule>
     </match>
+    <filter prometheus.datapoint**>
+      @type enhance_k8s_metadata
+    </filter>
     <filter prometheus.datapoint**>
       @type prometheus_format
       relabel container_name:container,pod_name:pod
