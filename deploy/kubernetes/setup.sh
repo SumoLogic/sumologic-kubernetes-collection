@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -x
 
 usage() {
   echo
@@ -58,6 +59,7 @@ do
  in
  c) COLLECTOR_NAME=${OPTARG};;
  k) CLUSTER_NAME=${OPTARG};;
+ n) NAMESPACE=${OPTARG};;
  esac
 done
 shift "$(($OPTIND -1))"
@@ -65,11 +67,30 @@ shift "$(($OPTIND -1))"
 TIME=`timestamp`;
 
 if [ -z $COLLECTOR_NAME ]; then
-  COLLECTOR_NAME="kubernetes-$TIME";
+  if [ -z $SUMO_COLLECTOR_NAME ]; 
+  then
+    COLLECTOR_NAME="kubernetes-$TIME";
+  else
+    COLLECTOR_NAME=$SUMO_COLLECTOR_NAME;
+  fi
 fi
 
 if [ -z $CLUSTER_NAME ]; then
-  CLUSTER_NAME="kubernetes-$TIME";
+  if [ -z $KUBERNETES_CLUSTER_NAME ]
+  then
+    CLUSTER_NAME="kubernetes-$TIME";
+  else
+    CLUSTER_NAME=$KUBERNETES_CLUSTER_NAME
+  fi
+fi
+
+if [ -z $NAMESPACE]; then
+  if [ -z $SUMO_NAMESPACE ]
+  then
+    NAMESPACE="sumo"
+  else
+    NAMESPACE=$SUMO_NAMESPACE
+  fi
 fi
 
 if [ -n "$1" ]; then
@@ -97,23 +118,23 @@ else
 fi
 
 set +e
-kubectl describe namespace sumologic &>/dev/null
+kubectl describe namespace $NAMESPACE &>/dev/null
 retVal=$?
 set -e
 if [ $retVal -ne 0 ]; then
-  echo "Creating namespace 'sumologic'..."
-  kubectl create namespace sumologic
+  echo "Creating namespace '$NAMESPACE'..."
+  kubectl create namespace $NAMESPACE
 else
   echo "Namespace 'sumologic' exists, skip creating."
 fi
 
 set +e
-echo "Creating secret 'sumologic'..."
-kubectl -n sumologic describe secret sumologic &>/dev/null
+echo "Checking for secret 'sumologic'..."
+kubectl -n $NAMESPACE describe secret sumologic &>/dev/null
 retVal=$?
 set -e
 if [ $retVal -eq 0 ]; then
-  echo "Secret 'sumologic::sumologic' exists, abort."
+  echo "Secret '${NAMESPACE}::sumologic' exists, abort."
   exit -2;
 fi
 
@@ -150,7 +171,7 @@ SOURCE_URL=
 create_http_source events $COLLECTOR_ID
 ENDPOINT_EVENTS="$SOURCE_URL"
 
-kubectl -n sumologic create secret generic sumologic \
+kubectl -n $NAMESPACE create secret generic sumologic \
   --from-literal=endpoint-metrics=$ENDPOINT_METRICS \
   --from-literal=endpoint-metrics-apiserver=$ENDPOINT_METRICS_APISERVER \
   --from-literal=endpoint-metrics-kube-controller-manager=$ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER \
