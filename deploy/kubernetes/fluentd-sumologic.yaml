@@ -172,7 +172,7 @@ data:
         bearer_token_file "#{ENV['K8S_METADATA_FILTER_BEARER_TOKEN_FILE']}"
         cache_size "#{ENV['K8S_METADATA_FILTER_BEARER_CACHE_SIZE']}"
         cache_ttl "#{ENV['K8S_METADATA_FILTER_BEARER_CACHE_TTL']}"
-        tag_to_kubernetes_name_regexp 'containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
+        tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
         merge_json_log false
       </filter>
 
