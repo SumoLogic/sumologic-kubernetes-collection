@@ -32,6 +32,10 @@ rules:
   - services
   - statefulsets
   verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+    - configmaps
+  verbs: ["create", "update"]
 ---
 apiVersion: v1
 kind: ServiceAccount
