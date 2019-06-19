@@ -176,6 +176,11 @@ prometheus:
       - action: keep
         regex: node-exporter;node_filesystem_(?:avail|free|size)_bytes
         sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.node
+      writeRelabelConfigs:
+      - action: keep
+        regex: node-exporter;node_filesystem_(?:files)
+        sourceLabels: [job, __name__]
     # prometheus operator rules
     - url: http://fluentd:9888/prometheus.metrics.operator.rule
       writeRelabelConfigs:
