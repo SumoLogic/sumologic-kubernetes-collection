@@ -348,13 +348,21 @@ kubectl describe pods POD_NAME
 kubectl logs fluentd-xxxxxxxxx-xxxxx -f
 ```
 
-To enable more detailed debug and/or trace logs from Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section:
+To enable more detailed debug and/or trace logs from all of Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section:
 ```
 <system>
-  log_level trace # or debug
+  log_level debug # or trace
 </system>
 ```
-After which you'll begin to see the relevant logs.
+
+To enable more detailed debug and/or trace logs from a specific Fluentd plugin, similarly add the following option to the plugin's `.conf` section:
+```
+<match **>
+  @type sumologic
+  @log_level debug # or trace
+  ...
+</match>
+```
 
 #### Pod stuck in `ContainerCreating` state
 
@@ -366,7 +374,7 @@ you have an unhealthy node. Killing the node should resolve this issue.
 
 #### [Metrics] Prometheus Logs
 
-To enable Prometheus logging:
+To view Prometheus logs:
 ```
 kubectl logs prometheus-prometheus-operator-prometheus-0 prometheus -f
 ```
