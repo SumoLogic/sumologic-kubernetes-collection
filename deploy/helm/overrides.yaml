@@ -146,7 +146,7 @@ prometheus:
         regex: POD
         sourceLabels: [container_name]
       - action: keep
-        regex: kubelet;container_network_(?:receive|transmit)_(?:bytes|errors)_total
+        regex: kubelet;container_network_(?:receive|transmit)_(?:bytes|errors|packets_dropped)_total
         sourceLabels: [job, __name__]
     # node exporter metrics
     - url: http://fluentd:9888/prometheus.metrics.node
