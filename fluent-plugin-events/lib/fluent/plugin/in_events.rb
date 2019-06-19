@@ -78,11 +78,11 @@ module Fluent
           # Periodically restart watcher connection by checking if enough time has passed since 
           # last time watcher thread was recreated or if the watcher thread has been stopped.
           now = Time.now.to_i
-          if now - last_recreated >= @watch_interval_seconds ||
-            (Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count < 1)
+          watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
+          if now - last_recreated >= @watch_interval_seconds || !watcher_exists
             
-            log.debug "Recreating watcher thread. Use resource version from latest snapshot unless it's the first time"
-            pull_resource_version if @watcher_id
+            log.debug "Recreating watcher thread. Use resource version from latest snapshot if watcher is running"
+            pull_resource_version if watcher_exists
             @watch_stream.finish if @watch_stream
 
             start_watcher_thread
