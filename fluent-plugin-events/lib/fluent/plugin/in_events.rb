@@ -131,19 +131,19 @@ module Fluent
         end
       end
 
-      def create_config_maps
+      def create_config_map
         @resource_version = 0
         @configmap.data = { "resource-version": "#{@resource_version}" }
-        @client.public_send("create_config_map", @configmap).tap do |maps|
-          log.debug "Created config maps: #{maps}"
+        @client.public_send("create_config_map", @configmap).tap do |map|
+          log.debug "Created config map: #{map}"
         end
       end
 
       def update_config_map
         pull_resource_version
         @configmap.data = { "resource-version": "#{@resource_version}"}
-        @client.public_send("update_config_map", @configmap).tap do |maps|
-          log.debug "Updated config maps: #{maps}"
+        @client.public_send("update_config_map", @configmap).tap do |map|
+          log.debug "Updated config map: #{map}"
         end
       end
 
@@ -157,12 +157,12 @@ module Fluent
         # get or create the config map
         begin
           @client.public_send("get_config_map", "fluentd-config-resource-version", "sumologic").tap do |resource|
-            log.debug "Got config maps: #{resource}"
+            log.debug "Got config map: #{resource}"
             version = resource.data['resource-version']
             @resource_version = version.to_i if version
           end
         rescue Kubeclient::ResourceNotFoundError
-          create_config_maps
+          create_config_map
         end
       end
 
