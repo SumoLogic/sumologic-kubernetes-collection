@@ -43,7 +43,7 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics.state.pod
       writeRelabelConfigs:
       - action: keep
-        regex: kube-state-metrics;kube_pod_container_(?:info|resource_requests|resource_limits|status_ready|status_terminated_reason|status_waiting_reason)
+        regex: kube-state-metrics;kube_pod_container_(?:info|resource_requests|resource_limits|status_ready|status_terminated_reason|status_waiting_reason|status_restarts_total)
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.state.pod
       writeRelabelConfigs:
