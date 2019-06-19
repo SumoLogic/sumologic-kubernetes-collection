@@ -238,7 +238,7 @@ prometheus:
       - action: keep
         regex: up
         sourceLabels: [__name__]
-    # prometheus metrics
+    # prometheus remote write metrics
     - url: http://fluentd:9888/prometheus.metrics
       writeRelabelConfigs:
       - action: keep
