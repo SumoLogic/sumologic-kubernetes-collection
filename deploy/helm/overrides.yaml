@@ -123,6 +123,9 @@ prometheus:
       - action: keep
         regex: kubelet;container_spec_memory_(?:|swap|reservation)_limit_bytes
         sourceLabels: [job, __name__]
+      - action: keep
+        regex: kubelet;container_spec_cpu_(?:|quota|period)
+        sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
       - action: drop
