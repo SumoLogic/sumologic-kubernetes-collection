@@ -41,7 +41,7 @@ module Fluent
 
         @valid_types = ["ADDED", "MODIFIED", "DELETED"]
         raise Fluent::ConfigError, 'type_selector needs to be an array with maximum 3 elements: ADDED, MODIFIED and DELETED.' \
-          if @type_selector.length > 3 || !@type_selector.any? || !@type_selector.all? {|type| @valid_types.any? {|valid| valid.casecmp(type) == 0}}
+          if @type_selector.length > 3 || !@type_selector.any? || !@type_selector.all? {|type| @valid_types.any? {|valid| valid.casecmp?(type)}}
 
         normalize_param
         connect_kubernetes
@@ -120,7 +120,7 @@ module Fluent
             watcher.each do |entity|
               begin
                 entity = JSON.parse(entity)
-                router.emit tag, Fluent::Engine.now, entity if @type_selector.any? {|type| type.casecmp(entity['type']) == 0}
+                router.emit tag, Fluent::Engine.now, entity if @type_selector.any? {|type| type.casecmp?(entity['type'])}
                 rv = entity['object']['metadata']['resourceVersion']
               rescue => e
                 log.error "Got exception #{e} parsing entity #{entity}. Skipping."
