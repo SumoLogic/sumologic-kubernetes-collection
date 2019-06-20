@@ -40,8 +40,8 @@ module Fluent
         super
 
         @valid_types = ["ADDED", "MODIFIED", "DELETED"]
-        raise Fluent::ConfigError, 'type_selector needs to be an array with maximum 3 elements: ADDED, MODIFIED and DELETED.' \
-          if @type_selector.length > 3 || !@type_selector.any? || !@type_selector.all? {|type| @valid_types.any? {|valid| valid.casecmp?(type)}}
+        raise Fluent::ConfigError, "type_selector needs to be an array with maximum #{@valid_types.length} elements: #{@valid_types.join(", ")}." \
+          if @type_selector.length > @valid_types.length || !@type_selector.any? || !@type_selector.all? {|type| @valid_types.any? {|valid| valid.casecmp?(type)}}
 
         normalize_param
         connect_kubernetes
