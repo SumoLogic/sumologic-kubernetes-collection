@@ -15,6 +15,18 @@ end
 
 def stub_apis
   init_globals
+  stub_request(:any, %r{/api$})
+    .to_return(
+      'body' => {
+        'versions' => ['v1']
+      }.to_json
+    )
+  stub_request(:any, %r{/apis$})
+    .to_return(
+      'body' => {
+        'versions' => ['apps/v1', 'extensions/v1beta1']
+      }.to_json
+    )
   stub_request(:get, %r{/api/v1$})
     .to_return(body: test_resource('api_list_core_v1.json'), status: 200)
   stub_request(:get, %r{/apis/apps/v1$})
