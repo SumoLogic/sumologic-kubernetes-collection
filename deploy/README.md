@@ -267,7 +267,8 @@ This filter will:
 
 #### Filter events
 
-By default, the events plugin collects all events from all namespaces. You can filter the events collected by specifying  `namespace`, `label_selector` or `field_selector`. 
+
+By default, the events plugin collects all events from all namespaces. You can filter the events collected by specifying  `namespace`, `label_selector` or `field_selector`. You can also filter on the event type using `type_selector`. By default, we only collect `ADDED` and `MODIFIED` events. (`DELETED` events are ignored.) 
 
 Make your edits in the `<source>` stanza in the `fluentd-events-config` ConfigMap section of `fluentd-sumologic.yaml`. For example:
 
