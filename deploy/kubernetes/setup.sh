@@ -86,7 +86,7 @@ fi
 if [ -z $NAMESPACE]; then
   if [ -z $SUMO_NAMESPACE ]
   then
-    NAMESPACE="sumo"
+    NAMESPACE="sumologic"
   else
     NAMESPACE=$SUMO_NAMESPACE
   fi
