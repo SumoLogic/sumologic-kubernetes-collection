@@ -1,3 +1,4 @@
+require 'concurrent'
 require 'fluent/plugin/filter'
 
 module Fluent
@@ -9,6 +10,7 @@ module Fluent
       require_relative '../../sumologic/kubernetes/cache_strategy.rb'
 
       helpers :record_accessor
+      helpers :thread
       include SumoLogic::Kubernetes::Connector
       include SumoLogic::Kubernetes::Reader
       include SumoLogic::Kubernetes::CacheStrategy
@@ -42,6 +44,11 @@ module Fluent
         init_cache
         @in_namespace_ac = @in_namespace_path.map { |path| record_accessor_create(path) }
         @in_pod_ac = @in_pod_path.map { |path| record_accessor_create(path) }
+      end
+
+      def start
+        super
+        start_service_monitor
       end
 
       def filter(tag, time, record)
@@ -91,6 +98,107 @@ module Fluent
 
         @out_root = 'kubernetes' if @out_root.nil? || @out_root.empty?
         log.info "out_root: #{@out_root}"
+      end
+
+      def start_service_monitor
+        log.info "Starting watching for service changes"
+
+        @pods_to_services = Concurrent::Map.new
+        @watch_service_interval_seconds = 300
+        @configmap_update_interval_seconds = 10
+
+        last_recreated = Time.now.to_i
+        log.debug "last_recreated initialized to #{last_recreated}"
+
+        while true do
+          # Periodically restart watcher connection by checking if enough time has passed since 
+          # last time watcher thread was recreated or if the watcher thread has been stopped.
+          now = Time.now.to_i
+          watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
+          if now - last_recreated >= @watch_service_interval_seconds || !watcher_exists
+
+            log.debug "Recreating service watcher thread"
+            @watch_stream.finish if @watch_stream
+
+            start_service_watcher_thread
+            last_recreated = now
+            log.debug "last_recreated updated to #{last_recreated}"
+          end
+
+          sleep(@configmap_update_interval_seconds)
+        end
+      end
+
+      def start_service_watcher_thread
+        log.debug "Starting service endpoints watcher thread"
+        params = Hash.new
+        params[:as] = :raw
+        params[:resource_version] = get_current_service_snapshot_resource_version
+        params[:timeout_seconds] = @watch_service_interval_seconds + 60
+
+        @watcher = @clients['v1'].public_send("watch_endpoints", params).tap do |watcher|
+          thread_create(:"watch_endpoints") do
+            @watch_stream = watcher
+            @watcher_id = Thread.current.object_id
+            log.debug "New thread to watch service endpoints #{@watcher_id} from resource version #{params[:resource_version]}"
+
+            watcher.each do |entity|
+              begin
+                endpoint = JSON.parse(entity)['object']
+                service = endpoint['metadata']['name']
+                get_pods_for_service(endpoint).each do |pod|
+                  @pods_to_services[pod] = service
+                end
+              rescue => e
+                log.error "Got exception #{e} parsing entity #{entity}. Skipping."
+              end
+            end
+            log.info "Closing watch stream"
+          end
+        end
+      end
+
+      def get_current_service_snapshot_resource_version
+        log.debug "Getting current service snapshot"
+        begin
+          params = Hash.new
+          params[:as] = :raw
+          response = @clients['v1'].public_send "get_endpoints", params
+          result = JSON.parse(response)
+          result['items'].each do |endpoint|
+            service = endpoint['metadata']['name']
+            get_pods_for_service(endpoint).each do |pod|
+              @pods_to_services[pod] = service
+            end
+          end
+          result['metadata']['resourceVersion']
+        rescue => e
+          log.error "Got exception #{e} getting current service snapshot and corresponding resource version."
+          0
+        end
+      end
+
+      def get_pods_for_service(endpoint)
+        log.debug "Getting pods for service #{endpoint['metadata']['name']}"
+        pods = []
+        if endpoint.key? 'subsets'
+          endpoint['subsets'].each do |subset|
+            ['addresses', 'notReadyAddresses'].each do |key|
+              if subset.key? key
+                subset[key].each do |object|
+                  if object.key? 'targetRef'
+                    if object['targetRef']['kind'] == 'Pod'
+                      pod = object['targetRef']['name']
+                      log.debug "Found Pod: #{pod}"
+                      pods << pod
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+        pods
       end
     end
   end
