@@ -105,7 +105,6 @@ module Fluent
 
         @pods_to_services = Concurrent::Map.new
         @watch_service_interval_seconds = 300
-        @configmap_update_interval_seconds = 10
 
         last_recreated = Time.now.to_i
         log.debug "last_recreated initialized to #{last_recreated}"
@@ -125,7 +124,7 @@ module Fluent
             log.debug "last_recreated updated to #{last_recreated}"
           end
 
-          sleep(@configmap_update_interval_seconds)
+          sleep(10)
         end
       end
 
