@@ -103,7 +103,6 @@ module Fluent
       def start_service_monitor
         log.info "Starting watching for service changes"
 
-        @pods_to_services = Concurrent::Map.new
         @watch_service_interval_seconds = 300
 
         last_recreated = Time.now.to_i
@@ -123,7 +122,6 @@ module Fluent
             last_recreated = now
             log.debug "last_recreated updated to #{last_recreated}"
           end
-
           sleep(10)
         end
       end
@@ -141,13 +139,10 @@ module Fluent
             @watcher_id = Thread.current.object_id
             log.debug "New thread to watch service endpoints #{@watcher_id} from resource version #{params[:resource_version]}"
 
-            watcher.each do |entity|
+            watcher.each do |event|
               begin
-                endpoint = JSON.parse(entity)['object']
-                service = endpoint['metadata']['name']
-                get_pods_for_service(endpoint).each do |pod|
-                  @pods_to_services[pod] = service
-                end
+                event = JSON.parse(event)
+                handle_service_event(event)
               rescue => e
                 log.error "Got exception #{e} parsing entity #{entity}. Skipping."
               end
@@ -164,12 +159,14 @@ module Fluent
           params[:as] = :raw
           response = @clients['v1'].public_send "get_endpoints", params
           result = JSON.parse(response)
+          new_snapshot_pods_to_services = Concurrent::Map.new {|h, k| h[k] = []}
+
           result['items'].each do |endpoint|
             service = endpoint['metadata']['name']
-            get_pods_for_service(endpoint).each do |pod|
-              @pods_to_services[pod] = service
-            end
+            get_pods_for_service(endpoint).each {|pod| new_snapshot_pods_to_services[pod] << service}
           end
+
+          @pods_to_services = new_snapshot_pods_to_services
           result['metadata']['resourceVersion']
         rescue => e
           log.error "Got exception #{e} getting current service snapshot and corresponding resource version."
@@ -178,7 +175,6 @@ module Fluent
       end
 
       def get_pods_for_service(endpoint)
-        log.debug "Getting pods for service #{endpoint['metadata']['name']}"
         pods = []
         if endpoint.key? 'subsets'
           endpoint['subsets'].each do |subset|
@@ -188,7 +184,7 @@ module Fluent
                   if object.key? 'targetRef'
                     if object['targetRef']['kind'] == 'Pod'
                       pod = object['targetRef']['name']
-                      log.debug "Found Pod: #{pod}"
+                      log.debug "Found Pod #{pod} for Service #{endpoint['metadata']['name']}"
                       pods << pod
                     end
                   end
@@ -198,6 +194,28 @@ module Fluent
           end
         end
         pods
+      end
+
+      def handle_service_event(event)
+        type = event['type']
+        endpoint = event['object']
+        service = endpoint['metadata']['name']
+        case type
+        when 'ADDED'
+          get_pods_for_service(endpoint).each {|pod| @pods_to_services[pod] << service}
+        when 'MODIFIED'
+          desired_pods = get_pods_for_service(endpoint)
+          @pods_to_services.each do |pod, services|
+            if services.include? service
+              services.delete service unless desired_pods.include? pod
+            end
+          end
+          desired_pods.each {|pod| @pods_to_services[pod] |= [service]}
+        when 'DELETED'
+          get_pods_for_service(endpoint).each {|pod| @pods_to_services[pod].delete service}
+        else
+          log.error "Unknown type for watch endpoint event #{type}"
+        end
       end
     end
   end
