@@ -8,6 +8,9 @@ backend:
     tls_debug: 1
     shared_key:
 
+metrics:
+  enabled: true
+
 trackOffsets: true
 
 tolerations:
