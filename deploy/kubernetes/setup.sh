@@ -52,7 +52,7 @@ create_http_source()
   echo "Source was created(id=$SOURCE_ID, name=$SOURCE_NAME)."
 }
 
-while getopts c:k: option
+while getopts c:k:n: option
 do
  case "${option}"
  in
