@@ -85,6 +85,8 @@ The parameters for collector name, cluster name and namespace may also be passed
 * __KUBERNETES_CLUSTER_NAME__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
 * __SUMO_NAMESPACE__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namesapce will default to `sumologic`
 
+__Note:__ The script will generate a YAML file (`sumologic-collection.yaml`) with all the deployed Kuberentes resources on disk. Save this file for easy teardown and redeploy of the resources.
+
 ### Manual Source Creation and Setup
 
 This is a manual alternative approach to the automatic script if you don't have API access or need customized configuration, such as reusing an existing collector.
