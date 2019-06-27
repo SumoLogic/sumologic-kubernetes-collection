@@ -165,7 +165,7 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics.node
       writeRelabelConfigs:
       - action: keep
-        regex: node-exporter;node_memory_(?:MemAvailable|MemTotal|Buffers|SwapCached|Cached|Free)_bytes
+        regex: node-exporter;node_memory_(?:MemAvailable|MemTotal|Buffers|SwapCached|Cached|MemFree|SwapFree)_bytes
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.node
       writeRelabelConfigs:
