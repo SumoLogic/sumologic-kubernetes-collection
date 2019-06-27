@@ -33,6 +33,8 @@ def stub_apis
     .to_return(body: test_resource('api_list_apps_v1.json'), status: 200)
   stub_request(:get, %r{/apis/extensions/v1beta1$})
     .to_return(body: test_resource('api_list_extensions_v1beta1.json'), status: 200)
+  stub_request(:get, %r{/api/v1/endpoints$})
+    .to_return(body: test_resource('endpoints_list.json'), status: 200)
   stub_request(:get, %r{/api/v1/namespaces/sumologic/pods})
     .to_return(body: test_resource('pod_sumologic.json'), status: 200)
   stub_request(:get, %r{/apis/extensions/v1beta1/namespaces/sumologic/replicasets})
