@@ -185,6 +185,6 @@ echo "Applying deployment 'fluentd'..."
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/$NAMESPACE/g" | \
 tee fluentd-sumologic.yaml | \
-kubectl -n $NAMESPACE apply -f fluentd-sumologic.yaml
+kubectl -n $NAMESPACE apply -f -
 
 echo "Done."
