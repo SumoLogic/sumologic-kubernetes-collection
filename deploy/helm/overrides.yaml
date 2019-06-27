@@ -54,7 +54,7 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics.controller-manager
       writeRelabelConfigs:
       - action: keep
-        regex: kube-controller-manager;cloudprovider_.*_api_request_duration_seconds.*
+        regex: kubelet;cloudprovider_.*_api_request_duration_seconds.*
         sourceLabels: [job, __name__]
     # scheduler metrics
     - url: http://fluentd:9888/prometheus.metrics.scheduler
