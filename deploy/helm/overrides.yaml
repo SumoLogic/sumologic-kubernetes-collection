@@ -121,11 +121,16 @@ prometheus:
         regex: POD
         sourceLabels: [container_name]
       - action: keep
-        regex: kubelet;container_spec_memory_limit_bytes
+        regex: kubelet;container_spec_memory_(?:|swap_|reservation_)limit_bytes
         sourceLabels: [job, __name__]
-      - action: keep
-        regex: kubelet;container_spec_memory_(?:swap|reservation)_limit_bytes
-        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.container
+      writeRelabelConfigs:
+      - action: drop
+        regex: POD
+        sourceLabels: [container]
+      - action: drop
+        regex: POD
+        sourceLabels: [container_name]
       - action: keep
         regex: kubelet;container_spec_cpu_(?:|quota|period)
         sourceLabels: [job, __name__]
