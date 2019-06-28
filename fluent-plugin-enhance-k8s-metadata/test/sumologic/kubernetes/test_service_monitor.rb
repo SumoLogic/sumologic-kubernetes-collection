@@ -51,4 +51,26 @@ class ServiceMonitorTest < Test::Unit::TestCase
       expected = ['fluentd-59d9c9656d-cg5m4', 'fluentd-59d9c9656d-5pwjg', 'fluentd-59d9c9656d-zlhjh']
     end
   end
+
+  sub_test_case 'get_current_service_snapshot_resource_version' do
+    test 'get_current_service_snapshot_resource_version' do
+      resource_version = get_current_service_snapshot_resource_version
+      assert_equal "123456789", resource_version
+
+      expected = {
+        "kube-dns-6b4f4b544c-gzl2r": ["kube-dns"],
+        "kube-dns-6b4f4b544c-98jxv": ["kube-dns"],
+        "tiller-deploy-69458576b-27mp8": ["tiller-deploy"],
+        "fluentd-59d9c9656d-cg5m4": ["fluentd"],
+        "fluentd-59d9c9656d-5pwjg": ["fluentd"],
+        "fluentd-59d9c9656d-zlhjh": ["fluentd"]
+      }
+
+      @pods_to_services.each do |k,v|
+        assert_equal expected[k.to_sym], v
+      end
+
+      assert_equal 6, expected.keys.length
+    end
+  end
 end
