@@ -29,6 +29,19 @@ class ServiceMonitorTest < Test::Unit::TestCase
     JSON.parse(File.read("test/resources/endpoints_events.json"))['items']
   end
 
+  def populate_current_state(current_state)
+    current_state.each do |k,v|
+      @pods_to_services[k.to_s] = v
+    end
+  end
+
+  def assert_expected_state(expected)
+    assert_equal expected.keys.length, @pods_to_services.keys.length
+    @pods_to_services.each do |k,v|
+      assert_equal expected[k.to_sym], v
+    end
+  end
+
   sub_test_case 'get_pods_for_service' do
     test 'endpoint with no subsets' do
       input = get_test_endpoint[1]
@@ -70,10 +83,7 @@ class ServiceMonitorTest < Test::Unit::TestCase
         "fluentd-59d9c9656d-5pwjg": ["fluentd"],
         "fluentd-59d9c9656d-zlhjh": ["fluentd"]
       }
-      assert_equal expected.keys.length, @pods_to_services.keys.length
-      @pods_to_services.each do |k,v|
-        assert_equal expected[k.to_sym], v
-      end
+      assert_expected_state(expected)
     end
   end
 
@@ -94,10 +104,7 @@ class ServiceMonitorTest < Test::Unit::TestCase
         "fluentd-59d9c9656d-nvhkg": ["fluentd"],
         "fluentd-events-76c68bc596-5clcp": ["fluentd"]
       }
-      assert_equal expected.keys.length, @pods_to_services.keys.length
-      @pods_to_services.each do |k,v|
-        assert_equal expected[k.to_sym], v
-      end
+      assert_expected_state(expected)
     end
 
     test 'ADDED event with existing service on existing pods' do # shouldn't happen but check anyway
@@ -107,17 +114,12 @@ class ServiceMonitorTest < Test::Unit::TestCase
         "fluentd-59d9c9656d-nvhkg": ["fluentd"],
         "fluentd-events-76c68bc596-5clcp": ["fluentd"]
       }
-      current_state.each do |k,v|
-        @pods_to_services[k.to_s] = v
-      end
+      populate_current_state(current_state)
 
       event = get_test_endpoint_event[1]
       handle_service_event(event)
       expected = current_state
-      assert_equal expected.keys.length, @pods_to_services.keys.length
-      @pods_to_services.each do |k,v|
-        assert_equal expected[k.to_sym], v
-      end
+      assert_expected_state(expected)
     end
 
     test 'ADDED event with new service on existing pods' do
@@ -127,9 +129,7 @@ class ServiceMonitorTest < Test::Unit::TestCase
         "fluentd-59d9c9656d-nvhkg": ["fluentd"],
         "fluentd-events-76c68bc596-5clcp": ["fluentd"]
       }
-      current_state.each do |k,v|
-        @pods_to_services[k.to_s] = v
-      end
+      populate_current_state(current_state)
 
       event = get_test_endpoint_event[2]
       handle_service_event(event)
@@ -139,10 +139,7 @@ class ServiceMonitorTest < Test::Unit::TestCase
         "fluentd-59d9c9656d-nvhkg": ["fluentd", "fluentd-2"],
         "fluentd-events-76c68bc596-5clcp": ["fluentd", "fluentd-2"]
       }
-      assert_equal expected.keys.length, @pods_to_services.keys.length
-      @pods_to_services.each do |k,v|
-        assert_equal expected[k.to_sym], v
-      end
+      assert_expected_state(expected)
     end
   end
 end
