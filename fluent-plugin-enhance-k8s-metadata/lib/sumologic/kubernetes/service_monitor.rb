@@ -111,12 +111,13 @@ module SumoLogic
           get_pods_for_service(endpoint).each {|pod| @pods_to_services[pod] << service unless @pods_to_services[pod].include? service}
         when 'MODIFIED'
           desired_pods = get_pods_for_service(endpoint)
+          desired_pods.each {|pod| @pods_to_services[pod] |= [service]}
           @pods_to_services.each do |pod, services|
             if services.include? service
               services.delete service unless desired_pods.include? pod
             end
+            @pods_to_services.delete pod if services.length == 0
           end
-          desired_pods.each {|pod| @pods_to_services[pod] |= [service]}
         when 'DELETED'
           get_pods_for_service(endpoint).each {|pod| @pods_to_services[pod].delete service}
         else
