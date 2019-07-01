@@ -10,6 +10,7 @@ class ServiceMonitorTest < Test::Unit::TestCase
     # runs before each test
     stub_apis
     connect_kubernetes
+    @pods_to_services = Concurrent::Map.new {|h, k| h[k] = []}
   end
 
   def teardown
@@ -22,6 +23,10 @@ class ServiceMonitorTest < Test::Unit::TestCase
 
   def get_test_endpoint
     JSON.parse(File.read("test/resources/endpoints_list.json"))['items']
+  end
+
+  def get_test_endpoint_event
+    JSON.parse(File.read("test/resources/endpoints_events.json"))['items']
   end
 
   sub_test_case 'get_pods_for_service' do
@@ -64,6 +69,75 @@ class ServiceMonitorTest < Test::Unit::TestCase
         "fluentd-59d9c9656d-cg5m4": ["fluentd"],
         "fluentd-59d9c9656d-5pwjg": ["fluentd"],
         "fluentd-59d9c9656d-zlhjh": ["fluentd"]
+      }
+      assert_equal expected.keys.length, @pods_to_services.keys.length
+      @pods_to_services.each do |k,v|
+        assert_equal expected[k.to_sym], v
+      end
+    end
+  end
+
+  sub_test_case 'handle_service_event' do
+    test 'ADDED event with no pods' do
+      event = get_test_endpoint_event[0]
+      handle_service_event(event)
+      assert_equal 0, @pods_to_services.keys.length
+    end
+
+    test 'ADDED event with new pods' do
+      event = get_test_endpoint_event[1]
+      handle_service_event(event)
+
+      expected = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      assert_equal expected.keys.length, @pods_to_services.keys.length
+      @pods_to_services.each do |k,v|
+        assert_equal expected[k.to_sym], v
+      end
+    end
+
+    test 'ADDED event with existing service on existing pods' do # shouldn't happen but check anyway
+      current_state = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      current_state.each do |k,v|
+        @pods_to_services[k.to_s] = v
+      end
+
+      event = get_test_endpoint_event[1]
+      handle_service_event(event)
+      expected = current_state
+      assert_equal expected.keys.length, @pods_to_services.keys.length
+      @pods_to_services.each do |k,v|
+        assert_equal expected[k.to_sym], v
+      end
+    end
+
+    test 'ADDED event with new service on existing pods' do
+      current_state = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      current_state.each do |k,v|
+        @pods_to_services[k.to_s] = v
+      end
+
+      event = get_test_endpoint_event[2]
+      handle_service_event(event)
+      expected = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd", "fluentd-2"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd", "fluentd-2"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd", "fluentd-2"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd", "fluentd-2"]
       }
       assert_equal expected.keys.length, @pods_to_services.keys.length
       @pods_to_services.each do |k,v|
