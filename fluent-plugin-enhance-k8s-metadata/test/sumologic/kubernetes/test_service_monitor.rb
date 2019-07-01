@@ -65,12 +65,10 @@ class ServiceMonitorTest < Test::Unit::TestCase
         "fluentd-59d9c9656d-5pwjg": ["fluentd"],
         "fluentd-59d9c9656d-zlhjh": ["fluentd"]
       }
-
+      assert_equal expected.keys.length, @pods_to_services.keys.length
       @pods_to_services.each do |k,v|
         assert_equal expected[k.to_sym], v
       end
-
-      assert_equal 6, expected.keys.length
     end
   end
 end
