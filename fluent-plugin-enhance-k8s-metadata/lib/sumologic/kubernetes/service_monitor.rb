@@ -108,7 +108,7 @@ module SumoLogic
         service = endpoint['metadata']['name']
         case type
         when 'ADDED'
-          get_pods_for_service(endpoint).each {|pod| @pods_to_services[pod] << service}
+          get_pods_for_service(endpoint).each {|pod| @pods_to_services[pod] << service unless @pods_to_services[pod].include? service}
         when 'MODIFIED'
           desired_pods = get_pods_for_service(endpoint)
           @pods_to_services.each do |pod, services|
