@@ -292,8 +292,23 @@ spec:
   - port: web
   ```
   
-Replace the `name` with a name that relates to your service, and a `matchLabels` that would match the pods you want this service monitor to scrape against. While it will always scrape the `/metrics` endpoint, you can use the `port` field to configure which port gets scraped.
-  
+Replace the `name` with a name that relates to your service, and a `matchLabels` that would match the pods you want this service monitor to scrape against. By default, prometheus attempts to scrape metrics off of the `/metrics` endpoint, but if you do need to use a different url, you can override it by providing a `path` attribute in the settings like so:
+
+```
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: prometheus-operator-kubelet
+  name: prometheus-operator-kubelet
+  namespace: sumologic
+spec:
+  endpoints:
+  - path: /metrics/cadvisor
+    port: https-metrics
+...
+```
+Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
 #### Step 3: Update the overrides.yaml file to forward the metrics to Sumo.
