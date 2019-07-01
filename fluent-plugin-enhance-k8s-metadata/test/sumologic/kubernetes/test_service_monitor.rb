@@ -213,7 +213,7 @@ class ServiceMonitorTest < Test::Unit::TestCase
       assert_expected_state(expected)
     end
 
-    test 'MODIFIED event with increased replicas multiple service' do
+    test 'MODIFIED event with increased replicas new service' do
       current_state = {
         "fluentd-59d9c9656d-gvhxz": ["fluentd-2"],
         "fluentd-59d9c9656d-rtp7d": ["fluentd-2"],
@@ -253,6 +253,49 @@ class ServiceMonitorTest < Test::Unit::TestCase
       expected = {
         "fluentd-59d9c9656d-gvhxz": ["fluentd"],
         "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      assert_expected_state(expected)
+    end
+
+    test 'DELETED event only one service' do
+      current_state = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd-2"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd-2"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd-2"],
+        "fluentd-59d9c9656d-z8hxn": ["fluentd-2"],
+        "fluentd-59d9c9656d-drqph": ["fluentd-2"],
+        "fluentd-59d9c9656d-kfkkj": ["fluentd-2"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd-2"]
+      }
+      populate_current_state(current_state)
+
+      event = get_test_endpoint_event[7]
+      handle_service_event(event)
+      assert_equal 0, @pods_to_services.keys.length
+    end
+
+    test 'DELETED event 2nd service' do
+      current_state = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd-2", "fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd-2", "fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd-2", "fluentd"],
+        "fluentd-59d9c9656d-z8hxn": ["fluentd-2", "fluentd"],
+        "fluentd-59d9c9656d-drqph": ["fluentd-2", "fluentd"],
+        "fluentd-59d9c9656d-kfkkj": ["fluentd-2", "fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd-2", "fluentd"]
+      }
+      populate_current_state(current_state)
+
+      event = get_test_endpoint_event[7]
+      handle_service_event(event)
+      expected = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-59d9c9656d-z8hxn": ["fluentd"],
+        "fluentd-59d9c9656d-drqph": ["fluentd"],
+        "fluentd-59d9c9656d-kfkkj": ["fluentd"],
         "fluentd-events-76c68bc596-5clcp": ["fluentd"]
       }
       assert_expected_state(expected)

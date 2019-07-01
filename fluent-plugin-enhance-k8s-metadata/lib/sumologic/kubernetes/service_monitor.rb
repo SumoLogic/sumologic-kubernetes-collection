@@ -119,7 +119,10 @@ module SumoLogic
             @pods_to_services.delete pod if services.length == 0
           end
         when 'DELETED'
-          get_pods_for_service(endpoint).each {|pod| @pods_to_services[pod].delete service}
+          get_pods_for_service(endpoint).each do |pod|
+            @pods_to_services[pod].delete service
+            @pods_to_services.delete pod if @pods_to_services[pod].length == 0
+          end
         else
           log.error "Unknown type for watch endpoint event #{type}"
         end
