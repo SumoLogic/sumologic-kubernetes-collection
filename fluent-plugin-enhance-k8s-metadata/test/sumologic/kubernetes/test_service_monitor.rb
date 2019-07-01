@@ -141,5 +141,121 @@ class ServiceMonitorTest < Test::Unit::TestCase
       }
       assert_expected_state(expected)
     end
+
+    test 'MODIFIED event with no pods, empty hash' do
+      event = get_test_endpoint_event[3]
+      handle_service_event(event)
+      assert_equal 0, @pods_to_services.keys.length
+    end
+
+    test 'MODIFIED event with no pods, hash populated' do
+      current_state = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      populate_current_state(current_state)
+
+      event = get_test_endpoint_event[3]
+      handle_service_event(event)
+      expected = current_state
+      assert_expected_state(expected)
+    end
+
+    test 'MODIFIED event with ready and not ready pods that are already in hash' do
+      current_state = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      populate_current_state(current_state)
+
+      event = get_test_endpoint_event[4]
+      handle_service_event(event)
+      expected = current_state
+      assert_expected_state(expected)
+    end
+
+    test 'MODIFIED event with new ready and not ready pods' do
+      event = get_test_endpoint_event[4]
+      handle_service_event(event)
+      expected = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      assert_expected_state(expected)
+    end
+
+    test 'MODIFIED event with increased replicas' do
+      current_state = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      populate_current_state(current_state)
+
+      event = get_test_endpoint_event[5]
+      handle_service_event(event)
+      expected = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-59d9c9656d-z8hxn": ["fluentd"],
+        "fluentd-59d9c9656d-drqph": ["fluentd"],
+        "fluentd-59d9c9656d-kfkkj": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      assert_expected_state(expected)
+    end
+
+    test 'MODIFIED event with increased replicas multiple service' do
+      current_state = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd-2"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd-2"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd-2"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd-2"]
+      }
+      populate_current_state(current_state)
+
+      event = get_test_endpoint_event[5]
+      handle_service_event(event)
+      expected = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd-2", "fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd-2", "fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd-2", "fluentd"],
+        "fluentd-59d9c9656d-z8hxn": ["fluentd"],
+        "fluentd-59d9c9656d-drqph": ["fluentd"],
+        "fluentd-59d9c9656d-kfkkj": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd-2", "fluentd"]
+      }
+      assert_expected_state(expected)
+    end
+
+    test 'MODIFIED event with deleted replicas' do
+      current_state = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-rtp7d": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-59d9c9656d-z8hxn": ["fluentd"],
+        "fluentd-59d9c9656d-drqph": ["fluentd"],
+        "fluentd-59d9c9656d-kfkkj": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      populate_current_state(current_state)
+
+      event = get_test_endpoint_event[6]
+      handle_service_event(event)
+      expected = {
+        "fluentd-59d9c9656d-gvhxz": ["fluentd"],
+        "fluentd-59d9c9656d-nvhkg": ["fluentd"],
+        "fluentd-events-76c68bc596-5clcp": ["fluentd"]
+      }
+      assert_expected_state(expected)
+    end
   end
 end
