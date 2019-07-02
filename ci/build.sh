@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="${TRAVIS_TAG:=0.0.0}"
+VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
 : "${DOCKER_USERNAME:=sumodocker}"
@@ -41,7 +41,7 @@ cd ../..
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
-if [ -z "$DOCKER_PASSWORD" ] || [ "$TRAVIS_BRANCH" != "master" ]; then
+if [ -z "$DOCKER_PASSWORD" ] || [ -z "$TRAVIS_TAG" ]; then
     echo "Skip Docker pushing"
 else
     echo "Pushing docker image with $DOCKER_TAG:$VERSION and $DOCKER_TAG:latest..."
