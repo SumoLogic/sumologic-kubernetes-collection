@@ -3,15 +3,4 @@ services: docker
 before_install:
   - rm -f ./Gemfile.lock
   - gem install bundler
-
-jobs:
-  include:
-    - stage: build
-      script: ci/build.sh
-    - if: branch = master
-      stage: deploy
-      script:
-      - echo "Pushing docker image with $DOCKER_TAG:$VERSION and $DOCKER_TAG:latest..."
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker push $DOCKER_TAG:$VERSION
-      - docker push $DOCKER_TAG:latest
+script: ci/build.sh

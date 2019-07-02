@@ -41,4 +41,13 @@ cd ../..
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
+if [ -z "$DOCKER_PASSWORD" ] || [ "$TRAVIS_BRANCH" != "master" ]; then
+    echo "Skip Docker pushing"
+else
+    echo "Pushing docker image with $DOCKER_TAG:$VERSION and $DOCKER_TAG:latest..."
+    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    docker push $DOCKER_TAG:$VERSION
+    docker push $DOCKER_TAG:latest
+fi
+
 echo "DONE"
