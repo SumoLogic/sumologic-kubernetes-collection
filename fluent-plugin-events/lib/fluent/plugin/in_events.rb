@@ -36,6 +36,7 @@ module Fluent
       config_param :type_selector, :array, default: ["ADDED", "MODIFIED"], value_type: :string
       config_param :configmap_update_interval_seconds, :integer, default: 10
       config_param :watch_interval_seconds, :integer, default: 300
+      config_param :deploy_namespace, :string, default: "sumologic"
       
       def configure(conf)
         super
@@ -147,7 +148,7 @@ module Fluent
 
       def patch_config_map
         pull_resource_version
-        @client.public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @namespace).tap do |map|
+        @client.public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
           log.debug "Patched config map: #{map}"
         end
       end
@@ -157,12 +158,12 @@ module Fluent
         @configmap = ::Kubeclient::Resource.new
         @configmap.metadata = {
           name: "fluentd-config-resource-version",
-          namespace: @namespace
+          namespace: @deploy_namespace
         }
 
         # get or create the config map
         begin
-          @client.public_send("get_config_map", "fluentd-config-resource-version", @namespace).tap do |resource|
+          @client.public_send("get_config_map", "fluentd-config-resource-version", @deploy_namespace).tap do |resource|
             log.debug "Got config map: #{resource}"
             version = resource.data["resource-version-#{resource_name}"]
             @resource_version = version.to_i if version

@@ -373,7 +373,7 @@ data:
   events.conf: |-
     <source>
       @type events
-      namespace $NAMESPACE
+      deploy_namespace $NAMESPACE
     </source>
     <match kubernetes.**>
       @type sumologic
