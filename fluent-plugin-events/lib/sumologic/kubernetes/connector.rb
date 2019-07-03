@@ -9,7 +9,7 @@ module SumoLogic
   
         def connect_kubernetes
           @client = Kubeclient::Client.new(
-            @kubernetes_url, @apiVersion,
+            @kubernetes_url, @api_version,
             ssl_options: ssl_options,
             auth_options: auth_options
           )
