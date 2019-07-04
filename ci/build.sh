@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="${TRAVIS_TAG:=0.0.0}"
+VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
 : "${DOCKER_USERNAME:=sumodocker}"
