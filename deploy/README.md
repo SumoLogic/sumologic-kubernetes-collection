@@ -23,6 +23,7 @@ __NOTE__ This page describes preview software. If you have comments or issues, p
     * [Control how often the resource version is backed up](#control-how-often-the-resource-version-is-backed-up)
 * [Step 3: Deploy FluentBit](#step-3-deploy-fluentbit)
 * [Trim and relabel metrics](#trim-and-relabel-metrics)
+* [Custom metrics](#custom-metrics)
 * [Tear down](#tear-down)
 
 ### [Debugging the Kubernetes Collection Pipeline](#debugging-the-kubernetes-collection-pipeline-1)
@@ -81,9 +82,18 @@ __NOTE__ This script will be executed in bash and requires [jq command-line JSON
 
 * __-c collector-name__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
 * __-k cluster-name__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
+* __-n namespace__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace__ will default to `sumologic`
 * __api-endpoint__ - required. The API endpoint from [this page](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security).
 * __access-id__ - required. Sumo [access id](https://help.sumologic.com/Manage/Security/Access-Keys)
 * __access-key__ - required. Sumo [access key](https://help.sumologic.com/Manage/Security/Access-Keys)
+
+#### Environment variables
+The parameters for collector name, cluster name and namespace may also be passed in via environment variables instead of script arguments. If the script argument is supplied that trumps the environment variable.
+* __SUMO_COLLECTOR_NAME__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
+* __KUBERNETES_CLUSTER_NAME__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
+* __SUMO_NAMESPACE__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace__ will default to `sumologic`
+
+__Note:__ The script will generate a YAML file (`fluentd-sumologic.yaml`) with all the deployed Kuberentes resources on disk. Save this file for easy teardown and redeploy of the resources.
 
 ### Manual Source Creation and Setup
 
@@ -140,7 +150,9 @@ kubectl -n sumologic create secret generic sumologic \
 Apply `fluentd-sumologic.yaml` manifest with following command:
 
 ```sh
-kubectl apply -f https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+sed 's/\$NAMESPACE'"/sumologic/g" | \
+kubectl -n sumologic apply -f -
 ```
 
 The manifest will create the Kubernetes resources required by Fluentd.
@@ -263,6 +275,67 @@ This filter will:
 * Rename the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
 * Only apply to metrics with the `kube-system` namespace
 
+
+### Custom Metrics
+
+If you have custom metrics you'd like to send to Sumo via Prometheus, you just need to expose a `/metrics` endpoint in prometheus format, and instruct prometheus via a ServiceMonitor to pull data from the endpoint. In this section, we'll walk through collecting custom metrics with Prometheus.
+
+#### Step 1: Expose a `/metrics` endpoint on your service
+There are many pre-built libraries that the community has built to expose these, but really any output that aligns with the prometheus format can work. Here is a list of libraries: [Libraries](https://prometheus.io/docs/instrumenting/clientlibs). Manually verify that you have metrics exposed in Prometheus format by hitting the metrics endpoint, and verifying that the output follows the [Prometheus format](https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md).
+
+#### Step 2: Setup a service monitor so that Prometheus pulls the data
+
+Service Monitors is how we tell Prometheus what endpoints and sources to pull metrics from. To define a Service Monitor, create a yaml file on disk with information templated as follows:
+
+```
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: example-app
+  labels:
+    team: frontend
+spec:
+  selector:
+    matchLabels:
+      app: example-app
+  endpoints:
+  - port: web
+  ```
+  
+Replace the `name` with a name that relates to your service, and a `matchLabels` that would match the pods you want this service monitor to scrape against. By default, prometheus attempts to scrape metrics off of the `/metrics` endpoint, but if you do need to use a different url, you can override it by providing a `path` attribute in the settings like so:
+
+```
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: prometheus-operator-kubelet
+  name: prometheus-operator-kubelet
+  namespace: sumologic
+spec:
+  endpoints:
+  - path: /metrics/cadvisor
+    port: https-metrics
+...
+```
+Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
+Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
+
+#### Step 3: Update the overrides.yaml file to forward the metrics to Sumo.
+The overrides.yaml controls what metrics get forwarded on to Sumo Logic. In order to get your custom metrics sending into Sumo Logic, you need to update the `overrides.yaml` file to include a rule to forward on your custom metrics. Here is an example addition to the `overrides.yaml` that will forward metrics to Sumo:
+
+```
+- url: http://fluentd:9888/prometheus.metrics
+      writeRelabelConfigs:
+      - action: keep
+        regex: <YOUR_CUSTOM_MATCHER>
+        sourceLabels: [__name__]
+```
+
+After adding this to the `yaml`, go ahead and run a `helm upgrade prometheus-operator stable/prometheus-operator -f overrides.yaml` to upgrade your `prometheus-operator`.
+
+If all goes well, you should now have your custom metrics piping into Sumo Logic.
+
 ### Events
 
 #### Configurable fields for events
@@ -373,13 +446,21 @@ kubectl describe pods POD_NAME
 kubectl logs fluentd-xxxxxxxxx-xxxxx -f
 ```
 
-To enable more detailed debug and/or trace logs from Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section:
+To enable more detailed debug and/or trace logs from all of Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section:
 ```
 <system>
-  log_level trace # or debug
+  log_level debug # or trace
 </system>
 ```
-After which you'll begin to see the relevant logs.
+
+To enable more detailed debug and/or trace logs from a specific Fluentd plugin, similarly add the following option to the plugin's `.conf` section:
+```
+<match **>
+  @type sumologic
+  @log_level debug # or trace
+  ...
+</match>
+```
 
 #### Pod stuck in `ContainerCreating` state
 
@@ -391,7 +472,7 @@ you have an unhealthy node. Killing the node should resolve this issue.
 
 #### [Metrics] Prometheus Logs
 
-To enable Prometheus logging:
+To view Prometheus logs:
 ```
 kubectl logs prometheus-prometheus-operator-prometheus-0 prometheus -f
 ```

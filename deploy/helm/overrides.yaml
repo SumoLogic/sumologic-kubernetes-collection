@@ -43,7 +43,7 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics.state.pod
       writeRelabelConfigs:
       - action: keep
-        regex: kube-state-metrics;kube_pod_container_(?:info|resource_requests|resource_limits|status_ready|status_terminated_reason|status_waiting_reason)
+        regex: kube-state-metrics;kube_pod_container_(?:info|resource_requests|resource_limits|status_ready|status_terminated_reason|status_waiting_reason|status_restarts_total)
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.state.pod
       writeRelabelConfigs:
@@ -54,7 +54,7 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics.controller-manager
       writeRelabelConfigs:
       - action: keep
-        regex: kube-controller-manager;cloudprovider_.*_api_request_duration_seconds.*
+        regex: kubelet;cloudprovider_.*_api_request_duration_seconds.*
         sourceLabels: [job, __name__]
     # scheduler metrics
     - url: http://fluentd:9888/prometheus.metrics.scheduler
@@ -110,7 +110,7 @@ prometheus:
         regex: POD
         sourceLabels: [container_name]
       - action: keep
-        regex: kubelet;container_memory_(?:usage_bytes|memory_swap|working_set_bytes)
+        regex: kubelet;container_memory_(?:usage_bytes|swap|working_set_bytes)
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
@@ -121,7 +121,18 @@ prometheus:
         regex: POD
         sourceLabels: [container_name]
       - action: keep
-        regex: kubelet;container_spec_memory_(?:|swap|reservation)_limit_bytes
+        regex: kubelet;container_spec_memory_(?:|swap_|reservation_)limit_bytes
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.container
+      writeRelabelConfigs:
+      - action: drop
+        regex: POD
+        sourceLabels: [container]
+      - action: drop
+        regex: POD
+        sourceLabels: [container_name]
+      - action: keep
+        regex: kubelet;container_spec_cpu_(?:|quota|period)
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.container
       writeRelabelConfigs:
@@ -143,7 +154,7 @@ prometheus:
         regex: POD
         sourceLabels: [container_name]
       - action: keep
-        regex: kubelet;container_network_(?:receive|transmit)_(?:bytes|errors)_total
+        regex: kubelet;container_network_(?:receive|transmit)_(?:bytes|errors|packets_dropped)_total
         sourceLabels: [job, __name__]
     # node exporter metrics
     - url: http://fluentd:9888/prometheus.metrics.node
@@ -159,7 +170,7 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics.node
       writeRelabelConfigs:
       - action: keep
-        regex: node-exporter;node_memory_(?:MemAvailable|MemTotal|Buffers|SwapCached|Cached|Free)_bytes
+        regex: node-exporter;node_memory_(?:MemAvailable|MemTotal|Buffers|SwapCached|Cached|MemFree|SwapFree)_bytes
         sourceLabels: [job, __name__]
     - url: http://fluentd:9888/prometheus.metrics.node
       writeRelabelConfigs:
@@ -175,6 +186,11 @@ prometheus:
       writeRelabelConfigs:
       - action: keep
         regex: node-exporter;node_filesystem_(?:avail|free|size)_bytes
+        sourceLabels: [job, __name__]
+    - url: http://fluentd:9888/prometheus.metrics.node
+      writeRelabelConfigs:
+      - action: keep
+        regex: node-exporter;node_filesystem_(?:files)
         sourceLabels: [job, __name__]
     # prometheus operator rules
     - url: http://fluentd:9888/prometheus.metrics.operator.rule
@@ -237,4 +253,10 @@ prometheus:
       writeRelabelConfigs:
       - action: keep
         regex: up
+        sourceLabels: [__name__]
+    # prometheus remote write metrics
+    - url: http://fluentd:9888/prometheus.metrics
+      writeRelabelConfigs:
+      - action: keep
+        regex: 'prometheus_remote_storage_*'
         sourceLabels: [__name__]

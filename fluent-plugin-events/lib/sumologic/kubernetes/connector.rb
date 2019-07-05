@@ -9,7 +9,7 @@ module SumoLogic
   
         def connect_kubernetes
           @client = Kubeclient::Client.new(
-            @kubernetes_url, @apiVersion,
+            @kubernetes_url, @api_version,
             ssl_options: ssl_options,
             auth_options: auth_options
           )
@@ -42,7 +42,7 @@ module SumoLogic
             ssl_options[:client_key] = OpenSSL::PKey::RSA.new(File.read(@client_key))
           end
           ssl_options[:cert_store] = ssl_store if @ssl_partial_chain
-          log.info "ssl_options: #{ssl_options}"
+          log.debug "ssl_options: #{ssl_options}"
           ssl_options
         end
   
@@ -51,7 +51,7 @@ module SumoLogic
           if !@bearer_token_file.nil? && File.exist?(@bearer_token_file)
             auth_options[:bearer_token] = File.read(@bearer_token_file)
           end
-          log.info "auth_options: #{ssl_options}"
+          log.debug "auth_options: #{ssl_options}"
           auth_options
         end
       end

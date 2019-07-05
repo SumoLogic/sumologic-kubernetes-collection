@@ -5,8 +5,8 @@ metadata:
   name: fluentd
 subjects:
 - kind: ServiceAccount
+  namespace: $NAMESPACE
   name: fluentd
-  namespace: sumologic
 roleRef:
   kind: ClusterRole
   name: fluentd
@@ -19,22 +19,28 @@ metadata:
   labels:
     k8s-app: fluentd-sumologic
 rules:
-- apiGroups: [""]
+- apiGroups: ["", "apps", "extensions", "events.k8s.io"]
   resources:
-  - nodes
-  - namespaces
+  - configmaps
+  - daemonsets
+  - deployments
   - events
+  - namespaces
+  - nodes
   - pods
   - replicasets
+  - services
   - statefulsets
-  - deployments
   verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+    - configmaps
+  verbs: ["create", "update"]
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: fluentd
-  namespace: sumologic
   labels:
     k8s-app: fluentd-sumologic
 ---
@@ -42,11 +48,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: fluentd-config
-  namespace: sumologic
 data:
   fluent.conf: |-
     @include metrics.conf
-    @include events.conf
     @include logs.conf
   metrics.conf: |-
     <source>
@@ -72,6 +76,9 @@ data:
         tag ${tag}.$1
       </rule>
     </match>
+    <filter prometheus.datapoint**>
+      @type enhance_k8s_metadata
+    </filter>
     <filter prometheus.datapoint**>
       @type prometheus_format
       relabel container_name:container,pod_name:pod
@@ -125,15 +132,6 @@ data:
       metric_data_format prometheus
       disable_cookies true
     </match>
-  events.conf: |-
-    <source>
-      @type dummy
-      tag "dummy.events"
-      dummy {"hello":"world"}
-    </source>
-    <match "dummy.events">
-      @type null
-    </match>
   logs.conf: |-
     <source>
       @type forward
@@ -172,7 +170,7 @@ data:
         bearer_token_file "#{ENV['K8S_METADATA_FILTER_BEARER_TOKEN_FILE']}"
         cache_size "#{ENV['K8S_METADATA_FILTER_BEARER_CACHE_SIZE']}"
         cache_ttl "#{ENV['K8S_METADATA_FILTER_BEARER_CACHE_TTL']}"
-        tag_to_kubernetes_name_regexp 'containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
+        tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
         merge_json_log false
       </filter>
 
@@ -263,7 +261,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fluentd
-  namespace: sumologic
   labels:
     k8s-app: fluentd-sumologic
 spec:
@@ -291,11 +288,11 @@ spec:
         imagePullPolicy: Always
         resources:
           limits:
-            memory: 256Mi
-            cpu: "100m"
+            memory: 1Gi
+            cpu: 1
           requests:
-            memory: 256Mi
-            cpu: "100m"
+            memory: 768Mi
+            cpu: 0.5
         ports:
         - name: prom-write
           containerPort: 9888
@@ -367,10 +364,75 @@ spec:
               key: endpoint-logs
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-events-config
+data:
+  fluent.conf: |-
+    @include events.conf
+  events.conf: |-
+    <source>
+      @type events
+      deploy_namespace $NAMESPACE
+    </source>
+    <match kubernetes.**>
+      @type sumologic
+      endpoint "#{ENV['SUMO_ENDPOINT_EVENTS']}"
+      data_type logs
+      disable_cookies true
+    </match>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluentd-events
+  labels:
+    k8s-app: fluentd-sumologic
+spec:
+  selector:
+    matchLabels:
+      k8s-app: fluentd-sumologic
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd-sumologic
+    spec:
+      serviceAccountName: fluentd
+      volumes:
+      - name: pos-files
+        hostPath:
+          path: /var/run/fluentd-pos
+          type: ""
+      - name: config-volume
+        configMap:
+          name: fluentd-events-config
+      containers:
+      - name: fluentd-events
+        image: sumologic/kubernetes-fluentd
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: "100m"
+          requests:
+            memory: 256Mi
+            cpu: "100m"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /fluentd/etc/
+        - name: pos-files
+          mountPath: /mnt/pos/
+        env:
+        - name: SUMO_ENDPOINT_EVENTS
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-events
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: fluentd
-  namespace: sumologic
   labels:
     k8s-app: fluentd-sumologic
 spec:

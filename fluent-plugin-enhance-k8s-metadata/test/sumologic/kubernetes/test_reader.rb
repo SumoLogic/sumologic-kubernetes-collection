@@ -20,32 +20,34 @@ class ReaderTest < Test::Unit::TestCase
     Fluent::Test::TestLogger.new
   end
 
-  test 'fetch_pod is expected' do
-    pod = fetch_pod('sumologic', 'somepod')
+  test 'fetch_resource is expected' do
+    pod = fetch_resource('pods', 'somepod', 'sumologic')
     assert_not_nil pod
     assert_equal pod['apiVersion'], 'v1'
     assert_equal pod['kind'], 'Pod'
-  end
-
-  test 'extract_pod_labels is expected' do
-    pod = fetch_pod('sumologic', 'somepod')
-    assert_not_nil pod
-    labels = extract_pod_labels(pod)
+    labels = pod['metadata']['labels']
     assert_not_nil labels
     assert_equal labels['pod-template-hash'], '1691804713'
     assert_equal labels['run'], 'curl-byi'
   end
 
-  test 'fetch_pod_labels is expected' do
-    labels = fetch_pod_labels('sumologic', 'somepod')
-    assert_not_nil labels
-    assert_equal labels['pod-template-hash'], '1691804713'
-    assert_equal labels['run'], 'curl-byi'
+  test 'fetch_pod_metadata get labels' do
+    metadata = fetch_pod_metadata('sumologic', 'somepod')
+    assert_not_nil metadata
+    assert_equal metadata['pod']['labels']['pod-template-hash'], '1691804713'
+    assert_equal metadata['pod']['labels']['run'], 'curl-byi'
   end
 
-  test 'fetch_pod_labels return empty map if resource not found' do
-    labels = fetch_pod_labels('non-exist', 'somepod')
-    assert_not_nil labels
-    assert_equal labels.size, 0
+  test 'fetch_pod_metadata get owners' do
+    metadata = fetch_pod_metadata('kube-system', 'somepod')
+    assert_not_nil metadata
+    assert_equal metadata['replicaset']['name'], 'kube-dns-5fbcb4d67b'
+    assert_equal metadata['deployment']['name'], 'kube-dns'
+  end
+
+  test 'fetch_pod_metadata returns empty map if resource not found' do
+    metadata = fetch_pod_metadata('non-exist', 'somepod')
+    assert_not_nil metadata
+    assert_equal metadata.size, 0
   end
 end

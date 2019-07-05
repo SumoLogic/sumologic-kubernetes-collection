@@ -14,7 +14,7 @@ module Fluent
       
       # parameters for connecting to k8s api server
       config_param :kubernetes_url, :string, default: nil
-      config_param :apiVersion, :string, default: 'v1'
+      config_param :api_version, :string, default: 'v1'
       config_param :client_cert, :string, default: nil
       config_param :client_key, :string, default: nil
       config_param :ca_file, :string, default: nil
@@ -28,14 +28,23 @@ module Fluent
       config_param :ssl_partial_chain, :bool, default: false
       
       # parameters for events collection
+      config_param :resource_name, :string, default: "events"
       config_param :tag, :string, default: 'kubernetes.*'
       config_param :namespace, :string, default: nil
       config_param :label_selector, :string, default: nil
       config_param :field_selector, :string, default: nil
+      config_param :type_selector, :array, default: ["ADDED", "MODIFIED"], value_type: :string
       config_param :configmap_update_interval_seconds, :integer, default: 10
+      config_param :watch_interval_seconds, :integer, default: 300
+      config_param :deploy_namespace, :string, default: "sumologic"
       
       def configure(conf)
         super
+
+        @valid_types = ["ADDED", "MODIFIED", "DELETED"]
+        raise Fluent::ConfigError, "type_selector needs to be an array with maximum #{@valid_types.length} elements: #{@valid_types.join(", ")}." \
+          if @type_selector.length > @valid_types.length || !@type_selector.any? || !@type_selector.all? {|type| @valid_types.any? {|valid| valid.casecmp?(type)}}
+
         normalize_param
         connect_kubernetes
       end
@@ -43,90 +52,138 @@ module Fluent
       def start
         super
         initialize_resource_version
-        start_watcher_thread
-        start_configmap_flush_thread
+        start_monitor
       end
   
-      def close
-        @watcher.each &:finish
+      def stop
+        log.debug "Clean up before stopping completely"
+        patch_config_map
+        @watch_stream.finish if @watch_stream
         super
       end
 
-      def initialize_resource_version
-        # get or create the config map
-        begin
-          @client.public_send("get_config_map", "fluentd-config-resource-version", "sumologic").tap do |resource|
-            log.info "Get config maps: #{resource}"
-            version = resource.data['resource-version']
-            @resource_version = version if version
-          end
-        rescue Kubeclient::ResourceNotFoundError
-          create_config_maps
+      # Listen for SIGTERM but do not trap
+      def prepend_handler(signal, &handler)
+        previous = Signal.trap(signal) do
+          previous = -> { raise SignalException, signal} unless previous.respond_to?(:call)
+          handler.call(previous)
         end
       end
 
-      def create_config_maps
-        @resource_version = "0"
-        resource = ::Kubeclient::Resource.new
-        resource.metadata = {
-          name: "fluentd-config-resource-version",
-          namespace: "sumologic"
-        }
-        resource.data = { "resource-version": "#{@resource_version}" }
-        @client.public_send("create_config_map", resource).tap do |maps|
-          log.info "Created config maps: #{maps}"
+      def start_monitor
+        log.info "Starting events collection"
+
+        last_recreated = Time.now.to_i
+        log.debug "last_recreated initialized to #{last_recreated}"
+
+        interrupted = false
+        prepend_handler("TERM") do |old|
+          interrupted = true
+          old.call
+        end
+
+        while !interrupted do
+          # Periodically restart watcher connection by checking if enough time has passed since 
+          # last time watcher thread was recreated or if the watcher thread has been stopped.
+          now = Time.now.to_i
+          watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
+          if now - last_recreated >= @watch_interval_seconds || !watcher_exists
+            
+            log.debug "Recreating watcher thread. Use resource version from latest snapshot if watcher is running"
+            pull_resource_version if watcher_exists
+            @watch_stream.finish if @watch_stream
+
+            start_watcher_thread
+            last_recreated = now
+            log.debug "last_recreated updated to #{last_recreated}"
+          end
+
+          patch_config_map
+          sleep(@configmap_update_interval_seconds)
         end
       end
   
       def start_watcher_thread
+        log.debug "Starting watcher thread"
         params = Hash.new
         params[:as] = :raw
         params[:resource_version] = @resource_version
         params[:field_selector] = @field_selector
         params[:label_selector] = @label_selector
         params[:namespace] = @namespace
+        params[:timeout_seconds] = @watch_interval_seconds + 60
 
-        @watcher = @client.public_send("watch_events", params).tap do |watcher|
-          thread_create(:"watch_events") do
+        @watcher = @client.public_send("watch_#{resource_name}", params).tap do |watcher|
+          thread_create(:"watch_#{resource_name}") do
+            @watch_stream = watcher
+            @watcher_id = Thread.current.object_id
+            log.debug "New thread to watch #{resource_name} #{@watcher_id} from resource version #{params[:resource_version]}"
+
             watcher.each do |entity|
-              log.debug "Received new object from watching events"
-
               begin
                 entity = JSON.parse(entity)
-                router.emit tag, Fluent::Engine.now, entity
-                @resource_version = entity['object']['metadata']['resourceVersion']
+                router.emit tag, Fluent::Engine.now, entity if @type_selector.any? {|type| type.casecmp?(entity['type'])}
+                rv = entity['object']['metadata']['resourceVersion']
               rescue => e
                 log.error "Got exception #{e} parsing entity #{entity}. Skipping."
               end
 
-              if (!@resource_version)
-                @resource_version = 0
-                sleep(5)
-                start_watcher_thread
+              if (!rv)
+                log.error "Resource version #{rv} expired, waiting for stream to be recreated with more recent version."
                 break
               end
             end
+
+            log.debug "Closing watch stream"
           end
         end
       end
 
-      def start_configmap_flush_thread
-        thread_create(:"update_configmap") do
-          resource = ::Kubeclient::Resource.new
-          resource.metadata = {
-            name: "fluentd-config-resource-version",
-            namespace: "sumologic"
-          }
-          while true do
-            sleep(@configmap_update_interval_seconds)
-            resource.data = { "resource-version": "#{@resource_version}"}
-
-            # update the config map
-            @client.public_send("update_config_map", resource).tap do |maps|
-              log.debug "Updated config maps: #{maps}"
-            end
-          end
+      def create_config_map
+        @configmap.data = { "resource-version-#{resource_name}": "#{@resource_version}" }
+        @client.public_send("create_config_map", @configmap).tap do |map|
+          log.debug "Created config map: #{map}"
         end
+      end
+
+      def patch_config_map
+        pull_resource_version
+        @client.public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
+          log.debug "Patched config map: #{map}"
+        end
+      end
+
+      def initialize_resource_version
+        @resource_version = 0
+        @configmap = ::Kubeclient::Resource.new
+        @configmap.metadata = {
+          name: "fluentd-config-resource-version",
+          namespace: @deploy_namespace
+        }
+
+        # get or create the config map
+        begin
+          @client.public_send("get_config_map", "fluentd-config-resource-version", @deploy_namespace).tap do |resource|
+            log.debug "Got config map: #{resource}"
+            version = resource.data["resource-version-#{resource_name}"]
+            @resource_version = version.to_i if version
+          end
+        rescue Kubeclient::ResourceNotFoundError
+          create_config_map
+        end
+      end
+
+      def pull_resource_version
+        params = Hash.new
+        params[:as] = :raw
+        response = @client.public_send "get_#{resource_name}", params
+        result = JSON.parse(response)
+
+        resource_version = result.fetch('resourceVersion') do
+          result.fetch('metadata', {})['resourceVersion']
+        end
+
+        @resource_version = resource_version
       end
 
       def normalize_param
@@ -137,13 +194,13 @@ module Fluent
           env_port = ENV['KUBERNETES_SERVICE_PORT']
           @kubernetes_url = "https://#{env_host}:#{env_port}/api" unless env_host.nil? || env_port.nil?
         end
-        log.info "Kubernetes URL: '#{@kubernetes_url}'"
+        log.debug "Kubernetes URL: '#{@kubernetes_url}'"
 
         @ca_file = File.join(@secret_dir, K8_POD_CA_CERT) if @ca_file.nil?
-        log.info "ca_file: '#{@ca_file}', exist: #{File.exist?(@ca_file)}"
+        log.debug "ca_file: '#{@ca_file}', exist: #{File.exist?(@ca_file)}"
 
         @bearer_token_file = File.join(@secret_dir, K8_POD_TOKEN) if @bearer_token_file.nil?
-        log.info "bearer_token_file: '#{@bearer_token_file}', exist: #{File.exist?(@bearer_token_file)}"
+        log.debug "bearer_token_file: '#{@bearer_token_file}', exist: #{File.exist?(@bearer_token_file)}"
       end
     end
   end
