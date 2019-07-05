@@ -265,32 +265,19 @@ This filter will:
 
 ### Events
 
-#### Filter events
+#### Configurable fields for events
 
-
-By default, the events plugin collects all events from all namespaces. You can filter the events collected by specifying  `namespace`, `label_selector` or `field_selector`. You can also filter on the event type using `type_selector`. By default, we only collect `ADDED` and `MODIFIED` events. (`DELETED` events are ignored.) 
-
-Make your edits in the `<source>` stanza in the `fluentd-events-config` ConfigMap section of `fluentd-sumologic.yaml`. For example:
-
-```xml
-<source>
-  @type events
-  namespace my_namespace
-  label_selector my_label
-  field_selector my_field
-</source>
-```
-
-#### Control how often the resource version is backed up
-
-Resource version is used to resume events collection from where it was left off after a container/pod/node restart. The latest resource version of your events is kept in memory and backend up to a ConfigMap at an interval. By default, we back up the resource version by making a ConfigMap API call every 10 seconds. If you want to back up more frequently, reduce the interval. If you want to reduce the number of API calls, increase the interval. For example:
-
-```xml
-<source>
-  @type events
-  configmap_update_interval_seconds 5
-</source>
-```
+Parameter Name | Default |Description |
+------------ | ------------- | -------------
+resource_name | "events" | Collect events for a specific resource type. E.g. pods, deployments, services etc.
+tag | "kubernetes.*" | Tag collected events.
+namespace | nil | Collect events from a specific namespace.
+label_selector | nil | Collect events for resources matching a specific label.
+field_selector | nil | Collect events for resources matching a specific field.
+type_selector | ["ADDED", "MODIFIED"] | Collect specific event types. Currently supports "ADDED", "MODIFIED", and "DELETED".
+configmap_update_interval_seconds | 10 | Resource version is used to resume events collection from where it was left off after a container/pod/node restart. The latest resource version of your events is kept in memory and backend up to a ConfigMap at an interval. By default, we back up the resource version by making a ConfigMap API call every 10 seconds. If you want to back up more frequently, reduce the interval. If you want to reduce the number of API calls, increase the interval.
+watch_interval_seconds | 300 | Interval at which the watch thread gets recreated.
+deploy_namespace | "sumologic" | Namespace that the events plugin resources will be created in. 
 
 ## Step 3: Deploy FluentBit
 
