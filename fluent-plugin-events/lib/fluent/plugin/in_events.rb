@@ -14,7 +14,7 @@ module Fluent
       
       # parameters for connecting to k8s api server
       config_param :kubernetes_url, :string, default: nil
-      config_param :apiVersion, :string, default: 'v1'
+      config_param :api_version, :string, default: 'v1'
       config_param :client_cert, :string, default: nil
       config_param :client_key, :string, default: nil
       config_param :ca_file, :string, default: nil
@@ -28,6 +28,7 @@ module Fluent
       config_param :ssl_partial_chain, :bool, default: false
       
       # parameters for events collection
+      config_param :resource_name, :string, default: "events"
       config_param :tag, :string, default: 'kubernetes.*'
       config_param :namespace, :string, default: nil
       config_param :label_selector, :string, default: nil
@@ -35,6 +36,7 @@ module Fluent
       config_param :type_selector, :array, default: ["ADDED", "MODIFIED"], value_type: :string
       config_param :configmap_update_interval_seconds, :integer, default: 10
       config_param :watch_interval_seconds, :integer, default: 300
+      config_param :deploy_namespace, :string, default: "sumologic"
       
       def configure(conf)
         super
@@ -55,7 +57,7 @@ module Fluent
   
       def stop
         log.debug "Clean up before stopping completely"
-        update_config_map
+        patch_config_map
         @watch_stream.finish if @watch_stream
         super
       end
@@ -96,7 +98,7 @@ module Fluent
             log.debug "last_recreated updated to #{last_recreated}"
           end
 
-          update_config_map
+          patch_config_map
           sleep(@configmap_update_interval_seconds)
         end
       end
@@ -111,11 +113,11 @@ module Fluent
         params[:namespace] = @namespace
         params[:timeout_seconds] = @watch_interval_seconds + 60
 
-        @watcher = @client.public_send("watch_events", params).tap do |watcher|
-          thread_create(:"watch_events") do
+        @watcher = @client.public_send("watch_#{resource_name}", params).tap do |watcher|
+          thread_create(:"watch_#{resource_name}") do
             @watch_stream = watcher
             @watcher_id = Thread.current.object_id
-            log.debug "New thread to watch events #{@watcher_id} from resource version #{params[:resource_version]}"
+            log.debug "New thread to watch #{resource_name} #{@watcher_id} from resource version #{params[:resource_version]}"
 
             watcher.each do |entity|
               begin
@@ -138,33 +140,32 @@ module Fluent
       end
 
       def create_config_map
-        @resource_version = 0
-        @configmap.data = { "resource-version": "#{@resource_version}" }
+        @configmap.data = { "resource-version-#{resource_name}": "#{@resource_version}" }
         @client.public_send("create_config_map", @configmap).tap do |map|
           log.debug "Created config map: #{map}"
         end
       end
 
-      def update_config_map
+      def patch_config_map
         pull_resource_version
-        @configmap.data = { "resource-version": "#{@resource_version}"}
-        @client.public_send("update_config_map", @configmap).tap do |map|
-          log.debug "Updated config map: #{map}"
+        @client.public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
+          log.debug "Patched config map: #{map}"
         end
       end
 
       def initialize_resource_version
+        @resource_version = 0
         @configmap = ::Kubeclient::Resource.new
         @configmap.metadata = {
           name: "fluentd-config-resource-version",
-          namespace: "sumologic"
+          namespace: @deploy_namespace
         }
 
         # get or create the config map
         begin
-          @client.public_send("get_config_map", "fluentd-config-resource-version", "sumologic").tap do |resource|
+          @client.public_send("get_config_map", "fluentd-config-resource-version", @deploy_namespace).tap do |resource|
             log.debug "Got config map: #{resource}"
-            version = resource.data['resource-version']
+            version = resource.data["resource-version-#{resource_name}"]
             @resource_version = version.to_i if version
           end
         rescue Kubeclient::ResourceNotFoundError
@@ -175,7 +176,7 @@ module Fluent
       def pull_resource_version
         params = Hash.new
         params[:as] = :raw
-        response = @client.public_send "get_events", params
+        response = @client.public_send "get_#{resource_name}", params
         result = JSON.parse(response)
 
         resource_version = result.fetch('resourceVersion') do
