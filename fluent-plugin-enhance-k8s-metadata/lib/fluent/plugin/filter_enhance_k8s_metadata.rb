@@ -7,11 +7,14 @@ module Fluent
       Fluent::Plugin.register_filter('enhance_k8s_metadata', self)
 
       require_relative '../../sumologic/kubernetes/cache_strategy.rb'
+      require_relative '../../sumologic/kubernetes/service_monitor.rb'
 
       helpers :record_accessor
+      helpers :thread
       include SumoLogic::Kubernetes::Connector
       include SumoLogic::Kubernetes::Reader
       include SumoLogic::Kubernetes::CacheStrategy
+      include SumoLogic::Kubernetes::ServiceMonitor
 
       # parameters for read/write record
       config_param :in_namespace_path, :array, default: ['$.namespace']
@@ -42,6 +45,11 @@ module Fluent
         init_cache
         @in_namespace_ac = @in_namespace_path.map { |path| record_accessor_create(path) }
         @in_pod_ac = @in_pod_path.map { |path| record_accessor_create(path) }
+      end
+
+      def start
+        super
+        start_service_monitor
       end
 
       def filter(tag, time, record)

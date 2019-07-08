@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = test_files
   spec.require_paths = ['lib']
 
+  spec.add_runtime_dependency 'concurrent-ruby', '~> 1.1'
   spec.add_runtime_dependency 'fluentd', ['>= 0.14.10', '< 2']
   spec.add_runtime_dependency 'kubeclient', '~> 4.4.0'
   spec.add_runtime_dependency 'lru_redux', '~> 1.1.0'
