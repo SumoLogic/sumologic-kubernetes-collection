@@ -11,6 +11,7 @@ module Fluent
 
       helpers :record_accessor
       helpers :thread
+      helpers :timer
       include SumoLogic::Kubernetes::Connector
       include SumoLogic::Kubernetes::Reader
       include SumoLogic::Kubernetes::CacheStrategy

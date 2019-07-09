@@ -8,7 +8,7 @@ module Fluent
 
       require_relative '../../sumologic/kubernetes/connector.rb'
 
-      helpers :thread
+      helpers :thread, :timer
 
       include SumoLogic::Kubernetes::Connector
       
@@ -50,9 +50,15 @@ module Fluent
       end
 
       def start
+        log.info "Starting events collection for #{@resource_name}"
+        
         super
         initialize_resource_version
-        start_monitor
+        
+        @last_recreated = Time.now.to_i
+        log.debug "last_recreated initialized to #{@last_recreated}"
+
+        timer_execute(:"#{@resource_name}_monitor", @configmap_update_interval_seconds, &method(:start_monitor))
       end
   
       def stop
@@ -62,45 +68,21 @@ module Fluent
         super
       end
 
-      # Listen for SIGTERM but do not trap
-      def prepend_handler(signal, &handler)
-        previous = Signal.trap(signal) do
-          previous = -> { raise SignalException, signal} unless previous.respond_to?(:call)
-          handler.call(previous)
-        end
-      end
-
       def start_monitor
-        log.info "Starting events collection"
+        now = Time.now.to_i
+        watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
+        if now - @last_recreated >= @watch_interval_seconds || !watcher_exists
+          
+          log.debug "Recreating watcher thread. Use resource version from latest snapshot if watcher is running"
+          pull_resource_version if watcher_exists
+          @watch_stream.finish if @watch_stream
 
-        last_recreated = Time.now.to_i
-        log.debug "last_recreated initialized to #{last_recreated}"
-
-        interrupted = false
-        prepend_handler("TERM") do |old|
-          interrupted = true
-          old.call
+          start_watcher_thread
+          @last_recreated = now
+          log.debug "last_recreated updated to #{@last_recreated}"
         end
 
-        while !interrupted do
-          # Periodically restart watcher connection by checking if enough time has passed since 
-          # last time watcher thread was recreated or if the watcher thread has been stopped.
-          now = Time.now.to_i
-          watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
-          if now - last_recreated >= @watch_interval_seconds || !watcher_exists
-            
-            log.debug "Recreating watcher thread. Use resource version from latest snapshot if watcher is running"
-            pull_resource_version if watcher_exists
-            @watch_stream.finish if @watch_stream
-
-            start_watcher_thread
-            last_recreated = now
-            log.debug "last_recreated updated to #{last_recreated}"
-          end
-
-          patch_config_map
-          sleep(@configmap_update_interval_seconds)
-        end
+        patch_config_map
       end
   
       def start_watcher_thread
@@ -149,7 +131,7 @@ module Fluent
       def patch_config_map
         pull_resource_version
         @client.public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
-          log.debug "Patched config map: #{map}"
+          log.debug "Patched config map for #{@resource_name}: #{map}"
         end
       end
 
