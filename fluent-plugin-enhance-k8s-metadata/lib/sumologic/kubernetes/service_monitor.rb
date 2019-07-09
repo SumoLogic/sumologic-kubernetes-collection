@@ -11,24 +11,25 @@ module SumoLogic
 
         @watch_service_interval_seconds = 300
 
-        last_recreated = Time.now.to_i
-        log.debug "last_recreated initialized to #{last_recreated}"
+        @last_recreated = Time.now.to_i
+        log.debug "last_recreated initialized to #{@last_recreated}"
 
-        while true do
-          # Periodically restart watcher connection by checking if enough time has passed since 
-          # last time watcher thread was recreated or if the watcher thread has been stopped.
-          now = Time.now.to_i
-          watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
-          if now - last_recreated >= @watch_service_interval_seconds || !watcher_exists
+        timer_execute(:service_monitor, 10, &method(:run_monitor))
+      end
 
-            log.debug "Recreating service watcher thread"
-            @watch_stream.finish if @watch_stream
+      def run_monitor
+        # Periodically restart watcher connection by checking if enough time has passed since 
+        # last time watcher thread was recreated or if the watcher thread has been stopped.
+        now = Time.now.to_i
+        watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
+        if now - @last_recreated >= @watch_service_interval_seconds || !watcher_exists
 
-            start_service_watcher_thread
-            last_recreated = now
-            log.debug "last_recreated updated to #{last_recreated}"
-          end
-          sleep(10)
+          log.debug "Recreating service watcher thread"
+          @watch_stream.finish if @watch_stream
+
+          start_service_watcher_thread
+          @last_recreated = now
+          log.debug "last_recreated updated to #{@last_recreated}"
         end
       end
 
