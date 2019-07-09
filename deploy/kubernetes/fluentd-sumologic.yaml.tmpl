@@ -24,6 +24,7 @@ rules:
   - configmaps
   - daemonsets
   - deployments
+  - endpoints
   - events
   - namespaces
   - nodes
@@ -373,6 +374,7 @@ data:
   events.conf: |-
     <source>
       @type events
+      deploy_namespace $NAMESPACE
     </source>
     <match kubernetes.**>
       @type sumologic

@@ -29,11 +29,11 @@ module SumoLogic
       end
 
       def create_client(base, ver)
-        url = "#{@kubernetes_url}/#{base}/#{ver}"
-        log.info "create client with URL: #{url}"
+        url = "#{@kubernetes_url}/#{base}"
+        log.info "create client with URL: #{url} and apiVersion: #{ver}"
         client = Kubeclient::Client.new(
           url,
-          '',
+          ver,
           ssl_options: ssl_options,
           auth_options: auth_options,
           as: :parsed

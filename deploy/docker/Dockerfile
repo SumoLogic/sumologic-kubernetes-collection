@@ -10,6 +10,7 @@ RUN apk add --no-cache libexecinfo libexecinfo-dev
 RUN apk add --no-cache snappy g++ snappy-dev
 
 RUN apk add --no-cache --update --virtual .build-deps sudo build-base ruby-dev \
+       && gem install concurrent-ruby \
        && gem install google-protobuf \
        && gem install kubeclient \
        && gem install lru_redux \

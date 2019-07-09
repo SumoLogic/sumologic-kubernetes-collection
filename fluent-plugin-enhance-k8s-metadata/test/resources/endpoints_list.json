@@ -1,0 +1,324 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "v1",
+            "kind": "Endpoints",
+            "metadata": {
+                "creationTimestamp": "2019-04-29T21:16:33Z",
+                "name": "kubernetes",
+                "namespace": "default",
+                "resourceVersion": "10425414",
+                "selfLink": "/api/v1/namespaces/default/endpoints/kubernetes",
+                "uid": "10526daf-6ac4-11e9-950a-028777db66fe"
+            },
+            "subsets": [
+                {
+                    "addresses": [
+                        {
+                            "ip": "172.20.38.183"
+                        },
+                        {
+                            "ip": "172.20.48.207"
+                        },
+                        {
+                            "ip": "172.20.78.16"
+                        }
+                    ],
+                    "ports": [
+                        {
+                            "name": "https",
+                            "port": 443,
+                            "protocol": "TCP"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Endpoints",
+            "metadata": {
+                "annotations": {
+                    "control-plane.alpha.kubernetes.io/leader": "{\"holderIdentity\":\"ip-172-20-48-207_4f02f76e-6b95-11e9-a1a7-06604569b78c\",\"leaseDurationSeconds\":15,\"acquireTime\":\"2019-04-30T22:18:10Z\",\"renewTime\":\"2019-06-25T20:29:47Z\",\"leaderTransitions\":3}"
+                },
+                "creationTimestamp": "2019-02-27T18:59:29Z",
+                "name": "kube-controller-manager",
+                "namespace": "kube-system",
+                "resourceVersion": "19601594",
+                "selfLink": "/api/v1/namespaces/kube-system/endpoints/kube-controller-manager",
+                "uid": "cf49c821-3ac1-11e9-85d5-062f31d2c4ec"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Endpoints",
+            "metadata": {
+                "creationTimestamp": "2019-02-27T18:59:55Z",
+                "labels": {
+                    "k8s-addon": "kube-dns.addons.k8s.io",
+                    "k8s-app": "kube-dns",
+                    "kubernetes.io/cluster-service": "true",
+                    "kubernetes.io/name": "KubeDNS"
+                },
+                "name": "kube-dns",
+                "namespace": "kube-system",
+                "resourceVersion": "17788387",
+                "selfLink": "/api/v1/namespaces/kube-system/endpoints/kube-dns",
+                "uid": "dedc02ed-3ac1-11e9-85d5-062f31d2c4ec"
+            },
+            "subsets": [
+                {
+                    "addresses": [
+                        {
+                            "ip": "100.114.10.95",
+                            "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                            "targetRef": {
+                                "kind": "Pod",
+                                "name": "kube-dns-6b4f4b544c-gzl2r",
+                                "namespace": "kube-system",
+                                "resourceVersion": "17788386",
+                                "uid": "6c47f296-8ed8-11e9-b605-06604569b78c"
+                            }
+                        },
+                        {
+                            "ip": "100.115.226.65",
+                            "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                            "targetRef": {
+                                "kind": "Pod",
+                                "name": "kube-dns-6b4f4b544c-98jxv",
+                                "namespace": "kube-system",
+                                "resourceVersion": "17309602",
+                                "uid": "f4a54748-8c8f-11e9-b605-06604569b78c"
+                            }
+                        }
+                    ],
+                    "ports": [
+                        {
+                            "name": "dns",
+                            "port": 53,
+                            "protocol": "UDP"
+                        },
+                        {
+                            "name": "dns-tcp",
+                            "port": 53,
+                            "protocol": "TCP"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Endpoints",
+            "metadata": {
+                "annotations": {
+                    "control-plane.alpha.kubernetes.io/leader": "{\"holderIdentity\":\"ip-172-20-48-207_43b66f71-6b95-11e9-b8ef-06604569b78c\",\"leaseDurationSeconds\":15,\"acquireTime\":\"2019-04-30T22:25:55Z\",\"renewTime\":\"2019-06-25T20:29:47Z\",\"leaderTransitions\":2}"
+                },
+                "creationTimestamp": "2019-02-27T18:59:29Z",
+                "name": "kube-scheduler",
+                "namespace": "kube-system",
+                "resourceVersion": "19601595",
+                "selfLink": "/api/v1/namespaces/kube-system/endpoints/kube-scheduler",
+                "uid": "cf52af6e-3ac1-11e9-85d5-062f31d2c4ec"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Endpoints",
+            "metadata": {
+                "creationTimestamp": "2019-04-29T22:13:59Z",
+                "labels": {
+                    "k8s-app": "kubelet"
+                },
+                "name": "prometheus-operator-kubelet",
+                "namespace": "kube-system",
+                "resourceVersion": "17638823",
+                "selfLink": "/api/v1/namespaces/kube-system/endpoints/prometheus-operator-kubelet",
+                "uid": "16c80c7f-6acc-11e9-950a-028777db66fe"
+            },
+            "subsets": [
+                {
+                    "addresses": [
+                        {
+                            "ip": "172.20.38.183",
+                            "targetRef": {
+                                "kind": "Node",
+                                "name": "ip-172-20-38-183.us-west-1.compute.internal",
+                                "uid": "837d73a3-6b96-11e9-b250-06f6400abec8"
+                            }
+                        },
+                        {
+                            "ip": "172.20.48.207",
+                            "targetRef": {
+                                "kind": "Node",
+                                "name": "ip-172-20-48-207.us-west-1.compute.internal",
+                                "uid": "774bd6d1-6b95-11e9-b605-06604569b78c"
+                            }
+                        },
+                        {
+                            "ip": "172.20.54.182",
+                            "targetRef": {
+                                "kind": "Node",
+                                "name": "ip-172-20-54-182.us-west-1.compute.internal",
+                                "uid": "4c695b72-8c90-11e9-b605-06604569b78c"
+                            }
+                        },
+                        {
+                            "ip": "172.20.60.118",
+                            "targetRef": {
+                                "kind": "Node",
+                                "name": "ip-172-20-60-118.us-west-1.compute.internal",
+                                "uid": "37e50e12-8c8f-11e9-b250-06f6400abec8"
+                            }
+                        },
+                        {
+                            "ip": "172.20.74.252",
+                            "targetRef": {
+                                "kind": "Node",
+                                "name": "ip-172-20-74-252.us-west-1.compute.internal",
+                                "uid": "e65c1035-8e1b-11e9-b250-06f6400abec8"
+                            }
+                        },
+                        {
+                            "ip": "172.20.78.16",
+                            "targetRef": {
+                                "kind": "Node",
+                                "name": "ip-172-20-78-16.us-west-1.compute.internal",
+                                "uid": "779ef345-6b97-11e9-aeec-0202bfa61b70"
+                            }
+                        }
+                    ],
+                    "ports": [
+                        {
+                            "name": "http-metrics",
+                            "port": 10255,
+                            "protocol": "TCP"
+                        },
+                        {
+                            "name": "cadvisor",
+                            "port": 4194,
+                            "protocol": "TCP"
+                        },
+                        {
+                            "name": "https-metrics",
+                            "port": 10250,
+                            "protocol": "TCP"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Endpoints",
+            "metadata": {
+                "creationTimestamp": "2019-03-01T21:51:03Z",
+                "labels": {
+                    "app": "helm",
+                    "name": "tiller"
+                },
+                "name": "tiller-deploy",
+                "namespace": "kube-system",
+                "resourceVersion": "17309596",
+                "selfLink": "/api/v1/namespaces/kube-system/endpoints/tiller-deploy",
+                "uid": "1be02498-3c6c-11e9-85d5-062f31d2c4ec"
+            },
+            "subsets": [
+                {
+                    "addresses": [
+                        {
+                            "ip": "100.115.226.66",
+                            "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                            "targetRef": {
+                                "kind": "Pod",
+                                "name": "tiller-deploy-69458576b-27mp8",
+                                "namespace": "kube-system",
+                                "resourceVersion": "17309595",
+                                "uid": "f4bff1fc-8c8f-11e9-b605-06604569b78c"
+                            }
+                        }
+                    ],
+                    "ports": [
+                        {
+                            "name": "tiller",
+                            "port": 44134,
+                            "protocol": "TCP"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Endpoints",
+            "metadata": {
+                "creationTimestamp": "2019-06-25T20:29:04Z",
+                "labels": {
+                    "k8s-app": "fluentd-sumologic"
+                },
+                "name": "fluentd",
+                "namespace": "sumologic",
+                "resourceVersion": "19601538",
+                "selfLink": "/api/v1/namespaces/sumologic/endpoints/fluentd",
+                "uid": "e0395a93-9787-11e9-b605-06604569b78c"
+            },
+            "subsets": [
+                {
+                    "notReadyAddresses": [
+                        {
+                            "ip": "100.108.94.43",
+                            "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                            "targetRef": {
+                                "kind": "Pod",
+                                "name": "fluentd-59d9c9656d-cg5m4",
+                                "namespace": "sumologic",
+                                "resourceVersion": "19601526",
+                                "uid": "e01c6c20-9787-11e9-b605-06604569b78c"
+                            }
+                        },
+                        {
+                            "ip": "100.114.10.110",
+                            "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                            "targetRef": {
+                                "kind": "Pod",
+                                "name": "fluentd-59d9c9656d-5pwjg",
+                                "namespace": "sumologic",
+                                "resourceVersion": "19601532",
+                                "uid": "e02af0b6-9787-11e9-b605-06604569b78c"
+                            }
+                        },
+                        {
+                            "ip": "100.115.226.103",
+                            "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                            "targetRef": {
+                                "kind": "Pod",
+                                "name": "fluentd-59d9c9656d-zlhjh",
+                                "namespace": "sumologic",
+                                "resourceVersion": "19601537",
+                                "uid": "e02ad64d-9787-11e9-b605-06604569b78c"
+                            }
+                        }
+                    ],
+                    "ports": [
+                        {
+                            "name": "prom-write",
+                            "port": 9888,
+                            "protocol": "TCP"
+                        },
+                        {
+                            "name": "fluent-bit",
+                            "port": 24321,
+                            "protocol": "TCP"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "123456789",
+        "selfLink": ""
+    }
+}
