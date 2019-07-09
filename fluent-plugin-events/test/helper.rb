@@ -25,10 +25,23 @@ def mock_get_config_map
 end
 
 def mock_watch_events
-  text = File.read(test_resource('api_watch_events.txt'))
+  text = File.read(test_resource('api_watch_events_v1.txt'))
   Kubeclient::Client.any_instance.stubs(:public_send)
     .with("watch_events", {:as=>:raw, :field_selector=>nil, :label_selector=>nil, :namespace=>nil, :resource_version=>nil, :timeout_seconds=>360})
     .returns(text.split(/\n+/))
+end
+
+def mock_watch_services
+  text = File.read(test_resource('api_watch_services_v1.txt'))
+  Kubeclient::Client.any_instance.stubs(:public_send)
+    .with("watch_services", {:as=>:raw, :field_selector=>nil, :label_selector=>nil, :namespace=>nil, :resource_version=>nil, :timeout_seconds=>360})
+    .returns(text.split(/\n+/))
+end
+
+def get_watch_resources_count_by_type_selector(type_selector, file_name)
+  text = File.read(test_resource(file_name))
+  objects = text.split(/\n+/).map {|line| JSON.parse(line)}
+  objects.select {|object| type_selector.any? {|type| type.casecmp?(object['type'])}}.count
 end
 
 def init_globals
