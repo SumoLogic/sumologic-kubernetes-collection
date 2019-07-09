@@ -41,8 +41,8 @@ class ReaderTest < Test::Unit::TestCase
   test 'fetch_pod_metadata get owners' do
     metadata = fetch_pod_metadata('kube-system', 'somepod')
     assert_not_nil metadata
-    assert_equal metadata['replicaset']['name'], 'kube-dns-5fbcb4d67b'
-    assert_equal metadata['deployment']['name'], 'kube-dns'
+    assert_equal metadata['replicaset'], 'kube-dns-5fbcb4d67b'
+    assert_equal metadata['deployment'], 'kube-dns'
   end
 
   test 'fetch_pod_metadata returns empty map if resource not found' do

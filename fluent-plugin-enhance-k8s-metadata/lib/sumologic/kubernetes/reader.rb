@@ -33,7 +33,7 @@ module SumoLogic
         owners = fetch_owners(namespace, pod)
         result = {}
         owners.each do |owner|
-          result[owner['kind'].downcase] = { 'name' => owner['metadata']['name'] }
+          result[owner['kind'].downcase] = owner['metadata']['name']
         end
         result
       end
