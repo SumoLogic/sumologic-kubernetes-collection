@@ -24,8 +24,8 @@ def mock_get_config_map
     .with("get_config_map", "fluentd-config-resource-version", "sumologic").returns(Kubeclient::Resource.new(response))
 end
 
-def mock_watch_events
-  text = File.read(test_resource('api_watch_events_v1.txt'))
+def mock_watch_events(file_name)
+  text = File.read(test_resource(file_name))
   Kubeclient::Client.any_instance.stubs(:public_send)
     .with("watch_events", {:as=>:raw, :field_selector=>nil, :label_selector=>nil, :namespace=>nil, :resource_version=>nil, :timeout_seconds=>360})
     .returns(text.split(/\n+/))
@@ -46,7 +46,7 @@ end
 
 def init_globals
   @kubernetes_url = 'http://localhost:8080'
-  @apiVersion = 'v1'
+  @api_version = 'v1'
   @verify_ssl = false
   @ca_file = nil
   @client_cert = nil

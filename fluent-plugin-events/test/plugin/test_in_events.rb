@@ -8,7 +8,6 @@ class EventsInputTest < Test::Unit::TestCase
 
   def setup
     # runs before each test
-    @api_version = 'v1'
     init_globals
     connect_kubernetes
   end
@@ -51,7 +50,7 @@ class EventsInputTest < Test::Unit::TestCase
     config = %([])
     driver = create_driver(config).instance
     driver.instance_variable_set(:@client, @client)
-    mock_watch_events
+    mock_watch_events('api_watch_events_v1.txt')
 
     selected_events_count = get_watch_resources_count_by_type_selector(["ADDED", "MODIFIED"],
       'api_watch_events_v1.txt')
@@ -69,7 +68,7 @@ class EventsInputTest < Test::Unit::TestCase
     ])
     driver = create_driver(config).instance
     driver.instance_variable_set(:@client, @client)
-    mock_watch_events
+    mock_watch_events('api_watch_events_v1.txt')
 
     selected_events_count = get_watch_resources_count_by_type_selector(["ADDED", "MODIFIED", "DELETED"],
       'api_watch_events_v1.txt')
@@ -78,6 +77,26 @@ class EventsInputTest < Test::Unit::TestCase
     sleep 5
     assert_equal events.length, 9
     assert_equal selected_events_count, 9
+  end
+
+  test 'configuration error will be thrown if type_selector is invalid' do
+    assert_raise Fluent::ConfigError do 
+      create_driver(%([
+        type_selector ["ADDED", "MODIFIED", "DELETED", "BOOKED"]
+      ]))
+    end
+
+    assert_raise Fluent::ConfigError do
+      create_driver(%([
+        type_selector ["ADDED", "MODIFIED", "INVALIDTYPE"]
+      ]))
+    end
+
+    assert_raise Fluent::ConfigError do
+      create_driver(%([
+        type_selector []
+      ]))
+    end
   end
 
   test 'watch other resources with default type_selector' do 
@@ -95,5 +114,20 @@ class EventsInputTest < Test::Unit::TestCase
     sleep 5
     assert_equal events.length, 5
     assert_equal selected_services_count, 4
+  end
+
+  test 'no events are ingested with error' do
+    config = %([])
+    driver = create_driver(config).instance
+    driver.instance_variable_set(:@client, @client)
+    mock_watch_events('api_watch_events_error_v1.txt')
+
+    selected_services_count = get_watch_resources_count_by_type_selector(["ADDED", "MODIFIED"],
+      'api_watch_events_error_v1.txt')
+    driver.router.expects(:emit).times(selected_services_count).with(anything, anything, anything)
+    events = driver.start_watcher_thread
+    sleep 5
+    assert_equal events.length, 4
+    assert_equal selected_services_count, 3
   end
 end
