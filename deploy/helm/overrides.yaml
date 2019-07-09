@@ -1,3 +1,7 @@
+alertmanager:
+  enabled: false
+grafana:
+  enabled: false
 prometheus:
   prometheusSpec:
     externalLabels:
