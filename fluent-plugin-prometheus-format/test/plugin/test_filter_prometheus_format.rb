@@ -62,8 +62,8 @@ class PrometheusFormatFilterTest < Test::Unit::TestCase
       config = %([
         relabel {
           "service" : "",
-          "kubernetes.service.name" : "service_name",
-          "kubernetes.pod.name" : "pod_name"
+          "kubernetes_service_name" : "service_name",
+          "kubernetes_pod_name" : "pod_name"
         }
       ])
       outputs = filter_datapoints(config, 'datapoint.nested')
@@ -75,12 +75,11 @@ class PrometheusFormatFilterTest < Test::Unit::TestCase
       config = %([
         relabel {
           "service" : "",
-          "kubernetes.service.na e" : "service_na e",
-          "kubernetes.pod.na e" : "pod_na e"
+          "kubernetes_service_na e" : "service_na e",
+          "kubernetes_pod_na e" : "pod_na e"
         }
       ])
       outputs = filter_datapoints(config, 'datapoint.nested.spaces')
-      puts outputs
       assert_equal 1, outputs.length
       verify_with_expected outputs, 'output.datapoint.nested.spaces.relabel'
     end
@@ -88,7 +87,6 @@ class PrometheusFormatFilterTest < Test::Unit::TestCase
     test 'transform data point with escaped sequences' do
       config = %([])
       outputs = filter_datapoints(config, 'datapoint.nested.escape')
-      puts outputs
       assert_equal 1, outputs.length
       verify_with_expected outputs, 'output.datapoint.nested.escape'
     end
@@ -396,8 +394,8 @@ class PrometheusFormatFilterTest < Test::Unit::TestCase
       config = %([
         relabel {
           "service" : "",
-          "kubernetes.service.name" : "service_name",
-          "kubernetes.pod.name" : "pod_name"
+          "kubernetes_service_name" : "service_name",
+          "kubernetes_pod_name" : "pod_name"
         }
         inclusions { "pod_name" : "^kube-scheduler-.*" }
       ])
@@ -413,8 +411,8 @@ class PrometheusFormatFilterTest < Test::Unit::TestCase
       config = %([
         relabel {
           "service" : "",
-          "kubernetes.service.name" : "service_name",
-          "kubernetes.pod.name" : "pod_name"
+          "kubernetes_service_name" : "service_name",
+          "kubernetes_pod_name" : "pod_name"
         }
         inclusions { "pod_name" : "^cube-scheduler-.*" }
       ])
@@ -431,8 +429,8 @@ class PrometheusFormatFilterTest < Test::Unit::TestCase
       config = %([
         relabel {
           "service" : "",
-          "kubernetes.service.name" : "service_name",
-          "kubernetes.pod.name" : "pod_name"
+          "kubernetes_service_name" : "service_name",
+          "kubernetes_pod_name" : "pod_name"
         }
         exclusions { "pod_name" : "^cube-scheduler.*" }
       ])
@@ -448,8 +446,8 @@ class PrometheusFormatFilterTest < Test::Unit::TestCase
       config = %([
         relabel {
           "service" : "",
-          "kubernetes.service.name" : "service_name",
-          "kubernetes.pod.name" : "pod_name"
+          "kubernetes_service_name" : "service_name",
+          "kubernetes_pod_name" : "pod_name"
         }
         exclusions { "pod_name" : "^kube-scheduler.*" }
       ])
