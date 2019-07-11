@@ -130,4 +130,19 @@ class EventsInputTest < Test::Unit::TestCase
     assert_equal events.length, 4
     assert_equal selected_services_count, 3
   end
+
+  test 'no events are ingested with error' do
+    config = %([])
+    driver = create_driver(config).instance
+    driver.instance_variable_set(:@client, @client)
+    driver.stubs(:pull_resource_version).returns(200)
+    driver.instance_variable_set(:@resource_version, 200)
+    
+   #  mock_watch_events('api_watch_events_v1.txt')
+    # mock_patch_config_map(driver)
+    # mock_watch_events_with_rv(200)
+    driver.expects(:start_watcher_thread).at_least(2)
+
+    events = driver.start_monitor
+  end
 end

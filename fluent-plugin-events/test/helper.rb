@@ -37,6 +37,22 @@ def mock_watch_services
     .with("watch_services", {:as=>:raw, :field_selector=>nil, :label_selector=>nil, :namespace=>nil, :resource_version=>nil, :timeout_seconds=>360})
     .returns(text.split(/\n+/))
 end
+def mock_watch_events_with_rv(rv)
+  Kubeclient::Client.any_instance.expects(:public_send)
+    .with("watch_events", {:as=>:raw, :field_selector=>nil, :label_selector=>nil, :namespace=>nil, :resource_version=>rv, :timeout_seconds=>360})
+    .at_least_once
+end
+
+def mock_patch_config_map(driver)
+  text = File.read(test_resource('api_get_configmap_rv.json'))
+  object = JSON.parse(text)
+  object['data'] = {"resource-version-events": "200"}
+  Kubeclient::Client.any_instance.stubs(:public_send)
+    .with("patch_config_map", "fluentd-config-resource-version", 
+    {data: { "resource-version-events": "200"}}, 'sumologic')
+    .returns(object.to_json)
+  driver.instance_variable_set(:@resource_version, 200)
+end
 
 def get_watch_resources_count_by_type_selector(type_selector, file_name)
   text = File.read(test_resource(file_name))
