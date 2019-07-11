@@ -56,7 +56,7 @@ class EventsInputTest < Test::Unit::TestCase
       'api_watch_events_v1.txt')
     driver.router.expects(:emit).times(selected_events_count).with(anything, anything, anything)
     events = driver.start_watcher_thread
-    sleep 5
+    sleep 2
     assert_equal events.length, 9
     assert_equal selected_events_count, 6
   end
@@ -74,7 +74,7 @@ class EventsInputTest < Test::Unit::TestCase
       'api_watch_events_v1.txt')
     driver.router.expects(:emit).times(selected_events_count).with(anything, anything, anything)
     events = driver.start_watcher_thread
-    sleep 5
+    sleep 2
     assert_equal events.length, 9
     assert_equal selected_events_count, 9
   end
@@ -111,38 +111,24 @@ class EventsInputTest < Test::Unit::TestCase
       'api_watch_services_v1.txt')
     driver.router.expects(:emit).times(selected_services_count).with(anything, anything, anything)
     events = driver.start_watcher_thread
-    sleep 5
+    sleep 2
     assert_equal events.length, 5
     assert_equal selected_services_count, 4
   end
 
-  test 'no events are ingested with error' do
+  test 'no events are ingested with error type and resource_version is set from pull_resource_version' do
     config = %([])
     driver = create_driver(config).instance
     driver.instance_variable_set(:@client, @client)
+    driver.instance_variable_set(:@last_recreated, 0)
+    new_resource_version = 2346293
+
+    mock_get_events
+    mock_patch_config_map(new_resource_version)
     mock_watch_events('api_watch_events_error_v1.txt')
-
-    selected_services_count = get_watch_resources_count_by_type_selector(["ADDED", "MODIFIED"],
-      'api_watch_events_error_v1.txt')
-    driver.router.expects(:emit).times(selected_services_count).with(anything, anything, anything)
-    events = driver.start_watcher_thread
-    sleep 5
-    assert_equal events.length, 4
-    assert_equal selected_services_count, 3
-  end
-
-  test 'no events are ingested with error' do
-    config = %([])
-    driver = create_driver(config).instance
-    driver.instance_variable_set(:@client, @client)
-    driver.stubs(:pull_resource_version).returns(200)
-    driver.instance_variable_set(:@resource_version, 200)
+    driver.router.expects(:emit).never.with(anything, anything, anything)
     
-   #  mock_watch_events('api_watch_events_v1.txt')
-    # mock_patch_config_map(driver)
-    # mock_watch_events_with_rv(200)
-    driver.expects(:start_watcher_thread).at_least(2)
-
-    events = driver.start_monitor
+    driver.start_monitor
+    assert_equal driver.instance_variable_get(:@resource_version), new_resource_version.to_s
   end
 end
