@@ -25,8 +25,8 @@ class CacheStrategyTest < Test::Unit::TestCase
   test 'get_pod_metadata load labels from API' do
     metadata = get_pod_metadata('sumologic', 'somepod')
     assert_not_nil metadata
-    assert_equal metadata['pod_labels']['pod-template-hash'], '1691804713'
-    assert_equal metadata['pod_labels']['run'], 'curl-byi'
+    assert_equal '1691804713', metadata['pod_labels']['pod-template-hash']
+    assert_equal 'curl-byi', metadata['pod_labels']['run']
   end
 
   test 'get_pod_metadata load labels from cache if already exist' do
@@ -38,8 +38,8 @@ class CacheStrategyTest < Test::Unit::TestCase
       }
     }
     metadata = get_pod_metadata('sumologic', 'somepod')
-    assert_equal metadata['pod_labels']['pod-template-hash'], '0'
-    assert_equal metadata['pod_labels']['run'], 'from-cache'
+    assert_equal '0', metadata['pod_labels']['pod-template-hash']
+    assert_equal 'from-cache', metadata['pod_labels']['run']
   end
 
   test 'get_pod_metadata cache empty result' do
@@ -47,6 +47,6 @@ class CacheStrategyTest < Test::Unit::TestCase
     @cache['sumologic::somepod'] = {}
     metadata = get_pod_metadata('sumologic', 'somepod')
     assert_not_nil metadata
-    assert_equal metadata.size, 0
+    assert_equal 0, metadata.size
   end
 end
