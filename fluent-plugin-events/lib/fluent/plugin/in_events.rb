@@ -158,7 +158,8 @@ module Fluent
       def pull_resource_version
         params = Hash.new
         params[:as] = :raw
-        response = @client.public_send "get_#{resource_name}", params
+
+        response = @client.public_send("get_#{resource_name}", params)
         result = JSON.parse(response)
 
         resource_version = result.fetch('resourceVersion') do
