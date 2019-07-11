@@ -84,7 +84,7 @@ module Fluent
           if service.nil? || service.empty?
             log.debug "Cannot get service for pod #{namespace_name}::#{pod_name}, skip."
           else
-            record['service'] = service.join('_')
+            record['service'] = service.sort!.join('_')
           end
         end
       end
