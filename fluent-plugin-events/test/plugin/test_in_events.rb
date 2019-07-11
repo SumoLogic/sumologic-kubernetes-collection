@@ -31,7 +31,7 @@ class EventsInputTest < Test::Unit::TestCase
 
     mock_get_events
     resource_version = driver.pull_resource_version
-    assert_equal resource_version, '2346293'
+    assert_equal '2346293', resource_version
   end
 
   test 'initialize_resource_version correctly for different resources' do
@@ -41,9 +41,9 @@ class EventsInputTest < Test::Unit::TestCase
 
     mock_get_config_map
     resource = driver.initialize_resource_version
-    assert_equal resource.data['resource-version-events'], 'dummy-events-rv'
-    assert_equal resource.data['resource-version-pods'], 'dummy-pods-rv'
-    assert_equal resource.data['resource-version-services'], 'dummy-services-rv'
+    assert_equal 'dummy-events-rv', resource.data['resource-version-events']
+    assert_equal 'dummy-pods-rv', resource.data['resource-version-pods']
+    assert_equal 'dummy-services-rv', resource.data['resource-version-services']
   end
 
   test 'watch_events with default type_selector' do
@@ -57,8 +57,8 @@ class EventsInputTest < Test::Unit::TestCase
     driver.router.expects(:emit).times(selected_events_count).with(anything, anything, anything)
     events = driver.start_watcher_thread
     sleep 2
-    assert_equal events.length, 9
-    assert_equal selected_events_count, 6
+    assert_equal 9, events.length
+    assert_equal 6, selected_events_count
   end
 
 
@@ -75,8 +75,8 @@ class EventsInputTest < Test::Unit::TestCase
     driver.router.expects(:emit).times(selected_events_count).with(anything, anything, anything)
     events = driver.start_watcher_thread
     sleep 2
-    assert_equal events.length, 9
-    assert_equal selected_events_count, 9
+    assert_equal 9, events.length
+    assert_equal 9, selected_events_count
   end
 
   test 'configuration error will be thrown if type_selector is invalid' do
@@ -112,8 +112,8 @@ class EventsInputTest < Test::Unit::TestCase
     driver.router.expects(:emit).times(selected_services_count).with(anything, anything, anything)
     events = driver.start_watcher_thread
     sleep 2
-    assert_equal events.length, 5
-    assert_equal selected_services_count, 4
+    assert_equal 5, events.length
+    assert_equal 4, selected_services_count
   end
 
   test 'no events are ingested with too old resource version error' do
