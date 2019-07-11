@@ -116,19 +116,17 @@ class EventsInputTest < Test::Unit::TestCase
     assert_equal selected_services_count, 4
   end
 
-  test 'no events are ingested with error type and resource_version is set from pull_resource_version' do
+  test 'no events are ingested with too old resource version error' do
     config = %([])
     driver = create_driver(config).instance
     driver.instance_variable_set(:@client, @client)
     driver.instance_variable_set(:@last_recreated, 0)
-    new_resource_version = 2346293
 
     mock_get_events
-    mock_patch_config_map(new_resource_version)
+    mock_patch_config_map(2346293)
     mock_watch_events('api_watch_events_error_v1.txt')
     driver.router.expects(:emit).never.with(anything, anything, anything)
     
     driver.start_monitor
-    assert_equal driver.instance_variable_get(:@resource_version), new_resource_version.to_s
   end
 end
