@@ -70,11 +70,15 @@ module Fluent
         elsif pod_name.nil?
           log.debug "Record doesn't have [#{@in_pod_path}] field"
         else
+          if record.key? 'service'
+            record['prometheus_service'] = record['service']
+            record.delete('service')
+          end
           metadata = get_pod_metadata(namespace_name, pod_name)
           if metadata.empty?
             log.debug "Cannot get labels on pod #{namespace_name}::#{pod_name}, skip."
           else
-            record[@out_root] = metadata
+            record.merge! metadata
           end
         end
       end

@@ -22,7 +22,7 @@ module SumoLogic
 
         metadata = {}
         labels = pod['metadata']['labels']
-        metadata['pod'] = { 'labels' => labels } if labels.is_a?(Hash)
+        metadata['pod_labels'] = labels if labels.is_a?(Hash)
 
         owners = fetch_pod_owners(namespace, pod)
         metadata.merge!(owners)
@@ -33,7 +33,7 @@ module SumoLogic
         owners = fetch_owners(namespace, pod)
         result = {}
         owners.each do |owner|
-          result[owner['kind'].downcase] = { 'name' => owner['metadata']['name'] }
+          result[owner['kind'].downcase] = owner['metadata']['name']
         end
         result
       end
