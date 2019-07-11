@@ -35,8 +35,9 @@ create_host_collector()
 create_http_source()
 {
   _P='{"source":{"sourceType":"HTTP","name":"'
+  _C='","category":"'
   _S='","messagePerRequest":false,"multilineProcessingEnabled":false}}'
-  JSON="$_P$1$_S"
+  JSON="$_P$1$_C$3/$1$_S"
   COMMAND="curl -s -u $ACC_ID:$ACC_KEY -X POST -H Content-Type:application/json -d $JSON $SUMO_ENDPOINT/collectors/$2/sources"
   RESULT=$($COMMAND)
   set +e
@@ -66,7 +67,7 @@ shift "$(($OPTIND -1))"
 TIME=`timestamp`;
 
 if [ -z $COLLECTOR_NAME ]; then
-  if [ -z $SUMO_COLLECTOR_NAME ]; 
+  if [ -z $SUMO_COLLECTOR_NAME ];
   then
     COLLECTOR_NAME="kubernetes-$TIME";
   else
@@ -143,31 +144,31 @@ create_host_collector $COLLECTOR_NAME $CLUSTER_NAME
 
 echo "Creating sources in '$COLLECTOR_NAME'..."
 SOURCE_URL=
-create_http_source '(default-metrics)' $COLLECTOR_ID
+create_http_source '(default-metrics)' $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_METRICS="$SOURCE_URL"
 SOURCE_URL=
-create_http_source apiserver-metrics $COLLECTOR_ID
+create_http_source apiserver-metrics $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_METRICS_APISERVER="$SOURCE_URL"
 SOURCE_URL=
-create_http_source kube-controller-manager-metrics $COLLECTOR_ID
+create_http_source kube-controller-manager-metrics $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER="$SOURCE_URL"
 SOURCE_URL=
-create_http_source kube-scheduler-metrics $COLLECTOR_ID
+create_http_source kube-scheduler-metrics $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_METRICS_KUBE_SCHEDULER="$SOURCE_URL"
 SOURCE_URL=
-create_http_source kube-state-metrics $COLLECTOR_ID
+create_http_source kube-state-metrics $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_METRICS_KUBE_STATE="$SOURCE_URL"
 SOURCE_URL=
-create_http_source kubelet-metrics $COLLECTOR_ID
+create_http_source kubelet-metrics $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_METRICS_KUBELET="$SOURCE_URL"
 SOURCE_URL=
-create_http_source node-exporter-metrics $COLLECTOR_ID
+create_http_source node-exporter-metrics $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_METRICS_NODE_EXPORTER="$SOURCE_URL"
 SOURCE_URL=
-create_http_source logs $COLLECTOR_ID
+create_http_source logs $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_LOGS="$SOURCE_URL"
 SOURCE_URL=
-create_http_source events $COLLECTOR_ID
+create_http_source events $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_EVENTS="$SOURCE_URL"
 
 kubectl -n $NAMESPACE create secret generic sumologic \
