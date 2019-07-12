@@ -388,15 +388,15 @@ kind: Deployment
 metadata:
   name: fluentd-events
   labels:
-    k8s-app: fluentd-sumologic
+    k8s-app: fluentd-sumologic-events
 spec:
   selector:
     matchLabels:
-      k8s-app: fluentd-sumologic
+      k8s-app: fluentd-sumologic-events
   template:
     metadata:
       labels:
-        k8s-app: fluentd-sumologic
+        k8s-app: fluentd-sumologic-events
     spec:
       serviceAccountName: fluentd
       volumes:
