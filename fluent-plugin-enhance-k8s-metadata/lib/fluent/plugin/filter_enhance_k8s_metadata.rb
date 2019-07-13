@@ -20,7 +20,6 @@ module Fluent
       # parameters for read/write record
       config_param :in_namespace_path, :array, default: ['$.namespace']
       config_param :in_pod_path, :array, default: ['$.pod', '$.pod_name']
-      config_param :out_root, :string, default: 'kubernetes'
 
       # parameters for connecting to k8s api server
       config_param :kubernetes_url, :string, default: nil
@@ -107,9 +106,6 @@ module Fluent
 
         @cache_ttl = :none if @cache_ttl <= 0
         log.info "cache_ttl: #{cache_ttl}, cache_size: #{@cache_size}"
-
-        @out_root = 'kubernetes' if @out_root.nil? || @out_root.empty?
-        log.info "out_root: #{@out_root}"
       end
     end
   end
