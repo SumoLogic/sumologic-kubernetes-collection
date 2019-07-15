@@ -41,7 +41,7 @@ RUN gem sources --clear-all \
        && rm -f ./*.gem
 
 # Default settings for log collection
-ENV LOG_FORMAT "json"
+ENV LOG_FORMAT "fields"
 ENV FLUSH_INTERVAL "5s"
 ENV NUM_THREADS "1"
 ENV SOURCE_CATEGORY "%{namespace}/%{pod_name}"
