@@ -34,15 +34,15 @@ class ReaderTest < Test::Unit::TestCase
   test 'fetch_pod_metadata get labels' do
     metadata = fetch_pod_metadata('sumologic', 'somepod')
     assert_not_nil metadata
-    assert_equal '1691804713', metadata['pod_labels']['pod-template-hash']
-    assert_equal 'curl-byi', metadata['pod_labels']['run']
+    assert_equal '1691804713', metadata['pod_labels']['pod_labels']['pod-template-hash']
+    assert_equal 'curl-byi', metadata['pod_labels']['pod_labels']['run']
   end
 
   test 'fetch_pod_metadata get owners' do
     metadata = fetch_pod_metadata('kube-system', 'somepod')
     assert_not_nil metadata
-    assert_equal 'kube-dns-5fbcb4d67b', metadata['replicaset']
-    assert_equal 'kube-dns', metadata['deployment']
+    assert_equal 'kube-dns-5fbcb4d67b', metadata['owners']['replicaset']
+    assert_equal 'kube-dns', metadata['owners']['deployment']
   end
 
   test 'fetch_pod_metadata returns empty map if resource not found' do

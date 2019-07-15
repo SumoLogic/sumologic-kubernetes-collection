@@ -20,6 +20,7 @@ module Fluent
       # parameters for read/write record
       config_param :in_namespace_path, :array, default: ['$.namespace']
       config_param :in_pod_path, :array, default: ['$.pod', '$.pod_name']
+      config_param :data_type, :string, default: 'metrics'
 
       # parameters for connecting to k8s api server
       config_param :kubernetes_url, :string, default: nil
@@ -74,16 +75,23 @@ module Fluent
             record.delete('service')
           end
           metadata = get_pod_metadata(namespace_name, pod_name)
-          if metadata.empty?
-            log.debug "Cannot get labels on pod #{namespace_name}::#{pod_name}, skip."
-          else
-            record.merge! metadata
-          end
           service = @pods_to_services[pod_name]
-          if service.nil? || service.empty?
-            log.debug "Cannot get service for pod #{namespace_name}::#{pod_name}, skip."
-          else
-            record['service'] = service.sort!.join('_')
+          metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
+
+          ['pod_labels', 'owners', 'service'].each do |metadata_type|
+            attachment = metadata[metadata_type]
+            if attachment.nil? || attachment.empty?
+              log.debug "Cannot get #{metadata_type} for pod #{namespace_name}::#{pod_name}, skip."
+            else
+              case @data_type
+              when 'logs'
+                record['kubernetes'].merge! attachment if metadata_type != 'pod_labels'
+              when 'metrics'
+                record.merge! attachment
+              else
+                record.merge! attachment
+              end
+            end
           end
         end
       end
