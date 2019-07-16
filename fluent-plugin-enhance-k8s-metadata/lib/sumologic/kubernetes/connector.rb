@@ -7,7 +7,7 @@ module SumoLogic
       K8_POD_CA_CERT = 'ca.crt'.freeze
       K8_POD_TOKEN = 'token'.freeze
 
-      # Need different clients to access deifferent API groups/versions
+      # Need different clients to access different API groups/versions
       # https://github.com/abonas/kubeclient/issues/208
       CORE_API_VERSIONS = ['v1'].freeze
       API_GROUPS = ['apps/v1', 'extensions/v1beta1'].freeze
