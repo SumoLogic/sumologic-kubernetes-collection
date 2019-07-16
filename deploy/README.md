@@ -66,7 +66,7 @@ This approach requires access to the Sumo Logic Collector API. It will create a 
 
 ```sh
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
-  | bash -s [-c collector-name] [-k cluster-name] <api-endpoint> <access-id> <access-key>
+  | bash -s - [-c collector-name] [-k cluster-name] [-n namespace] <api-endpoint> <access-id> <access-key>
 ```
 
 __NOTE__ This script will be executed in bash and requires [jq command-line JSON parser](https://stedolan.github.io/jq/download/) to be installed.
