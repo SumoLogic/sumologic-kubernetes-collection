@@ -10,7 +10,11 @@ class EventsInputTest < Test::Unit::TestCase
     # runs before each test
     init_globals
     connect_kubernetes
-    print "HAHA clients #{@clients}, clients type #{@clients.class}"
+    coreClients = core_clients
+    groupClients = group_clients
+    print "HAHA clients #{@clients}, clients type #{@clients.class}\n"
+    print "core_clients #{coreClients}, core_clients typep #{coreClients.class}\n"
+    print "group_clients #{groupClients}, group_clietns type #{groupClients.class}\n"
   end
 
   def teardown
