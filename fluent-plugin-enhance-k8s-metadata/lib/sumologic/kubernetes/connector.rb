@@ -19,7 +19,7 @@ module SumoLogic
       def core_clients
         CORE_API_VERSIONS.map do |ver|
           [ver, create_client('api', ver)]
-        end
+        end.to_h
       end
 
       def group_clients
