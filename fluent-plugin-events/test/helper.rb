@@ -4,12 +4,28 @@ require "fluent/test"
 require "fluent/test/driver/input"
 require "fluent/test/helpers"
 require 'mocha/test_unit'
+require 'webmock/test_unit'
 
 Test::Unit::TestCase.include(Fluent::Test::Helpers)
 Test::Unit::TestCase.extend(Fluent::Test::Helpers)
 
 def test_resource(name)
   File.new("test/resources/#{name}")
+end
+
+def stub_apis
+  stub_request(:any, %r{/api$})
+  .to_return(
+    'body' => {
+      'versions' => ['v1']
+    }.to_json
+  )
+stub_request(:any, %r{/apis$})
+  .to_return(
+    'body' => {
+      'versions' => ['apps/v1', 'extensions/v1beta1']
+    }.to_json
+  )
 end
 
 def mock_get_events(file_name)
@@ -55,6 +71,7 @@ end
 
 def init_globals
   @kubernetes_url = 'http://localhost:8080'
+  # @api_version = 'v1'
   @verify_ssl = false
   @ca_file = nil
   @client_cert = nil

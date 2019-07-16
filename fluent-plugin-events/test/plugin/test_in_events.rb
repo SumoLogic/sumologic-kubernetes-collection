@@ -9,7 +9,7 @@ class EventsInputTest < Test::Unit::TestCase
   def setup
     # runs before each test
     init_globals
-    connect_kubernetes
+    stub_apis
   end
 
   def teardown
@@ -24,9 +24,15 @@ class EventsInputTest < Test::Unit::TestCase
     driver = Fluent::Test::Driver::Input.new(Fluent::Plugin::EventsInput).configure(conf)
   end
 
+  def connect_kubernetes_with_api_version(driver)
+    @api_version = driver.instance_variable_get(:@api_version)
+    connect_kubernetes
+  end
+
   test 'pull_resource_version correctly from eventlist' do
     config = %([])
     driver = create_driver(config).instance
+    connect_kubernetes_with_api_version(driver)
     driver.instance_variable_set(:@clients, @clients)
 
     mock_get_events('api_list_events_v1.json')
@@ -39,6 +45,7 @@ class EventsInputTest < Test::Unit::TestCase
       api_version "events.k8s.io/v1beta1"
     ])
     driver = create_driver(config).instance
+    connect_kubernetes_with_api_version(driver)
     driver.instance_variable_set(:@clients, @clients)
 
     mock_get_events('api_list_events_v1beta1.json')
@@ -49,6 +56,7 @@ class EventsInputTest < Test::Unit::TestCase
   test 'initialize_resource_version correctly for different resources' do
     config = %([])
     driver = create_driver(config).instance
+    connect_kubernetes_with_api_version(driver)
     driver.instance_variable_set(:@clients, @clients)
 
     mock_get_config_map
@@ -63,6 +71,7 @@ class EventsInputTest < Test::Unit::TestCase
       api_version "events.k8s.io/v1beta1"
     ])
     driver = create_driver(config).instance
+    connect_kubernetes_with_api_version(driver)
     driver.instance_variable_set(:@clients, @clients)
 
     mock_get_config_map
@@ -75,6 +84,7 @@ class EventsInputTest < Test::Unit::TestCase
   test 'watch_events with default type_selector' do
     config = %([])
     driver = create_driver(config).instance
+    connect_kubernetes_with_api_version(driver)
     driver.instance_variable_set(:@clients, @clients)
     mock_watch_events('api_watch_events_v1.txt')
 
@@ -93,6 +103,7 @@ class EventsInputTest < Test::Unit::TestCase
       type_selector ["ADDED", "MODIFIED", "DELETED"]
     ])
     driver = create_driver(config).instance
+    connect_kubernetes_with_api_version(driver)
     driver.instance_variable_set(:@clients, @clients)
     mock_watch_events('api_watch_events_v1.txt')
 
@@ -130,6 +141,7 @@ class EventsInputTest < Test::Unit::TestCase
       resource_name "services"
     ])
     driver = create_driver(config).instance
+    connect_kubernetes_with_api_version(driver)
     driver.instance_variable_set(:@clients, @clients)
     mock_watch_services
 
@@ -147,6 +159,7 @@ class EventsInputTest < Test::Unit::TestCase
       api_version "events.k8s.io/v1beta1"
     ])
     driver = create_driver(config).instance
+    connect_kubernetes_with_api_version(driver)
     driver.instance_variable_set(:@clients, @clients)
     mock_watch_events('api_watch_events_v1beta1.txt')
 
@@ -162,6 +175,7 @@ class EventsInputTest < Test::Unit::TestCase
   test 'no events are ingested with too old resource version error' do
     config = %([])
     driver = create_driver(config).instance
+    connect_kubernetes_with_api_version(driver)
     driver.instance_variable_set(:@clients, @clients)
     driver.instance_variable_set(:@last_recreated, 0)
 

@@ -9,7 +9,6 @@ module SumoLogic
 
       # Need different clients to access different API groups/versions
       CORE_API_VERSIONS = ['v1'].freeze
-      API_GROUPS = ['events.k8s.io/v1beta1', 'apps/v1', 'extensions/v1beta1'].freeze
 
       def core_clients
         CORE_API_VERSIONS.map do |ver|
@@ -17,8 +16,9 @@ module SumoLogic
         end.to_h
       end
 
+      # If @api_version is not v1, we will create client for other API groups/versions
       def group_clients
-        API_GROUPS.map do |ver|
+        [@api_version].map do |ver|
           [ver, create_client('apis', ver)]
         end.to_h
       end
@@ -38,7 +38,7 @@ module SumoLogic
       end
 
       def connect_kubernetes
-        @clients = core_clients.merge(group_clients)
+        @clients = @api_version == 'v1' ? core_clients : core_clients.merge(group_clients)
       end
 
       def ssl_store
