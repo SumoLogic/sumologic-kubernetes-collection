@@ -285,7 +285,7 @@ spec:
           name: fluentd-config
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:latest
+        image: sumologic/kubernetes-fluentd:0.0.0
         imagePullPolicy: Always
         resources:
           limits:
@@ -409,7 +409,7 @@ spec:
           name: fluentd-events-config
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:latest
+        image: sumologic/kubernetes-fluentd:0.0.0
         imagePullPolicy: Always
         resources:
           limits:
