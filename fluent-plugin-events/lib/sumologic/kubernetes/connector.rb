@@ -9,7 +9,7 @@ module SumoLogic
 
       # Need different clients to access different API groups/versions
       CORE_API_VERSIONS = ['v1'].freeze
-      API_GROUPS = ['events.k8s.io/v1beta1'].freeze
+      API_GROUPS = ['events.k8s.io/v1beta1', 'apps/v1', 'extensions/v1beta1'].freeze
 
       def core_clients
         CORE_API_VERSIONS.map do |ver|
@@ -29,8 +29,7 @@ module SumoLogic
         client = Kubeclient::Client.new(
           url, ver,
           ssl_options: ssl_options,
-          auth_options: auth_options,
-          as: :parsed
+          auth_options: auth_options
         )
         client.api_valid?
         client
