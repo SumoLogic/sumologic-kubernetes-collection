@@ -286,7 +286,7 @@ spec:
       containers:
       - name: fluentd
         image: sumologic/kubernetes-fluentd
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         resources:
           limits:
             memory: 1Gi
@@ -410,7 +410,7 @@ spec:
       containers:
       - name: fluentd-events
         image: sumologic/kubernetes-fluentd
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         resources:
           limits:
             memory: 256Mi
