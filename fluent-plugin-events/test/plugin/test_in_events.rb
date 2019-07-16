@@ -9,6 +9,7 @@ class EventsInputTest < Test::Unit::TestCase
   def setup
     # runs before each test
     init_globals
+    stub_apis
     connect_kubernetes
     coreClients = core_clients
     groupClients = group_clients
