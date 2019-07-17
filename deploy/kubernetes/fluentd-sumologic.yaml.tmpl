@@ -36,7 +36,7 @@ rules:
 - apiGroups: [""]
   resources:
     - configmaps
-  verbs: ["create", "update"]
+  verbs: ["create", "update", "patch"]
 ---
 apiVersion: v1
 kind: ServiceAccount
