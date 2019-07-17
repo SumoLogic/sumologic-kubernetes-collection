@@ -71,7 +71,6 @@ end
 
 def init_globals
   @kubernetes_url = 'http://localhost:8080'
-  # @api_version = 'v1'
   @verify_ssl = false
   @ca_file = nil
   @client_cert = nil
