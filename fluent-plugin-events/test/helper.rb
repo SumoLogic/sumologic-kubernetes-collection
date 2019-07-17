@@ -23,7 +23,7 @@ def stub_apis
 stub_request(:any, %r{/apis$})
   .to_return(
     'body' => {
-      'versions' => ['apps/v1', 'extensions/v1beta1']
+      'versions' => ['events.k8s.io/v1beta1']
     }.to_json
   )
 end
