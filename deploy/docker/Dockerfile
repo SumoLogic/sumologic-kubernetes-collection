@@ -16,6 +16,7 @@ RUN apk add --no-cache --update --virtual .build-deps sudo build-base ruby-dev \
        && gem install lru_redux \
        && gem install snappy
 
+# FluentD plugins from RubyGems
 RUN gem install fluent-plugin-s3 -v 1.1.4 \
        && gem install fluent-plugin-systemd -v 0.3.1 \
        && gem install fluent-plugin-record-modifier \
@@ -26,9 +27,8 @@ RUN gem install fluent-plugin-s3 -v 1.1.4 \
        && gem install fluent-plugin-prometheus -v 1.1.0 \
        && gem install fluent-plugin-kubernetes_sumologic
 
-RUN gem install fluent-plugin-sumologic_output \
-       && gem install fluent-plugin-carbon-v2 \
-       && gem install fluent-plugin-prometheus-format \
+# FluentD plugins from this repository
+RUN gem install fluent-plugin-prometheus-format \
        && gem install fluent-plugin-enhance-k8s-metadata \
        && gem install fluent-plugin-datapoint \
        && gem install fluent-plugin-rewrite-tag-filter \
