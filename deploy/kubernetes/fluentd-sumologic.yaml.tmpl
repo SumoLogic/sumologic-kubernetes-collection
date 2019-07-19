@@ -53,6 +53,7 @@ data:
   fluent.conf: |-
     @include metrics.conf
     @include logs.conf
+    @include common.conf
   metrics.conf: |-
     <source>
       @type http
@@ -257,6 +258,33 @@ data:
       timestamp_key "#{ENV['TIMESTAMP_KEY']}"
       proxy_uri "#{ENV['PROXY_URI']}"
     </match>
+
+  common.conf: |-
+    # Prometheus metrics source
+    <source>
+      @type prometheus
+      port 24231
+    </source>
+
+    <source>
+      @type monitor_agent
+    </source>
+
+    # input plugin that collects metrics from MonitorAgent
+    <source>
+      @type prometheus_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
+
+    # input plugin that collects metrics for output plugin
+    <source>
+      @type prometheus_output_monitor
+      <labels>
+        host ${hostname}
+      </labels>
+    </source>
 ---
 apiVersion: apps/v1
 kind: Deployment
