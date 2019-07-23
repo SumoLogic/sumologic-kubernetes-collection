@@ -29,7 +29,7 @@ stub_request(:any, %r{/apis$})
 end
 
 def mock_get_events(file_name)
-  Kubeclient::Client.any_instance.stubs(:public_send).with("get_events", {:as=>:raw})
+  Kubeclient::Client.any_instance.stubs(:public_send).with("get_events", anything)
     .returns(File.read(test_resource(file_name)))
 end
 
