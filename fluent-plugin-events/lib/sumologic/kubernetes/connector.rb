@@ -29,7 +29,11 @@ module SumoLogic
         client = Kubeclient::Client.new(
           url, ver,
           ssl_options: ssl_options,
-          auth_options: auth_options
+          auth_options: auth_options,
+          timeouts: {
+            open: 10,  # unit is seconds
+            read: 10
+          }
         )
         client.api_valid?
         client

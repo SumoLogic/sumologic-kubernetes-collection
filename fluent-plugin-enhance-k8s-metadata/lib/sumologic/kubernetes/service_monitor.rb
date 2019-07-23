@@ -65,6 +65,7 @@ module SumoLogic
         begin
           params = Hash.new
           params[:as] = :raw
+          params[:timeout_seconds] = 10
           response = @clients['v1'].public_send "get_endpoints", params
           result = JSON.parse(response)
           new_snapshot_pods_to_services = Concurrent::Map.new {|h, k| h[k] = []}

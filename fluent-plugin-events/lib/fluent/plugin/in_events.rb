@@ -158,7 +158,7 @@ module Fluent
       def pull_resource_version
         params = Hash.new
         params[:as] = :raw
-
+        params[:timeout_seconds] = 10
         response = @clients[@api_version].public_send("get_#{resource_name}", params)
         result = JSON.parse(response)
 

@@ -50,7 +50,7 @@ module Fluent
 
       def start
         super
-        # start_service_monitor
+        start_service_monitor
       end
 
       def filter(tag, time, record)
@@ -80,12 +80,12 @@ module Fluent
           else
             record.merge! metadata
           end
-          # service = @pods_to_services[pod_name]
-          # if service.nil? || service.empty?
-          #   log.debug "Cannot get service for pod #{namespace_name}::#{pod_name}, skip."
-          # else
-          #   record['service'] = service.sort!.join('_')
-          # end
+          service = @pods_to_services[pod_name]
+          if service.nil? || service.empty?
+            log.debug "Cannot get service for pod #{namespace_name}::#{pod_name}, skip."
+          else
+            record['service'] = service.sort!.join('_')
+          end
         end
       end
 

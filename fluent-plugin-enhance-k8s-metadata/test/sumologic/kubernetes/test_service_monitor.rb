@@ -67,7 +67,7 @@ class ServiceMonitorTest < Test::Unit::TestCase
     test 'endpoint with subsets and notReadyAddresses with targetRef and type is Pods' do
       input = get_test_endpoint[6]
       expected = ['fluentd-59d9c9656d-cg5m4', 'fluentd-59d9c9656d-5pwjg', 'fluentd-59d9c9656d-zlhjh']
-      # assert_equal expected, get_pods_for_service(input)
+      assert_equal expected, get_pods_for_service(input)
     end
   end
 
