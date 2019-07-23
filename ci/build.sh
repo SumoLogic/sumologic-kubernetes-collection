@@ -33,8 +33,9 @@ done
 
 echo "Building docker image with $DOCKER_TAG:$VERSION in `pwd`..."
 cd ./deploy/docker
-docker build . -f ./Dockerfile -t $DOCKER_TAG:$VERSION --no-cache
-docker build . -f ./Dockerfile -t $DOCKER_TAG:latest
+# docker build . -f ./Dockerfile -t $DOCKER_TAG:$VERSION --no-cache
+# docker build . -f ./Dockerfile -t $DOCKER_TAG:latest
+docker build . -f ./Dockerfile -t yuting-test:latest
 rm -f ./gems/*.gem
 cd ../..
 

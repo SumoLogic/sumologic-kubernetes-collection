@@ -183,9 +183,9 @@ kubectl -n $NAMESPACE create secret generic sumologic \
   --from-literal=endpoint-events=$ENDPOINT_EVENTS
 
 echo "Applying deployment 'fluentd'..."
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
-sed 's/\$NAMESPACE'"/$NAMESPACE/g" | \
-tee fluentd-sumologic.yaml | \
-kubectl -n $NAMESPACE apply -f -
+#curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+#sed 's/\$NAMESPACE'"/$NAMESPACE/g" | \
+#tee fluentd-sumologic.yaml | \
+kubectl -n sumologic apply -f fluentd-sumologic.yaml
 
 echo "Done."
