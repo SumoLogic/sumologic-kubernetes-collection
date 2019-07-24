@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.4.2-onbuild-1.0
+FROM fluent/fluentd:v1.6.2-1.0
 
 # Use root account to use apk
 USER root
@@ -64,6 +64,7 @@ ENV VERIFY_SSL "true"
 
 RUN mkdir -p /fluentd/conf.d
 
-COPY ./fluent.conf /fluentd/conf.d/fluent.conf
+COPY ./fluent.conf /fluentd/etc/
+COPY entrypoint.sh /bin/
 
 USER fluent
