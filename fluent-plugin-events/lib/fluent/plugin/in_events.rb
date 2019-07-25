@@ -156,10 +156,15 @@ module Fluent
       end
 
       def pull_resource_version
-        params = Hash.new
-        params[:as] = :raw
-        params[:timeout_seconds] = 10
-        response = @clients[@api_version].public_send("get_#{resource_name}", params)
+        log.debug "Getting current #{resource_name} resource version"
+        external_thread = Thread.new {
+          params = Hash.new
+          params[:as] = :raw
+          params[:timeout_seconds] = 10
+          Thread.current["response"] = @clients[@api_version].public_send("get_#{resource_name}", params)
+        }
+        external_thread.join
+        response = external_thread["response"]
         result = JSON.parse(response)
 
         resource_version = result.fetch('resourceVersion') do

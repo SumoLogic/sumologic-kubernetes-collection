@@ -63,10 +63,14 @@ module SumoLogic
       def get_current_service_snapshot_resource_version
         log.debug "Getting current service snapshot"
         begin
-          params = Hash.new
-          params[:as] = :raw
-          params[:timeout_seconds] = 10
-          response = @clients['v1'].public_send "get_endpoints", params
+          external_thread = Thread.new {
+            params = Hash.new
+            params[:as] = :raw
+            params[:timeout_seconds] = 10
+            Thread.current["response"] = @clients['v1'].public_send("get_endpoints", params)
+          }
+          external_thread.join
+          response = external_thread["response"]
           result = JSON.parse(response)
           new_snapshot_pods_to_services = Concurrent::Map.new {|h, k| h[k] = []}
 
