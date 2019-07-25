@@ -12,9 +12,10 @@ for i in ./fluent-plugin* ; do
   if [ -d "$i" ]; then
     cd $i
     PLUGIN_NAME=$(basename "$i")
-    
-    echo "Building gems $PLUGIN_NAME in `pwd` ..."
-    sed -i.bak "s/0.0.0/$VERSION/g" ./$PLUGIN_NAME.gemspec
+    # Strip "-alpha" suffix if it exists to avoid gem prerelease behavior
+    GEM_VERSION=${VERSION%"-alpha"}
+    echo "Building gem $PLUGIN_NAME version $GEM_VERSION in `pwd` ..."
+    sed -i.bak "s/0.0.0/$GEM_VERSION/g" ./$PLUGIN_NAME.gemspec
     rm -f ./$PLUGIN_NAME.gemspec.bak
     
     echo "Install bundler..."
@@ -23,7 +24,7 @@ for i in ./fluent-plugin* ; do
     echo "Run unit tests..."
     bundle exec rake
 
-    echo "Build gem $PLUGIN_NAME $VERSION..."
+    echo "Build gem $PLUGIN_NAME $GEM_VERSION..."
     gem build $PLUGIN_NAME
     mv *.gem ../deploy/docker/gems
     
