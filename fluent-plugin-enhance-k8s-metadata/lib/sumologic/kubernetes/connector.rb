@@ -38,8 +38,8 @@ module SumoLogic
           auth_options: auth_options,
           as: :parsed,
           timeouts: {
-            open: 10,  # unit is seconds
-            read: 10
+            open: 5,  # unit is seconds
+            read: 5
           }
         )
         client.api_valid?

@@ -31,8 +31,8 @@ module SumoLogic
           ssl_options: ssl_options,
           auth_options: auth_options,
           timeouts: {
-            open: 10,  # unit is seconds
-            read: 10
+            open: 5,  # unit is seconds
+            read: 5
           }
         )
         client.api_valid?

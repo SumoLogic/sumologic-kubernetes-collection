@@ -22,6 +22,9 @@ module SumoLogic
         # Periodically restart watcher connection by checking if enough time has passed since 
         # last time watcher thread was recreated or if the watcher thread has been stopped.
         now = Time.now.to_i
+        num_threads = Thread.list.count
+        num_alive_threads = Thread.list.select {|thread| thread.alive?}.count
+        log.debug "Number threads: #{num_threads}, number alive threads: #{num_alive_threads}"
         watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
         if now - @last_recreated >= @watch_service_interval_seconds || !watcher_exists
 
@@ -66,7 +69,7 @@ module SumoLogic
           external_thread = Thread.new {
             params = Hash.new
             params[:as] = :raw
-            params[:timeout_seconds] = 10
+            params[:timeout_seconds] = 5
             Thread.current["response"] = @clients['v1'].public_send("get_endpoints", params)
           }
           external_thread.join

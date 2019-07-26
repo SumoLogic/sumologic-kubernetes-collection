@@ -160,7 +160,7 @@ module Fluent
         external_thread = Thread.new {
           params = Hash.new
           params[:as] = :raw
-          params[:timeout_seconds] = 10
+          params[:timeout_seconds] = 5
           Thread.current["response"] = @clients[@api_version].public_send("get_#{resource_name}", params)
         }
         external_thread.join
