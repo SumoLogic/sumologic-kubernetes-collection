@@ -302,12 +302,16 @@ metadata:
     app: prometheus-operator-kubelet
   name: prometheus-operator-kubelet
   namespace: sumologic
+  release: prometheus-operator
 spec:
   endpoints:
   - path: /metrics/cadvisor
     port: https-metrics
 ...
 ```
+
+Note, please make sure you include the label `release: prometheus-operator` in your ServiceMonitor as the Prometheus Operator expects this.  
+
 Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
@@ -323,6 +327,10 @@ The `prometheus-overrides.yaml` file controls what metrics get forwarded on to S
 ```
 
 After adding this to the `yaml`, go ahead and run a `helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml` to upgrade your `prometheus-operator`.
+
+Note: When executing the helm upgrade to avoid the error below is need add the argument `--force`.
+      
+      invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
 
 If all goes well, you should now have your custom metrics piping into Sumo Logic.
 
