@@ -95,7 +95,7 @@ module Fluent
         params[:namespace] = @namespace
         params[:timeout_seconds] = @watch_interval_seconds + 60
 
-        @watcher = @client.public_send("watch_#{resource_name}", params).tap do |watcher|
+        @watcher = @clients[@api_version].public_send("watch_#{resource_name}", params).tap do |watcher|
           thread_create(:"watch_#{resource_name}") do
             @watch_stream = watcher
             @watcher_id = Thread.current.object_id
@@ -123,14 +123,14 @@ module Fluent
 
       def create_config_map
         @configmap.data = { "resource-version-#{resource_name}": "#{@resource_version}" }
-        @client.public_send("create_config_map", @configmap).tap do |map|
+        @clients['v1'].public_send("create_config_map", @configmap).tap do |map|
           log.debug "Created config map: #{map}"
         end
       end
 
       def patch_config_map
         pull_resource_version
-        @client.public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
+        @clients['v1'].public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
           log.debug "Patched config map for #{@resource_name}: #{map}"
         end
       end
@@ -145,7 +145,7 @@ module Fluent
 
         # get or create the config map
         begin
-          @client.public_send("get_config_map", "fluentd-config-resource-version", @deploy_namespace).tap do |resource|
+          @clients['v1'].public_send("get_config_map", "fluentd-config-resource-version", @deploy_namespace).tap do |resource|
             log.debug "Got config map: #{resource}"
             version = resource.data["resource-version-#{resource_name}"]
             @resource_version = version.to_i if version
@@ -159,7 +159,7 @@ module Fluent
         params = Hash.new
         params[:as] = :raw
 
-        response = @client.public_send("get_#{resource_name}", params)
+        response = @clients[@api_version].public_send("get_#{resource_name}", params)
         result = JSON.parse(response)
 
         resource_version = result.fetch('resourceVersion') do
@@ -175,7 +175,7 @@ module Fluent
           log.debug 'Kubernetes URL is not set - inspecting environment'
           env_host = ENV['KUBERNETES_SERVICE_HOST']
           env_port = ENV['KUBERNETES_SERVICE_PORT']
-          @kubernetes_url = "https://#{env_host}:#{env_port}/api" unless env_host.nil? || env_port.nil?
+          @kubernetes_url = "https://#{env_host}:#{env_port}" unless env_host.nil? || env_port.nil?
         end
         log.debug "Kubernetes URL: '#{@kubernetes_url}'"
 

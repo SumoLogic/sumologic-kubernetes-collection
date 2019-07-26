@@ -66,7 +66,7 @@ This approach requires access to the Sumo Logic Collector API. It will create a 
 
 ```sh
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
-  | bash -s [-c collector-name] [-k cluster-name] <api-endpoint> <access-id> <access-key>
+  | bash -s - [-c collector-name] [-k cluster-name] [-n namespace] <api-endpoint> <access-id> <access-key>
 ```
 
 __NOTE__ This script will be executed in bash and requires [jq command-line JSON parser](https://stedolan.github.io/jq/download/) to be installed.
@@ -74,7 +74,7 @@ __NOTE__ This script will be executed in bash and requires [jq command-line JSON
 #### Parameters
 
 * __-c collector-name__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
-* __-k cluster-name__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
+* __-k cluster-name__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
 * __-n namespace__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace__ will default to `sumologic`
 * __api-endpoint__ - required. The API endpoint from [this page](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security).
 * __access-id__ - required. Sumo [access id](https://help.sumologic.com/Manage/Security/Access-Keys)
@@ -83,7 +83,7 @@ __NOTE__ This script will be executed in bash and requires [jq command-line JSON
 #### Environment variables
 The parameters for collector name, cluster name and namespace may also be passed in via environment variables instead of script arguments. If the script argument is supplied that trumps the environment variable.
 * __SUMO_COLLECTOR_NAME__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
-* __KUBERNETES_CLUSTER_NAME__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
+* __KUBERNETES_CLUSTER_NAME__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
 * __SUMO_NAMESPACE__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace__ will default to `sumologic`
 
 __Note:__ The script will generate a YAML file (`fluentd-sumologic.yaml`) with all the deployed Kuberentes resources on disk. Save this file for easy teardown and redeploy of the resources.
@@ -175,23 +175,23 @@ kubectl apply -f https://raw.githubusercontent.com/SumoLogic/sumologic-kubernete
 
 This manifest binds the default `cluster-admin` ClusterRole in your Kubernetes cluster to the `tiller` service account (which is created when you deploy Tiller in the following step.)
 
-Download the Prometheus Operator `overrides.yaml` from GitHub:
+Download the Prometheus Operator `prometheus-overrides.yaml` from GitHub:
 
 ```sh
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/prometheus-overrides.yaml
 ```
 
-Before installing `prometheus-operator`, edit `overrides.yaml` to define a unique cluster identifier. The default value of the `cluster` field in the `externalLabels` section of `overrides.yaml` is `kubernetes`. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
+Before installing `prometheus-operator`, edit `prometheus-overrides.yaml` to define a unique cluster identifier. The default value of the `cluster` field in the `externalLabels` section of `prometheus-overrides.yaml` is `kubernetes`. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
 
 __NOTE__ It’s fine to change the value of the `cluster` field, but don’t change the field name (key).
 
-You can also [Filter metrics](#filter-metrics) and [Trim and relabel metrics](#trim-and-relabel-metrics) in `overrides.yaml`.
+You can also [Filter metrics](#filter-metrics) and [Trim and relabel metrics](#trim-and-relabel-metrics) in `prometheus-overrides.yaml`.
 
 Install `prometheus-operator` using Helm:
 
 ```sh
 helm repo update \
-   && helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f overrides.yaml
+   && helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f prometheus-overrides.yaml
 ```
 
 __NOTE__ If Custom Resource Definitions (CRD) were created earlier, add `--no-crd-hook` to the end of the command.
@@ -219,9 +219,9 @@ kubectl -n kube-system patch service prometheus-operator-kube-scheduler --type=j
 
 ### Filter metrics
 
-The `overrides.yaml` file specifies metrics to be collected. If you want to exclude some metrics from collection, or include others, you can edit `overrides.yaml`. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
+The `prometheus-overrides.yaml` file specifies metrics to be collected. If you want to exclude some metrics from collection, or include others, you can edit `prometheus-overrides.yaml`. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
 
-If you would like to collect other metrics that are not listed in `overrides.yaml`, you can add a new section to the file.
+If you would like to collect other metrics that are not listed in `prometheus-overrides.yaml`, you can add a new section to the file.
 
 ```yaml
     - url: http://fluentd:9888/prometheus.metrics.<some_label>
@@ -311,8 +311,8 @@ spec:
 Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
-#### Step 3: Update the overrides.yaml file to forward the metrics to Sumo.
-The overrides.yaml controls what metrics get forwarded on to Sumo Logic. In order to get your custom metrics sending into Sumo Logic, you need to update the `overrides.yaml` file to include a rule to forward on your custom metrics. Here is an example addition to the `overrides.yaml` that will forward metrics to Sumo:
+#### Step 3: Update the prometheus-overrides.yaml file to forward the metrics to Sumo.
+The `prometheus-overrides.yaml` file controls what metrics get forwarded on to Sumo Logic. In order to get your custom metrics sending into Sumo Logic, you need to update the `prometheus-overrides.yaml` file to include a rule to forward on your custom metrics. Here is an example addition to the `prometheus-overrides.yaml` that will forward metrics to Sumo:
 
 ```
 - url: http://fluentd:9888/prometheus.metrics
@@ -322,7 +322,7 @@ The overrides.yaml controls what metrics get forwarded on to Sumo Logic. In orde
         sourceLabels: [__name__]
 ```
 
-After adding this to the `yaml`, go ahead and run a `helm upgrade prometheus-operator stable/prometheus-operator -f overrides.yaml` to upgrade your `prometheus-operator`.
+After adding this to the `yaml`, go ahead and run a `helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml` to upgrade your `prometheus-operator`.
 
 If all goes well, you should now have your custom metrics piping into Sumo Logic.
 
@@ -330,17 +330,17 @@ If all goes well, you should now have your custom metrics piping into Sumo Logic
 
 In this step, you will deploy FluentBit to forward logs to Fluentd.
 
-Download the FluentBit `overrides.yaml` from GitHub:
+Download the FluentBit `fluent-bit-overrides.yaml` from GitHub:
 
 ```sh
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/fluent-bit/overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/fluent-bit-overrides.yaml
 ```
 
 Install `fluent-bit` using Helm:
 
 ```sh
 helm repo update \
-   && helm install stable/fluent-bit --name fluent-bit --namespace sumologic -f overrides.yaml
+   && helm install stable/fluent-bit --name fluent-bit --namespace sumologic -f fluent-bit-overrides.yaml
 ```
 
 ## Tear down
@@ -519,7 +519,7 @@ kops rolling-update cluster --yes
 
 The goal is to set the flag `kubelet.serviceMonitor.https=false` when deploying the prometheus operator.
 
-Add the following lines to the beginning of your `overrides.yaml` file:
+Add the following lines to the beginning of your `prometheus-overrides.yaml` file:
 ```
 kubelet:
   serviceMonitor:
@@ -529,7 +529,7 @@ kubelet:
 and redeploy Prometheus:
 ```
 helm del --purge prometheus-operator
-helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f /path/to/overrides.yaml
+helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f prometheus-overrides.yaml
 ```
 
 ## Missing `kube-controller-manager` or `kube-scheduler` metrics

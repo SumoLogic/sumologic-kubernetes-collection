@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.4.2-onbuild-1.0
+FROM fluent/fluentd:v1.6.2-1.0
 
 # Use root account to use apk
 USER root
@@ -16,6 +16,7 @@ RUN apk add --no-cache --update --virtual .build-deps sudo build-base ruby-dev \
        && gem install lru_redux \
        && gem install snappy
 
+# FluentD plugins from RubyGems
 RUN gem install fluent-plugin-s3 -v 1.1.4 \
        && gem install fluent-plugin-systemd -v 0.3.1 \
        && gem install fluent-plugin-record-modifier \
@@ -24,11 +25,10 @@ RUN gem install fluent-plugin-s3 -v 1.1.4 \
        && gem install fluent-plugin-concat -v 2.3.0 \
        && gem install fluent-plugin-rewrite-tag-filter -v 2.1.0 \
        && gem install fluent-plugin-prometheus -v 1.1.0 \
-       && gem install fluent-plugin-kubernetes_sumologic
+       && gem install fluent-plugin-kubernetes_sumologic -v 2.4.1
 
-RUN gem install fluent-plugin-sumologic_output \
-       && gem install fluent-plugin-carbon-v2 \
-       && gem install fluent-plugin-prometheus-format \
+# FluentD plugins from this repository
+RUN gem install fluent-plugin-prometheus-format \
        && gem install fluent-plugin-enhance-k8s-metadata \
        && gem install fluent-plugin-datapoint \
        && gem install fluent-plugin-rewrite-tag-filter \
@@ -41,7 +41,7 @@ RUN gem sources --clear-all \
        && rm -f ./*.gem
 
 # Default settings for log collection
-ENV LOG_FORMAT "json"
+ENV LOG_FORMAT "fields"
 ENV FLUSH_INTERVAL "5s"
 ENV NUM_THREADS "1"
 ENV SOURCE_CATEGORY "%{namespace}/%{pod_name}"
@@ -64,6 +64,7 @@ ENV VERIFY_SSL "true"
 
 RUN mkdir -p /fluentd/conf.d
 
-COPY ./fluent.conf /fluentd/conf.d/fluent.conf
+COPY ./fluent.conf /fluentd/etc/
+COPY entrypoint.sh /bin/
 
 USER fluent

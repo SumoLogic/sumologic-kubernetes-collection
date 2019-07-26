@@ -36,7 +36,7 @@ rules:
 - apiGroups: [""]
   resources:
     - configmaps
-  verbs: ["create", "update"]
+  verbs: ["create", "patch"]
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -295,7 +295,7 @@ spec:
           name: fluentd-config
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd
+        image: sumologic/kubernetes-fluentd:0.0.0
         imagePullPolicy: Always
         resources:
           limits:
@@ -419,7 +419,7 @@ spec:
           name: fluentd-events-config
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd
+        image: sumologic/kubernetes-fluentd:0.0.0
         imagePullPolicy: Always
         resources:
           limits:

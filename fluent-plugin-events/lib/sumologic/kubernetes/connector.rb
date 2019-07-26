@@ -7,15 +7,38 @@ module SumoLogic
       K8_POD_CA_CERT = 'ca.crt'.freeze
       K8_POD_TOKEN = 'token'.freeze
 
-      def connect_kubernetes
-        @client = Kubeclient::Client.new(
-          @kubernetes_url, @api_version,
+      # Need different clients to access different API groups/versions
+      CORE_API_VERSIONS = ['v1'].freeze
+
+      def core_clients
+        CORE_API_VERSIONS.map do |ver|
+          [ver, create_client('api', ver)]
+        end.to_h
+      end
+
+      # If @api_version is not v1, we will create client for other API groups/versions
+      def group_clients
+        [@api_version].map do |ver|
+          [ver, create_client('apis', ver)]
+        end.to_h
+      end
+
+      def create_client(base, ver)
+        url = "#{@kubernetes_url}/#{base}"
+        log.info "create client with URL: #{url} and apiVersion: #{ver}"
+        client = Kubeclient::Client.new(
+          url, ver,
           ssl_options: ssl_options,
           auth_options: auth_options
         )
-        @client.api_valid?
+        client.api_valid?
+        client
       rescue Exception => e
         log.error e
+      end
+
+      def connect_kubernetes
+        @clients = @api_version == 'v1' ? core_clients : core_clients.merge(group_clients)
       end
 
       def ssl_store

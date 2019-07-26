@@ -1,0 +1,266 @@
+{
+    "kind": "EventList",
+    "apiVersion": "events.k8s.io/v1beta1",
+    "metadata": {
+      "selfLink": "/apis/events.k8s.io/v1beta1/namespaces/sumologic/events",
+      "resourceVersion": "2721303"
+    },
+    "items": [
+      {
+        "metadata": {
+          "name": "fluentd-8657bcb875-mj2ft.15afa857956ee9e8",
+          "namespace": "sumologic",
+          "selfLink": "/apis/events.k8s.io/v1beta1/namespaces/sumologic/events/fluentd-8657bcb875-mj2ft.15afa857956ee9e8",
+          "uid": "645cf1d6-a210-11e9-965c-025000000001",
+          "resourceVersion": "2721285",
+          "creationTimestamp": "2019-07-09T06:11:29Z"
+        },
+        "eventTime": null,
+        "reportingInstance": "",
+        "action": "",
+        "reason": "Pulling",
+        "regarding": {
+          "kind": "Pod",
+          "namespace": "sumologic",
+          "name": "fluentd-8657bcb875-mj2ft",
+          "uid": "636844c0-a210-11e9-965c-025000000001",
+          "apiVersion": "v1",
+          "resourceVersion": "2460599",
+          "fieldPath": "spec.containers{fluentd}"
+        },
+        "note": "pulling image \"sumologic/kubernetes-fluentd\"",
+        "type": "Normal",
+        "deprecatedSource": {
+          "component": "kubelet",
+          "host": "docker-for-desktop"
+        },
+        "deprecatedFirstTimestamp": "2019-07-09T06:11:29Z",
+        "deprecatedLastTimestamp": "2019-07-16T18:04:00Z",
+        "deprecatedCount": 9534
+      },
+      {
+        "metadata": {
+          "name": "fluentd-8657bcb875-mj2ft.15afa857dd0c2c5c",
+          "namespace": "sumologic",
+          "selfLink": "/apis/events.k8s.io/v1beta1/namespaces/sumologic/events/fluentd-8657bcb875-mj2ft.15afa857dd0c2c5c",
+          "uid": "3d74b9e7-a798-11e9-80e5-025000000001",
+          "resourceVersion": "2717520",
+          "creationTimestamp": "2019-07-16T07:06:31Z"
+        },
+        "eventTime": null,
+        "reportingInstance": "",
+        "action": "",
+        "reason": "Pulled",
+        "regarding": {
+          "kind": "Pod",
+          "namespace": "sumologic",
+          "name": "fluentd-8657bcb875-mj2ft",
+          "uid": "636844c0-a210-11e9-965c-025000000001",
+          "apiVersion": "v1",
+          "resourceVersion": "2460599",
+          "fieldPath": "spec.containers{fluentd}"
+        },
+        "note": "Successfully pulled image \"sumologic/kubernetes-fluentd\"",
+        "type": "Normal",
+        "deprecatedSource": {
+          "component": "kubelet",
+          "host": "docker-for-desktop"
+        },
+        "deprecatedFirstTimestamp": "2019-07-09T06:11:31Z",
+        "deprecatedLastTimestamp": "2019-07-16T12:21:31Z",
+        "deprecatedCount": 8948
+      },
+      {
+        "metadata": {
+          "name": "fluentd-8657bcb875-tn5sb.15afa857a7323810",
+          "namespace": "sumologic",
+          "selfLink": "/apis/events.k8s.io/v1beta1/namespaces/sumologic/events/fluentd-8657bcb875-tn5sb.15afa857a7323810",
+          "uid": "f8fda991-a3a8-11e9-965c-025000000001",
+          "resourceVersion": "2721283",
+          "creationTimestamp": "2019-07-11T06:56:13Z"
+        },
+        "eventTime": null,
+        "reportingInstance": "",
+        "action": "",
+        "reason": "Pulling",
+        "regarding": {
+          "kind": "Pod",
+          "namespace": "sumologic",
+          "name": "fluentd-8657bcb875-tn5sb",
+          "uid": "636c7d92-a210-11e9-965c-025000000001",
+          "apiVersion": "v1",
+          "resourceVersion": "2460607",
+          "fieldPath": "spec.containers{fluentd}"
+        },
+        "note": "pulling image \"sumologic/kubernetes-fluentd\"",
+        "type": "Normal",
+        "deprecatedSource": {
+          "component": "kubelet",
+          "host": "docker-for-desktop"
+        },
+        "deprecatedFirstTimestamp": "2019-07-09T06:11:30Z",
+        "deprecatedLastTimestamp": "2019-07-16T18:03:59Z",
+        "deprecatedCount": 9572
+      },
+      {
+        "metadata": {
+          "name": "fluentd-8657bcb875-tn5sb.15afa85b6dfb2ad0",
+          "namespace": "sumologic",
+          "selfLink": "/apis/events.k8s.io/v1beta1/namespaces/sumologic/events/fluentd-8657bcb875-tn5sb.15afa85b6dfb2ad0",
+          "uid": "5f2b2aa8-a7be-11e9-80e5-025000000001",
+          "resourceVersion": "2717333",
+          "creationTimestamp": "2019-07-16T11:39:29Z"
+        },
+        "eventTime": null,
+        "reportingInstance": "",
+        "action": "",
+        "reason": "Failed",
+        "regarding": {
+          "kind": "Pod",
+          "namespace": "sumologic",
+          "name": "fluentd-8657bcb875-tn5sb",
+          "uid": "636c7d92-a210-11e9-965c-025000000001",
+          "apiVersion": "v1",
+          "resourceVersion": "2460607",
+          "fieldPath": "spec.containers{fluentd}"
+        },
+        "note": "Error: ErrImagePull",
+        "type": "Warning",
+        "deprecatedSource": {
+          "component": "kubelet",
+          "host": "docker-for-desktop"
+        },
+        "deprecatedFirstTimestamp": "2019-07-09T06:11:46Z",
+        "deprecatedLastTimestamp": "2019-07-16T11:39:28Z",
+        "deprecatedCount": 365
+      },
+      {
+        "metadata": {
+          "name": "fluentd-8657bcb875-tn5sb.15afa85b9adaad28",
+          "namespace": "sumologic",
+          "selfLink": "/apis/events.k8s.io/v1beta1/namespaces/sumologic/events/fluentd-8657bcb875-tn5sb.15afa85b9adaad28",
+          "uid": "76d0d317-a7ee-11e9-80e5-025000000001",
+          "resourceVersion": "2718374",
+          "creationTimestamp": "2019-07-16T17:23:44Z"
+        },
+        "eventTime": null,
+        "reportingInstance": "",
+        "action": "",
+        "reason": "Failed",
+        "regarding": {
+          "kind": "Pod",
+          "namespace": "sumologic",
+          "name": "fluentd-8657bcb875-tn5sb",
+          "uid": "636c7d92-a210-11e9-965c-025000000001",
+          "apiVersion": "v1",
+          "resourceVersion": "2460607",
+          "fieldPath": "spec.containers{fluentd}"
+        },
+        "note": "Error: ImagePullBackOff",
+        "type": "Warning",
+        "deprecatedSource": {
+          "component": "kubelet",
+          "host": "docker-for-desktop"
+        },
+        "deprecatedFirstTimestamp": "2019-07-09T06:11:47Z",
+        "deprecatedLastTimestamp": "2019-07-16T17:23:44Z",
+        "deprecatedCount": 4491
+      },
+      {
+        "metadata": {
+          "name": "fluentd-8657bcb875-tn5sb.15afa85f199f8d88",
+          "namespace": "sumologic",
+          "selfLink": "/apis/events.k8s.io/v1beta1/namespaces/sumologic/events/fluentd-8657bcb875-tn5sb.15afa85f199f8d88",
+          "uid": "e508f857-a75c-11e9-80e5-025000000001",
+          "resourceVersion": "2717523",
+          "creationTimestamp": "2019-07-16T00:01:43Z"
+        },
+        "eventTime": null,
+        "reportingInstance": "",
+        "action": "",
+        "reason": "Pulled",
+        "regarding": {
+          "kind": "Pod",
+          "namespace": "sumologic",
+          "name": "fluentd-8657bcb875-tn5sb",
+          "uid": "636c7d92-a210-11e9-965c-025000000001",
+          "apiVersion": "v1",
+          "resourceVersion": "2460607",
+          "fieldPath": "spec.containers{fluentd}"
+        },
+        "note": "Successfully pulled image \"sumologic/kubernetes-fluentd\"",
+        "type": "Normal",
+        "deprecatedSource": {
+          "component": "kubelet",
+          "host": "docker-for-desktop"
+        },
+        "deprecatedFirstTimestamp": "2019-07-09T06:12:02Z",
+        "deprecatedLastTimestamp": "2019-07-16T12:21:33Z",
+        "deprecatedCount": 9028
+      },
+      {
+        "metadata": {
+          "name": "fluentd-8657bcb875-vn4wq.15afa857ba681f44",
+          "namespace": "sumologic",
+          "selfLink": "/apis/events.k8s.io/v1beta1/namespaces/sumologic/events/fluentd-8657bcb875-vn4wq.15afa857ba681f44",
+          "uid": "df6475d5-a396-11e9-965c-025000000001",
+          "resourceVersion": "2721281",
+          "creationTimestamp": "2019-07-11T04:46:39Z"
+        },
+        "eventTime": null,
+        "reportingInstance": "",
+        "action": "",
+        "reason": "Pulling",
+        "regarding": {
+          "kind": "Pod",
+          "namespace": "sumologic",
+          "name": "fluentd-8657bcb875-vn4wq",
+          "uid": "636ce6a4-a210-11e9-965c-025000000001",
+          "apiVersion": "v1",
+          "resourceVersion": "2460603",
+          "fieldPath": "spec.containers{fluentd}"
+        },
+        "note": "pulling image \"sumologic/kubernetes-fluentd\"",
+        "type": "Normal",
+        "deprecatedSource": {
+          "component": "kubelet",
+          "host": "docker-for-desktop"
+        },
+        "deprecatedFirstTimestamp": "2019-07-09T06:11:30Z",
+        "deprecatedLastTimestamp": "2019-07-16T18:03:58Z",
+        "deprecatedCount": 9323
+      },
+      {
+        "metadata": {
+          "name": "fluentd-8657bcb875-vn4wq.15afa85bb97fc420",
+          "namespace": "sumologic",
+          "selfLink": "/apis/events.k8s.io/v1beta1/namespaces/sumologic/events/fluentd-8657bcb875-vn4wq.15afa85bb97fc420",
+          "uid": "751119cb-a78c-11e9-80e5-025000000001",
+          "resourceVersion": "2718741",
+          "creationTimestamp": "2019-07-16T05:42:11Z"
+        },
+        "eventTime": null,
+        "reportingInstance": "",
+        "action": "",
+        "reason": "Pulled",
+        "regarding": {
+          "kind": "Pod",
+          "namespace": "sumologic",
+          "name": "fluentd-8657bcb875-vn4wq",
+          "uid": "636ce6a4-a210-11e9-965c-025000000001",
+          "apiVersion": "v1",
+          "resourceVersion": "2460603",
+          "fieldPath": "spec.containers{fluentd}"
+        },
+        "note": "Successfully pulled image \"sumologic/kubernetes-fluentd\"",
+        "type": "Normal",
+        "deprecatedSource": {
+          "component": "kubelet",
+          "host": "docker-for-desktop"
+        },
+        "deprecatedFirstTimestamp": "2019-07-09T06:11:47Z",
+        "deprecatedLastTimestamp": "2019-07-16T17:28:45Z",
+        "deprecatedCount": 8806
+      }
+    ]
+  }

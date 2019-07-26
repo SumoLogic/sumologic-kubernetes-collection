@@ -14,6 +14,7 @@ module SumoLogic
         @last_recreated = Time.now.to_i
         log.debug "last_recreated initialized to #{@last_recreated}"
 
+        @pods_to_services = Concurrent::Map.new {|h, k| h[k] = []}
         timer_execute(:service_monitor, 10, &method(:run_monitor))
       end
 
