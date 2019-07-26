@@ -35,7 +35,6 @@ done
 echo "Building docker image with $DOCKER_TAG:$VERSION in `pwd`..."
 cd ./deploy/docker
 docker build . -f ./Dockerfile -t $DOCKER_TAG:$VERSION --no-cache
-docker build . -f ./Dockerfile -t $DOCKER_TAG:latest
 rm -f ./gems/*.gem
 cd ../..
 
@@ -45,10 +44,9 @@ ruby deploy/test/test_docker.rb
 if [ -z "$DOCKER_PASSWORD" ] || [ -z "$TRAVIS_TAG" ]; then
     echo "Skip Docker pushing"
 else
-    echo "Pushing docker image with $DOCKER_TAG:$VERSION and $DOCKER_TAG:latest..."
+    echo "Pushing docker image with $DOCKER_TAG:$VERSION ..."
     echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     docker push $DOCKER_TAG:$VERSION
-    docker push $DOCKER_TAG:latest
 fi
 
 echo "DONE"
