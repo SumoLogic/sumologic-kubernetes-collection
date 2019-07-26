@@ -175,6 +175,8 @@ data:
         merge_json_log false
       </filter>
 
+      @include logs.enhanced.metadata.conf
+
       <filter containers.**>
         @type kubernetes_sumologic
         source_name "#{ENV['SOURCE_NAME']}"
@@ -242,6 +244,14 @@ data:
 
       @include logs.output.conf
     </label>
+
+  logs.enhanced.metadata.conf: |-
+    <filter **>
+      @type enhance_k8s_metadata
+      in_namespace_path '$.kubernetes.namespace_name'
+      in_pod_path '$.kubernetes.pod_name'
+      data_type logs
+    </filter>
 
   logs.output.conf: |-
     <match **>
