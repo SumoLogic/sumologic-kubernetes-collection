@@ -4,6 +4,7 @@ VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
 : "${DOCKER_USERNAME:=sumodocker}"
+DOCKER_TAGS="https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags"
 
 echo "Starting build process in: `pwd` with version tag: $VERSION"
 set -e
@@ -32,21 +33,43 @@ for i in ./fluent-plugin* ; do
   fi
 done
 
-echo "Building docker image with $DOCKER_TAG:$VERSION in `pwd`..."
+echo "Building docker image with $DOCKER_TAG:local in `pwd`..."
 cd ./deploy/docker
-docker build . -f ./Dockerfile -t $DOCKER_TAG:$VERSION --no-cache
+docker build . -f ./Dockerfile -t $DOCKER_TAG:local --no-cache
 rm -f ./gems/*.gem
 cd ../..
 
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
-if [ -z "$DOCKER_PASSWORD" ] || [ -z "$TRAVIS_TAG" ]; then
-    echo "Skip Docker pushing"
+if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
+  echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$VERSION..."
+  docker tag $DOCKER_TAG:local $DOCKER_TAG:$VERSION
+  echo "Pushing docker image $DOCKER_TAG:$VERSION..."
+  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  docker push $DOCKER_TAG:$VERSION
+elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+  # Major.minor.patch version format
+  latest_release=`wget -q $DOCKER_TAGS -O - | jq -r .[].name | grep -v alpha | grep -v latest | sort --version-sort --field-separator=. | tail -1`
+  latest_major=`echo $latest_release | tr '.' $'\n' | sed -n 1p`
+  latest_minor=`echo $latest_release | tr '.' $'\n' | sed -n 2p`
+  latest_alpha=`wget -q $DOCKER_TAGS -O - | jq -r .[].name | grep alpha | grep "^$latest_major.$latest_minor" | sed 's/-alpha//g' | sort --version-sort --field-separator=. | tail -1`
+  if [ -n "$latest_alpha" ]; then
+    echo "Most recent release version: $latest_release, most recent alpha: $latest_alpha-alpha"
+  else
+    echo "Most recent release version: $latest_release, most recent alpha does not yet exist"
+    latest_alpha="$latest_release"
+  fi
+  new_patch=$((`echo $latest_alpha | tr '.' $'\n' | sed -n 3p`+1))
+  new_alpha="$latest_major.$latest_minor.$new_patch-alpha"
+  
+  echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$new_alpha..."
+  docker tag $DOCKER_TAG:local $DOCKER_TAG:$new_alpha
+  echo "Pushing alpha docker image with version $new_alpha"
+  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  docker push $DOCKER_TAG:$new_alpha
 else
-    echo "Pushing docker image with $DOCKER_TAG:$VERSION ..."
-    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    docker push $DOCKER_TAG:$VERSION
+  echo "Skip Docker pushing"
 fi
 
 echo "DONE"
