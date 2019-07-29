@@ -22,7 +22,7 @@ class TestDocker < Test::Unit::TestCase
   end
 
   def test_docker_image_runnable
-    id = `docker run -d --rm --name #{CONTAINER_NAME} #{docker_tag}:latest`
+    id = `docker run -d --rm --name #{CONTAINER_NAME} #{docker_tag}:local`
     assert !id.nil? && !id.empty?
     sleep_time = 15
     sleep sleep_time
