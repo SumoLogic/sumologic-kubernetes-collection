@@ -84,7 +84,7 @@ if [ -z $CLUSTER_NAME ]; then
   fi
 fi
 
-if [ -z $NAMESPACE]; then
+if [ -z $NAMESPACE ]; then
   if [ -z $SUMO_NAMESPACE ]
   then
     NAMESPACE="sumologic"
@@ -118,7 +118,7 @@ else
 fi
 
 set +e
-kubectl describe namespace $NAMESPACE &>/dev/null
+kubectl get namespace $NAMESPACE &>/dev/null
 retVal=$?
 set -e
 if [ $retVal -ne 0 ]; then
