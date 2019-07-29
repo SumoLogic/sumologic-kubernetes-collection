@@ -291,7 +291,7 @@ spec:
   endpoints:
   - port: web
   ```
-  
+
 Replace the `name` with a name that relates to your service, and a `matchLabels` that would match the pods you want this service monitor to scrape against. By default, prometheus attempts to scrape metrics off of the `/metrics` endpoint, but if you do need to use a different url, you can override it by providing a `path` attribute in the settings like so:
 
 ```
@@ -329,7 +329,7 @@ The `prometheus-overrides.yaml` file controls what metrics get forwarded on to S
 After adding this to the `yaml`, go ahead and run a `helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml` to upgrade your `prometheus-operator`.
 
 Note: When executing the helm upgrade to avoid the error below is need add the argument `--force`.
-      
+
       invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
 
 If all goes well, you should now have your custom metrics piping into Sumo Logic.
@@ -351,7 +351,48 @@ helm repo update \
    && helm install stable/fluent-bit --name fluent-bit --namespace sumologic -f fluent-bit-overrides.yaml
 ```
 
+## Step 4: Deploy Falco
+
+In this step, you will deploy Falco to detect anomalous activity and capture Kubernetes Audit Events.
+
+__NOTE__ Falco needs privileged container access to insert its kernel module to process events for system calls.
+
+Download the file `falco-overrides.yaml` from GitHub:
+
+```sh
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/falco-overrides.yaml
+```
+
+Install `falco` using Helm:
+
+```sh
+helm repo update \
+   && helm install stable/falco --name falco --namespace sumologic -f falco-overrides.yaml
+```
+
+__NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to leverage eBPF (extended Berkeley Packet Filter) to supply the stream of system calls to the Falco engine. eBPF is currently supported only on GKE and COS.
+
+To install `Falco` on `GKE`, download the file `falco-gke-overrides.yaml` from GitHub:
+
+```sh
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/falco-gke-overrides.yaml
+```
+
+Install `falco` on `GKE` using Helm:
+
+```sh
+helm repo update \
+   && helm install stable/falco --name falco --namespace sumologic -f falco-gke-overrides.yaml
+```
+
+
 ## Tear down
+
+To delete `falco` from the Kubernetes cluster:
+
+```sh
+helm del --purge falco
+```
 
 To delete `fluent-bit` from the Kubernetes cluster:
 
