@@ -87,66 +87,51 @@ data:
     <match prometheus.datapoint.apiserver**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_APISERVER']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
-      @include buffer.output.conf
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kubelet**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
-      @include buffer.output.conf
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kube-controller-manager**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
-      @include buffer.output.conf
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kube-scheduler**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
-      @include buffer.output.conf
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kube-state**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_STATE']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
-      @include buffer.output.conf
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint.node-exporter**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_NODE_EXPORTER']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
-      @include buffer.output.conf
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint**>
       @type sumologic
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
-      @include buffer.output.conf
+      @include metrics.output.conf
     </match>
+
+  metrics.output.conf: |-
+    data_type metrics
+    metric_data_format prometheus
+    disable_cookies true
+    @include buffer.output.conf
+
   logs.conf: |-
     <source>
       @type forward
       port 24321
       bind 0.0.0.0
     </source>
-
     @include logs.source.containers.conf
     @include logs.source.systemd.conf
 
@@ -158,12 +143,10 @@ data:
       separator "#{ENV['CONCAT_SEPARATOR']}"
       timeout_label @NORMAL
     </filter>
-
     <match containers.**>
       @type relabel
       @label @NORMAL
     </match>
-
     <label @NORMAL>
       <filter containers.**>
         @type kubernetes_metadata
@@ -181,9 +164,12 @@ data:
         tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
         merge_json_log false
       </filter>
-
-      @include logs.enhanced.metadata.conf
-
+      <filter **>
+        @type enhance_k8s_metadata
+        in_namespace_path '$.kubernetes.namespace_name'
+        in_pod_path '$.kubernetes.pod_name'
+        data_type logs
+      </filter>
       <filter containers.**>
         @type kubernetes_sumologic
         source_name "#{ENV['SOURCE_NAME']}"
@@ -210,7 +196,6 @@ data:
       @type relabel
       @label @KUBELET
     </match>
-
     <label @KUBELET>
       <filter host.kubelet.**>
         @type kubernetes_sumologic
@@ -222,15 +207,12 @@ data:
         exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
         exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
       </filter>
-
       @include logs.output.conf
     </label>
-
     <match host.**>
       @type relabel
       @label @SYSTEMD
     </match>
-
     <label @SYSTEMD>
       <filter host.**>
         @type kubernetes_sumologic
@@ -241,28 +223,19 @@ data:
         exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
         exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
       </filter>
-
       <filter host.**>
         @type record_modifier
         <record>
           _sumo_metadata ${record["_sumo_metadata"][:source] = tag_parts[1]; record["_sumo_metadata"]}
         </record>
       </filter>
-
       @include logs.output.conf
     </label>
-
-  logs.enhanced.metadata.conf: |-
-    <filter **>
-      @type enhance_k8s_metadata
-      in_namespace_path '$.kubernetes.namespace_name'
-      in_pod_path '$.kubernetes.pod_name'
-      data_type logs
-    </filter>
 
   logs.output.conf: |-
     <match **>
       @type sumologic
+      data_type logs
       log_key log
       endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
       verify_ssl "#{ENV['VERIFY_SSL']}"
@@ -406,6 +379,16 @@ data:
       endpoint "#{ENV['SUMO_ENDPOINT_EVENTS']}"
       data_type logs
       disable_cookies true
+      verify_ssl "#{ENV['VERIFY_SSL']}"
+      proxy_uri "#{ENV['PROXY_URI']}"
+      <buffer>
+      @type memory
+        compress gzip
+        flush_interval "#{ENV['FLUSH_INTERVAL']}"
+        flush_thread_count "#{ENV['NUM_THREADS']}"
+        chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
+        total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
+      </buffer>
     </match>
 ---
 apiVersion: apps/v1
