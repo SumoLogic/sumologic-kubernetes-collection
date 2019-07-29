@@ -90,6 +90,7 @@ data:
       data_type metrics
       metric_data_format prometheus
       disable_cookies true
+      @include buffer.output.conf
     </match>
     <match prometheus.datapoint.kubelet**>
       @type sumologic
@@ -97,6 +98,7 @@ data:
       data_type metrics
       metric_data_format prometheus
       disable_cookies true
+      @include buffer.output.conf
     </match>
     <match prometheus.datapoint.kube-controller-manager**>
       @type sumologic
@@ -104,6 +106,7 @@ data:
       data_type metrics
       metric_data_format prometheus
       disable_cookies true
+      @include buffer.output.conf
     </match>
     <match prometheus.datapoint.kube-scheduler**>
       @type sumologic
@@ -111,6 +114,7 @@ data:
       data_type metrics
       metric_data_format prometheus
       disable_cookies true
+      @include buffer.output.conf
     </match>
     <match prometheus.datapoint.kube-state**>
       @type sumologic
@@ -118,6 +122,7 @@ data:
       data_type metrics
       metric_data_format prometheus
       disable_cookies true
+      @include buffer.output.conf
     </match>
     <match prometheus.datapoint.node-exporter**>
       @type sumologic
@@ -125,6 +130,7 @@ data:
       data_type metrics
       metric_data_format prometheus
       disable_cookies true
+      @include buffer.output.conf
     </match>
     <match prometheus.datapoint**>
       @type sumologic
@@ -132,6 +138,7 @@ data:
       data_type metrics
       metric_data_format prometheus
       disable_cookies true
+      @include buffer.output.conf
     </match>
   logs.conf: |-
     <source>
@@ -260,13 +267,21 @@ data:
       endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
       verify_ssl "#{ENV['VERIFY_SSL']}"
       log_format "#{ENV['LOG_FORMAT']}"
-      flush_interval "#{ENV['FLUSH_INTERVAL']}"
-      num_threads "#{ENV['NUM_THREADS']}"
-      open_timeout 60
       add_timestamp "#{ENV['ADD_TIMESTAMP']}"
       timestamp_key "#{ENV['TIMESTAMP_KEY']}"
       proxy_uri "#{ENV['PROXY_URI']}"
+      @include buffer.output.conf
     </match>
+  
+  buffer.output.conf: |-
+    <buffer>
+      @type memory
+      compress gzip
+      flush_interval "#{ENV['FLUSH_INTERVAL']}"
+      flush_thread_count "#{ENV['NUM_THREADS']}"
+      chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
+      total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
+    </buffer>
 ---
 apiVersion: apps/v1
 kind: Deployment

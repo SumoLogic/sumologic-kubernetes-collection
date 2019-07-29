@@ -43,7 +43,9 @@ RUN gem sources --clear-all \
 # Default settings for log collection
 ENV LOG_FORMAT "fields"
 ENV FLUSH_INTERVAL "5s"
-ENV NUM_THREADS "1"
+ENV NUM_THREADS "4"
+ENV CHUNK_LIMIT_SIZE "100k"
+ENV TOTAL_LIMIT_SIZE "128m"
 ENV SOURCE_CATEGORY "%{namespace}/%{pod_name}"
 ENV SOURCE_CATEGORY_PREFIX "kubernetes/"
 ENV SOURCE_CATEGORY_REPLACE_DASH "/"
