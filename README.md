@@ -4,7 +4,7 @@
 
 | DISCLAIMER |
 | --- |
-| As this repo is in active development, we recommend using the collection pipeline detailed [here](https://github.com/SumoLogic/fluentd-kubernetes-sumologic) for production systems until further notice. |
+| While this repo is under active development, we recommend using the collection pipeline detailed [here](https://github.com/SumoLogic/fluentd-kubernetes-sumologic) for production systems. |
 
 Please refer to [our documentation](./deploy/README.md) on how to collect data from your Kubernetes clusters into Sumo Logic.
 
