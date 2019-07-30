@@ -42,7 +42,7 @@ cd ../..
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
-if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
+if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha* ]]; then
   echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$VERSION..."
   docker tag $DOCKER_TAG:local $DOCKER_TAG:$VERSION
   echo "Pushing docker image $DOCKER_TAG:$VERSION..."
