@@ -40,30 +40,6 @@ RUN gem sources --clear-all \
        && rm -rf /home/fluent/.gem/ruby/2.5.0/cache/*.gem \
        && rm -f ./*.gem
 
-# Default settings for log collection
-ENV LOG_FORMAT "fields"
-ENV FLUSH_INTERVAL "5s"
-ENV NUM_THREADS "4"
-ENV CHUNK_LIMIT_SIZE "100k"
-ENV TOTAL_LIMIT_SIZE "128m"
-ENV SOURCE_CATEGORY "%{namespace}/%{pod_name}"
-ENV SOURCE_CATEGORY_PREFIX "kubernetes/"
-ENV SOURCE_CATEGORY_REPLACE_DASH "/"
-ENV SOURCE_NAME "%{namespace}.%{pod}.%{container}"
-ENV KUBERNETES_META "true"
-ENV KUBERNETES_META_REDUCE "false"
-ENV MULTILINE_START_REGEXP "/^\w{3} \d{1,2}, \d{4}/"
-ENV CONCAT_SEPARATOR ""
-ENV ADD_TIMESTAMP "true"
-ENV TIMESTAMP_KEY "timestamp"
-ENV ADD_STREAM "true"
-ENV ADD_TIME "true"
-ENV K8S_METADATA_FILTER_WATCH "true"
-ENV K8S_METADATA_FILTER_VERIFY_SSL "true"
-ENV K8S_METADATA_FILTER_BEARER_CACHE_SIZE "1000"
-ENV K8S_METADATA_FILTER_BEARER_CACHE_TTL "3600"
-ENV VERIFY_SSL "true"
-
 RUN mkdir -p /fluentd/conf.d
 
 COPY ./fluent.conf /fluentd/etc/

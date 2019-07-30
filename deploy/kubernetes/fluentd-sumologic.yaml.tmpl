@@ -361,6 +361,50 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
+        - name: LOG_FORMAT
+          value: "fields"
+        - name: FLUSH_INTERVAL
+          value: "5s"
+        - name: NUM_THREADS
+          value: "4"
+        - name: CHUNK_LIMIT_SIZE
+          value: "100k"
+        - name: TOTAL_LIMIT_SIZE
+          value: "128m"
+        - name: SOURCE_CATEGORY
+          value: "%{namespace}/%{pod_name}"
+        - name: SOURCE_CATEGORY_PREFIX
+          value: "kubernetes/"
+        - name: SOURCE_CATEGORY_REPLACE_DASH
+          value: "/"
+        - name: SOURCE_NAME
+          value: "%{namespace}.%{pod}.%{container}"
+        - name: KUBERNETES_META
+          value: "true"
+        - name: KUBERNETES_META_REDUCE
+          value: "false"
+        - name: MULTILINE_START_REGEXP
+          value: "/^\w{3} \d{1,2}, \d{4}/"
+        - name: CONCAT_SEPARATOR
+          value: ""
+        - name: ADD_TIMESTAMP
+          value: "true"
+        - name: TIMESTAMP_KEY
+          value: "timestamp"
+        - name: ADD_STREAM
+          value: "true"
+        - name: ADD_TIME
+          value: "true"
+        - name: K8S_METADATA_FILTER_WATCH
+          value: "true"
+        - name: K8S_METADATA_FILTER_VERIFY_SSL
+          value: "true"
+        - name: K8S_METADATA_FILTER_BEARER_CACHE_SIZE
+          value: "1000"
+        - name: K8S_METADATA_FILTER_BEARER_CACHE_TTL
+          value: "3600"
+        - name: VERIFY_SSL
+          value: "true"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -437,6 +481,17 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-events
+        - name: VERIFY_SSL
+          value: "true"
+        - name: FLUSH_INTERVAL
+          value: "5s"
+        - name: NUM_THREADS
+          value: "4"
+        - name: CHUNK_LIMIT_SIZE
+          value: "100k"
+        - name: TOTAL_LIMIT_SIZE
+          value: "128m"
+
 ---
 apiVersion: v1
 kind: Service
