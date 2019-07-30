@@ -70,8 +70,11 @@ elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS
   docker push $DOCKER_TAG:$new_alpha
 
   echo "Tagging git with v$new_alpha..."
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
+  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
   git tag -a "v$new_alpha" -m "Bump version to v$new_alpha"
-  git push --tags origin master
+  git push --tags --quiet --set-upstream origin-repo master
 else
   echo "Skip Docker pushing"
 fi
