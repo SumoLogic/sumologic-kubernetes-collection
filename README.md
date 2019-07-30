@@ -2,6 +2,10 @@
 
 # sumologic-kubernetes-collection
 
+| DISCLAIMER |
+| --- |
+| While this repo is under active development, we recommend using the collection pipeline detailed [here](https://github.com/SumoLogic/fluentd-kubernetes-sumologic) for production systems. |
+
 Please refer to [our documentation](./deploy/README.md) on how to collect data from your Kubernetes clusters into Sumo Logic.
 
 This repo contains all required resources to collect data from Kubernetes clusters into Sumo Logic. Sumo Logic leverages [CNCF](https://www.cncf.io) supported technology including [Fluent-Bit](https://fluentbit.io), [FluentD](https://www.fluentd.org) and [Prometheus](https://prometheus.io) to collect logs from Kubernetes clusters. The following diagram provides an overview of the collection process.
