@@ -66,7 +66,7 @@ class EventsInputTest < Test::Unit::TestCase
     assert_equal 'dummy-services-rv', resource.data['resource-version-services']
   end
 
-  test 'initialize_resource_verion correctly for different client' do
+  test 'initialize_resource_version correctly for different client' do
     config = %([
       api_version "events.k8s.io/v1beta1"
     ])
@@ -187,16 +187,64 @@ class EventsInputTest < Test::Unit::TestCase
     driver.start_monitor
   end
 
-  test 'exception thrown from kubeclient will not interrupt execution of start_monitor' do
-    config = %([])
-    driver = create_driver(config).instance
-    connect_kubernetes_with_api_version(driver)
-    driver.instance_variable_set(:@clients, @clients)
-    driver.instance_variable_set(:@last_recreated, 0)
+  sub_test_case 'exception from kubeclient will not interrupt execution of start monitor' do
+    test 'exception from kubeclient call in create_config_map' do
+      config = %([])
+      driver = create_driver(config).instance
+      connect_kubernetes_with_api_version(driver)
+      driver.instance_variable_set(:@clients, @clients)
+      driver.instance_variable_set(:@last_recreated, 0)
 
-    mock_get_events('api_list_events_v1.json')
-    mock_watch_events('api_watch_events_v1.txt')
-    mock_patch_config_map_exception(2346293)
-    assert_nothing_raised { driver.start_monitor}
+      mock_get_config_map
+      driver.initialize_resource_version
+      mock_create_config_map_execution(driver.instance_variable_get(:@configmap))
+      assert_nothing_raised { driver.create_config_map }
+    end
+
+    test 'exception from kubeclient call in patch_config_map' do
+      config = %([])
+      driver = create_driver(config).instance
+      connect_kubernetes_with_api_version(driver)
+      driver.instance_variable_set(:@clients, @clients)
+      driver.instance_variable_set(:@last_recreated, 0)
+  
+      mock_get_events('api_list_events_v1.json')
+      mock_watch_events('api_watch_events_v1.txt')
+      mock_patch_config_map_exception(2346293)
+      assert_nothing_raised { driver.start_monitor }
+    end
+
+    test 'exception from kubeclient call in initialize_resource_version' do
+      config = %([])
+      driver = create_driver(config).instance
+      connect_kubernetes_with_api_version(driver)
+      driver.instance_variable_set(:@clients, @clients)
+      driver.instance_variable_set(:@last_recreated, 0)
+
+      mock_get_config_map_exception
+      assert_nothing_raised { driver.initialize_resource_version }
+    end
+
+    test 'exception from kubeclient call in pull_resource_version' do
+      config = %([])
+      driver = create_driver(config).instance
+      connect_kubernetes_with_api_version(driver)
+      driver.instance_variable_set(:@clients, @clients)
+      driver.instance_variable_set(:@last_recreated, 0)
+
+      mock_get_events_exception
+      assert_nothing_raised { driver.pull_resource_version }
+    end
+
+    test 'exception from kubclient call in start_watcher_thread' do
+      config = %([])
+      driver = create_driver(config).instance
+      connect_kubernetes_with_api_version(driver)
+      driver.instance_variable_set(:@clients, @clients)
+      driver.instance_variable_set(:@last_recreated, 0)
+      
+      mock_watch_events_exception
+      assert_nothing_raised { driver.start_watcher_thread}
+    end
   end
 end

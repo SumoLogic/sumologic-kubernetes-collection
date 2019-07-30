@@ -159,7 +159,7 @@ module Fluent
         rescue Kubeclient::ResourceNotFoundError
           create_config_map
         rescue => e
-          log.error "Got exception #{e} getting config map #{resource}. Skipping."
+          log.error "Got exception #{e} getting config map. Skipping."
         end
       end
 

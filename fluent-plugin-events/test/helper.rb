@@ -63,11 +63,34 @@ def mock_patch_config_map(rv)
     .returns(object.to_json)
 end
 
+def mock_create_config_map_execution(configmap)
+  Kubeclient::Client.any_instance.stubs(:public_send)
+    .with("create_config_map", configmap)
+    .raises(StandardError.new 'Error occurred when creating config map.')
+end
+
 def mock_patch_config_map_exception(rv)
   Kubeclient::Client.any_instance.stubs(:public_send)
     .with("patch_config_map", "fluentd-config-resource-version",
     {data: { "resource-version-events": rv.to_s}}, 'sumologic')
-    .raises()
+    .raises(StandardError.new 'Error occurred when patching config map.')
+end
+
+def mock_get_config_map_exception
+  Kubeclient::Client.any_instance.stubs(:public_send)
+    .with("get_config_map", "fluentd-config-resource-version", "sumologic")
+    .raises(StandardError.new 'Error occurred when getting config map.')
+end
+
+def mock_get_events_exception
+  Kubeclient::Client.any_instance.stubs(:public_send).with("get_events", {:as=>:raw})
+    .raises(StandardError.new 'Error occurred when getting events.')
+end
+
+def mock_watch_events_exception
+  Kubeclient::Client.any_instance.stubs(:public_send)
+    .with("watch_events", {:as=>:raw, :field_selector=>nil, :label_selector=>nil, :namespace=>nil, :resource_version=>nil, :timeout_seconds=>360})
+    .raises(StandardError.new 'Error occurred when watching events.')
 end
 
 def get_watch_resources_count_by_type_selector(type_selector, file_name)
