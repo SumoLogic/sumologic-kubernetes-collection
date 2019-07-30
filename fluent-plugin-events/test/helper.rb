@@ -63,6 +63,13 @@ def mock_patch_config_map(rv)
     .returns(object.to_json)
 end
 
+def mock_patch_config_map_exception(rv)
+  Kubeclient::Client.any_instance.stubs(:public_send)
+    .with("patch_config_map", "fluentd-config-resource-version",
+    {data: { "resource-version-events": rv.to_s}}, 'sumologic')
+    .raises()
+end
+
 def get_watch_resources_count_by_type_selector(type_selector, file_name)
   text = File.read(test_resource(file_name))
   objects = text.split(/\n+/).map {|line| JSON.parse(line)}

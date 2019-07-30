@@ -186,4 +186,17 @@ class EventsInputTest < Test::Unit::TestCase
     
     driver.start_monitor
   end
+
+  test 'exception thrown from kubeclient will not interrupt execution of start_monitor' do
+    config = %([])
+    driver = create_driver(config).instance
+    connect_kubernetes_with_api_version(driver)
+    driver.instance_variable_set(:@clients, @clients)
+    driver.instance_variable_set(:@last_recreated, 0)
+
+    mock_get_events('api_list_events_v1.json')
+    mock_watch_events('api_watch_events_v1.txt')
+    mock_patch_config_map_exception(2346293)
+    assert_nothing_raised { driver.start_monitor}
+  end
 end
