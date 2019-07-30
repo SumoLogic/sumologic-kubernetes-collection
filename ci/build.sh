@@ -68,6 +68,10 @@ elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS
   echo "Pushing alpha docker image with version $new_alpha"
   echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   docker push $DOCKER_TAG:$new_alpha
+
+  echo "Tagging git with v$new_alpha..."
+  git tag -a "v$new_alpha" -m "Bump version to v$new_alpha"
+  git push --tags origin master
 else
   echo "Skip Docker pushing"
 fi
