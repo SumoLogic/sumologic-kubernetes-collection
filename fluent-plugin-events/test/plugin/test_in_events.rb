@@ -173,7 +173,7 @@ class EventsInputTest < Test::Unit::TestCase
 
   sub_test_case 'appropriately handle exceptions thrown from kubeclient' do
     test 'exception from kubeclient call in create_config_map' do
-      driver = configure_test_driver(%([]))
+      driver = configure_test_driver()
       mock_get_config_map
 
       driver.initialize_resource_version
@@ -182,7 +182,7 @@ class EventsInputTest < Test::Unit::TestCase
     end
 
     test 'exception from kubeclient call in patch_config_map' do
-      driver = configure_test_driver(%([]))
+      driver = configure_test_driver()
       driver.instance_variable_set(:@last_recreated, 0)
       mock_get_events('api_list_events_v1.json')
       mock_watch_events('api_watch_events_v1.txt')
@@ -192,21 +192,21 @@ class EventsInputTest < Test::Unit::TestCase
     end
 
     test 'exception from kubeclient call in initialize_resource_version' do
-      driver = configure_test_driver(%([]))
+      driver = configure_test_driver()
       mock_get_config_map_exception
 
       assert_nothing_raised { driver.initialize_resource_version }
     end
 
     test 'exception from kubeclient call in pull_resource_version' do
-      driver = configure_test_driver(%([]))
+      driver = configure_test_driver()
       mock_get_events_exception
 
       assert_nothing_raised { driver.pull_resource_version }
     end
 
     test 'exception from kubclient call in start_watcher_thread' do
-      driver = configure_test_driver(%([]))
+      driver = configure_test_driver()
       mock_watch_events_exception
 
       assert_nothing_raised { driver.start_watcher_thread }
