@@ -4,7 +4,7 @@ set -e
 usage() {
   echo
   echo 'Usage:'
-  echo '  setup.sh [-c collector-name] [-k cluster-name] [-n namespace] <endpoint> <access-id> <access-key>'
+  echo '  setup.sh [-c collector-name] [-k cluster-name] [-n namespace]  [-a alpha] <endpoint> <access-id> <access-key>'
   echo
 }
 
@@ -53,13 +53,14 @@ create_http_source()
   echo "Source was created(id=$SOURCE_ID, name=$SOURCE_NAME)."
 }
 
-while getopts c:k:n: option
+while getopts c:k:n:a: option
 do
  case "${option}"
  in
  c) COLLECTOR_NAME=${OPTARG};;
  k) CLUSTER_NAME=${OPTARG};;
  n) NAMESPACE=${OPTARG};;
+ a) ALPHA=${OPTARG};;
  esac
 done
 shift "$(($OPTIND -1))"
@@ -93,6 +94,13 @@ if [ -z $NAMESPACE ]; then
   fi
 fi
 
+if [ -z $ALPHA ]
+then
+  release=`wget -q https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags -O - | jq -r .[].name | grep alpha | sed 's/-alpha//g' | sort --version-sort --field-separator=. | tail -1`-alpha  
+else
+  release=`wget -q https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags -O - | jq -r .[].name | grep -v alpha | grep -v latest | sort --version-sort --field-separator=. | tail -1`
+fi
+  
 if [ -n "$1" ]; then
   SUMO_ENDPOINT=${1%/};
 else
@@ -182,9 +190,10 @@ kubectl -n $NAMESPACE create secret generic sumologic \
   --from-literal=endpoint-logs=$ENDPOINT_LOGS \
   --from-literal=endpoint-events=$ENDPOINT_EVENTS
 
-echo "Applying deployment 'fluentd'..."
+echo "Applying deployment 'fluentd'... $release"
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/$NAMESPACE/g" | \
+sed 's/\fluentd:0.0.0'"/fluentd:$release/g" | \
 tee fluentd-sumologic.yaml | \
 kubectl -n $NAMESPACE apply -f -
 
