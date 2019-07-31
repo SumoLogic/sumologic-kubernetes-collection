@@ -353,9 +353,9 @@ helm repo update \
 
 ## Step 4: Deploy Falco
 
-In this step, you will deploy Falco to detect anomalous activity and capture Kubernetes Audit Events.
+In this step, you will deploy [Falco](https://falco.org/) to detect anomalous activity and capture Kubernetes Audit Events.
 
-__NOTE__ Falco needs privileged container access to insert its kernel module to process events for system calls.
+__NOTE__ [Falco](https://sysdig.com/blog/sysdig-falco/) needs privileged container access to insert its kernel module to process events for system calls.
 
 Download the file `falco-overrides.yaml` from GitHub:
 
@@ -370,19 +370,20 @@ helm repo update \
    && helm install stable/falco --name falco --namespace sumologic -f falco-overrides.yaml
 ```
 
-__NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to leverage eBPF (extended Berkeley Packet Filter) to supply the stream of system calls to the Falco engine. eBPF is currently supported only on GKE and COS.
+__NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to leverage eBPF (extended Berkeley Packet Filter) to supply the stream of system calls to the Falco engine. eBPF is currently supported only on GKE and COS. More details [here](https://falco.org/docs/installation/).
 
-To install `Falco` on `GKE`, download the file `falco-gke-overrides.yaml` from GitHub:
+To install `Falco` on `GKE`, uncomment following lines in the file `falco-overrides.yaml`:
 
-```sh
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/falco-gke-overrides.yaml
+```
+ebpf:
+  enabled: true
 ```
 
 Install `falco` on `GKE` using Helm:
 
 ```sh
 helm repo update \
-   && helm install stable/falco --name falco --namespace sumologic -f falco-gke-overrides.yaml
+   && helm install stable/falco --name falco --namespace sumologic -f falco-overrides.yaml
 ```
 
 
