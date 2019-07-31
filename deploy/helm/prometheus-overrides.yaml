@@ -3,6 +3,19 @@ alertmanager:
 grafana:
   enabled: false
 prometheus:
+  additionalServiceMonitors:
+    - name: fluentd
+      additionalLabels: 
+        k8s-app: fluentd-sumologic
+        release: prometheus-operator
+      endpoints:
+      - port: metrics
+      namespaceSelector:
+        matchNames:
+        - sumologic
+      selector:
+          matchLabels:
+            k8s-app: fluentd-sumologic
   prometheusSpec:
     externalLabels:
       # Set this to a value to distinguish between different k8s clusters
@@ -268,5 +281,5 @@ prometheus:
     - url: http://fluentd:9888/prometheus.metrics
       writeRelabelConfigs:
         - action: keep
-          regex: 'fluentd_*'
+          regex: 'fluentd_.*'
           sourceLabels: [__name__]
