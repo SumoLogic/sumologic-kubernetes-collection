@@ -4,7 +4,7 @@ set -e
 usage() {
   echo
   echo 'Usage:'
-  echo '  setup.sh [-c collector-name] [-k cluster-name] [-n namespace]  [-a alpha] <endpoint> <access-id> <access-key>'
+  echo '  setup.sh [-c collector-name] [-k cluster-name] [-n namespace] [-a alpha] <endpoint> <access-id> <access-key>'
   echo
 }
 
