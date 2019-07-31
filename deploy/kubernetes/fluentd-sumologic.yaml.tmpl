@@ -51,8 +51,15 @@ metadata:
   name: fluentd-config
 data:
   fluent.conf: |-
+    @include common.conf
     @include metrics.conf
     @include logs.conf
+  common.conf: |-
+    <source>
+      @type monitor_agent
+      bind 0.0.0.0
+      port 24220
+    </source>
   metrics.conf: |-
     <source>
       @type http
@@ -86,36 +93,43 @@ data:
     </filter>
     <match prometheus.datapoint.apiserver**>
       @type sumologic
+      @id sumologic.endpoint.metrics.apiserver
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_APISERVER']}"
       @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kubelet**>
       @type sumologic
+      @id sumologic.endpoint.metrics.kubelet
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
       @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kube-controller-manager**>
       @type sumologic
+      @id sumologic.endpoint.metrics.kube.controller.manager
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER']}"
       @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kube-scheduler**>
       @type sumologic
+      @id sumologic.endpoint.metrics.kube.scheduler
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER']}"
       @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kube-state**>
       @type sumologic
+      @id sumologic.endpoint.metrics.kube.state
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_STATE']}"
       @include metrics.output.conf
     </match>
     <match prometheus.datapoint.node-exporter**>
       @type sumologic
+      @id sumologic.endpoint.metrics.node.exporter
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_NODE_EXPORTER']}"
       @include metrics.output.conf
     </match>
     <match prometheus.datapoint**>
       @type sumologic
+      @id sumologic.endpoint.metrics
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
       @include metrics.output.conf
     </match>
@@ -187,8 +201,11 @@ data:
         exclude_container_regex "#{ENV['EXCLUDE_CONTAINER_REGEX']}"
         exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
       </filter>
-
-      @include logs.output.conf
+      <match **>
+        @type sumologic
+        @id sumologic.endpoint.logs
+        @include logs.output.conf
+      </match>
     </label>
 
   logs.source.systemd.conf: |-
@@ -207,7 +224,11 @@ data:
         exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
         exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
       </filter>
-      @include logs.output.conf
+      <match **>
+        @type sumologic
+        @id sumologic.endpoint.logs.kubelet
+        @include logs.output.conf
+      </match>
     </label>
     <match host.**>
       @type relabel
@@ -229,22 +250,23 @@ data:
           _sumo_metadata ${record["_sumo_metadata"][:source] = tag_parts[1]; record["_sumo_metadata"]}
         </record>
       </filter>
-      @include logs.output.conf
+      <match **>
+        @type sumologic
+        @id sumologic.endpoint.logs.systemd
+        @include logs.output.conf
+      </match>
     </label>
 
   logs.output.conf: |-
-    <match **>
-      @type sumologic
-      data_type logs
-      log_key log
-      endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
-      verify_ssl "#{ENV['VERIFY_SSL']}"
-      log_format "#{ENV['LOG_FORMAT']}"
-      add_timestamp "#{ENV['ADD_TIMESTAMP']}"
-      timestamp_key "#{ENV['TIMESTAMP_KEY']}"
-      proxy_uri "#{ENV['PROXY_URI']}"
-      @include buffer.output.conf
-    </match>
+    data_type logs
+    log_key log
+    endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
+    verify_ssl "#{ENV['VERIFY_SSL']}"
+    log_format "#{ENV['LOG_FORMAT']}"
+    add_timestamp "#{ENV['ADD_TIMESTAMP']}"
+    timestamp_key "#{ENV['TIMESTAMP_KEY']}"
+    proxy_uri "#{ENV['PROXY_URI']}"
+    @include buffer.output.conf
   
   buffer.output.conf: |-
     <buffer>
@@ -416,6 +438,7 @@ data:
   events.conf: |-
     <source>
       @type events
+      @id sumologic.endpoint.events
       deploy_namespace $NAMESPACE
     </source>
     <match kubernetes.**>
@@ -426,7 +449,7 @@ data:
       verify_ssl "#{ENV['VERIFY_SSL']}"
       proxy_uri "#{ENV['PROXY_URI']}"
       <buffer>
-      @type memory
+        @type memory
         compress gzip
         flush_interval "#{ENV['FLUSH_INTERVAL']}"
         flush_thread_count "#{ENV['NUM_THREADS']}"
