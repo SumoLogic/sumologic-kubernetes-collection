@@ -94,7 +94,7 @@ if [ -z $NAMESPACE ]; then
   fi
 fi
 
-if [ "$ALPHA" == "true"]
+if [ "$ALPHA" == "true" ]
 then
   release=`wget -q https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags -O - | jq -r .[].name | grep alpha | sed 's/-alpha//g' | sort --version-sort --field-separator=. | tail -1`-alpha  
 else
