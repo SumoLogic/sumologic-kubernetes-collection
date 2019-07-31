@@ -193,7 +193,7 @@ kubectl -n $NAMESPACE create secret generic sumologic \
 echo "Applying deployment 'fluentd'... $release"
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/$NAMESPACE/g" | \
-sed 's/\fluentd:0.0.0'"/fluentd:$release/g" | \
+sed 's/\0.0.0'"/$release/g" | \
 tee fluentd-sumologic.yaml | \
 kubectl -n $NAMESPACE apply -f -
 
