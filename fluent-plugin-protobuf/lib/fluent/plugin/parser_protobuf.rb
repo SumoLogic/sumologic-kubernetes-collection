@@ -4,6 +4,8 @@ require 'snappy'
 require_relative '../../types_pb'
 require_relative '../../remote_pb'
 
+WriteRequest = Prometheus::WriteRequest
+
 module Fluent
   module Plugin
     # fluentd parser plugin to parse Prometheus metrics into timeseries events.
@@ -14,7 +16,7 @@ module Fluent
 
       def parse(text)
         inflated = Snappy.inflate(text)
-        decoded = Prometheus::WriteRequest.decode(inflated)
+        decoded = WriteRequest.decode(inflated)
         log.trace "protobuf::parse - in: (#{text.bytesize}/#{inflated.bytesize}), out: #{decoded.timeseries.length}"
         record = {}
         record[KEY_TIMESERIES] = decoded.timeseries
