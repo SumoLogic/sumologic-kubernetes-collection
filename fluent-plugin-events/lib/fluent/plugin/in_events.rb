@@ -119,6 +119,8 @@ module Fluent
             log.debug "Closing watch stream"
           end
         end
+      rescue => e
+        log.error "Got exception #{e} watching for resource #{resource_name}. Skipping."
       end
 
       def create_config_map
@@ -126,6 +128,8 @@ module Fluent
         @clients['v1'].public_send("create_config_map", @configmap).tap do |map|
           log.debug "Created config map: #{map}"
         end
+      rescue => e
+        log.error "Got exception #{e} creating config map. Skipping."
       end
 
       def patch_config_map
@@ -133,6 +137,8 @@ module Fluent
         @clients['v1'].public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
           log.debug "Patched config map for #{@resource_name}: #{map}"
         end
+      rescue => e
+        log.error "Got exception #{e} patching config map. Skipping."
       end
 
       def initialize_resource_version
@@ -152,6 +158,8 @@ module Fluent
           end
         rescue Kubeclient::ResourceNotFoundError
           create_config_map
+        rescue => e
+          log.error "Got exception #{e} getting config map. Skipping."
         end
       end
 
@@ -167,6 +175,8 @@ module Fluent
         end
 
         @resource_version = resource_version
+      rescue => e
+        log.error "Got exception #{e} pulling resource version #{resource_version} for resource #{resource_name}. Skipping."
       end
 
       def normalize_param
