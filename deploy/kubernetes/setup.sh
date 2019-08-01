@@ -4,7 +4,7 @@ set -e
 usage() {
   echo
   echo 'Usage:'
-  echo '  setup.sh [-c collector-name] [-k cluster-name] [-n namespace] [-a isAlpha] <endpoint> <access-id> <access-key>'
+  echo '  setup.sh [-c collector-name] [-k cluster-name] [-n namespace] [-a useAlpha] <endpoint> <access-id> <access-key>'
   echo
 }
 
@@ -190,7 +190,7 @@ kubectl -n $NAMESPACE create secret generic sumologic \
   --from-literal=endpoint-logs=$ENDPOINT_LOGS \
   --from-literal=endpoint-events=$ENDPOINT_EVENTS
 
-echo "Applying deployment 'fluentd'... $release"
+echo "Applying deployment 'fluentd' $release ... "
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v$release/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/$NAMESPACE/g" | \
 sed "s|image: sumologic/kubernetes-fluentd:.*|image: sumologic/kubernetes-fluentd:$release|g" | \
