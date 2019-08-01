@@ -50,7 +50,7 @@ module Fluent
 
       def start
         super
-        # start_service_monitor
+        start_service_monitor
       end
 
       def filter(tag, time, record)
@@ -75,11 +75,11 @@ module Fluent
             record.delete('service')
           end
           metadata = get_pod_metadata(namespace_name, pod_name)
-          # service = @pods_to_services[pod_name]
-          # metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
+          service = @pods_to_services[pod_name]
+          metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
 
-          # ['pod_labels', 'owners', 'service'].each do |metadata_type|
-          ['pod_labels', 'owners'].each do |metadata_type|
+          ['pod_labels', 'owners', 'service'].each do |metadata_type|
+          # ['pod_labels', 'owners'].each do |metadata_type|
             attachment = metadata[metadata_type]
             if attachment.nil? || attachment.empty?
               log.trace "Cannot get #{metadata_type} for pod #{namespace_name}::#{pod_name}, skip."

@@ -8,56 +8,29 @@ module SumoLogic
 
       def start_service_monitor
         log.info "Starting watching for service changes"
-
         @watch_service_interval_seconds = 300
-
-        @last_recreated = Time.now.to_i
-        log.debug "last_recreated initialized to #{@last_recreated}"
-
-        @pods_to_services = Concurrent::Map.new {|h, k| h[k] = []}
-        timer_execute(:service_monitor, 10, &method(:run_monitor))
-      end
-
-      def run_monitor
-        # Periodically restart watcher connection by checking if enough time has passed since 
-        # last time watcher thread was recreated or if the watcher thread has been stopped.
-        now = Time.now.to_i
-        watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
-        if now - @last_recreated >= @watch_service_interval_seconds || !watcher_exists
-
-          log.debug "Recreating service watcher thread"
-          @watch_stream.finish if @watch_stream
-
-          start_service_watcher_thread
-          @last_recreated = now
-          log.debug "last_recreated updated to #{@last_recreated}"
-        end
-      end
-
-      def start_service_watcher_thread
-        log.debug "Starting service endpoints watcher thread"
-        params = Hash.new
-        params[:as] = :raw
-        params[:resource_version] = get_current_service_snapshot_resource_version
-        params[:timeout_seconds] = @watch_service_interval_seconds + 60
-
-        @watcher = @clients['v1'].public_send("watch_endpoints", params).tap do |watcher|
-          thread_create(:"watch_endpoints") do
-            @watch_stream = watcher
-            @watcher_id = Thread.current.object_id
-            log.debug "New thread to watch service endpoints #{@watcher_id} from resource version #{params[:resource_version]}"
-
-            watcher.each do |event|
-              begin
-                event = JSON.parse(event)
-                handle_service_event(event)
-              rescue => e
-                log.error "Got exception #{e} parsing event #{event}. Skipping."
+        thread_create(:"watch_endpoints") {
+          loop do
+            log.debug "Making new watch_endpoints call"
+            params = Hash.new
+            params[:as] = :raw
+            params[:resource_version] = get_current_service_snapshot_resource_version
+            params[:timeout_seconds] = @watch_service_interval_seconds + 60
+            @watcher = @clients['v1'].public_send("watch_endpoints", params).tap do |watcher|
+              log.debug "@watcher initialized for watch_endpoints"
+              watcher.each do |event|
+                begin
+                  event = JSON.parse(event)
+                  log.trace "Got watch_endpoints event #{event}"
+                  handle_service_event(event)
+                rescue => e
+                  log.error "Got exception #{e} parsing event #{event}. Skipping."
+                end
               end
+              log.debug "Closing watch stream"
             end
-            log.info "Closing watch stream"
           end
-        end
+        }
       end
 
       def get_current_service_snapshot_resource_version
@@ -67,6 +40,7 @@ module SumoLogic
           params[:as] = :raw
           response = @clients['v1'].public_send "get_endpoints", params
           result = JSON.parse(response)
+          log.debug "Got response to get_endpoints #{result}"
           new_snapshot_pods_to_services = Concurrent::Map.new {|h, k| h[k] = []}
 
           result['items'].each do |endpoint|
@@ -74,6 +48,7 @@ module SumoLogic
             get_pods_for_service(endpoint).each {|pod| new_snapshot_pods_to_services[pod] << service}
           end
 
+          log.debug "Reinitializing @pods_to_services to #{new_snapshot_pods_to_services}"
           @pods_to_services = new_snapshot_pods_to_services
           result['metadata']['resourceVersion']
         rescue => e
