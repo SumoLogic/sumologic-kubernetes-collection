@@ -24,7 +24,7 @@ RUN gem install fluent-plugin-s3 -v 1.1.4 \
        && gem install fluent-plugin-sumologic_output -v 1.5.0 \
        && gem install fluent-plugin-concat -v 2.3.0 \
        && gem install fluent-plugin-rewrite-tag-filter -v 2.1.0 \
-       && gem install fluent-plugin-prometheus -v 1.1.0 \
+       && gem install fluent-plugin-prometheus -v 1.4.0 \
        && gem install fluent-plugin-kubernetes_sumologic -v 2.4.1
 
 # FluentD plugins from this repository
