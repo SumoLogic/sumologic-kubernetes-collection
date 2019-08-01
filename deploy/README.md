@@ -353,7 +353,7 @@ helm repo update \
 
 ## Step 4: Deploy Falco
 
-In this step, you will deploy [Falco](https://falco.org/) to detect anomalous activity and capture Kubernetes Audit Events.
+In this step, you will deploy [Falco](https://falco.org/) to detect anomalous activity and capture Kubernetes Audit Events. This step is required only if you intend to use the Sumo Logic Kubernetes App.
 
 __NOTE__ [Falco](https://sysdig.com/blog/sysdig-falco/) needs privileged container access to insert its kernel module to process events for system calls.
 
