@@ -52,7 +52,7 @@ module SumoLogic
                 event = JSON.parse(event)
                 handle_service_event(event)
               rescue => e
-                log.error "Got exception #{e} parsing entity #{entity}. Skipping."
+                log.error "Got exception #{e} parsing event #{event}. Skipping."
               end
             end
             log.info "Closing watch stream"

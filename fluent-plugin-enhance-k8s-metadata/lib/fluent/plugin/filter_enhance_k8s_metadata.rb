@@ -66,9 +66,9 @@ module Fluent
         @in_namespace_ac.each { |ac| namespace_name ||= ac.call(record) }
         @in_pod_ac.each { |ac| pod_name ||= ac.call(record) }
         if namespace_name.nil?
-          log.debug "Record doesn't have [#{@in_namespace_path}] field"
+          log.trace "Record doesn't have [#{@in_namespace_path}] field"
         elsif pod_name.nil?
-          log.debug "Record doesn't have [#{@in_pod_path}] field"
+          log.trace "Record doesn't have [#{@in_pod_path}] field"
         else
           if record.key? 'service'
             record['prometheus_service'] = record['service']
@@ -82,7 +82,7 @@ module Fluent
           ['pod_labels', 'owners'].each do |metadata_type|
             attachment = metadata[metadata_type]
             if attachment.nil? || attachment.empty?
-              log.debug "Cannot get #{metadata_type} for pod #{namespace_name}::#{pod_name}, skip."
+              log.trace "Cannot get #{metadata_type} for pod #{namespace_name}::#{pod_name}, skip."
             else
               case @data_type
               when 'logs'
