@@ -16,6 +16,18 @@ prometheus:
       selector:
           matchLabels:
             k8s-app: fluentd-sumologic
+    - name: fluentd-events
+      additionalLabels: 
+        k8s-app: fluentd-sumologic-events
+        release: prometheus-operator
+      endpoints:
+      - port: metrics
+      namespaceSelector:
+        matchNames:
+        - sumologic
+      selector:
+          matchLabels:
+            k8s-app: fluentd-sumologic-events
   prometheusSpec:
     externalLabels:
       # Set this to a value to distinguish between different k8s clusters
