@@ -1,0 +1,80 @@
+image:
+  repository: sumologic/kubernetes-fluentd
+  tag: 0.0.0
+  pullPolicy: Always
+
+nameOverride: ""
+fullnameOverride: ""
+
+deployment:
+  replicaCount: 3
+  resources: 
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      memory: 1Gi
+      cpu: 1
+    requests:
+      memory: 768Mi
+      cpu: 0.5
+
+eventsDeployment:
+  resources: 
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    limits:
+      memory: 256Mi
+      cpu: "100m"
+    requests:
+      memory: 256Mi
+      cpu: "100m"
+
+sumologic:
+  logFormat: fields
+
+  flushInterval: 5
+  
+  numThreads: 1
+
+  chunkLimitSize: "100k"
+  
+  totalLimitSize: "128m"
+  
+  sourceCategory: "%{namespace}/%{pod_name}"
+  
+  sourceCategoryPrefix: "kubernetes/"
+
+  sourceCategoryReplaceDash: "/"
+
+  sourceName: "%{namespace}.%{pod}.%{container}"
+
+  kubernetesMeta: "true"
+
+  kubernetesMetaReduce: "false"
+  
+  multilineStartRegexp: '/^\w{3} \d{1,2}, \d{4}/'
+  
+  concatSeparator: ""
+
+  addTimestamp: "true"
+
+  timestampKey: "timestamp"
+
+  addStream: "true"
+
+  addTime: "true"
+
+  verifySsl: "true"
+
+  k8sMetadataFilter:
+    watch: "true"
+    verifySsl: "true"
+    bearerCacheSize: "1000"
+    bearerCacheTtl: "3600"
+
+    
+
