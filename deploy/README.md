@@ -1,34 +1,52 @@
 # Deployment Guide
 
-This page has instructions for collecting Kubernetes metrics; enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic. It supports Kubernetes versions 1.11+.
+This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
 
-__NOTE__ This page describes preview software. If you have comments or issues, please add an issue [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/issues).
+**Compatibility**: Kubernetes version 1.11+
 
-## Table of Contents
+<!-- TOC -->
 
-### [Deployment Guide](#deployment-guide)
+- [Deployment Guide](#deployment-guide)
+    - [Solution overview](#solution-overview)
+    - [Before you start](#before-you-start)
+    - [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd)
+        - [Automatic Source Creation and Setup Script](#automatic-source-creation-and-setup-script)
+            - [Parameters](#parameters)
+            - [Environment variables](#environment-variables)
+        - [Manual Source Creation and Setup](#manual-source-creation-and-setup)
+            - [Create a hosted collector and an HTTP source](#create-a-hosted-collector-and-an-http-source)
+            - [Deploy Fluentd](#deploy-fluentd)
+        - [Verify the pods are running](#verify-the-pods-are-running)
+    - [Step 2: Configure Prometheus](#step-2-configure-prometheus)
+        - [Missing metrics for `controller-manager` or `scheduler`](#missing-metrics-for-controller-manager-or-scheduler)
+        - [Additional configuration options](#additional-configuration-options)
+            - [Filter metrics](#filter-metrics)
+            - [Trim and relabel metrics](#trim-and-relabel-metrics)
+            - [Custom Metrics](#custom-metrics)
+                - [Step 1: Expose a `/metrics` endpoint on your service](#step-1-expose-a-metrics-endpoint-on-your-service)
+                - [Step 2: Setup a service monitor so that Prometheus pulls the data](#step-2-setup-a-service-monitor-so-that-prometheus-pulls-the-data)
+                - [Step 3: Update the prometheus-overrides.yaml file to forward the metrics to Sumo.](#step-3-update-the-prometheus-overridesyaml-file-to-forward-the-metrics-to-sumo)
+    - [Step 3: Deploy FluentBit](#step-3-deploy-fluentbit)
+    - [Tear down](#tear-down)
+- [Troubleshooting Collection](#troubleshooting-collection)
+    - [Namespace configuration](#namespace-configuration)
+    - [Gathering logs](#gathering-logs)
+        - [Fluentd Logs](#fluentd-logs)
+        - [Prometheus Logs](#prometheus-logs)
+        - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
+    - [Gathering metrics](#gathering-metrics)
+        - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
+        - [Check the Prometheus UI](#check-the-prometheus-ui)
+        - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+        - [Check FluentBit and FluentD output metrics](#check-fluentbit-and-fluentd-output-metrics)
+    - [Common Issues](#common-issues)
+        - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
+        - [Missing `kubelet` metrics](#missing-kubelet-metrics)
+            - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
+            - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator)
+        - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
 
-* [Solution Overview](#solution-overview)
-* [Before you start](#before-you-start)
-* [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd)
-  * [Automatic with setup script](#automatic-with-setup-script)
-  * [Manual](#manual)
-* [Step 2: Configure Prometheus](#step-2-configure-prometheus)
-* [Filter metrics](#filter-metrics)
-* [Trim and relabel metrics](#trim-and-relabel-metrics)
-* [Custom metrics](#custom-metrics)
-* [Tear down](#tear-down)
-
-### [Debugging the Kubernetes Collection Pipeline](#debugging-the-kubernetes-collection-pipeline-1)
-
-* [General steps for debugging issues](#general-steps-for-debugging-issues)
-  * [1. Use `kubectl` to get logs and state](#1-use-kubectl-to-get-logs-and-state)
-  * [2. Send data to Fluentd stdout instead of to Sumo](#2-send-data-to-fluentd-stdout-instead-of-to-sumo)
-  * [3. [Metrics] Check the Prometheus UI](#3-metrics-check-the-prometheus-ui)
-* [Missing `kubelet` metrics](#missing-kubelet-metrics)
-  * [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
-  * [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator)
-* [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
+<!-- /TOC -->
 
 ## Solution overview
 
@@ -93,7 +111,7 @@ __Note:__ The script will generate a YAML file (`fluentd-sumologic.yaml`) with a
 
 This is a manual alternative approach to the automatic script if you don't have API access or need customized configuration, such as reusing an existing collector.
 
-#### 1.1 Create a hosted collector and an HTTP source
+#### Create a hosted collector and an HTTP source
 
 In this step you create a Sumo Logic hosted collector with a set of HTTP sources to receive your Kubernetes data.
 
@@ -116,7 +134,7 @@ Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic
 * **Naming the sources.** You can assign any name you like to the sources, but it’s a good idea to assign a name to each source that reflects the Kubernetes component from which it receives metrics. For example, you might name the source that receives API Server metrics “api-server-metrics”.
 * **HTTP Source URLs.** When you configure each HTTP source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service secrets to send data to Sumo.
 
-#### 1.2 Deploy Fluentd
+#### Deploy Fluentd
 
 In this step you will deploy Fluentd using a Sumo-provided .yaml manifest. This step also creates Kubernetes secrets for the HTTP sources created in the previous step.
 
@@ -151,7 +169,7 @@ kubectl -n sumologic apply -f -
 
 The manifest will create the Kubernetes resources required by Fluentd.
 
-### Verify the pod(s) are running
+### Verify the pods are running
 
 ```sh
 kubectl -n sumologic get pod
@@ -205,7 +223,7 @@ kubectl -n sumologic logs prometheus-prometheus-operator-prometheus-0 prometheus
 
 At this point setup is complete and metrics data is being sent to Sumo Logic.
 
-#### Missing metrics for `controller-manager` or `scheduler`
+### Missing metrics for `controller-manager` or `scheduler`
 
 Since there is a backward compatibility issue in the current version of chart, you may need to follow a workaround for sending these metrics under `controller-manager` or `scheduler`:
 
@@ -216,9 +234,9 @@ kubectl -n kube-system patch service prometheus-operator-kube-controller-manager
 kubectl -n kube-system patch service prometheus-operator-kube-scheduler --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
 ```
 
-## Additional configuration options
+### Additional configuration options
 
-### Filter metrics
+#### Filter metrics
 
 The `prometheus-overrides.yaml` file specifies metrics to be collected. If you want to exclude some metrics from collection, or include others, you can edit `prometheus-overrides.yaml`. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
 
@@ -235,7 +253,7 @@ If you would like to collect other metrics that are not listed in `prometheus-ov
 The syntax of `writeRelabelConfigs` can be found [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write).
 You can supply any label you like. You can query Prometheus to see a complete list of metrics it’s scraping.
 
-### Trim and relabel metrics
+#### Trim and relabel metrics
 
 You can specify relabeling, and additional inclusion or exclusion options in `fluentd-sumologic.yaml`.
 
@@ -267,14 +285,15 @@ This filter will:
 * Rename the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
 * Only apply to metrics with the `kube-system` namespace
 
-### Custom Metrics
+#### Custom Metrics
 
 If you have custom metrics you'd like to send to Sumo via Prometheus, you just need to expose a `/metrics` endpoint in prometheus format, and instruct prometheus via a ServiceMonitor to pull data from the endpoint. In this section, we'll walk through collecting custom metrics with Prometheus.
 
-#### Step 1: Expose a `/metrics` endpoint on your service
+##### Step 1: Expose a `/metrics` endpoint on your service
+
 There are many pre-built libraries that the community has built to expose these, but really any output that aligns with the prometheus format can work. Here is a list of libraries: [Libraries](https://prometheus.io/docs/instrumenting/clientlibs). Manually verify that you have metrics exposed in Prometheus format by hitting the metrics endpoint, and verifying that the output follows the [Prometheus format](https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md).
 
-#### Step 2: Setup a service monitor so that Prometheus pulls the data
+##### Step 2: Setup a service monitor so that Prometheus pulls the data
 
 Service Monitors is how we tell Prometheus what endpoints and sources to pull metrics from. To define a Service Monitor, create a yaml file on disk with information templated as follows:
 
@@ -316,7 +335,8 @@ Note, please make sure you include the label `release: prometheus-operator` in y
 Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
-#### Step 3: Update the prometheus-overrides.yaml file to forward the metrics to Sumo.
+##### Step 3: Update the prometheus-overrides.yaml file to forward the metrics to Sumo.
+
 The `prometheus-overrides.yaml` file controls what metrics get forwarded on to Sumo Logic. In order to get your custom metrics sending into Sumo Logic, you need to update the `prometheus-overrides.yaml` file to include a rule to forward on your custom metrics. Here is an example addition to the `prometheus-overrides.yaml` that will forward metrics to Sumo:
 
 ```
@@ -386,22 +406,20 @@ To delete the `sumologic` namespace and all resources under it:
 kubectl delete namespace sumologic
 ```
 
-# Debugging the Kubernetes Collection Pipeline
+# Troubleshooting Collection
 
-## General steps for debugging issues
-
-#### Note about namespaces
+## Namespace configuration
 
 The following `kubectl` commands assume you are in the correct namespace `sumologic`. By default, these commands will use the namespace `default`.
 
 To run a single command in the `sumologic` namespace, pass in the flag `-n sumologic`.
 
 To set your namespace context more permanently, you can run
-```
+```sh
 kubectl config set-context $(kubectl config current-context) --namespace=sumologic
 ```
 
-### 1. Use `kubectl` to get logs and state
+## Gathering logs
 
 First check if your pods are in a healthy state. Run
 ```
@@ -423,20 +441,20 @@ To get a snapshot of the current state of the pod, you can run
 kubectl describe pods POD_NAME
 ```
 
-#### Fluentd Logs
+### Fluentd Logs
 
 ```
 kubectl logs fluentd-xxxxxxxxx-xxxxx -f
 ```
 
-To enable more detailed debug and/or trace logs from all of Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section:
+To enable more detailed debug or trace logs from all of Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section and apply the change to your deployment:
 ```
 <system>
   log_level debug # or trace
 </system>
 ```
 
-To enable more detailed debug and/or trace logs from a specific Fluentd plugin, similarly add the following option to the plugin's `.conf` section:
+To enable debug or trace logs from a specific Fluentd plugin, add the following option to the plugin's `.conf` section:
 ```
 <match **>
   @type sumologic
@@ -445,24 +463,17 @@ To enable more detailed debug and/or trace logs from a specific Fluentd plugin, 
 </match>
 ```
 
-#### Pod stuck in `ContainerCreating` state
-
-If you are seeing a pod stuck in the `ContainerCreating` state and seeing logs like
-```
-Warning  FailedCreatePodSandBox  29s   kubelet, ip-172-20-87-45.us-west-1.compute.internal  Failed create pod sandbox: rpc error: code = DeadlineExceeded desc = context deadline exceeded
-```
-you have an unhealthy node. Killing the node should resolve this issue.
-
-#### [Metrics] Prometheus Logs
+### Prometheus Logs
 
 To view Prometheus logs:
 ```
 kubectl logs prometheus-prometheus-operator-prometheus-0 prometheus -f
 ```
 
-### 2. Send data to Fluentd stdout instead of to Sumo
+### Send data to Fluentd stdout instead of to Sumo
 
 To help reduce the points of possible failure, we can write data to Fluentd logs rather than sending to Sumo directly using the Sumo Logic output plugin. To do this, change the following lines in the `fluentd-sumologic.yaml` file under the relevant `.conf` section:
+
 ```
 <match TAG_YOU_ARE_DEBUGGING>
   @type sumologic
@@ -470,7 +481,9 @@ To help reduce the points of possible failure, we can write data to Fluentd logs
   ...
 </match>
 ```
+
 to
+
 ```
 <match TAG_YOU_ARE_DEBUGGING>
   @type stdout
@@ -478,31 +491,84 @@ to
 ```
 
 Then redeploy your `fluentd` deployment:
-```
+
+```sh
 kubectl delete deployment fluentd
 kubectl apply -f /path/to/fluentd-sumologic.yaml
 ```
 
-__Note__ this `-f` flag stands for "file" rather than "follow" like in the logs command above.
-
 You should see data being sent to Fluentd logs, which you can get using the commands [above](#fluentd-logs).
 
-### 3. [Metrics] Check the Prometheus UI
+## Gathering metrics
+
+### Check the `/metrics` endpoint
+
+You can `port-forward` to a pod exposing `/metrics` endpoint and verify it is exposing Prometheus metrics:
+
+```sh
+kubectl port-forward fluentd-6f797b49b5-52h82 8080:24231
+```
+
+Then, in your browser, go to `localhost:8080/metrics`. You should see Prometheus metrics exposed.
+
+### Check the Prometheus UI
 
 First run the following command to expose the Prometheus UI:
-```
+
+```sh
 kubectl port-forward prometheus-prometheus-operator-prometheus-0 8080:9090
 ```
 
 Then, in your browser, go to `localhost:8080`. You should be in the Prometheus UI now.
 
-In the top menu, navigate to section `Status > Targets`. Check if any targets are down or have errors.
+From here you can start typing the expected name of a metric to see if Prometheus auto-completes the entry.
 
-## Missing `kubelet` metrics
+If you can't find the expected metrics, you can check if Prometheus is successfully scraping the `/metrics` endpoints. In the top menu, navigate to section `Status > Targets`. Check if any targets are down or have errors.
+
+### Check Prometheus Remote Storage
+
+We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus/latest/storage/) integration to send metrics from Prometheus to the FluentD collection pipeline.
+
+You can follow [Deploy Fluentd](#prometheus-logs) to verify there are no errors during remote write.
+
+You can also check `prometheus_remote_storage_.*` metrics to look for success/failure attempts.
+
+### Check FluentBit and FluentD output metrics
+
+By default, we collect input/output plugin metrics for FluentBit, and output metrics for FluentD that you can use to verify collection:
+
+Relevant FluentBit metrics include:
+
+- fluentbit_input_bytes_total
+- fluentbit_input_records_total
+- fluentbit_output_proc_bytes_total
+- fluentbit_output_proc_records_total
+- fluentbit_output_retries_total
+- fluentbit_output_retries_failed_total
+
+Relevant FluentD metrics include:
+
+- fluentd_output_status_emit_records
+- fluentd_output_status_buffer_queue_length
+- fluentd_output_status_buffervqueuevbytes
+- fluentd_output_status_num_errors
+- fluentd_output_status_retry_count
+
+## Common Issues
+
+### Pod stuck in `ContainerCreating` state
+
+If you are seeing a pod stuck in the `ContainerCreating` state and seeing logs like
+```
+Warning  FailedCreatePodSandBox  29s   kubelet, ip-172-20-87-45.us-west-1.compute.internal  Failed create pod sandbox: rpc error: code = DeadlineExceeded desc = context deadline exceeded
+```
+you have an unhealthy node. Killing the node should resolve this issue.
+
+### Missing `kubelet` metrics
 
 Navigate to the `kubelet` targets using the steps above. You may see that the targets are down with 401 errors. If so, there are two known workarounds you can try.
 
-### 1. Enable the `authenticationTokenWebhook` flag in the cluster
+#### 1. Enable the `authenticationTokenWebhook` flag in the cluster
 
 The goal is to set the flag `--authentication-token-webhook=true` for `kubelet`. One way to do this is:
 ```
@@ -524,7 +590,7 @@ kops update cluster --yes
 kops rolling-update cluster --yes
 ```
 
-### 2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator
+#### 2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator
 
 The goal is to set the flag `kubelet.serviceMonitor.https=false` when deploying the prometheus operator.
 
@@ -541,6 +607,6 @@ helm del --purge prometheus-operator
 helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f prometheus-overrides.yaml
 ```
 
-## Missing `kube-controller-manager` or `kube-scheduler` metrics
+### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
 There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [above](#missing-metrics-for-controller-manager-or-scheduler).
