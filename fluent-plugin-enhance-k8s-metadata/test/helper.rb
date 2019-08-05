@@ -15,12 +15,26 @@ end
 
 def stub_apis
   init_globals
+  stub_request(:any, %r{/api$})
+    .to_return(
+      'body' => {
+        'versions' => ['v1']
+      }.to_json
+    )
+  stub_request(:any, %r{/apis$})
+    .to_return(
+      'body' => {
+        'versions' => ['apps/v1', 'extensions/v1beta1']
+      }.to_json
+    )
   stub_request(:get, %r{/api/v1$})
     .to_return(body: test_resource('api_list_core_v1.json'), status: 200)
   stub_request(:get, %r{/apis/apps/v1$})
     .to_return(body: test_resource('api_list_apps_v1.json'), status: 200)
   stub_request(:get, %r{/apis/extensions/v1beta1$})
     .to_return(body: test_resource('api_list_extensions_v1beta1.json'), status: 200)
+  stub_request(:get, %r{/api/v1/endpoints$})
+    .to_return(body: test_resource('endpoints_list.json'), status: 200)
   stub_request(:get, %r{/api/v1/namespaces/sumologic/pods})
     .to_return(body: test_resource('pod_sumologic.json'), status: 200)
   stub_request(:get, %r{/apis/extensions/v1beta1/namespaces/sumologic/replicasets})
@@ -39,7 +53,6 @@ end
 
 def init_globals
   @kubernetes_url = 'http://localhost:8080'
-  @apiVersion = 'v1'
   @verify_ssl = false
   @ca_file = nil
   @client_cert = nil

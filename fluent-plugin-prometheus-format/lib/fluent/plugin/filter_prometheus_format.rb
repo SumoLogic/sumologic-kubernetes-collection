@@ -58,7 +58,7 @@ module Fluent
       KEY_TIMESTAMP = '@timestamp'.freeze
       KEY_VALUE = '@value'.freeze
       KEY_MESSAGE = 'message'.freeze
-      SPLITOR = '.'.freeze
+      SPLITOR = '_'.freeze
 
       ORIGIN_KEY = '_origin'.freeze
       ORIGIN_VALUE = 'kubernetes'.freeze

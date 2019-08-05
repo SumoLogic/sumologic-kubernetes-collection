@@ -1,5 +1,5 @@
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: fluentd
@@ -12,7 +12,7 @@ roleRef:
   name: fluentd
   apiGroup: rbac.authorization.k8s.io
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: fluentd
@@ -24,6 +24,7 @@ rules:
   - configmaps
   - daemonsets
   - deployments
+  - endpoints
   - events
   - namespaces
   - nodes
@@ -35,7 +36,7 @@ rules:
 - apiGroups: [""]
   resources:
     - configmaps
-  verbs: ["create", "update"]
+  verbs: ["create", "patch"]
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -50,8 +51,18 @@ metadata:
   name: fluentd-config
 data:
   fluent.conf: |-
+    @include common.conf
     @include metrics.conf
     @include logs.conf
+  common.conf: |-
+    <source>
+      @type prometheus
+      metrics_path /metrics
+      port 24231
+    </source>
+    <source>
+      @type prometheus_output_monitor
+    </source>
   metrics.conf: |-
     <source>
       @type http
@@ -85,60 +96,59 @@ data:
     </filter>
     <match prometheus.datapoint.apiserver**>
       @type sumologic
+      @id sumologic.endpoint.metrics.apiserver
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_APISERVER']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kubelet**>
       @type sumologic
+      @id sumologic.endpoint.metrics.kubelet
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kube-controller-manager**>
       @type sumologic
+      @id sumologic.endpoint.metrics.kube.controller.manager
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kube-scheduler**>
       @type sumologic
+      @id sumologic.endpoint.metrics.kube.scheduler
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint.kube-state**>
       @type sumologic
+      @id sumologic.endpoint.metrics.kube.state
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_STATE']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint.node-exporter**>
       @type sumologic
+      @id sumologic.endpoint.metrics.node.exporter
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS_NODE_EXPORTER']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
+      @include metrics.output.conf
     </match>
     <match prometheus.datapoint**>
       @type sumologic
+      @id sumologic.endpoint.metrics
       endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
-      data_type metrics
-      metric_data_format prometheus
-      disable_cookies true
+      @include metrics.output.conf
     </match>
+
+  metrics.output.conf: |-
+    data_type metrics
+    metric_data_format prometheus
+    disable_cookies true
+    @include buffer.output.conf
+
   logs.conf: |-
     <source>
       @type forward
       port 24321
       bind 0.0.0.0
     </source>
-
     @include logs.source.containers.conf
     @include logs.source.systemd.conf
 
@@ -150,12 +160,10 @@ data:
       separator "#{ENV['CONCAT_SEPARATOR']}"
       timeout_label @NORMAL
     </filter>
-
     <match containers.**>
       @type relabel
       @label @NORMAL
     </match>
-
     <label @NORMAL>
       <filter containers.**>
         @type kubernetes_metadata
@@ -173,7 +181,12 @@ data:
         tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
         merge_json_log false
       </filter>
-
+      <filter **>
+        @type enhance_k8s_metadata
+        in_namespace_path '$.kubernetes.namespace_name'
+        in_pod_path '$.kubernetes.pod_name'
+        data_type logs
+      </filter>
       <filter containers.**>
         @type kubernetes_sumologic
         source_name "#{ENV['SOURCE_NAME']}"
@@ -191,8 +204,11 @@ data:
         exclude_container_regex "#{ENV['EXCLUDE_CONTAINER_REGEX']}"
         exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
       </filter>
-
-      @include logs.output.conf
+      <match **>
+        @type sumologic
+        @id sumologic.endpoint.logs
+        @include logs.output.conf
+      </match>
     </label>
 
   logs.source.systemd.conf: |-
@@ -200,7 +216,6 @@ data:
       @type relabel
       @label @KUBELET
     </match>
-
     <label @KUBELET>
       <filter host.kubelet.**>
         @type kubernetes_sumologic
@@ -212,15 +227,16 @@ data:
         exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
         exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
       </filter>
-
-      @include logs.output.conf
+      <match **>
+        @type sumologic
+        @id sumologic.endpoint.logs.kubelet
+        @include logs.output.conf
+      </match>
     </label>
-
     <match host.**>
       @type relabel
       @label @SYSTEMD
     </match>
-
     <label @SYSTEMD>
       <filter host.**>
         @type kubernetes_sumologic
@@ -231,31 +247,39 @@ data:
         exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
         exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
       </filter>
-
       <filter host.**>
         @type record_modifier
         <record>
           _sumo_metadata ${record["_sumo_metadata"][:source] = tag_parts[1]; record["_sumo_metadata"]}
         </record>
       </filter>
-
-      @include logs.output.conf
+      <match **>
+        @type sumologic
+        @id sumologic.endpoint.logs.systemd
+        @include logs.output.conf
+      </match>
     </label>
 
   logs.output.conf: |-
-    <match **>
-      @type sumologic
-      log_key log
-      endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
-      verify_ssl "#{ENV['VERIFY_SSL']}"
-      log_format "#{ENV['LOG_FORMAT']}"
+    data_type logs
+    log_key log
+    endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
+    verify_ssl "#{ENV['VERIFY_SSL']}"
+    log_format "#{ENV['LOG_FORMAT']}"
+    add_timestamp "#{ENV['ADD_TIMESTAMP']}"
+    timestamp_key "#{ENV['TIMESTAMP_KEY']}"
+    proxy_uri "#{ENV['PROXY_URI']}"
+    @include buffer.output.conf
+  
+  buffer.output.conf: |-
+    <buffer>
+      @type memory
+      compress gzip
       flush_interval "#{ENV['FLUSH_INTERVAL']}"
-      num_threads "#{ENV['NUM_THREADS']}"
-      open_timeout 60
-      add_timestamp "#{ENV['ADD_TIMESTAMP']}"
-      timestamp_key "#{ENV['TIMESTAMP_KEY']}"
-      proxy_uri "#{ENV['PROXY_URI']}"
-    </match>
+      flush_thread_count "#{ENV['NUM_THREADS']}"
+      chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
+      total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
+    </buffer>
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -284,7 +308,7 @@ spec:
           name: fluentd-config
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd
+        image: sumologic/kubernetes-fluentd:0.0.0
         imagePullPolicy: Always
         resources:
           limits:
@@ -314,7 +338,7 @@ spec:
             - "/bin/sh"
             - "-c"
             - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
-          initialDelaySeconds: 45
+          initialDelaySeconds: 30
           periodSeconds: 5
         volumeMounts:
         - name: config-volume
@@ -362,6 +386,50 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
+        - name: LOG_FORMAT
+          value: "fields"
+        - name: FLUSH_INTERVAL
+          value: "5s"
+        - name: NUM_THREADS
+          value: "4"
+        - name: CHUNK_LIMIT_SIZE
+          value: "100k"
+        - name: TOTAL_LIMIT_SIZE
+          value: "128m"
+        - name: SOURCE_CATEGORY
+          value: "%{namespace}/%{pod_name}"
+        - name: SOURCE_CATEGORY_PREFIX
+          value: "kubernetes/"
+        - name: SOURCE_CATEGORY_REPLACE_DASH
+          value: "/"
+        - name: SOURCE_NAME
+          value: "%{namespace}.%{pod}.%{container}"
+        - name: KUBERNETES_META
+          value: "true"
+        - name: KUBERNETES_META_REDUCE
+          value: "false"
+        - name: MULTILINE_START_REGEXP
+          value: "/^\\w{3} \\d{1,2}, \\d{4}/"
+        - name: CONCAT_SEPARATOR
+          value: ""
+        - name: ADD_TIMESTAMP
+          value: "true"
+        - name: TIMESTAMP_KEY
+          value: "timestamp"
+        - name: ADD_STREAM
+          value: "true"
+        - name: ADD_TIME
+          value: "true"
+        - name: K8S_METADATA_FILTER_WATCH
+          value: "true"
+        - name: K8S_METADATA_FILTER_VERIFY_SSL
+          value: "true"
+        - name: K8S_METADATA_FILTER_BEARER_CACHE_SIZE
+          value: "1000"
+        - name: K8S_METADATA_FILTER_BEARER_CACHE_TTL
+          value: "3600"
+        - name: VERIFY_SSL
+          value: "true"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -372,14 +440,33 @@ data:
     @include events.conf
   events.conf: |-
     <source>
+      @type prometheus
+      metrics_path /metrics
+      port 24231
+    </source>
+    <source>
+      @type prometheus_output_monitor
+    </source>
+    <source>
       @type events
       deploy_namespace $NAMESPACE
     </source>
     <match kubernetes.**>
       @type sumologic
+      @id sumologic.endpoint.events
       endpoint "#{ENV['SUMO_ENDPOINT_EVENTS']}"
       data_type logs
       disable_cookies true
+      verify_ssl "#{ENV['VERIFY_SSL']}"
+      proxy_uri "#{ENV['PROXY_URI']}"
+      <buffer>
+        @type memory
+        compress gzip
+        flush_interval "#{ENV['FLUSH_INTERVAL']}"
+        flush_thread_count "#{ENV['NUM_THREADS']}"
+        chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
+        total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
+      </buffer>
     </match>
 ---
 apiVersion: apps/v1
@@ -387,15 +474,15 @@ kind: Deployment
 metadata:
   name: fluentd-events
   labels:
-    k8s-app: fluentd-sumologic
+    k8s-app: fluentd-sumologic-events
 spec:
   selector:
     matchLabels:
-      k8s-app: fluentd-sumologic
+      k8s-app: fluentd-sumologic-events
   template:
     metadata:
       labels:
-        k8s-app: fluentd-sumologic
+        k8s-app: fluentd-sumologic-events
     spec:
       serviceAccountName: fluentd
       volumes:
@@ -408,7 +495,7 @@ spec:
           name: fluentd-events-config
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd
+        image: sumologic/kubernetes-fluentd:0.0.0
         imagePullPolicy: Always
         resources:
           limits:
@@ -422,12 +509,38 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
+        livenessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
+          initialDelaySeconds: 300
+          periodSeconds: 20
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
+          initialDelaySeconds: 30
+          periodSeconds: 5
         env:
         - name: SUMO_ENDPOINT_EVENTS
           valueFrom:
             secretKeyRef:
               name: sumologic
               key: endpoint-events
+        - name: VERIFY_SSL
+          value: "true"
+        - name: FLUSH_INTERVAL
+          value: "5s"
+        - name: NUM_THREADS
+          value: "4"
+        - name: CHUNK_LIMIT_SIZE
+          value: "100k"
+        - name: TOTAL_LIMIT_SIZE
+          value: "128m"
 ---
 apiVersion: v1
 kind: Service
@@ -446,5 +559,24 @@ spec:
   - name: fluent-bit
     port: 24321
     targetPort: 24321
+    protocol: TCP
+  - name: metrics
+    port: 24231
+    targetPort: 24231
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluentd-events
+  labels:
+    k8s-app: fluentd-sumologic-events
+spec:
+  selector:
+    k8s-app: fluentd-sumologic-events
+  ports:
+  - name: metrics
+    port: 24231
+    targetPort: 24231
     protocol: TCP
 ---

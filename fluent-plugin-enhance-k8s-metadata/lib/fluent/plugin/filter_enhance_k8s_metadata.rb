@@ -7,16 +7,20 @@ module Fluent
       Fluent::Plugin.register_filter('enhance_k8s_metadata', self)
 
       require_relative '../../sumologic/kubernetes/cache_strategy.rb'
+      require_relative '../../sumologic/kubernetes/service_monitor.rb'
 
       helpers :record_accessor
+      helpers :thread
+      helpers :timer
       include SumoLogic::Kubernetes::Connector
       include SumoLogic::Kubernetes::Reader
       include SumoLogic::Kubernetes::CacheStrategy
+      include SumoLogic::Kubernetes::ServiceMonitor
 
       # parameters for read/write record
       config_param :in_namespace_path, :array, default: ['$.namespace']
       config_param :in_pod_path, :array, default: ['$.pod', '$.pod_name']
-      config_param :out_root, :string, default: 'kubernetes'
+      config_param :data_type, :string, default: 'metrics'
 
       # parameters for connecting to k8s api server
       config_param :kubernetes_url, :string, default: nil
@@ -44,6 +48,11 @@ module Fluent
         @in_pod_ac = @in_pod_path.map { |path| record_accessor_create(path) }
       end
 
+      def start
+        super
+        # start_service_monitor
+      end
+
       def filter(tag, time, record)
         decorate_record(record)
         record
@@ -61,11 +70,29 @@ module Fluent
         elsif pod_name.nil?
           log.debug "Record doesn't have [#{@in_pod_path}] field"
         else
+          if record.key? 'service'
+            record['prometheus_service'] = record['service']
+            record.delete('service')
+          end
           metadata = get_pod_metadata(namespace_name, pod_name)
-          if metadata.empty?
-            log.debug "Cannot get labels on pod #{namespace_name}::#{pod_name}, skip."
-          else
-            record[@out_root] = metadata
+          # service = @pods_to_services[pod_name]
+          # metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
+
+          # ['pod_labels', 'owners', 'service'].each do |metadata_type|
+          ['pod_labels', 'owners'].each do |metadata_type|
+            attachment = metadata[metadata_type]
+            if attachment.nil? || attachment.empty?
+              log.debug "Cannot get #{metadata_type} for pod #{namespace_name}::#{pod_name}, skip."
+            else
+              case @data_type
+              when 'logs'
+                record['kubernetes'].merge! attachment if metadata_type != 'pod_labels'
+              when 'metrics'
+                record.merge! attachment
+              else
+                record.merge! attachment
+              end
+            end
           end
         end
       end
@@ -88,9 +115,6 @@ module Fluent
 
         @cache_ttl = :none if @cache_ttl <= 0
         log.info "cache_ttl: #{cache_ttl}, cache_size: #{@cache_size}"
-
-        @out_root = 'kubernetes' if @out_root.nil? || @out_root.empty?
-        log.info "out_root: #{@out_root}"
       end
     end
   end

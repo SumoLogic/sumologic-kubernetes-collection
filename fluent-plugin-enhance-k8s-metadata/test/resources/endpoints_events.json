@@ -1,0 +1,581 @@
+{
+  "items": [
+    {
+      "type": "ADDED",
+      "object": {
+        "kind": "Endpoints",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "kube-scheduler",
+          "namespace": "kube-system",
+          "selfLink": "/api/v1/namespaces/kube-system/endpoints/kube-scheduler",
+          "uid": "cf52af6e-3ac1-11e9-85d5-062f31d2c4ec",
+          "resourceVersion": "20568244",
+          "creationTimestamp": "2019-02-27T18:59:29Z",
+          "annotations": {
+            "control-plane.alpha.kubernetes.io/leader": "{\"holderIdentity\":\"ip-172-20-48-207_43b66f71-6b95-11e9-b8ef-06604569b78c\",\"leaseDurationSeconds\":15,\"acquireTime\":\"2019-04-30T22:25:55Z\",\"renewTime\":\"2019-07-01T17:51:18Z\",\"leaderTransitions\":2}"
+          }
+        }
+      }
+    },
+    {
+      "type": "ADDED",
+      "object": {
+        "kind": "Endpoints",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "fluentd",
+          "namespace": "sumologic",
+          "selfLink": "/api/v1/namespaces/sumologic/endpoints/fluentd",
+          "uid": "fadbb0e2-9c28-11e9-b605-06604569b78c",
+          "resourceVersion": "20568383",
+          "creationTimestamp": "2019-07-01T17:52:23Z",
+          "labels": {
+            "k8s-app": "fluentd-sumologic"
+          }
+        },
+        "subsets": [
+          {
+            "addresses": [
+              {
+                "ip": "100.108.94.61",
+                "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-gvhxz",
+                  "uid": "cb766b43-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568330"
+                }
+              },
+              {
+                "ip": "100.114.10.126",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-events-76c68bc596-5clcp",
+                  "uid": "cb9e9211-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568226"
+                }
+              },
+              {
+                "ip": "100.114.10.127",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-rtp7d",
+                  "uid": "cb805ca4-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568354"
+                }
+              },
+              {
+                "ip": "100.115.226.113",
+                "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-nvhkg",
+                  "uid": "cb80cba6-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568336"
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "prom-write",
+                "port": 9888,
+                "protocol": "TCP"
+              },
+              {
+                "name": "fluent-bit",
+                "port": 24321,
+                "protocol": "TCP"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "ADDED",
+      "object": {
+        "kind": "Endpoints",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "fluentd-2",
+          "namespace": "sumologic",
+          "selfLink": "/api/v1/namespaces/sumologic/endpoints/fluentd-2",
+          "uid": "fadbb0e2-9c28-11e9-b605-06604569b78c",
+          "resourceVersion": "20568383",
+          "creationTimestamp": "2019-07-01T17:52:23Z",
+          "labels": {
+            "k8s-app": "fluentd-sumologic"
+          }
+        },
+        "subsets": [
+          {
+            "addresses": [
+              {
+                "ip": "100.108.94.61",
+                "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-gvhxz",
+                  "uid": "cb766b43-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568330"
+                }
+              },
+              {
+                "ip": "100.114.10.126",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-events-76c68bc596-5clcp",
+                  "uid": "cb9e9211-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568226"
+                }
+              },
+              {
+                "ip": "100.114.10.127",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-rtp7d",
+                  "uid": "cb805ca4-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568354"
+                }
+              },
+              {
+                "ip": "100.115.226.113",
+                "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-nvhkg",
+                  "uid": "cb80cba6-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568336"
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "prom-write",
+                "port": 9888,
+                "protocol": "TCP"
+              },
+              {
+                "name": "fluent-bit",
+                "port": 24321,
+                "protocol": "TCP"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "MODIFIED",
+      "object": {
+        "kind": "Endpoints",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "kube-scheduler",
+          "namespace": "kube-system",
+          "selfLink": "/api/v1/namespaces/kube-system/endpoints/kube-scheduler",
+          "uid": "cf52af6e-3ac1-11e9-85d5-062f31d2c4ec",
+          "resourceVersion": "20568244",
+          "creationTimestamp": "2019-02-27T18:59:29Z",
+          "annotations": {
+            "control-plane.alpha.kubernetes.io/leader": "{\"holderIdentity\":\"ip-172-20-48-207_43b66f71-6b95-11e9-b8ef-06604569b78c\",\"leaseDurationSeconds\":15,\"acquireTime\":\"2019-04-30T22:25:55Z\",\"renewTime\":\"2019-07-01T17:51:18Z\",\"leaderTransitions\":2}"
+          }
+        }
+      }
+    },
+    {
+      "type": "MODIFIED",
+      "object": {
+        "kind": "Endpoints",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "fluentd",
+          "namespace": "sumologic",
+          "selfLink": "/api/v1/namespaces/sumologic/endpoints/fluentd",
+          "uid": "cbc1b62d-9c28-11e9-b605-06604569b78c",
+          "resourceVersion": "20568252",
+          "creationTimestamp": "2019-07-01T17:51:04Z",
+          "labels": {
+            "k8s-app": "fluentd-sumologic"
+          }
+        },
+        "subsets": [
+          {
+            "addresses": [
+              {
+                "ip": "100.114.10.126",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-events-76c68bc596-5clcp",
+                  "uid": "cb9e9211-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568226"
+                }
+              }
+            ],
+            "notReadyAddresses": [
+              {
+                "ip": "100.108.94.61",
+                "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-gvhxz",
+                  "uid": "cb766b43-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568230"
+                }
+              },
+              {
+                "ip": "100.114.10.127",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-rtp7d",
+                  "uid": "cb805ca4-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568251"
+                }
+              },
+              {
+                "ip": "100.115.226.113",
+                "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-nvhkg",
+                  "uid": "cb80cba6-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568241"
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "prom-write",
+                "port": 9888,
+                "protocol": "TCP"
+              },
+              {
+                "name": "fluent-bit",
+                "port": 24321,
+                "protocol": "TCP"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "MODIFIED",
+      "object": {
+        "kind": "Endpoints",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "fluentd",
+          "namespace": "sumologic",
+          "selfLink": "/api/v1/namespaces/sumologic/endpoints/fluentd",
+          "uid": "cbc1b62d-9c28-11e9-b605-06604569b78c",
+          "resourceVersion": "20568469",
+          "creationTimestamp": "2019-07-01T17:51:04Z",
+          "labels": {
+            "k8s-app": "fluentd-sumologic"
+          }
+        },
+        "subsets": [
+          {
+            "addresses": [
+              {
+                "ip": "100.108.94.61",
+                "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-gvhxz",
+                  "uid": "cb766b43-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568330"
+                }
+              },
+              {
+                "ip": "100.114.10.126",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-events-76c68bc596-5clcp",
+                  "uid": "cb9e9211-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568226"
+                }
+              },
+              {
+                "ip": "100.114.10.127",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-rtp7d",
+                  "uid": "cb805ca4-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568354"
+                }
+              },
+              {
+                "ip": "100.115.226.113",
+                "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-nvhkg",
+                  "uid": "cb80cba6-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568336"
+                }
+              }
+            ],
+            "notReadyAddresses": [
+              {
+                "ip": "100.108.94.62",
+                "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-z8hxn",
+                  "uid": "099a7e3b-9c29-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568465"
+                }
+              },
+              {
+                "ip": "100.108.94.63",
+                "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-drqph",
+                  "uid": "0996ed8f-9c29-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568468"
+                }
+              },
+              {
+                "ip": "100.115.226.114",
+                "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-kfkkj",
+                  "uid": "0999cd47-9c29-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568461"
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "prom-write",
+                "port": 9888,
+                "protocol": "TCP"
+              },
+              {
+                "name": "fluent-bit",
+                "port": 24321,
+                "protocol": "TCP"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "MODIFIED",
+      "object": {
+        "kind": "Endpoints",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "fluentd",
+          "namespace": "sumologic",
+          "selfLink": "/api/v1/namespaces/sumologic/endpoints/fluentd",
+          "uid": "cbc1b62d-9c28-11e9-b605-06604569b78c",
+          "resourceVersion": "20568552",
+          "creationTimestamp": "2019-07-01T17:51:04Z",
+          "labels": {
+            "k8s-app": "fluentd-sumologic"
+          }
+        },
+        "subsets": [
+          {
+            "addresses": [
+              {
+                "ip": "100.108.94.61",
+                "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-gvhxz",
+                  "uid": "cb766b43-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568330"
+                }
+              },
+              {
+                "ip": "100.114.10.126",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-events-76c68bc596-5clcp",
+                  "uid": "cb9e9211-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568226"
+                }
+              },
+              {
+                "ip": "100.115.226.113",
+                "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-nvhkg",
+                  "uid": "cb80cba6-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568336"
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "prom-write",
+                "port": 9888,
+                "protocol": "TCP"
+              },
+              {
+                "name": "fluent-bit",
+                "port": 24321,
+                "protocol": "TCP"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "DELETED",
+      "object": {
+        "kind": "Endpoints",
+        "apiVersion": "v1",
+        "metadata": {
+          "name": "fluentd-2",
+          "namespace": "sumologic",
+          "selfLink": "/api/v1/namespaces/sumologic/endpoints/fluentd-2",
+          "uid": "fadbb0e2-9c28-11e9-b605-06604569b78c",
+          "resourceVersion": "20568514",
+          "creationTimestamp": "2019-07-01T17:52:23Z",
+          "labels": {
+            "k8s-app": "fluentd-sumologic"
+          }
+        },
+        "subsets": [
+          {
+            "addresses": [
+              {
+                "ip": "100.108.94.61",
+                "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-gvhxz",
+                  "uid": "cb766b43-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568330"
+                }
+              },
+              {
+                "ip": "100.114.10.126",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-events-76c68bc596-5clcp",
+                  "uid": "cb9e9211-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568226"
+                }
+              },
+              {
+                "ip": "100.114.10.127",
+                "nodeName": "ip-172-20-54-182.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-rtp7d",
+                  "uid": "cb805ca4-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568354"
+                }
+              },
+              {
+                "ip": "100.115.226.113",
+                "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-nvhkg",
+                  "uid": "cb80cba6-9c28-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568336"
+                }
+              }
+            ],
+            "notReadyAddresses": [
+              {
+                "ip": "100.108.94.62",
+                "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-z8hxn",
+                  "uid": "099a7e3b-9c29-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568465"
+                }
+              },
+              {
+                "ip": "100.108.94.63",
+                "nodeName": "ip-172-20-74-252.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-drqph",
+                  "uid": "0996ed8f-9c29-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568468"
+                }
+              },
+              {
+                "ip": "100.115.226.114",
+                "nodeName": "ip-172-20-60-118.us-west-1.compute.internal",
+                "targetRef": {
+                  "kind": "Pod",
+                  "namespace": "sumologic",
+                  "name": "fluentd-59d9c9656d-kfkkj",
+                  "uid": "0999cd47-9c29-11e9-b605-06604569b78c",
+                  "resourceVersion": "20568461"
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "prom-write",
+                "port": 9888,
+                "protocol": "TCP"
+              },
+              {
+                "name": "fluent-bit",
+                "port": 24321,
+                "protocol": "TCP"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

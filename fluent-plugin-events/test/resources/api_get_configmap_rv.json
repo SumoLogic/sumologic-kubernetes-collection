@@ -1,0 +1,17 @@
+{
+  "kind": "ConfigMap",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "fluentd-config-resource-version",
+    "namespace": "sumologic",
+    "selfLink": "/api/v1/namespaces/sumologic/configmaps/fluentd-config-resource-version",
+    "uid": "e81335bf-7da9-11e9-894b-025000000001",
+    "resourceVersion": "2361804",
+    "creationTimestamp": "2019-05-23T22:27:10Z"
+  },
+  "data": {
+    "resource-version-events": "dummy-events-rv",
+    "resource-version-pods": "dummy-pods-rv",
+    "resource-version-services": "dummy-services-rv"
+  }
+}

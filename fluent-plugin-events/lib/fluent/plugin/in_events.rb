@@ -8,7 +8,7 @@ module Fluent
 
       require_relative '../../sumologic/kubernetes/connector.rb'
 
-      helpers :thread
+      helpers :thread, :timer
 
       include SumoLogic::Kubernetes::Connector
       
@@ -50,9 +50,15 @@ module Fluent
       end
 
       def start
+        log.info "Starting events collection for #{@resource_name}"
+        
         super
         initialize_resource_version
-        start_monitor
+        
+        @last_recreated = Time.now.to_i
+        log.debug "last_recreated initialized to #{@last_recreated}"
+
+        timer_execute(:"#{@resource_name}_monitor", @configmap_update_interval_seconds, &method(:start_monitor))
       end
   
       def stop
@@ -62,45 +68,21 @@ module Fluent
         super
       end
 
-      # Listen for SIGTERM but do not trap
-      def prepend_handler(signal, &handler)
-        previous = Signal.trap(signal) do
-          previous = -> { raise SignalException, signal} unless previous.respond_to?(:call)
-          handler.call(previous)
-        end
-      end
-
       def start_monitor
-        log.info "Starting events collection"
+        now = Time.now.to_i
+        watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
+        if now - @last_recreated >= @watch_interval_seconds || !watcher_exists
+          
+          log.debug "Recreating watcher thread. Use resource version from latest snapshot if watcher is running"
+          pull_resource_version if watcher_exists
+          @watch_stream.finish if @watch_stream
 
-        last_recreated = Time.now.to_i
-        log.debug "last_recreated initialized to #{last_recreated}"
-
-        interrupted = false
-        prepend_handler("TERM") do |old|
-          interrupted = true
-          old.call
+          start_watcher_thread
+          @last_recreated = now
+          log.debug "last_recreated updated to #{@last_recreated}"
         end
 
-        while !interrupted do
-          # Periodically restart watcher connection by checking if enough time has passed since 
-          # last time watcher thread was recreated or if the watcher thread has been stopped.
-          now = Time.now.to_i
-          watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
-          if now - last_recreated >= @watch_interval_seconds || !watcher_exists
-            
-            log.debug "Recreating watcher thread. Use resource version from latest snapshot if watcher is running"
-            pull_resource_version if watcher_exists
-            @watch_stream.finish if @watch_stream
-
-            start_watcher_thread
-            last_recreated = now
-            log.debug "last_recreated updated to #{last_recreated}"
-          end
-
-          patch_config_map
-          sleep(@configmap_update_interval_seconds)
-        end
+        patch_config_map
       end
   
       def start_watcher_thread
@@ -113,7 +95,7 @@ module Fluent
         params[:namespace] = @namespace
         params[:timeout_seconds] = @watch_interval_seconds + 60
 
-        @watcher = @client.public_send("watch_#{resource_name}", params).tap do |watcher|
+        @watcher = @clients[@api_version].public_send("watch_#{resource_name}", params).tap do |watcher|
           thread_create(:"watch_#{resource_name}") do
             @watch_stream = watcher
             @watcher_id = Thread.current.object_id
@@ -137,20 +119,26 @@ module Fluent
             log.debug "Closing watch stream"
           end
         end
+      rescue => e
+        log.error "Got exception #{e} watching for resource #{resource_name}. Skipping."
       end
 
       def create_config_map
         @configmap.data = { "resource-version-#{resource_name}": "#{@resource_version}" }
-        @client.public_send("create_config_map", @configmap).tap do |map|
+        @clients['v1'].public_send("create_config_map", @configmap).tap do |map|
           log.debug "Created config map: #{map}"
         end
+      rescue => e
+        log.error "Got exception #{e} creating config map. Skipping."
       end
 
       def patch_config_map
         pull_resource_version
-        @client.public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
-          log.debug "Patched config map: #{map}"
+        @clients['v1'].public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
+          log.debug "Patched config map for #{@resource_name}: #{map}"
         end
+      rescue => e
+        log.error "Got exception #{e} patching config map. Skipping."
       end
 
       def initialize_resource_version
@@ -163,20 +151,23 @@ module Fluent
 
         # get or create the config map
         begin
-          @client.public_send("get_config_map", "fluentd-config-resource-version", @deploy_namespace).tap do |resource|
+          @clients['v1'].public_send("get_config_map", "fluentd-config-resource-version", @deploy_namespace).tap do |resource|
             log.debug "Got config map: #{resource}"
             version = resource.data["resource-version-#{resource_name}"]
             @resource_version = version.to_i if version
           end
         rescue Kubeclient::ResourceNotFoundError
           create_config_map
+        rescue => e
+          log.error "Got exception #{e} getting config map. Skipping."
         end
       end
 
       def pull_resource_version
         params = Hash.new
         params[:as] = :raw
-        response = @client.public_send "get_#{resource_name}", params
+
+        response = @clients[@api_version].public_send("get_#{resource_name}", params)
         result = JSON.parse(response)
 
         resource_version = result.fetch('resourceVersion') do
@@ -184,6 +175,8 @@ module Fluent
         end
 
         @resource_version = resource_version
+      rescue => e
+        log.error "Got exception #{e} pulling resource version #{resource_version} for resource #{resource_name}. Skipping."
       end
 
       def normalize_param
@@ -192,7 +185,7 @@ module Fluent
           log.debug 'Kubernetes URL is not set - inspecting environment'
           env_host = ENV['KUBERNETES_SERVICE_HOST']
           env_port = ENV['KUBERNETES_SERVICE_PORT']
-          @kubernetes_url = "https://#{env_host}:#{env_port}/api" unless env_host.nil? || env_port.nil?
+          @kubernetes_url = "https://#{env_host}:#{env_port}" unless env_host.nil? || env_port.nil?
         end
         log.debug "Kubernetes URL: '#{@kubernetes_url}'"
 

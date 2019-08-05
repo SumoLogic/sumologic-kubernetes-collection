@@ -23,31 +23,31 @@ class ReaderTest < Test::Unit::TestCase
   test 'fetch_resource is expected' do
     pod = fetch_resource('pods', 'somepod', 'sumologic')
     assert_not_nil pod
-    assert_equal pod['apiVersion'], 'v1'
-    assert_equal pod['kind'], 'Pod'
+    assert_equal 'v1', pod['apiVersion']
+    assert_equal 'Pod', pod['kind']
     labels = pod['metadata']['labels']
     assert_not_nil labels
-    assert_equal labels['pod-template-hash'], '1691804713'
-    assert_equal labels['run'], 'curl-byi'
+    assert_equal '1691804713', labels['pod-template-hash']
+    assert_equal 'curl-byi', labels['run']
   end
 
   test 'fetch_pod_metadata get labels' do
     metadata = fetch_pod_metadata('sumologic', 'somepod')
     assert_not_nil metadata
-    assert_equal metadata['pod']['labels']['pod-template-hash'], '1691804713'
-    assert_equal metadata['pod']['labels']['run'], 'curl-byi'
+    assert_equal '1691804713', metadata['pod_labels']['pod_labels']['pod-template-hash']
+    assert_equal 'curl-byi', metadata['pod_labels']['pod_labels']['run']
   end
 
   test 'fetch_pod_metadata get owners' do
     metadata = fetch_pod_metadata('kube-system', 'somepod')
     assert_not_nil metadata
-    assert_equal metadata['replicaset']['name'], 'kube-dns-5fbcb4d67b'
-    assert_equal metadata['deployment']['name'], 'kube-dns'
+    assert_equal 'kube-dns-5fbcb4d67b', metadata['owners']['replicaset']
+    assert_equal 'kube-dns', metadata['owners']['deployment']
   end
 
   test 'fetch_pod_metadata returns empty map if resource not found' do
     metadata = fetch_pod_metadata('non-exist', 'somepod')
     assert_not_nil metadata
-    assert_equal metadata.size, 0
+    assert_equal 0, metadata.size
   end
 end
