@@ -113,7 +113,7 @@ module SumoLogic
           nil
         end
       rescue Kubeclient::ResourceNotFoundError => e
-        log.error e
+        log.warn e
         nil
       end
     end
