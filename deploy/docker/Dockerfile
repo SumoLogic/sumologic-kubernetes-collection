@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.6.2-1.0
+FROM fluent/fluentd:v1.6.3-1.0
 
 # Use root account to use apk
 USER root
@@ -16,15 +16,20 @@ RUN apk add --no-cache --update --virtual .build-deps sudo build-base ruby-dev \
        && gem install lru_redux \
        && gem install snappy
 
+# FluentD plugins to allow customers to forward data if needed to various cloud providers
+RUN gem install fluent-plugin-s3
+       # TODO: Support additional cloud providers
+       # && gem install fluent-plugin-google-cloud \
+       # && gem install fluent-plugin-azure-storage-append-blob
+
 # FluentD plugins from RubyGems
-RUN gem install fluent-plugin-s3 -v 1.1.4 \
-       && gem install fluent-plugin-systemd -v 0.3.1 \
-       && gem install fluent-plugin-record-modifier \
-       && gem install fluent-plugin-kubernetes_metadata_filter -v 1.0.2 \
+RUN gem install fluent-plugin-systemd -v 1.0.2 \
+       && gem install fluent-plugin-record-modifier -v 2.0.1 \
+       && gem install fluent-plugin-kubernetes_metadata_filter -v 2.2.0 \
        && gem install fluent-plugin-sumologic_output -v 1.5.0 \
-       && gem install fluent-plugin-concat -v 2.3.0 \
-       && gem install fluent-plugin-rewrite-tag-filter -v 2.1.0 \
-       && gem install fluent-plugin-prometheus -v 1.4.0 \
+       && gem install fluent-plugin-concat -v 2.4.0 \
+       && gem install fluent-plugin-rewrite-tag-filter -v 2.2.0 \
+       && gem install fluent-plugin-prometheus -v 1.5.0 \
        && gem install fluent-plugin-kubernetes_sumologic -v 2.4.2
 
 # FluentD plugins from this repository

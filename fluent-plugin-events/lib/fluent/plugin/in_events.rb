@@ -111,7 +111,7 @@ module Fluent
               end
 
               if (!rv)
-                log.error "Resource version #{rv} expired, waiting for stream to be recreated with more recent version."
+                log.warn "Resource version #{rv} expired, waiting for stream to be recreated with more recent version."
                 break
               end
             end
