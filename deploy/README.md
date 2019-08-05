@@ -131,7 +131,7 @@ Create nine HTTP sources under the collector you created in the previous step, o
 
 Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create the sources, with the following additions:
 
-* **Naming the sources.** You can assign any name you like to the sources, but it’s a good idea to assign a name to each source that reflects the Kubernetes component from which it receives metrics. For example, you might name the source that receives API Server metrics “api-server-metrics”.
+* **Naming the sources.** You can assign any name you like to the sources, but it’s a good idea to assign a name to each source that reflects the Kubernetes component from which it receives data. For example, you might name the source that receives API Server metrics “api-server-metrics”.
 * **HTTP Source URLs.** When you configure each HTTP source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service secrets to send data to Sumo.
 
 #### Deploy Fluentd
@@ -236,6 +236,8 @@ kubectl -n kube-system patch service prometheus-operator-kube-scheduler --type=j
 
 ### Additional configuration options
 
+### Metrics
+
 #### Filter metrics
 
 The `prometheus-overrides.yaml` file specifies metrics to be collected. If you want to exclude some metrics from collection, or include others, you can edit `prometheus-overrides.yaml`. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
@@ -285,7 +287,7 @@ This filter will:
 * Rename the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
 * Only apply to metrics with the `kube-system` namespace
 
-#### Custom Metrics
+### Custom Metrics
 
 If you have custom metrics you'd like to send to Sumo via Prometheus, you just need to expose a `/metrics` endpoint in prometheus format, and instruct prometheus via a ServiceMonitor to pull data from the endpoint. In this section, we'll walk through collecting custom metrics with Prometheus.
 
@@ -354,6 +356,31 @@ Note: When executing the helm upgrade to avoid the error below is need add the a
       invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
 
 If all goes well, you should now have your custom metrics piping into Sumo Logic.
+
+### Events
+
+#### Configurable fields for events
+
+Parameter Name | Default |Description |
+------------ | ------------- | -------------
+resource_name | "events" | Collect events for a specific resource type, such as pods, deployments, or services.
+tag | "kubernetes.*" | Tag collected events.
+namespace | nil | Collect events from a specific namespace.
+label_selector | nil | Collect events for resources matching a specific label.
+field_selector | nil | Collect events for resources matching a specific field.
+type_selector | ["ADDED", "MODIFIED"] | Collect specific event types. Currently supports "ADDED", "MODIFIED", and "DELETED".
+configmap_update_interval_seconds | 10 | Resource version is used to resume events collection from where it left off after a container/pod/node restart. The latest resource version of your events is kept in memory and backed up to a ConfigMap at an interval. By default, we back up the resource version by making a ConfigMap API call every 10 seconds. If you want to back up more frequently, reduce the interval. If you want to reduce the number of API calls, increase the interval.
+watch_interval_seconds | 300 | Interval at which the watch thread gets recreated.
+deploy_namespace | "sumologic" | Namespace that the events plugin resources will be created in. 
+kubernetes_url | nil | URL of the Kubernetes API.
+api_version | v1 | Version of the Kubernetes Events API.
+client_cert | nil | Path to the certificate file for the client.
+client_key | nil | Path to the private key file for the client.
+ca_file | nil | Path to the CA file.
+secret_dir | "/var/run/secrets/kubernetes.io/serviceaccount" | Path of the location where the service account credentials for the pod are stored.
+bearer_token_file | nil | Path to the file containing the API token. By default it reads from the file "token" in the `secret_dir`.
+verify_ssl | true | Whether to verify the API server certificate.
+ssl_partial_chain | false | If `ca_file` is for an intermediate CA, or otherwise we do not have the root CA and want to trust the intermediate CA certs we do have, set this to `true` - this corresponds to the openssl s_client -partial_chain flag and X509_V_FLAG_PARTIAL_CHAIN
 
 ## Step 3: Deploy FluentBit
 
