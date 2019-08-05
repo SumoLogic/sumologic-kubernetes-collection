@@ -16,10 +16,11 @@ RUN apk add --no-cache --update --virtual .build-deps sudo build-base ruby-dev \
        && gem install lru_redux \
        && gem install snappy
 
-# FluentD plugins to allow customers to forward data if needed to various cloud platforms
-RUN gem install fluent-plugin-s3 \
-       && gem install fluent-plugin-google-cloud \
-       && gem install fluent-plugin-azure-storage-append-blob
+# FluentD plugins to allow customers to forward data if needed to various cloud providers
+RUN gem install fluent-plugin-s3
+       # TODO: Support additional cloud providers
+       # && gem install fluent-plugin-google-cloud \
+       # && gem install fluent-plugin-azure-storage-append-blob
 
 # FluentD plugins from RubyGems
 RUN gem install fluent-plugin-systemd -v 1.0.2 \
