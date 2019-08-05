@@ -79,7 +79,6 @@ module Fluent
           metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
 
           ['pod_labels', 'owners', 'service'].each do |metadata_type|
-          # ['pod_labels', 'owners'].each do |metadata_type|
             attachment = metadata[metadata_type]
             if attachment.nil? || attachment.empty?
               log.trace "Cannot get #{metadata_type} for pod #{namespace_name}::#{pod_name}, skip."
