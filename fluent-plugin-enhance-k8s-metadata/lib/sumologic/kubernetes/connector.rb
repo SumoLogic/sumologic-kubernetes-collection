@@ -36,7 +36,11 @@ module SumoLogic
           ver,
           ssl_options: ssl_options,
           auth_options: auth_options,
-          as: :parsed
+          as: :parsed,
+          timeouts: {
+            open: 5,
+            read: 5
+          }
         )
         client.api_valid?
         client
