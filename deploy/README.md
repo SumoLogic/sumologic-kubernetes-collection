@@ -181,6 +181,8 @@ In this step, you will configure the Prometheus server to write metrics to Fluen
 
 Install Helm:
 
+*Note the following steps are on way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://helm.sh/docs/using_helm/#securing-your-helm-installation)*
+
 ```sh
 brew install kubernetes-helm
 ```
