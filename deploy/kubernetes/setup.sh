@@ -4,7 +4,7 @@ set -e
 usage() {
   echo
   echo 'Usage:'
-  echo '  setup.sh [-c collector-name] [-k cluster-name] [-n namespace] [-a useAlpha] <endpoint> <access-id> <access-key>'
+  echo '  setup.sh [-c collector-name] [-k cluster-name] [-n namespace] [-a use-alpha] [-y download-yaml] <endpoint> <access-id> <access-key>'
   echo
 }
 
@@ -53,7 +53,9 @@ create_http_source()
   echo "Source was created(id=$SOURCE_ID, name=$SOURCE_NAME)."
 }
 
-while getopts c:k:n:a: option
+DOWNLOAD_YAML=true;
+
+while getopts c:k:n:a:y: option
 do
  case "${option}"
  in
@@ -61,6 +63,7 @@ do
  k) CLUSTER_NAME=${OPTARG};;
  n) NAMESPACE=${OPTARG};;
  a) ALPHA=${OPTARG};;
+ y) DOWNLOAD_YAML=${OPTARG};;
  esac
 done
 shift "$(($OPTIND -1))"
@@ -133,7 +136,7 @@ if [ $retVal -ne 0 ]; then
   echo "Creating namespace '$NAMESPACE'..."
   kubectl create namespace $NAMESPACE
 else
-  echo "Namespace 'sumologic' exists, skip creating."
+  echo "Namespace '$NAMESPACE' exists, skip creating."
 fi
 
 set +e
@@ -146,38 +149,38 @@ if [ $retVal -eq 0 ]; then
   exit -2;
 fi
 
-echo "Creating collector '$COLLECTOR_NAME' for cluster $CLUSTER_NAME..."
-COLLECTOR_ID=
-create_host_collector $COLLECTOR_NAME $CLUSTER_NAME
+# echo "Creating collector '$COLLECTOR_NAME' for cluster $CLUSTER_NAME..."
+# COLLECTOR_ID=
+# create_host_collector $COLLECTOR_NAME $CLUSTER_NAME
 
-echo "Creating sources in '$COLLECTOR_NAME'..."
-SOURCE_URL=
-create_http_source '(default-metrics)' $COLLECTOR_ID $CLUSTER_NAME
-ENDPOINT_METRICS="$SOURCE_URL"
-SOURCE_URL=
-create_http_source apiserver-metrics $COLLECTOR_ID $CLUSTER_NAME
-ENDPOINT_METRICS_APISERVER="$SOURCE_URL"
-SOURCE_URL=
-create_http_source kube-controller-manager-metrics $COLLECTOR_ID $CLUSTER_NAME
-ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER="$SOURCE_URL"
-SOURCE_URL=
-create_http_source kube-scheduler-metrics $COLLECTOR_ID $CLUSTER_NAME
-ENDPOINT_METRICS_KUBE_SCHEDULER="$SOURCE_URL"
-SOURCE_URL=
-create_http_source kube-state-metrics $COLLECTOR_ID $CLUSTER_NAME
-ENDPOINT_METRICS_KUBE_STATE="$SOURCE_URL"
-SOURCE_URL=
-create_http_source kubelet-metrics $COLLECTOR_ID $CLUSTER_NAME
-ENDPOINT_METRICS_KUBELET="$SOURCE_URL"
-SOURCE_URL=
-create_http_source node-exporter-metrics $COLLECTOR_ID $CLUSTER_NAME
-ENDPOINT_METRICS_NODE_EXPORTER="$SOURCE_URL"
-SOURCE_URL=
-create_http_source logs $COLLECTOR_ID $CLUSTER_NAME
-ENDPOINT_LOGS="$SOURCE_URL"
-SOURCE_URL=
-create_http_source events $COLLECTOR_ID $CLUSTER_NAME
-ENDPOINT_EVENTS="$SOURCE_URL"
+# echo "Creating sources in '$COLLECTOR_NAME'..."
+# SOURCE_URL=
+# create_http_source '(default-metrics)' $COLLECTOR_ID $CLUSTER_NAME
+# ENDPOINT_METRICS="$SOURCE_URL"
+# SOURCE_URL=
+# create_http_source apiserver-metrics $COLLECTOR_ID $CLUSTER_NAME
+# ENDPOINT_METRICS_APISERVER="$SOURCE_URL"
+# SOURCE_URL=
+# create_http_source kube-controller-manager-metrics $COLLECTOR_ID $CLUSTER_NAME
+# ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER="$SOURCE_URL"
+# SOURCE_URL=
+# create_http_source kube-scheduler-metrics $COLLECTOR_ID $CLUSTER_NAME
+# ENDPOINT_METRICS_KUBE_SCHEDULER="$SOURCE_URL"
+# SOURCE_URL=
+# create_http_source kube-state-metrics $COLLECTOR_ID $CLUSTER_NAME
+# ENDPOINT_METRICS_KUBE_STATE="$SOURCE_URL"
+# SOURCE_URL=
+# create_http_source kubelet-metrics $COLLECTOR_ID $CLUSTER_NAME
+# ENDPOINT_METRICS_KUBELET="$SOURCE_URL"
+# SOURCE_URL=
+# create_http_source node-exporter-metrics $COLLECTOR_ID $CLUSTER_NAME
+# ENDPOINT_METRICS_NODE_EXPORTER="$SOURCE_URL"
+# SOURCE_URL=
+# create_http_source logs $COLLECTOR_ID $CLUSTER_NAME
+# ENDPOINT_LOGS="$SOURCE_URL"
+# SOURCE_URL=
+# create_http_source events $COLLECTOR_ID $CLUSTER_NAME
+# ENDPOINT_EVENTS="$SOURCE_URL"
 
 kubectl -n $NAMESPACE create secret generic sumologic \
   --from-literal=endpoint-metrics=$ENDPOINT_METRICS \
@@ -190,11 +193,13 @@ kubectl -n $NAMESPACE create secret generic sumologic \
   --from-literal=endpoint-logs=$ENDPOINT_LOGS \
   --from-literal=endpoint-events=$ENDPOINT_EVENTS
 
-echo "Applying deployment 'fluentd' $release ... "
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v$release/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
-sed 's/\$NAMESPACE'"/$NAMESPACE/g" | \
-sed "s|image: sumologic/kubernetes-fluentd:.*|image: sumologic/kubernetes-fluentd:$release|g" | \
-tee fluentd-sumologic.yaml | \
-kubectl -n $NAMESPACE apply -f -
+
+if [ "$DOWNLOAD_YAML" = true ]; then
+  echo "Downloading 'fluentd-sumologic.yaml' $release ..."
+  curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v$release/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+  sed 's/\$NAMESPACE'"/$NAMESPACE/g" | \
+  sed "s|image: sumologic/kubernetes-fluentd:.*|image: sumologic/kubernetes-fluentd:$release|g" | \
+  tee fluentd-sumologic.yaml
+fi
 
 echo "Done."
