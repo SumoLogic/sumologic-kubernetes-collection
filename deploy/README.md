@@ -95,7 +95,8 @@ __NOTE__ This script will be executed in bash and requires [jq command-line JSON
 * __-k cluster-name__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
 * __-n namespace__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace__ will default to `sumologic`
 * __-a use-alpha__ - optional. Use value true if you want to deploy latest alpha version. If not specified, the latest release will be deployed.
-* __-y download-yaml__ - optional. Use value false if you only want to set up the Sumo collector and sources but not download the yaml. If not specified, the yaml file with default configuration will be downloaded.
+* __-d deploy__ - optional. Use value false if you only want to set up the Sumo collector and sources and download the yaml, but do not want to deploy yet because you want to customize the yaml. If not specified, resources with default configuration will be deployed.
+* __-y download-yaml__ - optional. Use value false if you set `deploy` to false and do not want to download the yaml. If not specified, the yaml file with default configuration will be downloaded.
 * __api-endpoint__ - required. The API endpoint from [this page](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security).
 * __access-id__ - required. Sumo [access id](https://help.sumologic.com/Manage/Security/Access-Keys)
 * __access-key__ - required. Sumo [access key](https://help.sumologic.com/Manage/Security/Access-Keys)

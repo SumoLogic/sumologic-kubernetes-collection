@@ -4,7 +4,7 @@ set -e
 usage() {
   echo
   echo 'Usage:'
-  echo '  setup.sh [-c collector-name] [-k cluster-name] [-n namespace] [-a use-alpha] [-y download-yaml] <endpoint> <access-id> <access-key>'
+  echo '  setup.sh [-c collector-name] [-k cluster-name] [-n namespace] [-a use-alpha] [-d deploy] [-y download-yaml] <endpoint> <access-id> <access-key>'
   echo
 }
 
@@ -53,9 +53,10 @@ create_http_source()
   echo "Source was created(id=$SOURCE_ID, name=$SOURCE_NAME)."
 }
 
+DEPLOY=true;
 DOWNLOAD_YAML=true;
 
-while getopts c:k:n:a:y: option
+while getopts c:k:n:a:d:y: option
 do
  case "${option}"
  in
@@ -63,6 +64,7 @@ do
  k) CLUSTER_NAME=${OPTARG};;
  n) NAMESPACE=${OPTARG};;
  a) ALPHA=${OPTARG};;
+ d) DEPLOY=${OPTARG};;
  y) DOWNLOAD_YAML=${OPTARG};;
  esac
 done
@@ -194,12 +196,19 @@ kubectl -n $NAMESPACE create secret generic sumologic \
   --from-literal=endpoint-events=$ENDPOINT_EVENTS
 
 
-if [ "$DOWNLOAD_YAML" = true ]; then
-  echo "Downloading 'fluentd-sumologic.yaml' $release ..."
+if [ "$DEPLOY" = true ]; then
+  echo "Applying deployment 'fluentd' $release ... "
   curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v$release/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
   sed 's/\$NAMESPACE'"/$NAMESPACE/g" | \
   sed "s|image: sumologic/kubernetes-fluentd:.*|image: sumologic/kubernetes-fluentd:$release|g" | \
-  tee fluentd-sumologic.yaml
+  tee fluentd-sumologic.yaml | \
+  kubectl -n $NAMESPACE apply -f -
+elif [ "$DOWNLOAD_YAML" = true ]; then
+  echo "Downloading 'fluentd-sumologic.yaml' $release ..."
+  curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v$release/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+  sed 's/\$NAMESPACE'"/$NAMESPACE/g" | \
+  sed "s|image: sumologic/kubernetes-fluentd:.*|image: sumologic/kubernetes-fluentd:$release|g" \
+  >> fluentd-sumologic.yaml
 fi
 
 echo "Done."
