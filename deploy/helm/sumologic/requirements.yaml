@@ -1,0 +1,9 @@
+dependencies:
+  - name: fluent-bit
+    version: ^2.4.0
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    condition: fluent-bit.enabled
+  - name: prometheus-operator
+    version: ~6.2.0
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    condition: prometheus-operator.enabled
