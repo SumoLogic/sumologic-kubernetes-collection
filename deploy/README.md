@@ -84,22 +84,22 @@ This approach requires access to the Sumo Logic Collector API. It will create a 
 
 ```sh
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
-  | bash -s - [-c collector-name] [-k cluster-name] [-n namespace] <api-endpoint> <access-id> <access-key>
+  | bash -s - [-c <collector_name>] [-k <cluster_name>] [-n <namespace>] [-a <boolean>] [-d <boolean>] [-y <boolean>] <api_endpoint> <access_id> <access_key>
 ```
 
 __NOTE__ This script will be executed in bash and requires [jq command-line JSON parser](https://stedolan.github.io/jq/download/) to be installed.
 
 #### Parameters
 
-* __-c collector-name__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
-* __-k cluster-name__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
-* __-n namespace__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace__ will default to `sumologic`
-* __-a use-alpha__ - optional. Use value true if you want to deploy latest alpha version. If not specified, the latest release will be deployed.
-* __-d deploy__ - optional. Use value false if you only want to set up the Sumo collector and sources and download the yaml, but do not want to deploy yet because you want to customize the yaml. If not specified, resources with default configuration will be deployed.
-* __-y download-yaml__ - optional. Use value false if you set `deploy` to false and do not want to download the yaml. If not specified, the yaml file with default configuration will be downloaded.
-* __api-endpoint__ - required. The API endpoint from [this page](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security).
-* __access-id__ - required. Sumo [access id](https://help.sumologic.com/Manage/Security/Access-Keys)
-* __access-key__ - required. Sumo [access key](https://help.sumologic.com/Manage/Security/Access-Keys)
+* __-c &lt;collector_name&gt;__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
+* __-k &lt;cluster_name&gt;__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
+* __-n &lt;namespace&gt;__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace will default to `sumologic`.
+* __-a &lt;boolean&gt;__ - optional. Set this to true if you want to deploy with the latest alpha version. If not specified, the latest release will be deployed.
+* __-d &lt;boolean&gt;__ - optional. Set this to false to only set up the Sumo Collector and Sources and download the YAML file, but not to deploy so you can customize the YAML file. If not specified, the default configuration will deploy.
+* __-y &lt;boolean&gt;__ - optional. When -d is set to false you can also set this to false to not download the YAML file. If not specified, the YAML file will be downloaded.
+* __&lt;api_endpoint&gt;__ - required. See [API endpoints](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security) for details.
+* __&lt;access_id&gt;__ - required. Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
+* __&lt;access_key&gt;__ - required. Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 #### Environment variables
 The parameters for collector name, cluster name and namespace may also be passed in via environment variables instead of script arguments. If the script argument is supplied that trumps the environment variable.
