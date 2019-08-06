@@ -326,17 +326,17 @@ spec:
         livenessProbe:
           exec:
             command:
-            - "/bin/bash"
+            - "/bin/sh"
             - "-c"
-            - "[[ $( pgrep ruby | wc -l)  > 0 ]]"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
           initialDelaySeconds: 300
           periodSeconds: 20
         readinessProbe:
           exec:
             command:
-            - "/bin/bash"
+            - "/bin/sh"
             - "-c"
-            - "[[ $( pgrep ruby | wc -l)  > 0 ]]"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
           initialDelaySeconds: 30
           periodSeconds: 5
         volumeMounts:
@@ -511,17 +511,17 @@ spec:
         livenessProbe:
           exec:
             command:
-            - "/bin/bash"
+            - "/bin/sh"
             - "-c"
-            - "[[ $( pgrep ruby | wc -l)  > 0 ]]"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
           initialDelaySeconds: 300
           periodSeconds: 20
         readinessProbe:
           exec:
             command:
-            - "/bin/bash"
+            - "/bin/sh"
             - "-c"
-            - "[[ $( pgrep ruby | wc -l)  > 0 ]]"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
           initialDelaySeconds: 30
           periodSeconds: 5
         env:
