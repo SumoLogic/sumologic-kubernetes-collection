@@ -3,8 +3,7 @@ FROM fluent/fluentd:v1.6.3-debian-1.0
 # Use root account to use apt
 USER root
 
-# below RUN includes plugin as examples elasticsearch is not required
-# you may customize including plugins as you wish
+# Build dependencies
 RUN buildDeps="sudo make gcc g++ libc-dev ruby-dev libsnappy-dev" \
  && apt-get update \
  && apt-get install -y --no-install-recommends $buildDeps
