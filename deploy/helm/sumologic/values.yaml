@@ -26,47 +26,86 @@ eventsDeployment:
       cpu: "100m"
 
 sumologic:
+
+  ## Format to post logs into Sumo. json, json_merge, or text
   logFormat: fields
 
+  ## How frequently to push logs to SumoLogic
+  ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
   flushInterval: 5
   
+  ## Increase number of http threads to Sumo. May be required in heavy logging clusters
   numThreads: 1
 
   chunkLimitSize: "100k"
   
   totalLimitSize: "128m"
   
-  sourceCategory: "%{namespace}/%{pod_name}"
-  
-  sourceCategoryPrefix: "kubernetes/"
-
-  sourceCategoryReplaceDash: "/"
-
+  ## Set the _sourceName metadata field in SumoLogic.
   sourceName: "%{namespace}.%{pod}.%{container}"
 
+  ## Set the _sourceCategory metadata field in SumoLogic.
+  sourceCategory: "%{namespace}/%{pod_name}"
+  
+  ## Set the prefix, for _sourceCategory metadata.
+  sourceCategoryPrefix: "kubernetes/"
+
+  ## Used to replace - with another character.
+  sourceCategoryReplaceDash: "/"
+
+  ## Include or exclude Kubernetes metadata such as namespace and pod_name if
+  ## using json log format.
   kubernetesMeta: "true"
 
+  ## Reduces redundant Kubernetes metadata. 
+  ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#reducing-kubernetes-metadata
   kubernetesMetaReduce: "false"
   
+  ## The regular expression for the "concat" plugin to use when merging multi-line messages
   multilineStartRegexp: '/^\w{3} \d{1,2}, \d{4}/'
-  
+
+  ## The character to use to delimit lines within the final concatenated message.
+  ## Most multi-line messages contain a newline at the end of each line
   concatSeparator: ""
 
+  ## Option to control adding timestamp to logs. 
   addTimestamp: "true"
 
+  ## Field name when add_timestamp is on.
   timestampKey: "timestamp"
 
+  ## Option to control adding stream to logs.
   addStream: "true"
 
+  ## Option to control adding time to logs.
   addTime: "true"
 
+  ## Verify SumoLogic HTTPS certificates
   verifySsl: "true"
 
+  ## Sets the fluentd log level. The default log level, if not specified, is info.
+  ## ref: https://docs.fluentd.org/deployment/logging
+  # fluentdLogLevel: "debug"
+
+  ## Override Kubernetes resource types you want to get events for from different Kubernetes
+  ## API versions. The key represents the name of the resource type and the value represents
+  ## the API version.
+  # watchResourceEventsOverrides:
+  #   pods: "v1"
+  #   events: "events.k8s.io/v1beta1"
+
   k8sMetadataFilter:
+    ## Option to control the enabling of metadata filter plugin watch.
+    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     watch: "true"
+
+    ## Verify ssl certificate of sumologic endpoint.
     verifySsl: "true"
+
+    ## Option to control the enabling of metadata filter plugin cache_size. 
+    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     bearerCacheSize: "1000"
+
+    ## Option to control the enabling of metadata filter plugin cache_ttl. 
+    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     bearerCacheTtl: "3600"
-
-    
-
