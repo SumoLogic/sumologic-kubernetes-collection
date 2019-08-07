@@ -204,6 +204,8 @@ Before installing `prometheus-operator`, edit `prometheus-overrides.yaml` to def
 
 __NOTE__ It’s fine to change the value of the `cluster` field, but don’t change the field name (key).
 
+__NOTE__ If you plan to install Prometheus in a a different namespace than you deployed FluentD to in Step 1, or you have an existing Prometheus you plan to apply our configuration to running in a different namespace,  please update the remote write API configuration to use the full service url. e.g. `http://fluentd.sumologic.svc.cluster.local:9888`.
+
 You can also [Filter metrics](#filter-metrics) and [Trim and relabel metrics](#trim-and-relabel-metrics) in `prometheus-overrides.yaml`.
 
 Install `prometheus-operator` using Helm:
