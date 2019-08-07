@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
+  labels:
+    app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
+    {{ template "sumologic.labels.common" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
+  template:
+    metadata:
+      labels:
+        app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
+        {{ template "sumologic.labels.common" . }}
+    spec:
+      serviceAccountName: {{ template "sumologic.fullname" . }}
+      volumes:
+      - name: pos-files
+        hostPath:
+          path: /var/run/fluentd-pos
+          type: ""
+      - name: config-volume
+        configMap:
+          name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
+      containers:
+      - name: fluentd-events
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          {{- toYaml .Values.eventsDeployment.resources | nindent 10 }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /fluentd/etc/
+        - name: pos-files
+          mountPath: /mnt/pos/
+        livenessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
+          initialDelaySeconds: 300
+          periodSeconds: 20
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        env:
+        - name: SUMO_ENDPOINT_EVENTS
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-events
+        - name: VERIFY_SSL
+          value: {{ .Values.sumologic.verifySsl| quote }}
+        - name: FLUSH_INTERVAL
+          value: {{ .Values.sumologic.flushInterval | quote }}
+        - name: NUM_THREADS
+          value: {{ .Values.sumologic.numThreads | quote }}
+        - name: CHUNK_LIMIT_SIZE
+          value: {{ .Values.sumologic.chunkLimitSize | quote }}
+        - name: TOTAL_LIMIT_SIZE
+          value: {{ .Values.sumologic.totalLimitSize | quote }}
+        

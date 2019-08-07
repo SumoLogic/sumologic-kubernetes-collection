@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
+  labels:
+    app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
+    {{ template "sumologic.labels.common" . }}
+data:
+  fluent.conf: |-
+    @include events.conf
+  {{- (tpl (.Files.Glob "conf/events/*.conf").AsConfig .) | nindent 2 }}
