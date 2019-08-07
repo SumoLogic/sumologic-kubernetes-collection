@@ -102,11 +102,16 @@ sumologic:
     ## Verify ssl certificate of sumologic endpoint.
     verifySsl: "true"
 
+    ## Option to control the enabling of metadata filter plugin cache_size. 
+    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
+    bearerCacheSize: "1000"
+
     ## Option to control the enabling of metadata filter plugin cache_ttl. 
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     bearerCacheTtl: "3600"
 
-# fluent-bit https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
+## Configure fluent-bit 
+## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
 fluent-bit:
   enabled: true
   backend:
@@ -194,7 +199,8 @@ fluent-bit:
     @INCLUDE fluent-bit-input.conf
     @INCLUDE fluent-bit-output.conf
 
-# prometheus-operator https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml
+## Confugure prometheus-operator 
+## ref: https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml
 prometheus-operator:
   enabled: true
   alertmanager:
@@ -463,4 +469,3 @@ prometheus-operator:
         - action: keep
           regex: 'prometheus_remote_storage_*'
           sourceLabels: [__name__]
-          
