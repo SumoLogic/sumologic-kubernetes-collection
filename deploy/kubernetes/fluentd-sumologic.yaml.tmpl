@@ -328,7 +328,7 @@ spec:
             command:
             - "/bin/sh"
             - "-c"
-            - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
           initialDelaySeconds: 300
           periodSeconds: 20
         readinessProbe:
@@ -336,7 +336,7 @@ spec:
             command:
             - "/bin/sh"
             - "-c"
-            - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
           initialDelaySeconds: 30
           periodSeconds: 5
         volumeMounts:
@@ -513,7 +513,7 @@ spec:
             command:
             - "/bin/sh"
             - "-c"
-            - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
           initialDelaySeconds: 300
           periodSeconds: 20
         readinessProbe:
@@ -521,7 +521,7 @@ spec:
             command:
             - "/bin/sh"
             - "-c"
-            - "[[ $( pgrep ruby | wc -l)  == 2 ]]"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
           initialDelaySeconds: 30
           periodSeconds: 5
         env:
