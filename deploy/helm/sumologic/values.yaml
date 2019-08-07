@@ -68,7 +68,7 @@ sumologic:
     bearerCacheSize: "1000"
     bearerCacheTtl: "3600"
 
-## Configuration for fluent-bit
+# fluent-bit https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
 fluent-bit:
   enabled: true
   backend:
@@ -156,6 +156,7 @@ fluent-bit:
     @INCLUDE fluent-bit-input.conf
     @INCLUDE fluent-bit-output.conf
 
+# prometheus-operator https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml
 prometheus-operator:
   enabled: true
   alertmanager:
@@ -165,7 +166,7 @@ prometheus-operator:
   prometheus:
     prometheusSpec:
       externalLabels:
-        # Set this to a value to distinguish between different k8s clusters
+        # set this to a value to distinguish between different k8s clusters
         cluster: kubernetes
       remoteWrite:
       # kube state metrics
