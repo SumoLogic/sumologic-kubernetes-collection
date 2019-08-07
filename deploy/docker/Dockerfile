@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.6.3-debian-1.0
+FROM fluent/fluentd:v1.6.3-debian-1.0 AS builder
 
 # Use root account to use apt
 USER root
@@ -34,21 +34,24 @@ RUN gem install fluent-plugin-systemd -v 1.0.2 \
        && gem install fluent-plugin-kubernetes_sumologic -v 2.4.2
 
 # FluentD plugins from this repository
-RUN gem install fluent-plugin-prometheus-format \
-       && gem install fluent-plugin-enhance-k8s-metadata \
-       && gem install fluent-plugin-datapoint \
-       && gem install fluent-plugin-rewrite-tag-filter \
-       && gem install fluent-plugin-protobuf \
-       && gem install fluent-plugin-events
+RUN gem install --local fluent-plugin-prometheus-format \
+       && gem install --local fluent-plugin-enhance-k8s-metadata \
+       && gem install --local fluent-plugin-datapoint \
+       && gem install --local fluent-plugin-protobuf \
+       && gem install --local fluent-plugin-events
 
-RUN sudo gem sources --clear-all \
- && SUDO_FORCE_REMOVE=yes \
-    apt-get purge -y --auto-remove \
-                  -o APT::AutoRemove::RecommendsImportant=false \
-                  $buildDeps \
- && rm -rf /var/lib/apt/lists/* \
- && rm -rf /tmp/* /var/tmp/* /usr/lib/ruby/gems/*/cache/*.gem
+# Start with fresh image
+FROM fluent/fluentd:v1.6.3-debian-1.0
 
+# Use root account to use apt
+USER root
+
+# Run dependencies
+RUN runDeps="sudo libsnappy-dev" \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends $runDeps
+
+COPY --from=builder /usr/local/bundle /usr/local/bundle
 COPY ./fluent.conf /fluentd/etc/
 COPY ./entrypoint.sh /bin/
 
