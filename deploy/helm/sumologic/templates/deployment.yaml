@@ -24,7 +24,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ template "sumologic.fluentdUserConfig.fullname" . }}
+          name: {{ template "sumologic.fullname" . }}
       containers:
       - name: fluentd
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

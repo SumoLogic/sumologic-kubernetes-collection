@@ -20,7 +20,7 @@ module Fluent
       # parameters for read/write record
       config_param :in_namespace_path, :array, default: ['$.namespace']
       config_param :in_pod_path, :array, default: ['$.pod', '$.pod_name']
-      config_param :out_root, :string, default: 'kubernetes'
+      config_param :data_type, :string, default: 'metrics'
 
       # parameters for connecting to k8s api server
       config_param :kubernetes_url, :string, default: nil
@@ -50,7 +50,7 @@ module Fluent
 
       def start
         super
-        # start_service_monitor
+        start_service_monitor
       end
 
       def filter(tag, time, record)
@@ -66,26 +66,33 @@ module Fluent
         @in_namespace_ac.each { |ac| namespace_name ||= ac.call(record) }
         @in_pod_ac.each { |ac| pod_name ||= ac.call(record) }
         if namespace_name.nil?
-          log.debug "Record doesn't have [#{@in_namespace_path}] field"
+          log.trace "Record doesn't have [#{@in_namespace_path}] field"
         elsif pod_name.nil?
-          log.debug "Record doesn't have [#{@in_pod_path}] field"
+          log.trace "Record doesn't have [#{@in_pod_path}] field"
         else
           if record.key? 'service'
             record['prometheus_service'] = record['service']
             record.delete('service')
           end
           metadata = get_pod_metadata(namespace_name, pod_name)
-          if metadata.empty?
-            log.debug "Cannot get labels on pod #{namespace_name}::#{pod_name}, skip."
-          else
-            record.merge! metadata
+          service = @pods_to_services[pod_name]
+          metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
+
+          ['pod_labels', 'owners', 'service'].each do |metadata_type|
+            attachment = metadata[metadata_type]
+            if attachment.nil? || attachment.empty?
+              log.trace "Cannot get #{metadata_type} for pod #{namespace_name}::#{pod_name}, skip."
+            else
+              case @data_type
+              when 'logs'
+                record['kubernetes'].merge! attachment if metadata_type != 'pod_labels'
+              when 'metrics'
+                record.merge! attachment
+              else
+                record.merge! attachment
+              end
+            end
           end
-          # service = @pods_to_services[pod_name]
-          # if service.nil? || service.empty?
-          #   log.debug "Cannot get service for pod #{namespace_name}::#{pod_name}, skip."
-          # else
-          #   record['service'] = service.sort!.join('_')
-          # end
         end
       end
 
@@ -107,9 +114,6 @@ module Fluent
 
         @cache_ttl = :none if @cache_ttl <= 0
         log.info "cache_ttl: #{cache_ttl}, cache_size: #{@cache_size}"
-
-        @out_root = 'kubernetes' if @out_root.nil? || @out_root.empty?
-        log.info "out_root: #{@out_root}"
       end
     end
   end

@@ -41,16 +41,3 @@ If dryRun=true, we use the Chart name "sumologic" and do not include labels spec
     heritage: "{{ .Release.Service }}"
 {{- end -}}
 {{- end -}}
-
-{{/*
-Create a default fully qualified fluentd user conf name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-*/}}
-{{- define "sumologic.fluentdUserConfig.fullname" -}}
-{{- printf "%s-config" (include "sumologic.fullname" .) | trunc 63 | trimSuffix "-" }}
-{{- end -}}
-
-{{- define "sumologic.fluentdUserConfigEvents.fullname" -}}
-{{- printf "%s-events-config" (include "sumologic.fullname" .) | trunc 63 | trimSuffix "-" }}
-{{- end -}}
-

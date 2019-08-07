@@ -4,6 +4,7 @@ require "fluent/test"
 require "fluent/test/driver/input"
 require "fluent/test/helpers"
 require 'mocha/test_unit'
+require 'webmock/test_unit'
 
 Test::Unit::TestCase.include(Fluent::Test::Helpers)
 Test::Unit::TestCase.extend(Fluent::Test::Helpers)
@@ -12,9 +13,24 @@ def test_resource(name)
   File.new("test/resources/#{name}")
 end
 
-def mock_get_events
+def stub_apis
+  stub_request(:any, %r{/api$})
+  .to_return(
+    'body' => {
+      'versions' => ['v1']
+    }.to_json
+  )
+stub_request(:any, %r{/apis$})
+  .to_return(
+    'body' => {
+      'versions' => ['events.k8s.io/v1beta1']
+    }.to_json
+  )
+end
+
+def mock_get_events(file_name)
   Kubeclient::Client.any_instance.stubs(:public_send).with("get_events", {:as=>:raw})
-    .returns(File.read(test_resource('api_list_events_v1.json')))
+    .returns(File.read(test_resource(file_name)))
 end
 
 def mock_get_config_map
@@ -47,6 +63,36 @@ def mock_patch_config_map(rv)
     .returns(object.to_json)
 end
 
+def mock_create_config_map_execution(configmap)
+  Kubeclient::Client.any_instance.stubs(:public_send)
+    .with("create_config_map", configmap)
+    .raises(StandardError.new 'Error occurred when creating config map.')
+end
+
+def mock_patch_config_map_exception(rv)
+  Kubeclient::Client.any_instance.stubs(:public_send)
+    .with("patch_config_map", "fluentd-config-resource-version",
+    {data: { "resource-version-events": rv.to_s}}, 'sumologic')
+    .raises(StandardError.new 'Error occurred when patching config map.')
+end
+
+def mock_get_config_map_exception
+  Kubeclient::Client.any_instance.stubs(:public_send)
+    .with("get_config_map", "fluentd-config-resource-version", "sumologic")
+    .raises(StandardError.new 'Error occurred when getting config map.')
+end
+
+def mock_get_events_exception
+  Kubeclient::Client.any_instance.stubs(:public_send).with("get_events", {:as=>:raw})
+    .raises(StandardError.new 'Error occurred when getting events.')
+end
+
+def mock_watch_events_exception
+  Kubeclient::Client.any_instance.stubs(:public_send)
+    .with("watch_events", {:as=>:raw, :field_selector=>nil, :label_selector=>nil, :namespace=>nil, :resource_version=>nil, :timeout_seconds=>360})
+    .raises(StandardError.new 'Error occurred when watching events.')
+end
+
 def get_watch_resources_count_by_type_selector(type_selector, file_name)
   text = File.read(test_resource(file_name))
   objects = text.split(/\n+/).map {|line| JSON.parse(line)}
@@ -55,7 +101,6 @@ end
 
 def init_globals
   @kubernetes_url = 'http://localhost:8080'
-  @api_version = 'v1'
   @verify_ssl = false
   @ca_file = nil
   @client_cert = nil

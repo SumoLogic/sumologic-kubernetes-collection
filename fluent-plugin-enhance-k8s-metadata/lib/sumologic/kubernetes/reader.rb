@@ -22,10 +22,10 @@ module SumoLogic
 
         metadata = {}
         labels = pod['metadata']['labels']
-        metadata['pod_labels'] = labels if labels.is_a?(Hash)
+        metadata['pod_labels'] = {'pod_labels' => labels} if labels.is_a?(Hash)
 
         owners = fetch_pod_owners(namespace, pod)
-        metadata.merge!(owners)
+        metadata['owners'] = owners if owners.is_a?(Hash)
         metadata
       end
 
@@ -113,7 +113,7 @@ module SumoLogic
           nil
         end
       rescue Kubeclient::ResourceNotFoundError => e
-        log.error e
+        log.warn e
         nil
       end
     end

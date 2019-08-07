@@ -23,7 +23,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ template "sumologic.fluentdUserConfigEvents.fullname" . }}
+          name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
       containers:
       - name: fluentd-events
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

@@ -95,7 +95,7 @@ module Fluent
         params[:namespace] = @namespace
         params[:timeout_seconds] = @watch_interval_seconds + 60
 
-        @watcher = @client.public_send("watch_#{resource_name}", params).tap do |watcher|
+        @watcher = @clients[@api_version].public_send("watch_#{resource_name}", params).tap do |watcher|
           thread_create(:"watch_#{resource_name}") do
             @watch_stream = watcher
             @watcher_id = Thread.current.object_id
@@ -111,7 +111,7 @@ module Fluent
               end
 
               if (!rv)
-                log.error "Resource version #{rv} expired, waiting for stream to be recreated with more recent version."
+                log.warn "Resource version #{rv} expired, waiting for stream to be recreated with more recent version."
                 break
               end
             end
@@ -119,20 +119,26 @@ module Fluent
             log.debug "Closing watch stream"
           end
         end
+      rescue => e
+        log.error "Got exception #{e} watching for resource #{resource_name}. Skipping."
       end
 
       def create_config_map
         @configmap.data = { "resource-version-#{resource_name}": "#{@resource_version}" }
-        @client.public_send("create_config_map", @configmap).tap do |map|
+        @clients['v1'].public_send("create_config_map", @configmap).tap do |map|
           log.debug "Created config map: #{map}"
         end
+      rescue => e
+        log.error "Got exception #{e} creating config map. Skipping."
       end
 
       def patch_config_map
         pull_resource_version
-        @client.public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
+        @clients['v1'].public_send("patch_config_map", "fluentd-config-resource-version", {data: { "resource-version-#{resource_name}": "#{@resource_version}"}}, @deploy_namespace).tap do |map|
           log.debug "Patched config map for #{@resource_name}: #{map}"
         end
+      rescue => e
+        log.error "Got exception #{e} patching config map. Skipping."
       end
 
       def initialize_resource_version
@@ -145,13 +151,15 @@ module Fluent
 
         # get or create the config map
         begin
-          @client.public_send("get_config_map", "fluentd-config-resource-version", @deploy_namespace).tap do |resource|
+          @clients['v1'].public_send("get_config_map", "fluentd-config-resource-version", @deploy_namespace).tap do |resource|
             log.debug "Got config map: #{resource}"
             version = resource.data["resource-version-#{resource_name}"]
             @resource_version = version.to_i if version
           end
         rescue Kubeclient::ResourceNotFoundError
           create_config_map
+        rescue => e
+          log.error "Got exception #{e} getting config map. Skipping."
         end
       end
 
@@ -159,7 +167,7 @@ module Fluent
         params = Hash.new
         params[:as] = :raw
 
-        response = @client.public_send("get_#{resource_name}", params)
+        response = @clients[@api_version].public_send("get_#{resource_name}", params)
         result = JSON.parse(response)
 
         resource_version = result.fetch('resourceVersion') do
@@ -167,6 +175,8 @@ module Fluent
         end
 
         @resource_version = resource_version
+      rescue => e
+        log.error "Got exception #{e} pulling resource version #{resource_version} for resource #{resource_name}. Skipping."
       end
 
       def normalize_param
@@ -175,7 +185,7 @@ module Fluent
           log.debug 'Kubernetes URL is not set - inspecting environment'
           env_host = ENV['KUBERNETES_SERVICE_HOST']
           env_port = ENV['KUBERNETES_SERVICE_PORT']
-          @kubernetes_url = "https://#{env_host}:#{env_port}/api" unless env_host.nil? || env_port.nil?
+          @kubernetes_url = "https://#{env_host}:#{env_port}" unless env_host.nil? || env_port.nil?
         end
         log.debug "Kubernetes URL: '#{@kubernetes_url}'"
 
