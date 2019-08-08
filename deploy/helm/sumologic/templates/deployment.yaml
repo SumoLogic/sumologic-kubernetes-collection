@@ -52,7 +52,7 @@ spec:
             - "/bin/sh"
             - "-c"
             - "[ $(pgrep ruby | wc -l) -gt 0 ]"
-          initialDelaySeconds: 45
+          initialDelaySeconds: 30
           periodSeconds: 5
         volumeMounts:
         - name: config-volume
