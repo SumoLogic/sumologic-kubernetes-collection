@@ -1,6 +1,8 @@
 lang: ruby
 services: docker
+os: osx
 before_install:
   - rm -f ./Gemfile.lock
   - gem install bundler
+  - brew install kubernetes-helm
 script: bash ci/build.sh

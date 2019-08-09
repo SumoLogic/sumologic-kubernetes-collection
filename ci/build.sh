@@ -42,6 +42,19 @@ cd ../..
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
+if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+  echo "Generating yaml from helm chart..."
+  helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+  if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
+      echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version..."
+      git add deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+      git commit -m "Generate new 'fluentd-sumologic.yaml.tmpl'"
+      git push origin "$TRAVIS_BRANCH"
+  else
+      echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
+  fi
+fi
+
 if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha* ]]; then
   echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$VERSION..."
   docker tag $DOCKER_TAG:local $DOCKER_TAG:$VERSION
