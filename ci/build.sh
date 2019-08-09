@@ -48,6 +48,8 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_BRANCH..."
       git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
+      git fetch origin-repo
+      git checkout $TRAVIS_BRANCH
       git add deploy/kubernetes/fluentd-sumologic.yaml.tmpl
       git commit -m "Generate new 'fluentd-sumologic.yaml.tmpl'"
       git push --quiet origin-repo "$TRAVIS_BRANCH"
