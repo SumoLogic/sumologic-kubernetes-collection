@@ -1,6 +1,8 @@
 lang: ruby
 services: docker
-os: osx
+os: 
+  - linux
+  - osx
 before_install:
   - rm -f ./Gemfile.lock
   - gem install bundler
