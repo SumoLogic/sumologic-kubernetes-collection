@@ -5,5 +5,5 @@ before_install:
   - gem install bundler
   - sudo apt update
   - sudo apt install snapd
-  - sudo snap install helm --classic
+  - snap install helm --classic
 script: bash ci/build.sh
