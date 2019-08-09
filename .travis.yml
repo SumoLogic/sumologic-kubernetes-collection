@@ -3,5 +3,7 @@ services: docker
 before_install:
   - rm -f ./Gemfile.lock
   - gem install bundler
+  - sudo apt update
+  - sudo apt install snapd
   - sudo snap install helm --classic
 script: bash ci/build.sh
