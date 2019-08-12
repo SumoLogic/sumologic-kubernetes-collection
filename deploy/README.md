@@ -28,6 +28,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
                 - [Step 3: Update the prometheus-overrides.yaml file to forward the metrics to Sumo.](#step-3-update-the-prometheus-overridesyaml-file-to-forward-the-metrics-to-sumo)
     - [Step 3: Deploy FluentBit](#step-3-deploy-fluentbit)
     - [Tear down](#tear-down)
+    - [Adding Additional FluentD Plugins](adding-additional-fluentD-plugins)
 - [Troubleshooting Collection](#troubleshooting-collection)
     - [Namespace configuration](#namespace-configuration)
     - [Gathering logs](#gathering-logs)
@@ -479,6 +480,18 @@ To delete the `sumologic` namespace and all resources under it:
 
 ```sh
 kubectl delete namespace sumologic
+```
+
+## Adding Additional FluentD Plugins
+To add additional FluentD plugins, you can simply create a new Docker image from our provided Docker image.
+
+```
+FROM sumologic/kubernetes-fluentd:0.0.0
+
+USER root
+RUN gem install fluent-plugin-aws-elasticsearch-service
+
+USER fluent
 ```
 
 # Troubleshooting Collection
