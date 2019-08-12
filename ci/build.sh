@@ -2,10 +2,6 @@
 
 if [ -n "$TRAVIS_COMMIT_RANGE" ] && [ "$TRAVIS_PULL_REQUEST" == false ]; then
   if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluentd-sumologic.yaml.tmpl"; then
-    changed_files=`git diff --name-only $TRAVIS_COMMIT_RANGE`
-    last_commit_author=`git --no-pager show -s --format="%an" .`
-    echo "DEBUG: Changed files: $changed_files"
-    echo "DEBUG: Author of last commit: $last_commit_author"
     if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
       echo "Detected manual changes in 'fluentd-sumologic.yaml.tmpl', abort."
       exit 1
