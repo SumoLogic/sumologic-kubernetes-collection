@@ -28,7 +28,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
                 - [Step 3: Update the prometheus-overrides.yaml file to forward the metrics to Sumo.](#step-3-update-the-prometheus-overridesyaml-file-to-forward-the-metrics-to-sumo)
     - [Step 3: Deploy FluentBit](#step-3-deploy-fluentbit)
     - [Tear down](#tear-down)
-    - [Adding Additional FluentD Plugins](adding-additional-fluentD-plugins)
+    - [Adding Additional FluentD Plugins](#adding-additional-fluentd-plugins)
 - [Troubleshooting Collection](#troubleshooting-collection)
     - [Namespace configuration](#namespace-configuration)
     - [Gathering logs](#gathering-logs)
