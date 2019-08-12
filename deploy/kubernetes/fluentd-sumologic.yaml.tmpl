@@ -1,4 +1,4 @@
-# This file is auto-generated. Please DO NOT modify.
+# This file is auto-generated.
 ---
 # Source: sumologic/templates/configmap.yaml
 apiVersion: v1
@@ -408,7 +408,7 @@ spec:
           name: fluentd
       containers:
       - name: fluentd
-        image: "sumologic/kubernetes-fluentd:0.0.0"
+        image: sumologic/kubernetes-fluentd:0.1.0
         imagePullPolicy: Always
         resources:
           limits:
@@ -561,7 +561,7 @@ spec:
           name: fluentd-events
       containers:
       - name: fluentd-events
-        image: "sumologic/kubernetes-fluentd:0.0.0"
+        image: sumologic/kubernetes-fluentd:0.1.0
         imagePullPolicy: Always
         resources:
           limits:
