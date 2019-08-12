@@ -59,11 +59,3 @@ And then execute:
 ```
 $ bundle
 ```
-
-## Configuration
-
-You can generate configuration template:
-
-```
-$ fluent-plugin-config-format input events
-```
