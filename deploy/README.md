@@ -16,7 +16,6 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
         - [Manual Source Creation and Setup](#manual-source-creation-and-setup)
             - [Create a hosted collector and an HTTP source](#create-a-hosted-collector-and-an-http-source)
             - [Deploy Fluentd](#deploy-fluentd)
-        - [Events](#events)
         - [Verify the pods are running](#verify-the-pods-are-running)
     - [Step 2: Configure Prometheus](#step-2-configure-prometheus)
         - [Missing metrics for `controller-manager` or `scheduler`](#missing-metrics-for-controller-manager-or-scheduler)
@@ -53,7 +52,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 
 The diagram below illustrates the components of the Kubernetes metric collection solution.
 
-![solution](/images/k8s-metrics3.png)
+![solution](/images/k8s_collection_diagram.png)
 
 * **K8S API Server**. Exposes API server metrics.
 * **Scheduler.** Makes Scheduler metrics available on an HTTP metrics port.
@@ -96,7 +95,7 @@ __NOTE__ This script will be executed in bash and requires [jq command-line JSON
 * __-k &lt;cluster_name&gt;__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
 * __-n &lt;namespace&gt;__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace will default to `sumologic`.
 * __-a &lt;boolean&gt;__ - optional. Set this to true if you want to deploy with the latest alpha version. If not specified, the latest release will be deployed.
-* __-d &lt;boolean&gt;__ - optional. Set this to false to only set up the Sumo Collector and Sources and download the YAML file, but not to deploy so you can customize the YAML file, such as configuring fields for [events](#events). If not specified, the default configuration will deploy.
+* __-d &lt;boolean&gt;__ - optional. Set this to false to only set up the Sumo Collector and Sources and download the YAML file, but not to deploy so you can customize the YAML file, such as configuring fields for [events](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/fluent-plugin-events/README.md#fluent-plugin-events). If not specified, the default configuration will deploy.
 * __-y &lt;boolean&gt;__ - optional. When -d is set to false you can also set this to false to not download the YAML file. If not specified, the YAML file will be downloaded.
 * __&lt;api_endpoint&gt;__ - required. See [API endpoints](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security) for details.
 * __&lt;access_id&gt;__ - required. Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
@@ -162,56 +161,29 @@ kubectl -n sumologic create secret generic sumologic \
   --from-literal=endpoint-events=$ENDPOINT_EVENTS
 ```
 
-Get the `fluentd-sumologic.yaml` manifest with following command:
+If you don't need to customize the configuration apply the `fluentd-sumologic.yaml` manifest with the following command:
 
 ```sh
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
-sed 's/\$NAMESPACE'"/sumologic/g"
+sed 's/\$NAMESPACE'"/sumologic/g" | \
+kubectl -n sumologic apply -f -
 ```
 
-You can customize the provided YAML file if needed, including configuring fields for [events](#events). Once done run the following command to apply the `fluentd-sumologic.yaml` manifest.
+If you need to customize the configuration there are two commands to run. First, get the `fluentd-sumologic.yaml` manifest with following command:
 
 ```sh
-kubectl -n sumologic apply -f -
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+sed 's/\$NAMESPACE'"/sumologic/g" >> fluentd-sumologic.yaml
+```
+
+You can customize the provided YAML file if needed, including configuring fields for [events](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/fluent-plugin-events/README.md#fluent-plugin-events). Once done run the following command to apply the `fluentd-sumologic.yaml` manifest.
+
+```sh
+kubectl -n sumologic apply -f fluentd-sumologic.yaml
 ```
 
 The manifest will create the Kubernetes resources required by Fluentd.
 
-### Events
-
-To customize fields for events edit the provided (`fluentd-sumologic.yaml`) file by specifying the fields in the `events` plugin `@type` parameter. The following example has specified the `type_selector`, `deploy_namespace`, and `configmap_update_interval_seconds` fields,
-
-```json
-<source>
-    @type events
-    deploy_namespace $NAMESPACE
-    type_selector ["ADDED", "MODIFIED", "DELETED"]
-    configmap_update_interval_seconds 5
-</source>
-```
-
-#### Configurable fields for events
-
-Parameter Name | Default |Description |
------------- | ------------- | -------------
-resource_name | "events" | Collect events for a specific resource type, such as pods, deployments, or services.
-tag | "kubernetes.*" | Tag collected events.
-namespace | nil | Collect events from a specific namespace.
-label_selector | nil | Collect events for resources matching a specific label.
-field_selector | nil | Collect events for resources matching a specific field.
-type_selector | ["ADDED", "MODIFIED"] | Collect specific event types. Currently supports "ADDED", "MODIFIED", and "DELETED".
-configmap_update_interval_seconds | 10 | Resource version is used to resume events collection from where it left off after a container/pod/node restart. The latest resource version of your events is kept in memory and backed up to a ConfigMap at an interval. By default, we back up the resource version by making a ConfigMap API call every 10 seconds. If you want to back up more frequently, reduce the interval. If you want to reduce the number of API calls, increase the interval.
-watch_interval_seconds | 300 | Interval at which the watch thread gets recreated.
-deploy_namespace | "sumologic" | Namespace that the events plugin resources will be created in. 
-kubernetes_url | nil | URL of the Kubernetes API.
-api_version | v1 | Version of the Kubernetes Events API.
-client_cert | nil | Path to the certificate file for the client.
-client_key | nil | Path to the private key file for the client.
-ca_file | nil | Path to the CA file.
-secret_dir | "/var/run/secrets/kubernetes.io/serviceaccount" | Path of the location where the service account credentials for the pod are stored.
-bearer_token_file | nil | Path to the file containing the API token. By default it reads from the file "token" in the `secret_dir`.
-verify_ssl | true | Whether to verify the API server certificate.
-ssl_partial_chain | false | If `ca_file` is for an intermediate CA, or otherwise we do not have the root CA and want to trust the intermediate CA certs we do have, set this to `true` - this corresponds to the openssl s_client -partial_chain flag and X509_V_FLAG_PARTIAL_CHAIN
 
 ### Verify the pods are running
 
