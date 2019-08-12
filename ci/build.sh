@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -n "$TRAVIS_COMMIT_RANGE" ]; then
+if [ -n "$TRAVIS_COMMIT_RANGE" ] && [ "$TRAVIS_PULL_REQUEST" == false ]; then
   if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluentd-sumologic.yaml.tmpl"; then
     changed_files=`git diff --name-only $TRAVIS_COMMIT_RANGE`
     last_commit_author=`git --no-pager show -s --format="%an" .`
