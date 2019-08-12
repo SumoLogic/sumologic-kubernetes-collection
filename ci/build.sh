@@ -1,5 +1,14 @@
 #!/bin/sh
 
+if [ -n "$TRAVIS_COMMIT_RANGE" ]; then
+  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluentd-sumologic.yaml.tmpl"; then
+    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
+      echo "Detected manual changes in 'fluentd-sumologic.yaml.tmpl', abort."
+      exit 1
+    fi
+  fi
+fi
+
 VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
