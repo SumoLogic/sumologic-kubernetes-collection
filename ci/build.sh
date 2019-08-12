@@ -44,10 +44,13 @@ ruby deploy/test/test_docker.rb
 
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
-  echo "# This file is auto-generated. Please DO NOT modify." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+  echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_BRANCH..."
+      git config --global user.email "travis@travis-ci.org"
+      git config --global user.name "Travis CI"
       git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
       git fetch origin-repo
       git checkout $TRAVIS_BRANCH

@@ -27,7 +27,7 @@ spec:
           name: {{ template "sumologic.fullname" . }}
       containers:
       - name: fluentd
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
           {{- toYaml .Values.deployment.resources | nindent 10 }}
