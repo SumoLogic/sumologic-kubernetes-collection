@@ -16,6 +16,8 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
         - [Manual Source Creation and Setup](#manual-source-creation-and-setup)
             - [Create a hosted collector and an HTTP source](#create-a-hosted-collector-and-an-http-source)
             - [Deploy Fluentd](#deploy-fluentd)
+              - [Use default configuration](#use-default-configuration)
+              - [Customize configuration](#customize-configuration)
         - [Verify the pods are running](#verify-the-pods-are-running)
     - [Step 2: Configure Prometheus](#step-2-configure-prometheus)
         - [Missing metrics for `controller-manager` or `scheduler`](#missing-metrics-for-controller-manager-or-scheduler)
