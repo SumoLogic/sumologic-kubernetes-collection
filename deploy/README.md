@@ -161,6 +161,8 @@ kubectl -n sumologic create secret generic sumologic \
   --from-literal=endpoint-events=$ENDPOINT_EVENTS
 ```
 
+##### Use default configuration
+
 If you don't need to customize the configuration apply the `fluentd-sumologic.yaml` manifest with the following command:
 
 ```sh
@@ -168,6 +170,8 @@ curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection
 sed 's/\$NAMESPACE'"/sumologic/g" | \
 kubectl -n sumologic apply -f -
 ```
+
+##### Customize configuration
 
 If you need to customize the configuration there are two commands to run. First, get the `fluentd-sumologic.yaml` manifest with following command:
 
