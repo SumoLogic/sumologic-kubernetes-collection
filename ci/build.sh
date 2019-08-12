@@ -1,5 +1,14 @@
 #!/bin/sh
 
+if [ -n "$TRAVIS_COMMIT_RANGE" ] && [ "$TRAVIS_PULL_REQUEST" == false ]; then
+  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluentd-sumologic.yaml.tmpl"; then
+    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
+      echo "Detected manual changes in 'fluentd-sumologic.yaml.tmpl', abort."
+      exit 1
+    fi
+  fi
+fi
+
 VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
@@ -41,6 +50,26 @@ cd ../..
 
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
+
+if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
+  echo "Generating yaml from helm chart..."
+  echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+  sudo helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+
+  if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
+      echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_BRANCH..."
+      git config --global user.email "travis@travis-ci.org"
+      git config --global user.name "Travis CI"
+      git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
+      git fetch origin-repo
+      git checkout $TRAVIS_BRANCH
+      git add deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+      git commit -m "Generate new 'fluentd-sumologic.yaml.tmpl'"
+      git push --quiet origin-repo "$TRAVIS_BRANCH"
+  else
+      echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
+  fi
+fi
 
 if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha* ]]; then
   echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$VERSION..."
