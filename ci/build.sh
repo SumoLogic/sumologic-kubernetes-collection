@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -n "$TRAVIS_COMMIT_RANGE" ] && [ "$TRAVIS_PULL_REQUEST" == false ]; then
+if [ -n "$TRAVIS_COMMIT_RANGE" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
   if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluentd-sumologic.yaml.tmpl"; then
     if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
       echo "Detected manual changes in 'fluentd-sumologic.yaml.tmpl', abort."
