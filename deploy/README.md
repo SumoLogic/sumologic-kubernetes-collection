@@ -14,7 +14,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
             - [Parameters](#parameters)
             - [Environment variables](#environment-variables)
         - [Manual Source Creation and Setup](#manual-source-creation-and-setup)
-            - [Create a hosted collector and an HTTP source](#create-a-hosted-collector-and-an-http-source)
+            - [Create a Hosted Collector and an HTTP Source](#create-a-hosted-collector-and-an-http-source)
             - [Deploy Fluentd](#deploy-fluentd)
               - [Use default configuration](#use-default-configuration)
               - [Customize configuration](#customize-configuration)
@@ -52,7 +52,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 
 ## Solution overview
 
-The diagram below illustrates the components of the Kubernetes metric collection solution.
+The diagram below illustrates the components of the Kubernetes collection solution.
 
 ![solution](/images/k8s_collection_diagram.png)
 
@@ -60,7 +60,7 @@ The diagram below illustrates the components of the Kubernetes metric collection
 * **Scheduler.** Makes Scheduler metrics available on an HTTP metrics port.
 * **Controller Manager.** Makes Controller Manager metrics available on an HTTP metrics port.
 * **node-exporter.** The `node_exporter` add-on exposes node metrics, including CPU, memory, disk, and network utilization.
-* **kube-state-metrics.** Listens to the Kubernetes API server; generates metrics about the state of the deployments, nodes and pods in the cluster; and exports the metrics as plaintext on an HTTP endpoint listen port.
+* **kube-state-metrics.** Listens to the Kubernetes API server; generates metrics about the state of the deployments, nodes, and pods in the cluster; and exports the metrics as plaintext on an HTTP endpoint listen port.
 * **Prometheus deployment.** Scrapes the metrics exposed by the `node-exporter` add-on for Kubernetes and the `kube-state-metric`s component; writes metrics to a port on the Fluentd deployment.
 * **Fluentd deployment.** Forwards metrics to HTTP sources on a hosted collector. Includes multiple Fluentd plugins that parse and format the metrics and enrich them with metadata.
 
@@ -78,11 +78,11 @@ __NOTE__ These instructions assume that Prometheus is not already running on you
 
 ## Step 1: Create Sumo collector and deploy Fluentd
 
-In this step you create a Sumo Logic hosted collector with a set of HTTP sources to receive your Kubernetes metrics; creates Kubernetes secrets for the HTTP sources created; and deploy Fluentd using a Sumo-provided .yaml manifest.
+In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources to receive your Kubernetes metrics; creates Kubernetes secrets for the HTTP sources created; and deploy Fluentd using a Sumo-provided .yaml manifest.
 
 ### Automatic Source Creation and Setup Script
 
-This approach requires access to the Sumo Logic Collector API. It will create a hosted collector and multiple HTTP source endpoints and pre-populate Kubernetes secrets detailed in the manual steps below.
+This approach requires access to the Sumo Logic Collector API. It will create a Hosted Collector and multiple HTTP Source endpoints and pre-populate Kubernetes secrets detailed in the manual steps below.
 
 ```sh
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
@@ -93,7 +93,7 @@ __NOTE__ This script will be executed in bash and requires [jq command-line JSON
 
 #### Parameters
 
-* __-c &lt;collector_name&gt;__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
+* __-c &lt;collector_name&gt;__ - optional. Name of Sumo Collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
 * __-k &lt;cluster_name&gt;__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
 * __-n &lt;namespace&gt;__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace will default to `sumologic`.
 * __-a &lt;boolean&gt;__ - optional. Set this to true if you want to deploy with the latest alpha version. If not specified, the latest release will be deployed.
@@ -104,8 +104,8 @@ __NOTE__ This script will be executed in bash and requires [jq command-line JSON
 * __&lt;access_key&gt;__ - required. Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 #### Environment variables
-The parameters for collector name, cluster name and namespace may also be passed in via environment variables instead of script arguments. If the script argument is supplied that trumps the environment variable.
-* __SUMO_COLLECTOR_NAME__ - optional. Name of Sumo collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
+The parameters for Collector name, cluster name and namespace may also be passed in via environment variables instead of script arguments. If the script argument is supplied that trumps the environment variable.
+* __SUMO_COLLECTOR_NAME__ - optional. Name of Sumo Collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
 * __KUBERNETES_CLUSTER_NAME__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
 * __SUMO_NAMESPACE__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace__ will default to `sumologic`
 
@@ -115,13 +115,13 @@ __Note:__ The script will generate a YAML file (`fluentd-sumologic.yaml`) with a
 
 This is a manual alternative approach to the automatic script if you don't have API access or need customized configuration, such as reusing an existing collector.
 
-#### Create a hosted collector and an HTTP source
+#### Create a Hosted Collector and an HTTP Source
 
-In this step you create a Sumo Logic hosted collector with a set of HTTP sources to receive your Kubernetes data.
+In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources to receive your Kubernetes data.
 
-Create a hosted collector, following the instructions on [Configure a Hosted Collector](https://help.sumologic.com/03Send-Data/Hosted-Collectors/Configure-a-Hosted-Collector) in Sumo help. If you already have a Sumo hosted collector that you want to use, skip this step.
+Create a Hosted Collector, following the instructions on [Configure a Hosted Collector](https://help.sumologic.com/03Send-Data/Hosted-Collectors/Configure-a-Hosted-Collector) in Sumo help. If you already have a Sumo Hosted Collector that you want to use, skip this step.
 
-Create nine HTTP sources under the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution, one for logs, and one for events:
+Create nine HTTP Sources under the collector you created in the previous step, one for each of the Kubernetes components that report metrics in this solution, one for logs, and one for events:
 
 * api-server-metrics
 * kubelet-metrics
@@ -133,14 +133,14 @@ Create nine HTTP sources under the collector you created in the previous step, o
 * logs
 * events
 
-Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create the sources, with the following additions:
+Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create the Sources, with the following additions:
 
-* **Naming the sources.** You can assign any name you like to the sources, but it’s a good idea to assign a name to each source that reflects the Kubernetes component from which it receives data. For example, you might name the source that receives API Server metrics “api-server-metrics”.
-* **HTTP Source URLs.** When you configure each HTTP source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service secrets to send data to Sumo.
+* **Naming the sources.** You can assign any name you like to the Sources, but it’s a good idea to assign a name to each Source that reflects the Kubernetes component from which it receives data. For example, you might name the source that receives API Server metrics “api-server-metrics”.
+* **HTTP Source URLs.** When you configure each HTTP Source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service secrets to send data to Sumo.
 
 #### Deploy Fluentd
 
-In this step you will deploy Fluentd using a Sumo-provided .yaml manifest. This step also creates Kubernetes secrets for the HTTP sources created in the previous step.
+In this step you will deploy Fluentd using a Sumo-provided .yaml manifest. This step also creates Kubernetes secrets for the HTTP Sources created in the previous step.
 
 Run the following command to create namespace `sumologic`
 
