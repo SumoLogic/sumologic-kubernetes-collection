@@ -53,6 +53,16 @@ create_http_source()
   echo "Source was created(id=$SOURCE_ID, name=$SOURCE_NAME)."
 }
 
+# Check for required software before proceeding
+verify_requirements()
+{
+  command -v wget >/dev/null 2>&1 || { echo >&2 "Please install wget before executing this script."; exit -1; }
+  command -v jq >/dev/null 2>&1 || { echo >&2 "Please install jq before executing this script"; exit -1; }
+  command -v kubectl >/dev/null 2>&1 || { echo >&2 "Please install kubectl before executing this script"; exit -1; }
+}
+
+verify_requirements;
+
 DEPLOY=true;
 DOWNLOAD_YAML=true;
 

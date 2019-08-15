@@ -7,7 +7,7 @@ metadata:
     {{ template "sumologic.labels.common" . }}
 spec:
   selector:
-    k8s-app: fluentd-sumologic
+    app: {{ template "sumologic.labels.app" . }}
   ports:
   - name: prom-write
     port: 9888

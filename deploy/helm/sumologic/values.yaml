@@ -1,6 +1,6 @@
 image:
   repository: sumologic/kubernetes-fluentd
-  tag: 0.0.0
+  tag: 0.1.0
   pullPolicy: Always
 
 nameOverride: ""
@@ -32,10 +32,10 @@ sumologic:
 
   ## How frequently to push logs to SumoLogic
   ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
-  flushInterval: 5
+  flushInterval: "5s"
   
   ## Increase number of http threads to Sumo. May be required in heavy logging clusters
-  numThreads: 1
+  numThreads: 4
 
   chunkLimitSize: "100k"
   
