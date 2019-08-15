@@ -14,7 +14,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
             - [Parameters](#parameters)
             - [Environment variables](#environment-variables)
         - [Manual Source Creation and Setup](#manual-source-creation-and-setup)
-            - [Create a hosted collector and an HTTP source](#create-a-hosted-collector-and-an-http-source)
+            - [Create a Hosted Collector and an HTTP Source](#create-a-hosted-collector-and-an-http-source)
             - [Deploy Fluentd](#deploy-fluentd)
               - [Use default configuration](#use-default-configuration)
               - [Customize configuration](#customize-configuration)
