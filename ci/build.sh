@@ -54,6 +54,7 @@ ruby deploy/test/test_docker.rb
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+  sumo helm init --client-only
   sudo helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
