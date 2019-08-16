@@ -1,10 +1,4 @@
-metrics:
-  enabled: true
-  serviceMonitor:
-    enabled: true
-    additionalLabels:
-      release: prometheus-operator
-
+# This file is auto-generated.
 backend:
   type: forward
   forward:
@@ -94,3 +88,4 @@ rawConfig: |-
     Read_From_Tail  true
 
   @INCLUDE fluent-bit-output.conf
+
