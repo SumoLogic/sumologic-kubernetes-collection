@@ -79,8 +79,8 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
   git fetch origin-repo
   git checkout gh-pages
   sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
-  git status
-  git commit -a -m "Push new Helm Chart release $VERSION"
+  git add -A
+  git commit -m "Push new Helm Chart release $VERSION"
   git push --quiet origin-repo gh-pages
 fi
 
