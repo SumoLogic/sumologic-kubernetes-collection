@@ -70,8 +70,17 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
   else
       echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
   fi
+fi
+
+if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha* ]]; then
+  echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$VERSION..."
+  docker tag $DOCKER_TAG:local $DOCKER_TAG:$VERSION
+  echo "Pushing docker image $DOCKER_TAG:$VERSION..."
+  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  docker push $DOCKER_TAG:$VERSION
 
   # Push new helm release
+  sudo helm init --client-only
   sudo helm package deploy/helm/sumologic --version=$VERSION
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "Travis CI"
@@ -82,15 +91,6 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
   git add -A
   git commit -m "Push new Helm Chart release $VERSION"
   git push --quiet origin-repo gh-pages
-fi
-
-if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha* ]]; then
-  echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$VERSION..."
-  docker tag $DOCKER_TAG:local $DOCKER_TAG:$VERSION
-  echo "Pushing docker image $DOCKER_TAG:$VERSION..."
-  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  docker push $DOCKER_TAG:$VERSION
-
 
 elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
   # Major.minor.patch version format
