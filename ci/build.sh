@@ -66,7 +66,7 @@ ruby deploy/test/test_docker.rb
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
-  sudo helm init --client-only
+  sudo helm init
   sudo helm dependency update
   sudo helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl
 
@@ -89,14 +89,14 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
     echo "Detected changes in 'values.yaml', generating file fluent-bit-overrides.yaml..."
     fluent_bit_start_linenum=`grep -n "fluent-bit:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
     fluent_bit_start_linenum=$(($fluent_bit_start_linenum + 2))
-    fluent_bit_end_linenum=`grep -n "## Confugure prometheus-operator" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+    fluent_bit_end_linenum=`grep -n "## Configure prometheus-operator" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
     fluent_bit_end_linenum=$(($fluent_bit_end_linenum - 1))
     echo "Copy 'values.yaml' from line $fluent_bit_start_linenum to line $fluent_bit_end_linenum to 'fluent-bit-overrides.yaml'"
     echo "# This file is auto-generated." > deploy/helm/fluent-bit-overrides.yaml
     # Copy lines of fluent-bit section and remove indention from values.yaml
     sed -n "$fluent_bit_start_linenum,${fluent_bit_end_linenum}p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/fluent-bit-overrides.yaml
     # Remove release name from service name
-    sed -i 's/collection-sumologic/sumologic/' deploy/helm/fluent-bit-overrides.yaml
+    sed -i 's/collection-sumologic/fluentd/' deploy/helm/fluent-bit-overrides.yaml
 
     echo "Detected changes in 'values.yaml', generating file prometheus-overrides.yaml..."
     prometheus_start_linenum=`grep -n "prometheus-operator:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
@@ -106,7 +106,7 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
     # Copy lines of fluent-bit section and remove indention from values.yaml
     sed -n "$prometheus_start_linenum,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
     # Remove release name from service name
-    sed -i 's/collection-sumologic/sumologic/' deploy/helm/prometheus-overrides.yaml
+    sed -i 's/collection-sumologic/fluentd/' deploy/helm/prometheus-overrides.yaml
   else
     echo "No changes in 'values.yaml'."
   fi
