@@ -109,6 +109,20 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
     sed -n "$prometheus_start_linenum,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
     # Remove release name from service name
     sed -i 's/collection-sumologic/fluentd/' deploy/helm/prometheus-overrides.yaml
+
+    if [[ $(git diff deploy/helm/fluent-bit-overrides.yaml) ] || [ $(git diff deploy/helm/prometheus-overrides.yaml) ]]; then
+      echo "Detected changes in 'fluent-bit-overrides.yaml' or 'prometheus-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
+      git config --global user.email "travis@travis-ci.org"
+      git config --global user.name "Travis CI"
+      git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
+      git fetch origin-repo
+      git checkout $TRAVIS_BRANCH
+      git add deploy/helm/*-overrides.yaml
+      git commit -m "Generate new overrides yamls."
+      git push --quiet origin-repo "$TRAVIS_BRANCH"
+    else
+      echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
+    fi
   else
     echo "No changes in 'values.yaml'."
   fi
