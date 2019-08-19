@@ -112,7 +112,7 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
     # Remove release name from service name
     sed -i 's/collection-sumologic/fluentd/' deploy/helm/prometheus-overrides.yaml
 
-    if [[ $(git diff deploy/helm/fluent-bit-overrides.yaml) ] || [ $(git diff deploy/helm/prometheus-overrides.yaml) ]]; then
+    if [ $(git diff deploy/helm/fluent-bit-overrides.yaml) ] || [ $(git diff deploy/helm/prometheus-overrides.yaml) ]; then
       echo "Detected changes in 'fluent-bit-overrides.yaml' or 'prometheus-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
       git config --global user.email "travis@travis-ci.org"
       git config --global user.name "Travis CI"
