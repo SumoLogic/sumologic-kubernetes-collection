@@ -67,7 +67,9 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm init --client-only
+  cd deploy/helm/sumologic
   sudo helm dependency update
+  cd ../../../
 
   with_files=`ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\\/g'`
   eval "helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true \ $with_files >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl"
