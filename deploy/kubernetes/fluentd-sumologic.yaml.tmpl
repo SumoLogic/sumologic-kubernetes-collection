@@ -4,10 +4,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: fluentd
+  name: release-name-sumologic
   labels:
-    app: sumologic
-    
+    app: release-name-sumologic
+    chart: "sumologic-0.1.0"
+    release: "release-name"
+    heritage: "Tiller"
 data:
   fluent.conf: |-
     @include common.conf
@@ -241,17 +243,19 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: fluentd-events
+  name: release-name-sumologic-events
   labels:
-    app: sumologic-events
-    
+    app: release-name-sumologic-events
+    chart: "sumologic-0.1.0"
+    release: "release-name"
+    heritage: "Tiller"
 data:
   fluent.conf: |-
     @include events.conf
   events.conf: |-
     <source>
       @type events
-      deploy_namespace $NAMESPACE
+      deploy_namespace --set
     </source>
     <source>
       @type prometheus
@@ -284,19 +288,23 @@ data:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: fluentd
+  name: release-name-sumologic
   labels:
-    app: sumologic
-    
+    app: release-name-sumologic
+    chart: "sumologic-0.1.0"
+    release: "release-name"
+    heritage: "Tiller"
 ---
 # Source: sumologic/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: fluentd
+  name: release-name-sumologic
   labels:
-    app: sumologic
-    
+    app: release-name-sumologic
+    chart: "sumologic-0.1.0"
+    release: "release-name"
+    heritage: "Tiller"
 rules:
 - apiGroups: ["", "apps", "extensions", "events.k8s.io"]
   resources:
@@ -317,34 +325,19 @@ rules:
     - configmaps
   verbs: ["create", "patch"]
 ---
-# Source: sumologic/templates/clusterrolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: fluentd
-  labels:
-    app: sumologic
-    
-subjects:
-- kind: ServiceAccount
-  namespace: $NAMESPACE
-  name: fluentd
-roleRef:
-  kind: ClusterRole
-  name: fluentd
-  apiGroup: rbac.authorization.k8s.io
----
 # Source: sumologic/templates/events-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: fluentd-events
+  name: release-name-sumologic-events
   labels:
-    app: sumologic-events
-    
+    app: release-name-sumologic-events
+    chart: "sumologic-0.1.0"
+    release: "release-name"
+    heritage: "Tiller"
 spec:
   selector:
-    app: sumologic-events
+    app: release-name-sumologic-events
   ports:
   - name: metrics
     port: 24231
@@ -356,13 +349,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fluentd
+  name: release-name-sumologic
   labels:
-    app: sumologic
-    
+    app: release-name-sumologic
+    chart: "sumologic-0.1.0"
+    release: "release-name"
+    heritage: "Tiller"
 spec:
   selector:
-    app: sumologic
+    app: release-name-sumologic
   ports:
   - name: prom-write
     port: 9888
@@ -382,22 +377,26 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fluentd
+  name: release-name-sumologic
   labels:
-    app: sumologic
-    
+    app: release-name-sumologic
+    chart: "sumologic-0.1.0"
+    release: "release-name"
+    heritage: "Tiller"
 spec:
   selector:
     matchLabels:
-      app: sumologic
+      app: release-name-sumologic
   replicas: 3
   template:
     metadata:
       labels:
-        app: sumologic
-        
+        app: release-name-sumologic
+        chart: "sumologic-0.1.0"
+    release: "release-name"
+    heritage: "Tiller"
     spec:
-      serviceAccountName: fluentd
+      serviceAccountName: release-name-sumologic
       volumes:
       - name: pos-files
         hostPath:
@@ -405,7 +404,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: fluentd
+          name: release-name-sumologic
       containers:
       - name: fluentd
         image: sumologic/kubernetes-fluentd:0.1.0
@@ -536,21 +535,25 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fluentd-events
+  name: release-name-sumologic-events
   labels:
-    app: sumologic-events
-    
+    app: release-name-sumologic-events
+    chart: "sumologic-0.1.0"
+    release: "release-name"
+    heritage: "Tiller"
 spec:
   selector:
     matchLabels:
-      app: sumologic-events
+      app: release-name-sumologic-events
   template:
     metadata:
       labels:
-        app: sumologic-events
-        
+        app: release-name-sumologic-events
+        chart: "sumologic-0.1.0"
+    release: "release-name"
+    heritage: "Tiller"
     spec:
-      serviceAccountName: fluentd
+      serviceAccountName: release-name-sumologic
       volumes:
       - name: pos-files
         hostPath:
@@ -558,7 +561,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: fluentd-events
+          name: release-name-sumologic-events
       containers:
       - name: fluentd-events
         image: sumologic/kubernetes-fluentd:0.1.0
