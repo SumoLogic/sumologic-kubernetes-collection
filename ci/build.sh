@@ -72,7 +72,7 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
   cd ../../../
 
   with_files=`ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\\/g'`
-  eval "helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true \ $with_files >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl"
+  eval "sudo helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true \ $with_files >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl"
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_BRANCH..."
