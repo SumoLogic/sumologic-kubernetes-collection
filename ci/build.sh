@@ -87,7 +87,7 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
   fi
 
   # Generate override yaml file for chart dependencies if changes are made to values.yaml file
-  if [[ $(git diff deploy/helm/sumologic/values.yaml) ]]; then
+  if [[ $(git diff $TRAVIS_BRANCH..master -- deploy/helm/sumologic/values.yaml) ]]; then
     echo "Detected changes in 'values.yaml', generating file fluent-bit-overrides.yaml..."
     fluent_bit_start_linenum=`grep -n "fluent-bit:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
     fluent_bit_start_linenum=$(($fluent_bit_start_linenum + 2))
