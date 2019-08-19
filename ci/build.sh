@@ -8,28 +8,18 @@ if [ -n "$TRAVIS_COMMIT_RANGE" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$T
     fi
   fi
   if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluent-bit-overrides.yaml"; then
-  if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
-      echo "Detected manual changes 'fluent-bit-overrides.yaml', abort."
+    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
+      echo "Detected manual changes in 'fluent-bit-overrides.yaml', abort."
       exit 1
     fi
   fi
   if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "prometheus-overrides.yaml"; then
-  if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
-      echo "Detected manual changes 'prometheus-overrides.yaml', abort."
+    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
+      echo "Detected manual changes in 'prometheus-overrides.yaml', abort."
       exit 1
     fi
   fi
 fi
-
-echo "Detected changes in 'values.yaml', generating file prometheus-overrides.yaml..."
-prometheus_start_linenum=`grep -n "prometheus-operator:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
-prometheus_start_linenum=$(($prometheus_start_linenum + 2))
-echo "Copy 'values.yaml' from line $prometheus_start_linenum to end to 'prometheus-overrides.yaml'"
-echo "# This file is auto-generated." > deploy/helm/prometheus-overrides.yaml
-# Copy lines of fluent-bit section and remove indention from values.yaml
-sed -n "$prometheus_start_linenum,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
-# Remove release names from service names
-sed -i -e 's/collection-sumologic/sumologic/' deploy/helm/prometheus-overrides.yaml
 
 VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
@@ -76,6 +66,7 @@ ruby deploy/test/test_docker.rb
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+  sudo helm dependency update
   sudo helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
@@ -114,7 +105,7 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
     # Copy lines of fluent-bit section and remove indention from values.yaml
     sed -n "$prometheus_start_linenum,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
     # Remove release name from service name
-    sed -i -e 's/collection-sumologic/sumologic/' deploy/helm/prometheus-overrides.yaml
+    sed -i 's/collection-sumologic/sumologic/' deploy/helm/prometheus-overrides.yaml
   else
     echo "No changes in 'values.yaml'."
   fi
