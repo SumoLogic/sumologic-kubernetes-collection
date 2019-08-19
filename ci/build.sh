@@ -65,12 +65,14 @@ ruby deploy/test/test_docker.rb
 
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
-  # echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+  echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm init --client-only
   cd deploy/helm/sumologic
   sudo helm dependency update
   cd ../../../
-  # sudo helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+
+  with_files=`ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\\/g'`
+  eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl'
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_BRANCH..."
