@@ -1,15 +1,9 @@
-metrics:
-  enabled: true
-  serviceMonitor:
-    enabled: true
-    additionalLabels:
-      release: prometheus-operator
-
+# This file is auto-generated.
 backend:
   type: forward
   forward:
-    host: fluentd
-    port: 24321
+    host: fluentd.sumologic.svc.cluster.local
+    port: 24322
     tls: "off"
     tls_verify: "on"
     tls_debug: 1
@@ -94,3 +88,4 @@ rawConfig: |-
     Read_From_Tail  true
 
   @INCLUDE fluent-bit-output.conf
+
