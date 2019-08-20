@@ -2,7 +2,7 @@
 alertmanager:
   enabled: false
 grafana:
-  enabled: true
+  enabled: false
 prometheus:
   additionalServiceMonitors:
     - name: fluentd
