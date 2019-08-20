@@ -18,7 +18,7 @@ spec:
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
       volumes:
-      - name: pos-filestest
+      - name: pos-files
         hostPath:
           path: /var/run/fluentd-pos
           type: ""
