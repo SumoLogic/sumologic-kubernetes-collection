@@ -30,38 +30,38 @@ DOCKER_TAGS="https://registry.hub.docker.com/v1/repositories/sumologic/kubernete
 echo "Starting build process in: `pwd` with version tag: $VERSION"
 set -e
 
-for i in ./fluent-plugin* ; do
-  if [ -d "$i" ]; then
-    cd $i
-    PLUGIN_NAME=$(basename "$i")
-    # Strip "-alpha" suffix if it exists to avoid gem prerelease behavior
-    GEM_VERSION=${VERSION%"-alpha"}
-    echo "Building gem $PLUGIN_NAME version $GEM_VERSION in `pwd` ..."
-    sed -i.bak "s/0.0.0/$GEM_VERSION/g" ./$PLUGIN_NAME.gemspec
-    rm -f ./$PLUGIN_NAME.gemspec.bak
+# for i in ./fluent-plugin* ; do
+#   if [ -d "$i" ]; then
+#     cd $i
+#     PLUGIN_NAME=$(basename "$i")
+#     # Strip "-alpha" suffix if it exists to avoid gem prerelease behavior
+#     GEM_VERSION=${VERSION%"-alpha"}
+#     echo "Building gem $PLUGIN_NAME version $GEM_VERSION in `pwd` ..."
+#     sed -i.bak "s/0.0.0/$GEM_VERSION/g" ./$PLUGIN_NAME.gemspec
+#     rm -f ./$PLUGIN_NAME.gemspec.bak
     
-    echo "Install bundler..."
-    bundle install
+#     echo "Install bundler..."
+#     bundle install
     
-    echo "Run unit tests..."
-    bundle exec rake
+#     echo "Run unit tests..."
+#     bundle exec rake
 
-    echo "Build gem $PLUGIN_NAME $GEM_VERSION..."
-    gem build $PLUGIN_NAME
-    mv *.gem ../deploy/docker/gems
+#     echo "Build gem $PLUGIN_NAME $GEM_VERSION..."
+#     gem build $PLUGIN_NAME
+#     mv *.gem ../deploy/docker/gems
     
-    cd ..
-  fi
-done
+#     cd ..
+#   fi
+# done
 
-echo "Building docker image with $DOCKER_TAG:local in `pwd`..."
-cd ./deploy/docker
-docker build . -f ./Dockerfile -t $DOCKER_TAG:local --no-cache
-rm -f ./gems/*.gem
-cd ../..
+# echo "Building docker image with $DOCKER_TAG:local in `pwd`..."
+# cd ./deploy/docker
+# docker build . -f ./Dockerfile -t $DOCKER_TAG:local --no-cache
+# rm -f ./gems/*.gem
+# cd ../..
 
-echo "Test docker image locally..."
-ruby deploy/test/test_docker.rb
+# echo "Test docker image locally..."
+# ruby deploy/test/test_docker.rb
 
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
@@ -116,7 +116,7 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
     # Remove release name from service name
     sed -i 's/collection-sumologic/fluentd/' deploy/helm/prometheus-overrides.yaml
 
-    if [ $(git diff deploy/helm/fluent-bit-overrides.yaml) ] || [ $(git diff deploy/helm/prometheus-overrides.yaml) ]; then
+    if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ]; then
       echo "Detected changes in 'fluent-bit-overrides.yaml' or 'prometheus-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
       git config --global user.email "travis@travis-ci.org"
       git config --global user.name "Travis CI"

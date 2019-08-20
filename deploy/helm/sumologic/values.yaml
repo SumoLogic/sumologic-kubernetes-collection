@@ -115,10 +115,10 @@ sumologic:
 fluent-bit:
   enabled: true
   backend:
-    type: http
+    type: forward
     forward:
       host: collection-sumologic.sumologic.svc.cluster.local
-      port: 24321
+      port: 24322
       tls: "off"
       tls_verify: "on"
       tls_debug: 1
