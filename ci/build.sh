@@ -1,21 +1,9 @@
 #!/bin/sh
 
 if [ -n "$TRAVIS_COMMIT_RANGE" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
-  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluentd-sumologic.yaml.tmpl"; then
+  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml"; then
     if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
-      echo "Detected manual changes in 'fluentd-sumologic.yaml.tmpl', abort."
-      exit 1
-    fi
-  fi
-  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluent-bit-overrides.yaml"; then
-    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
-      echo "Detected manual changes in 'fluent-bit-overrides.yaml', abort."
-      exit 1
-    fi
-  fi
-  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "prometheus-overrides.yaml"; then
-    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
-      echo "Detected manual changes in 'prometheus-overrides.yaml', abort."
+      echo "Detected manual changes in 'fluentd-sumologic.yaml.tmpl', 'fluent-bit-overrides.yaml' or 'prometheus-overrides.yaml', abort."
       exit 1
     fi
   fi
@@ -63,6 +51,13 @@ set -e
 # echo "Test docker image locally..."
 # ruby deploy/test/test_docker.rb
 
+# Set up Github
+if [ -n "$GITHUB_TOKEN" ]; then
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
+  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
+fi
+
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
@@ -76,9 +71,6 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_BRANCH..."
-      git config --global user.email "travis@travis-ci.org"
-      git config --global user.name "Travis CI"
-      git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
       git fetch origin-repo
       git checkout $TRAVIS_BRANCH
       git add deploy/kubernetes/fluentd-sumologic.yaml.tmpl
@@ -116,9 +108,6 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
 
     if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ]; then
       echo "Detected changes in 'fluent-bit-overrides.yaml' or 'prometheus-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
-      git config --global user.email "travis@travis-ci.org"
-      git config --global user.name "Travis CI"
-      git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
       git fetch origin-repo
       git checkout $TRAVIS_BRANCH
       git add deploy/helm/*-overrides.yaml
@@ -160,9 +149,6 @@ elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS
   docker push $DOCKER_TAG:$new_alpha
 
   echo "Tagging git with v$new_alpha..."
-  git config --global user.email "travis@travis-ci.org"
-  git config --global user.name "Travis CI"
-  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
   git tag -a "v$new_alpha" -m "Bump version to v$new_alpha"
   git push --tags --quiet --set-upstream origin-repo master
 else
