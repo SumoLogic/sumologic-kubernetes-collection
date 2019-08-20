@@ -1,9 +1,15 @@
 # This file is auto-generated.
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    additionalLabels:
+      release: prometheus-operator
 backend:
   type: forward
   forward:
     host: fluentd.sumologic.svc.cluster.local
-    port: 24322
+    port: 24321
     tls: "off"
     tls_verify: "on"
     tls_debug: 1
