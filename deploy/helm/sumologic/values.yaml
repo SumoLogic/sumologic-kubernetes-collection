@@ -113,7 +113,7 @@ sumologic:
 ## Configure fluent-bit 
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
 fluent-bit:
-  enabled: false
+  enabled: true
   metrics:
     enabled: true
     serviceMonitor:
@@ -217,7 +217,7 @@ prometheus-operator:
   alertmanager:
     enabled: false
   grafana:
-    enabled: true
+    enabled: false
   prometheus:
     additionalServiceMonitors:
       - name: collection-sumologic

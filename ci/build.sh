@@ -18,38 +18,38 @@ DOCKER_TAGS="https://registry.hub.docker.com/v1/repositories/sumologic/kubernete
 echo "Starting build process in: `pwd` with version tag: $VERSION"
 set -e
 
-# for i in ./fluent-plugin* ; do
-#   if [ -d "$i" ]; then
-#     cd $i
-#     PLUGIN_NAME=$(basename "$i")
-#     # Strip "-alpha" suffix if it exists to avoid gem prerelease behavior
-#     GEM_VERSION=${VERSION%"-alpha"}
-#     echo "Building gem $PLUGIN_NAME version $GEM_VERSION in `pwd` ..."
-#     sed -i.bak "s/0.0.0/$GEM_VERSION/g" ./$PLUGIN_NAME.gemspec
-#     rm -f ./$PLUGIN_NAME.gemspec.bak
+for i in ./fluent-plugin* ; do
+  if [ -d "$i" ]; then
+    cd $i
+    PLUGIN_NAME=$(basename "$i")
+    # Strip "-alpha" suffix if it exists to avoid gem prerelease behavior
+    GEM_VERSION=${VERSION%"-alpha"}
+    echo "Building gem $PLUGIN_NAME version $GEM_VERSION in `pwd` ..."
+    sed -i.bak "s/0.0.0/$GEM_VERSION/g" ./$PLUGIN_NAME.gemspec
+    rm -f ./$PLUGIN_NAME.gemspec.bak
     
-#     echo "Install bundler..."
-#     bundle install
+    echo "Install bundler..."
+    bundle install
     
-#     echo "Run unit tests..."
-#     bundle exec rake
+    echo "Run unit tests..."
+    bundle exec rake
 
-#     echo "Build gem $PLUGIN_NAME $GEM_VERSION..."
-#     gem build $PLUGIN_NAME
-#     mv *.gem ../deploy/docker/gems
+    echo "Build gem $PLUGIN_NAME $GEM_VERSION..."
+    gem build $PLUGIN_NAME
+    mv *.gem ../deploy/docker/gems
     
-#     cd ..
-#   fi
-# done
+    cd ..
+  fi
+done
 
-# echo "Building docker image with $DOCKER_TAG:local in `pwd`..."
-# cd ./deploy/docker
-# docker build . -f ./Dockerfile -t $DOCKER_TAG:local --no-cache
-# rm -f ./gems/*.gem
-# cd ../..
+echo "Building docker image with $DOCKER_TAG:local in `pwd`..."
+cd ./deploy/docker
+docker build . -f ./Dockerfile -t $DOCKER_TAG:local --no-cache
+rm -f ./gems/*.gem
+cd ../..
 
-# echo "Test docker image locally..."
-# ruby deploy/test/test_docker.rb
+echo "Test docker image locally..."
+ruby deploy/test/test_docker.rb
 
 # Set up Github
 if [ -n "$GITHUB_TOKEN" ]; then
