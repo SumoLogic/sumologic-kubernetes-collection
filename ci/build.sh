@@ -88,8 +88,6 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
       echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
   fi
 
-  echo "Debug: $TRAVIS_COMMIT_RANGE"
-
   # Generate override yaml file for chart dependencies if changes are made to values.yaml file
   if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "values.yaml"; then
     echo "Detected changes in 'values.yaml', generating file fluent-bit-overrides.yaml..."
@@ -124,7 +122,7 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
       git fetch origin-repo
       git checkout $TRAVIS_BRANCH
       git add deploy/helm/*-overrides.yaml
-      git commit -m "Generate new overrides yamls."
+      git commit -m "Generate new overrides yaml file(s)."
       git push --quiet origin-repo "$TRAVIS_BRANCH"
     else
       echo "No changes in the generated overrides files."
