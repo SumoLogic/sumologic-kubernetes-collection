@@ -54,6 +54,7 @@ ruby deploy/test/test_docker.rb
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+  sudo helm init --client-only
   sudo helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
@@ -77,6 +78,20 @@ if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha
   echo "Pushing docker image $DOCKER_TAG:$VERSION..."
   echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   docker push $DOCKER_TAG:$VERSION
+
+  # Push new helm release
+  sudo helm init --client-only
+  sudo helm package deploy/helm/sumologic --version=$VERSION
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
+  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
+  git fetch origin-repo
+  git checkout gh-pages
+  sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
+  git add -A
+  git commit -m "Push new Helm Chart release $VERSION"
+  git push --quiet origin-repo gh-pages
+
 elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
   # Major.minor.patch version format
   latest_release=`wget -q $DOCKER_TAGS -O - | jq -r .[].name | grep -v alpha | grep -v latest | sort --version-sort --field-separator=. | tail -1`
