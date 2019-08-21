@@ -101,7 +101,7 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
    
     echo "Copy 'values.yaml' from line $prometheus_start to end to 'prometheus-overrides.yaml'"
     echo "# This file is auto-generated." > deploy/helm/prometheus-overrides.yaml
-    # Copy lines of fluent-bit section and remove indention from values.yaml
+    # Copy lines of prometheus-operator section and remove indention from values.yaml
     sed -n "$prometheus_start,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
     # Remove release name from service name
     sed -i 's/collection-sumologic/fluentd/' deploy/helm/prometheus-overrides.yaml
