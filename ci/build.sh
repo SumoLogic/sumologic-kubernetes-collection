@@ -127,6 +127,17 @@ if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha
   echo "Pushing docker image $DOCKER_TAG:$VERSION..."
   echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   docker push $DOCKER_TAG:$VERSION
+
+  # Push new helm release
+  sudo helm init --client-only
+  sudo helm package deploy/helm/sumologic --version=$VERSION
+  git fetch origin-repo
+  git checkout gh-pages
+  sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
+  git add -A
+  git commit -m "Push new Helm Chart release $VERSION"
+  git push --quiet origin-repo gh-pages
+
 elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
   # Major.minor.patch version format
   latest_release=`wget -q $DOCKER_TAGS -O - | jq -r .[].name | grep -v alpha | grep -v latest | sort --version-sort --field-separator=. | tail -1`
