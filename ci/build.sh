@@ -1,9 +1,9 @@
 #!/bin/sh
 
 if [ -n "$TRAVIS_COMMIT_RANGE" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
-  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluentd-sumologic.yaml.tmpl"; then
+  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml"; then
     if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
-      echo "Detected manual changes in 'fluentd-sumologic.yaml.tmpl', abort."
+      echo "Detected manual changes in 'fluentd-sumologic.yaml.tmpl', 'fluent-bit-overrides.yaml' or 'prometheus-overrides.yaml', abort."
       exit 1
     fi
   fi
@@ -51,17 +51,26 @@ cd ../..
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
+# Set up Github
+if [ -n "$GITHUB_TOKEN" ]; then
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
+  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
+fi
+
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm init --client-only
-  sudo helm template deploy/helm/sumologic --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl
+  cd deploy/helm/sumologic
+  sudo helm dependency update
+  cd ../../../
+
+  with_files=`ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\\/g'`
+  eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl'
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_BRANCH..."
-      git config --global user.email "travis@travis-ci.org"
-      git config --global user.name "Travis CI"
-      git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
       git fetch origin-repo
       git checkout $TRAVIS_BRANCH
       git add deploy/kubernetes/fluentd-sumologic.yaml.tmpl
@@ -69,6 +78,46 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
       git push --quiet origin-repo "$TRAVIS_BRANCH"
   else
       echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
+  fi
+
+  # Generate override yaml file for chart dependencies if changes are made to values.yaml file
+  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "values.yaml"; then
+    echo "Detected changes in 'values.yaml', generating file fluent-bit-overrides.yaml..."
+    fluent_bit_start=`grep -n "fluent-bit:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+    fluent_bit_start=$(($fluent_bit_start + 2))
+    fluent_bit_end=`grep -n "## Configure prometheus-operator" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+    fluent_bit_end=$(($fluent_bit_end - 1))
+    
+    echo "Copy 'values.yaml' from line $fluent_bit_start to line $fluent_bit_end to 'fluent-bit-overrides.yaml'"
+    echo "# This file is auto-generated." > deploy/helm/fluent-bit-overrides.yaml
+    # Copy lines of fluent-bit section and remove indention from values.yaml
+    sed -n "$fluent_bit_start,${fluent_bit_end}p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/fluent-bit-overrides.yaml
+    # Remove release name from service name
+    sed -i 's/collection-sumologic/fluentd/' deploy/helm/fluent-bit-overrides.yaml
+
+    echo "Detected changes in 'values.yaml', generating file prometheus-overrides.yaml..."
+    prometheus_start=`grep -n "prometheus-operator:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+    prometheus_start=$(($prometheus_start + 2))
+   
+    echo "Copy 'values.yaml' from line $prometheus_start to end to 'prometheus-overrides.yaml'"
+    echo "# This file is auto-generated." > deploy/helm/prometheus-overrides.yaml
+    # Copy lines of prometheus-operator section and remove indention from values.yaml
+    sed -n "$prometheus_start,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
+    # Remove release name from service name
+    sed -i 's/collection-sumologic/fluentd/' deploy/helm/prometheus-overrides.yaml
+
+    if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ]; then
+      echo "Detected changes in 'fluent-bit-overrides.yaml' or 'prometheus-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
+      git fetch origin-repo
+      git checkout $TRAVIS_BRANCH
+      git add deploy/helm/*-overrides.yaml
+      git commit -m "Generate new overrides yaml file(s)."
+      git push --quiet origin-repo "$TRAVIS_BRANCH"
+    else
+      echo "No changes in the generated overrides files."
+    fi
+  else
+    echo "No changes in 'values.yaml'."
   fi
 fi
 
@@ -82,9 +131,6 @@ if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha
   # Push new helm release
   sudo helm init --client-only
   sudo helm package deploy/helm/sumologic --version=$VERSION
-  git config --global user.email "travis@travis-ci.org"
-  git config --global user.name "Travis CI"
-  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
   git fetch origin-repo
   git checkout gh-pages
   sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
@@ -114,9 +160,6 @@ elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS
   docker push $DOCKER_TAG:$new_alpha
 
   echo "Tagging git with v$new_alpha..."
-  git config --global user.email "travis@travis-ci.org"
-  git config --global user.name "Travis CI"
-  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
   git tag -a "v$new_alpha" -m "Bump version to v$new_alpha"
   git push --tags --quiet --set-upstream origin-repo master
 else
