@@ -302,3 +302,4 @@ prometheus:
         - action: keep
           regex: 'fluentbit.*'
           sourceLabels: [__name__]
+
