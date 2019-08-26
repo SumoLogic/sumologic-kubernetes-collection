@@ -16,19 +16,21 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
         - [Manual Source Creation and Setup](#manual-source-creation-and-setup)
             - [Create a Hosted Collector and an HTTP Source](#create-a-hosted-collector-and-an-http-source)
             - [Deploy Fluentd](#deploy-fluentd)
-              - [Use default configuration](#use-default-configuration)
-              - [Customize configuration](#customize-configuration)
+                - [Use default configuration](#use-default-configuration)
+                - [Customize configuration](#customize-configuration)
         - [Verify the pods are running](#verify-the-pods-are-running)
     - [Step 2: Configure Prometheus](#step-2-configure-prometheus)
         - [Missing metrics for `controller-manager` or `scheduler`](#missing-metrics-for-controller-manager-or-scheduler)
         - [Additional configuration options](#additional-configuration-options)
+        - [Metrics](#metrics)
             - [Filter metrics](#filter-metrics)
             - [Trim and relabel metrics](#trim-and-relabel-metrics)
-            - [Custom Metrics](#custom-metrics)
-                - [Step 1: Expose a `/metrics` endpoint on your service](#step-1-expose-a-metrics-endpoint-on-your-service)
-                - [Step 2: Setup a service monitor so that Prometheus pulls the data](#step-2-setup-a-service-monitor-so-that-prometheus-pulls-the-data)
-                - [Step 3: Update the prometheus-overrides.yaml file to forward the metrics to Sumo.](#step-3-update-the-prometheus-overridesyaml-file-to-forward-the-metrics-to-sumo)
+        - [Custom Metrics](#custom-metrics)
+            - [Step 1: Expose a `/metrics` endpoint on your service](#step-1-expose-a-metrics-endpoint-on-your-service)
+            - [Step 2: Setup a service monitor so that Prometheus pulls the data](#step-2-setup-a-service-monitor-so-that-prometheus-pulls-the-data)
+            - [Step 3: Update the prometheus-overrides.yaml file to forward the metrics to Sumo.](#step-3-update-the-prometheus-overridesyaml-file-to-forward-the-metrics-to-sumo)
     - [Step 3: Deploy FluentBit](#step-3-deploy-fluentbit)
+    - [Step 4: Deploy Falco](#step-4-deploy-falco)
     - [Tear down](#tear-down)
     - [Adding Additional FluentD Plugins](#adding-additional-fluentd-plugins)
 - [Troubleshooting Collection](#troubleshooting-collection)
@@ -318,11 +320,11 @@ This filter will:
 
 If you have custom metrics you'd like to send to Sumo via Prometheus, you just need to expose a `/metrics` endpoint in prometheus format, and instruct prometheus via a ServiceMonitor to pull data from the endpoint. In this section, we'll walk through collecting custom metrics with Prometheus.
 
-##### Step 1: Expose a `/metrics` endpoint on your service
+#### Step 1: Expose a `/metrics` endpoint on your service
 
 There are many pre-built libraries that the community has built to expose these, but really any output that aligns with the prometheus format can work. Here is a list of libraries: [Libraries](https://prometheus.io/docs/instrumenting/clientlibs). Manually verify that you have metrics exposed in Prometheus format by hitting the metrics endpoint, and verifying that the output follows the [Prometheus format](https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md).
 
-##### Step 2: Setup a service monitor so that Prometheus pulls the data
+#### Step 2: Setup a service monitor so that Prometheus pulls the data
 
 Service Monitors is how we tell Prometheus what endpoints and sources to pull metrics from. To define a Service Monitor, create a yaml file on disk with information templated as follows:
 
@@ -364,7 +366,7 @@ Note, please make sure you include the label `release: prometheus-operator` in y
 Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
-##### Step 3: Update the prometheus-overrides.yaml file to forward the metrics to Sumo.
+#### Step 3: Update the prometheus-overrides.yaml file to forward the metrics to Sumo.
 
 The `prometheus-overrides.yaml` file controls what metrics get forwarded on to Sumo Logic. In order to get your custom metrics sending into Sumo Logic, you need to update the `prometheus-overrides.yaml` file to include a rule to forward on your custom metrics. Here is an example addition to the `prometheus-overrides.yaml` that will forward metrics to Sumo:
 
