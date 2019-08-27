@@ -7,3 +7,7 @@ dependencies:
     version: ~6.2.0
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: prometheus-operator.enabled
+  - name: falco
+    version: ~1.0.0
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    condition: falco.enabled

@@ -82,7 +82,8 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
 
   # Generate override yaml file for chart dependencies if changes are made to values.yaml file
   if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "values.yaml"; then
-    echo "Detected changes in 'values.yaml', generating file fluent-bit-overrides.yaml..."
+    echo "Detected changes in 'values.yaml', generating overrides files..."
+    
     fluent_bit_start=`grep -n "fluent-bit:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
     fluent_bit_start=$(($fluent_bit_start + 2))
     fluent_bit_end=`grep -n "## Configure prometheus-operator" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
@@ -95,19 +96,30 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
     # Remove release name from service name
     sed -i 's/collection-sumologic/fluentd/' deploy/helm/fluent-bit-overrides.yaml
 
-    echo "Detected changes in 'values.yaml', generating file prometheus-overrides.yaml..."
     prometheus_start=`grep -n "prometheus-operator:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
     prometheus_start=$(($prometheus_start + 2))
-   
-    echo "Copy 'values.yaml' from line $prometheus_start to end to 'prometheus-overrides.yaml'"
+    prometheus_end=`grep -n "## Configure falco" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+    prometheus_end=$(($prometheus_end - 1))
+    
+    echo "Copy 'values.yaml' from line $prometheus_start to line $prometheus_end to 'prometheus-overrides.yaml'"
     echo "# This file is auto-generated." > deploy/helm/prometheus-overrides.yaml
     # Copy lines of prometheus-operator section and remove indention from values.yaml
-    sed -n "$prometheus_start,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
+    sed -n "$prometheus_start,${prometheus_end}p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
     # Remove release name from service name
     sed -i 's/collection-sumologic/fluentd/' deploy/helm/prometheus-overrides.yaml
 
-    if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ]; then
-      echo "Detected changes in 'fluent-bit-overrides.yaml' or 'prometheus-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
+    falco_start=`grep -n "falco:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+    falco_start=$(($falco_start + 2))
+    falco_end=`grep -n "## Configure falco" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+    falco_end=$(($falco_end - 1))
+    
+    echo "Copy 'values.yaml' from line $falco_start to end to 'falco-overrides.yaml'"
+    echo "# This file is auto-generated." > deploy/helm/falco-overrides.yaml
+    # Copy lines of falco section and remove indention from values.yaml
+    sed -n "$falco_start,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/falco-overrides.yaml
+
+    if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ "$(git diff deploy/helm/falco-overrides.yaml)" ]; then
+      echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml' or 'falco-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
       git fetch origin-repo
       git checkout $TRAVIS_BRANCH
       git add deploy/helm/*-overrides.yaml
