@@ -34,7 +34,7 @@ Install the chart with release name `collection` and namespace `sumologic`
 helm install sumologic/sumologic --name collection --namespace sumologic
 ```
 
-NOTE: If you install the chart with a different release name or a different namespace, you will need to override remote write URLs for Prometheus and the host for fluent-bit. We recommend using an override file due to the number of URLs needed to be overridden.
+NOTE: If you install the chart with a different release name or a different namespace, you will need to override remote write URLs for Prometheus and the host for fluent-bit. We recommend using an override file due to the number of URLs that need to be overridden.
 
 Eg. 
 
