@@ -1,4 +1,4 @@
-# The Sumo Logic Helm Chart
+# Sumo Logic Helm Chart
 | DISCLAIMER |
 | --- |
 | This Helm chart is still under active development. |
