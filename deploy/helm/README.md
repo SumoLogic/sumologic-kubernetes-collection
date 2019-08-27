@@ -34,29 +34,24 @@ Install the chart with release name `collection` and namespace `sumologic`
 helm install sumologic/sumologic --name collection --namespace sumologic
 ```
 
-NOTE: If you install the chart with a different release name or a different namespace, you will need to override remote write URLs for Prometheus and the host for fluent-bit. We recommend using an override file due to the number of URLs that need to be overridden.
-
-Eg. 
-
+NOTE: If you install the chart with a different release name or a different namespace, you will need to override remote write URLs for Prometheus and the host for fluent-bit. We recommend using an override file due to the number of URLs that need to be overridden. You can use the following command to download the override file and replace the `<RELEASE-NAME>` and `<NAMESPACE>`:
+  
+```bash
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml | \
+sed 's/\collection-sumologic.sumologic'"/<RELEASE-NAME>-sumologic.<NAMESPACE>/g" > values.yaml
 ```
-fluent-bit:
-  backend:
-    forward:
-      host: <RELEASE-NAME>-sumologic.<NAMESPACE>.svc.cluster.local
-      
-prometheus-operator:
-  prometheusSpec:
-    prometheus:
-      remoteWrite:
-      # kube state metrics
-      - url: http://<RELEASE-NAME>-sumologic.<NAMESPACE>.svc.cluster.local:9888/prometheus.metrics.state.statefulset
-        writeRelabelConfigs:
-        - action: keep
-          regex: kube-state-metrics;kube_statefulset_status_(?:observed_generation|replicas)
-          sourceLabels: [job, __name__]
-      ...
 
+For example, if your release name is `my-release` and namespace is `my-namespace`:
+```bash
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml | \
+sed 's/\collection-sumologic.sumologic'"/my-release-sumologic.my-namespace/g" > values.yaml
 ```
+
+Then, install the chart with the override file.
+```bash
+helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml
+```
+
 
 > **Tip**: List all releases using `helm list`, a release is a name used to track a specific deployment
 
