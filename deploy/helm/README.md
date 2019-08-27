@@ -1,7 +1,7 @@
 # Sumo Logic Helm Chart
 | DISCLAIMER |
 | --- |
-| This Helm chart is still under active development. |
+| This Helm chart is still under development. |
 
 ## Introduction
 
@@ -9,15 +9,15 @@ This chart deploys Kubernetes resources for collecting Kubernetes logs, metrics,
 
 ## Prerequisite
 
-Before installing the chart, a namespace called `sumologic` and a secret with the same name containing the Sumo Logic collection endpoints should be already created by the `setup.sh` script provided.
+Before installing the chart, a namespace called `sumologic` and a secret with the same name containing the Sumo Logic collection endpoints should be already created by the provided `setup.sh` script.
 
-To run the script for creating the namespace and secret, run:
+To run the script for creating the namespace and secret, use the following command:
 
 ```bash
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
   | bash -s - -d false -y false <api_endpoint> <access_id> <access_key>
 ```
-NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. All optional parameters are explained [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/master/deploy#automatic-source-creation-and-setup-script). 
+NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. Details on the parameters are explained [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/master/deploy#automatic-source-creation-and-setup-script). 
 
 _This step will not be needed after we move the collection setup into a helm hook. Stay tuned._
 
@@ -34,7 +34,7 @@ Install the chart with release name `collection` and namespace `sumologic`
 helm install sumologic/sumologic --name collection --namespace sumologic
 ```
 
-NOTE: If you install the chart with a different release name or a different namespace, you will need to override remote write URLs for Prometheus and the host for fluent-bit. We recommend using an override file due to the number of URLs needed to be overriden.
+NOTE: If you install the chart with a different release name or a different namespace, you will need to override remote write URLs for Prometheus and the host for fluent-bit. We recommend using an override file due to the number of URLs needed to be overridden.
 
 Eg. 
 
