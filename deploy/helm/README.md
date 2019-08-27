@@ -9,7 +9,7 @@ This chart deploys Kubernetes resources for collecting Kubernetes logs, metrics,
 
 ## Prerequisite
 
-Before installing the chart, a namespace called `sumologic` and a secret with the same name containing the Sumo Logic collection endpoints should be already created by the provided `setup.sh` script.
+Before installing the chart, a namespace called `sumologic` and a secret with the same name containing the Sumo Logic collection endpoints should already be created by the provided `setup.sh` script.
 
 To run the script for creating the namespace and secret, use the following command:
 
