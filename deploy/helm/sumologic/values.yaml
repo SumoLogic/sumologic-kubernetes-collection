@@ -222,7 +222,7 @@ prometheus-operator:
     additionalServiceMonitors:
       - name: collection-sumologic
         additionalLabels: 
-          k8s-app: fluentd-sumologic
+          app: sumologic
           release: prometheus-operator
         endpoints:
         - port: metrics
@@ -231,10 +231,10 @@ prometheus-operator:
           - sumologic
         selector:
             matchLabels:
-              k8s-app: fluentd-sumologic
+              app: sumologic
       - name: collection-sumologic-events
         additionalLabels: 
-          k8s-app: fluentd-sumologic-events
+          app: sumologic-events
           release: prometheus-operator
         endpoints:
         - port: metrics
@@ -243,7 +243,7 @@ prometheus-operator:
           - sumologic
         selector:
             matchLabels:
-              k8s-app: fluentd-sumologic-events
+              app: sumologic-events
     prometheusSpec:
       externalLabels:
         # Set this to a value to distinguish between different k8s clusters
