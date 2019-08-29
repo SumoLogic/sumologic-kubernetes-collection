@@ -141,6 +141,7 @@ if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha
   docker push $DOCKER_TAG:$VERSION
 
   # Push new helm release
+  git checkout -- .
   sudo helm init --client-only
   sudo helm package deploy/helm/sumologic --version=$VERSION
   git fetch origin-repo
