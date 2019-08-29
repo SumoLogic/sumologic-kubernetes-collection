@@ -93,6 +93,8 @@ module Fluent
               end
             end
           end
+
+          record['kubernetes']['labels'].select!{|k,v| !(v.nil? || v.empty?)} if @data_type == 'logs'
         end
       end
 
