@@ -65,7 +65,8 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 * **node-exporter.** The `node_exporter` add-on exposes node metrics, including CPU, memory, disk, and network utilization.
 * **kube-state-metrics.** Listens to the Kubernetes API server; generates metrics about the state of the deployments, nodes, and pods in the cluster; and exports the metrics as plaintext on an HTTP endpoint listen port.
 * **Prometheus deployment.** Scrapes the metrics exposed by the `node-exporter` add-on for Kubernetes and the `kube-state-metric`s component; writes metrics to a port on the Fluentd deployment.
-* **Fluentd deployment.** Forwards metrics to HTTP sources on a hosted collector. Includes multiple Fluentd plugins that parse and format the metrics and enrich them with metadata.
+* **Fluentd deployment.** Forwards logs and metrics to HTTP sources on a hosted collector. Includes multiple Fluentd plugins that parse and format the metrics and enrich them with metadata.
+* **Events fluentd deployment.** Forwards events to an HTTP source on a hosted collector.
 
 ## Before you start
 
@@ -81,7 +82,7 @@ __NOTE__ These instructions assume that Prometheus is not already running on you
 
 ## Step 1: Create Sumo collector and deploy Fluentd
 
-In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources to receive your Kubernetes metrics; creates Kubernetes secrets for the HTTP sources created; and deploy Fluentd using a Sumo-provided .yaml manifest.
+In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources to receive your Kubernetes data; creates Kubernetes secrets for the HTTP sources created; and deploy Fluentd using a Sumo-provided .yaml manifest.
 
 ### Automatic Source Creation and Setup Script
 
