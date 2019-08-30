@@ -6,7 +6,7 @@ backend:
   forward:
     host: fluentd.sumologic.svc.cluster.local
     port: 24321
-    tls: "on"
+    tls: "off"
     tls_verify: "on"
     tls_debug: 1
     shared_key:
