@@ -1,14 +1,5 @@
 #!/bin/sh
 
-if [ -n "$TRAVIS_COMMIT_RANGE" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
-  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml"; then
-    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
-      echo "Detected manual changes in 'fluentd-sumologic.yaml.tmpl', 'fluent-bit-overrides.yaml' or 'prometheus-overrides.yaml', abort."
-      exit 1
-    fi
-  fi
-fi
-
 VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
@@ -16,7 +7,32 @@ VERSION="${VERSION#v}"
 DOCKER_TAGS="https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags"
 
 echo "Starting build process in: `pwd` with version tag: $VERSION"
-set -e
+err_report() {
+    echo "Script error on line $1"
+    exit 1
+}
+trap 'err_report $LINENO' ERR
+
+# Set up Github
+if [ -n "$GITHUB_TOKEN" ]; then
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
+  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
+  git fetch origin-repo
+  git checkout $TRAVIS_BRANCH
+fi
+
+# Check for invalid changes to overrides yaml files
+if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+  # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
+  changes=`git diff origin-repo/master..$TRAVIS_BRANCH --name-only | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"` || true
+  if [ -n "$changes" ]; then
+    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
+      echo "Aborting due to manual changes detected in the following generated files: $changes"
+      exit 1
+    fi
+  fi
+fi
 
 for i in ./fluent-plugin* ; do
   if [ -d "$i" ]; then
@@ -27,17 +43,17 @@ for i in ./fluent-plugin* ; do
     echo "Building gem $PLUGIN_NAME version $GEM_VERSION in `pwd` ..."
     sed -i.bak "s/0.0.0/$GEM_VERSION/g" ./$PLUGIN_NAME.gemspec
     rm -f ./$PLUGIN_NAME.gemspec.bak
-    
+
     echo "Install bundler..."
     bundle install
-    
+
     echo "Run unit tests..."
     bundle exec rake
 
     echo "Build gem $PLUGIN_NAME $GEM_VERSION..."
     gem build $PLUGIN_NAME
     mv *.gem ../deploy/docker/gems
-    
+
     cd ..
   fi
 done
@@ -51,13 +67,7 @@ cd ../..
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
-# Set up Github
-if [ -n "$GITHUB_TOKEN" ]; then
-  git config --global user.email "travis@travis-ci.org"
-  git config --global user.name "Travis CI"
-  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
-fi
-
+# Check for changes that require re-generating overrides yaml files
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
@@ -71,8 +81,6 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_BRANCH..."
-      git fetch origin-repo
-      git checkout $TRAVIS_BRANCH
       git add deploy/kubernetes/fluentd-sumologic.yaml.tmpl
       git commit -m "Generate new 'fluentd-sumologic.yaml.tmpl'"
       git push --quiet origin-repo "$TRAVIS_BRANCH"
@@ -80,56 +88,50 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
       echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
   fi
 
-  # Generate override yaml file for chart dependencies if changes are made to values.yaml file
-  if git diff --name-only $TRAVIS_COMMIT_RANGE | grep -q -i "values.yaml"; then
-    echo "Detected changes in 'values.yaml', generating overrides files..."
-    
-    fluent_bit_start=`grep -n "fluent-bit:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
-    fluent_bit_start=$(($fluent_bit_start + 2))
-    fluent_bit_end=`grep -n "## Configure prometheus-operator" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
-    fluent_bit_end=$(($fluent_bit_end - 1))
-    
-    echo "Copy 'values.yaml' from line $fluent_bit_start to line $fluent_bit_end to 'fluent-bit-overrides.yaml'"
-    echo "# This file is auto-generated." > deploy/helm/fluent-bit-overrides.yaml
-    # Copy lines of fluent-bit section and remove indention from values.yaml
-    sed -n "$fluent_bit_start,${fluent_bit_end}p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/fluent-bit-overrides.yaml
-    # Remove release name from service name
-    sed -i 's/collection-sumologic/fluentd/' deploy/helm/fluent-bit-overrides.yaml
+  # Generate override yaml files for chart dependencies to determine if changes are made to overrides yaml files
+  echo "Generating overrides files..."
+  
+  fluent_bit_start=`grep -n "fluent-bit:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+  fluent_bit_start=$(($fluent_bit_start + 2))
+  fluent_bit_end=`grep -n "## Configure prometheus-operator" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+  fluent_bit_end=$(($fluent_bit_end - 1))
+  
+  echo "Copy 'values.yaml' from line $fluent_bit_start to line $fluent_bit_end to 'fluent-bit-overrides.yaml'"
+  echo "# This file is auto-generated." > deploy/helm/fluent-bit-overrides.yaml
+  # Copy lines of fluent-bit section and remove indention from values.yaml
+  sed -n "$fluent_bit_start,${fluent_bit_end}p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/fluent-bit-overrides.yaml
+  # Remove release name from service name
+  sed -i 's/collection-sumologic/fluentd/' deploy/helm/fluent-bit-overrides.yaml
 
-    prometheus_start=`grep -n "prometheus-operator:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
-    prometheus_start=$(($prometheus_start + 2))
-    prometheus_end=`grep -n "## Configure falco" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
-    prometheus_end=$(($prometheus_end - 1))
-    
-    echo "Copy 'values.yaml' from line $prometheus_start to line $prometheus_end to 'prometheus-overrides.yaml'"
-    echo "# This file is auto-generated." > deploy/helm/prometheus-overrides.yaml
-    # Copy lines of prometheus-operator section and remove indention from values.yaml
-    sed -n "$prometheus_start,${prometheus_end}p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
-    # Remove release name from service name
-    sed -i 's/collection-sumologic/fluentd/' deploy/helm/prometheus-overrides.yaml
+  prometheus_start=`grep -n "prometheus-operator:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+  prometheus_start=$(($prometheus_start + 2))
+  prometheus_end=`grep -n "## Configure falco" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+  prometheus_end=$(($prometheus_end - 1))
+  
+  echo "Copy 'values.yaml' from line $prometheus_start to line $prometheus_end to 'prometheus-overrides.yaml'"
+  echo "# This file is auto-generated." > deploy/helm/prometheus-overrides.yaml
+  # Copy lines of prometheus-operator section and remove indention from values.yaml
+  sed -n "$prometheus_start,${prometheus_end}p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
+  # Remove release name from service name
+  sed -i 's/collection-sumologic/fluentd/' deploy/helm/prometheus-overrides.yaml
 
-    falco_start=`grep -n "falco:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
-    falco_start=$(($falco_start + 2))
-    falco_end=`grep -n "## Configure falco" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
-    falco_end=$(($falco_end - 1))
-    
-    echo "Copy 'values.yaml' from line $falco_start to end to 'falco-overrides.yaml'"
-    echo "# This file is auto-generated." > deploy/helm/falco-overrides.yaml
-    # Copy lines of falco section and remove indention from values.yaml
-    sed -n "$falco_start,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/falco-overrides.yaml
+  falco_start=`grep -n "falco:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+  falco_start=$(($falco_start + 2))
+  falco_end=`grep -n "## Configure falco" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+  falco_end=$(($falco_end - 1))
+  
+  echo "Copy 'values.yaml' from line $falco_start to end to 'falco-overrides.yaml'"
+  echo "# This file is auto-generated." > deploy/helm/falco-overrides.yaml
+  # Copy lines of falco section and remove indention from values.yaml
+  sed -n "$falco_start,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/falco-overrides.yaml
 
-    if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ "$(git diff deploy/helm/falco-overrides.yaml)" ]; then
-      echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml' or 'falco-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
-      git fetch origin-repo
-      git checkout $TRAVIS_BRANCH
-      git add deploy/helm/*-overrides.yaml
-      git commit -m "Generate new overrides yaml file(s)."
-      git push --quiet origin-repo "$TRAVIS_BRANCH"
-    else
-      echo "No changes in the generated overrides files."
-    fi
+  if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ "$(git diff deploy/helm/falco-overrides.yaml)" ]; then
+    echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml' or 'falco-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
+    git add deploy/helm/*-overrides.yaml
+    git commit -m "Generate new overrides yaml file(s)."
+    git push --quiet origin-repo "$TRAVIS_BRANCH"
   else
-    echo "No changes in 'values.yaml'."
+    echo "No changes in the generated overrides files."
   fi
 fi
 
