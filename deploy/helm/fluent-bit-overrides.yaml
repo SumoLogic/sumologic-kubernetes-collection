@@ -19,7 +19,7 @@ tolerations:
 
 input:
   systemd:
-    enabled: false
+    enabled: true
 
 rawConfig: |-
   @INCLUDE fluent-bit-service.conf
