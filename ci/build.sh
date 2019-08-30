@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
-  changes=`git diff master...$TRAVIS_BRANCH | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"`
+  changes=`git diff master...$TRAVIS_BRANCH --name-only | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"`
   if [ -n "$changes" ]; then
     if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
       echo "Aborting due to manual changes detected in the following generated files: $changes"
