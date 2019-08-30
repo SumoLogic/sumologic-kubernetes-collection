@@ -34,7 +34,7 @@ Install the chart with release name `collection` and namespace `sumologic`
 helm install sumologic/sumologic --name collection --namespace sumologic
 ```
 
-NOTE: If you install the chart with a different release name or a different namespace, you will need to override remote write URLs for Prometheus and the host for fluent-bit. We recommend using an override file due to the number of URLs that need to be overridden. You can use the following command to download the override file and replace the `<RELEASE-NAME>` and `<NAMESPACE>`:
+NOTE: If you install the chart with a different release name or a different namespace, you will need to override some configuration fields for both Prometheus and fluent-bit. We recommend using an override file due to the number of fields that need to be overridden. You can use the following command to download the override file and replace the `<RELEASE-NAME>` and `<NAMESPACE>`:
   
 ```bash
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml | \
