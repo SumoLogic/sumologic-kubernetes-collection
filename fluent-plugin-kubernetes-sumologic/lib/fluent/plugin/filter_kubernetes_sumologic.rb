@@ -222,7 +222,7 @@ module Fluent::Plugin
       end
 
       if @log_format == "fields" and not log_fields.nil?
-        sumo_metadata[:fields] = log_fields.map{|k,v| "#{k}=#{v}"}.join(',')
+        sumo_metadata[:fields] = log_fields.select{|k,v| !(v.nil? || v.empty?)}.map{|k,v| "#{k}=#{v}"}.join(',')
         record.delete("docker")
         record.delete("kubernetes")
       end

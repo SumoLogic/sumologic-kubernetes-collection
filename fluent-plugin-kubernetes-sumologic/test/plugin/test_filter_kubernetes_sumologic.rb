@@ -229,6 +229,57 @@ class SumoContainerOutputTest < Test::Unit::TestCase
     assert_equal(d.filtered_records[0], expected)
   end
 
+  test "test_fields_null_field_values" do
+    conf = %{
+	      log_format fields
+	    }
+    d = create_driver(conf)
+    time = @time
+    input = {
+        "timestamp" => 1538677347823,
+        "log" => "some message",
+        "stream" => "stdout",
+        "docker" => {
+            "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+        },
+        "kubernetes" => {
+            "container_name" => "log-format-labs",
+            "namespace_name" => "default",
+            "pod_name" => "log-format-labs-54575ccdb9-9d677",
+            "pod_id" => "170af806-c801-11e8-9009-025000000001",
+            "labels" => {
+                "pod-template-hash" => "1013177865",
+                "empty-value" => "",
+                "run" => "log-format-labs",
+                "null-value" => nil,
+            },
+            "namespace_labels" => {
+                "app" => "sumologic"
+            },
+            "host" => "docker-for-desktop",
+            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+        },
+    }
+    d.run do
+      d.feed("filter.test", time, input)
+    end
+    expected = {
+        "timestamp" => 1538677347823,
+        "log" => "some message",
+        "stream" => "stdout",
+        "_sumo_metadata" => {
+            :category => "kubernetes/default/log/format/labs",
+            :host => "",
+            :log_format => "fields",
+            :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,namespace_labels_app=sumologic,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+        },
+    }
+    assert_equal(1, d.filtered_records.size)
+    assert_equal(d.filtered_records[0], expected)
+  end
+
   test "test_fields_format_no_timestamp" do
     conf = %{
 	      log_format fields
