@@ -183,7 +183,7 @@ prometheus:
       - action: drop
         regex: POD
         sourceLabels: [container]
-      - action: drop
+      - action: keep
         regex: POD
         sourceLabels: [container_name]
       - action: keep
