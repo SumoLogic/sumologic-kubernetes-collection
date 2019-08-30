@@ -1,7 +1,7 @@
 image:
   repository: sumologic/kubernetes-fluentd
   tag: 0.3.0
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 nameOverride: ""
 fullnameOverride: ""
@@ -121,7 +121,7 @@ fluent-bit:
     forward:
       host: collection-sumologic.sumologic.svc.cluster.local
       port: 24321
-      tls: "off"
+      tls: "on"
       tls_verify: "on"
       tls_debug: 1
       shared_key:
@@ -394,7 +394,7 @@ prometheus-operator:
         - action: drop
           regex: POD
           sourceLabels: [container]
-        - action: drop
+        - action: keep
           regex: POD
           sourceLabels: [container_name]
         - action: keep
@@ -535,4 +535,4 @@ falco:
   #ebpf:
   #  enabled: true
   falco:
-    jsonOutput: true
+    jsonOutput: false
