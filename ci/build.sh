@@ -13,6 +13,27 @@ err_report() {
 }
 trap 'err_report $LINENO' ERR
 
+# Set up Github
+if [ -n "$GITHUB_TOKEN" ]; then
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
+  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
+  git fetch origin-repo
+  git checkout $TRAVIS_BRANCH
+fi
+
+# Check for invalid changes to overrides yaml files
+if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+  # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
+  changes=`git diff origin-repo/master..$TRAVIS_BRANCH --name-only | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"` || true
+  if [ -n "$changes" ]; then
+    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
+      echo "Aborting due to manual changes detected in the following generated files: $changes"
+      exit 1
+    fi
+  fi
+fi
+
 for i in ./fluent-plugin* ; do
   if [ -d "$i" ]; then
     cd $i
@@ -45,27 +66,6 @@ cd ../..
 
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
-
-# Set up Github
-if [ -n "$GITHUB_TOKEN" ]; then
-  git config --global user.email "travis@travis-ci.org"
-  git config --global user.name "Travis CI"
-  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
-  git fetch origin-repo
-  git checkout $TRAVIS_BRANCH
-fi
-
-# Check for invalid changes to overrides yaml files
-if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
-  # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
-  changes=`git diff origin-repo/master..$TRAVIS_BRANCH --name-only | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"` || true
-  if [ -n "$changes" ]; then
-    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
-      echo "Aborting due to manual changes detected in the following generated files: $changes"
-      exit 1
-    fi
-  fi
-fi
 
 # Check for changes that require re-generating overrides yaml files
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
