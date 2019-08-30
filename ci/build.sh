@@ -1,15 +1,5 @@
 #!/bin/sh
 
-if [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
-  changes=`git diff master...$TRAVIS_BRANCH --name-only | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"`
-  if [ -n "$changes" ]; then
-    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
-      echo "Aborting due to manual changes detected in the following generated files: $changes"
-      exit 1
-    fi
-  fi
-fi
-
 VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
@@ -17,7 +7,11 @@ VERSION="${VERSION#v}"
 DOCKER_TAGS="https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags"
 
 echo "Starting build process in: `pwd` with version tag: $VERSION"
-set -e
+err_report() {
+    echo "Script error on line $1"
+    exit 1
+}
+trap 'err_report $LINENO' ERR
 
 for i in ./fluent-plugin* ; do
   if [ -d "$i" ]; then
@@ -28,17 +22,17 @@ for i in ./fluent-plugin* ; do
     echo "Building gem $PLUGIN_NAME version $GEM_VERSION in `pwd` ..."
     sed -i.bak "s/0.0.0/$GEM_VERSION/g" ./$PLUGIN_NAME.gemspec
     rm -f ./$PLUGIN_NAME.gemspec.bak
-    
+
     echo "Install bundler..."
     bundle install
-    
+
     echo "Run unit tests..."
     bundle exec rake
 
     echo "Build gem $PLUGIN_NAME $GEM_VERSION..."
     gem build $PLUGIN_NAME
     mv *.gem ../deploy/docker/gems
-    
+
     cd ..
   fi
 done
@@ -57,8 +51,23 @@ if [ -n "$GITHUB_TOKEN" ]; then
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "Travis CI"
   git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
+  git fetch origin-repo
+  git checkout $TRAVIS_BRANCH
 fi
 
+# Check for invalid changes to overrides yaml files
+if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+  # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
+  changes=`git diff origin-repo/master..$TRAVIS_BRANCH --name-only | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"` || true
+  if [ -n "$changes" ]; then
+    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
+      echo "Aborting due to manual changes detected in the following generated files: $changes"
+      exit 1
+    fi
+  fi
+fi
+
+# Check for changes that require re-generating overrides yaml files
 if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
@@ -72,8 +81,6 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_BRANCH..."
-      git fetch origin-repo
-      git checkout $TRAVIS_BRANCH
       git add deploy/kubernetes/fluentd-sumologic.yaml.tmpl
       git commit -m "Generate new 'fluentd-sumologic.yaml.tmpl'"
       git push --quiet origin-repo "$TRAVIS_BRANCH"
@@ -120,8 +127,6 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
 
   if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ "$(git diff deploy/helm/falco-overrides.yaml)" ]; then
     echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml' or 'falco-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
-    git fetch origin-repo
-    git checkout $TRAVIS_BRANCH
     git add deploy/helm/*-overrides.yaml
     git commit -m "Generate new overrides yaml file(s)."
     git push --quiet origin-repo "$TRAVIS_BRANCH"
