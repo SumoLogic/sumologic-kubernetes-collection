@@ -1,10 +1,6 @@
 # This file is auto-generated.
 metrics:
   enabled: true
-  serviceMonitor:
-    enabled: true
-    additionalLabels:
-      release: prometheus-operator
 backend:
   type: forward
   forward:

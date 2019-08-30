@@ -6,29 +6,43 @@ grafana:
 prometheus:
   additionalServiceMonitors:
     - name: fluentd
-      additionalLabels: 
+      additionalLabels:
         app: sumologic
-        release: prometheus-operator
+        release: collection
       endpoints:
       - port: metrics
       namespaceSelector:
         matchNames:
         - sumologic
       selector:
-          matchLabels:
-            app: sumologic
+        matchLabels:
+          app: fluentd
     - name: fluentd-events
-      additionalLabels: 
+      additionalLabels:
         app: sumologic-events
-        release: prometheus-operator
+        release: collection
       endpoints:
-      - port: metrics
+        - port: metrics
       namespaceSelector:
         matchNames:
-        - sumologic
+          - sumologic
       selector:
-          matchLabels:
-            app: sumologic-events
+        matchLabels:
+          app: fluentd-events
+    - name: collection-fluent-bit
+      additionalLabels:
+        app: fluent-bit
+        release: collection
+      endpoints:
+        - port: metrics
+          path: /api/v1/metrics/prometheus
+      namespaceSelector:
+        matchNames:
+          - sumologic
+      selector:
+        matchLabels:
+          app: fluent-bit
+          release: collection
   prometheusSpec:
     externalLabels:
       # Set this to a value to distinguish between different k8s clusters
