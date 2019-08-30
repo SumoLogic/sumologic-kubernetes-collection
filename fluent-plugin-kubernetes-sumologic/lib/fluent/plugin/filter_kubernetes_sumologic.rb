@@ -217,6 +217,7 @@ module Fluent::Plugin
           ["pod_id", "host", "master_url", "namespace_id", "service", "deployment", "daemonset", "replicaset", "statefulset"].each do |key|
             log_fields[key] = kubernetes[key] unless kubernetes[key].nil?
           end
+          log_fields["node"] = kubernetes["host"] unless kubernetes["host"].nil?
         end
       end
 
