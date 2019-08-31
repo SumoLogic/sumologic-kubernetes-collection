@@ -9,30 +9,24 @@ Expand the name of the chart.
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If dryRun=true, we use fixed value "fluentd".
 */}}
 {{- define "sumologic.fullname" -}}
-{{- if .Values.dryRun }}
-{{- printf "fluentd" }}
-{{- else -}}
 {{- $name := default .Chart.Name .Values.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end -}}
 {{- end -}}
 
 {{/*
 Create default fully qualified labels.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If dryRun=true, we use the Chart name "sumologic" and do not include labels specific to Helm.
 */}}
 {{- define "sumologic.labels.app" -}}
-{{- if .Values.dryRun }}
-{{- template "sumologic.name" . }}
-{{- else -}}
 {{- template "sumologic.fullname" . }}
 {{- end -}}
-{{- end -}}
 
+{{/*
+Create common labels used throughout the chart.
+If dryRun=true, we do not create any chart labels.
+*/}}
 {{- define "sumologic.labels.common" -}}
 {{- if .Values.dryRun -}}
 {{- else -}}
