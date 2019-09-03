@@ -26,6 +26,26 @@ eventsDeployment:
       cpu: "100m"
 
 sumologic:
+  ## Setup
+
+  # If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
+  setupEnabled: true
+
+  # Sumo access ID
+  #accessId: ""
+
+  # Sumo access key
+  #accesskey: ""
+
+  # Sumo API endpoint
+  #endpoint: ""
+
+  # Collector name
+  #collectorName: ""
+
+  # Cluster name
+  clusterName: &cluster_name "kubernetes"
+
 
   ## Format to post logs into Sumo. json, json_merge, or text
   logFormat: fields
@@ -253,7 +273,7 @@ prometheus-operator:
     prometheusSpec:
       externalLabels:
         # Set this to a value to distinguish between different k8s clusters
-        cluster: kubernetes
+        cluster: *cluster_name
       remoteWrite:
       # kube state metrics
       - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.state.statefulset

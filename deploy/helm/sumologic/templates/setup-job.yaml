@@ -1,0 +1,32 @@
+{{- if .Values.sumologic.setupEnabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "sumologic.fullname" . }}-init
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+  labels:
+    app: {{ template "sumologic.labels.app" . }}
+    {{ template "sumologic.labels.common" . }}
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: setup
+        image: setup-test:local
+        imagePullPolicy: Never
+        command: ["/usr/bin/setup.sh", 
+          "-n", "{{ .Release.Namespace }}", 
+          "-k", "{{ .Values.sumologic.clusterName }}", 
+          {{- if .Values.sumologic.collectorName }}
+          "-c", "{{ .Values.sumologic.collectorName }}",
+          {{- end }}
+          "-d", "false", 
+          "-y", "false", 
+          '{{ required "A valid .Values.sumologic.endpoint entry required!" .Values.sumologic.endpoint }}',
+          '{{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}', 
+          '{{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}']
+{{- end }}
