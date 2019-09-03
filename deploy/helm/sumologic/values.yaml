@@ -218,8 +218,7 @@ prometheus-operator:
     additionalServiceMonitors:
       - name: collection-sumologic
         additionalLabels:
-          app: sumologic
-          release: collection
+          app: collection-sumologic
         endpoints:
         - port: metrics
         namespaceSelector:
@@ -230,8 +229,7 @@ prometheus-operator:
             app: collection-sumologic
       - name: collection-sumologic-events
         additionalLabels:
-          app: sumologic-events
-          release: collection
+          app: collection-sumologic-events
         endpoints:
           - port: metrics
         namespaceSelector:
@@ -242,8 +240,7 @@ prometheus-operator:
             app: collection-sumologic-events
       - name: collection-fluent-bit
         additionalLabels:
-          app: fluent-bit
-          release: collection
+          app: collection-fluent-bit
         endpoints:
           - port: metrics
             path: /api/v1/metrics/prometheus
@@ -253,7 +250,6 @@ prometheus-operator:
         selector:
           matchLabels:
             app: fluent-bit
-            release: collection
     prometheusSpec:
       externalLabels:
         # Set this to a value to distinguish between different k8s clusters

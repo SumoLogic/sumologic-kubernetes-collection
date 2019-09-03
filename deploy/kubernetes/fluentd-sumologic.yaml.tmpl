@@ -4,9 +4,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: fluentd
+  name: collection-sumologic
   labels:
-    app: sumologic
+    app: collection-sumologic
     
 data:
   fluent.conf: |-
@@ -241,9 +241,9 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: fluentd-events
+  name: collection-sumologic-events
   labels:
-    app: sumologic-events
+    app: collection-sumologic-events
     
 data:
   fluent.conf: |-
@@ -284,18 +284,18 @@ data:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: fluentd
+  name: collection-sumologic
   labels:
-    app: sumologic
+    app: collection-sumologic
     
 ---
 # Source: sumologic/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: fluentd
+  name: collection-sumologic
   labels:
-    app: sumologic
+    app: collection-sumologic
     
 rules:
 - apiGroups: ["", "apps", "extensions", "events.k8s.io"]
@@ -321,30 +321,30 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: fluentd
+  name: collection-sumologic
   labels:
-    app: sumologic
+    app: collection-sumologic
     
 subjects:
 - kind: ServiceAccount
   namespace: $NAMESPACE
-  name: fluentd
+  name: collection-sumologic
 roleRef:
   kind: ClusterRole
-  name: fluentd
+  name: collection-sumologic
   apiGroup: rbac.authorization.k8s.io
 ---
 # Source: sumologic/templates/events-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: fluentd-events
+  name: collection-sumologic-events
   labels:
-    app: sumologic-events
+    app: collection-sumologic-events
     
 spec:
   selector:
-    app: sumologic-events
+    app: collection-sumologic-events
   ports:
   - name: metrics
     port: 24231
@@ -356,13 +356,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fluentd
+  name: collection-sumologic
   labels:
-    app: sumologic
+    app: collection-sumologic
     
 spec:
   selector:
-    app: sumologic
+    app: collection-sumologic
   ports:
   - name: prom-write
     port: 9888
@@ -382,22 +382,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fluentd
+  name: collection-sumologic
   labels:
-    app: sumologic
+    app: collection-sumologic
     
 spec:
   selector:
     matchLabels:
-      app: sumologic
+      app: collection-sumologic
   replicas: 3
   template:
     metadata:
       labels:
-        app: sumologic
+        app: collection-sumologic
         
     spec:
-      serviceAccountName: fluentd
+      serviceAccountName: collection-sumologic
       volumes:
       - name: pos-files
         hostPath:
@@ -405,7 +405,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: fluentd
+          name: collection-sumologic
       containers:
       - name: fluentd
         image: sumologic/kubernetes-fluentd:0.3.0
@@ -536,21 +536,21 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fluentd-events
+  name: collection-sumologic-events
   labels:
-    app: sumologic-events
+    app: collection-sumologic-events
     
 spec:
   selector:
     matchLabels:
-      app: sumologic-events
+      app: collection-sumologic-events
   template:
     metadata:
       labels:
-        app: sumologic-events
+        app: collection-sumologic-events
         
     spec:
-      serviceAccountName: fluentd
+      serviceAccountName: collection-sumologic
       volumes:
       - name: pos-files
         hostPath:
@@ -558,7 +558,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: fluentd-events
+          name: collection-sumologic-events
       containers:
       - name: fluentd-events
         image: sumologic/kubernetes-fluentd:0.3.0
