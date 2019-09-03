@@ -3,6 +3,7 @@ alertmanager:
   enabled: false
 grafana:
   enabled: false
+  defaultDashboardsEnabled: false
 prometheus:
   additionalServiceMonitors:
     - name: collection-sumologic
