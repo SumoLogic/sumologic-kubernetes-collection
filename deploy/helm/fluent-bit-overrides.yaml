@@ -4,7 +4,7 @@ metrics:
 backend:
   type: forward
   forward:
-    host: fluentd.sumologic.svc.cluster.local
+    host: collection-sumologic.sumologic.svc.cluster.local
     port: 24321
     tls: "off"
     tls_verify: "on"
