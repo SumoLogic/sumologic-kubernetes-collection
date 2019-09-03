@@ -225,7 +225,7 @@ This manifest binds the default `cluster-admin` ClusterRole in your Kubernetes c
 Download the Prometheus Operator `prometheus-overrides.yaml` from GitHub:
 
 ```sh
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.3.0/deploy/helm/prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 Before installing `prometheus-operator`, edit `prometheus-overrides.yaml` to define a unique cluster identifier. The default value of the `cluster` field in the `externalLabels` section of `prometheus-overrides.yaml` is `kubernetes`. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
@@ -394,7 +394,7 @@ In this step, you will deploy FluentBit to forward logs to Fluentd.
 Download the FluentBit `fluent-bit-overrides.yaml` from GitHub:
 
 ```sh
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.3.0/deploy/helm/fluent-bit-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/fluent-bit-overrides.yaml
 ```
 
 Install `fluent-bit` using Helm:
