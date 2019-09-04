@@ -1,6 +1,6 @@
 image:
   repository: sumologic/kubernetes-fluentd
-  tag: 0.3.0
+  tag: 0.4.0
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -234,6 +234,7 @@ prometheus-operator:
     enabled: false
   grafana:
     enabled: false
+    defaultDashboardsEnabled: false
   prometheus:
     additionalServiceMonitors:
       - name: collection-sumologic
