@@ -44,7 +44,7 @@ sumologic:
   #collectorName: ""
 
   # Cluster name
-  clusterName: &cluster_name "kubernetes"
+  clusterName: "kubernetes"
 
 
   ## Format to post logs into Sumo. json, json_merge, or text
@@ -273,7 +273,7 @@ prometheus-operator:
     prometheusSpec:
       externalLabels:
         # Set this to a value to distinguish between different k8s clusters
-        cluster: *cluster_name
+        cluster: kubernetes
       remoteWrite:
       # kube state metrics
       - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.state.statefulset
