@@ -49,7 +49,16 @@ USER root
 # Run dependencies
 RUN runDeps="sudo libsnappy-dev" \
  && apt-get update \
- && apt-get install -y --no-install-recommends $runDeps
+ && apt-get install -y --no-install-recommends $runDeps \
+ && apt-get install -y gnupg \
+ && apt-get install -y curl \
+ && apt-get install -y jq \
+ && apt-get install -y wget
+
+ # Install kubectl
+ADD https://storage.googleapis.com/kubernetes-release/release/v1.6.12/bin/linux/amd64/kubectl /usr/local/bin/kubectl
+RUN chmod +x /usr/local/bin/kubectl
+COPY setup/setup.sh /usr/bin/
 
 COPY --from=builder /usr/local/bundle /usr/local/bundle
 COPY ./fluent.conf /fluentd/etc/
