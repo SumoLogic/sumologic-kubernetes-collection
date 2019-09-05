@@ -39,6 +39,7 @@ NOTE: If you install the chart with a different release name or a different name
 ```bash
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml | \
 sed 's/\-sumologic.sumologic'"/-sumologic.<NAMESPACE>/g" | \
+sed 's/\- sumologic'"/- <NAMESPACE>/g" | \
 sed 's/\collection'"/<RELEASE-NAME>/g" > values.yaml
 ```
 
