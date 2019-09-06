@@ -26,6 +26,26 @@ eventsDeployment:
       cpu: "100m"
 
 sumologic:
+  ## Setup
+
+  # If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
+  setupEnabled: true
+
+  # Sumo access ID
+  #accessId: ""
+
+  # Sumo access key
+  #accesskey: ""
+
+  # Sumo API endpoint
+  #endpoint: ""
+
+  # Collector name
+  #collectorName: ""
+
+  # Cluster name
+  clusterName: "kubernetes"
+
 
   ## Format to post logs into Sumo. json, json_merge, or text
   logFormat: fields

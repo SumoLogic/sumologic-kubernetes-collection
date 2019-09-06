@@ -89,7 +89,7 @@ In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources
 This approach requires access to the Sumo Logic Collector API. It will create a Hosted Collector and multiple HTTP Source endpoints and pre-populate Kubernetes secrets detailed in the manual steps below.
 
 ```sh
-curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
+curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/docker/setup/setup.sh \
   | bash -s - [-c <collector_name>] [-k <cluster_name>] [-n <namespace>] [-a <boolean>] [-d <boolean>] [-y <boolean>] <api_endpoint> <access_id> <access_key>
 ```
 
