@@ -440,7 +440,7 @@ The `prometheus-overrides.yaml` file controls what metrics get forwarded on to S
 
 Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and run a `helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml` to upgrade your `prometheus-operator`.
 
-Note: When executing the helm upgrade, to avoid the error below, you need add the argument `--force`.
+Note: When executing the helm upgrade, to avoid the error below, you need to add the argument `--force`.
 
       invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
 
