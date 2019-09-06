@@ -407,7 +407,7 @@ kind: Secret
           value: fields
 ```
 
-  * Finally, you need to modify the Fluentd config to route data to your newly created HTTP source. Assuming you installed the collector in the  `sumologic` namespace, you can run `kubectl -n sumologic edit configmap fluentd` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
+  * Finally, you need to modify the Fluentd config to route data to your newly created HTTP source. Assuming you installed the collector in the `sumologic` namespace, you can run `kubectl -n sumologic edit configmap fluentd` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
   * Locate the section `match prometheus.metrics` and you will insert a new section above this. The `match` statement should end with a tag that identifies your data that FluentD will use for routing. Then make sure you point to the environment variable you added to your deployment. The following is an example.
   
 ```yaml
