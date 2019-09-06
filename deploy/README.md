@@ -27,7 +27,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
             - [Trim and relabel metrics](#trim-and-relabel-metrics)
         - [Custom Metrics](#custom-metrics)
             - [Step 1: Expose a `/metrics` endpoint on your service](#step-1-expose-a-metrics-endpoint-on-your-service)
-            - [Step 2: Setup a service monitor so that Prometheus pulls the data](#step-2-setup-a-service-monitor-so-that-prometheus-pulls-the-data)
+            - [Step 2: Set up a service monitor so that Prometheus pulls the data](#step-2-set-up-a-service-monitor-so-that-prometheus-pulls-the-data)
             - [Step 3: Step 3: Create a new HTTP source in Sumo Logic.](#step-3-create-a-new-http-source-in-sumo-logic)
             - [Step 4: Update the metrics.conf FluentD Configuration.](#step-4-update-the-metricsconf-fluentd-configuration)
             - [Step 5: Update the prometheus-overrides.yaml file to forward the metrics to FluentD.](#step-5-update-the-prometheus-overridesyaml-file-to-forward-the-metrics-to-fluentd)
@@ -327,7 +327,7 @@ If you have custom metrics you'd like to send to Sumo via Prometheus, you just n
 
 There are many pre-built libraries that the community has built to expose these, but really any output that aligns with the prometheus format can work. Here is a list of libraries: [Libraries](https://prometheus.io/docs/instrumenting/clientlibs). Manually verify that you have metrics exposed in Prometheus format by hitting the metrics endpoint, and verifying that the output follows the [Prometheus format](https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md).
 
-#### Step 2: Setup a service monitor so that Prometheus pulls the data
+#### Step 2: Set up a service monitor so that Prometheus pulls the data
 
 Service Monitors is how we tell Prometheus what endpoints and sources to pull metrics from. To define a Service Monitor, create a yaml file on disk with information templated as follows:
 
@@ -371,15 +371,15 @@ Once you have created this yaml file, go ahead and run `kubectl create -f name_o
 
 #### Step 3: Create a new HTTP source in Sumo Logic.
 
-To avoid [blacklisting](https://help.sumologic.com/Metrics/Understand_and_Manage_Metric_Volume/Blacklisted_Metrics_Sources) metrics should be distributed across multiple HTTP sources.  You can [follow these steps](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create a new HTTP source for your custom metrics. Make note of the URL as you will need it in the next step.
+To avoid [blacklisting](https://help.sumologic.com/Metrics/Understand_and_Manage_Metric_Volume/Blacklisted_Metrics_Sources) metrics should be distributed across multiple HTTP sources. You can [follow these steps](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create a new HTTP source for your custom metrics. Make note of the URL as you will need it in the next step.
 
 #### Step 4: Update the metrics.conf FluentD Configuration
 
-Next, you will need to update the fluentD configuration to ensure FluentD routes your custom metrics to the HTTP source you created in the previous step.
+Next, you will need to update the Fluentd configuration to ensure Fluentd routes your custom metrics to the HTTP source you created in the previous step.
 
   * First, base64 encode the HTTP source URL from the previous step by running `echo <HTTP_SOURCE_URL> | base64`.  Replace `<HTTP_SOURCE_URL>` with the URL from step 3.
-  * Next, you can edit the secret that houses all the HTTP sources URLs. Assuming you installed the collection in the  `sumologic` namespace, you can run `kubectl -n sumologic edit secret sumologic` or edit the YAML you deployed when you set up collection..
-  * In the `data` section, add a new key and the base64 encoded value you created. The following is just a snipped of the secret for an example. Do not alter the existing content, you simply want to add a new key.
+  * Next, you can edit the secret that houses all the HTTP sources URLs. Assuming you installed the collector in the  `sumologic` namespace, you can run `kubectl -n sumologic edit secret sumologic` or edit the YAML you deployed when you set up collection.
+  * In the `data` section, add a new key and the base64 encoded value you created. The following is just a snippet of the secret for an example. Do not alter the existing content, you simply want to add a new key.
   
 ```yaml
 data:
@@ -388,7 +388,7 @@ my-custom-metrics: <base64EncodedURL>
 kind: Secret
 ```
 
-  * Next you need to edit the FluentD Deployment and add a new environment variable, pointing to the new secret.  Assuming you installed the collection in the  `sumologic` namespace, you can run `kubectl -n sumologic edit deployment fluentd` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
+  * Next you need to edit the FluentD Deployment and add a new environment variable, pointing to the new secret.  Assuming you installed the collector in the  `sumologic` namespace, you can run `kubectl -n sumologic edit deployment fluentd` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
   * Locate the `SUMO_ENDPOINT_LOGS` environment variable in the YAML and add a new environment variable that points to the secret key you created. The following is an example.
   
 ```yaml
@@ -407,8 +407,8 @@ kind: Secret
           value: fields
 ```
 
-  * Finally, you need yo modify the fluentD config to route data to your newly created HTTP source. Assuming you installed the collection in the  `sumologic` namespace, you can run `kubectl -n sumologic edit configmap fluentd` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
-  * Locate the section `match prometheus.metrics` and you will insert a new section above this.  The `match` statement should end with a tag that identifies your data that fluentD will use for routing.  Then make sure you point to the environment variable you added to your deployment. The following is an example.
+  * Finally, you need to modify the Fluentd config to route data to your newly created HTTP source. Assuming you installed the collector in the  `sumologic` namespace, you can run `kubectl -n sumologic edit configmap fluentd` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
+  * Locate the section `match prometheus.metrics` and you will insert a new section above this. The `match` statement should end with a tag that identifies your data that FluentD will use for routing. Then make sure you point to the environment variable you added to your deployment. The following is an example.
   
 ```yaml
 ...        
@@ -428,7 +428,7 @@ kind: Secret
 
 #### Step 5: Update the prometheus-overrides.yaml file to forward the metrics to FluentD.
 
-The `prometheus-overrides.yaml` file controls what metrics get forwarded on to Sumo Logic. In order to get your custom metrics sending into Sumo Logic, you need to update the `prometheus-overrides.yaml` file to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your FluentD configmap in the previous step. Here is an example addition to the `prometheus-overrides.yaml` that will forward metrics to Sumo:
+The `prometheus-overrides.yaml` file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update the `prometheus-overrides.yaml` file to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your FluentD configmap in the previous step. Here is an example addition to the `prometheus-overrides.yaml` file that will forward metrics to Sumo:
 
 ```
 - url: http://fluentd.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
@@ -440,7 +440,7 @@ The `prometheus-overrides.yaml` file controls what metrics get forwarded on to S
 
 Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and run a `helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml` to upgrade your `prometheus-operator`.
 
-Note: When executing the helm upgrade to avoid the error below is need add the argument `--force`.
+Note: When executing the helm upgrade, to avoid the error below, you need add the argument `--force`.
 
       invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
 
