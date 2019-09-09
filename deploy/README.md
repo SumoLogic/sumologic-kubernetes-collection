@@ -8,6 +8,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 
 - [Deployment Guide](#deployment-guide)
     - [Solution overview](#solution-overview)
+    - [Support Matrix](#support-matrix)
     - [Before you start](#before-you-start)
     - [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd)
         - [Automatic Source Creation and Setup Script](#automatic-source-creation-and-setup-script)
@@ -67,6 +68,26 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 * **Prometheus deployment.** Scrapes the metrics exposed by the `node-exporter` add-on for Kubernetes and the `kube-state-metric`s component; writes metrics to a port on the Fluentd deployment.
 * **Fluentd deployment.** Forwards logs and metrics to HTTP sources on a hosted collector. Includes multiple Fluentd plugins that parse and format the metrics and enrich them with metadata.
 * **Events fluentd deployment.** Forwards events to an HTTP source on a hosted collector.
+
+## Support Matrix
+
+The following matrix displays the minimum supported version of required services.
+
+Item | Value
+-------- | -----
+K8s with EKS | 1.13.8
+.. | 1.11.10
+K8s with Kops | 1.13.10-k8s<br>1.13.0-kops
+.. | 1.12.8-k8s<br>1.12.2-kops
+.. |1.10.13-k8s<br>1.10.0-kops
+K8s with GKE | 1.12.8-gke.10<br>1.12.7-gke.25<br>1.11.10-gke.5
+K8s with AKS | 1.12.8
+Prometheus Operator | Chart 6.2.1 = App 0.31.1
+Fluent Bit | Chart 2.4.4 = App 1.2.2
+Fluent D | 1.6.3-debian-1.0
+Helm | 2.4.13 (Linux)
+Falco | 1.0.5
+kubectl | 1.15.0
 
 ## Before you start
 
