@@ -71,7 +71,7 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 
 ## Support Matrix
 
-The following matrix displays the minimum supported version of required services.
+The following matrix displays the tested package versions for our Helm chart.
 
 Name | Version
 -------- | -----
