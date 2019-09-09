@@ -73,20 +73,16 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 
 The following matrix displays the minimum supported version of required services.
 
-Item | Value
+Name | Version
 -------- | -----
 K8s with EKS | 1.13.8
-.. | 1.11.10
+|| 1.11.10
 K8s with Kops | 1.13.10-k8s<br>1.13.0-kops
-.. | 1.12.8-k8s<br>1.12.2-kops
-.. |1.10.13-k8s<br>1.10.0-kops
+|| 1.12.8-k8s<br>1.12.2-kops
+||1.10.13-k8s<br>1.10.0-kops
 K8s with GKE | 1.12.8-gke.10<br>1.12.7-gke.25<br>1.11.10-gke.5
 K8s with AKS | 1.12.8
-Prometheus Operator | Chart 6.2.1 = App 0.31.1
-Fluent Bit | Chart 2.4.4 = App 1.2.2
-Fluent D | 1.6.3-debian-1.0
 Helm | 2.4.13 (Linux)
-Falco | 1.0.5
 kubectl | 1.15.0
 
 ## Before you start
