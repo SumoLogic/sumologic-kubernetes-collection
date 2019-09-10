@@ -617,7 +617,7 @@ ebpf:
   enabled: true
 ```
 
-Install `falco` on `GKE` using Helm:
+Install `falco` by generating the yaml files using Helm:
 
 ```bash
 $ helm template stable/falco --name falco --set dryRun=true -f falco-overrides.yaml > falco.yaml
