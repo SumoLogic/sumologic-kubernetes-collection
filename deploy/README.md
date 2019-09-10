@@ -7,7 +7,8 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 <!-- TOC -->
 
 - [Deployment Guide](#deployment-guide)
-	- [Solution overview](#solution-overview) 
+	- [Solution overview](#solution-overview)
+	- [Minimum Requirements](#minimum-requirements)
 	- [Installation with Helm](#installation-with-helm) 
 		- [How to install when no Prometheus exists](#how-to-install-when-no-prometheus-exists) 
 		- [How to install if you have an existing Prometheus operator](#how-to-install-if-you-have-an-existing-prometheus-operator) 
@@ -77,6 +78,28 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 * **Prometheus deployment.** Scrapes the metrics exposed by the `node-exporter` add-on for Kubernetes and the `kube-state-metric`s component; writes metrics to a port on the Fluentd deployment.
 * **Fluentd deployment.** Forwards logs and metrics to HTTP sources on a hosted collector. Includes multiple Fluentd plugins that parse and format the metrics and enrich them with metadata.
 * **Events Fluentd deployment.** Forwards events to an HTTP source on a hosted collector.
+
+## Minimum Requirements
+
+Name | Version
+-------- | -----
+K8s with EKS | 1.13.8
+|| 1.11.10
+K8s with Kops | 1.13.10-k8s<br>1.13.0-kops
+|| 1.12.8-k8s<br>1.12.2-kops
+||1.10.13-k8s<br>1.10.0-kops
+K8s with GKE | 1.12.8-gke.10<br>1.12.7-gke.25<br>1.11.10-gke.5
+K8s with AKS | 1.12.8
+Helm | 2.4.13 (Linux)
+kubectl | 1.15.0
+
+## Support Matrix
+
+The following matrix displays the tested package versions for our Helm chart.
+
+Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco
+|:-------- |:-------- |:-------- |:--------
+0.4.0 | 6.2.1 | 2.4.4 | 1.0.5
 
 ## Installation with Helm
 
