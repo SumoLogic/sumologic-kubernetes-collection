@@ -355,6 +355,12 @@ Install Helm:
 
 *Note the following steps are one way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://helm.sh/docs/using_helm/#securing-your-helm-installation)*
 
+Download Helm to generate the yaml files necessary to deploy by running
+
+```bash
+brew install kubernetes-helm
+```
+
 Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
@@ -372,7 +378,7 @@ __NOTE__ If you plan to install Prometheus in a different namespace than you dep
 
 You can also [Filter metrics](#filter-metrics) and [Trim and relabel metrics](#trim-and-relabel-metrics) in `prometheus-overrides.yaml`.
 
-Install `prometheus-operator` using Helm:
+Install `prometheus-operator` by generating the yaml files using Helm:
 
 ```bash
 $ helm template stable/prometheus-operator --name prometheus-operator --set dryRun=true -f prometheus-overrides.yaml > prometheus.yaml
