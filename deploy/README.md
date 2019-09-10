@@ -8,6 +8,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 	- [Solution overview](#solution-overview)
 	- [Minimum Requirements](#minimum-requirements)
 	- [Installation with Helm](#installation-with-helm) 
+		- [Prerequisite](#prerequisite)
 		- [How to install when no Prometheus exists](#how-to-install-when-no-prometheus-exists) 
 		- [How to install if you have an existing Prometheus operator](#how-to-install-if-you-have-an-existing-prometheus-operator) 
 			- [Default steps](#default-steps) 
@@ -102,6 +103,20 @@ Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco
 ## Installation with Helm
 
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
+
+### Prerequisite
+
+Before installing the chart, you'll need to run our `setup.sh` script. It will create a namespace called `sumologic` and a secret with the same name that contains the Sumo Logic collection endpoints.
+
+To run the script that creates the namespace and secret, use the following command:
+
+```bash
+curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
+  | bash -s - -d false -y false <api_endpoint> <access_id> <access_key>
+```
+NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. Details on the parameters are explained [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/master/deploy#automatic-source-creation-and-setup-script). 
+
+_Soon this step will not be needed after we move the collection setup into a helm hook. Stay tuned._
 
 ### How to install when no Prometheus exists
 
