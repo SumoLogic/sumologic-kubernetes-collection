@@ -1,57 +1,64 @@
 # Deployment Guide
 
-This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
-
-**Compatibility**: Kubernetes version 1.11+
+This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic. See our [documentation guide]([https://help.sumologic.com/Solutions/Kubernetes_Solution](https://help.sumologic.com/Solutions/Kubernetes_Solution)) for details on our Kubernetes Solution.
 
 <!-- TOC -->
 
 - [Deployment Guide](#deployment-guide)
-    - [Solution overview](#solution-overview)
-    - [Before you start](#before-you-start)
-    - [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd)
-        - [Automatic Source Creation and Setup Script](#automatic-source-creation-and-setup-script)
-            - [Parameters](#parameters)
-            - [Environment variables](#environment-variables)
-        - [Manual Source Creation and Setup](#manual-source-creation-and-setup)
-            - [Create a Hosted Collector and an HTTP Source](#create-a-hosted-collector-and-an-http-source)
-            - [Deploy Fluentd](#deploy-fluentd)
-                - [Use default configuration](#use-default-configuration)
-                - [Customize configuration](#customize-configuration)
-        - [Verify the pods are running](#verify-the-pods-are-running)
-    - [Step 2: Configure Prometheus](#step-2-configure-prometheus)
-        - [Missing metrics for `controller-manager` or `scheduler`](#missing-metrics-for-controller-manager-or-scheduler)
-        - [Additional configuration options](#additional-configuration-options)
-        - [Metrics](#metrics)
-            - [Filter metrics](#filter-metrics)
-            - [Trim and relabel metrics](#trim-and-relabel-metrics)
-        - [Custom Metrics](#custom-metrics)
-            - [Step 1: Expose a `/metrics` endpoint on your service](#step-1-expose-a-metrics-endpoint-on-your-service)
-            - [Step 2: Set up a service monitor so that Prometheus pulls the data](#step-2-set-up-a-service-monitor-so-that-prometheus-pulls-the-data)
-            - [Step 3: Create a new HTTP source in Sumo Logic.](#step-3-create-a-new-http-source-in-sumo-logic)
-            - [Step 4: Update the metrics.conf FluentD Configuration](#step-4-update-the-metricsconf-fluentd-configuration)
-            - [Step 5: Update the prometheus-overrides.yaml file to forward the metrics to FluentD.](#step-5-update-the-prometheus-overridesyaml-file-to-forward-the-metrics-to-fluentd)
-    - [Step 3: Deploy FluentBit](#step-3-deploy-fluentbit)
-    - [Step 4: Deploy Falco](#step-4-deploy-falco)
-    - [Tear down](#tear-down)
-    - [Adding Additional FluentD Plugins](#adding-additional-fluentd-plugins)
+	- [Solution overview](#solution-overview)
+	- [Minimum Requirements](#minimum-requirements)
+	- [Installation with Helm](#installation-with-helm) 
+		- [How to install when no Prometheus exists](#how-to-install-when-no-prometheus-exists) 
+		- [How to install if you have an existing Prometheus operator](#how-to-install-if-you-have-an-existing-prometheus-operator) 
+			- [Default steps](#default-steps) 
+			- [Manual configuration steps](#manual-configuration-steps) 
+		- [How to install if you have standalone Prometheus](#how-to-install-if-you-have-standalone-prometheus) 
+		- [Uninstalling the Chart](#uninstalling-the-chart) 
+	- [Non Helm Installation](#non-helm-installation) 
+		- [Before you start](#before-you-start) 
+		- [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd) 
+			- [Automatic Source Creation and Setup Script](#automatic-source-creation-and-setup-script) 
+				- [Parameters](#parameters) 
+				- [Environment variables](#environment-variables) 
+		- [Manual Source Creation and Setup](#manual-source-creation-and-setup) 
+			- [Create a Hosted Collector and an HTTP Source](#create-a-hosted-collector-and-an-http-source) 
+			- [Deploy Fluentd](#deploy-fluentd) 
+				- [Use default configuration](#use-default-configuration) 
+				- [Customize configuration](#customize-configuration) 
+			- [Verify the pods are running](#verify-the-pods-are-running) 
+		- [Step 2: Configure Prometheus](#step-2-configure-prometheus) 
+			- [Missing metrics for `controller-manager` or `scheduler`](#missing-metrics-for-`controller-manager`-or-`scheduler`) 
+			- [Additional configuration options](#additional-configuration-options) 
+			- [Metrics](#metrics) 
+				- [Filter metrics](#filter-metrics) 
+				- [Trim and relabel metrics](#trim-and-relabel-metrics) 
+			- [Custom Metrics](#custom-metrics) 
+				- [Step 1: Expose a `/metrics` endpoint on your service](#step-1-expose-a-`/metrics`-endpoint-on-your-service) 
+				- [Step 2: Set up a service monitor so that Prometheus pulls the data](#step-2-set-up-a-service-monitor-so-that-prometheus-pulls-the-data) 
+				- [Step 3: Create a new HTTP source in Sumo Logic.](#step-3-create-a-new-http-source-in-sumo-logic.) 
+				- [Step 4: Update the metrics.conf FluentD Configuration](#step-4-update-the-metrics.conf-fluentd-configuration) 
+				- [Step 5: Update the prometheus-overrides.yaml file to forward the metrics to FluentD.](#step-5-update-the-prometheus-overrides.yaml-file-to-forward-the-metrics-to-fluentd.) 
+		- [Step 3: Deploy FluentBit](#step-3-deploy-fluentbit) 
+		- [Step 4: Deploy Falco](#step-4-deploy-falco) 
+	- [Tear down](#tear-down) 
+	- [Adding Additional FluentD Plugins](#adding-additional-fluentd-plugins)
 - [Troubleshooting Collection](#troubleshooting-collection)
-    - [Namespace configuration](#namespace-configuration)
-    - [Gathering logs](#gathering-logs)
-        - [Fluentd Logs](#fluentd-logs)
-        - [Prometheus Logs](#prometheus-logs)
-        - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
-    - [Gathering metrics](#gathering-metrics)
-        - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
-        - [Check the Prometheus UI](#check-the-prometheus-ui)
-        - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
-        - [Check FluentBit and FluentD output metrics](#check-fluentbit-and-fluentd-output-metrics)
-    - [Common Issues](#common-issues)
-        - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
-        - [Missing `kubelet` metrics](#missing-kubelet-metrics)
-            - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
-            - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator)
-        - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
+	- [Namespace configuration](#namespace-configuration) 
+	- [Gathering logs](#gathering-logs) 
+		- [Fluentd Logs](#fluentd-logs) 
+		- [Prometheus Logs](#prometheus-logs) 
+		- [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo) 
+	- [Gathering metrics](#gathering-metrics) 
+		- [Check the `/metrics` endpoint](#check-the-`/metrics`-endpoint) 
+		- [Check the Prometheus UI](#check-the-prometheus-ui) 
+		- [Check Prometheus Remote Storage](#check-prometheus-remote-storage) 
+		- [Check FluentBit and FluentD output metrics](#check-fluentbit-and-fluentd-output-metrics) 
+	- [Common Issues](#common-issues) 
+		- [Pod stuck in `ContainerCreating` state](#pod-stuck-in-`containercreating`-state) 
+		- [Missing `kubelet` metrics](#missing-`kubelet`-metrics) 
+			- [- Enable the `authenticationTokenWebhook` flag in the cluster](#--enable-the-`authenticationtokenwebhook`-flag-in-the-cluster) 
+			- [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2.-disable-the-`kubelet.servicemonitor.https`-flag-in-the-prometheus-operator) 
+		- [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-`kube-controller-manager`-or-`kube-scheduler`-metrics) 
 
 <!-- /TOC -->
 
@@ -68,9 +75,146 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 * **kube-state-metrics.** Listens to the Kubernetes API server; generates metrics about the state of the deployments, nodes, and pods in the cluster; and exports the metrics as plaintext on an HTTP endpoint listen port.
 * **Prometheus deployment.** Scrapes the metrics exposed by the `node-exporter` add-on for Kubernetes and the `kube-state-metric`s component; writes metrics to a port on the Fluentd deployment.
 * **Fluentd deployment.** Forwards logs and metrics to HTTP sources on a hosted collector. Includes multiple Fluentd plugins that parse and format the metrics and enrich them with metadata.
-* **Events fluentd deployment.** Forwards events to an HTTP source on a hosted collector.
+* **Events Fluentd deployment.** Forwards events to an HTTP source on a hosted collector.
 
-## Before you start
+## Minimum Requirements
+
+Name | Version
+-------- | -----
+K8s with EKS | 1.13.8
+|| 1.11.10
+K8s with Kops | 1.13.10-k8s<br>1.13.0-kops
+|| 1.12.8-k8s<br>1.12.2-kops
+||1.10.13-k8s<br>1.10.0-kops
+K8s with GKE | 1.12.8-gke.10<br>1.12.7-gke.25<br>1.11.10-gke.5
+K8s with AKS | 1.12.8
+Helm | 2.4.13 (Linux)
+kubectl | 1.15.0
+
+## Support Matrix
+
+The following matrix displays the tested package versions for our Helm chart.
+
+Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco
+|:-------- |:-------- |:-------- |:--------
+0.4.0 | 6.2.1 | 2.4.4 | 1.0.5
+
+## Installation with Helm
+
+Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
+
+### How to install when no Prometheus exists
+
+To install the chart, first add the `sumologic` private repo:
+
+```bash
+helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
+```
+
+Install the chart with release name `collection` and namespace `sumologic`
+
+```bash
+helm install sumologic/sumologic --name collection --namespace sumologic
+```
+
+If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists`, run
+
+```bash
+helm install sumologic/sumologic --name collection --namespace sumologic --no-crd-hook
+```
+
+To customize your configuration, download the values.yaml file by running
+
+```bash
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml
+```
+
+NOTE: If you need to install the chart with a different release name or namespace you will need to override some configuration fields for both Prometheus and fluent-bit. We recommend using an override file due to the number of fields that need to be overridden. In the following command, replace the `<RELEASE-NAME>` and `<NAMESPACE>` variables with your values and then run it to download the override file with your replaced values:
+
+```bash
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml | \
+sed 's/\-sumologic.sumologic'"/-sumologic.<NAMESPACE>/g" | \
+sed 's/\- sumologic'"/- <NAMESPACE>/g" | \
+sed 's/\collection'"/<RELEASE-NAME>/g" > values.yaml
+```
+
+For example, if your release name is `my-release` and namespace is `my-namespace`:
+```bash
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml | \
+sed 's/\-sumologic.sumologic'"/-sumologic.my-namespace/g" | \
+sed 's/\collection'"/my-release/g" > values.yaml
+```
+
+Make any changes to the `values.yaml` file as needed, and run the following to install the chart with the override file.
+
+```bash
+helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml
+```
+### How to install if you have an existing Prometheus operator
+
+Run the following to download the `values.yaml` file
+
+```bash
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml
+```
+
+Edit the `values.yaml` file so `prometheus-operator.enabled = false`, and run
+
+```bash
+helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml
+```
+
+If you already have a customized remote write configuration you’ll need to make some manual changes, see the [manual configuration](#manual-configuration-steps) steps, otherwise follow the [default](#default-steps) steps.
+
+#### Default steps
+
+Run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide.
+
+```bash
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/prometheus-overrides.yaml
+```
+
+Then run
+
+```bash
+helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml
+```
+
+#### Manual configuration steps
+
+Helm supports providing multiple configuration files, priority will be given to the last (right-most) file specified. You can obtain your current prometheus configuration by running
+
+```bash
+helm get values prometheus-operator > current-values.yaml
+```
+
+Any section of `current-values.yaml` that conflicts with sections of our `prometheus-overrides.yaml` will have to be removed from the `prometheus-overrides.yaml` file and appended to `current-values.yaml` in relevant sections. For any config that doesn’t conflict, you can leave them in `prometheus-overrides.yaml`. Then run
+
+```bash
+helm upgrade prometheus-operator stable/prometheus-operator -f current-values.yaml -f prometheus-overrides.yaml
+```
+
+### How to install if you have standalone Prometheus
+
+Update your Prometheus configuration file’s `remote_write` section, as per the documentation [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write), by taking the `remoteWrite` section of the `prometheus-overrides.yaml` file, and making the following changes:
+
+* `writeRelabelConfigs:` change to `write_relabel_configs:`
+* `sourceLabels:` change to `source_labels:`
+
+### Uninstalling the Chart
+
+To uninstall/delete the `collection` release:
+
+```bash
+helm delete collection
+```
+> **Tip**: Use helm delete --purge collection to completely remove the release from Helm internal storage
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+## Non Helm Installation
+
+### Before you start
 
 * If you haven’t already done so, create your Kubernetes cluster. Verify that you can access the cluster with `kubectl`.
 * Verify that the cluster DNS service is enabled. For more information, see [DNS](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/#dns) in Kubernetes documentation.
@@ -82,11 +226,11 @@ kubectl config use-context DESIRED_CONTEXT_NAME
 
 __NOTE__ These instructions assume that Prometheus is not already running on your Kubernetes cluster.
 
-## Step 1: Create Sumo collector and deploy Fluentd
+### Step 1: Create Sumo collector and deploy Fluentd
 
 In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources to receive your Kubernetes data; creates Kubernetes secrets for the HTTP sources created; and deploy Fluentd using a Sumo-provided .yaml manifest.
 
-### Automatic Source Creation and Setup Script
+#### Automatic Source Creation and Setup Script
 
 This approach requires access to the Sumo Logic Collector API. It will create a Hosted Collector and multiple HTTP Source endpoints and pre-populate Kubernetes secrets detailed in the manual steps below.
 
@@ -97,7 +241,7 @@ curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collect
 
 __NOTE__ This script will be executed in bash and requires [jq command-line JSON parser](https://stedolan.github.io/jq/download/) to be installed.
 
-#### Parameters
+##### Parameters
 
 * __-c &lt;collector_name&gt;__ - optional. Name of Sumo Collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
 * __-k &lt;cluster_name&gt;__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
@@ -109,7 +253,7 @@ __NOTE__ This script will be executed in bash and requires [jq command-line JSON
 * __&lt;access_id&gt;__ - required. Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
 * __&lt;access_key&gt;__ - required. Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
-#### Environment variables
+##### Environment variables
 The parameters for Collector name, cluster name and namespace may also be passed in via environment variables instead of script arguments. If the script argument is supplied that trumps the environment variable.
 * __SUMO_COLLECTOR_NAME__ - optional. Name of Sumo Collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
 * __KUBERNETES_CLUSTER_NAME__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
@@ -197,13 +341,13 @@ kubectl -n sumologic apply -f fluentd-sumologic.yaml
 The manifest will create the Kubernetes resources required by Fluentd.
 
 
-### Verify the pods are running
+#### Verify the pods are running
 
 ```sh
 kubectl -n sumologic get pod
 ```
 
-## Step 2: Configure Prometheus
+### Step 2: Configure Prometheus
 
 In this step, you will configure the Prometheus server to write metrics to Fluentd.
 
@@ -211,41 +355,35 @@ Install Helm:
 
 *Note the following steps are one way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://helm.sh/docs/using_helm/#securing-your-helm-installation)*
 
-```sh
+Download Helm to generate the yaml files necessary to deploy by running
+
+```bash
 brew install kubernetes-helm
 ```
 
-Apply `tiller-rbac.yaml` manifest with `kubectl`, and deploy Tiller with a service account:
+Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
-```sh
-kubectl apply -f https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/tiller-rbac.yaml \
-  && helm init --service-account tiller
+```bash
+$ cd /path/to/helm/charts/  
+$ curl - LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/prometheus-overrides.yaml
 ```
 
-This manifest binds the default `cluster-admin` ClusterRole in your Kubernetes cluster to the `tiller` service account (which is created when you deploy Tiller in the following step.)
-
-Download the Prometheus Operator `prometheus-overrides.yaml` from GitHub:
-
-```sh
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/prometheus-overrides.yaml
-```
+In `prometheus-overrides.yaml`, edit to define a unique cluster identifier. The default value of the cluster field in the externalLabels section of prometheus-overrides.yaml is kubernetes. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
 
 Before installing `prometheus-operator`, edit `prometheus-overrides.yaml` to define a unique cluster identifier. The default value of the `cluster` field in the `externalLabels` section of `prometheus-overrides.yaml` is `kubernetes`. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
 
 __NOTE__ It’s fine to change the value of the `cluster` field, but don’t change the field name (key).
 
-__NOTE__ If you plan to install Prometheus in a different namespace than you deployed FluentD to in Step 1, or you have an existing Prometheus you plan to apply our configuration to running in a different namespace,  please update the remote write API configuration to use the full service url. e.g. `http://collection-sumologic.sumologic.svc.cluster.local:9888`.
+__NOTE__ If you plan to install Prometheus in a different namespace than you deployed Fluentd to in Step 1, or you have an existing Prometheus you plan to apply our configuration to running in a different namespace,  please update the remote write API configuration to use the full service URL like, `http://collection-sumologic.sumologic.svc.cluster.local:9888`.
 
 You can also [Filter metrics](#filter-metrics) and [Trim and relabel metrics](#trim-and-relabel-metrics) in `prometheus-overrides.yaml`.
 
-Install `prometheus-operator` using Helm:
+Install `prometheus-operator` by generating the yaml files using Helm:
 
-```sh
-helm repo update \
-   && helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f prometheus-overrides.yaml
+```bash
+$ helm template stable/prometheus-operator --name prometheus-operator --set dryRun=true -f prometheus-overrides.yaml > prometheus.yaml
+$ kubectl apply -f prometheus.yaml
 ```
-
-__NOTE__ If Custom Resource Definitions (CRD) were created earlier, add `--no-crd-hook` to the end of the command.
 
 Verify `prometheus-operator` is running:
 
@@ -255,7 +393,7 @@ kubectl -n sumologic logs prometheus-prometheus-operator-prometheus-0 prometheus
 
 At this point setup is complete and metrics data is being sent to Sumo Logic.
 
-### Missing metrics for `controller-manager` or `scheduler`
+#### Missing metrics for `controller-manager` or `scheduler`
 
 Since there is a backward compatibility issue in the current version of chart, you may need to follow a workaround for sending these metrics under `controller-manager` or `scheduler`:
 
@@ -266,11 +404,11 @@ kubectl -n kube-system patch service prometheus-operator-kube-controller-manager
 kubectl -n kube-system patch service prometheus-operator-kube-scheduler --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
 ```
 
-### Additional configuration options
+#### Additional configuration options
 
-### Metrics
+#### Metrics
 
-#### Filter metrics
+##### Filter metrics
 
 The `prometheus-overrides.yaml` file specifies metrics to be collected. If you want to exclude some metrics from collection, or include others, you can edit `prometheus-overrides.yaml`. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
 
@@ -287,7 +425,7 @@ If you would like to collect other metrics that are not listed in `prometheus-ov
 The syntax of `writeRelabelConfigs` can be found [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write).
 You can supply any label you like. You can query Prometheus to see a complete list of metrics it’s scraping.
 
-#### Trim and relabel metrics
+##### Trim and relabel metrics
 
 You can specify relabeling, and additional inclusion or exclusion options in `fluentd-sumologic.yaml`.
 
@@ -319,15 +457,15 @@ This filter will:
 * Rename the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
 * Only apply to metrics with the `kube-system` namespace
 
-### Custom Metrics
+#### Custom Metrics
 
 If you have custom metrics you'd like to send to Sumo via Prometheus, you just need to expose a `/metrics` endpoint in prometheus format, and instruct prometheus via a ServiceMonitor to pull data from the endpoint. In this section, we'll walk through collecting custom metrics with Prometheus.
 
-#### Step 1: Expose a `/metrics` endpoint on your service
+##### Step 1: Expose a `/metrics` endpoint on your service
 
 There are many pre-built libraries that the community has built to expose these, but really any output that aligns with the prometheus format can work. Here is a list of libraries: [Libraries](https://prometheus.io/docs/instrumenting/clientlibs). Manually verify that you have metrics exposed in Prometheus format by hitting the metrics endpoint, and verifying that the output follows the [Prometheus format](https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md).
 
-#### Step 2: Set up a service monitor so that Prometheus pulls the data
+##### Step 2: Set up a service monitor so that Prometheus pulls the data
 
 Service Monitors is how we tell Prometheus what endpoints and sources to pull metrics from. To define a Service Monitor, create a yaml file on disk with information templated as follows:
 
@@ -369,11 +507,11 @@ Note, you need to ensure the `release` label matches the `release` label on your
 Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
-#### Step 3: Create a new HTTP source in Sumo Logic.
+##### Step 3: Create a new HTTP source in Sumo Logic.
 
 To avoid [blacklisting](https://help.sumologic.com/Metrics/Understand_and_Manage_Metric_Volume/Blacklisted_Metrics_Sources) metrics should be distributed across multiple HTTP sources. You can [follow these steps](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create a new HTTP source for your custom metrics. Make note of the URL as you will need it in the next step.
 
-#### Step 4: Update the metrics.conf FluentD Configuration
+##### Step 4: Update the metrics.conf FluentD Configuration
 
 Next, you will need to update the Fluentd configuration to ensure Fluentd routes your custom metrics to the HTTP source you created in the previous step.
 
@@ -426,7 +564,7 @@ kind: Secret
            </match>
 ```
 
-#### Step 5: Update the prometheus-overrides.yaml file to forward the metrics to FluentD.
+##### Step 5: Update the prometheus-overrides.yaml file to forward the metrics to FluentD.
 
 The `prometheus-overrides.yaml` file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update the `prometheus-overrides.yaml` file to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your FluentD configmap in the previous step. Here is an example addition to the `prometheus-overrides.yaml` file that will forward metrics to Sumo:
 
@@ -446,58 +584,45 @@ Note: When executing the helm upgrade, to avoid the error below, you need to add
 
 If all goes well, you should now have your custom metrics piping into Sumo Logic.
 
-## Step 3: Deploy FluentBit
+### Step 3: Deploy FluentBit
 
 In this step, you will deploy FluentBit to forward logs to Fluentd.
 
-Download the FluentBit `fluent-bit-overrides.yaml` from GitHub:
+Run the following commands to download the FluentBit fluent-bit-overrides.yaml file and install `fluent-bit`
 
-```sh
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/fluent-bit-overrides.yaml
+```bash
+$ cd /path/to/helm/charts/
+$ curl - LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/fluent-bit-overrides.yaml
+$ helm template stable/fluent-bit --name fluent-bit --set dryRun=true -f fluent-bit-overrides.yaml > fluent-bit.yaml
+$ kubectl apply -f fluent-bit.yaml
 ```
 
-Install `fluent-bit` using Helm:
-
-```sh
-helm repo update \
-   && helm install stable/fluent-bit --name fluent-bit --namespace sumologic -f fluent-bit-overrides.yaml
-```
-
-## Step 4: Deploy Falco
+### Step 4: Deploy Falco
 
 In this step, you will deploy [Falco](https://falco.org/) to detect anomalous activity and capture Kubernetes Audit Events. This step is required only if you intend to use the Sumo Logic Kubernetes App.
 
-__NOTE__ [Falco](https://sysdig.com/blog/sysdig-falco/) needs privileged container access to insert its kernel module to process events for system calls.
-
 Download the file `falco-overrides.yaml` from GitHub:
 
-```sh
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/falco-overrides.yaml
-```
-
-Install `falco` using Helm:
-
-```sh
-helm repo update \
-   && helm install stable/falco --name falco --namespace sumologic -f falco-overrides.yaml
+```bash
+$ cd /path/to/helm/charts/
+$ curl - LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/falco-overrides.yaml
 ```
 
 __NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to leverage eBPF (extended Berkeley Packet Filter) to supply the stream of system calls to the Falco engine. eBPF is currently supported only on GKE and COS. More details [here](https://falco.org/docs/installation/).
 
-To install `Falco` on `GKE`, uncomment following lines in the file `falco-overrides.yaml`:
+To install `Falco` on `GKE`, uncomment the following lines in the file `falco-overrides.yaml`:
 
 ```
 ebpf:
   enabled: true
 ```
 
-Install `falco` on `GKE` using Helm:
+Install `falco` by generating the yaml files using Helm:
 
-```sh
-helm repo update \
-   && helm install stable/falco --name falco --namespace sumologic -f falco-overrides.yaml
+```bash
+$ helm template stable/falco --name falco --set dryRun=true -f falco-overrides.yaml > falco.yaml
+$ kubectl apply -f falco.yaml
 ```
-
 
 ## Tear down
 
@@ -757,3 +882,9 @@ helm install stable/prometheus-operator --name prometheus-operator --namespace s
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
 There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [above](#missing-metrics-for-controller-manager-or-scheduler).
+
+### Rancher
+
+If you are running the out of the box rancher monitoring setup, you cannot run our Prometheus operator alongside it. The Rancher Prometheus Operator setup will actually kill and permanently terminate our Prometheus Operator instance and will prevent the metrics system from coming up.
+If you have the Rancher prometheus operator setup running, they will have to use the UI to disable it before they can install our collection process.
+
