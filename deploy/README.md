@@ -855,3 +855,9 @@ helm install stable/prometheus-operator --name prometheus-operator --namespace s
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
 There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [above](#missing-metrics-for-controller-manager-or-scheduler).
+
+### Rancher
+
+If you are running the out of the box rancher monitoring setup, you cannot run our Prometheus operator alongside it. The Rancher Prometheus Operator setup will actually kill and permanently terminate our Prometheus Operator instance and will prevent the metrics system from coming up.
+If you have the Rancher prometheus operator setup running, they will have to use the UI to disable it before they can install our collection process.
+
