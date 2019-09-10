@@ -431,7 +431,7 @@ kind: Secret
 The `prometheus-overrides.yaml` file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update the `prometheus-overrides.yaml` file to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your FluentD configmap in the previous step. Here is an example addition to the `prometheus-overrides.yaml` file that will forward metrics to Sumo:
 
 ```
-- url: http://fluentd.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
+- url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
       writeRelabelConfigs:
       - action: keep
         regex: <YOUR_CUSTOM_MATCHER>
