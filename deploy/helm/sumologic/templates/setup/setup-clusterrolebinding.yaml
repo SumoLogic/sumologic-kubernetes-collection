@@ -5,6 +5,7 @@ metadata:
   name:  {{ template "sumologic.fullname" . }}-setup
   annotations:
     "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "2"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: {{ template "sumologic.labels.app" . }}
