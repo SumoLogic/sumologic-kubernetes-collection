@@ -114,7 +114,7 @@ To run the script that creates the namespace and secret, use the following comma
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
   | bash -s - -d false -y false <api_endpoint> <access_id> <access_key>
 ```
-NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. Details on the parameters are explained [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/master/deploy#automatic-source-creation-and-setup-script). 
+NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. Details on the parameters are explained [here](#automatic-source-creation-and-setup-script). 
 
 _Soon this step will not be needed after we move the collection setup into a helm hook. Stay tuned._
 
