@@ -111,7 +111,7 @@ Before installing the chart, you'll need to run our `setup.sh` script. It will c
 To run the script that creates the namespace and secret, use the following command:
 
 ```bash
-curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup.sh \
+curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/docker/setup/setup.sh \
   | bash -s - -d false -y false <api_endpoint> <access_id> <access_key>
 ```
 NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. Details on the parameters are explained [here](#automatic-source-creation-and-setup-script). 
