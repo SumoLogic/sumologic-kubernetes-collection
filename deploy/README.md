@@ -17,7 +17,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 		- [Uninstalling the Chart](#uninstalling-the-chart) 
 	- [Non Helm Installation](#non-helm-installation) 
 		- [Before you start](#before-you-start) 
-		- [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd) 
+		- [Step 1: Create Sumo fields, Sumo collector and deploy Fluentd](#step-1-create-sumo-fields-sumo-collector-and-deploy-fluentd) 
 			- [Automatic Source Creation and Setup Script](#automatic-source-creation-and-setup-script) 
 				- [Parameters](#parameters) 
 				- [Environment variables](#environment-variables) 
