@@ -82,6 +82,15 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 
 Name | Version
 -------- | -----
+K8s | 1.10+
+Helm | 2.11+
+
+## Support Matrix
+
+The following table displays the tested Kubernetes and Helm versions.
+
+Name | Version
+-------- | -----
 K8s with EKS | 1.13.8
 || 1.11.10
 K8s with Kops | 1.13.10-k8s<br>1.13.0-kops
@@ -89,10 +98,8 @@ K8s with Kops | 1.13.10-k8s<br>1.13.0-kops
 ||1.10.13-k8s<br>1.10.0-kops
 K8s with GKE | 1.12.8-gke.10<br>1.12.7-gke.25<br>1.11.10-gke.5
 K8s with AKS | 1.12.8
-Helm | 2.4.13 (Linux)
+Helm | 2.14.13 (Linux)
 kubectl | 1.15.0
-
-## Support Matrix
 
 The following matrix displays the tested package versions for our Helm chart.
 
@@ -114,7 +121,7 @@ To run the script that creates the namespace and secret, use the following comma
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/docker/setup/setup.sh \
   | bash -s - -d false -y false <api_endpoint> <access_id> <access_key>
 ```
-NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. Details on the parameters are explained [here](#automatic-source-creation-and-setup-script). 
+NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. To use a different cluster name than the default `kubernetes`, add the `-k <cluster_name>` parameter. Details on the parameters are explained [here](#automatic-source-creation-and-setup-script). 
 
 _Soon this step will not be needed after we move the collection setup into a helm hook. Stay tuned._
 
@@ -165,6 +172,12 @@ Make any changes to the `values.yaml` file as needed, and run the following to i
 ```bash
 helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml
 ```
+
+If you would like to use a different cluster name than the default `kubernetes`, add this to the `helm install` command:
+```
+--set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<my-cluster-name>"
+```
+
 ### How to install if you have an existing Prometheus operator
 
 Run the following to download the `values.yaml` file
@@ -380,7 +393,7 @@ Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
 $ cd /path/to/helm/charts/  
-$ curl - LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/prometheus-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 In `prometheus-overrides.yaml`, edit to define a unique cluster identifier. The default value of the cluster field in the externalLabels section of prometheus-overrides.yaml is kubernetes. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
@@ -607,7 +620,7 @@ Run the following commands to download the FluentBit fluent-bit-overrides.yaml f
 
 ```bash
 $ cd /path/to/helm/charts/
-$ curl - LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/fluent-bit-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/fluent-bit-overrides.yaml
 $ helm template stable/fluent-bit --name fluent-bit --set dryRun=true -f fluent-bit-overrides.yaml > fluent-bit.yaml
 $ kubectl apply -f fluent-bit.yaml
 ```
@@ -620,7 +633,7 @@ Download the file `falco-overrides.yaml` from GitHub:
 
 ```bash
 $ cd /path/to/helm/charts/
-$ curl - LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/falco-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/falco-overrides.yaml
 ```
 
 __NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to leverage eBPF (extended Berkeley Packet Filter) to supply the stream of system calls to the Falco engine. eBPF is currently supported only on GKE and COS. More details [here](https://falco.org/docs/installation/).
