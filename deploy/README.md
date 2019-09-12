@@ -114,7 +114,7 @@ To run the script that creates the namespace and secret, use the following comma
 curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/docker/setup/setup.sh \
   | bash -s - -d false -y false <api_endpoint> <access_id> <access_key>
 ```
-NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. Details on the parameters are explained [here](#automatic-source-creation-and-setup-script). 
+NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. To use a different cluster name than the defualt `kubernetes`, add the `-k <cluster_name>` parameter. Details on the parameters are explained [here](#automatic-source-creation-and-setup-script). 
 
 _Soon this step will not be needed after we move the collection setup into a helm hook. Stay tuned._
 
@@ -165,6 +165,12 @@ Make any changes to the `values.yaml` file as needed, and run the following to i
 ```bash
 helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml
 ```
+
+If you would like to use a different cluster name than the default `kubernetes`, add this to the `helm install` command:
+```
+--set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<my-cluster-name>"
+```
+
 ### How to install if you have an existing Prometheus operator
 
 Run the following to download the `values.yaml` file
