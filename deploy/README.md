@@ -386,7 +386,7 @@ Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
 $ cd /path/to/helm/charts/  
-$ curl - LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/prometheus-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 In `prometheus-overrides.yaml`, edit to define a unique cluster identifier. The default value of the cluster field in the externalLabels section of prometheus-overrides.yaml is kubernetes. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
@@ -613,7 +613,7 @@ Run the following commands to download the FluentBit fluent-bit-overrides.yaml f
 
 ```bash
 $ cd /path/to/helm/charts/
-$ curl - LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/fluent-bit-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/fluent-bit-overrides.yaml
 $ helm template stable/fluent-bit --name fluent-bit --set dryRun=true -f fluent-bit-overrides.yaml > fluent-bit.yaml
 $ kubectl apply -f fluent-bit.yaml
 ```
@@ -626,7 +626,7 @@ Download the file `falco-overrides.yaml` from GitHub:
 
 ```bash
 $ cd /path/to/helm/charts/
-$ curl - LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/falco-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/falco-overrides.yaml
 ```
 
 __NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to leverage eBPF (extended Berkeley Packet Filter) to supply the stream of system calls to the Falco engine. eBPF is currently supported only on GKE and COS. More details [here](https://falco.org/docs/installation/).
