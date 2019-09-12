@@ -118,6 +118,16 @@ NOTE: You'll need to set `-d` and `-y` to false so the script does not download 
 
 _Soon this step will not be needed after we move the collection setup into a helm hook. Stay tuned._
 
+Next you'll need to set up the relevant [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI. This is to ensure your logs will be tagged with the correct metadata.
+- cluster
+- container
+- deployment
+- host
+- namespace
+- node
+- pod
+- service
+
 ### How to install when no Prometheus exists
 
 To install the chart, first add the `sumologic` private repo:
@@ -241,9 +251,19 @@ kubectl config use-context DESIRED_CONTEXT_NAME
 
 __NOTE__ These instructions assume that Prometheus is not already running on your Kubernetes cluster.
 
-### Step 1: Create Sumo collector and deploy Fluentd
+### Step 1: Create Sumo fields, Sumo collector and deploy Fluentd
 
 In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources to receive your Kubernetes data; creates Kubernetes secrets for the HTTP sources created; and deploy Fluentd using a Sumo-provided .yaml manifest.
+
+First, you'll need to set up the relevant [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI. This is to ensure your logs will be tagged with the correct metadata.
+- cluster
+- container
+- deployment
+- host
+- namespace
+- node
+- pod
+- service
 
 #### Automatic Source Creation and Setup Script
 
