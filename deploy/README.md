@@ -128,7 +128,7 @@ helm install sumologic/sumologic --name collection --namespace sumologic --set s
 If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists`, run
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic --no-crd-hook
+helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --no-crd-hook
 ```
 
 To customize your configuration, download the values.yaml file by running
@@ -156,7 +156,7 @@ sed 's/\collection'"/my-release/g" > values.yaml
 Make any changes to the `values.yaml` file as needed, and run the following to install the chart with the override file.
 
 ```bash
-helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml
+helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
 ```
 
 If you would like to use a different cluster name than the default `kubernetes`, add this to the `helm install` command:
@@ -175,7 +175,7 @@ curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection
 Edit the `values.yaml` file so `prometheus-operator.enabled = false`, and run
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml
+helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
 ```
 
 If you already have a customized remote write configuration you’ll need to make some manual changes, see the [manual configuration](#manual-configuration-steps) steps, otherwise follow the [default](#default-steps) steps.
