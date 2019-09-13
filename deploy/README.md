@@ -105,25 +105,11 @@ The following matrix displays the tested package versions for our Helm chart.
 
 Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco
 |:-------- |:-------- |:-------- |:--------
-0.4.0 | 6.2.1 | 2.4.4 | 1.0.5
+0.6.0 | 6.2.1 | 2.4.4 | 1.0.5
 
 ## Installation with Helm
 
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
-
-### Prerequisite
-
-Before installing the chart, you'll need to run our `setup.sh` script. It will create a namespace called `sumologic` and a secret with the same name that contains the Sumo Logic collection endpoints.
-
-To run the script that creates the namespace and secret, use the following command:
-
-```bash
-curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/docker/setup/setup.sh \
-  | bash -s - -d false -y false <api_endpoint> <access_id> <access_key>
-```
-NOTE: You'll need to set `-d` and `-y` to false so the script does not download the YAML file or deploy the resources into your cluster yet. To use a different cluster name than the default `kubernetes`, add the `-k <cluster_name>` parameter. Details on the parameters are explained [here](#automatic-source-creation-and-setup-script). 
-
-_Soon this step will not be needed after we move the collection setup into a helm hook. Stay tuned._
 
 ### How to install when no Prometheus exists
 
@@ -136,7 +122,7 @@ helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collect
 Install the chart with release name `collection` and namespace `sumologic`
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic
+helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>
 ```
 
 If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists`, run
@@ -199,7 +185,7 @@ If you already have a customized remote write configuration you’ll need to mak
 Run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide.
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.6.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 Then run
@@ -393,7 +379,7 @@ Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
 $ cd /path/to/helm/charts/  
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/prometheus-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.6.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 In `prometheus-overrides.yaml`, edit to define a unique cluster identifier. The default value of the cluster field in the externalLabels section of prometheus-overrides.yaml is kubernetes. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
@@ -620,7 +606,7 @@ Run the following commands to download the FluentBit fluent-bit-overrides.yaml f
 
 ```bash
 $ cd /path/to/helm/charts/
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/fluent-bit-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.6.0/deploy/helm/fluent-bit-overrides.yaml
 $ helm template stable/fluent-bit --name fluent-bit --set dryRun=true -f fluent-bit-overrides.yaml > fluent-bit.yaml
 $ kubectl apply -f fluent-bit.yaml
 ```
@@ -633,7 +619,7 @@ Download the file `falco-overrides.yaml` from GitHub:
 
 ```bash
 $ cd /path/to/helm/charts/
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.4.0/deploy/helm/falco-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.6.0/deploy/helm/falco-overrides.yaml
 ```
 
 __NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to leverage eBPF (extended Berkeley Packet Filter) to supply the stream of system calls to the Falco engine. eBPF is currently supported only on GKE and COS. More details [here](https://falco.org/docs/installation/).
