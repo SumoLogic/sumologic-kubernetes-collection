@@ -17,7 +17,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 		- [Uninstalling the Chart](#uninstalling-the-chart) 
 	- [Non Helm Installation](#non-helm-installation) 
 		- [Before you start](#before-you-start) 
-		- [Step 1: Create Sumo collector and deploy Fluentd](#step-1-create-sumo-collector-and-deploy-fluentd) 
+		- [Step 1: Create Sumo Fields, a collector, and deploy Fluentd](#step-1-create-sumo-fields-a-collector-and-deploy-fluentd) 
 			- [Automatic Source Creation and Setup Script](#automatic-source-creation-and-setup-script) 
 				- [Parameters](#parameters) 
 				- [Environment variables](#environment-variables) 
@@ -110,6 +110,18 @@ Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco
 ## Installation with Helm
 
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
+
+### Prerequisite
+
+Before installing the chart, you'll need to set up the following [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI. This is to ensure your logs are tagged with relevant metadata.
+- cluster
+- container
+- deployment
+- host
+- namespace
+- node
+- pod
+- service
 
 ### How to install when no Prometheus exists
 
@@ -240,9 +252,19 @@ kubectl config use-context DESIRED_CONTEXT_NAME
 
 __NOTE__ These instructions assume that Prometheus is not already running on your Kubernetes cluster.
 
-### Step 1: Create Sumo collector and deploy Fluentd
+### Step 1: Create Sumo Fields, a Collector, and deploy Fluentd
 
 In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources to receive your Kubernetes data; creates Kubernetes secrets for the HTTP sources created; and deploy Fluentd using a Sumo-provided .yaml manifest.
+
+First, you'll need to set up the relevant [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI. This is to ensure your logs will be tagged with the correct metadata.
+- cluster
+- container
+- deployment
+- host
+- namespace
+- node
+- pod
+- service
 
 #### Automatic Source Creation and Setup Script
 
