@@ -173,7 +173,7 @@ helm install sumologic/sumologic --name my-release --namespace my-namespace -f v
 
 If you would like to use a different cluster name than the default `kubernetes`, add this to the `helm install` command:
 ```
---set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<my-cluster-name>"
+--set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<my-cluster-name>" --set sumologic.clusterName="<my-cluster-name>"
 ```
 
 ### How to install if you have an existing Prometheus operator
