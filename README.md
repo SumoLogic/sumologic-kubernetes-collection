@@ -8,6 +8,10 @@ This repo contains all required resources to collect data from Kubernetes cluste
 
 ![overview](/images/overview.png)
 
+# Installation
+
+Detailed instructions are available in our [Installation Guide](./deploy/README.md).
+
 # License
 
 This project is released under the [Apache 2.0 License](./LICENSE).
