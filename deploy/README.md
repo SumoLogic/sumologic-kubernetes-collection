@@ -123,7 +123,7 @@ Before installing the chart, you'll need to set up the following [fields](https:
 - pod
 - service
 
-The Helm chart installation requires 3 parameter overrides:
+The Helm chart installation requires three parameter overrides:
 * __sumologic.endpoint__ - See [API endpoints](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security) for details.
 * __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
 * __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
