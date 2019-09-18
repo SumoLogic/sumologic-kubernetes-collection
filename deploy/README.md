@@ -17,30 +17,30 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 		- [Uninstalling the Chart](#uninstalling-the-chart) 
 	- [Non Helm Installation](#non-helm-installation) 
 		- [Before you start](#before-you-start) 
-		- [Step 1: Create Sumo Fields, a collector, and deploy Fluentd](#step-1-create-sumo-fields-a-collector-and-deploy-fluentd) 
+		- [Create Sumo Fields, a collector, and deploy Fluentd](#create-sumo-fields-a-collector-and-deploy-fluentd) 
 			- [Automatic Source Creation and Setup Script](#automatic-source-creation-and-setup-script) 
 				- [Parameters](#parameters) 
 				- [Environment variables](#environment-variables) 
-		- [Manual Source Creation and Setup](#manual-source-creation-and-setup) 
-			- [Create a Hosted Collector and an HTTP Source](#create-a-hosted-collector-and-an-http-source) 
-			- [Deploy Fluentd](#deploy-fluentd) 
-				- [Use default configuration](#use-default-configuration) 
-				- [Customize configuration](#customize-configuration) 
+			- [Manual Source Creation and Setup](#manual-source-creation-and-setup) 
+				- [Create a Hosted Collector and an HTTP Source](#create-a-hosted-collector-and-an-http-source) 
+				- [Deploy Fluentd](#deploy-fluentd) 
+					- [Use default configuration](#use-default-configuration) 
+					- [Customize configuration](#customize-configuration) 
 			- [Verify the pods are running](#verify-the-pods-are-running) 
-		- [Step 2: Configure Prometheus](#step-2-configure-prometheus) 
+		- [Configure Prometheus](#configure-prometheus) 
 			- [Missing metrics for `controller-manager` or `scheduler`](#missing-metrics-for-`controller-manager`-or-`scheduler`) 
 			- [Additional configuration options](#additional-configuration-options) 
 			- [Metrics](#metrics) 
 				- [Filter metrics](#filter-metrics) 
 				- [Trim and relabel metrics](#trim-and-relabel-metrics) 
 			- [Custom Metrics](#custom-metrics) 
-				- [Step 1: Expose a `/metrics` endpoint on your service](#step-1-expose-a-`/metrics`-endpoint-on-your-service) 
-				- [Step 2: Set up a service monitor so that Prometheus pulls the data](#step-2-set-up-a-service-monitor-so-that-prometheus-pulls-the-data) 
-				- [Step 3: Create a new HTTP source in Sumo Logic.](#step-3-create-a-new-http-source-in-sumo-logic.) 
-				- [Step 4: Update the metrics.conf FluentD Configuration](#step-4-update-the-metrics.conf-fluentd-configuration) 
-				- [Step 5: Update the prometheus-overrides.yaml file to forward the metrics to FluentD.](#step-5-update-the-prometheus-overrides.yaml-file-to-forward-the-metrics-to-fluentd.) 
-		- [Step 3: Deploy FluentBit](#step-3-deploy-fluentbit) 
-		- [Step 4: Deploy Falco](#step-4-deploy-falco) 
+				- [Expose a `/metrics` endpoint on your service](#expose-a-`/metrics`-endpoint-on-your-service) 
+				- [Set up a service monitor so that Prometheus pulls the data](#set-up-a-service-monitor-so-that-prometheus-pulls-the-data) 
+				- [Create a new HTTP source in Sumo Logic.](#create-a-new-http-source-in-sumo-logic.) 
+				- [Update the metrics.conf FluentD Configuration](#update-the-metrics.conf-fluentd-configuration) 
+				- [Update the prometheus-overrides.yaml file to forward the metrics to FluentD.](#update-the-prometheus-overrides.yaml-file-to-forward-the-metrics-to-fluentd.) 
+		- [Deploy FluentBit](#deploy-fluentbit) 
+		- [Deploy Falco](#4-deploy-falco) 
 	- [Tear down](#tear-down) 
 	- [Adding Additional FluentD Plugins](#adding-additional-fluentd-plugins)
 - [Troubleshooting Collection](#troubleshooting-collection)
@@ -252,7 +252,7 @@ kubectl config use-context DESIRED_CONTEXT_NAME
 
 __NOTE__ These instructions assume that Prometheus is not already running on your Kubernetes cluster.
 
-### Step 1: Create Sumo Fields, a Collector, and deploy Fluentd
+### Create Sumo Fields, a Collector, and deploy Fluentd
 
 In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources to receive your Kubernetes data; creates Kubernetes secrets for the HTTP sources created; and deploy Fluentd using a Sumo-provided .yaml manifest.
 
@@ -297,11 +297,11 @@ The parameters for Collector name, cluster name and namespace may also be passed
 
 __Note:__ The script will generate a YAML file (`fluentd-sumologic.yaml`) with all the deployed Kuberentes resources on disk. Save this file for easy teardown and redeploy of the resources.
 
-### Manual Source Creation and Setup
+#### Manual Source Creation and Setup
 
 This is a manual alternative approach to the automatic script if you don't have API access or need customized configuration, such as reusing an existing collector.
 
-#### Create a Hosted Collector and an HTTP Source
+##### Create a Hosted Collector and an HTTP Source
 
 In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources to receive your Kubernetes data.
 
@@ -324,7 +324,7 @@ Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic
 * **Naming the sources.** You can assign any name you like to the Sources, but it’s a good idea to assign a name to each Source that reflects the Kubernetes component from which it receives data. For example, you might name the source that receives API Server metrics “api-server-metrics”.
 * **HTTP Source URLs.** When you configure each HTTP Source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service secrets to send data to Sumo.
 
-#### Deploy Fluentd
+##### Deploy Fluentd
 
 In this step you will deploy Fluentd using a Sumo-provided .yaml manifest. This step also creates Kubernetes secrets for the HTTP Sources created in the previous step.
 
@@ -349,7 +349,7 @@ kubectl -n sumologic create secret generic sumologic \
   --from-literal=endpoint-events=$ENDPOINT_EVENTS
 ```
 
-##### Use default configuration
+###### Use default configuration
 
 If you don't need to customize the configuration apply the `fluentd-sumologic.yaml` manifest with the following command:
 
@@ -359,7 +359,7 @@ sed 's/\$NAMESPACE'"/sumologic/g" | \
 kubectl -n sumologic apply -f -
 ```
 
-##### Customize configuration
+###### Customize configuration
 
 If you need to customize the configuration there are two commands to run. First, get the `fluentd-sumologic.yaml` manifest with following command:
 
@@ -377,13 +377,13 @@ kubectl -n sumologic apply -f fluentd-sumologic.yaml
 The manifest will create the Kubernetes resources required by Fluentd.
 
 
-#### Verify the pods are running
+##### Verify the pods are running
 
 ```sh
 kubectl -n sumologic get pod
 ```
 
-### Step 2: Configure Prometheus
+### Configure Prometheus
 
 In this step, you will configure the Prometheus server to write metrics to Fluentd.
 
@@ -497,11 +497,11 @@ This filter will:
 
 If you have custom metrics you'd like to send to Sumo via Prometheus, you just need to expose a `/metrics` endpoint in prometheus format, and instruct prometheus via a ServiceMonitor to pull data from the endpoint. In this section, we'll walk through collecting custom metrics with Prometheus.
 
-##### Step 1: Expose a `/metrics` endpoint on your service
+##### Expose a `/metrics` endpoint on your service
 
 There are many pre-built libraries that the community has built to expose these, but really any output that aligns with the prometheus format can work. Here is a list of libraries: [Libraries](https://prometheus.io/docs/instrumenting/clientlibs). Manually verify that you have metrics exposed in Prometheus format by hitting the metrics endpoint, and verifying that the output follows the [Prometheus format](https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md).
 
-##### Step 2: Set up a service monitor so that Prometheus pulls the data
+##### Set up a service monitor so that Prometheus pulls the data
 
 Service Monitors is how we tell Prometheus what endpoints and sources to pull metrics from. To define a Service Monitor, create a yaml file on disk with information templated as follows:
 
@@ -543,11 +543,11 @@ Note, you need to ensure the `release` label matches the `release` label on your
 Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
-##### Step 3: Create a new HTTP source in Sumo Logic.
+##### Create a new HTTP source in Sumo Logic.
 
 To avoid [blacklisting](https://help.sumologic.com/Metrics/Understand_and_Manage_Metric_Volume/Blacklisted_Metrics_Sources) metrics should be distributed across multiple HTTP sources. You can [follow these steps](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create a new HTTP source for your custom metrics. Make note of the URL as you will need it in the next step.
 
-##### Step 4: Update the metrics.conf FluentD Configuration
+##### Update the metrics.conf FluentD Configuration
 
 Next, you will need to update the Fluentd configuration to ensure Fluentd routes your custom metrics to the HTTP source you created in the previous step.
 
@@ -600,7 +600,7 @@ kind: Secret
            </match>
 ```
 
-##### Step 5: Update the prometheus-overrides.yaml file to forward the metrics to FluentD.
+##### Update the prometheus-overrides.yaml file to forward the metrics to FluentD.
 
 The `prometheus-overrides.yaml` file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update the `prometheus-overrides.yaml` file to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your FluentD configmap in the previous step. Here is an example addition to the `prometheus-overrides.yaml` file that will forward metrics to Sumo:
 
@@ -620,7 +620,7 @@ Note: When executing the helm upgrade, to avoid the error below, you need to add
 
 If all goes well, you should now have your custom metrics piping into Sumo Logic.
 
-### Step 3: Deploy FluentBit
+### Deploy FluentBit
 
 In this step, you will deploy FluentBit to forward logs to Fluentd.
 
@@ -633,7 +633,7 @@ $ helm template stable/fluent-bit --name fluent-bit --set dryRun=true -f fluent-
 $ kubectl apply -f fluent-bit.yaml
 ```
 
-### Step 4: Deploy Falco
+### Deploy Falco
 
 In this step, you will deploy [Falco](https://falco.org/) to detect anomalous activity and capture Kubernetes Audit Events. This step is required only if you intend to use the Sumo Logic Kubernetes App.
 
