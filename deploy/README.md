@@ -716,6 +716,25 @@ USER fluent
 
 # Troubleshooting Collection
 
+## `helm install` hanging
+
+If `helm install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to limitation of helm, errors from the setup job cannot be fed back to the `helm install` command. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where the helm chart is deployed:
+```sh
+kubectl get pods -n sumologic
+```
+
+Get the logs from that pod:
+```
+kubectl logs POD_NAME -f
+```
+
+If you see `Secret 'sumologic::sumologic' exists, abort.` from the logs, delete the existing secret:
+```
+kubectl delete secret sumologic -n sumologic
+```
+
+`helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries, rerun the `helm install` command.
+
 ## Namespace configuration
 
 The following `kubectl` commands assume you are in the correct namespace `sumologic`. By default, these commands will use the namespace `default`.
