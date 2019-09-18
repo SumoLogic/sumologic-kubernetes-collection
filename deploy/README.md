@@ -718,7 +718,7 @@ USER fluent
 
 ## `helm install` hanging
 
-If `helm install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to limitation of helm, errors from the setup job cannot be fed back to the `helm install` command. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where the helm chart is deployed:
+If `helm install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm install` command. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where the Helm chart is deployed:
 ```sh
 kubectl get pods -n sumologic
 ```
