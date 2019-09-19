@@ -11,8 +11,9 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 		- [Prerequisite](#prerequisite)
 		- [How to install when no Prometheus exists](#how-to-install-when-no-prometheus-exists) 
 		- [How to install if you have an existing Prometheus operator](#how-to-install-if-you-have-an-existing-prometheus-operator) 
-			- [Default steps](#default-steps) 
-			- [Manual configuration steps](#manual-configuration-steps) 
+			- [Install Fluentd, Fluent-bit, and Falco](#install-fluentd-fluent-bit-and-falco) 
+			- [Overwrite Prometheus Remote Write Configuration](#overwrite-prometheus-remote-write-configuration) 
+			- [Merge Prometheus Remote Write Configuration](#merge-prometheus-remote-write-configuration) 
 		- [How to install if you have standalone Prometheus](#how-to-install-if-you-have-standalone-prometheus) 
 		- [Uninstalling the Chart](#uninstalling-the-chart) 
 	- [Non Helm Installation](#non-helm-installation) 
@@ -178,23 +179,23 @@ If you would like to use a different cluster name than the default `kubernetes`,
 
 ### How to install if you have an existing Prometheus operator
 
+#### Install Fluentd, Fluent-bit, and Falco
+
 Run the following to download the `values.yaml` file
 
 ```bash
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml
 ```
 
-Edit the `values.yaml` file so `prometheus-operator.enabled = false`, and run
+Edit the `values.yaml` file to `prometheus-operator.enabled = false`, and run
 
 ```bash
 helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
 ```
 
-If you already have a customized remote write configuration you’ll need to make some manual changes, see the [manual configuration](#manual-configuration-steps) steps, otherwise follow the [default](#default-steps) steps.
+#### Overwrite Prometheus Remote Write Configuration
 
-#### Default steps
-
-Run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide.
+If you have not already customized your [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write), run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide below.
 
 ```bash
 curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.6.0/deploy/helm/prometheus-overrides.yaml
@@ -206,9 +207,11 @@ Then run
 helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml
 ```
 
-#### Manual configuration steps
+#### Merge Prometheus Remote Write Configuration
 
-Helm supports providing multiple configuration files, priority will be given to the last (right-most) file specified. You can obtain your current prometheus configuration by running
+If you have customized your Prometheus remote write configuration, follow these steps to merge the configurations. 
+
+Helm supports providing multiple configuration files, and priority will be given to the last (right-most) file specified. You can obtain your current prometheus configuration by running
 
 ```bash
 helm get values prometheus-operator > current-values.yaml
