@@ -1,3 +1,4 @@
+{{- if eq .Values.sumologic.eventCollectionEnabled true }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,4 @@ spec:
     port: 24231
     targetPort: 24231
     protocol: TCP
+{{- end }}

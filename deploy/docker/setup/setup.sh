@@ -65,8 +65,9 @@ verify_requirements;
 
 DEPLOY=true;
 DOWNLOAD_YAML=true;
+COLLECT_EVENTS=true;
 
-while getopts c:k:n:a:d:y: option
+while getopts c:k:n:a:d:y:e option
 do
  case "${option}"
  in
@@ -76,6 +77,7 @@ do
  a) ALPHA=${OPTARG};;
  d) DEPLOY=${OPTARG};;
  y) DOWNLOAD_YAML=${OPTARG};;
+ e) COLLECT_EVENTS=false;;
  esac
 done
 shift "$(($OPTIND -1))"
@@ -190,21 +192,34 @@ ENDPOINT_METRICS_NODE_EXPORTER="$SOURCE_URL"
 SOURCE_URL=
 create_http_source logs $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_LOGS="$SOURCE_URL"
+if [ "$COLLECT_EVENTS" = true ]; then
 SOURCE_URL=
 create_http_source events $COLLECTOR_ID $CLUSTER_NAME
 ENDPOINT_EVENTS="$SOURCE_URL"
+fi
 
-kubectl -n $NAMESPACE create secret generic sumologic \
-  --from-literal=endpoint-metrics=$ENDPOINT_METRICS \
-  --from-literal=endpoint-metrics-apiserver=$ENDPOINT_METRICS_APISERVER \
-  --from-literal=endpoint-metrics-kube-controller-manager=$ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER \
-  --from-literal=endpoint-metrics-kube-scheduler=$ENDPOINT_METRICS_KUBE_SCHEDULER \
-  --from-literal=endpoint-metrics-kube-state=$ENDPOINT_METRICS_KUBE_STATE \
-  --from-literal=endpoint-metrics-kubelet=$ENDPOINT_METRICS_KUBELET \
-  --from-literal=endpoint-metrics-node-exporter=$ENDPOINT_METRICS_NODE_EXPORTER \
-  --from-literal=endpoint-logs=$ENDPOINT_LOGS \
-  --from-literal=endpoint-events=$ENDPOINT_EVENTS
-
+if [ "$COLLECT_EVENTS" = true ]; then
+  kubectl -n $NAMESPACE create secret generic sumologic \
+    --from-literal=endpoint-metrics=$ENDPOINT_METRICS \
+    --from-literal=endpoint-metrics-apiserver=$ENDPOINT_METRICS_APISERVER \
+    --from-literal=endpoint-metrics-kube-controller-manager=$ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER \
+    --from-literal=endpoint-metrics-kube-scheduler=$ENDPOINT_METRICS_KUBE_SCHEDULER \
+    --from-literal=endpoint-metrics-kube-state=$ENDPOINT_METRICS_KUBE_STATE \
+    --from-literal=endpoint-metrics-kubelet=$ENDPOINT_METRICS_KUBELET \
+    --from-literal=endpoint-metrics-node-exporter=$ENDPOINT_METRICS_NODE_EXPORTER \
+    --from-literal=endpoint-logs=$ENDPOINT_LOGS \
+    --from-literal=endpoint-events=$ENDPOINT_EVENTS
+else
+  kubectl -n $NAMESPACE create secret generic sumologic \
+    --from-literal=endpoint-metrics=$ENDPOINT_METRICS \
+    --from-literal=endpoint-metrics-apiserver=$ENDPOINT_METRICS_APISERVER \
+    --from-literal=endpoint-metrics-kube-controller-manager=$ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER \
+    --from-literal=endpoint-metrics-kube-scheduler=$ENDPOINT_METRICS_KUBE_SCHEDULER \
+    --from-literal=endpoint-metrics-kube-state=$ENDPOINT_METRICS_KUBE_STATE \
+    --from-literal=endpoint-metrics-kubelet=$ENDPOINT_METRICS_KUBELET \
+    --from-literal=endpoint-metrics-node-exporter=$ENDPOINT_METRICS_NODE_EXPORTER \
+    --from-literal=endpoint-logs=$ENDPOINT_LOGS
+fi
 
 if [ "$DEPLOY" = true ]; then
   echo "Applying deployment 'fluentd' $release ... "

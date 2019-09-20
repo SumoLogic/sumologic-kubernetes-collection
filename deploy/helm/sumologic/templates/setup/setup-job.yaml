@@ -26,6 +26,9 @@ spec:
           {{- if .Values.sumologic.collectorName }}
           "-c", "{{ .Values.sumologic.collectorName }}",
           {{- end }}
+          {{- if eq .Values.sumologic.eventCollectionEnabled false }}
+          "-e",
+          {{- end }}
           "-d", "false", 
           "-y", "false", 
           '{{ required "A valid .Values.sumologic.endpoint entry required!" .Values.sumologic.endpoint }}',
