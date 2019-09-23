@@ -189,7 +189,7 @@ If you would like to use a different cluster name than the default `kubernetes`,
 Run the following to download the `values.yaml` file
 
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml
 ```
 
 Edit the `values.yaml` file to `prometheus-operator.enabled = false`, and run
