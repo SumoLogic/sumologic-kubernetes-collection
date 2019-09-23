@@ -144,3 +144,13 @@ spec:
           value: {{ .Values.sumologic.k8sMetadataFilter.bearerCacheTtl | quote }}
         - name: VERIFY_SSL
           value: {{ .Values.sumologic.verifySsl | quote }}
+        - name: EXCLUDE_NAMESPACE_REGEX
+          value: {{ .Values.sumologic.excludeNamespaceRegex | quote }}
+        - name: EXCLUDE_CONTAINER_REGEX
+          value: {{ .Values.sumologic.excludeContainerRegex | quote }}
+        - name: EXCLUDE_PATH
+          value: {{ .Values.sumologic.excludePath | quote }}
+        - name: EXCLUDE_HOST_REGEX
+          value: {{ .Values.sumologic.excludeHostRegex | quote }}
+        - name: EXCLUDE_POD_REGEX
+          value: {{ .Values.sumologic.excludePodRegex | quote }}
