@@ -228,6 +228,7 @@ data:
 
 ---
 # Source: sumologic/templates/events-configmap.yaml
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -325,6 +326,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ---
 # Source: sumologic/templates/events-service.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -340,7 +342,6 @@ spec:
     port: 24231
     targetPort: 24231
     protocol: TCP
-
 ---
 # Source: sumologic/templates/service.yaml
 apiVersion: v1
@@ -523,6 +524,7 @@ spec:
           value: "true"
 ---
 # Source: sumologic/templates/events-deployment.yaml
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -598,5 +600,3 @@ spec:
           value: "100k"
         - name: TOTAL_LIMIT_SIZE
           value: "128m"
-        
-
