@@ -46,6 +46,8 @@ sumologic:
   # Cluster name
   clusterName: "kubernetes"
 
+  # If enabled, collect K8s events
+  eventCollectionEnabled: true
 
   ## Format to post logs into Sumo. json, json_merge, or text
   logFormat: fields

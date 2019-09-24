@@ -1,3 +1,4 @@
+{{- if eq .Values.sumologic.eventCollectionEnabled true }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -67,4 +68,4 @@ spec:
           value: {{ .Values.sumologic.chunkLimitSize | quote }}
         - name: TOTAL_LIMIT_SIZE
           value: {{ .Values.sumologic.totalLimitSize | quote }}
-        
+{{- end }}
