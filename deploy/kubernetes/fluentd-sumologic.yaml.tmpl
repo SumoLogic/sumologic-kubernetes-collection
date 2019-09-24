@@ -399,7 +399,7 @@ spec:
           name: collection-sumologic
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:0.6.0
+        image: sumologic/kubernetes-fluentd:0.7.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -522,6 +522,14 @@ spec:
           value: "3600"
         - name: VERIFY_SSL
           value: "true"
+        - name: EXCLUDE_NAMESPACE_REGEX
+          value: ""
+        - name: EXCLUDE_CONTAINER_REGEX
+          value: ""
+        - name: EXCLUDE_HOST_REGEX
+          value: ""
+        - name: EXCLUDE_POD_REGEX
+          value: ""
 ---
 # Source: sumologic/templates/events-deployment.yaml
 
@@ -553,7 +561,7 @@ spec:
           name: collection-sumologic-events
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:0.6.0
+        image: sumologic/kubernetes-fluentd:0.7.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
