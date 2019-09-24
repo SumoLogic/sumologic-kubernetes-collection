@@ -105,6 +105,23 @@ sumologic:
   ## Verify SumoLogic HTTPS certificates
   verifySsl: "true"
 
+  ## A regular expression for containers. 
+  ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+  excludeContainerRegex: ""
+
+  ## A regular expression for hosts. 
+  ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+  excludeHostRegex: ""
+
+  ## A regular expression for namespaces. 
+  ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+  excludeNamespaceRegex: ""
+
+  ## A regular expression for pods. 
+  ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+  excludePodRegex: ""
+
+
   ## Sets the fluentd log level. The default log level, if not specified, is info.
   ## ref: https://docs.fluentd.org/deployment/logging
   # fluentdLogLevel: "debug"
