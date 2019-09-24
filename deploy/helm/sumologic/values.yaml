@@ -115,11 +115,6 @@ sumologic:
   ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
   excludeNamespaceRegex: ""
 
-  ## Files matching this pattern will be ignored by the in_tail plugin, 
-  ## and will not be sent to Kubernetes or Sumo. 
-  ## This can be a comma-separated list as well. See in_tail documentation for more information. 
-  excludePath: ""
-
   ## A regular expression for pods. 
   ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
   excludePodRegex: ""
