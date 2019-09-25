@@ -24,9 +24,11 @@ fi
 
 # Check for invalid changes to overrides yaml files
 if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+  # NOTE(ryan, 2019-09-25): Only compare last commit with current commit to detect changes in generated files
   # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
-  changes=`git diff origin-repo/master..$TRAVIS_BRANCH --name-only | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"` || true
+  changes=`git diff HEAD^ HEAD --name-only | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"` || true
   if [ -n "$changes" ]; then
+    # NOTE(ryan, 2019-09-25): "Travis" user is allowed to make changes to generated files
     if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
       echo "Aborting due to manual changes detected in the following generated files: $changes"
       exit 1
