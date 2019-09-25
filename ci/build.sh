@@ -22,12 +22,14 @@ if [ -n "$GITHUB_TOKEN" ]; then
   git checkout $TRAVIS_BRANCH
 fi
 
-# Check for invalid changes to overrides yaml files
+# Check for invalid changes to generated yaml files
 if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
-  # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
-  changes=`git diff origin-repo/master..$TRAVIS_BRANCH --name-only | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"` || true
-  if [ -n "$changes" ]; then
-    if git --no-pager show -s --format="%an" . | grep -v -q -i "travis"; then
+  # Check most recent commit author. If non-Travis, check for changes made to generated files
+  recent_author=`git log origin-repo/master..HEAD --format="%an" | grep -m1 ""`
+  if echo $recent_author | grep -v -q -i "travis"; then
+    # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
+    changes=`git log origin-repo/master..HEAD --name-only --format="" --author="$recent_author" | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml"` || true
+    if [ -n "$changes" ]; then
       echo "Aborting due to manual changes detected in the following generated files: $changes"
       exit 1
     fi
