@@ -64,6 +64,12 @@ data:
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
         @include metrics.output.conf
       </match>
+      <match prometheus.metrics.container**>
+        @type sumologic
+        @id sumologic.endpoint.metrics.container
+        endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
+        @include metrics.output.conf
+      </match>
       <match prometheus.metrics.controller-manager**>
         @type sumologic
         @id sumologic.endpoint.metrics.kube.controller.manager
