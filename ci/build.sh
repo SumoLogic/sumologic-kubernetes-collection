@@ -22,8 +22,8 @@ if [ -n "$GITHUB_TOKEN" ]; then
   git checkout $TRAVIS_BRANCH
 fi
 
-# Check for invalid changes to generated yaml files
-if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+# Check for invalid changes to generated yaml files (non-Tag builds)
+if [ -n "$GITHUB_TOKEN" ] && [ -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
   # Check most recent commit author. If non-Travis, check for changes made to generated files
   recent_author=`git log origin-repo/master..HEAD --format="%an" | grep -m1 ""`
   if echo $recent_author | grep -v -q -i "travis"; then
