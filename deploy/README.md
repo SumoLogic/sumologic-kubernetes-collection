@@ -15,6 +15,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 			- [Overwrite Prometheus Remote Write Configuration](#overwrite-prometheus-remote-write-configuration) 
 			- [Merge Prometheus Remote Write Configuration](#merge-prometheus-remote-write-configuration) 
 		- [How to install if you have standalone Prometheus](#how-to-install-if-you-have-standalone-prometheus) 
+    - [How to install our Prometheus side by side with your existing Prometheus](#how-to-install-our-prometheus-side-by-side-with-your-existing-prometheus) 
 		- [Uninstalling the Chart](#uninstalling-the-chart) 
 	- [Non Helm Installation](#non-helm-installation) 
 		- [Before you start](#before-you-start) 
@@ -234,6 +235,23 @@ Update your Prometheus configuration file’s `remote_write` section, as per the
 
 * `writeRelabelConfigs:` change to `write_relabel_configs:`
 * `sourceLabels:` change to `source_labels:`
+
+### How to install our Prometheus side by side with your existing Prometheus
+
+It is possible to have more than one Prometheus running in the same cluster when you have your existing Prometheus running in the cluster that you want to deploy our Chart with our Prometheus to. When installing our Helm Chart, set the following fields for the Prometheus node exporter to use a different port number than the default port number 9100. For example:
+
+```
+--set prometheus-node-exporter.service.port=9200 --set prometheus-node-exporter.service.targetPort=9200
+```
+
+Or add the following section to your override values.yaml:
+
+```
+prometheus-node-exporter:
+  service:
+    port: 9200
+    targetPort: 9200
+```
 
 ### Uninstalling the Chart
 
