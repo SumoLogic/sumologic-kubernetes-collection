@@ -15,7 +15,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 			- [Overwrite Prometheus Remote Write Configuration](#overwrite-prometheus-remote-write-configuration) 
 			- [Merge Prometheus Remote Write Configuration](#merge-prometheus-remote-write-configuration) 
 		- [How to install if you have standalone Prometheus](#how-to-install-if-you-have-standalone-prometheus) 
-    - [How to install our Prometheus side by side with your existing Prometheus](#how-to-install-our-prometheus-side-by-side-with-your-existing-prometheus) 
+		- [How to install our Prometheus side by side with your existing Prometheus](#how-to-install-our-prometheus-side-by-side-with-your-existing-prometheus) 
 		- [Uninstalling the Chart](#uninstalling-the-chart) 
 	- [Non Helm Installation](#non-helm-installation) 
 		- [Before you start](#before-you-start) 
