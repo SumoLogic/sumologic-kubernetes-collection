@@ -114,7 +114,7 @@ Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metr
 
 ### Prerequisite
 
-Before installing the chart, you'll need to set up the following [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI. This is to ensure your logs are tagged with relevant metadata.
+Before installing the chart, you need to add the following [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata.
 - cluster
 - container
 - deployment
