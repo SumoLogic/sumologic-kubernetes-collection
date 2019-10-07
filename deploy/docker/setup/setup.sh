@@ -153,7 +153,7 @@ fi
 
 set +e
 echo "Checking for secret 'sumologic'..."
-kubectl -n $NAMESPACE describe secret sumologic &>/dev/null
+kubectl -n $NAMESPACE describe secret/sumologic &>/dev/null
 retVal=$?
 set -e
 if [ $retVal -eq 0 ]; then
