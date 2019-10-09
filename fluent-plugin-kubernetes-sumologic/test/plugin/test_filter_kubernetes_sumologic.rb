@@ -56,9 +56,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log/format/labs",
             :host => "",
@@ -104,9 +106,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log/format/labs",
             :host => "",
@@ -149,9 +153,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log-format-labs",
             :host => "",
@@ -310,9 +316,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log/format/labs",
             :host => "foo",
@@ -356,9 +364,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log/format/labs",
             :host => "",
@@ -402,9 +412,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/foo",
             :host => "",
@@ -447,9 +459,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log/format/labs/log/format/labs",
             :host => "",
@@ -492,9 +506,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log/format/labs",
             :host => "170af806-c801-11e8-9009-025000000001",
@@ -537,9 +553,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log/format/labs/undefined",
             :host => "",
@@ -628,9 +646,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log/format/labs",
             :host => "",
@@ -671,9 +691,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log/format/labs",
             :host => "",
@@ -714,9 +736,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
       d.feed("filter.test", time, input)
     end
     expected = {
-        "timestamp" => 1538677347823,
-        "log" => "some message",
-        "stream" => "stdout",
+        "message" => {
+            "timestamp" => 1538677347823,
+            "log" => "some message",
+            "stream" => "stdout",
+        },
         "_sumo_metadata" => {
             :category => "kubernetes/default/log/format/labs/53575ccdb9",
             :host => "",

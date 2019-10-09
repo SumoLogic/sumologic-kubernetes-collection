@@ -55,8 +55,7 @@ module Fluent::Plugin
       log_fields = {}
 
       # Set the sumo metadata fields
-      sumo_metadata = record["_sumo_metadata"] || {}
-      record["_sumo_metadata"] = sumo_metadata
+      sumo_metadata = record["_sumo_metadata"].clone || {}
       sumo_metadata[:host] = @source_host if @source_host
       sumo_metadata[:source] = @source_name if @source_name
       unless @source_category.nil?
@@ -170,7 +169,8 @@ module Fluent::Plugin
         record.delete("kubernetes")
       end
       sumo_metadata[:fields] = log_fields.select{|k,v| !(v.nil? || v.empty?)}.map{|k,v| "#{k}=#{v}"}.join(',')
-      record
+      record.delete("_sumo_metadata")
+      { "message" => record, "_sumo_metadata" => sumo_metadata }
     end
   end
 end
