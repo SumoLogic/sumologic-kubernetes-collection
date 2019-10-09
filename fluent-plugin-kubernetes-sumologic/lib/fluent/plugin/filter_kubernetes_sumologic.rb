@@ -5,13 +5,10 @@ module Fluent::Plugin
     # Register type
     Fluent::Plugin.register_filter("kubernetes_sumologic", self)
 
-    config_param :kubernetes_meta, :bool, :default => true
-    config_param :kubernetes_meta_reduce, :bool, :default => false
     config_param :source_category, :string, :default => "%{namespace}/%{pod_name}"
     config_param :source_category_replace_dash, :string, :default => "/"
     config_param :source_category_prefix, :string, :default => "kubernetes/"
     config_param :source_name, :string, :default => "%{namespace}.%{pod}.%{container}"
-    config_param :log_format, :string, :default => "json"
     config_param :source_host, :string, :default => ""
     config_param :exclude_container_regex, :string, :default => ""
     config_param :exclude_facility_regex, :string, :default => ""
@@ -20,8 +17,6 @@ module Fluent::Plugin
     config_param :exclude_pod_regex, :string, :default => ""
     config_param :exclude_priority_regex, :string, :default => ""
     config_param :exclude_unit_regex, :string, :default => ""
-    config_param :add_stream, :bool, :default => true
-    config_param :add_time, :bool, :default => true
 
     def configure(conf)
       super
@@ -62,7 +57,6 @@ module Fluent::Plugin
       # Set the sumo metadata fields
       sumo_metadata = record["_sumo_metadata"] || {}
       record["_sumo_metadata"] = sumo_metadata
-      sumo_metadata[:log_format] = @log_format
       sumo_metadata[:host] = @source_host if @source_host
       sumo_metadata[:source] = @source_name if @source_name
       unless @source_category.nil?
@@ -87,6 +81,12 @@ module Fluent::Plugin
         unless @exclude_host_regex.empty?
           return nil if Regexp.compile(@exclude_host_regex).match(record["_HOSTNAME"])
         end
+      end
+
+      if record.key?("docker") and not record.fetch("docker").nil?
+        # Populate log_fields with docker metadata
+        record["docker"].each {|k, v| log_fields[k] = v}
+        record.delete("docker")
       end
 
       if record.key?("kubernetes") and not record.fetch("kubernetes").nil?
@@ -135,8 +135,6 @@ module Fluent::Plugin
           return nil
         end
 
-        sumo_metadata[:log_format] = annotations["sumologic.com/format"] if annotations["sumologic.com/format"]
-
         unless annotations["sumologic.com/sourceHost"].nil?
           sumo_metadata[:host] = annotations["sumologic.com/sourceHost"]
         end
@@ -151,56 +149,27 @@ module Fluent::Plugin
         sumo_metadata[:category] = sumo_metadata[:category] % k8s_metadata
         sumo_metadata[:category].gsub!("-", @source_category_replace_dash)
 
-        # Strip kubernetes metadata from json if disabled
-        if annotations["sumologic.com/kubernetes_meta"] == "false" || !@kubernetes_meta
-          record.delete("docker")
-          record.delete("kubernetes")
-        end
-        if annotations["sumologic.com/kubernetes_meta_reduce"] == "true" || annotations["sumologic.com/kubernetes_meta_reduce"].nil? && @kubernetes_meta_reduce == true
-          record.delete("docker")
-          record["kubernetes"].delete("pod_id")
-          record["kubernetes"].delete("namespace_id")
-          record["kubernetes"].delete("labels")
-          record["kubernetes"].delete("namespace_labels")
-          record["kubernetes"].delete("master_url")
-          record["kubernetes"].delete("annotations")
-        end
-        if @add_stream == false
-          record.delete("stream")
-        end
-        if @add_time == false
-          record.delete("time")
-        end
         # Strip sumologic.com annotations
-        # Note (sam 10/9/19): we're stripping from the copy, so this has no affect on output
+        # Note (sam 10/9/19): we're stripping from the copy, so this has no effect on output
         kubernetes.delete("annotations") if annotations
 
-        if @log_format == "fields" and record.key?("docker") and not record.fetch("docker").nil?
-          record["docker"].each {|k, v| log_fields[k] = v}
-          record.delete("docker")
+        # Populate log_fields with kubernetes metadata
+        if kubernetes.has_key? "labels"
+          kubernetes["labels"].each { |k, v| log_fields["pod_labels_#{k}".to_sym] = v }
         end
-
-        if @log_format == "fields" and record.key?("kubernetes") and not record.fetch("kubernetes").nil?
-          if kubernetes.has_key? "labels"
-            kubernetes["labels"].each { |k, v| log_fields["pod_labels_#{k}".to_sym] = v }
-          end
-          if kubernetes.has_key? "namespace_labels"
-            kubernetes["namespace_labels"].each { |k, v| log_fields["namespace_labels_#{k}".to_sym] = v }
-          end
-          log_fields["container"] = kubernetes["container_name"] unless kubernetes["container_name"].nil?
-          log_fields["namespace"] = kubernetes["namespace_name"] unless kubernetes["namespace_name"].nil?
-          log_fields["pod"] = kubernetes["pod_name"] unless kubernetes["pod_name"].nil?
-          ["pod_id", "host", "master_url", "namespace_id", "service", "deployment", "daemonset", "replicaset", "statefulset"].each do |key|
-            log_fields[key] = kubernetes[key] unless kubernetes[key].nil?
-          end
-          log_fields["node"] = kubernetes["host"] unless kubernetes["host"].nil?
-          record.delete("kubernetes")
+        if kubernetes.has_key? "namespace_labels"
+          kubernetes["namespace_labels"].each { |k, v| log_fields["namespace_labels_#{k}".to_sym] = v }
         end
+        log_fields["container"] = kubernetes["container_name"] unless kubernetes["container_name"].nil?
+        log_fields["namespace"] = kubernetes["namespace_name"] unless kubernetes["namespace_name"].nil?
+        log_fields["pod"] = kubernetes["pod_name"] unless kubernetes["pod_name"].nil?
+        ["pod_id", "host", "master_url", "namespace_id", "service", "deployment", "daemonset", "replicaset", "statefulset"].each do |key|
+          log_fields[key] = kubernetes[key] unless kubernetes[key].nil?
+        end
+        log_fields["node"] = kubernetes["host"] unless kubernetes["host"].nil?
+        record.delete("kubernetes")
       end
-
-      if @log_format == "fields" and not log_fields.nil?
-        sumo_metadata[:fields] = log_fields.select{|k,v| !(v.nil? || v.empty?)}.map{|k,v| "#{k}=#{v}"}.join(',')
-      end
+      sumo_metadata[:fields] = log_fields.select{|k,v| !(v.nil? || v.empty?)}.map{|k,v| "#{k}=#{v}"}.join(',')
       record
     end
   end
