@@ -65,7 +65,20 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log/format/labs",
             :host => "",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,namespace_labels_app=sumologic,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "namespace_labels_app" => "sumologic",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -115,7 +128,20 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log/format/labs",
             :host => "",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,namespace_labels_app=sumologic,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "namespace_labels_app" => "sumologic",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -162,7 +188,19 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log-format-labs",
             :host => "",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -325,7 +363,19 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log/format/labs",
             :host => "foo",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -373,7 +423,19 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log/format/labs",
             :host => "",
             :source => "foo",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -421,7 +483,19 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/foo",
             :host => "",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -468,7 +542,19 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log/format/labs/log/format/labs",
             :host => "",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -515,7 +601,19 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log/format/labs",
             :host => "170af806-c801-11e8-9009-025000000001",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -562,7 +660,19 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log/format/labs/undefined",
             :host => "",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -655,7 +765,19 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log/format/labs",
             :host => "",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -700,7 +822,19 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log/format/labs",
             :host => "",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=54575ccdb9,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "54575ccdb9",
+              "pod_labels_run" => "log-format-labs",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-54575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)
@@ -745,7 +879,19 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :category => "kubernetes/default/log/format/labs/53575ccdb9",
             :host => "",
             :source => "default.log-format-labs-53575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-53575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => {
+              "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+              "pod_labels_pod-template-hash" => "1013177865",
+              "pod_labels_run" => "log-format-labs",
+              "container" => "log-format-labs",
+              "namespace" => "default",
+              "pod" => "log-format-labs-53575ccdb9-9d677",
+              "pod_id" => "170af806-c801-11e8-9009-025000000001",
+              "host" => "docker-for-desktop",
+              "master_url" => "https =>//10.96.0.1 =>443/api",
+              "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+              "node" => "docker-for-desktop"
+            }
         },
     }
     assert_equal(1, d.filtered_records.size)

@@ -154,10 +154,10 @@ module Fluent::Plugin
 
         # Populate log_fields with kubernetes metadata
         if kubernetes.has_key? "labels"
-          kubernetes["labels"].each { |k, v| log_fields["pod_labels_#{k}".to_sym] = v }
+          kubernetes["labels"].each { |k, v| log_fields["pod_labels_#{k}"] = v }
         end
         if kubernetes.has_key? "namespace_labels"
-          kubernetes["namespace_labels"].each { |k, v| log_fields["namespace_labels_#{k}".to_sym] = v }
+          kubernetes["namespace_labels"].each { |k, v| log_fields["namespace_labels_#{k}"] = v }
         end
         log_fields["container"] = kubernetes["container_name"] unless kubernetes["container_name"].nil?
         log_fields["namespace"] = kubernetes["namespace_name"] unless kubernetes["namespace_name"].nil?
@@ -168,7 +168,7 @@ module Fluent::Plugin
         log_fields["node"] = kubernetes["host"] unless kubernetes["host"].nil?
         record.delete("kubernetes")
       end
-      sumo_metadata[:fields] = log_fields.select{|k,v| !(v.nil? || v.empty?)}.map{|k,v| "#{k}=#{v}"}.join(',')
+      sumo_metadata[:fields] = log_fields.select{|k,v| !(v.nil? || v.empty?)}
       record.delete("_sumo_metadata")
       { "message" => record, "_sumo_metadata" => sumo_metadata }
     end
