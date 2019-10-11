@@ -100,8 +100,6 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
-        - name: LOG_FORMAT
-          value: {{ .Values.sumologic.logFormat | quote }}
         - name: FLUSH_INTERVAL
           value: {{ .Values.sumologic.flushInterval | quote }}
         - name: NUM_THREADS
@@ -118,22 +116,10 @@ spec:
           value: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
         - name: SOURCE_NAME
           value: {{ .Values.sumologic.sourceName | quote }}
-        - name: KUBERNETES_META
-          value: {{ .Values.sumologic.kubernetesMeta | quote }}
-        - name: KUBERNETES_META_REDUCE
-          value: {{ .Values.sumologic.kubernetesMetaReduce | quote }}
         - name: MULTILINE_START_REGEXP
           value: {{ .Values.sumologic.multilineStartRegexp | quote }}
         - name: CONCAT_SEPARATOR
           value: {{ .Values.sumologic.concatSeparator | quote }}
-        - name: ADD_TIMESTAMP
-          value: {{ .Values.sumologic.addTimestamp | quote }}
-        - name: TIMESTAMP_KEY
-          value: {{ .Values.sumologic.timestampKey | quote }}
-        - name: ADD_STREAM
-          value: {{ .Values.sumologic.addStream | quote }}
-        - name: ADD_TIME
-          value: {{ .Values.sumologic.addTime | quote }}
         - name: K8S_METADATA_FILTER_WATCH
           value: {{ .Values.sumologic.k8sMetadataFilter.watch | quote }}
         - name: K8S_METADATA_FILTER_VERIFY_SSL
