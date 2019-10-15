@@ -763,6 +763,13 @@ Find the fluentd daemonset:
 kubectl get daemonsets
 ```
 
+Delete the RBAC resources if you set up the old solution with RBAC:
+```
+kubectl delete serviceaccount fluentd
+kubectl delete clusterrole fluentd
+kubectl delete clusterrolebinding fluentd
+```
+
 Delete the Fluentd daemonset, configmap and secret:
 ```
 kubectl delete daemonset fluentd-sumologic
@@ -771,6 +778,8 @@ kubectl delete secret sumologic
 ```
 
 ## Delete the resources associated with Heapster
+
+Remove the Graphite Sink for Heapster. Assuming you have used the [YAML files suggested by our old setup](https://github.com/SumoLogic/fluentd-kubernetes-sumologic#step-4-set-up-heapster-for-metric-collection), the sink option to be removed would be `--sink=graphite:tcp://sumo-graphite.kube-system.svc:2003`.
 
 Delete the service, deployment and configmap for Heapster:
 ```
