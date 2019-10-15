@@ -744,7 +744,7 @@ USER fluent
 
 # Migration Steps
 
-Our old collection mechanism includes Fluentd for logs and Heapster for metrics.
+Our [old collection mechanism](https://github.com/SumoLogic/fluentd-kubernetes-sumologic) includes Fluentd for logs and Heapster for metrics.
 * If you plan to deploy the new collection mechanism to the same namespace where the old mechanism was deployed to, you will need to delete the old set up first. 
 * If you plan to deploy in a different namespace, you can set up the new collection mechanism before deleting the old set up to avoid losing any data. They should both be able to run at the same time and while there will be some duplication, there won’t be any loss in data.
 
