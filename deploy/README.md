@@ -45,6 +45,9 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 		- [Deploy Falco](#4-deploy-falco) 
 	- [Tear down](#tear-down) 
 	- [Adding Additional FluentD Plugins](#adding-additional-fluentd-plugins)
+- [Migration Steps](#migration-steps)
+  - [Delete the resources associated with Fluentd](#delete-the-resources-associated-with-fluentd)
+  - [Delete the resources associated with Heapster](#delete-the-resources-associated-with-heapster)
 - [Troubleshooting Collection](#troubleshooting-collection)
 	- [Namespace configuration](#namespace-configuration) 
 	- [Gathering logs](#gathering-logs) 
@@ -737,6 +740,43 @@ USER root
 RUN gem install fluent-plugin-aws-elasticsearch-service
 
 USER fluent
+```
+
+# Migration Steps
+
+Our old collection mechanism includes Fluentd for logs and Heapster for metrics.
+* If you plan to deploy the new collection mechanism to the same namespace where the old mechanism was deployed to, you will need to delete the old set up first. 
+* If you plan to deploy in a different namespace, you can set up the new collection mechanism before deleting the old set up to avoid losing any data. They should both be able to run at the same time and while there will be some duplication, there won’t be any loss in data.
+
+To delete the old collection mechanism, you will need to delete the deployment for both Fluentd and Heapster:
+
+Find the resources associated with the old collection mechanism:
+```
+kubectl get all --all-namespaces
+```
+This will show you all pods/namespaces/deployments/services and make sure you don’t miss things that may have been deployed in different namespaces.
+
+## Delete the resources associated with Fluentd
+
+Find the fluentd daemonset:
+```
+kubectl get daemonsets
+```
+
+Delete the Fluentd daemonset, configmap and secret:
+```
+kubectl delete daemonset fluentd-sumologic
+kubectl delete configmap fluentd-sumologic-config
+kubectl delete secret sumologic
+```
+
+## Delete the resources associated with Heapster
+
+Delete the service, deployment and configmap for Heapster:
+```
+kubectl delete service sumo-graphite
+kubectl delete deployment sumo-graphite
+kubectl delete configmap sumo-sources
 ```
 
 # Troubleshooting Collection
