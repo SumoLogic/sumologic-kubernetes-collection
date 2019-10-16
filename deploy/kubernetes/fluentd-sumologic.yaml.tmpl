@@ -120,9 +120,6 @@ data:
     log_key log
     endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
     verify_ssl "#{ENV['VERIFY_SSL']}"
-    log_format "#{ENV['LOG_FORMAT']}"
-    add_timestamp "#{ENV['ADD_TIMESTAMP']}"
-    timestamp_key "#{ENV['TIMESTAMP_KEY']}"
     proxy_uri "#{ENV['PROXY_URI']}"
     @include buffer.output.conf
   logs.source.containers.conf: |-
@@ -153,21 +150,44 @@ data:
         cache_ttl "#{ENV['K8S_METADATA_FILTER_BEARER_CACHE_TTL']}"
         tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
       </filter>
-      <filter **>
+      <filter containers.**>
         @type enhance_k8s_metadata
         in_namespace_path '$.kubernetes.namespace_name'
         in_pod_path '$.kubernetes.pod_name'
         data_type logs
       </filter>
+  
+    ## Input to kubernetes_sumologic plugin
+      # {
+      #     "log" => "some message",
+      #     "stream" => "stdout",
+      #     "time" => "2019-10-11T04:45:38.046161188Z",
+      #     "docker" => {
+      #         "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+      #     },
+      #     "kubernetes" => {
+      #         "container_name" => "log-format-labs",
+      #         "namespace_name" => "default",
+      #         "pod_name" => "log-format-labs-54575ccdb9-9d677",
+      #         "pod_id" => "170af806-c801-11e8-9009-025000000001",
+      #         "labels" => {
+      #             "pod-template-hash" => "1013177865",
+      #             "empty-value" => "",
+      #             "run" => "log-format-labs",
+      #             "null-value" => nil,
+      #         },
+      #         "namespace_labels" => {
+      #             "app" => "sumologic"
+      #         },
+      #         "host" => "docker-for-desktop",
+      #         "master_url" => "https =>//10.96.0.1 =>443/api",
+      #         "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+      #     }
+      # }
       <filter containers.**>
         @type kubernetes_sumologic
         source_name "#{ENV['SOURCE_NAME']}"
         source_host "#{ENV['SOURCE_HOST']}"
-        log_format "#{ENV['LOG_FORMAT']}"
-        kubernetes_meta "#{ENV['KUBERNETES_META']}"
-        kubernetes_meta_reduce "#{ENV['KUBERNETES_META_REDUCE']}"
-        add_stream "#{ENV['ADD_STREAM']}"
-        add_time "#{ENV['ADD_TIME']}"
         source_category "#{ENV['SOURCE_CATEGORY']}"
         source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
         source_category_replace_dash "#{ENV['SOURCE_CATEGORY_REPLACE_DASH']}"
@@ -176,7 +196,102 @@ data:
         exclude_container_regex "#{ENV['EXCLUDE_CONTAINER_REGEX']}"
         exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
       </filter>
-      <match **>
+    ## Output from kubernetes_sumologic plugin
+      # {
+      #     "message" => {
+      #         "log" => "some message",
+      #         "stream" => "stdout",
+      #         "time" => "2019-10-11T04:45:38.046161188Z"
+      #     },
+      #     "_sumo_metadata" => {
+      #         :category => "kubernetes/default/log/format/labs",
+      #         :host => "",
+      #         :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+      #         :fields => {
+      #           "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+      #           "pod_labels_pod-template-hash" => "1013177865",
+      #           "pod_labels_run" => "log-format-labs",
+      #           "namespace_labels_app" => "sumologic",
+      #           "container" => "log-format-labs",
+      #           "namespace" => "default",
+      #           "pod" => "log-format-labs-54575ccdb9-9d677",
+      #           "pod_id" => "170af806-c801-11e8-9009-025000000001",
+      #           "host" => "docker-for-desktop",
+      #           "master_url" => "https =>//10.96.0.1 =>443/api",
+      #           "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+      #           "node" => "docker-for-desktop"
+      #         }
+      #     }
+      # }
+  
+    ## For `text` format, uncomment the following record_modifier section
+      # <filter containers.**>
+      #   @type record_modifier
+      #   <record>
+      #     message ${record["message"]["log"]}
+      #   </record>
+      # </filter>
+    ## Output from record_modifier plugin
+      # {
+      #     "message" => "some message",
+      #     "_sumo_metadata" => {
+      #         :category => "kubernetes/default/log/format/labs",
+      #         :host => "",
+      #         :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+      #         :fields => {
+      #           "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+      #           "pod_labels_pod-template-hash" => "1013177865",
+      #           "pod_labels_run" => "log-format-labs",
+      #           "namespace_labels_app" => "sumologic",
+      #           "container" => "log-format-labs",
+      #           "namespace" => "default",
+      #           "pod" => "log-format-labs-54575ccdb9-9d677",
+      #           "pod_id" => "170af806-c801-11e8-9009-025000000001",
+      #           "host" => "docker-for-desktop",
+      #           "master_url" => "https =>//10.96.0.1 =>443/api",
+      #           "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+      #           "node" => "docker-for-desktop"
+      #         }
+      #     }
+      # }
+  
+    ## For `json_merge` format, uncomment the following record_modifier section
+      # <filter containers.**>
+      #   @type record_modifier
+      #   <record>
+      #     message ${begin; record["message"].merge(JSON.parse(record["message"]["log"])).delete("log"); rescue JSON::ParserError; record["message"]; end}
+      #   </record>
+      # </filter>
+    ## Output from record_modifier plugin, where input "log" => "{\"foo\":\"bar\", \"a\":\"b\"}"
+      # {
+      #     "message" => {
+      #         "foo" => "bar",
+      #         "a" => "b",
+      #         "stream" => "stdout",
+      #         "time" => "2019-10-11T04:45:38.046161188Z"
+      #     },
+      #     "_sumo_metadata" => {
+      #         :category => "kubernetes/default/log/format/labs",
+      #         :host => "",
+      #         :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+      #         :fields => {
+      #           "container_id" => "5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0",
+      #           "pod_labels_pod-template-hash" => "1013177865",
+      #           "pod_labels_run" => "log-format-labs",
+      #           "namespace_labels_app" => "sumologic",
+      #           "container" => "log-format-labs",
+      #           "namespace" => "default",
+      #           "pod" => "log-format-labs-54575ccdb9-9d677",
+      #           "pod_id" => "170af806-c801-11e8-9009-025000000001",
+      #           "host" => "docker-for-desktop",
+      #           "master_url" => "https =>//10.96.0.1 =>443/api",
+      #           "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+      #           "node" => "docker-for-desktop"
+      #         }
+      #     }
+      # }
+  
+      <match containers.**>
         @type sumologic
         @id sumologic.endpoint.logs
         @include logs.output.conf
@@ -198,7 +313,7 @@ data:
         exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
         exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
       </filter>
-      <match **>
+      <match host.kubelet.**>
         @type sumologic
         @id sumologic.endpoint.logs.kubelet
         @include logs.output.conf
@@ -224,7 +339,7 @@ data:
           _sumo_metadata ${record["_sumo_metadata"][:source] = tag_parts[1]; record["_sumo_metadata"]}
         </record>
       </filter>
-      <match **>
+      <match host.**>
         @type sumologic
         @id sumologic.endpoint.logs.systemd
         @include logs.output.conf
@@ -484,8 +599,6 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
-        - name: LOG_FORMAT
-          value: "fields"
         - name: FLUSH_INTERVAL
           value: "5s"
         - name: NUM_THREADS
@@ -502,22 +615,10 @@ spec:
           value: "/"
         - name: SOURCE_NAME
           value: "%{namespace}.%{pod}.%{container}"
-        - name: KUBERNETES_META
-          value: "true"
-        - name: KUBERNETES_META_REDUCE
-          value: "false"
         - name: MULTILINE_START_REGEXP
           value: "/^\\w{3} \\d{1,2}, \\d{4}/"
         - name: CONCAT_SEPARATOR
           value: ""
-        - name: ADD_TIMESTAMP
-          value: "true"
-        - name: TIMESTAMP_KEY
-          value: "timestamp"
-        - name: ADD_STREAM
-          value: "true"
-        - name: ADD_TIME
-          value: "true"
         - name: K8S_METADATA_FILTER_WATCH
           value: "true"
         - name: K8S_METADATA_FILTER_VERIFY_SSL
