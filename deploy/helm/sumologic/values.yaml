@@ -131,6 +131,19 @@ fluentd:
     @include common.conf
     @include metrics.conf
     @include logs.conf
+  logs:
+    containers:
+      enabled: true
+      outputConfig: |-
+        @include logs.output.conf
+    kubelet:
+      enabled: true
+      outputConfig: |-
+        @include logs.output.conf
+    systemd:
+      enabled: true
+      outputConfig: |-
+        @include logs.output.conf
 
 ## Configure fluent-bit 
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
