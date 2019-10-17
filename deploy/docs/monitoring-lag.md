@@ -1,6 +1,6 @@
 # Monitoring the Monitoring
 
-Once you have Sumo Logic's collection setup installed, you should be primed to have metrics, logs, and events flowing into Sumo Logic. However, as your cluster scales up and down, you might find the need to rescale your fluentd deployment replica count. Here are some tips on how to judge if you're seeing lag in your Sumo Logic collection pipeline.
+Once you have Sumo Logic's collection setup installed, you should be primed to have metrics, logs, and events flowing into Sumo Logic. However, as your cluster scales up and down, you might find the need to rescale your Fluentd deployment replica count. Here are some tips on how to judge if you're seeing lag in your Sumo Logic collection pipeline.
 
 1. Kubernetes Health Check Dashboard
 
@@ -8,7 +8,7 @@ This dashboard can be found from the `Cluster` level in `Explore`, and is a grea
 
 2. Fluentd Queue Length
 
-On the health check dashboard you'll see a panel for fluentd queue length. If you see this length going up over time, chances are that you either have backpressure or you are overwhelming the fluentd pods with requests. If you see any `429` status codes in the fluentd logs, that means you are likely getting throttled and need to contact Sumo Logic to increase your base plan or increase the throttling limit. If you aren't seeing `429` then you likely are in a situation where the incoming traffic into Fluentd is higher than the current replica count can handle. This is a good indication that you should scale up.
+On the health check dashboard you'll see a panel for Fluentd queue length. If you see this length going up over time, chances are that you either have backpressure or you are overwhelming the Fluentd pods with requests. If you see any `429` status codes in the Fluentd logs, that means you are likely getting throttled and need to contact Sumo Logic to increase your base plan or increase the throttling limit. If you aren't seeing `429` then you likely are in a situation where the incoming traffic into Fluentd is higher than the current replica count can handle. This is a good indication that you should scale up.
 
 3. Check Prometheus Remote Write Metrics
 
@@ -16,4 +16,4 @@ Prometheus has a few metrics to monitor its remote write performance. You should
 
 4. Check Prometheus Logs
 
-If all else fails, check the prometheus logs. If there is anything suspicious happening with regards to the fluentd connection you'll see it in the Prometheus logs. Any logs that have `connection reset` or `context cancelled` in them are indicative of requests that were terminated or dropped. Too many of those and your data will start to lag.
+If all else fails, check the Prometheus logs. If there is anything suspicious happening with regards to the Fluentd connection you'll see it in the Prometheus logs. Any logs that have `connection reset` or `context cancelled` in them are indicative of requests that were terminated or dropped. Too many of those and your data will start to lag.
