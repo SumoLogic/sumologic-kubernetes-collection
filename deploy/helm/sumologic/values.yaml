@@ -132,14 +132,32 @@ fluentd:
     @include metrics.conf
     @include logs.conf
   logs:
+    ## Configuration for sumologic output plugin
+    ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/logs/logs.output.conf
+    output:
+      ## Verify SumoLogic HTTPS certificates
+      verifySsl: true
+      ## Proxy URI for sumologic output plugin
+      proxyUri: ""
+      ## Additional config parameters for sumologic output plugin
+      extraConf: |-
+
+    ## Additional log config for custom log pipelines
+    ## ref: TODO: documentation for custom logs pipelines
+    extraLogs: |-
+
+    ## Container log configuration
     containers:
       enabled: true
       outputConfig: |-
         @include logs.output.conf
+    ## Kubelet log configuration
     kubelet:
       enabled: true
       outputConfig: |-
         @include logs.output.conf
+    ## Systemd log configuration
     systemd:
       enabled: true
       outputConfig: |-
