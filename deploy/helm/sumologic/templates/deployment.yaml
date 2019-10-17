@@ -116,18 +116,6 @@ spec:
           value: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
         - name: SOURCE_NAME
           value: {{ .Values.sumologic.sourceName | quote }}
-        - name: MULTILINE_START_REGEXP
-          value: {{ .Values.sumologic.multilineStartRegexp | quote }}
-        - name: CONCAT_SEPARATOR
-          value: {{ .Values.sumologic.concatSeparator | quote }}
-        - name: K8S_METADATA_FILTER_WATCH
-          value: {{ .Values.sumologic.k8sMetadataFilter.watch | quote }}
-        - name: K8S_METADATA_FILTER_VERIFY_SSL
-          value: {{ .Values.sumologic.k8sMetadataFilter.verifySsl | quote }}
-        - name: K8S_METADATA_FILTER_BEARER_CACHE_SIZE
-          value: {{ .Values.sumologic.k8sMetadataFilter.bearerCacheSize | quote }}
-        - name: K8S_METADATA_FILTER_BEARER_CACHE_TTL
-          value: {{ .Values.sumologic.k8sMetadataFilter.bearerCacheTtl | quote }}
         - name: VERIFY_SSL
           value: {{ .Values.sumologic.verifySsl | quote }}
         - name: EXCLUDE_NAMESPACE_REGEX
