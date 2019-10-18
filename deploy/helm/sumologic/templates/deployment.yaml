@@ -108,16 +108,6 @@ spec:
           value: {{ .Values.sumologic.chunkLimitSize | quote }}
         - name: TOTAL_LIMIT_SIZE
           value: {{ .Values.sumologic.totalLimitSize | quote }}
-        - name: SOURCE_CATEGORY
-          value: {{ .Values.sumologic.sourceCategory | quote }}
-        - name: SOURCE_CATEGORY_PREFIX
-          value: {{ .Values.sumologic.sourceCategoryPrefix | quote }}
-        - name: SOURCE_CATEGORY_REPLACE_DASH
-          value: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
-        - name: SOURCE_NAME
-          value: {{ .Values.sumologic.sourceName | quote }}
-        - name: VERIFY_SSL
-          value: {{ .Values.sumologic.verifySsl | quote }}
         - name: EXCLUDE_NAMESPACE_REGEX
           value: {{ .Values.sumologic.excludeNamespaceRegex | quote }}
         - name: EXCLUDE_CONTAINER_REGEX

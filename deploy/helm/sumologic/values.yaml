@@ -60,18 +60,6 @@ sumologic:
 
   totalLimitSize: "128m"
 
-  ## Set the _sourceName metadata field in SumoLogic.
-  sourceName: "%{namespace}.%{pod}.%{container}"
-
-  ## Set the _sourceCategory metadata field in SumoLogic.
-  sourceCategory: "%{namespace}/%{pod_name}"
-
-  ## Set the prefix, for _sourceCategory metadata.
-  sourceCategoryPrefix: "kubernetes/"
-
-  ## Used to replace - with another character.
-  sourceCategoryReplaceDash: "/"
-
   ## Verify SumoLogic HTTPS certificates
   verifySsl: "true"
 
@@ -128,8 +116,40 @@ fluentd:
     ## Container log configuration
     containers:
       enabled: true
+
       outputConf: |-
         @include logs.output.conf
+
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "%{namespace}.%{pod}.%{container}"
+
+      ## Set the _sourceHost metadata field in Sumo Logic.
+      sourceHost: ""
+
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "%{namespace}/%{pod_name}"
+
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+
+      ## Used to replace - with another character.
+      sourceCategoryReplaceDash: "/"
+
+      ## A regular expression for containers.
+      ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeContainerRegex: ""
+
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeHostRegex: ""
+
+      ## A regular expression for namespaces.
+      ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeNamespaceRegex: ""
+
+      ## A regular expression for pods.
+      ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludePodRegex: ""
 
       ## The regular expression for the "concat" plugin to use when merging multi-line messages
       multilineStartRegexp: '/^\w{3} \d{1,2}, \d{4}/'
@@ -159,15 +179,20 @@ fluentd:
         ## Additional config parameters for kubernetes_metadata filter plugin
         extraConf: |-
 
+      ## To use additional filter plugins (ex: for text or json_merge log format)
+      extraPluginConf: |-
+
     ## Kubelet log configuration
     kubelet:
       enabled: true
+
       outputConf: |-
         @include logs.output.conf
 
     ## Systemd log configuration
     systemd:
       enabled: true
+
       outputConf: |-
         @include logs.output.conf
 
