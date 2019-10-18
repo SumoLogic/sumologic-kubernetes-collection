@@ -132,7 +132,7 @@ fluentd:
         ## path to CA file for Kubernetes server certificate validation
         caFile: ""
         ## Validate SSL certificates
-        verifySsl: "true"
+        verifySsl: true
         ## Path to a client cert file to authenticate to the API server
         clientCert: ""
         ## Path to a client key file to authenticate to the API server
