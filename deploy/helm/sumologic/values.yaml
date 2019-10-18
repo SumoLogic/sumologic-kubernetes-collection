@@ -46,16 +46,6 @@ sumologic:
   # Cluster name
   clusterName: "kubernetes"
 
-  # If enabled, collect K8s events
-  eventCollectionEnabled: true
-
-  ## Override Kubernetes resource types you want to get events for from different Kubernetes
-  ## API versions. The key represents the name of the resource type and the value represents
-  ## the API version.
-  # watchResourceEventsOverrides:
-  #   pods: "v1"
-  #   events: "events.k8s.io/v1beta1"
-
 ## Configure fluentd
 fluentd:
   rawConfig: |-
@@ -118,15 +108,12 @@ fluentd:
       ## A regular expression for containers.
       ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeContainerRegex: ""
-
       ## A regular expression for hosts.
       ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeHostRegex: ""
-
       ## A regular expression for namespaces.
       ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeNamespaceRegex: ""
-
       ## A regular expression for pods.
       ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
       excludePodRegex: ""
@@ -188,7 +175,7 @@ fluentd:
       ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeUnitRegex: ""
 
-      ## To use additional filter plugins (ex: for text or json_merge log format)
+      ## To use additional filter plugins
       extraPluginConf: |-
 
     ## Systemd log configuration
@@ -215,8 +202,34 @@ fluentd:
       ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeUnitRegex: ""
 
-      ## To use additional filter plugins (ex: for text or json_merge log format)
+      ## To use additional filter plugins
       extraPluginConf: |-
+
+  metrics:
+    ## Configuration for sumologic output plugin
+    ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/logs/logs.output.conf
+    output:
+      ## Additional config parameters for sumologic output plugin
+      extraConf: |-
+
+    ## To use additional filter plugins
+    extraPluginConf: |-
+
+  events:
+    # If enabled, collect K8s events
+    enabled: true
+
+    output:
+      ## Additional config parameters for sumologic output plugin
+      extraConf: |-
+
+    ## Override Kubernetes resource types you want to get events for from different Kubernetes
+    ## API versions. The key represents the name of the resource type and the value represents
+    ## the API version.
+    # watchResourceEventsOverrides:
+    #   pods: "v1"
+    #   events: "events.k8s.io/v1beta1"
 
 ## Configure fluent-bit 
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
