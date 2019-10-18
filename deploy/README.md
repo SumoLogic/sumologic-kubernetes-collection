@@ -248,7 +248,7 @@ When installing our Helm Chart it is possible to have more than one Prometheus s
 --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
 ```
 
-Or add the following to the `prometheus-operator` section of the override `values.yaml`:
+Or add the following to the `prometheus-operator` section of your overrides `values.yaml`:
 
 ```
 prometheus-operator:
