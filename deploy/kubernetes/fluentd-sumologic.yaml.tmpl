@@ -17,10 +17,10 @@ data:
     <buffer>
       @type memory
       compress gzip
-      flush_interval "#{ENV['FLUSH_INTERVAL']}"
-      flush_thread_count "#{ENV['NUM_THREADS']}"
-      chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
-      total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
+      flush_interval "5s"
+      flush_thread_count "4"
+      chunk_limit_size "100k"
+      total_limit_size "128m"
     </buffer>
   common.conf: |-
     <source>
@@ -48,6 +48,7 @@ data:
       <filter prometheus.metrics**>
         @type enhance_k8s_metadata
       </filter>
+      
       <filter prometheus.metrics**>
         @type prometheus_format
         relabel container_name:container,pod_name:pod
@@ -105,7 +106,10 @@ data:
     data_type metrics
     metric_data_format prometheus
     disable_cookies true
+    verify_ssl true
+    proxy_uri ""
     @include buffer.output.conf
+    
   
   logs.conf: |-
     <source>
@@ -114,20 +118,23 @@ data:
       bind 0.0.0.0
     </source>
     @include logs.source.containers.conf
+    @include logs.source.kubelet.conf
     @include logs.source.systemd.conf
-  logs.output.conf: |
+    
+  logs.output.conf: |-
     data_type logs
     log_key log
     endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
-    verify_ssl "#{ENV['VERIFY_SSL']}"
-    proxy_uri "#{ENV['PROXY_URI']}"
+    verify_ssl true
+    proxy_uri ""
     @include buffer.output.conf
+    
   logs.source.containers.conf: |-
     <filter containers.**>
       @type concat
       key log
-      multiline_start_regexp "#{ENV['MULTILINE_START_REGEXP']}"
-      separator "#{ENV['CONCAT_SEPARATOR']}"
+      multiline_start_regexp "/^\\w{3} \\d{1,2}, \\d{4}/"
+      separator ""
       timeout_label @NORMAL
     </filter>
     <match containers.**>
@@ -140,15 +147,16 @@ data:
         @log_level warn
         annotation_match ["sumologic\.com.*"]
         de_dot false
-        watch "#{ENV['K8S_METADATA_FILTER_WATCH']}"
-        ca_file "#{ENV['K8S_METADATA_FILTER_CA_FILE']}"
-        verify_ssl "#{ENV['K8S_METADATA_FILTER_VERIFY_SSL']}"
-        client_cert "#{ENV['K8S_METADATA_FILTER_CLIENT_CERT']}"
-        client_key "#{ENV['K8S_METADATA_FILTER_CLIENT_KEY']}"
-        bearer_token_file "#{ENV['K8S_METADATA_FILTER_BEARER_TOKEN_FILE']}"
-        cache_size "#{ENV['K8S_METADATA_FILTER_BEARER_CACHE_SIZE']}"
-        cache_ttl "#{ENV['K8S_METADATA_FILTER_BEARER_CACHE_TTL']}"
+        watch "true"
+        ca_file ""
+        verify_ssl "true"
+        client_cert ""
+        client_key ""
+        bearer_token_file ""
+        cache_size "1000"
+        cache_ttl "3600"
         tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
+        
       </filter>
       <filter containers.**>
         @type enhance_k8s_metadata
@@ -186,15 +194,15 @@ data:
       # }
       <filter containers.**>
         @type kubernetes_sumologic
-        source_name "#{ENV['SOURCE_NAME']}"
-        source_host "#{ENV['SOURCE_HOST']}"
-        source_category "#{ENV['SOURCE_CATEGORY']}"
-        source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
-        source_category_replace_dash "#{ENV['SOURCE_CATEGORY_REPLACE_DASH']}"
-        exclude_namespace_regex "#{ENV['EXCLUDE_NAMESPACE_REGEX']}"
-        exclude_pod_regex "#{ENV['EXCLUDE_POD_REGEX']}"
-        exclude_container_regex "#{ENV['EXCLUDE_CONTAINER_REGEX']}"
-        exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
+        source_name "%{namespace}.%{pod}.%{container}"
+        source_host ""
+        source_category "%{namespace}/%{pod_name}"
+        source_category_prefix "kubernetes/"
+        source_category_replace_dash "/"
+        exclude_namespace_regex ""
+        exclude_pod_regex ""
+        exclude_container_regex ""
+        exclude_host_regex ""
       </filter>
     ## Output from kubernetes_sumologic plugin
       # {
@@ -290,6 +298,7 @@ data:
       #         }
       #     }
       # }
+      
   
       <match containers.**>
         @type sumologic
@@ -297,7 +306,7 @@ data:
         @include logs.output.conf
       </match>
     </label>
-  logs.source.systemd.conf: |-
+  logs.source.kubelet.conf: |-
     <match host.kubelet.**>
       @type relabel
       @label @KUBELET
@@ -305,20 +314,22 @@ data:
     <label @KUBELET>
       <filter host.kubelet.**>
         @type kubernetes_sumologic
-        source_category kubelet
-        source_name k8s_kubelet
-        source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
-        exclude_facility_regex "#{ENV['EXCLUDE_FACILITY_REGEX']}"
-        exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
-        exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
-        exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
+        source_category "kubelet"
+        source_name "k8s_kubelet"
+        source_category_prefix "kubernetes/"
+        exclude_facility_regex ""
+        exclude_host_regex ""
+        exclude_priority_regex ""
+        exclude_unit_regex ""
       </filter>
+      
       <match host.kubelet.**>
         @type sumologic
         @id sumologic.endpoint.logs.kubelet
         @include logs.output.conf
       </match>
     </label>
+  logs.source.systemd.conf: |-
     <match host.**>
       @type relabel
       @label @SYSTEMD
@@ -326,12 +337,12 @@ data:
     <label @SYSTEMD>
       <filter host.**>
         @type kubernetes_sumologic
-        source_category system
-        source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
-        exclude_facility_regex "#{ENV['EXCLUDE_FACILITY_REGEX']}"
-        exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
-        exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
-        exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
+        source_category "system"
+        source_category_prefix "kubernetes/"
+        exclude_facility_regex ""
+        exclude_host_regex ""
+        exclude_priority_regex ""
+        exclude_unit_regex ""
       </filter>
       <filter host.**>
         @type record_modifier
@@ -339,6 +350,7 @@ data:
           _sumo_metadata ${record["_sumo_metadata"][:source] = tag_parts[1]; record["_sumo_metadata"]}
         </record>
       </filter>
+      
       <match host.**>
         @type sumologic
         @id sumologic.endpoint.logs.systemd
@@ -379,16 +391,17 @@ data:
       endpoint "#{ENV['SUMO_ENDPOINT_EVENTS']}"
       data_type logs
       disable_cookies true
-      verify_ssl "#{ENV['VERIFY_SSL']}"
-      proxy_uri "#{ENV['PROXY_URI']}"
+      verify_ssl true
+      proxy_uri ""
       <buffer>
         @type memory
         compress gzip
-        flush_interval "#{ENV['FLUSH_INTERVAL']}"
-        flush_thread_count "#{ENV['NUM_THREADS']}"
-        chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
-        total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
+        flush_interval "5s"
+        flush_thread_count "4"
+        chunk_limit_size "100k"
+        total_limit_size "128m"
       </buffer>
+      
     </match>
   
 ---
@@ -599,44 +612,6 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
-        - name: FLUSH_INTERVAL
-          value: "5s"
-        - name: NUM_THREADS
-          value: "4"
-        - name: CHUNK_LIMIT_SIZE
-          value: "100k"
-        - name: TOTAL_LIMIT_SIZE
-          value: "128m"
-        - name: SOURCE_CATEGORY
-          value: "%{namespace}/%{pod_name}"
-        - name: SOURCE_CATEGORY_PREFIX
-          value: "kubernetes/"
-        - name: SOURCE_CATEGORY_REPLACE_DASH
-          value: "/"
-        - name: SOURCE_NAME
-          value: "%{namespace}.%{pod}.%{container}"
-        - name: MULTILINE_START_REGEXP
-          value: "/^\\w{3} \\d{1,2}, \\d{4}/"
-        - name: CONCAT_SEPARATOR
-          value: ""
-        - name: K8S_METADATA_FILTER_WATCH
-          value: "true"
-        - name: K8S_METADATA_FILTER_VERIFY_SSL
-          value: "true"
-        - name: K8S_METADATA_FILTER_BEARER_CACHE_SIZE
-          value: "1000"
-        - name: K8S_METADATA_FILTER_BEARER_CACHE_TTL
-          value: "3600"
-        - name: VERIFY_SSL
-          value: "true"
-        - name: EXCLUDE_NAMESPACE_REGEX
-          value: ""
-        - name: EXCLUDE_CONTAINER_REGEX
-          value: ""
-        - name: EXCLUDE_HOST_REGEX
-          value: ""
-        - name: EXCLUDE_POD_REGEX
-          value: ""
 ---
 # Source: sumologic/templates/events-deployment.yaml
 
@@ -705,13 +680,3 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-events
-        - name: VERIFY_SSL
-          value: "true"
-        - name: FLUSH_INTERVAL
-          value: "5s"
-        - name: NUM_THREADS
-          value: "4"
-        - name: CHUNK_LIMIT_SIZE
-          value: "100k"
-        - name: TOTAL_LIMIT_SIZE
-          value: "128m"
