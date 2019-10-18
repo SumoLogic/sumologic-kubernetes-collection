@@ -58,14 +58,4 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-events
-        - name: VERIFY_SSL
-          value: {{ .Values.sumologic.verifySsl| quote }}
-        - name: FLUSH_INTERVAL
-          value: {{ .Values.sumologic.flushInterval | quote }}
-        - name: NUM_THREADS
-          value: {{ .Values.sumologic.numThreads | quote }}
-        - name: CHUNK_LIMIT_SIZE
-          value: {{ .Values.sumologic.chunkLimitSize | quote }}
-        - name: TOTAL_LIMIT_SIZE
-          value: {{ .Values.sumologic.totalLimitSize | quote }}
 {{- end }}

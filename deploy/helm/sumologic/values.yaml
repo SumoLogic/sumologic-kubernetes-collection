@@ -49,35 +49,8 @@ sumologic:
   # If enabled, collect K8s events
   eventCollectionEnabled: true
 
-  ## How frequently to push logs to SumoLogic
-  ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
-  flushInterval: "5s"
-
-  ## Increase number of http threads to Sumo. May be required in heavy logging clusters
-  numThreads: 4
-
-  chunkLimitSize: "100k"
-
-  totalLimitSize: "128m"
-
   ## Verify SumoLogic HTTPS certificates
   verifySsl: "true"
-
-  ## A regular expression for containers. 
-  ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludeContainerRegex: ""
-
-  ## A regular expression for hosts. 
-  ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludeHostRegex: ""
-
-  ## A regular expression for namespaces. 
-  ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludeNamespaceRegex: ""
-
-  ## A regular expression for pods. 
-  ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludePodRegex: ""
 
   ## Sets the fluentd log level. The default log level, if not specified, is info.
   ## ref: https://docs.fluentd.org/deployment/logging
@@ -97,15 +70,25 @@ fluentd:
     @include metrics.conf
     @include logs.conf
 
+  ## Verify SumoLogic HTTPS certificates
+  verifySsl: true
+  ## Proxy URI for sumologic output plugin
+  proxyUri: ""
+
+  buffer:
+    ## How frequently to push logs to SumoLogic
+    ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
+    flushInterval: "5s"
+    ## Increase number of http threads to Sumo. May be required in heavy logging clusters
+    numThreads: 4
+    chunkLimitSize: "100k"
+    totalLimitSize: "128m"
+
   logs:
     ## Configuration for sumologic output plugin
     ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
     ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/logs/logs.output.conf
     output:
-      ## Verify SumoLogic HTTPS certificates
-      verifySsl: true
-      ## Proxy URI for sumologic output plugin
-      proxyUri: ""
       ## Additional config parameters for sumologic output plugin
       extraConf: |-
 
