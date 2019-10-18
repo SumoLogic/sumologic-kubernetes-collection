@@ -29,6 +29,7 @@ This document has instructions for setting up collection with FluentD, FluentBit
     - [Update the prometheus-overrides.yaml file to forward the metrics to FluentD.](#update-the-prometheus-overrides.yaml-file-to-forward-the-metrics-to-fluentd.) 
 - [Deploy FluentBit](#deploy-fluentbit) 
 - [Deploy Falco](#4-deploy-falco)
+- [Tear down](#tear-down) 
 
 <!-- /TOC -->
 
@@ -448,4 +449,45 @@ Install `falco` by generating the yaml files using Helm:
 ```bash
 $ helm template stable/falco --name falco --set dryRun=true -f falco-overrides.yaml > falco.yaml
 $ kubectl apply -f falco.yaml
+```
+
+
+## Tear down
+
+To delete `falco` from the Kubernetes cluster:
+
+```sh
+kubectl delete -f falco.yaml
+```
+
+To delete `fluent-bit` from the Kubernetes cluster:
+
+```sh
+kubectl delete -f fluent-bit.yaml
+```
+
+To delete `prometheus-operator` from the Kubernetes cluster:
+
+```sh
+kubectl delete -f prometheus.yaml
+```
+
+__NOTE__ This command will not remove the Custom Resource Definitions created.
+
+To delete the `fluentd-sumologic` app:
+
+```sh
+kubectl delete -f ./fluentd-sumologic.yaml
+```
+
+To delete the `sumologic` secret (for recreating collector/sources):
+
+```sh
+kubectl -n sumologic delete secret sumologic
+```
+
+To delete the `sumologic` namespace and all resources under it:
+
+```sh
+kubectl delete namespace sumologic
 ```
