@@ -27,14 +27,6 @@ The Helm chart installation requires three parameter overrides:
 * __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
 * __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
-How to install when no Prometheus exists
-How to install if you have an existing Prometheus operator
-Install Fluentd, Fluent-bit, and Falco
-Overwrite Prometheus Remote Write Configuration
-Merge Prometheus Remote Write Configuration
-How to install if you have standalone Prometheus
-How to install our Prometheus side by side with your existing Prometheus
-
 ## Installation Steps
 
 These steps require that no Premotheus exists. If you already have prometheus installed select from the following options:
