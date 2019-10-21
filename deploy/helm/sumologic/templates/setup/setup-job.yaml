@@ -16,19 +16,30 @@ spec:
     spec:
       restartPolicy: OnFailure
       serviceAccountName: {{ template "sumologic.fullname" . }}-setup
-      containers:
+      volumes:
       - name: setup
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command: ["/usr/bin/setup.sh", 
-          "-n", "{{ .Release.Namespace }}", 
-          "-k", "{{ .Values.sumologic.clusterName }}", 
-          {{- if .Values.sumologic.collectorName }}
-          "-c", "{{ .Values.sumologic.collectorName }}",
-          {{- end }}
-          "-d", "false", 
-          "-y", "false", 
-          '{{ required "A valid .Values.sumologic.endpoint entry required!" .Values.sumologic.endpoint }}',
-          '{{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}', 
-          '{{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}']
+        configMap:
+          name: {{ template "sumologic.fullname" . }}-setup
+          defaultMode: 0777
+      containers:
+      - name:  kubectl
+        image: gcr.io/google_containers/kubectl:v1.0.7
+        command: ["/kubectl"]
+        args: ["proxy", "-p", "8001"]
+      - name: setup
+        image: test1:latest
+        imagePullPolicy: Never
+        command: ["/etc/terraform/setup.sh"]
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - name: setup
+          mountPath: /etc/terraform
+        env:
+        - name: SUMOLOGIC_ACCESSID
+          value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
+        - name: SUMOLOGIC_ACCESSKEY
+          value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
+        - name: SUMOLOGIC_ENVIRONMENT
+          value: us2
 {{- end }}
