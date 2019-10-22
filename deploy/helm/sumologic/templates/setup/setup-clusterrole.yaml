@@ -16,5 +16,5 @@ rules:
     resources:
       - secrets
       - namespaces
-    verbs: ["get", "create", "describe"]
+    verbs: ["get", "create", "describe", "patch"]
 {{- end }}

@@ -14,7 +14,7 @@ metadata:
 spec:
   template:
     spec:
-      restartPolicy: OnFailure
+      restartPolicy: Never
       serviceAccountName: {{ template "sumologic.fullname" . }}-setup
       volumes:
       - name: setup
@@ -27,11 +27,9 @@ spec:
         command: ["/kubectl"]
         args: ["proxy", "-p", "8001"]
       - name: setup
-        image: test1:latest
-        imagePullPolicy: Never
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: ["/etc/terraform/setup.sh"]
-        securityContext:
-          runAsUser: 0
         volumeMounts:
         - name: setup
           mountPath: /etc/terraform
@@ -40,6 +38,6 @@ spec:
           value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
         - name: SUMOLOGIC_ACCESSKEY
           value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
-        - name: SUMOLOGIC_ENVIRONMENT
-          value: us2
+        - name: SUMOLOGIC_BASE_URL
+          value: {{ required "A valid .Values.sumologic.endpoint entry required!" .Values.sumologic.endpoint }}
 {{- end }}
