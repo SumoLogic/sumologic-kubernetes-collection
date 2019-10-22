@@ -55,7 +55,7 @@ RUN runDeps="sudo libsnappy-dev" \
  && apt-get install -y jq \
  && apt-get install -y unzip
 
- # Install kubectl
+ # Install kubectl (to be removed once we switch to Terraform)
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 RUN chmod +x /usr/local/bin/kubectl
 COPY setup/setup.sh /usr/bin/
@@ -70,28 +70,14 @@ RUN mkdir /tmp/terraform && \
     chmod +x /bin/terraform && \
     rm -rf /tmp/terraform
 
-# Install go
-ENV GO_VERSION 1.11
-
-RUN curl -sSL https://storage.googleapis.com/golang/go$GO_VERSION.linux-armv6l.tar.gz -o /tmp/go.tar.gz && \
-    tar -C /usr/local -vxzf /tmp/go.tar.gz && \
-    rm /tmp/go.tar.gz
-
-ENV PATH /go/bin:/usr/local/go/bin:$PATH
-ENV GOPATH /go:/go/src/app/_gopath
-
-RUN mkdir -p /go/src/app /go/bin && chmod -R 777 /go
-
-RUN ln -s /go/src/app /app
-
 # Install sumologic provider
 ENV SUMO_PROVIDER_VERSION 1.2.0
-RUN mkdir -p /home/terraform && \
-    cd /home/terraform && \
+RUN mkdir -p /terraform && \
+    cd /terraform && \
     curl -L https://github.com/SumoLogic/sumologic-terraform-provider/releases/download/v${SUMO_PROVIDER_VERSION}/sumologic-terraform-provider_${SUMO_PROVIDER_VERSION}_Linux_64-bit.zip -o terraform-provider-sumologic.zip && \
     unzip terraform-provider-sumologic.zip && \
-    mv terraform-provider-sumologic /bin/terraform-provider-sumologic && \
-    chmod +x /bin/terraform-provider-sumologic
+    rm terraform-provider-sumologic.zip && \
+    chown -R fluent /terraform
 
 COPY --from=builder /usr/local/bundle /usr/local/bundle
 COPY ./fluent.conf /fluentd/etc/
