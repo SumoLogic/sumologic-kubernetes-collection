@@ -136,7 +136,9 @@ data:
     }
 
     provider "kubernetes" {
-      host = "http://localhost:8001"
+      host                    = "https://kubernetes.default.svc"
+      token                   = "${file("/var/run/secrets/kubernetes.io/serviceaccount/token")}"
+      cluster_ca_certificate  = "${file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")}"
     }
 
     resource "kubernetes_namespace" "sumologic_collection_namespace" {

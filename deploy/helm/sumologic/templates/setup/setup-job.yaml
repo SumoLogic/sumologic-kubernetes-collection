@@ -14,7 +14,7 @@ metadata:
 spec:
   template:
     spec:
-      restartPolicy: Never
+      restartPolicy: OnFailure
       serviceAccountName: {{ template "sumologic.fullname" . }}-setup
       volumes:
       - name: setup
@@ -22,10 +22,6 @@ spec:
           name: {{ template "sumologic.fullname" . }}-setup
           defaultMode: 0777
       containers:
-      - name:  kubectl
-        image: gcr.io/google_containers/kubectl:v1.0.7
-        command: ["/kubectl"]
-        args: ["proxy", "-p", "8001"]
       - name: setup
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
