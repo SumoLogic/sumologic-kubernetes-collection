@@ -53,12 +53,35 @@ RUN runDeps="sudo libsnappy-dev" \
  && apt-get install -y gnupg \
  && apt-get install -y curl \
  && apt-get install -y jq \
- && apt-get install -y wget
+ && apt-get install -y unzip
 
- # Install kubectl
+ # Install kubectl (to be removed once we switch to Terraform)
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 RUN chmod +x /usr/local/bin/kubectl
 COPY setup/setup.sh /usr/bin/
+
+# Install Terraform
+ENV TERRAFORM_VERSION 0.12.12
+RUN mkdir /tmp/terraform && \
+    curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o /tmp/terraform/terraform.zip && \
+    cd /tmp/terraform && \
+    unzip terraform.zip && \
+    mv terraform /bin/terraform && \
+    chmod +x /bin/terraform && \
+    rm -rf /tmp/terraform
+
+# Install sumologic provider and Kubernetes provider
+ENV SUMO_PROVIDER_VERSION 1.3.0
+ENV KUBERNETES_PROVIDER_VERSION 1.9.0
+RUN mkdir -p /terraform && \
+    cd /terraform && \
+    curl -L https://github.com/SumoLogic/sumologic-terraform-provider/releases/download/v${SUMO_PROVIDER_VERSION}/sumologic-terraform-provider_${SUMO_PROVIDER_VERSION}_Linux_64-bit.zip -o terraform-provider-sumologic.zip && \
+    unzip terraform-provider-sumologic.zip && \
+    rm terraform-provider-sumologic.zip && \
+    curl -L https://releases.hashicorp.com/terraform-provider-kubernetes/${KUBERNETES_PROVIDER_VERSION}/terraform-provider-kubernetes_${KUBERNETES_PROVIDER_VERSION}_linux_amd64.zip -o terraform-provider-kubernetes.zip && \
+    unzip terraform-provider-kubernetes.zip && \
+    rm terraform-provider-kubernetes.zip && \
+    chown -R fluent /terraform
 
 COPY --from=builder /usr/local/bundle /usr/local/bundle
 COPY ./fluent.conf /fluentd/etc/
