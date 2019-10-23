@@ -70,13 +70,17 @@ RUN mkdir /tmp/terraform && \
     chmod +x /bin/terraform && \
     rm -rf /tmp/terraform
 
-# Install sumologic provider
-ENV SUMO_PROVIDER_VERSION 1.2.0
+# Install sumologic provider and Kubernetes provider
+ENV SUMO_PROVIDER_VERSION 1.3.0
+ENV KUBERNETES_PROVIDER_VERSION 1.9.0
 RUN mkdir -p /terraform && \
     cd /terraform && \
     curl -L https://github.com/SumoLogic/sumologic-terraform-provider/releases/download/v${SUMO_PROVIDER_VERSION}/sumologic-terraform-provider_${SUMO_PROVIDER_VERSION}_Linux_64-bit.zip -o terraform-provider-sumologic.zip && \
     unzip terraform-provider-sumologic.zip && \
     rm terraform-provider-sumologic.zip && \
+    curl -L https://releases.hashicorp.com/terraform-provider-kubernetes/${KUBERNETES_PROVIDER_VERSION}/terraform-provider-kubernetes_${KUBERNETES_PROVIDER_VERSION}_linux_amd64.zip -o terraform-provider-kubernetes.zip && \
+    unzip terraform-provider-kubernetes.zip && \
+    rm terraform-provider-kubernetes.zip && \
     chown -R fluent /terraform
 
 COPY --from=builder /usr/local/bundle /usr/local/bundle
