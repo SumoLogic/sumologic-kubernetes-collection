@@ -53,6 +53,7 @@ RUN runDeps="sudo libsnappy-dev" \
  && apt-get install -y gnupg \
  && apt-get install -y curl \
  && apt-get install -y jq \
+ && apt-get install -y wget \
  && apt-get install -y unzip
 
  # Install kubectl (to be removed once we switch to Terraform)
