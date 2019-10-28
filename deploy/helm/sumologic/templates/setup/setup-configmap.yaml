@@ -16,6 +16,9 @@ data:
     cp /etc/terraform/sumo-k8s.tf /terraform
     cd /terraform
 
+    # Fix URL to remove "v1" or "v1/"
+    export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
+
     COLLECTOR_NAME={{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ .Values.sumologic.clusterName }}{{- end}}
 
     terraform init
