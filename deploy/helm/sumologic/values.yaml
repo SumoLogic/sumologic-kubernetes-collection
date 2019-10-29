@@ -7,6 +7,7 @@ nameOverride: ""
 
 deployment:
   nodeSelector: {}
+  tolerations: {}
   replicaCount: 3
   resources:
     limits:
@@ -18,6 +19,7 @@ deployment:
 
 eventsDeployment:
   nodeSelector: {}
+  tolerations: {}
   resources:
     limits:
       memory: 256Mi
