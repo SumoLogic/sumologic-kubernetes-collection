@@ -23,7 +23,7 @@ if [ -n "$GITHUB_TOKEN" ]; then
 fi
 
 # Check for invalid changes to generated yaml files (non-Tag builds)
-if [ -n "$GITHUB_TOKEN" ] && [ -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   # Check most recent commit author. If non-Travis, check for changes made to generated files
   recent_author=`git log origin-repo/master..HEAD --format="%an" | grep -m1 ""`
   if echo $recent_author | grep -v -q -i "travis"; then
@@ -70,7 +70,7 @@ echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
 # Check for changes that require re-generating overrides yaml files
-if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
+if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm init --client-only
