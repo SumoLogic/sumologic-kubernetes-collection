@@ -319,7 +319,7 @@ prometheus-operator:
         - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.apiserver
           writeRelabelConfigs:
             - action: keep
-              regex: apiserver;(?:apiserver_request_count|apiserver_request_latencies.*|etcd_request_cache_get_latencies_summary|etcd_request_cache_add_latencies_summary|etcd_helper_cache_hit_count|etcd_helper_cache_miss_count)
+              regex: apiserver;(?:apiserver_request_count|apiserver_request_latencies.*|etcd_request_cache_get_latencies_summary.*|etcd_request_cache_add_latencies_summary.*|etcd_helper_cache_hit_count|etcd_helper_cache_miss_count)
               sourceLabels: [job, __name__]
         # kubelet metrics
         - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.kubelet
@@ -337,7 +337,7 @@ prometheus-operator:
               regex: POD
               sourceLabels: [container_name]
             - action: keep
-              regex: kubelet;(?:container_cpu_load_average_10s|container_cpu_system_seconds_total|container_cpu_usage_seconds_total|container_cpu_cfs_throttled_seconds_total|container_memory_usage_bytes|container_memory_swap|container_memory_working_set_bytes|container_spec_memory_swap_limit_bytes|container_spec_memory_reservation_limit_bytes|container_spec_cpu_quota|container_spec_cpu_period|container_fs_usage_bytes|container_fs_limit_bytes|container_fs_reads_bytes_total|container_fs_writes_bytes_total|container_network_receive_bytes_total|container_network_transmit_bytes_total|container_network_receive_errors_total|container_network_transmit_errors_total|container_network_receive_packets_dropped_total|container_network_transmit_packets_dropped_total|)
+              regex: kubelet;(?:container_cpu_load_average_10s|container_cpu_system_seconds_total|container_cpu_usage_seconds_total|container_cpu_cfs_throttled_seconds_total|container_memory_usage_bytes|container_memory_swap|container_memory_working_set_bytes|container_spec_memory_limit_bytes|container_spec_memory_swap_limit_bytes|container_spec_memory_reservation_limit_bytes|container_spec_cpu_quota|container_spec_cpu_period|container_fs_usage_bytes|container_fs_limit_bytes|container_fs_reads_bytes_total|container_fs_writes_bytes_total|container_network_receive_bytes_total|container_network_transmit_bytes_total|container_network_receive_errors_total|container_network_transmit_errors_total|container_network_receive_packets_dropped_total|container_network_transmit_packets_dropped_total|)
               sourceLabels: [job, __name__]
         # node exporter metrics
         - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.node
