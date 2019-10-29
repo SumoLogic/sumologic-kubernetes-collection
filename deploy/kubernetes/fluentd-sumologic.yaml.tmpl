@@ -394,8 +394,7 @@ spec:
         app: collection-sumologic
         
     spec:
-      serviceAccountName: collection-sumologic
-      volumes:
+      serviceAccountName: collection-sumologicvolumes:
       - name: pos-files
         hostPath:
           path: /var/run/fluentd-pos
@@ -556,8 +555,7 @@ spec:
         app: collection-sumologic-events
         
     spec:
-      serviceAccountName: collection-sumologic
-      volumes:
+      serviceAccountName: collection-sumologicvolumes:
       - name: pos-files
         hostPath:
           path: /var/run/fluentd-pos
