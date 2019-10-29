@@ -4,9 +4,10 @@ image:
   pullPolicy: IfNotPresent
 
 nameOverride: ""
-fullnameOverride: ""
 
 deployment:
+  nodeSelector: {}
+  tolerations: {}
   replicaCount: 3
   resources:
     limits:
@@ -17,6 +18,8 @@ deployment:
       cpu: 0.5
 
 eventsDeployment:
+  nodeSelector: {}
+  tolerations: {}
   resources:
     limits:
       memory: 256Mi
