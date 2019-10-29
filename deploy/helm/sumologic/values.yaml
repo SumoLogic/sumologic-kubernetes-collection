@@ -8,7 +8,7 @@ nameOverride: ""
 deployment:
   nodeSelector: {}
   tolerations: {}
-  replicaCount: 3
+  replicaCount: 4
   resources:
     limits:
       memory: 1Gi
@@ -32,7 +32,7 @@ sumologic:
   ## Setup
 
   # If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
-  setupEnabled: true
+  setupEnabled: false
 
   # Sumo access ID
   #accessId: ""
@@ -257,7 +257,7 @@ prometheus-operator:
   alertmanager:
     enabled: false
   grafana:
-    enabled: false
+    enabled: true
     defaultDashboardsEnabled: false
   prometheus:
     additionalServiceMonitors:
