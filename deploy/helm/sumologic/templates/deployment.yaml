@@ -20,11 +20,11 @@ spec:
 {{- if .Values.deployment.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.deployment.nodeSelector | indent 8 }}
-{{- end -}}
+{{- end }}
 {{- if .Values.deployment.tolerations }}
       tolerations:
 {{ toYaml .Values.deployment.tolerations | indent 8 }}
-{{- end -}}
+{{- end }}
       volumes:
       - name: pos-files
         hostPath:
