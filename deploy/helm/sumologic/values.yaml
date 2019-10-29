@@ -157,7 +157,7 @@ sumologic:
 fluent-bit:
   enabled: true
   metrics:
-    enabled: true
+    enabled: false
   backend:
     type: forward
     forward:
