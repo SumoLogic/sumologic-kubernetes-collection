@@ -19,11 +19,11 @@ if [ -n "$GITHUB_TOKEN" ]; then
   git config --global user.name "Travis CI"
   git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
   git fetch origin-repo
-  git checkout $TRAVIS_BRANCH
+  git checkout $TRAVIS_PULL_REQUEST_BRANCH
 fi
 
 # Check for invalid changes to generated yaml files (non-Tag builds)
-if [ -n "$GITHUB_TOKEN" ] && [ -z "$TRAVIS_TAG" ] && [ "$TRAVIS_PULL_REQUEST" == false ] && [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   # Check most recent commit author. If non-Travis, check for changes made to generated files
   recent_author=`git log origin-repo/master..HEAD --format="%an" | grep -m1 ""`
   if echo $recent_author | grep -v -q -i "travis"; then
@@ -70,7 +70,7 @@ echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
 # Check for changes that require re-generating overrides yaml files
-if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -n "$GITHUB_TOKEN" ]; then
+if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "Generating yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm init --client-only
@@ -82,10 +82,10 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
   eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --name collection --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl --set sumologic.endpoint="bogus" --set sumologic.accessId="bogus" --set sumologic.accessKey="bogus"'
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
-      echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_BRANCH..."
+      echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
       git add deploy/kubernetes/fluentd-sumologic.yaml.tmpl
       git commit -m "Generate new 'fluentd-sumologic.yaml.tmpl'"
-      git push --quiet origin-repo "$TRAVIS_BRANCH"
+      git push --quiet origin-repo "$TRAVIS_PULL_REQUEST_BRANCH"
   else
       echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
   fi
@@ -124,10 +124,10 @@ if [ "$TRAVIS_BRANCH" != "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ] && [ -
   sed -n "$falco_start,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/falco-overrides.yaml
 
   if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ "$(git diff deploy/helm/falco-overrides.yaml)" ]; then
-    echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml' or 'falco-overrides.yaml', committing the updated version to $TRAVIS_BRANCH..."
+    echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml' or 'falco-overrides.yaml', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
     git add deploy/helm/*-overrides.yaml
     git commit -m "Generate new overrides yaml file(s)."
-    git push --quiet origin-repo "$TRAVIS_BRANCH"
+    git push --quiet origin-repo "$TRAVIS_PULL_REQUEST_BRANCH"
   else
     echo "No changes in the generated overrides files."
   fi
