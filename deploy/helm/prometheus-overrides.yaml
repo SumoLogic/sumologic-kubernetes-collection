@@ -67,7 +67,7 @@ prometheus:
       - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.apiserver
         writeRelabelConfigs:
           - action: keep
-            regex: apiserver;(?:apiserver_request_count|apiserver_request_latencies.*|etcd_request_cache_get_latencies_summary|etcd_request_cache_add_latencies_summary|etcd_helper_cache_hit_count|etcd_helper_cache_miss_count)
+            regex: apiserver;(?:apiserver_request_count|apiserver_request_latencies.*|etcd_request_cache_get_latencies_summary.*|etcd_request_cache_add_latencies_summary.*|etcd_helper_cache_hit_count|etcd_helper_cache_miss_count)
             sourceLabels: [job, __name__]
       # kubelet metrics
       - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.kubelet
