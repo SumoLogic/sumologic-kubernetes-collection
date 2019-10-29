@@ -17,6 +17,14 @@ spec:
         {{ template "sumologic.labels.common" . }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
+{{- if .Values.deployment.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.deployment.nodeSelector | indent 8 }}
+{{- end -}}
+{{- if .Values.deployment.tolerations }}
+      tolerations:
+{{ toYaml .Values.deployment.tolerations | indent 8 }}
+{{- end -}}
       volumes:
       - name: pos-files
         hostPath:
