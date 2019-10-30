@@ -30,8 +30,8 @@ If dryRun=true, we do not create any chart labels.
 {{- define "sumologic.labels.common" -}}
 {{- if .Values.dryRun -}}
 {{- else -}}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+release: "{{ .Release.Name }}"
+heritage: "{{ .Release.Service }}"
 {{- end -}}
 {{- end -}}
