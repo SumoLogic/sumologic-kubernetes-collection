@@ -4,7 +4,7 @@ metadata:
   name: {{ template "sumologic.fullname" . }}
   labels:
     app: {{ template "sumologic.labels.app" . }}
-    {{ template "sumologic.labels.common" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
 subjects:
 - kind: ServiceAccount
   namespace: {{ .Release.Namespace }}
