@@ -16,19 +16,24 @@ spec:
     spec:
       restartPolicy: OnFailure
       serviceAccountName: {{ template "sumologic.fullname" . }}-setup
+      volumes:
+      - name: setup
+        configMap:
+          name: {{ template "sumologic.fullname" . }}-setup
+          defaultMode: 0777
       containers:
       - name: setup
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command: ["/usr/bin/setup.sh", 
-          "-n", "{{ .Release.Namespace }}", 
-          "-k", "{{ .Values.sumologic.clusterName }}", 
-          {{- if .Values.sumologic.collectorName }}
-          "-c", "{{ .Values.sumologic.collectorName }}",
-          {{- end }}
-          "-d", "false", 
-          "-y", "false", 
-          '{{ required "A valid .Values.sumologic.endpoint entry required!" .Values.sumologic.endpoint }}',
-          '{{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}', 
-          '{{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}']
+        command: ["/etc/terraform/setup.sh"]
+        volumeMounts:
+        - name: setup
+          mountPath: /etc/terraform
+        env:
+        - name: SUMOLOGIC_ACCESSID
+          value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
+        - name: SUMOLOGIC_ACCESSKEY
+          value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
+        - name: SUMOLOGIC_BASE_URL
+          value: {{ required "A valid .Values.sumologic.endpoint entry required!" .Values.sumologic.endpoint }}
 {{- end }}
