@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   sumologic:
   - apiVersion: v1
+    appVersion: 0.10.5-alpha
+    created: "2019-10-31T10:00:01.900155-07:00"
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
+    digest: 05de1d8491d6b8d6081c07df3727f7d199bef18247d050f202ac14724c5af78e
+    name: sumologic
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/alpha/sumologic-0.10.5-alpha.tgz
+    version: 0.10.5-alpha
+  - apiVersion: v1
     appVersion: 0.10.4-alpha
-    created: "2019-10-30T15:17:44.577071-07:00"
+    created: "2019-10-31T10:00:01.890855-07:00"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: ed0220d764495a668447865d88be8dcb1d1682f8c0b39a9ba464234802b15ee1
@@ -13,7 +23,7 @@ entries:
     version: 0.10.4-alpha
   - apiVersion: v1
     appVersion: 0.10.0
-    created: "2019-10-30T15:17:44.567406-07:00"
+    created: "2019-10-31T10:00:01.880521-07:00"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 01a7c54446f7fe35a4608c80c49ffb893e7de1329fd0b4e6aa334f2a2b27cc7e
@@ -21,4 +31,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/alpha/sumologic-0.10.0.tgz
     version: 0.10.0
-generated: "2019-10-30T15:17:44.55666-07:00"
+generated: "2019-10-31T10:00:01.869269-07:00"
