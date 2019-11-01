@@ -143,7 +143,7 @@ if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha
   # Push new helm release
   git checkout -- .
   sudo helm init --client-only
-  sudo helm package deploy/helm/sumologic --version=$VERSION
+  sudo helm package deploy/helm/sumologic --version=$VERSION --app-version=$VERSION
   git fetch origin-repo
   git checkout gh-pages
   sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
@@ -175,6 +175,17 @@ elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS
   echo "Tagging git with v$new_alpha..."
   git tag -a "v$new_alpha" -m "Bump version to v$new_alpha"
   git push --tags --quiet --set-upstream origin-repo master
+
+  # Push new alpha helm release
+  git checkout -- .
+  sudo helm init --client-only
+  sudo helm package deploy/helm/sumologic --version=$new_alpha --app-version=$new_alpha
+  git fetch origin-repo
+  git checkout gh-pages
+  sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
+  git add -A
+  git commit -m "Push new alpha Helm Chart release $new_alpha"
+  git push --quiet origin-repo gh-pages
 else
   echo "Skip Docker pushing"
 fi
