@@ -143,7 +143,6 @@ if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha
   # Push new helm release
   git checkout -- .
   sudo helm init --client-only
-  sudo helm dependency update
   sudo helm repo update
   sudo helm package deploy/helm/sumologic --version=$VERSION --app-version=$VERSION
   git fetch origin-repo
@@ -181,7 +180,6 @@ elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS
   # Push new alpha helm release
   git checkout -- .
   sudo helm init --client-only
-  sudo helm dependency update
   sudo helm repo update
   sudo helm package deploy/helm/sumologic --version=$new_alpha --app-version=$new_alpha
   git fetch origin-repo
