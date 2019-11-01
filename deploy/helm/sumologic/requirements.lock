@@ -1,0 +1,12 @@
+dependencies:
+- name: fluent-bit
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 2.4.4
+- name: prometheus-operator
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 6.2.1
+- name: falco
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 1.0.8
+digest: sha256:8388add1c43105b4cffb66872fd3ce47967b3a5dabcb902ecaf6941badc6566a
+generated: "2019-11-01T20:26:03.011191519Z"
