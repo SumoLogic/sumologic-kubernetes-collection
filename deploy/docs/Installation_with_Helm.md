@@ -31,9 +31,9 @@ The Helm chart installation requires three parameter overrides:
 
 These steps require that no Prometheus exists. If you already have Prometheus installed select from the following options:
 
-- [How to install if you have an existing Prometheus operator](https://github.com/SumoLogic/sumologic-kubernetes-collection/deploy/docs/existingPrometheusDoc.md) 
-- [How to install if you have standalone Prometheus](https://github.com/SumoLogic/sumologic-kubernetes-collection/deploy/docs/standAlonePrometheus.md) 
-- [How to install our Prometheus side by side with your existing Prometheus](https://github.com/SumoLogic/sumologic-kubernetes-collection/deploy/docs/SideBySidePrometheus.md)
+- [How to install if you have an existing Prometheus operator](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/existingPrometheusDoc.md) 
+- [How to install if you have standalone Prometheus](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/standAlonePrometheus.md) 
+- [How to install our Prometheus side by side with your existing Prometheus](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/SideBySidePrometheus.md)
 
 To install the chart, first add the `sumologic` private repo:
 
