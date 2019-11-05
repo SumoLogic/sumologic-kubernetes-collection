@@ -2,8 +2,6 @@
 
 This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic. See our [documentation guide](https://help.sumologic.com/Solutions/Kubernetes_Solution) for details on our Kubernetes Solution.
 
-<!-- TOC -->
-
 - [Deployment Guide](#deployment-guide)
   - [Solution overview](#solution-overview)
   - [Minimum Requirements](#minimum-requirements)
@@ -14,8 +12,6 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 - [Migration Steps](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Migration_Steps.md)
 - [Troubleshooting Collection](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Troubleshoot_Collection.md)
 - [Monitoring the Monitoring](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/monitoring-lag.md)
-
-<!-- /TOC -->
 
 ## Solution overview
 
