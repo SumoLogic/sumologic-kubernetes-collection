@@ -42,6 +42,15 @@ This document has instructions for setting up collection with FluentD, FluentBit
 kubectl config current-context
 kubectl config use-context DESIRED_CONTEXT_NAME
 ```
+* In the Non-Helm installation steps, you will never need to run `helm install`, but we use Helm as a templating tool to generate the yaml files to install various components of our solution. Thus you will still need to install Helm:
+
+*Note the following steps are one way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://helm.sh/docs/using_helm/#securing-your-helm-installation)*
+
+Download Helm to generate the yaml files necessary to deploy by running
+
+```bash
+brew install kubernetes-helm
+```
 
 __NOTE__ These instructions assume that Prometheus is not already running on your Kubernetes cluster.
 
@@ -179,16 +188,6 @@ kubectl -n sumologic get pod
 ## Configure Prometheus
 
 In this step, you will configure the Prometheus server to write metrics to Fluentd.
-
-Install Helm:
-
-*Note the following steps are one way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://helm.sh/docs/using_helm/#securing-your-helm-installation)*
-
-Download Helm to generate the yaml files necessary to deploy by running
-
-```bash
-brew install kubernetes-helm
-```
 
 Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
