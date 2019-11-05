@@ -27,7 +27,7 @@ helm install sumologic/sumologic --name collection --namespace sumologic -f valu
 If you have not already customized your [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write), run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide below.
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.9.0/deploy/helm/prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.10.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 Then run
