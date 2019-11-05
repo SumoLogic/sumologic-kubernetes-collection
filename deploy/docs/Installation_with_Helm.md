@@ -91,3 +91,11 @@ helm delete collection
 > **Tip**: Use helm delete --purge collection to completely remove the release from Helm internal storage
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+To remove the Kubernetes secret:
+
+```bash
+kubectl delete secret sumologic
+```
+
+Then delete the associated hosted collector in the Sumo Logic UI.
