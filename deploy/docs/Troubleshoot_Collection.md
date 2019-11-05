@@ -2,6 +2,7 @@
 
 <!-- TOC -->
 
+- [`helm install` hanging](#helm-install-hanging) 
 - [Namespace configuration](#namespace-configuration) 
 - [Gathering logs](#gathering-logs) 
   - [Fluentd Logs](#fluentd-logs) 
