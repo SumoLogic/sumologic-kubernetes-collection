@@ -8,16 +8,16 @@
   - [Prometheus Logs](#prometheus-logs) 
   - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo) 
 - [Gathering metrics](#gathering-metrics) 
-  - [Check the `/metrics` endpoint](#check-the-`/metrics`-endpoint) 
+  - [Check the `/metrics` endpoint](#check-the-metrics-endpoint) 
   - [Check the Prometheus UI](#check-the-prometheus-ui) 
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage) 
   - [Check FluentBit and FluentD output metrics](#check-fluentbit-and-fluentd-output-metrics) 
 - [Common Issues](#common-issues) 
-  - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-`containercreating`-state) 
-  - [Missing `kubelet` metrics](#missing-`kubelet`-metrics) 
-    - [- Enable the `authenticationTokenWebhook` flag in the cluster](#--enable-the-`authenticationtokenwebhook`-flag-in-the-cluster) 
-    - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2.-disable-the-`kubelet.servicemonitor.https`-flag-in-the-prometheus-operator) 
-  - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-`kube-controller-manager`-or-`kube-scheduler`-metrics) 
+  - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state) 
+  - [Missing `kubelet` metrics](#missing-kubelet-metrics) 
+    - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster) 
+    - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator) 
+  - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics) 
 
 <!-- /TOC -->
 
@@ -241,7 +241,7 @@ helm install stable/prometheus-operator --name prometheus-operator --namespace s
 
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
-There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [above](#missing-metrics-for-controller-manager-or-scheduler).
+There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/master/deploy/docs/Non_Helm_Installation.md#missing-metrics-for-controller-manager-or-scheduler).
 
 ### Rancher
 
