@@ -29,7 +29,7 @@ The Helm chart installation requires three parameter overrides:
 
 ## Installation Steps
 
-These steps require that no Premotheus exists. If you already have prometheus installed select from the following options:
+These steps require that no Prometheus exists. If you already have Prometheus installed select from the following options:
 
 - [How to install if you have an existing Prometheus operator](https://github.com/SumoLogic/sumologic-kubernetes-collection/deploy/docs/existingPrometheusDoc.md) 
 - [How to install if you have standalone Prometheus](https://github.com/SumoLogic/sumologic-kubernetes-collection/deploy/docs/standAlonePrometheus.md) 
@@ -44,7 +44,7 @@ helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collect
 Install the chart with release name `collection` and namespace `sumologic`
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>
+helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<my-cluster-name>" --set sumologic.clusterName="<my-cluster-name>"
 ```
 
 If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists`, run
