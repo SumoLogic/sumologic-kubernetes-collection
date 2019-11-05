@@ -81,11 +81,6 @@ Make any changes to the `values.yaml` file as needed, and run the following to i
 helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
 ```
 
-If you would like to use a different cluster name than the default `kubernetes`, add this to the `helm install` command:
-```
---set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<my-cluster-name>" --set sumologic.clusterName="<my-cluster-name>"
-```
-
 ## Uninstalling the Chart
 
 To uninstall/delete the `collection` release:
