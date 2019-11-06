@@ -96,7 +96,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "# This file is auto-generated." > deploy/kubernetes/setup-sumologic.yaml.tmpl
 
   with_files=`ls deploy/helm/sumologic/templates/setup/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\\/g'`
-  eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --name collection --set dryRun=true >> deploy/kubernetes/setup-sumologic.yaml.tmpl --set sumologic.endpoint="bogus" --set sumologic.accessId="bogus" --set sumologic.accessKey="bogus"'
+  eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --name collection --set dryRun=true >> deploy/kubernetes/setup-sumologic.yaml.tmpl --set sumologic.endpoint="$SUMOLOGIC_BASE_URL" --set sumologic.accessId="$SUMOLOGIC_ACCESSID" --set sumologic.accessKey="$SUMOLOGIC_ACCESSKEY"'
 
   if [[ $(git diff deploy/kubernetes/setup-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'setup-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
