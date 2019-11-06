@@ -1,1 +1,264 @@
 # This file is auto-generated.
+---
+# Source: sumologic/templates/setup/setup-configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  collection-sumologic-setup
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic
+    
+data:
+  setup.sh: |-
+    #!/bin/sh
+    cp /etc/terraform/sumo-k8s.tf /terraform
+    cd /terraform
+
+    # Fix URL to remove "v1" or "v1/"
+    export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
+
+    COLLECTOR_NAME=kubernetes
+
+    terraform init
+
+    # Sumo Collector and HTTP sources
+    terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+    terraform import sumologic_http_source.default_metrics_source "$COLLECTOR_NAME/(default-metrics)"
+    terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
+    terraform import sumologic_http_source.events_source "$COLLECTOR_NAME/events"
+    terraform import sumologic_http_source.kube_controller_manager_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
+    terraform import sumologic_http_source.kube_scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
+    terraform import sumologic_http_source.kube_state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
+    terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
+    terraform import sumologic_http_source.logs_source "$COLLECTOR_NAME/logs"
+    terraform import sumologic_http_source.node_exporter_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
+
+    # Kubernetes Namespace and Secret
+    terraform import kubernetes_namespace.sumologic_collection_namespace $NAMESPACE
+    terraform import kubernetes_secret.sumologic_collection_secret $NAMESPACE/sumologic
+
+    terraform apply -auto-approve
+  sumo-k8s.tf: |-
+    variable "cluster_name" {
+      type  = string
+      default = "kubernetes"
+    }
+    variable "collector_name" {
+      type  = string
+      default = "kubernetes"
+    }
+
+    variable "namespace_name" {
+      type  = string
+      default = "$NAMESPACE"
+    }
+
+    locals {
+      default-metrics-source-name                 = "(default-metrics)"
+      apiserver-metrics-source-name               = "apiserver-metrics"
+      events-source-name                          = "events"
+      kube-controller-manager-metrics-source-name = "kube-controller-manager-metrics"
+      kube-scheduler-metrics-source-name          = "kube-scheduler-metrics"
+      kube-state-metrics-source-name              = "kube-state-metrics"
+      kubelet-metrics-source-name                 = "kubelet-metrics"
+      logs-source-name                            = "logs"
+      node-exporter-metrics-source-name           = "node-exporter-metrics"
+    }
+
+    provider "sumologic" {}
+
+    resource "sumologic_collector" "collector" {
+        name  = var.collector_name
+        fields  = {
+          cluster = var.cluster_name
+        }
+    }
+
+    resource "sumologic_http_source" "default_metrics_source" {
+        name         = local.default-metrics-source-name
+        category     = "${var.cluster_name}/${local.default-metrics-source-name}"
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
+    resource "sumologic_http_source" "apiserver_metrics_source" {
+        name         = local.apiserver-metrics-source-name
+        category     = "${var.cluster_name}/${local.apiserver-metrics-source-name}"
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
+    resource "sumologic_http_source" "events_source" {
+        name         = local.events-source-name
+        category     = "${var.cluster_name}/${local.events-source-name}"
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
+    resource "sumologic_http_source" "kube_controller_manager_metrics_source" {
+        name         = local.kube-controller-manager-metrics-source-name
+        category     = "${var.cluster_name}/${local.kube-controller-manager-metrics-source-name}"
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
+    resource "sumologic_http_source" "kube_scheduler_metrics_source" {
+        name         = local.kube-scheduler-metrics-source-name
+        category     = "${var.cluster_name}/${local.kube-scheduler-metrics-source-name}"
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
+    resource "sumologic_http_source" "kube_state_metrics_source" {
+        name         = local.kube-state-metrics-source-name
+        category     = "${var.cluster_name}/${local.kube-state-metrics-source-name}"
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
+    resource "sumologic_http_source" "kubelet_metrics_source" {
+        name         = local.kubelet-metrics-source-name
+        category     = "${var.cluster_name}/${local.kubelet-metrics-source-name}"
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
+    resource "sumologic_http_source" "logs_source" {
+        name         = local.logs-source-name
+        category     = "${var.cluster_name}/${local.logs-source-name}"
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
+    resource "sumologic_http_source" "node_exporter_metrics_source" {
+        name         = local.node-exporter-metrics-source-name
+        category     = "${var.cluster_name}/${local.node-exporter-metrics-source-name}"
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
+    provider "kubernetes" {
+      host                    = "https://kubernetes.default.svc"
+      token                   = "${file("/var/run/secrets/kubernetes.io/serviceaccount/token")}"
+      cluster_ca_certificate  = "${file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")}"
+    }
+
+    resource "kubernetes_namespace" "sumologic_collection_namespace" {
+      metadata {
+        name = var.namespace_name
+      }
+    }
+
+    resource "kubernetes_secret" "sumologic_collection_secret" {
+      metadata {
+        name = "sumologic"
+        namespace = var.namespace_name
+      }
+
+      data = {
+        endpoint-events                           = "${sumologic_http_source.events_source.url}"
+        endpoint-logs                             = "${sumologic_http_source.logs_source.url}"
+        endpoint-metrics                          = "${sumologic_http_source.default_metrics_source.url}"
+        endpoint-metrics-apiserver                = "${sumologic_http_source.apiserver_metrics_source.url}"
+        endpoint-metrics-kube-controller-manager  = "${sumologic_http_source.kube_controller_manager_metrics_source.url}"
+        endpoint-metrics-kube-scheduler           = "${sumologic_http_source.kube_scheduler_metrics_source.url}"
+        endpoint-metrics-kube-state               = "${sumologic_http_source.kube_state_metrics_source.url}"
+        endpoint-metrics-kubelet                  = "${sumologic_http_source.kubelet_metrics_source.url}"
+        endpoint-metrics-node-exporter            = "${sumologic_http_source.node_exporter_metrics_source.url}"
+      }
+
+      type = "Opaque"
+    }
+---
+# Source: sumologic/templates/setup/setup-serviceaccount.yaml
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name:  collection-sumologic-setup
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic
+    
+---
+# Source: sumologic/templates/setup/setup-clusterrole.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name:  collection-sumologic-setup
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic
+    
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - namespaces
+    verbs: ["get", "create", "describe", "patch"]
+---
+# Source: sumologic/templates/setup/setup-clusterrolebinding.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name:  collection-sumologic-setup
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic
+    
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: collection-sumologic-setup
+subjects:
+  - kind: ServiceAccount
+    name: collection-sumologic-setup
+    namespace: $NAMESPACE
+---
+# Source: sumologic/templates/setup/setup-job.yaml
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: collection-sumologic-setup
+  namespace: $NAMESPACE
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic
+    
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: collection-sumologic-setup
+      volumes:
+      - name: setup
+        configMap:
+          name: collection-sumologic-setup
+          defaultMode: 0777
+      containers:
+      - name: setup
+        image: sumologic/kubernetes-fluentd:0.10.0
+        imagePullPolicy: IfNotPresent
+        command: ["/etc/terraform/setup.sh"]
+        volumeMounts:
+        - name: setup
+          mountPath: /etc/terraform
+        env:
+        - name: SUMOLOGIC_ACCESSID
+          value: bogus
+        - name: SUMOLOGIC_ACCESSKEY
+          value: bogus
+        - name: SUMOLOGIC_BASE_URL
+          value: bogus
