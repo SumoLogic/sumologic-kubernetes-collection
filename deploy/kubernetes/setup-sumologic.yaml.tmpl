@@ -22,7 +22,7 @@ data:
     # Fix URL to remove "v1" or "v1/"
     export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
 
-    COLLECTOR_NAME=kubernetes
+    COLLECTOR_NAME=$COLLECTOR_NAME
 
     terraform init
 
@@ -46,11 +46,11 @@ data:
   sumo-k8s.tf: |-
     variable "cluster_name" {
       type  = string
-      default = "kubernetes"
+      default = "$CLUSTER_NAME"
     }
     variable "collector_name" {
       type  = string
-      default = "kubernetes"
+      default = "$COLLECTOR_NAME"
     }
 
     variable "namespace_name" {
