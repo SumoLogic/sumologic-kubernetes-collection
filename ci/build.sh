@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
@@ -71,14 +71,16 @@ ruby deploy/test/test_docker.rb
 
 # Check for changes that require re-generating overrides yaml files
 if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
-  echo "Generating yaml from helm chart..."
+  echo "Generating deployment yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm init --client-only
   cd deploy/helm/sumologic
   sudo helm dependency update
   cd ../../../
 
-  with_files=`ls deploy/helm/sumologic/templates/*.yaml  | grep -v "setup-*.yaml" | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\\/g'`
+  # NOTE(ryan, 2019-11-06): helm template -execute is going away in Helm 3 so we will need to revisit this
+  # https://github.com/helm/helm/issues/5887
+  with_files=`ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\\/g'`
   eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --name collection --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl --set sumologic.endpoint="bogus" --set sumologic.accessId="bogus" --set sumologic.accessKey="bogus"'
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
@@ -88,6 +90,20 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
       git push --quiet origin-repo "$TRAVIS_PULL_REQUEST_BRANCH"
   else
       echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
+  fi
+
+  echo "Generating setup job yaml from helm chart..."
+  echo "# This file is auto-generated." > deploy/kubernetes/setup-sumologic.yaml.tmpl
+
+  with_files=`ls deploy/helm/sumologic/templates/setup/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\\/g'`
+  eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --name collection --set dryRun=true >> deploy/kubernetes/setup-sumologic.yaml.tmpl --set sumologic.endpoint="\$SUMOLOGIC_BASE_URL" --set sumologic.accessId="\$SUMOLOGIC_ACCESSID" --set sumologic.accessKey="\$SUMOLOGIC_ACCESSKEY" --set sumologic.collectorName="\$COLLECTOR_NAME" --set sumologic.clusterName="\$CLUSTER_NAME"'
+  if [[ $(git diff deploy/kubernetes/setup-sumologic.yaml.tmpl) ]]; then
+      echo "Detected changes in 'setup-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
+      git add deploy/kubernetes/setup-sumologic.yaml.tmpl
+      git commit -m "Generate new 'setup-sumologic.yaml.tmpl'"
+      git push --quiet origin-repo "$TRAVIS_PULL_REQUEST_BRANCH"
+  else
+      echo "No changes in 'setup-sumologic.yaml.tmpl'."
   fi
 
   # Generate override yaml files for chart dependencies to determine if changes are made to overrides yaml files
