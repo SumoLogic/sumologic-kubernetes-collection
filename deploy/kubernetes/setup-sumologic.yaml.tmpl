@@ -7,7 +7,7 @@ kind: ConfigMap
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    "helm.sh/hook": pre-install
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "2"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
@@ -173,7 +173,7 @@ kind: ServiceAccount
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    "helm.sh/hook": pre-install
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "0"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
@@ -187,7 +187,7 @@ kind: ClusterRole
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    "helm.sh/hook": pre-install
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "1"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
@@ -208,7 +208,7 @@ kind: ClusterRoleBinding
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    "helm.sh/hook": pre-install
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "2"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
@@ -231,7 +231,7 @@ metadata:
   name: collection-sumologic-setup
   namespace: $NAMESPACE
   annotations:
-    "helm.sh/hook": pre-install
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "3"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
