@@ -72,7 +72,7 @@ RUN mkdir /tmp/terraform && \
     rm -rf /tmp/terraform
 
 # Install sumologic provider and Kubernetes provider
-ENV SUMO_PROVIDER_VERSION 1.3.0
+ENV SUMO_PROVIDER_VERSION 2.0.0
 ENV KUBERNETES_PROVIDER_VERSION 1.9.0
 RUN mkdir -p /terraform && \
     cd /terraform && \
