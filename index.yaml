@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   sumologic:
   - apiVersion: v1
+    appVersion: 0.10.17-alpha
+    created: "2019-11-09T00:24:32.233880638Z"
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
+    digest: e56a3393b084d8c6bddb3058665660197e28049a6b92f09cb22e15bf9df039a7
+    name: sumologic
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.10.17-alpha.tgz
+    version: 0.10.17-alpha
+  - apiVersion: v1
     appVersion: 0.10.16-alpha
-    created: "2019-11-08T17:52:30.388761995Z"
+    created: "2019-11-09T00:24:32.220699001Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 2f9c331c1bfd6ff23b72c64d8c6fa11c9c2cedc45365b8438af4c6b1e8ef3a2e
@@ -13,7 +23,7 @@ entries:
     version: 0.10.16-alpha
   - apiVersion: v1
     appVersion: 0.10.15-alpha
-    created: "2019-11-08T17:52:30.374982685Z"
+    created: "2019-11-09T00:24:32.202981328Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 9c23e8eb84ebbb8654e21034b34996c8af3bb0140fd8cc7fce0b1414c0c0f384
@@ -23,7 +33,7 @@ entries:
     version: 0.10.15-alpha
   - apiVersion: v1
     appVersion: 0.10.14-alpha
-    created: "2019-11-08T17:52:30.360937109Z"
+    created: "2019-11-09T00:24:32.188206612Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 3045f8ff4fb27f4b784f254225e345ce4167507370458f7208ab1c3331bbc35f
@@ -33,7 +43,7 @@ entries:
     version: 0.10.14-alpha
   - apiVersion: v1
     appVersion: 0.10.13-alpha
-    created: "2019-11-08T17:52:30.346621754Z"
+    created: "2019-11-09T00:24:32.17276134Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 59b43b499579c81c11d60176af87a6659431a388c4a9d85963d16223a6e91be5
@@ -43,7 +53,7 @@ entries:
     version: 0.10.13-alpha
   - apiVersion: v1
     appVersion: 0.10.12-alpha
-    created: "2019-11-08T17:52:30.331232325Z"
+    created: "2019-11-09T00:24:32.159420753Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 3299b5a272210ef9777019896fb0b75c0b27b254c354822a67c790027eba9244
@@ -53,7 +63,7 @@ entries:
     version: 0.10.12-alpha
   - apiVersion: v1
     appVersion: 0.10.11-alpha
-    created: "2019-11-08T17:52:30.316933828Z"
+    created: "2019-11-09T00:24:32.141854357Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 437a5f47fb49cb959ac36e6cf705925f5a2a43d51077269626b07bc4b8fa0447
@@ -63,7 +73,7 @@ entries:
     version: 0.10.11-alpha
   - apiVersion: v1
     appVersion: 0.10.10-alpha
-    created: "2019-11-08T17:52:30.301711575Z"
+    created: "2019-11-09T00:24:32.128524213Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 28b6287397e6659085b4ea00890b17a0e19ffd564671541089519452ab77a154
@@ -73,7 +83,7 @@ entries:
     version: 0.10.10-alpha
   - apiVersion: v1
     appVersion: 0.10.5-alpha
-    created: "2019-11-08T17:52:30.571126536Z"
+    created: "2019-11-09T00:24:32.411697443Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 05de1d8491d6b8d6081c07df3727f7d199bef18247d050f202ac14724c5af78e
@@ -83,7 +93,7 @@ entries:
     version: 0.10.5-alpha
   - apiVersion: v1
     appVersion: 0.10.4-alpha
-    created: "2019-11-08T17:52:30.553918872Z"
+    created: "2019-11-09T00:24:32.396860599Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: ed0220d764495a668447865d88be8dcb1d1682f8c0b39a9ba464234802b15ee1
@@ -93,7 +103,7 @@ entries:
     version: 0.10.4-alpha
   - apiVersion: v1
     appVersion: 0.10.0
-    created: "2019-11-08T17:52:30.539597671Z"
+    created: "2019-11-09T00:24:32.382018903Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 01a7c54446f7fe35a4608c80c49ffb893e7de1329fd0b4e6aa334f2a2b27cc7e
@@ -103,7 +113,7 @@ entries:
     version: 0.10.0
   - apiVersion: v1
     appVersion: 0.10.0
-    created: "2019-11-08T17:52:30.287581195Z"
+    created: "2019-11-09T00:24:32.110986862Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 98d17bd14bd407105705e710700715e56da607b78073b2b674e40980f7600568
@@ -113,7 +123,7 @@ entries:
     version: 0.10.0
   - apiVersion: v1
     appVersion: 0.9.0
-    created: "2019-11-08T17:52:30.527024005Z"
+    created: "2019-11-09T00:24:32.368338057Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 539ed695221ec466acdb658b4d028fc94a831dc235f848419c609c3dce505650
@@ -123,7 +133,7 @@ entries:
     version: 0.9.0
   - apiVersion: v1
     appVersion: 0.8.0
-    created: "2019-11-08T17:52:30.509188483Z"
+    created: "2019-11-09T00:24:32.35082301Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 3022ea4d75ed31ca20381fa01324f0766d6658e13e84cf97d2e89431deddafbe
@@ -133,7 +143,7 @@ entries:
     version: 0.8.0
   - apiVersion: v1
     appVersion: 0.7.0
-    created: "2019-11-08T17:52:30.496426243Z"
+    created: "2019-11-09T00:24:32.337942844Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 6fc14a6d7c2bc42b6139e7673ee8f3d4750aded5fa1511c64959086779c31a7b
@@ -143,7 +153,7 @@ entries:
     version: 0.7.0
   - apiVersion: v1
     appVersion: 0.6.0
-    created: "2019-11-08T17:52:30.47748992Z"
+    created: "2019-11-09T00:24:32.322901747Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 8a537e17322d07c559c71f96bd74634f7c18a0963b982fd3e73c9f43adc1896f
@@ -153,7 +163,7 @@ entries:
     version: 0.6.0
   - apiVersion: v1
     appVersion: 0.4.0
-    created: "2019-11-08T17:52:30.465302339Z"
+    created: "2019-11-09T00:24:32.307962261Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 22583b6ac2077ccff32c928584328ef6bde52cd767e96f4b04ae824a99a37475
@@ -163,7 +173,7 @@ entries:
     version: 0.5.0
   - apiVersion: v1
     appVersion: 0.4.0
-    created: "2019-11-08T17:52:30.446090791Z"
+    created: "2019-11-09T00:24:32.293667466Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: bc7eed5d028d9f417ac8fb7705c6008194bb1cae6eea75a0617d8bb216b90bfa
@@ -173,7 +183,7 @@ entries:
     version: 0.4.0
   - apiVersion: v1
     appVersion: 0.4.0
-    created: "2019-11-08T17:52:30.432691129Z"
+    created: "2019-11-09T00:24:32.278764319Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 67a13c658accc39703d13a8b2adf5259e875721f78fec20409e2146c6d2d2306
@@ -183,7 +193,7 @@ entries:
     version: 0.3.1-alpha
   - apiVersion: v1
     appVersion: 0.3.0
-    created: "2019-11-08T17:52:30.418740426Z"
+    created: "2019-11-09T00:24:32.264717221Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 1cdf93e9b078bdbeced5e230ff8c50112bfb7deae6f8c8437f9c59e1f3a99246
@@ -193,7 +203,7 @@ entries:
     version: 0.3.0
   - apiVersion: v1
     appVersion: 0.4.0
-    created: "2019-11-08T17:52:30.403806203Z"
+    created: "2019-11-09T00:24:32.249876248Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 15dc188792915ff9bfd6d6f5b011f37e92d5c9bd16cf3c5702cfc472821cea70
@@ -203,7 +213,7 @@ entries:
     version: 0.3.0-alpha
   - apiVersion: v1
     appVersion: 0.0.0
-    created: "2019-11-08T17:52:30.273298723Z"
+    created: "2019-11-09T00:24:32.094933185Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 96f30bc7ac1c97247d0e0bae7ce556e5b02037cadfc184def7b7e81c6ffa66e8
@@ -213,7 +223,7 @@ entries:
     version: 0.1.1
   - apiVersion: v1
     appVersion: 0.0.0
-    created: "2019-11-08T17:52:30.259125742Z"
+    created: "2019-11-09T00:24:32.0812252Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 5f0e1d0663bbbeb822ece477a71462d883941bd6221ba66008dce87ec5296f77
@@ -223,7 +233,7 @@ entries:
     version: 0.1.0
   - apiVersion: v1
     appVersion: 0.0.0
-    created: "2019-11-08T17:52:30.257975197Z"
+    created: "2019-11-09T00:24:32.080584022Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
       Sumo Logic.
     digest: 15018d851f94aabdcd452be9179090c2ae4be7744be7b66190b32e14ae7e2c34
@@ -231,4 +241,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.0.0.tgz
     version: 0.0.0
-generated: "2019-11-08T17:52:30.256480853Z"
+generated: "2019-11-09T00:24:32.079694193Z"
