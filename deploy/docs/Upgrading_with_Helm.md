@@ -57,6 +57,14 @@ If no chart value arguments are provided on the command line, any existing custo
 
 And if there exists `--set/--set-file/--set-string/--values/-f` , the `--reset-values` flag will be used by default.
 
+### Example using the `--set` flag in the upgrade command:
+
+```bash
+helm upgrade collection sumologic/sumologic --set key1=val1, key2=val2
+```
+
+### Example using the `-f` flag in the upgrade command:
+
 You can specify any of the chart value flags multiple times. The priority will be given to the last (right-most) value specified. For example, if both `myvalues.yaml` and `override.yaml` contained a key called ‘Test’, the value set in `override.yaml` would take precedence:  
 
 ```bash
