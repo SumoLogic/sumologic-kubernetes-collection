@@ -7,7 +7,11 @@ This command upgrades a release to a specified version of a chart and/or updates
 
 Required arguments are release and chart.
 
-The chart argument can be one of: - a chart reference; use `–version` flag for versions other than latest, - a path to a chart directory, - a packaged chart, - a fully qualified URL.
+The chart argument can be one of: 
+- a chart reference; use `–version` flag for versions other than latest, 
+- a path to a chart directory, 
+- a packaged chart, 
+- a fully qualified URL.
 
 An upgrade takes an existing release and upgrades it according to the information you provide. Because Kubernetes charts can be large and complex, Helm tries to perform the least invasive upgrade. It will only update things that have changed since the last release.
 
@@ -26,29 +30,18 @@ helm upgrade [RELEASE] [CHART] [flags]
 
 Some useful Options
 
-``` bash
-
---debug 		Enable verbose output
-
---dry-run 		Simulate an upgrade
-
--h, --help 		help for upgrade
-
---no-hooks 		Disable pre/post upgrade hooks
-
---reset-values 	When upgrading, reset the values to the ones built into the chart
-
---reuse-values 	When upgrading, reuse the last releases values and merge in any overrides from the command line via --set and -f
-
---set string	Array Set values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)
-
---set-file 		stringArray Set values from respective files specified via the command line (can specify multiple or separate values with commas: key1=path1,key2=path2)
-
---set-string 	stringArray Set STRING values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)
-
---version 		Specify the exact chart version to use. If this is not specified, the latest version is used
-
-```
+|     Option     	| Description                                                                                                                                              	|
+|:--------------:	|----------------------------------------------------------------------------------------------------------------------------------------------------------	|
+|     `--debug`    	| Enable verbose output                                                                                                                                    	|
+|    `--dry-run`   	| Simulate an upgrade                                                                                                                                      	|
+|   `-h`, `--help`   	| help for upgrade                                                                                                                                         	|
+|   `--no-hooks`   	| Disable pre/post upgrade hooks                                                                                                                           	|
+| `--reset-values` 	| When upgrading, reset the values to the ones built into the chart                                                                                        	|
+| `--reuse-values` 	| When upgrading, reuse the last releases values and merge in any overrides from the command line via `--set` and `-f`                                        	|
+|  `--set` stringArray	| Set values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)                                          	|
+|   `--set-file` stringArray  	| Set values from respective files specified via the command line (can specify multiple or separate values with commas: key1=path1,key2=path2) 	|
+|  `--set-string` stringArray  	|  Set STRING values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)                             	|
+|    `--version`   	| Specify the exact chart version to use. If this is not specified, the latest version is used                                                             	|
 
 
 To edit or append to the existing customized values, add the `–reuse-values` flag, otherwise any existing customized values are ignored.
@@ -76,7 +69,7 @@ In the above case, the `collection` release is upgraded with the same chart, but
 Test: true
 ```
   
-We can use helm get values to see whether that new setting took effect.
+We can use helm `get values` to see whether that new setting took effect.
 ```bash
 $ helm get values collection
 Test: true
