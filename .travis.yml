@@ -10,3 +10,4 @@ script: bash ci/build.sh
 branches:
   only:
   - master
+  - /^v\d.\d.\d$/
