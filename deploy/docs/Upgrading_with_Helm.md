@@ -46,4 +46,4 @@ $ helm upgrade collection sumologic/sumologic --reuse-values -f override.yaml
 **Tip**: Use `--reuse-values` flag to retain the values for Sumologic API Endpoint, Access ID and Key.  
 
 Reference link to official Helm documentation:  https://helm.sh/docs/helm/#helm-upgrade
- No newline at end of file
+
