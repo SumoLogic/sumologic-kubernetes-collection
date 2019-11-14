@@ -12,7 +12,7 @@
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint) 
   - [Check the Prometheus UI](#check-the-prometheus-ui) 
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage) 
-  - [Check FluentBit and FluentD output metrics](#check-fluentbit-and-fluentd-output-metrics) 
+  - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics) 
 - [Common Issues](#common-issues) 
   - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state) 
   - [Missing `kubelet` metrics](#missing-kubelet-metrics) 
@@ -160,15 +160,15 @@ If you can't find the expected metrics, you can check if Prometheus is successfu
 
 ### Check Prometheus Remote Storage
 
-We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus/latest/storage/) integration to send metrics from Prometheus to the FluentD collection pipeline.
+We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus/latest/storage/) integration to send metrics from Prometheus to the Fluentd collection pipeline.
 
 You can follow [Deploy Fluentd](#prometheus-logs) to verify there are no errors during remote write.
 
 You can also check `prometheus_remote_storage_.*` metrics to look for success/failure attempts.
 
-### Check FluentBit and FluentD output metrics
+### Check FluentBit and Fluentd output metrics
 
-By default, we collect input/output plugin metrics for FluentBit, and output metrics for FluentD that you can use to verify collection:
+By default, we collect input/output plugin metrics for FluentBit, and output metrics for Fluentd that you can use to verify collection:
 
 Relevant FluentBit metrics include:
 
@@ -179,7 +179,7 @@ Relevant FluentBit metrics include:
 - fluentbit_output_retries_total
 - fluentbit_output_retries_failed_total
 
-Relevant FluentD metrics include:
+Relevant Fluentd metrics include:
 
 - fluentd_output_status_emit_records
 - fluentd_output_status_buffer_queue_length

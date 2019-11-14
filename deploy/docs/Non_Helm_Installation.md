@@ -1,6 +1,6 @@
 # Non Helm Installation
 
-This document has instructions for setting up collection with FluentD, FluentBit, and Prometheus.
+This document has instructions for setting up collection with Fluentd, FluentBit, and Prometheus.
 
 <!-- TOC -->
 
