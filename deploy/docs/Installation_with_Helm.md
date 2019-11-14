@@ -81,7 +81,7 @@ Make any changes to the `values.yaml` file as needed, and run the following to i
 helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml --set sumologic.endpoint=<SUMO_API_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
 ```
 
-__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additonal_prometheus_configuration.md)
+__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
 
 ## Uninstalling the Chart
 

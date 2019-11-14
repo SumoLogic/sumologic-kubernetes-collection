@@ -205,7 +205,7 @@ __NOTE__ It’s fine to change the value of the `cluster` field, but don’t cha
 
 __NOTE__ If you plan to install Prometheus in a different namespace than you deployed Fluentd to in Step 1, or you have an existing Prometheus you plan to apply our configuration to running in a different namespace,  please update the remote write API configuration to use the full service URL like, `http://collection-sumologic.sumologic.svc.cluster.local:9888`.
 
-You can also [Filter metrics](additonal_prometheus_configuration.md#filter-metrics) and [Trim and relabel metrics](additonal_prometheus_configuration.md#trim-and-relabel-metrics) in `prometheus-overrides.yaml`.
+You can also [Filter metrics](additional_prometheus_configuration.md#filter-metrics) and [Trim and relabel metrics](additional_prometheus_configuration.md#trim-and-relabel-metrics) in `prometheus-overrides.yaml`.
 
 Install `prometheus-operator` by generating the yaml files using Helm:
 
@@ -237,9 +237,9 @@ kubectl -n sumologic logs prometheus-prometheus-operator-prometheus-0 prometheus
 At this point setup is complete and metrics data is being sent to Sumo Logic.
 
 <<<<<<< HEAD
-__NOTE__ You can also [send custom metrics](additonal_prometheus_configuration.md#custom-metrics)to Sumo Logic from Prometheus.
+__NOTE__ You can also [send custom metrics](additional_prometheus_configuration.md#custom-metrics)to Sumo Logic from Prometheus.
 =======
-__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additonal_prometheus_configuration.md)
+__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
 >>>>>>> ef4063a5821842134096b5ea2a40559e6611c267
 
 ### Missing metrics for `controller-manager` or `scheduler`

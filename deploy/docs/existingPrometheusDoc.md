@@ -52,4 +52,4 @@ Any section of `current-values.yaml` that conflicts with sections of our `promet
 helm upgrade prometheus-operator stable/prometheus-operator -f current-values.yaml -f prometheus-overrides.yaml
 ```
 
-__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additonal_prometheus_configuration.md)
+__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
