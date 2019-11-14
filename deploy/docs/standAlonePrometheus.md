@@ -5,4 +5,4 @@ Update your Prometheus configuration file’s `remote_write` section, as per the
 * `writeRelabelConfigs:` change to `write_relabel_configs:`
 * `sourceLabels:` change to `source_labels:`
 
-__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additonal_prometheus_configuration.md)
+__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
