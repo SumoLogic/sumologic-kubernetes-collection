@@ -51,3 +51,5 @@ Any section of `current-values.yaml` that conflicts with sections of our `promet
 ```bash
 helm upgrade prometheus-operator stable/prometheus-operator -f current-values.yaml -f prometheus-overrides.yaml
 ```
+
+__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)

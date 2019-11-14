@@ -17,3 +17,5 @@ prometheus-operator:
       targetPort: 9200
   ...
 ```
+
+__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
