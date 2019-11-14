@@ -1,0 +1,39 @@
+{{- if .Values.sumologic.setupEnabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "sumologic.fullname" . }}-setup
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: {{ template "sumologic.labels.app" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: {{ template "sumologic.fullname" . }}-setup
+      volumes:
+      - name: setup
+        configMap:
+          name: {{ template "sumologic.fullname" . }}-setup
+          defaultMode: 0777
+      containers:
+      - name: setup
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/etc/terraform/setup.sh"]
+        volumeMounts:
+        - name: setup
+          mountPath: /etc/terraform
+        env:
+        - name: SUMOLOGIC_ACCESSID
+          value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
+        - name: SUMOLOGIC_ACCESSKEY
+          value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
+        - name: SUMOLOGIC_BASE_URL
+          value: {{ .Values.sumologic.endpoint }}
+{{- end }}

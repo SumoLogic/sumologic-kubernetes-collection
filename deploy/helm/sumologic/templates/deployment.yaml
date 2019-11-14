@@ -1,0 +1,162 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "sumologic.fullname" . }}
+  labels:
+    app: {{ template "sumologic.labels.app" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.labels.app" . }}
+  replicas: {{ .Values.deployment.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "sumologic.labels.app" . }}
+        {{- include "sumologic.labels.common" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ template "sumologic.fullname" . }}
+{{- if .Values.deployment.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.deployment.nodeSelector | indent 8 }}
+{{- end }}
+{{- if .Values.deployment.tolerations }}
+      tolerations:
+{{ toYaml .Values.deployment.tolerations | indent 8 }}
+{{- end }}
+      volumes:
+      - name: pos-files
+        hostPath:
+          path: /var/run/fluentd-pos
+          type: ""
+      - name: config-volume
+        configMap:
+          name: {{ template "sumologic.fullname" . }}
+      containers:
+      - name: fluentd
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          {{- toYaml .Values.deployment.resources | nindent 10 }}
+        ports:
+        - name: prom-write
+          containerPort: 9888
+          protocol: TCP
+        - name: fluent-bit
+          containerPort: 24321
+          protocol: TCP
+        livenessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
+          initialDelaySeconds: 300
+          periodSeconds: 20
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        volumeMounts:
+        - name: config-volume
+          mountPath: /fluentd/etc/
+        - name: pos-files
+          mountPath: /mnt/pos/
+        env:
+        - name: SUMO_ENDPOINT_METRICS
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics
+        - name: SUMO_ENDPOINT_METRICS_APISERVER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-apiserver
+        - name: SUMO_ENDPOINT_METRICS_KUBELET
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kubelet
+        - name: SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kube-controller-manager
+        - name: SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kube-scheduler
+        - name: SUMO_ENDPOINT_METRICS_KUBE_STATE
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kube-state
+        - name: SUMO_ENDPOINT_METRICS_NODE_EXPORTER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-node-exporter
+        - name: SUMO_ENDPOINT_LOGS
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-logs
+        - name: LOG_FORMAT
+          value: {{ .Values.sumologic.logFormat | quote }}
+        - name: FLUSH_INTERVAL
+          value: {{ .Values.sumologic.flushInterval | quote }}
+        - name: NUM_THREADS
+          value: {{ .Values.sumologic.numThreads | quote }}
+        - name: CHUNK_LIMIT_SIZE
+          value: {{ .Values.sumologic.chunkLimitSize | quote }}
+        - name: TOTAL_LIMIT_SIZE
+          value: {{ .Values.sumologic.totalLimitSize | quote }}
+        - name: SOURCE_CATEGORY
+          value: {{ .Values.sumologic.sourceCategory | quote }}
+        - name: SOURCE_CATEGORY_PREFIX
+          value: {{ .Values.sumologic.sourceCategoryPrefix | quote }}
+        - name: SOURCE_CATEGORY_REPLACE_DASH
+          value: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
+        - name: SOURCE_NAME
+          value: {{ .Values.sumologic.sourceName | quote }}
+        - name: KUBERNETES_META
+          value: {{ .Values.sumologic.kubernetesMeta | quote }}
+        - name: KUBERNETES_META_REDUCE
+          value: {{ .Values.sumologic.kubernetesMetaReduce | quote }}
+        - name: MULTILINE_START_REGEXP
+          value: {{ .Values.sumologic.multilineStartRegexp | quote }}
+        - name: CONCAT_SEPARATOR
+          value: {{ .Values.sumologic.concatSeparator | quote }}
+        - name: ADD_TIMESTAMP
+          value: {{ .Values.sumologic.addTimestamp | quote }}
+        - name: TIMESTAMP_KEY
+          value: {{ .Values.sumologic.timestampKey | quote }}
+        - name: ADD_STREAM
+          value: {{ .Values.sumologic.addStream | quote }}
+        - name: ADD_TIME
+          value: {{ .Values.sumologic.addTime | quote }}
+        - name: K8S_METADATA_FILTER_WATCH
+          value: {{ .Values.sumologic.k8sMetadataFilter.watch | quote }}
+        - name: K8S_METADATA_FILTER_VERIFY_SSL
+          value: {{ .Values.sumologic.k8sMetadataFilter.verifySsl | quote }}
+        - name: K8S_METADATA_FILTER_BEARER_CACHE_SIZE
+          value: {{ .Values.sumologic.k8sMetadataFilter.bearerCacheSize | quote }}
+        - name: K8S_METADATA_FILTER_BEARER_CACHE_TTL
+          value: {{ .Values.sumologic.k8sMetadataFilter.bearerCacheTtl | quote }}
+        - name: VERIFY_SSL
+          value: {{ .Values.sumologic.verifySsl | quote }}
+        - name: EXCLUDE_NAMESPACE_REGEX
+          value: {{ .Values.sumologic.excludeNamespaceRegex | quote }}
+        - name: EXCLUDE_CONTAINER_REGEX
+          value: {{ .Values.sumologic.excludeContainerRegex | quote }}
+        - name: EXCLUDE_HOST_REGEX
+          value: {{ .Values.sumologic.excludeHostRegex | quote }}
+        - name: EXCLUDE_POD_REGEX
+          value: {{ .Values.sumologic.excludePodRegex | quote }}

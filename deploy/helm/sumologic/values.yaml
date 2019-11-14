@@ -1,0 +1,372 @@
+image:
+  repository: sumologic/kubernetes-fluentd
+  tag: 0.11.0
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+
+deployment:
+  nodeSelector: {}
+  tolerations: {}
+  replicaCount: 3
+  resources:
+    limits:
+      memory: 1Gi
+      cpu: 1
+    requests:
+      memory: 768Mi
+      cpu: 0.5
+
+eventsDeployment:
+  nodeSelector: {}
+  tolerations: {}
+  resources:
+    limits:
+      memory: 256Mi
+      cpu: "100m"
+    requests:
+      memory: 256Mi
+      cpu: "100m"
+
+sumologic:
+  ## Setup
+
+  # If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
+  setupEnabled: true
+
+  # Sumo access ID
+  #accessId: ""
+
+  # Sumo access key
+  #accessKey: ""
+
+  # Sumo API endpoint
+  # ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
+  #endpoint: ""
+
+  # Collector name
+  #collectorName: ""
+
+  # Cluster name
+  clusterName: "kubernetes"
+
+  # If enabled, collect K8s events
+  eventCollectionEnabled: true
+
+  ## Format to post logs into Sumo. json, json_merge, or text
+  logFormat: fields
+
+  ## How frequently to push logs to SumoLogic
+  ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
+  flushInterval: "5s"
+
+  ## Increase number of http threads to Sumo. May be required in heavy logging clusters
+  numThreads: 4
+
+  chunkLimitSize: "100k"
+
+  totalLimitSize: "128m"
+
+  ## Set the _sourceName metadata field in SumoLogic.
+  sourceName: "%{namespace}.%{pod}.%{container}"
+
+  ## Set the _sourceCategory metadata field in SumoLogic.
+  sourceCategory: "%{namespace}/%{pod_name}"
+
+  ## Set the prefix, for _sourceCategory metadata.
+  sourceCategoryPrefix: "kubernetes/"
+
+  ## Used to replace - with another character.
+  sourceCategoryReplaceDash: "/"
+
+  ## Include or exclude Kubernetes metadata such as namespace and pod_name if
+  ## using json log format.
+  kubernetesMeta: "true"
+
+  ## Reduces redundant Kubernetes metadata. 
+  ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#reducing-kubernetes-metadata
+  kubernetesMetaReduce: "false"
+
+  ## The regular expression for the "concat" plugin to use when merging multi-line messages
+  multilineStartRegexp: '/^\w{3} \d{1,2}, \d{4}/'
+
+  ## The character to use to delimit lines within the final concatenated message.
+  ## Most multi-line messages contain a newline at the end of each line
+  concatSeparator: ""
+
+  ## Option to control adding timestamp to logs. 
+  addTimestamp: "true"
+
+  ## Field name when add_timestamp is on.
+  timestampKey: "timestamp"
+
+  ## Option to control adding stream to logs.
+  addStream: "true"
+
+  ## Option to control adding time to logs.
+  addTime: "true"
+
+  ## Verify SumoLogic HTTPS certificates
+  verifySsl: "true"
+
+  ## A regular expression for containers. 
+  ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+  excludeContainerRegex: ""
+
+  ## A regular expression for hosts. 
+  ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+  excludeHostRegex: ""
+
+  ## A regular expression for namespaces. 
+  ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+  excludeNamespaceRegex: ""
+
+  ## A regular expression for pods. 
+  ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+  excludePodRegex: ""
+
+
+  ## Sets the fluentd log level. The default log level, if not specified, is info.
+  ## ref: https://docs.fluentd.org/deployment/logging
+  # fluentdLogLevel: "debug"
+
+  ## Override Kubernetes resource types you want to get events for from different Kubernetes
+  ## API versions. The key represents the name of the resource type and the value represents
+  ## the API version.
+  # watchResourceEventsOverrides:
+  #   pods: "v1"
+  #   events: "events.k8s.io/v1beta1"
+
+  k8sMetadataFilter:
+    ## Option to control the enabling of metadata filter plugin watch.
+    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
+    watch: "true"
+
+    ## Verify ssl certificate of sumologic endpoint.
+    verifySsl: "true"
+
+    ## Option to control the enabling of metadata filter plugin cache_size. 
+    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
+    bearerCacheSize: "1000"
+
+    ## Option to control the enabling of metadata filter plugin cache_ttl. 
+    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
+    bearerCacheTtl: "3600"
+
+## Configure fluent-bit 
+## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
+fluent-bit:
+  enabled: true
+  metrics:
+    enabled: true
+  backend:
+    type: forward
+    forward:
+      host: collection-sumologic.sumologic.svc.cluster.local
+      port: 24321
+      tls: "off"
+      tls_verify: "on"
+      tls_debug: 1
+      shared_key:
+
+  trackOffsets: true
+
+  tolerations:
+    - effect: NoSchedule
+      operator: Exists
+
+  input:
+    systemd:
+      enabled: true
+
+  rawConfig: |-
+    @INCLUDE fluent-bit-service.conf
+
+    [INPUT]
+      Name             tail
+      Path             /var/log/containers/*.log
+      Parser           docker
+      Tag              containers.*
+      Refresh_Interval 1
+      Rotate_Wait      60
+      Mem_Buf_Limit    5MB
+      Skip_Long_Lines  On
+      DB               /tail-db/tail-containers-state.db
+      DB.Sync          Normal
+    [INPUT]
+      Name            systemd
+      Tag             host.*
+      Systemd_Filter  _SYSTEMD_UNIT=addon-config.service
+      Systemd_Filter  _SYSTEMD_UNIT=addon-run.service
+      Systemd_Filter  _SYSTEMD_UNIT=cfn-etcd-environment.service
+      Systemd_Filter  _SYSTEMD_UNIT=cfn-signal.service
+      Systemd_Filter  _SYSTEMD_UNIT=clean-ca-certificates.service
+      Systemd_Filter  _SYSTEMD_UNIT=containerd.service
+      Systemd_Filter  _SYSTEMD_UNIT=coreos-metadata.service
+      Systemd_Filter  _SYSTEMD_UNIT=coreos-setup-environment.service
+      Systemd_Filter  _SYSTEMD_UNIT=coreos-tmpfiles.service
+      Systemd_Filter  _SYSTEMD_UNIT=dbus.service
+      Systemd_Filter  _SYSTEMD_UNIT=docker.service
+      Systemd_Filter  _SYSTEMD_UNIT=efs.service
+      Systemd_Filter  _SYSTEMD_UNIT=etcd-member.service
+      Systemd_Filter  _SYSTEMD_UNIT=etcd.service
+      Systemd_Filter  _SYSTEMD_UNIT=etcd2.service
+      Systemd_Filter  _SYSTEMD_UNIT=etcd3.service
+      Systemd_Filter  _SYSTEMD_UNIT=etcdadm-check.service
+      Systemd_Filter  _SYSTEMD_UNIT=etcdadm-reconfigure.service
+      Systemd_Filter  _SYSTEMD_UNIT=etcdadm-save.service
+      Systemd_Filter  _SYSTEMD_UNIT=etcdadm-update-status.service
+      Systemd_Filter  _SYSTEMD_UNIT=flanneld.service
+      Systemd_Filter  _SYSTEMD_UNIT=format-etcd2-volume.service
+      Systemd_Filter  _SYSTEMD_UNIT=kube-node-taint-and-uncordon.service
+      Systemd_Filter  _SYSTEMD_UNIT=kubelet.service
+      Systemd_Filter  _SYSTEMD_UNIT=ldconfig.service
+      Systemd_Filter  _SYSTEMD_UNIT=locksmithd.service
+      Systemd_Filter  _SYSTEMD_UNIT=logrotate.service
+      Systemd_Filter  _SYSTEMD_UNIT=lvm2-monitor.service
+      Systemd_Filter  _SYSTEMD_UNIT=mdmon.service
+      Systemd_Filter  _SYSTEMD_UNIT=nfs-idmapd.service
+      Systemd_Filter  _SYSTEMD_UNIT=nfs-mountd.service
+      Systemd_Filter  _SYSTEMD_UNIT=nfs-server.service
+      Systemd_Filter  _SYSTEMD_UNIT=nfs-utils.service
+      Systemd_Filter  _SYSTEMD_UNIT=node-problem-detector.service
+      Systemd_Filter  _SYSTEMD_UNIT=ntp.service
+      Systemd_Filter  _SYSTEMD_UNIT=oem-cloudinit.service
+      Systemd_Filter  _SYSTEMD_UNIT=rkt-gc.service
+      Systemd_Filter  _SYSTEMD_UNIT=rkt-metadata.service
+      Systemd_Filter  _SYSTEMD_UNIT=rpc-idmapd.service
+      Systemd_Filter  _SYSTEMD_UNIT=rpc-mountd.service
+      Systemd_Filter  _SYSTEMD_UNIT=rpc-statd.service
+      Systemd_Filter  _SYSTEMD_UNIT=rpcbind.service
+      Systemd_Filter  _SYSTEMD_UNIT=set-aws-environment.service
+      Systemd_Filter  _SYSTEMD_UNIT=system-cloudinit.service
+      Systemd_Filter  _SYSTEMD_UNIT=systemd-timesyncd.service
+      Systemd_Filter  _SYSTEMD_UNIT=update-ca-certificates.service
+      Systemd_Filter  _SYSTEMD_UNIT=user-cloudinit.service
+      Systemd_Filter  _SYSTEMD_UNIT=var-lib-etcd2.service
+      Max_Entries     1000
+      Read_From_Tail  true
+
+    @INCLUDE fluent-bit-output.conf
+
+## Configure prometheus-operator
+## ref: https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml
+grafana:
+  enabled: false
+prometheus-operator:
+  enabled: true
+  alertmanager:
+    enabled: false
+  grafana:
+    enabled: false
+    defaultDashboardsEnabled: false
+  prometheus:
+    additionalServiceMonitors:
+      - name: collection-sumologic
+        additionalLabels:
+          app: collection-sumologic
+        endpoints:
+        - port: metrics
+        namespaceSelector:
+          matchNames:
+          - sumologic
+        selector:
+          matchLabels:
+            app: collection-sumologic
+      - name: collection-sumologic-events
+        additionalLabels:
+          app: collection-sumologic-events
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - sumologic
+        selector:
+          matchLabels:
+            app: collection-sumologic-events
+      - name: collection-fluent-bit
+        additionalLabels:
+          app: collection-fluent-bit
+        endpoints:
+          - port: metrics
+            path: /api/v1/metrics/prometheus
+        namespaceSelector:
+          matchNames:
+            - sumologic
+        selector:
+          matchLabels:
+            app: fluent-bit
+    prometheusSpec:
+      externalLabels:
+        # Set this to a value to distinguish between different k8s clusters
+        cluster: kubernetes
+      remoteWrite:
+        # kube state metrics
+        - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.state
+          writeRelabelConfigs:
+            - action: keep
+              regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_daemonset_metadata_generation|kube_deployment_metadata_generation|kube_deployment_spec_paused|kube_deployment_spec_replicas|kube_deployment_spec_strategy_rollingupdate_max_unavailable|kube_deployment_status_replicas_available|kube_deployment_status_observed_generation|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_spec_unschedulable|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)
+              sourceLabels: [job, __name__]
+        # controller manager metrics
+        - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.controller-manager
+          writeRelabelConfigs:
+            - action: keep
+              regex: kubelet;cloudprovider_.*_api_request_duration_seconds.*
+              sourceLabels: [job, __name__]
+        # scheduler metrics
+        - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.scheduler
+          writeRelabelConfigs:
+            - action: keep
+              regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_latency_microseconds.*
+              sourceLabels: [job, __name__]
+        # api server metrics
+        - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.apiserver
+          writeRelabelConfigs:
+            - action: keep
+              regex: apiserver;(?:apiserver_request_count|apiserver_request_latencies.*|etcd_request_cache_get_latencies_summary.*|etcd_request_cache_add_latencies_summary.*|etcd_helper_cache_hit_count|etcd_helper_cache_miss_count)
+              sourceLabels: [job, __name__]
+        # kubelet metrics
+        - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.kubelet
+          writeRelabelConfigs:
+            - action: keep
+              regex: kubelet;(?:kubelet_docker_operations_errors|kubelet_docker_operations_latency_microseconds|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_latency_microseconds.*)
+              sourceLabels: [job, __name__]
+        # cadvisor container metrics
+        - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.container
+          writeRelabelConfigs:
+            - action: drop
+              regex: POD
+              sourceLabels: [container]
+            - action: drop
+              regex: POD
+              sourceLabels: [container_name]
+            - action: keep
+              regex: kubelet;(?:container_cpu_load_average_10s|container_cpu_system_seconds_total|container_cpu_usage_seconds_total|container_cpu_cfs_throttled_seconds_total|container_memory_usage_bytes|container_memory_swap|container_memory_working_set_bytes|container_spec_memory_limit_bytes|container_spec_memory_swap_limit_bytes|container_spec_memory_reservation_limit_bytes|container_spec_cpu_quota|container_spec_cpu_period|container_fs_usage_bytes|container_fs_limit_bytes|container_fs_reads_bytes_total|container_fs_writes_bytes_total|container_network_receive_bytes_total|container_network_transmit_bytes_total|container_network_receive_errors_total|container_network_transmit_errors_total|container_network_receive_packets_dropped_total|container_network_transmit_packets_dropped_total|)
+              sourceLabels: [job, __name__]
+        # node exporter metrics
+        - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.node
+          writeRelabelConfigs:
+            - action: keep
+              regex: node-exporter;(?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_memory_MemAvailable_bytes|node_memory_MemTotal_bytes|node_memory_Buffers_bytes|node_memory_SwapCached_bytes|node_memory_Cached_bytes|node_memory_MemFree_bytes|node_memory_SwapFree_bytes|node_ipvs_incoming_bytes_total|node_ipvs_outgoing_bytes_total|node_ipvs_incoming_packets_total|node_ipvs_outgoing_packets_total|node_disk_reads_completed_total|node_disk_writes_completed_total|node_disk_read_bytes_total|node_disk_written_bytes_total|node_filesystem_avail_bytes|node_filesystem_free_bytes|node_filesystem_size_bytes|node_filesystem_files)
+              sourceLabels: [job, __name__]
+        # prometheus operator rules
+        - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.operator.rule
+          writeRelabelConfigs:
+            - action: keep
+              regex: 'cluster_quantile:apiserver_request_latencies:histogram_quantile|instance:node_cpu:rate:sum|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|instance:node_network_transmit_bytes:rate:sum|nstance:node_cpu:ratio|cluster:node_cpu:sum_rate5m|cluster:node_cpu:ratio|cluster_quantile:scheduler_e2e_scheduling_latency:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_latency:histogram_quantile|cluster_quantile:scheduler_binding_latency:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|:node_memory_MemFreeCachedBuffers_bytes:sum|:node_memory_MemTotal_bytes:sum|node:node_memory_bytes_available:sum|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:'
+              sourceLabels: [__name__]
+        # health
+        - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*)
+              sourceLabels: [__name__]
+
+## Configure falco
+## ref: https://github.com/helm/charts/blob/master/stable/falco/values.yaml
+falco:
+  enabled: true
+  #ebpf:
+  #  enabled: true
+  falco:
+    jsonOutput: true

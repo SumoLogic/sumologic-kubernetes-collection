@@ -1,0 +1,7 @@
+Thank you for installing {{ .Chart.Name }}. 
+
+A Collector with the name {{ default "kubernetes-<TIMESTAMP>" .Values.sumologic.collectorName }} has been created in your Sumo Logic account.
+
+Check the release status by running:
+  kubectl --namespace {{ .Release.Namespace }} get pods -l "release={{ .Release.Name }}"
+
