@@ -157,6 +157,7 @@ if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha
   docker push $DOCKER_TAG:$VERSION
 
   # Push new helm release
+  echo "Pushing new Helm Chart release $VERSION"
   git checkout -- .
   sudo helm init --client-only
   sudo helm package deploy/helm/sumologic --dependency-update --version=$VERSION --app-version=$VERSION
@@ -193,6 +194,7 @@ elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS
   git push --tags --quiet --set-upstream origin-repo master
 
   # Push new alpha helm release
+  echo "Pushing new alpha Helm Chart release $new_alpha"
   git checkout -- .
   sudo helm init --client-only
   sudo helm package deploy/helm/sumologic --dependency-update --version=$new_alpha --app-version=$new_alpha
