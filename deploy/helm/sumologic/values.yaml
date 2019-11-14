@@ -34,6 +34,9 @@ sumologic:
   # If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
   setupEnabled: true
 
+  # If enabled, accessId and accessKey will be sourced from Secret Name given
+  # envFromSecret: accessCredentials
+
   # Sumo access ID
   #accessId: ""
 
