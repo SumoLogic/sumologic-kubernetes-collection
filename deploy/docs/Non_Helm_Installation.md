@@ -183,16 +183,6 @@ Next, you will set up [Prometheus](#configure-prometheus).
 
 In this step, you will configure the Prometheus server to write metrics to Fluentd.
 
-First, you will need to fetch the `prometheus-operator` helm chart.
-
-```bash
-$ helm fetch --repo https://kubernetes-charts.storage.googleapis.com/ --untar --untardir ./charts --version 6.2.1 prometheus-operator
-```
-
-__NOTE__ This will download a local copy of the chart to the working directory.  The following commands assume you are in the same working directory.
-
-__NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) for the currently supported version.
-
 Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
@@ -210,17 +200,12 @@ You can also [Filter metrics](additional_prometheus_configuration.md#filter-metr
 Install `prometheus-operator` by generating the yaml files using Helm:
 
 ```bash
-<<<<<<< HEAD
 $ helm fetch stable/prometheus-operator --version 6.2.1
 $ helm template prometheus-operator-6.2.1.tgz --name prometheus-operator --namespace=sumologic -f prometheus-overrides.yaml > prometheus.yaml
 ```
 
 __NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) for the currently supported version.
 
-=======
-$ helm template ./charts/prometheus-operator --name prometheus-operator --namespace=sumologic -f prometheus-overrides.yaml > prometheus.yaml
-```
->>>>>>> ef4063a5821842134096b5ea2a40559e6611c267
 Before applying, change your default namespace for `kubectl` from `default` to `sumologic`. This is required as the YAML generated will deploy some resources to `kube-system` namespace as well.
 
 ```bash
@@ -236,11 +221,7 @@ kubectl -n sumologic logs prometheus-prometheus-operator-prometheus-0 prometheus
 
 At this point setup is complete and metrics data is being sent to Sumo Logic.
 
-<<<<<<< HEAD
 __NOTE__ You can also [send custom metrics](additional_prometheus_configuration.md#custom-metrics)to Sumo Logic from Prometheus.
-=======
-__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
->>>>>>> ef4063a5821842134096b5ea2a40559e6611c267
 
 ### Missing metrics for `controller-manager` or `scheduler`
 
@@ -258,7 +239,6 @@ kubectl -n kube-system patch service prometheus-operator-kube-scheduler --type=j
 
 In this step, you will deploy FluentBit to forward logs to Fluentd.
 
-<<<<<<< HEAD
 Run the following commands to download the FluentBit `fluent-bit-overrides.yaml` file and install `fluent-bit`
 
 ```bash
@@ -285,57 +265,6 @@ $ kubectl apply -f falco.yaml
 
 __NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) for the currently supported version.
 
-=======
-First, you will need to fetch the `fluent-bit` helm chart.
-
-```bash
-$ helm fetch --repo https://kubernetes-charts.storage.googleapis.com/ --untar --untardir ./charts --version 2.4.4 fluent-bit
-```
-
-__NOTE__ This will download a local copy of the chart to the working directory.  The following commands assume you are in the same working directory.
-
-__NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) for the currently supported version.
-
-Download the Prometheus Operator `fluent-bit-overrides.yaml` by running
-
-```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.11.0/deploy/helm/fluent-bit-overrides.yaml
-```
-
-Install `fluent-bit` by generating the yaml files using Helm:
-
-```bash
-$ helm template ./charts/fluent-bit --name fluent-bit --namespace=sumologic -f fluent-bit-overrides.yaml > fluent-bit.yaml
-$ kubectl apply -f fluent-bit.yaml
-```
-
-## Deploy Falco
-
-In this step, you will deploy [Falco](https://falco.org/) to detect anomalous activity and capture Kubernetes Audit Events. This step is required only if you intend to use the Sumo Logic Kubernetes App.
-
-First, you will need to fetch the `falco` helm chart.
-
-```bash
-$ helm fetch --repo https://kubernetes-charts.storage.googleapis.com/ --untar --untardir ./charts --version 1.0.8 falco
-```
-
-__NOTE__ This will download a local copy of the chart to the working directory.  The following commands assume you are in the same working directory.
-
-__NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) for the currently supported version.
-
-Download the Prometheus Operator `falco-overrides.yaml` by running
-
-```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.11.0/deploy/helm/falco-overrides.yaml
-```
-
-Install `falco` by generating the yaml files using Helm:
-
-```bash
-$ helm template ./charts/falco --name falco --namespace=sumologic -f falco-overrides.yaml > falco.yaml
-$ kubectl apply -f falco.yaml
-```
->>>>>>> ef4063a5821842134096b5ea2a40559e6611c267
 __NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to leverage eBPF (extended Berkeley Packet Filter) to supply the stream of system calls to the Falco engine. eBPF is currently supported only on GKE and COS. More details [here](https://falco.org/docs/installation/).
 
 To install `Falco` on `GKE`, uncomment the following lines in the file `falco-overrides.yaml`:
