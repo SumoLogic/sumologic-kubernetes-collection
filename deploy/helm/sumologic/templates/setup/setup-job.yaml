@@ -41,5 +41,4 @@ spec:
         - name: SUMOLOGIC_BASE_URL
           value: {{ .Values.sumologic.endpoint }}
         {{ end }}
-
 {{- end }}
