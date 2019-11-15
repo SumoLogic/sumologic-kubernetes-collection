@@ -31,7 +31,8 @@ spec:
           mountPath: /etc/terraform
         {{- if .Values.sumologic.envFromSecret }}
         envFrom:
-          - {{ .Values.sumologic.envFromSecret }}
+        - secretRef:
+            name: {{ .Values.sumologic.envFromSecret }}
         {{ else }}
         env:
         - name: SUMOLOGIC_ACCESSID
