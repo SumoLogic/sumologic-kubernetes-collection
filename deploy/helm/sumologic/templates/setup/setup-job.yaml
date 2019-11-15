@@ -29,6 +29,10 @@ spec:
         volumeMounts:
         - name: setup
           mountPath: /etc/terraform
+        {{- if .Values.sumologic.envFromSecret }}
+        envFrom:
+          - {{ .Values.sumologic.envFromSecret }}
+        {{ else }}
         env:
         - name: SUMOLOGIC_ACCESSID
           value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
@@ -36,4 +40,5 @@ spec:
           value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
         - name: SUMOLOGIC_BASE_URL
           value: {{ .Values.sumologic.endpoint }}
+        {{ end }}
 {{- end }}
