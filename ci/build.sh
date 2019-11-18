@@ -13,6 +13,9 @@ err_report() {
 }
 trap 'err_report $LINENO' ERR
 
+echo "Getting helm version"
+sudo helm version
+
 # Set up Github
 if [ -n "$GITHUB_TOKEN" ]; then
   git config --global user.email "travis@travis-ci.org"
