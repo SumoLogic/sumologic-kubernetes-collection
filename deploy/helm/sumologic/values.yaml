@@ -165,7 +165,8 @@ fluent-bit:
   backend:
     type: forward
     forward:
-      host: collection-sumologic.sumologic.svc.cluster.local
+      # NOTE: Requires trailing "." for fully-qualified name resolution
+      host: collection-sumologic.sumologic.svc.cluster.local.
       port: 24321
       tls: "off"
       tls_verify: "on"
