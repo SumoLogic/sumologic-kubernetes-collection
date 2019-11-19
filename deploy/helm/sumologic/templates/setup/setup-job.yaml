@@ -42,4 +42,4 @@ spec:
         - name: SUMOLOGIC_BASE_URL
           value: {{ .Values.sumologic.setup.job.endpoint }}
         {{ end }}
-{{- end}}
+{{- end }}
