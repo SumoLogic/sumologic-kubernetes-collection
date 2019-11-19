@@ -1,4 +1,4 @@
-{{- if .Values.sumologic.setup }}
+{{- if .Values.sumologic.setupEnabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -29,17 +29,17 @@ spec:
         volumeMounts:
         - name: setup
           mountPath: /etc/terraform
-        {{- if .Values.sumologic.setup.job.envFromSecret }}
+        {{- if .Values.sumologic.envFromSecret }}
         envFrom:
         - secretRef:
-            name: {{ .Values.sumologic.setup.job.envFromSecret }}
+            name: {{ .Values.sumologic.envFromSecret }}
         {{ else }}
         env:
         - name: SUMOLOGIC_ACCESSID
-          value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.setup.job.accessId }}
+          value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
         - name: SUMOLOGIC_ACCESSKEY
-          value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.setup.job.accessKey }}
+          value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
         - name: SUMOLOGIC_BASE_URL
-          value: {{ .Values.sumologic.setup.job.endpoint }}
+          value: {{ .Values.sumologic.endpoint }}
         {{ end }}
 {{- end }}

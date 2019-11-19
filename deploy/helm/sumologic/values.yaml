@@ -30,6 +30,18 @@ eventsDeployment:
 
 sumologic:
   ## Setup
+  #envFromSecret: sumo-api-secret
+
+  # Sumo access ID
+  #accessId: ""
+
+  # Sumo access key
+  #accessKey: ""
+
+  # Sumo API endpoint
+  # ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
+  #endpoint: ""
+  setupEnabled:
   setup:
     clusterRole:
       annotations:
@@ -47,17 +59,6 @@ sumologic:
         helm.sh/hook-weight: 2
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     job:
-      #envFromSecret: sumo-api-secret
-
-      # Sumo access ID
-      #accessId: ""
-
-      # Sumo access key
-      #accessKey: ""
-
-      # Sumo API endpoint
-      # ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
-      #endpoint: ""
       annotations:
         helm.sh/hook: pre-install
         helm.sh/hook-weight: 3
