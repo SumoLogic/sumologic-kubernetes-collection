@@ -30,18 +30,20 @@ eventsDeployment:
 
 sumologic:
   ## Setup
-  #envFromSecret: sumo-api-secret
+
+  # If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
+  setupEnabled: true
+
+  # If enabled, accessId and accessKey will be sourced from Secret Name given
+  # envFromSecret: sumo-api-secret
 
   # Sumo access ID
   #accessId: ""
 
-  # Sumo access key
-  #accessKey: ""
-
   # Sumo API endpoint
   # ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
   #endpoint: ""
-  setupEnabled:
+
   setup:
     clusterRole:
       annotations:
