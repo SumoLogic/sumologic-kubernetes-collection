@@ -30,22 +30,43 @@ eventsDeployment:
 
 sumologic:
   ## Setup
+  setup:
+    clusterRole:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: 1
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    clusterRoleBinding:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: 2
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    configMap:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: 2
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    job:
+      #envFromSecret: sumo-api-secret
 
-  # If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
-  setupEnabled: true
+      # Sumo access ID
+      #accessId: ""
 
-  # If enabled, accessId and accessKey will be sourced from Secret Name given
-  # envFromSecret: accessCredentials
+      # Sumo access key
+      #accessKey: ""
 
-  # Sumo access ID
-  #accessId: ""
-
-  # Sumo access key
-  #accessKey: ""
-
-  # Sumo API endpoint
-  # ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
-  #endpoint: ""
+      # Sumo API endpoint
+      # ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
+      #endpoint: ""
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: 3
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    serviceaccount:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: 0
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
   # Collector name
   #collectorName: ""

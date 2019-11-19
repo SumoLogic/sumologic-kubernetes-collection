@@ -1,13 +1,13 @@
-{{- if .Values.sumologic.setupEnabled }}
+{{- if .Values.sumologic.setup }}
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ template "sumologic.fullname" . }}-setup
   namespace: {{ .Release.Namespace }}
+  {{- if .Values.sumologic.setup.job.annotations  }}
   annotations:
-    "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "3"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+{{ toYaml .Values.sumologic.setup.job.annotations | indent 4 }}
+  {{- end }}
   labels:
     app: {{ template "sumologic.labels.app" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
@@ -29,17 +29,17 @@ spec:
         volumeMounts:
         - name: setup
           mountPath: /etc/terraform
-        {{- if .Values.sumologic.envFromSecret }}
+        {{- if .Values.sumologic.setup.job.envFromSecret }}
         envFrom:
         - secretRef:
-            name: {{ .Values.sumologic.envFromSecret }}
+            name: {{ .Values.sumologic.setup.job.envFromSecret }}
         {{ else }}
         env:
         - name: SUMOLOGIC_ACCESSID
-          value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
+          value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.setup.job.accessId }}
         - name: SUMOLOGIC_ACCESSKEY
-          value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
+          value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.setup.job.accessKey }}
         - name: SUMOLOGIC_BASE_URL
-          value: {{ .Values.sumologic.endpoint }}
-        {{ end }}
-{{- end }}
+          value: {{ .Values.sumologic.setup.job.endpoint }}
+        {{- end }}
+{{- end}}

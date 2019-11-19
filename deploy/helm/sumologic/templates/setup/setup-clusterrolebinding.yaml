@@ -1,12 +1,12 @@
-{{- if .Values.sumologic.setupEnabled }}
+{{- if .Values.sumologic.setup }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name:  {{ template "sumologic.fullname" . }}-setup
+  {{- if .Values.sumologic.setup.clusterRoleBinding.annotations  }}
   annotations:
-    "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "2"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+{{ toYaml .Values.sumologic.setup.clusterRoleBinding.annotations | indent 4 }}
+  {{- end }}
   labels:
     app: {{ template "sumologic.labels.app" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
