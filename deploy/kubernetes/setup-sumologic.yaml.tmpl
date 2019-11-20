@@ -7,9 +7,10 @@ kind: ConfigMap
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "2"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    helm.sh/hook: pre-install
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-weight: "2"
+    
   labels:
     app: collection-sumologic
     
@@ -174,12 +175,14 @@ kind: ServiceAccount
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "0"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    helm.sh/hook: pre-install
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-weight: "0"
+    
   labels:
     app: collection-sumologic
     
+
 ---
 # Source: sumologic/templates/setup/setup-clusterrole.yaml
 
@@ -188,9 +191,10 @@ kind: ClusterRole
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "1"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    helm.sh/hook: pre-install
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-weight: "1"
+    
   labels:
     app: collection-sumologic
     
@@ -201,6 +205,7 @@ rules:
       - secrets
       - namespaces
     verbs: ["get", "create", "describe", "patch"]
+
 ---
 # Source: sumologic/templates/setup/setup-clusterrolebinding.yaml
 
@@ -209,9 +214,10 @@ kind: ClusterRoleBinding
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "2"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    helm.sh/hook: pre-install
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-weight: "2"
+    
   labels:
     app: collection-sumologic
     
@@ -223,6 +229,7 @@ subjects:
   - kind: ServiceAccount
     name: collection-sumologic-setup
     namespace: $NAMESPACE
+
 ---
 # Source: sumologic/templates/setup/setup-job.yaml
 
@@ -232,9 +239,10 @@ metadata:
   name: collection-sumologic-setup
   namespace: $NAMESPACE
   annotations:
-    "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "3"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    helm.sh/hook: pre-install
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-weight: "3"
+    
   labels:
     app: collection-sumologic
     

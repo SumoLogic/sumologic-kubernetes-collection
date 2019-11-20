@@ -4,6 +4,11 @@ alertmanager:
 grafana:
   enabled: false
   defaultDashboardsEnabled: false
+prometheusOperator:
+  admissionWebhooks:
+    enabled: false
+  tlsProxy:
+    enabled: false
 prometheus:
   additionalServiceMonitors:
     - name: collection-sumologic
