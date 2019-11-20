@@ -4,10 +4,8 @@ kind: Job
 metadata:
   name: {{ template "sumologic.fullname" . }}-setup
   namespace: {{ .Release.Namespace }}
-  {{- if .Values.sumologic.setup.job.annotations  }}
   annotations:
 {{ toYaml .Values.sumologic.setup.job.annotations | indent 4 }}
-  {{- end }}
   labels:
     app: {{ template "sumologic.labels.app" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}

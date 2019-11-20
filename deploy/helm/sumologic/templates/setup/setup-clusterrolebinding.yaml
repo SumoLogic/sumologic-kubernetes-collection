@@ -3,10 +3,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name:  {{ template "sumologic.fullname" . }}-setup
-  {{- if .Values.sumologic.setup.clusterRoleBinding.annotations  }}
   annotations:
 {{ toYaml .Values.sumologic.setup.clusterRoleBinding.annotations | indent 4 }}
-  {{- end }}
   labels:
     app: {{ template "sumologic.labels.app" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
