@@ -286,14 +286,16 @@ grafana:
   enabled: false
 prometheus-operator:
   enabled: true
-  prometheusOperator:
-    admissionWebhooks:
-      enabled: false
   alertmanager:
     enabled: false
   grafana:
     enabled: false
     defaultDashboardsEnabled: false
+  prometheusOperator:
+    admissionWebhooks:
+      enabled: false
+    tlsProxy:
+      enabled: false
   prometheus:
     additionalServiceMonitors:
       - name: collection-sumologic
