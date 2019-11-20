@@ -35,7 +35,7 @@ sumologic:
   setupEnabled: true
 
   # If enabled, accessId and accessKey will be sourced from Secret Name given
-  # envFromSecret: accessCredentials
+  # envFromSecret: sumo-api-secret
 
   # Sumo access ID
   #accessId: ""
@@ -46,6 +46,33 @@ sumologic:
   # Sumo API endpoint
   # ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
   #endpoint: ""
+
+  setup:
+    clusterRole:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: 1
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    clusterRoleBinding:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: 2
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    configMap:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: 2
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    job:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: 3
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    serviceAccount:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: 0
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
   # Collector name
   #collectorName: ""
