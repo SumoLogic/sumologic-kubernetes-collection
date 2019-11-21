@@ -5,7 +5,8 @@ before_install:
   - gem install bundler
   - sudo apt update
   - sudo apt install snapd
-  - sudo snap install helm yq --classic
+  - sudo snap install helm --classic
+  - sudo snap install yq --classic
 script: bash ci/build.sh
 branches:
   only:
