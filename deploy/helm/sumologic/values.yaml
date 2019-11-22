@@ -117,13 +117,6 @@ sumologic:
   ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#reducing-kubernetes-metadata
   kubernetesMetaReduce: "false"
 
-  ## The regular expression for the "concat" plugin to use when merging multi-line messages
-  multilineStartRegexp: '/^\w{3} \d{1,2}, \d{4}/'
-
-  ## The character to use to delimit lines within the final concatenated message.
-  ## Most multi-line messages contain a newline at the end of each line
-  concatSeparator: ""
-
   ## Option to control adding timestamp to logs. 
   addTimestamp: "true"
 
@@ -167,22 +160,6 @@ sumologic:
   #   pods: "v1"
   #   events: "events.k8s.io/v1beta1"
 
-  k8sMetadataFilter:
-    ## Option to control the enabling of metadata filter plugin watch.
-    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-    watch: "true"
-
-    ## Verify ssl certificate of sumologic endpoint.
-    verifySsl: "true"
-
-    ## Option to control the enabling of metadata filter plugin cache_size. 
-    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-    bearerCacheSize: "1000"
-
-    ## Option to control the enabling of metadata filter plugin cache_ttl. 
-    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-    bearerCacheTtl: "3600"
-
 ## Configure fluentd
 fluentd:
   rawConfig: |-
@@ -218,6 +195,35 @@ fluentd:
       enabled: true
       outputConf: |-
         @include logs.output.conf
+
+      ## The regular expression for the "concat" plugin to use when merging multi-line messages
+      multilineStartRegexp: '/^\w{3} \d{1,2}, \d{4}/'
+
+      ## The character to use to delimit lines within the final concatenated message.
+      ## Most multi-line messages contain a newline at the end of each line
+      concatSeparator: ""
+
+      ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
+      k8sMetadataFilter:
+        ## Option to control the enabling of metadata filter plugin watch.
+        watch: "true"
+        ## path to CA file for Kubernetes server certificate validation
+        caFile: ""
+        ## Validate SSL certificates
+        verifySsl: true
+        ## Path to a client cert file to authenticate to the API server
+        clientCert: ""
+        ## Path to a client key file to authenticate to the API server
+        clientKey: ""
+        ## Path to a file containing the bearer token to use for authentication
+        bearerTokenFile: ""
+        ## Option to control the enabling of metadata filter plugin cache_size.
+        bearerCacheSize: "1000"
+        ## Option to control the enabling of metadata filter plugin cache_ttl.
+        bearerCacheTtl: "3600"
+        ## Additional config parameters for kubernetes_metadata filter plugin
+        extraConf: |-
+
     ## Kubelet log configuration
     kubelet:
       enabled: true
