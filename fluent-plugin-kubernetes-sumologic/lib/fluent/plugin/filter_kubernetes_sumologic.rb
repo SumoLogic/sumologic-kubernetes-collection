@@ -172,7 +172,7 @@ module Fluent::Plugin
           record.delete("time")
         end
         # Strip sumologic.com annotations
-        # Note (sam 10/9/19): we're stripping from the copy, so this has no affect on output
+        # Note (sam 10/9/19): we're stripping from the copy, so this has no effect on output
         kubernetes.delete("annotations") if annotations
 
         if @log_format == "fields" and record.key?("docker") and not record.fetch("docker").nil?
