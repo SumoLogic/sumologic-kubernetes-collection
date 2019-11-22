@@ -149,10 +149,11 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   # Copy lines of falco section and remove indention from values.yaml
   sed -n "$falco_start,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/falco-overrides.yaml
 
-  if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ "$(git diff deploy/helm/falco-overrides.yaml)" ]; then
-    echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml' or 'falco-overrides.yaml', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
+  if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ "$(git diff deploy/helm/falco-overrides.yaml)" ] || [ "$(git diff deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet)" ]; then
+    echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml', 'falco-overrides.yaml', or 'kube-prometheus-sumo-logic-mixin.libsonnet', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
     git add deploy/helm/*-overrides.yaml
-    git commit -m "Generate new overrides yaml file(s)."
+    git add deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet
+    git commit -m "Generate new overrides yaml/libsonnet file(s)."
     git push --quiet origin-repo "$TRAVIS_PULL_REQUEST_BRANCH"
   else
     echo "No changes in the generated overrides files."
