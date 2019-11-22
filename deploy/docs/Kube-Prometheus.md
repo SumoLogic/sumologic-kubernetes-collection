@@ -60,3 +60,37 @@ local kp =
 
 // ...
 ```
+
+## Usage with `jsonnet-bundler`
+
+*jsonnetfile.json*:
+```json
+{
+    "dependencies": [
+        {
+            "name": "sumologic-kubernetes-collection",
+            "source": {
+                "git": {
+                    "remote": "https://github.com/SumoLogic/sumologic-kubernetes-collection",
+                    "subdir": "deploy/kubernetes"
+                }
+            },
+            "version": "master"
+        }
+    ]
+}
+```
+
+```shell
+$ jb install
+```
+
+```jsonnet
+local kp =
+  (import 'kube-prometheus/kube-prometheus.libsonnet') +
+  (import 'vendor/sumologic-kubernetes-collection/kube-prometheus-sumo-logic-mixin.libsonnet') + // import the collection mixin
+  {
+    _config+:: {
+      namespace: 'monitoring',
+...
+```
