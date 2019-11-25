@@ -22,13 +22,20 @@ input:
   systemd:
     enabled: true
 
+parsers:
+  enabled: true
+  regex:
+    - name: multi_line
+      regex: (?<log>.*\d{4}-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}.*)
+    
 rawConfig: |-
   @INCLUDE fluent-bit-service.conf
 
   [INPUT]
     Name             tail
     Path             /var/log/containers/*.log
-    Parser           docker
+    Multiline        On
+    Parser_Firstline multi_line
     Tag              containers.*
     Refresh_Interval 1
     Rotate_Wait      60
