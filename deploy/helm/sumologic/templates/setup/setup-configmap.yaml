@@ -4,12 +4,10 @@ kind: ConfigMap
 metadata:
   name:  {{ template "sumologic.fullname" . }}-setup
   annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "2"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+{{ toYaml .Values.sumologic.setup.configMap.annotations | indent 4 }}
   labels:
     app: {{ template "sumologic.labels.app" . }}
-    {{ template "sumologic.labels.common" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   setup.sh: |-
     #!/bin/sh

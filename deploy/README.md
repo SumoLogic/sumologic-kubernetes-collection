@@ -6,12 +6,14 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
   - [Solution overview](#solution-overview)
   - [Minimum Requirements](#minimum-requirements)
   - [Support Matrix](#support-matrix)
-  - [Installation with Helm](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Installation_with_Helm.md) 
-  - [Non Helm Installation](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md) 
-  - [Adding Additional FluentD Plugins](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Additional_Fluentd_Plugins.md)
-- [Migration Steps](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Migration_Steps.md)
-- [Troubleshooting Collection](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Troubleshoot_Collection.md)
-- [Monitoring the Monitoring](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/monitoring-lag.md)
+  - [Installation with Helm](./docs/Installation_with_Helm.md)
+  - [Upgrading with Helm](./docs/Upgrading_with_Helm.md) 
+  - [Non Helm Installation](./docs/Non_Helm_Installation.md) 
+  - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
+  - [Alpha Releases](./docs/Alpha_Release_Guide.md)
+- [Migration Steps](./docs/Migration_Steps.md)
+- [Troubleshooting Collection](./docs/Troubleshoot_Collection.md)
+- [Monitoring the Monitoring](./docs/monitoring-lag.md)
 
 ## Solution overview
 

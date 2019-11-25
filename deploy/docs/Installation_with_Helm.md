@@ -44,13 +44,13 @@ helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collect
 Install the chart with release name `collection` and namespace `sumologic`
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<my-cluster-name>" --set sumologic.clusterName="<my-cluster-name>"
+helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.endpoint=<SUMO_API_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<my-cluster-name>" --set sumologic.clusterName="<my-cluster-name>"
 ```
 
 If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists`, run the above command with the `--no-crd-hook` flag:
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<my-cluster-name>" --set sumologic.clusterName="<my-cluster-name>" --no-crd-hook
+helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.endpoint=<SUMO_API_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<my-cluster-name>" --set sumologic.clusterName="<my-cluster-name>" --no-crd-hook
 ```
 
 To customize your configuration, download the values.yaml file by running
@@ -78,8 +78,10 @@ sed 's/\collection'"/my-release/g" > values.yaml
 Make any changes to the `values.yaml` file as needed, and run the following to install the chart with the override file.
 
 ```bash
-helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
+helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml --set sumologic.endpoint=<SUMO_API_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
 ```
+
+__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
 
 ## Uninstalling the Chart
 

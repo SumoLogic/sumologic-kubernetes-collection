@@ -1,6 +1,6 @@
 image:
   repository: sumologic/kubernetes-fluentd
-  tag: 0.10.0
+  tag: 0.11.0
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -34,6 +34,9 @@ sumologic:
   # If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
   setupEnabled: true
 
+  # If enabled, accessId and accessKey will be sourced from Secret Name given
+  #envFromSecret: sumo-api-secret
+
   # Sumo access ID
   #accessId: ""
 
@@ -41,6 +44,7 @@ sumologic:
   #accessKey: ""
 
   # Sumo API endpoint
+  # ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
   #endpoint: ""
 
   # Collector name
@@ -48,6 +52,33 @@ sumologic:
 
   # Cluster name
   clusterName: "kubernetes"
+
+  setup:
+    clusterRole:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: "1"
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    clusterRoleBinding:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: "2"
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    configMap:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: "2"
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    job:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: "3"
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    serviceAccount:
+      annotations:
+        helm.sh/hook: pre-install
+        helm.sh/hook-weight: "0"
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
   # If enabled, collect K8s events
   eventCollectionEnabled: true
@@ -154,7 +185,8 @@ fluent-bit:
   backend:
     type: forward
     forward:
-      host: collection-sumologic.sumologic.svc.cluster.local
+      # NOTE: Requires trailing "." for fully-qualified name resolution
+      host: collection-sumologic.sumologic.svc.cluster.local.
       port: 24321
       tls: "off"
       tls_verify: "on"
@@ -259,6 +291,11 @@ prometheus-operator:
   grafana:
     enabled: false
     defaultDashboardsEnabled: false
+  prometheusOperator:
+    admissionWebhooks:
+      enabled: false
+    tlsProxy:
+      enabled: false
   prometheus:
     additionalServiceMonitors:
       - name: collection-sumologic
