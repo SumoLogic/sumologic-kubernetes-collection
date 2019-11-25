@@ -6,9 +6,7 @@ This document has instructions for setting up collection with Fluentd, FluentBit
 
 - [Before you start](#before-you-start) 
 - [Create Sumo Fields, a collector, and deploy Fluentd](#create-sumo-fields-a-collector-and-deploy-fluentd) 
-  - [Automatic Source Creation and Setup Script](#automatic-source-creation-and-setup-script) 
-    - [Parameters](#parameters) 
-    - [Environment variables](#environment-variables) 
+  - [Automatic Source Creation and Setup YAML](#automatic-source-creation-and-setup-yaml) 
   - [Manual Source Creation and Setup](#manual-source-creation-and-setup) 
     - [Create a Hosted Collector and an HTTP Source](#create-a-hosted-collector-and-an-http-source) 
     - [Deploy Fluentd](#deploy-fluentd) 
@@ -58,38 +56,39 @@ First, you'll need to set up the relevant [fields](https://help.sumologic.com/Ma
 - pod
 - service
 
-### Automatic Source Creation and Setup Script
+### Automatic Source Creation and Setup YAML
 
-This approach requires access to the Sumo Logic Collector API. It will create a Hosted Collector and multiple HTTP Source endpoints and pre-populate Kubernetes secrets detailed in the manual steps below.
+This approach requires access to the Sumo Logic Collector API. It will create Kubernetes resources in your environment and run a container that uses the [Sumo Logic Terraform provider](https://github.com/SumoLogic/sumologic-terraform-provider) to create a Hosted Collector and multiple HTTP Sources in Sumo. It also uses the [Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/index.html) to create a Kubernetes secret to store the HTTP source endpoints to be used by Fluentd later.
+
+First, create the namespace. (We recommend using `sumologic` for easier setup.)
+```sh
+kubectl create namespace sumologic
+``` 
+
+Run the following command to download and apply the YAML file containing all the Kubernetes resources. Replace the `<NAMESPACE>`, `<SUMOLOGIC_ACCESSID>`, `<SUMOLOGIC_ACCESSKEY>`, `<COLLECTOR_NAME>` and `<CLUSTER_NAME>` variables with your values.
 
 ```sh
-curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/docker/setup/setup.sh \
-  | bash -s - [-c <collector_name>] [-k <cluster_name>] [-n <namespace>] [-a <boolean>] [-d <boolean>] [-y <boolean>] <api_endpoint> <access_id> <access_key>
+curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/kubernetes/setup-sumologic.yaml.tmpl | \
+sed 's/\$NAMESPACE'"/<NAMESPACE>/g" | \
+sed 's/\$SUMOLOGIC_ACCESSID'"/<SUMOLOGIC_ACCESSID>/g" | \
+sed 's/\$SUMOLOGIC_ACCESSKEY'"/<SUMOLOGIC_ACCESSKEY>/g" | \
+sed 's/\$COLLECTOR_NAME'"/<COLLECTOR_NAME>/g" | \
+sed 's/\$CLUSTER_NAME'"/<CLUSTER_NAME>/g" | \
+tee setup-sumologic.yaml | \
+kubectl -n sumologic apply -f -
 ```
 
-__NOTE__ This script will be executed in bash and requires [jq command-line JSON parser](https://stedolan.github.io/jq/download/) to be installed.
+Run the following command to make sure the `collection-sumologic-setup` job is completed. You should see the status of the job being `Completed`.
+```sh
+kubectl get jobs -n sumologic
+```
 
-#### Parameters
+(Optional) You can delete the setup job which will automatically delete the associated pod as well.
+```sh
+kubectl delete job collection-sumologic-setup -n sumologic
+```
 
-* __-c &lt;collector_name&gt;__ - optional. Name of Sumo Collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
-* __-k &lt;cluster_name&gt;__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
-* __-n &lt;namespace&gt;__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace will default to `sumologic`.
-* __-a &lt;boolean&gt;__ - optional. Set this to true if you want to deploy with the latest alpha version. If not specified, the latest release will be deployed.
-* __-d &lt;boolean&gt;__ - optional. Set this to false to only set up the Sumo Collector and Sources and download the YAML file, but not to deploy so you can customize the YAML file, such as configuring fields for [events](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/fluent-plugin-events/README.md#fluent-plugin-events). If not specified, the default configuration will deploy.
-* __-y &lt;boolean&gt;__ - optional. When -d is set to false you can also set this to false to not download the YAML file. If not specified, the YAML file will be downloaded.
-* __&lt;api_endpoint&gt;__ - required. See [API endpoints](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security) for details.
-* __&lt;access_id&gt;__ - required. Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-* __&lt;access_key&gt;__ - required. Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
-
-#### Environment variables
-The parameters for Collector name, cluster name and namespace may also be passed in via environment variables instead of script arguments. If the script argument is supplied that trumps the environment variable.
-* __SUMO_COLLECTOR_NAME__ - optional. Name of Sumo Collector that will be created. If not specified, it will be named as `kubernetes-<timestamp>`
-* __KUBERNETES_CLUSTER_NAME__ - optional. Name of the Kubernetes cluster that will be attached to logs and events as metadata. If not specified, it will be named as `kubernetes-<timestamp>`. For metrics, specify the cluster name in the `prometheus-overrides.yaml` provided for the prometheus operator; further details in [step 2](#step-2-configure-prometheus).
-* __SUMO_NAMESPACE__ - optional. Name of the Kubernetes namespace in which to deploy resources. If not specified, the namespace__ will default to `sumologic`
-
-__Note:__ The script will generate a YAML file (`fluentd-sumologic.yaml`) with all the deployed Kuberentes resources on disk. Save this file for easy teardown and redeploy of the resources.
-
-Next, you will set up [Prometheus](#configure-prometheus).
+Next, you will set up [Fluentd](#deploy-fluentd).
 
 ### Manual Source Creation and Setup
 
@@ -118,9 +117,7 @@ Follow the instructions on [HTTP Logs and Metrics Source](https://help.sumologic
 * **Naming the sources.** You can assign any name you like to the Sources, but it’s a good idea to assign a name to each Source that reflects the Kubernetes component from which it receives data. For example, you might name the source that receives API Server metrics “api-server-metrics”.
 * **HTTP Source URLs.** When you configure each HTTP Source, Sumo will display the URL of the HTTP endpoint. Make a note of the URL. You will use it when you configure the Kubernetes service secrets to send data to Sumo.
 
-#### Deploy Fluentd
-
-In this step you will deploy Fluentd using a Sumo-provided .yaml manifest. This step also creates Kubernetes secrets for the HTTP Sources created in the previous step.
+#### Create the namespace and secret
 
 Run the following command to create namespace `sumologic`
 
@@ -142,6 +139,10 @@ kubectl -n sumologic create secret generic sumologic \
   --from-literal=endpoint-logs=$ENDPOINT_LOGS \
   --from-literal=endpoint-events=$ENDPOINT_EVENTS
 ```
+
+### Deploy Fluentd
+
+In this step you will deploy Fluentd using a Sumo-provided .yaml manifest. 
 
 ##### Use default configuration
 

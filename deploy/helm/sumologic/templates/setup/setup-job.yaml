@@ -37,7 +37,7 @@ spec:
           value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
         - name: SUMOLOGIC_ACCESSKEY
           value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
-        - name: SUMOLOGIC_BASE_URL
-          value: {{ .Values.sumologic.endpoint }}
+        # - name: SUMOLOGIC_BASE_URL
+        #  value: {{ .Values.sumologic.endpoint }}
         {{ end }}
 {{- end }}
