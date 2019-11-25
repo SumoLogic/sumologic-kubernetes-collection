@@ -86,13 +86,6 @@ sumologic:
   ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#reducing-kubernetes-metadata
   kubernetesMetaReduce: "false"
 
-  ## The regular expression for the "concat" plugin to use when merging multi-line messages
-  multilineStartRegexp: '/^\w{3} \d{1,2}, \d{4}/'
-
-  ## The character to use to delimit lines within the final concatenated message.
-  ## Most multi-line messages contain a newline at the end of each line
-  concatSeparator: ""
-
   ## Option to control adding timestamp to logs. 
   addTimestamp: "true"
 
