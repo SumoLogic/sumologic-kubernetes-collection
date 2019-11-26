@@ -53,6 +53,8 @@ K8s with AKS | 1.12.8
 Helm | 2.14.13 (Linux)
 kubectl | 1.15.0
 
+NOTE: Helm 3 is currently not supported.
+
 The following matrix displays the tested package versions for our Helm chart.
 
 Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco
