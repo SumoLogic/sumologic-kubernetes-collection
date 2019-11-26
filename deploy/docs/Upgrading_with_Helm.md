@@ -17,6 +17,8 @@ If desired, there are two ways to pass configuration data:
 
 - If there exists `--set/--set-file/--set-string/--values/-f` , the `--reset-values` flag will be used by default.
 
+- If you are using an [Alpha Release](./Alpha_Release_Guide.md) you will need to append `--version=X.X.X-alpha` to your `helm upgrade` command to avoid changing the version of the Helm chart installed. Use `helm ls` to find your current Helm chart version.
+
 ### Example to Upgrade without any arguments:
 
 ```bash
@@ -28,7 +30,7 @@ In the above command, since no arguments were specified, the `--reuse-values` fl
 ### Example to Upgrade using the `--version` flag:
 
 ```bash
-helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VERSION> -f config.yaml
+helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VERSION> -f values.yaml
 ```
 
 ### Example to upgrade using the `--set` flag:
