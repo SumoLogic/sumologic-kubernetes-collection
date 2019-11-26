@@ -130,10 +130,6 @@ spec:
           value: {{ .Values.sumologic.kubernetesMeta | quote }}
         - name: KUBERNETES_META_REDUCE
           value: {{ .Values.sumologic.kubernetesMetaReduce | quote }}
-        - name: MULTILINE_START_REGEXP
-          value: {{ .Values.sumologic.multilineStartRegexp | quote }}
-        - name: CONCAT_SEPARATOR
-          value: {{ .Values.sumologic.concatSeparator | quote }}
         - name: ADD_TIMESTAMP
           value: {{ .Values.sumologic.addTimestamp | quote }}
         - name: TIMESTAMP_KEY
