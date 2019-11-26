@@ -43,7 +43,7 @@ brew install kubernetes-helm
 
 __NOTE__ These instructions assume that Prometheus is not already running on your Kubernetes cluster.
 
-## Create Sumo Fields, a Collector, and deploy Fluentd
+## Create Sumo Fields and a Collector
 
 In this step you create a Sumo Logic Hosted Collector with a set of HTTP Sources to receive your Kubernetes data; creates Kubernetes secrets for the HTTP sources created; and deploy Fluentd using a Sumo-provided .yaml manifest.
 
