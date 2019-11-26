@@ -9,6 +9,7 @@ This document has instructions for setting up collection with Fluentd, FluentBit
   - [Automatic Source Creation and Setup YAML](#automatic-source-creation-and-setup-yaml) 
   - [Manual Source Creation and Setup](#manual-source-creation-and-setup) 
     - [Create a Hosted Collector and an HTTP Source](#create-a-hosted-collector-and-an-http-source) 
+    - [Create the namespace and secret](#create-the-namespace-and-secret) 
 - [Deploy Fluentd](#deploy-fluentd) 
   - [Use default configuration](#use-default-configuration) 
   - [Customize configuration](#customize-configuration) 
