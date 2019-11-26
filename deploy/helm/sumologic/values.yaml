@@ -43,9 +43,9 @@ sumologic:
   # Sumo access key
   #accessKey: ""
 
-  # Sumo API endpoint
+  # Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
   # ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
-  #endpoint: ""
+  endpoint: ""
 
   # Collector name
   #collectorName: ""
@@ -117,13 +117,6 @@ sumologic:
   ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#reducing-kubernetes-metadata
   kubernetesMetaReduce: "false"
 
-  ## The regular expression for the "concat" plugin to use when merging multi-line messages
-  multilineStartRegexp: '/^\w{3} \d{1,2}, \d{4}/'
-
-  ## The character to use to delimit lines within the final concatenated message.
-  ## Most multi-line messages contain a newline at the end of each line
-  concatSeparator: ""
-
   ## Option to control adding timestamp to logs. 
   addTimestamp: "true"
 
@@ -187,6 +180,8 @@ sumologic:
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
 fluent-bit:
   enabled: true
+  service:
+    flush: 5
   metrics:
     enabled: true
   backend:
@@ -210,13 +205,21 @@ fluent-bit:
     systemd:
       enabled: true
 
+  parsers:
+    enabled: true
+    # This regex matches the first line of a multiline log starting with a date of the format : "2019-11-17 07:14:12"
+    regex:
+      - name: multi_line
+        regex: (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}.*)
+      
   rawConfig: |-
     @INCLUDE fluent-bit-service.conf
 
     [INPUT]
       Name             tail
       Path             /var/log/containers/*.log
-      Parser           docker
+      Multiline        On
+      Parser_Firstline multi_line
       Tag              containers.*
       Refresh_Interval 1
       Rotate_Wait      60
