@@ -5,15 +5,15 @@ This document has instructions for setting up collection with Fluentd, FluentBit
 <!-- TOC -->
 
 - [Before you start](#before-you-start) 
-- [Create Sumo Fields, a collector, and deploy Fluentd](#create-sumo-fields-a-collector-and-deploy-fluentd) 
+- [Create Sumo Fields and a collector](#create-sumo-fields-a-collector) 
   - [Automatic Source Creation and Setup YAML](#automatic-source-creation-and-setup-yaml) 
   - [Manual Source Creation and Setup](#manual-source-creation-and-setup) 
     - [Create a Hosted Collector and an HTTP Source](#create-a-hosted-collector-and-an-http-source) 
-    - [Deploy Fluentd](#deploy-fluentd) 
-      - [Use default configuration](#use-default-configuration) 
-      - [Customize configuration](#customize-configuration) 
+- [Deploy Fluentd](#deploy-fluentd) 
+  - [Use default configuration](#use-default-configuration) 
+  - [Customize configuration](#customize-configuration) 
   - [Verify the pods are running](#verify-the-pods-are-running) 
-- [Configure Prometheus](#configure-prometheus) 
+- [Deploy Prometheus](#deploy-prometheus) 
   - [Missing metrics for `controller-manager` or `scheduler`](#missing-metrics-for-controller-manager-or-scheduler) 
 - [Deploy FluentBit](#deploy-fluentbit) 
 - [Deploy Falco](#deploy-falco)
@@ -140,11 +140,11 @@ kubectl -n sumologic create secret generic sumologic \
   --from-literal=endpoint-events=$ENDPOINT_EVENTS
 ```
 
-### Deploy Fluentd
+## Deploy Fluentd
 
 In this step you will deploy Fluentd using a Sumo-provided .yaml manifest. 
 
-##### Use default configuration
+### Use default configuration
 
 If you don't need to customize the configuration apply the `fluentd-sumologic.yaml` manifest with the following command:
 
@@ -154,7 +154,7 @@ sed 's/\$NAMESPACE'"/sumologic/g" | \
 kubectl -n sumologic apply -f -
 ```
 
-##### Customize configuration
+### Customize configuration
 
 If you need to customize the configuration there are two commands to run. First, get the `fluentd-sumologic.yaml` manifest with following command:
 
@@ -172,15 +172,15 @@ kubectl -n sumologic apply -f fluentd-sumologic.yaml
 The manifest will create the Kubernetes resources required by Fluentd.
 
 
-#### Verify the pods are running
+### Verify the pods are running
 
 ```sh
 kubectl -n sumologic get pod
 ```
 
-Next, you will set up [Prometheus](#configure-prometheus).
+Next, you will set up [Prometheus](#deploy-prometheus).
 
-## Configure Prometheus
+## Deploy Prometheus
 
 In this step, you will configure the Prometheus server to write metrics to Fluentd.
 
