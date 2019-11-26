@@ -187,6 +187,8 @@ sumologic:
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
 fluent-bit:
   enabled: true
+  service:
+    flush: 5
   metrics:
     enabled: true
   backend:
