@@ -96,6 +96,19 @@ To enable debug or trace logs from a specific Fluentd plugin, add the following 
 </match>
 ```
 
+To enable debug or trace logs using the Helm chart, you can override the value `sumologic.fluentdLogLevel`:
+
+```
+helm upgrade collection sumologic/sumologic --reuse-values --set sumologic.fluentdLogLevel="debug"
+```
+
+For configuration changes to take effect in FluentD, you can redeploy the pods by scaling to zero and back to the desired deployment size:
+
+```
+kubectl scale deployment/collection-sumologic --replicas=0
+kubectl scale deployment/collection-sumologic --replicas=3
+```
+
 ### Prometheus Logs
 
 To view Prometheus logs:
