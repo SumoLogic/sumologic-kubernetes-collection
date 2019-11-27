@@ -126,18 +126,10 @@ spec:
           value: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
         - name: SOURCE_NAME
           value: {{ .Values.sumologic.sourceName | quote }}
-        - name: KUBERNETES_META
-          value: {{ .Values.sumologic.kubernetesMeta | quote }}
-        - name: KUBERNETES_META_REDUCE
-          value: {{ .Values.sumologic.kubernetesMetaReduce | quote }}
         - name: ADD_TIMESTAMP
           value: {{ .Values.sumologic.addTimestamp | quote }}
         - name: TIMESTAMP_KEY
           value: {{ .Values.sumologic.timestampKey | quote }}
-        - name: ADD_STREAM
-          value: {{ .Values.sumologic.addStream | quote }}
-        - name: ADD_TIME
-          value: {{ .Values.sumologic.addTime | quote }}
         - name: EXCLUDE_NAMESPACE_REGEX
           value: {{ .Values.sumologic.excludeNamespaceRegex | quote }}
         - name: EXCLUDE_CONTAINER_REGEX

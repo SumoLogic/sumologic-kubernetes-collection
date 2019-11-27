@@ -5,8 +5,6 @@ module Fluent::Plugin
     # Register type
     Fluent::Plugin.register_filter("kubernetes_sumologic", self)
 
-    config_param :kubernetes_meta, :bool, :default => true
-    config_param :kubernetes_meta_reduce, :bool, :default => false
     config_param :source_category, :string, :default => "%{namespace}/%{pod_name}"
     config_param :source_category_replace_dash, :string, :default => "/"
     config_param :source_category_prefix, :string, :default => "kubernetes/"
@@ -20,8 +18,6 @@ module Fluent::Plugin
     config_param :exclude_pod_regex, :string, :default => ""
     config_param :exclude_priority_regex, :string, :default => ""
     config_param :exclude_unit_regex, :string, :default => ""
-    config_param :add_stream, :bool, :default => true
-    config_param :add_time, :bool, :default => true
 
     def configure(conf)
       super
@@ -89,6 +85,11 @@ module Fluent::Plugin
         end
       end
 
+      if @log_format == "fields" and record.key?("docker") and not record.fetch("docker").nil?
+        record["docker"].each {|k, v| log_fields[k] = v}
+        record.delete("docker")
+      end
+
       if record.key?("kubernetes") and not record.fetch("kubernetes").nil?
         # Clone kubernetes hash so we don't override the cache
         # Note (sam 10/9/19): this is a shallow copy; nested hashes can still be overriden
@@ -151,34 +152,9 @@ module Fluent::Plugin
         sumo_metadata[:category] = sumo_metadata[:category] % k8s_metadata
         sumo_metadata[:category].gsub!("-", @source_category_replace_dash)
 
-        # Strip kubernetes metadata from json if disabled
-        if annotations["sumologic.com/kubernetes_meta"] == "false" || !@kubernetes_meta
-          record.delete("docker")
-          record.delete("kubernetes")
-        end
-        if annotations["sumologic.com/kubernetes_meta_reduce"] == "true" || annotations["sumologic.com/kubernetes_meta_reduce"].nil? && @kubernetes_meta_reduce == true
-          record.delete("docker")
-          record["kubernetes"].delete("pod_id")
-          record["kubernetes"].delete("namespace_id")
-          record["kubernetes"].delete("labels")
-          record["kubernetes"].delete("namespace_labels")
-          record["kubernetes"].delete("master_url")
-          record["kubernetes"].delete("annotations")
-        end
-        if @add_stream == false
-          record.delete("stream")
-        end
-        if @add_time == false
-          record.delete("time")
-        end
         # Strip sumologic.com annotations
         # Note (sam 10/9/19): we're stripping from the copy, so this has no effect on output
         kubernetes.delete("annotations") if annotations
-
-        if @log_format == "fields" and record.key?("docker") and not record.fetch("docker").nil?
-          record["docker"].each {|k, v| log_fields[k] = v}
-          record.delete("docker")
-        end
 
         if @log_format == "fields" and record.key?("kubernetes") and not record.fetch("kubernetes").nil?
           if kubernetes.has_key? "labels"
