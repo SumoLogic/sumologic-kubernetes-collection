@@ -159,6 +159,9 @@ sumologic:
   # watchResourceEventsOverrides:
   #   pods: "v1"
   #   events: "events.k8s.io/v1beta1"
+  
+  ## Option to specify the fluentD buffer as file/memory.
+  fluentdBuffer: "memory"
 
   k8sMetadataFilter:
     ## Option to control the enabling of metadata filter plugin watch.
