@@ -14,14 +14,16 @@ data:
     @include metrics.conf
     @include logs.conf
   buffer.output.conf: |-
-    <buffer>
-      @type memory
-      compress gzip
-      flush_interval "#{ENV['FLUSH_INTERVAL']}"
-      flush_thread_count "#{ENV['NUM_THREADS']}"
-      chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
-      total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
-    </buffer>
+    compress gzip
+    retry_wait 5
+    retry_max_times 5
+    retry_forever false
+    retry_timeout 2h
+    retry_exponential_backoff_base 2
+    flush_interval "#{ENV['FLUSH_INTERVAL']}"
+    flush_thread_count "#{ENV['NUM_THREADS']}"
+    chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
+    total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
   common.conf: |-
     <source>
       @type prometheus
@@ -101,11 +103,15 @@ data:
         @include metrics.output.conf
       </match>
     </label>
-  metrics.output.conf: |-
+  metrics.output.conf: |
     data_type metrics
     metric_data_format prometheus
     disable_cookies true
+    <buffer>
+    @type file
+    path /fluentd/buffer/metrics
     @include buffer.output.conf
+    </buffer>
   
   logs.conf: |-
     <source>
@@ -124,7 +130,11 @@ data:
     add_timestamp "#{ENV['ADD_TIMESTAMP']}"
     timestamp_key "#{ENV['TIMESTAMP_KEY']}"
     proxy_uri "#{ENV['PROXY_URI']}"
+    <buffer>
+    @type file
+    path /fluentd/buffer/logs
     @include buffer.output.conf
+    </buffer>
   logs.source.containers.conf: |-
     <filter containers.**>
       @type record_transformer
@@ -270,12 +280,9 @@ data:
       verify_ssl "#{ENV['VERIFY_SSL']}"
       proxy_uri "#{ENV['PROXY_URI']}"
       <buffer>
-        @type memory
-        compress gzip
-        flush_interval "#{ENV['FLUSH_INTERVAL']}"
-        flush_thread_count "#{ENV['NUM_THREADS']}"
-        chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
-        total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
+        @type file
+        path /fluentd/buffer/events
+        @include buffer.output.conf
       </buffer>
     </match>
   
