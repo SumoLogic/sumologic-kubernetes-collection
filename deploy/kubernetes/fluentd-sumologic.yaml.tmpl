@@ -152,7 +152,7 @@ data:
     </source>
     @include logs.source.containers.conf
     @include logs.source.systemd.conf
-  logs.output.conf: |+
+  logs.output.conf: |
     data_type logs
     log_key log
     endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
@@ -161,7 +161,6 @@ data:
     add_timestamp "#{ENV['ADD_TIMESTAMP']}"
     timestamp_key "#{ENV['TIMESTAMP_KEY']}"
     proxy_uri "#{ENV['PROXY_URI']}"
-  
   logs.source.containers.conf: |-
     <filter containers.**>
       @type record_transformer
