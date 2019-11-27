@@ -83,9 +83,6 @@ sumologic:
   # If enabled, collect K8s events
   eventCollectionEnabled: true
 
-  ## Format to post logs into Sumo. json, json_merge, or text
-  logFormat: fields
-
   ## How frequently to push logs to SumoLogic
   ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
   flushInterval: "5s"
@@ -97,18 +94,6 @@ sumologic:
 
   totalLimitSize: "128m"
 
-  ## Set the _sourceName metadata field in SumoLogic.
-  sourceName: "%{namespace}.%{pod}.%{container}"
-
-  ## Set the _sourceCategory metadata field in SumoLogic.
-  sourceCategory: "%{namespace}/%{pod_name}"
-
-  ## Set the prefix, for _sourceCategory metadata.
-  sourceCategoryPrefix: "kubernetes/"
-
-  ## Used to replace - with another character.
-  sourceCategoryReplaceDash: "/"
-
   ## Option to control adding timestamp to logs. 
   addTimestamp: "true"
 
@@ -117,23 +102,6 @@ sumologic:
 
   ## Verify SumoLogic HTTPS certificates
   verifySsl: "true"
-
-  ## A regular expression for containers. 
-  ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludeContainerRegex: ""
-
-  ## A regular expression for hosts. 
-  ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludeHostRegex: ""
-
-  ## A regular expression for namespaces. 
-  ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludeNamespaceRegex: ""
-
-  ## A regular expression for pods. 
-  ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludePodRegex: ""
-
 
   ## Sets the fluentd log level. The default log level, if not specified, is info.
   ## ref: https://docs.fluentd.org/deployment/logging
@@ -179,8 +147,40 @@ fluentd:
     ## Container log configuration
     containers:
       enabled: true
+
       outputConf: |-
         @include logs.output.conf
+
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "%{namespace}.%{pod}.%{container}"
+
+      ## Set the _sourceHost metadata field in Sumo Logic.
+      sourceHost: ""
+
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "%{namespace}/%{pod_name}"
+
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+
+      ## Used to replace - with another character.
+      sourceCategoryReplaceDash: "/"
+
+      ## A regular expression for containers.
+      ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeContainerRegex: ""
+
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeHostRegex: ""
+
+      ## A regular expression for namespaces.
+      ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeNamespaceRegex: ""
+
+      ## A regular expression for pods.
+      ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludePodRegex: ""
 
       ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
       k8sMetadataFilter:

@@ -108,8 +108,6 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
-        - name: LOG_FORMAT
-          value: {{ .Values.sumologic.logFormat | quote }}
         - name: FLUSH_INTERVAL
           value: {{ .Values.sumologic.flushInterval | quote }}
         - name: NUM_THREADS
@@ -118,23 +116,7 @@ spec:
           value: {{ .Values.sumologic.chunkLimitSize | quote }}
         - name: TOTAL_LIMIT_SIZE
           value: {{ .Values.sumologic.totalLimitSize | quote }}
-        - name: SOURCE_CATEGORY
-          value: {{ .Values.sumologic.sourceCategory | quote }}
-        - name: SOURCE_CATEGORY_PREFIX
-          value: {{ .Values.sumologic.sourceCategoryPrefix | quote }}
-        - name: SOURCE_CATEGORY_REPLACE_DASH
-          value: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
-        - name: SOURCE_NAME
-          value: {{ .Values.sumologic.sourceName | quote }}
         - name: ADD_TIMESTAMP
           value: {{ .Values.sumologic.addTimestamp | quote }}
         - name: TIMESTAMP_KEY
           value: {{ .Values.sumologic.timestampKey | quote }}
-        - name: EXCLUDE_NAMESPACE_REGEX
-          value: {{ .Values.sumologic.excludeNamespaceRegex | quote }}
-        - name: EXCLUDE_CONTAINER_REGEX
-          value: {{ .Values.sumologic.excludeContainerRegex | quote }}
-        - name: EXCLUDE_HOST_REGEX
-          value: {{ .Values.sumologic.excludeHostRegex | quote }}
-        - name: EXCLUDE_POD_REGEX
-          value: {{ .Values.sumologic.excludePodRegex | quote }}
