@@ -15,11 +15,6 @@ data:
     @include logs.conf
   buffer.output.conf: |-
     compress gzip
-    retry_wait 5
-    retry_max_times 5
-    retry_forever false
-    retry_timeout 2h
-    retry_exponential_backoff_base 2
     flush_interval "#{ENV['FLUSH_INTERVAL']}"
     flush_thread_count "#{ENV['NUM_THREADS']}"
     chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
@@ -59,59 +54,95 @@ data:
         @id sumologic.endpoint.metrics.apiserver
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_APISERVER']}"
         @include metrics.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/metrics.apiserver
+          @include buffer.output.conf
+        </buffer>
+  
       </match>
       <match prometheus.metrics.kubelet**>
         @type sumologic
         @id sumologic.endpoint.metrics.kubelet
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
         @include metrics.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/metrics.kubelet
+          @include buffer.output.conf
+        </buffer>
       </match>
       <match prometheus.metrics.container**>
         @type sumologic
         @id sumologic.endpoint.metrics.container
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
         @include metrics.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/metrics.container
+          @include buffer.output.conf
+        </buffer>
       </match>
       <match prometheus.metrics.controller-manager**>
         @type sumologic
         @id sumologic.endpoint.metrics.kube.controller.manager
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER']}"
         @include metrics.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/metrics.controller
+          @include buffer.output.conf
+        </buffer>
       </match>
       <match prometheus.metrics.scheduler**>
         @type sumologic
         @id sumologic.endpoint.metrics.kube.scheduler
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER']}"
         @include metrics.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/metrics.scheduler
+          @include buffer.output.conf
+        </buffer>
       </match>
       <match prometheus.metrics.state**>
         @type sumologic
         @id sumologic.endpoint.metrics.kube.state
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_STATE']}"
         @include metrics.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/metrics.state
+          @include buffer.output.conf
+        </buffer>
       </match>
       <match prometheus.metrics.node**>
         @type sumologic
         @id sumologic.endpoint.metrics.node.exporter
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_NODE_EXPORTER']}"
         @include metrics.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/metrics.node
+          @include buffer.output.conf
+        </buffer>
       </match>
       <match prometheus.metrics**>
         @type sumologic
         @id sumologic.endpoint.metrics
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
         @include metrics.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/metrics.all
+          @include buffer.output.conf
+        </buffer>
       </match>
     </label>
   metrics.output.conf: |
     data_type metrics
     metric_data_format prometheus
     disable_cookies true
-    <buffer>
-    @type file
-    path /fluentd/buffer/metrics
-    @include buffer.output.conf
-    </buffer>
   
   logs.conf: |-
     <source>
@@ -121,7 +152,7 @@ data:
     </source>
     @include logs.source.containers.conf
     @include logs.source.systemd.conf
-  logs.output.conf: |
+  logs.output.conf: |+
     data_type logs
     log_key log
     endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
@@ -130,11 +161,7 @@ data:
     add_timestamp "#{ENV['ADD_TIMESTAMP']}"
     timestamp_key "#{ENV['TIMESTAMP_KEY']}"
     proxy_uri "#{ENV['PROXY_URI']}"
-    <buffer>
-    @type file
-    path /fluentd/buffer/logs
-    @include buffer.output.conf
-    </buffer>
+  
   logs.source.containers.conf: |-
     <filter containers.**>
       @type record_transformer
@@ -193,6 +220,11 @@ data:
         @type sumologic
         @id sumologic.endpoint.logs
         @include logs.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/logs.containers
+          @include buffer.output.conf
+        </buffer>
       </match>
     </label>
   logs.source.systemd.conf: |-
@@ -215,6 +247,11 @@ data:
         @type sumologic
         @id sumologic.endpoint.logs.kubelet
         @include logs.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/logs.kubelet
+          @include buffer.output.conf
+        </buffer>
       </match>
     </label>
     <match host.**>
@@ -241,6 +278,11 @@ data:
         @type sumologic
         @id sumologic.endpoint.logs.systemd
         @include logs.output.conf
+        <buffer>
+          @type file
+          path /fluentd/buffer/logs.systemd
+          @include buffer.output.conf
+        </buffer>
       </match>
     </label>
   
@@ -281,8 +323,12 @@ data:
       proxy_uri "#{ENV['PROXY_URI']}"
       <buffer>
         @type file
+        compress gzip
         path /fluentd/buffer/events
-        @include buffer.output.conf
+        flush_interval "#{ENV['FLUSH_INTERVAL']}"
+        flush_thread_count "#{ENV['NUM_THREADS']}"
+        chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
+        total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
       </buffer>
     </match>
   
