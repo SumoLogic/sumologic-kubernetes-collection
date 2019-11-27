@@ -127,11 +127,14 @@ data:
     @include buffer.output.conf
   logs.source.containers.conf: |-
     <filter containers.**>
-      @type concat
-      key log
-      multiline_start_regexp "#{ENV['MULTILINE_START_REGEXP']}"
-      separator "#{ENV['CONCAT_SEPARATOR']}"
-      timeout_label @NORMAL
+      @type record_transformer
+      enable_ruby
+      renew_record true
+      <record>
+        log    ${record["log"].split(/[\n\t]+/).map! {|item| JSON.parse(item)["log"]}.join("")}
+        stream ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["stream"]}.join("")}
+        time   ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.join("")}
+      </record>
     </filter>
     <match containers.**>
       @type relabel
@@ -506,10 +509,6 @@ spec:
           value: "true"
         - name: KUBERNETES_META_REDUCE
           value: "false"
-        - name: MULTILINE_START_REGEXP
-          value: "/^\\w{3} \\d{1,2}, \\d{4}/"
-        - name: CONCAT_SEPARATOR
-          value: ""
         - name: ADD_TIMESTAMP
           value: "true"
         - name: TIMESTAMP_KEY
