@@ -196,13 +196,6 @@ fluentd:
       outputConf: |-
         @include logs.output.conf
 
-      ## The regular expression for the "concat" plugin to use when merging multi-line messages
-      multilineStartRegexp: '/^\w{3} \d{1,2}, \d{4}/'
-
-      ## The character to use to delimit lines within the final concatenated message.
-      ## Most multi-line messages contain a newline at the end of each line
-      concatSeparator: ""
-
       ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
       k8sMetadataFilter:
         ## Option to control the enabling of metadata filter plugin watch.

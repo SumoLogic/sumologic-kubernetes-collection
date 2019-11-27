@@ -138,8 +138,6 @@ spec:
           value: {{ .Values.sumologic.addStream | quote }}
         - name: ADD_TIME
           value: {{ .Values.sumologic.addTime | quote }}
-        - name: VERIFY_SSL
-          value: {{ .Values.sumologic.verifySsl | quote }}
         - name: EXCLUDE_NAMESPACE_REGEX
           value: {{ .Values.sumologic.excludeNamespaceRegex | quote }}
         - name: EXCLUDE_CONTAINER_REGEX
