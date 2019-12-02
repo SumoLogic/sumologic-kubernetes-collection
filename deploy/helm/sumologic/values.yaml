@@ -86,10 +86,6 @@ sumologic:
   ## Field name when add_timestamp is on.
   timestampKey: "timestamp"
 
-  ## Sets the fluentd log level. The default log level, if not specified, is info.
-  ## ref: https://docs.fluentd.org/deployment/logging
-  # fluentdLogLevel: "debug"
-
   ## Override Kubernetes resource types you want to get events for from different Kubernetes
   ## API versions. The key represents the name of the resource type and the value represents
   ## the API version.
@@ -103,6 +99,10 @@ fluentd:
     @include common.conf
     @include metrics.conf
     @include logs.conf
+
+  ## Sets the fluentd log level. The default log level, if not specified, is info.
+  ## ref: https://docs.fluentd.org/deployment/logging
+  # logLevel: "debug"
 
   ## Verify SumoLogic HTTPS certificates
   verifySsl: true
