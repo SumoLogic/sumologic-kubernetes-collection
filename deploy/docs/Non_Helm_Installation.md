@@ -245,8 +245,8 @@ Run the following commands to download the FluentBit `fluent-bit-overrides.yaml`
 
 ```bash
 $ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.12.0/deploy/helm/fluent-bit-overrides.yaml
-$ helm fetch stable/fluent-bit --version 2.4.4
-$ helm template fluent-bit-2.4.4.tgz --name fluent-bit --namespace=sumologic -f fluent-bit-overrides.yaml > fluent-bit.yaml
+$ helm fetch stable/fluent-bit --version 2.8.1
+$ helm template fluent-bit-2.8.1.tgz --name fluent-bit --namespace=sumologic -f fluent-bit-overrides.yaml > fluent-bit.yaml
 $ kubectl apply -f fluent-bit.yaml
 ```
 
@@ -260,8 +260,8 @@ Download the file `falco-overrides.yaml` from GitHub:
 
 ```bash
 $ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.12.0/deploy/helm/falco-overrides.yaml
-$ helm fetch stable/falco --version 1.0.8
-$ helm template falco-1.0.8.tgz --name falco --namespace=sumologic -f falco-overrides.yaml > falco.yaml
+$ helm fetch stable/falco --version 1.0.9
+$ helm template falco-1.0.9.tgz --name falco --namespace=sumologic -f falco-overrides.yaml > falco.yaml
 $ kubectl apply -f falco.yaml
 ```
 
