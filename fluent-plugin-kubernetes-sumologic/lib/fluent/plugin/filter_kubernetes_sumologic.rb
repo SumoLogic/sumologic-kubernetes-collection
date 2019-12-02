@@ -158,12 +158,14 @@ module Fluent::Plugin
         end
         if annotations["sumologic.com/kubernetes_meta_reduce"] == "true" || annotations["sumologic.com/kubernetes_meta_reduce"].nil? && @kubernetes_meta_reduce == true
           record.delete("docker")
-          record["kubernetes"].delete("pod_id")
-          record["kubernetes"].delete("namespace_id")
-          record["kubernetes"].delete("labels")
-          record["kubernetes"].delete("namespace_labels")
-          record["kubernetes"].delete("master_url")
-          record["kubernetes"].delete("annotations")
+          if record.key?("kubernetes") and not record.fetch("kubernetes").nil?
+            record["kubernetes"].delete("pod_id")
+            record["kubernetes"].delete("namespace_id")
+            record["kubernetes"].delete("labels")
+            record["kubernetes"].delete("namespace_labels")
+            record["kubernetes"].delete("master_url")
+            record["kubernetes"].delete("annotations")
+          end
         end
         if @add_stream == false
           record.delete("stream")
