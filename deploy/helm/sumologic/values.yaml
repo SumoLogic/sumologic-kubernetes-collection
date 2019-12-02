@@ -80,9 +80,6 @@ sumologic:
         helm.sh/hook-weight: "0"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
-  # If enabled, collect K8s events
-  eventCollectionEnabled: true
-
   ## How frequently to push logs to SumoLogic
   ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
   flushInterval: "5s"
@@ -113,7 +110,6 @@ sumologic:
   # watchResourceEventsOverrides:
   #   pods: "v1"
   #   events: "events.k8s.io/v1beta1"
-  
 
   fluentd:
     ## Option to specify the Fluentd buffer as file/memory.
@@ -126,15 +122,16 @@ fluentd:
     @include metrics.conf
     @include logs.conf
 
+  ## Verify SumoLogic HTTPS certificates
+  verifySsl: true
+  ## Proxy URI for sumologic output plugin
+  proxyUri: ""
+
   logs:
     ## Configuration for sumologic output plugin
     ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
     ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/logs/logs.output.conf
     output:
-      ## Verify SumoLogic HTTPS certificates
-      verifySsl: true
-      ## Proxy URI for sumologic output plugin
-      proxyUri: ""
       ## Format to post logs into Sumo. fields, json, json_merge, or text.
       ## NOTE: for logs metadata, fields is required.
       logFormat: fields
@@ -261,6 +258,10 @@ fluentd:
 
       ## To use additional filter plugins (ex: for text or json_merge log format)
       extraPluginConf: |-
+
+  events:
+    # If enabled, collect K8s events
+    enabled: true
 
 ## Configure fluent-bit 
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml

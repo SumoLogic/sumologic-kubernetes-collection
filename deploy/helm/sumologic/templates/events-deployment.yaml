@@ -1,4 +1,4 @@
-{{- if eq .Values.sumologic.eventCollectionEnabled true }}
+{{- if eq .Values.fluentd.events.enabled true }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -66,8 +66,6 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-events
-        - name: VERIFY_SSL
-          value: {{ .Values.sumologic.verifySsl| quote }}
         - name: FLUSH_INTERVAL
           value: {{ .Values.sumologic.flushInterval | quote }}
         - name: NUM_THREADS
