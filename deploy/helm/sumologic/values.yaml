@@ -113,6 +113,11 @@ sumologic:
   # watchResourceEventsOverrides:
   #   pods: "v1"
   #   events: "events.k8s.io/v1beta1"
+  
+
+  fluentd:
+    ## Option to specify the Fluentd buffer as file/memory.
+    buffer: "memory"
 
 ## Configure fluentd
 fluentd:
