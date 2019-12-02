@@ -80,25 +80,11 @@ sumologic:
         helm.sh/hook-weight: "0"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
-  ## How frequently to push logs to SumoLogic
-  ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
-  flushInterval: "5s"
-
-  ## Increase number of http threads to Sumo. May be required in heavy logging clusters
-  numThreads: 4
-
-  chunkLimitSize: "100k"
-
-  totalLimitSize: "128m"
-
   ## Option to control adding timestamp to logs. 
   addTimestamp: "true"
 
   ## Field name when add_timestamp is on.
   timestampKey: "timestamp"
-
-  ## Verify SumoLogic HTTPS certificates
-  verifySsl: "true"
 
   ## Sets the fluentd log level. The default log level, if not specified, is info.
   ## ref: https://docs.fluentd.org/deployment/logging
@@ -111,10 +97,6 @@ sumologic:
   #   pods: "v1"
   #   events: "events.k8s.io/v1beta1"
 
-  fluentd:
-    ## Option to specify the Fluentd buffer as file/memory.
-    buffer: "memory"
-
 ## Configure fluentd
 fluentd:
   rawConfig: |-
@@ -126,6 +108,17 @@ fluentd:
   verifySsl: true
   ## Proxy URI for sumologic output plugin
   proxyUri: ""
+
+  buffer:
+    ## Option to specify the Fluentd buffer as file/memory.
+    type: "memory"
+    ## How frequently to push logs to SumoLogic
+    ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
+    flushInterval: "5s"
+    ## Increase number of http threads to Sumo. May be required in heavy logging clusters
+    numThreads: 4
+    chunkLimitSize: "100k"
+    totalLimitSize: "128m"
 
   logs:
     ## Configuration for sumologic output plugin
