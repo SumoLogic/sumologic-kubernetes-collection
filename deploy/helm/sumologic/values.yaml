@@ -106,6 +106,8 @@ fluentd:
     numThreads: 4
     chunkLimitSize: "100k"
     totalLimitSize: "128m"
+    ## Additional config for buffer settings
+    extraConf: |-
 
   logs:
     ## Configuration for sumologic output plugin
