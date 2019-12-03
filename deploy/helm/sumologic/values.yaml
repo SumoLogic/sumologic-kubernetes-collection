@@ -86,13 +86,6 @@ sumologic:
   ## Field name when add_timestamp is on.
   timestampKey: "timestamp"
 
-  ## Override Kubernetes resource types you want to get events for from different Kubernetes
-  ## API versions. The key represents the name of the resource type and the value represents
-  ## the API version.
-  # watchResourceEventsOverrides:
-  #   pods: "v1"
-  #   events: "events.k8s.io/v1beta1"
-
 ## Configure fluentd
 fluentd:
   rawConfig: |-
@@ -223,7 +216,7 @@ fluentd:
       ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeUnitRegex: ""
 
-      ## To use additional filter plugins (ex: for text or json_merge log format)
+      ## To use additional filter plugins
       extraPluginConf: |-
 
     ## Systemd log configuration
@@ -249,12 +242,34 @@ fluentd:
       ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeUnitRegex: ""
 
-      ## To use additional filter plugins (ex: for text or json_merge log format)
+      ## To use additional filter plugins
       extraPluginConf: |-
+
+  metrics:
+    ## Configuration for sumologic output plugin
+    ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/metrics/metrics.output.conf
+    output:
+      ## Additional config parameters for sumologic output plugin
+      extraConf: |-
+
+    ## To use additional filter plugins
+    extraPluginConf: |-
 
   events:
     # If enabled, collect K8s events
     enabled: true
+
+    output:
+      ## Additional config parameters for sumologic output plugin
+      extraConf: |-
+
+    ## Override Kubernetes resource types you want to get events for from different Kubernetes
+    ## API versions. The key represents the name of the resource type and the value represents
+    ## the API version.
+    # watchResourceEventsOverrides:
+    #   pods: "v1"
+    #   events: "events.k8s.io/v1beta1"
 
 ## Configure fluent-bit 
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
