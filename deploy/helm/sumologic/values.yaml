@@ -240,7 +240,10 @@ fluentd:
       extraConf: |-
 
     ## To use additional filter plugins
-    extraPluginConf: |-
+    extraFilterPluginConf: |-
+
+    ## To use additional output plugins
+    extraOutputPluginConf: |-
 
   events:
     # If enabled, collect K8s events
