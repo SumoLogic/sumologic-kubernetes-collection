@@ -51,6 +51,7 @@ data:
         @type prometheus_format
         relabel container_name:container,pod_name:pod
       </filter>
+      
       <match prometheus.metrics.apiserver**>
         @type sumologic
         @id sumologic.endpoint.metrics.apiserver
@@ -206,7 +207,7 @@ data:
         source_category_prefix "kubernetes/"
         source_category_replace_dash "/"
         exclude_namespace_regex ""
-        exclude_pod_regex 
+        exclude_pod_regex ""
         exclude_container_regex ""
         exclude_host_regex ""
       </filter>
