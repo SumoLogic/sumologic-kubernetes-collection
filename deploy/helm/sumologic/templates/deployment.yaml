@@ -108,7 +108,3 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
-        - name: ADD_TIMESTAMP
-          value: {{ .Values.sumologic.addTimestamp | quote }}
-        - name: TIMESTAMP_KEY
-          value: {{ .Values.sumologic.timestampKey | quote }}

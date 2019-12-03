@@ -80,12 +80,6 @@ sumologic:
         helm.sh/hook-weight: "0"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
-  ## Option to control adding timestamp to logs. 
-  addTimestamp: "true"
-
-  ## Field name when add_timestamp is on.
-  timestampKey: "timestamp"
-
 ## Configure fluentd
 fluentd:
   rawConfig: |-
@@ -135,37 +129,29 @@ fluentd:
     ## Container log configuration
     containers:
       enabled: true
-
       outputConf: |-
         @include logs.output.conf
 
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "%{namespace}.%{pod}.%{container}"
-
       ## Set the _sourceHost metadata field in Sumo Logic.
       sourceHost: ""
-
       ## Set the _sourceCategory metadata field in Sumo Logic.
       sourceCategory: "%{namespace}/%{pod_name}"
-
       ## Set the prefix, for _sourceCategory metadata.
       sourceCategoryPrefix: "kubernetes/"
-
       ## Used to replace - with another character.
       sourceCategoryReplaceDash: "/"
 
       ## A regular expression for containers.
       ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeContainerRegex: ""
-
       ## A regular expression for hosts.
       ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeHostRegex: ""
-
       ## A regular expression for namespaces.
       ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeNamespaceRegex: ""
-
       ## A regular expression for pods.
       ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
       excludePodRegex: ""
@@ -203,6 +189,7 @@ fluentd:
       sourceCategory: "kubelet"
       ## Set the prefix, for _sourceCategory metadata.
       sourceCategoryPrefix: "kubernetes/"
+
       ## A regular expression for facility.
       ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeFacilityRegex: ""
@@ -229,6 +216,7 @@ fluentd:
       sourceCategory: "system"
       ## Set the prefix, for _sourceCategory metadata.
       sourceCategoryPrefix: "kubernetes/"
+
       ## A regular expression for facility.
       ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeFacilityRegex: ""
