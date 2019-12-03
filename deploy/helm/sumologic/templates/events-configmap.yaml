@@ -10,4 +10,5 @@ data:
   fluent.conf: |-
     @include events.conf
   {{- (tpl (.Files.Glob "conf/events/*.conf").AsConfig .) | nindent 2 }}
+  {{- (tpl (.Files.Glob "conf/buffer.output.conf").AsConfig .) | nindent 2 }}
 {{- end }}
