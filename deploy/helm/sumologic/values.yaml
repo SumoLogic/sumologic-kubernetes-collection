@@ -115,10 +115,6 @@ fluentd:
       ## Format to post logs into Sumo. fields, json, json_merge, or text.
       ## NOTE: for logs metadata, fields is required.
       logFormat: fields
-      ## Option to control adding timestamp to logs.
-      addTimestamp: "true"
-      ## Field name when add_timestamp is on.
-      timestampKey: "timestamp"
       ## Additional config parameters for sumologic output plugin
       extraConf: |-
 
