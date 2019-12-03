@@ -99,6 +99,24 @@ fluentd:
   buffer:
     ## Option to specify the Fluentd buffer as file/memory.
     type: "memory"
+    ## File paths to buffer to, if Fluentd buffer type is specified as file above.
+    ## Each sumologic output plugin buffers to its own unique file.
+    filePaths:
+      logs:
+        containers: /fluentd/buffer/logs.containers
+        kubelet: /fluentd/buffer/logs.kubelet
+        systemd: /fluentd/buffer/logs.systemd
+      metrics:
+        apiserver: /fluentd/buffer/metrics.apiserver
+        kubelet: /fluentd/buffer/metrics.kubelet
+        container: /fluentd/buffer/metrics.container
+        controller: /fluentd/buffer/metrics.controller
+        scheduler: /fluentd/buffer/metrics.scheduler
+        state: /fluentd/buffer/metrics.state
+        node: /fluentd/buffer/metrics.node
+        default: /fluentd/buffer/metrics.all
+      events: /fluentd/buffer/events
+
     ## How frequently to push logs to SumoLogic
     ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
     flushInterval: "5s"
