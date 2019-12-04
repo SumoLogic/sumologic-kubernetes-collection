@@ -90,5 +90,14 @@ Once the config has been modified in the `values.yaml` file,  we need to run the
 ```bash
 $ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml
 ```
+#### File path paramter:
 
-Reference link to official Fluentd buffer documentation: https://docs.fluentd.org/configuration/buffer-section
+We have defined several file paths where the buffer chunks will be stored. This parameter must be unique to avoid race condition problem.
+
+These paths can be modified in the `values.yaml` under the `filePaths` section in the `fluentd` key .
+
+Please make sure that you have **enough space in the path directory** . Running out of disk space is a problem frequently reported by users.
+
+Reference link to official Fluentd buffer documentation: 
+ - https://docs.fluentd.org/configuration/buffer-section
+ - https://docs.fluentd.org/buffer/file
