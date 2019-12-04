@@ -85,4 +85,10 @@ retry_timeout 2h
 retry_exponential_backoff_base 2
 ```
 
+Once the config has been modified in the `values.yaml` file,  we need to run the `helm upgrade` in order to apply the changes.
+
+```bash
+$ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml
+```
+
 Reference link to official Fluentd buffer documentation: https://docs.fluentd.org/configuration/buffer-section
