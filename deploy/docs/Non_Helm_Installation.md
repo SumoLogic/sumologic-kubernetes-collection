@@ -202,8 +202,8 @@ You can also [Filter metrics](additional_prometheus_configuration.md#filter-metr
 Install `prometheus-operator` by generating the yaml files using Helm:
 
 ```bash
-$ helm fetch stable/prometheus-operator --version 6.2.1
-$ helm template prometheus-operator-6.2.1.tgz --name prometheus-operator --namespace=sumologic -f prometheus-overrides.yaml > prometheus.yaml
+$ helm fetch stable/prometheus-operator --version 8.2.0
+$ helm template prometheus-operator-8.2.0.tgz --name prometheus-operator --namespace=sumologic -f prometheus-overrides.yaml > prometheus.yaml
 ```
 
 __NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) for the currently supported version.
