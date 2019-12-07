@@ -193,6 +193,9 @@ fluentd:
         ## Additional config parameters for kubernetes_metadata filter plugin
         extraConf: |-
 
+      ## To use additional filter plugins
+      extraFilterPluginConf: |-
+
     ## Kubelet log configuration
     kubelet:
       enabled: true
