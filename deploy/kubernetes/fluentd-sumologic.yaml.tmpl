@@ -198,6 +198,7 @@ data:
         in_pod_path '$.kubernetes.pod_name'
         data_type logs
       </filter>
+      
       <filter containers.**>
         @type kubernetes_sumologic
         source_name "%{namespace}.%{pod}.%{container}"
