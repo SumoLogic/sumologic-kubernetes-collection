@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.0.0
+## v1.0.0
 - Expose new configs in `values.yaml` to enable users to configure Fluentd to their liking. See the new `fluentd` section in `values.yaml` for more details.
 - Make several changes to `values.yaml` for consistency and understandability:
 
@@ -26,14 +26,14 @@ Old Config | New Config
 `sumologic.k8sMetadataFilter` | `fluentd.logs.containers.k8sMetadataFilter`
 
 - Remove some outdated configs in `values.yaml`
-  - sumologic.kubernetesMeta
-  - sumologic.kubernetesMetaReduce
-  > To preserve the behavior of `kubernetesMeta` or `kubernetesMetaReduce`, we recommend using the `fields` log_format, which by default strips this metadata from the body of the log message.
-  - sumologic.addTimestamp
-  - sumologic.timestampKey
-  - sumologic.addStream
-  - sumologic.addTime
-  > To preserve the behavior of `addTimestamp`, `timestampKey`, `addStream`, and `addtime`, you can use the [record_modifier plugin](https://github.com/repeatedly/fluent-plugin-record-modifier) in the new section of the `values.yaml` file, under `fluentd.logs.containers.extraFilterPluginConf`. For example, to preserve the values of `addTimestamp = true`, `timestampKey = timestamp`, `addStream = false`, `addTime = false`
+  - `sumologic.kubernetesMeta`
+  - `sumologic.kubernetesMetaReduce`
+  - To preserve the behavior of `kubernetesMeta` or `kubernetesMetaReduce`, we recommend using the `fields` log_format, which by default strips this metadata from the body of the log message.
+  - `sumologic.addTimestamp`
+  - `sumologic.timestampKey`
+  - `sumologic.addStream`
+  - `sumologic.addTime`
+  - To preserve the behavior of `addTimestamp`, `timestampKey`, `addStream`, and `addtime`, you can use the [record_modifier plugin](https://github.com/repeatedly/fluent-plugin-record-modifier) in the new section of the `values.yaml` file, under `fluentd.logs.containers.extraFilterPluginConf`. For example, to preserve the values of `addTimestamp = true`, `timestampKey = timestamp`, `addStream = false`, `addTime = false`
   ```
   fluentd:
     logs:
@@ -43,7 +43,7 @@ Old Config | New Config
             @type record_modifier
             remove_keys stream,time
             <record>
-              timestamp ${(Time.now.to_f*1000).to_i}
+              timestamp ${time.to_i}
             </record>
           </filter>
   ```
