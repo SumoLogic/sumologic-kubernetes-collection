@@ -157,7 +157,8 @@ data:
     endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
     verify_ssl true
     log_format fields
-    add_timestamp false
+    add_timestamp true
+    timestampKey timestamp
     proxy_uri ""
     
   logs.source.containers.conf: |-
