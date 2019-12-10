@@ -16,6 +16,8 @@ Old Config | New Config
 `sumologic.sourceCategory` | `fluentd.logs.containers.sourceCategory`
 `sumologic.sourceCategoryPrefix` | `fluentd.logs.containers.sourceCategoryPrefix`
 `sumologic.sourceCategoryReplaceDash` | `fluentd.logs.containers.sourceCategoryReplaceDash`
+`sumologic.addTimestamp` | `fluentd.logs.output.addTimestamp`
+`sumologic.timestampKey` | `fluentd.logs.output.timestampKey`
 `sumologic.verifySsl` | `fluentd.verifySsl`
 `sumologic.excludeContainerRegex` | `fluentd.logs.containers.excludeContainerRegex`
 `sumologic.excludeHostRegex` | `fluentd.logs.containers.excludeHostRegex`
@@ -29,11 +31,10 @@ Old Config | New Config
   - `sumologic.kubernetesMeta`
   - `sumologic.kubernetesMetaReduce`
   - To preserve the behavior of `kubernetesMeta` or `kubernetesMetaReduce`, we recommend using the `fields` log_format, which by default strips this metadata from the body of the log message.
-  - `sumologic.addTimestamp`
-  - `sumologic.timestampKey`
   - `sumologic.addStream`
   - `sumologic.addTime`
-  - To preserve the behavior of `addTimestamp`, `timestampKey`, `addStream`, and `addtime`, you can use the [record_modifier plugin](https://github.com/repeatedly/fluent-plugin-record-modifier) in the new section of the `values.yaml` file, under `fluentd.logs.containers.extraFilterPluginConf`. For example, to preserve the values of `addTimestamp = true`, `timestampKey = timestamp`, `addStream = false`, `addTime = false`
+  - To preserve the behavior of `addStream` or `addtime`, you can use the [record_modifier plugin](https://github.com/repeatedly/fluent-plugin-record-modifier) in the new section of the `values.yaml` file, under `fluentd.logs.containers.extraFilterPluginConf`. For example, to preserve the values of `addStream = false`, `addTime = false`:
+
   ```
   fluentd:
     logs:
@@ -42,8 +43,5 @@ Old Config | New Config
           <filter **>
             @type record_modifier
             remove_keys stream,time
-            <record>
-              timestamp ${time.to_i}
-            </record>
           </filter>
   ```
