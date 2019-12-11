@@ -28,6 +28,21 @@ eventsDeployment:
       memory: 256Mi
       cpu: "100m"
 
+## Persist data to a persistent volume; Must be used together with Fluentd file buffer (fluentd.buffer="file")
+persistence:
+  enabled: false
+
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, Azure & OpenStack)
+  ##
+  # storageClass: "-"
+  # annotations: {}
+  accessMode: ReadWriteOnce
+  size: 10Gi
+
 sumologic:
   ## Setup
 
