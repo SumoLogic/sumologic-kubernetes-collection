@@ -423,7 +423,7 @@ spec:
 ---
 # Source: sumologic/templates/deployment.yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: collection-sumologic
   labels:
@@ -578,11 +578,12 @@ spec:
           value: ""
         - name: EXCLUDE_POD_REGEX
           value: ""
+
 ---
 # Source: sumologic/templates/events-deployment.yaml
 
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: collection-sumologic-events
   labels:
@@ -656,3 +657,4 @@ spec:
           value: "100k"
         - name: TOTAL_LIMIT_SIZE
           value: "128m"
+
