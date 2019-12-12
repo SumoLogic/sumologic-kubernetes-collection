@@ -169,12 +169,10 @@ sumologic:
       minReplicas: 1
       maxReplicas: 10
       metrics:
-        - type: Resource
-          resource:
-            name: cpu
-            target:
-              type: Utilization
-              averageUtilization: 60
+      - type: Pods
+        pods:
+          metricName: fluentd_output_status_buffer_queue_length
+          targetAverageValue: 1
 
   k8sMetadataFilter:
     ## Option to control the enabling of metadata filter plugin watch.
@@ -425,3 +423,10 @@ falco:
   #  enabled: true
   falco:
     jsonOutput: true
+
+## Configure prometheus-operator
+## ref: https://github.com/helm/charts/blob/master/stable/falco/values.yaml
+prometheus-adapter:
+  enabled: true
+  prometheus:
+    url: http://collection-prometheus-oper-prometheus.sumologic.svc

@@ -1,5 +1,5 @@
 {{- if and .Values.sumologic.fluentd.autoscaling.enabled}}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "sumologic.fullname" . }}
@@ -8,7 +8,7 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}  
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1beta1
+    apiVersion: apps/v1
     kind: Deployment
     name: {{ template "sumologic.fullname" . }}
   minReplicas: {{ .Values.sumologic.fluentd.autoscaling.minReplicas }}
