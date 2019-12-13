@@ -13,6 +13,5 @@ spec:
     name: {{ template "sumologic.fullname" . }}
   minReplicas: {{ .Values.sumologic.fluentd.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.sumologic.fluentd.autoscaling.maxReplicas }}
-  metrics:
-    {{- toYaml .Values.sumologic.fluentd.autoscaling.metrics | nindent 4 }}
-{{- end }}
+  targetCPUUtilizationPercentage: {{ .Values.sumologic.fluentd.autoscaling.targetCPUUtilizationPercentage }}
+{{- end -}}
