@@ -1,4 +1,4 @@
-{{- if and .Values.sumologic.fluentd.autoscaling.enabled}}
+{{- if .Values.sumologic.fluentd.autoscaling.enabled}}
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:

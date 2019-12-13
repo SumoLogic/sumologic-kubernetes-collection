@@ -167,7 +167,7 @@ sumologic:
     ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
     autoscaling:
       enabled: true
-      minReplicas: 1
+      minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
 
