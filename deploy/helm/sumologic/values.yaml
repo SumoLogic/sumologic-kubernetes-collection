@@ -164,15 +164,18 @@ sumologic:
   fluentd:
     ## Option to specify the Fluentd buffer as file/memory.
     buffer: "memory"
+    ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
     autoscaling:
       enabled: true
       minReplicas: 1
       maxReplicas: 10
       metrics:
-      - type: Pods
-        pods:
-          metricName: fluentd_output_status_buffer_queue_length
-          targetAverageValue: 1
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 50
 
   k8sMetadataFilter:
     ## Option to control the enabling of metadata filter plugin watch.
@@ -189,6 +192,15 @@ sumologic:
     ## Option to control the enabling of metadata filter plugin cache_ttl. 
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     bearerCacheTtl: "3600"
+
+
+## Configure metrics-server
+## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
+metrics-server:
+  enabled: true
+  args:
+    - --kubelet-insecure-tls
+    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
 
 ## Configure fluent-bit 
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
@@ -423,10 +435,3 @@ falco:
   #  enabled: true
   falco:
     jsonOutput: true
-
-## Configure prometheus-operator
-## ref: https://github.com/helm/charts/blob/master/stable/falco/values.yaml
-prometheus-adapter:
-  enabled: true
-  prometheus:
-    url: http://collection-prometheus-oper-prometheus.sumologic.svc
