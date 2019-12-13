@@ -3,3 +3,10 @@
 #  enabled: true
 falco:
   jsonOutput: true
+
+## Configure prometheus-operator
+## ref: https://github.com/helm/charts/blob/master/stable/falco/values.yaml
+prometheus-adapter:
+enabled: true
+prometheus:
+  url: http://collection-prometheus-oper-prometheus.sumologic.svc

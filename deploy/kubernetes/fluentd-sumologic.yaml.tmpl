@@ -659,7 +659,7 @@ spec:
 ---
 # Source: sumologic/templates/hpa.yaml
 
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: collection-sumologic
@@ -668,16 +668,14 @@ metadata:
       
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1beta1
+    apiVersion: apps/v1
     kind: Deployment
     name: collection-sumologic
   minReplicas: 1
   maxReplicas: 10
   metrics:
-    - resource:
-        name: cpu
-        target:
-          averageUtilization: 60
-          type: Utilization
-      type: Resource
+    - pods:
+        metricName: fluentd_output_status_buffer_queue_length
+        targetAverageValue: 1
+      type: Pods
     
