@@ -421,7 +421,88 @@ spec:
     protocol: TCP
 
 ---
-# Source: sumologic/templates/deployment.yaml
+# Source: sumologic/templates/events-statefulset.yaml
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: collection-sumologic-events
+  labels:
+    app: collection-sumologic-events
+    
+spec:
+  selector:
+    matchLabels:
+      app: collection-sumologic-events
+  template:
+    metadata:
+      labels:
+        app: collection-sumologic-events
+        
+    spec:
+      serviceAccountName: collection-sumologic
+      volumes:
+      - name: pos-files
+        hostPath:
+          path: /var/run/fluentd-pos
+          type: ""
+      - name: config-volume
+        configMap:
+          name: collection-sumologic-events
+      securityContext:
+        fsGroup: 999
+      containers:
+      - name: fluentd-events
+        image: sumologic/kubernetes-fluentd:0.12.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          
+        volumeMounts:
+        - name: config-volume
+          mountPath: /fluentd/etc/
+        - name: pos-files
+          mountPath: /mnt/pos/
+        livenessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
+          initialDelaySeconds: 300
+          periodSeconds: 20
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        env:
+        - name: SUMO_ENDPOINT_EVENTS
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-events
+        - name: VERIFY_SSL
+          value: "true"
+        - name: FLUSH_INTERVAL
+          value: "5s"
+        - name: NUM_THREADS
+          value: "4"
+        - name: CHUNK_LIMIT_SIZE
+          value: "100k"
+        - name: TOTAL_LIMIT_SIZE
+          value: "128m"
+
+---
+# Source: sumologic/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -449,6 +530,8 @@ spec:
       - name: config-volume
         configMap:
           name: collection-sumologic
+      securityContext:
+        fsGroup: 999
       containers:
       - name: fluentd
         image: sumologic/kubernetes-fluentd:0.12.0
@@ -578,83 +661,4 @@ spec:
           value: ""
         - name: EXCLUDE_POD_REGEX
           value: ""
-
----
-# Source: sumologic/templates/events-deployment.yaml
-
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: collection-sumologic-events
-  labels:
-    app: collection-sumologic-events
-    
-spec:
-  selector:
-    matchLabels:
-      app: collection-sumologic-events
-  template:
-    metadata:
-      labels:
-        app: collection-sumologic-events
-        
-    spec:
-      serviceAccountName: collection-sumologic
-      volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
-      - name: config-volume
-        configMap:
-          name: collection-sumologic-events
-      containers:
-      - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:0.12.0
-        imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            cpu: 100m
-            memory: 256Mi
-          requests:
-            cpu: 100m
-            memory: 256Mi
-          
-        volumeMounts:
-        - name: config-volume
-          mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
-        livenessProbe:
-          exec:
-            command:
-            - "/bin/sh"
-            - "-c"
-            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
-          initialDelaySeconds: 300
-          periodSeconds: 20
-        readinessProbe:
-          exec:
-            command:
-            - "/bin/sh"
-            - "-c"
-            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
-          initialDelaySeconds: 30
-          periodSeconds: 5
-        env:
-        - name: SUMO_ENDPOINT_EVENTS
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-events
-        - name: VERIFY_SSL
-          value: "true"
-        - name: FLUSH_INTERVAL
-          value: "5s"
-        - name: NUM_THREADS
-          value: "4"
-        - name: CHUNK_LIMIT_SIZE
-          value: "100k"
-        - name: TOTAL_LIMIT_SIZE
-          value: "128m"
 
