@@ -66,7 +66,7 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
-{{- if and .Values.sumologic.fluentd.persistence.enabled (eq .Values.sumologic.fluentd.buffer "file") }}
+{{- if .Values.sumologic.fluentd.persistence.enabled }}
         - name: buffer
           mountPath: "/fluentd/buffer"
 {{- end}}
@@ -159,7 +159,7 @@ spec:
           value: {{ .Values.sumologic.excludeHostRegex | quote }}
         - name: EXCLUDE_POD_REGEX
           value: {{ .Values.sumologic.excludePodRegex | quote }}
-{{- if and .Values.sumologic.fluentd.persistence.enabled (eq .Values.sumologic.fluentd.buffer "file") }}
+{{- if .Values.sumologic.fluentd.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: buffer

@@ -172,9 +172,10 @@ sumologic:
       targetCPUUtilizationPercentage: 50
 
     securityContext:
+      ## The group ID of all processes in the statefulset containers. By default this needs to be fluent(999).
       fsGroup: 999
 
-    ## Persist data to a persistent volume; Must be used together with Fluentd file buffer (fluentd.buffer="file")
+    ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
     persistence:
       enabled: false
 
