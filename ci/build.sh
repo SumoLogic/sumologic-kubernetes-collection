@@ -115,7 +115,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   metrics_server_end=$(($metrics_server_end - 1))
   
   echo "Copy 'values.yaml' from line $metrics_server_start to line $metrics_server_end to 'metrics-server-overrides.yaml'"
-  echo "# This file is auto-generated." > deploy/helm/fluent-bit-overrides.yaml
+  echo "# This file is auto-generated." > deploy/helm/metrics-server-overrides.yaml
   # Copy lines of metrics_server section and remove indention from values.yaml
   sed -n "$metrics_server_start,${metrics_server_end}p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/metrics-server-overrides.yaml
 
@@ -159,7 +159,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   # Copy lines of falco section and remove indention from values.yaml
   sed -n "$falco_start,$ p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/falco-overrides.yaml
 
-  if [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ "$(git diff deploy/helm/falco-overrides.yaml)" ] || [ "$(git diff deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet)" ]; then
+  if [ "$(git diff deploy/helm/metrics-server-overrides.yaml)" ] || [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ "$(git diff deploy/helm/falco-overrides.yaml)" ] || [ "$(git diff deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet)" ]; then
     echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml', 'falco-overrides.yaml', or 'kube-prometheus-sumo-logic-mixin.libsonnet', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
     git add deploy/helm/*-overrides.yaml
     git add deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet
