@@ -166,7 +166,7 @@ sumologic:
     buffer: "memory"
     ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
     autoscaling:
-      enabled: true
+      enabled: false
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
