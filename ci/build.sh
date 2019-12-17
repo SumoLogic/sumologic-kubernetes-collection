@@ -109,6 +109,16 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   # Generate override yaml files for chart dependencies to determine if changes are made to overrides yaml files
   echo "Generating overrides files..."
   
+  metrics_server_start=`grep -n "metrics-server:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+  metrics_server_start=$(($metrics_server_start + 2))
+  metrics_server_end=`grep -n "## Configure fluent-bit" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
+  metrics_server_end=$(($metrics_server_end - 1))
+  
+  echo "Copy 'values.yaml' from line $metrics_server_start to line $metrics_server_end to 'metrics-server-overrides.yaml'"
+  echo "# This file is auto-generated." > deploy/helm/fluent-bit-overrides.yaml
+  # Copy lines of metrics_server section and remove indention from values.yaml
+  sed -n "$metrics_server_start,${metrics_server_end}p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/metrics-server-overrides.yaml
+
   fluent_bit_start=`grep -n "fluent-bit:" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
   fluent_bit_start=$(($fluent_bit_start + 2))
   fluent_bit_end=`grep -n "## Configure prometheus-operator" deploy/helm/sumologic/values.yaml | head -n 1 | cut -d: -f1`
