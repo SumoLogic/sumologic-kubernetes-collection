@@ -45,3 +45,5 @@ Old Config | New Config
             remove_keys stream,time
           </filter>
   ```
+  
+- Run the setup job as a pre-upgrade hook. Upgrading the sumologic Helm chart from version 0.10.0 or older to version 1.0.0 will result in new collector and sources being created in your Sumo Logic account if the config `sumologic.collectorName` is not provided. In that case, the new collector will be named after the value of `sumologic.clusterName` (with a default of `kubernetes`).
