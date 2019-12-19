@@ -164,6 +164,12 @@ sumologic:
   fluentd:
     ## Option to specify the Fluentd buffer as file/memory.
     buffer: "memory"
+    ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
 
   k8sMetadataFilter:
     ## Option to control the enabling of metadata filter plugin watch.
@@ -180,6 +186,15 @@ sumologic:
     ## Option to control the enabling of metadata filter plugin cache_ttl. 
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     bearerCacheTtl: "3600"
+
+
+## Configure metrics-server
+## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
+metrics-server:
+  enabled: true
+  args:
+    - --kubelet-insecure-tls
+    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
 
 ## Configure fluent-bit 
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
