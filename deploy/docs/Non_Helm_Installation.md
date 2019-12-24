@@ -211,7 +211,7 @@ __NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) f
 Before applying, change your default namespace for `kubectl` from `default` to `sumologic`. This is required as the YAML generated will deploy some resources to `kube-system` namespace as well.
 
 ```bash
-$ kubectl config set-context --current --namespace=sumlogic
+$ kubectl config set-context --current --namespace=sumologic
 $ kubectl apply -f prometheus.yaml
 ```
 
