@@ -218,7 +218,7 @@ $ kubectl apply -f prometheus.yaml
 Verify `prometheus-operator` is running:
 
 ```sh
-kubectl -n sumologic logs prometheus-prometheus-operator-prometheus-0 prometheus -f
+kubectl -n sumologic logs prometheus-collection-prometheus-oper-prometheus-0 prometheus -f
 ```
 
 At this point setup is complete and metrics data is being sent to Sumo Logic.
