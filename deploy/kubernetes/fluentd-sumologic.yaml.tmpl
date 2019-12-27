@@ -481,11 +481,9 @@ spec:
           periodSeconds: 30
           timeoutSeconds: 3
         readinessProbe:
-          exec:
-            command:
-            - "/bin/sh"
-            - "-c"
-            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
+          httpGet:
+            path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
+            port: 9880
           initialDelaySeconds: 30
           periodSeconds: 5
         volumeMounts:
