@@ -149,9 +149,9 @@ sumologic:
   excludePodRegex: ""
 
 
-  ## Sets the fluentd log level. The default log level, if not specified, is info.
+  ## Sets the fluentd log level. The default log level, if not specified, is error.
   ## ref: https://docs.fluentd.org/deployment/logging
-  # fluentdLogLevel: "debug"
+  fluentdLogLevel: "error"
 
   ## Override Kubernetes resource types you want to get events for from different Kubernetes
   ## API versions. The key represents the name of the resource type and the value represents
