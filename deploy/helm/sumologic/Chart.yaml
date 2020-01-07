@@ -1,5 +1,12 @@
 apiVersion: v1
-appVersion: "0.12.0"
-description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
 name: sumologic
 version: 0.12.0
+appVersion: 0.12.0
+description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+keywords:
+  - monitoring
+  - logging
+icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
+home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+sources:
+  - https://github.com/SumoLogic/sumologic-kubernetes-collection

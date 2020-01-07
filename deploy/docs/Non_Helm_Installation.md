@@ -35,11 +35,14 @@ kubectl config use-context DESIRED_CONTEXT_NAME
 
 *Note the following steps are one way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://helm.sh/docs/using_helm/#securing-your-helm-installation)*
 
-Download Helm to generate the yaml files necessary to deploy by running
+Download the latest Helm 2 version to generate the yaml files necessary to deploy by running
 
 ```bash
-brew install kubernetes-helm
+brew install helm@2
+export PATH="/usr/local/opt/helm@2/bin:$PATH"
 ```
+
+Reference: https://helm.sh/docs/intro/install/
 
 __NOTE__ These instructions assume that Prometheus is not already running on your Kubernetes cluster.
 
@@ -211,14 +214,14 @@ __NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) f
 Before applying, change your default namespace for `kubectl` from `default` to `sumologic`. This is required as the YAML generated will deploy some resources to `kube-system` namespace as well.
 
 ```bash
-$ kubectl config set-context --current --namespace=sumlogic
+$ kubectl config set-context --current --namespace=sumologic
 $ kubectl apply -f prometheus.yaml
 ```
 
 Verify `prometheus-operator` is running:
 
 ```sh
-kubectl -n sumologic logs prometheus-prometheus-operator-prometheus-0 prometheus -f
+kubectl -n sumologic logs prometheus-collection-prometheus-oper-prometheus-0 prometheus -f
 ```
 
 At this point setup is complete and metrics data is being sent to Sumo Logic.
