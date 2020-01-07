@@ -35,7 +35,7 @@ kubectl config use-context DESIRED_CONTEXT_NAME
 
 *Note the following steps are one way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://helm.sh/docs/using_helm/#securing-your-helm-installation)*
 
-Download latest Helm 2 to generate the yaml files necessary to deploy by running
+Download the latest Helm 2 version to generate the yaml files necessary to deploy by running
 
 ```bash
 brew install helm@2
