@@ -45,7 +45,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -69,7 +69,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -77,10 +77,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_default_config_no_labels" do
@@ -100,7 +101,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             "pod_name" => "log-format-labs-54575ccdb9-9d677",
             "pod_id" => "170af806-c801-11e8-9009-025000000001",
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -120,7 +121,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             "pod_name" => "log-format-labs-54575ccdb9-9d677",
             "pod_id" => "170af806-c801-11e8-9009-025000000001",
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -128,10 +129,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_fields_format" do
@@ -157,7 +159,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -173,11 +175,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "fields",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_fields_namespace_labels" do
@@ -206,7 +208,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "app" => "sumologic"
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -222,11 +224,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "fields",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,namespace_labels_app=sumologic,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,namespace_labels_app=sumologic,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_fields_null_field_values" do
@@ -257,7 +259,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "app" => "sumologic"
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -273,11 +275,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "fields",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,namespace_labels_app=sumologic,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,namespace_labels_app=sumologic,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_fields_format_no_timestamp" do
@@ -304,7 +306,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -319,11 +321,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "fields",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
-            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https =>//10.96.0.1 =>443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_no_k8s_labels" do
@@ -343,7 +345,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             "pod_name" => "log-format-labs-54575ccdb9-9d677",
             "pod_id" => "170af806-c801-11e8-9009-025000000001",
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -363,7 +365,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             "pod_name" => "log-format-labs-54575ccdb9-9d677",
             "pod_id" => "170af806-c801-11e8-9009-025000000001",
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -371,10 +373,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_sourcecategory_prefix" do
@@ -398,7 +401,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -422,7 +425,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -430,10 +433,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_add_stream" do
@@ -459,7 +463,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -482,7 +486,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -490,10 +494,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_add_time" do
@@ -520,7 +525,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -544,7 +549,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -552,10 +557,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_sourcecategory_replace_dash" do
@@ -581,7 +587,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -605,7 +611,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -613,10 +619,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_kubernetes_meta" do
@@ -642,7 +649,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -658,10 +665,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => ""
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_kubernetes_meta_reduce_via_annotation" do
@@ -708,10 +716,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_kubernetes_meta_reduce_via_conf" do
@@ -757,10 +766,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_kubernetes_meta_reduce_via_annotation_and_conf" do
@@ -809,10 +819,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_log_format_json_merge" do
@@ -838,7 +849,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -862,7 +873,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -870,10 +881,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json_merge",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_log_format_text" do
@@ -899,7 +911,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -923,7 +935,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -931,10 +943,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "text",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_exclude_pod_regex" do
@@ -1076,7 +1089,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "sumologic.com/sourceHost" => "foo",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -1103,7 +1116,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "sumologic.com/sourceHost" => "foo",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -1111,10 +1124,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "foo",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_sourcename_annotation" do
@@ -1141,7 +1155,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "sumologic.com/sourceName" => "foo",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -1168,7 +1182,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "sumologic.com/sourceName" => "foo",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -1176,10 +1190,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "foo",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_sourcecategory_annotation" do
@@ -1206,7 +1221,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "sumologic.com/sourceCategory" => "foo",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -1233,7 +1248,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "sumologic.com/sourceCategory" => "foo",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -1241,10 +1256,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_sourcecategory_using_labels" do
@@ -1270,7 +1286,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -1294,7 +1310,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -1302,10 +1318,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_sourcehost_using_pod_id" do
@@ -1331,7 +1348,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -1355,7 +1372,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -1363,10 +1380,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "170af806-c801-11e8-9009-025000000001",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_undefined_labels" do
@@ -1392,7 +1410,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -1416,7 +1434,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -1424,10 +1442,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_exclude_systemd_unit_regex" do
@@ -1499,7 +1518,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -1523,7 +1542,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -1531,10 +1550,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-1013177865-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-1013177865-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_1.8-1.11_dynamic_bit_removal" do
@@ -1558,7 +1578,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -1582,7 +1602,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -1590,10 +1610,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=1013177865,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_post_1.11_dynamic_bit_removal" do
@@ -1617,7 +1638,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -1641,7 +1662,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -1649,10 +1670,11 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-54575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=54575ccdb9,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-54575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 
   test "test_mismatch_dynamic_bit_is_left" do
@@ -1676,7 +1698,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
     }
@@ -1700,7 +1722,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
                 "run" => "log-format-labs",
             },
             "host" => "docker-for-desktop",
-            "master_url" => "https =>//10.96.0.1 =>443/api",
+            "master_url" => "https://10.96.0.1:443/api",
             "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
         },
         "_sumo_metadata" => {
@@ -1708,9 +1730,10 @@ class SumoContainerOutputTest < Test::Unit::TestCase
             :host => "",
             :log_format => "json",
             :source => "default.log-format-labs-53575ccdb9-9d677.log-format-labs",
+            :fields => "container_id=5c280b6ad5abec32e9af729295c20f60fbeadf3ba16fda2d121f87228e6822e0,pod_labels_pod-template-hash=54575ccdb9,pod_labels_run=log-format-labs,container=log-format-labs,namespace=default,pod=log-format-labs-53575ccdb9-9d677,pod_id=170af806-c801-11e8-9009-025000000001,host=docker-for-desktop,master_url=https://10.96.0.1:443/api,namespace_id=e8572415-9596-11e8-b28b-025000000001,node=docker-for-desktop"
         },
     }
     assert_equal(1, d.filtered_records.size)
-    assert_equal(d.filtered_records[0], expected)
+    assert_equal(expected, d.filtered_records[0])
   end
 end

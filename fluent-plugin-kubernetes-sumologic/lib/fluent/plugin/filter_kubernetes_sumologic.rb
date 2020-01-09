@@ -177,12 +177,12 @@ module Fluent::Plugin
         # Note (sam 10/9/19): we're stripping from the copy, so this has no effect on output
         kubernetes.delete("annotations") if annotations
 
-        if @log_format == "fields" and record.key?("docker") and not record.fetch("docker").nil?
+        if record.key?("docker") and not record.fetch("docker").nil?
           record["docker"].each {|k, v| log_fields[k] = v}
-          record.delete("docker")
+          record.delete("docker") if @log_format == "fields"
         end
 
-        if @log_format == "fields" and record.key?("kubernetes") and not record.fetch("kubernetes").nil?
+        if record.key?("kubernetes") and not record.fetch("kubernetes").nil?
           if kubernetes.has_key? "labels"
             kubernetes["labels"].each { |k, v| log_fields["pod_labels_#{k}".to_sym] = v }
           end
@@ -196,11 +196,11 @@ module Fluent::Plugin
             log_fields[key] = kubernetes[key] unless kubernetes[key].nil?
           end
           log_fields["node"] = kubernetes["host"] unless kubernetes["host"].nil?
-          record.delete("kubernetes")
+          record.delete("kubernetes") if @log_format == "fields"
         end
       end
 
-      if @log_format == "fields" and not log_fields.nil?
+      unless log_fields.nil?
         sumo_metadata[:fields] = log_fields.select{|k,v| !(v.nil? || v.empty?)}.map{|k,v| "#{k}=#{v}"}.join(',')
       end
       record
