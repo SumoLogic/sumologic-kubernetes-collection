@@ -35,6 +35,8 @@ sumologic:
   setupEnabled: true
 
   # If enabled, accessId and accessKey will be sourced from Secret Name given
+  # Be sure to include at least the following env variables in your secret
+  # (1) SUMOLOGIC_ACCESSID, (2) SUMOLOGIC_ACCESSKEY
   #envFromSecret: sumo-api-secret
 
   # Sumo access ID
