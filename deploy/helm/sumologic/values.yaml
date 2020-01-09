@@ -193,7 +193,7 @@ sumologic:
 ## Configure metrics-server
 ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
 metrics-server:
-  enabled: true
+  enabled: false
   args:
     - --kubelet-insecure-tls
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
