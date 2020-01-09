@@ -14,6 +14,7 @@ data:
     @include metrics.conf
     @include logs.conf
   buffer.output.conf: |-
+    compress gzip
     flush_interval "#{ENV['FLUSH_INTERVAL']}"
     flush_thread_count "#{ENV['NUM_THREADS']}"
     chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
@@ -350,6 +351,7 @@ data:
     </system>
   
   buffer.output.conf: |-
+    compress gzip
     flush_interval "#{ENV['FLUSH_INTERVAL']}"
     flush_thread_count "#{ENV['NUM_THREADS']}"
     chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
