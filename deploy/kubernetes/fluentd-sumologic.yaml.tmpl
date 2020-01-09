@@ -633,16 +633,19 @@ spec:
         - name: pos-files
           mountPath: /mnt/pos/
         livenessProbe:
-          httpGet:
-            path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
-            port: 9880
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
           initialDelaySeconds: 300
-          periodSeconds: 30
-          timeoutSeconds: 3
+          periodSeconds: 20
         readinessProbe:
-          httpGet:
-            path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
-            port: 9880
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "[ $(pgrep ruby | wc -l) -gt 0 ]"
           initialDelaySeconds: 30
           periodSeconds: 5
         env:
