@@ -35,6 +35,8 @@ sumologic:
   setupEnabled: true
 
   # If enabled, accessId and accessKey will be sourced from Secret Name given
+  # Be sure to include at least the following env variables in your secret
+  # (1) SUMOLOGIC_ACCESSID, (2) SUMOLOGIC_ACCESSKEY
   #envFromSecret: sumo-api-secret
 
   # Sumo access ID
@@ -56,27 +58,27 @@ sumologic:
   setup:
     clusterRole:
       annotations:
-        helm.sh/hook: pre-install,pre-upgrade
+        helm.sh/hook: pre-install
         helm.sh/hook-weight: "1"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     clusterRoleBinding:
       annotations:
-        helm.sh/hook: pre-install,pre-upgrade
+        helm.sh/hook: pre-install
         helm.sh/hook-weight: "2"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     configMap:
       annotations:
-        helm.sh/hook: pre-install,pre-upgrade
+        helm.sh/hook: pre-install
         helm.sh/hook-weight: "2"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     job:
       annotations:
-        helm.sh/hook: pre-install,pre-upgrade
+        helm.sh/hook: pre-install
         helm.sh/hook-weight: "3"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     serviceAccount:
       annotations:
-        helm.sh/hook: pre-install,pre-upgrade
+        helm.sh/hook: pre-install
         helm.sh/hook-weight: "0"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
@@ -191,7 +193,7 @@ sumologic:
 ## Configure metrics-server
 ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
 metrics-server:
-  enabled: true
+  enabled: false
   args:
     - --kubelet-insecure-tls
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
@@ -402,8 +404,14 @@ prometheus-operator:
               regex: POD
               sourceLabels: [container_name]
             - action: keep
-              regex: kubelet;.+;(?:container_cpu_load_average_10s|container_cpu_system_seconds_total|container_cpu_usage_seconds_total|container_cpu_cfs_throttled_seconds_total|container_memory_usage_bytes|container_memory_swap|container_memory_working_set_bytes|container_spec_memory_limit_bytes|container_spec_memory_swap_limit_bytes|container_spec_memory_reservation_limit_bytes|container_spec_cpu_quota|container_spec_cpu_period|container_fs_usage_bytes|container_fs_limit_bytes|container_fs_reads_bytes_total|container_fs_writes_bytes_total|container_network_receive_bytes_total|container_network_transmit_bytes_total|container_network_receive_errors_total|container_network_transmit_errors_total|container_network_receive_packets_dropped_total|container_network_transmit_packets_dropped_total|)
+              regex: kubelet;.+;(?:container_cpu_load_average_10s|container_cpu_system_seconds_total|container_cpu_usage_seconds_total|container_cpu_cfs_throttled_seconds_total|container_memory_usage_bytes|container_memory_swap|container_memory_working_set_bytes|container_spec_memory_limit_bytes|container_spec_memory_swap_limit_bytes|container_spec_memory_reservation_limit_bytes|container_spec_cpu_quota|container_spec_cpu_period|container_fs_usage_bytes|container_fs_limit_bytes|container_fs_reads_bytes_total|container_fs_writes_bytes_total|)
               sourceLabels: [job,container_name,__name__]
+        # cadvisor aggregate container metrics
+        - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.container
+          writeRelabelConfigs:
+            - action: keep
+              regex: kubelet;(?:container_network_receive_bytes_total|container_network_transmit_bytes_total|container_network_receive_errors_total|container_network_transmit_errors_total|container_network_receive_packets_dropped_total|container_network_transmit_packets_dropped_total)
+              sourceLabels: [job,__name__]
         # node exporter metrics
         - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.node
           writeRelabelConfigs:
