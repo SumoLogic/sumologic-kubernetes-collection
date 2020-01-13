@@ -302,7 +302,19 @@ fluent-bit:
       Systemd_Filter  _SYSTEMD_UNIT=var-lib-etcd2.service
       Max_Entries     1000
       Read_From_Tail  true
-
+    [INPUT]
+      Name              tail
+      Path              /var/log/kube-apiserver-audit.log
+      Parser            docker
+      Tag               audit.*
+      Refresh_Interval  5
+      Rotate_Wait       60
+      Mem_Buf_Limit     35MB
+      Buffer_Chunk_Size 2MB
+      Buffer_Max_Size   10MB
+      Skip_Long_Lines   On
+      DB                /tail-db
+      Key               kubernetes-audit
     @INCLUDE fluent-bit-output.conf
 
 ## Configure prometheus-operator
