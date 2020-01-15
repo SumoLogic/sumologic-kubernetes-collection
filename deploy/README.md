@@ -10,6 +10,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
   - [Upgrading with Helm](./docs/Upgrading_with_Helm.md) 
   - [Non Helm Installation](./docs/Non_Helm_Installation.md) 
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
+  - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
   - [Alpha Releases](./docs/Alpha_Release_Guide.md)
 - [Migration Steps](./docs/Migration_Steps.md)
 - [Troubleshooting Collection](./docs/Troubleshoot_Collection.md)
