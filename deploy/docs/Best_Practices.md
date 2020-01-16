@@ -3,11 +3,11 @@
 
 ### Multiline Log Support
 
-By default, we use a regex that matches the first line of a multiline log starting with a date of the format: `2019-11-17 07:14:12`.
+By default, we use a regex that matches the first line of multiline logs that start with dates in the following format: `2019-11-17 07:14:12`.
 
-You can specify a custom regex to detect the first line of a multiline logs to parse them correctly.
+If your logs have a different date format you can provide a custom regex to detect the first line of multiline logs. See [collecting multiline logs](https://help.sumologic.com/?cid=49494) for details on configuring a boundary regex.
 
-New parsers can be defined under the `parsers` key of the fluent-bit configuration section in  the `values.yaml` file as follows:
+New parsers can be defined under the `parsers` key of the fluent-bit configuration section in the `values.yaml` file as follows:
 
 ```
 parsers:
@@ -22,14 +22,14 @@ parsers:
 
 The regex used for `Parser_Firstline` needs to have at least one named capture group.
 
-To use the newly define parser to detect the first line of multiline log, change the `Parser_Firstline` parameter in the `Input plugin` configuration of fluent-bit:
+To use the newly defined parser to detect the first line of multiline logs, change the `Parser_Firstline` parameter in the `Input plugin` configuration of fluent-bit:
 
 ```bash
 Parser_Firstline new_parser_name
 ```
 
-You can also use  the optional-extra parser to interpret and structure multiline entries.
-When Multiline is On, if a line matched `Parser_Firstline`, continuation lines will be matched against `Parser_N` parsers (just if a previous Parser_Firstline match exists).
+You can also use the optional-extra parser to interpret and structure multiline entries.
+When Multiline is On, if the first line matches `Parser_Firstline`, the rest of the lines will be matched against `Parser_N`.
 
 ```bash
 Parser_Firstline multi_line
@@ -38,12 +38,12 @@ Parser_1 optional_parser
 
 #### Fluentd autoscaling:
 
-We have provided an option to enable autoscaling for fluentd deployments. This is disabled by default. 
+We have provided an option to enable autoscaling for Fluentd deployments. This is disabled by default. 
 
-To enable autoscaling for fluentd:
+To enable autoscaling for Fluentd:
 
 - Enable metrics-server dependency
-  Note: if metrics-server is already installed, this step is not required.
+  Note: If metrics-server is already installed, this step is not required.
   ```
   ## Configure metrics-server
   ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
@@ -51,7 +51,7 @@ To enable autoscaling for fluentd:
     enabled: true
   ```
 
-- Enable autoscaling for fluentd
+- Enable autoscaling for Fluentd
 ```
 fluentd:
   ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
@@ -62,9 +62,9 @@ fluentd:
 
 ### Fluentd File-based buffer
 
-By default, we use the in-memory buffer for the Fluentd buffer, but for production environments we recommend users to use the file-based buffer instead.
+By default, we use the in-memory buffer for the Fluentd buffer, however for production environments we recommend you use the file-based buffer instead.
 
-Buffer configuration can be set in `values.yaml` under the `fluentd` key as follows:
+The buffer configuration can be set in the `values.yaml` file under the `fluentd` key as follows:
 
 ```
 fluentd:
@@ -72,16 +72,16 @@ fluentd:
   buffer: "file"
 ```
 
-We have defined several file paths where the buffer chunks will be stored.
+We have defined several file paths where the buffer chunks are stored.
 
-Please make sure that you have **enough space in the path directory**. Running out of disk space is a problem frequently reported by users.
+Ensure that you have **enough space in the path directory**. Running out of disk space is a common problem.
 
-Once the config has been modified in the `values.yaml` file,  you need to run the `helm upgrade` command to apply the changes.
+Once the config has been modified in the `values.yaml` file you need to run the `helm upgrade` command to apply the changes.
 
 ```bash
 $ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml
 ```
 
-Reference link to official Fluentd buffer documentation: 
+See the following links to official Fluentd buffer documentation: 
  - https://docs.fluentd.org/configuration/buffer-section
  - https://docs.fluentd.org/buffer/file
