@@ -3,11 +3,11 @@
 
 ### Multiline Log Support
 
-By default, we use a regex that matches the first line of a multiline log starting with a date of the format : `2019-11-17 07:14:12`.
+By default, we use a regex that matches the first line of a multiline log starting with a date of the format: `2019-11-17 07:14:12`.
 
-Users can specify their custom regex to detect the first line of a multiline log and parse the logs correctly.
+You can specify a custom regex to detect the first line of a multiline logs to parse them correctly.
 
-New parsers can be defined under the `parsers` key of the fluent-bit configuration section in `values.yaml` as follows:
+New parsers can be defined under the `parsers` key of the fluent-bit configuration section in  the `values.yaml` file as follows:
 
 ```
 parsers:
@@ -22,13 +22,13 @@ parsers:
 
 The regex used for `Parser_Firstline` needs to have at least one named capture group.
 
-In order to use the newly define parser to detect the first line of multiline log, change the `Parser_Firstline` parameter in the `Input plugin` configuration of fluent-bit:
+To use the newly define parser to detect the first line of multiline log, change the `Parser_Firstline` parameter in the `Input plugin` configuration of fluent-bit:
 
 ```bash
 Parser_Firstline new_parser_name
 ```
 
-Users can also use optional-extra parser to interpret and structure multiline entries.
+You can also use  the optional-extra parser to interpret and structure multiline entries.
 When Multiline is On, if a line matched `Parser_Firstline`, continuation lines will be matched against `Parser_N` parsers (just if a previous Parser_Firstline match exists).
 
 ```bash
@@ -40,10 +40,10 @@ Parser_1 optional_parser
 
 We have provided an option to enable autoscaling for fluentd deployments. This is disabled by default. 
 
-In order to enable autoscaling for fluentd:
+To enable autoscaling for fluentd:
 
 - Enable metrics-server dependency
-  Note: if metrics-server is already installed , this step is not required
+  Note: if metrics-server is already installed, this step is not required.
   ```
   ## Configure metrics-server
   ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
@@ -54,9 +54,9 @@ In order to enable autoscaling for fluentd:
 - Enable autoscaling for fluentd
 ```
 fluentd:
-    ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
-    autoscaling:
-      enabled: true
+  ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
+  autoscaling:
+    enabled: true
 ```
 
 
@@ -68,40 +68,15 @@ Buffer configuration can be set in `values.yaml` under the `fluentd` key as foll
 
 ```
 fluentd:
-## Option to specify the Fluentd buffer as file/memory.
-   buffer: 
-     type : "file"
+  ## Option to specify the Fluentd buffer as file/memory.
+  buffer: "file"
 ```
 
-We recommend the following configurations for the file-based buffer:
+We have defined several file paths where the buffer chunks will be stored.
 
-#### Buffering parameters:
-```
-flush_interval 5s
+Please make sure that you have **enough space in the path directory**. Running out of disk space is a problem frequently reported by users.
 
-flush_thread_count 4
-
-chunk_limit_size 100k
-
-total_limit_size 128m
-```
-
-####  Flushing parameters:
-```
-retry_wait 5
-
-retry_forever false
-
-retry_timeout 2h
-
-retry_exponential_backoff_base 2
-```
-
-We have defined several file paths where the buffer chunks will be stored. This parameter must be unique to avoid race condition problem.
-
-Please make sure that you have **enough space in the path directory** . Running out of disk space is a problem frequently reported by users.
-
-Once the config has been modified in the `values.yaml` file,  we need to run the `helm upgrade` in order to apply the changes.
+Once the config has been modified in the `values.yaml` file,  you need to run the `helm upgrade` command to apply the changes.
 
 ```bash
 $ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml
