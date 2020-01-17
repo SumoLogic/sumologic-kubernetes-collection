@@ -36,7 +36,7 @@ Parser_Firstline multi_line
 Parser_1 optional_parser
 ```
 
-#### Fluentd autoscaling:
+### Fluentd autoscaling:
 
 We have provided an option to enable autoscaling for Fluentd deployments. This is disabled by default. 
 
