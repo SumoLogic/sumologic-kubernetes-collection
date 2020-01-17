@@ -1,34 +1,34 @@
 # Using this chart with Helm 3
 
-Helm3 has many different changes, but you can install the Sumo Logic Helm chart using Helm3.
+Helm 3 can be used to install the Sumo Logic Helm chart.
 
 ## Migrating from Helm2 to Helm 3
 
-If you already have our helm chart installed and are using Helm 2 and are looking to migrate to Helm 3, we recommend following this [migration guide](https://helm.sh/blog/migrate-from-helm-v2-to-helm-v3/) to transition your Helm 2 release of the Sumo Logic chart.
+If you have installed our Helm chart with Helm 2 and are looking to migrate to Helm 3, we recommend following this [migration guide](https://helm.sh/blog/migrate-from-helm-v2-to-helm-v3/) to transition your Helm 2 release of the Sumo Logic chart.
 
 ## Installing Chart Using Helm 3
 
-If you are currently using Helm 3 and wish to install the chart, you can us the following steps.
+If you are currently using Helm 3 use the following steps to install the chart.
 
-  1. Helm 3 no longer creates namespaces.  You will need to create a Sumo Logic namespace first.
+  1. Helm 3 no longer creates namespaces. You will need to create a Sumo Logic namespace first.
   
 ```
 kubectl create namespace sumologic
 ```
 
-  2. Change your kubectl context to the sumologic namespace. You can use a tool like [kubens](https://github.com/ahmetb/kubectx) or use kubectl to do this.
+  2. Change your kubectl context to the sumologic namespace. You can use a tool like [kubens](https://github.com/ahmetb/kubectx) or kubectl to do this.
   
 ```bash
 kubectl config set-context --current --namespace=sumologic
 ```
 
-  3. Install the chart using Helm 3. The helm install command has slightly changed in Helm 3.
+  3. Install the chart using Helm 3. The helm install command has changed slightly in Helm 3.
   
 ```
 helm install collection sumologic/sumologic  --set sumologic.endpoint=<SUMO_API_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<MY_CLUSTER_NAME>" --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
-NOTE: You may see the following messages but they can usually be ignored.
+NOTE: You may see the following messages however they can usually be ignored.
 
 ```bash
 manifest_sorter.go:175: info: skipping unknown hook: "crd-install"
@@ -68,7 +68,7 @@ helm install my-release sumologic/sumologic -f values.yaml --set sumologic.endpo
 
 ## Uninstalling Chart Using Helm 3
 
-In Helm 3 the delete command has changed slightly.  By default history is not preserved but can be retained by using `--keep-history`
+In Helm 3 the delete command has changed slightly. By default, history is not preserved yet can be retained by using `--keep-history`
 
   * Delete without preserving history
   
