@@ -399,8 +399,7 @@ prometheus-operator:
           writeRelabelConfigs:
             - action: labelmap
               regex: container_name
-              replacement: ${1}
-              targetLabel: container
+              replacement: container
             - action: drop
               regex: POD
               sourceLabels: [container]
