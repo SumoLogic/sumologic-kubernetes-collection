@@ -85,8 +85,9 @@ sumologic:
   # If enabled, collect K8s events
   eventCollectionEnabled: true
 
-  # Source category for the Events source. Default: "{clusterName}/events"
-  #eventsSourceCategory: ""
+  events:
+    # Source category for the Events source. Default: "{clusterName}/events"
+    sourceCategory: ""
 
   ## Format to post logs into Sumo. json, json_merge, or text
   logFormat: fields
