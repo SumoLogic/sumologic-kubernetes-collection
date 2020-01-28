@@ -36,7 +36,7 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 Name | Version
 -------- | -----
 K8s | 1.10+
-Helm | 2.11+
+Helm | 2.12+
 
 ## Support Matrix
 
