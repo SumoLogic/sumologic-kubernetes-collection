@@ -189,6 +189,8 @@ data:
     <label @NORMAL>
       <filter containers.**>
         @type kubernetes_metadata
+        cache_size  10000
+        cache_ttl  3600
         @log_level warn
         annotation_match ["sumologic\.com.*"]
         de_dot false
