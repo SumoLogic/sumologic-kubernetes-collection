@@ -10,6 +10,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
   - [Upgrading with Helm](./docs/Upgrading_with_Helm.md) 
   - [Non Helm Installation](./docs/Non_Helm_Installation.md) 
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
+  - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
   - [Alpha Releases](./docs/Alpha_Release_Guide.md)
 - [Migration Steps](./docs/Migration_Steps.md)
 - [Troubleshooting Collection](./docs/Troubleshoot_Collection.md)
@@ -53,7 +54,7 @@ K8s with AKS | 1.12.8
 Helm | 2.14.13 (Linux)
 kubectl | 1.15.0
 
-NOTE: Helm 3 is currently not supported.
+NOTE: Helm 3 support is in the early stages and is not fully tested. Please refer to this [guide](docs/Helm3.md) for more information on Helm 3. We recommend you thoroughly test the use of Helm 3 in your pre-production environments before use.
 
 The following matrix displays the tested package versions for our Helm chart.
 

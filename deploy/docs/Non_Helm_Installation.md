@@ -191,7 +191,7 @@ In this step, you will configure the Prometheus server to write metrics to Fluen
 Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.12.0/deploy/helm/prometheus-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.13.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 Before installing `prometheus-operator`, edit `prometheus-overrides.yaml` to define a unique cluster identifier. The default value of the `cluster` field in the `externalLabels` section of `prometheus-overrides.yaml` is `kubernetes`. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
@@ -247,7 +247,7 @@ In this step, you will deploy FluentBit to forward logs to Fluentd.
 Run the following commands to download the FluentBit `fluent-bit-overrides.yaml` file and install `fluent-bit`
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.12.0/deploy/helm/fluent-bit-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.13.0/deploy/helm/fluent-bit-overrides.yaml
 $ helm fetch stable/fluent-bit --version 2.8.1
 $ helm template fluent-bit-2.8.1.tgz --name fluent-bit --namespace=sumologic -f fluent-bit-overrides.yaml > fluent-bit.yaml
 $ kubectl apply -f fluent-bit.yaml
@@ -262,7 +262,7 @@ In this step, you will deploy [Falco](https://falco.org/) to detect anomalous ac
 Download the file `falco-overrides.yaml` from GitHub:
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.12.0/deploy/helm/falco-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.13.0/deploy/helm/falco-overrides.yaml
 $ helm fetch stable/falco --version 1.0.9
 $ helm template falco-1.0.9.tgz --name falco --namespace=sumologic -f falco-overrides.yaml > falco.yaml
 $ kubectl apply -f falco.yaml

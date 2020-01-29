@@ -7,7 +7,7 @@ kind: ConfigMap
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook: pre-install
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "2"
     
@@ -82,55 +82,46 @@ data:
 
     resource "sumologic_http_source" "default_metrics_source" {
         name         = local.default-metrics-source-name
-        category     = "${var.cluster_name}/${local.default-metrics-source-name}"
         collector_id = "${sumologic_collector.collector.id}"
     }
 
     resource "sumologic_http_source" "apiserver_metrics_source" {
         name         = local.apiserver-metrics-source-name
-        category     = "${var.cluster_name}/${local.apiserver-metrics-source-name}"
         collector_id = "${sumologic_collector.collector.id}"
     }
 
     resource "sumologic_http_source" "events_source" {
         name         = local.events-source-name
-        category     = "${var.cluster_name}/${local.events-source-name}"
         collector_id = "${sumologic_collector.collector.id}"
     }
 
     resource "sumologic_http_source" "kube_controller_manager_metrics_source" {
         name         = local.kube-controller-manager-metrics-source-name
-        category     = "${var.cluster_name}/${local.kube-controller-manager-metrics-source-name}"
         collector_id = "${sumologic_collector.collector.id}"
     }
 
     resource "sumologic_http_source" "kube_scheduler_metrics_source" {
         name         = local.kube-scheduler-metrics-source-name
-        category     = "${var.cluster_name}/${local.kube-scheduler-metrics-source-name}"
         collector_id = "${sumologic_collector.collector.id}"
     }
 
     resource "sumologic_http_source" "kube_state_metrics_source" {
         name         = local.kube-state-metrics-source-name
-        category     = "${var.cluster_name}/${local.kube-state-metrics-source-name}"
         collector_id = "${sumologic_collector.collector.id}"
     }
 
     resource "sumologic_http_source" "kubelet_metrics_source" {
         name         = local.kubelet-metrics-source-name
-        category     = "${var.cluster_name}/${local.kubelet-metrics-source-name}"
         collector_id = "${sumologic_collector.collector.id}"
     }
 
     resource "sumologic_http_source" "logs_source" {
         name         = local.logs-source-name
-        category     = "${var.cluster_name}/${local.logs-source-name}"
         collector_id = "${sumologic_collector.collector.id}"
     }
 
     resource "sumologic_http_source" "node_exporter_metrics_source" {
         name         = local.node-exporter-metrics-source-name
-        category     = "${var.cluster_name}/${local.node-exporter-metrics-source-name}"
         collector_id = "${sumologic_collector.collector.id}"
     }
 
@@ -175,7 +166,7 @@ kind: ServiceAccount
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook: pre-install
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "0"
     
@@ -191,7 +182,7 @@ kind: ClusterRole
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook: pre-install
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "1"
     
@@ -214,7 +205,7 @@ kind: ClusterRoleBinding
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook: pre-install
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "2"
     
@@ -239,7 +230,7 @@ metadata:
   name: collection-sumologic-setup
   namespace: $NAMESPACE
   annotations:
-    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook: pre-install
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "3"
     
@@ -258,7 +249,7 @@ spec:
           defaultMode: 0777
       containers:
       - name: setup
-        image: sumologic/kubernetes-fluentd:0.12.0
+        image: sumologic/kubernetes-fluentd:0.13.0
         imagePullPolicy: IfNotPresent
         command: ["/etc/terraform/setup.sh"]
         volumeMounts:

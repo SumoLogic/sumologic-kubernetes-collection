@@ -56,11 +56,6 @@ RUN runDeps="sudo libsnappy-dev" \
  && apt-get install -y wget \
  && apt-get install -y unzip
 
- # Install kubectl (to be removed once we switch to Terraform)
-ADD https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kubectl /usr/local/bin/kubectl
-RUN chmod +x /usr/local/bin/kubectl
-COPY setup/setup.sh /usr/bin/
-
 # Install Terraform
 ENV TERRAFORM_VERSION 0.12.12
 RUN mkdir /tmp/terraform && \
