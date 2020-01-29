@@ -206,6 +206,8 @@ data:
       </filter>
       <filter **>
         @type enhance_k8s_metadata
+        cache_size  10000
+        cache_ttl  3600
         in_namespace_path '$.kubernetes.namespace_name'
         in_pod_path '$.kubernetes.pod_name'
         data_type logs
@@ -673,9 +675,9 @@ spec:
           value: "true"
         - name: K8S_METADATA_FILTER_VERIFY_SSL
           value: "true"
-        - name: K8S_METADATA_FILTER_BEARER_CACHE_SIZE
+        - name: K8S_METADATA_FILTER_CACHE_SIZE
           value: "10000"
-        - name: K8S_METADATA_FILTER_BEARER_CACHE_TTL
+        - name: K8S_METADATA_FILTER_CACHE_TTL
           value: "3600"
         - name: VERIFY_SSL
           value: "true"
