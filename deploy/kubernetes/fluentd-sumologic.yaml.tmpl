@@ -52,8 +52,8 @@ data:
     <label @DATAPOINT>
       <filter prometheus.metrics**>
         @type enhance_k8s_metadata
-        cache_size  10000
-        cache_ttl  3600
+        cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
+        cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
       </filter>
       <filter prometheus.metrics**>
         @type prometheus_format
@@ -204,8 +204,8 @@ data:
       </filter>
       <filter **>
         @type enhance_k8s_metadata
-        cache_size  10000
-        cache_ttl  3600
+        cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
+        cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
         in_namespace_path '$.kubernetes.namespace_name'
         in_pod_path '$.kubernetes.pod_name'
         data_type logs
