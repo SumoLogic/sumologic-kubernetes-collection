@@ -21,7 +21,7 @@ You can supply any label you like. You can query Prometheus to see a complete li
 
 You can specify relabeling, and additional inclusion or exclusion options in `fluentd-sumologic.yaml`.
 
-The options you can use are described [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/master/fluent-plugin-prometheus-format).
+The options you can use are described [here](../../fluent-plugin-prometheus-format/README.md).
 
 Make your edits in the `<filter>` stanza in the ConfigMap section of `fluentd-sumologic.yaml`.
 

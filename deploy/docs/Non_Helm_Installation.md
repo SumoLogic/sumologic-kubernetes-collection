@@ -167,7 +167,7 @@ curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection
 sed 's/\$NAMESPACE'"/sumologic/g" >> fluentd-sumologic.yaml
 ```
 
-Next, customize the provided YAML file. Our [plugin](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/fluent-plugin-events/README.md#fluent-plugin-events) allows you to configure fields for events. Once done run the following command to apply the `fluentd-sumologic.yaml` manifest.
+Next, customize the provided YAML file. Our [plugin](../../fluent-plugin-events/README.md#fluent-plugin-events) allows you to configure fields for events. Once done run the following command to apply the `fluentd-sumologic.yaml` manifest.
 
 ```sh
 kubectl -n sumologic apply -f fluentd-sumologic.yaml
