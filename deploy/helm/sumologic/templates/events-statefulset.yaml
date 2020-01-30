@@ -1,6 +1,6 @@
 {{- if eq .Values.sumologic.eventCollectionEnabled true }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
   labels:
@@ -17,13 +17,13 @@ spec:
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
-{{- if .Values.eventsDeployment.nodeSelector }}
+{{- if .Values.eventsStatefulset.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.eventsDeployment.nodeSelector | indent 8 }}
+{{ toYaml .Values.eventsStatefulset.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.eventsDeployment.tolerations }}
+{{- if .Values.eventsStatefulset.tolerations }}
       tolerations:
-{{ toYaml .Values.eventsDeployment.tolerations | indent 8 }}
+{{ toYaml .Values.eventsStatefulset.tolerations | indent 8 }}
 {{- end }}
       volumes:
       - name: pos-files
@@ -33,17 +33,23 @@ spec:
       - name: config-volume
         configMap:
           name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
+      securityContext:
+        fsGroup: {{ .Values.sumologic.fluentd.securityContext.fsGroup }}
       containers:
       - name: fluentd-events
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
-          {{- toYaml .Values.eventsDeployment.resources | nindent 10 }}
+          {{- toYaml .Values.eventsStatefulset.resources | nindent 10 }}
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
+{{- if .Values.sumologic.fluentd.persistence.enabled }}
+        - name: buffer
+          mountPath: "/fluentd/buffer"
+{{- end}}
         livenessProbe:
           httpGet:
             path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
@@ -73,4 +79,15 @@ spec:
           value: {{ .Values.sumologic.chunkLimitSize | quote }}
         - name: TOTAL_LIMIT_SIZE
           value: {{ .Values.sumologic.totalLimitSize | quote }}
+{{- if .Values.sumologic.fluentd.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: buffer
+    spec:
+      accessModes: [{{ .Values.sumologic.fluentd.persistence.accessMode }}]
+      storageClassName: {{ .Values.sumologic.fluentd.persistence.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.sumologic.fluentd.persistence.size }}
+{{- end }}
 {{- end }}

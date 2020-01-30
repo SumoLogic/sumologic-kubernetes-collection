@@ -25,7 +25,8 @@ kubectl config set-context --current --namespace=sumologic
   3. Install the chart using Helm 3. The helm install command has changed slightly in Helm 3.
   
 ```
-helm install collection sumologic/sumologic  --set sumologic.endpoint=<SUMO_API_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<MY_CLUSTER_NAME>" --set sumologic.clusterName="<MY_CLUSTER_NAME>"
+helm install collection sumologic/sumologic
+ --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<MY_CLUSTER_NAME>" --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
 NOTE: You may see the following messages however they can usually be ignored.
@@ -63,7 +64,7 @@ kubectl config set-context --current --namespace=my-namespace
 Then you can run the following to install the chart with the override file.
 
 ```bash
-helm install my-release sumologic/sumologic -f values.yaml --set sumologic.endpoint=<SUMO_API_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
+helm install my-release sumologic/sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
 ```
 
 ## Uninstalling Chart Using Helm 3
