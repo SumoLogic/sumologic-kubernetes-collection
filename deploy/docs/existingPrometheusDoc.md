@@ -19,7 +19,7 @@ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-colle
 Edit the `values.yaml` file to `prometheus-operator.enabled = false`, and run
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.endpoint=<SUMO_ENDPOINT> --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
+helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
 ```
 
 ## Overwrite Prometheus Remote Write Configuration
