@@ -202,11 +202,11 @@ sumologic:
 
     ## Option to control the enabling of metadata filter plugin cache_size. 
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-    bearerCacheSize: "1000"
+    cacheSize: "10000"
 
-    ## Option to control the enabling of metadata filter plugin cache_ttl. 
+    ## Option to control the enabling of metadata filter plugin cache_ttl (in seconds). 
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-    bearerCacheTtl: "3600"
+    cacheTtl: "3600"
 
 
 ## Configure metrics-server

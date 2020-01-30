@@ -145,10 +145,10 @@ spec:
           value: {{ .Values.sumologic.k8sMetadataFilter.watch | quote }}
         - name: K8S_METADATA_FILTER_VERIFY_SSL
           value: {{ .Values.sumologic.k8sMetadataFilter.verifySsl | quote }}
-        - name: K8S_METADATA_FILTER_BEARER_CACHE_SIZE
-          value: {{ .Values.sumologic.k8sMetadataFilter.bearerCacheSize | quote }}
-        - name: K8S_METADATA_FILTER_BEARER_CACHE_TTL
-          value: {{ .Values.sumologic.k8sMetadataFilter.bearerCacheTtl | quote }}
+        - name: K8S_METADATA_FILTER_CACHE_SIZE
+          value: {{ .Values.sumologic.k8sMetadataFilter.cacheSize | quote }}
+        - name: K8S_METADATA_FILTER_CACHE_TTL
+          value: {{ .Values.sumologic.k8sMetadataFilter.cacheTtl | quote }}
         - name: VERIFY_SSL
           value: {{ .Values.sumologic.verifySsl | quote }}
         - name: EXCLUDE_NAMESPACE_REGEX
