@@ -130,13 +130,7 @@ module Fluent
               namespace_name = split[0]
               pod_name = split[1]
               metadata = fetch_pod_metadata(namespace_name, pod_name)
-
-              if !metadata.nil? && !metadata.empty?
-                @cache[entry[0]] = metadata
-              else
-                log.info "Deleting entry for key #{entry[0]}"
-                @cache.delete(entry[0])
-              end
+              @cache[entry[0]] = metadata unless metadata.empty?
             rescue => e
               log.error "Cannot refresh metadata for entry #{entry}: #{e}"
             end
