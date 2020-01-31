@@ -57,13 +57,13 @@ helm install sumologic/sumologic --name collection --namespace sumologic --set s
 To customize your configuration, download the values.yaml file by running
 
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.13.0/deploy/helm/sumologic/values.yaml
 ```
 
 NOTE: If you need to install the chart with a different release name or namespace you will need to override some configuration fields for both Prometheus and fluent-bit. We recommend using an override file due to the number of fields that need to be overridden. In the following command, replace the `<RELEASE-NAME>` and `<NAMESPACE>` variables with your values and then run it to download the override file with your replaced values:
 
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.13.0/deploy/helm/sumologic/values.yaml | \
 sed 's/\-sumologic.sumologic'"/-sumologic.<NAMESPACE>/g" | \
 sed 's/\- sumologic'"/- <NAMESPACE>/g" | \
 sed 's/\collection'"/<RELEASE-NAME>/g" > values.yaml
@@ -71,7 +71,7 @@ sed 's/\collection'"/<RELEASE-NAME>/g" > values.yaml
 
 For example, if your release name is `my-release` and namespace is `my-namespace`:
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.13.0/deploy/helm/sumologic/values.yaml | \
 sed 's/\-sumologic.sumologic'"/-sumologic.my-namespace/g" | \
 sed 's/\collection'"/my-release/g" > values.yaml
 ```
