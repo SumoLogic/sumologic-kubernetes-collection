@@ -24,7 +24,7 @@ Sumo Logic Apps for Kubernetes and Explore require you to add the following [fie
 - pod
 - service
 
-The Helm chart installation requires three parameter overrides:
+The Helm chart installation requires two parameter overrides:
 * __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
 * __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
