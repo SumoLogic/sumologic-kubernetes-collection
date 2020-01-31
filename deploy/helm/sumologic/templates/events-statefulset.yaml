@@ -16,6 +16,7 @@ spec:
         app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
+      podManagementPolicy: "Parallel"
       serviceAccountName: {{ template "sumologic.fullname" . }}
 {{- if .Values.eventsStatefulset.nodeSelector }}
       nodeSelector:
