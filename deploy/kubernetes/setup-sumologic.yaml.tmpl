@@ -92,7 +92,7 @@ data:
 
     resource "sumologic_http_source" "events_source" {
         name         = local.events-source-name
-        category     = ${var.cluster_name}/${local.events-source-name}
+        category     = "${var.cluster_name}/${local.events-source-name}"
         collector_id = "${sumologic_collector.collector.id}"
     }
 
