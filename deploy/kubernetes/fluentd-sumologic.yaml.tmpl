@@ -472,6 +472,7 @@ spec:
         app: collection-sumologic-events
         
     spec:
+      podManagementPolicy: "Parallel"
       serviceAccountName: collection-sumologic
       volumes:
       - name: pos-files
@@ -550,6 +551,7 @@ spec:
         app: collection-sumologic
         
     spec:
+      podManagementPolicy: "Parallel"
       serviceAccountName: collection-sumologic
       volumes:
       - name: pos-files
