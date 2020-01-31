@@ -255,7 +255,7 @@ helm install stable/prometheus-operator --name prometheus-operator --namespace s
 
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
-There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/master/deploy/docs/Non_Helm_Installation.md#missing-metrics-for-controller-manager-or-scheduler).
+There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [here](./Non_Helm_Installation.md#missing-metrics-for-controller-manager-or-scheduler).
 
 ### Rancher
 
