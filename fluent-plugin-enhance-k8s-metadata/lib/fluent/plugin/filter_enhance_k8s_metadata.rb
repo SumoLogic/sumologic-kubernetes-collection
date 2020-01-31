@@ -125,7 +125,7 @@ module Fluent
 
           entries.each { |entry|
             begin
-              log.info "Refreshing metadata for key #{entry[0]}"
+              log.debug "Refreshing metadata for key #{entry[0]}"
               split = entry[0].split("::")
               namespace_name = split[0]
               pod_name = split[1]
@@ -138,7 +138,7 @@ module Fluent
                 @cache.delete(entry[0])
               end
             rescue => e
-              log.error "Cannot refresh metadata for entry #{entry}"
+              log.error "Cannot refresh metadata for entry #{entry}: #{e}"
             end
           }
         }
