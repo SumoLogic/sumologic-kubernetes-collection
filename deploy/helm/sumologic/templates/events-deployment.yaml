@@ -33,8 +33,6 @@ spec:
       - name: config-volume
         configMap:
           name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
-      securityContext:
-        fsGroup: {{ .Values.sumologic.fluentd.securityContext.fsGroup }}
       containers:
       - name: fluentd-events
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -46,7 +44,7 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
-{{- if and .Values.sumologic.fluentd.persistence.enabled (eq .Values.sumologic.fluentd.buffer "file") }}
+{{- if and .Values.persistence.enabled (eq .Values.sumologic.fluentd.buffer "file") }}
         - name: buffer
           mountPath: "/fluentd/buffer"
 {{- end}}
@@ -79,15 +77,15 @@ spec:
           value: {{ .Values.sumologic.chunkLimitSize | quote }}
         - name: TOTAL_LIMIT_SIZE
           value: {{ .Values.sumologic.totalLimitSize | quote }}
-{{- if and .Values.sumologic.fluentd.persistence.enabled (eq .Values.sumologic.fluentd.buffer "file") }}
+{{- if and .Values.persistence.enabled (eq .Values.sumologic.fluentd.buffer "file") }}
   volumeClaimTemplates:
   - metadata:
       name: buffer
     spec:
-      accessModes: [{{ .Values.sumologic.fluentd.persistence.accessMode }}]
-      storageClassName: {{ .Values.sumologic.fluentd.persistence.storageClass }}
+      accessModes: [{{ .Values.persistence.accessMode }}]
+      storageClassName: {{ .Values.persistence.storageClass }}
       resources:
         requests:
-          storage: {{ .Values.sumologic.fluentd.persistence.size }}
+          storage: {{ .Values.persistence.size }}
 {{- end }}
 {{- end }}
