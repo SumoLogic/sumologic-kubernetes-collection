@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app" . }}
-  replicas: {{ .Values.deployment.replicaCount }}
+  replicas: {{ .Values.statefulset.replicaCount }}
   template:
     metadata:
       labels:
@@ -17,13 +17,13 @@ spec:
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
-{{- if .Values.deployment.nodeSelector }}
+{{- if .Values.statefulset.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.deployment.nodeSelector | indent 8 }}
+{{ toYaml .Values.statefulset.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.deployment.tolerations }}
+{{- if .Values.statefulset.tolerations }}
       tolerations:
-{{ toYaml .Values.deployment.tolerations | indent 8 }}
+{{ toYaml .Values.statefulset.tolerations | indent 8 }}
 {{- end }}
       volumes:
       - name: pos-files
@@ -40,7 +40,7 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
-          {{- toYaml .Values.deployment.resources | nindent 10 }}
+          {{- toYaml .Values.statefulset.resources | nindent 10 }}
         ports:
         - name: prom-write
           containerPort: 9888

@@ -17,13 +17,13 @@ spec:
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
-{{- if .Values.eventsDeployment.nodeSelector }}
+{{- if .Values.eventsStatefulset.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.eventsDeployment.nodeSelector | indent 8 }}
+{{ toYaml .Values.eventsStatefulset.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.eventsDeployment.tolerations }}
+{{- if .Values.eventsStatefulset.tolerations }}
       tolerations:
-{{ toYaml .Values.eventsDeployment.tolerations | indent 8 }}
+{{ toYaml .Values.eventsStatefulset.tolerations | indent 8 }}
 {{- end }}
       volumes:
       - name: pos-files
@@ -40,7 +40,7 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
-          {{- toYaml .Values.eventsDeployment.resources | nindent 10 }}
+          {{- toYaml .Values.eventsStatefulset.resources | nindent 10 }}
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/

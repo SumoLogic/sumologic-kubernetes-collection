@@ -5,7 +5,7 @@ image:
 
 nameOverride: ""
 
-deployment:
+statefulset:
   nodeSelector: {}
   tolerations: {}
   replicaCount: 3
@@ -17,7 +17,7 @@ deployment:
       memory: 768Mi
       cpu: 0.5
 
-eventsDeployment:
+eventsStatefulset:
   nodeSelector: {}
   tolerations: {}
   resources:
