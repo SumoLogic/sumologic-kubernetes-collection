@@ -212,6 +212,8 @@ sumologic:
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     cacheTtl: "3600"
 
+    ## Option to control the interval at which metadata cache is asynchronously refreshed (in seconds).
+    cacheRefresh: "600"
 
 ## Configure metrics-server
 ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml

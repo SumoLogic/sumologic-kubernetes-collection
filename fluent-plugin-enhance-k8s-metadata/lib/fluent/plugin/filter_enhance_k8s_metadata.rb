@@ -38,12 +38,14 @@ module Fluent
 
       config_param :cache_size, :integer, default: 1000
       config_param :cache_ttl, :integer, default: 60 * 60
+      config_param :cache_refresh, :integer, default: 60 * 10
 
       def configure(conf)
         super
         normalize_param
         connect_kubernetes
         init_cache
+        start_cache_timer
         @in_namespace_ac = @in_namespace_path.map { |path| record_accessor_create(path) }
         @in_pod_ac = @in_pod_path.map { |path| record_accessor_create(path) }
       end
@@ -113,7 +115,27 @@ module Fluent
         log.debug "bearer_token_file: '#{@bearer_token_file}', exist: #{File.exist?(@bearer_token_file)}"
 
         @cache_ttl = :none if @cache_ttl <= 0
-        log.info "cache_ttl: #{cache_ttl}, cache_size: #{@cache_size}"
+        log.info "cache_ttl: #{@cache_ttl}, cache_size: #{@cache_size}, cache_refresh: #{@cache_refresh}"
+      end
+
+      def start_cache_timer
+        timer_execute(:"cache_refresher", @cache_refresh) {
+          entries = @cache.to_a
+          log.info "Refreshing metadata for #{entries.count} entries"
+
+          entries.each { |entry|
+            begin
+              log.debug "Refreshing metadata for key #{entry[0]}"
+              split = entry[0].split("::")
+              namespace_name = split[0]
+              pod_name = split[1]
+              metadata = fetch_pod_metadata(namespace_name, pod_name)
+              @cache[entry[0]] = metadata unless metadata.empty?
+            rescue => e
+              log.error "Cannot refresh metadata for entry #{entry}: #{e}"
+            end
+          }
+        }
       end
     end
   end

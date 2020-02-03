@@ -54,6 +54,7 @@ data:
         @type enhance_k8s_metadata
         cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
         cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
+        cache_refresh "#{ENV['K8S_METADATA_FILTER_CACHE_REFRESH']}"
       </filter>
       <filter prometheus.metrics**>
         @type prometheus_format
@@ -206,6 +207,7 @@ data:
         @type enhance_k8s_metadata
         cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
         cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
+        cache_refresh "#{ENV['K8S_METADATA_FILTER_CACHE_REFRESH']}"
         in_namespace_path '$.kubernetes.namespace_name'
         in_pod_path '$.kubernetes.pod_name'
         data_type logs
@@ -679,6 +681,8 @@ spec:
           value: "10000"
         - name: K8S_METADATA_FILTER_CACHE_TTL
           value: "3600"
+        - name: K8S_METADATA_FILTER_CACHE_REFRESH
+          value: "600"
         - name: VERIFY_SSL
           value: "true"
         - name: EXCLUDE_NAMESPACE_REGEX

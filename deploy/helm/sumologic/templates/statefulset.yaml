@@ -150,6 +150,8 @@ spec:
           value: {{ .Values.sumologic.k8sMetadataFilter.cacheSize | quote }}
         - name: K8S_METADATA_FILTER_CACHE_TTL
           value: {{ .Values.sumologic.k8sMetadataFilter.cacheTtl | quote }}
+        - name: K8S_METADATA_FILTER_CACHE_REFRESH
+          value: {{ .Values.sumologic.k8sMetadataFilter.cacheRefresh | quote }}
         - name: VERIFY_SSL
           value: {{ .Values.sumologic.verifySsl | quote }}
         - name: EXCLUDE_NAMESPACE_REGEX
