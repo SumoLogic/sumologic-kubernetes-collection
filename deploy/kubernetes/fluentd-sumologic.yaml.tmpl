@@ -19,6 +19,7 @@ data:
     flush_thread_count "#{ENV['NUM_THREADS']}"
     chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
     overflow_action drop_oldest_chunk
+    total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
   common.conf: |-
     <source>
       @type prometheus
@@ -67,7 +68,6 @@ data:
         @include metrics.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
   
@@ -79,7 +79,6 @@ data:
         @include metrics.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
       </match>
@@ -90,7 +89,6 @@ data:
         @include metrics.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
       </match>
@@ -101,7 +99,6 @@ data:
         @include metrics.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
       </match>
@@ -112,7 +109,6 @@ data:
         @include metrics.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
       </match>
@@ -123,7 +119,6 @@ data:
         @include metrics.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
       </match>
@@ -134,7 +129,6 @@ data:
         @include metrics.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
       </match>
@@ -145,7 +139,6 @@ data:
         @include metrics.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
       </match>
@@ -235,7 +228,6 @@ data:
         @include logs.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
       </match>
@@ -262,7 +254,6 @@ data:
         @include logs.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
       </match>
@@ -293,7 +284,6 @@ data:
         @include logs.output.conf
         <buffer>
           @type memory
-          total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
           @include buffer.output.conf
         </buffer>
       </match>
@@ -341,7 +331,6 @@ data:
       proxy_uri "#{ENV['PROXY_URI']}"
       <buffer>
         @type memory
-        total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
         @include buffer.output.conf
       </buffer>
     </match>
@@ -355,6 +344,7 @@ data:
     flush_thread_count "#{ENV['NUM_THREADS']}"
     chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
     overflow_action drop_oldest_chunk
+    total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
   
 ---
 # Source: sumologic/templates/serviceaccount.yaml
@@ -455,88 +445,9 @@ spec:
     protocol: TCP
 
 ---
-# Source: sumologic/templates/events-statefulset.yaml
-
+# Source: sumologic/templates/deployment.yaml
 apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: collection-sumologic-events
-  labels:
-    app: collection-sumologic-events
-    
-spec:
-  selector:
-    matchLabels:
-      app: collection-sumologic-events
-  template:
-    metadata:
-      labels:
-        app: collection-sumologic-events
-        
-    spec:
-      podManagementPolicy: "Parallel"
-      serviceAccountName: collection-sumologic
-      volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
-      - name: config-volume
-        configMap:
-          name: collection-sumologic-events
-      securityContext:
-        fsGroup: 999
-      containers:
-      - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:0.13.0
-        imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            cpu: 100m
-            memory: 256Mi
-          requests:
-            cpu: 100m
-            memory: 256Mi
-          
-        volumeMounts:
-        - name: config-volume
-          mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
-        livenessProbe:
-          httpGet:
-            path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
-            port: 9880
-          initialDelaySeconds: 300
-          periodSeconds: 30
-          timeoutSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
-            port: 9880
-          initialDelaySeconds: 30
-          periodSeconds: 5
-        env:
-        - name: SUMO_ENDPOINT_EVENTS
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-events
-        - name: VERIFY_SSL
-          value: "true"
-        - name: FLUSH_INTERVAL
-          value: "5s"
-        - name: NUM_THREADS
-          value: "4"
-        - name: CHUNK_LIMIT_SIZE
-          value: "100k"
-        - name: TOTAL_LIMIT_SIZE
-          value: "128m"
-
----
-# Source: sumologic/templates/statefulset.yaml
-apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: collection-sumologic
   labels:
@@ -553,7 +464,6 @@ spec:
         app: collection-sumologic
         
     spec:
-      podManagementPolicy: "Parallel"
       serviceAccountName: collection-sumologic
       volumes:
       - name: pos-files
@@ -563,8 +473,6 @@ spec:
       - name: config-volume
         configMap:
           name: collection-sumologic
-      securityContext:
-        fsGroup: 999
       containers:
       - name: fluentd
         image: sumologic/kubernetes-fluentd:0.13.0
@@ -693,7 +601,81 @@ spec:
           value: ""
         - name: EXCLUDE_POD_REGEX
           value: ""
+---
+# Source: sumologic/templates/events-deployment.yaml
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collection-sumologic-events
+  labels:
+    app: collection-sumologic-events
+    
+spec:
+  selector:
+    matchLabels:
+      app: collection-sumologic-events
+  template:
+    metadata:
+      labels:
+        app: collection-sumologic-events
+        
+    spec:
+      serviceAccountName: collection-sumologic
+      volumes:
+      - name: pos-files
+        hostPath:
+          path: /var/run/fluentd-pos
+          type: ""
+      - name: config-volume
+        configMap:
+          name: collection-sumologic-events
+      containers:
+      - name: fluentd-events
+        image: sumologic/kubernetes-fluentd:0.13.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          
+        volumeMounts:
+        - name: config-volume
+          mountPath: /fluentd/etc/
+        - name: pos-files
+          mountPath: /mnt/pos/
+        livenessProbe:
+          httpGet:
+            path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
+            port: 9880
+          initialDelaySeconds: 300
+          periodSeconds: 30
+          timeoutSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
+            port: 9880
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        env:
+        - name: SUMO_ENDPOINT_EVENTS
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-events
+        - name: VERIFY_SSL
+          value: "true"
+        - name: FLUSH_INTERVAL
+          value: "5s"
+        - name: NUM_THREADS
+          value: "4"
+        - name: CHUNK_LIMIT_SIZE
+          value: "100k"
+        - name: TOTAL_LIMIT_SIZE
+          value: "128m"
 ---
 # Source: sumologic/templates/hpa.yaml
 
