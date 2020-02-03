@@ -1,6 +1,6 @@
 {{- if eq .Values.sumologic.eventCollectionEnabled true }}
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
   labels:
@@ -44,10 +44,6 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
-{{- if and .Values.persistence.enabled (eq .Values.sumologic.fluentd.buffer "file") }}
-        - name: buffer
-          mountPath: "/fluentd/buffer"
-{{- end}}
         livenessProbe:
           httpGet:
             path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
@@ -77,15 +73,4 @@ spec:
           value: {{ .Values.sumologic.chunkLimitSize | quote }}
         - name: TOTAL_LIMIT_SIZE
           value: {{ .Values.sumologic.totalLimitSize | quote }}
-{{- if and .Values.persistence.enabled (eq .Values.sumologic.fluentd.buffer "file") }}
-  volumeClaimTemplates:
-  - metadata:
-      name: buffer
-    spec:
-      accessModes: [{{ .Values.persistence.accessMode }}]
-      storageClassName: {{ .Values.persistence.storageClass }}
-      resources:
-        requests:
-          storage: {{ .Values.persistence.size }}
-{{- end }}
 {{- end }}

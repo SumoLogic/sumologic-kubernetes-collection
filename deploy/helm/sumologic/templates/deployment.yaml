@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ template "sumologic.fullname" . }}
   labels:
@@ -64,10 +64,6 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
-{{- if and .Values.persistence.enabled (eq .Values.sumologic.fluentd.buffer "file") }}
-        - name: buffer
-          mountPath: "/fluentd/buffer"
-{{- end}}
         env:
         - name: SUMO_ENDPOINT_METRICS
           valueFrom:
@@ -159,14 +155,3 @@ spec:
           value: {{ .Values.sumologic.excludeHostRegex | quote }}
         - name: EXCLUDE_POD_REGEX
           value: {{ .Values.sumologic.excludePodRegex | quote }}
-{{- if and .Values.persistence.enabled (eq .Values.sumologic.fluentd.buffer "file") }}
-  volumeClaimTemplates:
-  - metadata:
-      name: buffer
-    spec:
-      accessModes: [{{ .Values.persistence.accessMode }}]
-      storageClassName: {{ .Values.persistence.storageClass }}
-      resources:
-        requests:
-          storage: {{ .Values.persistence.size }}
-{{- end }}
