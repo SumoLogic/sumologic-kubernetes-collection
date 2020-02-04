@@ -13,14 +13,14 @@ data:
     @include common.conf
     @include metrics.conf
     @include logs.conf
-  buffer.output.conf: |-
+  buffer.output.conf: |
     compress gzip
     flush_interval "#{ENV['FLUSH_INTERVAL']}"
     flush_thread_count "#{ENV['NUM_THREADS']}"
     chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
+    total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
     queued_chunks_limit_size "#{ENV['QUEUE_CHUNK_LIMIT_SIZE']}"
     overflow_action drop_oldest_chunk
-    total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
   common.conf: |-
     <source>
       @type prometheus
@@ -339,14 +339,14 @@ data:
       log_level error
     </system>
   
-  buffer.output.conf: |-
+  buffer.output.conf: |
     compress gzip
     flush_interval "#{ENV['FLUSH_INTERVAL']}"
     flush_thread_count "#{ENV['NUM_THREADS']}"
     chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
+    total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
     queued_chunks_limit_size "#{ENV['QUEUE_CHUNK_LIMIT_SIZE']}"
     overflow_action drop_oldest_chunk
-    total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
   
 ---
 # Source: sumologic/templates/serviceaccount.yaml
@@ -607,6 +607,7 @@ spec:
           value: ""
 ---
 # Source: sumologic/templates/events-deployment.yaml
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -676,7 +677,9 @@ spec:
         - name: NUM_THREADS
           value: "4"
         - name: CHUNK_LIMIT_SIZE
-          value: "100k"
+          value: "1m"
+        - name: QUEUE_CHUNK_LIMIT_SIZE
+          value: "128"
         - name: TOTAL_LIMIT_SIZE
           value: "128m"
 ---
