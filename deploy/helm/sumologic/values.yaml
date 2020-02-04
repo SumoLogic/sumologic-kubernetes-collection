@@ -101,6 +101,8 @@ sumologic:
 
   chunkLimitSize: "100k"
 
+  queueChunkLimitSize: 128
+
   totalLimitSize: "128m"
 
   ## Set the _sourceName metadata field in SumoLogic.
