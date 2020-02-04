@@ -38,7 +38,7 @@ module Fluent
 
       config_param :cache_size, :integer, default: 1000
       config_param :cache_ttl, :integer, default: 60 * 60
-      config_param :cache_refresh, :integer, default: 60 * 10
+      config_param :cache_refresh, :integer, default: 60 * 30
 
       def configure(conf)
         super
