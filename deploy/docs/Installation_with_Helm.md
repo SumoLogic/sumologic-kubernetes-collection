@@ -54,9 +54,9 @@ If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers
 helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<MY_CLUSTER_NAME>" --set sumologic.clusterName="<MY_CLUSTER_NAME>" --no-crd-hook
 ```
 
-__NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to leverage eBPF (extended Berkeley Packet Filter) to supply the stream of system calls to the Falco engine. eBPF is currently supported only on GKE and COS. More details [here](https://falco.org/docs/installation/).
+__NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to use extended Berkeley Packet Filter (eBPF) to supply the stream of system calls to the Falco engine. eBPF is currently only supported on GKE and COS. For more information see [Installing Falco](https://falco.org/docs/installation/).
 
-To install on `GKE`, use the provided override file to cutomize your configuration and uncomment the following lines in the file `values.yaml` referenced below:
+To install on `GKE`, use the provided override file to customize your configuration and uncomment the following lines in the `values.yaml` file referenced below:
 
 ```
 ebpf:
