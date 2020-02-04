@@ -1,6 +1,6 @@
 {{- if eq .Values.sumologic.eventCollectionEnabled true }}
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
   labels:
@@ -16,7 +16,6 @@ spec:
         app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
-      podManagementPolicy: "Parallel"
       serviceAccountName: {{ template "sumologic.fullname" . }}
 {{- if .Values.eventsDeployment.nodeSelector }}
       nodeSelector:
@@ -34,8 +33,6 @@ spec:
       - name: config-volume
         configMap:
           name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
-      securityContext:
-        fsGroup: {{ .Values.sumologic.fluentd.securityContext.fsGroup }}
       containers:
       - name: fluentd-events
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -47,10 +44,6 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
-{{- if .Values.sumologic.fluentd.persistence.enabled }}
-        - name: buffer
-          mountPath: "/fluentd/buffer"
-{{- end}}
         livenessProbe:
           httpGet:
             path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
@@ -82,15 +75,4 @@ spec:
           value: {{ .Values.sumologic.queueChunkLimitSize | quote }}
         - name: TOTAL_LIMIT_SIZE
           value: {{ .Values.sumologic.totalLimitSize | quote }}
-{{- if .Values.sumologic.fluentd.persistence.enabled }}
-  volumeClaimTemplates:
-  - metadata:
-      name: buffer
-    spec:
-      accessModes: [{{ .Values.sumologic.fluentd.persistence.accessMode }}]
-      storageClassName: {{ .Values.sumologic.fluentd.persistence.storageClass }}
-      resources:
-        requests:
-          storage: {{ .Values.sumologic.fluentd.persistence.size }}
-{{- end }}
 {{- end }}
