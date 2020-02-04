@@ -99,7 +99,9 @@ sumologic:
   ## Increase number of http threads to Sumo. May be required in heavy logging clusters
   numThreads: 4
 
-  chunkLimitSize: "100k"
+  chunkLimitSize: "1m"
+
+  queueChunkLimitSize: 128
 
   totalLimitSize: "128m"
 
