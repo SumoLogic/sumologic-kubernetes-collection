@@ -179,25 +179,6 @@ sumologic:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
 
-    securityContext:
-      ## The group ID of all processes in the statefulset containers. By default this needs to be fluent(999).
-      fsGroup: 999
-
-    ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
-    persistence:
-      enabled: false
-
-      ## If defined, storageClassName: <storageClass>
-      ## If set to "-", storageClassName: "", which disables dynamic provisioning
-      ## If undefined (the default) or set to null, no storageClassName spec is
-      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-      ##   GKE, Azure & OpenStack)
-      ##
-      # storageClass: "-"
-      # annotations: {}
-      accessMode: ReadWriteOnce
-      size: 10Gi
-
   k8sMetadataFilter:
     ## Option to control the enabling of metadata filter plugin watch.
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration

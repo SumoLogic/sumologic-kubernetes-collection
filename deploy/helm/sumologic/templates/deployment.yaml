@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ template "sumologic.fullname" . }}
   labels:
@@ -16,7 +16,6 @@ spec:
         app: {{ template "sumologic.labels.app" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
-      podManagementPolicy: "Parallel"
       serviceAccountName: {{ template "sumologic.fullname" . }}
 {{- if .Values.deployment.nodeSelector }}
       nodeSelector:
@@ -34,8 +33,6 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "sumologic.fullname" . }}
-      securityContext:
-        fsGroup: {{ .Values.sumologic.fluentd.securityContext.fsGroup }}
       containers:
       - name: fluentd
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -67,10 +64,6 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
-{{- if .Values.sumologic.fluentd.persistence.enabled }}
-        - name: buffer
-          mountPath: "/fluentd/buffer"
-{{- end}}
         env:
         - name: SUMO_ENDPOINT_METRICS
           valueFrom:
@@ -164,14 +157,3 @@ spec:
           value: {{ .Values.sumologic.excludeHostRegex | quote }}
         - name: EXCLUDE_POD_REGEX
           value: {{ .Values.sumologic.excludePodRegex | quote }}
-{{- if .Values.sumologic.fluentd.persistence.enabled }}
-  volumeClaimTemplates:
-  - metadata:
-      name: buffer
-    spec:
-      accessModes: [{{ .Values.sumologic.fluentd.persistence.accessMode }}]
-      storageClassName: {{ .Values.sumologic.fluentd.persistence.storageClass }}
-      resources:
-        requests:
-          storage: {{ .Values.sumologic.fluentd.persistence.size }}
-{{- end }}
