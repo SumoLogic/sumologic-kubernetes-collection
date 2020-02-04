@@ -58,8 +58,9 @@ NOTE: Helm 3 compatibility is in the early stages and is not fully tested or sup
 
 The following matrix displays the tested package versions for our Helm chart.
 
-Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco
-|:-------- |:-------- |:-------- |:--------
-0.12.0 - Latest | 8.2.0 | 2.8.1 | 1.0.9
-0.9.0 - 0.11.0 | 6.2.1 | 2.4.4 | 1.0.8
-0.6.0 - 0.8.0 | 6.2.1 | 2.4.4 | 1.0.5
+Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco  | Metrics Server
+|:-------- |:-------- |:-------- |:-------- |:--------
+0.13.0 - Latest | 8.2.0 | 2.8.1 | 1.0.11 | 2.7.0
+0.12.0 - 0.12.0 | 8.2.0 | 2.8.1 | 1.0.9  |  -
+0.9.0 - 0.11.0 | 6.2.1 | 2.4.4 | 1.0.8   |  -
+0.6.0 - 0.8.0 | 6.2.1 | 2.4.4 | 1.0.5    |  -
