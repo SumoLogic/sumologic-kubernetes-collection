@@ -18,6 +18,7 @@ data:
     flush_interval "#{ENV['FLUSH_INTERVAL']}"
     flush_thread_count "#{ENV['NUM_THREADS']}"
     chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
+    queued_chunks_limit_size "#{ENV['QUEUE_CHUNK_LIMIT_SIZE']}"
     overflow_action drop_oldest_chunk
   common.conf: |-
     <source>
@@ -354,6 +355,7 @@ data:
     flush_interval "#{ENV['FLUSH_INTERVAL']}"
     flush_thread_count "#{ENV['NUM_THREADS']}"
     chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
+    queued_chunks_limit_size "#{ENV['QUEUE_CHUNK_LIMIT_SIZE']}"
     overflow_action drop_oldest_chunk
   
 ---
@@ -529,7 +531,9 @@ spec:
         - name: NUM_THREADS
           value: "4"
         - name: CHUNK_LIMIT_SIZE
-          value: "100k"
+          value: "1m"
+        - name: QUEUE_CHUNK_LIMIT_SIZE
+          value: "128"
         - name: TOTAL_LIMIT_SIZE
           value: "128m"
 
@@ -650,7 +654,9 @@ spec:
         - name: NUM_THREADS
           value: "4"
         - name: CHUNK_LIMIT_SIZE
-          value: "100k"
+          value: "1m"
+        - name: QUEUE_CHUNK_LIMIT_SIZE
+          value: "128"
         - name: TOTAL_LIMIT_SIZE
           value: "128m"
         - name: SOURCE_CATEGORY
