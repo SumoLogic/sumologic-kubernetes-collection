@@ -10,6 +10,8 @@ spec:
   selector:
     matchLabels:
       app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
+  serviceName: {{ printf "%s-events-headless" (include "sumologic.fullname" .) }}
+  podManagementPolicy: "Parallel"
   template:
     metadata:
       labels:

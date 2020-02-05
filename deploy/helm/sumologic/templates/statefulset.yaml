@@ -9,6 +9,8 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app" . }}
+  serviceName: {{ template "sumologic.fullname" . }}-headless
+  podManagementPolicy: "Parallel"
   replicas: {{ .Values.statefulset.replicaCount }}
   template:
     metadata:
