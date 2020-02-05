@@ -97,7 +97,7 @@ sumologic:
   flushInterval: "5s"
 
   ## Increase number of http threads to Sumo. May be required in heavy logging clusters
-  numThreads: 4
+  numThreads: 8
 
   chunkLimitSize: "1m"
 
