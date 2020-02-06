@@ -170,6 +170,9 @@ sumologic:
   
 
   fluentd:
+    ## Option to specify the Fluentd system config.
+    ## https://docs.fluentd.org/deployment/system-config#suppress_repeated_stacktrace
+    suppressRepeatedStackTrace: "true"
     ## Option to specify the Fluentd buffer as file/memory.
     buffer: "memory"
     ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
