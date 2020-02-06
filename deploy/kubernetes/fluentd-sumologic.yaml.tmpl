@@ -37,6 +37,7 @@ data:
     </source>
     <system>
       log_level warn
+      suppress_repeated_stacktrace true
     </system>
   
   metrics.conf: |-
@@ -157,6 +158,7 @@ data:
     </source>
     @include logs.source.containers.conf
     @include logs.source.systemd.conf
+    @include logs.source.generic.conf
   logs.output.conf: |-
     data_type logs
     log_key log
@@ -233,6 +235,19 @@ data:
         </buffer>
       </match>
     </label>
+  logs.source.generic.conf: |-
+    <match fluent**>
+      @type null
+    </match>
+    <match **>
+      @type sumologic
+      @id sumologic.endpoint.logs.generic
+      @include logs.output.conf
+      <buffer>
+        @type memory
+        @include buffer.output.conf
+      </buffer>
+    </match>
   logs.source.systemd.conf: |-
     <match host.kubelet.**>
       @type relabel
