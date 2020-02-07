@@ -233,6 +233,16 @@ data:
         </buffer>
       </match>
     </label>
+  logs.source.generic.conf: |-
+    <match **>
+      @type sumologic
+      @id sumologic.endpoint.logs.generic
+      @include logs.output.conf
+      <buffer>
+        @type memory
+        @include buffer.output.conf
+      </buffer>
+    </match>
   logs.source.systemd.conf: |-
     <match host.kubelet.**>
       @type relabel
