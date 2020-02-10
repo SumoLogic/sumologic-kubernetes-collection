@@ -77,7 +77,7 @@ kubectl describe pods POD_NAME
 ### Fluentd Logs
 
 ```
-kubectl logs fluentd-xxxxxxxxx-xxxxx -f
+kubectl logs collection-sumologic-xxxxxxxxx-xxxxx -f
 ```
 
 To enable more detailed debug or trace logs from all of Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section and apply the change to your deployment:
@@ -113,7 +113,7 @@ kubectl scale deployment/collection-sumologic --replicas=3
 
 To view Prometheus logs:
 ```
-kubectl logs prometheus-prometheus-operator-prometheus-0 prometheus -f
+kubectl logs prometheus-collection-prometheus-oper-prometheus-0 prometheus -f
 ```
 
 ### Send data to Fluentd stdout instead of to Sumo
@@ -152,7 +152,7 @@ You should see data being sent to Fluentd logs, which you can get using the comm
 You can `port-forward` to a pod exposing `/metrics` endpoint and verify it is exposing Prometheus metrics:
 
 ```sh
-kubectl port-forward fluentd-6f797b49b5-52h82 8080:24231
+kubectl port-forward collection-sumologic-xxxxxxxxx-xxxxx 8080:24231
 ```
 
 Then, in your browser, go to `localhost:8080/metrics`. You should see Prometheus metrics exposed.
@@ -162,7 +162,7 @@ Then, in your browser, go to `localhost:8080/metrics`. You should see Prometheus
 First run the following command to expose the Prometheus UI:
 
 ```sh
-kubectl port-forward prometheus-prometheus-operator-prometheus-0 8080:9090
+kubectl port-forward prometheus-collection-prometheus-oper-prometheus-0 8080:9090
 ```
 
 Then, in your browser, go to `localhost:8080`. You should be in the Prometheus UI now.
@@ -240,17 +240,18 @@ kops rolling-update cluster --yes
 
 The goal is to set the flag `kubelet.serviceMonitor.https=false` when deploying the prometheus operator.
 
-Add the following lines to the beginning of your `prometheus-overrides.yaml` file:
+Add the following lines to the `prometheus-operator` section of your `values.yaml` file:
 ```
-kubelet:
-  serviceMonitor:
-    https: false
+prometheus-operator:
+  ...
+  kubelet:
+    serviceMonitor:
+      https: false
 ```
 
-and redeploy Prometheus:
+and upgrade the helm chart:
 ```
-helm del --purge prometheus-operator
-helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f prometheus-overrides.yaml
+helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VERSION> -f values.yaml
 ```
 
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
