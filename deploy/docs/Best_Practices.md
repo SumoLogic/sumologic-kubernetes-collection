@@ -35,6 +35,14 @@ When Multiline is On, if the first line matches `Parser_Firstline`, the rest of 
 Parser_Firstline multi_line
 Parser_1 optional_parser
 ```
+### Log lines over 16KB are truncated
+Docker daemon has a limit of 16KB/line so if a log line is greater than that, it might be truncated in Sumo.
+To fix this, fluent-bit exposes a parameter:  
+``` bash
+Docker_Mode  On
+```
+If enabled, the plugin will recombine split Docker log lines before passing them to any parser. This mode cannot be used at the same time as Multiline.
+Reference: https://docs.fluentbit.io/manual/v/1.3/input/tail#docker_mode
 
 ### Fluentd autoscaling:
 
