@@ -85,3 +85,46 @@ $ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml
 See the following links to official Fluentd buffer documentation: 
  - https://docs.fluentd.org/configuration/buffer-section
  - https://docs.fluentd.org/buffer/file
+
+### Excluding Logs From Specific Components
+
+You can exclude specific logs from being sent to Sumo Logic by specifying the following parameters either in the `values.yaml` file or the `helm install` command.
+```
+excludeContainerRegex
+excludeHostRegex
+excludeNamespaceRegex
+excludePodRegex
+```
+
+ - This is Ruby regex, so all ruby regex rules apply. Unlike regex in the Sumo collector, you do not need to match the entire line. When doing multiple patterns, put them inside of parentheses and pipe separate them.
+ - For things like pods and containers you will need to use a star at the end because the string is dynamic. Example:
+```bash
+excludepodRegex: "(dashboard.*|sumologic.*)"
+```
+ - For things like namespace you won’t need to use a star at the end since there is no dynamic string. Example:
+```bash
+excludeNamespaceRegex: “(sumologic|kube-public)”
+```
+
+### Add a local file to fluent-bit configuration
+
+If you want to capture container logs to a container that writes locally, you will need to ensure the logs get mounted to the host so fluent-bit can be configured to capture from the host.
+
+Example:
+In the fluentbit overrides file (https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/fluent-bit/overrides.yaml) in the `rawConfig section`, you have to add a new input specifying the file path, eg.
+
+```bash
+[INPUT]
+    Name        tail
+    Path        /var/log/syslog
+```
+Reference: https://fluentbit.io/documentation/0.12/input/tail.html 
+
+### Filtering Prometheus Metrics by Namespace in the Remote Write Config
+If you want to filter metrics by namespace, it can be done in the prometheus remote write config. Here is an example of excluding kube-state metrics.
+```bash
+ - action: drop
+   regex: kube-state-metrics;(namespace1|namespace2)
+   sourceLabels: [job, namespace]
+```
+The above section should be added in each of the  kube-state remote write blocks.
