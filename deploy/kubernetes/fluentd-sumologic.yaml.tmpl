@@ -157,7 +157,6 @@ data:
     </source>
     @include logs.source.containers.conf
     @include logs.source.systemd.conf
-    @include logs.source.generic.conf
   logs.enhance.k8s.metadata.filter.conf: |-
     cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
     cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
@@ -252,6 +251,16 @@ data:
         </buffer>
       </match>
     </label>
+  logs.source.generic.conf: |-
+    <match **>
+      @type sumologic
+      @id sumologic.endpoint.logs.generic
+      @include logs.output.conf
+      <buffer>
+        @type memory
+        @include buffer.output.conf
+      </buffer>
+    </match>
   logs.source.systemd.conf: |-
     <match host.kubelet.**>
       @type relabel
