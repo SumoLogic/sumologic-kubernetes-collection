@@ -257,6 +257,16 @@ helm install stable/prometheus-operator --name prometheus-operator --namespace s
 
 There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [here](./Non_Helm_Installation.md#missing-metrics-for-controller-manager-or-scheduler).
 
+### Promethues stuck in `Terminating` state after running `helm del collection`
+Delete the pod forcefully by adding `--force --grace-period=0` to the `kubectl delete pod` command.
+
+
+### Validation error in helm installation
+``` bash 
+Error: validation failed: [unable to recognize no matches for kind "ServiceMonitor" in version "monitoring.coreos.com/v1", unable to recognize "": no matches for kind "Prometheus" in version "monitoring.coreos.com/v1"
+```
+This is a known race condition with Helm and there is no workaround at this time. If this happens just re-run the `helm install` command and add in `--no-crd-hook` to the helm install command.
+
 ### Rancher
 
 If you are running the out of the box rancher monitoring setup, you cannot run our Prometheus operator alongside it. The Rancher Prometheus Operator setup will actually kill and permanently terminate our Prometheus Operator instance and will prevent the metrics system from coming up.
