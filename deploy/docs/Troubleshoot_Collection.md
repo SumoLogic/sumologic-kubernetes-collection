@@ -31,7 +31,7 @@ kubectl get pods -n sumologic
 
 Get the logs from that pod:
 ```
-kubectl logs POD_NAME -f
+kubectl logs POD_NAME -f 
 ```
 
 If you see `Secret 'sumologic::sumologic' exists, abort.` from the logs, delete the existing secret:
