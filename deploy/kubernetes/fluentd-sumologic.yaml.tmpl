@@ -157,6 +157,7 @@ data:
     </source>
     @include logs.source.containers.conf
     @include logs.source.systemd.conf
+    @include logs.source.generic.conf
   logs.enhance.k8s.metadata.filter.conf: |-
     cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
     cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
