@@ -139,6 +139,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   # Copy lines of prometheus-operator section and remove indention from values.yaml
   sed -n "$prometheus_start,${prometheus_end}p" deploy/helm/sumologic/values.yaml | sed 's/  //' >> deploy/helm/prometheus-overrides.yaml
 
+  # TODO(vsinghal, 2020-02-11): uncomment when yq stable is fixed
   # echo "Copy prometheus.prometheusSpec.remoteWrite from 'prometheus-overrides.yaml' and inject into 'deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet'"
   # prometheus_remote_write=`yq r deploy/helm/prometheus-overrides.yaml prometheus.prometheusSpec.remoteWrite -j | jq '.' | sed 's/^/    /'`
   # # Escaping so sed will work
