@@ -201,7 +201,7 @@ data:
     add_timestamp "#{ENV['ADD_TIMESTAMP']}"
     timestamp_key "#{ENV['TIMESTAMP_KEY']}"
     proxy_uri "#{ENV['PROXY_URI']}"
-  logs.source.containers.conf: |-
+  logs.source.containers.conf: |
     <filter containers.**>
       @type record_transformer
       enable_ruby
@@ -235,7 +235,7 @@ data:
       # sumologic kubernetes metadata enrichment filter plugin
       <filter containers.**>
         @type enhance_k8s_metadata
-        @include logs.kubernetes.enhance.k8s.metadata.filter.conf
+        @include logs.enhance.k8s.metadata.filter.conf
       </filter>
       # kubernetes sumologic filter plugin
       <filter containers.**>
