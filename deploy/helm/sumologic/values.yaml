@@ -89,6 +89,10 @@ sumologic:
     # Source category for the Events source. Default: "{clusterName}/events"
     sourceCategory: ""
 
+  # Traces configuration
+  traces:
+    enable: false
+
   ## Format to post logs into Sumo. json, json_merge, or text
   logFormat: fields
 
