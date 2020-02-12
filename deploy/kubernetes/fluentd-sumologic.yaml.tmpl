@@ -506,7 +506,7 @@ spec:
           name: collection-sumologic
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:0.13.0
+        image: sumologic/kubernetes-fluentd:0.14.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -665,7 +665,7 @@ spec:
           name: collection-sumologic-events
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:0.13.0
+        image: sumologic/kubernetes-fluentd:0.14.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
