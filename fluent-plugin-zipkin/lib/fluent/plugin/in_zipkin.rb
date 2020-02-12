@@ -14,6 +14,9 @@
 #    limitations under the License.
 #
 
+# This plugin base on fluentd in_http
+# TODO (sumo-drosiek, 2020.02.12): Remove unneeded code and configuration
+
 require 'fluent/plugin/input'
 require 'fluent/plugin/parser'
 require 'fluent/event'

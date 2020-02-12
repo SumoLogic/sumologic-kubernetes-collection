@@ -1,19 +1,17 @@
+# Count and show data processing speed in records per second.
+# Time resolution: 5 seconds
 require 'fluent/plugin/filter'
 require 'time'
 
 module Fluent::Plugin
   class CounterFilter < Filter
-    # Register this filter as "passthru"
     Fluent::Plugin.register_filter('counter', self)
-
-    # config_param works like other plugins
 
     def configure(conf)
       super
       @count = 0
       @last_timestamp = Time.now.to_f
       @timestamp = Time.now.to_f
-      # do the usual configuration here
     end
 
     def multi_workers_ready?

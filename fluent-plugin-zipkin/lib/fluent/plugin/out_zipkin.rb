@@ -106,6 +106,7 @@ module Fluent::Plugin
     end
 
     def send_request_repeated(uri, req)
+      # TODO (sumo-drosiek, 2020.02.12): Rather emit records back to the fluent than resend same packet
       begin
         send_request(uri, req)
         log.debug { "#{@http_method.capitalize} data to #{uri.to_s} with chunk(#{dump_unique_id_hex(chunk.unique_id)})" }
