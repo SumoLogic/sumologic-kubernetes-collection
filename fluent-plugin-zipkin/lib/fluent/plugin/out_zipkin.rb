@@ -63,9 +63,9 @@ module Fluent::Plugin
     desc 'The verify mode of TLS'
     config_param :tls_verify_mode, :enum, list: [:none, :peer], default: :peer
     desc 'The default version of TLS'
-    config_param :tls_version, :enum, list: Fluent::TLS::SUPPORTED_VERSIONS, default: Fluent::TLS::DEFAULT_VERSION
+    config_param :tls_version, :enum, list: Fluent::PluginHelper::Socket::TLS_SUPPORTED_VERSIONS, default: Fluent::PluginHelper::Socket::TLS_DEFAULT_VERSION
     desc 'The cipher configuration of TLS'
-    config_param :tls_ciphers, :string, default: Fluent::TLS::CIPHERS_DEFAULT
+    config_param :tls_ciphers, :string, default: Fluent::PluginHelper::Socket::CIPHERS_DEFAULT
 
     desc 'Raise UnrecoverableError when the response is non success, 4xx/5xx'
     config_param :error_response_as_unrecoverable, :bool, default: true
