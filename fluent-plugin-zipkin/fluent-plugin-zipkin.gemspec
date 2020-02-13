@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "test-unit", "~> 3.0"
   spec.add_development_dependency "benchmark-ips", "~> 2.7"
 
-  spec.add_runtime_dependency "fluentd", [">= 1.6.3", "<= 1.9.1"]
+  spec.add_runtime_dependency "fluentd", [">= 1.6.3", "<= 1.9.0"]
   spec.add_runtime_dependency "google-protobuf", "~> 3"
   spec.add_runtime_dependency "snappy", "> 0"
   spec.add_runtime_dependency "oj", "~> 3"
