@@ -81,7 +81,7 @@ prometheus:
       url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.kubelet
       writeRelabelConfigs:
       - action: keep
-        regex: kubelet;(?:kubelet_docker_operations_errors|kubelet_docker_operations_latency_microseconds|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_latency_microseconds.*)
+        regex: kubelet;(?:kubelet_docker_operations_errors.*|kubelet_docker_operations_(?:latency_micro|duration_)seconds.*|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_(?:latency_micro|duration_)seconds.*)
         sourceLabels: [job, __name__]
     - # cadvisor container metrics
       url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.container
