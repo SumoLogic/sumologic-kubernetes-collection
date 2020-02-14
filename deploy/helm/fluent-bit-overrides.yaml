@@ -13,24 +13,19 @@ backend:
     tls_verify: "on"
     tls_debug: 1
     shared_key:
-
 trackOffsets: true
-
 tolerations:
-  - effect: NoSchedule
-    operator: Exists
-
+- effect: NoSchedule
+  operator: Exists
 input:
   systemd:
     enabled: true
-
 parsers:
   enabled: true
   # This regex matches the first line of a multiline log starting with a date of the format :  "2019-11-17 07:14:12" or "2019-11-17T07:14:12"
   regex:
-    - name: multi_line
-      regex: (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
-    
+  - name: multi_line
+    regex: (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
 rawConfig: |-
   @INCLUDE fluent-bit-service.conf
 
@@ -101,4 +96,3 @@ rawConfig: |-
     Read_From_Tail  true
 
   @INCLUDE fluent-bit-output.conf
-
