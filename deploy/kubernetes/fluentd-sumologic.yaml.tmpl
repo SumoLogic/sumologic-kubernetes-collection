@@ -52,7 +52,7 @@ data:
       @label @DATAPOINT
     </match>
     <label @DATAPOINT>
-      <filter prometheus.metrics**>
+      <filter prometheus.metrics**> # NOTE: Remove this filter if you are running Kubernetes 1.13 or below.
         @type grep
         <exclude>
           key @metric
