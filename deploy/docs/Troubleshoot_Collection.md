@@ -77,7 +77,7 @@ kubectl describe pods POD_NAME
 ### Fluentd Logs
 
 ```
-kubectl logs fluentd-xxxxxxxxx-xxxxx -f
+kubectl logs collection-sumologic-xxxxxxxxx-xxxxx -f
 ```
 
 To enable more detailed debug or trace logs from all of Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section and apply the change to your deployment:
@@ -113,7 +113,7 @@ kubectl scale deployment/collection-sumologic --replicas=3
 
 To view Prometheus logs:
 ```
-kubectl logs prometheus-prometheus-operator-prometheus-0 prometheus -f
+kubectl logs prometheus-collection-prometheus-oper-prometheus-0 prometheus -f
 ```
 
 ### Send data to Fluentd stdout instead of to Sumo
@@ -152,7 +152,7 @@ You should see data being sent to Fluentd logs, which you can get using the comm
 You can `port-forward` to a pod exposing `/metrics` endpoint and verify it is exposing Prometheus metrics:
 
 ```sh
-kubectl port-forward fluentd-6f797b49b5-52h82 8080:24231
+kubectl port-forward collection-sumologic-xxxxxxxxx-xxxxx 8080:24231
 ```
 
 Then, in your browser, go to `localhost:8080/metrics`. You should see Prometheus metrics exposed.
@@ -162,7 +162,7 @@ Then, in your browser, go to `localhost:8080/metrics`. You should see Prometheus
 First run the following command to expose the Prometheus UI:
 
 ```sh
-kubectl port-forward prometheus-prometheus-operator-prometheus-0 8080:9090
+kubectl port-forward prometheus-collection-prometheus-oper-prometheus-0 8080:9090
 ```
 
 Then, in your browser, go to `localhost:8080`. You should be in the Prometheus UI now.
@@ -240,22 +240,33 @@ kops rolling-update cluster --yes
 
 The goal is to set the flag `kubelet.serviceMonitor.https=false` when deploying the prometheus operator.
 
-Add the following lines to the beginning of your `prometheus-overrides.yaml` file:
+Add the following lines to the `prometheus-operator` section of your `values.yaml` file:
 ```
-kubelet:
-  serviceMonitor:
-    https: false
+prometheus-operator:
+  ...
+  kubelet:
+    serviceMonitor:
+      https: false
 ```
 
-and redeploy Prometheus:
+and upgrade the helm chart:
 ```
-helm del --purge prometheus-operator
-helm install stable/prometheus-operator --name prometheus-operator --namespace sumologic -f prometheus-overrides.yaml
+helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VERSION> -f values.yaml
 ```
 
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
 There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [here](./Non_Helm_Installation.md#missing-metrics-for-controller-manager-or-scheduler).
+
+### Promethues stuck in `Terminating` state after running `helm del collection`
+Delete the pod forcefully by adding `--force --grace-period=0` to the `kubectl delete pod` command.
+
+
+### Validation error in helm installation
+``` bash 
+Error: validation failed: [unable to recognize no matches for kind "ServiceMonitor" in version "monitoring.coreos.com/v1", unable to recognize "": no matches for kind "Prometheus" in version "monitoring.coreos.com/v1"
+```
+This is a known race condition with Helm and there is no workaround at this time. If this happens just re-run the `helm install` command and add in `--no-crd-hook` to the helm install command.
 
 ### Rancher
 

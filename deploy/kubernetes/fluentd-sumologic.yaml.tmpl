@@ -36,7 +36,7 @@ data:
       bind 0.0.0.0
     </source>
     <system>
-      log_level error
+      log_level info
     </system>
   
   metrics.conf: |-
@@ -164,6 +164,41 @@ data:
     </source>
     @include logs.source.containers.conf
     @include logs.source.systemd.conf
+    @include logs.source.generic.conf
+  logs.enhance.k8s.metadata.filter.conf: |-
+    cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
+    cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
+    cache_refresh "#{ENV['K8S_METADATA_FILTER_CACHE_REFRESH']}"
+    in_namespace_path '$.kubernetes.namespace_name'
+    in_pod_path '$.kubernetes.pod_name'
+    data_type logs
+  logs.kubernetes.metadata.filter.conf: |-
+    annotation_match ["sumologic\.com.*"]
+    de_dot false
+    watch "#{ENV['K8S_METADATA_FILTER_WATCH']}"
+    ca_file "#{ENV['K8S_METADATA_FILTER_CA_FILE']}"
+    verify_ssl "#{ENV['K8S_METADATA_FILTER_VERIFY_SSL']}"
+    client_cert "#{ENV['K8S_METADATA_FILTER_CLIENT_CERT']}"
+    client_key "#{ENV['K8S_METADATA_FILTER_CLIENT_KEY']}"
+    bearer_token_file "#{ENV['K8S_METADATA_FILTER_BEARER_TOKEN_FILE']}"
+    cache_size "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
+    cache_ttl "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
+    tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
+  logs.kubernetes.sumologic.filter.conf: |-
+    source_name "#{ENV['SOURCE_NAME']}"
+    source_host "#{ENV['SOURCE_HOST']}"
+    log_format "#{ENV['LOG_FORMAT']}"
+    kubernetes_meta "#{ENV['KUBERNETES_META']}"
+    kubernetes_meta_reduce "#{ENV['KUBERNETES_META_REDUCE']}"
+    add_stream "#{ENV['ADD_STREAM']}"
+    add_time "#{ENV['ADD_TIME']}"
+    source_category "#{ENV['SOURCE_CATEGORY']}"
+    source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
+    source_category_replace_dash "#{ENV['SOURCE_CATEGORY_REPLACE_DASH']}"
+    exclude_namespace_regex "#{ENV['EXCLUDE_NAMESPACE_REGEX']}"
+    exclude_pod_regex "#{ENV['EXCLUDE_POD_REGEX']}"
+    exclude_container_regex "#{ENV['EXCLUDE_CONTAINER_REGEX']}"
+    exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
   logs.output.conf: |-
     data_type logs
     log_key log
@@ -173,7 +208,7 @@ data:
     add_timestamp "#{ENV['ADD_TIMESTAMP']}"
     timestamp_key "#{ENV['TIMESTAMP_KEY']}"
     proxy_uri "#{ENV['PROXY_URI']}"
-  logs.source.containers.conf: |-
+  logs.source.containers.conf: |
     <filter containers.**>
       @type record_transformer
       enable_ruby
@@ -184,53 +219,37 @@ data:
         time   ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.join("")}
       </record>
     </filter>
+    # match all  container logs and label them @NORMAL
     <match containers.**>
       @type relabel
       @label @NORMAL
     </match>
     <label @NORMAL>
+      #  only match fluentd logs based on fluentd container name
+      <filter **collection-sumologic**>
+        # only ingest fluentd logs of levels: {error, fatal} and warning messages if buffer is full
+        @type grep
+        <regexp>
+          key log
+          pattern /\[error\]|\[fatal\]|drop_oldest_chunk/
+        </regexp>
+      </filter>
+      # third-party kubernetes metadata  filter plugin
       <filter containers.**>
         @type kubernetes_metadata
-        @log_level warn
-        annotation_match ["sumologic\.com.*"]
-        de_dot false
-        watch "#{ENV['K8S_METADATA_FILTER_WATCH']}"
-        ca_file "#{ENV['K8S_METADATA_FILTER_CA_FILE']}"
-        verify_ssl "#{ENV['K8S_METADATA_FILTER_VERIFY_SSL']}"
-        client_cert "#{ENV['K8S_METADATA_FILTER_CLIENT_CERT']}"
-        client_key "#{ENV['K8S_METADATA_FILTER_CLIENT_KEY']}"
-        bearer_token_file "#{ENV['K8S_METADATA_FILTER_BEARER_TOKEN_FILE']}"
-        cache_size "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
-        cache_ttl "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
-        tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
+        @include logs.kubernetes.metadata.filter.conf
       </filter>
-      <filter **>
+      # sumologic kubernetes metadata enrichment filter plugin
+      <filter containers.**>
         @type enhance_k8s_metadata
-        cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
-        cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
-        cache_refresh "#{ENV['K8S_METADATA_FILTER_CACHE_REFRESH']}"
-        in_namespace_path '$.kubernetes.namespace_name'
-        in_pod_path '$.kubernetes.pod_name'
-        data_type logs
+        @include logs.enhance.k8s.metadata.filter.conf
       </filter>
+      # kubernetes sumologic filter plugin
       <filter containers.**>
         @type kubernetes_sumologic
-        source_name "#{ENV['SOURCE_NAME']}"
-        source_host "#{ENV['SOURCE_HOST']}"
-        log_format "#{ENV['LOG_FORMAT']}"
-        kubernetes_meta "#{ENV['KUBERNETES_META']}"
-        kubernetes_meta_reduce "#{ENV['KUBERNETES_META_REDUCE']}"
-        add_stream "#{ENV['ADD_STREAM']}"
-        add_time "#{ENV['ADD_TIME']}"
-        source_category "#{ENV['SOURCE_CATEGORY']}"
-        source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
-        source_category_replace_dash "#{ENV['SOURCE_CATEGORY_REPLACE_DASH']}"
-        exclude_namespace_regex "#{ENV['EXCLUDE_NAMESPACE_REGEX']}"
-        exclude_pod_regex "#{ENV['EXCLUDE_POD_REGEX']}"
-        exclude_container_regex "#{ENV['EXCLUDE_CONTAINER_REGEX']}"
-        exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
+        @include logs.kubernetes.sumologic.filter.conf
       </filter>
-      <match **>
+      <match containers.**>
         @type sumologic
         @id sumologic.endpoint.logs
         @include logs.output.conf
@@ -240,6 +259,16 @@ data:
         </buffer>
       </match>
     </label>
+  logs.source.generic.conf: |-
+    <match **>
+      @type sumologic
+      @id sumologic.endpoint.logs.generic
+      @include logs.output.conf
+      <buffer>
+        @type memory
+        @include buffer.output.conf
+      </buffer>
+    </match>
   logs.source.systemd.conf: |-
     <match host.kubelet.**>
       @type relabel
@@ -343,7 +372,7 @@ data:
       </buffer>
     </match>
     <system>
-      log_level error
+      log_level info
     </system>
   
   buffer.output.conf: |-
@@ -484,7 +513,7 @@ spec:
           name: collection-sumologic
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:0.13.0
+        image: sumologic/kubernetes-fluentd:0.14.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -643,7 +672,7 @@ spec:
           name: collection-sumologic-events
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:0.13.0
+        image: sumologic/kubernetes-fluentd:0.14.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
