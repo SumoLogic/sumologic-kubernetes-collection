@@ -53,6 +53,12 @@ data:
     </match>
     <label @DATAPOINT>
       <filter prometheus.metrics**>
+        @type record_modifier
+        <record>
+          cluster kubernetes
+        </record>
+      </filter>
+      <filter prometheus.metrics**>
         @type enhance_k8s_metadata
         cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
         cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
