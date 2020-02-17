@@ -214,9 +214,9 @@ data:
       enable_ruby
       renew_record true
       <record>
-        log    ${record["log"].split(/[\n\t]+/).map! {|item| JSON.parse(item)["log"]}.join("")}
-        stream ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["stream"]}.join("")}
-        time   ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.join("")}
+        log    ${record["log"].split(/[\n\t]+/).map! {|item| JSON.parse(item)["log"]}.join("") rescue record["log"]}
+        stream ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["stream"]}.join("") rescue record["stream"]}
+        time   ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.join("") rescue record["time"]}
       </record>
     </filter>
     # match all  container logs and label them @NORMAL
