@@ -52,6 +52,19 @@ data:
       @label @DATAPOINT
     </match>
     <label @DATAPOINT>
+      <filter prometheus.metrics**> # NOTE: Remove this filter if you are running Kubernetes 1.13 or below.
+        @type grep
+        <exclude>
+          key @metric
+          pattern /^apiserver_request_count|^apiserver_request_latencies_summary|^kubelet_runtime_operations_latency_microseconds|^kubelet_docker_operations_latency_microseconds|^kubelet_docker_operations_errors$/
+        </exclude>
+      </filter>
+      <filter prometheus.metrics**>
+        @type record_modifier
+        <record>
+          cluster kubernetes
+        </record>
+      </filter>
       <filter prometheus.metrics**>
         @type enhance_k8s_metadata
         cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
@@ -201,15 +214,15 @@ data:
     add_timestamp "#{ENV['ADD_TIMESTAMP']}"
     timestamp_key "#{ENV['TIMESTAMP_KEY']}"
     proxy_uri "#{ENV['PROXY_URI']}"
-  logs.source.containers.conf: |-
+  logs.source.containers.conf: |
     <filter containers.**>
       @type record_transformer
       enable_ruby
       renew_record true
       <record>
-        log    ${record["log"].split(/[\n\t]+/).map! {|item| JSON.parse(item)["log"]}.join("")}
-        stream ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["stream"]}.join("")}
-        time   ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.join("")}
+        log    ${record["log"].split(/[\n\t]+/).map! {|item| JSON.parse(item)["log"]}.join("") rescue record["log"]}
+        stream ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["stream"]}.join("") rescue record["stream"]}
+        time   ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.join("") rescue record["time"]}
       </record>
     </filter>
     # match all  container logs and label them @NORMAL
@@ -235,7 +248,7 @@ data:
       # sumologic kubernetes metadata enrichment filter plugin
       <filter containers.**>
         @type enhance_k8s_metadata
-        @include logs.kubernetes.enhance.k8s.metadata.filter.conf
+        @include logs.enhance.k8s.metadata.filter.conf
       </filter>
       # kubernetes sumologic filter plugin
       <filter containers.**>
@@ -510,7 +523,7 @@ spec:
           name: collection-sumologic
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:0.13.0
+        image: sumologic/kubernetes-fluentd:0.14.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -669,7 +682,7 @@ spec:
           name: collection-sumologic-events
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:0.13.0
+        image: sumologic/kubernetes-fluentd:0.14.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
