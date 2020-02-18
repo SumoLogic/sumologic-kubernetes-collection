@@ -318,21 +318,40 @@ module Fluent::Plugin
 
     def get_span_for_json(record)
 
-      record['traceId'] = string_to_hexstring(record.delete('trace_id'))
-      record['parentId'] = string_to_hexstring(record.delete('parent_id'))
+      if value = record.delete('trace_id')
+        record['traceId'] = string_to_hexstring(value)
+      end
+      if value = record.delete('parent_id')
+        record['parentId'] = string_to_hexstring(value)
+      end
       record['id'] = string_to_hexstring(record['id'])  # This line is failing during benchmark test (non-deterministic)
-      record['localEndpoint'] = record.delete('local_endpoint')
-      record['remoteEndpoint'] = record.delete('remote_endpoint')
+
+      if value = record.delete('local_endpoint')
+        record['localEndpoint'] = value
+      end
+
+      if value = record.delete('remote_endpoint')
+        record['remoteEndpoint'] = value
+      end
 
       if record['localEndpoint'] then
-        record['localEndpoint']['ipv4'] = string_to_ipv4(record['localEndpoint']['ipv4'], 4)
-        record['localEndpoint']['ipv6'] = string_to_ipv4(record['localEndpoint']['ipv6'], 16)
+        if record['localEndpoint']['ipv4']
+          record['localEndpoint']['ipv4'] = string_to_ipv4(record['localEndpoint']['ipv4'], 4)
+        end
+
+        if record['localEndpoint']['ipv6']
+          record['localEndpoint']['ipv6'] = string_to_ipv4(record['localEndpoint']['ipv6'], 16)
+        end
         record['localEndpoint']['serviceName'] = record['localEndpoint'].delete('service_name')
       end
 
       if record['remoteEndpoint'] then
-        record['remoteEndpoint']['ipv4'] = string_to_ipv4(record['remoteEndpoint']['ipv4'], 4)
-        record['remoteEndpoint']['ipv6'] = string_to_ipv4(record['remoteEndpoint']['ipv6'], 16)
+        if record['remoteEndpoint']['ipv4']
+          record['remoteEndpoint']['ipv4'] = string_to_ipv4(record['remoteEndpoint']['ipv4'], 4)
+        end
+        if record['remoteEndpoint']['ipv6']
+          record['remoteEndpoint']['ipv6'] = string_to_ipv4(record['remoteEndpoint']['ipv6'], 16)
+        end
         record['remoteEndpoint']['serviceName'] = record['remoteEndpoint'].delete('service_name')
       end
 

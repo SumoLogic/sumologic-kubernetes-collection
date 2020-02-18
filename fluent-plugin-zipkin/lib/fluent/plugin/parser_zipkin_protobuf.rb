@@ -40,23 +40,39 @@ module Fluent
       def parse_json(text)
         records = Oj.load(text, mode: :compat)
         records.each do |record|
-          record['trace_id'] = hexstring_to_string(record.delete('traceId'))
-          record['parent_id'] = hexstring_to_string(record.delete('parentId'))
+          if value = record.delete('traceId')
+            record['trace_id'] = hexstring_to_string(value)
+          end
+          if value = record.delete('parentId')
+            record['parent_id'] = hexstring_to_string(value)
+          end
           record['id'] = hexstring_to_string(record['id'])
 
           record['local_endpoint'] = record.delete('localEndpoint')
           record['remote_endpoint'] = record.delete('remoteEndpoint')
 
           if record['local_endpoint'] then
-            record['local_endpoint']['service_name'] = record['local_endpoint'].delete('serviceName')
-            record['local_endpoint']['ipv4'] = ip_to_string(record['local_endpoint'].delete('ipv4'))
-            record['local_endpoint']['ipv6'] = ip_to_string(record['local_endpoint'].delete('ipv6'))
+            if value = record['local_endpoint'].delete('serviceName')
+              record['local_endpoint']['service_name'] = value
+            end
+            if value = record['local_endpoint'].delete('ipv4')
+              record['local_endpoint']['ipv4'] = ip_to_string(value)
+            end
+            if value = record['local_endpoint'].delete('ipv6')
+              record['local_endpoint']['ipv6'] = ip_to_string(value)
+            end
           end
 
           if record['remote_endpoint'] then
-            record['remote_endpoint']['service_name'] = record['remote_endpoint'].delete('serviceName')
-            record['remote_endpoint']['ipv4'] = ip_to_string(record['remote_endpoint'].delete('ipv4'))
-            record['remote_endpoint']['ipv6'] = ip_to_string(record['remote_endpoint'].delete('ipv6'))
+            if value = record['remote_endpoint'].delete('serviceName')
+              record['remote_endpoint']['service_name'] = value
+            end
+            if value = record['remote_endpoint'].delete('ipv4')
+              record['remote_endpoint']['ipv4'] = ip_to_string(value)
+            end
+            if value = record['remote_endpoint'].delete('ipv6')
+              record['remote_endpoint']['ipv6'] = ip_to_string(value)
+            end
           end
 
           record['timestamp'] = record['timestamp'].to_i
