@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ template "sumologic.fullname" . }}
   labels:
@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app" . }}
-  replicas: {{ .Values.deployment.replicaCount }}
+  replicas: {{ .Values.statefulset.replicaCount }}
   template:
     metadata:
       labels:
@@ -17,13 +17,13 @@ spec:
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
-{{- if .Values.deployment.nodeSelector }}
+{{- if .Values.statefulset.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.deployment.nodeSelector | indent 8 }}
+{{ toYaml .Values.statefulset.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.deployment.tolerations }}
+{{- if .Values.statefulset.tolerations }}
       tolerations:
-{{ toYaml .Values.deployment.tolerations | indent 8 }}
+{{ toYaml .Values.statefulset.tolerations | indent 8 }}
 {{- end }}
       volumes:
       - name: pos-files
@@ -33,12 +33,14 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "sumologic.fullname" . }}
+      securityContext:
+        fsGroup: {{ .Values.sumologic.fluentd.securityContext.fsGroup }}
       containers:
       - name: fluentd
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
-          {{- toYaml .Values.deployment.resources | nindent 10 }}
+          {{- toYaml .Values.statefulset.resources | nindent 10 }}
         ports:
         - name: prom-write
           containerPort: 9888
@@ -64,6 +66,10 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
+{{- if .Values.sumologic.fluentd.persistence.enabled }}
+        - name: buffer
+          mountPath: "/fluentd/buffer"
+{{- end}}
         env:
         - name: SUMO_ENDPOINT_METRICS
           valueFrom:
@@ -157,3 +163,14 @@ spec:
           value: {{ .Values.sumologic.excludeHostRegex | quote }}
         - name: EXCLUDE_POD_REGEX
           value: {{ .Values.sumologic.excludePodRegex | quote }}
+{{- if .Values.sumologic.fluentd.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: buffer
+    spec:
+      accessModes: [{{ .Values.sumologic.fluentd.persistence.accessMode }}]
+      storageClassName: {{ .Values.sumologic.fluentd.persistence.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.sumologic.fluentd.persistence.size }}
+{{- end }}
