@@ -89,6 +89,14 @@ sumologic:
     # Source category for the Events source. Default: "{clusterName}/events"
     sourceCategory: ""
 
+  # Traces configuration
+  # This is experimental feature and may be unavailable for your account
+  traces:
+    enable: false
+    # Use filter stdout plugin for tracing data
+    # Warning: It will produce additional fluentd logs (one per trace)
+    fluentd_stdout: false
+
   ## Format to post logs into Sumo. json, json_merge, or text
   logFormat: fields
 
