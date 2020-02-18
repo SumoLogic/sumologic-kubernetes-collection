@@ -28,6 +28,24 @@ eventsDeployment:
       memory: 256Mi
       cpu: "100m"
 
+otelcolDeployment:
+  nodeSelector: {}
+  tolerations: {}
+  replicas: 1
+  resources:
+    limits:
+      memory: 2Gi
+      cpu: 1
+    requests:
+      memory: 384Mi
+      cpu: "200m"
+  # Memory Ballast size should be max 1/3 to 1/2 of memory.
+  memBallastSizeMib: "683"
+  image:
+    name: "omnition/opentelemetry-collector-contrib"
+    tag: "0.0.5"
+    pullPolicy: IfNotPresent
+
 sumologic:
   ## Setup
 
@@ -376,6 +394,17 @@ prometheus-operator:
         selector:
           matchLabels:
             app: fluent-bit
+      - name: collection-sumologic-otelcol
+        additionalLabels:
+          app: collection-sumologic-otelcol
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - sumologic
+        selector:
+          matchLabels:
+            app: collection-sumologic-otelcol
     prometheusSpec:
       remoteWrite:
         # kube state metrics

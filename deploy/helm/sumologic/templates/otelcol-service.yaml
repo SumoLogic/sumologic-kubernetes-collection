@@ -1,0 +1,27 @@
+{{- if eq .Values.sumologic.traces.enabled true }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-otelcol" (include "sumologic.fullname" .) }}
+  labels:
+    app: {{ printf "%s-otelcol" (include "sumologic.labels.app" .) }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ printf "%s-otelcol" (include "sumologic.labels.app" .) }}
+  ports:
+  - name: opencensus # Default endpoint for Opencensus receiver.
+    port: 55678
+    protocol: TCP
+    targetPort: 55678
+  - name: jaeger-grpc  # Default endpoint for Jaeger gRPC
+    port: 14250
+  - name: jaegert-channel  # Default endpoint for Jaeger TChannel receiver.
+    port: 14267
+  - name: jaeger-thrift-http # Default endpoint for Jaeger HTTP receiver.
+    port: 14268
+  - name: zipkin # Default endpoint for Zipkin receiver.
+    port: 9411
+  - name: metrics # Default endpoint for querying metrics.
+    port: 8888
+{{- end }}
