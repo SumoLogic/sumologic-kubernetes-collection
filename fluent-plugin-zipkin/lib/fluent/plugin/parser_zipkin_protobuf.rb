@@ -4,6 +4,7 @@ require 'snappy'
 require_relative '../../zipkin_pb'
 require 'base64'
 require 'oj'
+require 'ipaddr'
 
 module Fluent
   module Plugin
@@ -28,8 +29,16 @@ module Fluent
         return Array(value).pack('H*')
       end
 
+      def ip_to_string(value)
+        if !value
+          return value
+        end
+        
+        return IPAddr.new(value).hton
+      end
+
       def parse_json(text)
-        records = Oj.load(text)
+        records = Oj.load(text, mode: :compat)
         records.each do |record|
           record['trace_id'] = hexstring_to_string(record.delete('traceId'))
           record['parent_id'] = hexstring_to_string(record.delete('parentId'))
@@ -40,14 +49,14 @@ module Fluent
 
           if record['local_endpoint'] then
             record['local_endpoint']['service_name'] = record['local_endpoint'].delete('serviceName')
-            record['local_endpoint']['ipv4'] = hexstring_to_string(record['local_endpoint'].delete('ipv4'))
-            record['local_endpoint']['ipv6'] = hexstring_to_string(record['local_endpoint'].delete('ipv6'))
+            record['local_endpoint']['ipv4'] = ip_to_string(record['local_endpoint'].delete('ipv4'))
+            record['local_endpoint']['ipv6'] = ip_to_string(record['local_endpoint'].delete('ipv6'))
           end
 
           if record['remote_endpoint'] then
             record['remote_endpoint']['service_name'] = record['remote_endpoint'].delete('serviceName')
-            record['remote_endpoint']['ipv4'] = hexstring_to_string(record['remote_endpoint'].delete('ipv4'))
-            record['remote_endpoint']['ipv6'] = hexstring_to_string(record['remote_endpoint'].delete('ipv6'))
+            record['remote_endpoint']['ipv4'] = ip_to_string(record['remote_endpoint'].delete('ipv4'))
+            record['remote_endpoint']['ipv6'] = ip_to_string(record['remote_endpoint'].delete('ipv6'))
           end
 
           record['timestamp'] = record['timestamp'].to_i

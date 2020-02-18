@@ -24,6 +24,7 @@ require 'snappy'
 require 'json'
 require 'base64'
 require 'oj'
+require 'ipaddr'
 require_relative '../../zipkin_pb'
 
 module Fluent::Plugin
@@ -247,6 +248,18 @@ module Fluent::Plugin
       return value.bytes.pack("c*").unpack("H*").first
     end
 
+    def string_to_ipv4(value, length)
+      if !value then
+        return value
+      end
+
+      if value.length < length
+        value = "\x00".force_encoding("ASCII-8BIT") * (length - value.length) + value
+      end
+
+      return IPAddr.new_ntoh(value).to_s
+    end
+
     def get_spans(chunk, size: 100)
       # Using array is more efficient than inserting to Proto3 element by element
       return_value = []
@@ -312,14 +325,14 @@ module Fluent::Plugin
       record['remoteEndpoint'] = record.delete('remote_endpoint')
 
       if record['localEndpoint'] then
-        record['localEndpoint']['ipv4'] = string_to_hexstring(record['localEndpoint']['ipv4'])
-        record['localEndpoint']['ipv6'] = string_to_hexstring(record['localEndpoint']['ipv6'])
+        record['localEndpoint']['ipv4'] = string_to_ipv4(record['localEndpoint']['ipv4'], 4)
+        record['localEndpoint']['ipv6'] = string_to_ipv4(record['localEndpoint']['ipv6'], 16)
         record['localEndpoint']['serviceName'] = record['localEndpoint'].delete('service_name')
       end
 
       if record['remoteEndpoint'] then
-        record['remoteEndpoint']['ipv4'] = string_to_hexstring(record['remoteEndpoint']['ipv4'])
-        record['remoteEndpoint']['ipv6'] = string_to_hexstring(record['remoteEndpoint']['ipv6'])
+        record['remoteEndpoint']['ipv4'] = string_to_ipv4(record['remoteEndpoint']['ipv4'], 4)
+        record['remoteEndpoint']['ipv6'] = string_to_ipv4(record['remoteEndpoint']['ipv6'], 16)
         record['remoteEndpoint']['serviceName'] = record['remoteEndpoint'].delete('service_name')
       end
 
