@@ -92,7 +92,7 @@ sumologic:
   # Traces configuration
   # This is experimental feature and may be unavailable for your account
   traces:
-    enable: false
+    enabled: false
     # Use filter stdout plugin for tracing data
     # Warning: It will produce additional fluentd logs (one per trace)
     fluentd_stdout: false
