@@ -6,7 +6,7 @@
   sumologicCollector:: {
     remoteWriteConfigs+: [
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.state",
+        url: "http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state",
         writeRelabelConfigs: [
           {
             action: "keep",
@@ -19,7 +19,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.controller-manager",
+        url: "http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.controller-manager",
         writeRelabelConfigs: [
           {
             action: "keep",
@@ -32,7 +32,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.scheduler",
+        url: "http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.scheduler",
         writeRelabelConfigs: [
           {
             action: "keep",
@@ -45,7 +45,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.apiserver",
+        url: "http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.apiserver",
         writeRelabelConfigs: [
           {
             action: "keep",
@@ -58,7 +58,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.kubelet",
+        url: "http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.kubelet",
         writeRelabelConfigs: [
           {
             action: "keep",
@@ -71,7 +71,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.container",
+        url: "http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container",
         writeRelabelConfigs: [
           {
             action: "labelmap",
@@ -97,7 +97,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.container",
+        url: "http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container",
         writeRelabelConfigs: [
           {
             action: "keep",
@@ -110,7 +110,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.node",
+        url: "http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.node",
         writeRelabelConfigs: [
           {
             action: "keep",
@@ -123,7 +123,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.operator.rule",
+        url: "http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.operator.rule",
         writeRelabelConfigs: [
           {
             action: "keep",
@@ -135,7 +135,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics",
+        url: "http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics",
         writeRelabelConfigs: [
           {
             action: "keep",
