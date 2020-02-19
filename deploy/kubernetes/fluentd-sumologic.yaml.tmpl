@@ -15,12 +15,13 @@ data:
     @include logs.conf
   buffer.output.conf: |-
     compress gzip
-    flush_interval "#{ENV['FLUSH_INTERVAL']}"
-    flush_thread_count "#{ENV['NUM_THREADS']}"
-    chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
-    total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
-    queued_chunks_limit_size "#{ENV['QUEUE_CHUNK_LIMIT_SIZE']}"
+    flush_interval "5s"
+    flush_thread_count "8"
+    chunk_limit_size "1m"
+    total_limit_size "128m"
+    queued_chunks_limit_size "128"
     overflow_action drop_oldest_chunk
+    
   common.conf: |-
     <source>
       @type prometheus
@@ -67,14 +68,16 @@ data:
       </filter>
       <filter prometheus.metrics**>
         @type enhance_k8s_metadata
-        cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
-        cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
-        cache_refresh "#{ENV['K8S_METADATA_FILTER_CACHE_REFRESH']}"
+        cache_size  "10000"
+        cache_ttl  "3600"
+        cache_refresh "1800"
       </filter>
+      
       <filter prometheus.metrics**>
         @type prometheus_format
         relabel container_name:container,pod_name:pod
       </filter>
+      
       <match prometheus.metrics.apiserver**>
         @type sumologic
         @id sumologic.endpoint.metrics.apiserver
@@ -170,50 +173,48 @@ data:
     </source>
     @include logs.source.containers.conf
     @include logs.source.systemd.conf
-    @include logs.source.generic.conf
+    
+    @include logs.source.default.conf
   logs.enhance.k8s.metadata.filter.conf: |-
-    cache_size  "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
-    cache_ttl  "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
-    cache_refresh "#{ENV['K8S_METADATA_FILTER_CACHE_REFRESH']}"
+    cache_size  "10000"
+    cache_ttl  "3600"
+    cache_refresh "1800"
     in_namespace_path '$.kubernetes.namespace_name'
     in_pod_path '$.kubernetes.pod_name'
     data_type logs
   logs.kubernetes.metadata.filter.conf: |-
     annotation_match ["sumologic\.com.*"]
     de_dot false
-    watch "#{ENV['K8S_METADATA_FILTER_WATCH']}"
-    ca_file "#{ENV['K8S_METADATA_FILTER_CA_FILE']}"
-    verify_ssl "#{ENV['K8S_METADATA_FILTER_VERIFY_SSL']}"
-    client_cert "#{ENV['K8S_METADATA_FILTER_CLIENT_CERT']}"
-    client_key "#{ENV['K8S_METADATA_FILTER_CLIENT_KEY']}"
-    bearer_token_file "#{ENV['K8S_METADATA_FILTER_BEARER_TOKEN_FILE']}"
-    cache_size "#{ENV['K8S_METADATA_FILTER_CACHE_SIZE']}"
-    cache_ttl "#{ENV['K8S_METADATA_FILTER_CACHE_TTL']}"
+    watch "true"
+    ca_file ""
+    verify_ssl "true"
+    client_cert ""
+    client_key ""
+    bearer_token_file ""
+    cache_size "10000"
+    cache_ttl "3600"
     tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
   logs.kubernetes.sumologic.filter.conf: |-
-    source_name "#{ENV['SOURCE_NAME']}"
-    source_host "#{ENV['SOURCE_HOST']}"
-    log_format "#{ENV['LOG_FORMAT']}"
-    kubernetes_meta "#{ENV['KUBERNETES_META']}"
-    kubernetes_meta_reduce "#{ENV['KUBERNETES_META_REDUCE']}"
-    add_stream "#{ENV['ADD_STREAM']}"
-    add_time "#{ENV['ADD_TIME']}"
-    source_category "#{ENV['SOURCE_CATEGORY']}"
-    source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
-    source_category_replace_dash "#{ENV['SOURCE_CATEGORY_REPLACE_DASH']}"
-    exclude_namespace_regex "#{ENV['EXCLUDE_NAMESPACE_REGEX']}"
-    exclude_pod_regex "#{ENV['EXCLUDE_POD_REGEX']}"
-    exclude_container_regex "#{ENV['EXCLUDE_CONTAINER_REGEX']}"
-    exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
+    source_name "%{namespace}.%{pod}.%{container}"
+    source_host ""
+    log_format "fields"
+    source_category "%{namespace}/%{pod_name}"
+    source_category_prefix "kubernetes/"
+    source_category_replace_dash "/"
+    exclude_namespace_regex ""
+    exclude_pod_regex ""
+    exclude_container_regex ""
+    exclude_host_regex ""
   logs.output.conf: |-
     data_type logs
     log_key log
     endpoint "#{ENV['SUMO_ENDPOINT_LOGS']}"
-    verify_ssl "#{ENV['VERIFY_SSL']}"
-    log_format "#{ENV['LOG_FORMAT']}"
-    add_timestamp "#{ENV['ADD_TIMESTAMP']}"
-    timestamp_key "#{ENV['TIMESTAMP_KEY']}"
-    proxy_uri "#{ENV['PROXY_URI']}"
+    verify_ssl "true"
+    log_format "fields"
+    add_timestamp "true"
+    timestamp_key "timestamp"
+    proxy_uri ""
+    
   logs.source.containers.conf: |
     <filter containers.**>
       @type record_transformer
@@ -250,6 +251,7 @@ data:
         @type enhance_k8s_metadata
         @include logs.enhance.k8s.metadata.filter.conf
       </filter>
+      
       # kubernetes sumologic filter plugin
       <filter containers.**>
         @type kubernetes_sumologic
@@ -265,10 +267,10 @@ data:
         </buffer>
       </match>
     </label>
-  logs.source.generic.conf: |-
+  logs.source.default.conf: |-
     <match **>
       @type sumologic
-      @id sumologic.endpoint.logs.generic
+      @id sumologic.endpoint.logs.default
       @include logs.output.conf
       <buffer>
         @type memory
@@ -283,13 +285,13 @@ data:
     <label @KUBELET>
       <filter host.kubelet.**>
         @type kubernetes_sumologic
-        source_category kubelet
-        source_name k8s_kubelet
-        source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
-        exclude_facility_regex "#{ENV['EXCLUDE_FACILITY_REGEX']}"
-        exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
-        exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
-        exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
+        source_category "kubelet"
+        source_name "k8s_kubelet"
+        source_category_prefix "kubernetes/"
+        exclude_facility_regex ""
+        exclude_host_regex ""
+        exclude_priority_regex ""
+        exclude_unit_regex ""
       </filter>
       <match **>
         @type sumologic
@@ -308,12 +310,12 @@ data:
     <label @SYSTEMD>
       <filter host.**>
         @type kubernetes_sumologic
-        source_category system
-        source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
-        exclude_facility_regex "#{ENV['EXCLUDE_FACILITY_REGEX']}"
-        exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
-        exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
-        exclude_unit_regex "#{ENV['EXCLUDE_UNIT_REGEX']}"
+        source_category "system"
+        source_category_prefix "kubernetes/"
+        exclude_facility_regex ""
+        exclude_host_regex ""
+        exclude_priority_regex ""
+        exclude_unit_regex ""
       </filter>
       <filter host.**>
         @type record_modifier
@@ -370,8 +372,8 @@ data:
       endpoint "#{ENV['SUMO_ENDPOINT_EVENTS']}"
       data_type logs
       disable_cookies true
-      verify_ssl "#{ENV['VERIFY_SSL']}"
-      proxy_uri "#{ENV['PROXY_URI']}"
+      verify_ssl "true"
+      proxy_uri ""
       <buffer>
         @type memory
         @include buffer.output.conf
@@ -383,12 +385,13 @@ data:
   
   buffer.output.conf: |-
     compress gzip
-    flush_interval "#{ENV['FLUSH_INTERVAL']}"
-    flush_thread_count "#{ENV['NUM_THREADS']}"
-    chunk_limit_size "#{ENV['CHUNK_LIMIT_SIZE']}"
-    total_limit_size "#{ENV['TOTAL_LIMIT_SIZE']}"
-    queued_chunks_limit_size "#{ENV['QUEUE_CHUNK_LIMIT_SIZE']}"
+    flush_interval "5s"
+    flush_thread_count "8"
+    chunk_limit_size "1m"
+    total_limit_size "128m"
+    queued_chunks_limit_size "128"
     overflow_action drop_oldest_chunk
+    
   
 ---
 # Source: sumologic/templates/serviceaccount.yaml
@@ -595,58 +598,6 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
-        - name: LOG_FORMAT
-          value: "fields"
-        - name: FLUSH_INTERVAL
-          value: "5s"
-        - name: NUM_THREADS
-          value: "8"
-        - name: CHUNK_LIMIT_SIZE
-          value: "1m"
-        - name: QUEUE_CHUNK_LIMIT_SIZE
-          value: "128"
-        - name: TOTAL_LIMIT_SIZE
-          value: "128m"
-        - name: SOURCE_CATEGORY
-          value: "%{namespace}/%{pod_name}"
-        - name: SOURCE_CATEGORY_PREFIX
-          value: "kubernetes/"
-        - name: SOURCE_CATEGORY_REPLACE_DASH
-          value: "/"
-        - name: SOURCE_NAME
-          value: "%{namespace}.%{pod}.%{container}"
-        - name: KUBERNETES_META
-          value: "true"
-        - name: KUBERNETES_META_REDUCE
-          value: "false"
-        - name: ADD_TIMESTAMP
-          value: "true"
-        - name: TIMESTAMP_KEY
-          value: "timestamp"
-        - name: ADD_STREAM
-          value: "true"
-        - name: ADD_TIME
-          value: "true"
-        - name: K8S_METADATA_FILTER_WATCH
-          value: "true"
-        - name: K8S_METADATA_FILTER_VERIFY_SSL
-          value: "true"
-        - name: K8S_METADATA_FILTER_CACHE_SIZE
-          value: "10000"
-        - name: K8S_METADATA_FILTER_CACHE_TTL
-          value: "3600"
-        - name: K8S_METADATA_FILTER_CACHE_REFRESH
-          value: "1800"
-        - name: VERIFY_SSL
-          value: "true"
-        - name: EXCLUDE_NAMESPACE_REGEX
-          value: ""
-        - name: EXCLUDE_CONTAINER_REGEX
-          value: ""
-        - name: EXCLUDE_HOST_REGEX
-          value: ""
-        - name: EXCLUDE_POD_REGEX
-          value: ""
 ---
 # Source: sumologic/templates/events-deployment.yaml
 
@@ -712,18 +663,6 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-events
-        - name: VERIFY_SSL
-          value: "true"
-        - name: FLUSH_INTERVAL
-          value: "5s"
-        - name: NUM_THREADS
-          value: "8"
-        - name: CHUNK_LIMIT_SIZE
-          value: "1m"
-        - name: QUEUE_CHUNK_LIMIT_SIZE
-          value: "128"
-        - name: TOTAL_LIMIT_SIZE
-          value: "128m"
 ---
 # Source: sumologic/templates/hpa.yaml
 
