@@ -63,16 +63,4 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-events
-        - name: VERIFY_SSL
-          value: {{ .Values.fluentd.verifySsl| quote }}
-        - name: FLUSH_INTERVAL
-          value: {{ .Values.fluentd.buffer.flushInterval | quote }}
-        - name: NUM_THREADS
-          value: {{ .Values.fluentd.buffer.numThreads | quote }}
-        - name: CHUNK_LIMIT_SIZE
-          value: {{ .Values.fluentd.buffer.chunkLimitSize | quote }}
-        - name: QUEUE_CHUNK_LIMIT_SIZE
-          value: {{ .Values.fluentd.buffer.queueChunkLimitSize | quote }}
-        - name: TOTAL_LIMIT_SIZE
-          value: {{ .Values.fluentd.buffer.totalLimitSize | quote }}
 {{- end }}
