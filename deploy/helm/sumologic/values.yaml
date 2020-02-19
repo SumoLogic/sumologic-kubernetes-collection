@@ -82,41 +82,6 @@ sumologic:
         helm.sh/hook-weight: "0"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
-  # If enabled, collect K8s events
-  eventCollectionEnabled: true
-
-  events:
-    # Source category for the Events source. Default: "{clusterName}/events"
-    sourceCategory: ""
-
-  ## Format to post logs into Sumo. json, json_merge, or text
-  logFormat: fields
-
-  ## How frequently to push logs to SumoLogic
-  ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
-  flushInterval: "5s"
-
-  ## Increase number of http threads to Sumo. May be required in heavy logging clusters
-  numThreads: 8
-
-  chunkLimitSize: "1m"
-
-  queueChunkLimitSize: 128
-
-  totalLimitSize: "128m"
-
-  ## Set the _sourceName metadata field in SumoLogic.
-  sourceName: "%{namespace}.%{pod}.%{container}"
-
-  ## Set the _sourceCategory metadata field in SumoLogic.
-  sourceCategory: "%{namespace}/%{pod_name}"
-
-  ## Set the prefix, for _sourceCategory metadata.
-  sourceCategoryPrefix: "kubernetes/"
-
-  ## Used to replace - with another character.
-  sourceCategoryReplaceDash: "/"
-
   ## Include or exclude Kubernetes metadata such as namespace and pod_name if
   ## using json log format.
   kubernetesMeta: "true"
@@ -125,79 +90,110 @@ sumologic:
   ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#reducing-kubernetes-metadata
   kubernetesMetaReduce: "false"
 
-  ## Option to control adding timestamp to logs. 
-  addTimestamp: "true"
-
-  ## Field name when add_timestamp is on.
-  timestampKey: "timestamp"
-
   ## Option to control adding stream to logs.
   addStream: "true"
 
   ## Option to control adding time to logs.
   addTime: "true"
 
-  ## Verify SumoLogic HTTPS certificates
-  verifySsl: "true"
-
-  ## A regular expression for containers. 
-  ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludeContainerRegex: ""
-
-  ## A regular expression for hosts. 
-  ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludeHostRegex: ""
-
-  ## A regular expression for namespaces. 
-  ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludeNamespaceRegex: ""
-
-  ## A regular expression for pods. 
-  ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
-  excludePodRegex: ""
-
-
+fluentd:
   ## Sets the fluentd log level. The default log level, if not specified, is info.
   ## Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs.
   ## ref: https://docs.fluentd.org/deployment/logging
-  fluentdLogLevel: "info"
+  logLevel: "info"
 
-  ## Override Kubernetes resource types you want to get events for from different Kubernetes
-  ## API versions. The key represents the name of the resource type and the value represents
-  ## the API version.
-  # watchResourceEventsOverrides:
-  #   pods: "v1"
-  #   events: "events.k8s.io/v1beta1"
-  
+  ## Verify SumoLogic HTTPS certificates
+  verifySsl: true
+  ## Proxy URI for sumologic output plugin
+  proxyUri: ""
 
-  fluentd:
+  ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
+  autoscaling:
+    enabled: false
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 50
+
+  buffer:
     ## Option to specify the Fluentd buffer as file/memory.
-    buffer: "memory"
-    ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
-    autoscaling:
-      enabled: false
-      minReplicas: 3
-      maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+    type: "memory"
 
-  k8sMetadataFilter:
-    ## Option to control the enabling of metadata filter plugin watch.
-    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-    watch: "true"
+    ## How frequently to push logs to SumoLogic
+    ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
+    flushInterval: "5s"
+    ## Increase number of http threads to Sumo. May be required in heavy logging/high DPM clusters
+    numThreads: 8
+    chunkLimitSize: "1m"
+    queueChunkLimitSize: 128
+    totalLimitSize: "128m"
 
-    ## Verify ssl certificate of sumologic endpoint.
-    verifySsl: "true"
-
+  metadata:
     ## Option to control the enabling of metadata filter plugin cache_size. 
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     cacheSize: "10000"
-
     ## Option to control the enabling of metadata filter plugin cache_ttl (in seconds). 
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     cacheTtl: "3600"
-
     ## Option to control the interval at which metadata cache is asynchronously refreshed (in seconds).
     cacheRefresh: "1800"
+
+  logs:
+    ## Configuration for sumologic output plugin
+    ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/logs/logs.output.conf
+    output:
+      ## Format to post logs into Sumo: fields, json, json_merge, or text.
+      ## NOTE: for logs metadata, fields is required.
+      logFormat: fields
+      ## Option to control adding timestamp to logs.
+      addTimestamp: true
+      ## Field name when add_timestamp is on.
+      timestampKey: "timestamp"
+
+    ## Container log configuration
+    containers:
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "%{namespace}.%{pod}.%{container}"
+      ## Set the _sourceHost metadata field in Sumo Logic.
+      sourceHost: ""
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "%{namespace}/%{pod_name}"
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+      ## Used to replace - with another character.
+      sourceCategoryReplaceDash: "/"
+
+      ## A regular expression for containers.
+      ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeContainerRegex: ""
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeHostRegex: ""
+      ## A regular expression for namespaces.
+      ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeNamespaceRegex: ""
+      ## A regular expression for pods.
+      ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludePodRegex: ""
+
+      k8sMetadataFilter:
+        ## Option to control the enabling of metadata filter plugin watch.
+        ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
+        watch: "true"
+        ## Verify ssl certificate of sumologic endpoint.
+        verifySsl: "true"
+
+  events:
+    # If enabled, collect K8s events
+    enabled: true
+    # Source category for the Events source. Default: "{clusterName}/events"
+    sourceCategory: ""
+    ## Override Kubernetes resource types you want to get events for from different Kubernetes
+    ## API versions. The key represents the name of the resource type and the value represents
+    ## the API version.
+    # watchResourceEventsOverrides:
+    #   pods: "v1"
+    #   events: "events.k8s.io/v1beta1"
 
 ## Configure metrics-server
 ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml

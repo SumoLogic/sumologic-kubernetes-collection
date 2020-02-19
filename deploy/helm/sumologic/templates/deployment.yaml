@@ -106,54 +106,54 @@ spec:
               name: sumologic
               key: endpoint-logs
         - name: LOG_FORMAT
-          value: {{ .Values.sumologic.logFormat | quote }}
+          value: {{ .Values.fluentd.logs.output.logFormat | quote }}
         - name: FLUSH_INTERVAL
-          value: {{ .Values.sumologic.flushInterval | quote }}
+          value: {{ .Values.fluentd.buffer.flushInterval | quote }}
         - name: NUM_THREADS
-          value: {{ .Values.sumologic.numThreads | quote }}
+          value: {{ .Values.fluentd.buffer.numThreads | quote }}
         - name: CHUNK_LIMIT_SIZE
-          value: {{ .Values.sumologic.chunkLimitSize | quote }}
+          value: {{ .Values.fluentd.buffer.chunkLimitSize | quote }}
         - name: QUEUE_CHUNK_LIMIT_SIZE
-          value: {{ .Values.sumologic.queueChunkLimitSize | quote }}
+          value: {{ .Values.fluentd.buffer.queueChunkLimitSize | quote }}
         - name: TOTAL_LIMIT_SIZE
-          value: {{ .Values.sumologic.totalLimitSize | quote }}
+          value: {{ .Values.fluentd.buffer.totalLimitSize | quote }}
         - name: SOURCE_CATEGORY
-          value: {{ .Values.sumologic.sourceCategory | quote }}
+          value: {{ .Values.fluentd.logs.containers.sourceCategory | quote }}
         - name: SOURCE_CATEGORY_PREFIX
-          value: {{ .Values.sumologic.sourceCategoryPrefix | quote }}
+          value: {{ .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}
         - name: SOURCE_CATEGORY_REPLACE_DASH
-          value: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
+          value: {{ .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}
         - name: SOURCE_NAME
-          value: {{ .Values.sumologic.sourceName | quote }}
+          value: {{ .Values.fluentd.logs.containers.sourceName | quote }}
         - name: KUBERNETES_META
           value: {{ .Values.sumologic.kubernetesMeta | quote }}
         - name: KUBERNETES_META_REDUCE
           value: {{ .Values.sumologic.kubernetesMetaReduce | quote }}
         - name: ADD_TIMESTAMP
-          value: {{ .Values.sumologic.addTimestamp | quote }}
+          value: {{ .Values.fluentd.logs.output.addTimestamp | quote }}
         - name: TIMESTAMP_KEY
-          value: {{ .Values.sumologic.timestampKey | quote }}
+          value: {{ .Values.fluentd.logs.output.timestampKey | quote }}
         - name: ADD_STREAM
           value: {{ .Values.sumologic.addStream | quote }}
         - name: ADD_TIME
           value: {{ .Values.sumologic.addTime | quote }}
         - name: K8S_METADATA_FILTER_WATCH
-          value: {{ .Values.sumologic.k8sMetadataFilter.watch | quote }}
+          value: {{ .Values.fluentd.logs.containers.k8sMetadataFilter.watch | quote }}
         - name: K8S_METADATA_FILTER_VERIFY_SSL
-          value: {{ .Values.sumologic.k8sMetadataFilter.verifySsl | quote }}
+          value: {{ .Values.fluentd.logs.containers.k8sMetadataFilter.verifySsl | quote }}
         - name: K8S_METADATA_FILTER_CACHE_SIZE
-          value: {{ .Values.sumologic.k8sMetadataFilter.cacheSize | quote }}
+          value: {{ .Values.fluentd.metadata.cacheSize | quote }}
         - name: K8S_METADATA_FILTER_CACHE_TTL
-          value: {{ .Values.sumologic.k8sMetadataFilter.cacheTtl | quote }}
+          value: {{ .Values.fluentd.metadata.cacheTtl | quote }}
         - name: K8S_METADATA_FILTER_CACHE_REFRESH
-          value: {{ .Values.sumologic.k8sMetadataFilter.cacheRefresh | quote }}
+          value: {{ .Values.fluentd.metadata.cacheRefresh | quote }}
         - name: VERIFY_SSL
-          value: {{ .Values.sumologic.verifySsl | quote }}
+          value: {{ .Values.fluentd.verifySsl | quote }}
         - name: EXCLUDE_NAMESPACE_REGEX
-          value: {{ .Values.sumologic.excludeNamespaceRegex | quote }}
+          value: {{ .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
         - name: EXCLUDE_CONTAINER_REGEX
-          value: {{ .Values.sumologic.excludeContainerRegex | quote }}
+          value: {{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}
         - name: EXCLUDE_HOST_REGEX
-          value: {{ .Values.sumologic.excludeHostRegex | quote }}
+          value: {{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}
         - name: EXCLUDE_POD_REGEX
-          value: {{ .Values.sumologic.excludePodRegex | quote }}
+          value: {{ .Values.fluentd.logs.containers.excludePodRegex | quote }}
