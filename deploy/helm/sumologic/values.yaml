@@ -83,6 +83,11 @@ sumologic:
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 fluentd:
+  rawConfig: |-
+    @include common.conf
+    @include metrics.conf
+    @include logs.conf
+
   ## Sets the fluentd log level. The default log level, if not specified, is info.
   ## Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs.
   ## ref: https://docs.fluentd.org/deployment/logging
@@ -113,6 +118,28 @@ fluentd:
     queueChunkLimitSize: 128
     totalLimitSize: "128m"
 
+    ## File paths to buffer to, if Fluentd buffer type is specified as file above.
+    ## Each sumologic output plugin buffers to its own unique file.
+    filePaths:
+      logs:
+        containers: /fluentd/buffer/logs.containers
+        kubelet: /fluentd/buffer/logs.kubelet
+        systemd: /fluentd/buffer/logs.systemd
+        default: /fluentd/buffer/logs.default
+      metrics:
+        apiserver: /fluentd/buffer/metrics.apiserver
+        kubelet: /fluentd/buffer/metrics.kubelet
+        container: /fluentd/buffer/metrics.container
+        controller: /fluentd/buffer/metrics.controller
+        scheduler: /fluentd/buffer/metrics.scheduler
+        state: /fluentd/buffer/metrics.state
+        node: /fluentd/buffer/metrics.node
+        default: /fluentd/buffer/metrics.default
+      events: /fluentd/buffer/events
+
+    ## Additional config for buffer settings
+    extraConf: |-
+
   metadata:
     ## Option to control the enabling of metadata filter plugin cache_size. 
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
@@ -135,9 +162,17 @@ fluentd:
       addTimestamp: true
       ## Field name when add_timestamp is on.
       timestampKey: "timestamp"
+      ## Additional config parameters for sumologic output plugin
+      extraConf: |-
+
+    ## Additional config for custom log pipelines
+    ## ref: TODO: documentation for custom logs pipelines
+    extraLogs: |-
 
     ## Container log configuration
     containers:
+      outputConf: |-
+        @include logs.output.conf
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "%{namespace}.%{pod}.%{container}"
       ## Set the _sourceHost metadata field in Sumo Logic.
@@ -177,8 +212,13 @@ fluentd:
         ## Path to a file containing the bearer token to use for authentication
         bearerTokenFile: ""
 
+      ## To use additional filter plugins
+      extraFilterPluginConf: |-
+
     ## Kubelet log configuration
     kubelet:
+      outputConf: |-
+        @include logs.output.conf
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "k8s_kubelet"
       ## Set the _sourceCategory metadata field in Sumo Logic.
@@ -201,6 +241,8 @@ fluentd:
 
     ## Systemd log configuration
     systemd:
+      outputConf: |-
+        @include logs.output.conf
       ## Set the _sourceCategory metadata field in Sumo Logic.
       sourceCategory: "system"
       ## Set the prefix, for _sourceCategory metadata.
@@ -218,6 +260,24 @@ fluentd:
       ## A regular expression for unit.
       ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
       excludeUnitRegex: ""
+
+    ## Default log configuration (catch-all)
+    default:
+      outputConf: |-
+        @include logs.output.conf
+
+  metrics:
+    ## Configuration for sumologic output plugin
+    ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/metrics/metrics.output.conf
+    outputConf: |-
+      @include metrics.output.conf
+
+    ## To use additional filter plugins
+    extraFilterPluginConf: |-
+
+    ## To use additional output plugins
+    extraOutputPluginConf: |-
 
   events:
     # If enabled, collect K8s events
