@@ -162,12 +162,62 @@ fluentd:
       ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
       excludePodRegex: ""
 
+      ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
       k8sMetadataFilter:
         ## Option to control the enabling of metadata filter plugin watch.
-        ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
         watch: "true"
-        ## Verify ssl certificate of sumologic endpoint.
-        verifySsl: "true"
+        ## path to CA file for Kubernetes server certificate validation
+        caFile: ""
+        ## Validate SSL certificates
+        verifySsl: true
+        ## Path to a client cert file to authenticate to the API server
+        clientCert: ""
+        ## Path to a client key file to authenticate to the API server
+        clientKey: ""
+        ## Path to a file containing the bearer token to use for authentication
+        bearerTokenFile: ""
+
+    ## Kubelet log configuration
+    kubelet:
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "k8s_kubelet"
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "kubelet"
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+
+      ## A regular expression for facility.
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeFacilityRegex: ""
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeHostRegex: ""
+      ## A regular expression for priority.
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludePriorityRegex: ""
+      ## A regular expression for unit.
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeUnitRegex: ""
+
+    ## Systemd log configuration
+    systemd:
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "system"
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+
+      ## A regular expression for facility.
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeFacilityRegex: ""
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeHostRegex: ""
+      ## A regular expression for priority.
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludePriorityRegex: ""
+      ## A regular expression for unit.
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeUnitRegex: ""
 
   events:
     # If enabled, collect K8s events
