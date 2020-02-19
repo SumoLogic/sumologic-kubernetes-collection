@@ -125,18 +125,10 @@ spec:
           value: {{ .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}
         - name: SOURCE_NAME
           value: {{ .Values.fluentd.logs.containers.sourceName | quote }}
-        - name: KUBERNETES_META
-          value: {{ .Values.sumologic.kubernetesMeta | quote }}
-        - name: KUBERNETES_META_REDUCE
-          value: {{ .Values.sumologic.kubernetesMetaReduce | quote }}
         - name: ADD_TIMESTAMP
           value: {{ .Values.fluentd.logs.output.addTimestamp | quote }}
         - name: TIMESTAMP_KEY
           value: {{ .Values.fluentd.logs.output.timestampKey | quote }}
-        - name: ADD_STREAM
-          value: {{ .Values.sumologic.addStream | quote }}
-        - name: ADD_TIME
-          value: {{ .Values.sumologic.addTime | quote }}
         - name: K8S_METADATA_FILTER_WATCH
           value: {{ .Values.fluentd.logs.containers.k8sMetadataFilter.watch | quote }}
         - name: K8S_METADATA_FILTER_VERIFY_SSL

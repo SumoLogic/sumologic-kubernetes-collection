@@ -82,20 +82,6 @@ sumologic:
         helm.sh/hook-weight: "0"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
-  ## Include or exclude Kubernetes metadata such as namespace and pod_name if
-  ## using json log format.
-  kubernetesMeta: "true"
-
-  ## Reduces redundant Kubernetes metadata. 
-  ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#reducing-kubernetes-metadata
-  kubernetesMetaReduce: "false"
-
-  ## Option to control adding stream to logs.
-  addStream: "true"
-
-  ## Option to control adding time to logs.
-  addTime: "true"
-
 fluentd:
   ## Sets the fluentd log level. The default log level, if not specified, is info.
   ## Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs.
