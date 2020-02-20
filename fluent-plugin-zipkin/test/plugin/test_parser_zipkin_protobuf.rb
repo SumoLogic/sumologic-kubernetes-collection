@@ -67,4 +67,24 @@ class ZipkinProtobufParserTest < ::Test::Unit::TestCase
       assert_equal("test_second_tag", span['tags']['tag2'])
     }
   end
+
+  def test_parse_json_without_annotations
+    test_json = '[{"timestamp":1582204894816690,"duration":794480231,"traceId":"e1d1cc0ec89a82b96a0d4f57a04bc9c8","id":"47dcc5114b8917d4","parentId":"3f1d0f63f18d9c19","name":"nonrealism","kind":"CLIENT","localEndpoint":{"serviceName":"underniceness","ipv4":"83.245.217.213","port":9063},"remoteEndpoint":{"serviceName":"vivipary","ipv4":"234.253.77.216","port":31020},"tags":{"ipv6":"63ec:bbb8:3daf:3739:57d6:7814:fa7b:c9c8","zipkin.remoteEndpoint.ipv6":"4fb6:7db1:c2a0:f55f:cd46:2ad5:d508:9b80"}}]'
+    @parser.configure({})
+    @parser.instance.parse_json(test_json) { |timestamp, span|
+      assert_equal("\xE1\xD1\xCC\x0E\xC8\x9A\x82\xB9j\rOW\xA0K\xC9\xC8".force_encoding("ASCII-8BIT"), span['trace_id'])
+      assert_equal("?\x1D\x0Fc\xF1\x8D\x9C\x19".force_encoding("ASCII-8BIT"), span['parent_id'])
+      assert_equal("G\xDC\xC5\x11K\x89\x17\xD4".force_encoding("ASCII-8BIT"), span['id'])
+      assert_equal(1582204894816690, span['timestamp'])
+      assert_equal('CLIENT'.force_encoding("ASCII-8BIT"), span['kind'])
+      assert_equal('nonrealism', span['name'])
+      assert_equal(794480231, span['duration'])
+      assert_equal('underniceness', span['local_endpoint']['service_name'])
+      assert_equal("S\xF5\xD9\xD5".force_encoding("ASCII-8BIT"), span['local_endpoint']['ipv4'])
+      assert_equal(9063, span['local_endpoint']['port'])
+      assert_equal("\xEA\xFDM\xD8".force_encoding("ASCII-8BIT"), span['remote_endpoint']['ipv4'])
+      assert_equal('vivipary', span['remote_endpoint']['service_name'])
+      assert_equal(31020, span['remote_endpoint']['port'])
+    }
+  end
 end
