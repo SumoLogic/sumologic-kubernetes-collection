@@ -9,10 +9,12 @@ spec:
   selector:
     app: {{ template "sumologic.labels.app" . }}
   ports:
+  {{- if .Values.sumologic.traces.enabled }}
   - name: zipkin-write
     port: 9411
     targetPort: 9411
     protocol: TCP
+  {{- end }}
   - name: prom-write
     port: 9888
     targetPort: 9888
