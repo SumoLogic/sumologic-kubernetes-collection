@@ -78,7 +78,7 @@ module Fluent
           record['timestamp'] = record['timestamp'].to_i
           record['duration'] = record['duration'].to_i
 
-          record['annotations'].each do |annotation|
+          record.fetch('annotations', []).each do |annotation|
             annotation['timestamp'] = annotation['timestamp'].to_i
           end
 
