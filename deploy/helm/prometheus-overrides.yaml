@@ -48,6 +48,17 @@ prometheus:
     selector:
       matchLabels:
         app: fluent-bit
+  - name: collection-sumologic-otelcol
+    additionalLabels:
+      app: collection-sumologic-otelcol
+    endpoints:
+    - port: metrics
+    namespaceSelector:
+      matchNames:
+      - sumologic
+    selector:
+      matchLabels:
+        app: collection-sumologic-otelcol
   prometheusSpec:
     remoteWrite:
     - # kube state metrics
