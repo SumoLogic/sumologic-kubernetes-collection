@@ -315,7 +315,7 @@ fluent-bit:
       Name              tail
       Path              /var/log/kube-apiserver-audit.log
       Parser            docker
-      Tag               audit.*
+      Tag               kube-audit.*
       Refresh_Interval  5
       Rotate_Wait       60
       Mem_Buf_Limit     35MB
