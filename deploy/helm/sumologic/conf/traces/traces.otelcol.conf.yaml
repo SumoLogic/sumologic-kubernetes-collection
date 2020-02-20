@@ -3,7 +3,8 @@ receivers:
   jaeger:
     protocols:
       grpc:
-  zipkin: {}
+  zipkin:
+    endpoint: "0.0.0.0:9411"
 processors:
   k8s_tagger:
     passthrough: false
