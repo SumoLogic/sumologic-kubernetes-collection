@@ -11,12 +11,46 @@ processors:
     extract:
       metadata:
         # extract the following well-known metadata fields
-        - podName
-        - deployment
+        - containerId
+        - containerName
+        - containerImage
         - cluster
+        - daemonSetName
+        - deployment
+        - hostName
         - namespace
+        - namespaceId
         - node
+        - owners
+        - podId
+        - podName
+        - replicaSetName
+        - serviceName
         - startTime
+        - statefulSetName
+      tags:
+        containerId: container_id
+        containerName: container_name
+        containerImage: conatiner_image
+        cluster: cluster
+        daemonSetName: daemonset
+        deployment: deployment
+        hostName: hostname
+        namespace: namespace
+        namespaceId: namespace_id
+        node: node
+        podId: pod_id
+        podName: pod
+        replicaSetName: replicaset
+        serviceName: service_name
+        startTime: start_time
+        statefulSetName: statefulset
+      annotations:
+         - tag_name: pod_annotation_%s
+           key: "*"
+      labels:
+         - tag_name: pod_label_%s
+           key: "*"
   queued_retry:
     num_workers: 16
     queue_size: 10000
