@@ -45,13 +45,13 @@ helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collect
 Install the chart with release name `collection` and namespace `sumologic`
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<MY_CLUSTER_NAME>" --set sumologic.clusterName="<MY_CLUSTER_NAME>"
+helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
 If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists`, run the above command with the `--no-crd-hook` flag:
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="<MY_CLUSTER_NAME>" --set sumologic.clusterName="<MY_CLUSTER_NAME>" --no-crd-hook
+helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --no-crd-hook
 ```
 
 __NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to use extended Berkeley Packet Filter (eBPF) to supply the stream of system calls to the Falco engine. eBPF is currently only supported on GKE and COS. For more information see [Installing Falco](https://falco.org/docs/installation/).
@@ -66,13 +66,13 @@ ebpf:
 To customize your configuration, download the values.yaml file by running
 
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.14.0/deploy/helm/sumologic/values.yaml
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/sumologic/values.yaml
 ```
 
 NOTE: If you need to install the chart with a different release name or namespace you will need to override some configuration fields for both Prometheus and fluent-bit. We recommend using an override file due to the number of fields that need to be overridden. In the following command, replace the `<RELEASE-NAME>` and `<NAMESPACE>` variables with your values and then run it to download the override file with your replaced values:
 
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.14.0/deploy/helm/sumologic/values.yaml | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/sumologic/values.yaml | \
 sed 's/\-sumologic.sumologic'"/-sumologic.<NAMESPACE>/g" | \
 sed 's/\- sumologic'"/- <NAMESPACE>/g" | \
 sed 's/\collection'"/<RELEASE-NAME>/g" > values.yaml
@@ -80,7 +80,7 @@ sed 's/\collection'"/<RELEASE-NAME>/g" > values.yaml
 
 For example, if your release name is `my-release` and namespace is `my-namespace`:
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.14.0/deploy/helm/sumologic/values.yaml | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/sumologic/values.yaml | \
 sed 's/\-sumologic.sumologic'"/-sumologic.my-namespace/g" | \
 sed 's/\collection'"/my-release/g" > values.yaml
 ```
