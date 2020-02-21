@@ -9,6 +9,9 @@ deployment:
   nodeSelector: {}
   tolerations: {}
   affinity: {}
+  ## Acceptable values for podAntiAffinity:
+  ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
+  ## hard: specifies rules that must be met for a pod to be scheduled onto a node
   podAntiAffinity: "soft"
   replicaCount: 3
   resources:
