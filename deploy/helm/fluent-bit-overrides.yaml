@@ -3,11 +3,21 @@ service:
   flush: 5
 metrics:
   enabled: true
+env:
+- name: CHART
+  valueFrom:
+    configMapKeyRef:
+      name: sumologic-configmap
+      key: release
+- name: NAMESPACE
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.namespace
 backend:
   type: forward
   forward:
     # NOTE: Requires trailing "." for fully-qualified name resolution
-    host: collection-sumologic.sumologic.svc.cluster.local.
+    host: ${CHART}.${NAMESPACE}.svc.cluster.local.
     port: 24321
     tls: "off"
     tls_verify: "on"
