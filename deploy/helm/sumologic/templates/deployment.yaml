@@ -25,6 +25,43 @@ spec:
       tolerations:
 {{ toYaml .Values.deployment.tolerations | indent 8 }}
 {{- end }}
+{{- if or .Values.deployment.affinity  .Values.deployment.podAntiAffinity }}
+      affinity:
+{{- if .Values.deployment.affinity }}
+{{ toYaml .Values.deployment.affinity | indent 8 }}
+{{- end }}
+{{- if eq .Values.deployment.podAntiAffinity "hard"}}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - {{ template "sumologic.labels.app" . }}
+              - key: app
+                operator: In
+                values:
+                - prometheus-operator-prometheus
+            topologyKey: "kubernetes.io/hostname"
+{{else if eq .Values.deployment.podAntiAffinity "soft"}}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ template "sumologic.labels.app" . }}
+                - key: app
+                  operator: In
+                  values:
+                  - prometheus-operator-prometheus
+              topologyKey: "kubernetes.io/hostname"
+{{- end }}
+{{- end }}
       volumes:
       - name: pos-files
         hostPath:
