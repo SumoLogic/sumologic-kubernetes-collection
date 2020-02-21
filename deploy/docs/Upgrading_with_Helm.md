@@ -19,19 +19,20 @@ If desired, there are two ways to pass configuration data:
 
 - If you are using an [Alpha Release](./Alpha_Release_Guide.md) you will need to append `--version=X.X.X-alpha` to your `helm upgrade` command to avoid changing the version of the Helm chart installed. Use `helm ls` to find your current Helm chart version.
 
-### Example to Upgrade without any arguments:
+### Example to upgrade without any arguments:
 
 ```bash
 helm upgrade collection sumologic/sumologic
 ```
 In the above command, since no arguments were specified, the `--reuse-values` flag will be used by default.
 
-**Please ensure to always download the latest/specifc version `values.yaml` from the follwing link and make the required changes as per your existing `values.yaml`  before running the upgrade.** 
+**Always download the latest version of `values.yaml` from the following link and synchronize it based on your existing `values.yaml` file before running the upgrade.**
 
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.14.0/deploy/helm/sumologic/values.yaml 
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.14.0/deploy/helm/sumologic/values.yaml
+```
 
-### Example to Upgrade using the `--version` flag:
+### Example to upgrade using the `--version` flag:
 
 ```bash
 helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VERSION> -f values.yaml
