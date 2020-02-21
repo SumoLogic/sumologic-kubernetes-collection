@@ -26,6 +26,10 @@ helm upgrade collection sumologic/sumologic
 ```
 In the above command, since no arguments were specified, the `--reuse-values` flag will be used by default.
 
+**Please ensure to always download the latest/specifc version `values.yaml` from the follwing link and make the required changes as per your existing `values.yaml`  before running the upgrade.** 
+
+```bash
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.14.0/deploy/helm/sumologic/values.yaml 
 
 ### Example to Upgrade using the `--version` flag:
 
