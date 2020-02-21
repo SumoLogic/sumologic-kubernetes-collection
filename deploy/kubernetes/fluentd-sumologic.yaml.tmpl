@@ -502,6 +502,22 @@ spec:
         
     spec:
       serviceAccountName: collection-sumologic
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - collection-sumologic
+                - key: app
+                  operator: In
+                  values:
+                  - prometheus-operator-prometheus
+              topologyKey: "kubernetes.io/hostname"
       volumes:
       - name: pos-files
         hostPath:
