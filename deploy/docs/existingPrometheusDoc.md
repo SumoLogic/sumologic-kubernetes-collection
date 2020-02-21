@@ -19,7 +19,15 @@ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-colle
 Edit the `values.yaml` file to `prometheus-operator.enabled = false`, and run
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
+helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> 
+```
+
+In case the prometheus-operator is installed in a different namespace as compared to where the sumologic solution is deployed, you would need to copy one of the configmaps that exposes the release name,  which is used in the remote write urls.
+
+For example: 
+If the sumologic solution is deployed in <source-namespace> and existing prometheus-operator is in <destination-namespace>, run the below command: 
+```bash
+kubectl get configmap sumologic-configmap — namespace=<source-namespace> — export -o yaml |\ kubectl apply — namespace=<destination-namespace> -f -
 ```
 
 ## Overwrite Prometheus Remote Write Configuration
