@@ -23,7 +23,8 @@ if [ -n "$GITHUB_TOKEN" ]; then
 fi
 
 # Check for invalid changes to generated yaml files (non-Tag builds)
-if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
+# Exclude branches that start with "revert-" to allow reverts
+if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ] && [[ ! "$TRAVIS_PULL_REQUEST_BRANCH" =~ ^revert- ]]; then
   # Check most recent commit author. If non-Travis, check for changes made to generated files
   recent_author=$(git log origin-repo/master..HEAD --format="%an" | grep -m1 "")
   if echo $recent_author | grep -v -q -i "travis"; then
