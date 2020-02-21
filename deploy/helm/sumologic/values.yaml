@@ -8,6 +8,8 @@ nameOverride: ""
 deployment:
   nodeSelector: {}
   tolerations: {}
+  affinity: {}
+  podAntiAffinity: "soft"
   replicaCount: 3
   resources:
     limits:
