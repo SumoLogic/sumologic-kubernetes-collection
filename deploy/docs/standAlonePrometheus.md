@@ -12,7 +12,7 @@ The urls in `remoteWrite` section of the `prometheus-overrides.yaml` file uses `
 - Replace `$(NAMESPACE)` with the namespace where prometheus is running.
 
 For eg:
-If you have installed the sumlogic helm chart with release name `collection` in `sumologic namespace and the prometheus is running in `prometheus` namespace:
+If you have installed the sumlogic helm chart with release name `collection` in `sumologic` namespace and the prometheus is running in `prometheus` namespace:
 ```
 `$(CHART).$(NAMESPACE)` will be replaced by `collection-sumologic.prometheus`
 ```
