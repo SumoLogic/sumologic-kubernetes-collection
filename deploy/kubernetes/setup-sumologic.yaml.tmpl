@@ -38,6 +38,7 @@ data:
     terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
     terraform import sumologic_http_source.logs_source "$COLLECTOR_NAME/logs"
     terraform import sumologic_http_source.node_exporter_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
+    terraform import sumologic_http_source.traces_source "$COLLECTOR_NAME/traces"
 
     # Kubernetes Namespace and Secret
     terraform import kubernetes_namespace.sumologic_collection_namespace $NAMESPACE
@@ -69,6 +70,7 @@ data:
       kubelet-metrics-source-name                 = "kubelet-metrics"
       logs-source-name                            = "logs"
       node-exporter-metrics-source-name           = "node-exporter-metrics"
+      traces-source-name                          = "traces"
     }
 
     provider "sumologic" {}
@@ -126,6 +128,11 @@ data:
         collector_id = "${sumologic_collector.collector.id}"
     }
 
+    resource "sumologic_http_source" "traces_source" {
+        name         = local.traces-source-name
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
     provider "kubernetes" {
       host                    = "https://kubernetes.default.svc"
       token                   = "${file("/var/run/secrets/kubernetes.io/serviceaccount/token")}"
@@ -154,6 +161,7 @@ data:
         endpoint-metrics-kube-state               = "${sumologic_http_source.kube_state_metrics_source.url}"
         endpoint-metrics-kubelet                  = "${sumologic_http_source.kubelet_metrics_source.url}"
         endpoint-metrics-node-exporter            = "${sumologic_http_source.node_exporter_metrics_source.url}"
+        endpoint-traces                           = "${sumologic_http_source.traces_source.url}"
       }
 
       type = "Opaque"
