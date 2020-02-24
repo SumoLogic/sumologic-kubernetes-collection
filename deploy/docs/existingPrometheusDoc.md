@@ -25,7 +25,7 @@ helm install sumologic/sumologic --name collection --namespace sumologic -f valu
 If the prometheus-operator is installed in a different namespace than where the Sumo Logic Solution is deployed you need to copy one of the configmaps that exposes the release name, which is used in the remote write URLs.
 
 For example: 
-If the sumologic solution is deployed in <source-namespace> and existing prometheus-operator is in <destination-namespace>, run the below command: 
+If the Sumo Logic Solution is deployed in <source-namespace> and the existing prometheus-operator is in <destination-namespace>, run the below command: 
 ```bash
 kubectl get configmap sumologic-configmap — namespace=<source-namespace> — export -o yaml |\ kubectl apply — namespace=<destination-namespace> -f -
 ```
