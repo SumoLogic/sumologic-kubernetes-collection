@@ -155,6 +155,11 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
+        - name: SUMO_ENDPOINT_TRACES
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-traces
 {{- if .Values.fluentd.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
