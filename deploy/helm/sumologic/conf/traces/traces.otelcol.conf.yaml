@@ -68,11 +68,7 @@ exporters:
 service:
   extensions: [health_check]
   pipelines:
-    traces/1:
-      receivers: [jaeger, zipkin, opencensus]
-      processors: [batch, queued_retry, k8s_tagger]
-      exporters: [zipkin]
-    traces/2:
+    traces:
       receivers: [jaeger, zipkin, opencensus]
       processors: [batch, queued_retry, k8s_tagger]
       exporters: [zipkin]
