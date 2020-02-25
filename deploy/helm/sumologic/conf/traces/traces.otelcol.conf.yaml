@@ -4,75 +4,47 @@ receivers:
     protocols:
       grpc:
   zipkin:
-    endpoint: "0.0.0.0:9411"
+    endpoint: {{ .Values.otelcol.receivers.zipkin.endpoint }}
 processors:
   k8s_tagger:
-    passthrough: false
+    passthrough: {{ .Values.otelcol.processors.k8s_tagger.passthrough }}
     extract:
       metadata:
-        # extract the following well-known metadata fields
-        - containerId
-        - containerName
-        - containerImage
-        - cluster
-        - daemonSetName
-        - deployment
-        - hostName
-        - namespace
-        - namespaceId
-        - node
-        - owners
-        - podId
-        - podName
-        - replicaSetName
-        - serviceName
-        - startTime
-        - statefulSetName
+        {{- range .Values.otelcol.processors.k8s_tagger.extract.metadata }}
+        - {{ . | quote }}
+        {{- end }}
       tags:
-        containerId: container_id
-        containerName: container_name
-        containerImage: conatiner_image
-        cluster: cluster
-        daemonSetName: daemonset
-        deployment: deployment
-        hostName: hostname
-        namespace: namespace
-        namespaceId: namespace_id
-        node: node
-        podId: pod_id
-        podName: pod
-        replicaSetName: replicaset
-        serviceName: service_name
-        startTime: start_time
-        statefulSetName: statefulset
+        {{- range $key, $val := .Values.otelcol.processors.k8s_tagger.extract.tags }}
+        {{ $key }}: {{ $val | quote }}
+        {{- end }}
       annotations:
-         - tag_name: pod_annotation_%s
-           key: "*"
+        {{- range .Values.otelcol.processors.k8s_tagger.extract.annotations }}
+        - tag_name: {{ .tag_name | quote }}
+          key: {{ .key | quote }}
+        {{- end }}
       labels:
-         - tag_name: pod_label_%s
-           key: "*"
+        {{- range .Values.otelcol.processors.k8s_tagger.extract.labels }}
+        - tag_name: {{ .tag_name | quote }}
+          key: {{ .key | quote }}
+        {{- end }}
   queued_retry:
-    num_workers: 16
-    queue_size: 10000
-    retry_on_failure: true
+    num_workers: {{ .Values.otelcol.processors.queued_retry.num_workers }}
+    queue_size: {{ .Values.otelcol.processors.queued_retry.queue_size }}
+    retry_on_failure: {{ .Values.otelcol.processors.queued_retry.retry_on_failure }}
   batch:
-    send_batch_size: 1024
-    timeout: 5s
+    send_batch_size: {{ .Values.otelcol.processors.batch.send_batch_size }}
+    timeout: {{ .Values.otelcol.processors.batch.timeout }}
 extensions:
   health_check: {}
 exporters:
   zipkin:
-    url: http://{{ template "sumologic.fullname" . }}:9411/api/v2/spans
+    url: {{ if .Values.otelcol.exporters.zipkin.url }} {{ .Values.otelcol.exporters.zipkin.url }} {{ else }} http://{{ template "sumologic.fullname" . }}:9411/api/v2/spans {{ end }}
   # logging:
   #   loglevel: debug
 service:
-  extensions: [health_check]
+  extensions: {{ include "otelcol.generate_list" .Values.otelcol.extensions | nindent 5 }}
   pipelines:
-    traces/1:
-      receivers: [jaeger, zipkin, opencensus]
-      processors: [batch, queued_retry, k8s_tagger]
-      exporters: [zipkin]
-    traces/2:
-      receivers: [jaeger, zipkin, opencensus]
-      processors: [batch, queued_retry, k8s_tagger]
-      exporters: [zipkin]
+    traces:
+      receivers: {{ include "otelcol.generate_list" .Values.otelcol.receivers | nindent 10 }}
+      processors: {{ include "otelcol.generate_list" .Values.otelcol.processors | nindent 10 }}
+      exporters: {{ include "otelcol.generate_list" .Values.otelcol.exporters | nindent 10 }}

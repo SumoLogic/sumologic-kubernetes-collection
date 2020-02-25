@@ -35,3 +35,35 @@ release: "{{ .Release.Name }}"
 heritage: "{{ .Release.Service }}"
 {{- end -}}
 {{- end -}}
+
+{{/*
+Generate list of extensions/receivers/etc from dictionary:
+
+Example input:
+```
+extensions:
+  extension_a:
+    enabled: true
+  extension_b:
+    enabled: false
+```
+
+Usage: include "otelcol.generate_list" extensions"
+
+Expected output:
+```
+- extension_a
+```
+*/}}
+{{- define "otelcol.generate_list" -}}
+{{- $empty_list := true }}
+{{- range $key, $val := . }}
+  {{- if $val.enabled }}
+    {{- if $empty_list }}
+      {{- $empty_list = false }}
+    {{- end }}
+- {{ $key | quote }}
+  {{- end }}
+{{- end }}
+{{- if $empty_list }} [] {{ end }}
+{{- end -}}
