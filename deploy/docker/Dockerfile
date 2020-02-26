@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.6.3-debian-1.0 AS builder
+FROM fluent/fluentd:v1.8.1-debian-1.0 AS builder
 
 # Use root account to use apt
 USER root
@@ -26,7 +26,7 @@ RUN gem install fluent-plugin-s3
 # FluentD plugins from RubyGems
 RUN gem install fluent-plugin-systemd -v 1.0.2 \
        && gem install fluent-plugin-record-modifier -v 2.0.1 \
-       && gem install fluent-plugin-kubernetes_metadata_filter -v 2.2.0 \
+       && gem install fluent-plugin-kubernetes_metadata_filter -v 2.4.1 \
        && gem install fluent-plugin-sumologic_output -v 1.6.1 \
        && gem install fluent-plugin-concat -v 2.4.0 \
        && gem install fluent-plugin-rewrite-tag-filter -v 2.2.0 \
@@ -42,7 +42,7 @@ RUN gem install --local fluent-plugin-prometheus-format \
        && gem install --local fluent-plugin-zipkin
 
 # Start with fresh image
-FROM fluent/fluentd:v1.6.3-debian-1.0
+FROM fluent/fluentd:v1.8.1-debian-1.0
 
 # Use root account to use apt
 USER root
