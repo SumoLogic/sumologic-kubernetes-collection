@@ -138,6 +138,7 @@ data:
     resource "sumologic_http_source" "traces_source" {
         name         = local.traces-source-name
         collector_id = "${sumologic_collector.collector.id}"
+        content_type = "Zipkin"
     }
     {{- end }}
 
