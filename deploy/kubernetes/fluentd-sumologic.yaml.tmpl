@@ -1,5 +1,13 @@
 # This file is auto-generated.
 ---
+# Source: sumologic/templates/chart-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sumologic-configmap
+data:
+  release: collection-sumologic
+---
 # Source: sumologic/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -53,13 +61,6 @@ data:
       @label @DATAPOINT
     </match>
     <label @DATAPOINT>
-      <filter prometheus.metrics**> # NOTE: Remove this filter if you are running Kubernetes 1.13 or below.
-        @type grep
-        <exclude>
-          key @metric
-          pattern /^apiserver_request_count|^apiserver_request_latencies_summary|^kubelet_runtime_operations_latency_microseconds|^kubelet_docker_operations_latency_microseconds|^kubelet_docker_operations_errors$/
-        </exclude>
-      </filter>
       <filter prometheus.metrics**>
         @type record_modifier
         <record>
@@ -221,9 +222,9 @@ data:
       enable_ruby
       renew_record true
       <record>
-        log    ${record["log"].split(/[\n\t]+/).map! {|item| JSON.parse(item)["log"]}.join("") rescue record["log"]}
-        stream ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["stream"]}.join("") rescue record["stream"]}
-        time   ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.join("") rescue record["time"]}
+        log    ${record["log"].split(/[\n\t]+/).map! {|item| JSON.parse(item)["log"]}.any? ? record["log"].split(/[\n\t]+/).map! {|item| JSON.parse(item)["log"]}.join("") : record["log"] rescue record["log"]}
+        stream ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["stream"]}.any? ? [record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["stream"]}.join("") : record["stream"] rescue record["stream"]}
+        time   ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.any? ? [record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.join("") : record["time"] rescue record["time"]}
       </record>
     </filter>
     # match all  container logs and label them @NORMAL
@@ -512,6 +513,22 @@ spec:
         
     spec:
       serviceAccountName: collection-sumologic
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - collection-sumologic
+                - key: app
+                  operator: In
+                  values:
+                  - prometheus-operator-prometheus
+              topologyKey: "kubernetes.io/hostname"
       volumes:
       - name: pos-files
         hostPath:
@@ -522,7 +539,7 @@ spec:
           name: collection-sumologic
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:0.14.0
+        image: sumologic/kubernetes-fluentd:0.15.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -629,7 +646,7 @@ spec:
           name: collection-sumologic-events
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:0.14.0
+        image: sumologic/kubernetes-fluentd:0.15.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -665,4 +682,14 @@ spec:
               key: endpoint-events
 ---
 # Source: sumologic/templates/hpa.yaml
+
+---
+# Source: sumologic/templates/otelcol-configmap.yaml
+
+---
+# Source: sumologic/templates/otelcol-deployment.yaml
+
+
+---
+# Source: sumologic/templates/otelcol-service.yaml
 

@@ -1,0 +1,44 @@
+receivers:
+  opencensus: {}
+  jaeger:
+    protocols:
+      grpc:
+  zipkin:
+    endpoint: "0.0.0.0:9411"
+processors:
+  k8s_tagger:
+    passthrough: false
+    extract:
+      metadata:
+        # extract the following well-known metadata fields
+        - podName
+        - deployment
+        - cluster
+        - namespace
+        - node
+        - startTime
+  queued_retry:
+    num_workers: 16
+    queue_size: 10000
+    retry_on_failure: true
+  batch:
+    send_batch_size: 1024
+    timeout: 5s
+extensions:
+  health_check: {}
+exporters:
+  zipkin:
+    url: http://{{ template "sumologic.fullname" . }}:9411/api/v2/spans
+  # logging:
+  #   loglevel: debug
+service:
+  extensions: [health_check]
+  pipelines:
+    traces/1:
+      receivers: [jaeger, zipkin, opencensus]
+      processors: [batch, queued_retry, k8s_tagger]
+      exporters: [zipkin]
+    traces/2:
+      receivers: [jaeger, zipkin, opencensus]
+      processors: [batch, queued_retry, k8s_tagger]
+      exporters: [zipkin]
