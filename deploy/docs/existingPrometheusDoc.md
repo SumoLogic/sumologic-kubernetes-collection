@@ -13,13 +13,21 @@
 Run the following to download the `values.yaml` file
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.14.0/deploy/helm/sumologic/values.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/sumologic/values.yaml
 ```
 
 Edit the `values.yaml` file to `prometheus-operator.enabled = false`, and run
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
+helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> 
+```
+
+If the prometheus-operator is installed in a different namespace than where the Sumo Logic Solution is deployed you need to copy one of the configmaps that exposes the release name, which is used in the remote write URLs.
+
+For example: 
+If the Sumo Logic Solution is deployed in `<source-namespace>` and the existing prometheus-operator is in `<destination-namespace>`, run the below command: 
+```bash
+kubectl get configmap sumologic-configmap — namespace=<source-namespace> — export -o yaml |\ kubectl apply — namespace=<destination-namespace> -f -
 ```
 
 ## Overwrite Prometheus Remote Write Configuration
@@ -27,7 +35,7 @@ helm install sumologic/sumologic --name collection --namespace sumologic -f valu
 If you have not already customized your [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write), run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide below.
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.14.0/deploy/helm/prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 Then run

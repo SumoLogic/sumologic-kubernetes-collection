@@ -94,7 +94,7 @@ data:
 
     resource "sumologic_http_source" "events_source" {
         name         = local.events-source-name
-        category     = {{ if .Values.sumologic.events.sourceCategory }}{{ .Values.sumologic.events.sourceCategory }}{{- else}}{{ "\"${var.cluster_name}/${local.events-source-name}\"" }}{{- end}}
+        category     = {{ if .Values.fluentd.events.sourceCategory }}{{ .Values.fluentd.events.sourceCategory }}{{- else}}{{ "\"${var.cluster_name}/${local.events-source-name}\"" }}{{- end}}
         collector_id = "${sumologic_collector.collector.id}"
     }
 

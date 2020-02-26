@@ -1,0 +1,90 @@
+require_relative '../helper'
+require 'fluent/test/driver/parser'
+require 'fluent/plugin/parser'
+require 'fluent/plugin/parser_zipkin_protobuf'
+
+class ZipkinProtobufParserTest < ::Test::Unit::TestCase
+  TEST_JSON = '[{"traceId":"746573745f6964","parentId":"746573745f6965","id":"746573745f6963","kind":"CLIENT","name":"test name","timestamp":"1580308467000000","duration":"13","localEndpoint":{"serviceName":"test_local","ipv4":"127.0.0.1","ipv6":"::2001:4860:4860:8888","port":313},"remoteEndpoint":{"serviceName":"test_remote","ipv4":"127.0.0.2","ipv6":"::2001:4860:4860:88ff","port":777},"annotations":[{"timestamp":"1580308467000006","value":"test_value"}],"tags":{"tag1":"test_first_tag","tag2":"test_second_tag"}}]'
+  TEST_PROTOBUF = "\x0a\xbe\x01\x0a\x07\x74\x65\x73\x74\x5f\x69\x64\x12\x07\x74\x65\x73\x74\x5f\x69\x65\x1a\x07\x74\x65\x73\x74\x5f\x69\x63\x20\x01\x2a\x09\x74\x65\x73\x74\x20\x6e\x61\x6d\x65\x31\xc0\xa2\xcf\x3c\x48\x9d\x05\x00\x38\x0d\x42\x1f\x0a\x0a\x74\x65\x73\x74\x5f\x6c\x6f\x63\x61\x6c\x12\x04\x7f\x00\x00\x01\x1a\x08\x20\x01\x48\x60\x48\x60\x88\x88\x20\xb9\x02\x4a\x20\x0a\x0b\x74\x65\x73\x74\x5f\x72\x65\x6d\x6f\x74\x65\x12\x04\x7f\x00\x00\x02\x1a\x08\x20\x01\x48\x60\x48\x60\x88\xff\x20\x89\x06\x52\x15\x09\xc6\xa2\xcf\x3c\x48\x9d\x05\x00\x12\x0a\x74\x65\x73\x74\x5f\x76\x61\x6c\x75\x65\x5a\x16\x0a\x04\x74\x61\x67\x31\x12\x0e\x74\x65\x73\x74\x5f\x66\x69\x72\x73\x74\x5f\x74\x61\x67\x5a\x17\x0a\x04\x74\x61\x67\x32\x12\x0f\x74\x65\x73\x74\x5f\x73\x65\x63\x6f\x6e\x64\x5f\x74\x61\x67\x0a\xbe\x01\x0a\x07\x74\x65\x73\x74\x5f\x69\x64\x12\x07\x74\x65\x73\x74\x5f\x69\x65\x1a\x07\x74\x65\x73\x74\x5f\x69\x63\x20\x01\x2a\x09\x74\x65\x73\x74\x20\x6e\x61\x6d\x65\x31\xc0\xa2\xcf\x3c\x48\x9d\x05\x00\x38\x0d\x42\x1f\x0a\x0a\x74\x65\x73\x74\x5f\x6c\x6f\x63\x61\x6c\x12\x04\x7f\x00\x00\x01\x1a\x08\x20\x01\x48\x60\x48\x60\x88\x88\x20\xb9\x02\x4a\x20\x0a\x0b\x74\x65\x73\x74\x5f\x72\x65\x6d\x6f\x74\x65\x12\x04\x7f\x00\x00\x02\x1a\x08\x20\x01\x48\x60\x48\x60\x88\xff\x20\x89\x06\x52\x15\x09\xc6\xa2\xcf\x3c\x48\x9d\x05\x00\x12\x0a\x74\x65\x73\x74\x5f\x76\x61\x6c\x75\x65\x5a\x16\x0a\x04\x74\x61\x67\x31\x12\x0e\x74\x65\x73\x74\x5f\x66\x69\x72\x73\x74\x5f\x74\x61\x67\x5a\x17\x0a\x04\x74\x61\x67\x32\x12\x0f\x74\x65\x73\x74\x5f\x73\x65\x63\x6f\x6e\x64\x5f\x74\x61\x67\x0a\xbe\x01\x0a\x07\x74\x65\x73\x74\x5f\x69\x64\x12\x07\x74\x65\x73\x74\x5f\x69\x65\x1a\x07\x74\x65\x73\x74\x5f\x69\x63\x20\x01\x2a\x09\x74\x65\x73\x74\x20\x6e\x61\x6d\x65\x31\xc0\xa2\xcf\x3c\x48\x9d\x05\x00\x38\x0d\x42\x1f\x0a\x0a\x74\x65\x73\x74\x5f\x6c\x6f\x63\x61\x6c\x12\x04\x7f\x00\x00\x01\x1a\x08\x20\x01\x48\x60\x48\x60\x88\x88\x20\xb9\x02\x4a\x20\x0a\x0b\x74\x65\x73\x74\x5f\x72\x65\x6d\x6f\x74\x65\x12\x04\x7f\x00\x00\x02\x1a\x08\x20\x01\x48\x60\x48\x60\x88\xff\x20\x89\x06\x52\x15\x09\xc6\xa2\xcf\x3c\x48\x9d\x05\x00\x12\x0a\x74\x65\x73\x74\x5f\x76\x61\x6c\x75\x65\x5a\x16\x0a\x04\x74\x61\x67\x31\x12\x0e\x74\x65\x73\x74\x5f\x66\x69\x72\x73\x74\x5f\x74\x61\x67\x5a\x17\x0a\x04\x74\x61\x67\x32\x12\x0f\x74\x65\x73\x74\x5f\x73\x65\x63\x6f\x6e\x64\x5f\x74\x61\x67\x0a\xbe\x01\x0a\x07\x74\x65\x73\x74\x5f\x69\x64\x12\x07\x74\x65\x73\x74\x5f\x69\x65\x1a\x07\x74\x65\x73\x74\x5f\x69\x63\x20\x01\x2a\x09\x74\x65\x73\x74\x20\x6e\x61\x6d\x65\x31\xc0\xa2\xcf\x3c\x48\x9d\x05\x00\x38\x0d\x42\x1f\x0a\x0a\x74\x65\x73\x74\x5f\x6c\x6f\x63\x61\x6c\x12\x04\x7f\x00\x00\x01\x1a\x08\x20\x01\x48\x60\x48\x60\x88\x88\x20\xb9\x02\x4a\x20\x0a\x0b\x74\x65\x73\x74\x5f\x72\x65\x6d\x6f\x74\x65\x12\x04\x7f\x00\x00\x02\x1a\x08\x20\x01\x48\x60\x48\x60\x88\xff\x20\x89\x06\x52\x15\x09\xc6\xa2\xcf\x3c\x48\x9d\x05\x00\x12\x0a\x74\x65\x73\x74\x5f\x76\x61\x6c\x75\x65\x5a\x16\x0a\x04\x74\x61\x67\x31\x12\x0e\x74\x65\x73\x74\x5f\x66\x69\x72\x73\x74\x5f\x74\x61\x67\x5a\x17\x0a\x04\x74\x61\x67\x32\x12\x0f\x74\x65\x73\x74\x5f\x73\x65\x63\x6f\x6e\x64\x5f\x74\x61\x67"
+
+  def setup
+    Fluent::Test.setup
+    @parser = Fluent::Test::Driver::Parser.new(Fluent::Plugin::ZipkinProtobufParser)
+  end
+
+  def test_hexstring_to_base64
+    @parser.configure({})
+    assert_equal('dGVzdF9pZA==', @parser.instance.hexstring_to_base64('746573745f6964'))
+  end
+
+  def test_parse_json
+    @parser.configure({})
+    @parser.instance.parse_json(TEST_JSON) { |timestamp, span|
+      assert_equal('test_id', span['trace_id'])
+      assert_equal('test_ie', span['parent_id'])
+      assert_equal('test_ic', span['id'])
+      assert_equal(1580308467000000, span['timestamp'])
+      assert_equal('CLIENT'.force_encoding("ASCII-8BIT"), span['kind'])
+      assert_equal('test name', span['name'])
+      assert_equal(13, span['duration'])
+      assert_equal('test_local', span['local_endpoint']['service_name'])
+      assert_equal("\x7f\x00\x00\x01", span['local_endpoint']['ipv4'])
+      assert_equal("\x00\x00\x00\x00\x00\x00\x00\x00 \x01H`H`\x88\x88".force_encoding("ASCII-8BIT"), span['local_endpoint']['ipv6'])
+      assert_equal(313, span['local_endpoint']['port'])
+      assert_equal("\x7f\x00\x00\x02", span['remote_endpoint']['ipv4'])
+      assert_equal("\x00\x00\x00\x00\x00\x00\x00\x00 \x01H`H`\x88\xFF".force_encoding("ASCII-8BIT"), span['remote_endpoint']['ipv6'])
+      assert_equal('test_remote', span['remote_endpoint']['service_name'])
+      assert_equal(777, span['remote_endpoint']['port'])
+      assert_equal(1580308467000006, span['annotations'][0]['timestamp'])
+      assert_equal('test_value', span['annotations'][0]['value'])
+      assert_equal('test_first_tag', span['tags']['tag1'])
+      assert_equal('test_second_tag', span['tags']['tag2'])
+      assert_equal(false, span['debug'])
+      assert_equal(false, span['shared'])
+    }
+  end
+
+  def test_parse_protobuf
+    @parser.configure({})
+    @parser.instance.parse(TEST_PROTOBUF) { |timestamp, span|
+      assert_equal('test_id', span['trace_id'])
+      assert_equal('test_ie', span['parent_id'])
+      assert_equal('test_ic', span['id'])
+      assert_equal(1580308467000000, span['timestamp'])
+      assert_equal(:CLIENT, span['kind'])
+      assert_equal('test name', span['name'])
+      assert_equal(13, span['duration'])
+      assert_equal('test_local', span['local_endpoint']['service_name'])
+      assert_equal("\x7f\x00\x00\x01", span['local_endpoint']['ipv4'])
+      assert_equal("\x20\x01\x48\x60\x48\x60\x88\x88".force_encoding("ASCII-8BIT"), span['local_endpoint']['ipv6'])
+      assert_equal(313, span['local_endpoint']['port'])
+      assert_equal("\x7f\x00\x00\x02", span['remote_endpoint']['ipv4'])
+      assert_equal("\x20\x01\x48\x60\x48\x60\x88\xff".force_encoding("ASCII-8BIT"), span['remote_endpoint']['ipv6'])
+      assert_equal("test_remote", span['remote_endpoint']['service_name'])
+      assert_equal(1580308467000006, span['annotations'][0]['timestamp'])
+      assert_equal("test_value", span['annotations'][0]['value'])
+      assert_equal("test_first_tag", span['tags']['tag1'])
+      assert_equal("test_second_tag", span['tags']['tag2'])
+    }
+  end
+
+  def test_parse_json_without_annotations
+    test_json = '[{"timestamp":1582204894816690,"duration":794480231,"traceId":"e1d1cc0ec89a82b96a0d4f57a04bc9c8","id":"47dcc5114b8917d4","parentId":"3f1d0f63f18d9c19","name":"nonrealism","kind":"CLIENT","localEndpoint":{"serviceName":"underniceness","ipv4":"83.245.217.213","port":9063},"remoteEndpoint":{"serviceName":"vivipary","ipv4":"234.253.77.216","port":31020},"tags":{"ipv6":"63ec:bbb8:3daf:3739:57d6:7814:fa7b:c9c8","zipkin.remoteEndpoint.ipv6":"4fb6:7db1:c2a0:f55f:cd46:2ad5:d508:9b80"}}]'
+    @parser.configure({})
+    @parser.instance.parse_json(test_json) { |timestamp, span|
+      assert_equal("\xE1\xD1\xCC\x0E\xC8\x9A\x82\xB9j\rOW\xA0K\xC9\xC8".force_encoding("ASCII-8BIT"), span['trace_id'])
+      assert_equal("?\x1D\x0Fc\xF1\x8D\x9C\x19".force_encoding("ASCII-8BIT"), span['parent_id'])
+      assert_equal("G\xDC\xC5\x11K\x89\x17\xD4".force_encoding("ASCII-8BIT"), span['id'])
+      assert_equal(1582204894816690, span['timestamp'])
+      assert_equal('CLIENT'.force_encoding("ASCII-8BIT"), span['kind'])
+      assert_equal('nonrealism', span['name'])
+      assert_equal(794480231, span['duration'])
+      assert_equal('underniceness', span['local_endpoint']['service_name'])
+      assert_equal("S\xF5\xD9\xD5".force_encoding("ASCII-8BIT"), span['local_endpoint']['ipv4'])
+      assert_equal(9063, span['local_endpoint']['port'])
+      assert_equal("\xEA\xFDM\xD8".force_encoding("ASCII-8BIT"), span['remote_endpoint']['ipv4'])
+      assert_equal('vivipary', span['remote_endpoint']['service_name'])
+      assert_equal(31020, span['remote_endpoint']['port'])
+    }
+  end
+end
