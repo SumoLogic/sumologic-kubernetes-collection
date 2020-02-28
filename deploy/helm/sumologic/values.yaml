@@ -510,9 +510,15 @@ falco:
     jsonOutput: true
 
 otelcol:
+  receivers:
+    opencensus: {}
+    jaeger:
+      protocols:
+        grpc:
+    zipkin:
+      endpoint: "0.0.0.0:9411"
   processors:
     k8s_tagger:
-      enabled: true
       passthrough: false
       extract:
         metadata:
@@ -552,32 +558,29 @@ otelcol:
           startTime: start_time
           statefulSetName: statefulset
         annotations:
-          - tag_name: pod_annotation_%s
-            key: "*"
+           - tag_name: pod_annotation_%s
+             key: "*"
         labels:
-          - tag_name: pod_label_%s
-            key: "*"
-    batch:
-      enabled: true
-      send_batch_size: 1024
-      timeout: 5s
+           - tag_name: pod_label_%s
+             key: "*"
     queued_retry:
-      enabled: true
       num_workers: 16
       queue_size: 10000
       retry_on_failure: true
-  receivers:
-    jaeger:
-      enabled: true
-    zipkin:
-      enabled: true
-      endpoint: "0.0.0.0:9411"
-    opencensus:
-      enabled: true
+    batch:
+      send_batch_size: 1024
+      timeout: 5s
   extensions:
-    health_check:
-      enabled: true
+    health_check: {}
   exporters:
     zipkin:
-      enabled: true
-      url: null
+      url: "exporters.zipkin.url_replace"
+    # logging:
+    #   loglevel: debug
+  service:
+    extensions: [health_check]
+    pipelines:
+      traces:
+        receivers: [jaeger, zipkin, opencensus]
+        processors: [batch, queued_retry, k8s_tagger]
+        exporters: [zipkin]
