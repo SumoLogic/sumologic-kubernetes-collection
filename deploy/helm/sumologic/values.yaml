@@ -612,7 +612,7 @@ falco:
 
 ##Configure otelcol
 otelcol:
-  otelcolDeployment:
+  deployment:
     nodeSelector: {}
     tolerations: {}
     replicas: 1
