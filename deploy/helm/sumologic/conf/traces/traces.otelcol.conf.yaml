@@ -1,4 +1,4 @@
-{{- $yamlFile := toYaml $.Values.otelcol }}
+{{- $yamlFile := toYaml $.Values.otelcol.config }}
 {{- $fullname := include "sumologic.fullname" . }}
 {{- $url := list "http://" $fullname ":9411/api/v2/spans" | join "" }}
 {{- $yamlFile | replace "exporters.zipkin.url_replace" $url | nindent 2 }}
