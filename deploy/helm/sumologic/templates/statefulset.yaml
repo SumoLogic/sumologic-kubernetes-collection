@@ -11,7 +11,7 @@ spec:
       app: {{ template "sumologic.labels.app" . }}
   serviceName: {{ template "sumologic.fullname" . }}-headless
   podManagementPolicy: "Parallel"
-  replicas: {{ .Values.statefulset.replicaCount }}
+  replicas: {{ .Values.fluentd.statefulset.replicaCount }}
   template:
     metadata:
       labels:
@@ -19,20 +19,20 @@ spec:
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
-{{- if .Values.statefulset.nodeSelector }}
+{{- if .Values.fluentd.statefulset.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.statefulset.nodeSelector | indent 8 }}
+{{ toYaml .Values.fluentd.statefulset.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.statefulset.tolerations }}
+{{- if .Values.fluentd.statefulset.tolerations }}
       tolerations:
-{{ toYaml .Values.statefulset.tolerations | indent 8 }}
+{{ toYaml .Values.fluentd.statefulset.tolerations | indent 8 }}
 {{- end }}
-{{- if or .Values.statefulset.affinity  .Values.statefulset.podAntiAffinity }}
+{{- if or .Values.fluentd.statefulset.affinity  .Values.fluentd.statefulset.podAntiAffinity }}
       affinity:
-{{- if .Values.statefulset.affinity }}
-{{ toYaml .Values.statefulset.affinity | indent 8 }}
+{{- if .Values.fluentd.statefulset.affinity }}
+{{ toYaml .Values.fluentd.statefulset.affinity | indent 8 }}
 {{- end }}
-{{- if eq .Values.statefulset.podAntiAffinity "hard"}}
+{{- if eq .Values.fluentd.statefulset.podAntiAffinity "hard"}}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
@@ -46,7 +46,7 @@ spec:
                 values:
                 - prometheus-operator-prometheus
             topologyKey: "kubernetes.io/hostname"
-{{else if eq .Values.statefulset.podAntiAffinity "soft"}}
+{{else if eq .Values.fluentd.statefulset.podAntiAffinity "soft"}}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
@@ -79,7 +79,7 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
-          {{- toYaml .Values.statefulset.resources | nindent 10 }}
+          {{- toYaml .Values.fluentd.statefulset.resources | nindent 10 }}
         ports:
         {{- if .Values.sumologic.traces.enabled }}
         - name: zipkin-write

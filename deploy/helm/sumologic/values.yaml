@@ -5,52 +5,6 @@ image:
 
 nameOverride: ""
 
-statefulset:
-  nodeSelector: {}
-  tolerations: {}
-  affinity: {}
-  ## Acceptable values for podAntiAffinity:
-  ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
-  ## hard: specifies rules that must be met for a pod to be scheduled onto a node
-  podAntiAffinity: "soft"
-  replicaCount: 3
-  resources:
-    limits:
-      memory: 1Gi
-      cpu: 1
-    requests:
-      memory: 768Mi
-      cpu: 0.5
-
-eventsStatefulset:
-  nodeSelector: {}
-  tolerations: {}
-  resources:
-    limits:
-      memory: 256Mi
-      cpu: "100m"
-    requests:
-      memory: 256Mi
-      cpu: "100m"
-
-otelcolDeployment:
-  nodeSelector: {}
-  tolerations: {}
-  replicas: 1
-  resources:
-    limits:
-      memory: 2Gi
-      cpu: 1
-    requests:
-      memory: 384Mi
-      cpu: "200m"
-  # Memory Ballast size should be max 1/3 to 1/2 of memory.
-  memBallastSizeMib: "683"
-  image:
-    name: "omnition/opentelemetry-collector-contrib"
-    tag: "0.0.5"
-    pullPolicy: IfNotPresent
-
 sumologic:
   ## Setup
 
@@ -116,6 +70,34 @@ sumologic:
     endpoint: ''
 
 fluentd:
+  statefulset:
+    nodeSelector: {}
+    tolerations: {}
+    affinity: {}
+    ## Acceptable values for podAntiAffinity:
+    ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
+    ## hard: specifies rules that must be met for a pod to be scheduled onto a node
+    podAntiAffinity: "soft"
+    replicaCount: 3
+    resources:
+      limits:
+        memory: 1Gi
+        cpu: 1
+      requests:
+        memory: 768Mi
+        cpu: 0.5
+
+  eventsStatefulset:
+    nodeSelector: {}
+    tolerations: {}
+    resources:
+      limits:
+        memory: 256Mi
+        cpu: "100m"
+      requests:
+        memory: 256Mi
+        cpu: "100m"
+
   rawConfig: |-
     @include common.conf
     @include metrics.conf
@@ -627,3 +609,23 @@ falco:
   #  enabled: true
   falco:
     jsonOutput: true
+
+##Configure otelcol
+otelcol:
+  otelcolDeployment:
+    nodeSelector: {}
+    tolerations: {}
+    replicas: 1
+    resources:
+      limits:
+        memory: 2Gi
+        cpu: 1
+      requests:
+        memory: 384Mi
+        cpu: "200m"
+    # Memory Ballast size should be max 1/3 to 1/2 of memory.
+    memBallastSizeMib: "683"
+    image:
+      name: "omnition/opentelemetry-collector-contrib"
+      tag: "0.0.5"
+      pullPolicy: IfNotPresent
