@@ -9,7 +9,7 @@ metadata:
 spec:
   minReadySeconds: 5
   progressDeadlineSeconds: 120
-  replicas: {{ .Values.otelcol.otelcolDeployment.replicas }}
+  replicas: {{ .Values.otelcol.deployment.replicas }}
   selector:
     matchLabels:
       app: {{ printf "%s-otelcol" (include "sumologic.labels.app" .) }}
@@ -20,27 +20,27 @@ spec:
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
-      {{- if .Values.otelcol.otelcolDeployment.nodeSelector }}
+      {{- if .Values.otelcol.deployment.nodeSelector }}
       nodeSelector:
-        {{ toYaml .Values.otelcol.otelcolDeployment.nodeSelector | indent 8 }}
+        {{ toYaml .Values.otelcol.deployment.nodeSelector | indent 8 }}
       {{- end }}
-      {{- if .Values.otelcol.otelcolDeployment.tolerations }}
+      {{- if .Values.otelcol.deployment.tolerations }}
       tolerations:
-        {{ toYaml .Values.otelcol.otelcolDeployment.tolerations | indent 8 }}
+        {{ toYaml .Values.otelcol.deployment.tolerations | indent 8 }}
       {{- end }}
       containers:
       - name: otelcontrib-collector
-        image: {{ .Values.otelcol.otelcolDeployment.image.name }}:{{ .Values.otelcol.otelcolDeployment.image.tag }}
-        imagePullPolicy: {{ .Values.otelcol.otelcolDeployment.image.pullPolicy }}
+        image: {{ .Values.otelcol.deployment.image.name }}:{{ .Values.otelcol.deployment.image.tag }}
+        imagePullPolicy: {{ .Values.otelcol.deployment.image.pullPolicy }}
         command:
           - "/otelcontribcol"
           - "--config=/conf/traces.otelcol.conf.yaml"
-          - {{ printf "--mem-ballast-size-mib=%s" .Values.otelcol.otelcolDeployment.memBallastSizeMib }}
+          - {{ printf "--mem-ballast-size-mib=%s" .Values.otelcol.deployment.memBallastSizeMib }}
         env:
         - name: GOGC
           value: "80"
         resources:
-          {{- toYaml .Values.otelcol.otelcolDeployment.resources | nindent 10 }}
+          {{- toYaml .Values.otelcol.deployment.resources | nindent 10 }}
         ports:
         - containerPort: 55678 # Default endpoint for Opencensus receiver.
         - containerPort: 14267 # Default endpoint for Jaeger TChannel receiver.
