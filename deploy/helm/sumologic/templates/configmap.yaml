@@ -7,15 +7,13 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   fluent.conf: |-
-    @include common.conf
-    @include metrics.conf
-    @include logs.conf
+{{- .Values.fluentd.rawConfig | nindent 4 }}
 {{- if .Values.sumologic.traces.enabled }}
     @include traces.conf
 {{- end }}
-  {{- (tpl (.Files.Glob "conf/*.conf").AsConfig .) | nindent 2 }}
-  {{- (tpl (.Files.Glob "conf/metrics/*.conf").AsConfig .) | nindent 2 }}
-  {{- (tpl (.Files.Glob "conf/logs/*.conf").AsConfig .) | nindent 2 }}
-  {{- if .Values.sumologic.traces.enabled }}
-  {{- (tpl (.Files.Glob "conf/traces/*.conf").AsConfig .) | nindent 2 }}
-  {{- end }}
+{{- (tpl (.Files.Glob "conf/*.conf").AsConfig .) | nindent 2 }}
+{{- (tpl (.Files.Glob "conf/metrics/*.conf").AsConfig .) | nindent 2 }}
+{{- (tpl (.Files.Glob "conf/logs/*.conf").AsConfig .) | nindent 2 }}
+{{- if .Values.sumologic.traces.enabled }}
+{{- (tpl (.Files.Glob "conf/traces/*.conf").AsConfig .) | nindent 2 }}
+{{- end }}
