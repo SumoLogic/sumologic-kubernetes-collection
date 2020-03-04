@@ -1,4 +1,5 @@
 # Using this chart with Helm 3
+NOTE: Helm 3 compatibility is in the early stages and is not fully tested or supported. We recommend you thoroughly test the use of Helm 3 in your pre-production environments before use.
 
 Helm 3 can be used to install the Sumo Logic Helm chart.
 
