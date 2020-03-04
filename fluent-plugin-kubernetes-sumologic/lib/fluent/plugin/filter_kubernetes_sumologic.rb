@@ -18,6 +18,7 @@ module Fluent::Plugin
     config_param :exclude_pod_regex, :string, :default => ""
     config_param :exclude_priority_regex, :string, :default => ""
     config_param :exclude_unit_regex, :string, :default => ""
+    config_param :tracing_format, :bool, :default => false
 
     def configure(conf)
       super
@@ -52,12 +53,50 @@ module Fluent::Plugin
       pod_template_hash.each_byte.map { |i| alphanums[i.to_i % alphanums.length] }.join("")
     end
 
+    def get_kubernetes(record)
+      if not @tracing_format
+        if record.key?("kubernetes") and not record.fetch("kubernetes").nil?
+          # Clone kubernetes hash so we don't override the cache
+          # Note (sam 10/9/19): this is a shallow copy; nested hashes can still be overriden
+          return record["kubernetes"].clone
+        end
+        return nil
+      else
+        return_value = {
+          'namespace_name' => record['tags']['namespace'],
+          'pod_name' => record['tags']['pod'],
+          'pod_id' => record['tags']['pod_id'],
+          'container_name' => record['tags']['container_name'],
+          'host' => record['tags']['hostname'],
+          'labels' => {},
+          'annotations' => {}
+        }
+
+        label_length = 'pod_label_'.length
+        annotation_length = 'pod_annotation_'.length
+
+        record['tags'].select { |key, value|
+          if key.match(/^pod_label_./)
+            return_value['labels'][key["pod_label_".length..-1]] = value
+          elsif key.match(/^pod_annotation_./)
+            return_value['annotations'][key["pod_label_".length..-1]] = value
+          end
+        }
+
+        return return_value
+      end
+    end
+
     def filter(tag, time, record)
       log_fields = {}
 
       # Set the sumo metadata fields
       sumo_metadata = record["_sumo_metadata"] || {}
-      record["_sumo_metadata"] = sumo_metadata
+
+      if not @tracing_format
+        record["_sumo_metadata"] = sumo_metadata
+      end
+
       sumo_metadata[:log_format] = @log_format
       sumo_metadata[:host] = @source_host if @source_host
       sumo_metadata[:source] = @source_name if @source_name
@@ -85,11 +124,8 @@ module Fluent::Plugin
         end
       end
 
-      if record.key?("kubernetes") and not record.fetch("kubernetes").nil?
-        # Clone kubernetes hash so we don't override the cache
-        # Note (sam 10/9/19): this is a shallow copy; nested hashes can still be overriden
-        kubernetes = record["kubernetes"].clone
-
+      kubernetes = get_kubernetes(record)
+      if not kubernetes.nil?
         # Populate k8s_metadata to use later in sumo_metadata
         k8s_metadata = {
             :namespace => kubernetes["namespace_name"],
@@ -150,6 +186,15 @@ module Fluent::Plugin
         # Strip sumologic.com annotations
         # Note (sam 10/9/19): we're stripping from the copy, so this has no effect on output
         kubernetes.delete("annotations") if annotations
+
+        if @tracing_format
+          # Move data to record in tracing format
+          record['tags']['_sourceHost'] = sumo_metadata[:host]
+          record['tags']['_source'] = sumo_metadata[:source]
+          record['tags']['_sourceCategory'] = sumo_metadata[:category]
+          
+          return record
+        end
 
         if record.key?("docker") and not record.fetch("docker").nil?
           record["docker"].each {|k, v| log_fields[k] = v}
