@@ -151,7 +151,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   fi
 fi
 
-if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha* ]]; then
+if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
   echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$VERSION..."
   docker tag $DOCKER_TAG:local $DOCKER_TAG:$VERSION
   echo "Pushing docker image $DOCKER_TAG:$VERSION..."
@@ -171,40 +171,24 @@ if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ] && [[ $TRAVIS_TAG != *alpha
   git push --quiet origin-repo gh-pages
 
 elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
-  # Major.minor.patch version format
-  latest_release=$(wget -q $DOCKER_TAGS -O - | jq -r .[].name | grep -v alpha | grep -v latest | sort --version-sort --field-separator=. | tail -1)
-  latest_major=$(echo $latest_release | tr '.' $'\n' | sed -n 1p)
-  latest_minor=$(echo $latest_release | tr '.' $'\n' | sed -n 2p)
-  latest_alpha=$(wget -q $DOCKER_TAGS -O - | jq -r .[].name | grep alpha | grep "^$latest_major.$latest_minor" | sed 's/-alpha//g' | sort --version-sort --field-separator=. | tail -1)
-  if [ -n "$latest_alpha" ]; then
-    echo "Most recent release version: $latest_release, most recent alpha: $latest_alpha-alpha"
-  else
-    echo "Most recent release version: $latest_release, most recent alpha does not yet exist"
-    latest_alpha="$latest_release"
-  fi
-  new_patch=$(($(echo $latest_alpha | tr '.' $'\n' | sed -n 3p)+1))
-  new_alpha="$latest_major.$latest_minor.$new_patch-alpha"
+  dev_build_tag=$(git describe --tags --always)
   
-  echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$new_alpha..."
-  docker tag $DOCKER_TAG:local $DOCKER_TAG:$new_alpha
-  echo "Pushing alpha docker image with version $new_alpha"
+  echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$dev_build_tag..."
+  docker tag $DOCKER_TAG:local $DOCKER_TAG:$dev_build_tag
+  echo "Pushing dev docker image with version $dev_build_tag"
   echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  docker push $DOCKER_TAG:$new_alpha
+  docker push $DOCKER_TAG:$dev_build_tag
 
-  echo "Tagging git with v$new_alpha..."
-  git tag -a "v$new_alpha" -m "Bump version to v$new_alpha"
-  git push --tags --quiet --set-upstream origin-repo master
-
-  # Push new alpha helm release
-  echo "Pushing new alpha Helm Chart release $new_alpha"
+  # Push new dev helm release
+  echo "Pushing new dev Helm Chart release $dev_build_tag"
   git checkout -- .
   sudo helm init --client-only
-  sudo helm package deploy/helm/sumologic --dependency-update --version=$new_alpha --app-version=$new_alpha
+  sudo helm package deploy/helm/sumologic --dependency-update --version=$dev_build_tag --app-version=$dev_build_tag
   git fetch origin-repo
   git checkout gh-pages
   sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
   git add -A
-  git commit -m "Push new alpha Helm Chart release $new_alpha"
+  git commit -m "Push new dev Helm Chart release $dev_build_tag"
   git push --quiet origin-repo gh-pages
 else
   echo "Skip Docker pushing"
