@@ -151,45 +151,40 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   fi
 fi
 
-if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
-  echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$VERSION..."
-  docker tag $DOCKER_TAG:local $DOCKER_TAG:$VERSION
-  echo "Pushing docker image $DOCKER_TAG:$VERSION..."
-  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  docker push $DOCKER_TAG:$VERSION
+function push_docker_image() {
+  local version="$1"
 
-  # Push new helm release
-  echo "Pushing new Helm Chart release $VERSION"
+  echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$version..."
+  docker tag $DOCKER_TAG:local $DOCKER_TAG:$version
+  echo "Pushing docker image $DOCKER_TAG:$version..."
+  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  docker push $DOCKER_TAG:$version
+}
+
+function push_helm_chart() {
+  local version="$1"
+
+  echo "Pushing new Helm Chart release $version"
   git checkout -- .
   sudo helm init --client-only
-  sudo helm package deploy/helm/sumologic --dependency-update --version=$VERSION --app-version=$VERSION
+  sudo helm package deploy/helm/sumologic --dependency-update --version=$version --app-version=$version
   git fetch origin-repo
   git checkout gh-pages
   sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
   git add -A
-  git commit -m "Push new Helm Chart release $VERSION"
+  git commit -m "Push new Helm Chart release $version"
   git push --quiet origin-repo gh-pages
+}
+
+if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
+  push_docker_image "$VERSION"
+  push_helm_chart "$VERSION"
 
 elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
   dev_build_tag=$(git describe --tags --always)
-  
-  echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$dev_build_tag..."
-  docker tag $DOCKER_TAG:local $DOCKER_TAG:$dev_build_tag
-  echo "Pushing dev docker image with version $dev_build_tag"
-  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  docker push $DOCKER_TAG:$dev_build_tag
+  push_docker_image "$dev_build_tag"
+  push_helm_chart "$dev_build_tag"
 
-  # Push new dev helm release
-  echo "Pushing new dev Helm Chart release $dev_build_tag"
-  git checkout -- .
-  sudo helm init --client-only
-  sudo helm package deploy/helm/sumologic --dependency-update --version=$dev_build_tag --app-version=$dev_build_tag
-  git fetch origin-repo
-  git checkout gh-pages
-  sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
-  git add -A
-  git commit -m "Push new dev Helm Chart release $dev_build_tag"
-  git push --quiet origin-repo gh-pages
 else
   echo "Skip Docker pushing"
 fi
