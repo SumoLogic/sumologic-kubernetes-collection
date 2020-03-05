@@ -1,6 +1,6 @@
 # Installation with Helm
 
-Note: the following steps assume you are installing using Helm 2.  You are using Helm 3, please refer to [this guide](Helm3.md).
+Note: the following steps assume you are installing using Helm 2. Use of Helm 3 is not yet supported.
 
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
 
