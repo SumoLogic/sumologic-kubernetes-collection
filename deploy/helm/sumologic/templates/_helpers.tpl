@@ -36,3 +36,15 @@ heritage: "{{ .Release.Service }}"
 {{- end -}}
 {{- end -}}
 
+{{/*
+Get configuration value, otherwise returns default
+*/}}
+{{- define "utils.get_default" -}}
+{{- $dict := .Values -}}
+{{- $keys := .Keys -}}
+{{- $default := .Default -}}
+{{- range $keys -}}
+  {{ $dict := get $dict . }}
+{{- end -}}
+{{ $default }}
+{{- end -}}
