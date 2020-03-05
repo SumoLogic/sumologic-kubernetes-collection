@@ -19,6 +19,16 @@ module Fluent::Plugin
     config_param :exclude_priority_regex, :string, :default => ""
     config_param :exclude_unit_regex, :string, :default => ""
     config_param :tracing_format, :bool, :default => false
+    config_param :tracing_namespace, :string, :default => 'namespace'
+    config_param :tracing_pod, :string, :default => 'pod'
+    config_param :tracing_pod_id, :string, :default => 'pod_id'
+    config_param :tracing_container_name, :string, :default => 'container_name'
+    config_param :tracing_host, :string, :default => 'hostname'
+    config_param :tracing_label_prefix, :string, :default => 'pod_label_'
+    config_param :tracing_annotation_prefix, :string, :default => 'pod_annotation_'
+    config_param :source_host_key_name, :string, :default => '_sourceHost'
+    config_param :source_category_key_name, :string, :default => '_sourceCategory'
+    config_param :source_key_name, :string, :default => '_source'
 
     def configure(conf)
       super
@@ -63,23 +73,23 @@ module Fluent::Plugin
         return nil
       else
         return_value = {
-          'namespace_name' => record['tags']['namespace'],
-          'pod_name' => record['tags']['pod'],
-          'pod_id' => record['tags']['pod_id'],
-          'container_name' => record['tags']['container_name'],
-          'host' => record['tags']['hostname'],
+          'namespace_name' => record['tags'][@tracing_namespace],
+          'pod_name' => record['tags'][@tracing_pod],
+          'pod_id' => record['tags'][@tracing_pod_id],
+          'container_name' => record['tags'][@tracing_container_name],
+          'host' => record['tags'][@tracing_host],
           'labels' => {},
           'annotations' => {}
         }
 
-        label_length = 'pod_label_'.length
-        annotation_length = 'pod_annotation_'.length
+        label_length = @tracing_label_prefix.length
+        annotation_length = @tracing_annotation_prefix.length
 
         record['tags'].select { |key, value|
-          if key.match(/^pod_label_./)
-            return_value['labels'][key["pod_label_".length..-1]] = value
-          elsif key.match(/^pod_annotation_./)
-            return_value['annotations'][key["pod_label_".length..-1]] = value
+          if key.match(/^#{@tracing_label_prefix}./)
+            return_value['labels'][key[label_length..-1]] = value
+          elsif key.match(/^#{@tracing_annotation_prefix}./)
+            return_value['annotations'][key[annotation_length..-1]] = value
           end
         }
 
@@ -189,9 +199,9 @@ module Fluent::Plugin
 
         if @tracing_format
           # Move data to record in tracing format
-          record['tags']['_sourceHost'] = sumo_metadata[:host]
-          record['tags']['_source'] = sumo_metadata[:source]
-          record['tags']['_sourceCategory'] = sumo_metadata[:category]
+          record['tags'][@source_host_key_name] = sumo_metadata[:host]
+          record['tags'][@source_key_name] = sumo_metadata[:source]
+          record['tags'][@source_category_key_name] = sumo_metadata[:category]
           
           return record
         end
