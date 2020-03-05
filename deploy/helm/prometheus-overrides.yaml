@@ -8,6 +8,8 @@ grafana:
   enabled: false
   defaultDashboardsEnabled: false
 prometheusOperator:
+  ## Resource limits for prometheus operator
+  resources: {}
   admissionWebhooks:
     enabled: false
   tlsProxy:
@@ -60,6 +62,10 @@ prometheus:
       matchLabels:
         app: collection-sumologic-otelcol
   prometheusSpec:
+    ## Define resources requests and limits for single Pods.
+    resources: {}
+    # requests:
+    #   memory: 400Mi
     thanos:
       version: v0.10.0
     containers:
