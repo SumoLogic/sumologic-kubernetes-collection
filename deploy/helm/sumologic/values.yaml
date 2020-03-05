@@ -627,7 +627,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.2.6.3"
+      tag: "0.2.6.4"
       pullPolicy: IfNotPresent
   config:
     receivers:
@@ -652,6 +652,7 @@ otelcol:
             - namespace
             - node
             - owners
+            - podId
             - podName
             - replicaSetName
             - serviceName
@@ -666,6 +667,7 @@ otelcol:
             hostName: hostname
             namespace: namespace
             node: node
+            podId: pod_id
             podName: pod
             replicaSetName: replicaset
             serviceName: service_name
