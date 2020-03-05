@@ -1371,6 +1371,7 @@ class SumoContainerOutputTest < Test::Unit::TestCase
     conf = %{
       tracing_format true
       source_host "%{container}-%{label:pod-template-hash}"
+      collector_value "My collector"
     }
     d = create_driver(conf)
     time = @time
@@ -1395,7 +1396,9 @@ class SumoContainerOutputTest < Test::Unit::TestCase
         "tags" => {
           "_sourceCategory" => "kubernetes/default/log/format/labs/53575ccdb9",
           "_sourceHost" => "log-format-labs-54575ccdb9",
-          "_source" => "default.log-format-labs-53575ccdb9-9d677.log-format-labs",
+          "_source" => "traces",
+          "_collector" => "My collector",
+          "_sourceName" => "default.log-format-labs-53575ccdb9-9d677.log-format-labs",
           "container_name" => "log-format-labs",
           "namespace" => "default",
           "pod" => "log-format-labs-53575ccdb9-9d677",

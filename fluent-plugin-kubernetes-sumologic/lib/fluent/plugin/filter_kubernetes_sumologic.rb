@@ -28,7 +28,9 @@ module Fluent::Plugin
     config_param :tracing_annotation_prefix, :string, :default => 'pod_annotation_'
     config_param :source_host_key_name, :string, :default => '_sourceHost'
     config_param :source_category_key_name, :string, :default => '_sourceCategory'
-    config_param :source_key_name, :string, :default => '_source'
+    config_param :source_name_key_name, :string, :default => '_sourceName'
+    config_param :collector_key_name, :string, :default => '_collector'
+    config_param :collector_value, :string, :default => 'undefined'
 
     def configure(conf)
       super
@@ -200,9 +202,10 @@ module Fluent::Plugin
         if @tracing_format
           # Move data to record in tracing format
           record['tags'][@source_host_key_name] = sumo_metadata[:host]
-          record['tags'][@source_key_name] = sumo_metadata[:source]
+          record['tags'][@source_name_key_name] = sumo_metadata[:source]
           record['tags'][@source_category_key_name] = sumo_metadata[:category]
-          
+          record['tags']['_source'] = 'traces'
+          record['tags'][@collector_key_name] = @collector_value
           return record
         end
 
