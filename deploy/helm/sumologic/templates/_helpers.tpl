@@ -44,7 +44,7 @@ Get configuration value, otherwise returns default
 {{- $keys := .Keys -}}
 {{- $default := .Default -}}
 {{- range $keys -}}
-  {{ $dict := get $dict . }}
+  {{ $dict := index $dict . }}
 {{- end -}}
 {{ $default }}
 {{- end -}}
