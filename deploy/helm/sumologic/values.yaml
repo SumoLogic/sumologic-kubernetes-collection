@@ -627,7 +627,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.2.6.2"
+      tag: "0.2.6.3"
       pullPolicy: IfNotPresent
   config:
     receivers:
@@ -645,16 +645,13 @@ otelcol:
             # extract the following well-known metadata fields
             - containerId
             - containerName
-            - containerImage
             - cluster
             - daemonSetName
             - deployment
             - hostName
             - namespace
-            - namespaceId
             - node
             - owners
-            - podId
             - podName
             - replicaSetName
             - serviceName
@@ -662,16 +659,13 @@ otelcol:
             - statefulSetName
           tags:
             containerId: container_id
-            containerName: container_name
-            containerImage: container_image
+            containerName: container
             cluster: cluster
             daemonSetName: daemonset
             deployment: deployment
             hostName: hostname
             namespace: namespace
-            namespaceId: namespace_id
             node: node
-            podId: pod_id
             podName: pod
             replicaSetName: replicaset
             serviceName: service_name
