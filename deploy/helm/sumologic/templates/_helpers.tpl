@@ -43,8 +43,17 @@ Get configuration value, otherwise returns default
 {{- $dict := .Values -}}
 {{- $keys := .Keys -}}
 {{- $default := .Default -}}
+{{- $success := true }}
 {{- range $keys -}}
-  {{ $dict := index $dict . }}
-{{- end -}}
-{{ $default }}
+  {{- if (and $success (hasKey $dict .)) }}
+    {{- $dict = index $dict . }}
+  {{- else }}
+    {{- $success = false }}
+  {{- end }}
+{{- end }}
+{{- if $success }}
+  {{- $dict }}
+{{- else }}
+  {{- $default }}
+{{- end }}
 {{- end -}}
