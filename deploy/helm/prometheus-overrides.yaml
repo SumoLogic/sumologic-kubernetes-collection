@@ -1,6 +1,9 @@
 # This file is auto-generated.
 # Ensure we use pre 1.14 recording rules consistently as current content depends on them.
 kubeTargetVersionOverride: 1.13.0-0
+## Set the enabled flag to false for either of the below two purposes:
+## 1. Not install prometheus operator helm chart as a dependency along with this helm chart
+## 2. Disable metrics collection altogether
 enabled: true
 alertmanager:
   enabled: false
