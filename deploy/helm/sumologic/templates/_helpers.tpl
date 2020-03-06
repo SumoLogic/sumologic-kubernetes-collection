@@ -37,33 +37,30 @@ heritage: "{{ .Release.Service }}"
 {{- end -}}
 
 {{/*
-Generate list of extensions/receivers/etc from dictionary:
+Get configuration value, otherwise returns default
 
-Example input:
-```
-extensions:
-  extension_a:
-    enabled: true
-  extension_b:
-    enabled: false
-```
+Example usage:
 
-Usage: include "otelcol.generate_list" extensions"
+{{ include "utils.get_default" (dict "Values" .Values "Keys" (list "key1" "key2") "Default" "default_value") | quote }}
 
-Expected output:
-```
-- extension_a
-```
+It returns `.Value.key1.key2` if it exists otherwise `default_value`
+
 */}}
-{{- define "otelcol.generate_list" -}}
-{{- $empty_list := true }}
-{{- range $key, $val := . }}
-  {{- if $val.enabled }}
-    {{- if $empty_list }}
-      {{- $empty_list = false }}
-    {{- end }}
-- {{ $key | quote }}
+{{- define "utils.get_default" -}}
+{{- $dict := .Values -}}
+{{- $keys := .Keys -}}
+{{- $default := .Default -}}
+{{- $success := true }}
+{{- range $keys -}}
+  {{- if (and $success (hasKey $dict .)) }}
+    {{- $dict = index $dict . }}
+  {{- else }}
+    {{- $success = false }}
   {{- end }}
 {{- end }}
-{{- if $empty_list }} [] {{ end }}
+{{- if $success }}
+  {{- $dict }}
+{{- else }}
+  {{- $default }}
+{{- end }}
 {{- end -}}
