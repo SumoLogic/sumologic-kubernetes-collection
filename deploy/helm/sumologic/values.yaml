@@ -439,8 +439,9 @@ prometheus-operator:
               key: release
         - name: NAMESPACE
           valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
+            configMapKeyRef:
+              name: sumologic-configmap
+              key: fluentdNamespace
 
       remoteWrite:
         # kube state metrics
