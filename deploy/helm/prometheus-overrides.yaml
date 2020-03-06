@@ -81,8 +81,9 @@ prometheus:
             key: release
       - name: NAMESPACE
         valueFrom:
-          fieldRef:
-            fieldPath: metadata.namespace
+          configMapKeyRef:
+            name: sumologic-configmap
+            key: fluentdNamespace
     remoteWrite:
     - # kube state metrics
       url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
