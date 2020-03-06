@@ -83,9 +83,9 @@ class ZipkinOutputTest < ::Test::Unit::TestCase
             'tag2' => 'test_second_tag'
         }
     }]]
-    spans = @plugin.instance.send(:get_spans, chunk)
+    spans = @plugin.instance.send(:get_spans, @plugin.instance.send(:split_chunk, chunk)[0])
 
-    assert_equal(spans[0], EXPECTED_PROTOBUF.force_encoding("ASCII-8BIT"))
+    assert_equal(spans, EXPECTED_PROTOBUF.force_encoding("ASCII-8BIT"))
   end
 
   def test_json
@@ -127,9 +127,9 @@ class ZipkinOutputTest < ::Test::Unit::TestCase
         }
     }]]
 
-    spans = @plugin.instance.send(:get_spans_for_json, SPANS_CHUNK)
+    spans = @plugin.instance.send(:get_spans_for_json, @plugin.instance.send(:split_chunk, SPANS_CHUNK)[0])
 
-    assert_equal(Oj.load(spans[0], mode: :compat), Oj.load(EXPECTED_JSON, mode: :compat))
+    assert_equal(Oj.load(spans, mode: :compat), Oj.load(EXPECTED_JSON, mode: :compat))
   end
 
   def test_json_empty_parent_id
@@ -172,8 +172,8 @@ class ZipkinOutputTest < ::Test::Unit::TestCase
         }
     }]]
 
-    spans = @plugin.instance.send(:get_spans_for_json, chunk)
+    spans = @plugin.instance.send(:get_spans_for_json, @plugin.instance.send(:split_chunk, chunk)[0])
 
-    assert_equal(Oj.load(spans[0], mode: :compat), Oj.load(expected_json, mode: :compat))
+    assert_equal(Oj.load(spans, mode: :compat), Oj.load(expected_json, mode: :compat))
   end
 end
