@@ -107,6 +107,10 @@ spec:
         - name: pos-files
           mountPath: /mnt/pos/
         env:
+        - name: K8S_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
         - name: SUMO_ENDPOINT_METRICS
           valueFrom:
             secretKeyRef:
