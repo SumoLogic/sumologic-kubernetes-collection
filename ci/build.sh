@@ -6,7 +6,7 @@ VERSION="${VERSION#v}"
 : "${DOCKER_USERNAME:=sumodocker}"
 DOCKER_TAGS="https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags"
 
-echo "Starting build process in: $(pwd) with version tag: $VERSION"
+echo "Starting build process in: $(pwd) with version tag: ${VERSION}"
 err_report() {
     echo "Script error on line $1"
     exit 1
@@ -165,6 +165,7 @@ function push_helm_chart() {
   local version="$1"
 
   echo "Pushing new Helm Chart release $version"
+  set -x
   git checkout -- .
   sudo helm init --client-only
   sudo helm package deploy/helm/sumologic --dependency-update --version=$version --app-version=$version
@@ -174,6 +175,7 @@ function push_helm_chart() {
   git add -A
   git commit -m "Push new Helm Chart release $version"
   git push --quiet origin-repo gh-pages
+  set +x
 }
 
 if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
