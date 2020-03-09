@@ -133,6 +133,8 @@ kind: Secret
             secretKeyRef:
               key: my-custom-metrics
               name: sumologic
+        - name: LOG_FORMAT	
+          value: fields
 ```
 
   * Finally, you need to modify the Fluentd config to route data to your newly created HTTP source. Assuming you installed the collector in the `sumologic` namespace, you can run `kubectl -n sumologic edit configmap fluentd` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.

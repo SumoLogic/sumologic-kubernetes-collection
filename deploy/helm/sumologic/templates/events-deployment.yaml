@@ -1,6 +1,6 @@
-{{- if eq .Values.fluentd.events.enabled true }}
+{{- if eq .Values.sumologic.eventCollectionEnabled true }}
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
   labels:
@@ -10,8 +10,6 @@ spec:
   selector:
     matchLabels:
       app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
-  serviceName: {{ printf "%s-events-headless" (include "sumologic.fullname" .) }}
-  podManagementPolicy: "Parallel"
   template:
     metadata:
       labels:
@@ -19,13 +17,13 @@ spec:
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
-{{- if .Values.fluentd.eventsStatefulset.nodeSelector }}
+{{- if .Values.eventsDeployment.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.fluentd.eventsStatefulset.nodeSelector | indent 8 }}
+{{ toYaml .Values.eventsDeployment.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.fluentd.eventsStatefulset.tolerations }}
+{{- if .Values.eventsDeployment.tolerations }}
       tolerations:
-{{ toYaml .Values.fluentd.eventsStatefulset.tolerations | indent 8 }}
+{{ toYaml .Values.eventsDeployment.tolerations | indent 8 }}
 {{- end }}
       volumes:
       - name: pos-files
@@ -35,23 +33,17 @@ spec:
       - name: config-volume
         configMap:
           name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
-      securityContext:
-        fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:
       - name: fluentd-events
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
-          {{- toYaml .Values.fluentd.eventsStatefulset.resources | nindent 10 }}
+          {{- toYaml .Values.eventsDeployment.resources | nindent 10 }}
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
-{{- if .Values.fluentd.persistence.enabled }}
-        - name: buffer
-          mountPath: "/fluentd/buffer"
-{{- end}}
         livenessProbe:
           httpGet:
             path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
@@ -71,15 +63,16 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-events
-{{- if .Values.fluentd.persistence.enabled }}
-  volumeClaimTemplates:
-  - metadata:
-      name: buffer
-    spec:
-      accessModes: [{{ .Values.fluentd.persistence.accessMode }}]
-      storageClassName: {{ .Values.fluentd.persistence.storageClass }}
-      resources:
-        requests:
-          storage: {{ .Values.fluentd.persistence.size }}
-{{- end }}
+        - name: VERIFY_SSL
+          value: {{ .Values.sumologic.verifySsl| quote }}
+        - name: FLUSH_INTERVAL
+          value: {{ .Values.sumologic.flushInterval | quote }}
+        - name: NUM_THREADS
+          value: {{ .Values.sumologic.numThreads | quote }}
+        - name: CHUNK_LIMIT_SIZE
+          value: {{ .Values.sumologic.chunkLimitSize | quote }}
+        - name: QUEUE_CHUNK_LIMIT_SIZE
+          value: {{ .Values.sumologic.queueChunkLimitSize | quote }}
+        - name: TOTAL_LIMIT_SIZE
+          value: {{ .Values.sumologic.totalLimitSize | quote }}
 {{- end }}
