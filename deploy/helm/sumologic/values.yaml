@@ -104,7 +104,7 @@ sumologic:
     # Sumologic endpoint for traces
     endpoint: ''
 
-  ## Format to post logs into Sumo. json, json_merge, or text	fluentd:
+  ## Format to post logs into Sumo. json, json_merge, or text
   logFormat: fields
 
   ## How frequently to push logs to SumoLogic
@@ -182,12 +182,12 @@ sumologic:
   # watchResourceEventsOverrides:
   #   pods: "v1"
   #   events: "events.k8s.io/v1beta1"
+  
 
   fluentd:
     ## Option to specify the Fluentd buffer as file/memory.
     buffer: "memory"
-    ## Option to turn autoscaling on for fluentd and specify params for HPA.
-    ## Autoscaling needs metrics-server to access cpu metrics.
+    ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
     autoscaling:
       enabled: false
       minReplicas: 3
@@ -216,25 +216,14 @@ sumologic:
 ## Configure metrics-server
 ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
 metrics-server:
-  ## Set the enabled flag to true for enabling metrics-server.
-  ## This is required before enabling fluentd autoscaling unless you have an existing metrics-server in the cluster.
   enabled: false
   args:
     - --kubelet-insecure-tls
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
 
-## Configure fluent-bit
+## Configure fluent-bit 
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
 fluent-bit:
-  ## Resource limits for fluent-bit
-  resources: {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 10m
-    #   memory: 8Mi
-
   enabled: true
   service:
     flush: 5
@@ -367,8 +356,6 @@ prometheus-operator:
     enabled: false
     defaultDashboardsEnabled: false
   prometheusOperator:
-    ## Resource limits for prometheus operator
-    resources: {}
     admissionWebhooks:
       enabled: false
     tlsProxy:
@@ -421,10 +408,6 @@ prometheus-operator:
           matchLabels:
             app: collection-sumologic-otelcol
     prometheusSpec:
-      ## Define resources requests and limits for single Pods.
-      resources: {}
-      # requests:
-      #   memory: 400Mi
       thanos:
         version: v0.10.0
       containers:

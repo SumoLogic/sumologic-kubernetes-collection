@@ -133,7 +133,7 @@ kind: Secret
             secretKeyRef:
               key: my-custom-metrics
               name: sumologic
-        - name: LOG_FORMAT	
+        - name: LOG_FORMAT
           value: fields
 ```
 
