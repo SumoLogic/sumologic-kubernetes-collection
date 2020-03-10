@@ -182,6 +182,7 @@ if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
 
 elif [ -n "$DOCKER_PASSWORD" ] && [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
   dev_build_tag=$(git describe --tags --always)
+  dev_build_tag=${dev_build_tag#v}
   push_docker_image "$dev_build_tag"
   push_helm_chart "$dev_build_tag"
 
