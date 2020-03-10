@@ -104,6 +104,15 @@ module Fluent::Plugin
     end
 
     def filter(tag, time, record)
+      begin
+        return proper_filter(tag, time, record)
+      rescue => exception
+        log.warn "Error during tagging record #{record}"
+        return record
+      end
+    end
+
+    def proper_filter(tag, time, record)
       log_fields = {}
 
       # Set the sumo metadata fields
