@@ -19,21 +19,32 @@ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-colle
 Edit the `values.yaml` file to `prometheus-operator.enabled = false`, and run
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> 
+helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> 
 ```
+**NOTE**:
+In case the prometheus-operator is installed in a different namespace as compared to where the sumologic solution is deployed, you would need to do the following two steps:  
 
-## Overwrite Prometheus Remote Write Configuration
+##### 1. Copy one of the configmaps that exposes the release name,  which is used in the remote write urls.
 
-If you have not already customized your [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write), run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide below.
+For example: 
+If the sumologic solution is deployed in `<source-namespace>` and existing prometheus-operator is in `<destination-namespace>`, run the below command: 
+```bash
+kubectl get configmap sumologic-configmap --namespace=<source-namespace> —-export -o yaml | kubectl apply --namespace=<destination-namespace> -f -
+```
+##### 2. Update Prometheus remote write URL's
+Run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide below.
+
+In the below command, replace `<SUMOLOGIC_HELM_CHART_NAMESPACE>` with the actual namespace where the sumologic helm chart is installed. This is done to point the prometheus remote write URL to the Fluentd endpoints correctly.
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/prometheus-overrides.yaml| \
+sed 's/\$(NAMESPACE)/<SUMOLOGIC_HELM_CHART_NAMESPACE>/g' prometheus-overrides.yaml > prometheus-overrides.yaml
 ```
 
 Then run
 
 ```bash
-helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml
+helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
 ```
 
 ## Merge Prometheus Remote Write Configuration
