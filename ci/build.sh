@@ -41,8 +41,8 @@ for i in ./fluent-plugin* ; do
   if [ -d "$i" ]; then
     cd $i
     PLUGIN_NAME=$(basename "$i")
-    # Strip "-alpha" suffix if it exists to avoid gem prerelease behavior
-    GEM_VERSION=${VERSION%"-alpha"}
+    # Strip everything after "-" (longest match) to avoid gem prerelease behavior
+    GEM_VERSION=${VERSION%%-*}
     echo "Building gem $PLUGIN_NAME version $GEM_VERSION in $(pwd) ..."
     sed -i.bak "s/0.0.0/$GEM_VERSION/g" ./$PLUGIN_NAME.gemspec
     rm -f ./$PLUGIN_NAME.gemspec.bak
