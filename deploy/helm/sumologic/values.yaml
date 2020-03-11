@@ -533,11 +533,11 @@ otelcol:
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
-      memory_limiter:
-        check_interval: 5s
-        limit_mib: 4000
+      # Tags spans with K8S metadata, basing on the context IP
       k8s_tagger:
+        # When true, only IP is assigned and passed (so it could be tagged on another collector)
         passthrough: false
+        # Extracted fields and assigned names
         extract:
           metadata:
             # extract the following well-known metadata fields
@@ -577,13 +577,37 @@ otelcol:
           labels:
             - tag_name: pod_label_%s
               key: "*"
+
+      # The memory_limiter processor is used to prevent out of memory situations on the collector.
+      memory_limiter:
+        # check_interval is the time between measurements of memory usage for the
+        # purposes of avoiding going over the limits. Defaults to zero, so no
+        # checks will be performed. Values below 1 second are not recommended since
+        # it can result in unnecessary CPU consumption.
+        check_interval: 5s
+
+        # Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
+        # Note that typically the total memory usage of process will be about 50MiB higher
+        # than this value.
+        limit_mib: 4000
+
+      # The queued_retry processor uses a bounded queue to relay batches from the receiver or previous
+      # processor to the next processor.
       queued_retry:
+        # Number of workers that dequeue batches
         num_workers: 16
+        # Maximum number of batches kept in memory before data is dropped
         queue_size: 10000
+        # Whether to retry on failure or give up and drop
         retry_on_failure: true
+
+      # The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
+        # Number of spans after which a batch will be sent regardless of time
         send_batch_size: 512
+        # Number of tickers that loop over batch buckets
         num_tickers: 10
+        # Time duration after which a batch will be sent regardless of size
         timeout: 5s
     extensions:
       health_check: {}
@@ -591,7 +615,9 @@ otelcol:
       zipkin:
         url: "exporters.zipkin.url_replace"
       # Following generates verbose logs with span content, useful to verify what
-      # metadata is being tagged. To enable, uncomment and add "logging" to exporters below
+      # metadata is being tagged. To enable, uncomment and add "logging" to exporters below.
+      # There are two levels that could be used: `debug` and `info` with the former
+      # being much more verbose and including (sampled) spans content
       # logging:
       #   loglevel: debug
     service:
