@@ -604,7 +604,7 @@ otelcol:
       # The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
         # Number of spans after which a batch will be sent regardless of time
-        send_batch_size: 512
+        send_batch_size: 256
         # Number of tickers that loop over batch buckets
         num_tickers: 10
         # Time duration after which a batch will be sent regardless of size
