@@ -589,7 +589,7 @@ otelcol:
         # Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
         # Note that typically the total memory usage of process will be about 50MiB higher
         # than this value.
-        limit_mib: 4000
+        limit_mib: 1900
 
       # The queued_retry processor uses a bounded queue to relay batches from the receiver or previous
       # processor to the next processor.
