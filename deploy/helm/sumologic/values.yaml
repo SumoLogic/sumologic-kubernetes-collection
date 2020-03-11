@@ -534,6 +534,8 @@ otelcol:
         endpoint: "0.0.0.0:9411"
     processors:
       memory_limiter:
+        check_interval: 5s
+        limit_mib: 4000
       k8s_tagger:
         passthrough: false
         extract:
