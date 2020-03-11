@@ -518,7 +518,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.2.6.5"
+      tag: "0.2.6.6"
       pullPolicy: IfNotPresent
   config:
     receivers:
@@ -533,6 +533,7 @@ otelcol:
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
+      memory_limiter:
       k8s_tagger:
         passthrough: false
         extract:
@@ -579,7 +580,8 @@ otelcol:
         queue_size: 10000
         retry_on_failure: true
       batch:
-        send_batch_size: 1024
+        send_batch_size: 512
+        num_tickers: 10
         timeout: 5s
     extensions:
       health_check: {}
@@ -595,5 +597,5 @@ otelcol:
       pipelines:
         traces:
           receivers: [jaeger, zipkin, opencensus]
-          processors: [k8s_tagger, batch, queued_retry]
+          processors: [memory_limiter, k8s_tagger, batch, queued_retry]
           exporters: [zipkin]
