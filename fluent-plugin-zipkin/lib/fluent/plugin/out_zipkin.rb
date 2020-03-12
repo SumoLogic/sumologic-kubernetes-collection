@@ -77,7 +77,7 @@ module Fluent::Plugin
     config_param :retryable_response_codes, :array, value_type: :integer, default: [503]
 
     desc 'Maximum number of spans per request'
-    config_param :spans_per_request, :int, default: 100
+    config_param :spans_per_request, :integer, default: 100
 
     config_section :auth, required: false, multi: false do
       desc 'The method for HTTP authentication'
