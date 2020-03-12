@@ -206,6 +206,8 @@ fluentd:
   logLevel: "info"
   ## to ingest all fluentd logs, turn the logLevelFilter to false
   logLevelFilter: true
+  ## specify number of fluentd workers
+  workers: 1
 
   ## Verify SumoLogic HTTPS certificates
   verifySsl: true
