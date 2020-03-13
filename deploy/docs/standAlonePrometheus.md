@@ -4,15 +4,15 @@ Update your Prometheus configuration file’s `remote_write` section, as per the
 
 * `writeRelabelConfigs:` change to `write_relabel_configs:`
 * `sourceLabels:` change to `source_labels:`
-*  Modify remote urls in the `remoteWrite` section of the `prometheus-overrides.yaml` file
+*  Modify remote URLs in the `remoteWrite` section of the `prometheus-overrides.yaml` file
 
-The urls in `remoteWrite` section of the `prometheus-overrides.yaml` file uses `env` variables which need to be changed to point it to the correct location.
+The URLs in `remoteWrite` section of the `prometheus-overrides.yaml` file uses `env` variables which need to be changed to point to the correct location.
 
-- Replace `$(CHART)` with the `release name-namespace` that you have used while installing the sumologic helm chart.
-- Replace `$(NAMESPACE)` with the namespace where prometheus is running.
+- Replace `$(CHART)` with the `release name-namespace` that you have used while installing the Sumo Logic helm chart.
+- Replace `$(NAMESPACE)` with the namespace where Prometheus is running.
 
-For eg:
-If you have installed the sumlogic helm chart with release name `collection` in `sumologic` namespace and the prometheus is running in `prometheus` namespace:
+For example:\
+If you have installed the Sumo Logic helm chart with release name `collection` in the `sumologic` namespace and Prometheus is running in the `prometheus` namespace:
 ```
 `$(CHART).$(NAMESPACE)` will be replaced by `collection-sumologic.prometheus`
 ```
