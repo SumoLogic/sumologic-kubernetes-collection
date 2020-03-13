@@ -30,6 +30,11 @@ data:
     queued_chunks_limit_size "#{ENV['QUEUE_CHUNK_LIMIT_SIZE']}"
     overflow_action drop_oldest_chunk
   common.conf: |-
+    # Prevent fluentd from handling records containing its own logs.
+    <match fluentd.**>
+      @type null
+    </match>
+    # expose the Fluentd metrics to Prometheus
     <source>
       @type prometheus
       metrics_path /metrics
@@ -333,7 +338,6 @@ data:
       </match>
     </label>
   
-
 ---
 # Source: sumologic/templates/events-configmap.yaml
 
@@ -352,6 +356,11 @@ data:
       @type events
       deploy_namespace $NAMESPACE
     </source>
+    # Prevent fluentd from handling records containing its own logs.
+    <match fluentd.**>
+      @type null
+    </match>
+    # expose the Fluentd metrics to Prometheus
     <source>
       @type prometheus
       metrics_path /metrics
