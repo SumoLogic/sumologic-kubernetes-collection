@@ -76,6 +76,9 @@ module Fluent::Plugin
     desc 'The list of retryable response code'
     config_param :retryable_response_codes, :array, value_type: :integer, default: [503]
 
+    desc 'Maximum number of spans per request'
+    config_param :spans_per_request, :integer, default: 100
+
     config_section :auth, required: false, multi: false do
       desc 'The method for HTTP authentication'
       config_param :method, :enum, list: [:basic], default: :basic
@@ -112,7 +115,7 @@ module Fluent::Plugin
 
     def write(chunk)
       uri = parse_endpoint(chunk)
-      data = split_chunk(chunk, size: 100)
+      data = split_chunk(chunk, size: @spans_per_request)
 
       data.each do |spans|
         begin

@@ -103,6 +103,8 @@ sumologic:
     fluentd_stdout: false
     # Sumologic endpoint for traces
     endpoint: ''
+    # How many spans per request should be send to receiver
+    spans_per_request: 100
 
   ## Format to post logs into Sumo. json, json_merge, or text
   logFormat: fields
