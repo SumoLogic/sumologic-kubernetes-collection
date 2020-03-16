@@ -293,6 +293,7 @@ data:
         source_category kubelet
         source_name k8s_kubelet
         source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
+        source_category_replace_dash "#{ENV['SOURCE_CATEGORY_REPLACE_DASH']}"
         exclude_facility_regex "#{ENV['EXCLUDE_FACILITY_REGEX']}"
         exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
         exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
@@ -317,6 +318,7 @@ data:
         @type kubernetes_sumologic
         source_category system
         source_category_prefix "#{ENV['SOURCE_CATEGORY_PREFIX']}"
+        source_category_replace_dash "#{ENV['SOURCE_CATEGORY_REPLACE_DASH']}"
         exclude_facility_regex "#{ENV['EXCLUDE_FACILITY_REGEX']}"
         exclude_host_regex "#{ENV['EXCLUDE_HOST_REGEX']}"
         exclude_priority_regex "#{ENV['EXCLUDE_PRIORITY_REGEX']}"
