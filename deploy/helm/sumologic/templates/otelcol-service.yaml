@@ -10,18 +10,26 @@ spec:
   selector:
     app: {{ printf "%s-otelcol" (include "sumologic.labels.app" .) }}
   ports:
-  - name: opencensus # Default endpoint for Opencensus receiver.
-    port: 55678
-    protocol: TCP
-    targetPort: 55678
+  - name: jaeger-sampling # Default endpoint for Jaeger Sampling (if enabled)
+    port: 5778
+  - name: jaeger-thrift-compact # Default endpoint for Jaeger Thrift Compact receiver.
+    port: 6831
+    protocol: UDP
+  - name: jaeger-thrift-binary # Default endpoint for Jaeger Thrift Binary receiver.
+    port: 6832
+    protocol: UDP
+  - name: metrics # Default endpoint for querying metrics.
+    port: 8888
+  - name: zipkin # Default endpoint for Zipkin receiver.
+    port: 9411
   - name: jaeger-grpc  # Default endpoint for Jaeger gRPC
     port: 14250
   - name: jaegert-channel  # Default endpoint for Jaeger TChannel receiver.
     port: 14267
   - name: jaeger-thrift-http # Default endpoint for Jaeger HTTP receiver.
     port: 14268
-  - name: zipkin # Default endpoint for Zipkin receiver.
-    port: 9411
-  - name: metrics # Default endpoint for querying metrics.
-    port: 8888
+  - name: opencensus # Default endpoint for Opencensus receiver.
+    port: 55678
+    protocol: TCP
+    targetPort: 55678
 {{- end }}
