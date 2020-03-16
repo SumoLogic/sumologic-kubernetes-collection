@@ -1,6 +1,6 @@
 # Additional Prometheus Configuration
 
-##Filter metrics
+## Filter metrics
 
 The `prometheus-overrides.yaml` file specifies metrics to be collected. If you want to exclude some metrics from collection, or include others, you can edit `prometheus-overrides.yaml`. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
 
