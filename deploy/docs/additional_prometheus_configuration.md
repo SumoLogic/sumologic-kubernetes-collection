@@ -1,10 +1,15 @@
 # Additional Prometheus Configuration
 
+## Configuration
+
+Prometheus configuration is specified in `prometheus-operator` section in `values.yaml`. This instruction assumes that all operations will be done within this section.
+For non-helm installation this configuration is exposed in `prometheus-overrides.yaml`.
+
 ## Filter metrics
 
-The `prometheus-overrides.yaml` file specifies metrics to be collected. If you want to exclude some metrics from collection, or include others, you can edit `prometheus-overrides.yaml`. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
+If you want to exclude some metrics from collection, or include others, you can edit configuration. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
 
-If you would like to collect other metrics that are not listed in `prometheus-overrides.yaml`, you can add a new section to the file.
+If you would like to collect other metrics that are not listed in configuration, you can add a new section to the file.
 
 ```yaml
     - url: http://fluentd:9888/prometheus.metrics.<some_label>
@@ -59,42 +64,52 @@ There are many pre-built libraries that the community has built to expose these,
 
 ### Set up a service monitor so that Prometheus pulls the data
 
+To expose metrics to prometheus, you need to have some service. Let's say here is our example service configuration:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-metrics
+  labels:
+    app: example-metrics # This is important, because prometheus matches service via labels
+spec:  # Should match your deployment ;)
+  ports:
+    - name: "8000"
+      port: 8000
+      targetPort: 8000
+  selector:
+    service: example-metrics
+status:
+  loadBalancer: {}
+```
+
 Service Monitors is how we tell Prometheus what endpoints and sources to pull metrics from. To define a Service Monitor, create a yaml file on disk with information templated as follows:
 
 ```
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: example-app
+  name: my-metrics
   labels:
-    team: frontend
+    release: collection  # ensure this matches the `release` label on your Prometheus pod
 spec:
   selector:
-    matchLabels:
-      app: example-app
+    matchSelector:
+      app: example-metrics
   endpoints:
-  - port: web
+  - port: "8000" # Same as service's port name
   ```
 
-Replace the `name` with a name that relates to your service, and a `matchLabels` that would match the pods you want this service monitor to scrape against. By default, prometheus attempts to scrape metrics off of the `/metrics` endpoint, but if you do need to use a different url, you can override it by providing a `path` attribute in the settings like so:
+By default, prometheus attempts to scrape metrics off of the `/metrics` endpoint, but if you do need to use a different url, you can override it by providing a `path` attribute in the settings like so:
 
 ```
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  labels:
-    app: prometheus-operator-kubelet
-  name: prometheus-operator-kubelet
-  namespace: sumologic
-  release: prometheus-operator
-spec:
+...
   endpoints:
   - path: /metrics/cadvisor
     port: https-metrics
 ...
 ```
-
-Note, you need to ensure the `release` label matches the `release` label on your Prometheus pod.
 
 Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
@@ -156,9 +171,9 @@ kind: Secret
            </match>
 ```
 
-### Update the prometheus-overrides.yaml file to forward the metrics to Fluentd.
+### Update configuration forward the metrics to Fluentd.
 
-The `prometheus-overrides.yaml` file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update the `prometheus-overrides.yaml` file to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your Fluentd configmap in the previous step. Here is an example addition to the `prometheus-overrides.yaml` file that will forward metrics to Sumo:
+The `prometheus.prometheusSpec.remoteWrite` section in the configuration controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update it to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your Fluentd configmap in the previous step. Here is an example addition to the configuration that will forward metrics to Sumo:
 
 ```
 - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
@@ -168,7 +183,10 @@ The `prometheus-overrides.yaml` file controls what metrics get forwarded on to S
         sourceLabels: [__name__]
 ```
 
-Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and run a `helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml` to upgrade your `prometheus-operator`.
+Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and upgrade your sumologic installation or prometheus operator, depending on used merhod:
+
+* `helm upgrade collection sumologic/sumologic -f values.yaml` to upgrade collection
+* `helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml` to upgrade your `prometheus-operator`.
 
 Note: When executing the helm upgrade, to avoid the error below, you need to add the argument `--force`.
 
