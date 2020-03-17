@@ -1,10 +1,14 @@
 # Additional Prometheus Configuration
 
+## Configuration
+
+Prometheus configuration is located in `values.yaml` under `prometheus` key or in `prometheus-overrides.yaml` if you are using prometheus-operator directly. All changes describe in this documentation should be introduced in those files depending of used deployment.
+
 ## Filter metrics
 
-The `prometheus-overrides.yaml` file specifies metrics to be collected. If you want to exclude some metrics from collection, or include others, you can edit `prometheus-overrides.yaml`. The file contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
+The configuration contains a section like the following for each of the Kubernetes components that report metrics in this solution: API server, Controller Manager, and so on.
 
-If you would like to collect other metrics that are not listed in `prometheus-overrides.yaml`, you can add a new section to the file.
+If you would like to collect other metrics that are not listed in configuration, you can add a new section to the file.
 
 ```yaml
     - url: http://fluentd:9888/prometheus.metrics.<some_label>
@@ -112,7 +116,7 @@ By default, prometheus attempts to scrape metrics off of the `/metrics` endpoint
 Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
-If you want to keep all your changes inside `prometheus-overrides.yaml` instead of sercviceMonitors, you can add your changes to `prometheus.additionalServiceMonitors` section. For given serviceMonitor configuration should looks like follow:
+If you want to keep all your changes inside configuration instead of serviceMonitors, you can add your changes to `prometheus.additionalServiceMonitors` section. For given serviceMonitor configuration should looks like follow:
 
 ```yaml
 ...
@@ -186,7 +190,7 @@ kind: Secret
 
 ### Update the prometheus-overrides.yaml file to forward the metrics to Fluentd.
 
-The `prometheus-overrides.yaml` file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update the `prometheus-overrides.yaml` file to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your Fluentd configmap in the previous step. Here is an example addition to the `prometheus-overrides.yaml` file that will forward metrics to Sumo:
+The configuration file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update it to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your Fluentd configmap in the previous step. Here is an example addition to the configuration file that will forward metrics to Sumo:
 
 ```yaml
 - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
@@ -206,9 +210,9 @@ According to our example, below config could be useful:
         sourceLabels: [service]
 ```
 
-Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and upgrade your sumologic or prometheus operator installation, depending on used merhod:
+Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and upgrade your sumologic or prometheus operator installation, depending on used method:
 
-* `helm upgrade collection sumologic/sumologic -f <path to prometheus-overrides.yaml>` to upgrade sumologic collection
+* `helm upgrade collection sumologic/sumologic -f <path to values.yaml>` to upgrade sumologic collection
 * `helm upgrade prometheus-operator stable/prometheus-operator -f <path to prometheus-overrides.yaml>` to upgrade your prometheus-operator.
 
 Note: When executing the helm upgrade, to avoid the error below, you need to add the argument `--force`.
