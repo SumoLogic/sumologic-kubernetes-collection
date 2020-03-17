@@ -139,7 +139,7 @@
         writeRelabelConfigs: [
           {
             action: "keep",
-            regex: "(?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*)",
+            regex: "(?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*|otelcol.*)",
             sourceLabels: [
               "__name__"
             ]

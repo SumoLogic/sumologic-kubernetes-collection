@@ -149,5 +149,5 @@ prometheus:
       url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics
       writeRelabelConfigs:
       - action: keep
-        regex: (?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*)
+        regex: (?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*|otelcol.*)
         sourceLabels: [__name__]
