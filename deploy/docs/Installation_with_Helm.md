@@ -66,7 +66,7 @@ ebpf:
 To customize your configuration, download the values.yaml file by running
 
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.16.0/deploy/helm/sumologic/values.yaml
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/sumologic/values.yaml
 ```
 
 #### To install the chart with a different release name or namespace:
