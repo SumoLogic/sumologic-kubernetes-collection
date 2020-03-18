@@ -2,7 +2,7 @@
 
 ## Configuration
 
-Prometheus configuration is located in `values.yaml` under `prometheus` key or in `prometheus-overrides.yaml` if you are using prometheus-operator directly. All changes describe in this documentation should be introduced in those files depending of used deployment.
+Prometheus configuration is located in `values.yaml` under `prometheus` key for helm installation or in `prometheus-overrides.yaml` if you are using prometheus-operator directly. All changes described in this documentation should be introduced in those files depending of used deployment.
 
 ## Filter metrics
 
@@ -11,7 +11,7 @@ The configuration contains a section like the following for each of the Kubernet
 If you would like to collect other metrics that are not listed in configuration, you can add a new section to the file.
 
 ```yaml
-    - url: http://fluentd:9888/prometheus.metrics.<some_label>
+    - url: http://collection-sumologic.sumologic.svc.cluster.local/prometheus.metrics.<some_label>
       writeRelabelConfigs:
       - action: keep
         regex: <metric1>|<metric2>|...
@@ -85,7 +85,7 @@ status:
   loadBalancer: {}
 ```
 
-Service Monitors is how we tell Prometheus what endpoints and sources to pull metrics from. To define a Service Monitor, create a yaml file on disk with information templated as follows:
+Service Monitors is how we tell Prometheus what endpoints and sources to pull metrics from. To define a Service Monitor, create a yaml file with information templated as follows:
 
 ```yaml
 ---
@@ -116,7 +116,7 @@ By default, prometheus attempts to scrape metrics off of the `/metrics` endpoint
 Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
-If you want to keep all your changes inside configuration instead of serviceMonitors, you can add your changes to `prometheus.additionalServiceMonitors` section. For given serviceMonitor configuration should looks like follow:
+If you want to keep all your changes inside configuration instead of serviceMonitors, you can add your changes to `prometheus.additionalServiceMonitors` section. For given serviceMonitor configuration it should looks like snippet below:
 
 ```yaml
 ...
