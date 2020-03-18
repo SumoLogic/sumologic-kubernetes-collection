@@ -74,7 +74,7 @@ metadata:
   # This is important, because prometheus matches service via labels
   labels:
     app: example-metrics
-spec:  # Should match your deployment ;)
+spec:  # Should match your deployment
   ports:
     - name: "8000"
       port: 8000
