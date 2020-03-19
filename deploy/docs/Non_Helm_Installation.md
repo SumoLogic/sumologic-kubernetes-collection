@@ -33,7 +33,7 @@ kubectl config use-context DESIRED_CONTEXT_NAME
 ```
 * In the Non-Helm installation steps, you will never need to run `helm install`, but we use Helm as a templating tool to generate the yaml files to install various components of our solution. Thus you will still need to install Helm:
 
-*Note the following steps are one way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://helm.sh/docs/using_helm/#securing-your-helm-installation)*
+*Note the following steps are one way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://v2.helm.sh/docs/securing_installation/#securing-your-helm-installation)*
 
 Download the latest Helm 2 version to generate the yaml files necessary to deploy by running
 
@@ -42,7 +42,7 @@ brew install helm@2
 export PATH="/usr/local/opt/helm@2/bin:$PATH"
 ```
 
-Reference: https://helm.sh/docs/intro/install/
+Reference: https://v2.helm.sh/docs/using_helm/#installing-helm
 
 __NOTE__ These instructions assume that Prometheus is not already running on your Kubernetes cluster.
 
