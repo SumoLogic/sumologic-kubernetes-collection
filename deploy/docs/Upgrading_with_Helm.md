@@ -1,17 +1,22 @@
 
 # Upgrading with Helm
 
-When a new version of a chart is released, or when you want to change the configuration of your release, you can use the helm upgrade command.
+When a new version of a chart is released, or when you want to change the configuration of your release, you can use the `helm upgrade` command.
 
-If desired, there are two ways to pass configuration data:
+By default, any settings you set when you first installed will be overriden by the default configuration, since helm uses the default values.yaml unless you specify those configurations again (through either --set or -f values.yaml covered below). If you wish to preserve your current configuration (including the values for Sumo Logic API endpoint, Access ID, and Access Key) use `--reuse-values`.
+
+If desired, there are two ways to pass configuration data when using `helm upgrade`:
 
 - `--values` or `-f`: Specify a YAML file with overrides. This can be specified multiple times and the rightmost file will take precedence
 
 - `--set` (and its variants `--set-string` and `--set-file`): Specify overrides on the command line.
 
-
 **Note**:
-- To edit or append to the existing customized values, add the `–reuse-values` flag, otherwise any existing customized values are ignored.
+- Assuming the default “collection” name is used, the following command can be used to get your current values.yaml file.
+
+```
+helm get values collection > current-values.yaml
+```
 
 - If no chart value arguments are provided on the command line, any existing customized values are carried forward, i.e. the `--reuse-values` flag will be used by default. If you want to revert to just the values provided in the chart, use the `-–reset-values` flag.
 
