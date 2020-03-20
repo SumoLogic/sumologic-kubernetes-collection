@@ -65,13 +65,13 @@ ebpf:
 
 To customize your configuration:
 
-- Download the values.yaml file by running:
+- Download the `values.yaml` file by running:
 
 ```bash
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/sumologic/values.yaml > values.yaml
 ```
 
-- Modify the values.yaml file with your customizations, then apply the configuration using the following command:
+- Modify the `values.yaml` file with your customizations, then apply the configuration using the following command:
 
 ```bash
 helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> -f values.yaml
