@@ -2,13 +2,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
+  name: {{ printf "%s-events-headless" (include "sumologic.fullname" .) }}
   labels:
     app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
     app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
+  clusterIP: None
   ports:
   - name: metrics
     port: 24231

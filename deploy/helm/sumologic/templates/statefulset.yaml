@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ template "sumologic.fullname" . }}
   labels:
@@ -9,7 +9,9 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app" . }}
-  replicas: {{ .Values.deployment.replicaCount }}
+  serviceName: {{ template "sumologic.fullname" . }}-headless
+  podManagementPolicy: "Parallel"
+  replicas: {{ .Values.fluentd.statefulset.replicaCount }}
   template:
     metadata:
       labels:
@@ -17,20 +19,20 @@ spec:
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
-{{- if .Values.deployment.nodeSelector }}
+{{- if .Values.fluentd.statefulset.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.deployment.nodeSelector | indent 8 }}
+{{ toYaml .Values.fluentd.statefulset.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.deployment.tolerations }}
+{{- if .Values.fluentd.statefulset.tolerations }}
       tolerations:
-{{ toYaml .Values.deployment.tolerations | indent 8 }}
+{{ toYaml .Values.fluentd.statefulset.tolerations | indent 8 }}
 {{- end }}
-{{- if or .Values.deployment.affinity  .Values.deployment.podAntiAffinity }}
+{{- if or .Values.fluentd.statefulset.affinity  .Values.fluentd.statefulset.podAntiAffinity }}
       affinity:
-{{- if .Values.deployment.affinity }}
-{{ toYaml .Values.deployment.affinity | indent 8 }}
+{{- if .Values.fluentd.statefulset.affinity }}
+{{ toYaml .Values.fluentd.statefulset.affinity | indent 8 }}
 {{- end }}
-{{- if eq .Values.deployment.podAntiAffinity "hard"}}
+{{- if eq .Values.fluentd.statefulset.podAntiAffinity "hard"}}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
@@ -44,7 +46,7 @@ spec:
                 values:
                 - prometheus-operator-prometheus
             topologyKey: "kubernetes.io/hostname"
-{{else if eq .Values.deployment.podAntiAffinity "soft"}}
+{{else if eq .Values.fluentd.statefulset.podAntiAffinity "soft"}}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
@@ -70,12 +72,14 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "sumologic.fullname" . }}
+      securityContext:
+        fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:
       - name: fluentd
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
-          {{- toYaml .Values.deployment.resources | nindent 10 }}
+          {{- toYaml .Values.fluentd.statefulset.resources | nindent 10 }}
         ports:
         {{- if .Values.sumologic.traces.enabled }}
         - name: zipkin-write
@@ -106,6 +110,10 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
+{{- if .Values.fluentd.persistence.enabled }}
+        - name: buffer
+          mountPath: "/fluentd/buffer"
+{{- end}}
         env:
         - name: SUMO_ENDPOINT_METRICS
           valueFrom:
@@ -151,55 +159,14 @@ spec:
         - name: SUMO_ENDPOINT_TRACES
           value: {{ .Values.sumologic.traces.endpoint }}
         {{- end }}
-        - name: LOG_FORMAT
-          value: {{ .Values.sumologic.logFormat | quote }}
-        - name: FLUSH_INTERVAL
-          value: {{ .Values.sumologic.flushInterval | quote }}
-        - name: NUM_THREADS
-          value: {{ .Values.sumologic.numThreads | quote }}
-        - name: CHUNK_LIMIT_SIZE
-          value: {{ .Values.sumologic.chunkLimitSize | quote }}
-        - name: QUEUE_CHUNK_LIMIT_SIZE
-          value: {{ .Values.sumologic.queueChunkLimitSize | quote }}
-        - name: TOTAL_LIMIT_SIZE
-          value: {{ .Values.sumologic.totalLimitSize | quote }}
-        - name: SOURCE_CATEGORY
-          value: {{ .Values.sumologic.sourceCategory | quote }}
-        - name: SOURCE_CATEGORY_PREFIX
-          value: {{ .Values.sumologic.sourceCategoryPrefix | quote }}
-        - name: SOURCE_CATEGORY_REPLACE_DASH
-          value: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
-        - name: SOURCE_NAME
-          value: {{ .Values.sumologic.sourceName | quote }}
-        - name: KUBERNETES_META
-          value: {{ .Values.sumologic.kubernetesMeta | quote }}
-        - name: KUBERNETES_META_REDUCE
-          value: {{ .Values.sumologic.kubernetesMetaReduce | quote }}
-        - name: ADD_TIMESTAMP
-          value: {{ .Values.sumologic.addTimestamp | quote }}
-        - name: TIMESTAMP_KEY
-          value: {{ .Values.sumologic.timestampKey | quote }}
-        - name: ADD_STREAM
-          value: {{ .Values.sumologic.addStream | quote }}
-        - name: ADD_TIME
-          value: {{ .Values.sumologic.addTime | quote }}
-        - name: K8S_METADATA_FILTER_WATCH
-          value: {{ .Values.sumologic.k8sMetadataFilter.watch | quote }}
-        - name: K8S_METADATA_FILTER_VERIFY_SSL
-          value: {{ .Values.sumologic.k8sMetadataFilter.verifySsl | quote }}
-        - name: K8S_METADATA_FILTER_CACHE_SIZE
-          value: {{ .Values.sumologic.k8sMetadataFilter.cacheSize | quote }}
-        - name: K8S_METADATA_FILTER_CACHE_TTL
-          value: {{ .Values.sumologic.k8sMetadataFilter.cacheTtl | quote }}
-        - name: K8S_METADATA_FILTER_CACHE_REFRESH
-          value: {{ .Values.sumologic.k8sMetadataFilter.cacheRefresh | quote }}
-        - name: VERIFY_SSL
-          value: {{ .Values.sumologic.verifySsl | quote }}
-        - name: EXCLUDE_NAMESPACE_REGEX
-          value: {{ .Values.sumologic.excludeNamespaceRegex | quote }}
-        - name: EXCLUDE_CONTAINER_REGEX
-          value: {{ .Values.sumologic.excludeContainerRegex | quote }}
-        - name: EXCLUDE_HOST_REGEX
-          value: {{ .Values.sumologic.excludeHostRegex | quote }}
-        - name: EXCLUDE_POD_REGEX
-          value: {{ .Values.sumologic.excludePodRegex | quote }}
+{{- if .Values.fluentd.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: buffer
+    spec:
+      accessModes: [{{ .Values.fluentd.persistence.accessMode }}]
+      storageClassName: {{ .Values.fluentd.persistence.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.fluentd.persistence.size }}
+{{- end }}

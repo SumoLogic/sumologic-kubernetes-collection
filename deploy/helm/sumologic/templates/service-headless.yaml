@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.fullname" . }}-headless
+  labels:
+    app: {{ template "sumologic.labels.app" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ template "sumologic.labels.app" . }}
+  clusterIP: None
+  ports:
+  - name: prom-write
+    port: 9888
+    targetPort: 9888
+    protocol: TCP
+  - name: fluent-bit
+    port: 24321
+    targetPort: 24321
+    protocol: TCP
+  - name: metrics
+    port: 24231
+    targetPort: 24231
+    protocol: TCP
