@@ -74,7 +74,7 @@ curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection
 - Modify the `values.yaml` file with your customizations, then apply the configuration using the following command:
 
 ```bash
-helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> -f values.yaml
+helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> -f values.yaml
 ```
 
 #### To install the chart with a different release name or namespace:
