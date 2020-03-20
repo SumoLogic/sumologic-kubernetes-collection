@@ -19,6 +19,10 @@
     - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster) 
     - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator) 
   - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics) 
+  - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
+  - [Error: could not find tiller](#error-could-not-find-tiller)
+  - [Validation error in helm installation](#validation-error-in-helm-installation)
+  - [Rancher](#rancher)
 
 <!-- /TOC -->
 
