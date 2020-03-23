@@ -30,7 +30,7 @@ In case the prometheus-operator is installed in a different namespace as compare
 For example:\
 If the Sumo Logic Solution is deployed in `<source-namespace>` and the existing prometheus-operator is in `<destination-namespace>`, run the below command:
 ```bash
-kubectl get configmap sumologic-configmap --namespace=<source-namespace> —-export -o yaml | kubectl apply --namespace=<destination-namespace> -f -
+kubectl get configmap sumologic-configmap --namespace=<source-namespace> --export -o yaml | kubectl apply --namespace=<destination-namespace> -f -
 ```
 ##### 2. Update Prometheus remote write URL's
 Run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide below.
@@ -38,8 +38,7 @@ Run the following to update the [remote write configuration](https://prometheus.
 In the below command, replace `<SUMOLOGIC_HELM_CHART_NAMESPACE>` with the actual namespace where the sumologic helm chart is installed. This is done to point the prometheus remote write URL to the Fluentd endpoints correctly.
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/prometheus-overrides.yaml| \
-sed 's/\$(NAMESPACE)/<SUMOLOGIC_HELM_CHART_NAMESPACE>/g' prometheus-overrides.yaml > prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/prometheus-overrides.yaml > prometheus-overrides.yaml
 ```
 
 Then run
