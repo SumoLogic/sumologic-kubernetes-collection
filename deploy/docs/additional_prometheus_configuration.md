@@ -2,7 +2,7 @@
 
 ## Configuration
 
-Prometheus configuration is located in `values.yaml` under `prometheus` key for helm installation or in `prometheus-overrides.yaml` if you are using prometheus-operator directly. All changes described in this documentation should be introduced in those files depending of used deployment.
+Prometheus configuration is located in `values.yaml` under `prometheus-operator` key for helm installation or in `prometheus-overrides.yaml` if you are using prometheus-operator directly. All changes described in this documentation should be introduced in those files depending of used deployment.
 
 ## Filter metrics
 
@@ -11,11 +11,19 @@ The configuration contains a section like the following for each of the Kubernet
 If you would like to collect other metrics that are not listed in configuration, you can add a new section to the file.
 
 ```yaml
-    - url: http://collection-sumologic.sumologic.svc.cluster.local/prometheus.metrics.<some_label>
-      writeRelabelConfigs:
-      - action: keep
-        regex: <metric1>|<metric2>|...
-        sourceLabels: [__name__]
+prometheus-operator:  # For values.yaml
+    # ...
+    prometheus:
+      # ...
+      prometheusSpec:
+        # ...
+        remoteWrite:
+          # ...
+          - url: http://collection-sumologic.sumologic.svc.cluster.local/prometheus.metrics.<some_label>
+            writeRelabelConfigs:
+            - action: keep
+              regex: <metric1>|<metric2>|...
+              sourceLabels: [__name__]
 ```
 
 The syntax of `writeRelabelConfigs` can be found [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write).
@@ -100,17 +108,21 @@ spec:
     matchSelector:
       app: example-metrics
   endpoints:
-  - port: "8000" # Same as service's port name
+  - port: "8000"  # Same as service's port name
   ```
 
 By default, prometheus attempts to scrape metrics off of the `/metrics` endpoint, but if you do need to use a different url, you can override it by providing a `path` attribute in the settings like so:
 
 ```yaml
-...
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+spec:
+  # ...
   endpoints:
   - path: /metrics/cadvisor
     port: https-metrics
-...
+# ...
 ```
 
 Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
@@ -119,16 +131,20 @@ Once you have created this yaml file, go ahead and run `kubectl create -f name_o
 If you want to keep all your changes inside configuration instead of serviceMonitors, you can add your changes to `prometheus.additionalServiceMonitors` section. For given serviceMonitor configuration it should looks like snippet below:
 
 ```yaml
-...
-- name: my-metrics
-  additionalLabels:
-    app: my-metrics
-  endpoints:
-  - port: "8000"
-  selector:
-    matchLabels:
-      app: example-metrics
-...
+prometheus-operator:  # For values.yaml
+  # ...
+  prometheus:
+    # ...
+    additionalServiceMonitors:
+      # ...
+      - name: my-metrics
+        additionalLabels:
+          app: my-metrics
+        endpoints:
+        - port: "8000"
+        selector:
+          matchLabels:
+            app: example-metrics
 ```
 
 ### Create a new HTTP source in Sumo Logic.
@@ -145,28 +161,38 @@ Next, you will need to update the Fluentd configuration to ensure Fluentd routes
   
 ```yaml
 data:
-...
-my-custom-metrics: <base64EncodedURL>
-kind: Secret
+  # ...
+  my-custom-metrics: <base64EncodedURL>
+  kind: Secret
 ```
 
-  * Next you need to edit the Fluentd Deployment and add a new environment variable, pointing to the new secret.  Assuming you installed the collector in the  `sumologic` namespace, you can run `kubectl -n sumologic edit deployment fluentd` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
+  * Next you need to edit the Fluentd Deployment and add a new environment variable, pointing to the new secret.  Assuming you installed the collector in the  `sumologic` namespace, you can run `kubectl -n sumologic edit deployment collection-sumologic` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
   * Locate the `SUMO_ENDPOINT_LOGS` environment variable in the YAML and add a new environment variable that points to the secret key you created. The following is an example.
   
 ```yaml
-...
-        - name: SUMO_ENDPOINT_LOGS
-          valueFrom:
-            secretKeyRef:
-              key: endpoint-logs
-              name: sumologic
-        - name: MY_CUSTOM_METRICS
-          valueFrom:
-            secretKeyRef:
-              key: my-custom-metrics
-              name: sumologic
-        - name: LOG_FORMAT
-          value: fields
+# ...
+spec:
+  # ...
+  template:
+    # ...
+    spec:
+      # ...
+      containers:
+        # ...
+        - env:
+          # ...
+          - name: SUMO_ENDPOINT_LOGS
+            valueFrom:
+              secretKeyRef:
+                key: endpoint-logs
+                name: sumologic
+          - name: MY_CUSTOM_METRICS
+            valueFrom:
+              secretKeyRef:
+                key: my-custom-metrics
+                name: sumologic
+          - name: LOG_FORMAT
+            value: fields
 ```
 
   * Finally, you need to modify the Fluentd config to route data to your newly created HTTP source. Assuming you installed the collector in the `sumologic` namespace, you can run `kubectl -n sumologic edit configmap fluentd` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
@@ -193,21 +219,37 @@ kind: Secret
 The configuration file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update it to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your Fluentd configmap in the previous step. Here is an example addition to the configuration file that will forward metrics to Sumo:
 
 ```yaml
-- url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
-      writeRelabelConfigs:
-      - action: keep
-        regex: <YOUR_CUSTOM_MATCHER>
-        sourceLabels: [__name__]
+prometheus-operator:  # For values.yaml
+    # ...
+    prometheus:
+      # ...
+      prometheusSpec:
+        # ...
+        remoteWrite:
+          # ...
+          - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
+            writeRelabelConfigs:
+            - action: keep
+              regex: <YOUR_CUSTOM_MATCHER>
+              sourceLabels: [__name__]
 ```
 
 According to our example, below config could be useful:
 
 ```yaml
-- url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
-      writeRelabelConfigs:
-      - action: keep
-        regex: '^example-metrics$'
-        sourceLabels: [service]
+prometheus-operator:  # For values.yaml
+    # ...
+    prometheus:
+      # ...
+      prometheusSpec:
+        # ...
+        remoteWrite:
+          # ...
+          - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
+            writeRelabelConfigs:
+            - action: keep
+              regex: 'example-metrics'
+              sourceLabels: [service]
 ```
 
 Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and upgrade your sumologic or prometheus operator installation, depending on used method:
