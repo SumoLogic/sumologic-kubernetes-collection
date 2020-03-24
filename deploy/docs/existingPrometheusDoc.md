@@ -19,7 +19,12 @@ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-colle
 Edit the `values.yaml` file, setting `prometheus-operator.enabled = false`. This modification will instruct Helm to install all the needed collection components (FluentD, FluentBit, and Falco), but it will not install the Prometheus Operator. Run the following command to install collection on your cluster.
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> 
+helm install sumologic/sumologic --name collection \
+    --namespace sumologic \
+    -f values.yaml \
+    --set sumologic.accessId=<SUMO_ACCESS_ID> \
+    --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+    --set sumologic.clusterName=<MY_CLUSTER_NAME> 
 ```
 
 **NOTE**:
@@ -52,15 +57,15 @@ helm upgrade prometheus-operator stable/prometheus-operator \
 
 ## Merge Prometheus Remote Write Configuration
 
-If you have customized your Prometheus remote write configuration, follow these steps to merge the configurations. 
-
-Helm supports providing multiple configuration files, and priority will be given to the last (right-most) file specified. You can obtain your current prometheus configuration by running
+If you have customized your Prometheus remote write configuration, follow these steps to merge the configurations. You can obtain your current prometheus configuration by running
 
 ```bash
 helm get values prometheus-operator > current-values.yaml
 ```
 
-Any section of `current-values.yaml` that conflicts with sections of our `prometheus-overrides.yaml` will have to be removed from the `prometheus-overrides.yaml` file and appended to `current-values.yaml` in relevant sections. For any config that doesn’t conflict, you can leave them in `prometheus-overrides.yaml`. Then run
+Any section of `current-values.yaml` that conflicts with sections of our `prometheus-overrides.yaml` will have to be removed from the `prometheus-overrides.yaml` file before it is appended to the `current-values.yaml`. You can leave config section that doesn’t conflict in the `prometheus-overrides.yaml`. Edit the `promemtheus-overrides.yaml` file in the text editor of your choice.
+
+Once you've removed any conflict, you can apply prometheus-override.yml to your cluser. Helm supports providing multiple configuration files, and priority will be given to the last (right-most) file specified. Run the following Helm command, with the following file order
 
 ```bash
 helm upgrade prometheus-operator stable/prometheus-operator \
