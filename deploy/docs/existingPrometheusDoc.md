@@ -41,10 +41,17 @@ In the below command, replace `<SUMOLOGIC_HELM_CHART_NAMESPACE>` with the actual
 curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/prometheus-overrides.yaml > prometheus-overrides.yaml
 ```
 
+<<<<<<< HEAD
 Then run
+=======
+Next, use the following helm upgrade apply the prometheus overrides file you downloaded 
+>>>>>>> 3f5e461... Clarified the language of our prometheus operator documentation, removing an irrelevant instruction, and improved the formatting of the CLI examples
 
 ```bash
-helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
+helm upgrade prometheus-operator stable/prometheus-operator \ 
+    -f prometheus-overrides.yaml \
+    --set prometheus-operator.prometheus-node-exporter.service.port=9200 \
+    --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
 ```
 
 ## Merge Prometheus Remote Write Configuration
@@ -60,7 +67,9 @@ helm get values prometheus-operator > current-values.yaml
 Any section of `current-values.yaml` that conflicts with sections of our `prometheus-overrides.yaml` will have to be removed from the `prometheus-overrides.yaml` file and appended to `current-values.yaml` in relevant sections. For any config that doesn’t conflict, you can leave them in `prometheus-overrides.yaml`. Then run
 
 ```bash
-helm upgrade prometheus-operator stable/prometheus-operator -f current-values.yaml -f prometheus-overrides.yaml
+helm upgrade prometheus-operator stable/prometheus-operator \
+    -f current-values.yaml \
+    -f prometheus-overrides.yaml
 ```
 
 __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
