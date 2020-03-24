@@ -7,7 +7,7 @@ kind: ConfigMap
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    helm.sh/hook: pre-install
+    helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "2"
     
@@ -167,7 +167,7 @@ kind: ServiceAccount
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    helm.sh/hook: pre-install
+    helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "0"
     
@@ -183,7 +183,7 @@ kind: ClusterRole
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    helm.sh/hook: pre-install
+    helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "1"
     
@@ -206,7 +206,7 @@ kind: ClusterRoleBinding
 metadata:
   name:  collection-sumologic-setup
   annotations:
-    helm.sh/hook: pre-install
+    helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "2"
     
@@ -231,7 +231,7 @@ metadata:
   name: collection-sumologic-setup
   namespace: $NAMESPACE
   annotations:
-    helm.sh/hook: pre-install
+    helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "3"
     
