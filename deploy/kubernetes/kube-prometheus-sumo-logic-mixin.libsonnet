@@ -49,7 +49,7 @@
         writeRelabelConfigs: [
           {
             action: "keep",
-            regex: "apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_latenc(?:ies|y_seconds).*|etcd_request_cache_get_latenc(?:ies_summary|y_seconds).*|etcd_request_cache_add_latenc(?:ies_summary|y_seconds).*|etcd_helper_cache_hit_(?:count|total)|etcd_helper_cache_miss_(?:count|total))",
+            regex: "apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:latencies|duration_seconds).*|etcd_request_cache_get_(?:latencies_summary|duration_seconds).*|etcd_request_cache_add_(?:latencies_summary|duration_seconds).*|etcd_helper_cache_hit_(?:count|total)|etcd_helper_cache_miss_(?:count|total))",
             sourceLabels: [
               "job",
               "__name__"
@@ -62,7 +62,7 @@
         writeRelabelConfigs: [
           {
             action: "keep",
-            regex: "kubelet;(?:kubelet_docker_operations_errors|kubelet_docker_operations_latency_microseconds|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_latency_microseconds.*)",
+            regex: "kubelet;(?:kubelet_docker_operations_errors.*|kubelet_docker_operations_(?:latency_micro|duration_)seconds.*|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_(?:latency_micro|duration_)seconds.*)",
             sourceLabels: [
               "job",
               "__name__"
