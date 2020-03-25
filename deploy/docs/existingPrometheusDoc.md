@@ -13,7 +13,7 @@
 Run the following to download the `values.yaml` file
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/sumologic/values.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/sumologic/values.yaml
 ```
 
 Edit the `values.yaml` file to `prometheus-operator.enabled = false`, and run
@@ -38,7 +38,7 @@ Run the following to update the [remote write configuration](https://prometheus.
 In the below command, replace `<SUMOLOGIC_HELM_CHART_NAMESPACE>` with the actual namespace where the sumologic helm chart is installed. This is done to point the prometheus remote write URL to the Fluentd endpoints correctly.
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/prometheus-overrides.yaml > prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/prometheus-overrides.yaml > prometheus-overrides.yaml
 ```
 
 Then run
