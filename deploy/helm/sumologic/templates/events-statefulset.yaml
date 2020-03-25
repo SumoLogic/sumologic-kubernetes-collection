@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
+  name: {{ printf "%s-events" (include "sumologic.fullname" .) }}-fluentd
   labels:
     app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
