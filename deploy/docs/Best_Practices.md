@@ -1,5 +1,14 @@
 # Advanced Configuration / Best Practices
 
+- [Topics](#advanced-configuration---best-practices)
+    + [Multiline Log Support](#multiline-log-support)
+    + [Log lines over 16KB are truncated](#log-lines-over-16kb-are-truncated)
+    + [Fluentd autoscaling:](#fluentd-autoscaling-)
+    + [Fluentd File-based buffer](#fluentd-file-based-buffer)
+    + [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
+    + [Add a local file to fluent-bit configuration](#add-a-local-file-to-fluent-bit-configuration)
+    + [Filtering Prometheus Metrics by Namespace in the Remote Write Config](#filtering-prometheus-metrics-by-namespace-in-the-remote-write-config)
+    + [Send Data to AWS S3](#send-data-to-aws-s3)
 
 ### Multiline Log Support
 
@@ -136,3 +145,53 @@ If you want to filter metrics by namespace, it can be done in the prometheus rem
    sourceLabels: [job, namespace]
 ```
 The above section should be added in each of the  kube-state remote write blocks.
+
+
+### Send Data to AWS S3
+
+If you wish to send data collected on your cluster to both Sumo Logic and an AWS S3 bucket, you may use the following example to configure FluentD to fork the data flow to sending to both S3 and Sumo. The following example presumes you have installed the collection solution.
+
+1. Open the collection-sumologic configmap in edit mode
+```
+kubectl edit comfigmap collection-sumologic -n sumologic
+```
+
+Modify the last output plugin section in logs.source.containers.conf, adding the `<store>` section shown below
+
+```
+<match containers.**>
+    @type copy
+    <store>
+      @type sumologic
+      @id sumologic.endpoint.logs
+      @include logs.output.conf
+      <buffer>
+        {{- if eq .Values.sumologic.fluentd.buffer "file" }}
+        @type file
+        path /fluentd/buffer/logs.containers
+        {{- else }}
+        @type memory
+        {{- end }}
+        @include buffer.output.conf
+      </buffer>
+    </store>
+    <store>
+      @type s3
+      aws_key_id YOUR_AWS_KEY_ID
+      aws_sec_key YOUR_AWS_SECRET_KEY
+      s3_bucket YOUR_S3_BUCKET_NAME
+      s3_region YOUR_S3_BUCKET_REGION
+      path logs/
+      # if you want to use ${tag} or %Y/%m/%d/ like syntax in path / s3_object_key_format,
+      # need to specify tag for ${tag} and time for %Y/%m/%d in <buffer> argument.
+      <buffer tag,time>
+        @type file
+        path /fluentd/buffer/logs.containers.s3
+        timekey 3600 # 1 hour partition
+        timekey_wait 10m
+        timekey_use_utc true # use utc
+        chunk_limit_size 256m
+      </buffer>
+    </store>
+  </match>
+```
