@@ -19,6 +19,7 @@ require 'uri'
 require 'openssl'
 require 'fluent/plugin/output'
 require 'fluent/plugin_helper/socket'
+require 'fluent/event'
 require 'google/protobuf'
 require 'snappy'
 require 'json'
@@ -30,6 +31,8 @@ require_relative '../../zipkin_pb'
 module Fluent::Plugin
   class ZipkinOutput < Output
     Fluent::Plugin.register_output('zipkin', self)
+
+    helpers :event_emitter
 
     class RetryableResponse < StandardError; end
 
@@ -73,6 +76,9 @@ module Fluent::Plugin
     desc 'The list of retryable response code'
     config_param :retryable_response_codes, :array, value_type: :integer, default: [503]
 
+    desc 'Maximum number of spans per request'
+    config_param :spans_per_request, :integer, default: 100
+
     config_section :auth, required: false, multi: false do
       desc 'The method for HTTP authentication'
       config_param :method, :enum, list: [:basic], default: :basic
@@ -93,6 +99,7 @@ module Fluent::Plugin
     def configure(conf)
       super
 
+      @first_trace = true
       if @content_type == 'application/json' then
         define_singleton_method(:get_spans, method(:get_spans_for_json))
       elsif @content_type != 'application/x-protobuf'
@@ -106,28 +113,23 @@ module Fluent::Plugin
       true
     end
 
-    def send_request_repeated(uri, req)
-      # TODO (sumo-drosiek, 2020.02.12): Rather emit records back to the fluent than resend same packet
-      begin
-        send_request(uri, req)
-        log.debug { "#{@http_method.capitalize} data to #{uri.to_s} with chunk(#{dump_unique_id_hex(chunk.unique_id)})" }
-      rescue Exception => exception
-        log.warn exception
-        log.info "Resend request due to #{exception}"
-        send_request_repeated(uri, req)
-        return
-      end
-    end
-
     def write(chunk)
       uri = parse_endpoint(chunk)
-      data = get_spans(chunk, size: 100)
+      data = split_chunk(chunk, size: @spans_per_request)
 
-      data.each do |payload|
+      data.each do |spans|
         begin
           req = create_request(chunk, uri)
+          payload = get_spans(spans)
           req.body = payload
-          send_request_repeated(uri, req)
+          if not send_request(uri, req)
+            mes = Fluent::MultiEventStream.new
+            spans.each do |timestamp, record|
+              mes.add(timestamp, record)
+            end
+            # ToDo (sumo-drosiek, 2020.03.06): Use chunk tag. It's hardcoded because sometimes chunk.metadata.tag is nil
+            router.emit_stream("tracing.resend", mes)
+          end
         rescue Exception => exception
           log.warn exception
           return
@@ -215,21 +217,19 @@ module Fluent::Plugin
                 http.request(req)
               }
             end
-
       if res.is_a?(Net::HTTPSuccess)
         log.debug { "#{res.code} #{res.message.rstrip}#{res.body.lstrip}" }
+
+        if @first_trace
+          log.info "First trace successfully sent to the receiver"
+          @first_trace = false
+        end
+
+        return true
       else
-        msg = "#{res.code} #{res.message.rstrip} #{res.body.lstrip}"
-
-        if @retryable_response_codes.include?(res.code.to_i)
-          raise RetryableResponse, msg
-        end
-
-        if @error_response_as_unrecoverable
-          raise Fluent::UnrecoverableError, msg
-        else
-          log.error "got error response from '#{@http_method.capitalize} #{uri.to_s}' : #{msg}"
-        end
+        msg = "#{res.code} #{res.message.rstrip}"
+        log.error "Error during sending traces: #{msg}"
+        return false
       end
     end
 
@@ -260,68 +260,53 @@ module Fluent::Plugin
       return IPAddr.new_ntoh(value).to_s
     end
 
-    def get_spans(chunk, size: 100)
-      # Using array is more efficient than inserting to Proto3 element by element
+    def split_chunk(chunk, size: 100)
       return_value = []
       spans = []
 
-      chunk.each do |time, record|
-        if !record['trace_id'] then
+      chunk.each do |time, span|
+        if !span['trace_id'] then
           next
         end
         if spans.length >= size
-          return_value.push(
-            Zipkin::Proto3::ListOfSpans.encode(
-              Zipkin::Proto3::ListOfSpans::new({
-                'spans' => spans
-                })))
+          return_value.push(spans)
           spans = []
         end
-        spans.push(Zipkin::Proto3::Span.new(record))
+        spans.push([time, span])
       end
 
       if spans.length > 0
-        return_value.push(
-          Zipkin::Proto3::ListOfSpans.encode(
-            Zipkin::Proto3::ListOfSpans::new({
-              'spans' => spans
-              })))
+        return_value.push(spans)
       end
 
       return return_value
     end
 
-    def get_spans_for_json(chunk, size: 100)
-      return_value = []
-      spans = []
+    def get_spans(spans)
+      return Zipkin::Proto3::ListOfSpans.encode(
+            Zipkin::Proto3::ListOfSpans::new({
+              'spans' => spans.map { |time, span| span }
+              }))
+    end
 
-      chunk.each do |time, record|
-        if !record['trace_id'] then
-          next
-        end
-
-        if spans.length >= size
-          return_value.push(Oj.dump(spans))
-          spans = []
-        end
-
-        spans.push(get_span_for_json(record))
+    def get_str_or_nil(value)
+      if !value || value == ''
+        return nil
       end
 
-      if spans.length > 0
-        return_value.push(Oj.dump(spans))
-        spans = []
-      end
+      return value
+    end
 
-      return return_value
+    def get_spans_for_json(spans)
+      return Oj.dump(spans.map { |time, span| get_span_for_json(span) })
     end
 
     def get_span_for_json(record)
 
-      if value = record.delete('trace_id')
+      if value = get_str_or_nil(record.delete('trace_id'))
         record['traceId'] = string_to_hexstring(value)
       end
-      if value = record.delete('parent_id')
+      if value = get_str_or_nil(record.delete('parent_id'))
         record['parentId'] = string_to_hexstring(value)
       end
       record['id'] = string_to_hexstring(record['id'])  # This line is failing during benchmark test (non-deterministic)
@@ -335,22 +320,22 @@ module Fluent::Plugin
       end
 
       if record['localEndpoint'] then
-        if record['localEndpoint']['ipv4']
-          record['localEndpoint']['ipv4'] = string_to_ipv4(record['localEndpoint']['ipv4'], 4)
+        if value = get_str_or_nil(record['localEndpoint'].delete('ipv4'))
+          record['localEndpoint']['ipv4'] = string_to_ipv4(value, 4)
         end
 
-        if record['localEndpoint']['ipv6']
-          record['localEndpoint']['ipv6'] = string_to_ipv4(record['localEndpoint']['ipv6'], 16)
+        if value = get_str_or_nil(record['localEndpoint'].delete('ipv6'))
+          record['localEndpoint']['ipv6'] = string_to_ipv4(value, 16)
         end
         record['localEndpoint']['serviceName'] = record['localEndpoint'].delete('service_name')
       end
 
       if record['remoteEndpoint'] then
-        if record['remoteEndpoint']['ipv4']
-          record['remoteEndpoint']['ipv4'] = string_to_ipv4(record['remoteEndpoint']['ipv4'], 4)
+        if value = get_str_or_nil(record['remoteEndpoint'].delete('ipv4'))
+          record['remoteEndpoint']['ipv4'] = string_to_ipv4(value, 4)
         end
-        if record['remoteEndpoint']['ipv6']
-          record['remoteEndpoint']['ipv6'] = string_to_ipv4(record['remoteEndpoint']['ipv6'], 16)
+        if value = get_str_or_nil(record['remoteEndpoint'].delete('ipv6'))
+          record['remoteEndpoint']['ipv6'] = string_to_ipv4(value, 16)
         end
         record['remoteEndpoint']['serviceName'] = record['remoteEndpoint'].delete('service_name')
       end

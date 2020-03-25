@@ -4,3 +4,4 @@ metadata:
   name: sumologic-configmap
 data:
   release: {{ template "sumologic.fullname" . }}-fluentd
+  fluentdNamespace: {{ .Release.Namespace }}

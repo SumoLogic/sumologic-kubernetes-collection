@@ -1366,4 +1366,52 @@ class SumoContainerOutputTest < Test::Unit::TestCase
     assert_equal(1, d.filtered_records.size)
     assert_equal(expected, d.filtered_records[0])
   end
+
+  test "test_tracing_format" do
+    conf = %{
+      tracing_format true
+      source_host "%{container}-%{label:pod-template-hash}"
+      collector_value "My collector"
+    }
+    d = create_driver(conf)
+    time = @time
+    input = {
+      "tags" => {
+        "container_name" => "log-format-labs",
+        "namespace" => "default",
+        "pod" => "log-format-labs-53575ccdb9-9d677",
+        "pod_id" => "170af806-c801-11e8-9009-025000000001",
+        "pod_label_pod-template-hash" => "54575ccdb9",
+        "pod_label_run" => "log-format-labs",
+        "pod_annotation_cluster" => "random-cluster",
+        "host" => "docker-for-desktop",
+        "master_url" => "https://10.96.0.1:443/api",
+        "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+      },
+    }
+    d.run do
+      d.feed("filter.test", time, input)
+    end
+    expected = {
+        "tags" => {
+          "_sourceCategory" => "kubernetes/default/log/format/labs/53575ccdb9",
+          "_sourceHost" => "log-format-labs-54575ccdb9",
+          "_source" => "traces",
+          "_collector" => "My collector",
+          "_sourceName" => "default.log-format-labs-53575ccdb9-9d677.log-format-labs",
+          "container_name" => "log-format-labs",
+          "namespace" => "default",
+          "pod" => "log-format-labs-53575ccdb9-9d677",
+          "pod_id" => "170af806-c801-11e8-9009-025000000001",
+          "pod_label_pod-template-hash" => "54575ccdb9",
+          "pod_label_run" => "log-format-labs",
+          "pod_annotation_cluster" => "random-cluster",
+          "host" => "docker-for-desktop",
+          "master_url" => "https://10.96.0.1:443/api",
+          "namespace_id" => "e8572415-9596-11e8-b28b-025000000001",
+        },
+    }
+    assert_equal(1, d.filtered_records.size)
+    assert_equal(expected, d.filtered_records[0])
+  end
 end

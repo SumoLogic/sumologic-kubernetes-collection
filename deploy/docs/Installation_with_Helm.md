@@ -1,6 +1,6 @@
 # Installation with Helm
 
-Note: the following steps assume you are installing using Helm 2.  You are using Helm 3, please refer to [this guide](Helm3.md).
+Note: the following steps assume you are installing using Helm 2.  Use of Helm 3 is not yet supported.
 
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
 
@@ -63,10 +63,18 @@ ebpf:
   enabled: true
 ```
 
-To customize your configuration, download the values.yaml file by running
+To customize your configuration:
+
+- Download the `values.yaml` file by running:
 
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/sumologic/values.yaml
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/sumologic/values.yaml > values.yaml
+```
+
+- Modify the `values.yaml` file with your customizations, then apply the configuration using the following command:
+
+```bash
+helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> -f values.yaml
 ```
 
 #### To install the chart with a different release name or namespace:

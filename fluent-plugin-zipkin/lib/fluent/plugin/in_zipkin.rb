@@ -72,6 +72,7 @@ module Fluent::Plugin
 
     def configure(conf)
       compat_parameters_convert(conf, :parser)
+      @first_trace = true
 
       super
 
@@ -157,6 +158,12 @@ module Fluent::Plugin
         end
 
         router.emit_stream(tag, mes)
+
+        if @first_trace
+          log.info "First trace received"
+          @first_trace = false
+        end
+
       rescue Exception => exception
         return ["500 Internal Server Error", {'Content-Type'=>'text/plain'}, "500 Internal Server Error\n#{$!}\n"]
       end

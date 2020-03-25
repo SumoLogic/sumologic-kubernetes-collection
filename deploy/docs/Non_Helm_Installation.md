@@ -33,7 +33,7 @@ kubectl config use-context DESIRED_CONTEXT_NAME
 ```
 * In the Non-Helm installation steps, you will never need to run `helm install`, but we use Helm as a templating tool to generate the yaml files to install various components of our solution. Thus you will still need to install Helm:
 
-*Note the following steps are one way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://helm.sh/docs/using_helm/#securing-your-helm-installation)*
+*Note the following steps are one way to install Helm, but in order to ensure property security, please be sure to review the [Helm documentation.](https://v2.helm.sh/docs/securing_installation/#securing-your-helm-installation)*
 
 Download the latest Helm 2 version to generate the yaml files necessary to deploy by running
 
@@ -42,7 +42,7 @@ brew install helm@2
 export PATH="/usr/local/opt/helm@2/bin:$PATH"
 ```
 
-Reference: https://helm.sh/docs/intro/install/
+Reference: https://v2.helm.sh/docs/using_helm/#installing-helm
 
 __NOTE__ These instructions assume that Prometheus is not already running on your Kubernetes cluster.
 
@@ -72,7 +72,7 @@ kubectl create namespace sumologic
 Run the following command to download and apply the YAML file containing all the Kubernetes resources. Replace the `<NAMESPACE>`, `<SUMOLOGIC_ACCESSID>`, `<SUMOLOGIC_ACCESSKEY>`, `<COLLECTOR_NAME>` and `<CLUSTER_NAME>` variables with your values.
 
 ```sh
-curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/kubernetes/setup-sumologic.yaml.tmpl | \
+curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/kubernetes/setup-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/<NAMESPACE>/g" | \
 sed 's/\$SUMOLOGIC_ACCESSID'"/<SUMOLOGIC_ACCESSID>/g" | \
 sed 's/\$SUMOLOGIC_ACCESSKEY'"/<SUMOLOGIC_ACCESSKEY>/g" | \
@@ -153,7 +153,7 @@ In this step you will deploy Fluentd using a Sumo-provided .yaml manifest.
 If you don't need to customize the configuration apply the `fluentd-sumologic.yaml` manifest with the following command:
 
 ```sh
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/sumologic/g" | \
 kubectl -n sumologic apply -f -
 ```
@@ -163,7 +163,7 @@ kubectl -n sumologic apply -f -
 If you need to customize the configuration there are two commands to run. First, get the `fluentd-sumologic.yaml` manifest with following command:
 
 ```sh
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/sumologic/g" >> fluentd-sumologic.yaml
 ```
 
@@ -191,7 +191,7 @@ In this step, you will configure the Prometheus server to write metrics to Fluen
 Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/prometheus-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 Before installing `prometheus-operator`, edit `prometheus-overrides.yaml` to define a unique cluster identifier. The default value of the `cluster` field in the `externalLabels` section of `prometheus-overrides.yaml` is `kubernetes`. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
@@ -247,7 +247,7 @@ In this step, you will deploy FluentBit to forward logs to Fluentd.
 Run the following commands to download the FluentBit `fluent-bit-overrides.yaml` file and install `fluent-bit`
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/fluent-bit-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/fluent-bit-overrides.yaml
 $ helm fetch stable/fluent-bit --version 2.8.1
 $ helm template fluent-bit-2.8.1.tgz --name fluent-bit --namespace=sumologic -f fluent-bit-overrides.yaml > fluent-bit.yaml
 $ kubectl apply -f fluent-bit.yaml
@@ -262,7 +262,7 @@ In this step, you will deploy [Falco](https://falco.org/) to detect anomalous ac
 Download the file `falco-overrides.yaml` from GitHub:
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/falco-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/falco-overrides.yaml
 $ helm fetch stable/falco --version 1.0.9
 $ helm template falco-1.0.9.tgz --name falco --namespace=sumologic -f falco-overrides.yaml > falco.yaml
 $ kubectl apply -f falco.yaml

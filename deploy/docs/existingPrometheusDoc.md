@@ -10,38 +10,41 @@
 
 ## Install Fluentd, Fluent-bit, and Falco
 
-Run the following to download the `values.yaml` file
+Installation of collection in a cluster where a prometheus operator already exists requires that you modify Sumo Logic's [values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/values.yaml) file. Run the following to download the `values.yaml` file
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/sumologic/values.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/sumologic/values.yaml
 ```
 
-Edit the `values.yaml` file to `prometheus-operator.enabled = false`, and run
+Edit the `values.yaml` file, setting `prometheus-operator.enabled = false`. This modification will instruct Helm to install all the needed collection components (FluentD, FluentBit, and Falco), but it will not install the Prometheus Operator. Run the following command to install collection on your cluster.
 
 ```bash
 helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> 
 ```
 
-If the prometheus-operator is installed in a different namespace than where the Sumo Logic Solution is deployed you need to copy one of the configmaps that exposes the release name, which is used in the remote write URLs.
+**NOTE**:
+In case the prometheus-operator is installed in a different namespace as compared to where the Sumo Logic Solution is deployed, you would need to do the following two steps:
 
-For example: 
-If the Sumo Logic Solution is deployed in `<source-namespace>` and the existing prometheus-operator is in `<destination-namespace>`, run the below command: 
+##### 1. Copy one of the configmaps that exposes the release name,  which is used in the remote write urls.
+
+For example:\
+If the Sumo Logic Solution is deployed in `<source-namespace>` and the existing prometheus-operator is in `<destination-namespace>`, run the below command:
 ```bash
-kubectl get configmap sumologic-configmap — namespace=<source-namespace> — export -o yaml |\ kubectl apply — namespace=<destination-namespace> -f -
+kubectl get configmap sumologic-configmap --namespace=<source-namespace> --export -o yaml | kubectl apply --namespace=<destination-namespace> -f -
+```
+##### 2. Update Prometheus remote write URL's
+Run the following commands to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator with the prometheus overrides we provide in our [prometheus-overrides.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/prometheus-overrides.yaml).
+
+Run the following command to download our prometheus-overrides.yaml file
+
+```bash
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.17.0/deploy/helm/prometheus-overrides.yaml > prometheus-overrides.yaml
 ```
 
-## Overwrite Prometheus Remote Write Configuration
-
-If you have not already customized your [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write), run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide below.
+Next run
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v0.15.0/deploy/helm/prometheus-overrides.yaml
-```
-
-Then run
-
-```bash
-helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml
+helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
 ```
 
 ## Merge Prometheus Remote Write Configuration

@@ -19,6 +19,10 @@
     - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster) 
     - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator) 
   - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics) 
+  - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
+  - [Error: could not find tiller](#error-could-not-find-tiller)
+  - [Validation error in helm installation](#validation-error-in-helm-installation)
+  - [Rancher](#rancher)
 
 <!-- /TOC -->
 
@@ -258,9 +262,33 @@ helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VE
 
 There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [here](./Non_Helm_Installation.md#missing-metrics-for-controller-manager-or-scheduler).
 
-### Promethues stuck in `Terminating` state after running `helm del collection`
+### Prometheus stuck in `Terminating` state after running `helm del collection`
 Delete the pod forcefully by adding `--force --grace-period=0` to the `kubectl delete pod` command.
 
+### Error: could not find tiller
+After running helm init you will see something like:
+
+```
+Warning: Tiller is already installed in the cluster.
+(Use --client-only to suppress this message, or --upgrade to upgrade Tiller to the current version.)
+Happy Helming!
+```
+
+However, when you try to run the helm install command it will error out:
+
+```
+Error: could not find tiller
+```
+
+To resolve this, you need to re-initalize tiller:
+
+```
+kubectl -n kube-system delete deployment tiller-deploy 
+
+kubectl -n kube-system delete service/tiller-deploy
+
+helm init --service-account tiller --history-max 200
+```
 
 ### Validation error in helm installation
 ``` bash 

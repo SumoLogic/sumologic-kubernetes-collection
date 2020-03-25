@@ -83,9 +83,9 @@ class ZipkinOutputTest < ::Test::Unit::TestCase
             'tag2' => 'test_second_tag'
         }
     }]]
-    spans = @plugin.instance.send(:get_spans, chunk)
+    spans = @plugin.instance.send(:get_spans, @plugin.instance.send(:split_chunk, chunk)[0])
 
-    assert_equal(spans[0], EXPECTED_PROTOBUF.force_encoding("ASCII-8BIT"))
+    assert_equal(spans, EXPECTED_PROTOBUF.force_encoding("ASCII-8BIT"))
   end
 
   def test_json
@@ -127,8 +127,53 @@ class ZipkinOutputTest < ::Test::Unit::TestCase
         }
     }]]
 
-    spans = @plugin.instance.send(:get_spans_for_json, SPANS_CHUNK)
+    spans = @plugin.instance.send(:get_spans_for_json, @plugin.instance.send(:split_chunk, SPANS_CHUNK)[0])
 
-    assert_equal(Oj.load(spans[0], mode: :compat), Oj.load(EXPECTED_JSON, mode: :compat))
+    assert_equal(Oj.load(spans, mode: :compat), Oj.load(EXPECTED_JSON, mode: :compat))
+  end
+
+  def test_json_empty_parent_id
+    expected_json = '[{"traceId":"746573745f6964","id":"746573745f6963","kind":"CLIENT","name":"test name","timestamp":1580308467000000,"duration":13,"localEndpoint":{"serviceName":"test_local","port":313},"remoteEndpoint":{"serviceName":"test_remote","port":777},"annotations":[{"timestamp":1580308467000006,"value":"test_value"}],"tags":{"tag1":"test_first_tag","tag2":"test_second_tag"}}]'
+    @plugin.configure(%[
+        content_type application/json
+        endpoint /dev/null
+    ])
+
+    chunk = [[0,
+      {
+        'trace_id' => 'test_id',
+        'parent_id' => '',
+        'id' => 'test_ic',
+        'kind' => 'CLIENT',
+        'name' => 'test name',
+        'timestamp' => 1580308467000000,
+        'duration' => 13,
+        'local_endpoint' => {
+            'service_name' => 'test_local',
+            'ipv4' => "".force_encoding("ASCII-8BIT"),
+            'ipv6' => "".force_encoding("ASCII-8BIT"),
+            'port' => 313,
+        },
+        'remote_endpoint' => {
+            'service_name' => 'test_remote',
+            'ipv4' => "".force_encoding("ASCII-8BIT"),
+            'ipv6' => "".force_encoding("ASCII-8BIT"),
+            'port' => 777,
+        },
+        'annotations' => [
+            {
+                'timestamp' => 1580308467000006,
+                'value' => 'test_value'
+            }
+        ],
+        'tags' => {
+            'tag1' => 'test_first_tag',
+            'tag2' => 'test_second_tag'
+        }
+    }]]
+
+    spans = @plugin.instance.send(:get_spans_for_json, @plugin.instance.send(:split_chunk, chunk)[0])
+
+    assert_equal(Oj.load(spans, mode: :compat), Oj.load(expected_json, mode: :compat))
   end
 end

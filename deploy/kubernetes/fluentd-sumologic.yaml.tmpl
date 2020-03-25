@@ -7,6 +7,7 @@ metadata:
   name: sumologic-configmap
 data:
   release: collection-sumologic
+  fluentdNamespace: $NAMESPACE
 ---
 # Source: sumologic/templates/configmap.yaml
 apiVersion: v1
@@ -31,6 +32,11 @@ data:
     overflow_action drop_oldest_chunk
     
   common.conf: |-
+    # Prevent fluentd from handling records containing its own logs.
+    <match fluentd.**>
+      @type null
+    </match>
+    # expose the Fluentd metrics to Prometheus
     <source>
       @type prometheus
       metrics_path /metrics
@@ -296,6 +302,7 @@ data:
         source_category "kubelet"
         source_name "k8s_kubelet"
         source_category_prefix "kubernetes/"
+        source_category_replace_dash "/"
         exclude_facility_regex ""
         exclude_host_regex ""
         exclude_priority_regex ""
@@ -320,6 +327,7 @@ data:
         @type kubernetes_sumologic
         source_category "system"
         source_category_prefix "kubernetes/"
+        source_category_replace_dash "/"
         exclude_facility_regex ""
         exclude_host_regex ""
         exclude_priority_regex ""
@@ -360,6 +368,11 @@ data:
       @type events
       deploy_namespace $NAMESPACE
     </source>
+    # Prevent fluentd from handling records containing its own logs.
+    <match fluentd.**>
+      @type null
+    </match>
+    # expose the Fluentd metrics to Prometheus
     <source>
       @type prometheus
       metrics_path /metrics
@@ -579,7 +592,7 @@ spec:
         fsGroup: 999
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:0.15.0
+        image: sumologic/kubernetes-fluentd:0.17.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -664,7 +677,7 @@ spec:
         fsGroup: 999
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:0.15.0
+        image: sumologic/kubernetes-fluentd:0.17.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:

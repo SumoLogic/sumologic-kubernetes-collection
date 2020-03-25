@@ -35,3 +35,32 @@ release: "{{ .Release.Name }}"
 heritage: "{{ .Release.Service }}"
 {{- end -}}
 {{- end -}}
+
+{{/*
+Get configuration value, otherwise returns default
+
+Example usage:
+
+{{ include "utils.get_default" (dict "Values" .Values "Keys" (list "key1" "key2") "Default" "default_value") | quote }}
+
+It returns `.Value.key1.key2` if it exists otherwise `default_value`
+
+*/}}
+{{- define "utils.get_default" -}}
+{{- $dict := .Values -}}
+{{- $keys := .Keys -}}
+{{- $default := .Default -}}
+{{- $success := true }}
+{{- range $keys -}}
+  {{- if (and $success (hasKey $dict .)) }}
+    {{- $dict = index $dict . }}
+  {{- else }}
+    {{- $success = false }}
+  {{- end }}
+{{- end }}
+{{- if $success }}
+  {{- $dict }}
+{{- else }}
+  {{- $default }}
+{{- end }}
+{{- end -}}
