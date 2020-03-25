@@ -252,7 +252,7 @@ prometheus-operator:  # For values.yaml
               sourceLabels: [service]
 ```
 
-Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and upgrade your sumologic or prometheus operator installation, depending on used method:
+Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and upgrade your sumologic or prometheus operator installation, depending on method used:
 
 * `helm upgrade collection sumologic/sumologic --reuse-values -f <path to values.yaml>` to upgrade sumologic collection
 * `helm upgrade prometheus-operator stable/prometheus-operator --reuse-values -f <path to prometheus-overrides.yaml>` to upgrade your prometheus-operator.
