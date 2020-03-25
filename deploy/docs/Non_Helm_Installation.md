@@ -155,6 +155,7 @@ If you don't need to customize the configuration apply the `fluentd-sumologic.ya
 ```sh
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.16/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/sumologic/g" | \
+sed 's/cluster kubernetes/cluster $CLUSTER_NAME/g' | \
 kubectl -n sumologic apply -f -
 ```
 
