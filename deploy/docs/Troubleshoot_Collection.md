@@ -298,17 +298,17 @@ This is a known race condition with Helm and there is no workaround at this time
 
 ```
  Error: namespaces "sumologic" is forbidden: User "system:serviceaccount:kube-system:default" cannot get resource "namespaces" in API group "" in the namespace "sumologic"
- ```
- This occurs in Kubernetes 1.8 and greater because you need to enable Role Based Access Control (RBAC).
+```
+This occurs in Kubernetes 1.8 and greater because you need to enable Role Based Access Control (RBAC).
  
- 1. Delete Tiller if it is already deployed
- ```
+1. Delete Tiller if it is already deployed
+```
 kubectl -n kube-system delete deployment tiller-deploy 
 kubectl -n kube-system delete service/tiller-deploy
 ```
- 2. Create a file called rbac-config.yaml with the following content
+2. Create a file called rbac-config.yaml with the following content
 ```yaml
- apiVersion: v1
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: tiller
@@ -327,11 +327,11 @@ subjects:
     name: tiller
     namespace: kube-system
 ```
- 3. Create the role for your cluster
+3. Create the role for your cluster
 ```
 kubectl create -f rbac-config.yaml
 ```
- 4. Initialize helm
+4. Initialize helm
 ```
 helm init --service-account tiller --history-max 200
 ```
