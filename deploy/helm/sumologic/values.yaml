@@ -699,7 +699,6 @@ otelcol:
             - podName
             - replicaSetName
             - serviceName
-            - startTime
             - statefulSetName
           tags:
             containerId: container_id
@@ -714,7 +713,6 @@ otelcol:
             podName: pod
             replicaSetName: replicaset
             serviceName: service_name
-            startTime: start_time
             statefulSetName: statefulset
           annotations:
             - tag_name: pod_annotation_%s
