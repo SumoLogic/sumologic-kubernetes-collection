@@ -307,7 +307,7 @@ kubectl -n kube-system delete deployment tiller-deploy
 kubectl -n kube-system delete service/tiller-deploy
 ```
  2. Create a file called rbac-config.yaml with the following content
- ```
+```yaml
  apiVersion: v1
 kind: ServiceAccount
 metadata:
