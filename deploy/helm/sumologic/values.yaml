@@ -126,7 +126,7 @@ sumologic:
   sourceName: "%{namespace}.%{pod}.%{container}"
 
   ## Set the _sourceHost metadata field in SumoLogic.
-  sourceHost: "%{host}"
+  sourceHost: "%{source_host}"
 
   ## Set the _sourceCategory metadata field in SumoLogic.
   sourceCategory: "%{namespace}/%{pod_name}"
