@@ -135,9 +135,9 @@ If you want to filter metrics by namespace, it can be done in the prometheus rem
    regex: kube-state-metrics;(namespace1|namespace2)
    sourceLabels: [job, namespace]
 ```
-The above section should be added in each of the  kube-state remote write blocks.
+The section above should be added in each of the kube-state remote write blocks.
 
-Here is another example of excluding up metrics in the sumologic namespace and keep the up metrics for all other namespaces:
+Here is another example of excluding up metrics in the sumologic namespace while still collecting up metrics for all other namespaces:
 ```
      # up metrics
      - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics
