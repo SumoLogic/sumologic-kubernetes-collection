@@ -125,6 +125,9 @@ sumologic:
   ## Set the _sourceName metadata field in SumoLogic.
   sourceName: "%{namespace}.%{pod}.%{container}"
 
+  ## Set the _sourceHost metadata field in SumoLogic.
+  sourcHost: "%{host}"
+
   ## Set the _sourceCategory metadata field in SumoLogic.
   sourceCategory: "%{namespace}/%{pod_name}"
 
@@ -538,7 +541,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.2.7.0"
+      tag: "0.2.7.1"
       pullPolicy: IfNotPresent
   config:
     receivers:
@@ -563,6 +566,8 @@ otelcol:
       k8s_tagger:
         # When true, only IP is assigned and passed (so it could be tagged on another collector)
         passthrough: false
+        # Enable calls for owners
+        owner_lookup_enabled: true
         # Extracted fields and assigned names
         extract:
           metadata:
@@ -575,7 +580,6 @@ otelcol:
             - hostName
             - namespace
             - node
-            - owners
             - podId
             - podName
             - replicaSetName
@@ -588,7 +592,7 @@ otelcol:
             cluster: cluster
             daemonSetName: daemonset
             deployment: deployment
-            hostName: hostname
+            hostName: host
             namespace: namespace
             node: node
             podId: pod_id
