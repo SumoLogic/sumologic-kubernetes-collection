@@ -21,3 +21,8 @@ Gemfile.lock
 deploy/helm/sumologic/charts
 deploy/helm/sumologic/charts/*
 deploy/helm/sumologic/requirements.lock
+
+# vagrant ignores
+.vagrant
+ubuntu-bionic-18.04-cloudimg-console.log
+.kube-config

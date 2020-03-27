@@ -135,6 +135,7 @@ If you want to filter metrics by namespace, it can be done in the prometheus rem
    regex: kube-state-metrics;(namespace1|namespace2)
    sourceLabels: [job, namespace]
 ```
+
 The section above should be added in each of the kube-state remote write blocks.
 
 Here is another example of excluding up metrics in the sumologic namespace while still collecting up metrics for all other namespaces:
@@ -148,4 +149,18 @@ Here is another example of excluding up metrics in the sumologic namespace while
        - action: drop
          regex: up;sumologic
          sourceLabels: [__name__,namespace]
+
+The above section should be added in each of the kube-state remote write blocks.
+
+### Modify the Log Level for Falco
+To modify the default log level for Falco, edit the following section in the values.yaml file. Available log levels can be found in Falco's documentation here: https://falco.org/docs/configuration/.
+```
+falco:
+  ## Set the enabled flag to false to disable falco.
+  enabled: true
+  #ebpf:
+  #  enabled: true
+  falco:
+    jsonOutput: true
+    loglevel: debug
 ```

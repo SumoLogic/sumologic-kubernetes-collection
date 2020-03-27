@@ -592,7 +592,7 @@ spec:
         fsGroup: 999
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:0.17.0
+        image: sumologic/kubernetes-fluentd:1.0.0-beta.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -677,7 +677,7 @@ spec:
         fsGroup: 999
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:0.17.0
+        image: sumologic/kubernetes-fluentd:1.0.0-beta.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
