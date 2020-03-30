@@ -10,13 +10,13 @@
 
 ## Install Fluentd, Fluent-bit, and Falco
 
-Installation of collection in a cluster where a prometheus operator already exists requires that you modify Sumo Logic's [values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/values.yaml) file. Run the following to download the `values.yaml` file
+Run the following to download the `values.yaml` file
 
 ```bash
 curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/sumologic/values.yaml
 ```
 
-Edit the `values.yaml` file, setting `prometheus-operator.enabled = false`. This modification will instruct Helm to install all the needed collection components (FluentD, FluentBit, and Falco), but it will not install the Prometheus Operator. Run the following command to install collection on your cluster.
+Edit the `values.yaml` file to `prometheus-operator.enabled = false`, and run
 
 ```bash
 helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> 
@@ -33,15 +33,15 @@ If the Sumo Logic Solution is deployed in `<source-namespace>` and the existing 
 kubectl get configmap sumologic-configmap --namespace=<source-namespace> --export -o yaml | kubectl apply --namespace=<destination-namespace> -f -
 ```
 ##### 2. Update Prometheus remote write URL's
-Run the following commands to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator with the prometheus overrides we provide in our [prometheus-overrides.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/prometheus-overrides.yaml).
+Run the following to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator by installing with the prometheus overrides file we provide below.
 
-Run the following command to download our prometheus-overrides.yaml file
+In the below command, replace `<SUMOLOGIC_HELM_CHART_NAMESPACE>` with the actual namespace where the sumologic helm chart is installed. This is done to point the prometheus remote write URL to the Fluentd endpoints correctly.
 
 ```bash
 curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/prometheus-overrides.yaml > prometheus-overrides.yaml
 ```
 
-Next run
+Then run
 
 ```bash
 helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200

@@ -7,7 +7,9 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   fluent.conf: |-
-{{- .Values.fluentd.rawConfig | nindent 4 }}
+    @include common.conf
+    @include metrics.conf
+    @include logs.conf
 {{- if .Values.sumologic.traces.enabled }}
     @include traces.conf
 {{- end }}
