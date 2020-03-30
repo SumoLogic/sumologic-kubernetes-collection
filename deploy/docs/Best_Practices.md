@@ -129,17 +129,32 @@ In the fluentbit overrides file (https://github.com/SumoLogic/sumologic-kubernet
 Reference: https://fluentbit.io/documentation/0.12/input/tail.html 
 
 ### Filtering Prometheus Metrics by Namespace in the Remote Write Config
-If you want to filter metrics by namespace, it can be done in the prometheus remote write config. Here is an example of excluding kube-state metrics.
+If you want to filter metrics by namespace, it can be done in the prometheus remote write config. Here is an example of excluding kube-state metrics for namespace1 and namespace2:
 ```bash
  - action: drop
    regex: kube-state-metrics;(namespace1|namespace2)
    sourceLabels: [job, namespace]
 ```
-The above section should be added in each of the kube-state remote write blocks.
+
+The section above should be added in each of the kube-state remote write blocks.
+
+Here is another example of excluding up metrics in the sumologic namespace while still collecting up metrics for all other namespaces:
+```bash
+     # up metrics
+     - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics
+       writeRelabelConfigs:
+       - action: keep
+         regex: up
+         sourceLabels: [__name__]
+       - action: drop
+         regex: up;sumologic
+         sourceLabels: [__name__,namespace]
+```
+The section above should be added in each of the kube-state remote write blocks.
 
 ### Modify the Log Level for Falco
 To modify the default log level for Falco, edit the following section in the values.yaml file. Available log levels can be found in Falco's documentation here: https://falco.org/docs/configuration/.
-```
+```bash
 falco:
   ## Set the enabled flag to false to disable falco.
   enabled: true
