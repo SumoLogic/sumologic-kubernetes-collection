@@ -193,6 +193,7 @@ for c in ${CLEANUP_CONFIGS[@]}; do
   yq d -i new.yaml $c
 done
 
+# New fluent-bit db path
 sed "s/tail-db\/tail-containers-state.db/tail-db\/tail-containers-state-sumo.db/g" new.yaml > new_values.yaml
 rm new.yaml
 
