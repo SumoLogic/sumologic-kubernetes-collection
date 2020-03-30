@@ -171,8 +171,6 @@ spec:
           value: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
         - name: SOURCE_NAME
           value: {{ .Values.sumologic.sourceName | quote }}
-        - name: SOURCE_HOST
-          value: {{ .Values.sumologic.sourceHost | quote }}
         - name: KUBERNETES_META
           value: {{ .Values.sumologic.kubernetesMeta | quote }}
         - name: KUBERNETES_META_REDUCE

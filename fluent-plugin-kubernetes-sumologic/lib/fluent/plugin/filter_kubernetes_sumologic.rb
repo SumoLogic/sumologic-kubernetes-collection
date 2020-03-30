@@ -12,7 +12,7 @@ module Fluent::Plugin
     config_param :source_category_prefix, :string, :default => "kubernetes/"
     config_param :source_name, :string, :default => "%{namespace}.%{pod}.%{container}"
     config_param :log_format, :string, :default => "json"
-    config_param :source_host, :string, :default => "%{source_host}"
+    config_param :source_host, :string, :default => ""
     config_param :exclude_container_regex, :string, :default => ""
     config_param :exclude_facility_regex, :string, :default => ""
     config_param :exclude_host_regex, :string, :default => ""
