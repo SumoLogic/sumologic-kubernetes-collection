@@ -1,6 +1,6 @@
 image:
   repository: sumologic/kubernetes-fluentd
-  tag: 0.17.0
+  tag: 0.17.1-rc.0
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -538,7 +538,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.2.7.0"
+      tag: "0.2.7.1"
       pullPolicy: IfNotPresent
   config:
     receivers:
@@ -563,6 +563,8 @@ otelcol:
       k8s_tagger:
         # When true, only IP is assigned and passed (so it could be tagged on another collector)
         passthrough: false
+        # Enable calls for owners
+        owner_lookup_enabled: true
         # Extracted fields and assigned names
         extract:
           metadata:
@@ -575,12 +577,10 @@ otelcol:
             - hostName
             - namespace
             - node
-            - owners
             - podId
             - podName
             - replicaSetName
             - serviceName
-            - startTime
             - statefulSetName
           tags:
             containerId: container_id
@@ -588,14 +588,13 @@ otelcol:
             cluster: cluster
             daemonSetName: daemonset
             deployment: deployment
-            hostName: hostname
+            hostName: host
             namespace: namespace
             node: node
             podId: pod_id
             podName: pod
             replicaSetName: replicaset
             serviceName: service_name
-            startTime: start_time
             statefulSetName: statefulset
           annotations:
             - tag_name: pod_annotation_%s
