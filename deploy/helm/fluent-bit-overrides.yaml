@@ -58,7 +58,7 @@ rawConfig: |-
     Rotate_Wait      60
     Mem_Buf_Limit    5MB
     Skip_Long_Lines  On
-    DB               /tail-db/tail-containers-state.db
+    DB               /tail-db/tail-containers-state-sumo.db
     DB.Sync          Normal
   [INPUT]
     Name            systemd

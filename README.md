@@ -11,11 +11,11 @@ This repo contains all required resources to collect data from Kubernetes cluste
 Detailed instructions are available in our Installation Guides below.
 
 Sumo Logic Helm Chart Version
-| version | status |  
+| version | status |
 |--|--|
-|[0.17.0](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v0.17/deploy/README.md)| current / supported  |
-|[0.16.0](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v0.16/deploy/README.md) | deprecated |
-|[0.15.0](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v0.15/deploy/README.md) | deprecated |
+|[v0.17](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v0.17/deploy/README.md) | current / supported  |
+|[v0.16](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v0.16/deploy/README.md) | deprecated |
+|[v0.15](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v0.15/deploy/README.md) | deprecated |
 
 # License
 
