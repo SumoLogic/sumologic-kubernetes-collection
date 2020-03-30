@@ -23,7 +23,7 @@ fi
 
 OLD_VALUES_YAML=$1
 
-URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/846cae152f4ccdc9cc1a26e4a67af1f603ea83fa/deploy/helm/sumologic/values.yaml
+URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/4bd5a737b0f9730e64c5d59f168420af73e81a9b/deploy/helm/sumologic/values.yaml
 curl -s $URL > new.yaml
 
 OLD_CONFIGS="sumologic.eventCollectionEnabled
@@ -56,7 +56,22 @@ sumologic.k8sMetadataFilter.watch
 sumologic.k8sMetadataFilter.verifySsl
 sumologic.k8sMetadataFilter.cacheSize
 sumologic.k8sMetadataFilter.cacheTtl
-sumologic.k8sMetadataFilter.cacheRefresh"
+sumologic.k8sMetadataFilter.cacheRefresh
+deployment.nodeSelector
+deployment.tolerations
+deployment.affinity
+deployment.podAntiAffinity
+deployment.replicaCount
+deployment.resources.limits.memory
+deployment.resources.limits.cpu
+deployment.resources.requests.memory
+deployment.resources.requests.cpu
+eventsDeployment.nodeSelector
+eventsDeployment.tolerations
+eventsDeployment.resources.limits.memory
+eventsDeployment.resources.limits.cpu
+eventsDeployment.resources.requests.memory
+eventsDeployment.resources.requests.cpu"
 
 NEW_CONFIGS="fluentd.events.enabled
 fluentd.events.sourceCategory
@@ -88,7 +103,22 @@ fluentd.logs.containers.k8sMetadataFilter.watch
 fluentd.logs.containers.k8sMetadataFilter.verifySsl
 fluentd.metadata.cacheSize
 fluentd.metadata.cacheTtl
-fluentd.metadata.cacheRefresh"
+fluentd.metadata.cacheRefresh
+fluentd.statefulset.nodeSelector
+fluentd.statefulset.tolerations
+fluentd.statefulset.affinity
+fluentd.statefulset.podAntiAffinity
+fluentd.statefulset.replicaCount
+fluentd.statefulset.resources.limits.memory
+fluentd.statefulset.resources.limits.cpu
+fluentd.statefulset.resources.requests.memory
+fluentd.statefulset.resources.requests.cpu
+fluentd.eventsStatefulset.nodeSelector
+fluentd.eventsStatefulset.tolerations
+fluentd.eventsStatefulset.resources.limits.memory
+fluentd.eventsStatefulset.resources.limits.cpu
+fluentd.eventsStatefulset.resources.requests.memory
+fluentd.eventsStatefulset.resources.requests.cpu"
 
 CLEANUP_CONFIGS="sumologic.events
 sumologic.fluentd
@@ -96,7 +126,9 @@ sumologic.k8sMetadataFilter
 sumologic.kubernetesMeta
 sumologic.kubernetesMetaReduce
 sumologic.addStream
-sumologic.addTime"
+sumologic.addTime
+deployment
+eventsDeployment"
 
 IFS=$'\n' read -r -d '' -a OLD_CONFIGS <<< "$OLD_CONFIGS"
 IFS=$'\n' read -r -d '' -a NEW_CONFIGS <<< "$NEW_CONFIGS"
@@ -122,6 +154,17 @@ fi
 
 # Keep image version as 1.0.0
 yq w -i new.yaml image.tag 1.0.0
+
+# Keep pre-upgrade hook
+PRE_UPGRADE="clusterRole
+clusterRoleBinding
+configMap
+job
+serviceAccount"
+IFS=$'\n' read -r -d '' -a PRE_UPGRADE <<< "$PRE_UPGRADE"
+for i in ${!PRE_UPGRADE[@]}; do
+  yq w -i new.yaml sumologic.setup.${PRE_UPGRADE[$i]}.annotations[helm.sh/hook] pre-install,pre-upgrade
+done
 
 # Preserve the functionality of addStream=false or addTime=false
 if [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ] && [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]
