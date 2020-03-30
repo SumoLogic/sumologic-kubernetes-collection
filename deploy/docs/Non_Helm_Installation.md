@@ -195,10 +195,6 @@ Download the Prometheus Operator `prometheus-overrides.yaml` by running
 $ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/prometheus-overrides.yaml
 ```
 
-Before installing `prometheus-operator`, edit `prometheus-overrides.yaml` to define a unique cluster identifier. The default value of the `cluster` field in the `externalLabels` section of `prometheus-overrides.yaml` is `kubernetes`. If you will be deploying the metric collection solution on multiple Kubernetes clusters, you will want to use a unique identifier for each. For example, you might use “Dev”, “Prod”, and so on.
-
-__NOTE__ It’s fine to change the value of the `cluster` field, but don’t change the field name (key).
-
 __NOTE__ If you plan to install Prometheus in a different namespace than you deployed Fluentd to in Step 1, or you have an existing Prometheus you plan to apply our configuration to running in a different namespace,  please update the remote write API configuration to use the full service URL like, `http://collection-sumologic.sumologic.svc.cluster.local:9888`.
 
 You can also [Filter metrics](additional_prometheus_configuration.md#filter-metrics) and [Trim and relabel metrics](additional_prometheus_configuration.md#trim-and-relabel-metrics) in `prometheus-overrides.yaml`.
