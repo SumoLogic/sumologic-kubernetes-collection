@@ -193,8 +193,9 @@ for c in ${CLEANUP_CONFIGS[@]}; do
   yq d -i new.yaml $c
 done
 
-# New fluent-bit db path
-sed "s/tail-db\/tail-containers-state.db/tail-db\/tail-containers-state-sumo.db/g" new.yaml > new_values.yaml
+# New fluent-bit db path, and account for yq bug that stringifies empty maps
+sed "s/tail-db\/tail-containers-state.db/tail-db\/tail-containers-state-sumo.db/g" new.yaml | \
+sed "s/'{}'/{}/g" > new_values.yaml
 rm new.yaml
 
 DONE="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
