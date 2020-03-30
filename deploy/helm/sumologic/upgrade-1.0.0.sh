@@ -10,7 +10,7 @@ Usage:
   ./upgrade-1.0.0.sh /path/to/values.yaml
 
 Returns:
-  new.yaml
+  new_values.yaml
 
 For more details, please refer to Migration steps and Changelog here: [link]
 "
@@ -193,6 +193,9 @@ for c in ${CLEANUP_CONFIGS[@]}; do
   yq d -i new.yaml $c
 done
 
+sed "s/tail-db\/tail-containers-state.db/tail-db\/tail-containers-state-sumo.db/g" new.yaml > new_values.yaml
+rm new.yaml
+
 DONE="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
-A new yaml file has been generated for you. Please check the current directory for new.yaml."
+A new yaml file has been generated for you. Please check the current directory for new_values.yaml."
 echo "$DONE"
