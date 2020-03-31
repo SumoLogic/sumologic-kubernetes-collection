@@ -84,4 +84,7 @@ COPY --from=builder /usr/local/bundle /usr/local/bundle
 COPY ./fluent.conf /fluentd/etc/
 COPY ./entrypoint.sh /bin/
 
+# Allow installing gems by fluent user
+RUN chown fluent /usr/local/bundle/*
+
 USER fluent

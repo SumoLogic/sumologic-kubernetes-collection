@@ -25,4 +25,11 @@ if [ "$1" = "fluentd" ]; then
     fi
 fi
 
+# Install custom plugins if specified by user
+if [ -n "${ADDITIONAL_PLUGINS}" ]; then
+    for plugin in ${ADDITIONAL_PLUGINS}; do
+        gem install ${plugin}
+    done
+fi
+
 exec "$@"
