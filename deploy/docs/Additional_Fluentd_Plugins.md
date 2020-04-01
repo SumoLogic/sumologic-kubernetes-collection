@@ -4,7 +4,7 @@ To add additional Fluentd plugins, you can modify `values.yaml` or create a new 
 
 ## Configuration
 
-__Note__: If your plugin require additional system libraries, it cannot be installed this way.
+__Note__: If your plugin requires additional system libraries, it cannot be installed this way.
 
 ```yaml
 # ...
