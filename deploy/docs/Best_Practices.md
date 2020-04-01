@@ -9,7 +9,7 @@ If your logs have a different date format you can provide a custom regex to dete
 
 New parsers can be defined under the `parsers` key of the fluent-bit configuration section in the `values.yaml` file as follows:
 
-```
+```yaml
 parsers:
   enabled: true
   regex:
@@ -52,7 +52,7 @@ To enable autoscaling for Fluentd:
 
 - Enable metrics-server dependency
   Note: If metrics-server is already installed, this step is not required.
-  ```
+  ```yaml
   ## Configure metrics-server
   ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
   metrics-server:
@@ -60,7 +60,7 @@ To enable autoscaling for Fluentd:
   ```
 
 - Enable autoscaling for Fluentd
-```
+```yaml
 fluentd:
   ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
   autoscaling:
@@ -74,10 +74,20 @@ By default, we use the in-memory buffer for the Fluentd buffer, however for prod
 
 The buffer configuration can be set in the `values.yaml` file under the `fluentd` key as follows:
 
-```
+```yaml
 fluentd:
   ## Option to specify the Fluentd buffer as file/memory.
   buffer: "file"
+```
+
+Additional buffering and flushing parameters can be added in the `extraConf`, in the `fluentd` buffer section.
+```yaml
+fluentd:
+## Option to specify the Fluentd buffer as file/memory.
+   buffer: 
+     type : "file"
+     extraConf: |-
+       retry_exponential_backoff_base 2s
 ```
 
 We have defined several file paths where the buffer chunks are stored.
@@ -106,11 +116,11 @@ excludePodRegex
 
  - This is Ruby regex, so all ruby regex rules apply. Unlike regex in the Sumo collector, you do not need to match the entire line. When doing multiple patterns, put them inside of parentheses and pipe separate them.
  - For things like pods and containers you will need to use a star at the end because the string is dynamic. Example:
-```bash
+```yaml
 excludepodRegex: "(dashboard.*|sumologic.*)"
 ```
  - For things like namespace you won’t need to use a star at the end since there is no dynamic string. Example:
-```bash
+```yaml
 excludeNamespaceRegex: “(sumologic|kube-public)”
 ```
 
@@ -130,7 +140,7 @@ Reference: https://fluentbit.io/documentation/0.12/input/tail.html
 
 ### Filtering Prometheus Metrics by Namespace in the Remote Write Config
 If you want to filter metrics by namespace, it can be done in the prometheus remote write config. Here is an example of excluding kube-state metrics for namespace1 and namespace2:
-```bash
+```yaml
  - action: drop
    regex: kube-state-metrics;(namespace1|namespace2)
    sourceLabels: [job, namespace]
@@ -139,7 +149,7 @@ If you want to filter metrics by namespace, it can be done in the prometheus rem
 The section above should be added in each of the kube-state remote write blocks.
 
 Here is another example of excluding up metrics in the sumologic namespace while still collecting up metrics for all other namespaces:
-```bash
+```yaml
      # up metrics
      - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics
        writeRelabelConfigs:
@@ -154,7 +164,7 @@ The section above should be added in each of the kube-state remote write blocks.
 
 ### Modify the Log Level for Falco
 To modify the default log level for Falco, edit the following section in the values.yaml file. Available log levels can be found in Falco's documentation here: https://falco.org/docs/configuration/.
-```bash
+```yaml
 falco:
   ## Set the enabled flag to false to disable falco.
   enabled: true
