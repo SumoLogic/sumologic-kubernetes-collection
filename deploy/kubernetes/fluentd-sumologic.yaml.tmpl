@@ -210,7 +210,7 @@ data:
     tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
   logs.kubernetes.sumologic.filter.conf: |-
     source_name "%{namespace}.%{pod}.%{container}"
-    source_host ""
+    source_host 
     log_format "fields"
     source_category "%{namespace}/%{pod_name}"
     source_category_prefix "kubernetes/"
