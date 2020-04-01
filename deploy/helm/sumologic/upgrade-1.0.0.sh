@@ -6,6 +6,9 @@ As part of this major release, the format of the values.yaml file has changed.
 This script will automatically take the configurations of your existing values.yaml
 and return one that is compatible with v1.0.0.
 
+Requirements:
+  yq https://github.com/mikefarah/yq
+
 Usage:
   ./upgrade-1.0.0.sh /path/to/values.yaml
 
@@ -23,7 +26,7 @@ fi
 
 OLD_VALUES_YAML=$1
 
-URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/4bd5a737b0f9730e64c5d59f168420af73e81a9b/deploy/helm/sumologic/values.yaml
+URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v1.0.0/deploy/helm/sumologic/values.yaml
 curl -s $URL > new.yaml
 
 OLD_CONFIGS="sumologic.eventCollectionEnabled
@@ -165,6 +168,9 @@ IFS=$'\n' read -r -d '' -a PRE_UPGRADE <<< "$PRE_UPGRADE"
 for i in ${!PRE_UPGRADE[@]}; do
   yq w -i new.yaml sumologic.setup.${PRE_UPGRADE[$i]}.annotations[helm.sh/hook] pre-install,pre-upgrade
 done
+
+# Keep Falco disabled
+yq w -i new.yaml falco.enabled false
 
 # Preserve the functionality of addStream=false or addTime=false
 if [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ] && [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]
