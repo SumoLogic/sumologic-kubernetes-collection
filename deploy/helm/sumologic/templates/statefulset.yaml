@@ -159,6 +159,8 @@ spec:
         - name: SUMO_ENDPOINT_TRACES
           value: {{ .Values.sumologic.traces.endpoint }}
         {{- end }}
+        - name: ADDITIONAL_PLUGINS
+          value: {{ join " " .Values.fluentd.additionalPlugins | quote }}
 {{- if .Values.fluentd.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
