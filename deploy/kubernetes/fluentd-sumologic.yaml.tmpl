@@ -753,6 +753,8 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
+        - name: ADDITIONAL_PLUGINS
+          value: ""
 ---
 # Source: sumologic/templates/hpa.yaml
 
