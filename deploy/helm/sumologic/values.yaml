@@ -215,8 +215,6 @@ fluentd:
         @include logs.output.conf
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "%{namespace}.%{pod}.%{container}"
-      ## Set the _sourceHost metadata field in Sumo Logic.
-      sourceHost: ""
       ## Set the _sourceCategory metadata field in Sumo Logic.
       sourceCategory: "%{namespace}/%{pod_name}"
       ## Set the prefix, for _sourceCategory metadata.
