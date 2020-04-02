@@ -18,8 +18,7 @@ Returns:
 For more details, please refer to Migration steps and Changelog here: [link]
 "
 
-if [ "$1" = "" ]
-then
+if [ "$1" = "" ]; then
   echo "$MAN"
   exit 1
 fi
@@ -150,8 +149,7 @@ done
 # Special case for fluentd.events.WatchResourceEventsOverrides
 # as this config is commented out by default but we will write it as empty string
 # which will not work
-if [ "$(yq r $OLD_VALUES_YAML sumologic.watchResourceEventsOverrides)" = "" ]
-then
+if [ "$(yq r $OLD_VALUES_YAML sumologic.watchResourceEventsOverrides)" = "" ]; then
   yq d -i new.yaml fluentd.events.watchResourceEventsOverrides
 fi
 
@@ -173,14 +171,11 @@ done
 yq w -i new.yaml falco.enabled false
 
 # Preserve the functionality of addStream=false or addTime=false
-if [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ] && [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]
-then
+if [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ] && [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]; then
   REMOVE="stream,time"
-elif [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ]
-then
+elif [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ]; then
   REMOVE="stream"
-elif [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]
-then
+elif [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]; then
   REMOVE="time"
 fi
 
@@ -189,8 +184,7 @@ FILTER="<filter containers.**>
   remove_keys $REMOVE
 </filter>"
 
-if [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ] || [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]
-then
+if [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ] || [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]; then
   yq w -i new.yaml fluentd.logs.containers.extraFilterPluginConf "$FILTER"
 fi
 
