@@ -27,7 +27,7 @@ fi
 
 OLD_VALUES_YAML=$1
 
-URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/deploy/helm/sumologic/values.yaml
+URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v1.0.0/deploy/helm/sumologic/values.yaml
 curl -s $URL > new.yaml
 
 OLD_CONFIGS="sumologic.eventCollectionEnabled
@@ -248,18 +248,34 @@ for i in $(seq 0 ${metrics_length}); do
     metric_regex=$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex")
     regexes_len=$(echo -e ${expected_metrics} | grep -A 2 "${metric_name}$" | grep regex | wc -l)
     # TODO: handle /prometheus.metrics.container
-    if [[ "${regexes_len}" -ne "2" ]]; then
-        continue  
+    if [[ "${regexes_len}" -eq "2" ]]; then
+
+      regex_1_0="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | ggrep -P '^\s+-' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+      regex_0_17="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | ggrep -P '^\s+\+' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+      regex="$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+      if [[ "${regex_0_17}" = "${regex}" ]]; then
+          yq w -i new.yaml "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+      else
+          echo "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually"
+          git --no-pager diff $(echo "${regex_0_17}" | git hash-object -w --stdin) $(echo "${regex}" | git hash-object -w --stdin)  --word-diff-regex='[^\|]'
+      fi
     fi
 
-    regex_1_0="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | ggrep -P '^\s+-' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
-    regex_0_17="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | ggrep -P '^\s+\+' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
-    regex="$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
-    if [[ "${regex_0_17}" = "${regex}" ]]; then
-        yq w -i new.yaml "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
-      else
-        echo "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually"
-        git --no-pager diff $(echo "${regex_0_17}" | git hash-object -w --stdin) $(echo "${regex}" | git hash-object -w --stdin)  --word-diff-regex='[^\|]'
+    if [[ "${metric_name}" = "/prometheus.metrics.container" ]]; then
+        regex_1_0="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | head -n 3 | ggrep -P '^\s+-' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+        regex_0_17="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | head -n 3 | ggrep -P '^\s+\+' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+        regex="$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+        if [[ "${regex_0_17}" = "${regex}" ]]; then
+            yq w -i new.yaml "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+        else
+            regex_1_0="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | tail -n 3 | ggrep -P '^\s+-' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+            regex_0_17="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | tail -n 3 | ggrep -P '^\s+\+' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+            if [[ "${regex_0_17}" = "${regex}" ]]; then
+                yq w -i new.yaml "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+            else
+                echo "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually"
+            fi
+        fi
     fi
 done
 
