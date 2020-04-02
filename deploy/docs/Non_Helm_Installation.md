@@ -150,7 +150,7 @@ In this step you will deploy Fluentd using a Sumo-provided .yaml manifest.
 
 ### Use default configuration
 
-If you don't need to customize the configuration apply the `fluentd-sumologic.yaml` manifest with the following command:
+If you don't need to customize the configuration apply the `fluentd-sumologic.yaml` manifest with the following command. Replace the `<NAMESPACE>` and `<CLUSTER_NAME>` variables with your values.
 
 ```sh
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
