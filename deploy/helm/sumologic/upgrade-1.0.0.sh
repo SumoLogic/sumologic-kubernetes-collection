@@ -198,8 +198,8 @@ fi
 # Prometheus changes
 # Diff of prometheus regexes:
 # git diff origin/drosiek-lint-values deploy/helm/sumologic/values.yaml | \
-# ggrep -P '(regex|url)\:' | \
-# ggrep -P "^(\-|\+)\s+ (regex|url)\:" | \
+# grep -P '(regex|url)\:' | \
+# grep -P "^(\-|\+)\s+ (regex|url)\:" | \
 # sed 's|-        url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888||' | \
 # sed 's/$/\\n/'
 #
@@ -231,11 +231,26 @@ expected_metrics="/prometheus.metrics.state\n
 +          regex: 'cluster_quantile:apiserver_request_latencies:histogram_quantile|instance:node_cpu:rate:sum|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|instance:node_network_transmit_bytes:rate:sum|instance:node_cpu:ratio|cluster:node_cpu:sum_rate5m|cluster:node_cpu:ratio|cluster_quantile:scheduler_e2e_scheduling_latency:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_latency:histogram_quantile|cluster_quantile:scheduler_binding_latency:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|:node_memory_MemFreeCachedBuffers_bytes:sum|:node_memory_MemTotal_bytes:sum|node:node_memory_bytes_available:sum|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:'\n
 /prometheus.metrics\n"
 
+function get_regex() {
+    # Get regex from file ans strip `'` and `"` from begging/end of it
+    local write_index="${1}"
+    local relabel_index="${2}"
+    yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${write_index}].writeRelabelConfigs[${relabel_index}].regex" | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//'
+}
+
+function get_release_regex() {
+  local metric_name="${1}"
+  local str_grep="${2}"
+  local filter="${3}"
+
+  echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | "${filter}" -n 3 | grep -P "${str_grep}" | grep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//'
+}
+
 metrics_length=$(yq r -l "${OLD_VALUES_YAML}" 'prometheus-operator.prometheus.prometheusSpec.remoteWrite')
 metrics_length=$(( ${metrics_length} - 1))
 
 for i in $(seq 0 ${metrics_length}); do
-    metric_name=$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | ggrep -oP '/prometheus\.metrics.*')
+    metric_name=$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oP '/prometheus\.metrics.*')
     metric_regex_length=$(yq r -l "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs")
     metric_regex_length=$(( ${metric_regex_length} - 1))
 
@@ -245,14 +260,13 @@ for i in $(seq 0 ${metrics_length}); do
             break
         fi
     done
-    metric_regex=$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex")
     regexes_len=$(echo -e ${expected_metrics} | grep -A 2 "${metric_name}$" | grep regex | wc -l)
     # TODO: handle /prometheus.metrics.container
     if [[ "${regexes_len}" -eq "2" ]]; then
 
-      regex_1_0="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | ggrep -P '^\s+-' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
-      regex_0_17="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | ggrep -P '^\s+\+' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
-      regex="$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+      regex_1_0="$(get_release_regex "${metric_name}" '^\s+-' 'head')"
+      regex_0_17="$(get_release_regex "${metric_name}" '^\s+\+' 'head')"
+      regex="$(get_regex "${i}" "${j}")"
       if [[ "${regex_0_17}" = "${regex}" ]]; then
           yq w -i new.yaml "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
       else
@@ -262,14 +276,14 @@ for i in $(seq 0 ${metrics_length}); do
     fi
 
     if [[ "${metric_name}" = "/prometheus.metrics.container" ]]; then
-        regex_1_0="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | head -n 3 | ggrep -P '^\s+-' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
-        regex_0_17="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | head -n 3 | ggrep -P '^\s+\+' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
-        regex="$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+        regex_1_0="$(get_release_regex "${metric_name}" '^\s+-' 'head')"
+        regex_0_17="$(get_release_regex "${metric_name}" '^\s+\+' 'head')"
+        regex="$(get_regex "${i}" "${j}")"
         if [[ "${regex_0_17}" = "${regex}" ]]; then
             yq w -i new.yaml "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
         else
-            regex_1_0="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | tail -n 3 | ggrep -P '^\s+-' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
-            regex_0_17="$(echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | tail -n 3 | ggrep -P '^\s+\+' | ggrep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//')"
+            regex_1_0="$(get_release_regex "${metric_name}" '^\s+-' 'tail')"
+            regex_0_17="$(get_release_regex "${metric_name}" '^\s+\+' 'tail')"
             if [[ "${regex_0_17}" = "${regex}" ]]; then
                 yq w -i new.yaml "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
             else
