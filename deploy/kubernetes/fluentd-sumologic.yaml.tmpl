@@ -473,7 +473,7 @@ roleRef:
 apiVersion: v1
 kind: Service
 metadata:
-  name: collection-sumologic-events-headless
+  name: collection-sumologic-events-fluentd-headless
   labels:
     app: collection-sumologic-events
     
@@ -509,7 +509,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: collection-sumologic-headless
+  name: collection-sumologic-fluentd-headless
   labels:
     app: collection-sumologic
     
@@ -571,7 +571,7 @@ spec:
   selector:
     matchLabels:
       app: collection-sumologic-events
-  serviceName: collection-sumologic-events-headless
+  serviceName: collection-sumologic-events-fluentd-headless
   podManagementPolicy: "Parallel"
   template:
     metadata:
@@ -639,7 +639,7 @@ spec:
   selector:
     matchLabels:
       app: collection-sumologic
-  serviceName: collection-sumologic-headless
+  serviceName: collection-sumologic-fluentd-headless
   podManagementPolicy: "Parallel"
   replicas: 3
   template:
