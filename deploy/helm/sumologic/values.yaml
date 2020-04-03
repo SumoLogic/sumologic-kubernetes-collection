@@ -189,6 +189,8 @@ fluentd:
     cacheTtl: "3600"
     ## Option to control the interval at which metadata cache is asynchronously refreshed (in seconds).
     cacheRefresh: "1800"
+    ## Option to give plugin specific log level
+    pluginLogLevel: "error"
 
   logs:
     ## Configuration for sumologic output plugin
@@ -202,6 +204,8 @@ fluentd:
       addTimestamp: true
       ## Field name when add_timestamp is on.
       timestampKey: "timestamp"
+      ## Option to give plugin specific log level
+      pluginLogLevel: "error"
       ## Additional config parameters for sumologic output plugin
       extraConf: |-
 
