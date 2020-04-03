@@ -230,6 +230,7 @@ data:
     proxy_uri ""
     
   logs.source.containers.conf: |
+    
     <filter containers.**>
       @type record_transformer
       enable_ruby
@@ -246,7 +247,8 @@ data:
       @label @NORMAL
     </match>
     <label @NORMAL>
-      #  only match fluentd logs based on fluentd container name
+      #  only match fluentd logs based on fluentd container name. by default, this is
+      #  <filter **collection-sumologic**>
       <filter **collection-sumologic**>
         # only ingest fluentd logs of levels: {error, fatal} and warning messages if buffer is full
         @type grep
@@ -292,6 +294,7 @@ data:
       </buffer>
     </match>
   logs.source.systemd.conf: |-
+    
     <match host.kubelet.**>
       @type relabel
       @label @KUBELET
@@ -318,6 +321,7 @@ data:
         </buffer>
       </match>
     </label>
+    
     <match host.**>
       @type relabel
       @label @SYSTEMD
