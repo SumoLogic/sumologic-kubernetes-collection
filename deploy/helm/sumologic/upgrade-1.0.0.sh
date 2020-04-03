@@ -8,7 +8,7 @@ and return one that is compatible with v1.0.0.
 
 Requirements:
   yq https://github.com/mikefarah/yq
-  git diff in case of changes in prometheus metrics
+  git diff in case of changes to Prometheus remote write regexs
 
 Usage:
   ./upgrade-1.0.0.sh /path/to/values.yaml
@@ -226,7 +226,7 @@ expected_metrics="/prometheus.metrics.state\n
 /prometheus.metrics\n"
 
 function get_regex() {
-    # Get regex from file ans strip `'` and `"` from begging/end of it
+    # Get regex from old yaml file and strip `'` and `"` from beginning/end of it
     local write_index="${1}"
     local relabel_index="${2}"
     yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${write_index}].writeRelabelConfigs[${relabel_index}].regex" | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//'
@@ -255,7 +255,6 @@ for i in $(seq 0 ${metrics_length}); do
         fi
     done
     regexes_len=$(echo -e ${expected_metrics} | grep -A 2 "${metric_name}$" | grep regex | wc -l)
-    # TODO: handle /prometheus.metrics.container
     if [[ "${regexes_len}" -eq "2" ]]; then
 
       regex_1_0="$(get_release_regex "${metric_name}" '^\s+-' 'head')"
