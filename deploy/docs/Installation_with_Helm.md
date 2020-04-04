@@ -42,16 +42,25 @@ To install the chart, first add the `sumologic` private repo:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Install the chart with release name `collection` and namespace `sumologic`
+Install the chart with release name `collection` and namespace `sumologic`. Be sure to include your [access id and access key](https://help.sumologic.com/Manage/Security/Access-Keys), as well as your [Sumo Logic endpoint](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security)
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
+helm install sumologic/sumologic --name collection --namespace sumologic \
+--set sumologic.accessId=<SUMO_ACCESS_ID> \
+--set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+--set sumologic.endpoint=<SUMO_API_ENDPOINT> \
+--set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
 If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists`, run the above command with the `--no-crd-hook` flag:
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --no-crd-hook
+helm install sumologic/sumologic --name collection --namespace sumologic \
+--set sumologic.accessId=<SUMO_ACCESS_ID> \
+--set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+--set sumologic.endpoint=<SUMO_API_ENDPOINT>  \
+--set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+--no-crd-hook
 ```
 
 __NOTE__ `Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to use extended Berkeley Packet Filter (eBPF) to supply the stream of system calls to the Falco engine. eBPF is currently only supported on GKE and COS. For more information see [Installing Falco](https://falco.org/docs/installation/).
@@ -74,13 +83,23 @@ curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection
 - Modify the `values.yaml` file with your customizations, then apply the configuration using the following command:
 
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME> -f values.yaml
+helm install sumologic/sumologic --name collection --namespace sumologic \
+-f values.yaml \
+--set sumologic.accessId=<SUMO_ACCESS_ID> \
+--set sumologic.accessKey=<SUMO_ACCESS_KEY>  \
+--set sumologic.endpoint=<SUMO_API_ENDPOINT> \
+--set sumologic.clusterName=<MY_CLUSTER_NAME> \
+-f values.yaml
 ```
 
 #### To install the chart with a different release name or namespace:
 
 ```bash
-helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME>
+helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml \
+--set sumologic.accessId=<SUMO_ACCESS_ID>  \
+--set sumologic.endpoint=<SUMO_API_ENDPOINT> \
+--set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+--set sumologic.clusterName=<MY_CLUSTER_NAME>
 ```
 
 __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
