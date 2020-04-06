@@ -9,7 +9,7 @@ apt-get --yes install apt-transport-https
 
 echo "export EDITOR=vim" >> /home/vagrant/.bashrc
 
-snap install microk8s --classic --channel=1.13/stable
+snap install microk8s --classic --channel=1.15/stable
 microk8s.status --wait-ready
 ufw allow in on cbr0
 ufw allow out on cbr0
@@ -25,10 +25,8 @@ snap install helm --classic --channel=2.16
 microk8s.kubectl config view --raw > /sumologic/.kube-config
 
 snap alias microk8s.kubectl kubectl
-snap alias microk8s.docker docker
 
 # allow privileged
-echo "--allow-privileged=true" >> /var/snap/microk8s/current/args/kubelet
 echo "--allow-privileged=true" >> /var/snap/microk8s/current/args/kube-apiserver
 systemctl restart snap.microk8s.daemon-kubelet.service
 systemctl restart snap.microk8s.daemon-apiserver.service
@@ -43,7 +41,6 @@ echo "sudo iptables -P FORWARD ACCEPT" >> /home/vagrant/.bashrc
 sudo -H -u vagrant -i helm init --wait
 
 usermod -a -G microk8s vagrant
-usermod -a -G docker vagrant
 
 set +x
 echo Dashboard local in-vagrant IP:
