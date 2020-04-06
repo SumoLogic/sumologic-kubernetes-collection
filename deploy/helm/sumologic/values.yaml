@@ -665,7 +665,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.2.7.0"
+      tag: "0.2.7.1"
       pullPolicy: IfNotPresent
   config:
     receivers:
@@ -690,39 +690,38 @@ otelcol:
       k8s_tagger:
         # When true, only IP is assigned and passed (so it could be tagged on another collector)
         passthrough: false
+        # When true, additional fields, such as serviceName are being also extracted
+        owner_lookup_enabled: true
         # Extracted fields and assigned names
         extract:
           metadata:
             # extract the following well-known metadata fields
             - containerId
             - containerName
-            - cluster
+            - clusterName
             - daemonSetName
-            - deployment
+            - deploymentName
             - hostName
             - namespace
-            - node
-            - owners
+            - nodeName
             - podId
             - podName
             - replicaSetName
             - serviceName
-            - startTime
             - statefulSetName
           tags:
             containerId: container_id
             containerName: container
-            cluster: cluster
+            clusterName: cluster
             daemonSetName: daemonset
-            deployment: deployment
-            hostName: hostname
+            deploymentName: deployment
+            hostName: host
             namespace: namespace
-            node: node
+            nodeName: node
             podId: pod_id
             podName: pod
             replicaSetName: replicaset
             serviceName: service_name
-            startTime: start_time
             statefulSetName: statefulset
           annotations:
             - tag_name: pod_annotation_%s
