@@ -709,7 +709,7 @@ otelcol:
             - podId
             - podName
             - replicaSetName
-            - serviceName
+            # - serviceName
             - statefulSetName
           tags:
             containerId: container_id
@@ -723,7 +723,7 @@ otelcol:
             podId: pod_id
             podName: pod
             replicaSetName: replicaset
-            serviceName: service_name
+            # serviceName: service
             statefulSetName: statefulset
           annotations:
             - tag_name: pod_annotation_%s
