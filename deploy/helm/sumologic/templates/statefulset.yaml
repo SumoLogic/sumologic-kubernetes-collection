@@ -150,6 +150,11 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-metrics-node-exporter
+        - name: SUMO_ENDPOINT_METRICS_CONTROL_PLANE
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-control-plane
         - name: SUMO_ENDPOINT_LOGS
           valueFrom:
             secretKeyRef:
