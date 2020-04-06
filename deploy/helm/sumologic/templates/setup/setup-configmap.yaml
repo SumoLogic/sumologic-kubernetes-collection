@@ -23,15 +23,16 @@ data:
 
     # Sumo Collector and HTTP sources
     terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+    terraform import sumologic_http_source.events_source "$COLLECTOR_NAME/events"
+    terraform import sumologic_http_source.logs_source "$COLLECTOR_NAME/logs"
     terraform import sumologic_http_source.default_metrics_source "$COLLECTOR_NAME/(default-metrics)"
     terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
-    terraform import sumologic_http_source.events_source "$COLLECTOR_NAME/events"
     terraform import sumologic_http_source.kube_controller_manager_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
     terraform import sumologic_http_source.kube_scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
     terraform import sumologic_http_source.kube_state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
     terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
-    terraform import sumologic_http_source.logs_source "$COLLECTOR_NAME/logs"
     terraform import sumologic_http_source.node_exporter_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
+    terraform import sumologic_http_source.control_plane_metrics_source "$COLLECTOR_NAME/control-plane-metrics"
 
     # Kubernetes Namespace and Secret
     terraform import kubernetes_namespace.sumologic_collection_namespace {{ .Release.Namespace }}
@@ -62,15 +63,16 @@ data:
     }
 
     locals {
+      events-source-name                          = "events"
+      logs-source-name                            = "logs"
       default-metrics-source-name                 = "(default-metrics)"
       apiserver-metrics-source-name               = "apiserver-metrics"
-      events-source-name                          = "events"
       kube-controller-manager-metrics-source-name = "kube-controller-manager-metrics"
       kube-scheduler-metrics-source-name          = "kube-scheduler-metrics"
       kube-state-metrics-source-name              = "kube-state-metrics"
       kubelet-metrics-source-name                 = "kubelet-metrics"
-      logs-source-name                            = "logs"
       node-exporter-metrics-source-name           = "node-exporter-metrics"
+      control-plane-metrics-source-name           = "control-plane-metrics"
     }
 
     provider "sumologic" {}
@@ -82,6 +84,17 @@ data:
         }
     }
 
+    resource "sumologic_http_source" "events_source" {
+        name         = local.events-source-name
+        category     = {{ if .Values.fluentd.events.sourceCategory }}{{ .Values.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events-source-name}\"" }}{{- end}}
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
+    resource "sumologic_http_source" "logs_source" {
+        name         = local.logs-source-name
+        collector_id = "${sumologic_collector.collector.id}"
+    }
+
     resource "sumologic_http_source" "default_metrics_source" {
         name         = local.default-metrics-source-name
         collector_id = "${sumologic_collector.collector.id}"
@@ -89,12 +102,6 @@ data:
 
     resource "sumologic_http_source" "apiserver_metrics_source" {
         name         = local.apiserver-metrics-source-name
-        collector_id = "${sumologic_collector.collector.id}"
-    }
-
-    resource "sumologic_http_source" "events_source" {
-        name         = local.events-source-name
-        category     = {{ if .Values.fluentd.events.sourceCategory }}{{ .Values.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events-source-name}\"" }}{{- end}}
         collector_id = "${sumologic_collector.collector.id}"
     }
 
@@ -118,13 +125,13 @@ data:
         collector_id = "${sumologic_collector.collector.id}"
     }
 
-    resource "sumologic_http_source" "logs_source" {
-        name         = local.logs-source-name
+    resource "sumologic_http_source" "node_exporter_metrics_source" {
+        name         = local.node-exporter-metrics-source-name
         collector_id = "${sumologic_collector.collector.id}"
     }
 
-    resource "sumologic_http_source" "node_exporter_metrics_source" {
-        name         = local.node-exporter-metrics-source-name
+    resource "sumologic_http_source" "control_plane_metrics_source" {
+        name         = local.control-plane-metrics-source-name
         collector_id = "${sumologic_collector.collector.id}"
     }
 
@@ -156,6 +163,7 @@ data:
         endpoint-metrics-kube-state               = "${sumologic_http_source.kube_state_metrics_source.url}"
         endpoint-metrics-kubelet                  = "${sumologic_http_source.kubelet_metrics_source.url}"
         endpoint-metrics-node-exporter            = "${sumologic_http_source.node_exporter_metrics_source.url}"
+        endpoint-metrics-control-plane            = "${sumologic_http_source.control_plane_metrics_source.url}"
       }
 
       type = "Opaque"
