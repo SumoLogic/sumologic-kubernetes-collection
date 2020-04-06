@@ -71,3 +71,34 @@ It returns `.Value.key1.key2` if it exists otherwise `default_value`
   {{- $default }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Generate metrics match configuration
+
+Example usage (as one line):
+
+{{ include "utils.metrics.match" (dict 
+  "Values" .Values 
+  "Match" "prometheus.metrics.kubelet" 
+  "Endpoint" "SUMO_ENDPOINT_METRICS" 
+  "Storage" .Values.fluentd.buffer.filePaths.metrics.default
+  "Id" sumologic.endpoint.metrics
+)}}
+*/}}
+{{- define "utils.metrics.match" -}}
+<match {{ .Match }}>
+  @type sumologic
+  @id {{ .Id }}
+  endpoint "#{ENV['{{ .Endpoint }}']}"
+{{- .Values.fluentd.metrics.outputConf | nindent 2 }}
+  <buffer>
+    {{- if or .Values.fluentd.persistence.enabled (eq .Values.fluentd.buffer.type "file") }}
+    @type file
+    path {{ .Storage }}
+    {{- else }}
+    @type memory
+    {{- end }}
+    @include buffer.output.conf
+  </buffer>
+</match>
+{{- end -}}
