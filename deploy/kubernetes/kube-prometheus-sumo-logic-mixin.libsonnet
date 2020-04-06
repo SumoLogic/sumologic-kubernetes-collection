@@ -145,6 +145,18 @@
             ]
           }
         ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.application.control-plane",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "(?:coredns_.*)",
+            sourceLabels: [
+              "__name__"
+            ]
+          }
+        ]
       }
     ],
   },
