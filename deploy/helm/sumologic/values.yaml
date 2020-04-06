@@ -571,30 +571,30 @@ otelcol:
             # extract the following well-known metadata fields
             - containerId
             - containerName
-            - cluster
+            - clusterName
             - daemonSetName
-            - deployment
+            - deploymentName
             - hostName
             - namespace
-            - node
+            - nodeName
             - podId
             - podName
             - replicaSetName
-            - serviceName
+            #- serviceName
             - statefulSetName
           tags:
             containerId: container_id
             containerName: container
-            cluster: cluster
+            clusterName: cluster
             daemonSetName: daemonset
-            deployment: deployment
+            deploymentName: deployment
             hostName: host
             namespace: namespace
-            node: node
+            nodeName: node
             podId: pod_id
             podName: pod
             replicaSetName: replicaset
-            serviceName: service_name
+            #serviceName: service
             statefulSetName: statefulset
           annotations:
             - tag_name: pod_annotation_%s
