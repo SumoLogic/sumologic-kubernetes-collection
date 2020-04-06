@@ -260,11 +260,13 @@ data:
       # third-party kubernetes metadata  filter plugin
       <filter containers.**>
         @type kubernetes_metadata
+        @log_level error
         @include logs.kubernetes.metadata.filter.conf
       </filter>
       # sumologic kubernetes metadata enrichment filter plugin
       <filter containers.**>
         @type enhance_k8s_metadata
+        @log_level error
         @include logs.enhance.k8s.metadata.filter.conf
       </filter>
       
@@ -276,6 +278,7 @@ data:
       <match containers.**>
         @type sumologic
         @id sumologic.endpoint.logs
+        @log_level error
         @include logs.output.conf
         <buffer>
           @type memory
