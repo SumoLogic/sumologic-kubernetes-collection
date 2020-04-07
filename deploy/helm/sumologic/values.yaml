@@ -176,6 +176,7 @@ fluentd:
         node: /fluentd/buffer/metrics.node
         default: /fluentd/buffer/metrics.default
       events: /fluentd/buffer/events
+      traces: /fluentd/buffer/traces
 
     ## Additional config for buffer settings
     extraConf: |-
