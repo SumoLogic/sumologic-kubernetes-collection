@@ -12,13 +12,13 @@ module SumoLogic
       end
 
       def core_clients
-        @CORE_API_VERSIONS.map do |ver|
+        @core_api_versions.map do |ver|
           [ver, create_client('api', ver)]
         end.to_h
       end
 
       def group_clients
-        @API_GROUPS.map do |ver|
+        @api_groups.map do |ver|
           [ver, create_client('apis', ver)]
         end.to_h
       end
