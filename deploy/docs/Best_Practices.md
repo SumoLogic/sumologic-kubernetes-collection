@@ -106,7 +106,7 @@ See the following links to official Fluentd buffer documentation:
 
 ### Excluding Logs From Specific Components
 
-You can exclude specific logs from being sent to Sumo Logic by specifying the following parameters either in the `values.yaml` file or the `helm install` command.
+You can exclude specific logs from specific components from being sent to Sumo Logic by specifying the following parameters either in the `values.yaml` file or the `helm install` command.
 ```
 excludeContainerRegex
 excludeHostRegex
@@ -122,6 +122,50 @@ excludepodRegex: "(dashboard.*|sumologic.*)"
  - For things like namespace you won’t need to use a star at the end since there is no dynamic string. Example:
 ```yaml
 excludeNamespaceRegex: “(sumologic|kube-public)”
+```
+
+To exclude specific log messages, you will need to edit the `logs.source.containers.conf` section in the `collection-sumologic` configmap. For example, let's say you wanted to exclude messages from your MongoDB pods that include the following:
+```
+.*connection accepted from.*
+.*authenticated as principal.*
+.*client metadata from.*
+```
+First, edit the configmap:
+```bash
+kubectl edit configmap collection-sumologic -n sumologic
+```
+Find the `logs.source.containers.conf` section and modify as follows:
+```yaml
+<filter containers.**>
+  @type record_transformer
+  enable_ruby
+  renew_record true
+  <record>
+    log    ${record["log"].split(/[\n\t]+/).map! {|item| JSON.parse(item)["log"]}.any? ? record["log"].split(/[\n\t]+/).map! {|item| JSON.parse(item)["log"]}.join("") : record["log"] rescue record["log"]}
+    stream ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["stream"]}.any? ? [record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["stream"]}.join("") : record["stream"] rescue record["stream"]}
+    time   ${[record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.any? ? [record["log"].split(/[\n\t]+/)[0]].map! {|item| JSON.parse(item)["time"]}.join("") : record["time"] rescue record["time"]}
+  </record>
+</filter>
+<filter containers.**>
+  @type grep
+  <regexp>
+    key hostname
+    pattern /^mongodb-\d+\./
+  </regexp>
+  <exclude>
+    key message
+    pattern /(.*connection accepted from.*|.*authenticated as principal.*|.*client metadata from.*)/
+  </exclude>
+</filter>
+```
+Apply the updated configmap:
+```bash
+kubectl apply configmap collection-sumologic -n sumologic
+```
+Bounce the fluentD pods (note that there will be multiple `collection-sumologic` pods that need to be restarted for the configmap update to take):
+```bash
+kubectl get pods -n sumologic
+kubectl delete pods <collection-sumologic-random_string>
 ```
 
 ### Add a local file to fluent-bit configuration
