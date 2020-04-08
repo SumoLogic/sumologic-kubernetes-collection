@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: {{ template "sumologic.fullname" . }}-fluentd-headless
   labels:
-    app: {{ template "sumologic.labels.app" . }}
+    app: {{ template "sumologic.labels.app" . }}-fluentd-headless
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ template "sumologic.labels.app" . }}
+    app: {{ template "sumologic.labels.app" . }}-fluentd
   clusterIP: None
   ports:
   {{- if .Values.sumologic.traces.enabled }}

@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "sumologic.fullname" . }}
+  name: {{ template "sumologic.fullname" . }}-fluentd
   labels:
-    app: {{ template "sumologic.labels.app" . }}
+    app: {{ template "sumologic.labels.app" . }}-fluentd
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   fluent.conf: |-

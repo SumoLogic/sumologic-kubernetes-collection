@@ -4,11 +4,11 @@ kind: Service
 metadata:
   name: {{ printf "%s-events-fluentd-headless" (include "sumologic.fullname" .) }}
   labels:
-    app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
+    app: {{ printf "%s-events-fluentd-headless" (include "sumologic.labels.app" .) }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
+    app: {{ printf "%s-events-fluentd" (include "sumologic.labels.app" .) }}
   clusterIP: None
   ports:
   - name: metrics
