@@ -227,9 +227,13 @@ prometheus:
         regex: (?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*|otelcol.*)
         sourceLabels: [__name__]
     - # control plane metrics
-      # coredns
       url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.application.control-plane
       writeRelabelConfigs:
-      - action: keep
+      - # coredns
+        action: keep
         regex: (?:coredns_.*)
+        sourceLabels: [__name__]
+      - # etcd server
+        action: keep
+        regex: (?:etcd_(debugging|disk|grpc|network|server)_.*)
         sourceLabels: [__name__]

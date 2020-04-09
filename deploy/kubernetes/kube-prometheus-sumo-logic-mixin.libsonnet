@@ -155,6 +155,13 @@
             sourceLabels: [
               "__name__"
             ]
+          },
+          {
+            action: "keep",
+            regex: "(?:etcd_(debugging|disk|grpc|network|server)_.*)",
+            sourceLabels: [
+              "__name__"
+            ]
           }
         ]
       }
