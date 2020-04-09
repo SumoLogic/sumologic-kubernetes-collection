@@ -13,9 +13,9 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: collection-sumologic
+  name: collection-sumologic-fluentd
   labels:
-    app: collection-sumologic
+    app: collection-sumologic-fluentd
     
 data:
   fluent.conf: |-
@@ -482,11 +482,11 @@ kind: Service
 metadata:
   name: collection-sumologic-events-fluentd-headless
   labels:
-    app: collection-sumologic-events
+    app: collection-sumologic-events-fluentd-headless
     
 spec:
   selector:
-    app: collection-sumologic-events
+    app: collection-sumologic-events-fluentd
   clusterIP: None
   ports:
   - name: metrics
@@ -501,11 +501,11 @@ kind: Service
 metadata:
   name: collection-sumologic-events-fluentd
   labels:
-    app: collection-sumologic-events
+    app: collection-sumologic-events-fluentd
     
 spec:
   selector:
-    app: collection-sumologic-events
+    app: collection-sumologic-events-fluentd
   ports:
   - name: metrics
     port: 24231
@@ -518,11 +518,11 @@ kind: Service
 metadata:
   name: collection-sumologic-fluentd-headless
   labels:
-    app: collection-sumologic
+    app: collection-sumologic-fluentd-headless
     
 spec:
   selector:
-    app: collection-sumologic
+    app: collection-sumologic-fluentd
   clusterIP: None
   ports:
   - name: prom-write
@@ -545,11 +545,11 @@ kind: Service
 metadata:
   name: collection-sumologic-fluentd
   labels:
-    app: collection-sumologic
+    app: collection-sumologic-fluentd
     
 spec:
   selector:
-    app: collection-sumologic
+    app: collection-sumologic-fluentd
   ports:
   - name: prom-write
     port: 9888
@@ -572,18 +572,18 @@ kind: StatefulSet
 metadata:
   name: collection-sumologic-events-fluentd
   labels:
-    app: collection-sumologic-events
+    app: collection-sumologic-events-fluentd
     
 spec:
   selector:
     matchLabels:
-      app: collection-sumologic-events
+      app: collection-sumologic-events-fluentd
   serviceName: collection-sumologic-events-fluentd-headless
   podManagementPolicy: "Parallel"
   template:
     metadata:
       labels:
-        app: collection-sumologic-events
+        app: collection-sumologic-events-fluentd
         
     spec:
       serviceAccountName: collection-sumologic
@@ -640,19 +640,19 @@ kind: StatefulSet
 metadata:
   name: collection-sumologic-fluentd
   labels:
-    app: collection-sumologic
+    app: collection-sumologic-fluentd
     
 spec:
   selector:
     matchLabels:
-      app: collection-sumologic
+      app: collection-sumologic-fluentd
   serviceName: collection-sumologic-fluentd-headless
   podManagementPolicy: "Parallel"
   replicas: 3
   template:
     metadata:
       labels:
-        app: collection-sumologic
+        app: collection-sumologic-fluentd
         
     spec:
       serviceAccountName: collection-sumologic
@@ -666,7 +666,7 @@ spec:
                 - key: app
                   operator: In
                   values:
-                  - collection-sumologic
+                  - collection-sumologic-fluentd
                 - key: app
                   operator: In
                   values:
@@ -679,7 +679,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: collection-sumologic
+          name: collection-sumologic-fluentd
       securityContext:
         fsGroup: 999
       containers:
