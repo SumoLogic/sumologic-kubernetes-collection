@@ -1,7 +1,7 @@
 
 # Upgrading with Helm
 
-When a new version of a chart is released, or when you want to change the configuration of your release, you can use the `helm upgrade` command.
+When a new version of a chart is released, or when you want to change the configuration of your release, you can use the `helm upgrade` command. In order to pull the most recent version of the chart, make sure to run `helm repo update`. This will ensure that your local helm repo cache has the most up to date version of the chart so your `helm upgrade` command can apply that update to your cluster.
 
 By default, any settings you set when you first installed will be overriden by the default configuration, since helm uses the default values.yaml unless you specify those configurations again (through either --set or -f values.yaml covered below). If you wish to preserve your current configuration (including the values for Sumo Logic API endpoint, Access ID, and Access Key) use `--reuse-values`.
 
