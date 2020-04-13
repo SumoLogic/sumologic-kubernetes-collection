@@ -1,5 +1,7 @@
 # How to install if you have an existing Prometheus operator
 
+__NOTE__: The Sumo Logic Kubernetes collection process does not support collecting metrics from when scaling Prometheus replicas. If you are running multiple Prometheus replicas, please follow our [Side-by-Side](SideBySidePrometheus.md) instructions.
+
 <!-- TOC -->
  
 - [Install Fluentd, Fluent-bit, and Falco](#install-fluentd-fluent-bit-and-falco) 
