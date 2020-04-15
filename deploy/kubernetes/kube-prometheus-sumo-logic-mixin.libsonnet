@@ -151,16 +151,21 @@
         writeRelabelConfigs: [
           {
             action: "keep",
-            regex: "(?:coredns_.*)",
+            regex: "coredns",
             sourceLabels: [
-              "__name__"
+              "job"
             ]
-          },
+          }
+        ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.application.control-plane",
+        writeRelabelConfigs: [
           {
             action: "keep",
-            regex: "(?:etcd_(debugging|disk|grpc|network|server)_.*)",
+            regex: "kube-etcd",
             sourceLabels: [
-              "__name__"
+              "job"
             ]
           }
         ]
