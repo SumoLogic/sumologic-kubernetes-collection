@@ -264,6 +264,13 @@ $ helm fetch stable/falco --version 1.0.9
 $ helm template falco-1.0.9.tgz --name falco --namespace=sumologic -f falco-overrides.yaml > falco.yaml
 $ kubectl apply -f falco.yaml
 ```
+__NOTE__ You may see the following errors while applying the `yaml` : 
+
+```bash
+unable to recognize "fluent-bit.yaml": no matches for kind "ClusterRole" in version "rbac.authorization.k8s.io/v1alpha1"
+unable to recognize "fluent-bit.yaml": no matches for kind "ClusterRoleBinding" in version "rbac.authorization.k8s.io/v1alpha1"
+```
+The above errors can be ignored.
 
 __NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) for the currently supported version.
 
