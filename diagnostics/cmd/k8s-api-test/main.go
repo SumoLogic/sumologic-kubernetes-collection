@@ -21,24 +21,24 @@ import (
 )
 
 func main() {
-	handleErr := func(message string, err error) {
+    handleErr := func(message string, err error) {
 		if err != nil {
 			log.Fatalf("%s: %v\n", message, err)
 		}
-	}
+    }
 
-	config, err := rest.InClusterConfig()
-	handleErr("Failed when creating in-cluster K8S config", err)
+    config, err := rest.InClusterConfig()
+    handleErr("Failed when creating in-cluster K8S config", err)
 
     clientset, err := kubernetes.NewForConfig(config)
-	handleErr("Failed when connecting to K8S cluster", err)
+    handleErr("Failed when connecting to K8S cluster", err)
 
-	version, err := clientset.Discovery().ServerVersion()
-	handleErr("Failed when pulling version info", err)
-	log.Printf("Kubernetes version: %s", version.GitVersion)
+    version, err := clientset.Discovery().ServerVersion()
+    handleErr("Failed when pulling version info", err)
+    log.Printf("Kubernetes version: %s", version.GitVersion)
 
     pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{Limit: 20})
-	handleErr("Failed when fetching list of pods", err)
+    handleErr("Failed when fetching list of pods", err)
 
-	log.Printf("Received data for %d pods in the cluster\n", len(pods.Items))
+    log.Printf("Received data for %d pods in the cluster\n", len(pods.Items))
 }
