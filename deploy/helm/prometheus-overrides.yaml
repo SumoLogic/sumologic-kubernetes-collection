@@ -153,13 +153,13 @@ prometheus:
         sourceLabels: [__name__]
     - # control plane metrics
       # coredns
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.application.control-plane
+      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane
       writeRelabelConfigs:
       - action: keep
         regex: coredns
         sourceLabels: [job]
     - # etcd server
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.application.control-plane
+      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane
       writeRelabelConfigs:
       - action: keep
         regex: kube-etcd
