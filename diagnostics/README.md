@@ -26,5 +26,5 @@ pod "diag" deleted
 
 The pod can be also run in interactive mode, i.e.:
 
-`$ kubectl run diag --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/k8s-diagnostics -- /bin/bash -l`
+`$ kubectl run diag --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-diagnostics -- /bin/bash -l`
 

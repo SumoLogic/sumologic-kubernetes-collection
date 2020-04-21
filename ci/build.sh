@@ -3,7 +3,7 @@
 VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
-: "${DIAGNOSTICS_TAG:=sumologic/k8s-diagnostics}"
+: "${DIAGNOSTICS_TAG:=sumologic/kubernetes-diagnostics}"
 : "${DOCKER_USERNAME:=sumodocker}"
 DOCKER_TAGS="https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags"
 
