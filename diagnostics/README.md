@@ -21,7 +21,8 @@ POD_NAMESPACE is not set
 POD_NAMESPACE env variable:
 Kubernetes cluster at 10.96.0.1:443
 Running K8S API test
-2020/04/21 17:38:20 Received data for 15 pods in the cluster
+2020/04/21 18:51:45 Kubernetes version: v1.15.5
+2020/04/21 18:51:45 Received data for 15 pods in the cluster
 pod "diag" deleted
 ```
 

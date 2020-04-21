@@ -33,6 +33,10 @@ func main() {
     clientset, err := kubernetes.NewForConfig(config)
 	handleErr("Failed when connecting to K8S cluster", err)
 
+	version, err := clientset.Discovery().ServerVersion()
+	handleErr("Failed when pulling version info", err)
+	log.Printf("Kubernetes version: %s", version.GitVersion)
+
     pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{Limit: 20})
 	handleErr("Failed when fetching list of pods", err)
 
