@@ -147,7 +147,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.application.control-plane",
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane",
         writeRelabelConfigs: [
           {
             action: "keep",
@@ -159,7 +159,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.application.control-plane",
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane",
         writeRelabelConfigs: [
           {
             action: "keep",
