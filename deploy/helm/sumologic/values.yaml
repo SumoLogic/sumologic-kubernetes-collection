@@ -216,11 +216,15 @@ fluentd:
 
     ## Container log configuration
     containers:
-      ## To override the contents of logs.source.containers.conf file. Leave empty for the default pipeline
+      ## To override the entire contents of logs.source.containers.conf file. Leave empty for the default pipeline
       overrideRawConfig: |-
-
+        
       outputConf: |-
         @include logs.output.conf
+      
+      ## Override output section for container logs. Leave empty for the default output section
+      overrideOutputConf: |-
+
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "%{namespace}.%{pod}.%{container}"
       ## Set the _sourceCategory metadata field in Sumo Logic.
@@ -266,6 +270,10 @@ fluentd:
       enabled: true
       outputConf: |-
         @include logs.output.conf
+      
+      ## Override output section for kubelet logs. Leave empty for the default output section.
+      overrideOutputConf: |-
+
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "k8s_kubelet"
       ## Set the _sourceCategory metadata field in Sumo Logic.
@@ -293,6 +301,10 @@ fluentd:
       enabled: true
       outputConf: |-
         @include logs.output.conf
+      
+      ## Override output section for systemd logs. Leave empty for the default output section.
+      overrideOutputConf: |-
+
       ## Set the _sourceCategory metadata field in Sumo Logic.
       sourceCategory: "system"
       ## Set the prefix, for _sourceCategory metadata.
