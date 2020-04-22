@@ -218,7 +218,7 @@ fluentd:
     containers:
       ## To override the entire contents of logs.source.containers.conf file. Leave empty for the default pipeline
       overrideRawConfig: |-
-        
+
       outputConf: |-
         @include logs.output.conf
       
@@ -329,6 +329,9 @@ fluentd:
     default:
       outputConf: |-
         @include logs.output.conf
+      
+      ## Override output section for untagged logs. Leave empty for the default output section.
+      overrideOutputConf: |-
 
   metrics:
     ## Configuration for sumologic output plugin
