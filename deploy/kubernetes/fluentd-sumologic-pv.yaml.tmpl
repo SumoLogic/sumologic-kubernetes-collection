@@ -54,7 +54,7 @@ data:
       log_level info
     </system>
   
-  metrics.conf: |
+  metrics.conf: |-
     <source>
       @type http
       port 9888
@@ -181,7 +181,6 @@ data:
           @include buffer.output.conf
         </buffer>
       </match>
-  
     </label>
   metrics.output.conf: |-
     data_type metrics
