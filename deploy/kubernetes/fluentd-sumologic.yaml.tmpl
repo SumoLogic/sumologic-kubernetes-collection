@@ -275,6 +275,7 @@ data:
         @type kubernetes_sumologic
         @include logs.kubernetes.sumologic.filter.conf
       </filter>
+      
       <match containers.**>
         @type sumologic
         @id sumologic.endpoint.logs
@@ -314,6 +315,7 @@ data:
         exclude_priority_regex ""
         exclude_unit_regex ""
       </filter>
+      
       <match **>
         @type sumologic
         @id sumologic.endpoint.logs.kubelet
@@ -346,6 +348,7 @@ data:
           _sumo_metadata ${record["_sumo_metadata"][:source] = tag_parts[1]; record["_sumo_metadata"]}
         </record>
       </filter>
+      
       <match **>
         @type sumologic
         @id sumologic.endpoint.logs.systemd
