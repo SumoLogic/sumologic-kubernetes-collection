@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "sumologic.fullname" . }}-fluentd
+  name: {{ template "sumologic.fullname" . }}-fluentd-metrics
   labels:
-    app: {{ template "sumologic.labels.app" . }}-fluentd
+    app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: {{ template "sumologic.labels.app" . }}-fluentd
-  serviceName: {{ template "sumologic.fullname" . }}-fluentd-headless
+      app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
+  serviceName: {{ template "sumologic.fullname" . }}-fluentd-metrics-headless
   podManagementPolicy: "Parallel"
   replicas: {{ .Values.fluentd.statefulset.replicaCount }}
   template:
     metadata:
       labels:
-        app: {{ template "sumologic.labels.app" . }}-fluentd
+        app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
@@ -73,7 +73,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ template "sumologic.fullname" . }}-fluentd
+          name: {{ template "sumologic.fullname" . }}-fluentd-metrics
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:
@@ -83,13 +83,8 @@ spec:
         resources:
           {{- toYaml .Values.fluentd.statefulset.resources | nindent 10 }}
         ports:
-        {{- if .Values.sumologic.traces.enabled }}
-        - name: zipkin-write
-          containerPort: 9411
-          protocol: TCP
-        {{- end }}
-        - name: fluent-bit
-          containerPort: 24321
+        - name: prom-write
+          containerPort: 9888
           protocol: TCP
         livenessProbe:
           httpGet:
@@ -114,11 +109,41 @@ spec:
           mountPath: "/fluentd/buffer"
 {{- end}}
         env:
-        - name: SUMO_ENDPOINT_LOGS
+        - name: SUMO_ENDPOINT_METRICS
           valueFrom:
             secretKeyRef:
               name: sumologic
-              key: endpoint-logs
+              key: endpoint-metrics
+        - name: SUMO_ENDPOINT_METRICS_APISERVER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-apiserver
+        - name: SUMO_ENDPOINT_METRICS_KUBELET
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kubelet
+        - name: SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kube-controller-manager
+        - name: SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kube-scheduler
+        - name: SUMO_ENDPOINT_METRICS_KUBE_STATE
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-kube-state
+        - name: SUMO_ENDPOINT_METRICS_NODE_EXPORTER
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-metrics-node-exporter
         {{- if .Values.sumologic.traces.enabled }}
         - name: SUMO_ENDPOINT_TRACES
           value: {{ .Values.sumologic.traces.endpoint }}

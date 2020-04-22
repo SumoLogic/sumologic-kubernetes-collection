@@ -12,7 +12,6 @@ data:
     @include traces.conf
 {{- end }}
 {{- (tpl (.Files.Glob "conf/*.conf").AsConfig .) | nindent 2 }}
-{{- (tpl (.Files.Glob "conf/metrics/*.conf").AsConfig .) | nindent 2 }}
 {{- (tpl (.Files.Glob "conf/logs/*.conf").AsConfig .) | nindent 2 }}
 {{- if .Values.sumologic.traces.enabled }}
 {{- (tpl (.Files.Glob "conf/traces/*.conf").AsConfig .) | nindent 2 }}

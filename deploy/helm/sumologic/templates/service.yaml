@@ -15,10 +15,6 @@ spec:
     targetPort: 9411
     protocol: TCP
   {{- end }}
-  - name: prom-write
-    port: 9888
-    targetPort: 9888
-    protocol: TCP
   - name: fluent-bit
     port: 24321
     targetPort: 24321

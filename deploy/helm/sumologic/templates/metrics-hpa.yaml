@@ -1,0 +1,17 @@
+{{- if .Values.fluentd.autoscaling.enabled}}
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "sumologic.fullname" . }}-fluentd-metrics
+  labels:
+    app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: {{ template "sumologic.fullname" . }}-fluentd-metrics
+  minReplicas: {{ .Values.fluentd.autoscaling.metrics.minReplicas }}
+  maxReplicas: {{ .Values.fluentd.autoscaling.metrics.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.fluentd.autoscaling.metrics.targetCPUUtilizationPercentage }}
+{{- end -}}
