@@ -24,7 +24,7 @@ ADD motd /etc/motd
 ADD profile  /etc/profile
 
 ADD k8s-check.sh /usr/bin/k8s-check.sh
-ADD k8s-check.sh /usr/bin/usage.sh
+ADD usage.sh /usr/bin/usage.sh
 COPY --from=builder /build/k8s-api-test /usr/bin/
 
 CMD ["/usr/bin/usage.sh"]
