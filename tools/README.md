@@ -8,7 +8,7 @@ Kubernetes collection.
 
 ## K8S Check
 
-`$ kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-tools -- /usr/bin/k8scheck.sh`
+`$ kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-tools -- /usr/bin/k8s-check.sh`
 
 Should provide an output such as:
 

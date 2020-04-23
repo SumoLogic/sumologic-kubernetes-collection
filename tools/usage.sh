@@ -5,7 +5,7 @@ This image provides a set of tools for Kubernetes Collection. You can use follow
 
  * K8S Check for verifying the environment:
 
- kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-tools -- /usr/bin/k8scheck.sh
+ kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-tools -- /usr/bin/k8s-check.sh
 
  * Interactive mode:
 
