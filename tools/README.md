@@ -1,12 +1,14 @@
-#Diagnostics
+#Tools
 
 This repository contains a simple tool that allows to check if environment is compatible with
 Kubernetes collection.
 
 
-Running:
+# Running
 
-`$ kubectl run diag --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-diagnostics --`
+## K8S Check
+
+`$ kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-tools -- /usr/bin/k8scheck.sh`
 
 Should provide an output such as:
 
@@ -26,7 +28,9 @@ Running K8S API test
 pod "diag" deleted
 ```
 
-The pod can be also run in interactive mode, i.e.:
+## Interactive mode
 
-`$ kubectl run diag --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-diagnostics -- /bin/bash -l`
+The pod can be also run in interactive mode:
+
+`$ kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-tools -- /bin/bash -l`
 

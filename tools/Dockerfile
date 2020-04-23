@@ -7,8 +7,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflag
 FROM alpine:3.9
 
 RUN set -ex \
-    && echo "http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
-    && echo "http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
+    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
     && apk update \
     && apk upgrade \
     && apk add --no-cache \
@@ -24,6 +24,7 @@ ADD motd /etc/motd
 ADD profile  /etc/profile
 
 ADD k8s-check.sh /usr/bin/k8s-check.sh
+ADD k8s-check.sh /usr/bin/usage.sh
 COPY --from=builder /build/k8s-api-test /usr/bin/
 
-CMD ["/usr/bin/k8s-check.sh"]
+CMD ["/usr/bin/usage.sh"]
