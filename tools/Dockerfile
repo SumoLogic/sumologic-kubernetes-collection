@@ -23,8 +23,8 @@ RUN set -ex \
 ADD motd /etc/motd
 ADD profile  /etc/profile
 
-ADD k8s-check.sh /usr/bin/k8s-check.sh
-ADD usage.sh /usr/bin/usage.sh
+ADD check /usr/bin/check
+ADD tools-usage /usr/bin/tools-usage
 COPY --from=builder /build/k8s-api-test /usr/bin/
 
-CMD ["/usr/bin/usage.sh"]
+CMD ["/usr/bin/tools-usage"]
