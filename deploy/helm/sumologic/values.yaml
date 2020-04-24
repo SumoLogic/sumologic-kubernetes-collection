@@ -514,10 +514,34 @@ prometheus-operator:
   prometheusOperator:
     ## Resource limits for prometheus operator
     resources: {}
+      # limits:
+      #   cpu: 200m
+      #   memory: 200Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 100Mi
     admissionWebhooks:
       enabled: false
     tlsProxy:
       enabled: false
+    ## Resource limits for kube-state-metrics
+    kube-state-metrics:
+      resources: {}
+        # limits:
+        #   cpu: 200m
+        #   memory: 200Mi
+        # requests:
+        #   cpu: 200m
+        #   memory: 200Mi
+    ## Resource limits for prometheus node exporter
+    prometheus-node-exporter:
+      resources: {}
+        # limits:
+        #   cpu: 200m
+        #   memory: 50Mi
+        # requests:
+        #   cpu: 100m
+        #   memory: 30Mi
   prometheus:
     additionalServiceMonitors:
       - name: collection-sumologic
