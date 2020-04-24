@@ -3,7 +3,11 @@
 read -d '' usage << EOF
 This image provides a set of tools for Kubernetes Collection. You can use following commands:
 
- * K8S Check for verifying the environment:
+ * K8S Check for verifying the environment for sumologic serviceaccount (collection must be installed first):
+
+kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never -n sumologic --serviceaccount='collection-sumologic' --image sumologic/kubernetes-tools -- check
+
+* K8S Check for verifying the environment (default serviceaccount):
 
  kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-tools -- check
 
