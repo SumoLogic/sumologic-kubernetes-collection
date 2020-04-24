@@ -28,6 +28,38 @@ Running K8S API test
 pod "diag" deleted
 ```
 
+## K8S Template generator
+
+Docker based:
+
+```bash
+docker run --rm kubernetes-tools \
+  template \
+  --namespace <NAMESPACE> \
+  --name collection \
+  --set sumologic.accessId='<ACCESS_KEY>' \
+  --set sumologic.accessKey='<ACCESS_ID>' \
+  --set sumologic.collectorName='<COLLECTOR_NAME>' \
+  --set sumologic.clusterName='<CLUSTER_NAME>' \
+  | tee setup-sumologic.yaml
+```
+
+Kubernetes based:
+
+```
+kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-tools -- \
+  template \
+  --namespace <NAMESPACE> \
+  --name collection \
+  --set sumologic.accessId='<ACCESS_KEY>' \
+  --set sumologic.accessKey='<ACCESS_ID>' \
+  --set sumologic.collectorName='<COLLECTOR_NAME>' \
+  --set sumologic.clusterName='<CLUSTER_NAME>' \
+  | tee setup-sumologic.yaml
+```
+
+As the result you will get `setup-sumologic.yaml` which is ready to apply for kubernetes.
+
 ## Interactive mode
 
 The pod can be also run in interactive mode:
