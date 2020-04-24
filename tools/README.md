@@ -8,6 +8,12 @@ Kubernetes collection.
 
 ## K8S Check
 
+When Sumo Logic Kubernetes Collection is installed already:
+
+`$ kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never -n sumologic --serviceaccount='collection-sumologic' --image sumologic/kubernetes-tools -- check`
+
+Alternatively, when collection is not installed, the same command can be run for default serviceaccount:
+
 `$ kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-tools -- check`
 
 Should provide an output such as:
