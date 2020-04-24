@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+echo '# Add sumologic repository'
+helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection 1>/dev/null 2>&1
+echo '# Update repository'
+helm repo update 1>/dev/null 2>&1
+echo '# Generating template'
+helm template sumologic/sumologic "$@"
