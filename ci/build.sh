@@ -3,6 +3,7 @@
 VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
+: "${TOOLS_TAG:=sumologic/kubernetes-tools}"
 : "${DOCKER_USERNAME:=sumodocker}"
 DOCKER_TAGS="https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags"
 
@@ -69,6 +70,9 @@ cd ../..
 
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
+
+echo "Building tools image with $TOOLS_TAG:local in $(pwd)..."
+docker build -t $TOOLS_TAG:local tools --no-cache
 
 # Check for changes that require re-generating overrides yaml files
 if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
@@ -178,15 +182,30 @@ function push_helm_chart() {
   set +x
 }
 
+
+function push_tools_image() {
+  local version="$1"
+
+  set -x
+  echo "Tagging tools image with $TOOLS_TAG:$version"
+  docker tag $TOOLS_TAG:local "$TOOLS_TAG:$version"
+  decho "Pushing docker image $TOOLS_TAG:$version"
+  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  docker push $TOOLS_TAG:$version
+  set +x
+}
+
 if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
   push_docker_image "$VERSION"
   push_helm_chart "$VERSION"
+  push_tools_image "$VERSION"
 
 elif [ -n "$DOCKER_PASSWORD" ] && [[ "$TRAVIS_BRANCH" == "master" || "$TRAVIS_BRANCH" =~ ^release-v[0-9]+\.[0-9]+$ ]] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
   dev_build_tag=$(git describe --tags --always)
   dev_build_tag=${dev_build_tag#v}
   push_docker_image "$dev_build_tag"
   push_helm_chart "$dev_build_tag"
+  push_tools_image "$dev_build_tag"
 
 else
   echo "Skip Docker pushing"
