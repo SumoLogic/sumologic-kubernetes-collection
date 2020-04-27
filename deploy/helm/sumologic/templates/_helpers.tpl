@@ -40,7 +40,7 @@ heritage: "{{ .Release.Service }}"
 Returns sumologic version string
 */}}
 {{- define "sumologic.sumo_client" -}}
-"k8s-{{ .Chart.Version }}"
+k8s_{{ .Chart.Version }}
 {{- end -}}
 
 {{/*
