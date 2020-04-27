@@ -15,6 +15,13 @@
               "job",
               "__name__"
             ]
+          },
+          {
+            action: "drop",
+            regex: ".*_bucket",
+            sourceLabels: [
+              "__name__"
+            ]
           }
         ]
       },
@@ -26,6 +33,13 @@
             regex: "kubelet;cloudprovider_.*_api_request_duration_seconds.*",
             sourceLabels: [
               "job",
+              "__name__"
+            ]
+          },
+          {
+            action: "drop",
+            regex: ".*_bucket",
+            sourceLabels: [
               "__name__"
             ]
           }
@@ -41,6 +55,13 @@
               "job",
               "__name__"
             ]
+          },
+          {
+            action: "drop",
+            regex: ".*_bucket",
+            sourceLabels: [
+              "__name__"
+            ]
           }
         ]
       },
@@ -54,6 +75,13 @@
               "job",
               "__name__"
             ]
+          },
+          {
+            action: "drop",
+            regex: ".*_bucket",
+            sourceLabels: [
+              "__name__"
+            ]
           }
         ]
       },
@@ -65,6 +93,13 @@
             regex: "kubelet;(?:kubelet_docker_operations_errors.*|kubelet_docker_operations_(?:latency_micro|duration_)seconds.*|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_(?:latency_micro|duration_)seconds.*)",
             sourceLabels: [
               "job",
+              "__name__"
+            ]
+          },
+          {
+            action: "drop",
+            regex: ".*_bucket",
+            sourceLabels: [
               "__name__"
             ]
           }
@@ -93,6 +128,13 @@
               "container",
               "__name__"
             ]
+          },
+          {
+            action: "drop",
+            regex: ".*_bucket",
+            sourceLabels: [
+              "__name__"
+            ]
           }
         ]
       },
@@ -104,6 +146,13 @@
             regex: "kubelet;(?:container_network_receive_bytes_total|container_network_transmit_bytes_total)",
             sourceLabels: [
               "job",
+              "__name__"
+            ]
+          },
+          {
+            action: "drop",
+            regex: ".*_bucket",
+            sourceLabels: [
               "__name__"
             ]
           }
@@ -119,6 +168,13 @@
               "job",
               "__name__"
             ]
+          },
+          {
+            action: "drop",
+            regex: ".*_bucket",
+            sourceLabels: [
+              "__name__"
+            ]
           }
         ]
       },
@@ -131,6 +187,13 @@
             sourceLabels: [
               "__name__"
             ]
+          },
+          {
+            action: "drop",
+            regex: ".*_bucket",
+            sourceLabels: [
+              "__name__"
+            ]
           }
         ]
       },
@@ -140,6 +203,13 @@
           {
             action: "keep",
             regex: "(?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*|otelcol.*)",
+            sourceLabels: [
+              "__name__"
+            ]
+          },
+          {
+            action: "drop",
+            regex: ".*_bucket",
             sourceLabels: [
               "__name__"
             ]
