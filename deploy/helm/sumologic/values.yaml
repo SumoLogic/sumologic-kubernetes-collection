@@ -11,6 +11,28 @@ sumologic:
   # If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
   setupEnabled: true
 
+  # Configuration of kubernetes for terraform client
+  # https://www.terraform.io/docs/providers/kubernetes/index.html#argument-reference
+  cluster:
+    host: "https://kubernetes.default.svc"
+    # username:
+    # password:
+    # insecure:
+    # client_certificate:
+    # client_key:
+    cluster_ca_certificate: "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\")}"
+    # config_path:
+    # config_context:
+    # config_context_auth_info:
+    # config_context_cluster:
+    token: "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}"
+    # load_config_file:
+    # exec:
+    #   api_version:
+    #   command:
+    #   args: []
+    #   env: {}
+
   # If enabled, accessId and accessKey will be sourced from Secret Name given
   # Be sure to include at least the following env variables in your secret
   # (1) SUMOLOGIC_ACCESSID, (2) SUMOLOGIC_ACCESSKEY
