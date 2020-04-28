@@ -27,7 +27,7 @@ RUN gem install fluent-plugin-s3
 RUN gem install fluent-plugin-systemd -v 1.0.2 \
        && gem install fluent-plugin-record-modifier -v 2.0.1 \
        && gem install fluent-plugin-kubernetes_metadata_filter -v 2.4.1 \
-       && gem install fluent-plugin-sumologic_output -v 1.7.0 \
+       && gem install fluent-plugin-sumologic_output -v 1.7.1 \
        && gem install fluent-plugin-concat -v 2.4.0 \
        && gem install fluent-plugin-rewrite-tag-filter -v 2.2.0 \
        && gem install fluent-plugin-prometheus -v 1.6.1
