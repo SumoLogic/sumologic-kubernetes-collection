@@ -7,7 +7,7 @@ This script will automatically take the configurations of your existing values.y
 and return one that is compatible with v1.0.0.
 
 Requirements:
-  yq https://github.com/mikefarah/yq
+  yq (3.2.1) https://github.com/mikefarah/yq/releases/tag/3.2.1
   git diff in case of changes to Prometheus remote write regexs
 
 Usage:
@@ -172,11 +172,11 @@ done
 yq w -i new.yaml falco.enabled false
 
 # Preserve the functionality of addStream=false or addTime=false
-if [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ] && [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]; then
+if [ "$(yq r $OLD_VALUES_YAML sumologic.addStream)" != "true" ] && [ "$(yq r $OLD_VALUES_YAML sumologic.addTime)" != "true" ]; then
   REMOVE="stream,time"
-elif [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ]; then
+elif [ "$(yq r $OLD_VALUES_YAML sumologic.addStream)" != "true" ]; then
   REMOVE="stream"
-elif [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]; then
+elif [ "$(yq r $OLD_VALUES_YAML sumologic.addTime)" != "true" ]; then
   REMOVE="time"
 fi
 
@@ -185,7 +185,7 @@ FILTER="<filter containers.**>
   remove_keys $REMOVE
 </filter>"
 
-if [ $(yq r $OLD_VALUES_YAML sumologic.addStream) != "true" ] || [ $(yq r $OLD_VALUES_YAML sumologic.addTime) != "true" ]; then
+if [ "$(yq r $OLD_VALUES_YAML sumologic.addStream)" != "true" ] || [ "$(yq r $OLD_VALUES_YAML sumologic.addTime)" != "true" ]; then
   yq w -i new.yaml fluentd.logs.containers.extraFilterPluginConf "$FILTER"
 fi
 
@@ -240,13 +240,13 @@ function get_release_regex() {
   echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | "${filter}" -n 3 | grep -P "${str_grep}" | grep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//'
 }
 
-metrics_length=$(yq r -l "${OLD_VALUES_YAML}" 'prometheus-operator.prometheus.prometheusSpec.remoteWrite')
-metrics_length=$(( ${metrics_length} - 1))
+metrics_length="$(yq r -l "${OLD_VALUES_YAML}" 'prometheus-operator.prometheus.prometheusSpec.remoteWrite')"
+metrics_length="$(( ${metrics_length} - 1))"
 
 for i in $(seq 0 ${metrics_length}); do
-    metric_name=$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oP '/prometheus\.metrics.*')
-    metric_regex_length=$(yq r -l "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs")
-    metric_regex_length=$(( ${metric_regex_length} - 1))
+    metric_name="$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oP '/prometheus\.metrics.*')"
+    metric_regex_length="$(yq r -l "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs")"
+    metric_regex_length="$(( ${metric_regex_length} - 1))"
 
     for j in $(seq 0 ${metric_regex_length}); do
         metric_regex_action=$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].action")
@@ -254,7 +254,7 @@ for i in $(seq 0 ${metrics_length}); do
             break
         fi
     done
-    regexes_len=$(echo -e ${expected_metrics} | grep -A 2 "${metric_name}$" | grep regex | wc -l)
+    regexes_len="$(echo -e ${expected_metrics} | grep -A 2 "${metric_name}$" | grep regex | wc -l)"
     if [[ "${regexes_len}" -eq "2" ]]; then
 
       regex_1_0="$(get_release_regex "${metric_name}" '^\s+-' 'head')"
@@ -264,7 +264,7 @@ for i in $(seq 0 ${metrics_length}); do
           yq w -i new.yaml "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
       else
           echo "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually"
-          git --no-pager diff $(echo "${regex_0_17}" | git hash-object -w --stdin) $(echo "${regex}" | git hash-object -w --stdin)  --word-diff-regex='[^\|]'
+          git --no-pager diff --no-index $(echo "${regex_0_17}" | git hash-object -w --stdin) $(echo "${regex}" | git hash-object -w --stdin)  --word-diff-regex='[^\|]'
       fi
     fi
 
