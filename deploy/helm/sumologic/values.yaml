@@ -105,6 +105,7 @@ fluentd:
     @include metrics.conf
     @include logs.conf
 
+  ## List of additional plugins which are going to be install during fluentd bootstrap
   additionalPlugins: []
 
   ## Sets the fluentd log level. The default log level, if not specified, is info.
