@@ -15,13 +15,6 @@
               "job",
               "__name__"
             ]
-          },
-          {
-            action: "drop",
-            regex: ".*_bucket",
-            sourceLabels: [
-              "__name__"
-            ]
           }
         ]
       },
@@ -35,13 +28,6 @@
               "job",
               "__name__"
             ]
-          },
-          {
-            action: "drop",
-            regex: ".*_bucket",
-            sourceLabels: [
-              "__name__"
-            ]
           }
         ]
       },
@@ -53,13 +39,6 @@
             regex: "kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_latency_microseconds.*",
             sourceLabels: [
               "job",
-              "__name__"
-            ]
-          },
-          {
-            action: "drop",
-            regex: ".*_bucket",
-            sourceLabels: [
               "__name__"
             ]
           }
@@ -128,13 +107,6 @@
               "container",
               "__name__"
             ]
-          },
-          {
-            action: "drop",
-            regex: ".*_bucket",
-            sourceLabels: [
-              "__name__"
-            ]
           }
         ]
       },
@@ -146,13 +118,6 @@
             regex: "kubelet;(?:container_network_receive_bytes_total|container_network_transmit_bytes_total)",
             sourceLabels: [
               "job",
-              "__name__"
-            ]
-          },
-          {
-            action: "drop",
-            regex: ".*_bucket",
-            sourceLabels: [
               "__name__"
             ]
           }
@@ -168,13 +133,6 @@
               "job",
               "__name__"
             ]
-          },
-          {
-            action: "drop",
-            regex: ".*_bucket",
-            sourceLabels: [
-              "__name__"
-            ]
           }
         ]
       },
@@ -187,13 +145,6 @@
             sourceLabels: [
               "__name__"
             ]
-          },
-          {
-            action: "drop",
-            regex: ".*_bucket",
-            sourceLabels: [
-              "__name__"
-            ]
           }
         ]
       },
@@ -203,13 +154,6 @@
           {
             action: "keep",
             regex: "(?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*|otelcol.*)",
-            sourceLabels: [
-              "__name__"
-            ]
-          },
-          {
-            action: "drop",
-            regex: ".*_bucket",
             sourceLabels: [
               "__name__"
             ]
