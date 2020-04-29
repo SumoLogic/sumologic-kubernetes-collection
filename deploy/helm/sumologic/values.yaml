@@ -629,7 +629,7 @@ prometheus-operator:
             - action: keep
               regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_latency_microseconds.*
               sourceLabels: [job, __name__]
-        # api server metrics
+        # api server metrics:
         # apiserver_request_count
         # apiserver_request_total
         # apiserver_request_duration_seconds_count
