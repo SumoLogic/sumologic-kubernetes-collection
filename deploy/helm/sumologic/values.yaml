@@ -638,15 +638,26 @@ prometheus-operator:
             - action: drop
               regex: .*_bucket
               sourceLabels: [__name__]
-        # kubelet metrics
+        # kubelet metrics:
+        # kubelet_docker_operations_errors
+        # kubelet_docker_operations_errors_total
+        # kubelet_docker_operations_duration_seconds_count
+        # kubelet_docker_operations_duration_seconds_sum
+        # kubelet_runtime_operations_duration_seconds_count
+        # kubelet_runtime_operations_duration_seconds_sum
+        # kubelet_running_container_count
+        # kubelet_running_pod_count
+        # kubelet_docker_operations_latency_microseconds
+        # kubelet_docker_operations_latency_microseconds_count
+        # kubelet_docker_operations_latency_microseconds_sum
+        # kubelet_runtime_operations_latency_microseconds
+        # kubelet_runtime_operations_latency_microseconds_count
+        # kubelet_runtime_operations_latency_microseconds_sum
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.kubelet
           writeRelabelConfigs:
             - action: keep
-              regex: kubelet;(?:kubelet_docker_operations_errors.*|kubelet_docker_operations_(?:latency_micro|duration_)seconds.*|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_(?:latency_micro|duration_)seconds.*)
+              regex: kubelet;(?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)_count|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
               sourceLabels: [job, __name__]
-            - action: drop
-              regex: .*_bucket
-              sourceLabels: [__name__]
         # cadvisor container metrics
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
           writeRelabelConfigs:
