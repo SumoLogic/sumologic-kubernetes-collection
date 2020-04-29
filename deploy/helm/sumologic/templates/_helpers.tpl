@@ -37,6 +37,13 @@ heritage: "{{ .Release.Service }}"
 {{- end -}}
 
 {{/*
+Returns sumologic version string
+*/}}
+{{- define "sumologic.sumo_client" -}}
+k8s_{{ .Chart.Version }}
+{{- end -}}
+
+{{/*
 Get configuration value, otherwise returns default
 
 Example usage:
