@@ -128,14 +128,32 @@ prometheus:
         regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_latency_microseconds.*
         sourceLabels: [job, __name__]
     - # api server metrics
+      # apiserver_request_count
+      # apiserver_request_total
+      # apiserver_request_duration_seconds_count
+      # apiserver_request_duration_seconds_sum
+      # apiserver_request_latencies_count
+      # apiserver_request_latencies_sum
+      # apiserver_request_latencies_summary
+      # apiserver_request_latencies_summary_count
+      # apiserver_request_latencies_summary_sum
+      # etcd_request_cache_get_duration_seconds_count
+      # etcd_request_cache_get_duration_seconds_sum
+      # etcd_request_cache_add_duration_seconds_count
+      # etcd_request_cache_add_duration_seconds_sum
+      # etcd_request_cache_add_latencies_summary_count
+      # etcd_request_cache_add_latencies_summary_sum
+      # etcd_request_cache_get_latencies_summary_count
+      # etcd_request_cache_get_latencies_summary_sum
+      # etcd_helper_cache_hit_count
+      # etcd_helper_cache_hit_total
+      # etcd_helper_cache_miss_count
+      # etcd_helper_cache_miss_total
       url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.apiserver
       writeRelabelConfigs:
       - action: keep
-        regex: apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:latencies|duration_seconds).*|etcd_request_cache_get_(?:latencies_summary|duration_seconds).*|etcd_request_cache_add_(?:latencies_summary|duration_seconds).*|etcd_helper_cache_hit_(?:count|total)|etcd_helper_cache_miss_(?:count|total))
+        regex: apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count_sum)|apiserver_request_latencies_summary(?:|_count|_sum)|etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total))
         sourceLabels: [job, __name__]
-      - action: drop
-        regex: .*_bucket
-        sourceLabels: [__name__]
     - # kubelet metrics:
       # kubelet_docker_operations_errors
       # kubelet_docker_operations_errors_total
