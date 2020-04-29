@@ -40,7 +40,7 @@ spec:
               - key: app
                 operator: In
                 values:
-                - {{ template "sumologic.labels.app" . }}-fluentd
+                - {{ template "sumologic.labels.app" . }}-fluentd-logs
                 - {{ template "sumologic.labels.app" . }}-fluentd-metrics
               - key: app
                 operator: In
@@ -57,7 +57,7 @@ spec:
                 - key: app
                   operator: In
                   values:
-                  - {{ template "sumologic.labels.app" . }}-fluentd
+                  - {{ template "sumologic.labels.app" . }}-fluentd-logs
                   - {{ template "sumologic.labels.app" . }}-fluentd-metrics
                 - key: app
                   operator: In

@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "sumologic.fullname" . }}-fluentd
+  name: {{ template "sumologic.fullname" . }}-fluentd-logs
   labels:
-    app: {{ template "sumologic.labels.app" . }}-fluentd
+    app: {{ template "sumologic.labels.app" . }}-fluentd-logs
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: {{ template "sumologic.labels.app" . }}-fluentd
-  serviceName: {{ template "sumologic.fullname" . }}-fluentd-headless
+      app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+  serviceName: {{ template "sumologic.fullname" . }}-fluentd-logs-headless
   podManagementPolicy: "Parallel"
   replicas: {{ .Values.fluentd.logs.statefulset.replicaCount }}
   template:
     metadata:
       labels:
-        app: {{ template "sumologic.labels.app" . }}-fluentd
+        app: {{ template "sumologic.labels.app" . }}-fluentd-logs
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
@@ -40,7 +40,7 @@ spec:
               - key: app
                 operator: In
                 values:
-                - {{ template "sumologic.labels.app" . }}-fluentd
+                - {{ template "sumologic.labels.app" . }}-fluentd-logs
                 - {{ template "sumologic.labels.app" . }}-fluentd-metrics
               - key: app
                 operator: In
@@ -57,7 +57,7 @@ spec:
                 - key: app
                   operator: In
                   values:
-                  - {{ template "sumologic.labels.app" . }}-fluentd
+                  - {{ template "sumologic.labels.app" . }}-fluentd-logs
                   - {{ template "sumologic.labels.app" . }}-fluentd-metrics
                 - key: app
                   operator: In
@@ -73,7 +73,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ template "sumologic.fullname" . }}-fluentd
+          name: {{ template "sumologic.fullname" . }}-fluentd-logs
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:
