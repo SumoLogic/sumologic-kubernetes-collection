@@ -69,16 +69,9 @@
         writeRelabelConfigs: [
           {
             action: "keep",
-            regex: "kubelet;(?:kubelet_docker_operations_errors.*|kubelet_docker_operations_(?:latency_micro|duration_)seconds.*|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_(?:latency_micro|duration_)seconds.*)",
+            regex: "kubelet;(?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)_count|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))",
             sourceLabels: [
               "job",
-              "__name__"
-            ]
-          },
-          {
-            action: "drop",
-            regex: ".*_bucket",
-            sourceLabels: [
               "__name__"
             ]
           }
