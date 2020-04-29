@@ -7,6 +7,6 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   fluent.conf: |-
-{{- .Values.fluentd.metricsRawConfig | nindent 4 }}
+{{- .Values.fluentd.metrics.rawConfig | nindent 4 }}
 {{- (tpl (.Files.Glob "conf/*.conf").AsConfig .) | nindent 2 }}
 {{- (tpl (.Files.Glob "conf/metrics/*.conf").AsConfig .) | nindent 2 }}

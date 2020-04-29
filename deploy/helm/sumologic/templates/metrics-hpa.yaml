@@ -1,4 +1,4 @@
-{{- if .Values.fluentd.autoscaling.enabled}}
+{{- if .Values.fluentd.metrics.autoscaling.enabled}}
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -11,7 +11,7 @@ spec:
     apiVersion: apps/v1
     kind: StatefulSet
     name: {{ template "sumologic.fullname" . }}-fluentd-metrics
-  minReplicas: {{ .Values.fluentd.autoscaling.metrics.minReplicas }}
-  maxReplicas: {{ .Values.fluentd.autoscaling.metrics.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.fluentd.autoscaling.metrics.targetCPUUtilizationPercentage }}
+  minReplicas: {{ .Values.fluentd.metrics.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.fluentd.metrics.autoscaling.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.fluentd.metrics.autoscaling.targetCPUUtilizationPercentage }}
 {{- end -}}

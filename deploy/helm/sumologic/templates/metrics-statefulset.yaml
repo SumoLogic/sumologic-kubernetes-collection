@@ -11,7 +11,7 @@ spec:
       app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
   serviceName: {{ template "sumologic.fullname" . }}-fluentd-metrics-headless
   podManagementPolicy: "Parallel"
-  replicas: {{ .Values.fluentd.statefulset.replicaCount }}
+  replicas: {{ .Values.fluentd.metrics.statefulset.replicaCount }}
   template:
     metadata:
       labels:
@@ -19,20 +19,20 @@ spec:
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
-{{- if .Values.fluentd.statefulset.nodeSelector }}
+{{- if .Values.fluentd.metrics.statefulset.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.fluentd.statefulset.nodeSelector | indent 8 }}
+{{ toYaml .Values.fluentd.metrics.statefulset.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.fluentd.statefulset.tolerations }}
+{{- if .Values.fluentd.metrics.statefulset.tolerations }}
       tolerations:
-{{ toYaml .Values.fluentd.statefulset.tolerations | indent 8 }}
+{{ toYaml .Values.fluentd.metrics.statefulset.tolerations | indent 8 }}
 {{- end }}
-{{- if or .Values.fluentd.statefulset.affinity  .Values.fluentd.statefulset.podAntiAffinity }}
+{{- if or .Values.fluentd.metrics.statefulset.affinity  .Values.fluentd.metrics.statefulset.podAntiAffinity }}
       affinity:
-{{- if .Values.fluentd.statefulset.affinity }}
-{{ toYaml .Values.fluentd.statefulset.affinity | indent 8 }}
+{{- if .Values.fluentd.metrics.statefulset.affinity }}
+{{ toYaml .Values.fluentd.metrics.statefulset.affinity | indent 8 }}
 {{- end }}
-{{- if eq .Values.fluentd.statefulset.podAntiAffinity "hard"}}
+{{- if eq .Values.fluentd.metrics.statefulset.podAntiAffinity "hard"}}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
@@ -47,7 +47,7 @@ spec:
                 values:
                 - prometheus-operator-prometheus
             topologyKey: "kubernetes.io/hostname"
-{{else if eq .Values.fluentd.statefulset.podAntiAffinity "soft"}}
+{{else if eq .Values.fluentd.metrics.statefulset.podAntiAffinity "soft"}}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
@@ -81,7 +81,7 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
-          {{- toYaml .Values.fluentd.statefulset.resources | nindent 10 }}
+          {{- toYaml .Values.fluentd.metrics.statefulset.resources | nindent 10 }}
         ports:
         - name: prom-write
           containerPort: 9888

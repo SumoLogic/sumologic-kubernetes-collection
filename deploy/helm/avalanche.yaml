@@ -1,0 +1,75 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avalanche
+  labels:
+    system: qeteam
+    name: avalanche
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      system: qeteam
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 10%
+      maxSurge: 15%
+  template:
+    metadata:
+      annotations:
+        avalanche/scrape: "true"
+      labels:
+        system: qeteam
+        name: avalanche
+    spec:
+      containers:
+      - name: avalanche
+        image: quay.io/freshtracks.io/avalanche
+        imagePullPolicy: IfNotPresent
+        args:
+        - --metric-count=50
+        - --series-count=10
+        - --port=9006
+        - --series-interval=60000
+        - --metric-interval=60000
+        - --value-interval=30
+        ports:
+        - name: web
+          containerPort: 9006
+          protocol: TCP
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: avalanche
+  labels:
+    system: qeteam
+    release: collection
+  namespace: sumologic
+spec:
+  selector:
+    matchLabels:
+      system: qeteam
+  endpoints:
+  - port: web
+    interval: 30s
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: avalancheservice
+  labels:
+    system: qeteam
+    tag: test
+spec:
+  selector:
+    system: qeteam
+  ports:
+  - name: web
+    port: 9006
