@@ -538,8 +538,8 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.2.7.1"
-      pullPolicy: IfNotPresent
+      tag: "0.3.0.3"
+      pullPolicy: Always
   config:
     receivers:
       jaeger:
@@ -556,9 +556,15 @@ otelcol:
             endpoint: "0.0.0.0:14268"
       opencensus:
         endpoint: "0.0.0.0:55678"
+      otlp:
+        endpoint: "0.0.0.0:55680"
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
+      source:
+        source_name: "%{namespace}.%{pod}.%{container}"
+        source_category: "%{namespace}/%{pod_name}"
+
       # Tags spans with K8S metadata, basing on the context IP
       k8s_tagger:
         # When true, only IP is assigned and passed (so it could be tagged on another collector)
@@ -597,10 +603,10 @@ otelcol:
             #serviceName: service
             statefulSetName: statefulset
           annotations:
-            - tag_name: pod_annotation_%s
+            - tag_name: "annotation:%s"
               key: "*"
           labels:
-            - tag_name: pod_label_%s
+            - tag_name: "label:%s"
               key: "*"
 
       # The memory_limiter processor is used to prevent out of memory situations on the collector.
@@ -630,15 +636,13 @@ otelcol:
       batch:
         # Number of spans after which a batch will be sent regardless of time
         send_batch_size: 256
-        # Number of tickers that loop over batch buckets
-        num_tickers: 10
         # Time duration after which a batch will be sent regardless of size
         timeout: 5s
     extensions:
       health_check: {}
     exporters:
       zipkin:
-        url: "exporters.zipkin.url_replace"
+        url: {{ .Values.sumologic.traces.endpoint || quote }}
       # Following generates verbose logs with span content, useful to verify what
       # metadata is being tagged. To enable, uncomment and add "logging" to exporters below.
       # There are two levels that could be used: `debug` and `info` with the former
@@ -650,5 +654,5 @@ otelcol:
       pipelines:
         traces:
           receivers: [jaeger, zipkin, opencensus]
-          processors: [memory_limiter, k8s_tagger, batch, queued_retry]
+          processors: [memory_limiter, k8s_tagger, source, batch, queued_retry]
           exporters: [zipkin]
