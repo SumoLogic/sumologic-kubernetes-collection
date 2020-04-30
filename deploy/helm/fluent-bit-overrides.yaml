@@ -17,7 +17,7 @@ env:
   valueFrom:
     configMapKeyRef:
       name: sumologic-configmap
-      key: release
+      key: fluentdLogs
 - name: NAMESPACE
   valueFrom:
     fieldRef:

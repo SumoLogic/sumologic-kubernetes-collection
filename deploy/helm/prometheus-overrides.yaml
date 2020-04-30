@@ -43,9 +43,9 @@ prometheusOperator:
     #   memory: 30Mi
 prometheus:
   additionalServiceMonitors:
-  - name: collection-sumologic
+  - name: collection-sumologic-fluentd-logs
     additionalLabels:
-      app: collection-sumologic
+      app: collection-sumologic-fluentd-logs
     endpoints:
     - port: metrics
     namespaceSelector:
@@ -53,10 +53,10 @@ prometheus:
       - sumologic
     selector:
       matchLabels:
-        app: collection-sumologic
-  - name: collection-sumologic-events
+        app: collection-sumologic-fluentd-logs
+  - name: collection-sumologic-fluentd-metrics
     additionalLabels:
-      app: collection-sumologic-events
+      app: collection-sumologic-fluentd-metrics
     endpoints:
     - port: metrics
     namespaceSelector:
@@ -64,7 +64,18 @@ prometheus:
       - sumologic
     selector:
       matchLabels:
-        app: collection-sumologic-events
+        app: collection-sumologic-fluentd-metrics
+  - name: collection-sumologic-fluentd-events
+    additionalLabels:
+      app: collection-sumologic-fluentd-events
+    endpoints:
+    - port: metrics
+    namespaceSelector:
+      matchNames:
+      - sumologic
+    selector:
+      matchLabels:
+        app: collection-sumologic-fluentd-events
   - name: collection-fluent-bit
     additionalLabels:
       app: collection-fluent-bit
@@ -102,7 +113,7 @@ prometheus:
         valueFrom:
           configMapKeyRef:
             name: sumologic-configmap
-            key: release
+            key: fluentdMetrics
       - name: NAMESPACE
         valueFrom:
           configMapKeyRef:
