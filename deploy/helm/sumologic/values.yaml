@@ -561,10 +561,12 @@ otelcol:
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
+      # Adds _sourceCategory and _sourceName
       source:
-        source_name: "%{namespace}.%{pod}.%{container}"
-        source_category: "%{namespace}/%{pod_name}"
-
+        source_name: {{ .Values.sumologic.sourceName | quote }}
+        source_category: {{ .Values.sumologic.sourceCategory | quote }}
+        source_category_prefix: {{ .Values.sumologic.sourceCategoryPrefix | quote }}
+        source_category_replace_dash: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
       # Tags spans with K8S metadata, basing on the context IP
       k8s_tagger:
         # When true, only IP is assigned and passed (so it could be tagged on another collector)
