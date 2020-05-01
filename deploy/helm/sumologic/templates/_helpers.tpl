@@ -16,6 +16,32 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
+Expand traces endpoint variable.
+*/}}
+{{- define "sumologic.traces.endpoint" -}}
+{{- default .Values.sumologic.traces.endpoint | trimSuffix "-" }}
+{{- end -}}
+
+{{/*
+Expand tracing source config.
+*/}}
+{{- define "sumologic.sourceName" -}}
+{{- default .Values.sumologic.sourceName | trimSuffix "-" }}
+{{- end -}}
+
+{{- define "sumologic.sourceCategory" -}}
+{{- default .Values.sumologic.sourceCategory | trimSuffix "-" }}
+{{- end -}}
+
+{{- define "sumologic.sourceCategoryPrefix" -}}
+{{- default .Values.sumologic.sourceCategoryPrefix | trimSuffix "-" }}
+{{- end -}}
+
+{{- define "sumologic.sourceCategoryReplaceDash" -}}
+{{- default .Values.sumologic.sourceCategoryReplaceDash | trimSuffix "-" }}
+{{- end -}}
+
+{{/*
 Create default fully qualified labels.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}

@@ -539,7 +539,7 @@ otelcol:
     image:
       name: "sumologic/opentelemetry-collector"
       tag: "0.3.0.3"
-      pullPolicy: Always
+      pullPolicy: IfNotPresent
   config:
     receivers:
       jaeger:
@@ -563,10 +563,10 @@ otelcol:
     processors:
       # Adds _sourceCategory and _sourceName
       source:
-        source_name: {{ .Values.sumologic.sourceName | quote }}
-        source_category: {{ .Values.sumologic.sourceCategory | quote }}
-        source_category_prefix: {{ .Values.sumologic.sourceCategoryPrefix | quote }}
-        source_category_replace_dash: {{ .Values.sumologic.sourceCategoryReplaceDash | quote }}
+        source_name: "processors.source.name.replace"
+        source_category: "processors.source.category.replace"
+        source_category_prefix: "processors.source.category_prefix.replace"
+        source_category_replace_dash: "processors.source.category_replace_dash.replace"
       # Tags spans with K8S metadata, basing on the context IP
       k8s_tagger:
         # When true, only IP is assigned and passed (so it could be tagged on another collector)
@@ -644,7 +644,7 @@ otelcol:
       health_check: {}
     exporters:
       zipkin:
-        url: {{ .Values.sumologic.traces.endpoint || quote }}
+        url:  "exporters.zipkin.url_replace"
       # Following generates verbose logs with span content, useful to verify what
       # metadata is being tagged. To enable, uncomment and add "logging" to exporters below.
       # There are two levels that could be used: `debug` and `info` with the former
