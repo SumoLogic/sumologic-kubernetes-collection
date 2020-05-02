@@ -538,7 +538,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.3.0.3"
+      tag: "0.3.0.4"
       pullPolicy: IfNotPresent
   config:
     receivers:
