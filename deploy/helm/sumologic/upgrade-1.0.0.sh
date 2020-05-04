@@ -8,7 +8,7 @@ and return one that is compatible with v1.0.0.
 
 Requirements:
   yq (3.2.1) https://github.com/mikefarah/yq/releases/tag/3.2.1
-  git diff in case of changes to Prometheus remote write regexs
+  git diff in case of changes to Prometheus remote write regexes
 
 Usage:
   ./upgrade-1.0.0.sh /path/to/values.yaml
@@ -157,7 +157,10 @@ sumologic.kubernetesMetaReduce
 sumologic.addStream
 sumologic.addTime
 deployment
-eventsDeployment"
+eventsDeployment
+fluentd.statefulset
+fluentd.autoscaling
+fluentd.rawConfig"
 
 IFS=$'\n' read -r -d '' -a OLD_CONFIGS <<< "$OLD_CONFIGS"
 IFS=$'\n' read -r -d '' -a NEW_CONFIGS <<< "$NEW_CONFIGS"
@@ -311,6 +314,64 @@ for i in $(seq 0 ${metrics_length}); do
         fi
     fi
 done
+
+# Fix fluent-bit env
+yq w -i new.yaml "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
+
+# Fix prometheus service monitors
+yq d -i "new.yaml" "prometheus-operator.prometheus.additionalServiceMonitors(name==collection-sumologic)"
+yq d -i "new.yaml" "prometheus-operator.prometheus.additionalServiceMonitors(name==collection-sumologic-otelcol)"
+yq d -i "new.yaml" "prometheus-operator.prometheus.additionalServiceMonitors(name==collection-sumologic-events)"
+echo '---
+prometheus-operator:
+  prometheus:
+    additionalServiceMonitors:
+      - name: collection-sumologic-otelcol
+        additionalLabels:
+          app: collection-sumologic-otelcol
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - sumologic
+        selector:
+          matchLabels:
+            app: collection-sumologic-otelcol
+      - name: collection-sumologic-fluentd-logs
+        additionalLabels:
+          app: collection-sumologic-fluentd-logs
+        endpoints:
+        - port: metrics
+        namespaceSelector:
+          matchNames:
+          - sumologic
+        selector:
+          matchLabels:
+            app: collection-sumologic-fluentd-logs
+      - name: collection-sumologic-fluentd-metrics
+        additionalLabels:
+          app: collection-sumologic-fluentd-metrics
+        endpoints:
+        - port: metrics
+        namespaceSelector:
+          matchNames:
+          - sumologic
+        selector:
+          matchLabels:
+            app: collection-sumologic-fluentd-metrics
+      - name: collection-sumologic-fluentd-events
+        additionalLabels:
+          app: collection-sumologic-fluentd-events
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - sumologic
+        selector:
+          matchLabels:
+            app: collection-sumologic-fluentd-events' | yq m -a -i "new.yaml" -
+
+yq w -i new.yaml "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
 
 
 # Delete leftover old configs from new values.yaml
