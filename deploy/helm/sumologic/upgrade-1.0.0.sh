@@ -11,7 +11,11 @@ Requirements:
   git diff in case of changes to Prometheus remote write regexes
 
 Usage:
+  # for default helm release name 'collection' and namespace 'sumologic'
   ./upgrade-1.0.0.sh /path/to/values.yaml
+
+  # for non-default helm release name and k8s namespace
+  ./upgrade-1.0.0.sh /path/to/values.yaml helm_release_name k8s_namespace
 
 Returns:
   new_values.yaml
@@ -24,7 +28,9 @@ if [ "$1" = "" ]; then
   exit 1
 fi
 
-OLD_VALUES_YAML=$1
+readonly OLD_VALUES_YAML="$1"
+readonly HELM_RELEASE_NAME="${2:-collection}"
+readonly NAMESPACE="${3:-sumologic}"
 
 URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v1.0.0/deploy/helm/sumologic/values.yaml
 curl -s $URL > new.yaml
@@ -319,57 +325,57 @@ done
 yq w -i new.yaml "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
 
 # Fix prometheus service monitors
-yq d -i "new.yaml" "prometheus-operator.prometheus.additionalServiceMonitors(name==collection-sumologic)"
-yq d -i "new.yaml" "prometheus-operator.prometheus.additionalServiceMonitors(name==collection-sumologic-otelcol)"
-yq d -i "new.yaml" "prometheus-operator.prometheus.additionalServiceMonitors(name==collection-sumologic-events)"
-echo '---
+yq d -i "new.yaml" "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE})"
+yq d -i "new.yaml" "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
+yq d -i "new.yaml" "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-events)"
+echo "---
 prometheus-operator:
   prometheus:
     additionalServiceMonitors:
-      - name: collection-sumologic-otelcol
+      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
         additionalLabels:
-          app: collection-sumologic-otelcol
+          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
         endpoints:
           - port: metrics
         namespaceSelector:
           matchNames:
-            - sumologic
+            - ${NAMESPACE}
         selector:
           matchLabels:
-            app: collection-sumologic-otelcol
-      - name: collection-sumologic-fluentd-logs
+            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
+      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
         additionalLabels:
-          app: collection-sumologic-fluentd-logs
+          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
         endpoints:
         - port: metrics
         namespaceSelector:
           matchNames:
-          - sumologic
+          - ${NAMESPACE}
         selector:
           matchLabels:
-            app: collection-sumologic-fluentd-logs
-      - name: collection-sumologic-fluentd-metrics
+            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
+      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
         additionalLabels:
-          app: collection-sumologic-fluentd-metrics
+          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
         endpoints:
         - port: metrics
         namespaceSelector:
           matchNames:
-          - sumologic
+          - ${NAMESPACE}
         selector:
           matchLabels:
-            app: collection-sumologic-fluentd-metrics
-      - name: collection-sumologic-fluentd-events
+            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
+      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events
         additionalLabels:
-          app: collection-sumologic-fluentd-events
+          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events
         endpoints:
           - port: metrics
         namespaceSelector:
           matchNames:
-            - sumologic
+            - ${NAMESPACE}
         selector:
           matchLabels:
-            app: collection-sumologic-fluentd-events' | yq m -a -i "new.yaml" -
+            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "new.yaml" -
 
 yq w -i new.yaml "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
 
