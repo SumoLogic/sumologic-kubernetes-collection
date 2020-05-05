@@ -53,6 +53,7 @@ spec:
         - containerPort: 14267 # Default endpoint for Jaeger TChannel receiver.
         - containerPort: 14268 # Default endpoint for Jaeger HTTP receiver.
         - containerPort: 55678 # Default endpoint for Opencensus receiver.
+        - containerPort: 55680 # Default endpoint for OTLP receiver.
         volumeMounts:
         - name: otel-collector-config-vol
           mountPath: /conf
