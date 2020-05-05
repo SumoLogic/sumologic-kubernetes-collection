@@ -1,7 +1,8 @@
 {{- $yamlFile := toYaml $.Values.otelcol.config }}
-{{- $tracesEndpoint := include "sumologic.traces.endpoint" . | quote }}
-{{- $sourceName := include "sumologic.sourceName" . | quote }}
-{{- $sourceCategory := include "sumologic.sourceCategory" . | quote }}
-{{- $sourceCategoryPrefix := include "sumologic.sourceCategoryPrefix" . | quote }}
-{{- $sourceCategoryReplaceDash := include "sumologic.sourceCategoryReplaceDash" . | quote }}
-{{- $yamlFile | replace "exporters.zipkin.url_replace" $tracesEndpoint | replace "processors.source.name.replace" $sourceName | replace "processors.source.category.replace" $sourceCategory | replace "processors.source.category_prefix.replace" $sourceCategoryPrefix | replace "processors.source.category_replace_dash.replace" $sourceCategoryReplaceDash | nindent 2 }}
+{{- $_collector := .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
+{{- $endpoint := .Values.sumologic.traces.endpoint | quote }}
+{{- $sourceName := .Values.sumologic.sourceName | quote }}
+{{- $sourceCategory := .Values.sumologic.sourceCategory | quote }}
+{{- $sourceCategoryPrefix := .Values.sumologic.sourceCategoryPrefix | quote }}
+{{- $sourceCategoryReplaceDash := .Values.sumologic.sourceCategoryReplaceDash | quote }}
+{{- $yamlFile | replace "processors.source.collector.replace" $_collector | replace "exporters.zipkin.url_replace" $endpoint | replace "processors.source.name.replace" $sourceName | replace "processors.source.category.replace" $sourceCategory | replace "processors.source.category_prefix.replace" $sourceCategoryPrefix | replace "processors.source.category_replace_dash.replace" $sourceCategoryReplaceDash | nindent 2 }}

@@ -538,7 +538,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.3.0.4"
+      tag: "0.3.0.5"
       pullPolicy: IfNotPresent
   config:
     receivers:
@@ -563,6 +563,7 @@ otelcol:
     processors:
       # Adds _sourceCategory and _sourceName
       source:
+        collector: "processors.source.collector.replace"
         source_name: "processors.source.name.replace"
         source_category: "processors.source.category.replace"
         source_category_prefix: "processors.source.category_prefix.replace"
@@ -605,10 +606,10 @@ otelcol:
             #serviceName: service
             statefulSetName: statefulset
           annotations:
-            - tag_name: "annotation:%s"
+            - tag_name: "pod_annotation_%s"
               key: "*"
           labels:
-            - tag_name: "label:%s"
+            - tag_name: "pod_labels_%s"
               key: "*"
 
       # The memory_limiter processor is used to prevent out of memory situations on the collector.
@@ -644,7 +645,7 @@ otelcol:
       health_check: {}
     exporters:
       zipkin:
-        url:  "exporters.zipkin.url_replace"
+        url: "exporters.zipkin.url_replace"
       # Following generates verbose logs with span content, useful to verify what
       # metadata is being tagged. To enable, uncomment and add "logging" to exporters below.
       # There are two levels that could be used: `debug` and `info` with the former
