@@ -227,8 +227,8 @@ fi
 # Prometheus changes
 # Diff of prometheus regexes:
 # git diff v1.0.0 v0.17.1 deploy/helm/sumologic/values.yaml | \
-# grep -P '(regex|url)\:' | \
-# grep -P "^(\-|\+)\s+ (regex|url)\:" | \
+# grep -E '(regex|url)\:' | \
+# grep -E "^(\-|\+)\s+ (regex|url)\:" | \
 # sed 's|-        url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888||' | \
 # sed 's/$/\\n/'
 #
@@ -272,14 +272,14 @@ function get_release_regex() {
   local str_grep="${2}"
   local filter="${3}"
 
-  echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | "${filter}" -n 3 | grep -P "${str_grep}" | grep -oP ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//'
+  echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | "${filter}" -n 3 | grep -E "${str_grep}" | grep -oE ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//'
 }
 
 metrics_length="$(yq r -l "${OLD_VALUES_YAML}" 'prometheus-operator.prometheus.prometheusSpec.remoteWrite')"
 metrics_length="$(( ${metrics_length} - 1))"
 
 for i in $(seq 0 ${metrics_length}); do
-    metric_name="$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oP '/prometheus\.metrics.*')"
+    metric_name="$(yq r "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oE '/prometheus\.metrics.*')"
     metric_regex_length="$(yq r -l "${OLD_VALUES_YAML}" "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs")"
     metric_regex_length="$(( ${metric_regex_length} - 1))"
 
