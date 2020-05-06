@@ -32,7 +32,7 @@ readonly OLD_VALUES_YAML="$1"
 readonly HELM_RELEASE_NAME="${2:-collection}"
 readonly NAMESPACE="${3:-sumologic}"
 
-URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/v1.0.0/deploy/helm/sumologic/values.yaml
+URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/values.yaml
 curl -s $URL > new.yaml
 
 OLD_CONFIGS="sumologic.eventCollectionEnabled
