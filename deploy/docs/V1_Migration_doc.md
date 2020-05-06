@@ -10,9 +10,11 @@
 - [Non-Helm Users](#non-helm-users) 
   - [Changes](#breaking-changes) 
   - [How to upgrade](#how-to-upgrade-for-non-helm-users)
-    - [1. Move environment variable config changes to Fluentd pipeline](#1-move-environment-variable-config-changes-to-fluentd-pipeline)
-    - [2. Modify filter based on kubernetes version](#2-modify-filter-based-on-kubernetes-version))
-    - [3: Apply new changes](#3-apply-new-changes)
+    - [1. Tear down existing collection resources](#1-tear-down-existing-fluentd-prometheus-fluentbit-resources)
+    - [2. Deploy New Resources](#2-Deploy-Fluentd-Fluent-bit-and-prometheus-again-with-the-verison-1.0.0-yaml)
+      - [2.1: Deploy Fluentd](#2.1-Deploy-Fluentd)
+      - [2.1: Deploy Prometheus](#2.2-Deploy-Prometheus)
+      - [2.1: Deploy Fluent-bit](#2.3-Deploy-Fluentbit)
 
 
 <!-- /TOC -->
@@ -21,9 +23,14 @@ Based on the feedback from our users, we will be introducing several changes to 
 ## Helm Users
 ### Changes
 
-- Falco installation disabled by Default
+- Falco installation disabled by Default. If you want to enable Falco, modify the `enabled` flag for Falco in `values.yaml` as shown below: 
+```yaml
+falco:
+  ## Set the enabled flag to false to disable falco.
+  enabled: true
+  ```
 
-- Bumped the helm Falco chart version which included a fix to disable the bitcoin miner rule by default
+- Bumped the helm Falco chart version to v `1.1.6` which included a fix to disable the bitcoin/crypto miner rule by default
 
 - Changes in Configuration Parameters
 	- The `values.yaml` file has had several configs moved and renamed to improve usability. Namely, we introduced a new fluentd section into which we moved all of the Fluentd specific configs, while configs for our dependency charts (`prometheus-operator`, `fluent-bit`, `metrics-server`, `falco`) have not changed.
@@ -134,15 +141,26 @@ helm upgrade collection sumologic/sumologic --reuse-values --version=1.0.0 --set
   remove_keys stream,time
 </filter>
 ```
-above the output plugin section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/kubernetes/fluentd-sumologic.yaml.tmpl#L251)
+above the output plugin section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v1.0.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl#L251)
 - The Fluentd deployments have been changed to **statefulsets** to support the use of **persistent volumes**. This will allow better buffering behavior. They also now include `“fluentd”` in their names. This is a breaking change for non-Helm users as the deployments will not be cleaned up upon upgrade, leading to duplicate events (logs and metrics will not experience data duplication).
 - The unified Fluentd `statefulsets` have been split into set of two different Fluentd's, one for `logs` and the other one for `metrics`.
 - We now support the collection of renamed metrics (for Kubernetes version `1.17+`).
 ### How to upgrade for Non-helm Users
-#### 1. Move environment variable config changes to Fluentd pipeline
+#### 1. Tear down existing fluentd, prometheus, fluentbit resources
+Run the commands mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#tear-down) to delete the respective resources.
+
+#### 2. Deploy Fluentd, Fluent-bit and prometheus again with the verison 1.0.0 yaml
+Follow the below steps to deploy new resources. 
+##### 2.1 Deploy Fluentd
 - Non-Helm users who have made changes to configs in the [environment variable sections](#https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl#L627-L678) of the `fluentd-sumologic.yaml` file will need to move those config changes directly into the Fluentd pipeline.
 
-#### 2. Modify filter based on kubernetes version
+- Run the below command to get the `fluentd-sumologic.yaml` manifest for version v. `1.0.0` and  then make the changes identified in the above step.
+```bash
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+sed 's/\$NAMESPACE'"/<NAMESPACE>/g" | \
+sed 's/cluster kubernetes/cluster <CLUSTER_NAME>/g'  >> fluentd-sumologic.yaml
+```
+
 - Non-Helm users running a Kubernetes version of 1.13 or older will need to **remove the following filter plugin section from their Fluentd pipeline. This is required to prevent data duplication.**
 ```yaml
 <filter prometheus.metrics**> # NOTE: Remove this filter if you are running Kubernetes 1.13 or below.
@@ -153,14 +171,7 @@ above the output plugin section [here](https://github.com/SumoLogic/sumologic-ku
   </exclude>
 </filter>
 ```
-#### 3: Apply new changes
-- After making the above two changes, non-Helm users will need to run
-```bash
-kubectl apply -f fluentd-sumologic.yaml -n sumologic
-```
-followed by
-
-```bash
-kubectl delete deployment collection-sumologic -n sumologic
-kubectl delete deployment collection-sumologic-events -n sumologic
-```
+##### 2.2 Deploy Prometheus
+- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-prometheus) to deploy prometheus.
+##### 2.3: Deploy Fluentbit
+- Follow steps mentioned [here] (https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-fluentbit) to deploy fluent-bit.
