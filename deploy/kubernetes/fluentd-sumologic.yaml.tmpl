@@ -246,9 +246,9 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: collection-sumologic-events
+  name: collection-sumologic-fluentd-events
   labels:
-    app: collection-sumologic-events
+    app: collection-sumologic-fluentd-events
     
 data:
   fluent.conf: |-
@@ -542,13 +542,13 @@ roleRef:
 apiVersion: v1
 kind: Service
 metadata:
-  name: collection-sumologic-events-fluentd-headless
+  name: collection-sumologic-fluentd-events-headless
   labels:
-    app: collection-sumologic-events-fluentd-headless
+    app: collection-sumologic-fluentd-events-headless
     
 spec:
   selector:
-    app: collection-sumologic-events-fluentd
+    app: collection-sumologic-fluentd-events
   clusterIP: None
   ports:
   - name: metrics
@@ -561,13 +561,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: collection-sumologic-events-fluentd
+  name: collection-sumologic-fluentd-events
   labels:
-    app: collection-sumologic-events-fluentd
+    app: collection-sumologic-fluentd-events
     
 spec:
   selector:
-    app: collection-sumologic-events-fluentd
+    app: collection-sumologic-fluentd-events
   ports:
   - name: metrics
     port: 24231
@@ -669,20 +669,20 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: collection-sumologic-events-fluentd
+  name: collection-sumologic-fluentd-events
   labels:
-    app: collection-sumologic-events-fluentd
+    app: collection-sumologic-fluentd-events
     
 spec:
   selector:
     matchLabels:
-      app: collection-sumologic-events-fluentd
-  serviceName: collection-sumologic-events-fluentd-headless
+      app: collection-sumologic-fluentd-events
+  serviceName: collection-sumologic-fluentd-events-headless
   podManagementPolicy: "Parallel"
   template:
     metadata:
       labels:
-        app: collection-sumologic-events-fluentd
+        app: collection-sumologic-fluentd-events
         
     spec:
       serviceAccountName: collection-sumologic
@@ -693,7 +693,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: collection-sumologic-events
+          name: collection-sumologic-fluentd-events
       securityContext:
         fsGroup: 999
       containers:
