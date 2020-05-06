@@ -1,6 +1,6 @@
 {{- $yamlFile := toYaml $.Values.otelcol.config }}
 {{- $_collector := .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
-{{- $endpoint := .Values.sumologic.traces.endpoint | default "exporters.zipkin.url_replace" | quote }}
+{{- $endpoint := .Values.sumologic.traces.endpoint | quote }}
 {{- $sourceName := .Values.sumologic.sourceName | quote }}
 {{- $sourceCategory := .Values.sumologic.sourceCategory | quote }}
 {{- $sourceCategoryPrefix := .Values.sumologic.sourceCategoryPrefix | quote }}
