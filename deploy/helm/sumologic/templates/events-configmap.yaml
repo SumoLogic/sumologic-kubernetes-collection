@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ printf "%s-events" (include "sumologic.fullname" .) }}
+  name: {{ printf "%s-fluentd-events" (include "sumologic.fullname" .) }}
   labels:
-    app: {{ printf "%s-events" (include "sumologic.labels.app" .) }}
+    app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   fluent.conf: |-
