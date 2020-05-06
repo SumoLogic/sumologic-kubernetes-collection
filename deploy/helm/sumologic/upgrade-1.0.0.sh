@@ -8,6 +8,9 @@ and return one that is compatible with v1.0.0.
 
 Requirements:
   yq (3.2.1) https://github.com/mikefarah/yq/releases/tag/3.2.1
+  curl
+  grep
+  sed
   git diff in case of changes to Prometheus remote write regexes
 
 Usage:
@@ -23,10 +26,21 @@ Returns:
 For more details, please refer to Migration steps and Changelog here: [link]
 "
 
+
 if [[ "$1" = "" ]] || [[ "$1" = "--help" ]]; then
   echo "$MAN"
   exit 1
 fi
+
+function check_required_command() {
+  local command_to_check="$1"
+  command -v ${command_to_check} >/dev/null 2>&1 || { echo >&2 "Required command is missing: ${command_to_check}"; echo >&2 "Please consult --help and install missing commands before continue. Aborting."; exit 1; }
+}
+
+check_required_command yq
+check_required_command grep
+check_required_command sed
+check_required_command curl
 
 readonly OLD_VALUES_YAML="$1"
 readonly HELM_RELEASE_NAME="${2:-collection}"
