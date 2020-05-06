@@ -23,7 +23,7 @@ Returns:
 For more details, please refer to Migration steps and Changelog here: [link]
 "
 
-if [ "$1" = "" ]; then
+if [[ "$1" = "" ]] || [[ "$1" = "--help" ]]; then
   echo "$MAN"
   exit 1
 fi
