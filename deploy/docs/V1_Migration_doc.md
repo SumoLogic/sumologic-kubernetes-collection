@@ -5,16 +5,16 @@
 - [Helm Users](#helm-users) 
   - [Changes](#changes) 
   - [How to upgrade](#how-to-upgrade) 
-    - [1. Upgrade to helm chart version v0.17.1](#1-upgrade-to-helm-chart-version-v0.17.1)
-    - [2: Run upgrade script](#2-run-upgrade-script)
+    - [1. Upgrade to helm chart version v0.17.1](#1-upgrade-to-helm-chart-version-v0171)
+    - [2. Run upgrade script](#2-run-upgrade-script)
 - [Non-Helm Users](#non-helm-users) 
   - [Changes](#breaking-changes) 
   - [How to upgrade](#how-to-upgrade-for-non-helm-users)
     - [1. Tear down existing collection resources](#1-tear-down-existing-fluentd-prometheus-fluentbit-resources)
-    - [2. Deploy New Resources](#2-Deploy-Fluentd-Fluent-bit-and-prometheus-again-with-the-verison-1.0.0-yaml)
-      - [2.1: Deploy Fluentd](#2.1-Deploy-Fluentd)
-      - [2.1: Deploy Prometheus](#2.2-Deploy-Prometheus)
-      - [2.1: Deploy Fluent-bit](#2.3-Deploy-Fluentbit)
+    - [2. Deploy New Resources](#2-deploy-fluentd-fluent-bit-and-prometheus-again-with-the-verison-100-yaml)
+      - [2.1: Deploy Fluentd](#21-deploy-fluentd)
+      - [2.1: Deploy Prometheus](#22-deploy-prometheus)
+      - [2.1: Deploy Fluent-bit](#23-deploy-fluentbit)
 
 
 <!-- /TOC -->
@@ -174,4 +174,4 @@ sed 's/cluster kubernetes/cluster <CLUSTER_NAME>/g'  >> fluentd-sumologic.yaml
 ##### 2.2 Deploy Prometheus
 - Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-prometheus) to deploy prometheus.
 ##### 2.3: Deploy Fluentbit
-- Follow steps mentioned [here] (https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-fluentbit) to deploy fluent-bit.
+- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-fluentbit) to deploy fluent-bit.
