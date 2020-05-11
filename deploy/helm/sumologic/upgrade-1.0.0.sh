@@ -71,7 +71,6 @@ sumologic.excludeHostRegex:fluentd.logs.containers.excludeHostRegex
 sumologic.excludeNamespaceRegex:fluentd.logs.containers.excludeNamespaceRegex
 sumologic.excludePodRegex:fluentd.logs.containers.excludePodRegex
 sumologic.fluentd.buffer:fluentd.buffer.type
-sumologic.fluentd.buffer:problems.sumologic.fluentd.buffer
 sumologic.fluentdLogLevel:fluentd.logLevel
 sumologic.flushInterval:fluentd.buffer.flushInterval
 sumologic.k8sMetadataFilter.cacheRefresh:fluentd.metadata.cacheRefresh
@@ -84,6 +83,10 @@ sumologic.kubernetesMetaReduce:problems.sumologic.kubernetesMetaReduce
 sumologic.logFormat:fluentd.logs.output.logFormat
 sumologic.numThreads:fluentd.buffer.numThreads
 sumologic.queueChunkLimitSize:fluentd.buffer.queueChunkLimitSize
+sumologic.sourceCategory:fluentd.logs.containers.sourceCategory
+sumologic.sourceCategoryPrefix:fluentd.logs.containers.sourceCategoryPrefix
+sumologic.sourceCategoryReplaceDash:fluentd.logs.containers.sourceCategoryReplaceDash
+sumologic.sourceName:fluentd.logs.containers.sourceName
 sumologic.timestampKey:fluentd.logs.output.timestampKey
 sumologic.totalLimitSize:fluentd.buffer.totalLimitSize
 sumologic.verifySsl:fluentd.verifySsl
@@ -103,10 +106,7 @@ sumologic.fluentd.autoscaling.enabled:fluentd.logs.autoscaling.enabled:fluentd.m
 sumologic.fluentd.autoscaling.maxReplicas:fluentd.logs.autoscaling.maxReplicas:fluentd.metrics.autoscaling.maxReplicas
 sumologic.fluentd.autoscaling.minReplicas:fluentd.logs.autoscaling.minReplicas:fluentd.metrics.autoscaling.minReplicas
 sumologic.fluentd.autoscaling.targetCPUUtilizationPercentage:fluentd.logs.autoscaling.targetCPUUtilizationPercentage:fluentd.metrics.autoscaling.targetCPUUtilizationPercentage
-sumologic.sourceCategory:fluentd.logs.containers.sourceCategory:fluentd.logs.kubelet.sourceCategory
-sumologic.sourceCategoryPrefix:fluentd.logs.containers.sourceCategoryPrefix:fluentd.logs.kubelet.sourceCategoryPrefix
-sumologic.sourceCategoryReplaceDash:fluentd.logs.containers.sourceCategoryReplaceDash:fluentd.logs.kubelet.sourceCategoryReplaceDash
-sumologic.sourceName:fluentd.logs.containers.sourceName:fluentd.logs.kubelet.sourceName"
+"
 
 readonly KEY_MAPPINGS_EMPTY="
 deployment
