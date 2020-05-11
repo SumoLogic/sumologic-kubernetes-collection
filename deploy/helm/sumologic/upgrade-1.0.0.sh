@@ -372,7 +372,7 @@ if [[ ! -z "$(yq r new.yaml -- prometheus-operator.prometheus.prometheusSpec.con
 fi
 
 # Check user's image and echo warning if the image has been changed
-readonly USER_VERSION="$(yq r old-values.yaml -- image.tag)"
+readonly USER_VERSION="$(yq r ${OLD_VALUES_YAML} -- image.tag)"
 if [[ ! -z "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
   echo "You are using incorrect version: ${USER_VERSION}.
 Please upgrade to ${PREVIOUS_VERSION} or ensure that new.yaml is valid"
