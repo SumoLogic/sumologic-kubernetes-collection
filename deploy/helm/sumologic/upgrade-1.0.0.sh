@@ -192,6 +192,9 @@ if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" != "true" ] || [ "$(yq r 
   yq w -i new.yaml -- fluentd.logs.containers.extraFilterPluginConf "$FILTER"
 fi
 
+# Keep pre-upgrade hook
+yq w -i new.yaml -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
+
 # Check user's image and echo warning if the image has been changed
 readonly USER_VERSION="$(yq r old-values.yaml -- image.tag)"
 if [[ ! -z "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
