@@ -51,56 +51,78 @@ readonly NAMESPACE="${3:-sumologic}"
 URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/values.yaml
 curl -s $URL > new.yaml
 
-readonly KEY_MAPPINGS="deployment.nodeSelector:fluentd.logs.statefulset.nodeSelector
-deployment.tolerations:fluentd.logs.statefulset.tolerations
-deployment.affinity:fluentd.logs.statefulset.affinity
-deployment.podAntiAffinity:fluentd.logs.statefulset.podAntiAffinity
-deployment.replicaCount:fluentd.logs.statefulset.replicaCount
-deployment.resources.limits.memory:fluentd.logs.statefulset.resources.limits.memory
-deployment.resources.limits.cpu:fluentd.logs.statefulset.resources.limits.cpu
-deployment.resources.requests.memory:fluentd.logs.statefulset.resources.requests.memory
-deployment.resources.requests.cpu:fluentd.logs.statefulset.resources.requests.cpu
+readonly KEY_MAPPINGS="
 eventsDeployment.nodeSelector:fluentd.events.statefulset.nodeSelector
-eventsDeployment.tolerations:fluentd.events.statefulset.tolerations
-eventsDeployment.resources.limits.memory:fluentd.events.statefulset.resources.limits.memory
 eventsDeployment.resources.limits.cpu:fluentd.events.statefulset.resources.limits.cpu
-eventsDeployment.resources.requests.memory:fluentd.events.statefulset.resources.requests.memory
+eventsDeployment.resources.limits.memory:fluentd.events.statefulset.resources.limits.memory
 eventsDeployment.resources.requests.cpu:fluentd.events.statefulset.resources.requests.cpu
-sumologic.eventCollectionEnabled:fluentd.events.enabled
-sumologic.events.sourceCategory:fluentd.events.sourceCategory
-sumologic.logFormat:fluentd.logs.output.logFormat
-sumologic.flushInterval:fluentd.buffer.flushInterval
-sumologic.numThreads:fluentd.buffer.numThreads
-sumologic.chunkLimitSize:fluentd.buffer.chunkLimitSize
-sumologic.queueChunkLimitSize:fluentd.buffer.queueChunkLimitSize
-sumologic.totalLimitSize:fluentd.buffer.totalLimitSize
-sumologic.sourceName:fluentd.logs.containers.sourceName:fluentd.logs.kubelet.sourceName
-sumologic.kubernetesMeta:problems.sumologic.kubernetesMeta
-sumologic.kubernetesMetaReduce:problems.sumologic.kubernetesMetaReduce
-sumologic.addTimestamp:fluentd.logs.output.addTimestamp
-sumologic.timestampKey:fluentd.logs.output.timestampKey
+eventsDeployment.resources.requests.memory:fluentd.events.statefulset.resources.requests.memory
+eventsDeployment.tolerations:fluentd.events.statefulset.tolerations
 sumologic.addStream:problems.sumologic.addStream
 sumologic.addTime:problems.sumologic.addTime
-sumologic.verifySsl:fluentd.verifySsl
+sumologic.addTimestamp:fluentd.logs.output.addTimestamp
+sumologic.chunkLimitSize:fluentd.buffer.chunkLimitSize
+sumologic.eventCollectionEnabled:fluentd.events.enabled
+sumologic.events.sourceCategory:fluentd.events.sourceCategory
 sumologic.excludeContainerRegex:fluentd.logs.containers.excludeContainerRegex
 sumologic.excludeHostRegex:fluentd.logs.containers.excludeHostRegex
 sumologic.excludeNamespaceRegex:fluentd.logs.containers.excludeNamespaceRegex
+sumologic.excludeNamespaceRegex:fluentd.logs.containers.exclusumologic.excludeNamespaceRegex:fluentd.logs.containers.containers.excludePodRegex
 sumologic.excludePodRegex:fluentd.logs.containers.excludePodRegex
-sumologic.fluentdLogLevel:fluentd.logLevel
+sumologic.fluentd.buffer:fluentd.buffer.type
 sumologic.fluentd.buffer:problems.sumologic.fluentd.buffer
-sumologic.fluentd.autoscaling.enabled:fluentd.logs.autoscaling.enabled
-sumologic.fluentd.autoscaling.minReplicas:fluentd.logs.autoscaling.minReplicas
-sumologic.fluentd.autoscaling.maxReplicas:fluentd.logs.autoscaling.maxReplicas
-sumologic.fluentd.autoscaling.targetCPUUtilizationPercentage:fluentd.logs.autoscaling.targetCPUUtilizationPercentage
-sumologic.k8sMetadataFilter.watch:fluentd.logs.containers.k8sMetadataFilter.watch
-sumologic.k8sMetadataFilter.verifySsl:fluentd.logs.containers.k8sMetadataFilter.verifySsl
+sumologic.fluentdLogLevel:fluentd.logLevel
+sumologic.flushInterval:fluentd.buffer.flushInterval
+sumologic.flushInterval:fluentd.buffesumologic.flushInterval:fluentd.buffesumontd.buffer.numThreads
+sumologic.k8sMesumologic.k8sMesumologic.k8sMesumologic.k8sMesumologic.k8sMesusMetadataFilter.cacheTtl:fluentd.metadata.cacheTtl
+sumologic.k8sMetadataFilter.cacheRefresh:fluentd.metadata.cacheRefresh
 sumologic.k8sMetadataFilter.cacheSize:fluentd.metadata.cacheSize
 sumologic.k8sMetadataFilter.cacheTtl:fluentd.metadata.cacheTtl
-sumologic.k8sMetadataFilter.cacheRefresh:fluentd.metadata.cacheRefresh"
+sumologic.k8sMetadataFilter.verifySsl:fluentd.logs.containers.k8sMetadataFilter.verifySsl
+sumologic.k8sMetadataFilter.watch:fluentd.logs.containers.k8sMetadataFilter.watch
+sumologic.k8sMetsumologic.k8sMetsumologic.k8sMetsumologic.k8sMetsumoloataFilter.verifySsl
+sumologic.kubernetesMeta:problems.sumologic.kubernetesMeta
+sumologic.kubernetesMetaReduce:problems.sumologic.kubernetesMetaReduce
+sumologic.logFormat:fluentd.logs.output.logFormat
+sumologic.numThreads:fluentd.buffer.numThreads
+sumologic.queueChunkLimitSize:fluentd.buffer.queueChunkLimitSize
+sumologic.timestampKey:fluentd.logs.output.timestampKey
+sumologic.totalLimitSize:fluentd.buffer.totalLimitSize
+sumologic.verifySsl:fluentd.verifySsl
+sumologic.watchResourceEventsOverrides:fluentd.events.watchResourceEventsOverrides"
 
-readonly MAPPINGS_MULTIPLE"sumologic.sourceCategory:fluentd.logs.containers.sourceCategory:fluentd.logs.kubelet.sourceCategory
+readonly MAPPINGS_MULTIPLE="
+deployment.affinity:fluentd.logs.statefulset.affinity:fluentd.metrics.statefulset.affinity
+deployment.nodeSelector:fluentd.logs.statefulset.nodeSelector:fluentd.metrics.statefulset.nodeSelector
+deployment.podAntiAffinity:fluentd.logs.statefulset.podAntiAffinity:fluentd.metrics.statefulset.podAntiAffinity
+deployment.replicaCount:fluentd.logs.statefulset.replicaCount:fluentd.metrics.statefulset.replicaCount
+#?deployment.resources.limits.cpu:fluentd.logs.statefulset.resources.limits.cpu:fluentd.metrics.statefulset.resources.limits.cpu
+deployment.resources.limits.memory:fluentd.logs.statefulset.resources.limits.memory:fluentd.metrics.statefulset.resources.limits.memory
+deployment.resources.requests.cpu:fluentd.logs.statefulset.resources.requests.cpu:fluentd.metrics.statefulset.resources.requests.cpu
+deployment.resources.requests.memory:fluentd.logs.statefulset.resources.requests.memory:fluentd.metrics.statefulset.resources.requests.memory
+deployment.tolerations:fluentd.logs.statefulset.tolerations:fluentd.metrics.statefulset.tolerations
+sumologic.fluentd.autoscaling.enabled:fluentd.logs.autoscaling.enabled:fluentd.metrics.autoscaling.enabled
+sumologic.fluentd.autoscaling.maxReplicas:fluentd.logs.autoscaling.maxReplicas:fluentd.metrics.autoscaling.maxReplicas
+sumologic.fluentd.autoscaling.minReplicas:fluentd.logs.autoscaling.minReplicas:fluentd.metrics.autoscaling.minReplicas
+sumologic.fluentd.autoscaling.targetCPUUtilizationPercentage:fluentd.logs.autoscaling.targetCPUUtilizationPercentage:fluentd.metrics.autoscaling.targetCPUUtilizationPercentage
+sumologic.sourceCategory:fluentd.logs.containers.sourceCategory:fluentd.logs.kubelet.sourceCategory
 sumologic.sourceCategoryPrefix:fluentd.logs.containers.sourceCategoryPrefix:fluentd.logs.kubelet.sourceCategoryPrefix
-sumologic.sourceCategoryReplaceDash:fluentd.logs.containers.sourceCategoryReplaceDash:fluentd.logs.kubelet.sourceCategoryReplaceDash"
+sumologic.sourceCategoryReplaceDash:fluentd.logs.containers.sourceCategoryReplaceDash:fluentd.logs.kubelet.sourceCategoryReplaceDash
+sumologic.sourceName:fluentd.logs.containers.sourceName:fluentd.logs.kubelet.sourceName"
+
+readonly MAPPINGS_EMPTY="
+deployment
+eventsDeployment
+fluentd.autoscaling
+fluentd.rawConfig
+fluentd.statefulset
+sumologic.addStream
+sumologic.addTime
+sumologic.events
+sumologic.fluentd
+sumologic.k8sMetadataFilter
+sumologic.kubernetesMeta
+sumologic.kubernetesMetaReduce"
 
 IFS=$'\n' read -r -d '' -a MAPPINGS <<< "$KEY_MAPPINGS"
 readonly MAPPINGS
@@ -117,21 +139,28 @@ for key in ${CUSTOMER_KEYS}; do
       IFS=':' read -r -a maps <<< "${i}"
       if [[ ${maps[0]} == $key ]]; then
         echo into new key: ${maps[1]}
-        yq w -i new.yaml ${maps[1]} "$(yq r $OLD_VALUES_YAML ${maps[0]})"
-        yq d -i new.yaml ${maps[0]}
+        yq w -i new.yaml -- ${maps[1]} "$(yq r $OLD_VALUES_YAML -- ${maps[0]})"
+        yq d -i new.yaml -- ${maps[0]}
+      fi
+    done
+  elif [[ "${MAPPINGS_MULTIPLE[@]}" =~ "${key}" ]]; then
+    # whatever you want to do when arr contains value
+    for i in ${MAPPINGS_MULTIPLE[@]}; do
+      IFS=':' read -r -a maps <<< "${i}"
+      if [[ ${maps[0]} == $key ]]; then
+        for element in ${maps[@]:1}; do
+          echo into new key: ${element}
+          yq w -i new.yaml -- ${element} "$(yq r $OLD_VALUES_YAML -- ${maps[0]})"
+          yq d -i new.yaml -- ${maps[0]}
+        done
       fi
     done
   else
     echo into new key: $key
-    yq w -i new.yaml $key "$(yq r $OLD_VALUES_YAML $key)"
+    yq w -i new.yaml -- $key "$(yq r $OLD_VALUES_YAML -- $key)"
   fi
 
   echo
-  #for i in ${MAPPINGS[@]}; do
-  #  IFS=':' read -r -a maps <<< "${i}"
-  #  yq w -i new.yaml ${maps[1]} "$(yq r $OLD_VALUES_YAML ${maps[0]})"
-  #  yq d -i new.yaml ${maps[0]}
-  #done
 done
 
 exit 0
