@@ -372,6 +372,18 @@ if [[ ! -z "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; t
   echo "You are using incorrect version: ${USER_VERSION}.
 Please upgrade to ${PREVIOUS_VERSION} or ensure that new.yaml is valid"
 fi
+
+# New fluent-bit db path, and account for yq bug that stringifies empty maps
+echo 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
+echo 'Please ensure that new fluent-bit configuration is correct'
+
+sed 's$tail-db/tail-containers-state.db$tail-db/tail-containers-state-sumo.db$g' new.yaml | \
+sed "s/'{}'/{}/g" > new_values.yaml
+rm new.yaml
+
+DONE="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
+A new yaml file has been generated for you. Please check the current directory for new_values.yaml."
+echo "$DONE"
 exit 0
 
 OLD_CONFIGS="sumologic.eventCollectionEnabled
