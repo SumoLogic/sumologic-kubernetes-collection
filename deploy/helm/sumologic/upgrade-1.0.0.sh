@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#set -x
+
 MAN="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
 As part of this major release, the format of the values.yaml file has changed.
 
@@ -48,6 +50,91 @@ readonly NAMESPACE="${3:-sumologic}"
 
 URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/values.yaml
 curl -s $URL > new.yaml
+
+readonly KEY_MAPPINGS="deployment.nodeSelector:fluentd.logs.statefulset.nodeSelector
+deployment.tolerations:fluentd.logs.statefulset.tolerations
+deployment.affinity:fluentd.logs.statefulset.affinity
+deployment.podAntiAffinity:fluentd.logs.statefulset.podAntiAffinity
+deployment.replicaCount:fluentd.logs.statefulset.replicaCount
+deployment.resources.limits.memory:fluentd.logs.statefulset.resources.limits.memory
+deployment.resources.limits.cpu:fluentd.logs.statefulset.resources.limits.cpu
+deployment.resources.requests.memory:fluentd.logs.statefulset.resources.requests.memory
+deployment.resources.requests.cpu:fluentd.logs.statefulset.resources.requests.cpu
+eventsDeployment.nodeSelector:fluentd.events.statefulset.nodeSelector
+eventsDeployment.tolerations:fluentd.events.statefulset.tolerations
+eventsDeployment.resources.limits.memory:fluentd.events.statefulset.resources.limits.memory
+eventsDeployment.resources.limits.cpu:fluentd.events.statefulset.resources.limits.cpu
+eventsDeployment.resources.requests.memory:fluentd.events.statefulset.resources.requests.memory
+eventsDeployment.resources.requests.cpu:fluentd.events.statefulset.resources.requests.cpu
+sumologic.eventCollectionEnabled:fluentd.events.enabled
+sumologic.events.sourceCategory:fluentd.events.sourceCategory
+sumologic.logFormat:fluentd.logs.output.logFormat
+sumologic.flushInterval:fluentd.buffer.flushInterval
+sumologic.numThreads:fluentd.buffer.numThreads
+sumologic.chunkLimitSize:fluentd.buffer.chunkLimitSize
+sumologic.queueChunkLimitSize:fluentd.buffer.queueChunkLimitSize
+sumologic.totalLimitSize:fluentd.buffer.totalLimitSize
+sumologic.sourceName:fluentd.logs.containers.sourceName:fluentd.logs.kubelet.sourceName
+sumologic.kubernetesMeta:problems.sumologic.kubernetesMeta
+sumologic.kubernetesMetaReduce:problems.sumologic.kubernetesMetaReduce
+sumologic.addTimestamp:fluentd.logs.output.addTimestamp
+sumologic.timestampKey:fluentd.logs.output.timestampKey
+sumologic.addStream:problems.sumologic.addStream
+sumologic.addTime:problems.sumologic.addTime
+sumologic.verifySsl:fluentd.verifySsl
+sumologic.excludeContainerRegex:fluentd.logs.containers.excludeContainerRegex
+sumologic.excludeHostRegex:fluentd.logs.containers.excludeHostRegex
+sumologic.excludeNamespaceRegex:fluentd.logs.containers.excludeNamespaceRegex
+sumologic.excludePodRegex:fluentd.logs.containers.excludePodRegex
+sumologic.fluentdLogLevel:fluentd.logLevel
+sumologic.fluentd.buffer:problems.sumologic.fluentd.buffer
+sumologic.fluentd.autoscaling.enabled:fluentd.logs.autoscaling.enabled
+sumologic.fluentd.autoscaling.minReplicas:fluentd.logs.autoscaling.minReplicas
+sumologic.fluentd.autoscaling.maxReplicas:fluentd.logs.autoscaling.maxReplicas
+sumologic.fluentd.autoscaling.targetCPUUtilizationPercentage:fluentd.logs.autoscaling.targetCPUUtilizationPercentage
+sumologic.k8sMetadataFilter.watch:fluentd.logs.containers.k8sMetadataFilter.watch
+sumologic.k8sMetadataFilter.verifySsl:fluentd.logs.containers.k8sMetadataFilter.verifySsl
+sumologic.k8sMetadataFilter.cacheSize:fluentd.metadata.cacheSize
+sumologic.k8sMetadataFilter.cacheTtl:fluentd.metadata.cacheTtl
+sumologic.k8sMetadataFilter.cacheRefresh:fluentd.metadata.cacheRefresh"
+
+readonly MAPPINGS_MULTIPLE"sumologic.sourceCategory:fluentd.logs.containers.sourceCategory:fluentd.logs.kubelet.sourceCategory
+sumologic.sourceCategoryPrefix:fluentd.logs.containers.sourceCategoryPrefix:fluentd.logs.kubelet.sourceCategoryPrefix
+sumologic.sourceCategoryReplaceDash:fluentd.logs.containers.sourceCategoryReplaceDash:fluentd.logs.kubelet.sourceCategoryReplaceDash"
+
+IFS=$'\n' read -r -d '' -a MAPPINGS <<< "$KEY_MAPPINGS"
+readonly MAPPINGS
+
+echo > new.yaml
+readonly CUSTOMER_KEYS=$(yq --printMode p r $OLD_VALUES_YAML '**')
+
+for key in ${CUSTOMER_KEYS}; do
+  echo mapping old key: $key
+
+  if [[ "${MAPPINGS[@]}" =~ "${key}" ]]; then
+    # whatever you want to do when arr contains value
+    for i in ${MAPPINGS[@]}; do
+      IFS=':' read -r -a maps <<< "${i}"
+      if [[ ${maps[0]} == $key ]]; then
+        echo into new key: ${maps[1]}
+        yq w -i new.yaml ${maps[1]} "$(yq r $OLD_VALUES_YAML ${maps[0]})"
+        yq d -i new.yaml ${maps[0]}
+      fi
+    done
+  else
+    echo into new key: $key
+    yq w -i new.yaml $key "$(yq r $OLD_VALUES_YAML $key)"
+  fi
+
+  echo
+  #for i in ${MAPPINGS[@]}; do
+  #  IFS=':' read -r -a maps <<< "${i}"
+  #  yq w -i new.yaml ${maps[1]} "$(yq r $OLD_VALUES_YAML ${maps[0]})"
+  #  yq d -i new.yaml ${maps[0]}
+  #done
+done
+
+exit 0
 
 OLD_CONFIGS="sumologic.eventCollectionEnabled
 sumologic.events.sourceCategory
@@ -196,6 +283,10 @@ for i in ${!OLD_CONFIGS[@]}; do
   yq d -i new.yaml ${OLD_CONFIGS[$i]}
 done
 
+#exit 0
+
+
+##########################################
 # Special case for fluentd.events.WatchResourceEventsOverrides
 # as this config is commented out by default but we will write it as empty string
 # which will not work
@@ -203,9 +294,13 @@ if [ "$(yq r $OLD_VALUES_YAML sumologic.watchResourceEventsOverrides)" = "" ]; t
   yq d -i new.yaml fluentd.events.watchResourceEventsOverrides
 fi
 
+
+##########################################
 # Keep image version as 1.0.0
 yq w -i new.yaml image.tag 1.0.0
 
+
+##########################################
 # Keep pre-upgrade hook
 PRE_UPGRADE="clusterRole
 clusterRoleBinding
@@ -217,9 +312,13 @@ for i in ${!PRE_UPGRADE[@]}; do
   yq w -i new.yaml sumologic.setup.${PRE_UPGRADE[$i]}.annotations[helm.sh/hook] pre-install,pre-upgrade
 done
 
+
+##########################################
 # Keep Falco disabled
 yq w -i new.yaml falco.enabled false
 
+
+##########################################
 # Preserve the functionality of addStream=false or addTime=false
 if [ "$(yq r $OLD_VALUES_YAML sumologic.addStream)" != "true" ] && [ "$(yq r $OLD_VALUES_YAML sumologic.addTime)" != "true" ]; then
   REMOVE="stream,time"
@@ -238,6 +337,7 @@ if [ "$(yq r $OLD_VALUES_YAML sumologic.addStream)" != "true" ] || [ "$(yq r $OL
   yq w -i new.yaml fluentd.logs.containers.extraFilterPluginConf "$FILTER"
 fi
 
+##########################################
 # Prometheus changes
 # Diff of prometheus regexes:
 # git diff v1.0.0 v0.17.1 deploy/helm/sumologic/values.yaml | \
@@ -399,6 +499,8 @@ for c in ${CLEANUP_CONFIGS[@]}; do
   yq d -i new.yaml $c
 done
 
+
+##########################################
 # New fluent-bit db path, and account for yq bug that stringifies empty maps
 sed "s/tail-db\/tail-containers-state.db/tail-db\/tail-containers-state-sumo.db/g" new.yaml | \
 sed "s/'{}'/{}/g" > new_values.yaml
