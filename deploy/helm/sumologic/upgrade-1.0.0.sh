@@ -40,6 +40,7 @@ function check_required_command() {
 }
 
 check_required_command yq
+yq --version | grep 3.2.1 >/dev/null 2>&1 || { echo >&2 "yq version is invalid. It should be exactly 3.2.1. Please install it properly: https://github.com/mikefarah/yq/releases/tag/3.2.1"; exit 1; }
 check_required_command grep
 check_required_command sed
 check_required_command curl
