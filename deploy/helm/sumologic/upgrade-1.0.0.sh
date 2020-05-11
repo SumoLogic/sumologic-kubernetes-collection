@@ -201,7 +201,9 @@ if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" == "false" ] || [ "$(yq r
 fi
 
 # Keep pre-upgrade hook
-yq w -i new.yaml -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
+if [[ ! -z "$(yq r new.yaml -- sumologic.setup)" ]]; then
+  yq w -i new.yaml -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
+fi
 
 # Print information about falco state
 if [[ "$(yq r new.yaml -- falco.enabled)" == 'false' ]]; then
