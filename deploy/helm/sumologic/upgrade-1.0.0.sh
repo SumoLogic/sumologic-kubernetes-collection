@@ -171,6 +171,27 @@ if [ "$(yq r $OLD_VALUES_YAML -- sumologic.watchResourceEventsOverrides)" = "" ]
   yq d -i new.yaml -- fluentd.events.watchResourceEventsOverrides
 fi
 
+# Preserve the functionality of addStream=false or addTime=false
+if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" != "true" ] && [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" != "true" ]; then
+  REMOVE="stream,time"
+elif [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" != "true" ]; then
+  REMOVE="stream"
+elif [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" != "true" ]; then
+  REMOVE="time"
+fi
+
+# Add filter on beginning of current filters
+FILTER="<filter containers.**>
+  @type record_modifier
+  remove_keys $REMOVE
+</filter>
+$(yq r new.yaml -- fluentd.logs.containers.extraFilterPluginConf)"
+
+# Apply changes if required
+if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" != "true" ] || [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" != "true" ]; then
+  yq w -i new.yaml -- fluentd.logs.containers.extraFilterPluginConf "$FILTER"
+fi
+
 # Check user's image and echo warning if the image has been changed
 readonly USER_VERSION="$(yq r old-values.yaml -- image.tag)"
 if [[ ! -z "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
