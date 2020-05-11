@@ -47,6 +47,7 @@ check_required_command curl
 readonly OLD_VALUES_YAML="$1"
 readonly HELM_RELEASE_NAME="${2:-collection}"
 readonly NAMESPACE="${3:-sumologic}"
+readonly PREVIOUS_VERSION=0.17.2
 
 URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/values.yaml
 curl -s $URL > new.yaml
@@ -170,6 +171,12 @@ if [ "$(yq r $OLD_VALUES_YAML -- sumologic.watchResourceEventsOverrides)" = "" ]
   yq d -i new.yaml -- fluentd.events.watchResourceEventsOverrides
 fi
 
+# Check user's image and echo warning if the image has been changed
+readonly USER_VERSION="$(yq r old-values.yaml -- image.tag)"
+if [[ ! -z "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
+  echo "You are using incorrect version: ${USER_VERSION}.
+Please upgrade to ${PREVIOUS_VERSION} or ensure that new.yaml is valid"
+fi
 exit 0
 
 OLD_CONFIGS="sumologic.eventCollectionEnabled
