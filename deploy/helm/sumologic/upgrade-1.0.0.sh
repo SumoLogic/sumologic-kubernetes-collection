@@ -92,7 +92,7 @@ sumologic.totalLimitSize:fluentd.buffer.totalLimitSize
 sumologic.verifySsl:fluentd.verifySsl
 sumologic.watchResourceEventsOverrides:fluentd.events.watchResourceEventsOverrides"
 
-readonly MAPPINGS_MULTIPLE="
+readonly KEY_MAPPINGS_MULTIPLE="
 deployment.affinity:fluentd.logs.statefulset.affinity:fluentd.metrics.statefulset.affinity
 deployment.nodeSelector:fluentd.logs.statefulset.nodeSelector:fluentd.metrics.statefulset.nodeSelector
 deployment.podAntiAffinity:fluentd.logs.statefulset.podAntiAffinity:fluentd.metrics.statefulset.podAntiAffinity
@@ -111,7 +111,7 @@ sumologic.sourceCategoryPrefix:fluentd.logs.containers.sourceCategoryPrefix:flue
 sumologic.sourceCategoryReplaceDash:fluentd.logs.containers.sourceCategoryReplaceDash:fluentd.logs.kubelet.sourceCategoryReplaceDash
 sumologic.sourceName:fluentd.logs.containers.sourceName:fluentd.logs.kubelet.sourceName"
 
-readonly MAPPINGS_EMPTY="
+readonly KEY_MAPPINGS_EMPTY="
 deployment
 eventsDeployment
 fluentd.autoscaling
@@ -127,6 +127,10 @@ sumologic.kubernetesMetaReduce"
 
 IFS=$'\n' read -r -d '' -a MAPPINGS <<< "$KEY_MAPPINGS"
 readonly MAPPINGS
+IFS=$'\n' read -r -d '' -a MAPPINGS_MULTIPLE <<< "$KEY_MAPPINGS_MULTIPLE"
+readonly MAPPINGS_MULTIPLE
+IFS=$'\n' read -r -d '' -a MAPPINGS_EMPTY <<< "$KEY_MAPPINGS_EMPTY"
+readonly MAPPINGS_EMPTY
 
 echo > new.yaml
 readonly CUSTOMER_KEYS=$(yq --printMode p r $OLD_VALUES_YAML -- '**')
@@ -159,6 +163,11 @@ for key in ${CUSTOMER_KEYS}; do
   else
     echo into new key: $key
     yq w -i new.yaml -- $key "$(yq r $OLD_VALUES_YAML -- $key)"
+  fi
+
+  if [[ "${MAPPINGS_EMPTY[@]}" =~ "${key}" ]]; then
+    echo removing $key
+    yq d -i new.yaml -- "${key}"
   fi
 
   echo
