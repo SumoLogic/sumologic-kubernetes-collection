@@ -367,7 +367,7 @@ prometheus-operator:
             app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "new.yaml" -
 fi
 
-if [[ ! -z "$(yq r new.yaml -- prometheus-operator.prometheus.prometheusSpec.containers" ]]; then
+if [[ ! -z "$(yq r new.yaml -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
   yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
 fi
 
