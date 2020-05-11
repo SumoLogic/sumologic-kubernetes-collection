@@ -180,11 +180,11 @@ if [ "$(yq r $OLD_VALUES_YAML -- sumologic.watchResourceEventsOverrides)" = "" ]
 fi
 
 # Preserve the functionality of addStream=false or addTime=false
-if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" != "true" ] && [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" != "true" ]; then
+if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" == "false" ] && [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" == "false" ]; then
   REMOVE="stream,time"
-elif [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" != "true" ]; then
+elif [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" == "false" ]; then
   REMOVE="stream"
-elif [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" != "true" ]; then
+elif [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" == "false" ]; then
   REMOVE="time"
 fi
 
@@ -196,7 +196,7 @@ FILTER="<filter containers.**>
 $(yq r new.yaml -- fluentd.logs.containers.extraFilterPluginConf)"
 
 # Apply changes if required
-if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" != "true" ] || [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" != "true" ]; then
+if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" == "false" ] || [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" == "false" ]; then
   yq w -i new.yaml -- fluentd.logs.containers.extraFilterPluginConf "$FILTER"
 fi
 
