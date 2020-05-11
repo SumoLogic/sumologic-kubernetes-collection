@@ -74,13 +74,11 @@ sumologic.fluentd.buffer:fluentd.buffer.type
 sumologic.fluentd.buffer:problems.sumologic.fluentd.buffer
 sumologic.fluentdLogLevel:fluentd.logLevel
 sumologic.flushInterval:fluentd.buffer.flushInterval
-sumologic.k8sMesumologic.k8sMesumologic.k8sMesumologic.k8sMesumologic.k8sMesusMetadataFilter.cacheTtl:fluentd.metadata.cacheTtl
 sumologic.k8sMetadataFilter.cacheRefresh:fluentd.metadata.cacheRefresh
 sumologic.k8sMetadataFilter.cacheSize:fluentd.metadata.cacheSize
 sumologic.k8sMetadataFilter.cacheTtl:fluentd.metadata.cacheTtl
 sumologic.k8sMetadataFilter.verifySsl:fluentd.logs.containers.k8sMetadataFilter.verifySsl
 sumologic.k8sMetadataFilter.watch:fluentd.logs.containers.k8sMetadataFilter.watch
-sumologic.k8sMetsumologic.k8sMetsumologic.k8sMetsumologic.k8sMetsumoloataFilter.verifySsl
 sumologic.kubernetesMeta:problems.sumologic.kubernetesMeta
 sumologic.kubernetesMetaReduce:problems.sumologic.kubernetesMetaReduce
 sumologic.logFormat:fluentd.logs.output.logFormat
