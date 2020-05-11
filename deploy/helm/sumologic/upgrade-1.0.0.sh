@@ -74,7 +74,6 @@ sumologic.fluentd.buffer:fluentd.buffer.type
 sumologic.fluentd.buffer:problems.sumologic.fluentd.buffer
 sumologic.fluentdLogLevel:fluentd.logLevel
 sumologic.flushInterval:fluentd.buffer.flushInterval
-sumologic.flushInterval:fluentd.buffesumologic.flushInterval:fluentd.buffesumontd.buffer.numThreads
 sumologic.k8sMesumologic.k8sMesumologic.k8sMesumologic.k8sMesumologic.k8sMesusMetadataFilter.cacheTtl:fluentd.metadata.cacheTtl
 sumologic.k8sMetadataFilter.cacheRefresh:fluentd.metadata.cacheRefresh
 sumologic.k8sMetadataFilter.cacheSize:fluentd.metadata.cacheSize
@@ -97,7 +96,7 @@ deployment.affinity:fluentd.logs.statefulset.affinity:fluentd.metrics.statefulse
 deployment.nodeSelector:fluentd.logs.statefulset.nodeSelector:fluentd.metrics.statefulset.nodeSelector
 deployment.podAntiAffinity:fluentd.logs.statefulset.podAntiAffinity:fluentd.metrics.statefulset.podAntiAffinity
 deployment.replicaCount:fluentd.logs.statefulset.replicaCount:fluentd.metrics.statefulset.replicaCount
-#?deployment.resources.limits.cpu:fluentd.logs.statefulset.resources.limits.cpu:fluentd.metrics.statefulset.resources.limits.cpu
+deployment.resources.limits.cpu:fluentd.logs.statefulset.resources.limits.cpu:fluentd.metrics.statefulset.resources.limits.cpu
 deployment.resources.limits.memory:fluentd.logs.statefulset.resources.limits.memory:fluentd.metrics.statefulset.resources.limits.memory
 deployment.resources.requests.cpu:fluentd.logs.statefulset.resources.requests.cpu:fluentd.metrics.statefulset.resources.requests.cpu
 deployment.resources.requests.memory:fluentd.logs.statefulset.resources.requests.memory:fluentd.metrics.statefulset.resources.requests.memory
