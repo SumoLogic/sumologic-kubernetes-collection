@@ -308,13 +308,16 @@ for i in $(seq 0 ${metrics_length}); do
 done
 
 # Fix fluent-bit env
-yq w -i new.yaml -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
+if [[ ! -z "$(yq r new.yaml -- fluent-bit.env)" ]]; then
+  yq w -i new.yaml -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
+fi
 
 # Fix prometheus service monitors
-yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE})"
-yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
-yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-events)"
-echo "---
+if [[ ! -z "$(yq r new.yaml -- prometheus-operator.prometheus.additionalServiceMonitors)" ]]; then
+  yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE})"
+  yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
+  yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-events)"
+  echo "---
 prometheus-operator:
   prometheus:
     additionalServiceMonitors:
@@ -362,8 +365,11 @@ prometheus-operator:
         selector:
           matchLabels:
             app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "new.yaml" -
+fi
 
-yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
+if [[ ! -z "$(yq r new.yaml -- prometheus-operator.prometheus.prometheusSpec.containers" ]]; then
+  yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
+fi
 
 # Check user's image and echo warning if the image has been changed
 readonly USER_VERSION="$(yq r old-values.yaml -- image.tag)"
