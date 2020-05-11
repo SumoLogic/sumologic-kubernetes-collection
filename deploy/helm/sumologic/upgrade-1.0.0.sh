@@ -195,6 +195,13 @@ fi
 # Keep pre-upgrade hook
 yq w -i new.yaml -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
 
+# Print information about falco state
+if [[ "$(yq r new.yaml -- falco.enabled)" == 'false' ]]; then
+  echo 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it'
+else
+  echo 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)'
+fi
+
 # Check user's image and echo warning if the image has been changed
 readonly USER_VERSION="$(yq r old-values.yaml -- image.tag)"
 if [[ ! -z "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
