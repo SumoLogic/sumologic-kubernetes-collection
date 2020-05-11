@@ -163,6 +163,13 @@ for key in ${CUSTOMER_KEYS}; do
   echo
 done
 
+# Special case for fluentd.events.WatchResourceEventsOverrides
+# as this config is commented out by default but we will write it as empty string
+# which will not work
+if [ "$(yq r $OLD_VALUES_YAML -- sumologic.watchResourceEventsOverrides)" = "" ]; then
+  yq d -i new.yaml -- fluentd.events.watchResourceEventsOverrides
+fi
+
 exit 0
 
 OLD_CONFIGS="sumologic.eventCollectionEnabled
