@@ -69,7 +69,6 @@ sumologic.events.sourceCategory:fluentd.events.sourceCategory
 sumologic.excludeContainerRegex:fluentd.logs.containers.excludeContainerRegex
 sumologic.excludeHostRegex:fluentd.logs.containers.excludeHostRegex
 sumologic.excludeNamespaceRegex:fluentd.logs.containers.excludeNamespaceRegex
-sumologic.excludeNamespaceRegex:fluentd.logs.containers.exclusumologic.excludeNamespaceRegex:fluentd.logs.containers.containers.excludePodRegex
 sumologic.excludePodRegex:fluentd.logs.containers.excludePodRegex
 sumologic.fluentd.buffer:fluentd.buffer.type
 sumologic.fluentd.buffer:problems.sumologic.fluentd.buffer
