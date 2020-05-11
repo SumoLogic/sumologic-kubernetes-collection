@@ -128,7 +128,7 @@ IFS=$'\n' read -r -d '' -a MAPPINGS <<< "$KEY_MAPPINGS"
 readonly MAPPINGS
 
 echo > new.yaml
-readonly CUSTOMER_KEYS=$(yq --printMode p r $OLD_VALUES_YAML '**')
+readonly CUSTOMER_KEYS=$(yq --printMode p r $OLD_VALUES_YAML -- '**')
 
 for key in ${CUSTOMER_KEYS}; do
   echo mapping old key: $key
