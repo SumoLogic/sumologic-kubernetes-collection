@@ -43,7 +43,7 @@ fi
 
 function check_required_command() {
   local command_to_check="$1"
-  command -v ${command_to_check} >/dev/null 2>&1 || { error "Required command is missing: ${command_to_check}"; fatal "Please consult --help and install missing commands before continue. Aborting."; }
+  command -v "${command_to_check}" >/dev/null 2>&1 || { error "Required command is missing: ${command_to_check}"; fatal "Please consult --help and install missing commands before continue. Aborting."; }
 }
 
 check_required_command yq
@@ -67,8 +67,6 @@ eventsDeployment.resources.limits.memory:fluentd.events.statefulset.resources.li
 eventsDeployment.resources.requests.cpu:fluentd.events.statefulset.resources.requests.cpu
 eventsDeployment.resources.requests.memory:fluentd.events.statefulset.resources.requests.memory
 eventsDeployment.tolerations:fluentd.events.statefulset.tolerations
-sumologic.addStream:problems.sumologic.addStream
-sumologic.addTime:problems.sumologic.addTime
 sumologic.addTimestamp:fluentd.logs.output.addTimestamp
 sumologic.chunkLimitSize:fluentd.buffer.chunkLimitSize
 sumologic.eventCollectionEnabled:fluentd.events.enabled
@@ -85,8 +83,6 @@ sumologic.k8sMetadataFilter.cacheSize:fluentd.metadata.cacheSize
 sumologic.k8sMetadataFilter.cacheTtl:fluentd.metadata.cacheTtl
 sumologic.k8sMetadataFilter.verifySsl:fluentd.logs.containers.k8sMetadataFilter.verifySsl
 sumologic.k8sMetadataFilter.watch:fluentd.logs.containers.k8sMetadataFilter.watch
-sumologic.kubernetesMeta:problems.sumologic.kubernetesMeta
-sumologic.kubernetesMetaReduce:problems.sumologic.kubernetesMetaReduce
 sumologic.logFormat:fluentd.logs.output.logFormat
 sumologic.numThreads:fluentd.buffer.numThreads
 sumologic.queueChunkLimitSize:fluentd.buffer.queueChunkLimitSize
@@ -129,58 +125,60 @@ sumologic.k8sMetadataFilter
 sumologic.kubernetesMeta
 sumologic.kubernetesMetaReduce"
 
-IFS=$'\n' read -r -a MAPPINGS <<< "$KEY_MAPPINGS"
+# Convert variables to array
+set +e
+IFS=$'\n' read -r -d ' ' -a MAPPINGS <<< "$KEY_MAPPINGS"
 readonly MAPPINGS
-IFS=$'\n' read -r -a MAPPINGS_MULTIPLE <<< "$KEY_MAPPINGS_MULTIPLE"
+IFS=$'\n' read -r -d ' ' -a MAPPINGS_MULTIPLE <<< "$KEY_MAPPINGS_MULTIPLE"
 readonly MAPPINGS_MULTIPLE
-IFS=$'\n' read -r -a MAPPINGS_EMPTY <<< "$KEY_MAPPINGS_EMPTY"
+IFS=$'\n' read -r -d ' ' -a MAPPINGS_EMPTY <<< "$KEY_MAPPINGS_EMPTY"
 readonly MAPPINGS_EMPTY
+set -e
 
 echo > new.yaml
-readonly CUSTOMER_KEYS=$(yq --printMode p r $OLD_VALUES_YAML -- '**')
+readonly CUSTOMER_KEYS=$(yq --printMode p r "${OLD_VALUES_YAML}" -- '**')
 
 for key in ${CUSTOMER_KEYS}; do
-  if [[ "${MAPPINGS[@]}" =~ "${key}" ]]; then
+  if [[ ${MAPPINGS[*]} =~ ${key} ]]; then
     # whatever you want to do when arr contains value
-    for i in ${MAPPINGS[@]}; do
+    for i in "${MAPPINGS[@]}"; do
       IFS=':' read -r -a maps <<< "${i}"
-      if [[ ${maps[0]} == $key ]]; then
+      if [[ ${maps[0]} == "${key}" ]]; then
         info "Mapping ${key} into ${maps[1]}"
-        yq w -i new.yaml -- ${maps[1]} "$(yq r $OLD_VALUES_YAML -- ${maps[0]})"
-        yq d -i new.yaml -- ${maps[0]}
+        yq w -i new.yaml -- "${maps[1]}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
+        yq d -i new.yaml -- "${maps[0]}"
       fi
     done
-  elif [[ "${MAPPINGS_MULTIPLE[@]}" =~ "${key}" ]]; then
+  elif [[ ${MAPPINGS_MULTIPLE[*]} =~ ${key} ]]; then
     # whatever you want to do when arr contains value
     info "Mapping ${key} into:"
-    for i in ${MAPPINGS_MULTIPLE[@]}; do
+    for i in "${MAPPINGS_MULTIPLE[@]}"; do
       IFS=':' read -r -a maps <<< "${i}"
-      if [[ ${maps[0]} == $key ]]; then
-        for element in ${maps[@]:1}; do
+      if [[ ${maps[0]} == "${key}" ]]; then
+        for element in "${maps[@]:1}"; do
           info "- ${element}"
-          yq w -i new.yaml -- ${element} "$(yq r $OLD_VALUES_YAML -- ${maps[0]})"
-          yq d -i new.yaml -- ${maps[0]}
+          yq w -i new.yaml -- "${element}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
+          yq d -i new.yaml -- "${maps[0]}"
         done
       fi
     done
   else
-    yq w -i new.yaml -- $key "$(yq r $OLD_VALUES_YAML -- $key)"
+    yq w -i new.yaml -- "${key}" "$(yq r "${OLD_VALUES_YAML}" -- "${key}")"
   fi
 
-  if [[ "${MAPPINGS_EMPTY[@]}" =~ "${key}" ]]; then
+  if [[ "${MAPPINGS_EMPTY[*]}" =~ ${key} ]]; then
     info "Removing ${key}"
     yq d -i new.yaml -- "${key}"
   fi
-
-  echo
 done
+echo 
 
 # Preserve the functionality of addStream=false or addTime=false
-if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" == "false" ] && [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" == "false" ]; then
+if [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ] && [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
   REMOVE="stream,time"
-elif [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" == "false" ]; then
+elif [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ]; then
   REMOVE="stream"
-elif [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" == "false" ]; then
+elif [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
   REMOVE="time"
 else
   REMOVE=
@@ -193,13 +191,13 @@ FILTER="<filter containers.**>
 </filter>"
 
 # Apply changes if required
-if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" == "false" ] || [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" == "false" ]; then
+if [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ] || [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
   info "Creating fluentd.logs.containers.extraFilterPluginConf to preserve addStream/addTime functionality"
   yq w -i new.yaml -- fluentd.logs.containers.extraFilterPluginConf "$FILTER"
 fi
 
 # Keep pre-upgrade hook
-if [[ ! -z "$(yq r new.yaml -- sumologic.setup)" ]]; then
+if [[ -n "$(yq r new.yaml -- sumologic.setup)" ]]; then
   info "Updating setup hooks (sumologic.setup.*.annotations[helm.sh/hook]) to 'pre-install,pre-upgrade'"
   yq w -i new.yaml -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
 fi
@@ -259,16 +257,16 @@ function get_release_regex() {
   local str_grep="${2}"
   local filter="${3}"
 
-  echo -e ${expected_metrics} | grep -A 3 "${metric_name}$" | "${filter}" -n 3 | grep -E "${str_grep}" | grep -oE ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//'
+  echo -e "${expected_metrics}" | grep -A 3 "${metric_name}$" | "${filter}" -n 3 | grep -E "${str_grep}" | grep -oE ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//'
 }
 
 metrics_length="$(yq r -l "${OLD_VALUES_YAML}" -- 'prometheus-operator.prometheus.prometheusSpec.remoteWrite')"
-metrics_length="$(( ${metrics_length} - 1))"
+metrics_length="$(( metrics_length - 1))"
 
 for i in $(seq 0 ${metrics_length}); do
     metric_name="$(yq r "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oE '/prometheus\.metrics.*' || true)"
     metric_regex_length="$(yq r -l "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs")"
-    metric_regex_length="$(( ${metric_regex_length} - 1))"
+    metric_regex_length="$(( metric_regex_length - 1))"
 
     for j in $(seq 0 ${metric_regex_length}); do
         metric_regex_action=$(yq r "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].action")
@@ -276,7 +274,7 @@ for i in $(seq 0 ${metrics_length}); do
             break
         fi
     done
-    regexes_len="$( (echo -e ${expected_metrics} | grep -A 2 "${metric_name}$" | grep regex || true ) | wc -l)"
+    regexes_len="$( (echo -e "${expected_metrics}" | grep -A 2 "${metric_name}$" | grep regex || true ) | wc -l)"
     if [[ "${regexes_len}" -eq "2" ]]; then
 
       regex_1_0="$(get_release_regex "${metric_name}" '^\s+-' 'head')"
@@ -308,13 +306,13 @@ for i in $(seq 0 ${metrics_length}); do
 done
 
 # Fix fluent-bit env
-if [[ ! -z "$(yq r new.yaml -- fluent-bit.env)" ]]; then
+if [[ -n "$(yq r new.yaml -- fluent-bit.env)" ]]; then
   info "Patching fluent-bit CHART environmental variable"
   yq w -i new.yaml -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
 fi
 
 # Fix prometheus service monitors
-if [[ ! -z "$(yq r new.yaml -- prometheus-operator.prometheus.additionalServiceMonitors)" ]]; then
+if [[ -n "$(yq r new.yaml -- prometheus-operator.prometheus.additionalServiceMonitors)" ]]; then
   info "Patching prometheus-operator.prometheus.additionalServiceMonitors"
   yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE})"
   yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
@@ -369,14 +367,14 @@ prometheus-operator:
             app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "new.yaml" -
 fi
 
-if [[ ! -z "$(yq r new.yaml -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
+if [[ -n "$(yq r new.yaml -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
   info "Patching prometheus CHART environmental variable"
   yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
 fi
 
 # Check user's image and echo warning if the image has been changed
-readonly USER_VERSION="$(yq r ${OLD_VALUES_YAML} -- image.tag)"
-if [[ ! -z "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
+readonly USER_VERSION="$(yq r "${OLD_VALUES_YAML}" -- image.tag)"
+if [[ -n "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
   warning "You are using unsupported version: ${USER_VERSION}"
   warning "Please upgrade to ${PREVIOUS_VERSION} or ensure that new_values.yaml is valid\n"
 fi
@@ -385,7 +383,7 @@ fi
 info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
 warning 'Please ensure that new fluent-bit configuration is correct\n'
 
-sed 's$tail-db/tail-containers-state.db$tail-db/tail-containers-state-sumo.db$g' new.yaml | \
+sed 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' new.yaml | \
 sed "s/'{}'/{}/g" > new_values.yaml
 rm new.yaml
 
