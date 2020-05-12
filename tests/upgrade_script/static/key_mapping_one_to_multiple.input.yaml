@@ -1,0 +1,20 @@
+deployment:
+  affinity: fluentd.logs.statefulset.affinity, fluentd.metrics.statefulset.affinity
+  nodeSelector: fluentd.logs.statefulset.nodeSelector, fluentd.metrics.statefulset.nodeSelector
+  podAntiAffinity: fluentd.logs.statefulset.podAntiAffinity, fluentd.metrics.statefulset.podAntiAffinity
+  replicaCount: fluentd.logs.statefulset.replicaCount, fluentd.metrics.statefulset.replicaCount
+  resources:
+    limits:
+      cpu: fluentd.logs.statefulset.resources.limits.cpu, fluentd.metrics.statefulset.resources.limits.cpu
+      memory: fluentd.logs.statefulset.resources.limits.memory, fluentd.metrics.statefulset.resources.limits.memory
+    requests:
+      cpu: fluentd.logs.statefulset.resources.requests.cpu, fluentd.metrics.statefulset.resources.requests.cpu
+      memory: fluentd.logs.statefulset.resources.requests.memory, fluentd.metrics.statefulset.resources.requests.memory
+  tolerations: fluentd.logs.statefulset.tolerations, fluentd.metrics.statefulset.tolerations
+sumologic:
+  fluentd:
+    autoscaling:
+      enabled: fluentd.logs.autoscaling.enabled, fluentd.metrics.autoscaling.enabled
+      maxReplicas: fluentd.logs.autoscaling.maxReplicas, fluentd.metrics.autoscaling.maxReplicas
+      minReplicas: fluentd.logs.autoscaling.minReplicas, fluentd.metrics.autoscaling.minReplicas
+      targetCPUUtilizationPercentage: fluentd.logs.autoscaling.targetCPUUtilizationPercentage, fluentd.metrics.autoscaling.targetCPUUtilizationPercentage
