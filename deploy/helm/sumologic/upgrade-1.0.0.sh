@@ -44,8 +44,6 @@ function check_if_print_help_and_exit() {
   fi
 }
 
-check_if_print_help_and_exit "$1"
-
 function check_required_command() {
   local command_to_check="$1"
   command -v "${command_to_check}" >/dev/null 2>&1 || { error "Required command is missing: ${command_to_check}"; fatal "Please consult --help and install missing commands before continue. Aborting."; }
@@ -54,11 +52,6 @@ function check_required_command() {
 function check_yq_version() {
   yq --version | grep 3.2.1 >/dev/null 2>&1 || { error "yq version is invalid. It should be exactly 3.2.1"; fatal "Please install it from: https://github.com/mikefarah/yq/releases/tag/3.2.1"; }
 }
-
-check_required_command yq
-check_yq_version
-check_required_command grep
-check_required_command sed
 
 readonly OLD_VALUES_YAML="$1"
 readonly HELM_RELEASE_NAME="${2:-collection}"
@@ -136,8 +129,6 @@ function create_temp_file() {
   echo -n > ${TEMP_FILE}
 }
 
-create_temp_file
-
 function migrate_customer_keys() {
   # Convert variables to arrays
   set +e
@@ -187,8 +178,6 @@ function migrate_customer_keys() {
   echo
 }
 
-migrate_customer_keys
-
 function migrate_add_stream_and_add_time() {
   # Preserve the functionality of addStream=false or addTime=false
   if [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ] && [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
@@ -214,8 +203,6 @@ function migrate_add_stream_and_add_time() {
   fi
 }
 
-migrate_add_stream_and_add_time
-
 function migrate_pre_upgrade_hook() {
   # Keep pre-upgrade hook
   if [[ -n "$(yq r ${TEMP_FILE} -- sumologic.setup)" ]]; then
@@ -223,8 +210,6 @@ function migrate_pre_upgrade_hook() {
     yq w -i ${TEMP_FILE} -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
   fi
 }
-
-migrate_add_stream_and_add_time
 
 function check_falco_state() {
   # Print information about falco state
@@ -234,8 +219,6 @@ function check_falco_state() {
     info 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)\n'
   fi
 }
-
-check_falco_state
 
 # Prometheus changes
 # Diff of prometheus regexes:
@@ -335,8 +318,6 @@ function migrate_prometheus_metrics() {
   done
 }
 
-migrate_prometheus_metrics
-
 function fix_fluentbit_env() {
   # Fix fluent-bit env
   if [[ -n "$(yq r ${TEMP_FILE} -- fluent-bit.env)" ]]; then
@@ -344,8 +325,6 @@ function fix_fluentbit_env() {
     yq w -i ${TEMP_FILE} -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
   fi
 }
-
-fix_fluentbit_env
 
 function fix_prometheus_service_monitors() {
   # Fix prometheus service monitors
@@ -410,8 +389,6 @@ function fix_prometheus_service_monitors() {
   fi
 }
 
-fix_prometheus_service_monitors
-
 function check_user_image() {
   # Check user's image and echo warning if the image has been changed
   readonly USER_VERSION="$(yq r "${OLD_VALUES_YAML}" -- image.tag)"
@@ -420,8 +397,6 @@ function check_user_image() {
     warning "Please upgrade to ${PREVIOUS_VERSION} or ensure that new_values.yaml is valid\n"
   fi
 }
-
-check_user_image
 
 function migrate_fluentbit_db_path() {
   # New fluent-bit db path, and account for yq bug that stringifies empty maps
@@ -432,17 +407,38 @@ function migrate_fluentbit_db_path() {
   sed "s/'{}'/{}/g" > new_values.yaml
 }
 
-migrate_fluentbit_db_path
-
 function remove_temp_file() {
   rm ${TEMP_FILE}
 }
-
-remove_temp_file
 
 function echo_footer() {
   DONE="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.\nA new yaml file has been generated for you. Please check the current directory for new_values.yaml."
   echo -e "$DONE"
 }
+
+check_if_print_help_and_exit "$1"
+check_required_command yq
+check_yq_version
+check_required_command grep
+check_required_command sed
+
+create_temp_file
+
+migrate_customer_keys
+
+migrate_add_stream_and_add_time
+migrate_pre_upgrade_hook
+
+check_falco_state
+
+migrate_prometheus_metrics
+
+fix_fluentbit_env
+fix_prometheus_service_monitors
+
+check_user_image
+migrate_fluentbit_db_path
+
+remove_temp_file
 
 echo_footer
