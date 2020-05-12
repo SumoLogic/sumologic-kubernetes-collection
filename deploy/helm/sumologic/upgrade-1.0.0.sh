@@ -184,8 +184,7 @@ fi
 FILTER="<filter containers.**>
   @type record_modifier
   remove_keys $REMOVE
-</filter>
-$(yq r new.yaml -- fluentd.logs.containers.extraFilterPluginConf)"
+</filter>"
 
 # Apply changes if required
 if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" == "false" ] || [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" == "false" ]; then
