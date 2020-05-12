@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
+IFS=$'\n\t'
 
 MAN="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
 As part of this major release, the format of the values.yaml file has changed.
