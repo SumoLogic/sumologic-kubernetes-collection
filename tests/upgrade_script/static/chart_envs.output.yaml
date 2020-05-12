@@ -1,0 +1,30 @@
+fluent-bit:
+  env:
+  - name: CHART
+    valueFrom:
+      configMapKeyRef:
+        name: sumologic-configmap
+        key: fluentdLogs
+  - name: NAMESPACE
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.namespace
+prometheus-operator:
+  prometheus:
+    prometheusSpec:
+      resources: {}
+      thanos:
+        version: v0.10.0
+      containers:
+      - name: prometheus-config-reloader
+        env:
+        - name: CHART
+          valueFrom:
+            configMapKeyRef:
+              name: sumologic-configmap
+              key: fluentdMetrics
+        - name: NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              name: sumologic-configmap
+              key: fluentdNamespace
