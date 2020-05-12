@@ -3,6 +3,13 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+# https://slides.com/perk/how-to-train-your-bash#/41
+readonly LOG_FILE="/tmp/$(basename "$0").log"
+info()    { echo -e "[INFO]    $*" | tee -a "$LOG_FILE" >&2 ; }
+warning() { echo -e "[WARNING] $*" | tee -a "$LOG_FILE" >&2 ; }
+error()   { echo -e "[ERROR]   $*" | tee -a "$LOG_FILE" >&2 ; }
+fatal()   { echo -e "[FATAL]   $*" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
+
 MAN="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
 As part of this major release, the format of the values.yaml file has changed.
 
@@ -14,7 +21,6 @@ Requirements:
   curl
   grep
   sed
-  git diff in case of changes to Prometheus remote write regexes
 
 Usage:
   # for default helm release name 'collection' and namespace 'sumologic'
@@ -30,18 +36,18 @@ For more details, please refer to Migration steps and Changelog here: [link]
 "
 
 
-if [[ "$1" = "" ]] || [[ "$1" = "--help" ]]; then
+if [[ "${1:---help}" = "--help" ]]; then
   echo "$MAN"
   exit 1
 fi
 
 function check_required_command() {
   local command_to_check="$1"
-  command -v ${command_to_check} >/dev/null 2>&1 || { echo >&2 "Required command is missing: ${command_to_check}"; echo >&2 "Please consult --help and install missing commands before continue. Aborting."; exit 1; }
+  command -v ${command_to_check} >/dev/null 2>&1 || { error "Required command is missing: ${command_to_check}"; fatal "Please consult --help and install missing commands before continue. Aborting."; }
 }
 
 check_required_command yq
-yq --version | grep 3.2.1 >/dev/null 2>&1 || { echo >&2 "yq version is invalid. It should be exactly 3.2.1. Please install it properly: https://github.com/mikefarah/yq/releases/tag/3.2.1"; exit 1; }
+yq --version | grep 3.2.1 >/dev/null 2>&1 || { error "yq version is invalid. It should be exactly 3.2.1"; fatal "Please install it from: https://github.com/mikefarah/yq/releases/tag/3.2.1"; }
 check_required_command grep
 check_required_command sed
 check_required_command curl
@@ -123,48 +129,48 @@ sumologic.k8sMetadataFilter
 sumologic.kubernetesMeta
 sumologic.kubernetesMetaReduce"
 
-IFS=$'\n' read -r -d '' -a MAPPINGS <<< "$KEY_MAPPINGS"
+IFS=$'\n' read -r -a MAPPINGS <<< "$KEY_MAPPINGS"
 readonly MAPPINGS
-IFS=$'\n' read -r -d '' -a MAPPINGS_MULTIPLE <<< "$KEY_MAPPINGS_MULTIPLE"
+IFS=$'\n' read -r -a MAPPINGS_MULTIPLE <<< "$KEY_MAPPINGS_MULTIPLE"
 readonly MAPPINGS_MULTIPLE
-IFS=$'\n' read -r -d '' -a MAPPINGS_EMPTY <<< "$KEY_MAPPINGS_EMPTY"
+IFS=$'\n' read -r -a MAPPINGS_EMPTY <<< "$KEY_MAPPINGS_EMPTY"
 readonly MAPPINGS_EMPTY
 
 echo > new.yaml
 readonly CUSTOMER_KEYS=$(yq --printMode p r $OLD_VALUES_YAML -- '**')
 
 for key in ${CUSTOMER_KEYS}; do
-  echo mapping old key: $key
+  info "mapping old key: ${key}"
 
   if [[ "${MAPPINGS[@]}" =~ "${key}" ]]; then
     # whatever you want to do when arr contains value
     for i in ${MAPPINGS[@]}; do
       IFS=':' read -r -a maps <<< "${i}"
       if [[ ${maps[0]} == $key ]]; then
-        echo into new key: ${maps[1]}
+        info "into new key: ${maps[1]}"
         yq w -i new.yaml -- ${maps[1]} "$(yq r $OLD_VALUES_YAML -- ${maps[0]})"
         yq d -i new.yaml -- ${maps[0]}
       fi
     done
   elif [[ "${MAPPINGS_MULTIPLE[@]}" =~ "${key}" ]]; then
     # whatever you want to do when arr contains value
+    info "into new keys:"
     for i in ${MAPPINGS_MULTIPLE[@]}; do
       IFS=':' read -r -a maps <<< "${i}"
       if [[ ${maps[0]} == $key ]]; then
         for element in ${maps[@]:1}; do
-          echo into new key: ${element}
+          info "- ${element}"
           yq w -i new.yaml -- ${element} "$(yq r $OLD_VALUES_YAML -- ${maps[0]})"
           yq d -i new.yaml -- ${maps[0]}
         done
       fi
     done
   else
-    echo into new key: $key
     yq w -i new.yaml -- $key "$(yq r $OLD_VALUES_YAML -- $key)"
   fi
 
   if [[ "${MAPPINGS_EMPTY[@]}" =~ "${key}" ]]; then
-    echo removing $key
+    info "removing ${key}"
     yq d -i new.yaml -- "${key}"
   fi
 
@@ -178,12 +184,14 @@ elif [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" == "false" ]; then
   REMOVE="stream"
 elif [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" == "false" ]; then
   REMOVE="time"
+else
+  REMOVE=
 fi
 
 # Add filter on beginning of current filters
 FILTER="<filter containers.**>
   @type record_modifier
-  remove_keys $REMOVE
+  remove_keys ${REMOVE}
 </filter>"
 
 # Apply changes if required
@@ -198,9 +206,9 @@ fi
 
 # Print information about falco state
 if [[ "$(yq r new.yaml -- falco.enabled)" == 'false' ]]; then
-  echo 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it'
+  info 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it\n'
 else
-  echo 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)'
+  info 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)\n'
 fi
 
 # Prometheus changes
@@ -258,7 +266,7 @@ metrics_length="$(yq r -l "${OLD_VALUES_YAML}" -- 'prometheus-operator.prometheu
 metrics_length="$(( ${metrics_length} - 1))"
 
 for i in $(seq 0 ${metrics_length}); do
-    metric_name="$(yq r "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oE '/prometheus\.metrics.*')"
+    metric_name="$(yq r "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oE '/prometheus\.metrics.*' || true)"
     metric_regex_length="$(yq r -l "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs")"
     metric_regex_length="$(( ${metric_regex_length} - 1))"
 
@@ -268,7 +276,7 @@ for i in $(seq 0 ${metrics_length}); do
             break
         fi
     done
-    regexes_len="$(echo -e ${expected_metrics} | grep -A 2 "${metric_name}$" | grep regex | wc -l)"
+    regexes_len="$( (echo -e ${expected_metrics} | grep -A 2 "${metric_name}$" | grep regex || true ) | wc -l)"
     if [[ "${regexes_len}" -eq "2" ]]; then
 
       regex_1_0="$(get_release_regex "${metric_name}" '^\s+-' 'head')"
@@ -277,8 +285,7 @@ for i in $(seq 0 ${metrics_length}); do
       if [[ "${regex_0_17}" = "${regex}" ]]; then
           yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
       else
-          echo "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually"
-          git --no-pager diff --no-index $(echo "${regex_0_17}" | git hash-object -w --stdin) $(echo "${regex}" | git hash-object -w --stdin)  --word-diff-regex='[^\|]'
+          warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually\n"
       fi
     fi
 
@@ -294,7 +301,7 @@ for i in $(seq 0 ${metrics_length}); do
             if [[ "${regex_0_17}" = "${regex}" ]]; then
                 yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
             else
-                echo "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually"
+                warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually\n"
             fi
         fi
     fi
@@ -367,13 +374,13 @@ fi
 # Check user's image and echo warning if the image has been changed
 readonly USER_VERSION="$(yq r ${OLD_VALUES_YAML} -- image.tag)"
 if [[ ! -z "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
-  echo "You are using unsupported version: ${USER_VERSION}.
-Please upgrade to ${PREVIOUS_VERSION} or ensure that new_values.yaml is valid"
+  warning "You are using unsupported version: ${USER_VERSION}"
+  warning "Please upgrade to ${PREVIOUS_VERSION} or ensure that new_values.yaml is valid\n"
 fi
 
 # New fluent-bit db path, and account for yq bug that stringifies empty maps
-echo 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
-echo 'Please ensure that new fluent-bit configuration is correct'
+info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
+warning 'Please ensure that new fluent-bit configuration is correct\n'
 
 sed 's$tail-db/tail-containers-state.db$tail-db/tail-containers-state-sumo.db$g' new.yaml | \
 sed "s/'{}'/{}/g" > new_values.yaml
