@@ -226,11 +226,11 @@ function migrate_add_stream_and_add_time() {
     REMOVE=
   fi
 
-  # Add filter on beginning of current filters
-  FILTER="<filter containers.**>
-    @type record_modifier
-    remove_keys ${REMOVE}
-  </filter>"
+# Add filter on beginning of current filters
+FILTER="<filter containers.**>
+  @type record_modifier
+  remove_keys ${REMOVE}
+</filter>"
 
   # Apply changes if required
   if [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ] || [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
@@ -336,53 +336,53 @@ function fix_prometheus_service_monitors() {
     yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
     yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-events)"
     echo "---
-  prometheus-operator:
-    prometheus:
-      additionalServiceMonitors:
-        - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
-          additionalLabels:
+prometheus-operator:
+  prometheus:
+    additionalServiceMonitors:
+      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
+        additionalLabels:
+          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - ${NAMESPACE}
+        selector:
+          matchLabels:
             app: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
-          endpoints:
-            - port: metrics
-          namespaceSelector:
-            matchNames:
-              - ${NAMESPACE}
-          selector:
-            matchLabels:
-              app: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
-        - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
-          additionalLabels:
+      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
+        additionalLabels:
+          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
+        endpoints:
+        - port: metrics
+        namespaceSelector:
+          matchNames:
+          - ${NAMESPACE}
+        selector:
+          matchLabels:
             app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
-          endpoints:
-          - port: metrics
-          namespaceSelector:
-            matchNames:
-            - ${NAMESPACE}
-          selector:
-            matchLabels:
-              app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
-        - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
-          additionalLabels:
+      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
+        additionalLabels:
+          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
+        endpoints:
+        - port: metrics
+        namespaceSelector:
+          matchNames:
+          - ${NAMESPACE}
+        selector:
+          matchLabels:
             app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
-          endpoints:
+      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events
+        additionalLabels:
+          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events
+        endpoints:
           - port: metrics
-          namespaceSelector:
-            matchNames:
+        namespaceSelector:
+          matchNames:
             - ${NAMESPACE}
-          selector:
-            matchLabels:
-              app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
-        - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events
-          additionalLabels:
-            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events
-          endpoints:
-            - port: metrics
-          namespaceSelector:
-            matchNames:
-              - ${NAMESPACE}
-          selector:
-            matchLabels:
-              app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "${TEMP_FILE}" -
+        selector:
+          matchLabels:
+            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "${TEMP_FILE}" -
   fi
 
   if [[ -n "$(yq r ${TEMP_FILE} -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
