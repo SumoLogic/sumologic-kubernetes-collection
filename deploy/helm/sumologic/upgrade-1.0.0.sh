@@ -18,7 +18,6 @@ and return one that is compatible with v1.0.0.
 
 Requirements:
   yq (3.2.1) https://github.com/mikefarah/yq/releases/tag/3.2.1
-  curl
   grep
   sed
 
@@ -50,15 +49,11 @@ check_required_command yq
 yq --version | grep 3.2.1 >/dev/null 2>&1 || { error "yq version is invalid. It should be exactly 3.2.1"; fatal "Please install it from: https://github.com/mikefarah/yq/releases/tag/3.2.1"; }
 check_required_command grep
 check_required_command sed
-check_required_command curl
 
 readonly OLD_VALUES_YAML="$1"
 readonly HELM_RELEASE_NAME="${2:-collection}"
 readonly NAMESPACE="${3:-sumologic}"
 readonly PREVIOUS_VERSION=0.17.2
-
-URL=https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/values.yaml
-curl -s $URL > new.yaml
 
 readonly KEY_MAPPINGS="
 eventsDeployment.nodeSelector:fluentd.events.statefulset.nodeSelector
