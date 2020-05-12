@@ -130,7 +130,14 @@ IFS=$'\n' read -r -d ' ' -a MAPPINGS_EMPTY <<< "$KEY_MAPPINGS_EMPTY"
 readonly MAPPINGS_EMPTY
 set -e
 
-echo > new.yaml
+readonly TEMP_FILE=upgrade-1.0.0-temp-file
+
+function create_temp_file() {
+  echo -n > ${TEMP_FILE}
+}
+
+create_temp_file
+
 readonly CUSTOMER_KEYS=$(yq --printMode p r "${OLD_VALUES_YAML}" -- '**')
 
 for key in ${CUSTOMER_KEYS}; do
@@ -140,8 +147,8 @@ for key in ${CUSTOMER_KEYS}; do
       IFS=':' read -r -a maps <<< "${i}"
       if [[ ${maps[0]} == "${key}" ]]; then
         info "Mapping ${key} into ${maps[1]}"
-        yq w -i new.yaml -- "${maps[1]}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
-        yq d -i new.yaml -- "${maps[0]}"
+        yq w -i ${TEMP_FILE} -- "${maps[1]}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
+        yq d -i ${TEMP_FILE} -- "${maps[0]}"
       fi
     done
   elif [[ ${MAPPINGS_MULTIPLE[*]} =~ ${key} ]]; then
@@ -152,18 +159,18 @@ for key in ${CUSTOMER_KEYS}; do
       if [[ ${maps[0]} == "${key}" ]]; then
         for element in "${maps[@]:1}"; do
           info "- ${element}"
-          yq w -i new.yaml -- "${element}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
-          yq d -i new.yaml -- "${maps[0]}"
+          yq w -i ${TEMP_FILE} -- "${element}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
+          yq d -i ${TEMP_FILE} -- "${maps[0]}"
         done
       fi
     done
   else
-    yq w -i new.yaml -- "${key}" "$(yq r "${OLD_VALUES_YAML}" -- "${key}")"
+    yq w -i ${TEMP_FILE} -- "${key}" "$(yq r "${OLD_VALUES_YAML}" -- "${key}")"
   fi
 
   if [[ "${MAPPINGS_EMPTY[*]}" =~ ${key} ]]; then
     info "Removing ${key}"
-    yq d -i new.yaml -- "${key}"
+    yq d -i ${TEMP_FILE} -- "${key}"
   fi
 done
 echo 
@@ -188,17 +195,17 @@ FILTER="<filter containers.**>
 # Apply changes if required
 if [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ] || [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
   info "Creating fluentd.logs.containers.extraFilterPluginConf to preserve addStream/addTime functionality"
-  yq w -i new.yaml -- fluentd.logs.containers.extraFilterPluginConf "$FILTER"
+  yq w -i ${TEMP_FILE} -- fluentd.logs.containers.extraFilterPluginConf "$FILTER"
 fi
 
 # Keep pre-upgrade hook
-if [[ -n "$(yq r new.yaml -- sumologic.setup)" ]]; then
+if [[ -n "$(yq r ${TEMP_FILE} -- sumologic.setup)" ]]; then
   info "Updating setup hooks (sumologic.setup.*.annotations[helm.sh/hook]) to 'pre-install,pre-upgrade'"
-  yq w -i new.yaml -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
+  yq w -i ${TEMP_FILE} -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
 fi
 
 # Print information about falco state
-if [[ "$(yq r new.yaml -- falco.enabled)" == 'false' ]]; then
+if [[ "$(yq r ${TEMP_FILE} -- falco.enabled)" == 'false' ]]; then
   info 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it\n'
 else
   info 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)\n'
@@ -276,7 +283,7 @@ for i in $(seq 0 ${metrics_length}); do
       regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'head')"
       regex="$(get_regex "${i}" "${j}")"
       if [[ "${regex_0_17}" = "${regex}" ]]; then
-          yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+          yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
       else
           warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually\n"
       fi
@@ -287,12 +294,12 @@ for i in $(seq 0 ${metrics_length}); do
         regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'head')"
         regex="$(get_regex "${i}" "${j}")"
         if [[ "${regex_0_17}" = "${regex}" ]]; then
-            yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+            yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
         else
             regex_1_0="$(get_release_regex "${metric_name}" '^\s*-' 'tail')"
             regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'tail')"
             if [[ "${regex_0_17}" = "${regex}" ]]; then
-                yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+                yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
             else
                 warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually\n"
             fi
@@ -301,17 +308,17 @@ for i in $(seq 0 ${metrics_length}); do
 done
 
 # Fix fluent-bit env
-if [[ -n "$(yq r new.yaml -- fluent-bit.env)" ]]; then
+if [[ -n "$(yq r ${TEMP_FILE} -- fluent-bit.env)" ]]; then
   info "Patching fluent-bit CHART environmental variable"
-  yq w -i new.yaml -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
+  yq w -i ${TEMP_FILE} -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
 fi
 
 # Fix prometheus service monitors
-if [[ -n "$(yq r new.yaml -- prometheus-operator.prometheus.additionalServiceMonitors)" ]]; then
+if [[ -n "$(yq r ${TEMP_FILE} -- prometheus-operator.prometheus.additionalServiceMonitors)" ]]; then
   info "Patching prometheus-operator.prometheus.additionalServiceMonitors"
-  yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE})"
-  yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
-  yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-events)"
+  yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE})"
+  yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
+  yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-events)"
   echo "---
 prometheus-operator:
   prometheus:
@@ -359,12 +366,12 @@ prometheus-operator:
             - ${NAMESPACE}
         selector:
           matchLabels:
-            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "new.yaml" -
+            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "${TEMP_FILE}" -
 fi
 
-if [[ -n "$(yq r new.yaml -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
+if [[ -n "$(yq r ${TEMP_FILE} -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
   info "Patching prometheus CHART environmental variable"
-  yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
+  yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
 fi
 
 # Check user's image and echo warning if the image has been changed
@@ -378,9 +385,9 @@ fi
 info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
 warning 'Please ensure that new fluent-bit configuration is correct\n'
 
-sed 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' new.yaml | \
+sed 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE} | \
 sed "s/'{}'/{}/g" > new_values.yaml
-rm new.yaml
+rm ${TEMP_FILE}
 
 DONE="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
 A new yaml file has been generated for you. Please check the current directory for new_values.yaml."
