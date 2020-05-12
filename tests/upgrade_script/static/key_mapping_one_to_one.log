@@ -1,0 +1,36 @@
+[INFO]    Mapping eventsDeployment.nodeSelector into fluentd.events.statefulset.nodeSelector
+[INFO]    Mapping eventsDeployment.resources.limits.cpu into fluentd.events.statefulset.resources.limits.cpu
+[INFO]    Mapping eventsDeployment.resources.limits.memory into fluentd.events.statefulset.resources.limits.memory
+[INFO]    Mapping eventsDeployment.resources.requests.cpu into fluentd.events.statefulset.resources.requests.cpu
+[INFO]    Mapping eventsDeployment.resources.requests.memory into fluentd.events.statefulset.resources.requests.memory
+[INFO]    Mapping eventsDeployment.tolerations into fluentd.events.statefulset.tolerations
+[INFO]    Mapping sumologic.addTimestamp into fluentd.logs.output.addTimestamp
+[INFO]    Mapping sumologic.chunkLimitSize into fluentd.buffer.chunkLimitSize
+[INFO]    Mapping sumologic.eventCollectionEnabled into fluentd.events.enabled
+[INFO]    Mapping sumologic.events.sourceCategory into fluentd.events.sourceCategory
+[INFO]    Mapping sumologic.excludeContainerRegex into fluentd.logs.containers.excludeContainerRegex
+[INFO]    Mapping sumologic.excludeHostRegex into fluentd.logs.containers.excludeHostRegex
+[INFO]    Mapping sumologic.excludeNamespaceRegex into fluentd.logs.containers.excludeNamespaceRegex
+[INFO]    Mapping sumologic.excludePodRegex into fluentd.logs.containers.excludePodRegex
+[INFO]    Mapping sumologic.fluentd.buffer into fluentd.buffer.type
+[INFO]    Mapping sumologic.fluentdLogLevel into fluentd.logLevel
+[INFO]    Mapping sumologic.flushInterval into fluentd.buffer.flushInterval
+[INFO]    Mapping sumologic.logFormat into fluentd.logs.output.logFormat
+[INFO]    Mapping sumologic.numThreads into fluentd.buffer.numThreads
+[INFO]    Mapping sumologic.queueChunkLimitSize into fluentd.buffer.queueChunkLimitSize
+[INFO]    Mapping sumologic.sourceCategory into fluentd.logs.containers.sourceCategory
+[INFO]    Mapping sumologic.sourceCategoryPrefix into fluentd.logs.containers.sourceCategoryPrefix
+[INFO]    Mapping sumologic.sourceCategoryReplaceDash into fluentd.logs.containers.sourceCategoryReplaceDash
+[INFO]    Mapping sumologic.sourceName into fluentd.logs.containers.sourceName
+[INFO]    Mapping sumologic.timestampKey into fluentd.logs.output.timestampKey
+[INFO]    Mapping sumologic.totalLimitSize into fluentd.buffer.totalLimitSize
+[INFO]    Mapping sumologic.verifySsl into fluentd.verifySsl
+[INFO]    Mapping sumologic.watchResourceEventsOverrides into fluentd.events.watchResourceEventsOverrides
+
+[INFO]    falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)
+
+[INFO]    Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db
+[WARNING] Please ensure that new fluent-bit configuration is correct
+
+Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
+A new yaml file has been generated for you. Please check the current directory for new_values.yaml.
