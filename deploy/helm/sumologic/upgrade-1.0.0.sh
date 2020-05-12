@@ -140,21 +140,19 @@ echo > new.yaml
 readonly CUSTOMER_KEYS=$(yq --printMode p r $OLD_VALUES_YAML -- '**')
 
 for key in ${CUSTOMER_KEYS}; do
-  info "mapping old key: ${key}"
-
   if [[ "${MAPPINGS[@]}" =~ "${key}" ]]; then
     # whatever you want to do when arr contains value
     for i in ${MAPPINGS[@]}; do
       IFS=':' read -r -a maps <<< "${i}"
       if [[ ${maps[0]} == $key ]]; then
-        info "into new key: ${maps[1]}"
+        info "Mapping ${key} into ${maps[1]}"
         yq w -i new.yaml -- ${maps[1]} "$(yq r $OLD_VALUES_YAML -- ${maps[0]})"
         yq d -i new.yaml -- ${maps[0]}
       fi
     done
   elif [[ "${MAPPINGS_MULTIPLE[@]}" =~ "${key}" ]]; then
     # whatever you want to do when arr contains value
-    info "into new keys:"
+    info "Mapping ${key} into:"
     for i in ${MAPPINGS_MULTIPLE[@]}; do
       IFS=':' read -r -a maps <<< "${i}"
       if [[ ${maps[0]} == $key ]]; then
@@ -170,7 +168,7 @@ for key in ${CUSTOMER_KEYS}; do
   fi
 
   if [[ "${MAPPINGS_EMPTY[@]}" =~ "${key}" ]]; then
-    info "removing ${key}"
+    info "Removing ${key}"
     yq d -i new.yaml -- "${key}"
   fi
 
