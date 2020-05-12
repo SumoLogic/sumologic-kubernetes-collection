@@ -194,11 +194,13 @@ FILTER="<filter containers.**>
 
 # Apply changes if required
 if [ "$(yq r $OLD_VALUES_YAML -- sumologic.addStream)" == "false" ] || [ "$(yq r $OLD_VALUES_YAML -- sumologic.addTime)" == "false" ]; then
+  info "Creating fluentd.logs.containers.extraFilterPluginConf to preserve addStream/addTime functionality"
   yq w -i new.yaml -- fluentd.logs.containers.extraFilterPluginConf "$FILTER"
 fi
 
 # Keep pre-upgrade hook
 if [[ ! -z "$(yq r new.yaml -- sumologic.setup)" ]]; then
+  info "Updating setup hooks (sumologic.setup.*.annotations[helm.sh/hook]) to 'pre-install,pre-upgrade'"
   yq w -i new.yaml -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
 fi
 
