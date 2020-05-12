@@ -17,12 +17,6 @@ readonly INPUT_FILES="$(ls "${STATICS_PATH}" | grep input)"
 readonly TMP_OUT="tmp_out.log"
 readonly OUT="new_values.yaml"
 
-make_diff() {
-  file1=${1}
-  file2=${2}
-
-  result=$(diff "${file1}" "${file2}")
-}
 
 for input_file in ${INPUT_FILES}; do
   test_name=$(echo "${input_file}" | grep -oP '^.*?(?=\.input\.yaml)')
@@ -46,4 +40,6 @@ for input_file in ${INPUT_FILES}; do
   else
     test_passed "${test_name}"
   fi
+
+  rm "${TMP_OUT}" "${OUT}"
 done
