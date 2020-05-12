@@ -309,11 +309,13 @@ done
 
 # Fix fluent-bit env
 if [[ ! -z "$(yq r new.yaml -- fluent-bit.env)" ]]; then
+  info "Patching fluent-bit CHART environmental variable"
   yq w -i new.yaml -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
 fi
 
 # Fix prometheus service monitors
 if [[ ! -z "$(yq r new.yaml -- prometheus-operator.prometheus.additionalServiceMonitors)" ]]; then
+  info "Patching prometheus-operator.prometheus.additionalServiceMonitors"
   yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE})"
   yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
   yq d -i "new.yaml" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-events)"
@@ -368,6 +370,7 @@ prometheus-operator:
 fi
 
 if [[ ! -z "$(yq r new.yaml -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
+  info "Patching prometheus CHART environmental variable"
   yq w -i new.yaml -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
 fi
 
