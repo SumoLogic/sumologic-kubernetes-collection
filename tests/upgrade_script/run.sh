@@ -1,5 +1,12 @@
 #!/usr/bin/bash
 
+# Test generation:
+# export test_name=example_test; \
+# bash deploy/helm/sumologic/upgrade-1.0.0.sh \
+#   tests/upgrade_script/static/${test_name}.input.yaml \
+#   1> tests/upgrade_script/static/${test_name}.log 2>&1 \
+# && cp new_values.yaml tests/upgrade_script/static/${test_name}.output.yaml
+
 test_start()        { echo -e "[.] $*"; }
 test_passed()       { echo -e "[+] $*"; }
 test_failed()       { echo -e "[-] $*"; }
