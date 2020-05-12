@@ -1,0 +1,33 @@
+fluent-bit:
+  env:
+    - name: CHART
+      valueFrom:
+        configMapKeyRef:
+          name: sumologic-configmap
+          key: release
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+prometheus-operator:
+  prometheus:
+    prometheusSpec:
+      ## Define resources requests and limits for single Pods.
+      resources: {}
+      # requests:
+      #   memory: 400Mi
+      thanos:
+        version: v0.10.0
+      containers:
+      - name: "prometheus-config-reloader"
+        env:
+        - name: CHART
+          valueFrom:
+            configMapKeyRef:
+              name: sumologic-configmap
+              key: release
+        - name: NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              name: sumologic-configmap
+              key: fluentdNamespace
