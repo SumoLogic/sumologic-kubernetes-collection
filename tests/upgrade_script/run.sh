@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 test_start()        { echo -e "[.] $*"; }
-test_pass()         { echo -e "[+] $*"; }
+test_passed()       { echo -e "[+] $*"; }
 test_failed()       { echo -e "[-] $*"; }
 
 readonly SCRIPT_PATH="$( dirname $(realpath ${0}) )"
@@ -37,6 +37,6 @@ for input_file in ${INPUT_FILES}; do
     fi
     test_failed "${test_name}"
   else
-    test_pass "${test_name}"
+    test_passed "${test_name}"
   fi
 done
