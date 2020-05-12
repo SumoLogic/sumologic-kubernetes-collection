@@ -10,7 +10,8 @@ warning() { echo -e "[WARNING] $*" | tee -a "$LOG_FILE" >&2 ; }
 error()   { echo -e "[ERROR]   $*" | tee -a "$LOG_FILE" >&2 ; }
 fatal()   { echo -e "[FATAL]   $*" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
 
-MAN="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
+function print_help_and_exit() {
+  readonly MAN="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
 As part of this major release, the format of the values.yaml file has changed.
 
 This script will automatically take the configurations of your existing values.yaml
@@ -31,22 +32,31 @@ Usage:
 Returns:
   new_values.yaml
 
-For more details, please refer to Migration steps and Changelog here: [link]
-"
+For more details, please refer to Migration steps and Changelog here: [link]"
 
-
-if [[ "${1:---help}" = "--help" ]]; then
   echo "$MAN"
-  exit 1
-fi
+  exit 0
+}
+
+function check_if_print_help_and_exit() {
+  if [[ "${1:---help}" = "--help" ]]; then
+    print_help_and_exit
+  fi
+}
+
+check_if_print_help_and_exit "$1"
 
 function check_required_command() {
   local command_to_check="$1"
   command -v "${command_to_check}" >/dev/null 2>&1 || { error "Required command is missing: ${command_to_check}"; fatal "Please consult --help and install missing commands before continue. Aborting."; }
 }
 
+function check_yq_version() {
+  yq --version | grep 3.2.1 >/dev/null 2>&1 || { error "yq version is invalid. It should be exactly 3.2.1"; fatal "Please install it from: https://github.com/mikefarah/yq/releases/tag/3.2.1"; }
+}
+
 check_required_command yq
-yq --version | grep 3.2.1 >/dev/null 2>&1 || { error "yq version is invalid. It should be exactly 3.2.1"; fatal "Please install it from: https://github.com/mikefarah/yq/releases/tag/3.2.1"; }
+check_yq_version
 check_required_command grep
 check_required_command sed
 
@@ -120,16 +130,6 @@ sumologic.k8sMetadataFilter
 sumologic.kubernetesMeta
 sumologic.kubernetesMetaReduce"
 
-# Convert variables to array
-set +e
-IFS=$'\n' read -r -d ' ' -a MAPPINGS <<< "$KEY_MAPPINGS"
-readonly MAPPINGS
-IFS=$'\n' read -r -d ' ' -a MAPPINGS_MULTIPLE <<< "$KEY_MAPPINGS_MULTIPLE"
-readonly MAPPINGS_MULTIPLE
-IFS=$'\n' read -r -d ' ' -a MAPPINGS_EMPTY <<< "$KEY_MAPPINGS_EMPTY"
-readonly MAPPINGS_EMPTY
-set -e
-
 readonly TEMP_FILE=upgrade-1.0.0-temp-file
 
 function create_temp_file() {
@@ -138,78 +138,104 @@ function create_temp_file() {
 
 create_temp_file
 
-readonly CUSTOMER_KEYS=$(yq --printMode p r "${OLD_VALUES_YAML}" -- '**')
+function migrate_customer_keys() {
+  # Convert variables to arrays
+  set +e
+  IFS=$'\n' read -r -d ' ' -a MAPPINGS <<< "$KEY_MAPPINGS"
+  readonly MAPPINGS
+  IFS=$'\n' read -r -d ' ' -a MAPPINGS_MULTIPLE <<< "$KEY_MAPPINGS_MULTIPLE"
+  readonly MAPPINGS_MULTIPLE
+  IFS=$'\n' read -r -d ' ' -a MAPPINGS_EMPTY <<< "$KEY_MAPPINGS_EMPTY"
+  readonly MAPPINGS_EMPTY
+  set -e
 
-for key in ${CUSTOMER_KEYS}; do
-  if [[ ${MAPPINGS[*]} =~ ${key} ]]; then
-    # whatever you want to do when arr contains value
-    for i in "${MAPPINGS[@]}"; do
-      IFS=':' read -r -a maps <<< "${i}"
-      if [[ ${maps[0]} == "${key}" ]]; then
-        info "Mapping ${key} into ${maps[1]}"
-        yq w -i ${TEMP_FILE} -- "${maps[1]}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
-        yq d -i ${TEMP_FILE} -- "${maps[0]}"
-      fi
-    done
-  elif [[ ${MAPPINGS_MULTIPLE[*]} =~ ${key} ]]; then
-    # whatever you want to do when arr contains value
-    info "Mapping ${key} into:"
-    for i in "${MAPPINGS_MULTIPLE[@]}"; do
-      IFS=':' read -r -a maps <<< "${i}"
-      if [[ ${maps[0]} == "${key}" ]]; then
-        for element in "${maps[@]:1}"; do
-          info "- ${element}"
-          yq w -i ${TEMP_FILE} -- "${element}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
+  readonly CUSTOMER_KEYS=$(yq --printMode p r "${OLD_VALUES_YAML}" -- '**')
+
+  for key in ${CUSTOMER_KEYS}; do
+    if [[ ${MAPPINGS[*]} =~ ${key} ]]; then
+      # whatever you want to do when arr contains value
+      for i in "${MAPPINGS[@]}"; do
+        IFS=':' read -r -a maps <<< "${i}"
+        if [[ ${maps[0]} == "${key}" ]]; then
+          info "Mapping ${key} into ${maps[1]}"
+          yq w -i ${TEMP_FILE} -- "${maps[1]}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
           yq d -i ${TEMP_FILE} -- "${maps[0]}"
-        done
-      fi
-    done
+        fi
+      done
+    elif [[ ${MAPPINGS_MULTIPLE[*]} =~ ${key} ]]; then
+      # whatever you want to do when arr contains value
+      info "Mapping ${key} into:"
+      for i in "${MAPPINGS_MULTIPLE[@]}"; do
+        IFS=':' read -r -a maps <<< "${i}"
+        if [[ ${maps[0]} == "${key}" ]]; then
+          for element in "${maps[@]:1}"; do
+            info "- ${element}"
+            yq w -i ${TEMP_FILE} -- "${element}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
+            yq d -i ${TEMP_FILE} -- "${maps[0]}"
+          done
+        fi
+      done
+    else
+      yq w -i ${TEMP_FILE} -- "${key}" "$(yq r "${OLD_VALUES_YAML}" -- "${key}")"
+    fi
+
+    if [[ "${MAPPINGS_EMPTY[*]}" =~ ${key} ]]; then
+      info "Removing ${key}"
+      yq d -i ${TEMP_FILE} -- "${key}"
+    fi
+  done
+  echo
+}
+
+migrate_customer_keys
+
+function migrate_add_stream_and_add_time() {
+  # Preserve the functionality of addStream=false or addTime=false
+  if [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ] && [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
+    REMOVE="stream,time"
+  elif [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ]; then
+    REMOVE="stream"
+  elif [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
+    REMOVE="time"
   else
-    yq w -i ${TEMP_FILE} -- "${key}" "$(yq r "${OLD_VALUES_YAML}" -- "${key}")"
+    REMOVE=
   fi
 
-  if [[ "${MAPPINGS_EMPTY[*]}" =~ ${key} ]]; then
-    info "Removing ${key}"
-    yq d -i ${TEMP_FILE} -- "${key}"
+  # Add filter on beginning of current filters
+  FILTER="<filter containers.**>
+    @type record_modifier
+    remove_keys ${REMOVE}
+  </filter>"
+
+  # Apply changes if required
+  if [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ] || [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
+    info "Creating fluentd.logs.containers.extraFilterPluginConf to preserve addStream/addTime functionality"
+    yq w -i ${TEMP_FILE} -- fluentd.logs.containers.extraFilterPluginConf "$FILTER"
   fi
-done
-echo 
+}
 
-# Preserve the functionality of addStream=false or addTime=false
-if [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ] && [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
-  REMOVE="stream,time"
-elif [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ]; then
-  REMOVE="stream"
-elif [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
-  REMOVE="time"
-else
-  REMOVE=
-fi
+migrate_add_stream_and_add_time
 
-# Add filter on beginning of current filters
-FILTER="<filter containers.**>
-  @type record_modifier
-  remove_keys ${REMOVE}
-</filter>"
+function migrate_pre_upgrade_hook() {
+  # Keep pre-upgrade hook
+  if [[ -n "$(yq r ${TEMP_FILE} -- sumologic.setup)" ]]; then
+    info "Updating setup hooks (sumologic.setup.*.annotations[helm.sh/hook]) to 'pre-install,pre-upgrade'"
+    yq w -i ${TEMP_FILE} -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
+  fi
+}
 
-# Apply changes if required
-if [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ] || [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
-  info "Creating fluentd.logs.containers.extraFilterPluginConf to preserve addStream/addTime functionality"
-  yq w -i ${TEMP_FILE} -- fluentd.logs.containers.extraFilterPluginConf "$FILTER"
-fi
+migrate_add_stream_and_add_time
 
-# Keep pre-upgrade hook
-if [[ -n "$(yq r ${TEMP_FILE} -- sumologic.setup)" ]]; then
-  info "Updating setup hooks (sumologic.setup.*.annotations[helm.sh/hook]) to 'pre-install,pre-upgrade'"
-  yq w -i ${TEMP_FILE} -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
-fi
+function check_falco_state() {
+  # Print information about falco state
+  if [[ "$(yq r ${TEMP_FILE} -- falco.enabled)" == 'false' ]]; then
+    info 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it\n'
+  else
+    info 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)\n'
+  fi
+}
 
-# Print information about falco state
-if [[ "$(yq r ${TEMP_FILE} -- falco.enabled)" == 'false' ]]; then
-  info 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it\n'
-else
-  info 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)\n'
-fi
+check_falco_state
 
 # Prometheus changes
 # Diff of prometheus regexes:
@@ -222,7 +248,7 @@ fi
 # minus means 1.0.0 regex
 # plus means 0.17.1 regex
 
-expected_metrics="/prometheus.metrics.state
+readonly expected_metrics="/prometheus.metrics.state
 -          regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)
 +          regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_daemonset_metadata_generation|kube_deployment_metadata_generation|kube_deployment_spec_paused|kube_deployment_spec_replicas|kube_deployment_spec_strategy_rollingupdate_max_unavailable|kube_deployment_status_replicas_available|kube_deployment_status_observed_generation|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_spec_unschedulable|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)
 /prometheus.metrics.controller-manager
@@ -262,133 +288,161 @@ function get_release_regex() {
   echo "${expected_metrics}" | grep -A 3 "${metric_name}$" | "${filter}" -n 3 | grep -E "${str_grep}" | grep -oE ': .*' | sed 's/: //' | sed -e "s/^'//" -e 's/^"//' -e "s/'$//" -e 's/"$//'
 }
 
-metrics_length="$(yq r -l "${OLD_VALUES_YAML}" -- 'prometheus-operator.prometheus.prometheusSpec.remoteWrite')"
-metrics_length="$(( metrics_length - 1))"
+function migrate_prometheus_metrics() {
+  metrics_length="$(yq r -l "${OLD_VALUES_YAML}" -- 'prometheus-operator.prometheus.prometheusSpec.remoteWrite')"
+  metrics_length="$(( metrics_length - 1))"
 
-for i in $(seq 0 ${metrics_length}); do
-    metric_name="$(yq r "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oE '/prometheus\.metrics.*' || true)"
-    metric_regex_length="$(yq r -l "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs")"
-    metric_regex_length="$(( metric_regex_length - 1))"
+  for i in $(seq 0 ${metrics_length}); do
+      metric_name="$(yq r "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oE '/prometheus\.metrics.*' || true)"
+      metric_regex_length="$(yq r -l "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs")"
+      metric_regex_length="$(( metric_regex_length - 1))"
 
-    for j in $(seq 0 ${metric_regex_length}); do
-        metric_regex_action=$(yq r "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].action")
-        if [[ "${metric_regex_action}" = "keep" ]]; then
-            break
-        fi
-    done
-    regexes_len="$( (echo "${expected_metrics}" | grep -A 2 "${metric_name}$" | grep regex || true ) | wc -l)"
-    if [[ "${regexes_len}" -eq "2" ]]; then
+      for j in $(seq 0 ${metric_regex_length}); do
+          metric_regex_action=$(yq r "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].action")
+          if [[ "${metric_regex_action}" = "keep" ]]; then
+              break
+          fi
+      done
+      regexes_len="$( (echo "${expected_metrics}" | grep -A 2 "${metric_name}$" | grep regex || true ) | wc -l)"
+      if [[ "${regexes_len}" -eq "2" ]]; then
 
-      regex_1_0="$(get_release_regex "${metric_name}" '^\s*-' 'head')"
-      regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'head')"
-      regex="$(get_regex "${i}" "${j}")"
-      if [[ "${regex_0_17}" = "${regex}" ]]; then
-          yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
-      else
-          warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually\n"
-      fi
-    fi
-
-    if [[ "${metric_name}" = "/prometheus.metrics.container" ]]; then
         regex_1_0="$(get_release_regex "${metric_name}" '^\s*-' 'head')"
         regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'head')"
         regex="$(get_regex "${i}" "${j}")"
         if [[ "${regex_0_17}" = "${regex}" ]]; then
             yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
         else
-            regex_1_0="$(get_release_regex "${metric_name}" '^\s*-' 'tail')"
-            regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'tail')"
-            if [[ "${regex_0_17}" = "${regex}" ]]; then
-                yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
-            else
-                warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually\n"
-            fi
+            warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually\n"
         fi
-    fi
-done
+      fi
 
-# Fix fluent-bit env
-if [[ -n "$(yq r ${TEMP_FILE} -- fluent-bit.env)" ]]; then
-  info "Patching fluent-bit CHART environmental variable"
-  yq w -i ${TEMP_FILE} -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
-fi
+      if [[ "${metric_name}" = "/prometheus.metrics.container" ]]; then
+          regex_1_0="$(get_release_regex "${metric_name}" '^\s*-' 'head')"
+          regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'head')"
+          regex="$(get_regex "${i}" "${j}")"
+          if [[ "${regex_0_17}" = "${regex}" ]]; then
+              yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+          else
+              regex_1_0="$(get_release_regex "${metric_name}" '^\s*-' 'tail')"
+              regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'tail')"
+              if [[ "${regex_0_17}" = "${regex}" ]]; then
+                  yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+              else
+                  warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually\n"
+              fi
+          fi
+      fi
+  done
+}
 
-# Fix prometheus service monitors
-if [[ -n "$(yq r ${TEMP_FILE} -- prometheus-operator.prometheus.additionalServiceMonitors)" ]]; then
-  info "Patching prometheus-operator.prometheus.additionalServiceMonitors"
-  yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE})"
-  yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
-  yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-events)"
-  echo "---
-prometheus-operator:
-  prometheus:
-    additionalServiceMonitors:
-      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
-        additionalLabels:
-          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
-        endpoints:
-          - port: metrics
-        namespaceSelector:
-          matchNames:
-            - ${NAMESPACE}
-        selector:
-          matchLabels:
+migrate_prometheus_metrics
+
+function fix_fluentbit_env() {
+  # Fix fluent-bit env
+  if [[ -n "$(yq r ${TEMP_FILE} -- fluent-bit.env)" ]]; then
+    info "Patching fluent-bit CHART environmental variable"
+    yq w -i ${TEMP_FILE} -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
+  fi
+}
+
+fix_fluentbit_env
+
+function fix_prometheus_service_monitors() {
+  # Fix prometheus service monitors
+  if [[ -n "$(yq r ${TEMP_FILE} -- prometheus-operator.prometheus.additionalServiceMonitors)" ]]; then
+    info "Patching prometheus-operator.prometheus.additionalServiceMonitors"
+    yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE})"
+    yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
+    yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-events)"
+    echo "---
+  prometheus-operator:
+    prometheus:
+      additionalServiceMonitors:
+        - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
+          additionalLabels:
             app: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
-      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
-        additionalLabels:
-          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
-        endpoints:
-        - port: metrics
-        namespaceSelector:
-          matchNames:
-          - ${NAMESPACE}
-        selector:
-          matchLabels:
+          endpoints:
+            - port: metrics
+          namespaceSelector:
+            matchNames:
+              - ${NAMESPACE}
+          selector:
+            matchLabels:
+              app: ${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol
+        - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
+          additionalLabels:
             app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
-      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
-        additionalLabels:
-          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
-        endpoints:
-        - port: metrics
-        namespaceSelector:
-          matchNames:
-          - ${NAMESPACE}
-        selector:
-          matchLabels:
-            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
-      - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events
-        additionalLabels:
-          app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events
-        endpoints:
+          endpoints:
           - port: metrics
-        namespaceSelector:
-          matchNames:
+          namespaceSelector:
+            matchNames:
             - ${NAMESPACE}
-        selector:
-          matchLabels:
-            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "${TEMP_FILE}" -
-fi
+          selector:
+            matchLabels:
+              app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-logs
+        - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
+          additionalLabels:
+            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
+          endpoints:
+          - port: metrics
+          namespaceSelector:
+            matchNames:
+            - ${NAMESPACE}
+          selector:
+            matchLabels:
+              app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-metrics
+        - name: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events
+          additionalLabels:
+            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events
+          endpoints:
+            - port: metrics
+          namespaceSelector:
+            matchNames:
+              - ${NAMESPACE}
+          selector:
+            matchLabels:
+              app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "${TEMP_FILE}" -
+  fi
 
-if [[ -n "$(yq r ${TEMP_FILE} -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
-  info "Patching prometheus CHART environmental variable"
-  yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
-fi
+  if [[ -n "$(yq r ${TEMP_FILE} -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
+    info "Patching prometheus CHART environmental variable"
+    yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
+  fi
+}
 
-# Check user's image and echo warning if the image has been changed
-readonly USER_VERSION="$(yq r "${OLD_VALUES_YAML}" -- image.tag)"
-if [[ -n "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
-  warning "You are using unsupported version: ${USER_VERSION}"
-  warning "Please upgrade to ${PREVIOUS_VERSION} or ensure that new_values.yaml is valid\n"
-fi
+fix_prometheus_service_monitors
 
-# New fluent-bit db path, and account for yq bug that stringifies empty maps
-info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
-warning 'Please ensure that new fluent-bit configuration is correct\n'
+function check_user_image() {
+  # Check user's image and echo warning if the image has been changed
+  readonly USER_VERSION="$(yq r "${OLD_VALUES_YAML}" -- image.tag)"
+  if [[ -n "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
+    warning "You are using unsupported version: ${USER_VERSION}"
+    warning "Please upgrade to ${PREVIOUS_VERSION} or ensure that new_values.yaml is valid\n"
+  fi
+}
 
-sed 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE} | \
-sed "s/'{}'/{}/g" > new_values.yaml
-rm ${TEMP_FILE}
+check_user_image
 
-DONE="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
-A new yaml file has been generated for you. Please check the current directory for new_values.yaml."
-echo "$DONE"
+function migrate_fluentbit_db_path() {
+  # New fluent-bit db path, and account for yq bug that stringifies empty maps
+  info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
+  warning 'Please ensure that new fluent-bit configuration is correct\n'
+
+  sed 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE} | \
+  sed "s/'{}'/{}/g" > new_values.yaml
+}
+
+migrate_fluentbit_db_path
+
+function remove_temp_file() {
+  rm ${TEMP_FILE}
+}
+
+remove_temp_file
+
+function echo_footer() {
+  DONE="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.\nA new yaml file has been generated for you. Please check the current directory for new_values.yaml."
+  echo -e "$DONE"
+}
+
+echo_footer
