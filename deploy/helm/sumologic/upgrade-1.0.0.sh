@@ -444,3 +444,5 @@ migrate_fluentbit_db_path
 remove_temp_file
 
 echo_footer
+
+exit 0
