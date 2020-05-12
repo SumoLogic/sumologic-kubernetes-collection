@@ -1,0 +1,9 @@
+
+[INFO]    Updating setup hooks (sumologic.setup.*.annotations[helm.sh/hook]) to 'pre-install,pre-upgrade'
+[INFO]    falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)
+
+[INFO]    Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db
+[WARNING] Please ensure that new fluent-bit configuration is correct
+
+Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
+A new yaml file has been generated for you. Please check the current directory for new_values.yaml.
