@@ -1,0 +1,9 @@
+sumologic: {}
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |-
+        <filter containers.**>
+          @type record_modifier
+          remove_keys stream
+        </filter>
