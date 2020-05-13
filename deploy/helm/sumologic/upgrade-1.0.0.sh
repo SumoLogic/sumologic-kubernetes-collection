@@ -250,9 +250,9 @@ function migrate_pre_upgrade_hook() {
 function check_falco_state() {
   # Print information about falco state
   if [[ "$(yq r ${TEMP_FILE} -- falco.enabled)" == 'true' ]]; then
-    info 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)\n'
+    info 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)'
   else
-    info 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it\n'
+    info 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it'
   fi
 }
 
@@ -297,7 +297,7 @@ function migrate_prometheus_metrics() {
         if [[ "${regex_0_17}" = "${regex}" ]]; then
             yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
         else
-            warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually\n"
+            warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually"
         fi
       fi
 
@@ -313,7 +313,7 @@ function migrate_prometheus_metrics() {
               if [[ "${regex_0_17}" = "${regex}" ]]; then
                   yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
               else
-                  warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually\n"
+                  warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually"
               fi
           fi
       fi
@@ -396,7 +396,7 @@ function check_user_image() {
   readonly USER_VERSION="$(yq r "${OLD_VALUES_YAML}" -- image.tag)"
   if [[ -n "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
     warning "You are using unsupported version: ${USER_VERSION}"
-    warning "Please upgrade to ${PREVIOUS_VERSION} or ensure that new_values.yaml is valid\n"
+    warning "Please upgrade to ${PREVIOUS_VERSION} or ensure that new_values.yaml is valid"
   fi
 }
 
@@ -404,7 +404,7 @@ function migrate_fluentbit_db_path() {
   grep 'tail-db/tail-containers-state.db' ${TEMP_FILE} 1>/dev/null 2>&1 || return 0
   # New fluent-bit db path
   info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
-  warning 'Please ensure that new fluent-bit configuration is correct\n'
+  warning 'Please ensure that new fluent-bit configuration is correct'
 
   sed -i '' 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE}
 }
@@ -419,7 +419,7 @@ function rename_temp_file() {
 }
 
 function echo_footer() {
-  DONE="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.\nA new yaml file has been generated for you. Please check the current directory for new_values.yaml."
+  DONE="\nThank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.\nA new yaml file has been generated for you. Please check the current directory for new_values.yaml."
   echo -e "$DONE"
 }
 
