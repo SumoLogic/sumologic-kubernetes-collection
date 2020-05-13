@@ -3,7 +3,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-readonly OLD_VALUES_YAML="$1"
+readonly OLD_VALUES_YAML="${1:---help}"
 readonly HELM_RELEASE_NAME="${2:-collection}"
 readonly NAMESPACE="${3:-sumologic}"
 readonly PREVIOUS_VERSION=0.17.2
@@ -147,7 +147,7 @@ For more details, please refer to Migration steps and Changelog here: [link]"
 }
 
 function check_if_print_help_and_exit() {
-  if [[ "${1:---help}" = "--help" ]]; then
+  if [[ "$1" == "--help" ]]; then
     print_help_and_exit
   fi
 }
@@ -423,7 +423,7 @@ function echo_footer() {
   echo -e "$DONE"
 }
 
-check_if_print_help_and_exit "$1"
+check_if_print_help_and_exit "${OLD_VALUES_YAML}"
 check_required_command yq
 check_yq_version
 check_required_command grep
