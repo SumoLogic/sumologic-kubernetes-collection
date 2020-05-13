@@ -23,7 +23,7 @@ for input_file in ${INPUT_FILES}; do
   output_file="${test_name}.output.yaml"
   log_file="${test_name}.log"
 
-  test_start "${test_name}"
+  test_start "${test_name}" ${input_file}
   bash "${SCRIPT_PATH}/../../deploy/helm/sumologic/upgrade-1.0.0.sh" "${STATICS_PATH}/${input_file}" 1>"${TMP_OUT}" 2>&1
 
   test_output=$(diff "${STATICS_PATH}/${output_file}" "${OUT}")
@@ -31,10 +31,10 @@ for input_file in ${INPUT_FILES}; do
 
   if [[ -n "${test_output}" || -n "${test_log}" ]]; then
     if [[ -n "${test_output}" ]]; then
-      echo -e "\tOutput diff:\n${test_output}"
+      echo -e "\tOutput diff (${STATICS_PATH}/${output_file}):\n${test_output}"
     fi
     if [[ -n "${test_log}" ]]; then
-      echo -e "\tLog diff:\n${test_log}"
+      echo -e "\tLog diff (${STATICS_PATH}/${log_file}):\n${test_log}"
     fi
     test_failed "${test_name}"
   else
