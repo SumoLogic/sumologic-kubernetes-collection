@@ -401,17 +401,21 @@ function check_user_image() {
 }
 
 function migrate_fluentbit_db_path() {
-  # New fluent-bit db path, and account for yq bug that stringifies empty maps
-  # grep 'tail-db/tail-containers-state.db' "${OLD_VALUES_YAML}" || return
+  grep 'tail-db/tail-containers-state.db' ${TEMP_FILE} 1>/dev/null 2>&1 || return 0
+  # New fluent-bit db path
   info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
   warning 'Please ensure that new fluent-bit configuration is correct\n'
 
-  sed 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE} | \
-  sed "s/'{}'/{}/g" > new_values.yaml
+  sed -i '' 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE}
 }
 
-function remove_temp_file() {
-  rm ${TEMP_FILE}
+function fix_yq() {
+  # account for yq bug that stringifies empty maps
+  sed -i '' "s/'{}'/{}/g" ${TEMP_FILE}
+}
+
+function rename_temp_file() {
+  mv ${TEMP_FILE} new_values.yaml
 }
 
 function echo_footer() {
@@ -442,7 +446,8 @@ fix_prometheus_service_monitors
 check_user_image
 migrate_fluentbit_db_path
 
-remove_temp_file
+fix_yq
+rename_temp_file
 
 echo_footer
 
