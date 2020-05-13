@@ -179,7 +179,7 @@ function migrate_customer_keys() {
   readonly CUSTOMER_KEYS=$(yq --printMode p r "${OLD_VALUES_YAML}" -- '**')
 
   for key in ${CUSTOMER_KEYS}; do
-    if [[ ${MAPPINGS[*]} =~ ${key} ]]; then
+    if [[ ${MAPPINGS[*]} =~ ${key}: ]]; then
       # whatever you want to do when arr contains value
       for i in "${MAPPINGS[@]}"; do
         IFS=':' read -r -a maps <<< "${i}"
@@ -189,7 +189,7 @@ function migrate_customer_keys() {
           yq d -i ${TEMP_FILE} -- "${maps[0]}"
         fi
       done
-    elif [[ ${MAPPINGS_MULTIPLE[*]} =~ ${key} ]]; then
+    elif [[ ${MAPPINGS_MULTIPLE[*]} =~ ${key}: ]]; then
       # whatever you want to do when arr contains value
       info "Mapping ${key} into:"
       for i in "${MAPPINGS_MULTIPLE[@]}"; do
