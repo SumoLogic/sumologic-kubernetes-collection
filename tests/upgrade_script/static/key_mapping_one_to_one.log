@@ -27,7 +27,7 @@
 [INFO]    Mapping sumologic.verifySsl into fluentd.verifySsl
 [INFO]    Mapping sumologic.watchResourceEventsOverrides into fluentd.events.watchResourceEventsOverrides
 
-[INFO]    falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)
+[INFO]    falco will be disabled. Change "falco.enabled" to "true" if you want to enable it
 
 [INFO]    Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db
 [WARNING] Please ensure that new fluent-bit configuration is correct
