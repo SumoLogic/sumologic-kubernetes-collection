@@ -249,10 +249,10 @@ function migrate_pre_upgrade_hook() {
 
 function check_falco_state() {
   # Print information about falco state
-  if [[ "$(yq r ${TEMP_FILE} -- falco.enabled)" == 'false' ]]; then
-    info 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it\n'
-  else
+  if [[ "$(yq r ${TEMP_FILE} -- falco.enabled)" == 'true' ]]; then
     info 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)\n'
+  else
+    info 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it\n'
   fi
 }
 
@@ -402,6 +402,7 @@ function check_user_image() {
 
 function migrate_fluentbit_db_path() {
   # New fluent-bit db path, and account for yq bug that stringifies empty maps
+  # grep 'tail-db/tail-containers-state.db' "${OLD_VALUES_YAML}" || return
   info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
   warning 'Please ensure that new fluent-bit configuration is correct\n'
 
