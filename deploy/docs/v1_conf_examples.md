@@ -20,7 +20,7 @@ Below you can see a few examples of how this configuration can be set.
 Now we have exposed an `extraLogs` parameter inside the `logs.containers` section of the `values.yaml` where you can add the output plugin for the custom log pipeline.
 
 **NOTE:** This will only send the logs to Sumo if the logs are being collected correctly at the FluentBit level with an input plugin.
-To add a custom endpoint, please follow the steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/additional_prometheus_configuration.md#create-a-new-http-source-in-sumo-logic)
+To add a custom endpoint, please follow the steps mentioned [here](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source)
 
 ```yaml
 fluentd:
@@ -49,7 +49,7 @@ fluentd:
 
 You can add any of the Fluentd filter plugins in the `extraFilterPluginConf` section to filter data as per your needs.
 
-**Note:** This is specific to container logs pipeline only and will mnot work for other logs.
+**Note:** This is specific to container logs pipeline only and will not work for other logs.
 
 The below example uses the `grep` filter to match any record that satisfies the following conditions:
  - The value of the "message" field contains "cool"
@@ -72,10 +72,12 @@ fluentd:
           </exclude> 
         </filter>
 ```
-Reference documentation: [Fluentd Filter Plugin](#https://docs.fluentd.org/filter)
+Reference documentation: [Fluentd Filter Plugin](https://docs.fluentd.org/filter)
 
 ## Override Fluentd Output plugin to forward data to Sumo as well as S3
 The example below shows how you can override the entire output section for the container logs pipeline.
+
+You can look at the Default output section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/logs/logs.source.containers.conf#L51)
 
 ```yaml
 fluentd:
@@ -88,6 +90,7 @@ fluentd:
             @type sumologic
             @id sumologic.endpoint.logs
             @include logs.output.conf
+            # Helm templating does not work in the `values.yaml` file so, you will *NOT* have an option to choose the file/memory buffer configs based on the fluentd.buffer.type value and will have to write them explicitly. 
             <buffer>
               @type file
               path /fluentd/buffer/logs.containers
