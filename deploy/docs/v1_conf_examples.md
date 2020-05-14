@@ -2,17 +2,25 @@
 
 Until now, Helm users have not been able to modify their Fluentd configuration outside of the specific parameters that we exposed in the `values.yaml` file. Now, we expose the ability to modify the Fluentd configuration as needed. 
 
-Some use-cases include : 
+Some use-cases include: 
  - custom log pipelines, 
  - adding Fluentd filter plugins (ex: fluentd throttle plugin), or 
  - adding Fluentd output plugins (ex: forward to both Sumo and S3)
- - additinal configurantion for sumologic output plugin
+ - additional configuration for sumologic output plugin
 
+**NOTE:** Helm templating like
+```bash
+{{ .Values.fluentd.foo.bar | quote }}
+```
+will **NOT** work if they are specified within one of the below mentioned plugin conf sections, since they are in the `values.yaml` file and are therefore interpreted as literal strings. 
 
 Below you can see a few examples of how this configuration can be set.
 
 ### Custom Log Pipelines
-Now we have exposed an `extraLogs` paramter inside the `logs.containers` section of the `values.yaml` where you can add the output plugin for the custom log pipeline.
+Now we have exposed an `extraLogs` parameter inside the `logs.containers` section of the `values.yaml` where you can add the output plugin for the custom log pipeline.
+
+**NOTE:** This will only send the logs to Sumo if the logs are being collected correctly at the FluentBit level with an input plugin.
+To add a custom endpoint, please follow the steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/additional_prometheus_configuration.md#create-a-new-http-source-in-sumo-logic)
 
 ```yaml
 fluentd:
@@ -39,9 +47,11 @@ fluentd:
 
 ### Adding Fluentd Filter plugin
 
-You can add any of the fluentd filter plugins in the `extraFilterPluginConf` section to filter data as per your needs.
+You can add any of the Fluentd filter plugins in the `extraFilterPluginConf` section to filter data as per your needs.
 
-The below example uses the `grep` filter to match any event that satisfies the following conditions:
+**Note:** This is specific to container logs pipeline only and will mnot work for other logs.
+
+The below example uses the `grep` filter to match any record that satisfies the following conditions:
  - The value of the "message" field contains "cool"
  - The value of the "message" field does NOT contain "uncool"
 
@@ -107,7 +117,7 @@ fluentd:
 
 ### Additional Buffer/Flush/Retry Config parameters for Sumologic Output Plugin
 
-The following confgig parameters are set by default and their values can be set by changing the respective cofig in `values.yaml`. 
+The following config parameters are set by default and their values can be set by changing the respective config in `values.yaml`. 
 
 ```bash
 compress gzip
@@ -118,7 +128,7 @@ total_limit_size {{ .Values.fluentd.buffer.totalLimitSize | quote }}
 queued_chunks_limit_size {{ .Values.fluentd.buffer.queueChunkLimitSize | quote }}
 overflow_action drop_oldest_chunk
 ```
-If you want to add any new Buffer/Flush/Retry Config, you can add them in the `extraConf` section.
+However, if you wish to add any additional Buffer/Flush/Retry Configs, you can do so in the `extraConf` section.
 
 ```yaml
 fluentd:
