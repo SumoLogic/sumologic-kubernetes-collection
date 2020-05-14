@@ -36,7 +36,7 @@ falco:
 	- The `values.yaml` file has had several configs moved and renamed to improve usability. Namely, we introduced a new fluentd section into which we moved all of the Fluentd specific configs, while configs for our dependency charts (`prometheus-operator`, `fluent-bit`, `metrics-server`, `falco`) have not changed.
 
 | Old Config 	| New Config 	|
-|:----------------------------------------:	|-----------------------------------------------------	|
+|:----------------------------------------:	|:-----------------------------------------------------:	|
 | sumologic.eventCollectionEnabled 	| fluentd.events.enabled 	|
 | sumologic.events.sourceCategory 	| fluentd.events.sourceCategory 	|
 | sumologic.logFormat 	| fluentd.logs.output.logFormat 	|
@@ -102,7 +102,7 @@ Run the below command to fetch the latest helm chart:
 ```bash
 helm repo update
 
-If the user is not already on `v0.17.1` of the helm chart, upgrade to that version first by running the below command.
+If the user is not already on `v0.17.3` of the helm chart, upgrade to that version first by running the below command.
 
 ```bash
 helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.1
@@ -110,25 +110,24 @@ helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.1
 #### 2: Run upgrade script
 
 For Helm users, the only breaking changes are the renamed config parameters.
-For users who use a `values.yaml` file, we will provide a script that customers can run to convert their existing `values.yaml` files into ones that are compatible with the major release. 
+For users who use a `values.yaml` file, we provide a script that users can run to convert their existing `values.yaml` file into one that is compatible with the major release. 
 
-The upgrade script is present in the path : `sumologic-kubernetes-collection/deploy/helm/sumologic/`
-You will either need to clone the repo or `curl` the upgrade script. 
-Run the upgrade script with the below command.
+
+- Get the existing values for the helm chart and store it as `current_values.yaml` with the below command:
 ```bash
-./upgrade-1.0.0.sh values.yaml
+helm get values <RELEASE-NAME> > current_values.yaml
 ```
-At this point, users can then run: 
+- Run `curl` the upgrade script as follows:
 ```bash
-helm upgrade collection sumologic/sumologic --reuse-values --version=1.0.0 -f new_values.yaml
+curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0.0/deploy/helm/sumologic/upgrade-1.0.0.sh
 ```
-For users who installed without a `values.yaml` file, if they had set any of the above config parameters they will need to re-set those parameters during their upgrade. For example, if the customer had originally run
+- Run the upgrade script on the above file with the below command.
 ```bash
-helm install sumologic/sumologic --name collection --namespace sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> ... --set sumologic.numThreads=16
+./upgrade-1.0.0.sh current_values.yaml
 ```
-Then their upgrade command will look like
+- At this point, users can then run: 
 ```bash
-helm upgrade collection sumologic/sumologic --reuse-values --version=1.0.0 --set fluentd.buffer.numThreads=16
+helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_values.yaml
 ```
 ## Non-Helm Users
 ### Breaking Changes
@@ -146,15 +145,15 @@ above the output plugin section [here](https://github.com/SumoLogic/sumologic-ku
 - The unified Fluentd `statefulsets` have been split into set of two different Fluentd's, one for `logs` and the other one for `metrics`.
 - We now support the collection of renamed metrics (for Kubernetes version `1.17+`).
 ### How to upgrade for Non-helm Users
-#### 1. Tear down existing fluentd, prometheus, fluentbit resources
+#### 1. Tear down existing Fluentd, Prometheus, Fluentbit resources
 Run the commands mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#tear-down) to delete the respective resources.
 
-#### 2. Deploy Fluentd, Fluent-bit and prometheus again with the verison 1.0.0 yaml
+#### 2. Deploy Fluentd, Fluentbit and Prometheus again with the version 1.0.0 yaml
 Follow the below steps to deploy new resources. 
 ##### 2.1 Deploy Fluentd
 - Non-Helm users who have made changes to configs in the [environment variable sections](#https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl#L627-L678) of the `fluentd-sumologic.yaml` file will need to move those config changes directly into the Fluentd pipeline.
 
-- Run the below command to get the `fluentd-sumologic.yaml` manifest for version v. `1.0.0` and  then make the changes identified in the above step.
+- Run the below command to get the `fluentd-sumologic.yaml` manifest for version `v1.0.0` and  then make the changes identified in the above step.
 ```bash
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/<NAMESPACE>/g" | \
