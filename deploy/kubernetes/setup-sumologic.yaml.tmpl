@@ -250,7 +250,7 @@ spec:
           defaultMode: 0777
       containers:
       - name: setup
-        image: sumologic/kubernetes-fluentd:1.0.0-rc.0
+        image: sumologic/kubernetes-fluentd:1.0.0-rc.2
         imagePullPolicy: IfNotPresent
         command: ["/etc/terraform/setup.sh"]
         volumeMounts:
