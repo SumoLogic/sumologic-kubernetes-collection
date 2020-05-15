@@ -763,6 +763,10 @@ prometheus-operator:
               regex: kubelet;(?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)_count|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
               sourceLabels: [job, __name__]
         # cadvisor container metrics
+        # container_cpu_usage_seconds_total
+        # container_fs_limit_bytes
+        # container_fs_usage_bytes
+        # container_memory_working_set_bytes
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
           writeRelabelConfigs:
             - action: labelmap
