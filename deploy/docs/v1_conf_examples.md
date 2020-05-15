@@ -47,9 +47,9 @@ fluentd:
 
 ### Adding Fluentd Filter plugin
 
-You can add any of the Fluentd filter plugins in the `extraFilterPluginConf` section to filter data as per your needs.
+You can add any of the Fluentd filter plugins in the `extraFilterPluginConf` section to filter data based on your needs.
 
-**Note:** This is specific to container logs pipeline only and will not work for other logs.
+**Note:** This is specific to the container logs pipeline only and will not work for other logs.
 
 The below example uses the `grep` filter to match any record that satisfies the following conditions:
  - The value of the "message" field contains "cool"
