@@ -30,7 +30,7 @@ falco:
   enabled: true
   ```
 
-- Bumped the helm Falco chart version to v `1.1.6` which included a fix to disable the bitcoin/crypto miner rule by default
+- Bumped the helm Falco chart version to v`1.1.6` which included a fix to disable the bitcoin/crypto miner rule by default
 
 - Changes in Configuration Parameters
 	- The `values.yaml` file has had several configs moved and renamed to improve usability. Namely, we introduced a new fluentd section into which we moved all of the Fluentd specific configs, while configs for our dependency charts (`prometheus-operator`, `fluent-bit`, `metrics-server`, `falco`) have not changed.
