@@ -667,6 +667,11 @@ prometheus-operator:
               regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)
               sourceLabels: [job, __name__]
         # controller manager metrics
+        # https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
+        # e.g.
+        # cloudprovider_aws_api_request_duration_seconds_bucket
+        # cloudprovider_aws_api_request_duration_seconds_count
+        # cloudprovider_aws_api_request_duration_seconds_sum
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.controller-manager
           writeRelabelConfigs:
             - action: keep
