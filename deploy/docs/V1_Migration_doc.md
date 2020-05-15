@@ -65,7 +65,7 @@ falco:
 | sumologic.k8sMetadataFilter.cacheSize 	| fluentd.metadata.cacheSize 	|
 | sumologic.k8sMetadataFilter.cacheTtl 	| fluentd.metadata.cacheTtl 	|
 | sumologic.k8sMetadataFilter.cacheRefresh 	| fluentd.metadata.cacheRefresh 	|
-| deployment.* 	| fluentd.statefulset.* 	|
+| deployment.* 	| fluentd.logs.statefulset.* , fluentd.metrics.statefulset.*	|
 | eventsDeployment.* 	| fluentd.eventsStatefulset.* 	|
 
 
@@ -90,13 +90,15 @@ Some use-cases include :
  - adding Fluentd filter plugins (ex: fluentd throttle plugin), or 
  - adding Fluentd output plugins (ex: forward to both Sumo and S3)
 
+You can look for example configurations [here](../docs/v1_conf_examples.md)
+
 The Fluentd `deployments` have been changed to `statefulsets` to support the use of persistent volumes. This will allow better buffering behavior. They also now include `“fluentd”` in their names. This is not a breaking change for Helm users.
 
 The unified Fluentd `statefulsets` have been split into set of two different Fluentd's, one for `logs` and the other one for `metrics`.
 
 ### How to upgrade
 **Note: The below steps are using Helm 2. Helm 3 is not supported.**
-#### 1. Upgrade to helm chart version `v0.17.1 `
+#### 1. Upgrade to helm chart version `v0.17.3 `
 
 Run the below command to fetch the latest helm chart:
 ```bash
@@ -105,7 +107,7 @@ helm repo update
 If the user is not already on `v0.17.3` of the helm chart, upgrade to that version first by running the below command.
 
 ```bash
-helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.1
+helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.3
 ```
 #### 2: Run upgrade script
 
@@ -119,7 +121,7 @@ helm get values <RELEASE-NAME> > current_values.yaml
 ```
 - Run `curl` the upgrade script as follows:
 ```bash
-curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0.0/deploy/helm/sumologic/upgrade-1.0.0.sh
+curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/upgrade-1.0.0.sh
 ```
 - Run the upgrade script on the above file with the below command.
 ```bash
