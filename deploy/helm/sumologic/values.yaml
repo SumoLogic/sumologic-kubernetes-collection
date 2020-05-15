@@ -810,6 +810,10 @@ prometheus-operator:
               regex: kubelet;(?:container_network_receive_bytes_total|container_network_transmit_bytes_total)
               sourceLabels: [job,__name__]
         # node exporter metrics
+        # node_cpu_seconds_total
+        # node_load1
+        # node_load5
+        # node_load15
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.node
           writeRelabelConfigs:
             - action: keep
