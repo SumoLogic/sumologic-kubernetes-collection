@@ -6,7 +6,7 @@ IFS=$'\n\t'
 readonly OLD_VALUES_YAML="${1:---help}"
 readonly HELM_RELEASE_NAME="${2:-collection}"
 readonly NAMESPACE="${3:-sumologic}"
-readonly PREVIOUS_VERSION=0.17.2
+readonly PREVIOUS_VERSION=0.17
 
 readonly TEMP_FILE=upgrade-1.0.0-temp-file
 
@@ -394,9 +394,14 @@ prometheus-operator:
 function check_user_image() {
   # Check user's image and echo warning if the image has been changed
   readonly USER_VERSION="$(yq r "${OLD_VALUES_YAML}" -- image.tag)"
-  if [[ -n "${USER_VERSION}" && "${USER_VERSION}" != "${PREVIOUS_VERSION}" ]]; then
-    warning "You are using unsupported version: ${USER_VERSION}"
-    warning "Please upgrade to ${PREVIOUS_VERSION} or ensure that new_values.yaml is valid"
+  if [[ -n "${USER_VERSION}" ]]; then
+    if [[ "${USER_VERSION}" =~ ^"${PREVIOUS_VERSION}"\.[[:digit:]]+$ ]]; then
+      yq w -i ${TEMP_FILE} -- image.tag 1.0.0
+      info "Changing image.tag from '${USER_VERSION}' to '1.0.0'"
+    else
+      warning "You are using unsupported version: ${USER_VERSION}"
+      warning "Please upgrade to '${PREVIOUS_VERSION}.x' or ensure that new_values.yaml is valid"
+    fi
   fi
 }
 
