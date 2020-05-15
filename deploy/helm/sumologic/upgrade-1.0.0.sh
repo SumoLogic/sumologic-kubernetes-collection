@@ -6,7 +6,7 @@ IFS=$'\n\t'
 readonly OLD_VALUES_YAML="${1:---help}"
 readonly HELM_RELEASE_NAME="${2:-collection}"
 readonly NAMESPACE="${3:-sumologic}"
-readonly PREVIOUS_VERSION=0.17.2
+readonly PREVIOUS_VERSION=0.17.3
 
 readonly TEMP_FILE=upgrade-1.0.0-temp-file
 
