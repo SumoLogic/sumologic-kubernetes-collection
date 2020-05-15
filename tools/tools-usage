@@ -5,11 +5,21 @@ This image provides a set of tools for Kubernetes Collection. You can use follow
 
  * K8S Check for verifying the environment for sumologic serviceaccount (collection must be installed first):
 
-kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never -n sumologic --serviceaccount='collection-sumologic' --image sumologic/kubernetes-tools -- check
+ kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never -n sumologic --serviceaccount='collection-sumologic' --image sumologic/kubernetes-tools -- check
 
-* K8S Check for verifying the environment (default serviceaccount):
+ * K8S Check for verifying the environment (default serviceaccount):
 
  kubectl run tools --generator=run-pod/v1 -it --rm --restart=Never --image sumologic/kubernetes-tools -- check
+
+ * Trace stress-testing
+
+ kubectl run stress-tester --generator=run-pod/v1 -it --rm --restart=Never -n sumologic \
+  --image sumologic/kubernetes-tools \
+  --serviceaccount='collection-sumologic' \
+  --env JAEGER_AGENT_HOST=collection-sumologic-otelcol.sumologic \
+  --env JAEGER_AGENT_PORT=6831 \
+  --env TOTAL_SPANS=1000000 \
+  --env SPANS_PER_MIN=6000 --
 
  * Interactive mode:
 

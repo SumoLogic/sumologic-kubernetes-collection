@@ -1,6 +1,6 @@
 image:
   repository: sumologic/kubernetes-fluentd
-  tag: 1.0.0-beta.2
+  tag: 1.0.0-rc.2
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -669,17 +669,52 @@ prometheus-operator:
             - action: keep
               regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_latency_microseconds.*
               sourceLabels: [job, __name__]
-        # api server metrics
+        # api server metrics:
+        # apiserver_request_count
+        # apiserver_request_total
+        # apiserver_request_duration_seconds_count
+        # apiserver_request_duration_seconds_sum
+        # apiserver_request_latencies_count
+        # apiserver_request_latencies_sum
+        # apiserver_request_latencies_summary
+        # apiserver_request_latencies_summary_count
+        # apiserver_request_latencies_summary_sum
+        # etcd_request_cache_get_duration_seconds_count
+        # etcd_request_cache_get_duration_seconds_sum
+        # etcd_request_cache_add_duration_seconds_count
+        # etcd_request_cache_add_duration_seconds_sum
+        # etcd_request_cache_add_latencies_summary_count
+        # etcd_request_cache_add_latencies_summary_sum
+        # etcd_request_cache_get_latencies_summary_count
+        # etcd_request_cache_get_latencies_summary_sum
+        # etcd_helper_cache_hit_count
+        # etcd_helper_cache_hit_total
+        # etcd_helper_cache_miss_count
+        # etcd_helper_cache_miss_total
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.apiserver
           writeRelabelConfigs:
             - action: keep
-              regex: apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:latencies|duration_seconds).*|etcd_request_cache_get_(?:latencies_summary|duration_seconds).*|etcd_request_cache_add_(?:latencies_summary|duration_seconds).*|etcd_helper_cache_hit_(?:count|total)|etcd_helper_cache_miss_(?:count|total))
+              regex: apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum)|etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total))
               sourceLabels: [job, __name__]
-        # kubelet metrics
+        # kubelet metrics:
+        # kubelet_docker_operations_errors
+        # kubelet_docker_operations_errors_total
+        # kubelet_docker_operations_duration_seconds_count
+        # kubelet_docker_operations_duration_seconds_sum
+        # kubelet_runtime_operations_duration_seconds_count
+        # kubelet_runtime_operations_duration_seconds_sum
+        # kubelet_running_container_count
+        # kubelet_running_pod_count
+        # kubelet_docker_operations_latency_microseconds
+        # kubelet_docker_operations_latency_microseconds_count
+        # kubelet_docker_operations_latency_microseconds_sum
+        # kubelet_runtime_operations_latency_microseconds
+        # kubelet_runtime_operations_latency_microseconds_count
+        # kubelet_runtime_operations_latency_microseconds_sum
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.kubelet
           writeRelabelConfigs:
             - action: keep
-              regex: kubelet;(?:kubelet_docker_operations_errors.*|kubelet_docker_operations_(?:latency_micro|duration_)seconds.*|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_(?:latency_micro|duration_)seconds.*)
+              regex: kubelet;(?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)_count|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
               sourceLabels: [job, __name__]
         # cadvisor container metrics
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
@@ -745,7 +780,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.2.7.1"
+      tag: "0.3.0.5"
       pullPolicy: IfNotPresent
   config:
     receivers:
@@ -763,9 +798,18 @@ otelcol:
             endpoint: "0.0.0.0:14268"
       opencensus:
         endpoint: "0.0.0.0:55678"
+      otlp:
+        endpoint: "0.0.0.0:55680"
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
+      # Adds _sourceCategory and _sourceName
+      source:
+        collector: "processors.source.collector.replace"
+        source_name: "processors.source.name.replace"
+        source_category: "processors.source.category.replace"
+        source_category_prefix: "processors.source.category_prefix.replace"
+        source_category_replace_dash: "processors.source.category_replace_dash.replace"
       # Tags spans with K8S metadata, basing on the context IP
       k8s_tagger:
         # When true, only IP is assigned and passed (so it could be tagged on another collector)
@@ -804,10 +848,10 @@ otelcol:
             # serviceName: service
             statefulSetName: statefulset
           annotations:
-            - tag_name: pod_annotation_%s
+            - tag_name: "pod_annotation_%s"
               key: "*"
           labels:
-            - tag_name: pod_label_%s
+            - tag_name: "pod_labels_%s"
               key: "*"
 
       # The memory_limiter processor is used to prevent out of memory situations on the collector.
@@ -837,8 +881,6 @@ otelcol:
       batch:
         # Number of spans after which a batch will be sent regardless of time
         send_batch_size: 256
-        # Number of tickers that loop over batch buckets
-        num_tickers: 10
         # Time duration after which a batch will be sent regardless of size
         timeout: 5s
     extensions:
@@ -856,6 +898,6 @@ otelcol:
       extensions: [health_check]
       pipelines:
         traces:
-          receivers: [jaeger, zipkin, opencensus]
-          processors: [memory_limiter, k8s_tagger, batch, queued_retry]
+          receivers: [jaeger, zipkin, opencensus, otlp]
+          processors: [memory_limiter, k8s_tagger, source, batch, queued_retry]
           exporters: [zipkin]

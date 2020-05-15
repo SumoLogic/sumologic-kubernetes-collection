@@ -1,4 +1,8 @@
 {{- $yamlFile := toYaml $.Values.otelcol.config }}
-{{- $fullname := include "sumologic.fullname" . }}
-{{- $url := list "http://" $fullname ":9411/api/v2/spans" | join "" }}
-{{- $yamlFile | replace "exporters.zipkin.url_replace" $url | nindent 2 }}
+{{- $_collector := .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
+{{- $endpoint := .Values.sumologic.traces.endpoint | quote }}
+{{- $sourceName := .Values.sumologic.sourceName | quote }}
+{{- $sourceCategory := .Values.sumologic.sourceCategory | quote }}
+{{- $sourceCategoryPrefix := .Values.sumologic.sourceCategoryPrefix | quote }}
+{{- $sourceCategoryReplaceDash := .Values.sumologic.sourceCategoryReplaceDash | quote }}
+{{- $yamlFile | replace "processors.source.collector.replace" $_collector | replace "exporters.zipkin.url_replace" $endpoint | replace "processors.source.name.replace" $sourceName | replace "processors.source.category.replace" $sourceCategory | replace "processors.source.category_prefix.replace" $sourceCategoryPrefix | replace "processors.source.category_replace_dash.replace" $sourceCategoryReplaceDash | nindent 2 }}

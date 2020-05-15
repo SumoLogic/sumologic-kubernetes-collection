@@ -1,0 +1,41 @@
+eventsDeployment:
+  nodeSelector: fluentd.events.statefulset.nodeSelector
+  resources:
+    limits:
+      cpu: fluentd.events.statefulset.resources.limits.cpu
+      memory: fluentd.events.statefulset.resources.limits.memory
+    requests:
+      cpu: fluentd.events.statefulset.resources.requests.cpu
+      memory: fluentd.events.statefulset.resources.requests.memory
+  tolerations: fluentd.events.statefulset.tolerations
+sumologic:
+  addTimestamp: fluentd.logs.output.addTimestamp
+  chunkLimitSize: fluentd.buffer.chunkLimitSize
+  eventCollectionEnabled: fluentd.events.enabled
+  events:
+    sourceCategory: fluentd.events.sourceCategory
+  excludeContainerRegex: fluentd.logs.containers.excludeContainerRegex
+  excludeHostRegex: fluentd.logs.containers.excludeHostRegex
+  excludeNamespaceRegex: fluentd.logs.containers.excludeNamespaceRegex
+  excludePodRegex: fluentd.logs.containers.excludePodRegex
+  fluentd:
+    buffer: fluentd.buffer.type
+  fluentdLogLevel: fluentd.logLevel
+  flushInterval: fluentd.buffer.flushInterval
+  k8sMetadataFilter.:
+    cacheRefresh: fluentd.metadata.cacheRefresh
+    cacheSize: fluentd.metadata.cacheSize
+    cacheTtl: fluentd.metadata.cacheTtl
+    verifySsl: fluentd.logs.containers.k8sMetadataFilter.verifySsl
+    watch: fluentd.logs.containers.k8sMetadataFilter.watch
+  logFormat: fluentd.logs.output.logFormat
+  numThreads: fluentd.buffer.numThreads
+  queueChunkLimitSize: fluentd.buffer.queueChunkLimitSize
+  sourceCategory: fluentd.logs.containers.sourceCategory
+  sourceCategoryPrefix: fluentd.logs.containers.sourceCategoryPrefix
+  sourceCategoryReplaceDash: fluentd.logs.containers.sourceCategoryReplaceDash
+  sourceName: fluentd.logs.containers.sourceName
+  timestampKey: fluentd.logs.output.timestampKey
+  totalLimitSize: fluentd.buffer.totalLimitSize
+  verifySsl: fluentd.verifySsl
+  watchResourceEventsOverrides: fluentd.events.watchResourceEventsOverrides

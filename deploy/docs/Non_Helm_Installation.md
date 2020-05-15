@@ -154,8 +154,8 @@ If you don't need to customize the configuration apply the `fluentd-sumologic.ya
 
 ```sh
 curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
-sed 's/\$NAMESPACE'"/sumologic/g" | \
-sed 's/cluster kubernetes/cluster $CLUSTER_NAME/g' | \
+sed 's/\$NAMESPACE'"/<NAMESPACE>/g" | \
+sed 's/cluster kubernetes/cluster <CLUSTER_NAME>/g' | \
 kubectl -n sumologic apply -f -
 ```
 
@@ -249,6 +249,13 @@ $ helm fetch stable/fluent-bit --version 2.8.1
 $ helm template fluent-bit-2.8.1.tgz --name fluent-bit --namespace=sumologic -f fluent-bit-overrides.yaml > fluent-bit.yaml
 $ kubectl apply -f fluent-bit.yaml
 ```
+__NOTE__ You may see the following errors while applying the `yaml` : 
+
+```bash
+unable to recognize "fluent-bit.yaml": no matches for kind "ClusterRole" in version "rbac.authorization.k8s.io/v1alpha1"
+unable to recognize "fluent-bit.yaml": no matches for kind "ClusterRoleBinding" in version "rbac.authorization.k8s.io/v1alpha1"
+```
+The above errors can be ignored.
 
 __NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) for the currently supported version.
 
@@ -264,13 +271,6 @@ $ helm fetch stable/falco --version 1.0.9
 $ helm template falco-1.0.9.tgz --name falco --namespace=sumologic -f falco-overrides.yaml > falco.yaml
 $ kubectl apply -f falco.yaml
 ```
-__NOTE__ You may see the following errors while applying the `yaml` : 
-
-```bash
-unable to recognize "fluent-bit.yaml": no matches for kind "ClusterRole" in version "rbac.authorization.k8s.io/v1alpha1"
-unable to recognize "fluent-bit.yaml": no matches for kind "ClusterRoleBinding" in version "rbac.authorization.k8s.io/v1alpha1"
-```
-The above errors can be ignored.
 
 __NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) for the currently supported version.
 

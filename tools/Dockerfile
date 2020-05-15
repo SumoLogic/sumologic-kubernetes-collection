@@ -3,6 +3,7 @@ RUN mkdir /build
 ADD . /build/
 WORKDIR /build
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o k8s-api-test cmd/k8s-api-test/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o stress-tester cmd/stress-tester/main.go
 
 FROM alpine:3.9
 
@@ -26,5 +27,6 @@ ADD profile  /etc/profile
 ADD check /usr/bin/check
 ADD tools-usage /usr/bin/tools-usage
 COPY --from=builder /build/k8s-api-test /usr/bin/
+COPY --from=builder /build/stress-tester /usr/bin/
 
 CMD ["/usr/bin/tools-usage"]
