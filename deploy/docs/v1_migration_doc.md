@@ -119,7 +119,7 @@ For users who use a `values.yaml` file, we provide a script that users can run t
 
 - Get the existing values for the helm chart and store it as `current_values.yaml` with the below command:
 ```bash
-helm get values <RELEASE-NAME> -o yaml> current_values.yaml
+helm get values <RELEASE-NAME> -o yaml > current_values.yaml
 ```
 - Run `curl` the upgrade script as follows:
 ```bash
