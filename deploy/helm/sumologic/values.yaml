@@ -632,7 +632,11 @@ prometheus-operator:
     prometheusSpec:
       ## Define resources requests and limits for single Pods.
       resources: {}
+      # limits:
+      #   cpu: 800m
+      #   memory: 800Mi
       # requests:
+      #   cpu: 400m
       #   memory: 400Mi
       thanos:
         version: v0.10.0
