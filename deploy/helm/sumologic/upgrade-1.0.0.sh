@@ -225,7 +225,7 @@ function migrate_customer_keys() {
 
     if [[ "${CASTS_STRING[*]}" =~ ${key} ]]; then
       info "Casting ${key} to str"
-      # As yq doesn't cast `on` and `off` from bool to cast, we have to fo it manually
+      # As yq doesn't cast `on` and `off` from bool to cast, we use sed based casts
       yq w -i ${TEMP_FILE} -- "${key}" "$(yq r "${OLD_VALUES_YAML}" "${key}")__YQ_REPLACEMENT_CAST"
       sed -i '' 's/\(^.*: \)\(.*\)__YQ_REPLACEMENT_CAST/\1"\2"/g' ${TEMP_FILE}
     fi
