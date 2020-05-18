@@ -7,6 +7,7 @@
   - [How to upgrade](#how-to-upgrade)
     - [1. Upgrade to helm chart version v0.17.3](#1-upgrade-to-helm-chart-version-v0173)
     - [2. Run upgrade script](#2-run-upgrade-script)
+  - [Rollback](#rollback)
 - [Non-Helm Users](#non-helm-users)
   - [Changes](#breaking-changes)
   - [How to upgrade](#how-to-upgrade-for-non-helm-users)
@@ -132,6 +133,17 @@ curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collect
 ```bash
 helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_values.yaml
 ```
+
+### Rollback
+
+If something goes wrong, or you want to go back to the previous version,
+you can [rollback changes using helm](https://v2.helm.sh/docs/helm/#helm-rollback):
+
+```
+helm history collection
+helm rollback collection <REVISION-NUMBER>
+```
+
 ## Non-Helm Users
 ### Breaking Changes
 - The use of environment variables to set configs has been removed to avoid the extra layer of indirection and confusion. Instead, configs will be set directly within the Fluentd pipeline.
