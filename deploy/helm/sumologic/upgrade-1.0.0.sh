@@ -75,6 +75,16 @@ sumologic.k8sMetadataFilter
 sumologic.kubernetesMeta
 sumologic.kubernetesMetaReduce"
 
+readonly KEY_CASTS_STRING="
+fluent-bit.backend.forward.tls
+fluent-bit.backend.forward.tls_verify
+sumologic.setup.clusterRole.annotations.\"helm.sh/hook-weight\"
+sumologic.setup.clusterRoleBinding.annotations.\"helm.sh/hook-weight\"
+sumologic.setup.configMap.annotations.\"helm.sh/hook-weight\"
+sumologic.setup.job.annotations.\"helm.sh/hook-weight\"
+sumologic.setup.serviceAccount.annotations.\"helm.sh/hook-weight\"
+"
+
 # Prometheus changes
 # Diff of prometheus regexes:
 # git diff v1.0.0 v0.17.1 deploy/helm/sumologic/values.yaml | \
@@ -174,6 +184,8 @@ function migrate_customer_keys() {
   readonly MAPPINGS_MULTIPLE
   IFS=$'\n' read -r -d ' ' -a MAPPINGS_EMPTY <<< "$KEY_MAPPINGS_EMPTY"
   readonly MAPPINGS_EMPTY
+  IFS=$'\n' read -r -d ' ' -a CASTS_STRING <<< "$KEY_CASTS_STRING"
+  readonly CASTS_STRING
   set -e
 
   readonly CUSTOMER_KEYS=$(yq --printMode p r "${OLD_VALUES_YAML}" -- '**')
@@ -209,6 +221,13 @@ function migrate_customer_keys() {
     if [[ "${MAPPINGS_EMPTY[*]}" =~ ${key} ]]; then
       info "Removing ${key}"
       yq d -i ${TEMP_FILE} -- "${key}"
+    fi
+
+    if [[ "${CASTS_STRING[*]}" =~ ${key} ]]; then
+      info "Casting ${key} to str"
+      # As yq doesn't cast `on` and `off` from bool to cast, we use sed based casts
+      yq w -i ${TEMP_FILE} -- "${key}" "$(yq r "${OLD_VALUES_YAML}" "${key}")__YQ_REPLACEMENT_CAST"
+      sed -i '' 's/\(^.*: \)\(.*\)__YQ_REPLACEMENT_CAST/\1"\2"/g' ${TEMP_FILE}
     fi
   done
   echo
