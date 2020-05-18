@@ -2,19 +2,19 @@
 
 <!-- TOC -->
 
-- [Helm Users](#helm-users) 
-  - [Changes](#changes) 
-  - [How to upgrade](#how-to-upgrade) 
-    - [1. Upgrade to helm chart version v0.17.1](#1-upgrade-to-helm-chart-version-v0171)
+- [Helm Users](#helm-users)
+  - [Changes](#changes)
+  - [How to upgrade](#how-to-upgrade)
+    - [1. Upgrade to helm chart version v0.17.3](#1-upgrade-to-helm-chart-version-v0173)
     - [2. Run upgrade script](#2-run-upgrade-script)
-- [Non-Helm Users](#non-helm-users) 
-  - [Changes](#breaking-changes) 
+- [Non-Helm Users](#non-helm-users)
+  - [Changes](#breaking-changes)
   - [How to upgrade](#how-to-upgrade-for-non-helm-users)
-    - [1. Tear down existing collection resources](#1-tear-down-existing-fluentd-prometheus-fluentbit-resources)
-    - [2. Deploy New Resources](#2-deploy-fluentd-fluent-bit-and-prometheus-again-with-the-verison-100-yaml)
+    - [1. Tear down existing collection resources](#1-tear-down-existing-fluentd-prometheus-fluent-bit-resources)
+    - [2. Deploy New Resources](#2-deploy-fluentd-fluent-bit-and-prometheus-again-with-the-version-100-yaml)
       - [2.1: Deploy Fluentd](#21-deploy-fluentd)
       - [2.1: Deploy Prometheus](#22-deploy-prometheus)
-      - [2.1: Deploy Fluent-bit](#23-deploy-fluentbit)
+      - [2.1: Deploy Fluent Bit](#23-deploy-fluent-bit)
 
 
 <!-- /TOC -->
@@ -23,7 +23,7 @@ Based on the feedback from our users, we will be introducing several changes to 
 ## Helm Users
 ### Changes
 
-- Falco installation disabled by Default. If you want to enable Falco, modify the `enabled` flag for Falco in `values.yaml` as shown below: 
+- Falco installation disabled by Default. If you want to enable Falco, modify the `enabled` flag for Falco in `values.yaml` as shown below:
 ```yaml
 falco:
   ## Set the enabled flag to false to disable falco.
@@ -85,9 +85,9 @@ fluentd:
 
 Until now, Helm users have not been able to modify their Fluentd configuration outside of the specific parameters that we exposed in the `values.yaml` file. Now, we expose the ability to modify the Fluentd configuration as needed. 
 
-Some use-cases include : 
- - custom log pipelines, 
- - adding Fluentd filter plugins (ex: fluentd throttle plugin), or 
+Some use-cases include :
+ - custom log pipelines,
+ - adding Fluentd filter plugins (ex: fluentd throttle plugin), or
  - adding Fluentd output plugins (ex: forward to both Sumo and S3)
 
 You can look for example configurations [here](../docs/v1_conf_examples.md)
@@ -98,13 +98,14 @@ The unified Fluentd `statefulsets` have been split into set of two different Flu
 
 ### How to upgrade
 **Note: The below steps are using Helm 2. Helm 3 is not supported.**
-#### 1. Upgrade to helm chart version `v0.17.3 `
+#### 1. Upgrade to helm chart version `v0.17.3`
 
 Run the below command to fetch the latest helm chart:
 ```bash
 helm repo update
+```
 
-If the user is not already on `v0.17.3` of the helm chart, upgrade to that version first by running the below command.
+For the users who are not already on `v0.17.3` of the helm chart, please upgrade to that version first by running the below command.
 
 ```bash
 helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.3
@@ -112,7 +113,7 @@ helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.3
 #### 2: Run upgrade script
 
 For Helm users, the only breaking changes are the renamed config parameters.
-For users who use a `values.yaml` file, we provide a script that users can run to convert their existing `values.yaml` file into one that is compatible with the major release. 
+For users who use a `values.yaml` file, we provide a script that users can run to convert their existing `values.yaml` file into one that is compatible with the major release.
 
 
 - Get the existing values for the helm chart and store it as `current_values.yaml` with the below command:
@@ -127,7 +128,7 @@ curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collect
 ```bash
 ./upgrade-1.0.0.sh current_values.yaml
 ```
-- At this point, users can then run: 
+- At this point, users can then run:
 ```bash
 helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_values.yaml
 ```
@@ -135,23 +136,23 @@ helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_values.yaml
 ### Breaking Changes
 - The use of environment variables to set configs has been removed to avoid the extra layer of indirection and confusion. Instead, configs will be set directly within the Fluentd pipeline.
 - `kubernetesMeta` and `kubernetesMetaReduce` have been removed from `logs.kubernetes.sumologic.filter.conf` of the Fluentd pipeline for the same reason as above (Helm users)
-- Similarly `addStream` and `addTime` (default values were `true`) have been removed from `logs.kubernetes.sumologic.filter.conf` of the Fluentd pipeline; the default behavior will remain the same. To preserve the behavior of `addStream = false` or `addTime = false`, you can add: 
+- Similarly `addStream` and `addTime` (default values were `true`) have been removed from `logs.kubernetes.sumologic.filter.conf` of the Fluentd pipeline; the default behavior will remain the same. To preserve the behavior of `addStream = false` or `addTime = false`, you can add:
 ```yaml
 <filter containers.**>
   @type record_modifier
   remove_keys stream,time
 </filter>
 ```
-above the output plugin section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v1.0.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl#L251)
+above the output plugin section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v1.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl#L251)
 - The Fluentd deployments have been changed to **statefulsets** to support the use of **persistent volumes**. This will allow better buffering behavior. They also now include `“fluentd”` in their names. This is a breaking change for non-Helm users as the deployments will not be cleaned up upon upgrade, leading to duplicate events (logs and metrics will not experience data duplication).
 - The unified Fluentd `statefulsets` have been split into set of two different Fluentd's, one for `logs` and the other one for `metrics`.
 - We now support the collection of renamed metrics (for Kubernetes version `1.17+`).
 ### How to upgrade for Non-helm Users
-#### 1. Tear down existing Fluentd, Prometheus, Fluentbit resources
+#### 1. Tear down existing Fluentd, Prometheus, Fluent Bit resources
 Run the commands mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#tear-down) to delete the respective resources.
 
-#### 2. Deploy Fluentd, Fluentbit and Prometheus again with the version 1.0.0 yaml
-Follow the below steps to deploy new resources. 
+#### 2. Deploy Fluentd, Fluent Bit and Prometheus again with the version 1.0.0 yaml
+Follow the below steps to deploy new resources.
 ##### 2.1 Deploy Fluentd
 - Non-Helm users who have made changes to configs in the [environment variable sections](#https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl#L627-L678) of the `fluentd-sumologic.yaml` file will need to move those config changes directly into the Fluentd pipeline.
 
@@ -173,6 +174,6 @@ sed 's/cluster kubernetes/cluster <CLUSTER_NAME>/g'  >> fluentd-sumologic.yaml
 </filter>
 ```
 ##### 2.2 Deploy Prometheus
-- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-prometheus) to deploy prometheus.
-##### 2.3: Deploy Fluentbit
-- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-fluentbit) to deploy fluent-bit.
+- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-prometheus) to deploy Prometheus.
+##### 2.3: Deploy Fluent Bit
+- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-fluentbit) to deploy Fluent Bit.
