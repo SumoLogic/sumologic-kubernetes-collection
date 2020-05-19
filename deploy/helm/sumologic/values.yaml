@@ -664,7 +664,7 @@ prometheus-operator:
             app: collection-sumologic-otelcol
     prometheusSpec:
       ## Prometheus default scrape interval
-      ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
+      ## NOTE changing the scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
       scrapeInterval: "30s"
       ## Define resources requests and limits for single Pods.
       resources: {}
