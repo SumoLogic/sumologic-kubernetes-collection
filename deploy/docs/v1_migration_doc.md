@@ -119,11 +119,11 @@ For users who use a `values.yaml` file, we provide a script that users can run t
 
 - Get the existing values for the helm chart and store it as `current_values.yaml` with the below command:
 ```bash
-helm get values <RELEASE-NAME> > current_values.yaml
+helm get values <RELEASE-NAME> -o yaml > current_values.yaml
 ```
 - Run `curl` the upgrade script as follows:
 ```bash
-curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/upgrade-1.0.0.sh
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/upgrade-1.0.0.sh
 ```
 - Run the upgrade script on the above file with the below command.
 ```bash

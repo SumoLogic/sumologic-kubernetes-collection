@@ -150,7 +150,8 @@ Usage:
 Returns:
   new_values.yaml
 
-For more details, please refer to Migration steps and Changelog here: [link]"
+For more details, please refer to Migration steps and Changelog here:
+https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v1.0/deploy/docs/v1_migration_doc.md"
 
   echo "$MAN"
   exit 0
