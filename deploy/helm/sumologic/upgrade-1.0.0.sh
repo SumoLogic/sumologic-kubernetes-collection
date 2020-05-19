@@ -10,7 +10,6 @@ readonly PREVIOUS_VERSION=0.17
 
 readonly TEMP_FILE=upgrade-1.0.0-temp-file
 
-readonly MIN_GREP_VERSION=2.5
 readonly MIN_BASH_VERSION=4.4
 
 readonly KEY_MAPPINGS="
@@ -195,19 +194,6 @@ function check_app_version() {
 
 function check_yq_version() {
   yq --version | grep 3.2.1 >/dev/null 2>&1 || { error "yq version is invalid. It should be exactly 3.2.1"; fatal "Please install it from: https://github.com/mikefarah/yq/releases/tag/3.2.1"; }
-}
-
-function check_grep_version() {
-  local grep_version
-
-  # do not fail on missing or incorrect grep
-  set +e
-  grep_version=$(grep -V 2>&1 | head -n 1 | grep -oE "\d.*$")
-  set -e
-
-  local stripped_grep_version=${grep_version%%-*}
-
-  check_app_version "grep" "${MIN_GREP_VERSION}" "${stripped_grep_version}"
 }
 
 function check_bash_version() {
@@ -499,7 +485,6 @@ check_bash_version
 check_required_command yq
 check_yq_version
 check_required_command grep
-check_grep_version
 check_required_command sed
 
 create_temp_file
