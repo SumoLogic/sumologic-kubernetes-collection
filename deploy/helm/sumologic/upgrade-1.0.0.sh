@@ -10,6 +10,10 @@ readonly PREVIOUS_VERSION=0.17
 
 readonly TEMP_FILE=upgrade-1.0.0-temp-file
 
+readonly MIN_SED_VERSION=4
+readonly MIN_GREP_VERSION=2.5
+readonly MIN_BASH_VERSION=4.4
+
 readonly KEY_MAPPINGS="
 eventsDeployment.nodeSelector:fluentd.events.statefulset.nodeSelector
 eventsDeployment.resources.limits.cpu:fluentd.events.statefulset.resources.limits.cpu
@@ -168,8 +172,60 @@ function check_required_command() {
   command -v "${command_to_check}" >/dev/null 2>&1 || { error "Required command is missing: ${command_to_check}"; fatal "Please consult --help and install missing commands before continue. Aborting."; }
 }
 
+function compare_versions() {
+  local no_lower_than="${1}"
+  local app_version="${2}"
+
+  if [[ "$(printf '%s\n' "${app_version}" "$no_lower_than" | sort -V | head -n 1)" == "${no_lower_than}" ]]; then
+    echo "pass"
+  else
+    echo "fail"
+  fi
+}
+
+function check_app_version() {
+  local app_name="${1}"
+  local no_lower_than="${2}"
+  local app_version="${3}"
+
+  if [[ -z ${app_version} ]] || [[ $(compare_versions "${no_lower_than}" "${app_version}") == "fail" ]]; then
+    error "${app_name} version is invalid - it should be no lower than ${no_lower_than}"
+    fatal "Please update your ${app_name} version and retry."
+  fi
+}
+
 function check_yq_version() {
   yq --version | grep 3.2.1 >/dev/null 2>&1 || { error "yq version is invalid. It should be exactly 3.2.1"; fatal "Please install it from: https://github.com/mikefarah/yq/releases/tag/3.2.1"; }
+}
+
+function check_grep_version() {
+  local sed_version
+
+  # do not fail on missing or incorrect sed
+  set +e
+  grep_version=$(grep -V 2>&1 | head -n 1 | grep -oE "\d.*$")
+  set -e
+
+  local stripped_grep_version=${grep_version%%-*}
+
+  check_app_version "grep" "${MIN_GREP_VERSION}" "${stripped_grep_version}"
+}
+
+function check_sed_version() {
+  local sed_version
+
+  # do not fail on missing or incorrect sed
+  set +e
+  sed_version=$(sed --version 2>&1 | head -n 1 | grep -oE "\d.*$")
+  set -e
+
+  local stripped_sed_version=${sed_version%%-*}
+
+  check_app_version "sed" "${MIN_SED_VERSION}" "${stripped_sed_version}"
+}
+
+function check_bash_version() {
+  check_app_version "bash" "${MIN_BASH_VERSION}" "${BASH_VERSION}"
 }
 
 function create_temp_file() {
@@ -228,7 +284,7 @@ function migrate_customer_keys() {
       info "Casting ${key} to str"
       # As yq doesn't cast `on` and `off` from bool to cast, we use sed based casts
       yq w -i ${TEMP_FILE} -- "${key}" "$(yq r "${OLD_VALUES_YAML}" "${key}")__YQ_REPLACEMENT_CAST"
-      sed -i '' 's/\(^.*: \)\(.*\)__YQ_REPLACEMENT_CAST/\1"\2"/g' ${TEMP_FILE}
+      sed -i 's/\(^.*: \)\(.*\)__YQ_REPLACEMENT_CAST/\1"\2"/g' ${TEMP_FILE}
     fi
   done
   echo
@@ -431,12 +487,12 @@ function migrate_fluentbit_db_path() {
   info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
   warning 'Please ensure that new fluent-bit configuration is correct'
 
-  sed -i '' 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE}
+  sed -i 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE}
 }
 
 function fix_yq() {
   # account for yq bug that stringifies empty maps
-  sed -i '' "s/'{}'/{}/g" ${TEMP_FILE}
+  sed -i "s/'{}'/{}/g" ${TEMP_FILE}
 }
 
 function rename_temp_file() {
@@ -449,10 +505,13 @@ function echo_footer() {
 }
 
 check_if_print_help_and_exit "${OLD_VALUES_YAML}"
+check_bash_version
 check_required_command yq
 check_yq_version
 check_required_command grep
+check_grep_version
 check_required_command sed
+check_sed_version
 
 create_temp_file
 
