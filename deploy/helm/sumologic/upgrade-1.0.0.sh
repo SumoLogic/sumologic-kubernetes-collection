@@ -11,6 +11,7 @@ readonly PREVIOUS_VERSION=0.17
 readonly TEMP_FILE=upgrade-1.0.0-temp-file
 
 readonly MIN_BASH_VERSION=4.4
+readonly MIN_YQ_VERSION=3.2.1
 
 readonly KEY_MAPPINGS="
 eventsDeployment.nodeSelector:fluentd.events.statefulset.nodeSelector
@@ -138,7 +139,7 @@ This script will automatically take the configurations of your existing values.y
 and return one that is compatible with v1.0.0.
 
 Requirements:
-  yq (3.2.1) https://github.com/mikefarah/yq/releases/tag/3.2.1
+  yq (>=3.2.1) https://github.com/mikefarah/yq/releases/tag/3.2.1
   grep
   sed
 
@@ -193,7 +194,10 @@ function check_app_version() {
 }
 
 function check_yq_version() {
-  yq --version | grep 3.2.1 >/dev/null 2>&1 || { error "yq version is invalid. It should be exactly 3.2.1"; fatal "Please install it from: https://github.com/mikefarah/yq/releases/tag/3.2.1"; }
+  local yq_version
+  yq_version=$(yq --version | grep -oE '[^[:space:]]+$')
+
+  check_app_version "grep" "${MIN_YQ_VERSION}" "${yq_version}"
 }
 
 function check_bash_version() {
