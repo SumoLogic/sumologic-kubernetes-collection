@@ -10,7 +10,6 @@ readonly PREVIOUS_VERSION=0.17
 
 readonly TEMP_FILE=upgrade-1.0.0-temp-file
 
-readonly MIN_SED_VERSION=4
 readonly MIN_GREP_VERSION=2.5
 readonly MIN_BASH_VERSION=4.4
 
@@ -199,9 +198,9 @@ function check_yq_version() {
 }
 
 function check_grep_version() {
-  local sed_version
+  local grep_version
 
-  # do not fail on missing or incorrect sed
+  # do not fail on missing or incorrect grep
   set +e
   grep_version=$(grep -V 2>&1 | head -n 1 | grep -oE "\d.*$")
   set -e
@@ -209,19 +208,6 @@ function check_grep_version() {
   local stripped_grep_version=${grep_version%%-*}
 
   check_app_version "grep" "${MIN_GREP_VERSION}" "${stripped_grep_version}"
-}
-
-function check_sed_version() {
-  local sed_version
-
-  # do not fail on missing or incorrect sed
-  set +e
-  sed_version=$(sed --version 2>&1 | head -n 1 | grep -oE "\d.*$")
-  set -e
-
-  local stripped_sed_version=${sed_version%%-*}
-
-  check_app_version "sed" "${MIN_SED_VERSION}" "${stripped_sed_version}"
 }
 
 function check_bash_version() {
@@ -515,8 +501,6 @@ check_yq_version
 check_required_command grep
 check_grep_version
 check_required_command sed
-# do not check sed version as it works now on both GNU and BSD versions
-#check_sed_version
 
 create_temp_file
 
