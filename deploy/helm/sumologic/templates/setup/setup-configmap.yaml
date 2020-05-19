@@ -17,7 +17,7 @@ data:
     # Fix URL to remove "v1" or "v1/"
     export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
 
-    COLLECTOR_NAME={{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ .Values.sumologic.clusterName }}{{- end}}
+    COLLECTOR_NAME={{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}{{- end}}
 
     terraform init
 
@@ -41,7 +41,7 @@ data:
   sumo-k8s.tf: |-
     variable "cluster_name" {
       type  = string
-      default = "{{ .Values.sumologic.clusterName }}"
+      default = "{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}"
     }
 
     {{- if .Values.sumologic.collectorName }}
@@ -52,7 +52,7 @@ data:
     {{- else }}
     variable "collector_name" {
       type  = string
-      default = "{{ .Values.sumologic.clusterName }}"
+      default = "{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}"
     }
     {{- end }}
 
