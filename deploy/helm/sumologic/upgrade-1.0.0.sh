@@ -284,7 +284,7 @@ function migrate_customer_keys() {
       info "Casting ${key} to str"
       # As yq doesn't cast `on` and `off` from bool to cast, we use sed based casts
       yq w -i ${TEMP_FILE} -- "${key}" "$(yq r "${OLD_VALUES_YAML}" "${key}")__YQ_REPLACEMENT_CAST"
-      sed -i 's/\(^.*: \)\(.*\)__YQ_REPLACEMENT_CAST/\1"\2"/g' ${TEMP_FILE}
+      sed -i.bak 's/\(^.*: \)\(.*\)__YQ_REPLACEMENT_CAST/\1"\2"/g' ${TEMP_FILE}
     fi
   done
   echo
@@ -487,16 +487,20 @@ function migrate_fluentbit_db_path() {
   info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
   warning 'Please ensure that new fluent-bit configuration is correct'
 
-  sed -i 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE}
+  sed -i.bak 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE}
 }
 
 function fix_yq() {
   # account for yq bug that stringifies empty maps
-  sed -i "s/'{}'/{}/g" ${TEMP_FILE}
+  sed -i.bak "s/'{}'/{}/g" ${TEMP_FILE}
 }
 
 function rename_temp_file() {
   mv ${TEMP_FILE} new_values.yaml
+}
+
+function cleanup_bak_file() {
+  rm ${TEMP_FILE}.bak
 }
 
 function echo_footer() {
@@ -511,7 +515,8 @@ check_yq_version
 check_required_command grep
 check_grep_version
 check_required_command sed
-check_sed_version
+# do not check sed version as it works now on both GNU and BSD versions
+#check_sed_version
 
 create_temp_file
 
@@ -532,6 +537,7 @@ migrate_fluentbit_db_path
 
 fix_yq
 rename_temp_file
+cleanup_bak_file
 
 echo_footer
 
