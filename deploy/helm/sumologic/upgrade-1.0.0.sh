@@ -188,8 +188,8 @@ function check_app_version() {
   local app_version="${3}"
 
   if [[ -z ${app_version} ]] || [[ $(compare_versions "${no_lower_than}" "${app_version}") == "fail" ]]; then
-    error "${app_name} version is invalid - it should be no lower than ${no_lower_than}"
-    fatal "Please update your ${app_name} version and retry."
+    error "${app_name} version: '${app_version}' is invalid - it should be no lower than ${no_lower_than}"
+    fatal "Please update your ${app_name} and retry."
   fi
 }
 
