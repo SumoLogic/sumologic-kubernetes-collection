@@ -15,7 +15,7 @@ __NOTE__: The Sumo Logic Kubernetes collection process does not support collecti
 Installation of collection in a cluster where a prometheus operator already exists requires that you modify Sumo Logic's [values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/values.yaml) file. Run the following to download the `values.yaml` file
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/sumologic/values.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/values.yaml
 ```
 
 Edit the `values.yaml` file, setting `prometheus-operator.enabled = false`. This modification will instruct Helm to install all the needed collection components (FluentD, FluentBit, and Falco), but it will not install the Prometheus Operator. Run the following command to install collection on your cluster.
@@ -46,7 +46,7 @@ Run the following commands to update the [remote write configuration](https://pr
 Run the following command to download our prometheus-overrides.yaml file
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/prometheus-overrides.yaml > prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/prometheus-overrides.yaml > prometheus-overrides.yaml
 ```
 
 Next run

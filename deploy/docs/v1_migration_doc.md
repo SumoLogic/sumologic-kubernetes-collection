@@ -170,7 +170,7 @@ Follow the below steps to deploy new resources.
 
 - Run the below command to get the `fluentd-sumologic.yaml` manifest for version `v1.0.0` and  then make the changes identified in the above step.
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/<NAMESPACE>/g" | \
 sed 's/cluster kubernetes/cluster <CLUSTER_NAME>/g'  >> fluentd-sumologic.yaml
 ```
