@@ -154,7 +154,7 @@ data:
       <match containers.**>
         @type sumologic
         @id sumologic.endpoint.logs
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         @log_level error
         @include logs.output.conf
         <buffer>
@@ -168,7 +168,7 @@ data:
     <match **>
       @type sumologic
       @id sumologic.endpoint.logs.default
-      sumo_client "k8s_1.0.0-rc.2"
+      sumo_client "k8s_1.0.0-rc.3"
       @include logs.output.conf
       <buffer>
         @type memory
@@ -197,7 +197,7 @@ data:
       <match **>
         @type sumologic
         @id sumologic.endpoint.logs.kubelet
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         @include logs.output.conf
         <buffer>
           @type memory
@@ -231,7 +231,7 @@ data:
       <match **>
         @type sumologic
         @id sumologic.endpoint.logs.systemd
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         @include logs.output.conf
         <buffer>
           @type memory
@@ -279,7 +279,7 @@ data:
     <match kubernetes.**>
       @type sumologic
       @id sumologic.endpoint.events
-      sumo_client "k8s_1.0.0-rc.2"
+      sumo_client "k8s_1.0.0-rc.3"
       endpoint "#{ENV['SUMO_ENDPOINT_EVENTS']}"
       data_type logs
       disable_cookies true
@@ -390,7 +390,7 @@ data:
       <match prometheus.metrics.apiserver**>
         @type sumologic
         @id sumologic.endpoint.metrics.apiserver
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_APISERVER']}"
         @include metrics.output.conf
         <buffer>
@@ -402,7 +402,7 @@ data:
       <match prometheus.metrics.kubelet**>
         @type sumologic
         @id sumologic.endpoint.metrics.kubelet
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
         @include metrics.output.conf
         <buffer>
@@ -413,7 +413,7 @@ data:
       <match prometheus.metrics.container**>
         @type sumologic
         @id sumologic.endpoint.metrics.container
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBELET']}"
         @include metrics.output.conf
         <buffer>
@@ -424,7 +424,7 @@ data:
       <match prometheus.metrics.controller-manager**>
         @type sumologic
         @id sumologic.endpoint.metrics.kube.controller.manager
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER']}"
         @include metrics.output.conf
         <buffer>
@@ -435,7 +435,7 @@ data:
       <match prometheus.metrics.scheduler**>
         @type sumologic
         @id sumologic.endpoint.metrics.kube.scheduler
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER']}"
         @include metrics.output.conf
         <buffer>
@@ -446,7 +446,7 @@ data:
       <match prometheus.metrics.state**>
         @type sumologic
         @id sumologic.endpoint.metrics.kube.state
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_KUBE_STATE']}"
         @include metrics.output.conf
         <buffer>
@@ -457,7 +457,7 @@ data:
       <match prometheus.metrics.node**>
         @type sumologic
         @id sumologic.endpoint.metrics.node.exporter
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS_NODE_EXPORTER']}"
         @include metrics.output.conf
         <buffer>
@@ -468,7 +468,7 @@ data:
       <match prometheus.metrics**>
         @type sumologic
         @id sumologic.endpoint.metrics
-        sumo_client "k8s_1.0.0-rc.2"
+        sumo_client "k8s_1.0.0-rc.3"
         endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
         @include metrics.output.conf
         <buffer>
@@ -698,7 +698,7 @@ spec:
         fsGroup: 999
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:1.0.0-rc.2
+        image: sumologic/kubernetes-fluentd:1.0.0-rc.3
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -784,7 +784,7 @@ spec:
         fsGroup: 999
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:1.0.0-rc.2
+        image: sumologic/kubernetes-fluentd:1.0.0-rc.3
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -906,7 +906,7 @@ spec:
         fsGroup: 999
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:1.0.0-rc.2
+        image: sumologic/kubernetes-fluentd:1.0.0-rc.3
         imagePullPolicy: IfNotPresent
         resources:
           limits:
