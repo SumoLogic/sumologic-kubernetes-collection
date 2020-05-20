@@ -42,8 +42,8 @@ sudo -H -u vagrant -i helm init --wait
 
 usermod -a -G microk8s vagrant
 
-# Install yq
-sudo curl https://github.com/mikefarah/yq/releases/download/3.2.1/yq_linux_amd64 -L -o /usr/local/bin/yq && sudo chmod +x /usr/local/bin/yq
+# install yq with access to file structure
+sudo curl https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64 -L -o /usr/local/bin/yq && sudo chmod +x /usr/local/bin/yq
 
 set +x
 echo Dashboard local in-vagrant IP:

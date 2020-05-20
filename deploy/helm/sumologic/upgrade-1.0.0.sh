@@ -136,7 +136,7 @@ This script will automatically take the configurations of your existing values.y
 and return one that is compatible with v1.0.0.
 
 Requirements:
-  yq (3.2.1) https://github.com/mikefarah/yq/releases/tag/3.2.1
+  yq (3.2.1 or newer) https://github.com/mikefarah/yq
   grep
   sed
 
@@ -168,8 +168,17 @@ function check_required_command() {
   command -v "${command_to_check}" >/dev/null 2>&1 || { error "Required command is missing: ${command_to_check}"; fatal "Please consult --help and install missing commands before continue. Aborting."; }
 }
 
-function check_yq_version() {
-  yq --version | grep 3.2.1 >/dev/null 2>&1 || { error "yq version is invalid. It should be exactly 3.2.1"; fatal "Please install it from: https://github.com/mikefarah/yq/releases/tag/3.2.1"; }
+function check_min_version() {
+  # Echoes minimal version and current version, sort it and get lower version
+  # If lower is not minimal, it means that current version is earlier than required
+  if [[ "${2}" == "${3}" ]]; then
+    return
+  fi
+
+  lower="$(echo -e "${2}\n${3}" | sort | head -n 1)"
+  if [[ ! "$lower" == "${2}" ]]; then
+    fatal "${1} version is invalid (${3}). Should be at least ${2}"
+  fi
 }
 
 function create_temp_file() {
@@ -228,7 +237,7 @@ function migrate_customer_keys() {
       info "Casting ${key} to str"
       # As yq doesn't cast `on` and `off` from bool to cast, we use sed based casts
       yq w -i ${TEMP_FILE} -- "${key}" "$(yq r "${OLD_VALUES_YAML}" "${key}")__YQ_REPLACEMENT_CAST"
-      sed -i '' 's/\(^.*: \)\(.*\)__YQ_REPLACEMENT_CAST/\1"\2"/g' ${TEMP_FILE}
+      sed -i.bak -e 's/\(^.*: \)\(.*\)__YQ_REPLACEMENT_CAST/\1"\2"/g' ${TEMP_FILE}
     fi
   done
   echo
@@ -431,16 +440,17 @@ function migrate_fluentbit_db_path() {
   info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
   warning 'Please ensure that new fluent-bit configuration is correct'
 
-  sed -i '' 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE}
+  sed -i.bak -e 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE}
 }
 
 function fix_yq() {
   # account for yq bug that stringifies empty maps
-  sed -i '' "s/'{}'/{}/g" ${TEMP_FILE}
+  sed -i.bak -e "s/'{}'/{}/g" ${TEMP_FILE}
 }
 
 function rename_temp_file() {
   mv ${TEMP_FILE} new_values.yaml
+  rm "${TEMP_FILE}.bak"
 }
 
 function echo_footer() {
@@ -450,7 +460,7 @@ function echo_footer() {
 
 check_if_print_help_and_exit "${OLD_VALUES_YAML}"
 check_required_command yq
-check_yq_version
+check_min_version yq 3.2.1 "$(yq --version | grep -oE '[[:digit:]].*')"
 check_required_command grep
 check_required_command sed
 
