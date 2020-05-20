@@ -139,9 +139,10 @@ This script will automatically take the configurations of your existing values.y
 and return one that is compatible with v1.0.0.
 
 Requirements:
-  yq (>=3.2.1) https://github.com/mikefarah/yq/releases/tag/3.2.1
+  yq (>= ${MIN_YQ_VERSION}) https://github.com/mikefarah/yq/releases/tag/3.2.1
   grep
   sed
+  bash (>= ${MIN_BASH_VERSION})
 
 Usage:
   # for default helm release name 'collection' and namespace 'sumologic'
