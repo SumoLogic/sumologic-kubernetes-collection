@@ -1,6 +1,10 @@
-Thank you for installing {{ .Chart.Name }}. 
+Thank you for installing {{ .Chart.Name }}.
 
-A Collector with the name {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }} has been created in your Sumo Logic account.
+{{- if contains " " .Values.sumologic.clusterName }}
+ WARNING: You defined sumologic.clusterName with spaces, which is not supported.  Spaces have been replaced with dashes.
+ {{- end }}
+
+ A Collector with the name {{ .Values.sumologic.collectorName | default (include "sumologic.clusterNameReplaceSpaceWithDash" . ) | quote }} has been created in your Sumo Logic account.
 
 Check the release status by running:
   kubectl --namespace {{ .Release.Namespace }} get pods -l "release={{ .Release.Name }}"
