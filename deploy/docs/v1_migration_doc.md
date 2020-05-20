@@ -166,7 +166,7 @@ Run the commands mentioned [here](https://github.com/SumoLogic/sumologic-kuberne
 #### 2. Deploy Fluentd, Fluent Bit and Prometheus again with the version 1.0.0 yaml
 Follow the below steps to deploy new resources.
 ##### 2.1 Deploy Fluentd
-- Non-Helm users who have made changes to configs in the [environment variable sections](#https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl#L627-L678) of the `fluentd-sumologic.yaml` file will need to move those config changes directly into the Fluentd pipeline.
+- Non-Helm users who have made changes to configs in the [environment variable sections](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl#L627-L678) of the `fluentd-sumologic.yaml` file will need to move those config changes directly into the Fluentd pipeline.
 
 - Run the below command to get the `fluentd-sumologic.yaml` manifest for version `v1.0.0` and  then make the changes identified in the above step.
 ```bash
