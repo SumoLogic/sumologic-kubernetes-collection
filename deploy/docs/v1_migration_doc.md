@@ -5,7 +5,7 @@
 - [Helm Users](#helm-users)
   - [Changes](#changes)
   - [How to upgrade](#how-to-upgrade)
-    - [1. Upgrade to helm chart version v0.17.3](#1-upgrade-to-helm-chart-version-v0173)
+    - [1. Upgrade to helm chart version v0.17.4](#1-upgrade-to-helm-chart-version-v0174)
     - [2. Run upgrade script](#2-run-upgrade-script)
   - [Rollback](#rollback)
 - [Non-Helm Users](#non-helm-users)
@@ -99,17 +99,17 @@ The unified Fluentd `statefulsets` have been split into set of two different Flu
 
 ### How to upgrade
 **Note: The below steps are using Helm 2. Helm 3 is not supported.**
-#### 1. Upgrade to helm chart version `v0.17.3`
+#### 1. Upgrade to helm chart version `v0.17.4`
 
 Run the below command to fetch the latest helm chart:
 ```bash
 helm repo update
 ```
 
-For the users who are not already on `v0.17.3` of the helm chart, please upgrade to that version first by running the below command.
+For the users who are not already on `v0.17.4` of the helm chart, please upgrade to that version first by running the below command.
 
 ```bash
-helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.3
+helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.4
 ```
 #### 2: Run upgrade script
 
