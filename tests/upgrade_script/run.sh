@@ -19,7 +19,7 @@ readonly OUT="new_values.yaml"
 
 
 for input_file in ${INPUT_FILES}; do
-  test_name=$(echo "${input_file}" | grep -oP '^.*?(?=\.input\.yaml)')
+  test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
   output_file="${test_name}.output.yaml"
   log_file="${test_name}.log"
 
