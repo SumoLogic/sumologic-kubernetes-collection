@@ -70,6 +70,7 @@ prometheus:
     # requests:
     #   memory: 400Mi
     thanos:
+      baseImage: quay.io/thanos/thanos
       version: v0.10.0
     containers:
     - name: "prometheus-config-reloader"
