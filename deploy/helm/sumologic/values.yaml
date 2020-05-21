@@ -78,6 +78,8 @@ fluentd:
   ## Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs.
   ## ref: https://docs.fluentd.org/deployment/logging
   logLevel: "info"
+  ## to ingest all fluentd logs, turn the logLevelFilter to false 
+  logLevelFilter: true
 
   ## Verify SumoLogic HTTPS certificates
   verifySsl: true
