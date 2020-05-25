@@ -89,6 +89,10 @@ sumologic:
         helm.sh/hook-weight: "0"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
+  ## Configuration of http sources
+  ## name: source name
+  ## value: source values - it's visible in sumologic platform
+  ## endpoint: binds source with fluentd configuration: (fluentd.metrics.output[])
   sources:
     - name: default-metrics
       value: (default-metrics)
@@ -467,6 +471,10 @@ fluentd:
     #     readOnly: true
   
     ## Output configuration
+    ## match: fluentd match
+    ## id: sumologic output @id
+    ## endpoint: It should match the sumologic.sources[].endpoint
+    ## Order of output plugins has meaning in case of fliuentd matches
     output:
       apiserver:
         match: prometheus.metrics.apiserver**
