@@ -32,6 +32,29 @@ sumologic:
   # Cluster name
   clusterName: "kubernetes"
 
+  # Configuration of kubernetes for terraform client
+  # https://www.terraform.io/docs/providers/kubernetes/index.html#argument-reference
+  # All double quotes should be escaped here regarding terraform syntax
+  cluster:
+    host: "https://kubernetes.default.svc"
+    # username:
+    # password:
+    # insecure:
+    # client_certificate:
+    # client_key:
+    cluster_ca_certificate: "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\")}"
+    # config_path:
+    # config_context:
+    # config_context_auth_info:
+    # config_context_cluster:
+    token: "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}"
+    # load_config_file:
+    # exec:
+    #   api_version:
+    #   command:
+    #   args: []
+    #   env: {}
+
   setup:
     clusterRole:
       annotations:
