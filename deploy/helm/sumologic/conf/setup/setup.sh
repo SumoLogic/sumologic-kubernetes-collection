@@ -16,7 +16,7 @@ terraform init
 # Sumo Collector and HTTP sources
 terraform import sumologic_collector.collector "$COLLECTOR_NAME"
 {{ range $source := .Values.sumologic.sources }}
-terraform import sumologic_http_source.{{ template "sources.terraform_name" $source }} "$COLLECTOR_NAME/{{ $source.value }}"
+terraform import sumologic_http_source.{{ template "terraform.sources.name" $source }} "$COLLECTOR_NAME/{{ $source.value }}"
 {{- end }}
 
 # Kubernetes Namespace and Secret

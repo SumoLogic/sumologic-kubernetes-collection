@@ -385,10 +385,10 @@ Convert source name to terraform name:
 
 Example usage:
 
-{{ include "sources.terraform_name" $source }}
+{{ include "terraform.sources.name" $source }}
 
 */}}
-{{- define "sources.terraform_name" -}}
+{{- define "terraform.sources.name" -}}
 {{ replace "-" "_" .name }}_source
 {{- end -}}
 
@@ -398,24 +398,24 @@ Generate terraform name basing on name
 
 Example usage:
 
-{{ include "sources.terraform_source_name" $source }}
+{{ include "terraform.sources.source_name" $source }}
 
 */}}
-{{- define "sources.terraform_source_name" -}}
+{{- define "terraform.sources.source_name" -}}
 {{ printf "%s-source-name" .name }}
 {{- end -}}
 
 {{/*
 Generate line for local terraform section
- * `sources.terraform_source_name = value`
+ * `terraform.sources.source_name = value`
 
 Example usage:
 
-{{ include "sources.terraform_source_name" $source }}
+{{ include "terraform.sources.source_name" $source }}
 
 */}}
-{{- define "sources.terraform_local" -}}
-{{ printf "%-43s = \"%s\"" (include "sources.terraform_source_name" .) .value }}
+{{- define "terraform.sources.local" -}}
+{{ printf "%-43s = \"%s\"" (include "terraform.sources.source_name" .) .value }}
 {{- end -}}
 
 {{/*
@@ -423,9 +423,9 @@ Generate line for data terraform section
 
 Example usage:
 
-{{ include "sources.terraform_data" $source }}
+{{ include "terraform.sources.data" $source }}
 
 */}}
-{{- define "sources.terraform_data" -}}
-{{ printf "endpoint-%-32s = \"${sumologic_http_source.%s.url}\"" .endpoint (include "sources.terraform_name" .) }}
+{{- define "terraform.sources.data" -}}
+{{ printf "endpoint-%-32s = \"${sumologic_http_source.%s.url}\"" .endpoint (include "terraform.sources.name" .) }}
 {{- end -}}
