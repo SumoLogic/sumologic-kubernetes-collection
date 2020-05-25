@@ -680,7 +680,7 @@ prometheus-operator:
         - port: metrics
         namespaceSelector:
           matchNames:
-          - sumologic
+          - $(NAMESPACE)
         selector:
           matchLabels:
             app: collection-sumologic-fluentd-logs
@@ -691,7 +691,7 @@ prometheus-operator:
         - port: metrics
         namespaceSelector:
           matchNames:
-          - sumologic
+          - $(NAMESPACE)
         selector:
           matchLabels:
             app: collection-sumologic-fluentd-metrics
@@ -702,7 +702,7 @@ prometheus-operator:
           - port: metrics
         namespaceSelector:
           matchNames:
-            - sumologic
+            - $(NAMESPACE)
         selector:
           matchLabels:
             app: collection-sumologic-fluentd-events
@@ -714,7 +714,7 @@ prometheus-operator:
             path: /api/v1/metrics/prometheus
         namespaceSelector:
           matchNames:
-            - sumologic
+            - $(NAMESPACE)
         selector:
           matchLabels:
             app: fluent-bit
@@ -725,7 +725,7 @@ prometheus-operator:
           - port: metrics
         namespaceSelector:
           matchNames:
-            - sumologic
+            - $(NAMESPACE)
         selector:
           matchLabels:
             app: collection-sumologic-otelcol
