@@ -26,8 +26,8 @@ locals {
 {{- range $source := .Values.sumologic.sources }}
   {{ template "terraform.sources.local" $source }}
 {{- end }}
-{{ template "terraform.sources.local" $logs }}
-{{ template "terraform.sources.local" $events }}
+  {{ template "terraform.sources.local" $logs }}
+  {{ template "terraform.sources.local" $events }}
 }
 
 provider "sumologic" {}
@@ -39,10 +39,10 @@ resource "sumologic_collector" "collector" {
     }
 }
 
-{{- $ctx := .Values }}
-{{ range $source := .Values.sumologic.sources }}
+{{- $ctx := .Values -}}
+{{- range $source := .Values.sumologic.sources }}
 {{ include "terraform.sources.resource" (dict "Source" $source "Context" $ctx) | nindent 2 }}
-{{ end }}
+{{- end }}
 {{ include "terraform.sources.resource" (dict "Source" $logs "Context" $ctx) | nindent 2 }}
 {{ include "terraform.sources.resource" (dict "Source" $events "Context" $ctx) | nindent 2 }}
 
