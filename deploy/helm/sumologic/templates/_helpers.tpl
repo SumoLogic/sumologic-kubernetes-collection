@@ -391,3 +391,16 @@ Example usage:
 {{- define "sources.terraform_name" -}}
 {{ replace "-" "_" .name }}_source
 {{- end -}}
+
+{{/*
+Generate terraform name basing on name
+ * adds `-source-name` suffix
+
+Example usage:
+
+{{ include "sources.terraform_source_name" $source }}
+
+*/}}
+{{- define "sources.terraform_source_name" -}}
+{{ printf "%s-source-name" .name }}
+{{- end -}}

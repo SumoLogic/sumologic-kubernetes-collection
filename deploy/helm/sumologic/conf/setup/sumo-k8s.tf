@@ -41,51 +41,16 @@ resource "sumologic_collector" "collector" {
     }
 }
 
-resource "sumologic_http_source" "default_metrics_source" {
-    name         = local.default-metrics-source-name
+{{- $ctx := .Values }}
+{{ range $source := .Values.sumologic.sources }}
+resource "sumologic_http_source" "{{ template "sources.terraform_name" $source }}" {
+    name         = local.{{ template "sources.terraform_source_name" $source }}
     collector_id = "${sumologic_collector.collector.id}"
+    {{- if $source.category }}
+    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events-source-name}\"" }}{{- end}}
+    {{- end }}
 }
-
-resource "sumologic_http_source" "apiserver_metrics_source" {
-    name         = local.apiserver-metrics-source-name
-    collector_id = "${sumologic_collector.collector.id}"
-}
-
-resource "sumologic_http_source" "events_source" {
-    name         = local.events-source-name
-    category     = {{ if .Values.fluentd.events.sourceCategory }}{{ .Values.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events-source-name}\"" }}{{- end}}
-    collector_id = "${sumologic_collector.collector.id}"
-}
-
-resource "sumologic_http_source" "kube_controller_manager_metrics_source" {
-    name         = local.kube-controller-manager-metrics-source-name
-    collector_id = "${sumologic_collector.collector.id}"
-}
-
-resource "sumologic_http_source" "kube_scheduler_metrics_source" {
-    name         = local.kube-scheduler-metrics-source-name
-    collector_id = "${sumologic_collector.collector.id}"
-}
-
-resource "sumologic_http_source" "kube_state_metrics_source" {
-    name         = local.kube-state-metrics-source-name
-    collector_id = "${sumologic_collector.collector.id}"
-}
-
-resource "sumologic_http_source" "kubelet_metrics_source" {
-    name         = local.kubelet-metrics-source-name
-    collector_id = "${sumologic_collector.collector.id}"
-}
-
-resource "sumologic_http_source" "logs_source" {
-    name         = local.logs-source-name
-    collector_id = "${sumologic_collector.collector.id}"
-}
-
-resource "sumologic_http_source" "node_exporter_metrics_source" {
-    name         = local.node-exporter-metrics-source-name
-    collector_id = "${sumologic_collector.collector.id}"
-}
+{{ end }}
 
 provider "kubernetes" {
 {{- $ctx := .Values -}}
