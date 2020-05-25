@@ -99,6 +99,36 @@ sumologic:
   metrics:
     enabled: true
 
+  sources:
+    - name: default-metrics
+      value: (default-metrics)
+      endpoint: metrics
+    - name: apiserver-metrics
+      value: apiserver-metrics
+      endpoint: metrics-apiserver
+    - name: events
+      value: events
+      endpoint: events
+      category: true
+    - name: kube-controller-manager-metrics
+      value: kube-controller-manager-metrics
+      endpoint: metrics-kube-controller-manager
+    - name: kube-scheduler-metrics
+      value: kube-scheduler-metrics
+      endpoint: metrics-kube-scheduler
+    - name: kube-state-metrics
+      value: kube-state-metrics
+      endpoint: metrics-kube-state
+    - name: kubelet-metrics
+      value: kubelet-metrics
+      endpoint: metrics-kubelet
+    - name: logs
+      value: logs
+      endpoint: logs
+    - name: node-exporter-metrics
+      value: node-exporter-metrics
+      endpoint: metrics-node-exporter
+
   # Traces configuration
   # This is experimental feature and may be unavailable for your account
   traces:
