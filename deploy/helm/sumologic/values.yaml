@@ -110,10 +110,6 @@ sumologic:
     - name: apiserver-metrics
       value: apiserver-metrics
       endpoint: metrics-apiserver
-    - name: events
-      value: events
-      endpoint: events
-      category: true
     - name: kube-controller-manager-metrics
       value: kube-controller-manager-metrics
       endpoint: metrics-kube-controller-manager
@@ -126,9 +122,6 @@ sumologic:
     - name: kubelet-metrics
       value: kubelet-metrics
       endpoint: metrics-kubelet
-    - name: logs
-      value: logs
-      endpoint: logs
     - name: node-exporter-metrics
       value: node-exporter-metrics
       endpoint: metrics-node-exporter

@@ -1,3 +1,5 @@
+{{- $logs := (dict "name" "logs" "value" "logs" "endpoint" "logs" )}}
+{{- $events := (dict "name" "events" "value" "events" "endpoint" "events" "category" true )}}
 variable "cluster_name" {
   type  = string
   default = "{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}"
@@ -21,9 +23,11 @@ variable "namespace_name" {
 }
 
 locals {
-  {{- range $source := .Values.sumologic.sources }}
+{{- range $source := .Values.sumologic.sources }}
   {{ template "terraform.sources.local" $source }}
-  {{- end }}
+{{- end }}
+{{ template "terraform.sources.local" $logs }}
+{{ template "terraform.sources.local" $events }}
 }
 
 provider "sumologic" {}
@@ -37,19 +41,10 @@ resource "sumologic_collector" "collector" {
 
 {{- $ctx := .Values }}
 {{ range $source := .Values.sumologic.sources }}
-resource "sumologic_http_source" "{{ template "terraform.sources.name" $source }}" {
-    name         = local.{{ template "terraform.sources.source_name" $source }}
-    collector_id = "${sumologic_collector.collector.id}"
-    {{- if $source.category }}
-    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events-source-name}\"" }}{{- end}}
-    {{- end }}
-    {{- if $source.fields }}
-    {{- range $fkey, $fvalue := $source.fields }}
-    {{ $fkey }}  = "{{ $fvalue }}"
-    {{- end -}}
-    {{ end }}
-}
+{{ include "terraform.sources.resource" (dict "Source" $source "Context" $ctx) | nindent 2 }}
 {{ end }}
+{{ include "terraform.sources.resource" (dict "Source" $logs "Context" $ctx) | nindent 2 }}
+{{ include "terraform.sources.resource" (dict "Source" $events "Context" $ctx) | nindent 2 }}
 
 provider "kubernetes" {
 {{- $ctx := .Values -}}
@@ -92,6 +87,8 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
     {{ range $source := .Values.sumologic.sources -}}
     {{ include "terraform.sources.data" $source }}
     {{ end -}}
+    {{ include "terraform.sources.data" $logs }}
+    {{ include "terraform.sources.data" $events }}
   }
 
   type = "Opaque"
