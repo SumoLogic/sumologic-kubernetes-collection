@@ -430,3 +430,29 @@ Example usage:
 {{- define "terraform.sources.data" -}}
 {{ printf "endpoint-%-32s = \"${sumologic_http_source.%s.url}\"" .endpoint (include "terraform.sources.name" .) }}
 {{- end -}}
+
+
+{{/*
+Generate resource sections
+
+Example usage:
+
+{{ include "terraform.sources.resource" (dict "Source" $source "Context" $ctx) }}
+
+*/}}
+{{- define "terraform.sources.resource" -}}
+{{- $source := .Source -}}
+{{- $ctx := .Context -}}
+resource "sumologic_http_source" "{{ template "terraform.sources.name" $source }}" {
+    name         = local.{{ template "terraform.sources.source_name" $source }}
+    collector_id = "${sumologic_collector.collector.id}"
+    {{- if $source.category }}
+    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events-source-name}\"" }}{{- end}}
+    {{- end }}
+    {{- if $source.fields }}
+    {{- range $fkey, $fvalue := $source.fields }}
+    {{ $fkey }}  = "{{ $fvalue }}"
+    {{- end -}}
+    {{ end }}
+}
+{{- end -}}

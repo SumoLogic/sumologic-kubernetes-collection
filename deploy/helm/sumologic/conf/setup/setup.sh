@@ -1,4 +1,6 @@
 #!/bin/sh
+{{- $logs := (dict "name" "logs" "value" "logs" "endpoint" "logs" )}}
+{{- $events := (dict "name" "events" "value" "events" "endpoint" "events" "category" true )}}
 cp /etc/terraform/sumo-k8s.tf /terraform
 cd /terraform
 
@@ -18,6 +20,9 @@ terraform import sumologic_collector.collector "$COLLECTOR_NAME"
 {{ range $source := .Values.sumologic.sources }}
 terraform import sumologic_http_source.{{ template "terraform.sources.name" $source }} "$COLLECTOR_NAME/{{ $source.value }}"
 {{- end }}
+terraform import sumologic_http_source.{{ template "terraform.sources.name" $logs }} "$COLLECTOR_NAME/{{ $logs.value }}"
+terraform import sumologic_http_source.{{ template "terraform.sources.name" $events }} "$COLLECTOR_NAME/{{ $events.value }}"
+
 
 # Kubernetes Namespace and Secret
 terraform import kubernetes_namespace.sumologic_collection_namespace {{ .Release.Namespace }}
