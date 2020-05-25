@@ -377,3 +377,17 @@ Example usage (as one line):
   </buffer>
 </match>
 {{- end -}}
+
+{{/*
+Convert source name to terraform name:
+ * converts all `-` to `_`
+ * adds `_source` suffix
+
+Example usage:
+
+{{ include "sources.terraform_name" $source }}
+
+*/}}
+{{- define "sources.terraform_name" -}}
+{{ replace "-" "_" .name }}_source
+{{- end -}}
