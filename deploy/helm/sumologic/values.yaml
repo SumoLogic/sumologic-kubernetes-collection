@@ -118,6 +118,9 @@ sumologic:
     - name: node-exporter-metrics
       value: node-exporter-metrics
       endpoint: metrics-node-exporter
+    - name: control-plane-metrics
+      value: control-plane-metrics
+      endpoint: control-plane
 
   # Traces configuration
   # This is experimental feature and may be unavailable for your account
