@@ -417,3 +417,15 @@ Example usage:
 {{- define "sources.terraform_local" -}}
 {{ printf "%-43s = \"%s\"" (include "sources.terraform_source_name" .) .value }}
 {{- end -}}
+
+{{/*
+Generate line for data terraform section
+
+Example usage:
+
+{{ include "sources.terraform_data" $source }}
+
+*/}}
+{{- define "sources.terraform_data" -}}
+{{ printf "endpoint-%-32s = \"${sumologic_http_source.%s.url}\"" .endpoint (include "sources.terraform_name" .) }}
+{{- end -}}
