@@ -84,15 +84,9 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
   }
 
   data = {
-    endpoint-events                           = "${sumologic_http_source.events_source.url}"
-    endpoint-logs                             = "${sumologic_http_source.logs_source.url}"
-    endpoint-metrics                          = "${sumologic_http_source.default_metrics_source.url}"
-    endpoint-metrics-apiserver                = "${sumologic_http_source.apiserver_metrics_source.url}"
-    endpoint-metrics-kube-controller-manager  = "${sumologic_http_source.kube_controller_manager_metrics_source.url}"
-    endpoint-metrics-kube-scheduler           = "${sumologic_http_source.kube_scheduler_metrics_source.url}"
-    endpoint-metrics-kube-state               = "${sumologic_http_source.kube_state_metrics_source.url}"
-    endpoint-metrics-kubelet                  = "${sumologic_http_source.kubelet_metrics_source.url}"
-    endpoint-metrics-node-exporter            = "${sumologic_http_source.node_exporter_metrics_source.url}"
+    {{ range $source := .Values.sumologic.sources -}}
+    {{ include "sources.terraform_data" $source }}
+    {{ end -}}
   }
 
   type = "Opaque"
