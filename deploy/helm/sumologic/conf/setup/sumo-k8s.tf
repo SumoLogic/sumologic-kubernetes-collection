@@ -22,7 +22,7 @@ variable "namespace_name" {
 
 locals {
   {{- range $source := .Values.sumologic.sources }}
-  {{ template "sources.terraform_local" $source }}
+  {{ template "terraform.sources.local" $source }}
   {{- end }}
 }
 
@@ -37,8 +37,8 @@ resource "sumologic_collector" "collector" {
 
 {{- $ctx := .Values }}
 {{ range $source := .Values.sumologic.sources }}
-resource "sumologic_http_source" "{{ template "sources.terraform_name" $source }}" {
-    name         = local.{{ template "sources.terraform_source_name" $source }}
+resource "sumologic_http_source" "{{ template "terraform.sources.name" $source }}" {
+    name         = local.{{ template "terraform.sources.source_name" $source }}
     collector_id = "${sumologic_collector.collector.id}"
     {{- if $source.category }}
     category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events-source-name}\"" }}{{- end}}
@@ -85,7 +85,7 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
 
   data = {
     {{ range $source := .Values.sumologic.sources -}}
-    {{ include "sources.terraform_data" $source }}
+    {{ include "terraform.sources.data" $source }}
     {{ end -}}
   }
 
