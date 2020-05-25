@@ -353,7 +353,7 @@ Generate metrics match configuration
 Example usage (as one line):
 
 {{ include "utils.metrics.match" (dict 
-  "Values" .Values 
+  "Values" . 
   "Match" "prometheus.metrics.kubelet" 
   "Endpoint" "SUMO_ENDPOINT_METRICS" 
   "Storage" .Values.fluentd.buffer.filePaths.metrics.default
@@ -364,10 +364,11 @@ Example usage (as one line):
 <match {{ .Match }}>
   @type sumologic
   @id {{ .Id }}
-  endpoint "#{ENV['{{ .Endpoint }}']}"
-{{- .Values.fluentd.metrics.outputConf | nindent 2 }}
+  sumo_client {{ include "sumologic.sumo_client" .Context | quote }}
+  endpoint "#{ENV['SUMO_ENDPOINT_{{ replace "-" "_" .Endpoint | upper }}']}"
+{{- .Context.Values.fluentd.metrics.outputConf | nindent 2 }}
   <buffer>
-    {{- if or .Values.fluentd.persistence.enabled (eq .Values.fluentd.buffer.type "file") }}
+    {{- if or .Context.Values.fluentd.persistence.enabled (eq .Context.Values.fluentd.buffer.type "file") }}
     @type file
     path {{ .Storage }}
     {{- else }}
