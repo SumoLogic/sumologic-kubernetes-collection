@@ -404,3 +404,16 @@ Example usage:
 {{- define "sources.terraform_source_name" -}}
 {{ printf "%s-source-name" .name }}
 {{- end -}}
+
+{{/*
+Generate line for local terraform section
+ * `sources.terraform_source_name = value`
+
+Example usage:
+
+{{ include "sources.terraform_source_name" $source }}
+
+*/}}
+{{- define "sources.terraform_local" -}}
+{{ printf "%-43s = \"%s\"" (include "sources.terraform_source_name" .) .value }}
+{{- end -}}

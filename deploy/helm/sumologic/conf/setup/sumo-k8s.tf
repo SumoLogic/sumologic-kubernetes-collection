@@ -21,15 +21,9 @@ variable "namespace_name" {
 }
 
 locals {
-  default-metrics-source-name                 = "(default-metrics)"
-  apiserver-metrics-source-name               = "apiserver-metrics"
-  events-source-name                          = "events"
-  kube-controller-manager-metrics-source-name = "kube-controller-manager-metrics"
-  kube-scheduler-metrics-source-name          = "kube-scheduler-metrics"
-  kube-state-metrics-source-name              = "kube-state-metrics"
-  kubelet-metrics-source-name                 = "kubelet-metrics"
-  logs-source-name                            = "logs"
-  node-exporter-metrics-source-name           = "node-exporter-metrics"
+  {{- range $source := .Values.sumologic.sources }}
+  {{ template "sources.terraform_local" $source }}
+  {{- end }}
 }
 
 provider "sumologic" {}
