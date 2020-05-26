@@ -94,28 +94,36 @@ sumologic:
   ## value: source values - it's visible in sumologic platform
   ## endpoint: binds source with fluentd configuration: (fluentd.metrics.output[])
   sources:
-    - name: default-metrics
+    default:
+      name: default-metrics
       value: (default-metrics)
       endpoint: metrics
-    - name: apiserver-metrics
+    apiserver:
+      name: apiserver-metrics
       value: apiserver-metrics
       endpoint: metrics-apiserver
-    - name: kube-controller-manager-metrics
+    controller:
+      name: kube-controller-manager-metrics
       value: kube-controller-manager-metrics
       endpoint: metrics-kube-controller-manager
-    - name: kube-scheduler-metrics
+    scheduler:
+      name: kube-scheduler-metrics
       value: kube-scheduler-metrics
       endpoint: metrics-kube-scheduler
-    - name: kube-state-metrics
+    state:
+      name: kube-state-metrics
       value: kube-state-metrics
       endpoint: metrics-kube-state
-    - name: kubelet-metrics
+    kubelet:
+      name: kubelet-metrics
       value: kubelet-metrics
       endpoint: metrics-kubelet
-    - name: node-exporter-metrics
+    node:
+      name: node-exporter-metrics
       value: node-exporter-metrics
       endpoint: metrics-node-exporter
-    - name: control-plane-metrics
+    control-plane:
+      name: control-plane-metrics
       value: control-plane-metrics
       endpoint: control-plane
 

@@ -23,7 +23,7 @@ variable "namespace_name" {
 }
 
 locals {
-{{- range $source := .Values.sumologic.sources }}
+{{- range $key, $source := .Values.sumologic.sources }}
   {{ template "terraform.sources.local" $source }}
 {{- end }}
   {{ template "terraform.sources.local" $logs }}
@@ -40,7 +40,7 @@ resource "sumologic_collector" "collector" {
 }
 
 {{- $ctx := .Values -}}
-{{- range $source := .Values.sumologic.sources }}
+{{- range $key, $source := .Values.sumologic.sources }}
 {{ include "terraform.sources.resource" (dict "Source" $source "Context" $ctx) | nindent 2 }}
 {{- end }}
 {{ include "terraform.sources.resource" (dict "Source" $logs "Context" $ctx) | nindent 2 }}
@@ -84,7 +84,7 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
   }
 
   data = {
-    {{ range $source := .Values.sumologic.sources -}}
+    {{ range $key, $source := .Values.sumologic.sources -}}
     {{ include "terraform.sources.data" $source }}
     {{ end -}}
     {{ include "terraform.sources.data" $logs }}
