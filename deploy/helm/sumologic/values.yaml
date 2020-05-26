@@ -349,6 +349,7 @@ fluentd:
       overrideOutputConf: |-
 
   metrics:
+    enabled: true
     statefulset:
       nodeSelector: {}
       tolerations: {}
