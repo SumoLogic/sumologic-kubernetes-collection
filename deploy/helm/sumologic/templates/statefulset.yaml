@@ -131,7 +131,7 @@ spec:
         {{- end }}
         {{- if .Values.fluentd.extraEnvVars }}
 {{ toYaml .Values.fluentd.extraEnvVars | nindent 10 }}
-          {{- end }}
+        {{- end }}
         - name: ADDITIONAL_PLUGINS
           value: {{ join " " .Values.fluentd.additionalPlugins | quote }}
 {{- if .Values.fluentd.persistence.enabled }}
