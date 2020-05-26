@@ -1,6 +1,6 @@
 variable "cluster_name" {
   type  = string
-  default = "{{ .Values.sumologic.clusterName }}"
+  default = "{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}"
 }
 
 {{- if .Values.sumologic.collectorName }}
@@ -11,7 +11,7 @@ variable "collector_name" {
 {{- else }}
 variable "collector_name" {
   type  = string
-  default = "{{ .Values.sumologic.clusterName }}"
+  default = "{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}"
 }
 {{- end }}
 

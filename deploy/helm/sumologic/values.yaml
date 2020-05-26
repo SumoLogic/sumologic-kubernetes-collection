@@ -29,7 +29,7 @@ sumologic:
   # Collector name
   #collectorName: ""
 
-  # Cluster name
+  # Cluster name: Note spaces are not allowed and will be replaced with dashes.
   clusterName: "kubernetes"
 
   # Configuration of kubernetes for terraform client
