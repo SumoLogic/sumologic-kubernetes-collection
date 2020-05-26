@@ -17,7 +17,7 @@ terraform init
 
 # Sumo Collector and HTTP sources
 terraform import sumologic_collector.collector "$COLLECTOR_NAME"
-{{ range $source := .Values.sumologic.sources }}
+{{ range $key, $source := .Values.sumologic.sources }}
 terraform import sumologic_http_source.{{ template "terraform.sources.name" $source }} "$COLLECTOR_NAME/{{ $source.value }}"
 {{- end }}
 terraform import sumologic_http_source.{{ template "terraform.sources.name" $logs }} "$COLLECTOR_NAME/{{ $logs.value }}"
