@@ -44,6 +44,13 @@ k8s_{{ .Chart.Version }}
 {{- end -}}
 
 {{/*
+Returns clusterName with spaces replaced with dashes
+*/}}
+{{- define "sumologic.clusterNameReplaceSpaceWithDash" -}}
+{{ .Values.sumologic.clusterName | replace " " "-"}}
+{{- end -}}
+
+{{/*
 Get configuration value, otherwise returns default
 
 Example usage:
