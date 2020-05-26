@@ -55,8 +55,8 @@ sumologic:
     #   args: []
     #   env: {}
   
-    #  If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace> and not add the fluentD/fluent-bit logs and Prometheus remotestorage metrics.  
-    collectionMonitoring: true
+  #  If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace> and not add the fluentD/fluent-bit logs and Prometheus remotestorage metrics.  
+  collectionMonitoring: true
 
   setup:
     clusterRole:
