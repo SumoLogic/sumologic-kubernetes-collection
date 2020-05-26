@@ -107,35 +107,27 @@ sumologic:
     default:
       name: default-metrics
       value: (default-metrics)
-      endpoint: metrics
     apiserver:
       name: apiserver-metrics
       value: apiserver-metrics
-      endpoint: metrics-apiserver
     controller:
       name: kube-controller-manager-metrics
       value: kube-controller-manager-metrics
-      endpoint: metrics-kube-controller-manager
     scheduler:
       name: kube-scheduler-metrics
       value: kube-scheduler-metrics
-      endpoint: metrics-kube-scheduler
     state:
       name: kube-state-metrics
       value: kube-state-metrics
-      endpoint: metrics-kube-state
     kubelet:
       name: kubelet-metrics
       value: kubelet-metrics
-      endpoint: metrics-kubelet
     node:
       name: node-exporter-metrics
       value: node-exporter-metrics
-      endpoint: metrics-node-exporter
     control-plane:
       name: control-plane-metrics
       value: control-plane-metrics
-      endpoint: control-plane
 
   # Traces configuration
   # This is experimental feature and may be unavailable for your account
@@ -492,47 +484,39 @@ fluentd:
       apiserver:
         match: prometheus.metrics.apiserver**
         id: sumologic.endpoint.metrics.apiserver
-        endpoint: metrics-apiserver
         weight: 90
       kubelet:
         match: prometheus.metrics.kubelet**
         id: sumologic.endpoint.metrics.kubelet
-        endpoint: metrics-kubelet
         weight: 90
       container:
         match: prometheus.metrics.container**
         id: sumologic.endpoint.metrics.container
-        endpoint: metrics-kubelet
+        source: kubelet
         weight: 90
       controller:
         match: prometheus.metrics.controller-manager**
         id: sumologic.endpoint.metrics.kube.controller.manager
-        endpoint: metrics-kube-controller-manager
         weight: 90
       scheduler:
         match: prometheus.metrics.scheduler**
         id: sumologic.endpoint.metrics.kube.scheduler
-        endpoint: metrics-kube-scheduler
         weight: 90
       state:
         match: prometheus.metrics.state**
         id: sumologic.endpoint.metrics.kube.state
-        endpoint: metrics-kube-state
         weight: 90
       node:
         match: prometheus.metrics.node**
         id: sumologic.endpoint.metrics.node.exporter
-        endpoint: metrics-node-exporter
         weight: 90
       control-plane:
         match: prometheus.metrics.control-plane**
         id: sumologic.endpoint.metrics.control.plane
-        endpoint: metrics-control-plane
         weight: 90
       default:
         match: prometheus.metrics**
         id: sumologic.endpoint.metrics
-        endpoint: metrics
         weight: 100
 
   events:

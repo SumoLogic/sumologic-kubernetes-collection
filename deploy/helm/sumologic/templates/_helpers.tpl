@@ -428,7 +428,7 @@ Example usage:
 
 */}}
 {{- define "terraform.sources.data" -}}
-{{ printf "endpoint-%-32s = \"${sumologic_http_source.%s.url}\"" .endpoint (include "terraform.sources.name" .) }}
+{{ printf "endpoint-%-32s = \"${sumologic_http_source.%s.url}\"" .name (include "terraform.sources.name" .) }}
 {{- end -}}
 
 
