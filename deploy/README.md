@@ -12,6 +12,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
   - [Alpha Releases](./docs/Alpha_Release_Guide.md)
+  - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
 - [Migration Steps](./docs/Migration_Steps.md)
 - [Troubleshooting Collection](./docs/Troubleshoot_Collection.md)
 - [Monitoring the Monitoring](./docs/monitoring-lag.md)

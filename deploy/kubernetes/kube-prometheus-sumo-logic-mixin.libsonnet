@@ -145,6 +145,30 @@
             ]
           }
         ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "coredns",
+            sourceLabels: [
+              "job"
+            ]
+          }
+        ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "kube-etcd",
+            sourceLabels: [
+              "job"
+            ]
+          }
+        ]
       }
     ],
   },
