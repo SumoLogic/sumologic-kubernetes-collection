@@ -16,11 +16,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
-Create default fully qualified labels.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+Create default labels
 */}}
 {{- define "sumologic.labels.app" -}}
-{{- template "sumologic.fullname" . }}
+{{- printf "collection-sumologic" }}
 {{- end -}}
 
 {{/*
