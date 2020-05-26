@@ -557,6 +557,39 @@ fluent-bit:
 grafana:
   enabled: false
 prometheus-operator:
+  ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
+  kubeApiServer:
+    serviceMonitor:
+      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+      interval:
+  kubelet:
+    serviceMonitor:
+      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+      interval:
+  kubeControllerManager:
+    serviceMonitor:
+      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+      interval:
+  coreDns:
+    serviceMonitor:
+      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+      interval:
+  kubeEtcd:
+    serviceMonitor:
+      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+      interval:
+  kubeScheduler:
+    serviceMonitor:
+      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+      interval:
+  kubeStateMetrics:
+    serviceMonitor:
+      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+      interval:
+  nodeExporter:
+    serviceMonitor:
+      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+      interval:
   # Ensure we use pre 1.14 recording rules consistently as current content depends on them.
   kubeTargetVersionOverride: 1.13.0-0
   ## Set the enabled flag to false for either of the below two purposes:
@@ -658,6 +691,9 @@ prometheus-operator:
           matchLabels:
             app: collection-sumologic-otelcol
     prometheusSpec:
+      ## Prometheus default scrape interval, default from upstream Prometheus Operator Helm chart
+      ## NOTE changing the scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
+      scrapeInterval: "30s"
       ## Define resources requests and limits for single Pods.
       resources: {}
       # limits:
