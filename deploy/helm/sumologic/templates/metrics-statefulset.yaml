@@ -73,7 +73,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ template "sumologic.metadata.name.metrics" . }}
+          name: {{ template "sumologic.metadata.name.metrics.configmap" . }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:

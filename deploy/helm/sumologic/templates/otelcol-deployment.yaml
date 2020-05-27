@@ -67,6 +67,6 @@ spec:
             port: 13133 # Health Check extension default port.
       volumes:
         - configMap:
-            name: {{ template "sumologic.metadata.name.otelcol" . }}
+            name: {{ template "sumologic.metadata.name.otelcol.configmap" . }}
           name: otel-collector-config-vol
 {{- end }}

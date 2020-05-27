@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "sumologic.metadata.name.otelcol" . }}
+  name: {{ template "sumologic.metadata.name.otelcol.configmap" . }}
   labels:
     app: {{ template "sumologic.labels.app.otelcol" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}

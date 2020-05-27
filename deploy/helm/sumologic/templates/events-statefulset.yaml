@@ -34,7 +34,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ template "sumologic.metadata.name.events" . }}
+          name: {{ template "sumologic.metadata.name.events.configmap" . }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:
