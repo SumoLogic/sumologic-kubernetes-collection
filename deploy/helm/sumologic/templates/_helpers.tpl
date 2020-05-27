@@ -31,6 +31,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ template "sumologic.fullname" . }}-fluentd-logs-headless
 {{- end -}}
 
+{{- define "sumologic.metadata.name.metrics" -}}
+{{ template "sumologic.fullname" . }}-fluentd-metrics
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.headless" -}}
+{{ template "sumologic.fullname" . }}-fluentd-metrics-headless
+{{- end -}}
+
 {{/*
 Create common labels used throughout the chart.
 If dryRun=true, we do not create any chart labels.

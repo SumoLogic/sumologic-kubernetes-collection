@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "sumologic.fullname" . }}-fluentd-metrics
+  name: {{ template "sumologic.metadata.name.metrics" . }}
   labels:
     app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
     {{- include "sumologic.labels.common" . | nindent 4 }}
@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
-  serviceName: {{ template "sumologic.fullname" . }}-fluentd-metrics-headless
+  serviceName: {{ template "sumologic.metadata.name.metrics.headless" . }}
   podManagementPolicy: "Parallel"
   replicas: {{ .Values.fluentd.metrics.statefulset.replicaCount }}
   template:
@@ -73,7 +73,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ template "sumologic.fullname" . }}-fluentd-metrics
+          name: {{ template "sumologic.metadata.name.metrics" . }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:

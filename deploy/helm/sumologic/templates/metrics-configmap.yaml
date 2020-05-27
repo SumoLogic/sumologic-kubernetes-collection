@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "sumologic.fullname" . }}-fluentd-metrics
+  name: {{ template "sumologic.metadata.name.metrics" . }}
   labels:
     app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
     {{- include "sumologic.labels.common" . | nindent 4 }}
