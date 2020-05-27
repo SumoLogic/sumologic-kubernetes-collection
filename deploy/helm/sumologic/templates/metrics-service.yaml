@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: {{ template "sumologic.metadata.name.metrics" . }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
+    app: {{ template "sumologic.labels.app.metrics" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
+    app: {{ template "sumologic.labels.app.metrics" . }}
   ports:
   - name: prom-write
     port: 9888
