@@ -1,3 +1,4 @@
+{{- if eq .Values.fluentd.logs.enabled true }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -175,4 +176,5 @@ spec:
       resources:
         requests:
           storage: {{ .Values.fluentd.persistence.size }}
+{{- end }}
 {{- end }}
