@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ template "sumologic.metadata.name.logs" . }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+    app: {{ template "sumologic.labels.app.logs" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   fluent.conf: |-

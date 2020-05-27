@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: {{ template "sumologic.metadata.name.logs" . }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+    app: {{ template "sumologic.labels.app.logs" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+    app: {{ template "sumologic.labels.app.logs" . }}
   ports:
   {{- if .Values.sumologic.traces.enabled }}
   - name: zipkin-write

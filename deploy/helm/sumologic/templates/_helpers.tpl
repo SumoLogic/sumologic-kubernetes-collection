@@ -23,6 +23,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.logs" -}}
+{{- template "sumologic.fullname" . }}-fluentd-logs
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.headless" -}}
+{{- template "sumologic.fullname" . }}-fluentd-logs-headless
+{{- end -}}
+
 {{- define "sumologic.metadata.name.logs" -}}
 {{ template "sumologic.fullname" . }}-fluentd-logs
 {{- end -}}

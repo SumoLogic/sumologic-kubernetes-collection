@@ -3,19 +3,19 @@ kind: StatefulSet
 metadata:
   name: {{ template "sumologic.metadata.name.logs" . }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+    app: {{ template "sumologic.labels.app.logs" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+      app: {{ template "sumologic.labels.app.logs" . }}
   serviceName: {{ template "sumologic.metadata.name.logs.headless" . }}
   podManagementPolicy: "Parallel"
   replicas: {{ .Values.fluentd.logs.statefulset.replicaCount }}
   template:
     metadata:
       labels:
-        app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+        app: {{ template "sumologic.labels.app.logs" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
@@ -40,7 +40,7 @@ spec:
               - key: app
                 operator: In
                 values:
-                - {{ template "sumologic.labels.app" . }}-fluentd-logs
+                - {{ template "sumologic.labels.app.logs" . }}
                 - {{ template "sumologic.labels.app" . }}-fluentd-metrics
               - key: app
                 operator: In
@@ -57,7 +57,7 @@ spec:
                 - key: app
                   operator: In
                   values:
-                  - {{ template "sumologic.labels.app" . }}-fluentd-logs
+                  - {{ template "sumologic.labels.app.logs" . }}
                   - {{ template "sumologic.labels.app" . }}-fluentd-metrics
                 - key: app
                   operator: In
