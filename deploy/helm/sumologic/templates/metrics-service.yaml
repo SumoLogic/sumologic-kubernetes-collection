@@ -1,4 +1,4 @@
-{{- if eq .Values.prometheus-operator.enabled true }}
+{{- if index  .Values "prometheus-operator" "enabled" }}
 apiVersion: v1
 kind: Service
 metadata:
