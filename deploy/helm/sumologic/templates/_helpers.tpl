@@ -362,6 +362,9 @@ Example usage (as one line):
 */}}
 {{- define "utils.metrics.match" -}}
 <match {{ .Match }}>
+{{- if .Drop }}
+  @type null
+{{- else }}
   @type sumologic
   @id {{ .Id }}
   sumo_client {{ include "sumologic.sumo_client" .Context | quote }}
@@ -376,8 +379,9 @@ Example usage (as one line):
     {{- end }}
     @include buffer.output.conf
   </buffer>
+{{- end }}
 </match>
-{{- end -}}
+{{ end -}}
 
 {{/*
 Convert source name to terraform name:
