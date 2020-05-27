@@ -636,6 +636,7 @@ spec:
 
 ---
 # Source: sumologic/templates/service-headless.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -656,9 +657,9 @@ spec:
     port: 24231
     targetPort: 24231
     protocol: TCP
-
 ---
 # Source: sumologic/templates/service.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -873,6 +874,7 @@ spec:
           value: ""
 ---
 # Source: sumologic/templates/statefulset.yaml
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
