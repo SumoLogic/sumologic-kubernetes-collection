@@ -79,6 +79,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ template "sumologic.fullname" . }}-otelcol
 {{- end -}}
 
+{{- define "sumologic.metadata.name.setup" -}}
+{{ template "sumologic.fullname" . }}-setup
+{{- end -}}
+
 {{/*
 Create common labels used throughout the chart.
 If dryRun=true, we do not create any chart labels.
