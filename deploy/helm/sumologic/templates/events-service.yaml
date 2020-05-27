@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: {{ template "sumologic.metadata.name.events" . }}
   labels:
-    app: {{ template "sumologic.labels.app.events" . }}
+    {{- include "sumologic.labels.events" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:

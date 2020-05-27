@@ -83,6 +83,30 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ template "sumologic.fullname" . }}-setup
 {{- end -}}
 
+{{- define "sumologic.labels.logs" -}}
+app: {{ template "sumologic.labels.app.logs" . }}
+sumologic/app: fluentd-logs
+sumologic/component: logs
+{{- end -}}
+
+{{- define "sumologic.labels.metrics" -}}
+app: {{ template "sumologic.labels.app.metrics" . }}
+sumologic/app: fluentd-metrics
+sumologic/component: metrics
+{{- end -}}
+
+{{- define "sumologic.labels.events" -}}
+app: {{ template "sumologic.labels.app.events" . }}
+sumologic/app: fluentd-events
+sumologic/component: events
+{{- end -}}
+
+{{- define "sumologic.labels.traces" -}}
+app: {{ template "sumologic.labels.app.otelcol" . }}
+sumologic/app: otelcol
+sumologic/component: traces
+{{- end -}}
+
 {{/*
 Create common labels used throughout the chart.
 If dryRun=true, we do not create any chart labels.
