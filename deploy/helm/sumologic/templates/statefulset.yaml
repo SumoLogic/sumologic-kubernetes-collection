@@ -121,51 +121,11 @@ spec:
 {{ toYaml .Values.fluentd.logs.extraVolumeMounts | indent 8 }}
 {{- end }}
         env:
-        - name: SUMO_ENDPOINT_METRICS
+        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" "logs") }}
           valueFrom:
             secretKeyRef:
               name: sumologic
-              key: endpoint-metrics
-        - name: SUMO_ENDPOINT_METRICS_APISERVER
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-metrics-apiserver
-        - name: SUMO_ENDPOINT_METRICS_KUBELET
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-metrics-kubelet
-        - name: SUMO_ENDPOINT_METRICS_KUBE_CONTROLLER_MANAGER
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-metrics-kube-controller-manager
-        - name: SUMO_ENDPOINT_METRICS_KUBE_SCHEDULER
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-metrics-kube-scheduler
-        - name: SUMO_ENDPOINT_METRICS_KUBE_STATE
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-metrics-kube-state
-        - name: SUMO_ENDPOINT_METRICS_NODE_EXPORTER
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-metrics-node-exporter
-        - name: SUMO_ENDPOINT_METRICS_CONTROL_PLANE
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-metrics-control-plane
-        - name: SUMO_ENDPOINT_LOGS
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-logs
+              key: {{ template "terraform.sources.endpoint_name" (include "terraform.sources.name" "logs") }}
         {{- if .Values.sumologic.traces.enabled }}
         - name: SUMO_ENDPOINT_TRACES
           value: {{ .Values.sumologic.traces.endpoint }}
