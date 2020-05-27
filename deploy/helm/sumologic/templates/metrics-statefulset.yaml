@@ -1,4 +1,4 @@
-{{- if index .Values "prometheus-operator" "enabled" }}
+{{- if eq .Values.fluentd.metrics.enabled true }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
