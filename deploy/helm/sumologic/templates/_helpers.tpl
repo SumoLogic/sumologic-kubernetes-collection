@@ -365,7 +365,7 @@ Example usage (as one line):
   @type sumologic
   @id {{ .Id }}
   sumo_client {{ include "sumologic.sumo_client" .Context | quote }}
-  endpoint "#{ENV['SUMO_ENDPOINT_{{ replace "-" "_" .Endpoint | upper }}']}"
+  endpoint "#{ENV['{{ include "terraform.sources.endpoint" .Endpoint}}']}"
 {{- .Context.Values.fluentd.metrics.outputConf | nindent 2 }}
   <buffer>
     {{- if or .Context.Values.fluentd.persistence.enabled (eq .Context.Values.fluentd.buffer.type "file") }}
@@ -390,33 +390,58 @@ Example usage:
 
 */}}
 {{- define "terraform.sources.name" -}}
-{{ replace "-" "_" .name }}_source
+{{ replace "-" "_" . }}_source
 {{- end -}}
 
 {{/*
-Generate terraform name basing on name
- * adds `-source-name` suffix
+Convert source name to terraform metric name:
+ * converts all `-` to `_`
+ * adds `_metrics_source` suffix
 
 Example usage:
 
-{{ include "terraform.sources.source_name" $source }}
+{{ include "terraform.sources.name_metrics" $source }}
 
 */}}
-{{- define "terraform.sources.source_name" -}}
-{{ printf "%s-source-name" .name }}
+{{- define "terraform.sources.name_metrics" -}}
+{{ replace "-" "_" . }}_metrics_source
+{{- end -}}
+
+{{/*
+Generate endpoint variable string for given string
+
+Example usage:
+
+{{ include "terraform.sources.endpoint" "logs" }}
+
+*/}}
+{{- define "terraform.sources.endpoint" -}}
+SUMO_ENDPOINT_{{ replace "-" "_" . | upper }}
+{{- end -}}
+
+{{/*
+Generate endpoint variable string for given string
+
+Example usage:
+
+{{ include "terraform.sources.endpoint" "logs" }}
+
+*/}}
+{{- define "terraform.sources.endpoint_name" -}}
+{{ printf "endpoint-%s" . }}
 {{- end -}}
 
 {{/*
 Generate line for local terraform section
- * `terraform.sources.source_name = value`
+ * `terraform.sources.local = value`
 
 Example usage:
 
-{{ include "terraform.sources.source_name" $source }}
+{{ include "terraform.sources.local" $source }}
 
 */}}
 {{- define "terraform.sources.local" -}}
-{{ printf "%-43s = \"%s\"" (include "terraform.sources.source_name" .) .value }}
+{{ printf "%-43s = \"%s\"" .Name .Value }}
 {{- end -}}
 
 {{/*
@@ -428,9 +453,8 @@ Example usage:
 
 */}}
 {{- define "terraform.sources.data" -}}
-{{ printf "endpoint-%-32s = \"${sumologic_http_source.%s.url}\"" .name (include "terraform.sources.name" .) }}
+{{ printf "%-41s = \"${sumologic_http_source.%s.url}\"" (include "terraform.sources.endpoint_name" .) . }}
 {{- end -}}
-
 
 {{/*
 Generate resource sections
@@ -443,11 +467,11 @@ Example usage:
 {{- define "terraform.sources.resource" -}}
 {{- $source := .Source -}}
 {{- $ctx := .Context -}}
-resource "sumologic_http_source" "{{ template "terraform.sources.name" $source }}" {
-    name         = local.{{ template "terraform.sources.source_name" $source }}
+resource "sumologic_http_source" "{{ .Name }}" {
+    name         = local.{{ .Name }}
     collector_id = "${sumologic_collector.collector.id}"
     {{- if $source.category }}
-    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events-source-name}\"" }}{{- end}}
+    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events_source}\"" }}{{- end}}
     {{- end }}
     {{- if $source.fields }}
     {{- range $fkey, $fvalue := $source.fields }}

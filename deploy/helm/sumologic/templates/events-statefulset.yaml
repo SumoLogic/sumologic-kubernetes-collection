@@ -66,11 +66,11 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 5
         env:
-        - name: SUMO_ENDPOINT_EVENTS
+        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" "events") }}
           valueFrom:
             secretKeyRef:
               name: sumologic
-              key: endpoint-events
+              key: {{ template "terraform.sources.endpoint_name" (include "terraform.sources.name" "events") }}
 {{- if .Values.fluentd.events.extraEnvVars }}
 {{ toYaml .Values.fluentd.events.extraEnvVars | nindent 10 }}
 {{- end }}

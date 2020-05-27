@@ -95,28 +95,20 @@ sumologic:
   ## endpoint: binds source with fluentd configuration: (fluentd.metrics.output[])
   sources:
     default:
-      name: default-metrics
       value: (default-metrics)
     apiserver:
-      name: apiserver-metrics
       value: apiserver-metrics
     controller:
-      name: kube-controller-manager-metrics
       value: kube-controller-manager-metrics
     scheduler:
-      name: kube-scheduler-metrics
       value: kube-scheduler-metrics
     state:
-      name: kube-state-metrics
       value: kube-state-metrics
     kubelet:
-      name: kubelet-metrics
       value: kubelet-metrics
     node:
-      name: node-exporter-metrics
       value: node-exporter-metrics
     control-plane:
-      name: control-plane-metrics
       value: control-plane-metrics
 
   # Traces configuration
@@ -467,6 +459,8 @@ fluentd:
     ## match: fluentd match
     ## id: sumologic output @id
     ## endpoint: It should match the sumologic.sources[].endpoint
+    ## drop: true
+    ## weight: default 10
     ## Order of output plugins has meaning in case of fliuentd matches
     output:
       apiserver:
@@ -1085,13 +1079,13 @@ prometheus-operator:
               sourceLabels: [__name__]
         # control plane metrics
         # coredns
-        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane
+        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane.coredns
           writeRelabelConfigs:
             - action: keep
               regex: coredns
               sourceLabels: [job]
         # etcd server
-        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane
+        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane.kube-etcd
           writeRelabelConfigs:
             - action: keep
               regex: kube-etcd
