@@ -103,24 +103,6 @@ fluentd:
     # annotations: {}
     accessMode: ReadWriteOnce
     size: 10Gi
-  
-  # Extra Environment Values - allows yaml definitions
-  extraEnvVars:
-  #  - name: VALUE_FROM_SECRET
-  #    valueFrom:
-  #      secretKeyRef:
-  #        name: secret_name
-  #        key: secret_key
-
-  # extraVolumes:
-  #   - name: es-certs
-  #     secret:
-  #       defaultMode: 420
-  #       secretName: es-certs
-  # extraVolumeMounts:
-  #   - name: es-certs
-  #     mountPath: /certs
-  #     readOnly: true
 
   buffer:
     ## Option to specify the Fluentd buffer as file/memory.
@@ -340,6 +322,24 @@ fluentd:
       ## Override output section for untagged logs. Leave empty for the default output section.
       overrideOutputConf: |-
 
+    # Extra Environment Values - allows yaml definitions
+    extraEnvVars:
+    #  - name: VALUE_FROM_SECRET
+    #    valueFrom:
+    #      secretKeyRef:
+    #        name: secret_name
+    #        key: secret_key
+
+    # extraVolumes:
+    #   - name: es-certs
+    #     secret:
+    #       defaultMode: 420
+    #       secretName: es-certs
+    # extraVolumeMounts:
+    #   - name: es-certs
+    #     mountPath: /certs
+    #     readOnly: true
+
   metrics:
     statefulset:
       nodeSelector: {}
@@ -382,6 +382,24 @@ fluentd:
     ## To use additional output plugins
     extraOutputPluginConf: |-
 
+    # Extra Environment Values - allows yaml definitions
+    extraEnvVars:
+    #  - name: VALUE_FROM_SECRET
+    #    valueFrom:
+    #      secretKeyRef:
+    #        name: secret_name
+    #        key: secret_key
+
+    # extraVolumes:
+    #   - name: es-certs
+    #     secret:
+    #       defaultMode: 420
+    #       secretName: es-certs
+    # extraVolumeMounts:
+    #   - name: es-certs
+    #     mountPath: /certs
+    #     readOnly: true
+  
   events:
     # If enabled, collect K8s events
     enabled: true

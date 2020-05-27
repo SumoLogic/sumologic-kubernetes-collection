@@ -74,8 +74,8 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "sumologic.fullname" . }}-fluentd-metrics
-{{- if .Values.fluentd.extraVolumes }}
-{{ toYaml .Values.fluentd.extraVolumes | indent 8 }}
+{{- if .Values.fluentd.metrics.extraVolumes }}
+{{ toYaml .Values.fluentd.metrics.extraVolumes | indent 8 }}
 {{- end }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
@@ -111,8 +111,8 @@ spec:
         - name: buffer
           mountPath: "/fluentd/buffer"
 {{- end}}
-{{- if .Values.fluentd.extraVolumeMounts }}
-{{ toYaml .Values.fluentd.extraVolumeMounts | indent 8 }}
+{{- if .Values.fluentd.metrics.extraVolumeMounts }}
+{{ toYaml .Values.fluentd.metrics.extraVolumeMounts | indent 8 }}
 {{- end }}
         env:
         - name: SUMO_ENDPOINT_METRICS
@@ -154,8 +154,8 @@ spec:
         - name: SUMO_ENDPOINT_TRACES
           value: {{ .Values.sumologic.traces.endpoint }}
         {{- end }}
-        {{- if .Values.fluentd.extraEnvVars }}
-{{ toYaml .Values.fluentd.extraEnvVars | nindent 10 }}
+        {{- if .Values.fluentd.metrics.extraEnvVars }}
+{{ toYaml .Values.fluentd.metrics.extraEnvVars | nindent 10 }}
         {{- end }}
         - name: ADDITIONAL_PLUGINS
           value: {{ join " " .Values.fluentd.additionalPlugins | quote }}
