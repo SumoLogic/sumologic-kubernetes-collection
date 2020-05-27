@@ -74,7 +74,7 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "sumologic.fullname" . }}-fluentd-logs
-{{- if .Values.extraVolumes }}
+{{- if .Values.fluentd.extraVolumes }}
 {{ toYaml .Values.fluentd.extraVolumes | indent 8 }}
 {{- end }}
       securityContext:
