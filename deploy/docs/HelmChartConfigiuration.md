@@ -13,7 +13,7 @@ Parameter | Description | Default
 `image.repository`  |   Image repository for Sumo Logic docker container.   |   `sumologic/kubernetes-fluentd`
 `image.tag` | Image tag for Sumo Logic docker container. | `1.0.0-rc.2`
 `image.pullPolicy` | Image pullPolicy for Sumo Logic docker container.  | `IfNotPresent`
-`nameOverride` | Used to override the Chart name. | ``
+`nameOverride` | Used to override the Chart name. | `Nil`
 `sumologic.setupEnabled` | If enabled, a pre-install hook will create Collector and Sources in Sumo Logic. | `true`
 `sumologic.envFromSecret` | If enabled, accessId and accessKey will be sourced from Secret Name given. Be sure to include at least the following env variables in your secret (1) SUMOLOGIC_ACCESSID, (2) SUMOLOGIC_ACCESSKEY | `sumo-api-secret`
 `sumologic.accessId` | Sumo access ID. | `Nil`
@@ -29,7 +29,7 @@ Parameter | Description | Default
 `fluentd.additionalPlugins` | Additional Fluentd plugins to install from RubyGems. | `[]`
 `fluentd.logLevel` | Sets the fluentd log level. The default log level, if not specified, is info.  Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs. | `info`
 `fluentd.verifySsl` | Verify SumoLogic HTTPS certificates. | `true`
-`fluentd.proxyUri` | Proxy URI for sumologic output plugin. | ``
+`fluentd.proxyUri` | Proxy URI for sumologic output plugin. | `Nil`
 `fluentd.securityContext` | the securityContext configuration for Fluentd | `{"fsGroup":999}`
 `fluentd.persistence.enabled` | Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer. After setting the value to true, run the helm upgrade command with the --force flag. | `false`
 `fluentd.persistence.storageClass` | If defined, storageClassName: <storageClass>. If set to "-", storageClassName: "", which disables dynamic provisioning.  If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner.  (gp2 on AWS, standard on GKE, Azure & OpenStack) | `Nil`
@@ -63,49 +63,49 @@ Parameter | Description | Default
 `fluentd.logs.output.addTimestamp` | Option to control adding timestamp to logs. | `true`
 `fluentd.logs.output.timestampKey` | Field name when add_timestamp is on. | `timestamp`
 `fluentd.logs.output.pluginLogLevel` | Option to give plugin specific log level. | `error`
-`fluentd.logs.output.extraConf` | Additional config parameters for sumologic output plugin | ``
-`fluentd.logs.extraLogs` | Additional config for custom log pipelines. | ``
-`fluentd.logs.containers.overrideRawConfig` | To override the entire contents of logs.source.containers.conf file. Leave empty for the default pipeline. | ``
+`fluentd.logs.output.extraConf` | Additional config parameters for sumologic output plugin | `Nil`
+`fluentd.logs.extraLogs` | Additional config for custom log pipelines. | `Nil`
+`fluentd.logs.containers.overrideRawConfig` | To override the entire contents of logs.source.containers.conf file. Leave empty for the default pipeline. | `Nil`
 `fluentd.logs.containers.outputConf` | Default output configuration for container logs. | `@include logs.output.conf`
-`fluentd.logs.containers.overrideOutputConf` | Override output section for container logs. Leave empty for the default output section. | ``
+`fluentd.logs.containers.overrideOutputConf` | Override output section for container logs. Leave empty for the default output section. | `Nil`
 `fluentd.logs.containers.sourceName` | Set the _sourceName metadata field in Sumo Logic. | `%{namespace}.%{pod}.%{container}`
 `fluentd.logs.containers.sourceCategory` | Set the _sourceCategory metadata field in Sumo Logic. | `%{namespace}/%{pod_name}`
 `fluentd.logs.containers.sourceCategoryPrefix` | Set the prefix, for _sourceCategory metadata. | `kubernetes/`
 `fluentd.logs.containers.sourceCategoryReplaceDash` | Used to replace - with another character. | `/`
-`fluentd.logs.containers.excludeContainerRegex` | A regular expression for containers. Matching containers will be excluded from Sumo. The logs will still be sent to FluentD. | ``
-`fluentd.logs.containers.excludeHostRegex` | A regular expression for hosts. Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD. | ``
-`fluentd.logs.containers.excludeNamespaceRegex` | A regular expression for namespaces. Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD. | ``
-`fluentd.logs.containers.excludePodRegex` | A regular expression for pods. Matching pods will be excluded from Sumo. The logs will still be sent to FluentD. | ``
+`fluentd.logs.containers.excludeContainerRegex` | A regular expression for containers. Matching containers will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
+`fluentd.logs.containers.excludeHostRegex` | A regular expression for hosts. Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
+`fluentd.logs.containers.excludeNamespaceRegex` | A regular expression for namespaces. Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
+`fluentd.logs.containers.excludePodRegex` | A regular expression for pods. Matching pods will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
 `fluentd.logs.containers.k8sMetadataFilter.watch` | Option to control the enabling of metadata filter plugin watch. | `true`
-`fluentd.logs.containers.k8sMetadataFilter.caFile` | path to CA file for Kubernetes server certificate validation. | ``
+`fluentd.logs.containers.k8sMetadataFilter.caFile` | path to CA file for Kubernetes server certificate validation. | `Nil`
 `fluentd.logs.containers.k8sMetadataFilter.verifySsl` | Validate SSL certificates. | `true`
-`fluentd.logs.containers.k8sMetadataFilter.clientCert` | Path to a client cert file to authenticate to the API server. | ``
-`fluentd.logs.containers.k8sMetadataFilter.clientKey` | Path to a client key file to authenticate to the API server. | ``
-`fluentd.logs.containers.k8sMetadataFilter.bearerTokenFile` | Path to a file containing the bearer token to use for authentication. | ``
-`fluentd.logs.containers.extraFilterPluginConf` | To use additional filter plugins. | ``
+`fluentd.logs.containers.k8sMetadataFilter.clientCert` | Path to a client cert file to authenticate to the API server. | `Nil`
+`fluentd.logs.containers.k8sMetadataFilter.clientKey` | Path to a client key file to authenticate to the API server. | `Nil`
+`fluentd.logs.containers.k8sMetadataFilter.bearerTokenFile` | Path to a file containing the bearer token to use for authentication. | `Nil`
+`fluentd.logs.containers.extraFilterPluginConf` | To use additional filter plugins. | `Nil`
 `fluentd.logs.kubelet.enabled` | Collect kubelet logs. | `true`
 `fluentd.logs.kubelet.outputConf` | Output configuration for kubelet. | `@include logs.output.conf`
-`fluentd.logs.kubelet.overrideOutputConf` | Override output section for kubelet logs. Leave empty for the default output section. | ``
+`fluentd.logs.kubelet.overrideOutputConf` | Override output section for kubelet logs. Leave empty for the default output section. | `Nil`
 `fluentd.logs.kubelet.sourceName` | Set the _sourceName metadata field in Sumo Logic. | `k8s_kubelet`
 `fluentd.logs.kubelet.sourceCategory` | Set the _sourceCategory metadata field in Sumo Logic. | `kubelet`
 `fluentd.logs.kubelet.sourceCategoryPrefix` | Set the prefix, for _sourceCategory metadata. | `kubernetes/`
 `fluentd.logs.kubelet.sourceCategoryReplaceDash` | Used to replace - with another character. | `/`
-`fluentd.logs.kubelet.excludeFacilityRegex` | A regular expression for facility. Matching facility will be excluded from Sumo. The logs will still be sent to FluentD. | ``
-`fluentd.logs.kubelet.excludeHostRegex` | A regular expression for hosts. Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD. | ``
-`fluentd.logs.kubelet.excludePriorityRegex` | A regular expression for priority. Matching priority will be excluded from Sumo. The logs will still be sent to FluentD. | ``
-`fluentd.logs.kubelet.excludeUnitRegex` | A regular expression for unit. Matching unit will be excluded from Sumo. The logs will still be sent to FluentD. | ``
+`fluentd.logs.kubelet.excludeFacilityRegex` | A regular expression for facility. Matching facility will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
+`fluentd.logs.kubelet.excludeHostRegex` | A regular expression for hosts. Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
+`fluentd.logs.kubelet.excludePriorityRegex` | A regular expression for priority. Matching priority will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
+`fluentd.logs.kubelet.excludeUnitRegex` | A regular expression for unit. Matching unit will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
 `fluentd.logs.systemd.enabled` | Collect systemd logs. | `true`
 `fluentd.logs.systemd.outputConf` | Output configuration for systemd. | `@include logs.output.conf`
-`fluentd.logs.systemd.overrideOutputConf` | Override output section for systemd logs. Leave empty for the default output section. | ``
+`fluentd.logs.systemd.overrideOutputConf` | Override output section for systemd logs. Leave empty for the default output section. | `Nil`
 `fluentd.logs.systemd.sourceCategory` | Set the _sourceCategory metadata field in Sumo Logic. | `system`
 `fluentd.logs.systemd.sourceCategoryPrefix` | Set the prefix, for _sourceCategory metadata. | `kubernetes/`
 `fluentd.logs.systemd.sourceCategoryReplaceDash` | Used to replace - with another character. | `/`
-`fluentd.logs.systemd.excludeFacilityRegex` | A regular expression for facility. Matching facility will be excluded from Sumo. The logs will still be sent to FluentD. | ``
-`fluentd.logs.systemd.excludeHostRegex` | A regular expression for hosts. Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD. | ``
-`fluentd.logs.systemd.excludePriorityRegex` | A regular expression for priority. Matching priority will be excluded from Sumo. The logs will still be sent to FluentD. | ``
-`fluentd.logs.systemd.excludeUnitRegex` | A regular expression for unit. Matching unit will be excluded from Sumo. The logs will still be sent to FluentD. | ``
+`fluentd.logs.systemd.excludeFacilityRegex` | A regular expression for facility. Matching facility will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
+`fluentd.logs.systemd.excludeHostRegex` | A regular expression for hosts. Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
+`fluentd.logs.systemd.excludePriorityRegex` | A regular expression for priority. Matching priority will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
+`fluentd.logs.systemd.excludeUnitRegex` | A regular expression for unit. Matching unit will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
 `fluentd.logs.default.outputConf` | Default log configuration (catch-all). | `@include logs.output.conf`
-`fluentd.logs.default.overrideOutputConf` | Override output section for untagged logs. Leave empty for the default output section. | ``
+`fluentd.logs.default.overrideOutputConf` | Override output section for untagged logs. Leave empty for the default output section. | `Nil`
 `fluentd.metrics.statefulset.nodeSelector` | Node selector for Fluentd metrics statefulset. | `{}`
 `fluentd.metrics.statefulset.tolerations` | Tolerations for Fluentd metrics statefulset. | `{}`
 `fluentd.metrics.statefulset.affinity` | Affinity for Fluentd metrics statefulset. | `{}`
@@ -118,13 +118,13 @@ Parameter | Description | Default
 `fluentd.metrics.autoscaling.targetCPUUtilizationPercentage` | The desired target CPU utilization for autoscaling. | `50`
 `fluentd.metrics.rawConfig` | Raw config for fluentd metrics. | `@include common.conf @include metrics.conf`
 `fluentd.metrics.outputConf` | Configuration for sumologic output plugin. | `@include metrics.output.conf`
-`fluentd.metrics.extraFilterPluginConf` | To use additional filter plugins. | ``
-`fluentd.metrics.extraOutputPluginConf` | To use additional output plugins. | ``
+`fluentd.metrics.extraFilterPluginConf` | To use additional filter plugins. | `Nil`
+`fluentd.metrics.extraOutputPluginConf` | To use additional output plugins. | `Nil`
 `fluentd.events.enabled` | If enabled, collect K8s events. | `true`
 `fluentd.events.statefulset.nodeSelector` | Node selector for Fluentd events statefulset. | `{}`
 `fluentd.events.statefulset.tolerations` | Tolerations for Fluentd events statefulset. | `{}`
 `fluentd.events.statefulset.resources` | Resources for Fluentd log statefulset. | `{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}`
-`fluentd.events.sourceCategory` | Source category for the Events source. Default: "{clusterName}/events" | ``
+`fluentd.events.sourceCategory` | Source category for the Events source. Default: "{clusterName}/events" | `Nil`
 `metrics-server.enabled` | Set the enabled flag to true for enabling metrics-server. This is required before enabling fluentd autoscaling unless you have an existing metrics-server in the cluster. | `false`
 `metrics-server.args` | Arguments for metric server. | `["--kubelet-insecure-tls","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"]`
 `fluent-bit.resources` | Resources for Fluent-bit daemonsets. | `{}`
@@ -138,7 +138,7 @@ Parameter | Description | Default
 `fluent-bit.backend.forward.tls` | Enable or disable TLS support. | `off`
 `fluent-bit.backend.forward.tls_verify` | Force certificate validation. | `on`
 `fluent-bit.backend.forward.tls_debug` | Set TLS debug verbosity level. It accept the following values: 0-4. | `1`
-`fluent-bit.backend.forward.shared_key` | A key string known by the remote Fluentd used for authorization. | ``
+`fluent-bit.backend.forward.shared_key` | A key string known by the remote Fluentd used for authorization. | `Nil`
 `fluent-bit.trackOffsets` | Specify whether to track the file offsets for tailing docker logs. This allows fluent-bit to pick up where it left after pod restarts but requires access to a hostPath. | `true`
 `fluent-bit.tolerations` | Optional daemonset tolerations. | `[{"effect":"NoSchedule","operator":"Exists"}]`
 `fluent-bit.input.systemd.enabled` | Enable systemd input. | `true`
