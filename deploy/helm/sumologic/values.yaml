@@ -349,9 +349,6 @@ fluentd:
       overrideOutputConf: |-
 
   metrics:
-    ## Set the enabled flag to false for not creating resources for metrics collection
-    ## Set the prometheus-operator.enabled flag to false as well to avoid prometheus operator being installed
-    enabled: true
     statefulset:
       nodeSelector: {}
       tolerations: {}
