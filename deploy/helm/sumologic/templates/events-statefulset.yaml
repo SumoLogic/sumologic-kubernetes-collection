@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ printf "%s-fluentd-events" (include "sumologic.fullname" .) }}
+  name: {{ template "sumologic.metadata.name.events" . }}
   labels:
     app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
-  serviceName: {{ printf "%s-fluentd-events-headless" (include "sumologic.fullname" .) }}
+  serviceName: {{ template "sumologic.metadata.name.events.headless" . }}
   podManagementPolicy: "Parallel"
   template:
     metadata:
@@ -34,7 +34,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ printf "%s-fluentd-events" (include "sumologic.fullname" .) }}
+          name: {{ template "sumologic.metadata.name.events" . }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:

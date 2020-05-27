@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ printf "%s-fluentd-events" (include "sumologic.fullname" .) }}
+  name: {{ template "sumologic.metadata.name.events" . }}
   labels:
     app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
