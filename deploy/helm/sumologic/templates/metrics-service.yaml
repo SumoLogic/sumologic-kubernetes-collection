@@ -1,3 +1,4 @@
+{{- if eq .Values.prometheus-operator.enabled true }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -17,3 +18,4 @@ spec:
     port: 24231
     targetPort: 24231
     protocol: TCP
+{{- end }}
