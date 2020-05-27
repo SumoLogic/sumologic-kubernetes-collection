@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "sumologic.fullname" . }}-fluentd-logs
+  name: {{ template "sumologic.metadata.name.logs" . }}
   labels:
     app: {{ template "sumologic.labels.app" . }}-fluentd-logs
     {{- include "sumologic.labels.common" . | nindent 4 }}
@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app" . }}-fluentd-logs
-  serviceName: {{ template "sumologic.fullname" . }}-fluentd-logs-headless
+  serviceName: {{ template "sumologic.metadata.name.logs.headless" . }}
   podManagementPolicy: "Parallel"
   replicas: {{ .Values.fluentd.logs.statefulset.replicaCount }}
   template:
@@ -73,7 +73,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ template "sumologic.fullname" . }}-fluentd-logs
+          name: {{ template "sumologic.metadata.name.logs" . }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:
