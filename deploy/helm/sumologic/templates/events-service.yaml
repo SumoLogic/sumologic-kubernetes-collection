@@ -4,11 +4,11 @@ kind: Service
 metadata:
   name: {{ template "sumologic.metadata.name.events" . }}
   labels:
-    app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
+    app: {{ template "sumologic.labels.app.events" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
+    app: {{ template "sumologic.labels.app.events" . }}
   ports:
   - name: metrics
     port: 24231

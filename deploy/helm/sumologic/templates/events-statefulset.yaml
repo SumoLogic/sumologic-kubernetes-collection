@@ -4,18 +4,18 @@ kind: StatefulSet
 metadata:
   name: {{ template "sumologic.metadata.name.events" . }}
   labels:
-    app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
+    app: {{ template "sumologic.labels.app.events" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
+      app: {{ template "sumologic.labels.app.events" . }}
   serviceName: {{ template "sumologic.metadata.name.events.headless" . }}
   podManagementPolicy: "Parallel"
   template:
     metadata:
       labels:
-        app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
+        app: {{ template "sumologic.labels.app.events" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.fullname" . }}
