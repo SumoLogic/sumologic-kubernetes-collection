@@ -6,7 +6,7 @@ metadata:
   annotations:
 {{ toYaml .Values.sumologic.setup.clusterRoleBinding.annotations | indent 4 }}
   labels:
-    app: {{ template "sumologic.labels.app.roles.clusterrolebinding" . }}
+    app: {{ template "sumologic.labels.app.setup.roles.clusterrolebinding" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io

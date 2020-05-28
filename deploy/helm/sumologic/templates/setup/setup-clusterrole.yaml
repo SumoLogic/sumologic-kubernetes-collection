@@ -6,7 +6,7 @@ metadata:
   annotations:
 {{ toYaml .Values.sumologic.setup.clusterRole.annotations | indent 4 }}
   labels:
-    app: {{ template "sumologic.labels.app.roles.clusterrole" . }}
+    app: {{ template "sumologic.labels.app.setup.roles.clusterrole" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 rules:
   - apiGroups:
