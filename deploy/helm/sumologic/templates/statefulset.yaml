@@ -57,8 +57,8 @@ spec:
                 - key: app
                   operator: In
                   values:
-                  - {{ template "sumologic.labels.app.logs" . }}
-                  - {{ template "sumologic.labels.app.metrics" . }}
+                  - {{ template "sumologic.labels.app.logs.pod" . }}
+                  - {{ template "sumologic.labels.app.metrics.pod" . }}
                 - key: app
                   operator: In
                   values:
