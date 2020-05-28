@@ -39,6 +39,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}-fluentd-logs
 {{- end -}}
 
+{{- define "sumologic.labels.app.logs.pod" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs.service" -}}
 {{- template "sumologic.labels.app.logs" . }}
 {{- end -}}
@@ -53,6 +57,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "sumologic.labels.app.logs.statefulset" -}}
 {{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics" -}}
+{{- template "sumologic.fullname" . }}-fluentd-metrics
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.pod" -}}
+{{- template "sumologic.labels.app.metrics" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics.service" -}}
@@ -75,6 +87,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}-fluentd-events
 {{- end -}}
 
+{{- define "sumologic.labels.app.events.pod" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.events.service" -}}
 {{- template "sumologic.labels.app.events" . }}
 {{- end -}}
@@ -93,6 +109,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "sumologic.labels.app.otelcol" -}}
 {{- template "sumologic.fullname" . }}-otelcol
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.pod" -}}
+{{- template "sumologic.labels.app.otelcol" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.otelcol.service" -}}

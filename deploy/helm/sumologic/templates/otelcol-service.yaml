@@ -9,7 +9,7 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ template "sumologic.labels.app.otelcol" . }}
+    app: {{ template "sumologic.labels.app.otelcol.pod" . }}
   ports:
   - name: jaeger-sampling # Default endpoint for Jaeger Sampling (if enabled)
     port: 5778

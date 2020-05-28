@@ -16,7 +16,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "sumologic.labels.app.otelcol" . }}
+        app: {{ template "sumologic.labels.app.otelcol.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}

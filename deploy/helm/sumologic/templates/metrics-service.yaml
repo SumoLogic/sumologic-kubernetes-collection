@@ -8,7 +8,7 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ template "sumologic.labels.app.metrics" . }}
+    app: {{ template "sumologic.labels.app.metrics.pod" . }}
   ports:
   - name: prom-write
     port: 9888
