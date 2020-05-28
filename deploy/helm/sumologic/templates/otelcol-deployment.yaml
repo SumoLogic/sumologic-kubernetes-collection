@@ -2,9 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ printf "%s-otelcol" (include "sumologic.fullname" .) }}
+  name: {{ template "sumologic.metadata.name.otelcol.deployment" . }}
   labels:
-    app: {{ printf "%s-otelcol" (include "sumologic.labels.app" .) }}
+    app: {{ template "sumologic.labels.app.otelcol.deployment" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   minReadySeconds: 5
@@ -12,14 +12,14 @@ spec:
   replicas: {{ .Values.otelcol.deployment.replicas }}
   selector:
     matchLabels:
-      app: {{ printf "%s-otelcol" (include "sumologic.labels.app" .) }}
+      app: {{ template "sumologic.labels.app.otelcol.pod" . }}
   template:
     metadata:
       labels:
-        app: {{ printf "%s-otelcol" (include "sumologic.labels.app" .) }}
+        app: {{ template "sumologic.labels.app.otelcol.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ template "sumologic.fullname" . }}
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       {{- if .Values.otelcol.deployment.nodeSelector }}
       nodeSelector:
         {{ toYaml .Values.otelcol.deployment.nodeSelector | indent 8 }}
@@ -67,6 +67,6 @@ spec:
             port: 13133 # Health Check extension default port.
       volumes:
         - configMap:
-            name: {{ printf "%s-otelcol" (include "sumologic.fullname" .) }}
+            name: {{ template "sumologic.metadata.name.otelcol.configmap" . }}
           name: otel-collector-config-vol
 {{- end }}

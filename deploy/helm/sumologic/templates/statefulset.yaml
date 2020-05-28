@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "sumologic.fullname" . }}-fluentd-logs
+  name: {{ template "sumologic.metadata.name.logs.statefulset" . }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+    app: {{ template "sumologic.labels.app.logs.statefulset" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: {{ template "sumologic.labels.app" . }}-fluentd-logs
-  serviceName: {{ template "sumologic.fullname" . }}-fluentd-logs-headless
+      app: {{ template "sumologic.labels.app.logs.pod" . }}
+  serviceName: {{ template "sumologic.metadata.name.logs.service-headless" . }}
   podManagementPolicy: "Parallel"
   replicas: {{ .Values.fluentd.logs.statefulset.replicaCount }}
   template:
     metadata:
       labels:
-        app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+        app: {{ template "sumologic.labels.app.logs.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ template "sumologic.fullname" . }}
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
 {{- if .Values.fluentd.logs.statefulset.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.fluentd.logs.statefulset.nodeSelector | indent 8 }}
@@ -40,8 +40,8 @@ spec:
               - key: app
                 operator: In
                 values:
-                - {{ template "sumologic.labels.app" . }}-fluentd-logs
-                - {{ template "sumologic.labels.app" . }}-fluentd-metrics
+                - {{ template "sumologic.labels.app.logs" . }}
+                - {{ template "sumologic.labels.app.metrics" . }}
               - key: app
                 operator: In
                 values:
@@ -57,8 +57,8 @@ spec:
                 - key: app
                   operator: In
                   values:
-                  - {{ template "sumologic.labels.app" . }}-fluentd-logs
-                  - {{ template "sumologic.labels.app" . }}-fluentd-metrics
+                  - {{ template "sumologic.labels.app.logs.pod" . }}
+                  - {{ template "sumologic.labels.app.metrics.pod" . }}
                 - key: app
                   operator: In
                   values:
@@ -73,7 +73,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ template "sumologic.fullname" . }}-fluentd-logs
+          name: {{ template "sumologic.metadata.name.logs.configmap" . }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:

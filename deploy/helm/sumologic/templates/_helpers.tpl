@@ -23,6 +23,274 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.roles.clusterrole" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.roles.clusterrolebinding" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.roles.serviceaccount" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs" -}}
+{{- template "sumologic.fullname" . }}-fluentd-logs
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.pod" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.service" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.service-headless" -}}
+{{- template "sumologic.labels.app.logs.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.configmap" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.statefulset" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.hpa" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics" -}}
+{{- template "sumologic.fullname" . }}-fluentd-metrics
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.pod" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.service" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.service-headless" -}}
+{{- template "sumologic.labels.app.metrics.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.configmap" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.statefulset" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.hpa" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.events" -}}
+{{- template "sumologic.fullname" . }}-fluentd-events
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.pod" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.service" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.service-headless" -}}
+{{- template "sumologic.labels.app.events.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.configmap" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.statefulset" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol" -}}
+{{- template "sumologic.fullname" . }}-otelcol
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.pod" -}}
+{{- template "sumologic.labels.app.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.service" -}}
+{{- template "sumologic.labels.app.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.configmap" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.deployment" -}}
+{{- template "sumologic.labels.app.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup" -}}
+{{- template "sumologic.labels.app" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.job" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.configmap" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.roles.clusterrole" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.roles.clusterrolebinding" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.roles.serviceaccount" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.roles.clusterrole" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.roles.clusterrolebinding" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.roles.serviceaccount" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs" -}}
+{{ template "sumologic.fullname" . }}-fluentd-logs
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.service" -}}
+{{ template "sumologic.metadata.name.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.service-headless" -}}
+{{ template "sumologic.metadata.name.logs.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.configmap" -}}
+{{ template "sumologic.metadata.name.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.statefulset" -}}
+{{ template "sumologic.metadata.name.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics" -}}
+{{ template "sumologic.fullname" . }}-fluentd-metrics
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.service" -}}
+{{ template "sumologic.metadata.name.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.service-headless" -}}
+{{ template "sumologic.metadata.name.metrics.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.configmap" -}}
+{{ template "sumologic.metadata.name.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.statefulset" -}}
+{{ template "sumologic.metadata.name.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events" -}}
+{{ template "sumologic.fullname" . }}-fluentd-events
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events.service" -}}
+{{ template "sumologic.metadata.name.events" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events.service-headless" -}}
+{{ template "sumologic.metadata.name.events.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events.configmap" -}}
+{{ template "sumologic.metadata.name.events" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events.statefulset" -}}
+{{ template "sumologic.metadata.name.events" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol" -}}
+{{ template "sumologic.fullname" . }}-otelcol
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol.service" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol.configmap" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol.deployment" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup" -}}
+{{ template "sumologic.fullname" . }}-setup
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.job" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.configmap" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.roles.clusterrole" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.roles.clusterrolebinding" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.roles.serviceaccount" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.logs" -}}
+sumologic/app: fluentd-logs
+sumologic/component: logs
+{{- end -}}
+
+{{- define "sumologic.labels.metrics" -}}
+sumologic/app: fluentd-metrics
+sumologic/component: metrics
+{{- end -}}
+
+{{- define "sumologic.labels.events" -}}
+sumologic/app: fluentd-events
+sumologic/component: events
+{{- end -}}
+
+{{- define "sumologic.labels.traces" -}}
+sumologic/app: otelcol
+sumologic/component: traces
+{{- end -}}
+
 {{/*
 Create common labels used throughout the chart.
 If dryRun=true, we do not create any chart labels.
