@@ -259,7 +259,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ template "sumologic.metadata.name.setup" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.setup.roles.clusterrolebinding" -}}
+{{- define "sumologic.metadata.name.setup.roles.serviceaccount" -}}
 {{ template "sumologic.metadata.name.setup" . }}
 {{- end -}}
 
