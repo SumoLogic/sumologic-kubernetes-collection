@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: {{ template "sumologic.metadata.name.metrics" . }}
   labels:
+    app: {{ template "sumologic.labels.app.metrics" . }}
     {{- include "sumologic.labels.metrics" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
