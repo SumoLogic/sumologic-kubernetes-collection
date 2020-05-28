@@ -12,7 +12,7 @@ spec:
   replicas: {{ .Values.otelcol.deployment.replicas }}
   selector:
     matchLabels:
-      app: {{ template "sumologic.labels.app.otelcol" . }}
+      app: {{ template "sumologic.labels.app.otelcol.pod" . }}
   template:
     metadata:
       labels:
