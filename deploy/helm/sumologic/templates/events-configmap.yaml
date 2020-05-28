@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: {{ template "sumologic.metadata.name.events.configmap" . }}
   labels:
-    app: {{ template "sumologic.labels.app.events" . }}
+    app: {{ template "sumologic.labels.app.events.configmap" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   fluent.conf: |-

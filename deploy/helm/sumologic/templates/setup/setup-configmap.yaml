@@ -6,7 +6,7 @@ metadata:
   annotations:
 {{ toYaml .Values.sumologic.setup.configMap.annotations | indent 4 }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}
+    app: {{ template "sumologic.labels.app.setup.configmap" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   {{- (tpl (.Files.Glob "conf/setup/*").AsConfig .) | nindent 2 }}
