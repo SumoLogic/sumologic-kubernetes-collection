@@ -19,7 +19,7 @@ spec:
         app: {{ template "sumologic.labels.app.otelcol" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ template "sumologic.fullname" . }}
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       {{- if .Values.otelcol.deployment.nodeSelector }}
       nodeSelector:
         {{ toYaml .Values.otelcol.deployment.nodeSelector | indent 8 }}

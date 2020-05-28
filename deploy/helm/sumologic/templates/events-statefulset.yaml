@@ -18,7 +18,7 @@ spec:
         app: {{ template "sumologic.labels.app.events" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ template "sumologic.fullname" . }}
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
 {{- if .Values.fluentd.events.statefulset.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.fluentd.events.statefulset.nodeSelector | indent 8 }}

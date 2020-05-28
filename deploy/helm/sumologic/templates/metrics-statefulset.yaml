@@ -18,7 +18,7 @@ spec:
         app: {{ template "sumologic.labels.app.metrics" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ template "sumologic.fullname" . }}
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
 {{- if .Values.fluentd.metrics.statefulset.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.fluentd.metrics.statefulset.nodeSelector | indent 8 }}

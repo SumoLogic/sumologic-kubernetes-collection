@@ -23,6 +23,18 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.roles.clusterrole" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.roles.clusterrolebinding" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.roles.serviceaccount" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs" -}}
 {{- template "sumologic.fullname" . }}-fluentd-logs
 {{- end -}}
@@ -105,6 +117,30 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "sumologic.labels.app.setup.configmap" -}}
 {{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.roles.clusterrole" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.roles.clusterrolebinding" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.rolesserviceaccount" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.roles.clusterrole" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.roles.clusterrolebinding" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.roles.serviceaccount" -}}
+{{- template "sumologic.fullname" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs" -}}
@@ -192,6 +228,18 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.metadata.name.setup.configmap" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.roles.clusterrole" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.roles.clusterrolebinding" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.roles.clusterrolebinding" -}}
 {{ template "sumologic.metadata.name.setup" . }}
 {{- end -}}
 
