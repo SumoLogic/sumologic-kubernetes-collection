@@ -8,7 +8,7 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ template "sumologic.labels.app.events" . }}
+    app: {{ template "sumologic.labels.app.events.pod" . }}
   clusterIP: None
   ports:
   - name: metrics
