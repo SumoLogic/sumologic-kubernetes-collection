@@ -27,8 +27,12 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}-fluentd-logs
 {{- end -}}
 
-{{- define "sumologic.labels.app.logs.headless" -}}
-{{- template "sumologic.fullname" . }}-fluentd-logs-headless
+{{- define "sumologic.labels.app.logs.service" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.service-headless" -}}
+{{- template "sumologic.labels.app.logs.service" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.configmap" -}}
@@ -39,12 +43,12 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.logs" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.metrics" -}}
-{{- template "sumologic.fullname" . }}-fluentd-metrics
+{{- define "sumologic.labels.app.metrics.service" -}}
+{{- template "sumologic.labels.app.metrics" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.metrics.headless" -}}
-{{- template "sumologic.fullname" . }}-fluentd-metrics-headless
+{{- define "sumologic.labels.app.metrics.service-headless" -}}
+{{- template "sumologic.labels.app.metrics.service" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics.configmap" -}}
@@ -59,8 +63,12 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}-fluentd-events
 {{- end -}}
 
-{{- define "sumologic.labels.app.events.headless" -}}
-{{- template "sumologic.fullname" . }}-fluentd-events-headless
+{{- define "sumologic.labels.app.events.service" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.service-headless" -}}
+{{- template "sumologic.labels.app.events.service" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.labels.app.events.configmap" -}}
@@ -75,6 +83,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}-otelcol
 {{- end -}}
 
+{{- define "sumologic.labels.app.otelcol.service" -}}
+{{- template "sumologic.labels.app.otelcol" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcol.configmap" -}}
 {{- template "sumologic.labels.app.metrics" . }}
 {{- end -}}
@@ -83,16 +95,28 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.otelcol" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.setup.configmap" -}}
+{{- define "sumologic.labels.app.setup" -}}
 {{- template "sumologic.labels.app" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.job" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.configmap" -}}
+{{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs" -}}
 {{ template "sumologic.fullname" . }}-fluentd-logs
 {{- end -}}
 
-{{- define "sumologic.metadata.name.logs.headless" -}}
-{{ template "sumologic.fullname" . }}-fluentd-logs-headless
+{{- define "sumologic.metadata.name.logs.service" -}}
+{{ template "sumologic.metadata.name.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.service-headless" -}}
+{{ template "sumologic.metadata.name.logs.service" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.configmap" -}}
@@ -107,8 +131,12 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ template "sumologic.fullname" . }}-fluentd-metrics
 {{- end -}}
 
-{{- define "sumologic.metadata.name.metrics.headless" -}}
-{{ template "sumologic.fullname" . }}-fluentd-metrics-headless
+{{- define "sumologic.metadata.name.metrics.service" -}}
+{{ template "sumologic.metadata.name.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.service-headless" -}}
+{{ template "sumologic.metadata.name.metrics.service" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.configmap" -}}
@@ -123,8 +151,12 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ template "sumologic.fullname" . }}-fluentd-events
 {{- end -}}
 
-{{- define "sumologic.metadata.name.events.headless" -}}
-{{ template "sumologic.fullname" . }}-fluentd-events-headless
+{{- define "sumologic.metadata.name.events.service" -}}
+{{ template "sumologic.metadata.name.events" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events.service-headless" -}}
+{{ template "sumologic.metadata.name.events.service" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events.configmap" -}}
@@ -139,6 +171,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ template "sumologic.fullname" . }}-otelcol
 {{- end -}}
 
+{{- define "sumologic.metadata.name.otelcol.service" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.otelcol.configmap" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}
 {{- end -}}
@@ -149,6 +185,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "sumologic.metadata.name.setup" -}}
 {{ template "sumologic.fullname" . }}-setup
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.job" -}}
+{{ template "sumologic.metadata.name.setup" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.setup.configmap" -}}

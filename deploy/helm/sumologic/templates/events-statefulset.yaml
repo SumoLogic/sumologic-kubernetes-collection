@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.events" . }}
-  serviceName: {{ template "sumologic.metadata.name.events.headless" . }}
+  serviceName: {{ template "sumologic.metadata.name.events.service-headless" . }}
   podManagementPolicy: "Parallel"
   template:
     metadata:

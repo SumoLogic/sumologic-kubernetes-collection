@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.metrics" . }}
-  serviceName: {{ template "sumologic.metadata.name.metrics.headless" . }}
+  serviceName: {{ template "sumologic.metadata.name.metrics.service-headless" . }}
   podManagementPolicy: "Parallel"
   replicas: {{ .Values.fluentd.metrics.statefulset.replicaCount }}
   template:

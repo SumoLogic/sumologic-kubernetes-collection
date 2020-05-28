@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "sumologic.metadata.name.metrics.headless" . }}
+  name: {{ template "sumologic.metadata.name.metrics.service-headless" . }}
   labels:
-    app: {{ template "sumologic.labels.app.metrics.headless" . }}
+    app: {{ template "sumologic.labels.app.metrics.service-headless" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
