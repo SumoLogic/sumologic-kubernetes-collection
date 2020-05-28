@@ -2,9 +2,9 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ template "sumologic.metadata.name.logs" . }}
+  name: {{ template "sumologic.metadata.name.logs.hpa" . }}
   labels:
-    app: {{ template "sumologic.labels.app.logs" . }}
+    app: {{ template "sumologic.labels.app.logs.hpa" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   scaleTargetRef:
