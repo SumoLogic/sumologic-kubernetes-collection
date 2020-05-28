@@ -10,7 +10,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: StatefulSet
-    name: {{ template "sumologic.metadata.name.logs" . }}
+    name: {{ template "sumologic.metadata.name.logs.statefulset" . }}
   minReplicas: {{ .Values.fluentd.logs.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.fluentd.logs.autoscaling.maxReplicas }}
   targetCPUUtilizationPercentage: {{ .Values.fluentd.logs.autoscaling.targetCPUUtilizationPercentage }}
