@@ -72,7 +72,7 @@ kubectl create namespace sumologic
 Run the following command to download and apply the YAML file containing all the Kubernetes resources. Replace the `<NAMESPACE>`, `<SUMOLOGIC_ACCESSID>`, `<SUMOLOGIC_ACCESSKEY>`, `<COLLECTOR_NAME>` and `<CLUSTER_NAME>` variables with your values.
 
 ```sh
-curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/kubernetes/setup-sumologic.yaml.tmpl | \
+curl -s https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/kubernetes/setup-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/<NAMESPACE>/g" | \
 sed 's/\$SUMOLOGIC_ACCESSID'"/<SUMOLOGIC_ACCESSID>/g" | \
 sed 's/\$SUMOLOGIC_ACCESSKEY'"/<SUMOLOGIC_ACCESSKEY>/g" | \
@@ -153,7 +153,7 @@ In this step you will deploy Fluentd using a Sumo-provided .yaml manifest.
 If you don't need to customize the configuration apply the `fluentd-sumologic.yaml` manifest with the following command. Replace the `<NAMESPACE>` and `<CLUSTER_NAME>` variables with your values.
 
 ```sh
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/<NAMESPACE>/g" | \
 sed 's/cluster kubernetes/cluster <CLUSTER_NAME>/g' | \
 kubectl -n sumologic apply -f -
@@ -164,7 +164,7 @@ kubectl -n sumologic apply -f -
 If you need to customize the configuration there are two commands to run. First, get the `fluentd-sumologic.yaml` manifest with following command:
 
 ```sh
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/sumologic/g" >> fluentd-sumologic.yaml
 ```
 
@@ -192,7 +192,7 @@ In this step, you will configure the Prometheus server to write metrics to Fluen
 Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/prometheus-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 __NOTE__ If you plan to install Prometheus in a different namespace than you deployed Fluentd to in Step 1, or you have an existing Prometheus you plan to apply our configuration to running in a different namespace,  please update the remote write API configuration to use the full service URL like, `http://collection-sumologic.sumologic.svc.cluster.local:9888`.
@@ -244,7 +244,7 @@ In this step, you will deploy FluentBit to forward logs to Fluentd.
 Run the following commands to download the FluentBit `fluent-bit-overrides.yaml` file and install `fluent-bit`
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/fluent-bit-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/fluent-bit-overrides.yaml
 $ helm fetch stable/fluent-bit --version 2.8.1
 $ helm template fluent-bit-2.8.1.tgz --name fluent-bit --namespace=sumologic -f fluent-bit-overrides.yaml > fluent-bit.yaml
 $ kubectl apply -f fluent-bit.yaml
@@ -266,7 +266,7 @@ In this step, you will deploy [Falco](https://falco.org/) to detect anomalous ac
 Download the file `falco-overrides.yaml` from GitHub:
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/falco-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/falco-overrides.yaml
 $ helm fetch stable/falco --version 1.0.9
 $ helm template falco-1.0.9.tgz --name falco --namespace=sumologic -f falco-overrides.yaml > falco.yaml
 $ kubectl apply -f falco.yaml

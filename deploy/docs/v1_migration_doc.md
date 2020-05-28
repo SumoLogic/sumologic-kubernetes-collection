@@ -134,6 +134,11 @@ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-colle
 helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_values.yaml
 ```
 
+### Troubleshooting Upgrade
+If you receive the below error, it likely means your OS is picking up an older version of `bash` even though you may have upgraded.  Makes sure you are running a version of `bash` >= 4.4 by running `bash --version`.  If the version of bash is correct, you can rerun the upgrade script by running `bash upgrade-1.0.0.sh current_values.yaml` and then rerun `helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_values.yaml` to resolve.
+
+```Error: UPGRADE FAILED: error validating "": error validating data: [ValidationError(StatefulSet.spec.template.spec.containers[0].resources.limits.cpu fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.limits.memory fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.requests.cpu fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.requests.memory fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string"]```
+
 ### Rollback
 
 If something goes wrong, or you want to go back to the previous version,
@@ -170,7 +175,7 @@ Follow the below steps to deploy new resources.
 
 - Run the below command to get the `fluentd-sumologic.yaml` manifest for version `v1.0.0` and  then make the changes identified in the above step.
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/<NAMESPACE>/g" | \
 sed 's/cluster kubernetes/cluster <CLUSTER_NAME>/g'  >> fluentd-sumologic.yaml
 ```

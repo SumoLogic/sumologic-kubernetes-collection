@@ -71,7 +71,7 @@ To customize your configuration:
 - Download the `values.yaml` file by running:
 
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/sumologic/values.yaml > values.yaml
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/values.yaml > values.yaml
 ```
 
 - Modify the `values.yaml` file with your customizations, then apply the configuration using the following command:

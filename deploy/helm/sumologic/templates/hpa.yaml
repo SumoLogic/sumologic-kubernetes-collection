@@ -2,15 +2,15 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ template "sumologic.fullname" . }}-fluentd-logs
+  name: {{ template "sumologic.metadata.name.logs.hpa" . }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+    app: {{ template "sumologic.labels.app.logs.hpa" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: StatefulSet
-    name: {{ template "sumologic.fullname" . }}-fluentd-logs
+    name: {{ template "sumologic.metadata.name.logs.statefulset" . }}
   minReplicas: {{ .Values.fluentd.logs.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.fluentd.logs.autoscaling.maxReplicas }}
   targetCPUUtilizationPercentage: {{ .Values.fluentd.logs.autoscaling.targetCPUUtilizationPercentage }}

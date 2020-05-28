@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "sumologic.fullname" . }}-fluentd-logs-headless
+  name: {{ template "sumologic.metadata.name.logs.service-headless" . }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-logs-headless
+    app: {{ template "sumologic.labels.app.logs.service-headless" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-logs
+    app: {{ template "sumologic.labels.app.logs.pod" . }}
   clusterIP: None
   ports:
   {{- if .Values.sumologic.traces.enabled }}
