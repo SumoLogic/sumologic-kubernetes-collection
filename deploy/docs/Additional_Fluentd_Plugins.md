@@ -7,9 +7,7 @@ To add additional Fluentd plugins, you can modify `values.yaml` or create a new 
 __Note__: If your plugin requires additional system libraries, it cannot be installed this way.
 
 ```yaml
-# ...
 fluentd:
-  # ...
   additionalPlugins:
     - fluent-plugin-route
     - fluent-plugin-aws-elasticsearch-service
@@ -23,7 +21,7 @@ __Note__: You will want to update `<RELEASE>` to the [docker tag](https://hub.do
 FROM sumologic/kubernetes-fluentd:<RELEASE>
 
 USER root
-# Here goes your changes
+# Add the plugins you wish to install below.
 RUN gem install fluent-plugin-route
 RUN gem install fluent-plugin-aws-elasticsearch-service
 

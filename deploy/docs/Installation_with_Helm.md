@@ -33,13 +33,6 @@ Sumo Logic Apps for Kubernetes and Explore require you to add the following [fie
 - pod
 - service
 
-The Helm chart installation requires two parameter overrides:
-* __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-* __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
-
-The following parameter is optional, but we recommend setting it.
-* __sumologic.clusterName__ - An identifier for your Kubernetes cluster.  This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`. 
-
 ## Installation Steps
 
 These steps require that no Prometheus exists. If you already have Prometheus installed select from the following options:
@@ -47,6 +40,13 @@ These steps require that no Prometheus exists. If you already have Prometheus in
 - [How to install if you have an existing Prometheus operator](./existingPrometheusDoc.md) 
 - [How to install if you have standalone Prometheus](./standAlonePrometheus.md) 
 - [How to install our Prometheus side by side with your existing Prometheus](./SideBySidePrometheus.md)
+
+The Helm chart installation requires two parameter overrides:
+* __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
+* __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+
+The following parameter is optional, but we recommend setting it.
+* __sumologic.clusterName__ - An identifier for your Kubernetes cluster.  This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 To install the chart, first add the `sumologic` private repo:
 
