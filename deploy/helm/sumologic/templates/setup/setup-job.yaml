@@ -17,7 +17,7 @@ spec:
       volumes:
       - name: setup
         configMap:
-          name: {{ template "sumologic.metadata.name.setup" . }}
+          name: {{ template "sumologic.metadata.name.setup.configmap" . }}
           defaultMode: 0777
       containers:
       - name: setup

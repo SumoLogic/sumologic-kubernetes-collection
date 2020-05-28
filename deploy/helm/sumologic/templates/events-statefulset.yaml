@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "sumologic.metadata.name.events" . }}
+  name: {{ template "sumologic.metadata.name.events.statefulset" . }}
   labels:
     app: {{ template "sumologic.labels.app.events" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}

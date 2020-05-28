@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "sumologic.metadata.name.otelcol" . }}
+  name: {{ template "sumologic.metadata.name.otelcol.deployment" . }}
   labels:
     app: {{ template "sumologic.labels.app.otelcol" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}

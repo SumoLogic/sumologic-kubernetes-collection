@@ -63,6 +63,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ template "sumologic.metadata.name.logs" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.statefulset" -}}
+{{ template "sumologic.metadata.name.logs" . }}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.metrics" -}}
 {{ template "sumologic.fullname" . }}-fluentd-metrics
 {{- end -}}
@@ -72,6 +76,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.configmap" -}}
+{{ template "sumologic.metadata.name.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.statefulset" -}}
 {{ template "sumologic.metadata.name.metrics" . }}
 {{- end -}}
 
@@ -87,11 +95,19 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ template "sumologic.metadata.name.events" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.events.statefulset" -}}
+{{ template "sumologic.metadata.name.events" . }}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.otelcol" -}}
 {{ template "sumologic.fullname" . }}-otelcol
 {{- end -}}
 
 {{- define "sumologic.metadata.name.otelcol.configmap" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol.deployment" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}
 {{- end -}}
 

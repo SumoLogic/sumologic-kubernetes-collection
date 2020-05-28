@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "sumologic.metadata.name.logs" . }}
+  name: {{ template "sumologic.metadata.name.logs.statefulset" . }}
   labels:
     app: {{ template "sumologic.labels.app.logs" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
