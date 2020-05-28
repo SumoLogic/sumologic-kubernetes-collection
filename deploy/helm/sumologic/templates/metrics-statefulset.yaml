@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: {{ template "sumologic.metadata.name.metrics.statefulset" . }}
   labels:
-    app: {{ template "sumologic.labels.app.metrics" . }}
+    app: {{ template "sumologic.labels.app.metrics.statefulset" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:

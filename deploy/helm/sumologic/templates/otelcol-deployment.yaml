@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: {{ template "sumologic.metadata.name.otelcol.deployment" . }}
   labels:
-    app: {{ template "sumologic.labels.app.otelcol" . }}
+    app: {{ template "sumologic.labels.app.otelcol.deployment" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   minReadySeconds: 5

@@ -35,6 +35,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.logs" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.logs.statefulset" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.metrics" -}}
 {{- template "sumologic.fullname" . }}-fluentd-metrics
 {{- end -}}
@@ -44,6 +48,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics.configmap" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.statefulset" -}}
 {{- template "sumologic.labels.app.metrics" . }}
 {{- end -}}
 
@@ -59,12 +67,20 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.events" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.events.statefulset" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcol" -}}
 {{- template "sumologic.fullname" . }}-otelcol
 {{- end -}}
 
 {{- define "sumologic.labels.app.otelcol.configmap" -}}
 {{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.deployment" -}}
+{{- template "sumologic.labels.app.otelcol" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.setup.configmap" -}}
