@@ -23,6 +23,10 @@ data:
     # Fix URL to remove "v1" or "v1/"
     export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
   
+    # Support proxy for terraform
+    export HTTP_PROXY=${HTTP_PROXY:=""}
+    export HTTPS_PROXY=${HTTPS_PROXY:=""}
+  
     COLLECTOR_NAME=$COLLECTOR_NAME
   
     terraform init
@@ -264,6 +268,10 @@ spec:
         - name: SUMOLOGIC_ACCESSKEY
           value: $SUMOLOGIC_ACCESSKEY
         - name: SUMOLOGIC_BASE_URL
+          value: 
+        - name: HTTP_PROXY
+          value: 
+        - name: HTTPS_PROXY
           value: 
         
 
