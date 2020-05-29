@@ -80,6 +80,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   cd ../../../
 
   with_files=$(ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#-s templates#g' | sed 's/yaml/yaml \\/g')
+  echo $with_files
   eval 'sudo helm template collection deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl --set sumologic.endpoint="bogus" --set sumologic.accessId="bogus" --set sumologic.accessKey="bogus"'
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
