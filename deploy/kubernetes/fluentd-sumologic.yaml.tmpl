@@ -599,8 +599,8 @@ metadata:
   name: collection-sumologic-fluentd-metrics-headless
   labels:
     app: collection-sumologic-fluentd-metrics-headless
-    sumologic/app: fluentd-events
-    sumologic/component: events
+    sumologic/app: fluentd-metrics
+    sumologic/component: metrics
     
 spec:
   selector:
@@ -648,6 +648,8 @@ metadata:
   name: collection-sumologic-fluentd-logs-headless
   labels:
     app: collection-sumologic-fluentd-logs-headless
+    sumologic/app: fluentd-logs
+    sumologic/component: logs
     
 spec:
   selector:
