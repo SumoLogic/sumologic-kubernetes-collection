@@ -453,6 +453,14 @@ fluentd:
     #   pods: "v1"
     #   events: "events.k8s.io/v1beta1"
 
+    # Extra Environment Values - allows yaml definitions
+    extraEnvVars:
+    #  - name: VALUE_FROM_SECRET
+    #    valueFrom:
+    #      secretKeyRef:
+    #        name: secret_name
+    #        key: secret_key
+
 ## Configure metrics-server
 ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
 metrics-server:
