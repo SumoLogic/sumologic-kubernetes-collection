@@ -491,10 +491,11 @@ data:
       </match>
   
     </label>
-  metrics.output.conf: |-
+  metrics.output.conf: |
     data_type metrics
     metric_data_format prometheus
     disable_cookies true
+    proxy_uri ""
   
 ---
 # Source: sumologic/templates/serviceaccount.yaml
