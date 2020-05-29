@@ -1,4 +1,4 @@
-{{- if eq .Values.fluentd.logs.enabled true }}
+{{- if eq .Values.sumologic.logs.enabled true }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
