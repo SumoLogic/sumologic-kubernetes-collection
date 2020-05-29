@@ -453,11 +453,11 @@ Generate line for data terraform section
 
 Example usage:
 
-{{ include "terraform.sources.data" $source }}
+{{ include "terraform.sources.data" (dict "Endpoint" "enpoint-default-metrics" "Name" "default") }}
 
 */}}
 {{- define "terraform.sources.data" -}}
-{{ printf "%-41s = \"${sumologic_http_source.%s.url}\"" (include "terraform.sources.endpoint_name" .) . }}
+{{ printf "%-41s = \"${sumologic_http_source.%s.url}\"" .Endpoint .Name }}
 {{- end -}}
 
 {{/*
@@ -483,4 +483,27 @@ resource "sumologic_http_source" "{{ .Name }}" {
     {{- end -}}
     {{ end }}
 }
+{{- end -}}
+
+{{/*
+get configuration variable name for sources confg map
+
+Example usage:
+
+{{ include "terraform.sources.config-map-variable" (dict "Context" .Values "Name" $name "Endpoint" $endpoint) }}
+
+*/}}
+{{- define "terraform.sources.config-map-variable" -}}
+{{- $name := .Name -}}
+{{- $ctx := .Context -}}
+{{- $endpoint := .Endpoint -}}
+{{- if not $endpoint -}}
+{{- $source := (index $ctx.sumologic.sources "default") -}}
+{{- if (index $ctx.sumologic.sources .Name "config-name") -}}
+{{- $endpoint = index $ctx.sumologic.sources .Name "config-name" -}}
+{{- else -}}
+{{- $endpoint = printf "endpoint-%s" (include "terraform.sources.name_metrics" $name) -}}
+{{- end -}}
+{{- end -}}
+{{ $endpoint }}
 {{- end -}}

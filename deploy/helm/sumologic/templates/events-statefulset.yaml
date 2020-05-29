@@ -70,7 +70,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: sumologic
-              key: {{ template "terraform.sources.endpoint_name" (include "terraform.sources.name" "events") }}
+              key: {{ template "terraform.sources.config-map-variable" (dict "Context" .Values "Endpoint" "endpoint-events") }}
 {{- if .Values.fluentd.events.extraEnvVars }}
 {{ toYaml .Values.fluentd.events.extraEnvVars | nindent 10 }}
 {{- end }}
