@@ -81,6 +81,16 @@ sumologic:
         helm.sh/hook: pre-install,pre-upgrade
         helm.sh/hook-weight: "0"
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  
+  # Logs configuration
+  ## Set the enabled flag to false for diabling logs ingestion altogether.
+  logs:
+    enabled: true
+  
+  # Metrics configuration
+  ## Set the enabled flag to false for diabling metrics ingestion altogether.
+  metrics:
+    enabled: true
 
   # Traces configuration
   # This is experimental feature and may be unavailable for your account
@@ -180,7 +190,6 @@ fluentd:
     pluginLogLevel: "error"
 
   logs:
-    ## Set the enabled flag to false for diabling logs ingestion altogether.
     enabled: true
     statefulset:
       nodeSelector: {}
@@ -351,9 +360,6 @@ fluentd:
       overrideOutputConf: |-
 
   metrics:
-    ## Set the enabled flag to false for either of the below two purposes:
-    ## 1. Not install prometheus operator helm chart as a dependency along with this helm chart
-    ## 2. Disable metrics collection altogether
     enabled: true
     statefulset:
       nodeSelector: {}
@@ -598,7 +604,10 @@ prometheus-operator:
       interval:
   # Ensure we use pre 1.14 recording rules consistently as current content depends on them.
   kubeTargetVersionOverride: 1.13.0-0
-  
+  ## Set the enabled flag to false for either of the below two purposes:
+  ## 1. Not install prometheus operator helm chart as a dependency along with this helm chart
+  ## 2. Disable metrics collection altogether
+  enabled: true
   alertmanager:
     enabled: false
   grafana:

@@ -6,7 +6,7 @@ dependencies:
   - name: prometheus-operator
     version: 8.13.8
     repository: https://kubernetes-charts.storage.googleapis.com/
-    condition: fluentd.metrics.enabled
+    condition: sumologic.metrics.enabled,prometheus-operator.enabled
   - name: falco
     version: 1.1.7
     repository: https://kubernetes-charts.storage.googleapis.com/
