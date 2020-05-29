@@ -4,6 +4,7 @@ metadata:
   name: {{ template "sumologic.metadata.name.logs.service-headless" . }}
   labels:
     app: {{ template "sumologic.labels.app.logs.service-headless" . }}
+    {{- include "sumologic.labels.logs" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
