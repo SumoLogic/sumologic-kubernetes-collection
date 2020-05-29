@@ -39,5 +39,9 @@ spec:
           value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
         - name: SUMOLOGIC_BASE_URL
           value: {{ .Values.sumologic.endpoint }}
+        - name: HTTP_PROXY
+          value: {{ .Values.sumologic.httpProxy }}
+        - name: HTTPS_PROXY
+          value: {{ .Values.sumologic.httpsProxy }}
         {{ end }}
 {{- end }}
