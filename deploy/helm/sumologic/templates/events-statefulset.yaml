@@ -71,6 +71,9 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-events
+{{- if .Values.fluentd.events.extraEnvVars }}
+{{ toYaml .Values.fluentd.events.extraEnvVars | nindent 10 }}
+{{- end }}
 {{- if .Values.fluentd.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
