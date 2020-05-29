@@ -79,7 +79,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   sudo helm dependency update
   cd ../../../
 
-  with_files=$(ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#-s templates#g' | sed 's/yaml/yaml \\/g')
+  with_files=$(ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#--show-only templates#g' | sed 's/yaml/yaml \\/g')
   eval 'sudo helm template collection deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl --set sumologic.endpoint="bogus" --set sumologic.accessId="bogus" --set sumologic.accessKey="bogus"'
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
@@ -94,7 +94,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "Generating setup job yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/setup-sumologic.yaml.tmpl
 
-  with_files=$(ls deploy/helm/sumologic/templates/setup/*.yaml | sed 's#deploy/helm/sumologic/templates#-s templates#g' | sed 's/yaml/yaml \\/g')
+  with_files=$(ls deploy/helm/sumologic/templates/setup/*.yaml | sed 's#deploy/helm/sumologic/templates#--show-only templates#g' | sed 's/yaml/yaml \\/g')
   eval 'sudo helm template collection deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/setup-sumologic.yaml.tmpl --set sumologic.accessId="\$SUMOLOGIC_ACCESSID" --set sumologic.accessKey="\$SUMOLOGIC_ACCESSKEY" --set sumologic.collectorName="\$COLLECTOR_NAME" --set sumologic.clusterName="\$CLUSTER_NAME"'
   if [[ $(git diff deploy/kubernetes/setup-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'setup-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
