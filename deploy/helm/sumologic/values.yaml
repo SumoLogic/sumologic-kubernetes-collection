@@ -675,7 +675,7 @@ prometheus-operator:
     additionalServiceMonitors:
       - name: collection-sumologic-fluentd-logs
         additionalLabels:
-          app: collection-sumologic-fluentd-logs
+          sumologic/app: fluentd-logs
         endpoints:
         - port: metrics
         namespaceSelector:
@@ -683,10 +683,10 @@ prometheus-operator:
           - $(NAMESPACE)
         selector:
           matchLabels:
-            app: collection-sumologic-fluentd-logs
+            sumologic/app: fluentd-logs
       - name: collection-sumologic-fluentd-metrics
         additionalLabels:
-          app: collection-sumologic-fluentd-metrics
+          sumologic/app: fluentd-metrics
         endpoints:
         - port: metrics
         namespaceSelector:
@@ -694,10 +694,10 @@ prometheus-operator:
           - $(NAMESPACE)
         selector:
           matchLabels:
-            app: collection-sumologic-fluentd-metrics
+            sumologic/app: fluentd-metrics
       - name: collection-sumologic-fluentd-events
         additionalLabels:
-          app: collection-sumologic-fluentd-events
+          sumologic/app: fluentd-events
         endpoints:
           - port: metrics
         namespaceSelector:
@@ -705,7 +705,7 @@ prometheus-operator:
             - $(NAMESPACE)
         selector:
           matchLabels:
-            app: collection-sumologic-fluentd-events
+            sumologic/app: fluentd-events
       - name: collection-fluent-bit
         additionalLabels:
           app: collection-fluent-bit
@@ -720,7 +720,7 @@ prometheus-operator:
             app: fluent-bit
       - name: collection-sumologic-otelcol
         additionalLabels:
-          app: collection-sumologic-otelcol
+          sumologic/app: otelcol
         endpoints:
           - port: metrics
         namespaceSelector:
@@ -728,7 +728,7 @@ prometheus-operator:
             - $(NAMESPACE)
         selector:
           matchLabels:
-            app: collection-sumologic-otelcol
+            sumologic/app: otelcol
     prometheusSpec:
       ## Prometheus default scrape interval, default from upstream Prometheus Operator Helm chart
       ## NOTE changing the scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
