@@ -468,48 +468,48 @@ fluentd:
     #     readOnly: true
   
     ## Output configuration
-    ## match: fluentd match
+    ## tag: tag for fluentd match
     ## id: sumologic output @id
-    ## endpoint: It should match the sumologic.sources[].endpoint
-    ## drop: true
-    ## weight: default 10
-    ## Order of output plugins has meaning in case of fliuentd matches
+    ## endpoint: [optional] [output key by default] It should match the sumologic.sources[].endpoint
+    ## drop: [optional] [false by default] Change it to true to drop traffic for specific output
+    ## weight: [optional [0 by default] Order of fluentd output (lower means higher priority)
+    ## The weight has meaning in case of fluentd matches
     output:
       apiserver:
-        match: prometheus.metrics.apiserver**
+        tag: prometheus.metrics.apiserver**
         id: sumologic.endpoint.metrics.apiserver
         weight: 90
       kubelet:
-        match: prometheus.metrics.kubelet**
+        tag: prometheus.metrics.kubelet**
         id: sumologic.endpoint.metrics.kubelet
         weight: 90
       container:
-        match: prometheus.metrics.container**
+        tag: prometheus.metrics.container**
         id: sumologic.endpoint.metrics.container
         source: kubelet
         weight: 90
       controller:
-        match: prometheus.metrics.controller-manager**
+        tag: prometheus.metrics.controller-manager**
         id: sumologic.endpoint.metrics.kube.controller.manager
         weight: 90
       scheduler:
-        match: prometheus.metrics.scheduler**
+        tag: prometheus.metrics.scheduler**
         id: sumologic.endpoint.metrics.kube.scheduler
         weight: 90
       state:
-        match: prometheus.metrics.state**
+        tag: prometheus.metrics.state**
         id: sumologic.endpoint.metrics.kube.state
         weight: 90
       node:
-        match: prometheus.metrics.node**
+        tag: prometheus.metrics.node**
         id: sumologic.endpoint.metrics.node.exporter
         weight: 90
       control-plane:
-        match: prometheus.metrics.control-plane**
+        tag: prometheus.metrics.control-plane**
         id: sumologic.endpoint.metrics.control.plane
         weight: 90
       default:
-        match: prometheus.metrics**
+        tag: prometheus.metrics**
         id: sumologic.endpoint.metrics
         weight: 100
 
