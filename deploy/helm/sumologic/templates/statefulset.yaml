@@ -124,7 +124,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: sumologic
-              key: {{ template "terraform.sources.endpoint_name" (include "terraform.sources.name" "logs") }}
+              key: {{ template "terraform.sources.config-map-variable" (dict "Context" .Values "Endpoint" "endpoint-logs") }}
         {{- if .Values.sumologic.traces.enabled }}
         - name: SUMO_ENDPOINT_TRACES
           value: {{ .Values.sumologic.traces.endpoint }}

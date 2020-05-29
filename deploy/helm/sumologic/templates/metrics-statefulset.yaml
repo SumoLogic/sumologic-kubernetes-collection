@@ -115,12 +115,13 @@ spec:
 {{ toYaml .Values.fluentd.metrics.extraVolumeMounts | indent 8 }}
 {{- end }}
         env:
+{{- $ctx := .Values -}}
 {{- range $key, $source := .Values.sumologic.sources }}
         - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name_metrics" $key) }}
           valueFrom:
             secretKeyRef:
               name: sumologic
-              key: {{ template "terraform.sources.endpoint_name" (include "terraform.sources.name_metrics" $key) }}
+              key: {{ template "terraform.sources.config-map-variable" (dict "Context" $ctx "Name" $key) }}
 {{- end }}
         {{- if .Values.sumologic.traces.enabled }}
         - name: SUMO_ENDPOINT_TRACES

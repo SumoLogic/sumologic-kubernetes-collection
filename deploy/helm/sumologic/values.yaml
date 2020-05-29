@@ -92,22 +92,29 @@ sumologic:
   ## Configuration of http sources
   ## name: source name
   ## value: source values - it's visible in sumologic platform
-  ## endpoint: binds source with fluentd configuration: (fluentd.metrics.output[])
+  ## config-name: This is mostly for backward compatibility
   sources:
     default:
       value: (default-metrics)
+      config-name: endpoint-metrics
     apiserver:
       value: apiserver-metrics
+      config-name: endpoint-metrics-apiserver
     controller:
       value: kube-controller-manager-metrics
+      config-name: endpoint-metrics-kube-controller-manager
     scheduler:
       value: kube-scheduler-metrics
+      config-name: endpoint-metrics-kube-scheduler
     state:
       value: kube-state-metrics
+      config-name: endpoint-metrics-kube-state
     kubelet:
       value: kubelet-metrics
+      config-name: endpoint-metrics-kubelet
     node:
       value: node-exporter-metrics
+      config-name: endpoint-metrics-node-exporter
     control-plane:
       value: control-plane-metrics
 

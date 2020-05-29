@@ -85,10 +85,10 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
 
   data = {
     {{ range $key, $source := .Values.sumologic.sources -}}
-    {{ include "terraform.sources.data" (include "terraform.sources.name_metrics" $key) }}
+    {{ include "terraform.sources.data" (dict "Endpoint" (include "terraform.sources.config-map-variable" (dict "Context" $ctx "Name" $key)) "Name" (include "terraform.sources.name_metrics" $key)) }}
     {{ end -}}
-    {{ include "terraform.sources.data" (include "terraform.sources.name" "logs") }}
-    {{ include "terraform.sources.data" (include "terraform.sources.name" "events") }}
+    {{ include "terraform.sources.data" (dict "Endpoint" (include "terraform.sources.config-map-variable" (dict "Context" $ctx "Name" "logs" "Endpoint" "endpoint-logs")) "Name" (include "terraform.sources.name" "logs")) }}
+    {{ include "terraform.sources.data" (dict "Endpoint" (include "terraform.sources.config-map-variable" (dict "Context" $ctx "Name" "events" "Endpoint" "endpoint-events")) "Name" (include "terraform.sources.name" "events")) }}
   }
 
   type = "Opaque"
