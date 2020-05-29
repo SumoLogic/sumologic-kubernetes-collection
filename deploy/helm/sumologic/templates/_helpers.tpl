@@ -354,14 +354,14 @@ Example usage (as one line):
 
 {{ include "utils.metrics.match" (dict 
   "Values" . 
-  "Match" "prometheus.metrics.kubelet" 
+  "Tag" "prometheus.metrics.kubelet" 
   "Endpoint" "SUMO_ENDPOINT_METRICS" 
   "Storage" .Values.fluentd.buffer.filePaths.metrics.default
   "Id" sumologic.endpoint.metrics
 )}}
 */}}
 {{- define "utils.metrics.match" -}}
-<match {{ .Match }}>
+<match {{ .Tag }}>
 {{- if .Drop }}
   @type null
 {{- else }}
