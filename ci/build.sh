@@ -74,15 +74,13 @@ ruby deploy/test/test_docker.rb
 if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "Generating deployment yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
-  sudo helm init --client-only
   cd deploy/helm/sumologic
+  helm repo add falcosecurity https://falcosecurity.github.io/charts
   sudo helm dependency update
   cd ../../../
 
-  # NOTE(ryan, 2019-11-06): helm template -execute is going away in Helm 3 so we will need to revisit this
-  # https://github.com/helm/helm/issues/5887
-  with_files=$(ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\/g')
-  eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --name collection --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl --set sumologic.endpoint="bogus" --set sumologic.accessId="bogus" --set sumologic.accessKey="bogus"'
+  with_files=$(ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#-s templates#g' | sed 's/yaml/yaml \\/g')
+  eval 'sudo helm template collection deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl --set sumologic.endpoint="bogus" --set sumologic.accessId="bogus" --set sumologic.accessKey="bogus"'
 
   if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
@@ -96,8 +94,8 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "Generating setup job yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/setup-sumologic.yaml.tmpl
 
-  with_files=$(ls deploy/helm/sumologic/templates/setup/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\/g')
-  eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --name collection --set dryRun=true >> deploy/kubernetes/setup-sumologic.yaml.tmpl --set sumologic.accessId="\$SUMOLOGIC_ACCESSID" --set sumologic.accessKey="\$SUMOLOGIC_ACCESSKEY" --set sumologic.collectorName="\$COLLECTOR_NAME" --set sumologic.clusterName="\$CLUSTER_NAME"'
+  with_files=$(ls deploy/helm/sumologic/templates/setup/*.yaml | sed 's#deploy/helm/sumologic/templates#-s templates#g' | sed 's/yaml/yaml \\/g')
+  eval 'sudo helm template collection deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --set dryRun=true >> deploy/kubernetes/setup-sumologic.yaml.tmpl --set sumologic.accessId="\$SUMOLOGIC_ACCESSID" --set sumologic.accessKey="\$SUMOLOGIC_ACCESSKEY" --set sumologic.collectorName="\$COLLECTOR_NAME" --set sumologic.clusterName="\$CLUSTER_NAME"'
   if [[ $(git diff deploy/kubernetes/setup-sumologic.yaml.tmpl) ]]; then
       echo "Detected changes in 'setup-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
       git add deploy/kubernetes/setup-sumologic.yaml.tmpl
@@ -167,7 +165,7 @@ function push_helm_chart() {
   echo "Pushing new Helm Chart release $version"
   set -x
   git checkout -- .
-  sudo helm init --client-only
+  sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
   sudo helm package deploy/helm/sumologic --dependency-update --version=$version --app-version=$version
   git fetch origin-repo
   git checkout gh-pages
