@@ -1097,12 +1097,26 @@ prometheus-operator:
               regex: (?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*|otelcol.*)
               sourceLabels: [__name__]
         # control plane metrics
-        # coredns
+        # coredns:
+        # coredns_cache_size
+        # coredns_cache_hits_total
+        # coredns_cache_misses_total
+        # coredns_dns_request_duration_seconds_count
+        # coredns_dns_request_duration_seconds_sum
+        # coredns_dns_request_count_total
+        # coredns_dns_response_rcode_count_total
+        # coredns_forward_request_count_total
+        # process_cpu_seconds_total
+        # process_open_fds
+        # process_resident_memory_bytes
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane.coredns
           writeRelabelConfigs:
             - action: keep
               regex: coredns
               sourceLabels: [job]
+            - action: keep
+              regex: coredns_cache_(size|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes)
+              sourceLabels: [__name__]
         # etcd server
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane.kube-etcd
           writeRelabelConfigs:
