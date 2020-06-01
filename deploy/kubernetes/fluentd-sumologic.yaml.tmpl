@@ -11,6 +11,7 @@ data:
   fluentdNamespace: $NAMESPACE
 ---
 # Source: sumologic/templates/configmap.yaml
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -308,6 +309,7 @@ data:
   
 ---
 # Source: sumologic/templates/metrics-configmap.yaml
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -594,6 +596,7 @@ spec:
     protocol: TCP
 ---
 # Source: sumologic/templates/metrics-service-headless.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -619,6 +622,7 @@ spec:
 
 ---
 # Source: sumologic/templates/metrics-service.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -643,6 +647,7 @@ spec:
 
 ---
 # Source: sumologic/templates/service-headless.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -668,6 +673,7 @@ spec:
 
 ---
 # Source: sumologic/templates/service.yaml
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -761,6 +767,7 @@ spec:
               key: endpoint-events
 ---
 # Source: sumologic/templates/metrics-statefulset.yaml
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -881,8 +888,10 @@ spec:
               key: endpoint-metrics-node-exporter
         - name: ADDITIONAL_PLUGINS
           value: ""
+
 ---
 # Source: sumologic/templates/statefulset.yaml
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
