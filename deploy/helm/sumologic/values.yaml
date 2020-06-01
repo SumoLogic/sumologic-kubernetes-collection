@@ -100,33 +100,32 @@ sumologic:
     enabled: true
 
   ## Configuration of http sources
-  ## name: source name
-  ## value: source values - it's visible in sumologic platform
+  ## name: source name visible in sumologic platform
   ## config-name: This is mostly for backward compatibility
   sources:
     default:
-      value: (default-metrics)
+      name: (default-metrics)
       config-name: endpoint-metrics
     apiserver:
-      value: apiserver-metrics
+      name: apiserver-metrics
       config-name: endpoint-metrics-apiserver
     controller:
-      value: kube-controller-manager-metrics
+      name: kube-controller-manager-metrics
       config-name: endpoint-metrics-kube-controller-manager
     scheduler:
-      value: kube-scheduler-metrics
+      name: kube-scheduler-metrics
       config-name: endpoint-metrics-kube-scheduler
     state:
-      value: kube-state-metrics
+      name: kube-state-metrics
       config-name: endpoint-metrics-kube-state
     kubelet:
-      value: kubelet-metrics
+      name: kubelet-metrics
       config-name: endpoint-metrics-kubelet
     node:
-      value: node-exporter-metrics
+      name: node-exporter-metrics
       config-name: endpoint-metrics-node-exporter
     control-plane:
-      value: control-plane-metrics
+      name: control-plane-metrics
 
   # Traces configuration
   # This is experimental feature and may be unavailable for your account
