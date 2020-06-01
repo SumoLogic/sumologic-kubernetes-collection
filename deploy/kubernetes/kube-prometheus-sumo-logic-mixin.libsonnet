@@ -147,7 +147,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane",
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane.coredns",
         writeRelabelConfigs: [
           {
             action: "keep",
@@ -159,7 +159,7 @@
         ]
       },
       {
-        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane",
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane.kube-etcd",
         writeRelabelConfigs: [
           {
             action: "keep",
