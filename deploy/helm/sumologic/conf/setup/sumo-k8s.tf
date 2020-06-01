@@ -24,7 +24,7 @@ variable "namespace_name" {
 
 locals {
 {{- range $key, $source := .Values.sumologic.sources }}
-  {{ template "terraform.sources.local" (dict "Name" (include "terraform.sources.name_metrics" $key) "Value" $source.value) }}
+  {{ template "terraform.sources.local" (dict "Name" (include "terraform.sources.name_metrics" $key) "Value" $source.name) }}
 {{- end }}
   {{ template "terraform.sources.local" (dict "Name" (include "terraform.sources.name" "logs") "Value" "logs") }}
   {{ template "terraform.sources.local" (dict "Name" (include "terraform.sources.name" "events") "Value" "events") }}
