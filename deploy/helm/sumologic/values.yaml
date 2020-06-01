@@ -159,6 +159,7 @@ fluentd:
     chunkLimitSize: "1m"
     queueChunkLimitSize: 128
     totalLimitSize: "128m"
+    retryTimeout: "1h"
 
     ## File paths to buffer to, if Fluentd buffer type is specified as file above.
     ## Each sumologic output plugin buffers to its own unique file.
