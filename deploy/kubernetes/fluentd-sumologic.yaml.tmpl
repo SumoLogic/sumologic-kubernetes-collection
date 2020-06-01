@@ -31,6 +31,7 @@ data:
     total_limit_size "128m"
     queued_chunks_limit_size "128"
     overflow_action drop_oldest_chunk
+    retry_timeout "1h"
     
   common.conf: |-
     # Prevent fluentd from handling records containing its own logs.
@@ -305,6 +306,7 @@ data:
     total_limit_size "128m"
     queued_chunks_limit_size "128"
     overflow_action drop_oldest_chunk
+    retry_timeout "1h"
     
   
 ---
@@ -329,6 +331,7 @@ data:
     total_limit_size "128m"
     queued_chunks_limit_size "128"
     overflow_action drop_oldest_chunk
+    retry_timeout "1h"
     
   common.conf: |-
     # Prevent fluentd from handling records containing its own logs.
