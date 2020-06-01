@@ -1117,12 +1117,33 @@ prometheus-operator:
             - action: keep
               regex: coredns_cache_(size|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes)
               sourceLabels: [__name__]
-        # etcd server
+        # etcd server:
+        # etcd_debugging_mvcc_db_total_size_in_bytes
+        # etcd_debugging_store_expires_total
+        # etcd_debugging_store_watchers
+        # etcd_disk_backend_commit_duration_seconds_bucket
+        # etcd_disk_wal_fsync_duration_seconds_bucket
+        # etcd_grpc_proxy_cache_hits_total
+        # etcd_grpc_proxy_cache_misses_total
+        # etcd_network_client_grpc_received_bytes_total
+        # etcd_network_client_grpc_sent_bytes_total
+        # etcd_server_has_leader
+        # etcd_server_leader_changes_seen_total
+        # etcd_server_proposals_applied_total
+        # etcd_server_proposals_committed_total
+        # etcd_server_proposals_failed_total
+        # etcd_server_proposals_pending
+        # process_cpu_seconds_total
+        # process_open_fds
+        # process_resident_memory_bytes
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane.kube-etcd
           writeRelabelConfigs:
             - action: keep
               regex: kube-etcd
               sourceLabels: [job]
+            - action: keep
+              regex: etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes)
+              sourceLabels: [__name__]
 
 ## Configure falco
 ## ref: https://github.com/helm/charts/blob/master/stable/falco/values.yaml
