@@ -1,4 +1,4 @@
-{{- if eq .Values.sumologic.logs.enabled true }}
+{{- if and (eq .Values.sumologic.logs.enabled true) (eq .Values.fluentd.logs.enabled true) }}
 apiVersion: v1
 kind: Service
 metadata:
