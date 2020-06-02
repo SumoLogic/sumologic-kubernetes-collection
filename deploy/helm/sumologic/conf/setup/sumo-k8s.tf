@@ -41,7 +41,7 @@ resource "sumologic_collector" "collector" {
 
 {{- $ctx := .Values -}}
 {{- range $key, $source := .Values.sumologic.sources }}
-{{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name_metrics" $key) $key "Source" $source "Context" $ctx) | nindent 2 }}
+{{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name_metrics" $key) "Source" $source "Context" $ctx) | nindent 2 }}
 {{- end }}
 {{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name" "logs") "Source" $logs "Context" $ctx) | nindent 2 }}
 {{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name" "events") "Source" $events "Context" $ctx) | nindent 2 }}
