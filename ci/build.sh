@@ -18,7 +18,7 @@ if [ -n "$GITHUB_TOKEN" ]; then
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "Travis CI"
   git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
-  git fetch origin-repo
+  git fetch --unshallow origin-repo
   git checkout $TRAVIS_PULL_REQUEST_BRANCH
 fi
 
