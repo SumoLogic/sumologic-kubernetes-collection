@@ -1,0 +1,37 @@
+sumologic:
+  sources:
+    test_source:
+      name: "(Test source)"
+      properties:
+        description: "This is complex test"
+        category: "custom/category"
+        host_name: "localhost"
+        timezone: "local timezone"
+        automatic_date_parsing: false
+        multiline_processing_enabled: true
+        use_autoline_matching: false
+        manual_prefix_regexp: '.*'
+        force_timezone: true
+        default_date_formats:
+          - format: format_1
+            locator: locator_1
+          - format: format_2
+            locator: locator_2
+        filters:
+          - name: filter.no1
+            filter_type: Include
+            regexp: '[a-z]+'
+            mask: 'some_mask'
+          - name: filter.no2
+            filter_type: Exclude
+            regexp: '.+'
+            mask: 'another_mask'
+        cutoff_timestamp: 40
+        cutoff_relative_time: 'some value'
+        fields:
+          some_field: some_value
+          another_field: other_value
+        content_type: 'application/json'
+        test_list:
+          - point_1
+          - point_2

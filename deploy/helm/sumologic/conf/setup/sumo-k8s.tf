@@ -1,5 +1,6 @@
 {{- $logs := (dict "value" "logs" "endpoint" "logs" )}}
 {{- $events := (dict "value" "events" "endpoint" "events" "category" true )}}
+{{- $ctx := .Values }}
 variable "cluster_name" {
   type  = string
   default = "{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}"
@@ -35,11 +36,14 @@ provider "sumologic" {}
 resource "sumologic_collector" "collector" {
     name  = var.collector_name
     fields  = {
-      cluster = var.cluster_name
+      {{- $fields := .Values.sumologic.setup.fields }}
+      {{ include "terraform.generate-key" (dict "Name" "cluster" "Value" "var.cluster_name" "SkipEscaping" true "KeyLength" (include "terraform.max-key-length" $fields)) }}
+      {{- range $name, $value := $fields }}
+      {{ include "terraform.generate-key" (dict "Name" $name "Value" $value "KeyLength" (include "terraform.max-key-length" $fields)) }}
+      {{- end}}
     }
 }
 
-{{- $ctx := .Values -}}
 {{- range $key, $source := .Values.sumologic.sources }}
 {{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name_metrics" $key) "Source" $source "Context" $ctx) | nindent 2 }}
 {{- end }}
