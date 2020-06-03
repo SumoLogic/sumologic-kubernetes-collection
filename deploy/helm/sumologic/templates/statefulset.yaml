@@ -76,7 +76,7 @@ spec:
         configMap:
           name: {{ template "sumologic.metadata.name.logs.configmap" . }}
 {{- if .Values.fluentd.logs.extraVolumes }}
-{{ toYaml .Values.fluentd.logs.extraVolumes | indent 8 }}
+{{ toYaml .Values.fluentd.logs.extraVolumes | indent 6 }}
 {{- end }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
@@ -130,9 +130,9 @@ spec:
         - name: SUMO_ENDPOINT_TRACES
           value: {{ .Values.sumologic.traces.endpoint }}
         {{- end }}
-        {{- if .Values.fluentd.logs.extraEnvVars }}
-{{ toYaml .Values.fluentd.logs.extraEnvVars | nindent 10 }}
-        {{- end }}
+{{- if .Values.fluentd.logs.extraEnvVars }}
+{{ toYaml .Values.fluentd.logs.extraEnvVars | indent 8 }}
+{{- end }}
         - name: ADDITIONAL_PLUGINS
           value: {{ join " " .Values.fluentd.additionalPlugins | quote }}
 {{- if .Values.fluentd.persistence.enabled }}
