@@ -1,9 +1,11 @@
 # How to install if you have standalone Prometheus
 
+__NOTE__: The Sumo Logic Kubernetes collection process does not support collecting metrics from scaling Prometheus replicas. If you are running multiple Prometheus replicas, please follow our [Side-by-Side](SideBySidePrometheus.md) instructions.
+
 1. Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/helm/prometheus-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 2. Make the following modifications to the `remoteWrite` section of the `prometheus-overrides.yaml` file:

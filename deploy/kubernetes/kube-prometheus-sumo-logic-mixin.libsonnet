@@ -49,7 +49,7 @@
         writeRelabelConfigs: [
           {
             action: "keep",
-            regex: "apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:latencies|duration_seconds).*|etcd_request_cache_get_(?:latencies_summary|duration_seconds).*|etcd_request_cache_add_(?:latencies_summary|duration_seconds).*|etcd_helper_cache_hit_(?:count|total)|etcd_helper_cache_miss_(?:count|total))",
+            regex: "apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum)|etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total))",
             sourceLabels: [
               "job",
               "__name__"
@@ -62,7 +62,7 @@
         writeRelabelConfigs: [
           {
             action: "keep",
-            regex: "kubelet;(?:kubelet_docker_operations_errors.*|kubelet_docker_operations_(?:latency_micro|duration_)seconds.*|kubelet_running_container_count|kubelet_running_pod_count|kubelet_runtime_operations_(?:latency_micro|duration_)seconds.*)",
+            regex: "kubelet;(?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)_count|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))",
             sourceLabels: [
               "job",
               "__name__"
@@ -141,6 +141,32 @@
             action: "keep",
             regex: "(?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*|otelcol.*)",
             sourceLabels: [
+              "__name__"
+            ]
+          }
+        ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane.coredns",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "coredns;(?:coredns_cache_(size|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))",
+            sourceLabels: [
+              "job",
+              "__name__"
+            ]
+          }
+        ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane.kube-etcd",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "kube-etcd;(?:etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))",
+            sourceLabels: [
+              "job",
               "__name__"
             ]
           }

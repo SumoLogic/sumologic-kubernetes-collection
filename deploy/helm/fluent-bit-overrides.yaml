@@ -17,7 +17,7 @@ env:
   valueFrom:
     configMapKeyRef:
       name: sumologic-configmap
-      key: release
+      key: fluentdLogs
 - name: NAMESPACE
   valueFrom:
     fieldRef:
@@ -60,6 +60,7 @@ rawConfig: |-
     Skip_Long_Lines  On
     DB               /tail-db/tail-containers-state-sumo.db
     DB.Sync          Normal
+    Ignore_Older     24h
   [INPUT]
     Name            systemd
     Tag             host.*

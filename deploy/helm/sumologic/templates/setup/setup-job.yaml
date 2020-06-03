@@ -2,22 +2,22 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "sumologic.fullname" . }}-setup
+  name: {{ template "sumologic.metadata.name.setup.job" . }}
   namespace: {{ .Release.Namespace }}
   annotations:
 {{ toYaml .Values.sumologic.setup.job.annotations | indent 4 }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}
+    app: {{ template "sumologic.labels.app.setup.job" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   template:
     spec:
       restartPolicy: OnFailure
-      serviceAccountName: {{ template "sumologic.fullname" . }}-setup
+      serviceAccountName: {{ template "sumologic.metadata.name.setup.roles.serviceaccount" . }}
       volumes:
       - name: setup
         configMap:
-          name: {{ template "sumologic.fullname" . }}-setup
+          name: {{ template "sumologic.metadata.name.setup.configmap" . }}
           defaultMode: 0777
       containers:
       - name: setup
@@ -39,5 +39,9 @@ spec:
           value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
         - name: SUMOLOGIC_BASE_URL
           value: {{ .Values.sumologic.endpoint }}
+        - name: HTTP_PROXY
+          value: {{ .Values.sumologic.httpProxy }}
+        - name: HTTPS_PROXY
+          value: {{ .Values.sumologic.httpsProxy }}
         {{ end }}
 {{- end }}
