@@ -3,5 +3,6 @@ kind: ConfigMap
 metadata:
   name: sumologic-configmap
 data:
-  release: {{ template "sumologic.fullname" . }}-fluentd
+  fluentdLogs: {{ template "sumologic.metadata.name.logs" . }}
+  fluentdMetrics: {{ template "sumologic.metadata.name.metrics" . }}
   fluentdNamespace: {{ .Release.Namespace }}

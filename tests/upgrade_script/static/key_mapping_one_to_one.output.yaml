@@ -1,0 +1,45 @@
+fluentd:
+  events:
+    statefulset:
+      nodeSelector: fluentd.events.statefulset.nodeSelector
+      resources:
+        limits:
+          cpu: fluentd.events.statefulset.resources.limits.cpu
+          memory: fluentd.events.statefulset.resources.limits.memory
+        requests:
+          cpu: fluentd.events.statefulset.resources.requests.cpu
+          memory: fluentd.events.statefulset.resources.requests.memory
+      tolerations: fluentd.events.statefulset.tolerations
+    enabled: fluentd.events.enabled
+    sourceCategory: fluentd.events.sourceCategory
+    watchResourceEventsOverrides: fluentd.events.watchResourceEventsOverrides
+  logs:
+    output:
+      addTimestamp: fluentd.logs.output.addTimestamp
+      logFormat: fluentd.logs.output.logFormat
+      timestampKey: fluentd.logs.output.timestampKey
+    containers:
+      excludeContainerRegex: fluentd.logs.containers.excludeContainerRegex
+      excludeHostRegex: fluentd.logs.containers.excludeHostRegex
+      excludeNamespaceRegex: fluentd.logs.containers.excludeNamespaceRegex
+      excludePodRegex: fluentd.logs.containers.excludePodRegex
+      sourceCategory: fluentd.logs.containers.sourceCategory
+      sourceCategoryPrefix: fluentd.logs.containers.sourceCategoryPrefix
+      sourceCategoryReplaceDash: fluentd.logs.containers.sourceCategoryReplaceDash
+      sourceName: fluentd.logs.containers.sourceName
+  buffer:
+    chunkLimitSize: fluentd.buffer.chunkLimitSize
+    type: fluentd.buffer.type
+    flushInterval: fluentd.buffer.flushInterval
+    numThreads: fluentd.buffer.numThreads
+    queueChunkLimitSize: fluentd.buffer.queueChunkLimitSize
+    totalLimitSize: fluentd.buffer.totalLimitSize
+  logLevel: fluentd.logLevel
+  verifySsl: fluentd.verifySsl
+sumologic:
+  k8sMetadataFilter.:
+    cacheRefresh: fluentd.metadata.cacheRefresh
+    cacheSize: fluentd.metadata.cacheSize
+    cacheTtl: fluentd.metadata.cacheTtl
+    verifySsl: fluentd.logs.containers.k8sMetadataFilter.verifySsl
+    watch: fluentd.logs.containers.k8sMetadataFilter.watch

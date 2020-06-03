@@ -1,5 +1,14 @@
 # Advanced Configuration / Best Practices
 
+### Topics
+- [Multiline Log Support](#Multiline-Log-Support)
+- [Collecting Log Lines over 16KB](#Log-Lines-Over-16KB)
+- [Fluentd Autoscaling](#Fluentd-Autoscaling)
+- [Fluentd File-Based Buffer](#Fluentd-File-based-buffer) 
+- [Excluding Logs From Specific Components](#Excluding-Logs-From-Specific-Components)
+- [Filtering Prometheus Metrics by Namespace](#Filtering-Prometheus-Metrics-by-Namespace)
+- [Modify the Log Level for Falco](#Modify-the-Log-Level-for-Falco)
+
 
 ### Multiline Log Support
 
@@ -35,7 +44,7 @@ When Multiline is On, if the first line matches `Parser_Firstline`, the rest of 
 Parser_Firstline multi_line
 Parser_1 optional_parser
 ```
-### Log lines over 16KB are truncated
+### Collecting Log Lines Over 16KB
 Docker daemon has a limit of 16KB/line so if a log line is greater than that, it might be truncated in Sumo.
 To fix this, fluent-bit exposes a parameter:  
 ``` bash
@@ -44,7 +53,7 @@ Docker_Mode  On
 If enabled, the plugin will recombine split Docker log lines before passing them to any parser. This mode cannot be used at the same time as Multiline.
 Reference: https://docs.fluentbit.io/manual/v/1.3/input/tail#docker_mode
 
-### Fluentd autoscaling:
+### Fluentd Autoscaling
 
 We have provided an option to enable autoscaling for Fluentd deployments. This is disabled by default. 
 
@@ -68,7 +77,7 @@ fluentd:
 ```
 
 
-### Fluentd File-based buffer
+### Fluentd File-Based Buffer
 
 By default, we use the in-memory buffer for the Fluentd buffer, however for production environments we recommend you use the file-based buffer instead.
 
@@ -138,7 +147,7 @@ In the fluentbit overrides file (https://github.com/SumoLogic/sumologic-kubernet
 ```
 Reference: https://fluentbit.io/documentation/0.12/input/tail.html 
 
-### Filtering Prometheus Metrics by Namespace in the Remote Write Config
+### Filtering Prometheus Metrics by Namespace
 If you want to filter metrics by namespace, it can be done in the prometheus remote write config. Here is an example of excluding kube-state metrics for namespace1 and namespace2:
 ```yaml
  - action: drop

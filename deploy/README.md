@@ -12,6 +12,7 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
   - [Alpha Releases](./docs/Alpha_Release_Guide.md)
+  - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
 - [Migration Steps](./docs/Migration_Steps.md)
 - [Troubleshooting Collection](./docs/Troubleshoot_Collection.md)
 - [Monitoring the Monitoring](./docs/monitoring-lag.md)
@@ -60,7 +61,8 @@ The following matrix displays the tested package versions for our Helm chart.
 
 Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco  | Metrics Server
 |:-------- |:-------- |:-------- |:-------- |:--------
-0.17.0 - Latest | 8.2.0 | 2.8.1 | 1.1.0 | 2.7.0
+1.0.0 - Latest | 8.2.0 | 2.8.1 | 1.1.6 | 2.7.0
+0.17.0 - 0.17.1 | 8.2.0 | 2.8.1 | 1.1.0 | 2.7.0
 0.14.0 - 0.16.0 | 8.2.0 | 2.8.1 | 1.1.1 | 2.7.0
 0.13.0 | 8.2.0 | 2.8.1 | 1.0.11 | 2.7.0
 0.12.0 | 8.2.0 | 2.8.1 | 1.0.9  |  -

@@ -1,19 +1,23 @@
+{{- if and (eq .Values.sumologic.logs.enabled true) (eq .Values.fluentd.logs.enabled true) }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "sumologic.fullname" . }}-fluentd-headless
+  name: {{ template "sumologic.metadata.name.logs.service-headless" . }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}
+    app: {{ template "sumologic.labels.app.logs.service-headless" . }}
+    {{- include "sumologic.labels.logs" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ template "sumologic.labels.app" . }}
+    app: {{ template "sumologic.labels.app.logs.pod" . }}
   clusterIP: None
   ports:
-  - name: prom-write
-    port: 9888
-    targetPort: 9888
+  {{- if .Values.sumologic.traces.enabled }}
+  - name: zipkin-write
+    port: 9411
+    targetPort: 9411
     protocol: TCP
+  {{- end }}
   - name: fluent-bit
     port: 24321
     targetPort: 24321
@@ -22,3 +26,4 @@ spec:
     port: 24231
     targetPort: 24231
     protocol: TCP
+{{- end }}

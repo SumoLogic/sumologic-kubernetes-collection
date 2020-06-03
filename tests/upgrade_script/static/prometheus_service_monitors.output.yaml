@@ -1,0 +1,70 @@
+prometheus-operator:
+  prometheus:
+    additionalServiceMonitors:
+    - name: my-service-monitor
+      additionalLabels:
+        app: some-app
+      endpoints:
+      - port: 8080
+      namespaceSelector:
+        matchNames:
+        - test-app
+      selector:
+        matchLabels:
+          test: service-monitors
+    - name: collection-fluent-bit
+      additionalLabels:
+        app: collection-fluent-bit
+      endpoints:
+      - port: metrics
+        path: /api/v1/metrics/prometheus
+      namespaceSelector:
+        matchNames:
+        - sumologic
+      selector:
+        matchLabels:
+          app: fluent-bit
+    - name: collection-sumologic-otelcol
+      additionalLabels:
+        app: collection-sumologic-otelcol
+      endpoints:
+      - port: metrics
+      namespaceSelector:
+        matchNames:
+        - sumologic
+      selector:
+        matchLabels:
+          app: collection-sumologic-otelcol
+    - name: collection-sumologic-fluentd-logs
+      additionalLabels:
+        app: collection-sumologic-fluentd-logs
+      endpoints:
+      - port: metrics
+      namespaceSelector:
+        matchNames:
+        - sumologic
+      selector:
+        matchLabels:
+          app: collection-sumologic-fluentd-logs
+    - name: collection-sumologic-fluentd-metrics
+      additionalLabels:
+        app: collection-sumologic-fluentd-metrics
+      endpoints:
+      - port: metrics
+      namespaceSelector:
+        matchNames:
+        - sumologic
+      selector:
+        matchLabels:
+          app: collection-sumologic-fluentd-metrics
+    - name: collection-sumologic-fluentd-events
+      additionalLabels:
+        app: collection-sumologic-fluentd-events
+      endpoints:
+      - port: metrics
+      namespaceSelector:
+        matchNames:
+        - sumologic
+      selector:
+        matchLabels:
+          app: collection-sumologic-fluentd-events
