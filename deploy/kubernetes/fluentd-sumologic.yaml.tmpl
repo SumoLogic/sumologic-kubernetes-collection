@@ -72,8 +72,8 @@ data:
     cache_refresh "1800"
     in_namespace_path '$.kubernetes.namespace_name'
     in_pod_path '$.kubernetes.pod_name'
-    core_api_versions [v1]
-    api_groups [apps/v1 extensions/v1beta1]
+    core_api_versions v1
+    api_groups apps/v1,extensions/v1beta1
     data_type logs
   logs.kubernetes.metadata.filter.conf: |-
     annotation_match ["sumologic\.com.*"]
@@ -389,8 +389,8 @@ data:
         cache_size  "10000"
         cache_ttl  "3600"
         cache_refresh "1800"
-        core_api_versions [v1]
-        api_groups [apps/v1 extensions/v1beta1]
+        core_api_versions v1
+        api_groups apps/v1,extensions/v1beta1
       </filter>
       
       <filter prometheus.metrics**>
