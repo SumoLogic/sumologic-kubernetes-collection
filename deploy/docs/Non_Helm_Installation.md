@@ -257,14 +257,6 @@ unable to recognize "fluent-bit.yaml": no matches for kind "ClusterRoleBinding" 
 ```
 The above errors can be ignored.
 
-You may see the following errors while applying the `yaml` : 
-
-```bash
-unable to recognize "fluent-bit.yaml": no matches for kind "ClusterRole" in version "rbac.authorization.k8s.io/v1alpha1"
-unable to recognize "fluent-bit.yaml": no matches for kind "ClusterRoleBinding" in version "rbac.authorization.k8s.io/v1alpha1"
-```
-The above errors can be ignored.
-
 __NOTE__ Refer to the [requirements.yaml](../helm/sumologic/requirements.yaml) for the currently supported version.
 
 ## Deploy Falco
