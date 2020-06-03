@@ -192,9 +192,9 @@ fluentd:
     ## Option to give plugin specific log level
     pluginLogLevel: "error"
     ## Option to specify K8s API versions
-    coreApiVersions: ['v1']
+    coreApiVersions: '["v1"]'
     ## Option to specify K8s API groups
-    apiGroups: ['apps/v1', 'extensions/v1beta1']
+    apiGroups: '["apps/v1", "extensions/v1beta1"]'
 
   logs:
     ## Configuration for sumologic output plugin
