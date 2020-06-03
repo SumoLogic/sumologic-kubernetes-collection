@@ -226,11 +226,11 @@ fluentd:
     pluginLogLevel: "error"
     ## Option to specify K8s API versions
     coreApiVersions:
-      - v1
+      - '"v1"'
     ## Option to specify K8s API groups
     apiGroups:
-     - apps/v1
-     - extensions/v1beta1
+     - '"apps/v1"'
+     - '"extensions/v1beta1"'
 
   logs:
     enabled: true
