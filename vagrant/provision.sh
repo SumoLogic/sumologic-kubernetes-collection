@@ -49,6 +49,15 @@ curl https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64 -L -
 chmod +x /usr/local/bin/yq-3.3.0
 ln -s /usr/local/bin/yq-3.3.0 /usr/local/bin/yq
 
+# Install docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+apt-get install -y docker-ce docker-ce-cli containerd.io
+usermod -aG docker vagrant
+
 set +x
 echo Dashboard local in-vagrant IP:
 kubectl -n kube-system get services | grep -i kubernetes-dashboard | awk '{print $3}'
