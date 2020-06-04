@@ -15,9 +15,12 @@ terraform init
 
 # Sumo Collector and HTTP sources
 terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+{{- $ctx := .Values -}}
 {{- range $type, $sources := .Values.sumologic.sources }}
 {{- range $key, $source := $sources }}
+{{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
 terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "$COLLECTOR_NAME/{{ $source.name }}"
+{{- end }}
 {{- end }}
 {{- end }}
 
