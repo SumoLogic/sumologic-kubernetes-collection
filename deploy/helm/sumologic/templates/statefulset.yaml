@@ -120,20 +120,11 @@ spec:
 {{- if .Values.fluentd.logs.extraVolumeMounts }}
 {{ toYaml .Values.fluentd.logs.extraVolumeMounts | indent 8 }}
 {{- end }}
+        env:
 {{- $ctx := .Values -}}
-{{- range $key, $source := .Values.sumologic.sources.logs }}
-        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" "logs")) }}
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: {{ template "terraform.sources.config-map-variable" (dict "Type" "logs" "Context" $ctx "Name" $key) }}
-{{- end }}
-{{- range $key, $source := .Values.sumologic.sources.traces }}
-        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" "traces")) }}
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: {{ template "terraform.sources.config-map-variable" (dict "Type" "traces" "Context" $ctx "Name" $key) }}
+{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs")}}
+{{- if .Values.sumologic.traces.enabled }}
+{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces")}}
 {{- end }}
         {{- if .Values.fluentd.logs.extraEnvVars }}
 {{ toYaml .Values.fluentd.logs.extraEnvVars | nindent 8 }}

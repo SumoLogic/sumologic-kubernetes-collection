@@ -623,4 +623,22 @@ Example Usage:
 {{- end -}}
 {{ $value }}
 {{- end -}}
+
+{{/*
+Generate fluentd envs for given source type:
+
+Example:
+
+{{ include "kubernetes.sources.envs" (dict "Context" .Values "Type" "metrics")}}
+*/}}
+{{- define "kubernetes.sources.envs" -}}
+{{- $ctx := .Context -}}
+{{- $type := .Type -}}
+{{- range $key, $source := (index .Context.sumologic.sources $type) }}
+        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) }}
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: {{ template "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key) }}
+{{- end }}
 {{- end -}}

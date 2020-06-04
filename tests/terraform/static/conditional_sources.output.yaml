@@ -26,7 +26,7 @@ data:
     export HTTP_PROXY=${HTTP_PROXY:=""}
     export HTTPS_PROXY=${HTTPS_PROXY:=""}
   
-    COLLECTOR_NAME=kubernetes
+    COLLECTOR_NAME="kubernetes"
   
     terraform init
   
@@ -40,6 +40,12 @@ data:
   
     terraform apply -auto-approve
   sumo-k8s.tf: |-
+    terraform {
+      required_providers {
+        sumologic  = "~> 2.0.3"
+        kubernetes = "~> 1.11.3"
+      }
+    }
     variable "cluster_name" {
       type  = string
       default = "kubernetes"
@@ -68,9 +74,10 @@ data:
   
     provider "kubernetes" {
     
-        cluster_ca_certificate    = "${file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")}"
+        cluster_ca_certificate    = file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
         host                      = "https://kubernetes.default.svc"
-        token                     = "${file("/var/run/secrets/kubernetes.io/serviceaccount/token")}"
+        load_config_file          = "false"
+        token                     = file("/var/run/secrets/kubernetes.io/serviceaccount/token")
     }
   
     resource "kubernetes_namespace" "sumologic_collection_namespace" {
