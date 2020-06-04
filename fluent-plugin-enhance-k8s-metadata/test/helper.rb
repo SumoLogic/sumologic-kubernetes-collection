@@ -61,4 +61,6 @@ def init_globals
   @bearer_token_file = nil
   @cache_size = 1000
   @cache_ttl = 60 * 60
+  @core_api_versions = ['v1']
+  @api_groups = ['apps/v1', 'extensions/v1beta1']
 end

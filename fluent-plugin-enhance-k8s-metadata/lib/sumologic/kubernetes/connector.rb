@@ -7,23 +7,18 @@ module SumoLogic
       K8_POD_CA_CERT = 'ca.crt'.freeze
       K8_POD_TOKEN = 'token'.freeze
 
-      # Need different clients to access different API groups/versions
-      # https://github.com/abonas/kubeclient/issues/208
-      CORE_API_VERSIONS = ['v1'].freeze
-      API_GROUPS = ['apps/v1', 'extensions/v1beta1'].freeze
-
       def connect_kubernetes
         @clients = core_clients.merge(group_clients)
       end
 
       def core_clients
-        CORE_API_VERSIONS.map do |ver|
+        @core_api_versions.map do |ver|
           [ver, create_client('api', ver)]
         end.to_h
       end
 
       def group_clients
-        API_GROUPS.map do |ver|
+        @api_groups.map do |ver|
           [ver, create_client('apis', ver)]
         end.to_h
       end
