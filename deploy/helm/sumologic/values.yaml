@@ -140,6 +140,12 @@ sumologic:
         name: events
         config-name: endpoint-events
         category: true
+    traces:
+      default:
+        name: traces
+        config-name: endpoint-traces
+        properties:
+          content_type: Zipkin
 
   # Traces configuration
   # This is experimental feature and may be unavailable for your account

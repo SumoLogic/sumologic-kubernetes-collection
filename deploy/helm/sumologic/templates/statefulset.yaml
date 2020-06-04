@@ -128,13 +128,16 @@ spec:
               name: sumologic
               key: {{ template "terraform.sources.config-map-variable" (dict "Type" "logs" "Context" $ctx "Name" $key) }}
 {{- end }}
-        {{- if .Values.sumologic.traces.enabled }}
-        - name: SUMO_ENDPOINT_TRACES
-          value: {{ .Values.sumologic.traces.endpoint }}
-        {{- end }}
-{{- if .Values.fluentd.logs.extraEnvVars }}
-{{ toYaml .Values.fluentd.logs.extraEnvVars | indent 8 }}
+{{- range $key, $source := .Values.sumologic.sources.traces }}
+        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" "traces")) }}
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: {{ template "terraform.sources.config-map-variable" (dict "Type" "traces" "Context" $ctx "Name" $key) }}
 {{- end }}
+        {{- if .Values.fluentd.logs.extraEnvVars }}
+{{ toYaml .Values.fluentd.logs.extraEnvVars | nindent 8 }}
+        {{- end }}
         - name: ADDITIONAL_PLUGINS
           value: {{ join " " .Values.fluentd.additionalPlugins | quote }}
 {{- if .Values.fluentd.persistence.enabled }}
