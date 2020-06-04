@@ -117,13 +117,7 @@ spec:
 {{- end }}
         env:
 {{- $ctx := .Values -}}
-{{- range $key, $source := .Values.sumologic.sources.metrics }}
-        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" "metrics")) }}
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: {{ template "terraform.sources.config-map-variable" (dict "Type" "metrics" "Context" $ctx "Name" $key) }}
-{{- end }}
+{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics")}}
         {{- if .Values.fluentd.metrics.extraEnvVars }}
 {{ toYaml .Values.fluentd.metrics.extraEnvVars | nindent 10 }}
         {{- end }}

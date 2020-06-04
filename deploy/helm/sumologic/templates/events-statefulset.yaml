@@ -67,13 +67,7 @@ spec:
           periodSeconds: 5
         env:
 {{- $ctx := .Values -}}
-{{- range $key, $source := .Values.sumologic.sources.events }}
-        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" "events")) }}
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: {{ template "terraform.sources.config-map-variable" (dict "Type" "events" "Context" $ctx "Name" $key) }}
-{{- end }}
+{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "events")}}
 {{- if .Values.fluentd.events.extraEnvVars }}
 {{ toYaml .Values.fluentd.events.extraEnvVars | nindent 10 }}
 {{- end }}
