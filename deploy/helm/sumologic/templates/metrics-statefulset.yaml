@@ -124,10 +124,6 @@ spec:
               name: sumologic
               key: {{ template "terraform.sources.config-map-variable" (dict "Type" "metrics" "Context" $ctx "Name" $key) }}
 {{- end }}
-        {{- if .Values.sumologic.traces.enabled }}
-        - name: SUMO_ENDPOINT_TRACES
-          value: {{ .Values.sumologic.traces.endpoint }}
-        {{- end }}
         {{- if .Values.fluentd.metrics.extraEnvVars }}
 {{ toYaml .Values.fluentd.metrics.extraEnvVars | nindent 10 }}
         {{- end }}
