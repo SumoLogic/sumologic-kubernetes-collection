@@ -582,7 +582,6 @@ Example usage:
 {{ $endpoint }}
 {{- end -}}
 
-
 {{/*
 Add or skip quotation denending on the value
 
@@ -603,5 +602,25 @@ Example Usage:
 {{- end -}}
 {{- else -}}
 {{ printf "\"%s\"" (toString .) }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Check if component (source/events/logs/traces etc.) is enabled or not
+
+Example Usage:
+{{- if eq (include "terraform.sources.component_enabled" (dict "Context" .Values "Type" "metrics")) "true" }}
+
+*/}}
+{{- define "terraform.sources.component_enabled" -}}
+{{- $type := .Type -}}
+{{- $ctx := .Context -}}
+{{- $value := true -}}
+{{- if hasKey $ctx.sumologic $type -}}
+{{- if not (index $ctx.sumologic $type "enabled") -}}
+{{- $value = false -}}
+{{- end -}}
+{{- end -}}
+{{ $value }}
 {{- end -}}
 {{- end -}}
