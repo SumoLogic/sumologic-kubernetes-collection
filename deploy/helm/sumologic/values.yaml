@@ -648,6 +648,7 @@ fluent-bit:
     [INPUT]
       Name            systemd
       Tag             host.*
+      DB              /var/log/systemd-state-sumo.db
       Systemd_Filter  _SYSTEMD_UNIT=addon-config.service
       Systemd_Filter  _SYSTEMD_UNIT=addon-run.service
       Systemd_Filter  _SYSTEMD_UNIT=cfn-etcd-environment.service
