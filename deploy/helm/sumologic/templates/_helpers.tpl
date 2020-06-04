@@ -384,9 +384,9 @@ Example usage (as one line):
 {{ end -}}
 
 {{/*
-Convert source name to terraform name:
+Convert source name to terraform metric name:
  * converts all `-` to `_`
- * adds `_source` suffix
+ * adds `_$type_source` suffix
 
 Example usage:
 
@@ -394,21 +394,7 @@ Example usage:
 
 */}}
 {{- define "terraform.sources.name" -}}
-{{ replace "-" "_" . }}_source
-{{- end -}}
-
-{{/*
-Convert source name to terraform metric name:
- * converts all `-` to `_`
- * adds `_metrics_source` suffix
-
-Example usage:
-
-{{ include "terraform.sources.name_metrics" $source }}
-
-*/}}
-{{- define "terraform.sources.name_metrics" -}}
-{{ replace "-" "_" . }}_metrics_source
+{{ printf "%s_%s_source" (replace "-" "_" .Name) .Type }}
 {{- end -}}
 
 {{/*
@@ -475,13 +461,13 @@ resource "sumologic_http_source" "{{ .Name }}" {
     name         = local.{{ .Name }}
     collector_id = sumologic_collector.collector.id
     {{- if $source.category }}
-    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events_source}\"" }}{{- end}}
+    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.default_events_source}\"" }}{{- end}}
     {{- end }}
     {{- if $source.properties }}
     {{- range $fkey, $fvalue := $source.properties }}
     {{- include "terraform.generate-object" (dict "Name" $fkey "Value" $fvalue "KeyLength" (include "terraform.max-key-length" $source.properties) "Indent" 2) -}}
     {{- end -}}
-    {{ end }}
+    {{- end }}
 }
 {{- end -}}
 
@@ -583,13 +569,14 @@ Example usage:
 {{- define "terraform.sources.config-map-variable" -}}
 {{- $name := .Name -}}
 {{- $ctx := .Context -}}
+{{- $type := .Type -}}
 {{- $endpoint := .Endpoint -}}
 {{- if not $endpoint -}}
-{{- $source := (index $ctx.sumologic.sources "default") -}}
-{{- if (index $ctx.sumologic.sources .Name "config-name") -}}
-{{- $endpoint = index $ctx.sumologic.sources .Name "config-name" -}}
+{{- $source := (index $ctx.sumologic.sources $type "default") -}}
+{{- if (index $ctx.sumologic.sources $type .Name "config-name") -}}
+{{- $endpoint = index $ctx.sumologic.sources $type .Name "config-name" -}}
 {{- else -}}
-{{- $endpoint = printf "endpoint-%s" (include "terraform.sources.name_metrics" $name) -}}
+{{- $endpoint = printf "endpoint-%s" (include "terraform.sources.name" (dict "Name" $name "Type" $type)) -}}
 {{- end -}}
 {{- end -}}
 {{ $endpoint }}

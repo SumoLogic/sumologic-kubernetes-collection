@@ -31,11 +31,11 @@ variable "namespace_name" {
 }
 
 locals {
-{{- range $key, $source := .Values.sumologic.sources }}
-  {{ template "terraform.sources.local" (dict "Name" (include "terraform.sources.name_metrics" $key) "Value" $source.name) }}
+{{- range $type, $sources := .Values.sumologic.sources }}
+{{- range $key, $source := $sources }}
+  {{ template "terraform.sources.local" (dict "Name" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) "Value" $source.name) }}
 {{- end }}
-  {{ template "terraform.sources.local" (dict "Name" (include "terraform.sources.name" "logs") "Value" "logs") }}
-  {{ template "terraform.sources.local" (dict "Name" (include "terraform.sources.name" "events") "Value" "events") }}
+{{- end }}
 }
 
 provider "sumologic" {}
@@ -51,11 +51,11 @@ resource "sumologic_collector" "collector" {
     }
 }
 
-{{- range $key, $source := .Values.sumologic.sources }}
-{{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name_metrics" $key) "Source" $source "Context" $ctx) | nindent 2 }}
+{{- range $type, $sources := .Values.sumologic.sources }}
+{{- range $key, $source := $sources }}
+{{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) "Source" $source "Context" $ctx) | nindent 2 }}
 {{- end }}
-{{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name" "logs") "Source" $logs "Context" $ctx) | nindent 2 }}
-{{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name" "events") "Source" $events "Context" $ctx) | nindent 2 }}
+{{- end }}
 
 provider "kubernetes" {
 {{- $ctx := .Values -}}
@@ -95,11 +95,11 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
   }
 
   data = {
-    {{ range $key, $source := .Values.sumologic.sources -}}
-    {{ include "terraform.sources.data" (dict "Endpoint" (include "terraform.sources.config-map-variable" (dict "Context" $ctx "Name" $key)) "Name" (include "terraform.sources.name_metrics" $key)) }}
-    {{ end -}}
-    {{ include "terraform.sources.data" (dict "Endpoint" (include "terraform.sources.config-map-variable" (dict "Context" $ctx "Name" "logs" "Endpoint" "endpoint-logs")) "Name" (include "terraform.sources.name" "logs")) }}
-    {{ include "terraform.sources.data" (dict "Endpoint" (include "terraform.sources.config-map-variable" (dict "Context" $ctx "Name" "events" "Endpoint" "endpoint-events")) "Name" (include "terraform.sources.name" "events")) }}
+    {{- range $type, $sources := .Values.sumologic.sources }}
+    {{- range $key, $source := $sources }}
+    {{ include "terraform.sources.data" (dict "Endpoint" (include "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key)) "Name" (include "terraform.sources.name" (dict "Name" $key "Type" $type))) }}
+    {{- end }}
+    {{- end }}
   }
 
   type = "Opaque"

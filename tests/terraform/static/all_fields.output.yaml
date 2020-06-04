@@ -32,7 +32,8 @@ data:
   
     # Sumo Collector and HTTP sources
     terraform import sumologic_collector.collector "$COLLECTOR_NAME"
-    
+    terraform import sumologic_http_source.default_events_source "$COLLECTOR_NAME/events"
+    terraform import sumologic_http_source.default_logs_source "$COLLECTOR_NAME/logs"
     terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
     terraform import sumologic_http_source.control_plane_metrics_source "$COLLECTOR_NAME/control-plane-metrics"
     terraform import sumologic_http_source.controller_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
@@ -42,8 +43,6 @@ data:
     terraform import sumologic_http_source.scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
     terraform import sumologic_http_source.state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
     terraform import sumologic_http_source.test_source_metrics_source "$COLLECTOR_NAME/(Test source)"
-    terraform import sumologic_http_source.logs_source "$COLLECTOR_NAME/logs"
-    terraform import sumologic_http_source.events_source "$COLLECTOR_NAME/events"
   
   
     # Kubernetes Namespace and Secret
@@ -73,6 +72,8 @@ data:
     }
   
     locals {
+      default_events_source                       = "events"
+      default_logs_source                         = "logs"
       apiserver_metrics_source                    = "apiserver-metrics"
       control_plane_metrics_source                = "control-plane-metrics"
       controller_metrics_source                   = "kube-controller-manager-metrics"
@@ -82,8 +83,6 @@ data:
       scheduler_metrics_source                    = "kube-scheduler-metrics"
       state_metrics_source                        = "kube-state-metrics"
       test_source_metrics_source                  = "(Test source)"
-      logs_source                                 = "logs"
-      events_source                               = "events"
     }
   
     provider "sumologic" {}
@@ -93,6 +92,17 @@ data:
         fields  = {
           cluster = var.cluster_name
         }
+    }
+    
+    resource "sumologic_http_source" "default_events_source" {
+        name         = local.default_events_source
+        collector_id = sumologic_collector.collector.id
+        category     = "${var.cluster_name}/${local.default_events_source}"
+    }
+    
+    resource "sumologic_http_source" "default_logs_source" {
+        name         = local.default_logs_source
+        collector_id = sumologic_collector.collector.id
     }
     
     resource "sumologic_http_source" "apiserver_metrics_source" {
@@ -179,17 +189,6 @@ data:
         timezone                     = "local timezone"
         use_autoline_matching        = false
     }
-    
-    resource "sumologic_http_source" "logs_source" {
-        name         = local.logs_source
-        collector_id = sumologic_collector.collector.id
-    }
-    
-    resource "sumologic_http_source" "events_source" {
-        name         = local.events_source
-        collector_id = sumologic_collector.collector.id
-        category     = "${var.cluster_name}/${local.events_source}"
-    }
   
     provider "kubernetes" {
     
@@ -212,6 +211,8 @@ data:
       }
   
       data = {
+        endpoint-events                           = sumologic_http_source.default_events_source.url
+        endpoint-logs                             = sumologic_http_source.default_logs_source.url
         endpoint-metrics-apiserver                = sumologic_http_source.apiserver_metrics_source.url
         endpoint-control_plane_metrics_source     = sumologic_http_source.control_plane_metrics_source.url
         endpoint-metrics-kube-controller-manager  = sumologic_http_source.controller_metrics_source.url
@@ -221,8 +222,6 @@ data:
         endpoint-metrics-kube-scheduler           = sumologic_http_source.scheduler_metrics_source.url
         endpoint-metrics-kube-state               = sumologic_http_source.state_metrics_source.url
         endpoint-test_source_metrics_source       = sumologic_http_source.test_source_metrics_source.url
-        endpoint-logs                             = sumologic_http_source.logs_source.url
-        endpoint-events                           = sumologic_http_source.events_source.url
       }
   
       type = "Opaque"

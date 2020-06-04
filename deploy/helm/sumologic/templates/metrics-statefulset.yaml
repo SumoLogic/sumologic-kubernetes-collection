@@ -117,12 +117,12 @@ spec:
 {{- end }}
         env:
 {{- $ctx := .Values -}}
-{{- range $key, $source := .Values.sumologic.sources }}
-        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name_metrics" $key) }}
+{{- range $key, $source := .Values.sumologic.sources.metrics }}
+        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" "metrics")) }}
           valueFrom:
             secretKeyRef:
               name: sumologic
-              key: {{ template "terraform.sources.config-map-variable" (dict "Context" $ctx "Name" $key) }}
+              key: {{ template "terraform.sources.config-map-variable" (dict "Type" "metrics" "Context" $ctx "Name" $key) }}
 {{- end }}
         {{- if .Values.sumologic.traces.enabled }}
         - name: SUMO_ENDPOINT_TRACES
