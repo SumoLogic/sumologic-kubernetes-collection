@@ -239,31 +239,6 @@ subjects:
     namespace: $NAMESPACE
 
 ---
-# Source: sumologic/templates/setup/setup-cleanup.yaml
-
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: collection-sumologic-secret-cleanup
-  namespace: $NAMESPACE
-  annotations:
-    "helm.sh/hook": pre-delete
-    "helm.sh/hook-weight": "3"
-    "helm.sh/hook-delete-policy": hook-succeeded
-spec:
-  template:
-    spec:
-      serviceAccountName: collection-sumologic-setup
-      containers:
-        - name: kubectl
-          image: docker.io/bitnami/kubectl:1.14.1
-          imagePullPolicy: IfNotPresent
-          command:
-            - /bin/sh
-            - -c
-            - kubectl delete secret sumologic -n $NAMESPACE;
-      restartPolicy: OnFailure
----
 # Source: sumologic/templates/setup/setup-job.yaml
 
 apiVersion: batch/v1
