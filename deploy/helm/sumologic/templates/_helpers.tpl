@@ -457,7 +457,7 @@ Example usage:
 
 */}}
 {{- define "terraform.sources.data" -}}
-{{ printf "%-41s = \"${sumologic_http_source.%s.url}\"" .Endpoint .Name }}
+{{ printf "%-41s = sumologic_http_source.%s.url" .Endpoint .Name }}
 {{- end -}}
 
 {{/*
@@ -473,7 +473,7 @@ Example usage:
 {{- $ctx := .Context -}}
 resource "sumologic_http_source" "{{ .Name }}" {
     name         = local.{{ .Name }}
-    collector_id = "${sumologic_collector.collector.id}"
+    collector_id = sumologic_collector.collector.id
     {{- if $source.category }}
     category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.events_source}\"" }}{{- end}}
     {{- end }}
@@ -593,4 +593,28 @@ Example usage:
 {{- end -}}
 {{- end -}}
 {{ $endpoint }}
+{{- end -}}
+
+
+{{/*
+Add or skip quotation denending on the value
+
+Examples:
+  - "${test}" will be printed as `test`
+  - "test" will be printed as `"test"`
+
+Example Usage:
+{{ include "terraform.sources.config-map-variable" "${file(\"/var/test\")}" }}
+
+*/}}
+{{- define "terraform.print_value" -}}
+{{- if and (kindIs "string" .) -}}
+{{- if (regexMatch "^\\$\\{[^\\$]*\\}$" .) -}}
+{{ regexReplaceAll "^\\$\\{(.*)\\}$" . "${1}" }}
+{{- else -}}
+{{ printf "\"%s\"" . }}
+{{- end -}}
+{{- else -}}
+{{ printf "\"%s\"" (toString .) }}
+{{- end -}}
 {{- end -}}
