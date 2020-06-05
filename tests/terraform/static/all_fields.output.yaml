@@ -26,7 +26,7 @@ data:
     export HTTP_PROXY=${HTTP_PROXY:=""}
     export HTTPS_PROXY=${HTTPS_PROXY:=""}
   
-    COLLECTOR_NAME=kubernetes
+    COLLECTOR_NAME="kubernetes"
   
     terraform init
   

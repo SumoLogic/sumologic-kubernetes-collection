@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 test_start()        { echo -e "[.] $*"; }
 test_passed()       { echo -e "[+] $*"; }
@@ -9,6 +9,10 @@ readonly STATICS_PATH="${SCRIPT_PATH}/static"
 readonly INPUT_FILES="$(ls "${STATICS_PATH}" | grep input)"
 readonly OUT="new_values.yaml"
 
+docker run --rm \
+  -v ${SCRIPT_PATH}/../../deploy/helm/sumologic:/chart \
+  sumologic/kubernetes-tools:master \
+  helm dependency update /chart
 
 for input_file in ${INPUT_FILES}; do
   test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
