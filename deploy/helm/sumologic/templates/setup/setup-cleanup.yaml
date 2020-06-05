@@ -1,0 +1,24 @@
+{{- if .Values.sumologic.cleanUpSecrets }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: collection-sumologic-secret-cleanup
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ template "sumologic.metadata.name.setup.roles.serviceaccount" . }}
+      containers:
+        - name: kubectl
+          image: docker.io/bitnami/kubectl:1.14.1
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - {{printf "kubectl delete secret sumologic -n %s;" .Release.Namespace }}
+      restartPolicy: OnFailure
+{{- end }}
