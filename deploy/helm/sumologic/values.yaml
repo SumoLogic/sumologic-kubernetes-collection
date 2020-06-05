@@ -11,6 +11,9 @@ sumologic:
   # If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
   setupEnabled: true
 
+  # If enabled, a pre-delete hook will delete sumologic secret
+  cleanUpSecrets: true
+
   # If enabled, accessId and accessKey will be sourced from Secret Name given
   # Be sure to include at least the following env variables in your secret
   # (1) SUMOLOGIC_ACCESSID, (2) SUMOLOGIC_ACCESSKEY
