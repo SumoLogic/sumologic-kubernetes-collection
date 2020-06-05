@@ -176,6 +176,21 @@ data:
   
 
 ---
+# Source: sumologic/templates/setup/cleanup-serviceaccount.yaml
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name:  collection-sumologic-setup-cleanup
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic-cleanup
+    
+
+---
 # Source: sumologic/templates/setup/setup-serviceaccount.yaml
 
 apiVersion: v1
@@ -190,6 +205,28 @@ metadata:
   labels:
     app: collection-sumologic
     
+
+---
+# Source: sumologic/templates/setup/cleanup-clusterrole.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name:  collection-sumologic-setup-cleanup
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic-cleanup
+    
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - namespaces
+    verbs: ["get", "create", "describe", "patch", "delete"]
 
 ---
 # Source: sumologic/templates/setup/setup-clusterrole.yaml
@@ -215,6 +252,29 @@ rules:
     verbs: ["get", "create", "describe", "patch"]
 
 ---
+# Source: sumologic/templates/setup/cleanup-clusterrolebinding.yaml
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name:  collection-sumologic-setup-cleanup
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic-cleanup
+    
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: collection-sumologic-setup-cleanup
+subjects:
+  - kind: ServiceAccount
+    name: collection-sumologic-setup-cleanup
+    namespace: $NAMESPACE
+
+---
 # Source: sumologic/templates/setup/setup-clusterrolebinding.yaml
 
 apiVersion: rbac.authorization.k8s.io/v1
@@ -238,6 +298,31 @@ subjects:
     name: collection-sumologic-setup
     namespace: $NAMESPACE
 
+---
+# Source: sumologic/templates/setup/cleanup-job.yaml
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: collection-sumologic-secret-cleanup
+  namespace: $NAMESPACE
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    spec:
+      serviceAccountName:  collection-sumologic-setup-cleanup
+      containers:
+        - name: kubectl
+          image: bitnami/kubectl:1.17.4
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - kubectl delete secret sumologic; 
+      restartPolicy: OnFailure
 ---
 # Source: sumologic/templates/setup/setup-job.yaml
 
