@@ -1,0 +1,6 @@
+sumologic:
+  collectionMonitoring: false
+fluentd:
+  logs:
+    containers:
+      excludeNamespaceRegex: "foo"
