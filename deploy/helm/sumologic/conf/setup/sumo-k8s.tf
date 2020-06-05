@@ -1,5 +1,12 @@
 {{- $logs := (dict "value" "logs" "endpoint" "logs" )}}
 {{- $events := (dict "value" "events" "endpoint" "events" "category" true )}}
+terraform {
+  required_providers {
+    sumologic  = "~> 2.0.3"
+    kubernetes = "~> 1.11.3"
+  }
+}
+
 {{- $ctx := .Values }}
 variable "cluster_name" {
   type  = string
@@ -64,14 +71,14 @@ provider "kubernetes" {
     {{ if hasKey $ctx.sumologic.cluster.exec "env" }}
     {{ printf $printf_str "env" }} = {
       {{ range $key_env, $value_env := $ctx.sumologic.cluster.exec.env }}
-        {{ printf $printf_str $key_env }} = "{{ $value_env }}"
-      {{- end -}}
+        {{ printf $printf_str $key_env }} = {{ include "terraform.print_value" $value_env }}
+      {{- end }}
     }
     {{ end }}
   }
   {{- else -}}
-  {{ printf "  %-25s" $key }} = "{{ $value }}"
-  {{- end -}}
+  {{ printf "  %-25s" $key }} = {{ include "terraform.print_value" $value }}
+  {{- end }}
 {{- end }}
 }
 
