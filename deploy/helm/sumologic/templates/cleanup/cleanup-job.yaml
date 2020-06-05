@@ -7,18 +7,18 @@ metadata:
   annotations:
     "helm.sh/hook": pre-delete
     "helm.sh/hook-weight": "3"
-    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
     spec:
-      serviceAccountName: {{ template "sumologic.metadata.name.setup.roles.serviceaccount" . }}
+      serviceAccountName:  {{ template "sumologic.metadata.name.setup.roles.serviceaccount" . }}-cleanup
       containers:
         - name: kubectl
-          image: docker.io/bitnami/kubectl:1.14.1
+          image: bitnami/kubectl:1.17.4
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
             - -c
-            - {{printf "kubectl delete secret sumologic -n %s;" .Release.Namespace }}
+            - kubectl delete secret sumologic; 
       restartPolicy: OnFailure
 {{- end }}

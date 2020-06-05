@@ -1,0 +1,20 @@
+{{- if .Values.sumologic.cleanUpSecrets }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name:  {{ template "sumologic.metadata.name.setup.roles.clusterrole" . }}-cleanup
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: {{ template "sumologic.labels.app.setup.roles.clusterrole" . }}-cleanup
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - namespaces
+    verbs: ["get", "create", "describe", "patch", "delete"]
+{{- end }}

@@ -1,0 +1,22 @@
+{{- if .Values.sumologic.cleanUpSecrets }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name:  {{ template "sumologic.metadata.name.setup.roles.clusterrolebinding" . }}-cleanup
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: {{ template "sumologic.labels.app.setup.roles.clusterrolebinding" . }}-cleanup
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "sumologic.metadata.name.setup.roles.clusterrole" . }}-cleanup
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "sumologic.metadata.name.setup.roles.serviceaccount" . }}-cleanup
+    namespace: {{ .Release.Namespace }}
+
+{{- end }}
