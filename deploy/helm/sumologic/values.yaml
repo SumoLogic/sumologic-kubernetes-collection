@@ -235,8 +235,10 @@ fluentd:
 
   # configuration of fluentd monitoring metrics
   # input -> fluentd_input_status_num_records_total (~5% DPM increase for empty cluster)
+  # output -> fluentd_output_status_num_records_total (~25% DPM increase for empty cluster)
   monitoring:
     input: false
+    output: false
 
   metadata:
     ## Option to control the enabling of metadata filter plugin cache_size.

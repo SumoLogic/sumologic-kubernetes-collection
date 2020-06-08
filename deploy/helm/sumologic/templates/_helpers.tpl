@@ -362,24 +362,30 @@ Example usage (as one line):
 */}}
 {{- define "utils.metrics.match" -}}
 <match {{ .Tag }}>
+  @type copy
+  <store>
 {{- if .Drop }}
-  @type null
+    @type null
 {{- else }}
-  @type sumologic
-  @id {{ .Id }}
-  sumo_client {{ include "sumologic.sumo_client" .Context | quote }}
-  endpoint "#{ENV['{{ include "terraform.sources.endpoint" .Endpoint}}']}"
+    @type sumologic
+    @id {{ .Id }}
+    sumo_client {{ include "sumologic.sumo_client" .Context | quote }}
+    endpoint "#{ENV['{{ include "terraform.sources.endpoint" .Endpoint}}']}"
 {{- .Context.Values.fluentd.metrics.outputConf | nindent 2 }}
-  <buffer>
-    {{- if or .Context.Values.fluentd.persistence.enabled (eq .Context.Values.fluentd.buffer.type "file") }}
-    @type file
-    path {{ .Storage }}
-    {{- else }}
-    @type memory
-    {{- end }}
-    @include buffer.output.conf
-  </buffer>
+    <buffer>
+      {{- if or .Context.Values.fluentd.persistence.enabled (eq .Context.Values.fluentd.buffer.type "file") }}
+      @type file
+      path {{ .Storage }}
+      {{- else }}
+      @type memory
+      {{- end }}
+      @include buffer.output.conf
+    </buffer>
 {{- end }}
+  </store>
+  {{- if .Context.Values.fluentd.monitoring.output }}
+  {{ include "fluentd.prometheus-metrics.output" . | nindent 2 }}
+  {{- end }}
 </match>
 {{ end -}}
 
@@ -403,6 +409,28 @@ Example:
     </labels>
   </metric>
 </filter>
+{{- end -}}
+
+{{/*
+Generate fluentd prometheus store configuration (output metrics)
+
+Example:
+
+{{ template "fluentd.prometheus-metrics.output" . }}
+*/}}
+{{- define "fluentd.prometheus-metrics.output" -}}
+<store>
+  @type prometheus
+  <metric>
+    name fluentd_output_status_num_records_total
+    type counter
+    desc The total number of outgoing records
+    <labels>
+      tag ${tag}
+      hostname ${hostname}
+    </labels>
+  </metric>
+</store>
 {{- end -}}
 
 {{/*
