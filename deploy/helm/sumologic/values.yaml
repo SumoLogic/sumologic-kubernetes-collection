@@ -869,6 +869,9 @@ prometheus-operator:
               name: sumologic-configmap
               key: fluentdNamespace
 
+      ## Enable WAL compression to reduce Prometheus memory consumption
+      walCompression: true
+
       remoteWrite:
         # kube state metrics
         # kube_daemonset_status_current_number_scheduled
