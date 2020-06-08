@@ -384,6 +384,28 @@ Example usage (as one line):
 {{ end -}}
 
 {{/*
+Generate fluentd prometheus filter configuration (input metrics)
+
+Example:
+
+{{ template "fluentd.prometheus-metrics.input" (dict "Tag" "kubernetes.**") }}
+*/}}
+{{- define "fluentd.prometheus-metrics.input" }}
+<filter {{ .Tag }}>
+  @type prometheus
+  <metric>
+    name fluentd_input_status_num_records_total
+    type counter
+    desc The total number of incoming records
+    <labels>
+      tag ${tag}
+      hostname ${hostname}
+    </labels>
+  </metric>
+</filter>
+{{- end -}}
+
+{{/*
 Convert source name to terraform metric name:
  * converts all `-` to `_`
  * adds `_$type_source` suffix

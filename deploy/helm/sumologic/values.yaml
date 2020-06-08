@@ -233,6 +233,11 @@ fluentd:
     ## Additional config for buffer settings
     extraConf: |-
 
+  # configuration of fluentd monitoring metrics
+  # input -> fluentd_input_status_num_records_total (~5% DPM increase for empty cluster)
+  monitoring:
+    input: false
+
   metadata:
     ## Option to control the enabling of metadata filter plugin cache_size.
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
