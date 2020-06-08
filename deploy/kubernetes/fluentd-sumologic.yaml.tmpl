@@ -100,7 +100,7 @@ data:
   logs.output.conf: |-
     data_type logs
     log_key log
-    endpoint "#{ENV['SUMO_ENDPOINT_LOGS_SOURCE']}"
+    endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE']}"
     verify_ssl "true"
     log_format "fields"
     add_timestamp "true"
@@ -286,7 +286,7 @@ data:
       @type sumologic
       @id sumologic.endpoint.events
       sumo_client "k8s_1.0.0"
-      endpoint "#{ENV['SUMO_ENDPOINT_EVENTS_SOURCE']}"
+      endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE']}"
       data_type logs
       disable_cookies true
       verify_ssl "true"
@@ -774,7 +774,7 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 5
         env:
-        - name: SUMO_ENDPOINT_EVENTS_SOURCE
+        - name: SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE
           valueFrom:
             secretKeyRef:
               name: sumologic
@@ -994,7 +994,7 @@ spec:
         - name: pos-files
           mountPath: /mnt/pos/
         env:
-        - name: SUMO_ENDPOINT_LOGS_SOURCE
+        - name: SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE
           valueFrom:
             secretKeyRef:
               name: sumologic
