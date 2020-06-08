@@ -158,28 +158,34 @@ data:
       </filter>
       
       <match containers.**>
-        @type sumologic
-        @id sumologic.endpoint.logs
-        sumo_client "k8s_1.0.0"
-        @log_level error
-        @include logs.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.logs
+          sumo_client "k8s_1.0.0"
+          @log_level error
+          @include logs.output.conf
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
     </label>
   logs.source.default.conf: |-
     
     <match **>
-      @type sumologic
-      @id sumologic.endpoint.logs.default
-      sumo_client "k8s_1.0.0"
-      @include logs.output.conf
-      <buffer>
-        @type memory
-        @include buffer.output.conf
-      </buffer>
+      @type copy
+      <store>
+        @type sumologic
+        @id sumologic.endpoint.logs.default
+        sumo_client "k8s_1.0.0"
+        @include logs.output.conf
+        <buffer>
+          @type memory
+          @include buffer.output.conf
+        </buffer>
+      </store>
     </match>
   logs.source.systemd.conf: |-
     
@@ -201,14 +207,17 @@ data:
       </filter>
       
       <match **>
-        @type sumologic
-        @id sumologic.endpoint.logs.kubelet
-        sumo_client "k8s_1.0.0"
-        @include logs.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.logs.kubelet
+          sumo_client "k8s_1.0.0"
+          @include logs.output.conf
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
     </label>
     
@@ -235,14 +244,17 @@ data:
       </filter>
       
       <match **>
-        @type sumologic
-        @id sumologic.endpoint.logs.systemd
-        sumo_client "k8s_1.0.0"
-        @include logs.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.logs.systemd
+          sumo_client "k8s_1.0.0"
+          @include logs.output.conf
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
     </label>
   
@@ -283,18 +295,21 @@ data:
       bind 0.0.0.0
     </source>
     <match kubernetes.**>
-      @type sumologic
-      @id sumologic.endpoint.events
-      sumo_client "k8s_1.0.0"
-      endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE']}"
-      data_type logs
-      disable_cookies true
-      verify_ssl "true"
-      proxy_uri ""
-      <buffer>
-        @type memory
-        @include buffer.output.conf
-      </buffer>
+      @type copy
+      <store>
+        @type sumologic
+        @id sumologic.endpoint.events
+        sumo_client "k8s_1.0.0"
+        endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE']}"
+        data_type logs
+        disable_cookies true
+        verify_ssl "true"
+        proxy_uri ""
+        <buffer>
+          @type memory
+          @include buffer.output.conf
+        </buffer>
+      </store>
     </match>
     <system>
       log_level info
@@ -399,111 +414,138 @@ data:
       </filter>
       
       <match prometheus.metrics.apiserver**>
-        @type sumologic
-        @id sumologic.endpoint.metrics.apiserver
-        sumo_client "k8s_1.0.0"
-        endpoint "#{ENV['SUMO_ENDPOINT_APISERVER_METRICS_SOURCE']}"
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.metrics.apiserver
+          sumo_client "k8s_1.0.0"
+          endpoint "#{ENV['SUMO_ENDPOINT_APISERVER_METRICS_SOURCE']}"
         @include metrics.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
       
       <match prometheus.metrics.container**>
-        @type sumologic
-        @id sumologic.endpoint.metrics.container
-        sumo_client "k8s_1.0.0"
-        endpoint "#{ENV['SUMO_ENDPOINT_KUBELET_METRICS_SOURCE']}"
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.metrics.container
+          sumo_client "k8s_1.0.0"
+          endpoint "#{ENV['SUMO_ENDPOINT_KUBELET_METRICS_SOURCE']}"
         @include metrics.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
       
       <match prometheus.metrics.control-plane**>
-        @type sumologic
-        @id sumologic.endpoint.metrics.control.plane
-        sumo_client "k8s_1.0.0"
-        endpoint "#{ENV['SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE']}"
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.metrics.control.plane
+          sumo_client "k8s_1.0.0"
+          endpoint "#{ENV['SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE']}"
         @include metrics.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
       
       <match prometheus.metrics.controller-manager**>
-        @type sumologic
-        @id sumologic.endpoint.metrics.kube.controller.manager
-        sumo_client "k8s_1.0.0"
-        endpoint "#{ENV['SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE']}"
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.metrics.kube.controller.manager
+          sumo_client "k8s_1.0.0"
+          endpoint "#{ENV['SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE']}"
         @include metrics.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
       
       <match prometheus.metrics.kubelet**>
-        @type sumologic
-        @id sumologic.endpoint.metrics.kubelet
-        sumo_client "k8s_1.0.0"
-        endpoint "#{ENV['SUMO_ENDPOINT_KUBELET_METRICS_SOURCE']}"
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.metrics.kubelet
+          sumo_client "k8s_1.0.0"
+          endpoint "#{ENV['SUMO_ENDPOINT_KUBELET_METRICS_SOURCE']}"
         @include metrics.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
       
       <match prometheus.metrics.node**>
-        @type sumologic
-        @id sumologic.endpoint.metrics.node.exporter
-        sumo_client "k8s_1.0.0"
-        endpoint "#{ENV['SUMO_ENDPOINT_NODE_METRICS_SOURCE']}"
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.metrics.node.exporter
+          sumo_client "k8s_1.0.0"
+          endpoint "#{ENV['SUMO_ENDPOINT_NODE_METRICS_SOURCE']}"
         @include metrics.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
       
       <match prometheus.metrics.scheduler**>
-        @type sumologic
-        @id sumologic.endpoint.metrics.kube.scheduler
-        sumo_client "k8s_1.0.0"
-        endpoint "#{ENV['SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE']}"
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.metrics.kube.scheduler
+          sumo_client "k8s_1.0.0"
+          endpoint "#{ENV['SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE']}"
         @include metrics.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
       
       <match prometheus.metrics.state**>
-        @type sumologic
-        @id sumologic.endpoint.metrics.kube.state
-        sumo_client "k8s_1.0.0"
-        endpoint "#{ENV['SUMO_ENDPOINT_STATE_METRICS_SOURCE']}"
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.metrics.kube.state
+          sumo_client "k8s_1.0.0"
+          endpoint "#{ENV['SUMO_ENDPOINT_STATE_METRICS_SOURCE']}"
         @include metrics.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
       
       <match prometheus.metrics**>
-        @type sumologic
-        @id sumologic.endpoint.metrics
-        sumo_client "k8s_1.0.0"
-        endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE']}"
+        @type copy
+        <store>
+          @type sumologic
+          @id sumologic.endpoint.metrics
+          sumo_client "k8s_1.0.0"
+          endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE']}"
         @include metrics.output.conf
-        <buffer>
-          @type memory
-          @include buffer.output.conf
-        </buffer>
+          <buffer>
+            @type memory
+            @include buffer.output.conf
+          </buffer>
+        </store>
       </match>
       
     </label>
