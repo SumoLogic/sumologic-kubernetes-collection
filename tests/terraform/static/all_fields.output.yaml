@@ -158,7 +158,7 @@ data:
     resource "kubernetes_secret" "sumologic_collection_secret" {
       metadata {
         name = "sumologic"
-        namespace = var.namespace_name
+        namespace = kubernetes_namespace.sumologic_collection_namespace.metadata[0].name
       }
   
       data = {
