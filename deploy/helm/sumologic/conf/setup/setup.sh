@@ -1,5 +1,5 @@
 #!/bin/sh
-cp /etc/terraform/sumo-k8s.tf /terraform
+cp /etc/terraform/*.tf /terraform
 cd /terraform
 
 # Fix URL to remove "v1" or "v1/"
