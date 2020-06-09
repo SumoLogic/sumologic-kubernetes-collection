@@ -162,10 +162,10 @@ sumologic:
         name: my-source-name
 ```
 
-This will create a new http source with `my-source-name` name in you sumologic account.
+This will create a new HTTP source with the name `my-source-name` in your Sumo Logic account.
 
 **This configuration doesn't modify or remove HTTP sources from your account.
-If you rename a source in `values.yaml`, new source will be added to sumologic platform**
+If you rename a source in `values.yaml`, the new source will be added to your Sumo Logic account**
 
 ### Update Fluentd configuration
 
@@ -193,9 +193,9 @@ fluentd:
         drop: true  # Drop records which match the tag (false by default)
 ```
 
-The weight concept helps to keep fluentd outputs in correct order.
-For above example, the `alternative_source` covers all tags for the `my_source`.
-It means that if `alternative_source` would have less weight than `my_source`
+The weight concept helps to keep Fluentd outputs in the correct order.
+In the above example, the `alternative_source` covers all tags for the `my_source`.
+This means if `alternative_source` has less weight than `my_source`
 it would process all records and none of them would be taken by `my_source`.
 
 ### Update the prometheus-overrides.yaml file to forward the metrics to Fluentd.
