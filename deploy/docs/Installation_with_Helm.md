@@ -86,6 +86,8 @@ helm install sumologic/sumologic --name collection --namespace sumologic -f valu
 helm install sumologic/sumologic --name my-release --namespace my-namespace -f values.yaml --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY> --set sumologic.clusterName=<MY_CLUSTER_NAME>
 ```
 
+__NOTE__ To configure a chart with custom cluster settings, [please refer to this document](Terraform.md#kubernetes-terraform-provider)
+
 __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
 
 ## Uninstalling the Chart
