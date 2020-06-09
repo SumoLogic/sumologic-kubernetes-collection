@@ -14,62 +14,7 @@ metadata:
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
-  setup.sh: |-
-    #!/bin/sh
-    cp /etc/terraform/sumo-k8s.tf /terraform
-    cd /terraform
-  
-    # Fix URL to remove "v1" or "v1/"
-    export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
-  
-    # Support proxy for terraform
-    export HTTP_PROXY=${HTTP_PROXY:=""}
-    export HTTPS_PROXY=${HTTPS_PROXY:=""}
-  
-    COLLECTOR_NAME="kubernetes"
-  
-    terraform init
-  
-    # Sumo Collector and HTTP sources
-    terraform import sumologic_collector.collector "$COLLECTOR_NAME"
-    terraform import sumologic_http_source.default_events_source "$COLLECTOR_NAME/events"
-    terraform import sumologic_http_source.default_logs_source "$COLLECTOR_NAME/logs"
-    terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
-    terraform import sumologic_http_source.control_plane_metrics_source "$COLLECTOR_NAME/control-plane-metrics"
-    terraform import sumologic_http_source.controller_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
-    terraform import sumologic_http_source.default_metrics_source "$COLLECTOR_NAME/(default-metrics)"
-    terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
-    terraform import sumologic_http_source.node_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
-    terraform import sumologic_http_source.scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
-    terraform import sumologic_http_source.state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
-  
-  
-    # Kubernetes Namespace and Secret
-    terraform import kubernetes_namespace.sumologic_collection_namespace default
-    terraform import kubernetes_secret.sumologic_collection_secret default/sumologic
-  
-    terraform apply -auto-approve
-  sumo-k8s.tf: |-
-    terraform {
-      required_providers {
-        sumologic  = "~> 2.0.3"
-        kubernetes = "~> 1.11.3"
-      }
-    }
-    variable "cluster_name" {
-      type  = string
-      default = "kubernetes"
-    }
-    variable "collector_name" {
-      type  = string
-      default = "kubernetes"
-    }
-  
-    variable "namespace_name" {
-      type  = string
-      default = "default"
-    }
-  
+  locals.tf: |
     locals {
       default_events_source                       = "events"
       default_logs_source                         = "logs"
@@ -82,9 +27,24 @@ data:
       scheduler_metrics_source                    = "kube-scheduler-metrics"
       state_metrics_source                        = "kube-state-metrics"
     }
-  
+  main.tf: |
+    terraform {
+      required_providers {
+        sumologic  = "~> 2.0.3"
+        kubernetes = "~> 1.11.3"
+      }
+    }
+  providers.tf: |-
     provider "sumologic" {}
   
+    provider "kubernetes" {
+    
+        cluster_ca_certificate    = file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
+        host                      = "https://kubernetes.default.svc"
+        load_config_file          = "false"
+        token                     = file("/var/run/secrets/kubernetes.io/serviceaccount/token")
+    }
+  resources.tf: |
     resource "sumologic_collector" "collector" {
         name  = var.collector_name
         fields  = {
@@ -143,14 +103,6 @@ data:
         collector_id = sumologic_collector.collector.id
     }
   
-    provider "kubernetes" {
-    
-        cluster_ca_certificate    = file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
-        host                      = "https://kubernetes.default.svc"
-        load_config_file          = "false"
-        token                     = file("/var/run/secrets/kubernetes.io/serviceaccount/token")
-    }
-  
     resource "kubernetes_namespace" "sumologic_collection_namespace" {
       metadata {
         name = var.namespace_name
@@ -177,4 +129,54 @@ data:
       }
   
       type = "Opaque"
+    }
+  setup.sh: |-
+    #!/bin/sh
+    cp /etc/terraform/*.tf /terraform
+    cd /terraform
+  
+    # Fix URL to remove "v1" or "v1/"
+    export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
+  
+    # Support proxy for terraform
+    export HTTP_PROXY=${HTTP_PROXY:=""}
+    export HTTPS_PROXY=${HTTPS_PROXY:=""}
+  
+    COLLECTOR_NAME="kubernetes"
+  
+    terraform init
+  
+    # Sumo Collector and HTTP sources
+    terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+    terraform import sumologic_http_source.default_events_source "$COLLECTOR_NAME/events"
+    terraform import sumologic_http_source.default_logs_source "$COLLECTOR_NAME/logs"
+    terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
+    terraform import sumologic_http_source.control_plane_metrics_source "$COLLECTOR_NAME/control-plane-metrics"
+    terraform import sumologic_http_source.controller_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
+    terraform import sumologic_http_source.default_metrics_source "$COLLECTOR_NAME/(default-metrics)"
+    terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
+    terraform import sumologic_http_source.node_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
+    terraform import sumologic_http_source.scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
+    terraform import sumologic_http_source.state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
+  
+  
+    # Kubernetes Namespace and Secret
+    terraform import kubernetes_namespace.sumologic_collection_namespace default
+    terraform import kubernetes_secret.sumologic_collection_secret default/sumologic
+  
+    terraform apply -auto-approve
+  variables.tf: |-
+    variable "cluster_name" {
+      type  = string
+      default = "kubernetes"
+    }
+  
+    variable "collector_name" {
+      type  = string
+      default = "kubernetes"
+    }
+  
+    variable "namespace_name" {
+      type  = string
+      default = "default"
     }
