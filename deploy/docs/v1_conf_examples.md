@@ -21,7 +21,7 @@ Now we have exposed an `extraLogs` parameter inside the `logs.containers` sectio
 
 **NOTE:** This will only send the logs to Sumo if the logs are being collected correctly at the FluentBit level with an input plugin.
 
-You can add a custom endpoint in the `values.yaml`:
+You can add a custom endpoint in `values.yaml`:
 
 ```yaml
 sumologic:
@@ -31,7 +31,7 @@ sumologic:
         name: My custom logs  # It's going to be visible on sumologic platform
 ```
 
-The `custom-log` will be available in the fluentd as `SUMO_ENDPOINT_MY_CUSTOM_LOGS_SOURCE` environmental variable.
+The `custom-log` will be available in Fluentd as the `SUMO_ENDPOINT_MY_CUSTOM_LOGS_SOURCE` environmental variable.
 
 ```yaml
 fluentd:
