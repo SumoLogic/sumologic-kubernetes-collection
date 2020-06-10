@@ -163,6 +163,7 @@ sumologic:
 ```
 
 This will create a new HTTP source with the name `my-source-name` in your Sumo Logic account.
+All sources are going to be created in the same collector.
 
 **This configuration doesn't modify or remove HTTP sources from your account.
 If you rename a source in `values.yaml`, the new source will be added to your Sumo Logic account**
