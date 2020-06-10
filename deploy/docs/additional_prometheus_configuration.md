@@ -198,6 +198,8 @@ In the above example, the `alternative_source` covers all tags for the `my_sourc
 This means if `alternative_source` has less weight than `my_source`
 it would process all records and none of them would be taken by `my_source`.
 
+NOTE: [Explanation of fluentd match order](https://docs.fluentd.org/configuration/config-file#note-on-match-order)
+
 ### Update the prometheus-overrides.yaml file to forward the metrics to Fluentd.
 
 The configuration file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update it to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your Fluentd configmap in the previous step. Here is an example addition to the configuration file that will forward metrics to Sumo:
