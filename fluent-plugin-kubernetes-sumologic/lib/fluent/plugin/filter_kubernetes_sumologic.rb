@@ -129,8 +129,8 @@ module Fluent::Plugin
       end
       sumo_metadata[:category].gsub!("-", @source_category_replace_dash)
 
-      # Check systemd exclude filters
       if record.key?("_SYSTEMD_UNIT") and not record.fetch("_SYSTEMD_UNIT").nil?
+        # Check systemd exclude filters
         unless @exclude_unit_regex.empty?
           return nil if Regexp.compile(@exclude_unit_regex).match(record["_SYSTEMD_UNIT"])
         end
@@ -143,6 +143,9 @@ module Fluent::Plugin
         unless @exclude_host_regex.empty?
           return nil if Regexp.compile(@exclude_host_regex).match(record["_HOSTNAME"])
         end
+
+        # Set correct source host for systemd logs
+        sumo_metadata[:host] = record["_HOSTNAME"]
       end
 
       kubernetes = get_kubernetes(record)
