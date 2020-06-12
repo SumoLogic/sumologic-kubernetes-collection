@@ -19,8 +19,19 @@ Below you can see a few examples of how this configuration can be set.
 ### Custom Log Pipelines
 Now we have exposed an `extraLogs` parameter inside the `logs.containers` section of the `values.yaml` where you can add the output plugin for the custom log pipeline.
 
-**NOTE:** This will only send the logs to Sumo if the logs are being collected correctly at the FluentBit level with an input plugin.
-To add a custom endpoint, please follow the steps mentioned [here](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source)
+**NOTE:** This will only send the logs to Sumo if the logs are collected correctly at the FluentBit level with an input plugin.
+
+You can add a custom endpoint in `values.yaml`:
+
+```yaml
+sumologic:
+  sources:
+    logs:
+      my-custom:
+        name: My custom logs
+```
+
+The `custom-log` will be available in Fluentd as the `SUMO_ENDPOINT_MY_CUSTOM_LOGS_SOURCE` environmental variable.
 
 ```yaml
 fluentd:
@@ -33,7 +44,7 @@ fluentd:
         source_name custom
         data_type logs
         log_key log
-        endpoint "#{ENV['SUMO_ENDPOINT_CUSTOM_LOG']}"
+        endpoint "#{ENV['SUMO_ENDPOINT_MY_CUSTOM_LOGS_SOURCE']}"
         proxy_uri "#{ENV['PROXY_URI']}"
         verify_ssl "#{ENV['VERIFY_SSL']}"
         log_format "json_merge"
