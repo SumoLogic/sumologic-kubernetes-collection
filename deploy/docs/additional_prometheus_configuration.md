@@ -199,7 +199,7 @@ In the above example, the `alternative_source` covers all tags for the `my_sourc
 This means if `alternative_source` has less weight than `my_source`
 it would process all records and none of them would be taken by `my_source`.
 
-NOTE: [Explanation of fluentd match order](https://docs.fluentd.org/configuration/config-file#note-on-match-order)
+NOTE: [Explanation of Fluentd match order](https://docs.fluentd.org/configuration/config-file#note-on-match-order)
 
 ### Update the prometheus-overrides.yaml file to forward the metrics to Fluentd.
 
