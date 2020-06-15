@@ -8,6 +8,8 @@
 - [Excluding Logs From Specific Components](#Excluding-Logs-From-Specific-Components)
 - [Filtering Prometheus Metrics by Namespace](#Filtering-Prometheus-Metrics-by-Namespace)
 - [Modify the Log Level for Falco](#Modify-the-Log-Level-for-Falco)
+- [Override environment variables using annotations](#Override-environment-variables-using-annotations)
+- [Templating Kubernetes metadata](#Templating-Kubernetes-metadata)
 
 
 ### Multiline Log Support
@@ -183,3 +185,113 @@ falco:
     jsonOutput: true
     loglevel: debug
 ```
+
+### Override environment variables using annotations
+You can override the `LOG_FORMAT`, `KUBERNETES_META_REDUCE`, `SOURCE_CATEGORY` and `SOURCE_NAME` environment variables, per pod, using [Kubernetes annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/). For example:
+
+```
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    app: mywebsite
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: mywebsite
+      annotations:
+        sumologic.com/format: "text"
+        sumologic.com/kubernetes_meta_reduce: "true"
+        sumologic.com/sourceCategory: "mywebsite/nginx"
+        sumologic.com/sourceName: "mywebsite_nginx"
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+```
+
+#### Exclude data using annotations
+
+You can also use the `sumologic.com/exclude` annotation to exclude data from Sumo. This data is sent to FluentD, but not to Sumo.
+
+```
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    app: mywebsite
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: mywebsite
+      annotations:
+        sumologic.com/format: "text"
+        sumologic.com/sourceCategory: "mywebsite/nginx"
+        sumologic.com/sourceName: "mywebsite_nginx"
+        sumologic.com/exclude: "true"
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+```
+
+#### Include excluded using annotations
+
+If you excluded a whole namespace, but still need one or few pods to be still included for shipping to Sumologic, you can use the `sumologic.com/include` annotation to include data to Sumo. It takes precedence over the exclusion described above.
+
+```
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    app: mywebsite
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: mywebsite
+      annotations:
+        sumologic.com/format: "text"
+        sumologic.com/sourceCategory: "mywebsite/nginx"
+        sumologic.com/sourceName: "mywebsite_nginx"
+        sumologic.com/include: "true"
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+```
+
+### Templating Kubernetes metadata
+The following Kubernetes metadata is available for string templating:
+ 
+| String template  | Description                                             |
+| ---------------  | ------------------------------------------------------  |                                         
+| `%{namespace}`   | Namespace name                                          |
+| `%{pod}`         | Full pod name (e.g. `travel-products-4136654265-zpovl`) | 
+| `%{pod_name}`    | Friendly pod name (e.g. `travel-products`)              | 
+| `%{pod_id}`      | The pod's uid (a UUID)                                  | 
+| `%{container}`   | Container name                                          |
+| `%{source_host}` | Host                                                    |
+| `%{label:foo}`   | The value of label `foo`                                | 
+
+#### Missing labels
+Unlike the other templates, labels are not guaranteed to exist, so missing labels interpolate as `"undefined"`.
+
+For example, if you have only the label `app: travel` but you define `SOURCE_NAME="%{label:app}@%{label:version}"`, the source name will appear as `travel@undefined`.
