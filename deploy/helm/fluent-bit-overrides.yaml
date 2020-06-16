@@ -8,7 +8,9 @@ resources: {}
 #   cpu: 10m
 #   memory: 8Mi
 
-## Set the enabled flag to false to not install fluent-bit helm chart as a dependency along with this helm chart
+## Uncomment the flag below to not install fluent-bit helm chart as a dependency along with this helm chart.
+## Comment it out if you wish to have the fluent-bit dependency installed.
+## Setting the flag to true instead of commenting out will break other functionality. 
 # enabled: false
 service:
   flush: 5
