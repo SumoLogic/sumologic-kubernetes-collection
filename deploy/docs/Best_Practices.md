@@ -115,7 +115,7 @@ See the following links to official Fluentd buffer documentation:
 
 ### Excluding Logs From Specific Components
 
-You can exclude specific logs from being sent to Sumo Logic by specifying the following parameters either in the `values.yaml` file or the `helm install` command.
+You can exclude specific logs from specific components from being sent to Sumo Logic by specifying the following parameters either in the `values.yaml` file or the `helm install` command.
 ```
 excludeContainerRegex
 excludeHostRegex
@@ -132,6 +132,32 @@ excludepodRegex: "(dashboard.*|sumologic.*)"
 ```yaml
 excludeNamespaceRegex: “(sumologic|kube-public)”
 ```
+
+If you wish to exclude messages based on the content of the message, you can leverage the fluentd `grep` filter plugin.  We expose `fluentd.logs.containers.extraFilterPluginConf` which allows you to inject additional filter plugins to process data. For example suppose you want to exclude the following log messages:
+
+```
+.*connection accepted from.*
+.*authenticated as principal.*
+.*client metadata from.*
+```
+
+In your values.yaml, you can simply add the following to your `values.yaml`:
+
+```
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |-
+        <filter containers.**>
+          @type grep
+          <exclude>
+            key message
+            pattern /(.*connection accepted from.*|.*authenticated as principal.*|.*client metadata from.*)/
+          </exclude>
+        </filter>
+```
+
+You can find more information on the `grep` filter plugin in the [fluentd documentation](https://docs.fluentd.org/filter/grep). Refer to our [documentation](v1_conf_examples.md) for other examples of how you can customize the fluentd pipeline.
 
 ### Add a local file to fluent-bit configuration
 
