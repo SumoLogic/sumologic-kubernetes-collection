@@ -78,7 +78,7 @@ prometheus:
   additionalServiceMonitors:
     - name: collection-sumologic-fluentd-logs
       additionalLabels:
-        sumologic/app: fluentd-logs
+        sumologic.com/app: fluentd-logs
       endpoints:
         - port: metrics
       namespaceSelector:
@@ -86,10 +86,10 @@ prometheus:
           - $(NAMESPACE)
       selector:
         matchLabels:
-          sumologic/app: fluentd-logs
+          sumologic.com/app: fluentd-logs
     - name: collection-sumologic-fluentd-metrics
       additionalLabels:
-        sumologic/app: fluentd-metrics
+        sumologic.com/app: fluentd-metrics
       endpoints:
         - port: metrics
       namespaceSelector:
@@ -97,10 +97,10 @@ prometheus:
           - $(NAMESPACE)
       selector:
         matchLabels:
-          sumologic/app: fluentd-metrics
+          sumologic.com/app: fluentd-metrics
     - name: collection-sumologic-fluentd-events
       additionalLabels:
-        sumologic/app: fluentd-events
+        sumologic.com/app: fluentd-events
       endpoints:
         - port: metrics
       namespaceSelector:
@@ -108,7 +108,7 @@ prometheus:
           - $(NAMESPACE)
       selector:
         matchLabels:
-          sumologic/app: fluentd-events
+          sumologic.com/app: fluentd-events
     - name: collection-fluent-bit
       additionalLabels:
         app: collection-fluent-bit
@@ -123,7 +123,7 @@ prometheus:
           app: fluent-bit
     - name: collection-sumologic-otelcol
       additionalLabels:
-        sumologic/app: otelcol
+        sumologic.com/app: otelcol
       endpoints:
         - port: metrics
       namespaceSelector:
@@ -131,7 +131,7 @@ prometheus:
           - $(NAMESPACE)
       selector:
         matchLabels:
-          sumologic/app: otelcol
+          sumologic.com/app: otelcol
   prometheusSpec:
     ## Prometheus default scrape interval, default from upstream Prometheus Operator Helm chart
     ## NOTE changing the scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
