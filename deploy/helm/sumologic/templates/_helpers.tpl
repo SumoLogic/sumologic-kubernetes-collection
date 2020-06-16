@@ -272,23 +272,23 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.logs" -}}
-sumologic/app: fluentd-logs
-sumologic/component: logs
+sumologic.com/app: fluentd-logs
+sumologic.com/component: logs
 {{- end -}}
 
 {{- define "sumologic.labels.metrics" -}}
-sumologic/app: fluentd-metrics
-sumologic/component: metrics
+sumologic.com/app: fluentd-metrics
+sumologic.com/component: metrics
 {{- end -}}
 
 {{- define "sumologic.labels.events" -}}
-sumologic/app: fluentd-events
-sumologic/component: events
+sumologic.com/app: fluentd-events
+sumologic.com/component: events
 {{- end -}}
 
 {{- define "sumologic.labels.traces" -}}
-sumologic/app: otelcol
-sumologic/component: traces
+sumologic.com/app: otelcol
+sumologic.com/component: traces
 {{- end -}}
 
 {{/*
