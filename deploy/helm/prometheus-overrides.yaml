@@ -35,7 +35,7 @@ nodeExporter:
 # Ensure we use pre 1.14 recording rules consistently as current content depends on them.
 kubeTargetVersionOverride: 1.13.0-0
 ## Set the enabled flag to false to not install prometheus operator helm chart as a dependency along with this helm chart
-# enabled: true
+# enabled: false
 alertmanager:
   enabled: false
 grafana:
