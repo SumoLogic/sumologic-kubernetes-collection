@@ -45,13 +45,10 @@ The following table displays the tested Kubernetes and Helm versions.
 
 Name | Version
 -------- | -----
-K8s with EKS | 1.13.8
-|| 1.11.10
-K8s with Kops | 1.13.10-k8s<br>1.13.0-kops
-|| 1.12.8-k8s<br>1.12.2-kops
-||1.10.13-k8s<br>1.10.0-kops
-K8s with GKE | 1.12.8-gke.10<br>1.12.7-gke.25<br>1.11.10-gke.5
-K8s with AKS | 1.12.8
+K8s with EKS | 1.14<br/>1.15<br/>1.16
+K8s with Kops | 1.16<br/>1.17<br/>1.18
+K8s with GKE | 1.14<br/>1.15<br/>1.16
+K8s with AKS | 1.14<br/>1.15<br/>1.16
 Helm | 2.14.13 (Linux)
 kubectl | 1.15.0
 
