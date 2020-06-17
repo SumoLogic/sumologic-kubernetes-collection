@@ -730,8 +730,6 @@ fluent-bit:
 
 ## Configure prometheus-operator
 ## ref: https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml
-grafana:
-  enabled: false
 prometheus-operator:
   ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
   kubeApiServer:
