@@ -9,22 +9,24 @@ apt-get --yes install apt-transport-https
 
 echo "export EDITOR=vim" >> /home/vagrant/.bashrc
 
-snap install microk8s --classic --channel=1.16/stable
+snap install microk8s --classic --channel=1.18/stable
 microk8s.status --wait-ready
 ufw allow in on cbr0
 ufw allow out on cbr0
 ufw default allow routed
 
-microk8s.enable dashboard
-microk8s.enable registry
-microk8s.enable storage
-microk8s.enable dns
-microk8s.enable helm
+microk8s enable dashboard
+microk8s enable registry
+microk8s enable storage
+microk8s enable dns
+microk8s enable helm
+microk8s enable helm3
 
 microk8s.kubectl config view --raw > /sumologic/.kube-config
 
 snap alias microk8s.kubectl kubectl
-snap alias microk8s.helm helm
+snap alias microk8s.helm helm2
+snap alias microk8s.helm3 helm
 
 # allow privileged
 echo "--allow-privileged=true" >> /var/snap/microk8s/current/args/kube-apiserver
@@ -63,7 +65,7 @@ while true; do
 done
 
 # Init helm tiller
-sudo -H -u vagrant -i helm init --wait
+sudo -H -u vagrant -i helm2 init --wait
 
 echo Dashboard local in-vagrant IP:
 kubectl -n kube-system get services | grep -i kubernetes-dashboard | awk '{print $3}'
