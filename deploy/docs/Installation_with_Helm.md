@@ -6,7 +6,7 @@ Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metr
 - [Requirements](#requirements) 
 - [Prerequisite](#prerequisite)
 - [Installation Steps](#installation-steps) 
-- [Seeing Data In Sumo Logic](#installation-steps) 
+- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic) 
 - [Troubleshooting Installation](#troubleshooting-installation)
 - [Customizing Installation](#customizing-installation)
 - [Upgrade Sumo Logic Collection](#upgrading-sumo-logic-collection)
