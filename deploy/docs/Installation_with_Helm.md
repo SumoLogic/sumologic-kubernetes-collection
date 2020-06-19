@@ -161,7 +161,7 @@ Helm2
 ```bash
 helm delete my-release
 ```
-> **Tip**: Use helm delete --purge collection to completely remove the release from Helm internal storage
+> **Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
 
 Helm3
 ```bash
