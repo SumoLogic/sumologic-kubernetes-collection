@@ -87,7 +87,7 @@ Once you have completed installation, you can [install the Kubernetes App and vi
 ## Troubleshooting Installation
 
 ### Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists
-If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists` on a Helm2 installation, run the above command with the `--no-crd-hook` flag:
+If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists` on a Helm2 installation, run the above command with the `--set prometheus-operator.prometheusOperator.createCustomResource=false` parameter:
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.createCustomResource=false
