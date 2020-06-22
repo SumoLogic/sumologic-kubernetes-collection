@@ -67,14 +67,14 @@ helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<
 
 If you wish to install the chart in a different namespace you can do the following:
 
-*Helm2*
+**Helm2**
 ```bash
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
 Please note that Helm3 no longer supports the namespace flag. You must change your `kubectl` context to the namespace you wish to install in.
 
-*Helm3*
+**Helm3**
 ```bash
 kubectl config set-context --current --namespace=my-namespace
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
@@ -113,7 +113,7 @@ You can find more information in our [troubleshooting documentation](Troubleshoo
 ## Customizing Installation
 All default properties for the Helm chart can be found in our [documentation](HelmChartConfiguration.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade. 
   
-Helm2 or Helm3
+**Helm2 or Helm3**
 ```bash
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
 ```
@@ -159,13 +159,13 @@ helm rollback my-release <REVISION-NUMBER>
 
 To uninstall/delete the Helm chart:
 
-Helm2
+**Helm2**
 ```bash
 helm delete my-release
 ```
 > **Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
 
-Helm3
+**Helm3**
 ```bash
 helm delete my-release
 ```
