@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-auto-instrumetation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: java-auto-instrumetation
+  template:
+    metadata:
+      labels:
+        name: java-auto-instrumetation
+    spec:
+      serviceAccountName: java-auto-instrumetation
+      containers:
+        - name: java-auto-instrumetation
+          # Replace this with the built image name
+          image: REPLACE_IMAGE
+          command:
+          - java-auto-instrumetation
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "java-auto-instrumetation"
