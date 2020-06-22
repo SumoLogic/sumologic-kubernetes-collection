@@ -6,6 +6,7 @@ __NOTE__: The Sumo Logic Kubernetes collection process does not support collecti
 - [Prerequisite](#prerequisite)
 - [Install Sumo Logic Helm Chart](#install-sumo-logic-helm-chart) 
 - [Update Existing Prometheus](#update-existing-prometheus) 
+- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 
 <!-- /TOC -->
 
@@ -99,3 +100,7 @@ kubectl delete pods <prometheus_pod_name>
 ```
 
 __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
+
+## Viewing Data In Sumo Logic
+
+Once you have completed installation, you can [install the Kubernetes App and view the dashboards](https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards) or [open a new Explore tab](https://help.sumologic.com/Solutions/Kubernetes_Solution/05Navigate_your_Kubernetes_environment) in Sumo Logic. If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
