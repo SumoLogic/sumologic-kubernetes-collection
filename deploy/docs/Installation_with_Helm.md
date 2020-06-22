@@ -41,9 +41,9 @@ Sumo Logic Apps for Kubernetes and Explore require you to add the following [fie
 
 These steps require that no Prometheus exists. If you already have Prometheus installed select from the following options:
 
-- [How to install if you have an existing Prometheus operator](./existingPrometheusDoc.md) 
-- [How to install if you have standalone Prometheus](./standAlonePrometheus.md) 
-- [How to install our Prometheus side by side with your existing Prometheus](./SideBySidePrometheus.md)
+- [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
+- [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md) 
+- [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md) 
 
 The Helm chart installation requires two parameter overrides:
 * __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
