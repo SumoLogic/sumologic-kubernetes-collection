@@ -47,7 +47,7 @@ These steps require that no Prometheus exists. If you already have Prometheus in
 - [How to install if you have standalone Prometheus](./standAlonePrometheus.md) 
 - [How to install our Prometheus side by side with your existing Prometheus](./SideBySidePrometheus.md)
 
-In this method of installation, you will use our [templating tool](https://github.com/SumoLogic/sumologic-kubernetes-tools#k8s-template-generator) to generate the YAML needed to deploy Sumo Logic collection for Kubernetes.  This tool will use our Helm chart to generate the YAML.  You will configure the collection the same way that you would for Helm based install.  However, inseat of using Helm to install the Chartm, the tool will output the rendered YAML you can deploy.
+In this method of installation, you will use our [templating tool](https://github.com/SumoLogic/sumologic-kubernetes-tools#k8s-template-generator) to generate the YAML needed to deploy Sumo Logic collection for Kubernetes.  This tool will use our Helm chart to generate the YAML.  You will configure the collection the same way that you would for Helm based install.  However, instead of using Helm to install the Chart, the tool will output the rendered YAML you can deploy.
 
 The installation requires two parameters:
 * __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
@@ -181,7 +181,7 @@ kubectl run tools \
 
 ## Uninstalling Sumo Logic Collection
 
-To uninstall/delete, simply kube `kubectl delete` on the generated YAML.
+To uninstall/delete, simply run `kubectl delete` on the generated YAML.
 
 ```bash
 kubectl delete -f sumologic.yaml
