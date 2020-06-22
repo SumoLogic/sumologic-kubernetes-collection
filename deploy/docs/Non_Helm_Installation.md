@@ -2,7 +2,7 @@
 
 **Please note that our non-helm installation process still uses Helm to generate the YAML that you will deploy into your Kubernetes cluster.  We do not provide YAML that can be directly be applied and it must be generated.**
 
-This document has instructions for setting up Sumo Logic collection using Fluentd, FluentBit, Prometheus and Falco. 
+This document has instructions for setting up Sumo Logic collection using Fluentd, Fluent-Bit, Prometheus and Falco. 
 
 <!-- TOC -->
 
@@ -123,7 +123,7 @@ If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers
 ### Fluentd Pods Stuck in CreateContainerConfigError
 If the fluentd pods are in `CreateContainerConfigError` it can mean the setup job has not completed yet. Wait for the setup pod to complete and the issue should resolve itself.  The setup job creates a secret and the error simply means the secret is not there yet.  This usually resolves itself automatically.
 
-If the issue does not solve resolve automatically, you will need to look at the logs for the setup pod. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where the Helm chart was deployed. The pod name will contain `-setup` in the name.
+If the issue does not solve resolve automatically, you will need to look at the logs for the setup pod. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where you installed the rendered YAML. The pod name will contain `-setup` in the name.
 
 ```sh
 kubectl get pods
@@ -162,7 +162,7 @@ kubectl delete configmap sumologic-values
 
 **Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).**
 
-To upgrade you can simply re-generate the YAML when a new version of the Kubernetes collection is available.  If you with to upgrade to a specific version, you can pass the `--version` flag when generating the YAML.
+To upgrade you can simply re-generate the YAML when a new version of the Kubernetes collection is available.  If you wish to upgrade to a specific version, you can pass the `--version` flag when generating the YAML.
 
 ```bash
 kubectl run tools \
