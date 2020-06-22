@@ -2,6 +2,9 @@ package javaautoinstrumentation
 
 import (
 	"context"
+	"github.com/go-logr/logr"
+	appv1 "k8s.io/api/apps/v1"
+	"strings"
 
 	javaautoinstrv1alpha1 "github.com/SumoLogic/sumologic-kubernetes-collection/java-auto-instrumentation/pkg/apis/javaautoinstr/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
@@ -18,6 +21,13 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
+
+const tracingServiceNameLabel = "auto-instr-service-name"
+const needsAutoInstrumentationLabel = "should-auto-instrument"
+const autoInstrumentationExporterLabel = "auto-instrumentation-exporter"
+const opentelemetryJarVolumeName = "ot-jars-volume"
+const opentelemetryJarMountPath = "/ot-jars"
+const opentelemetryCollectorHostLabel = "collector-host"
 
 var log = logf.Log.WithName("controller_javaautoinstrumentation")
 
@@ -149,5 +159,217 @@ func newPodForCR(cr *javaautoinstrv1alpha1.JavaAutoInstrumentation) *corev1.Pod 
 				},
 			},
 		},
+	}
+}
+
+func getCollectorHostOrDefault(deployment *appv1.Deployment, exporter string) string {
+	providedHost, ok := deployment.Labels[opentelemetryCollectorHostLabel]
+	if ok {
+		return providedHost
+	} else {
+		return exporter
+	}
+}
+
+func hasJavaOptionsEnvVarWithAutoInstrumentation(containers []corev1.Container) bool {
+	options, exists := getJavaOptions(containers)
+	return exists && strings.Contains(options, "opentelemetry-auto")
+}
+
+func getJavaOptions(containers []corev1.Container) (string, bool) {
+	for _, container := range containers {
+		for _, e := range container.Env {
+			if e.Name == "_JAVA_OPTIONS" {
+				return e.Value, true
+			}
+		}
+	}
+	return "", false
+}
+
+func needsAutoInstrumentation(deployment *appv1.Deployment) bool {
+	shouldAutoInstrument, ok := deployment.Labels[needsAutoInstrumentationLabel]
+	if ok {
+		return shouldAutoInstrument == "true"
+	}
+	return false
+}
+
+func getAutoInstrumentationExporterOrDefault(reqLogger logr.Logger, deployment *appv1.Deployment) string {
+	exporter, ok := deployment.Labels[autoInstrumentationExporterLabel]
+	if ok {
+		if exporter == "jaeger" || exporter == "otlp" {
+			return exporter
+		} else {
+			reqLogger.Info("Unknown exporter "+exporter+", will default to jaeger", "Deployment",
+				deployment.Name)
+			return "jaeger"
+		}
+	} else {
+		reqLogger.Info("No exporter set, will default to jaeger", "Deployment",
+			deployment.Name)
+		return "jaeger"
+	}
+}
+
+func getAutoInstrumentationServiceName(reqLogger logr.Logger, deployment *appv1.Deployment) string {
+	name, ok := deployment.Labels[tracingServiceNameLabel]
+	if ok {
+		reqLogger.Info("Using label for tracing service name")
+		return name
+	} else {
+		podSpec := deployment.Spec.Template.Spec
+		numberOfContainers := len(podSpec.Containers)
+		reqLogger.Info("Using pod container for tracing service name", "Number of containers",
+			numberOfContainers)
+		return podSpec.Hostname + "-" + podSpec.Containers[0].Name
+	}
+}
+
+func getJaegerConfiguration(serviceName string, existingJavaOptions string, collectorHost string) []corev1.EnvVar {
+	return []corev1.EnvVar{
+		{
+			Name: "_JAVA_OPTIONS",
+			Value: existingJavaOptions + " -javaagent:" + opentelemetryJarMountPath + "/opentelemetry-auto-0.3.0.jar " +
+				"-Dota.exporter.jar=" + opentelemetryJarMountPath + "/opentelemetry-auto-exporters-jaeger-0.3.0.jar " +
+				"-Dota.exporter.jaeger.endpoint=" + collectorHost + ":14250 " +
+				"-Dota.exporter.jaeger.service.name=" + serviceName,
+		},
+	}
+}
+
+func getOtlpConfiguration(serviceName string, existingJavaOptions string, collectorHost string) []corev1.EnvVar {
+	return []corev1.EnvVar{
+		{
+			Name: "_JAVA_OPTIONS",
+			Value: existingJavaOptions + " -javaagent:" + opentelemetryJarMountPath + "/opentelemetry-auto-0.3.0.jar " +
+				"-Dota.exporter.jar=" + opentelemetryJarMountPath + "/opentelemetry-auto-exporters-otlp-0.3.0.jar " +
+				"-Dota.exporter.otlp.endpoint=" + collectorHost + ":55680",
+		},
+		{
+			Name:  "OTEL_RESOURCE_ATTRIBUTES",
+			Value: "service.name=" + serviceName,
+		},
+	}
+}
+
+func getConfiguration(exporter string, serviceName string, existingJavaOptions string,
+	collectorHost string) []corev1.EnvVar {
+
+	if exporter == "otlp" {
+		return getOtlpConfiguration(serviceName, existingJavaOptions, collectorHost)
+	} else {
+		return getJaegerConfiguration(serviceName, existingJavaOptions, collectorHost)
+	}
+}
+
+func copyExistingEnvVarsWithoutJavaOptions(env []corev1.EnvVar) []corev1.EnvVar {
+	var envVars []corev1.EnvVar
+	for _, e := range env {
+		if e.Name != "_JAVA_OPTIONS" {
+			envVars = append(envVars, e)
+		}
+	}
+	return envVars
+}
+
+func getOtJarsVolumeMount() corev1.VolumeMount {
+	return corev1.VolumeMount{
+		Name:      opentelemetryJarVolumeName,
+		MountPath: opentelemetryJarMountPath,
+		ReadOnly:  true,
+	}
+}
+
+func getOtJarsVolume() corev1.Volume {
+	return corev1.Volume{
+		Name: opentelemetryJarVolumeName,
+		VolumeSource: corev1.VolumeSource{
+			HostPath: &corev1.HostPathVolumeSource{
+				Path: "/home/vagrant/ot-jars",
+				//Type: corev1.HostPathDirectory,
+			},
+		},
+	}
+}
+
+func mergePodSpec(originalPodSpec *corev1.PodSpec, serviceName string, exporter string,
+	collectorHost string) corev1.PodSpec {
+
+	originalContainer := originalPodSpec.Containers[0] // TODO
+	existingJavaOptions, exists := getJavaOptions(originalPodSpec.Containers)
+	if !exists {
+		existingJavaOptions = ""
+	}
+	var envVars = copyExistingEnvVarsWithoutJavaOptions(originalContainer.Env)
+	envVars = append(envVars, getConfiguration(exporter, serviceName, existingJavaOptions, collectorHost)...)
+
+	var volumeMounts []corev1.VolumeMount
+	volumeMounts = append(volumeMounts, originalContainer.VolumeMounts...)
+	volumeMounts = append(volumeMounts, getOtJarsVolumeMount())
+
+	var volumes []corev1.Volume
+	volumes = append(volumes, originalPodSpec.Volumes...)
+	volumes = append(volumes, getOtJarsVolume())
+	return corev1.PodSpec{
+		Volumes:        volumes,
+		InitContainers: originalPodSpec.InitContainers,
+		Containers: []corev1.Container{
+			{
+				Name:                     originalContainer.Name,
+				Image:                    originalContainer.Image,
+				Resources:                originalContainer.Resources,
+				SecurityContext:          originalContainer.SecurityContext,
+				Env:                      envVars,
+				VolumeMounts:             volumeMounts,
+				Command:                  originalContainer.Command,
+				Args:                     originalContainer.Args,
+				WorkingDir:               originalContainer.WorkingDir,
+				Ports:                    originalContainer.Ports,
+				EnvFrom:                  originalContainer.EnvFrom,
+				VolumeDevices:            originalContainer.VolumeDevices,
+				LivenessProbe:            originalContainer.LivenessProbe,
+				ReadinessProbe:           originalContainer.ReadinessProbe,
+				StartupProbe:             originalContainer.StartupProbe,
+				Lifecycle:                originalContainer.Lifecycle,
+				TerminationMessagePath:   originalContainer.TerminationMessagePath,
+				TerminationMessagePolicy: originalContainer.TerminationMessagePolicy,
+				ImagePullPolicy:          originalContainer.ImagePullPolicy,
+				Stdin:                    originalContainer.Stdin,
+				StdinOnce:                originalContainer.StdinOnce,
+				TTY:                      originalContainer.TTY,
+			},
+		},
+		EphemeralContainers:           originalPodSpec.EphemeralContainers,
+		RestartPolicy:                 originalPodSpec.RestartPolicy,
+		TerminationGracePeriodSeconds: originalPodSpec.TerminationGracePeriodSeconds,
+		ActiveDeadlineSeconds:         originalPodSpec.ActiveDeadlineSeconds,
+		DNSPolicy:                     originalPodSpec.DNSPolicy,
+		NodeSelector:                  originalPodSpec.NodeSelector,
+		ServiceAccountName:            originalPodSpec.ServiceAccountName,
+		DeprecatedServiceAccount:      originalPodSpec.DeprecatedServiceAccount,
+		AutomountServiceAccountToken:  originalPodSpec.AutomountServiceAccountToken,
+		NodeName:                      originalPodSpec.NodeName,
+		HostNetwork:                   originalPodSpec.HostNetwork,
+		HostPID:                       originalPodSpec.HostPID,
+		HostIPC:                       originalPodSpec.HostIPC,
+		ShareProcessNamespace:         originalPodSpec.ShareProcessNamespace,
+		SecurityContext:               originalPodSpec.SecurityContext,
+		ImagePullSecrets:              originalPodSpec.ImagePullSecrets,
+		Hostname:                      originalPodSpec.Hostname,
+		Subdomain:                     originalPodSpec.Subdomain,
+		Affinity:                      originalPodSpec.Affinity,
+		SchedulerName:                 originalPodSpec.SchedulerName,
+		Tolerations:                   originalPodSpec.Tolerations,
+		HostAliases:                   originalPodSpec.HostAliases,
+		PriorityClassName:             originalPodSpec.PriorityClassName,
+		Priority:                      originalPodSpec.Priority,
+		DNSConfig:                     originalPodSpec.DNSConfig,
+		ReadinessGates:                originalPodSpec.ReadinessGates,
+		RuntimeClassName:              originalPodSpec.RuntimeClassName,
+		EnableServiceLinks:            originalPodSpec.EnableServiceLinks,
+		PreemptionPolicy:              originalPodSpec.PreemptionPolicy,
+		Overhead:                      originalPodSpec.Overhead,
+		TopologySpreadConstraints:     originalPodSpec.TopologySpreadConstraints,
 	}
 }
