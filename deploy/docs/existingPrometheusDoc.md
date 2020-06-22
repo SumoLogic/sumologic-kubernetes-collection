@@ -64,13 +64,13 @@ Run the following commands to update the [remote write configuration](https://pr
 Run the following command to download our prometheus-overrides.yaml file.  Please review our configuration as it will be applied to your existing operator configuration.
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/prometheus-overrides.yaml > sumo-prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/prometheus-overrides.yaml
 ```
 
 Next you can upgrade your Prometheus-Operator.  The following command assumes it is installed with the release name `prometheus-operator`. Remember, this command will update your Prometheus Operator to be configured with our default settings.   
 
 ```bash
-helm upgrade prometheus-operator stable/prometheus-operator -f sumo-prometheus-overrides.yaml 
+helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml 
 ```
 
 ## Merge Prometheus Configuration
@@ -90,3 +90,14 @@ helm upgrade prometheus-operator stable/prometheus-operator -f current-values.ya
 ```
 
 __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
+
+## Troubleshooting
+
+### UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "prometheusrulemutate.monitoring.coreos.com"
+
+If you receive the above error, you can take the following steps and then repeat the `helm upgrade` command.
+
+```bash
+kubectl delete  validatingwebhookconfigurations.admissionregistration.k8s.io prometheus-operator-admission
+kubectl delete  MutatingWebhookConfiguration  prometheus-operator-admission
+```
