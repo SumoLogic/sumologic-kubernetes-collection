@@ -2,9 +2,30 @@
 
 __NOTE__: The Sumo Logic Kubernetes collection process does not support collecting metrics from scaling Prometheus replicas. If you are running multiple Prometheus replicas, please follow our [Side-by-Side](SideBySidePrometheus.md) instructions.
 
+<!-- TOC -->
+- [Prerequisite](#prerequisite)
+- [Install Sumo Logic Helm Chart](#install-sumo-logic-helm-chart) 
+- [Update Existing Prometheus Operator Helm Chart](#update-existing-prometheus-operator-helm-chart) 
+- [Merge Prometheus Configuration](#merge-prometheus-configuration) 
+- [Troubleshooting](#troubleshooting) 
+
+<!-- /TOC -->
+
 This document will walk you through how to setup Sumo Logic Kubernetes collection when you already have Prometheus running using the Prometheus Operator. In these steps, you will modify your installed Prometheus operator to add in the minimum configuration that Sumo Logic needs.
 
 If you do not wish to modify your Prometheus Operator and wish to run side-by-side with our collection, please refer to our [How to install our Prometheus side by side with your existing Prometheus](./SideBySidePrometheus.md) documentation.
+
+## Prerequisite
+
+Sumo Logic Apps for Kubernetes and Explore require you to add the following [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata. This is a one time setup per Sumo Logic account.
+- cluster
+- container
+- deployment
+- host
+- namespace
+- node
+- pod
+- service
 
 ## Install Sumo Logic Helm Chart
 
