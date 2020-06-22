@@ -5,6 +5,7 @@ import (
 	"github.com/go-logr/logr"
 	appv1 "k8s.io/api/apps/v1"
 	"strings"
+	"time"
 
 	javaautoinstrv1alpha1 "github.com/SumoLogic/sumologic-kubernetes-collection/java-auto-instrumentation/pkg/apis/javaautoinstr/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
@@ -71,6 +72,12 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 		return err
 	}
 
+	log.Info("Watching all deployments")
+	err = c.Watch(&source.Kind{Type: &appv1.Deployment{}}, &handler.EnqueueRequestForObject{})
+	if err != nil {
+		log.Error(err, "Failed to watch all deployments")
+		return err
+	}
 	return nil
 }
 
@@ -93,49 +100,57 @@ type ReconcileJavaAutoInstrumentation struct {
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
 func (r *ReconcileJavaAutoInstrumentation) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name)
+	now := time.Now().Format(time.RFC3339)
+	reqLogger := log.WithValues("Request.Namespace", request.Namespace, "Request.Name", request.Name,
+		"Timestamp", now)
 	reqLogger.Info("Reconciling JavaAutoInstrumentation")
 
 	// Fetch the JavaAutoInstrumentation instance
-	instance := &javaautoinstrv1alpha1.JavaAutoInstrumentation{}
-	err := r.client.Get(context.TODO(), request.NamespacedName, instance)
+	//instance := &javaautoinstrv1alpha1.JavaAutoInstrumentation{}
+	//err := r.client.Get(context.TODO(), request.NamespacedName, instance)
+	//if err != nil {
+	//	if errors.IsNotFound(err) {
+	//		// Request object not found, could have been deleted after reconcile request.
+	//		// Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.
+	//		// Return and don't requeue
+	//		return reconcile.Result{}, nil
+	//	}
+	// Error reading the object - requeue the request.
+	//return reconcile.Result{}, err
+	//}
+
+	existingDeployments := &appv1.DeploymentList{}
+	err := r.client.List(context.TODO(), existingDeployments, &client.ListOptions{Namespace: request.Namespace})
 	if err != nil {
-		if errors.IsNotFound(err) {
-			// Request object not found, could have been deleted after reconcile request.
-			// Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.
-			// Return and don't requeue
-			return reconcile.Result{}, nil
+		reqLogger.Error(err, "failed to list existing deployments")
+		return reconcile.Result{}, err
+	}
+
+	for _, deployment := range existingDeployments.Items {
+		reqLogger.Info("Processing", "deployment", deployment.Name)
+		if needsAutoInstrumentation(&deployment) {
+			if !hasJavaOptionsEnvVarWithAutoInstrumentation(deployment.Spec.Template.Spec.Containers) {
+				reqLogger.Info("Containers do not have _JAVA_OPTIONS env var with auto instrumentation",
+					"Deployment", deployment.Name)
+				exporter := getAutoInstrumentationExporterOrDefault(reqLogger, &deployment)
+				collectorHost := getCollectorHostOrDefault(&deployment, exporter)
+				tracingServiceName := getAutoInstrumentationServiceName(reqLogger, &deployment)
+				deployment.Spec.Template.Spec = mergePodSpec(&deployment.Spec.Template.Spec, tracingServiceName,
+					exporter, collectorHost)
+				err = r.client.Update(context.TODO(), &deployment)
+				if err != nil {
+					reqLogger.Error(err, "Failed to update deployment", "Deployment", deployment.Name)
+					return reconcile.Result{}, err
+				} else {
+					reqLogger.Info("Successfully updated deployment", "Deployment", deployment.Name)
+				}
+			} else {
+				reqLogger.Info("Containers have _JAVA_OPTIONS with auto instrumentation, will leave them alone")
+			}
+		} else {
+			reqLogger.Info("This deployment doesn't need auto instrumentation")
 		}
-		// Error reading the object - requeue the request.
-		return reconcile.Result{}, err
 	}
-
-	// Define a new Pod object
-	pod := newPodForCR(instance)
-
-	// Set JavaAutoInstrumentation instance as the owner and controller
-	if err := controllerutil.SetControllerReference(instance, pod, r.scheme); err != nil {
-		return reconcile.Result{}, err
-	}
-
-	// Check if this Pod already exists
-	found := &corev1.Pod{}
-	err = r.client.Get(context.TODO(), types.NamespacedName{Name: pod.Name, Namespace: pod.Namespace}, found)
-	if err != nil && errors.IsNotFound(err) {
-		reqLogger.Info("Creating a new Pod", "Pod.Namespace", pod.Namespace, "Pod.Name", pod.Name)
-		err = r.client.Create(context.TODO(), pod)
-		if err != nil {
-			return reconcile.Result{}, err
-		}
-
-		// Pod created successfully - don't requeue
-		return reconcile.Result{}, nil
-	} else if err != nil {
-		return reconcile.Result{}, err
-	}
-
-	// Pod already exists - don't requeue
-	reqLogger.Info("Skip reconcile: Pod already exists", "Pod.Namespace", found.Namespace, "Pod.Name", found.Name)
 	return reconcile.Result{}, nil
 }
 
