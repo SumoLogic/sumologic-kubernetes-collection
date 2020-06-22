@@ -5,7 +5,7 @@
 - [Helm Users](#helm-users)
   - [Changes](#changes)
   - [How to upgrade](#how-to-upgrade)
-    - [1. Upgrade to helm chart version v0.17.3](#1-upgrade-to-helm-chart-version-v0173)
+    - [1. Upgrade to helm chart version v0.17.4](#1-upgrade-to-helm-chart-version-v0174)
     - [2. Run upgrade script](#2-run-upgrade-script)
   - [Rollback](#rollback)
 - [Non-Helm Users](#non-helm-users)
@@ -99,17 +99,17 @@ The unified Fluentd `statefulsets` have been split into set of two different Flu
 
 ### How to upgrade
 **Note: The below steps are using Helm 2. Helm 3 is not supported.**
-#### 1. Upgrade to helm chart version `v0.17.3`
+#### 1. Upgrade to helm chart version `v0.17.4`
 
 Run the below command to fetch the latest helm chart:
 ```bash
 helm repo update
 ```
 
-For the users who are not already on `v0.17.3` of the helm chart, please upgrade to that version first by running the below command.
+For the users who are not already on `v0.17.4` of the helm chart, please upgrade to that version first by running the below command.
 
 ```bash
-helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.3
+helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.4
 ```
 #### 2: Run upgrade script
 
@@ -133,6 +133,11 @@ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-colle
 ```bash
 helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_values.yaml
 ```
+
+### Troubleshooting Upgrade
+If you receive the below error, it likely means your OS is picking up an older version of `bash` even though you may have upgraded.  Makes sure you are running a version of `bash` >= 4.4 by running `bash --version`.  If the version of bash is correct, you can rerun the upgrade script by running `bash upgrade-1.0.0.sh current_values.yaml` and then rerun `helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_values.yaml` to resolve.
+
+```Error: UPGRADE FAILED: error validating "": error validating data: [ValidationError(StatefulSet.spec.template.spec.containers[0].resources.limits.cpu fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.limits.memory fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.requests.cpu fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.requests.memory fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string"]```
 
 ### Rollback
 
@@ -170,7 +175,7 @@ Follow the below steps to deploy new resources.
 
 - Run the below command to get the `fluentd-sumologic.yaml` manifest for version `v1.0.0` and  then make the changes identified in the above step.
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v0.17/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/kubernetes/fluentd-sumologic.yaml.tmpl | \
 sed 's/\$NAMESPACE'"/<NAMESPACE>/g" | \
 sed 's/cluster kubernetes/cluster <CLUSTER_NAME>/g'  >> fluentd-sumologic.yaml
 ```

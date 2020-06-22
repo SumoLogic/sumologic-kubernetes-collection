@@ -23,6 +23,274 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.roles.clusterrole" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.roles.clusterrolebinding" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.roles.serviceaccount" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs" -}}
+{{- template "sumologic.fullname" . }}-fluentd-logs
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.pod" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.service" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.service-headless" -}}
+{{- template "sumologic.labels.app.logs.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.configmap" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.statefulset" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.hpa" -}}
+{{- template "sumologic.labels.app.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics" -}}
+{{- template "sumologic.fullname" . }}-fluentd-metrics
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.pod" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.service" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.service-headless" -}}
+{{- template "sumologic.labels.app.metrics.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.configmap" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.statefulset" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.hpa" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.events" -}}
+{{- template "sumologic.fullname" . }}-fluentd-events
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.pod" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.service" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.service-headless" -}}
+{{- template "sumologic.labels.app.events.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.configmap" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.events.statefulset" -}}
+{{- template "sumologic.labels.app.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol" -}}
+{{- template "sumologic.fullname" . }}-otelcol
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.pod" -}}
+{{- template "sumologic.labels.app.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.service" -}}
+{{- template "sumologic.labels.app.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.configmap" -}}
+{{- template "sumologic.labels.app.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.deployment" -}}
+{{- template "sumologic.labels.app.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup" -}}
+{{- template "sumologic.labels.app" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.job" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.configmap" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.roles.clusterrole" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.roles.clusterrolebinding" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.setup.roles.serviceaccount" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.roles.clusterrole" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.roles.clusterrolebinding" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.roles.serviceaccount" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs" -}}
+{{ template "sumologic.fullname" . }}-fluentd-logs
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.service" -}}
+{{ template "sumologic.metadata.name.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.service-headless" -}}
+{{ template "sumologic.metadata.name.logs.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.configmap" -}}
+{{ template "sumologic.metadata.name.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.statefulset" -}}
+{{ template "sumologic.metadata.name.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics" -}}
+{{ template "sumologic.fullname" . }}-fluentd-metrics
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.service" -}}
+{{ template "sumologic.metadata.name.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.service-headless" -}}
+{{ template "sumologic.metadata.name.metrics.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.configmap" -}}
+{{ template "sumologic.metadata.name.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.statefulset" -}}
+{{ template "sumologic.metadata.name.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events" -}}
+{{ template "sumologic.fullname" . }}-fluentd-events
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events.service" -}}
+{{ template "sumologic.metadata.name.events" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events.service-headless" -}}
+{{ template "sumologic.metadata.name.events.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events.configmap" -}}
+{{ template "sumologic.metadata.name.events" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.events.statefulset" -}}
+{{ template "sumologic.metadata.name.events" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol" -}}
+{{ template "sumologic.fullname" . }}-otelcol
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol.service" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol.configmap" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol.deployment" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup" -}}
+{{ template "sumologic.fullname" . }}-setup
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.job" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.configmap" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.roles.clusterrole" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.roles.clusterrolebinding" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.roles.serviceaccount" -}}
+{{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.logs" -}}
+sumologic.com/app: fluentd-logs
+sumologic.com/component: logs
+{{- end -}}
+
+{{- define "sumologic.labels.metrics" -}}
+sumologic.com/app: fluentd-metrics
+sumologic.com/component: metrics
+{{- end -}}
+
+{{- define "sumologic.labels.events" -}}
+sumologic.com/app: fluentd-events
+sumologic.com/component: events
+{{- end -}}
+
+{{- define "sumologic.labels.traces" -}}
+sumologic.com/app: otelcol
+sumologic.com/component: traces
+{{- end -}}
+
 {{/*
 Create common labels used throughout the chart.
 If dryRun=true, we do not create any chart labels.
@@ -41,6 +309,13 @@ Returns sumologic version string
 */}}
 {{- define "sumologic.sumo_client" -}}
 k8s_{{ .Chart.Version }}
+{{- end -}}
+
+{{/*
+Returns clusterName with spaces replaced with dashes
+*/}}
+{{- define "sumologic.clusterNameReplaceSpaceWithDash" -}}
+{{ .Values.sumologic.clusterName | replace " " "-"}}
 {{- end -}}
 
 {{/*
@@ -69,5 +344,351 @@ It returns `.Value.key1.key2` if it exists otherwise `default_value`
   {{- $dict }}
 {{- else }}
   {{- $default }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Generate metrics match configuration
+
+Example usage (as one line):
+
+{{ include "utils.metrics.match" (dict 
+  "Values" . 
+  "Tag" "prometheus.metrics.kubelet" 
+  "Endpoint" "SUMO_ENDPOINT_METRICS" 
+  "Storage" .Values.fluentd.buffer.filePaths.metrics.default
+  "Id" sumologic.endpoint.metrics
+)}}
+*/}}
+{{- define "utils.metrics.match" -}}
+<match {{ .Tag }}>
+  @type copy
+  <store>
+{{- if .Drop }}
+    @type null
+{{- else }}
+    @type sumologic
+    @id {{ .Id }}
+    sumo_client {{ include "sumologic.sumo_client" .Context | quote }}
+    endpoint "#{ENV['{{ include "terraform.sources.endpoint" .Endpoint}}']}"
+{{- .Context.Values.fluentd.metrics.outputConf | nindent 2 }}
+    <buffer>
+      {{- if or .Context.Values.fluentd.persistence.enabled (eq .Context.Values.fluentd.buffer.type "file") }}
+      @type file
+      path {{ .Storage }}
+      {{- else }}
+      @type memory
+      {{- end }}
+      @include buffer.output.conf
+    </buffer>
+{{- end }}
+  </store>
+  {{- if .Context.Values.fluentd.monitoring.output }}
+  {{ include "fluentd.prometheus-metrics.output" . | nindent 2 }}
+  {{- end }}
+</match>
+{{ end -}}
+
+{{/*
+Generate fluentd prometheus filter configuration (input metrics)
+
+Example:
+
+{{ template "fluentd.prometheus-metrics.input" (dict "Tag" "kubernetes.**") }}
+*/}}
+{{- define "fluentd.prometheus-metrics.input" }}
+<filter {{ .Tag }}>
+  @type prometheus
+  <metric>
+    name fluentd_input_status_num_records_total
+    type counter
+    desc The total number of incoming records
+    <labels>
+      tag ${tag}
+      hostname ${hostname}
+    </labels>
+  </metric>
+</filter>
+{{- end -}}
+
+{{/*
+Generate fluentd prometheus store configuration (output metrics)
+
+Example:
+
+{{ template "fluentd.prometheus-metrics.output" . }}
+*/}}
+{{- define "fluentd.prometheus-metrics.output" -}}
+<store>
+  @type prometheus
+  <metric>
+    name fluentd_output_status_num_records_total
+    type counter
+    desc The total number of outgoing records
+    <labels>
+      tag ${tag}
+      hostname ${hostname}
+    </labels>
+  </metric>
+</store>
+{{- end -}}
+
+{{/*
+Convert source name to terraform metric name:
+ * converts all `-` to `_`
+ * adds `_$type_source` suffix
+
+Example usage:
+
+{{ include "terraform.sources.name" $source }}
+
+*/}}
+{{- define "terraform.sources.name" -}}
+{{ printf "%s_%s_source" (replace "-" "_" .Name) .Type }}
+{{- end -}}
+
+{{/*
+Generate endpoint variable string for given string
+
+Example usage:
+
+{{ include "terraform.sources.endpoint" "logs" }}
+
+*/}}
+{{- define "terraform.sources.endpoint" -}}
+SUMO_ENDPOINT_{{ replace "-" "_" . | upper }}
+{{- end -}}
+
+{{/*
+Generate endpoint variable string for given string
+
+Example usage:
+
+{{ include "terraform.sources.endpoint" "logs" }}
+
+*/}}
+{{- define "terraform.sources.endpoint_name" -}}
+{{ printf "endpoint-%s" . }}
+{{- end -}}
+
+{{/*
+Generate line for local terraform section
+ * `terraform.sources.local = value`
+
+Example usage:
+
+{{ include "terraform.sources.local" $source }}
+
+*/}}
+{{- define "terraform.sources.local" -}}
+{{ printf "%-43s = \"%s\"" .Name .Value }}
+{{- end -}}
+
+{{/*
+Generate line for data terraform section
+
+Example usage:
+
+{{ include "terraform.sources.data" (dict "Endpoint" "enpoint-default-metrics" "Name" "default") }}
+
+*/}}
+{{- define "terraform.sources.data" -}}
+{{ printf "%-41s = sumologic_http_source.%s.url" .Endpoint .Name }}
+{{- end -}}
+
+{{/*
+Generate resource sections
+
+Example usage:
+
+{{ include "terraform.sources.resource" (dict "Source" $source "Context" $ctx) }}
+
+*/}}
+{{- define "terraform.sources.resource" -}}
+{{- $source := .Source -}}
+{{- $ctx := .Context -}}
+resource "sumologic_http_source" "{{ .Name }}" {
+    name         = local.{{ .Name }}
+    collector_id = sumologic_collector.collector.id
+    {{- if $source.category }}
+    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.default_events_source}\"" }}{{- end}}
+    {{- end }}
+    {{- if $source.properties }}
+    {{- range $fkey, $fvalue := $source.properties }}
+    {{- include "terraform.generate-object" (dict "Name" $fkey "Value" $fvalue "KeyLength" (include "terraform.max-key-length" $source.properties) "Indent" 2) -}}
+    {{- end -}}
+    {{- end }}
+}
+{{- end -}}
+
+{{- define "terraform.max-key-length" -}}
+{{- $max := 0 -}}
+{{- range $key, $value := . -}}
+{{- if gt (len $key) $max -}}
+{{- $max = (len $key) -}}
+{{- end -}}
+{{- end -}}
+{{ $max }}
+{{- end -}}
+
+{{/*
+Generate key for terraform object. Default behaviour is to print:
+
+{{ name }} = {{ value }}
+
+If this is key for list, prints only value.
+
+This template takes care about indentation using Indent key
+
+Example usage:
+
+{{- include "terraform.generate-object" (dict "Name" "my_key" "Value" "my_value" "Indent" 8 "List" true) }}
+*/}}
+{{- define "terraform.generate-key" -}}
+{{- $indent := int .Indent -}}
+{{- $name := .Name -}}
+{{- $keyLength := int .KeyLength -}}
+{{- $format := printf "%%-%ss" (toString $keyLength) -}}
+{{- $value := .Value -}}
+{{- if and ( eq (kindOf $value) "string") (not .SkipEscaping) -}}
+{{- $value = printf "\"%s\"" $value -}}
+{{- end -}}
+{{- if .SkipPadding -}}
+{{- $format = "%s" -}}
+{{- end -}}
+{{ indent (int $indent) "" }}{{ if not .SkipName }}{{ printf $format (toString $name) }} {{ if not .SkipEqual }}= {{ end }}{{ end }}{{ (toString $value) }}{{ if .AddComma }},{{ end }}
+{{- end -}}
+
+{{/*
+Generates terraform object for primitives, slices and maps
+
+Example usage:
+
+{{- include "terraform.generate-object" (dict "Name" $name "Value" $value "Indent" 12 "List" true) }}
+
+where:
+  - Value can be slice, map or primitive type (int, string, etc)
+  - Name is string
+  - Indent should be convertable to int (0 by default)
+  - List - information if the Value is element of the list, false by default
+*/}}
+{{- define "terraform.generate-object" -}}
+{{- $name := .Name -}}
+{{- $value := .Value -}}
+{{- $keyLength := .KeyLength -}}
+{{- $indent := int .Indent -}}
+{{- $indent = add $indent 2 -}}
+{{- $process := true -}}
+{{- if eq (kindOf $value) "slice" }}
+{{- range $sname, $svalue := $value }}
+{{- if eq (kindOf $svalue) "map" }}
+{{- $process = false }}
+{{ include "terraform.generate-key" (dict "Name" $name "Value" "{" "SkipPadding" true "SkipEqual" true "SkipEscaping" true "KeyLength" $keyLength "Indent" $indent) }}
+{{- range $tname, $tvalue := $svalue }}
+{{- include "terraform.generate-object" (dict "Name" $tname "Value" $tvalue "Indent" $indent "KeyLength" (include "terraform.max-key-length" $svalue)) }}
+{{- end }}
+{{ printf "}" | indent (int $indent) }}
+{{- end }}
+{{- end }}
+{{- if $process }}
+{{ include "terraform.generate-key" (dict "Name" $name "Value" "[" "SkipPadding" true "SkipEscaping" true "KeyLength" $keyLength "Indent" $indent) }}
+{{- range $sname, $svalue := $value }}
+{{ include "terraform.generate-key" (dict "Name" $sname "Value" $svalue "SkipName" true "AddComma" true "Indent" (add $indent 2)) }}
+{{- end }}
+{{ printf "]" | indent (int $indent) }}
+{{- end }}
+{{- else if eq (kindOf $value) "map" }}
+{{ include "terraform.generate-key" (dict "Name" $name "Value" "{" "SkipPadding" true "SkipEscaping" true "KeyLength" $keyLength "Indent" $indent) }}
+{{- range $sname, $svalue := $value }}
+{{- include "terraform.generate-object" (dict "Name" $sname "Value" $svalue "KeyLength" (include "terraform.max-key-length" $value) "Indent" $indent) }}
+{{- end }}
+{{ printf "}" | indent (int $indent) }}
+{{- else }}
+{{ include "terraform.generate-key" (dict "Name" $name "Value" $value "KeyLength" $keyLength "Indent" $indent) }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+get configuration variable name for sources confg map
+
+Example usage:
+
+{{ include "terraform.sources.config-map-variable" (dict "Context" .Values "Name" $name "Endpoint" $endpoint) }}
+
+*/}}
+{{- define "terraform.sources.config-map-variable" -}}
+{{- $name := .Name -}}
+{{- $ctx := .Context -}}
+{{- $type := .Type -}}
+{{- $endpoint := .Endpoint -}}
+{{- if not $endpoint -}}
+{{- $source := (index $ctx.sumologic.sources $type "default") -}}
+{{- if (index $ctx.sumologic.sources $type .Name "config-name") -}}
+{{- $endpoint = index $ctx.sumologic.sources $type .Name "config-name" -}}
+{{- else -}}
+{{- $endpoint = printf "endpoint-%s" (include "terraform.sources.name" (dict "Name" $name "Type" $type)) -}}
+{{- end -}}
+{{- end -}}
+{{ $endpoint }}
+{{- end -}}
+
+{{/*
+Add or skip quotation denending on the value
+
+Examples:
+  - "${test}" will be printed as `test`
+  - "test" will be printed as `"test"`
+
+Example Usage:
+{{ include "terraform.sources.config-map-variable" "${file(\"/var/test\")}" }}
+
+*/}}
+{{- define "terraform.print_value" -}}
+{{- if and (kindIs "string" .) -}}
+{{- if (regexMatch "^\\$\\{[^\\$]*\\}$" .) -}}
+{{ regexReplaceAll "^\\$\\{(.*)\\}$" . "${1}" }}
+{{- else -}}
+{{ printf "\"%s\"" . }}
+{{- end -}}
+{{- else -}}
+{{ printf "\"%s\"" (toString .) }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Check if component (source/events/logs/traces etc.) is enabled or not
+
+Example Usage:
+{{- if eq (include "terraform.sources.component_enabled" (dict "Context" .Values "Type" "metrics")) "true" }}
+
+*/}}
+{{- define "terraform.sources.component_enabled" -}}
+{{- $type := .Type -}}
+{{- $ctx := .Context -}}
+{{- $value := true -}}
+{{- if hasKey $ctx.sumologic $type -}}
+{{- if not (index $ctx.sumologic $type "enabled") -}}
+{{- $value = false -}}
+{{- end -}}
+{{- end -}}
+{{ $value }}
+{{- end -}}
+
+{{/*
+Generate fluentd envs for given source type:
+
+Example:
+
+{{ include "kubernetes.sources.envs" (dict "Context" .Values "Type" "metrics")}}
+*/}}
+{{- define "kubernetes.sources.envs" -}}
+{{- $ctx := .Context -}}
+{{- $type := .Type -}}
+{{- range $key, $source := (index .Context.sumologic.sources $type) }}
+        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) }}
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: {{ template "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key) }}
 {{- end }}
 {{- end -}}

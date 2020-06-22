@@ -145,6 +145,32 @@
             ]
           }
         ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane.coredns",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "coredns;(?:coredns_cache_(size|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))",
+            sourceLabels: [
+              "job",
+              "__name__"
+            ]
+          }
+        ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.control-plane.kube-etcd",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "kube-etcd;(?:etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))",
+            sourceLabels: [
+              "job",
+              "__name__"
+            ]
+          }
+        ]
       }
     ],
   },

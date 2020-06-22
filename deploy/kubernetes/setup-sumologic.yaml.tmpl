@@ -15,149 +15,173 @@ metadata:
     app: collection-sumologic
     
 data:
-  setup.sh: |-
-    #!/bin/sh
-    cp /etc/terraform/sumo-k8s.tf /terraform
-    cd /terraform
-
-    # Fix URL to remove "v1" or "v1/"
-    export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
-
-    COLLECTOR_NAME=$COLLECTOR_NAME
-
-    terraform init
-
-    # Sumo Collector and HTTP sources
-    terraform import sumologic_collector.collector "$COLLECTOR_NAME"
-    terraform import sumologic_http_source.default_metrics_source "$COLLECTOR_NAME/(default-metrics)"
-    terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
-    terraform import sumologic_http_source.events_source "$COLLECTOR_NAME/events"
-    terraform import sumologic_http_source.kube_controller_manager_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
-    terraform import sumologic_http_source.kube_scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
-    terraform import sumologic_http_source.kube_state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
-    terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
-    terraform import sumologic_http_source.logs_source "$COLLECTOR_NAME/logs"
-    terraform import sumologic_http_source.node_exporter_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
-
-    # Kubernetes Namespace and Secret
-    terraform import kubernetes_namespace.sumologic_collection_namespace $NAMESPACE
-    terraform import kubernetes_secret.sumologic_collection_secret $NAMESPACE/sumologic
-
-    terraform apply -auto-approve
-  sumo-k8s.tf: |-
-    variable "cluster_name" {
-      type  = string
-      default = "$CLUSTER_NAME"
-    }
-    variable "collector_name" {
-      type  = string
-      default = "$COLLECTOR_NAME"
-    }
-
-    variable "namespace_name" {
-      type  = string
-      default = "$NAMESPACE"
-    }
-
+  locals.tf: |
     locals {
-      default-metrics-source-name                 = "(default-metrics)"
-      apiserver-metrics-source-name               = "apiserver-metrics"
-      events-source-name                          = "events"
-      kube-controller-manager-metrics-source-name = "kube-controller-manager-metrics"
-      kube-scheduler-metrics-source-name          = "kube-scheduler-metrics"
-      kube-state-metrics-source-name              = "kube-state-metrics"
-      kubelet-metrics-source-name                 = "kubelet-metrics"
-      logs-source-name                            = "logs"
-      node-exporter-metrics-source-name           = "node-exporter-metrics"
+      default_events_source                       = "events"
+      default_logs_source                         = "logs"
+      apiserver_metrics_source                    = "apiserver-metrics"
+      control_plane_metrics_source                = "control-plane-metrics"
+      controller_metrics_source                   = "kube-controller-manager-metrics"
+      default_metrics_source                      = "(default-metrics)"
+      kubelet_metrics_source                      = "kubelet-metrics"
+      node_metrics_source                         = "node-exporter-metrics"
+      scheduler_metrics_source                    = "kube-scheduler-metrics"
+      state_metrics_source                        = "kube-state-metrics"
     }
-
+  main.tf: |
+    terraform {
+      required_providers {
+        sumologic  = "~> 2.0.3"
+        kubernetes = "~> 1.11.3"
+      }
+    }
+  providers.tf: |-
     provider "sumologic" {}
-
+  
+    provider "kubernetes" {
+    
+        cluster_ca_certificate    = file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
+        host                      = "https://kubernetes.default.svc"
+        load_config_file          = "false"
+        token                     = file("/var/run/secrets/kubernetes.io/serviceaccount/token")
+    }
+  resources.tf: |
     resource "sumologic_collector" "collector" {
         name  = var.collector_name
         fields  = {
           cluster = var.cluster_name
         }
     }
-
-    resource "sumologic_http_source" "default_metrics_source" {
-        name         = local.default-metrics-source-name
-        collector_id = "${sumologic_collector.collector.id}"
+    
+    resource "sumologic_http_source" "default_events_source" {
+        name         = local.default_events_source
+        collector_id = sumologic_collector.collector.id
+        category     = "${var.cluster_name}/${local.default_events_source}"
     }
-
+    
+    resource "sumologic_http_source" "default_logs_source" {
+        name         = local.default_logs_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
     resource "sumologic_http_source" "apiserver_metrics_source" {
-        name         = local.apiserver-metrics-source-name
-        collector_id = "${sumologic_collector.collector.id}"
+        name         = local.apiserver_metrics_source
+        collector_id = sumologic_collector.collector.id
     }
-
-    resource "sumologic_http_source" "events_source" {
-        name         = local.events-source-name
-        category     = "${var.cluster_name}/${local.events-source-name}"
-        collector_id = "${sumologic_collector.collector.id}"
+    
+    resource "sumologic_http_source" "control_plane_metrics_source" {
+        name         = local.control_plane_metrics_source
+        collector_id = sumologic_collector.collector.id
     }
-
-    resource "sumologic_http_source" "kube_controller_manager_metrics_source" {
-        name         = local.kube-controller-manager-metrics-source-name
-        collector_id = "${sumologic_collector.collector.id}"
+    
+    resource "sumologic_http_source" "controller_metrics_source" {
+        name         = local.controller_metrics_source
+        collector_id = sumologic_collector.collector.id
     }
-
-    resource "sumologic_http_source" "kube_scheduler_metrics_source" {
-        name         = local.kube-scheduler-metrics-source-name
-        collector_id = "${sumologic_collector.collector.id}"
+    
+    resource "sumologic_http_source" "default_metrics_source" {
+        name         = local.default_metrics_source
+        collector_id = sumologic_collector.collector.id
     }
-
-    resource "sumologic_http_source" "kube_state_metrics_source" {
-        name         = local.kube-state-metrics-source-name
-        collector_id = "${sumologic_collector.collector.id}"
-    }
-
+    
     resource "sumologic_http_source" "kubelet_metrics_source" {
-        name         = local.kubelet-metrics-source-name
-        collector_id = "${sumologic_collector.collector.id}"
+        name         = local.kubelet_metrics_source
+        collector_id = sumologic_collector.collector.id
     }
-
-    resource "sumologic_http_source" "logs_source" {
-        name         = local.logs-source-name
-        collector_id = "${sumologic_collector.collector.id}"
+    
+    resource "sumologic_http_source" "node_metrics_source" {
+        name         = local.node_metrics_source
+        collector_id = sumologic_collector.collector.id
     }
-
-    resource "sumologic_http_source" "node_exporter_metrics_source" {
-        name         = local.node-exporter-metrics-source-name
-        collector_id = "${sumologic_collector.collector.id}"
+    
+    resource "sumologic_http_source" "scheduler_metrics_source" {
+        name         = local.scheduler_metrics_source
+        collector_id = sumologic_collector.collector.id
     }
-
-    provider "kubernetes" {
-      host                    = "https://kubernetes.default.svc"
-      token                   = "${file("/var/run/secrets/kubernetes.io/serviceaccount/token")}"
-      cluster_ca_certificate  = "${file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")}"
+    
+    resource "sumologic_http_source" "state_metrics_source" {
+        name         = local.state_metrics_source
+        collector_id = sumologic_collector.collector.id
     }
-
+  
     resource "kubernetes_namespace" "sumologic_collection_namespace" {
       metadata {
         name = var.namespace_name
       }
     }
-
+  
     resource "kubernetes_secret" "sumologic_collection_secret" {
       metadata {
         name = "sumologic"
-        namespace = var.namespace_name
+        namespace = kubernetes_namespace.sumologic_collection_namespace.metadata[0].name
       }
-
+  
       data = {
-        endpoint-events                           = "${sumologic_http_source.events_source.url}"
-        endpoint-logs                             = "${sumologic_http_source.logs_source.url}"
-        endpoint-metrics                          = "${sumologic_http_source.default_metrics_source.url}"
-        endpoint-metrics-apiserver                = "${sumologic_http_source.apiserver_metrics_source.url}"
-        endpoint-metrics-kube-controller-manager  = "${sumologic_http_source.kube_controller_manager_metrics_source.url}"
-        endpoint-metrics-kube-scheduler           = "${sumologic_http_source.kube_scheduler_metrics_source.url}"
-        endpoint-metrics-kube-state               = "${sumologic_http_source.kube_state_metrics_source.url}"
-        endpoint-metrics-kubelet                  = "${sumologic_http_source.kubelet_metrics_source.url}"
-        endpoint-metrics-node-exporter            = "${sumologic_http_source.node_exporter_metrics_source.url}"
+        endpoint-events                           = sumologic_http_source.default_events_source.url
+        endpoint-logs                             = sumologic_http_source.default_logs_source.url
+        endpoint-metrics-apiserver                = sumologic_http_source.apiserver_metrics_source.url
+        endpoint-control_plane_metrics_source     = sumologic_http_source.control_plane_metrics_source.url
+        endpoint-metrics-kube-controller-manager  = sumologic_http_source.controller_metrics_source.url
+        endpoint-metrics                          = sumologic_http_source.default_metrics_source.url
+        endpoint-metrics-kubelet                  = sumologic_http_source.kubelet_metrics_source.url
+        endpoint-metrics-node-exporter            = sumologic_http_source.node_metrics_source.url
+        endpoint-metrics-kube-scheduler           = sumologic_http_source.scheduler_metrics_source.url
+        endpoint-metrics-kube-state               = sumologic_http_source.state_metrics_source.url
       }
-
+  
       type = "Opaque"
     }
+  setup.sh: |-
+    #!/bin/sh
+    cp /etc/terraform/*.tf /terraform
+    cd /terraform
+  
+    # Fix URL to remove "v1" or "v1/"
+    export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
+  
+    # Support proxy for terraform
+    export HTTP_PROXY=${HTTP_PROXY:=""}
+    export HTTPS_PROXY=${HTTPS_PROXY:=""}
+  
+    COLLECTOR_NAME="$COLLECTOR_NAME"
+  
+    terraform init
+  
+    # Sumo Collector and HTTP sources
+    terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+    terraform import sumologic_http_source.default_events_source "$COLLECTOR_NAME/events"
+    terraform import sumologic_http_source.default_logs_source "$COLLECTOR_NAME/logs"
+    terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
+    terraform import sumologic_http_source.control_plane_metrics_source "$COLLECTOR_NAME/control-plane-metrics"
+    terraform import sumologic_http_source.controller_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
+    terraform import sumologic_http_source.default_metrics_source "$COLLECTOR_NAME/(default-metrics)"
+    terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
+    terraform import sumologic_http_source.node_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
+    terraform import sumologic_http_source.scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
+    terraform import sumologic_http_source.state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
+  
+  
+    # Kubernetes Namespace and Secret
+    terraform import kubernetes_namespace.sumologic_collection_namespace $NAMESPACE
+    terraform import kubernetes_secret.sumologic_collection_secret $NAMESPACE/sumologic
+  
+    terraform apply -auto-approve
+  variables.tf: |-
+    variable "cluster_name" {
+      type  = string
+      default = "$CLUSTER_NAME"
+    }
+  
+    variable "collector_name" {
+      type  = string
+      default = "$COLLECTOR_NAME"
+    }
+  
+    variable "namespace_name" {
+      type  = string
+      default = "$NAMESPACE"
+    }
+  
 
 ---
 # Source: sumologic/templates/setup/setup-serviceaccount.yaml
@@ -250,7 +274,7 @@ spec:
           defaultMode: 0777
       containers:
       - name: setup
-        image: sumologic/kubernetes-fluentd:1.0.0-rc.2
+        image: sumologic/kubernetes-fluentd:1.1.0-beta.2
         imagePullPolicy: IfNotPresent
         command: ["/etc/terraform/setup.sh"]
         volumeMounts:
@@ -262,6 +286,10 @@ spec:
         - name: SUMOLOGIC_ACCESSKEY
           value: $SUMOLOGIC_ACCESSKEY
         - name: SUMOLOGIC_BASE_URL
+          value: 
+        - name: HTTP_PROXY
+          value: 
+        - name: HTTPS_PROXY
           value: 
         
 

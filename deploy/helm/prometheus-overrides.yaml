@@ -1,10 +1,43 @@
 # This file is auto-generated.
+## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
+kubeApiServer:
+  serviceMonitor:
+    ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+    interval:
+kubelet:
+  serviceMonitor:
+    ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+    interval:
+kubeControllerManager:
+  serviceMonitor:
+    ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+    interval:
+coreDns:
+  serviceMonitor:
+    ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+    interval:
+kubeEtcd:
+  serviceMonitor:
+    ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+    interval:
+kubeScheduler:
+  serviceMonitor:
+    ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+    interval:
+kubeStateMetrics:
+  serviceMonitor:
+    ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+    interval:
+nodeExporter:
+  serviceMonitor:
+    ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+    interval:
 # Ensure we use pre 1.14 recording rules consistently as current content depends on them.
 kubeTargetVersionOverride: 1.13.0-0
-## Set the enabled flag to false for either of the below two purposes:
-## 1. Not install prometheus operator helm chart as a dependency along with this helm chart
-## 2. Disable metrics collection altogether
-enabled: true
+## Uncomment the flag below to not install fluent-bit helm chart as a dependency along with this helm chart.
+## Comment it out if you wish to have the fluent-bit dependency installed.
+## Setting the flag to true instead of commenting out will break other functionality. 
+# enabled: false
 alertmanager:
   enabled: false
 grafana:
@@ -43,63 +76,66 @@ prometheusOperator:
     #   memory: 30Mi
 prometheus:
   additionalServiceMonitors:
-  - name: collection-sumologic-fluentd-logs
-    additionalLabels:
-      app: collection-sumologic-fluentd-logs
-    endpoints:
-    - port: metrics
-    namespaceSelector:
-      matchNames:
-      - sumologic
-    selector:
-      matchLabels:
-        app: collection-sumologic-fluentd-logs
-  - name: collection-sumologic-fluentd-metrics
-    additionalLabels:
-      app: collection-sumologic-fluentd-metrics
-    endpoints:
-    - port: metrics
-    namespaceSelector:
-      matchNames:
-      - sumologic
-    selector:
-      matchLabels:
-        app: collection-sumologic-fluentd-metrics
-  - name: collection-sumologic-fluentd-events
-    additionalLabels:
-      app: collection-sumologic-fluentd-events
-    endpoints:
-    - port: metrics
-    namespaceSelector:
-      matchNames:
-      - sumologic
-    selector:
-      matchLabels:
-        app: collection-sumologic-fluentd-events
-  - name: collection-fluent-bit
-    additionalLabels:
-      app: collection-fluent-bit
-    endpoints:
-    - port: metrics
-      path: /api/v1/metrics/prometheus
-    namespaceSelector:
-      matchNames:
-      - sumologic
-    selector:
-      matchLabels:
-        app: fluent-bit
-  - name: collection-sumologic-otelcol
-    additionalLabels:
-      app: collection-sumologic-otelcol
-    endpoints:
-    - port: metrics
-    namespaceSelector:
-      matchNames:
-      - sumologic
-    selector:
-      matchLabels:
-        app: collection-sumologic-otelcol
+    - name: collection-sumologic-fluentd-logs
+      additionalLabels:
+        sumologic.com/app: fluentd-logs
+      endpoints:
+        - port: metrics
+      namespaceSelector:
+        matchNames:
+          - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: fluentd-logs
+    - name: collection-sumologic-fluentd-metrics
+      additionalLabels:
+        sumologic.com/app: fluentd-metrics
+      endpoints:
+        - port: metrics
+      namespaceSelector:
+        matchNames:
+          - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: fluentd-metrics
+    - name: collection-sumologic-fluentd-events
+      additionalLabels:
+        sumologic.com/app: fluentd-events
+      endpoints:
+        - port: metrics
+      namespaceSelector:
+        matchNames:
+          - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: fluentd-events
+    - name: collection-fluent-bit
+      additionalLabels:
+        app: collection-fluent-bit
+      endpoints:
+        - port: metrics
+          path: /api/v1/metrics/prometheus
+      namespaceSelector:
+        matchNames:
+          - $(NAMESPACE)
+      selector:
+        matchLabels:
+          app: fluent-bit
+    - name: collection-sumologic-otelcol
+      additionalLabels:
+        sumologic.com/app: otelcol
+      endpoints:
+        - port: metrics
+      namespaceSelector:
+        matchNames:
+          - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: otelcol
   prometheusSpec:
+    ## Prometheus default scrape interval, default from upstream Prometheus Operator Helm chart
+    ## NOTE changing the scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
+    scrapeInterval: "30s"
     ## Define resources requests and limits for single Pods.
     resources: {}
     # limits:
@@ -112,38 +148,77 @@ prometheus:
       baseImage: quay.io/thanos/thanos
       version: v0.10.0
     containers:
-    - name: "prometheus-config-reloader"
-      env:
-      - name: CHART
-        valueFrom:
-          configMapKeyRef:
-            name: sumologic-configmap
-            key: fluentdMetrics
-      - name: NAMESPACE
-        valueFrom:
-          configMapKeyRef:
-            name: sumologic-configmap
-            key: fluentdNamespace
+      - name: "prometheus-config-reloader"
+        env:
+          - name: CHART
+            valueFrom:
+              configMapKeyRef:
+                name: sumologic-configmap
+                key: fluentdMetrics
+          - name: NAMESPACE
+            valueFrom:
+              configMapKeyRef:
+                name: sumologic-configmap
+                key: fluentdNamespace
+    ## Enable WAL compression to reduce Prometheus memory consumption
+    walCompression: true
     remoteWrite:
-    - # kube state metrics
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
-      writeRelabelConfigs:
-      - action: keep
-        regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)
-        sourceLabels: [job, __name__]
-    - # controller manager metrics
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.controller-manager
-      writeRelabelConfigs:
-      - action: keep
-        regex: kubelet;cloudprovider_.*_api_request_duration_seconds.*
-        sourceLabels: [job, __name__]
-    - # scheduler metrics
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.scheduler
-      writeRelabelConfigs:
-      - action: keep
-        regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_latency_microseconds.*
-        sourceLabels: [job, __name__]
-    - # api server metrics:
+      # kube state metrics
+      # kube_daemonset_status_current_number_scheduled
+      # kube_daemonset_status_desired_number_scheduled
+      # kube_daemonset_status_number_misscheduled
+      # kube_daemonset_status_number_unavailable
+      # kube_deployment_spec_replicas
+      # kube_deployment_status_replicas_available
+      # kube_deployment_status_replicas_unavailable
+      # kube_node_info
+      # kube_node_status_allocatable
+      # kube_node_status_capacity
+      # kube_node_status_condition
+      # kube_pod_container_info
+      # kube_pod_container_resource_limits
+      # kube_pod_container_resource_requests
+      # kube_pod_container_status_ready
+      # kube_pod_container_status_restarts_total
+      # kube_pod_container_status_terminated_reason
+      # kube_pod_container_status_waiting_reason
+      # kube_pod_status_phase
+      # kube_statefulset_metadata_generation
+      # kube_statefulset_replicas
+      # kube_statefulset_status_observed_generation
+      # kube_statefulset_status_replicas
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
+        writeRelabelConfigs:
+          - action: keep
+            regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)
+            sourceLabels: [job, __name__]
+      # controller manager metrics
+      # https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
+      # e.g.
+      # cloudprovider_aws_api_request_duration_seconds_bucket
+      # cloudprovider_aws_api_request_duration_seconds_count
+      # cloudprovider_aws_api_request_duration_seconds_sum
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.controller-manager
+        writeRelabelConfigs:
+          - action: keep
+            regex: kubelet;cloudprovider_.*_api_request_duration_seconds.*
+            sourceLabels: [job, __name__]
+      # scheduler metrics_latency_microseconds
+      # scheduler_e2e_scheduling_latency_microseconds
+      # scheduler_e2e_scheduling_latency_microseconds_bucket
+      # scheduler_e2e_scheduling_latency_microseconds_count
+      # scheduler_binding_latency_microseconds
+      # scheduler_binding_latency_microseconds_bucket
+      # scheduler_binding_latency_microseconds_count
+      # scheduler_scheduling_algorithm_latency_microseconds
+      # scheduler_scheduling_algorithm_latency_microseconds_bucket
+      # scheduler_scheduling_algorithm_latency_microseconds_count
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.scheduler
+        writeRelabelConfigs:
+          - action: keep
+            regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_latency_microseconds.*
+            sourceLabels: [job, __name__]
+      # api server metrics:
       # apiserver_request_count
       # apiserver_request_total
       # apiserver_request_duration_seconds_count
@@ -165,12 +240,12 @@ prometheus:
       # etcd_helper_cache_hit_total
       # etcd_helper_cache_miss_count
       # etcd_helper_cache_miss_total
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.apiserver
-      writeRelabelConfigs:
-      - action: keep
-        regex: apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum)|etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total))
-        sourceLabels: [job, __name__]
-    - # kubelet metrics:
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.apiserver
+        writeRelabelConfigs:
+          - action: keep
+            regex: apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum)|etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total))
+            sourceLabels: [job, __name__]
+      # kubelet metrics:
       # kubelet_docker_operations_errors
       # kubelet_docker_operations_errors_total
       # kubelet_docker_operations_duration_seconds_count
@@ -185,44 +260,186 @@ prometheus:
       # kubelet_runtime_operations_latency_microseconds
       # kubelet_runtime_operations_latency_microseconds_count
       # kubelet_runtime_operations_latency_microseconds_sum
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.kubelet
-      writeRelabelConfigs:
-      - action: keep
-        regex: kubelet;(?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)_count|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
-        sourceLabels: [job, __name__]
-    - # cadvisor container metrics
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
-      writeRelabelConfigs:
-      - action: labelmap
-        regex: container_name
-        replacement: container
-      - action: drop
-        regex: POD
-        sourceLabels: [container]
-      - action: keep
-        regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes)
-        sourceLabels: [job, container, __name__]
-    - # cadvisor aggregate container metrics
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
-      writeRelabelConfigs:
-      - action: keep
-        regex: kubelet;(?:container_network_receive_bytes_total|container_network_transmit_bytes_total)
-        sourceLabels: [job, __name__]
-    - # node exporter metrics
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.node
-      writeRelabelConfigs:
-      - action: keep
-        regex: node-exporter;(?:node_load1|node_load5|node_load15|node_cpu_seconds_total)
-        sourceLabels: [job, __name__]
-    - # prometheus operator rules
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.operator.rule
-      writeRelabelConfigs:
-      - action: keep
-        regex: 'cluster_quantile:apiserver_request_latencies:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_latency:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_latency:histogram_quantile|cluster_quantile:scheduler_binding_latency:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:'
-        sourceLabels: [__name__]
-    - # health
-      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics
-      writeRelabelConfigs:
-      - action: keep
-        regex: (?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*|otelcol.*)
-        sourceLabels: [__name__]
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.kubelet
+        writeRelabelConfigs:
+          - action: keep
+            regex: kubelet;(?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)_count|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
+            sourceLabels: [job, __name__]
+      # cadvisor container metrics
+      # container_cpu_usage_seconds_total
+      # container_fs_limit_bytes
+      # container_fs_usage_bytes
+      # container_memory_working_set_bytes
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
+        writeRelabelConfigs:
+          - action: labelmap
+            regex: container_name
+            replacement: container
+          - action: drop
+            regex: POD
+            sourceLabels: [container]
+          - action: keep
+            regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes)
+            sourceLabels: [job, container, __name__]
+      # cadvisor aggregate container metrics
+      # container_network_receive_bytes_total
+      # container_network_transmit_bytes_total
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
+        writeRelabelConfigs:
+          - action: keep
+            regex: kubelet;(?:container_network_receive_bytes_total|container_network_transmit_bytes_total)
+            sourceLabels: [job, __name__]
+      # node exporter metrics
+      # node_cpu_seconds_total
+      # node_load1
+      # node_load5
+      # node_load15
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.node
+        writeRelabelConfigs:
+          - action: keep
+            regex: node-exporter;(?:node_load1|node_load5|node_load15|node_cpu_seconds_total)
+            sourceLabels: [job, __name__]
+      # prometheus operator rules
+      # :kube_pod_info_node_count:
+      # :node_cpu_saturation_load1:
+      # :node_cpu_utilisation:avg1m
+      # :node_disk_saturation:avg_irate
+      # :node_disk_utilisation:avg_irate
+      # :node_memory_swap_io_bytes:sum_rate
+      # :node_memory_utilisation:
+      # :node_net_saturation:sum_irate
+      # :node_net_utilisation:sum_irate
+      # cluster_quantile:apiserver_request_latencies:histogram_quantile
+      # cluster_quantile:scheduler_binding_latency:histogram_quantile
+      # cluster_quantile:scheduler_e2e_scheduling_latency:histogram_quantile
+      # cluster_quantile:scheduler_scheduling_algorithm_latency:histogram_quantile
+      # instance:node_filesystem_usage:sum
+      # instance:node_network_receive_bytes:rate:sum
+      # node:cluster_cpu_utilisation:ratio
+      # node:cluster_memory_utilisation:ratio
+      # node:node_cpu_saturation_load1:
+      # node:node_cpu_utilisation:avg1m
+      # node:node_disk_saturation:avg_irate
+      # node:node_disk_utilisation:avg_irate
+      # node:node_filesystem_avail:
+      # node:node_filesystem_usage:
+      # node:node_inodes_free:
+      # node:node_inodes_total:
+      # node:node_memory_bytes_total:sum
+      # node:node_memory_swap_io_bytes:sum_rate
+      # node:node_memory_utilisation:
+      # node:node_memory_utilisation:ratio
+      # node:node_memory_utilisation_2:
+      # node:node_net_saturation:sum_irate
+      # node:node_net_utilisation:sum_irate
+      # node:node_num_cpu:sum
+      # node_namespace_pod:kube_pod_info:
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.operator.rule
+        writeRelabelConfigs:
+          - action: keep
+            regex: 'cluster_quantile:apiserver_request_latencies:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_latency:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_latency:histogram_quantile|cluster_quantile:scheduler_binding_latency:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:'
+            sourceLabels: [__name__]
+      # health
+      # fluentbit_input_bytes_total
+      # fluentbit_input_files_closed_total
+      # fluentbit_input_files_opened_total
+      # fluentbit_input_files_rotated_total
+      # fluentbit_input_records_total
+      # fluentbit_output_errors_total
+      # fluentbit_output_proc_bytes_total
+      # fluentbit_output_proc_records_total
+      # fluentbit_output_retries_failed_total
+      # fluentbit_output_retries_total
+      # fluentd_output_status_buffer_available_space_ratio
+      # fluentd_output_status_buffer_queue_length
+      # fluentd_output_status_buffer_stage_byte_size
+      # fluentd_output_status_buffer_stage_length
+      # fluentd_output_status_buffer_total_bytes
+      # fluentd_output_status_emit_count
+      # fluentd_output_status_emit_records
+      # fluentd_output_status_flush_time_count
+      # fluentd_output_status_num_errors
+      # fluentd_output_status_queue_byte_size
+      # fluentd_output_status_retry_count
+      # fluentd_output_status_retry_wait
+      # fluentd_output_status_rollback_count
+      # fluentd_output_status_slow_flush_count
+      # fluentd_output_status_write_count
+      # otelcol_otelsvc_k8s_other_added
+      # otelcol_otelsvc_k8s_other_updated
+      # otelcol_otelsvc_k8s_pod_added
+      # otelcol_otelsvc_k8s_pod_deleted
+      # otelcol_otelsvc_k8s_pod_updated
+      # otelcol_process_cpu_seconds
+      # otelcol_process_runtime_heap_alloc_bytes
+      # otelcol_process_runtime_total_alloc_bytes
+      # otelcol_process_runtime_total_sys_memory_bytes
+      # otelcol_queue_length
+      # otelcol_spans_dropped
+      # otelcol_trace_batches_dropped
+      # prometheus_remote_storage_dropped_samples_total
+      # prometheus_remote_storage_enqueue_retries_total
+      # prometheus_remote_storage_failed_samples_total
+      # prometheus_remote_storage_highest_timestamp_in_seconds
+      # prometheus_remote_storage_pending_samples
+      # prometheus_remote_storage_queue_highest_sent_timestamp_seconds
+      # prometheus_remote_storage_retried_samples_total
+      # prometheus_remote_storage_samples_in_total
+      # prometheus_remote_storage_sent_batch_duration_seconds_bucket
+      # prometheus_remote_storage_sent_batch_duration_seconds_count
+      # prometheus_remote_storage_sent_batch_duration_seconds_sum
+      # prometheus_remote_storage_shard_capacity
+      # prometheus_remote_storage_shards
+      # prometheus_remote_storage_shards_desired
+      # prometheus_remote_storage_shards_max
+      # prometheus_remote_storage_shards_min
+      # prometheus_remote_storage_string_interner_zero_reference_releases_total
+      # prometheus_remote_storage_succeeded_samples_total
+      # up
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics
+        writeRelabelConfigs:
+          - action: keep
+            regex: (?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*|otelcol.*)
+            sourceLabels: [__name__]
+      # control plane metrics
+      # coredns:
+      # coredns_cache_size
+      # coredns_cache_hits_total
+      # coredns_cache_misses_total
+      # coredns_dns_request_duration_seconds_count
+      # coredns_dns_request_duration_seconds_sum
+      # coredns_dns_request_count_total
+      # coredns_dns_response_rcode_count_total
+      # coredns_forward_request_count_total
+      # process_cpu_seconds_total
+      # process_open_fds
+      # process_resident_memory_bytes
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane.coredns
+        writeRelabelConfigs:
+          - action: keep
+            regex: coredns;(?:coredns_cache_(size|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+            sourceLabels: [job, __name__]
+      # etcd server:
+      # etcd_debugging_mvcc_db_total_size_in_bytes
+      # etcd_debugging_store_expires_total
+      # etcd_debugging_store_watchers
+      # etcd_disk_backend_commit_duration_seconds_bucket
+      # etcd_disk_wal_fsync_duration_seconds_bucket
+      # etcd_grpc_proxy_cache_hits_total
+      # etcd_grpc_proxy_cache_misses_total
+      # etcd_network_client_grpc_received_bytes_total
+      # etcd_network_client_grpc_sent_bytes_total
+      # etcd_server_has_leader
+      # etcd_server_leader_changes_seen_total
+      # etcd_server_proposals_applied_total
+      # etcd_server_proposals_committed_total
+      # etcd_server_proposals_failed_total
+      # etcd_server_proposals_pending
+      # process_cpu_seconds_total
+      # process_open_fds
+      # process_resident_memory_bytes
+      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane.kube-etcd
+        writeRelabelConfigs:
+          - action: keep
+            regex: kube-etcd;(?:etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+            sourceLabels: [job, __name__]

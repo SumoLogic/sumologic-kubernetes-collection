@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ printf "%s-fluentd-events" (include "sumologic.fullname" .) }}
+  name: {{ template "sumologic.metadata.name.events.statefulset" . }}
   labels:
-    app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
+    app: {{ template "sumologic.labels.app.events.statefulset" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
-  serviceName: {{ printf "%s-fluentd-events-headless" (include "sumologic.fullname" .) }}
+      app: {{ template "sumologic.labels.app.events.pod" . }}
+  serviceName: {{ template "sumologic.metadata.name.events.service-headless" . }}
   podManagementPolicy: "Parallel"
   template:
     metadata:
       labels:
-        app: {{ printf "%s-fluentd-events" (include "sumologic.labels.app" .) }}
+        app: {{ template "sumologic.labels.app.events.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ template "sumologic.fullname" . }}
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
 {{- if .Values.fluentd.events.statefulset.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.fluentd.events.statefulset.nodeSelector | indent 8 }}
@@ -34,7 +34,7 @@ spec:
           type: ""
       - name: config-volume
         configMap:
-          name: {{ printf "%s-fluentd-events" (include "sumologic.fullname" .) }}
+          name: {{ template "sumologic.metadata.name.events.configmap" . }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
       containers:
@@ -66,11 +66,11 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 5
         env:
-        - name: SUMO_ENDPOINT_EVENTS
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-events
+{{- $ctx := .Values -}}
+{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "events")}}
+{{- if .Values.fluentd.events.extraEnvVars }}
+{{ toYaml .Values.fluentd.events.extraEnvVars | nindent 10 }}
+{{- end }}
 {{- if .Values.fluentd.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:

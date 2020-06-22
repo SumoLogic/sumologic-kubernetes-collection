@@ -1,13 +1,15 @@
+{{- if and (eq .Values.sumologic.metrics.enabled true) (eq .Values.fluentd.metrics.enabled true) }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "sumologic.fullname" . }}-fluentd-metrics
+  name: {{ template "sumologic.metadata.name.metrics.service" . }}
   labels:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
+    app: {{ template "sumologic.labels.app.metrics.service" . }}
+    {{- include "sumologic.labels.metrics" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ template "sumologic.labels.app" . }}-fluentd-metrics
+    app: {{ template "sumologic.labels.app.metrics.pod" . }}
   ports:
   - name: prom-write
     port: 9888
@@ -17,3 +19,4 @@ spec:
     port: 24231
     targetPort: 24231
     protocol: TCP
+{{- end }}

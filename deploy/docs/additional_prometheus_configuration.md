@@ -149,70 +149,57 @@ prometheus-operator:  # For values.yaml
 
 ### Create a new HTTP source in Sumo Logic.
 
-To avoid [blacklisting](https://help.sumologic.com/Metrics/Understand_and_Manage_Metric_Volume/Blacklisted_Metrics_Sources) metrics should be distributed across multiple HTTP sources. You can [follow these steps](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) to create a new HTTP source for your custom metrics. Make note of the URL as you will need it in the next step.
+To avoid [blacklisting](https://help.sumologic.com/Metrics/Understand_and_Manage_Metric_Volume/Blacklisted_Metrics_Sources) metrics should be distributed across multiple HTTP sources. You can create a new HTTP source using `values.yaml`:
 
-### Update the metrics.conf Fluentd Configuration
+```yaml
+sumologic:
+  # ...
+  sources:
+    # ...
+    metrics:
+      # ...
+      my_source:
+        name: my-source-name
+```
+
+This will create a new HTTP source with the name `my-source-name` in your Sumo Logic account.
+All sources are created on the same Collector.
+
+**This configuration doesn't modify or remove HTTP sources from your account.
+If you rename a source in `values.yaml`, the new source will be added to your Sumo Logic account**
+
+### Update Fluentd configuration
 
 Next, you will need to update the Fluentd configuration to ensure Fluentd routes your custom metrics to the HTTP source you created in the previous step.
+To do that, you should add an output to your values.yaml:
 
-  * First, base64 encode the HTTP source URL from the previous step by running `echo <HTTP_SOURCE_URL> | base64`.  Replace `<HTTP_SOURCE_URL>` with the URL from step 3.
-  * Next, you can edit the secret that houses all the HTTP sources URLs. Assuming you installed the collector in the  `sumologic` namespace, you can run `kubectl -n sumologic edit secret sumologic` or edit the YAML you deployed when you set up collection.
-  * In the `data` section, add a new key and the base64 encoded value you created. The following is just a snippet of the secret for an example. Do not alter the existing content, you simply want to add a new key.
-  
 ```yaml
-data:
-  # ...
-  my-custom-metrics: <base64EncodedURL>
-  kind: Secret
-```
 
-  * Next you need to edit the Fluentd Deployment and add a new environment variable, pointing to the new secret.  Assuming you installed the collector in the  `sumologic` namespace, you can run `kubectl -n sumologic edit deployment collection-sumologic` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
-  * Locate the `SUMO_ENDPOINT_LOGS` environment variable in the YAML and add a new environment variable that points to the secret key you created. The following is an example.
-  
-```yaml
-# ...
-spec:
+fluentd:
   # ...
-  template:
+  metrics:
     # ...
-    spec:
+    output:
       # ...
-      containers:
-        # ...
-        - env:
-          # ...
-          - name: SUMO_ENDPOINT_LOGS
-            valueFrom:
-              secretKeyRef:
-                key: endpoint-logs
-                name: sumologic
-          - name: MY_CUSTOM_METRICS
-            valueFrom:
-              secretKeyRef:
-                key: my-custom-metrics
-                name: sumologic
-          - name: LOG_FORMAT
-            value: fields
+      my_source:  # It matches sumologic.sources.my_source
+        tag: prometheus.metrics.YOUR_TAG  # tag used by Fluentd's match clausule
+        id: sumologic.endpoint.metrics
+      
+      # alternative example source with all fields
+      alternative_source:  # It doesn't match any source name
+        tag: prometheus.metrics.YOUR_TAG**
+        id: sumologic.endpoint.metrics
+        source: my_source  # you can specify which source should be used (the output key (alternative_source) is taken by default)
+        weight: 10  # optional, by default takes 0 and it is use to prioritise outputs (less means more important)
+        drop: true  # Drop records which match the tag (false by default)
 ```
 
-  * Finally, you need to modify the Fluentd config to route data to your newly created HTTP source. Assuming you installed the collector in the `sumologic` namespace, you can run `kubectl -n sumologic edit configmap fluentd` or edit the YAML you deployed when you set up collection. Note, if you installed using helm, the name of the deployment may be different depending on how you installed the helm chart.
-  * Locate the section `match prometheus.metrics` and you will insert a new section above this. The `match` statement should end with a tag that identifies your data that Fluentd will use for routing. Then make sure you point to the environment variable you added to your deployment. The following is an example.
-  
-```
-...        
-          <match prometheus.metrics.YOUR_TAG>
-             @type sumologic
-             @id sumologic.endpoint.metrics
-             endpoint "#{ENV['MY_CUSTOM_METRICS']}"
-             @include metrics.output.conf
-           </match>
-          <match prometheus.metrics**>
-             @type sumologic
-             @id sumologic.endpoint.metrics
-             endpoint "#{ENV['SUMO_ENDPOINT_METRICS']}"
-             @include metrics.output.conf
-           </match>
-```
+The weight concept helps to keep Fluentd outputs in the correct order.
+In the above example, the `alternative_source` covers all tags for the `my_source`.
+This means if `alternative_source` has less weight than `my_source`
+it would process all records and none of them would be taken by `my_source`.
+
+NOTE: [Explanation of Fluentd match order](https://docs.fluentd.org/configuration/config-file#note-on-match-order)
 
 ### Update the prometheus-overrides.yaml file to forward the metrics to Fluentd.
 
