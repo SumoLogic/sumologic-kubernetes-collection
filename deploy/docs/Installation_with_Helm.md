@@ -18,7 +18,7 @@ Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metr
 
 If you don’t already have a Sumo account, you can create one by clicking the Free Trial button on https://www.sumologic.com/.
 
-The following are required to setup Sumo Logic's Kubernetes collection.
+The following are required to set up Sumo Logic's Kubernetes collection.
 
   * An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with [Manage Collectors](https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management) capability.
   * Your Kubernetes cluster must allow [outbound access to Sumo Logic](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security) to setup collection. Using a proxy is not currently supported.
@@ -50,7 +50,7 @@ The Helm chart installation requires two parameter overrides:
 * __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 The following parameter is optional, but we recommend setting it.
-* __sumologic.clusterName__ - An identifier for your Kubernetes cluster.  This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+* __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 To install the chart, first add the `sumologic` private repo:
 
@@ -58,7 +58,7 @@ To install the chart, first add the `sumologic` private repo:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Next you can run `helm upgrade --install` to install our chart.  An example command with the minimum parameters is provided below.  The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to.
+Next you can run `helm upgrade --install` to install our chart. An example command with the minimum parameters is provided below. The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to.
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
