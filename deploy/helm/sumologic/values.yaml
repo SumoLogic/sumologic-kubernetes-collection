@@ -563,8 +563,8 @@ fluentd:
       tolerations: {}
       resources:
         limits:
-          memory: 256Mi
-          cpu: "100m"
+          memory: 512Mi
+          cpu: "200m"
         requests:
           memory: 256Mi
           cpu: "100m"
