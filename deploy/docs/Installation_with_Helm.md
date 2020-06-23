@@ -161,6 +161,7 @@ To uninstall/delete the Helm chart:
 helm delete my-release
 ```
 > **Helm2 Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
+
 > **Helm3 Tip**: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
