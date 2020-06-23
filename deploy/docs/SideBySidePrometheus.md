@@ -1,6 +1,6 @@
 # How to install our Prometheus side by side with your existing Prometheus
 
-When installing our Helm Chart it is possible to have more than one Prometheus server running in the same cluster. However, do note that you cannot have more than one Prometheus Operator running in the same cluster. This document will take you through the steps to setup Sumo Logic collection when you have an existing Prometheus Operator you wish to keep intact.
+When installing our Helm Chart it is possible to have more than one Prometheus server running in the same cluster. However, do note that you cannot have more than one Prometheus Operator running in the same cluster. This document will take you through the steps to set up Sumo Logic collection when you have an existing Prometheus Operator you wish to keep intact.
 
 # Installation with Helm
 
@@ -47,7 +47,7 @@ The Helm chart installation requires two parameter overrides:
 * __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 The following parameter is optional, but we recommend setting it.
-* __sumologic.clusterName__ - An identifier for your Kubernetes cluster.  This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+* __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 Since we are installing with an existing Prometheus Operator we must also define the following values.
 
@@ -61,12 +61,12 @@ To install the chart, first add the `sumologic` private repo:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Next you can run `helm upgrade --install` to install our chart.  An example command with the minimum parameters is provided below.  The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to. Node that because this is installing our chart in a cluster where an existing prometheus operator is running, we need to disable our operator and update the node exporter ports.
+Next you can run `helm upgrade --install` to install our chart. An example command with the minimum parameters is provided below. The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to. Node that because this is installing our chart in a cluster where an existing prometheus operator is running, we need to disable our operator and update the node exporter ports.
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.enabled=false --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
 ```
-> **Note**: This command is compatible with Helm2 or Helm3.  If the release exists, it will be upgraded, otherwise it will be installed.
+> **Note**: This command is compatible with Helm2 or Helm3. If the release exists, it will be upgraded, otherwise it will be installed.
 
 If you wish to install the chart in a different namespace you can do the following:
 
@@ -114,7 +114,7 @@ sumologic_http_source.default_metrics_source: Importing from ID`, you can safely
 You can find more information in our [troubleshooting documentation](Troubleshoot_Collection.md).
 
 ## Customizing Installation
-All default properties for the Helm chart can be found in our [documentation](HelmChartConfiguration.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade.  Remember to define the properties in our [requirements section](#requirements) in the `values.yaml` as well or pass them in via `--set`
+All default properties for the Helm chart can be found in our [documentation](HelmChartConfiguration.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade. Remember to define the properties in our [requirements section](#requirements) in the `values.yaml` as well or pass them in via `--set`
   
 **Helm2 or Helm3**
 ```bash
