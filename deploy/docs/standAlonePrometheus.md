@@ -10,7 +10,7 @@ __NOTE__: The Sumo Logic Kubernetes collection process does not support collecti
 
 <!-- /TOC -->
 
-This document will walk you through how to setup Sumo Logic Kubernetes collection when you already have Prometheus running, not using the Prometheus Operator. In these steps, you will modify your installed Prometheus to add in the minimum configuration that Sumo Logic needs. If you are using the Prometheus Operator, please refer to our guide on installing with an existing [Prometheus Operator](./existingPrometheusDoc.md).
+This document will walk you through how to set up Sumo Logic Kubernetes collection when you already have Prometheus running, not using the Prometheus Operator. In these steps, you will modify your installed Prometheus to add in the minimum configuration that Sumo Logic needs. If you are using the Prometheus Operator, please refer to our guide on installing with an existing [Prometheus Operator](./existingPrometheusDoc.md).
 
 ## Prerequisite
 
@@ -31,7 +31,7 @@ The Helm chart installation requires two parameter overrides:
 * __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 The following parameter is optional, but we recommend setting it.
-* __sumologic.clusterName__ - An identifier for your Kubernetes cluster.  This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+* __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 To install the chart, first add the `sumologic` private repo:
 
@@ -39,7 +39,7 @@ To install the chart, first add the `sumologic` private repo:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Next you can run `helm upgrade --install` to install our chart.  An example command with the minimum parameters is provided below.  The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to. The below command also disables the `prometheus-operator` sub-chart since we will be modifying the existing prometheus operator install.
+Next you can run `helm upgrade --install` to install our chart. An example command with the minimum parameters is provided below. The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to. The below command also disables the `prometheus-operator` sub-chart since we will be modifying the existing prometheus operator install.
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false
