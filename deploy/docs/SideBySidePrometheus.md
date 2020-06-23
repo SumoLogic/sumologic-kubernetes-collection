@@ -55,6 +55,8 @@ Since we are installing with an existing Prometheus Operator we must also define
 * __prometheus-operator.prometheus-node-exporter.service.port=9200__ - Since node exporter uses a `NodePort` we have to change the port.
 * __prometheus-operator.prometheus-node-exporter.service.targetPort=9200__ - Since node exporter uses a `NodePort` we have to change the port.
 
+The following helm commands support Helm2 or Helm3.
+
 To install the chart, first add the `sumologic` private repo:
 
 ```bash
@@ -66,21 +68,18 @@ Next you can run `helm upgrade --install` to install our chart. An example comma
 ```bash
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.enabled=false --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
 ```
-> **Note**: This command is compatible with Helm2 or Helm3. If the release exists, it will be upgraded, otherwise it will be installed.
+> **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
 
-If you wish to install the chart in a different namespace you can do the following:
+If you wish to install the chart in a different existing namespace you can do the following:
 
-**Helm2**
 ```bash
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.enabled=false --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
 ```
 
-Please note that Helm3 no longer supports the namespace flag. You must change your `kubectl` context to the namespace you wish to install in.
+For Helm3, if the namespace does not exist, you can add the `--create-namespace` flag.
 
-**Helm3**
 ```bash
-kubectl config set-context --current --namespace=my-namespace
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false --set prometheus-operator.prometheusOperator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.enabled=false --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200 --create-namespace
 ```
 
 ## Viewing Data In Sumo Logic
@@ -116,7 +115,6 @@ You can find more information in our [troubleshooting documentation](Troubleshoo
 ## Customizing Installation
 All default properties for the Helm chart can be found in our [documentation](HelmChartConfiguration.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade. Remember to define the properties in our [requirements section](#requirements) in the `values.yaml` as well or pass them in via `--set`
   
-**Helm2 or Helm3**
 ```bash
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
 ```
@@ -162,17 +160,11 @@ helm rollback my-release <REVISION-NUMBER>
 
 To uninstall/delete the Helm chart:
 
-**Helm2**
 ```bash
 helm delete my-release
 ```
-> **Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
-
-**Helm3**
-```bash
-helm delete my-release
-```
-> **Tip**: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.
+> **Helm2 Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
+> **Helm3 Tip**: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.ease.
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 

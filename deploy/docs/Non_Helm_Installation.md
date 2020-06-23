@@ -73,7 +73,7 @@ Next you will generate the YAML to apply to your cluster.  The following command
 kubectl run tools \
   -it --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools -- \
+  --image sumologic/kubernetes-tools:1.0.0-rc.0 -- \
   template \
   --name-template 'collection' \
   --set sumologic.accessId='<ACCESS_KEY>' \
@@ -94,7 +94,7 @@ If you with to install the YAML in a different namespace, you can add the `--nam
 kubectl run tools \
   -it --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools -- \
+  --image sumologic/kubernetes-tools:1.0.0-rc.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -141,19 +141,17 @@ sumologic_http_source.default_metrics_source: Importing from ID`, you can safely
 You can find more information in our [troubleshooting documentation](Troubleshoot_Collection.md).
 
 ## Customizing Installation
-All default properties for the Helm chart can be found in our [documentation](HelmChartConfiguration.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized the file you can generate the YAML. When using a `values.yaml` you will create a `ConfigMap` to store the file.
+All default properties for the Helm chart can be found in our [documentation](HelmChartConfiguration.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized the file you can generate the YAML. The content of the `values.yaml` can be fed into the template generator as shown below.
   
 ```bash
-kubectl create configmap sumologic-values --from-file=values.yaml
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-tools/master/src/k8s/tools-pod.yaml -s | kubectl apply -f -
-kubectl exec sumologic-tools \
-  -- \
-  template \
-  --name-template 'collection' \
-  -f /values.yaml \
-  | tee sumologic.yaml
-kubectl delete pod sumologic-tools
-kubectl delete configmap sumologic-values
+cat values.yaml | \
+  kubectl run tools \
+    -i --quiet --rm \
+    --restart=Never \
+    --image sumologic/kubernetes-tools:1.0.0-rc.0 -- \
+    template \
+      --name-template 'collection' \
+      | tee sumologic.yaml
 ``` 
 
 > **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
@@ -165,18 +163,15 @@ kubectl delete configmap sumologic-values
 To upgrade you can simply re-generate the YAML when a new version of the Kubernetes collection is available.  If you wish to upgrade to a specific version, you can pass the `--version` flag when generating the YAML.
 
 ```bash
-kubectl run tools \
-  -it --quiet --rm \
-  --restart=Never \
-  --image sumologic/kubernetes-tools -- \
-  template \
-  --namespace 'my-namespace' \
-  --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_KEY>' \
-  --set sumologic.accessKey='<ACCESS_ID>' \
-  --set sumologic.clusterName='<CLUSTER_NAME>' \
-  --version=1.0.0
-  | tee sumologic.yaml
+cat values.yaml | \
+  kubectl run tools \
+    -i --quiet --rm \
+    --restart=Never \
+    --image sumologic/kubernetes-tools:1.0.0-rc.0 -- \
+    template \
+      --name-template 'collection' \
+      --version=1.0.0
+      | tee sumologic.yaml
 ```
 
 ## Uninstalling Sumo Logic Collection
