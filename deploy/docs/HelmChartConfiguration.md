@@ -50,6 +50,7 @@ Parameter | Description | Default
 `fluentd.metadata.cacheTtl` | Option to control the enabling of metadata filter plugin cache_ttl (in seconds). | `3600`
 `fluentd.metadata.cacheRefresh` | Option to control the interval at which metadata cache is asynchronously refreshed (in seconds). | `1800`
 `fluentd.metadata.pluginLogLevel` | Option to give plugin specific log level. | `error`
+`fluentd.logs.enabled` | Flag to control deploying the Fluentd logs statefulsets. | `true`
 `fluentd.logs.statefulset.nodeSelector` | Node selector for Fluentd log statefulset. | `{}`
 `fluentd.logs.statefulset.tolerations` | Tolerations for Fluentd log statefulset. | `{}`
 `fluentd.logs.statefulset.affinity` | Affinity for Fluentd log statefulset. | `{}`
@@ -108,6 +109,7 @@ Parameter | Description | Default
 `fluentd.logs.systemd.excludeUnitRegex` | A regular expression for unit. Matching unit will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
 `fluentd.logs.default.outputConf` | Default log configuration (catch-all). | `@include logs.output.conf`
 `fluentd.logs.default.overrideOutputConf` | Override output section for untagged logs. Leave empty for the default output section. | `Nil`
+`fluentd.metrics.enabled` | Flag to control deploying the Fluentd metrics statefulsets. | `true`
 `fluentd.metrics.statefulset.nodeSelector` | Node selector for Fluentd metrics statefulset. | `{}`
 `fluentd.metrics.statefulset.tolerations` | Tolerations for Fluentd metrics statefulset. | `{}`
 `fluentd.metrics.statefulset.affinity` | Affinity for Fluentd metrics statefulset. | `{}`
