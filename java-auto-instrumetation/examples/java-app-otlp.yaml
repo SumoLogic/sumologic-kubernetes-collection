@@ -1,0 +1,69 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-app-otlp
+  labels:
+          "should-auto-instrument": "true"
+          "auto-instrumentation-exporter": "otlp"
+          "auto-instr-service-name": "java-app-otlp-exp"
+          app: java-app-otlp
+spec:
+  selector:
+    matchLabels:
+      app: java-app-otlp
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: java-app-otlp
+    spec:
+      containers:
+        - env:
+            - name: SAMPLE_ENV_VAR
+              value: java-app-env-var
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_POD_SERVICE_ACCOUNT
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+          image: "quay.io/pioter/java-app:v0.0.2"
+          name: java-app
+          resources: {}
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+      hostname: java-app-otlp
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: java-app-otlp
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: java-app-otlp
+status:
+  loadBalancer: {}
