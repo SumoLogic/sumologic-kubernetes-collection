@@ -18,16 +18,10 @@ resource "sumologic_collector" "collector" {
 {{- end }}
 {{- end }}
 
-data "kubernetes_namespace" "sumologic_collection_namespace" {
-  metadata {
-    name = var.namespace_name
-  }
-}
-
 resource "kubernetes_secret" "sumologic_collection_secret" {
   metadata {
     name = "sumologic"
-    namespace = data.kubernetes_namespace.sumologic_collection_namespace.metadata[0].name
+    namespace = var.namespace_name
   }
 
   data = {
