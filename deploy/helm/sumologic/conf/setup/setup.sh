@@ -25,8 +25,7 @@ terraform import sumologic_http_source.{{ template "terraform.sources.name" (dic
 {{- end }}
 
 
-# Kubernetes Namespace and Secret
-terraform import kubernetes_namespace.sumologic_collection_namespace {{ .Release.Namespace }}
+# Kubernetes Secret
 terraform import kubernetes_secret.sumologic_collection_secret {{ .Release.Namespace }}/sumologic
 
 terraform apply -auto-approve
