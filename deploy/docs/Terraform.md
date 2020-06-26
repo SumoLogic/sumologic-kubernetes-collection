@@ -49,11 +49,11 @@ sumologic:
   # ...
   sources:
     # ...
-    logs: # can be one of: logs/metrics/events/traces
+    logs: # source type, can be one of: logs/metrics/events/traces
       example-source: # source reference name
         name: # name of the source (visible on the sumologic platform)
         config-name: # name which be used in secret to store the url. This is backward-compatibility option
-        category: # this is backward compatibility property.
+        category: # this is backward compatibility property. It's deprecated and it's going to be removed in version 2.0
                   # Sets source category to "${var.cluster_name}/${local.default_events_source}" if true
                   # To overwrite category, please use `sumologic.sources[].properties.category`
         properties: # Additional terraform properties like fields or content_type
@@ -83,5 +83,23 @@ sumologic:
             node: hornetq-livestream-9
             deployment: sumologic
 ```
+
+#### Terraform variables
+
+You can use terraform extrapolation for properties:
+
+```yaml
+sumologic:
+  sources:
+    logs:
+      example-source:
+        properties:
+          category: "${var.cluster_name}/my-name"
+```
+
+List of available variables:
+ * var.cluster_name
+ * var.namespace_name
+ * var.collector_name
 
 **Note** You have to manually activate fields using the Sumo Logic service.
