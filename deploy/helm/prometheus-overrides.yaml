@@ -109,18 +109,6 @@ prometheus:
       selector:
         matchLabels:
           sumologic.com/app: fluentd-events
-    - name: collection-fluent-bit
-      additionalLabels:
-        app: collection-fluent-bit
-      endpoints:
-        - port: metrics
-          path: /api/v1/metrics/prometheus
-      namespaceSelector:
-        matchNames:
-          - $(NAMESPACE)
-      selector:
-        matchLabels:
-          app: fluent-bit
     - name: collection-sumologic-otelcol
       additionalLabels:
         sumologic.com/app: otelcol
