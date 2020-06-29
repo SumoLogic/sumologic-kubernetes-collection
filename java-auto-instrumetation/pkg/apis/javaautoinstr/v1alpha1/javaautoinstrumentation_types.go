@@ -4,23 +4,14 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // JavaAutoInstrumentationSpec defines the desired state of JavaAutoInstrumentation
 type JavaAutoInstrumentationSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
-	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
 	// Currently a placeholder
 	JavaOptions string `json:"javaOptions"`
 }
 
 // JavaAutoInstrumentationStatus defines the observed state of JavaAutoInstrumentation
 type JavaAutoInstrumentationStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
-	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
 	// Currently a placeholder
 	JavaOptions string `json:"javaOptions"`
 }
