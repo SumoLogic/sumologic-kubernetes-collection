@@ -5,4 +5,12 @@
 {{- $sourceCategory := .Values.sumologic.sourceCategory | quote }}
 {{- $sourceCategoryPrefix := .Values.sumologic.sourceCategoryPrefix | quote }}
 {{- $sourceCategoryReplaceDash := .Values.sumologic.sourceCategoryReplaceDash | quote }}
-{{- $yamlFile | replace "processors.source.collector.replace" $_collector | replace "exporters.zipkin.url_replace" $endpoint | replace "processors.source.name.replace" $sourceName | replace "processors.source.category.replace" $sourceCategory | replace "processors.source.category_prefix.replace" $sourceCategoryPrefix | replace "processors.source.category_replace_dash.replace" $sourceCategoryReplaceDash | nindent 2 }}
+{{- $excludeNamespaceRegex := .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
+{{ if eq .Values.sumologic.collectionMonitoring false }}
+  {{- $excludeNamespaceRegex = .Release.Namespace "|" .Values.sumologic.excludeNamespaceRegex | quote }}
+{{- end }}
+{{- $excludePodRegex := .Values.sumologic.excludePodRegex | quote }}
+{{- $excludeContainerRegex := .Values.sumologic.excludeContainerRegex | quote }}
+{{- $excludeHostRegex := .Values.sumologic.excludeHostRegex | quote }}
+
+{{- $yamlFile | replace "processors.source.collector.replace" $_collector | replace "exporters.zipkin.url_replace" $endpoint | replace "processors.source.name.replace" $sourceName | replace "processors.source.category.replace" $sourceCategory | replace "processors.source.category_prefix.replace" $sourceCategoryPrefix | replace "processors.source.category_replace_dash.replace" $sourceCategoryReplaceDash | replace "processors.source.excluded_namespace_regex.replace" $excludeNamespaceRegex | replace "processors.source.excludePodRegex.replace" $excludePodRegex | replace "processors.source.exclude_container_regex.replace" $excludeContainerRegex | replace "processors.source.exclude_host_regex.replace" $excludeHostRegex | nindent 2 }}

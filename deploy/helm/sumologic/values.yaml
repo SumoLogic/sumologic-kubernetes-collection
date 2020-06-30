@@ -539,7 +539,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.3.0.5"
+      tag: "0.3.0.6"
       pullPolicy: IfNotPresent
   config:
     receivers:
@@ -551,8 +551,6 @@ otelcol:
             endpoint: "0.0.0.0:6832"
           grpc:
             endpoint: "0.0.0.0:14250"
-          thrift_tchannel:
-            endpoint: "0.0.0.0:14267"
           thrift_http:
             endpoint: "0.0.0.0:14268"
       opencensus:
@@ -562,13 +560,6 @@ otelcol:
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
-      # Adds _sourceCategory and _sourceName
-      source:
-        collector: "processors.source.collector.replace"
-        source_name: "processors.source.name.replace"
-        source_category: "processors.source.category.replace"
-        source_category_prefix: "processors.source.category_prefix.replace"
-        source_category_replace_dash: "processors.source.category_replace_dash.replace"
       # Tags spans with K8S metadata, basing on the context IP
       k8s_tagger:
         # When true, only IP is assigned and passed (so it could be tagged on another collector)
@@ -590,29 +581,36 @@ otelcol:
             - podId
             - podName
             - replicaSetName
-            #- serviceName
+            - serviceName
             - statefulSetName
-          tags:
-            containerId: container_id
-            containerName: container
-            clusterName: cluster
-            daemonSetName: daemonset
-            deploymentName: deployment
-            hostName: host
-            namespace: namespace
-            nodeName: node
-            podId: pod_id
-            podName: pod
-            replicaSetName: replicaset
-            #serviceName: service
-            statefulSetName: statefulset
           annotations:
-            - tag_name: "pod_annotation_%s"
+            - tag_name: "k8s.pod.annotation.%s"
               key: "*"
+          namespace_labels:
+            - tag_name: "k8s.namespace.label.%s"
+              key: "*"      
           labels:
-            - tag_name: "pod_labels_%s"
-              key: "*"
-
+            - tag_name: "k8s.pod.label.%s"
+              key: "*"      
+      # Source processor adds Sumo Logic related metadata
+      source:
+        collector: "processors.source.collector.replace"
+        source_name: "processors.source.name.replace"
+        source_category: "processors.source.category.replace"
+        source_category_prefix: "processors.source.category_prefix.replace"
+        source_category_replace_dash: "processors.source.category_replace_dash.replace"
+        exclude_namespace_regex: "processors.source.exclude_namespace_regex.replace"
+        exclude_pod_regex: "processors.source.exclude_pod_regex.replace"
+        exclude_container_regex: "processors.source.exclude_container_regex.replace"
+        exclude_host_regex: "processors.source.exclude_host_regex.replace"
+        annotation_prefix: "k8s.pod.annotation."
+        pod_template_hash_key: "k8s.pod.label.pod-template-hash"
+        pod_name_key: "k8s.pod.pod_name"
+        namespace_key: "k8s.namespace.name"
+        pod_key: "k8s.pod.name"
+        container_key: "k8s.container.name"
+        source_host_key: "k8s.pod.hostname"
+      
       # The memory_limiter processor is used to prevent out of memory situations on the collector.
       memory_limiter:
         # check_interval is the time between measurements of memory usage for the
@@ -640,6 +638,8 @@ otelcol:
       batch:
         # Number of spans after which a batch will be sent regardless of time
         send_batch_size: 256
+        # Never more than this many spans are being sent in a batch
+        send_batch_hard_limit: 512
         # Time duration after which a batch will be sent regardless of size
         timeout: 5s
     extensions:
@@ -657,6 +657,6 @@ otelcol:
       extensions: [health_check]
       pipelines:
         traces:
-          receivers: [jaeger, zipkin, opencensus]
+          receivers: [jaeger, opencensus, otlp, zipkin]
           processors: [memory_limiter, k8s_tagger, source, batch, queued_retry]
           exporters: [zipkin]
