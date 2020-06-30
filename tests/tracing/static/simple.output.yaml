@@ -6,7 +6,7 @@ metadata:
   name: RELEASE-NAME-sumologic-otelcol
   labels:
     app: RELEASE-NAME-sumologic-fluentd-metrics
-    chart: "sumologic-1.0.0"
+    chart: "sumologic-1.1.0-beta.2"
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
@@ -56,6 +56,9 @@ data:
         num_workers: 16
         queue_size: 10000
         retry_on_failure: true
+      resource:
+        labels:
+          k8s.cluster.name: kubernetes
       source:
         annotation_prefix: k8s.pod.annotation.
         collector: "kubernetes"
@@ -101,6 +104,7 @@ data:
           - memory_limiter
           - k8s_tagger
           - source
+          - resource
           - batch
           - queued_retry
           receivers:

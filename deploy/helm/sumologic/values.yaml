@@ -1216,7 +1216,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       name: "sumologic/opentelemetry-collector"
-      tag: "0.3.0.6"
+      tag: "0.4.0.0"
       pullPolicy: IfNotPresent
   config:
     receivers:
@@ -1288,6 +1288,12 @@ otelcol:
         container_key: "k8s.container.name"
         source_host_key: "k8s.pod.hostname"
 
+      # Resource processor sets the associted cluster attribute
+      resource:
+        labels: {
+          k8s.cluster.name: "processors.resource.cluster.replace"
+        }
+
       # The memory_limiter processor is used to prevent out of memory situations on the collector.
       memory_limiter:
         # check_interval is the time between measurements of memory usage for the
@@ -1335,5 +1341,5 @@ otelcol:
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, zipkin]
-          processors: [memory_limiter, k8s_tagger, source, batch, queued_retry]
+          processors: [memory_limiter, k8s_tagger, source, resource, batch, queued_retry]
           exporters: [zipkin]
