@@ -431,7 +431,7 @@ fluentd:
       overrideOutputConf: |-
 
     # Extra Environment Values - allows yaml definitions
-    extraEnvVars:
+    # extraEnvVars:
     #  - name: VALUE_FROM_SECRET
     #    valueFrom:
     #      secretKeyRef:
@@ -492,7 +492,7 @@ fluentd:
     extraOutputPluginConf: |-
 
     # Extra Environment Values - allows yaml definitions
-    extraEnvVars:
+    # extraEnvVars:
     #  - name: VALUE_FROM_SECRET
     #    valueFrom:
     #      secretKeyRef:
@@ -580,7 +580,7 @@ fluentd:
     #   events: "events.k8s.io/v1beta1"
 
     # Extra Environment Values - allows yaml definitions
-    extraEnvVars:
+    # extraEnvVars:
     #  - name: VALUE_FROM_SECRET
     #    valueFrom:
     #      secretKeyRef:
