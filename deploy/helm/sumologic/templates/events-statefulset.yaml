@@ -75,7 +75,7 @@ spec:
 {{- $ctx := .Values -}}
 {{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "events")}}
 {{- if .Values.fluentd.events.extraEnvVars }}
-{{ toYaml .Values.fluentd.events.extraEnvVars | nindent 10 }}
+{{ toYaml .Values.fluentd.events.extraEnvVars | nindent 8 }}
 {{- end }}
 {{- if .Values.fluentd.persistence.enabled }}
   volumeClaimTemplates:
