@@ -76,7 +76,7 @@ spec:
         configMap:
           name: {{ template "sumologic.metadata.name.metrics.configmap" . }}
 {{- if .Values.fluentd.metrics.extraVolumes }}
-{{ toYaml .Values.fluentd.metrics.extraVolumes | indent 8 }}
+{{ toYaml .Values.fluentd.metrics.extraVolumes | indent 6 }}
 {{- end }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
@@ -119,7 +119,7 @@ spec:
 {{- $ctx := .Values -}}
 {{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics")}}
         {{- if .Values.fluentd.metrics.extraEnvVars }}
-{{ toYaml .Values.fluentd.metrics.extraEnvVars | nindent 10 }}
+{{ toYaml .Values.fluentd.metrics.extraEnvVars | nindent 8 }}
         {{- end }}
         - name: ADDITIONAL_PLUGINS
           value: {{ join " " .Values.fluentd.additionalPlugins | quote }}
