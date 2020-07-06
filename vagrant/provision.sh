@@ -19,14 +19,10 @@ microk8s enable dashboard
 microk8s enable registry
 microk8s enable storage
 microk8s enable dns
-microk8s enable helm
-microk8s enable helm3
 
 microk8s.kubectl config view --raw > /sumologic/.kube-config
 
 snap alias microk8s.kubectl kubectl
-snap alias microk8s.helm helm2
-snap alias microk8s.helm3 helm
 
 # allow privileged
 echo "--allow-privileged=true" >> /var/snap/microk8s/current/args/kube-apiserver
@@ -38,6 +34,19 @@ iptables -P FORWARD ACCEPT
 apt-get install --yes iptables-persistent
 # Somehow persistent iptables doesn't work - let's use this ugly hack to force iptables reload on every bash login
 echo "sudo iptables -P FORWARD ACCEPT" >> /home/vagrant/.bashrc
+
+echo "export KUBECONFIG=/var/snap/microk8s/current/credentials/kubelet.config" >> /home/vagrant/.bashrc
+
+HELM_2_VERSION=v2.16.9
+HELM_3_VERSION=v3.2.4
+
+mkdir /opt/helm2 /opt/helm3
+curl https://get.helm.sh/helm-${HELM_2_VERSION}-linux-amd64.tar.gz | tar -xz -C /opt/helm2
+curl https://get.helm.sh/helm-${HELM_3_VERSION}-linux-amd64.tar.gz | tar -xz -C /opt/helm3
+
+ln -s /opt/helm2/linux-amd64/helm /usr/bin/helm2
+ln -s /opt/helm3/linux-amd64/helm /usr/bin/helm3
+ln -s /usr/bin/helm3 /usr/bin/helm
 
 usermod -a -G microk8s vagrant
 
