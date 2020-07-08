@@ -191,6 +191,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{ template "sumologic.metadata.name.logs" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.hpa" -}}
+{{- template "sumologic.metadata.name.logs" . }}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.metrics" -}}
 {{ template "sumologic.fullname" . }}-fluentd-metrics
 {{- end -}}
@@ -209,6 +213,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "sumologic.metadata.name.metrics.statefulset" -}}
 {{ template "sumologic.metadata.name.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.hpa" -}}
+{{- template "sumologic.metadata.name.metrics" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events" -}}
