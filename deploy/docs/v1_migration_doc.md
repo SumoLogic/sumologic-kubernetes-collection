@@ -165,8 +165,15 @@ above the output plugin section [here](https://github.com/SumoLogic/sumologic-ku
 - The unified Fluentd `statefulsets` have been split into set of two different Fluentd's, one for `logs` and the other one for `metrics`.
 - We now support the collection of renamed metrics (for Kubernetes version `1.17+`).
 ### How to upgrade for Non-helm Users
-#### 1. Tear down existing Fluentd, Prometheus, Fluent Bit resources
-Run the commands mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#tear-down) to delete the respective resources.
+#### 1. Tear down existing Fluentd, Prometheus, Fluent Bit and Falco resources
+You will need the YAML files you created when you first installed collection. Run the following commands to remove Falco, Fluent-bit, Prometheus Operator and FluentD.  You do not need to delete the Namespace and Secret you originally created as they will still be used.
+
+```sh
+kubectl delete -f falco.yaml
+kubectl delete -f fluent-bit.yaml
+kubectl delete -f prometheus.yaml
+kubectl delete -f fluentd-sumologic.yaml
+```
 
 #### 2. Deploy Fluentd, Fluent Bit and Prometheus again with the version 1.0.0 yaml
 Follow the below steps to deploy new resources.
