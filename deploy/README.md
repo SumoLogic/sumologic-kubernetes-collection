@@ -61,7 +61,8 @@ The following matrix displays the tested package versions for our Helm chart.
 
 Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco  | Metrics Server
 |:-------- |:-------- |:-------- |:-------- |:--------
-1.0.0 - Latest | 8.2.0 | 2.8.1 | 1.1.6 | 2.7.0
+1.1.0 - Latest | 8.15.12 | 2.8.1 | 1.1.6 | 2.7.0
+1.0.0 | 8.2.0 | 2.8.1 | 1.1.6 | 2.7.0
 0.17.0 - 0.17.1 | 8.2.0 | 2.8.1 | 1.1.0 | 2.7.0
 0.14.0 - 0.16.0 | 8.2.0 | 2.8.1 | 1.1.1 | 2.7.0
 0.13.0 | 8.2.0 | 2.8.1 | 1.0.11 | 2.7.0

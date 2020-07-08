@@ -4,7 +4,7 @@ dependencies:
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: fluent-bit.enabled,sumologic.logs.enabled
   - name: prometheus-operator
-    version: 8.13.8
+    version: 8.15.12
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: prometheus-operator.enabled,sumologic.metrics.enabled
   - name: falco
