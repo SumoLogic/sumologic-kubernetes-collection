@@ -209,7 +209,7 @@ fluentd:
     queueChunkLimitSize: 128
     totalLimitSize: "128m"
     retryTimeout: "72h"
-    retryMaxInterval: "1h"
+    retryMaxInterval: "10m"
     retryForever: true
 
     ## File paths to buffer to, if Fluentd buffer type is specified as file above.
