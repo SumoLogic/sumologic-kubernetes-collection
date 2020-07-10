@@ -208,7 +208,6 @@ fluentd:
     chunkLimitSize: "1m"
     queueChunkLimitSize: 128
     totalLimitSize: "128m"
-    retryTimeout: "72h"
     retryMaxInterval: "10m"
     retryForever: true
 
