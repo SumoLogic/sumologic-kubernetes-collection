@@ -62,9 +62,9 @@ sumologic:
 
 ### Usage
 
-Source endpoints are exposed in the FluentD and OpenTelemetry collector as environmental variables.
-The variable name is build using schema `SUMO_ENDPOINT_<source name>_<source type>_SOURCE`,
-where `<source name>` and `<source type>` are being written uppercase and dashes are replaced with underscore.
+Source endpoints are exposed in FluentD and the OpenTelemetry collector as environmental variables.
+The variable name is built using the schema `SUMO_ENDPOINT_<source name>_<source type>_SOURCE`,
+where `<source name>` and `<source type>` are in uppercase and dashes are replaced with underscores.
 
 Examples:
  - `sumologic.sources.logs.example-source` becomes `SUMO_ENDPOINT_EXAMPLE_SOURCE_LOGS_SOURCE`
