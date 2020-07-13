@@ -8,7 +8,6 @@ import (
 
 	appv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
@@ -27,6 +26,8 @@ const autoInstrumentationExporterLabel = "auto-instrumentation-exporter"
 const opentelemetryJarVolumeName = "ot-jars-volume"
 const opentelemetryJarMountPath = "/ot-jars"
 const opentelemetryCollectorHostLabel = "collector-host"
+const opentelemetryJarContainerName = "ot-jars-holder"
+const opentelemetryJarContainerImage = "quay.io/pioter/ot-jars-holder:v0.2"
 
 var log = logf.Log.WithName("controller_javaautoinstrumentation")
 
@@ -253,10 +254,7 @@ func getOtJarsVolume() corev1.Volume {
 	return corev1.Volume{
 		Name: opentelemetryJarVolumeName,
 		VolumeSource: corev1.VolumeSource{
-			HostPath: &corev1.HostPathVolumeSource{
-				Path: "/home/vagrant/ot-jars",
-				//Type: corev1.HostPathDirectory,
-			},
+			EmptyDir: &corev1.EmptyDirVolumeSource{},
 		},
 	}
 }
@@ -272,16 +270,20 @@ func mergePodSpec(originalPodSpec *corev1.PodSpec, serviceName string, exporter 
 	var envVars = copyExistingEnvVarsWithoutJavaOptions(originalContainer.Env)
 	envVars = append(envVars, getConfiguration(exporter, serviceName, existingJavaOptions, collectorHost)...)
 
+	otJarsVolumeMount := getOtJarsVolumeMount()
 	var volumeMounts []corev1.VolumeMount
 	volumeMounts = append(volumeMounts, originalContainer.VolumeMounts...)
-	volumeMounts = append(volumeMounts, getOtJarsVolumeMount())
+	volumeMounts = append(volumeMounts, otJarsVolumeMount)
 
 	var volumes []corev1.Volume
 	volumes = append(volumes, originalPodSpec.Volumes...)
 	volumes = append(volumes, getOtJarsVolume())
+
+	initContainers := append(originalPodSpec.InitContainers, getOtJarsInitContainer(otJarsVolumeMount))
+
 	return corev1.PodSpec{
 		Volumes:        volumes,
-		InitContainers: originalPodSpec.InitContainers,
+		InitContainers: initContainers,
 		Containers: []corev1.Container{
 			{
 				Name:                     originalContainer.Name,
@@ -339,5 +341,13 @@ func mergePodSpec(originalPodSpec *corev1.PodSpec, serviceName string, exporter 
 		PreemptionPolicy:              originalPodSpec.PreemptionPolicy,
 		Overhead:                      originalPodSpec.Overhead,
 		TopologySpreadConstraints:     originalPodSpec.TopologySpreadConstraints,
+	}
+}
+
+func getOtJarsInitContainer(volumeMount corev1.VolumeMount) corev1.Container {
+	return corev1.Container{
+		Name:         opentelemetryJarContainerName,
+		Image:        opentelemetryJarContainerImage,
+		VolumeMounts: []corev1.VolumeMount{volumeMount},
 	}
 }
