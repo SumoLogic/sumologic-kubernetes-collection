@@ -308,6 +308,18 @@ func TestShouldUseExporterNameAsHostWhenNoLabelProvided(t *testing.T) {
 	assert.Equal(t, exporter, host)
 }
 
+func TestShouldAddInitContainer(t *testing.T) {
+	// given
+	originalPodSpec := buildPodSpecForIntegration()
+	assert.Equal(t, 0, len(originalPodSpec.InitContainers))
+
+	// when
+	newPodSpec := mergePodSpec(&originalPodSpec, "service", "exporter", "collector")
+
+	// then
+	assert.Equal(t, 1, len(newPodSpec.InitContainers))
+}
+
 func buildContainer(name string, value string) *corev1.Container {
 	return &corev1.Container{
 		Env: []corev1.EnvVar{
