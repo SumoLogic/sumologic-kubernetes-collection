@@ -9,7 +9,9 @@ metadata:
 data:
   otel-collector-config: |
     receivers:
-      otlp: {}
+      otlp:
+        protocols:
+          grpc:
       jaeger:
         protocols:
           grpc:
@@ -35,12 +37,13 @@ data:
         insecure: true
       logging:
         loglevel: debug
+        sampling_initial: 100
+        sampling_thereafter: 1
     service:
       extensions: [health_check, zpages]
       pipelines:
         traces:
           receivers: [otlp, jaeger]
-          #processors: [memory_limiter, batch, queued_retry]
           exporters: [jaeger, logging]
 ---
 apiVersion: v1
@@ -94,7 +97,7 @@ spec:
           - "--config=/conf/otel-collector-config.yaml"
 #           Memory Ballast size should be max 1/3 to 1/2 of memory.
           - "--mem-ballast-size-mib=683"
-        image: otel/opentelemetry-collector-dev:latest
+        image: otel/opentelemetry-collector:latest
         name: otel-collector
         resources:
           limits:
