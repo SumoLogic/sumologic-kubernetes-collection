@@ -1194,7 +1194,7 @@ prometheus-operator:
               sourceLabels: [job, __name__]
 
 ## Configure falco
-## ref: https://github.com/helm/charts/blob/master/stable/falco/values.yaml
+## ref: https://github.com/falcosecurity/charts/blob/master/falco/values.yaml
 falco:
   ## Set the enabled flag to true to enable falco.
   enabled: false
