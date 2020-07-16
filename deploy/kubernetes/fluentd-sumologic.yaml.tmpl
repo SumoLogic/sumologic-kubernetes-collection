@@ -175,6 +175,17 @@ data:
     </label>
   logs.source.default.conf: |-
     
+    <filter **>
+      @type kubernetes_sumologic
+      source_name "k8s_default"
+      source_category "default"
+      source_category_prefix "kubernetes/"
+      source_category_replace_dash "/"
+      exclude_facility_regex ""
+      exclude_host_regex ""
+      exclude_priority_regex ""
+      exclude_unit_regex ""
+    </filter>
     <match **>
       @type copy
       <store>
@@ -229,6 +240,7 @@ data:
     <label @SYSTEMD>
       <filter host.**>
         @type kubernetes_sumologic
+        source_name "k8s_systemd"
         source_category "system"
         source_category_prefix "kubernetes/"
         source_category_replace_dash "/"
