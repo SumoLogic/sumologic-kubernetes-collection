@@ -431,6 +431,28 @@ fluentd:
       ## Override output section for untagged logs. Leave empty for the default output section.
       overrideOutputConf: |-
 
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "k8s_default"
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "default"
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+      ## Used to replace - with another character.
+      sourceCategoryReplaceDash: "/"
+
+      ## A regular expression for facility.
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeFacilityRegex: ""
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeHostRegex: ""
+      ## A regular expression for priority.
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludePriorityRegex: ""
+      ## A regular expression for unit.
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeUnitRegex: ""
+
     # Extra Environment Values - allows yaml definitions
     # extraEnvVars:
     #  - name: VALUE_FROM_SECRET
