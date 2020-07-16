@@ -60,6 +60,16 @@ sumologic:
                     # ref: https://www.terraform.io/docs/providers/sumologic/r/collector.html
 ```
 
+### Usage
+
+Source endpoints are exposed in FluentD and the OpenTelemetry collector as environmental variables.
+The variable name is built using the schema `SUMO_ENDPOINT_<source name>_<source type>_SOURCE`,
+where `<source name>` and `<source type>` are in uppercase and dashes are replaced with underscores.
+
+Examples:
+ - `sumologic.sources.logs.example-source` becomes `SUMO_ENDPOINT_EXAMPLE_SOURCE_LOGS_SOURCE`
+ - `sumologic.sources.traces.default` becomes `SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE`
+
 ### Properties
 
 You can set all of the source [properties](https://www.terraform.io/docs/providers/sumologic/r/http_source.html#argument-reference)
