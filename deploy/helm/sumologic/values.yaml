@@ -291,7 +291,6 @@ fluentd:
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
     podDisruptionBudget:
-      enabled: true
       minAvailable: 2
 
     rawConfig: |-
@@ -485,7 +484,6 @@ fluentd:
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
     podDisruptionBudget:
-      enabled: true
       minAvailable: 2
 
     rawConfig: |-
