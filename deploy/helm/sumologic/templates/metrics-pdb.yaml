@@ -1,0 +1,11 @@
+{{- if .Values.fluentd.metrics.podDisruptionBudget.enabled}}
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "sumologic.metadata.name.metrics.statefulset" . }}-pdb
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.labels.app.metrics.statefulset" . }}
+{{ toYaml .Values.fluentd.metrics.podDisruptionBudget | indent 2 }}
+{{- end-}}
