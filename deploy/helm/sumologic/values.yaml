@@ -403,6 +403,8 @@ fluentd:
       ## Override output section for systemd logs. Leave empty for the default output section.
       overrideOutputConf: |-
 
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "k8s_systemd"
       ## Set the _sourceCategory metadata field in Sumo Logic.
       sourceCategory: "system"
       ## Set the prefix, for _sourceCategory metadata.
