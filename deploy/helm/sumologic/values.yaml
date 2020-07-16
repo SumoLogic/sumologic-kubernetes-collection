@@ -155,8 +155,6 @@ sumologic:
     # Use filter stdout plugin for tracing data
     # Warning: It will produce additional fluentd logs (one per trace)
     fluentd_stdout: false
-    # Sumologic endpoint for traces
-    endpoint: ''
     # How many spans per request should be send to receiver
     spans_per_request: 100
 

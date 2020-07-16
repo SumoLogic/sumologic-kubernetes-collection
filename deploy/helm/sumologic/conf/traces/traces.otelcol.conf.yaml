@@ -1,6 +1,5 @@
 {{- $yamlFile := toYaml $.Values.otelcol.config }}
 {{- $_collector := .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
-{{- $endpoint := .Values.sumologic.traces.endpoint | quote }}
 {{- $sourceName := .Values.sumologic.sourceName | quote }}
 {{- $sourceCategory := .Values.sumologic.sourceCategory | quote }}
 {{- $sourceCategoryPrefix := .Values.sumologic.sourceCategoryPrefix | quote }}
@@ -15,7 +14,6 @@
 {{- $clusterName := include "sumologic.clusterNameReplaceSpaceWithDash" . }}
 
 {{- $yamlFile := replace "processors.source.collector.replace" $_collector $yamlFile }}
-{{- $yamlFile := replace "exporters.zipkin.url_replace" $endpoint $yamlFile }}
 {{- $yamlFile := replace "processors.source.name.replace" $sourceName $yamlFile }}
 {{- $yamlFile := replace "processors.source.category.replace" $sourceCategory $yamlFile }}
 {{- $yamlFile := replace "processors.source.category_prefix.replace" $sourceCategoryPrefix $yamlFile }}
