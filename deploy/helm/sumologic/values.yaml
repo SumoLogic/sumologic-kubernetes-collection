@@ -1333,7 +1333,7 @@ otelcol:
       health_check: {}
     exporters:
       zipkin:
-        url: "exporters.zipkin.url_replace"
+        url: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
       # Following generates verbose logs with span content, useful to verify what
       # metadata is being tagged. To enable, uncomment and add "logging" to exporters below.
       # There are two levels that could be used: `debug` and `info` with the former
