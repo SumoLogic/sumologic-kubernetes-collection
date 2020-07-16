@@ -296,6 +296,12 @@ fluentd:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
 
+    ## Option to specify PodDisrutionBudgets
+    ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 2
+
     rawConfig: |-
       @include common.conf
       @include logs.conf
@@ -493,6 +499,12 @@ fluentd:
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
+
+    ## Option to specify PodDisrutionBudgets
+    ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 2
 
     rawConfig: |-
       @include common.conf
