@@ -1,5 +1,29 @@
 # This file is auto-generated.
 ---
+# Source: sumologic/templates/logs-pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: collection-sumologic-fluentd-logs-pdb
+spec:
+  selector:
+    matchLabels:
+      app: collection-sumologic-fluentd-logs
+  minAvailable: 2
+  
+---
+# Source: sumologic/templates/metrics-pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: collection-sumologic-fluentd-metrics-pdb
+spec:
+  selector:
+    matchLabels:
+      app: collection-sumologic-fluentd-metrics
+  minAvailable: 2
+  
+---
 # Source: sumologic/templates/chart-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
