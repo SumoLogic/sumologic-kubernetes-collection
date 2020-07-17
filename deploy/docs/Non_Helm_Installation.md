@@ -94,7 +94,7 @@ kubectl run tools \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_KEY>' \
+  --set sumologic.accessId='<ACCESS_ID>' \
   --set sumologic.accessKey='<ACCESS_ID>' \
   --set sumologic.clusterName='<CLUSTER_NAME>' \
   | tee sumologic.yaml
