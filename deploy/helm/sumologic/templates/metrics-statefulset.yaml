@@ -80,6 +80,9 @@ spec:
 {{- end }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
+      {{- if .Values.fluentd.metrics.priorityClassName }}
+      priorityClassName: {{ .Values.fluentd.metrics.priorityClassName | quote }}
+      {{- end }}
       containers:
       - name: fluentd
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
