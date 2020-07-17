@@ -61,7 +61,7 @@ kubectl run tools \
   --image sumologic/kubernetes-tools:1.0.0-rc.0 -- \
   template \
   --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_KEY>' \
+  --set sumologic.accessId='<ACCESS_ID>' \
   --set sumologic.accessKey='<ACCESS_ID>' \
   --set sumologic.clusterName='<CLUSTER_NAME>' \
   | tee sumologic.yaml
