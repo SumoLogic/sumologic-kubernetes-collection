@@ -113,14 +113,14 @@ prometheus:
       additionalLabels:
         app: collection-fluent-bit
       endpoints:
-        - port: metrics
+        - port: http
           path: /api/v1/metrics/prometheus
       namespaceSelector:
         matchNames:
           - $(NAMESPACE)
       selector:
         matchLabels:
-          app: fluent-bit
+          app.kubernetes.io/name: fluent-bit
     - name: collection-sumologic-otelcol
       additionalLabels:
         sumologic.com/app: otelcol
