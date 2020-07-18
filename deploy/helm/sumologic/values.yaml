@@ -863,7 +863,7 @@ prometheus-operator:
         additionalLabels:
           app: collection-fluent-bit
         endpoints:
-          - port: metrics
+          - port: http
             path: /api/v1/metrics/prometheus
         namespaceSelector:
           matchNames:
