@@ -38,8 +38,7 @@ RUN gem install --local fluent-plugin-prometheus-format \
        && gem install --local fluent-plugin-enhance-k8s-metadata \
        && gem install --local fluent-plugin-datapoint \
        && gem install --local fluent-plugin-protobuf \
-       && gem install --local fluent-plugin-events \
-       && gem install --local fluent-plugin-zipkin
+       && gem install --local fluent-plugin-events
 
 # Run dependencies
 RUN apt-get update \
