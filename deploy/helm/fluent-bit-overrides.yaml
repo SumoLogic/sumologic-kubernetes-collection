@@ -118,7 +118,7 @@ config:
         Match         *
         Host          ${CHART}.${NAMESPACE}.svc.cluster.local.
         Port          24321
-        Retry_Limit False
+        Retry_Limit   False
         tls           off
         tls.verify    on
         tls.debug     1
