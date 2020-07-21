@@ -1,0 +1,114 @@
+---
+# Source: sumologic/templates/otelcol-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol
+  labels:
+    app: RELEASE-NAME-sumologic-fluentd-metrics
+    chart: "sumologic-1.1.0-beta.2"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  traces.otelcol.conf.yaml: |-
+    
+    exporters:
+      zipkin:
+        url: ""
+    extensions:
+      health_check: {}
+    processors:
+      batch:
+        send_batch_hard_limit: 512
+        send_batch_size: 256
+        timeout: 5s
+      k8s_tagger:
+        extract:
+          annotations:
+          - key: '*'
+            tag_name: k8s.pod.annotation.%s
+          labels:
+          - key: '*'
+            tag_name: k8s.pod.label.%s
+          metadata:
+          - containerId
+          - containerName
+          - clusterName
+          - daemonSetName
+          - deploymentName
+          - hostName
+          - namespace
+          - nodeName
+          - podId
+          - podName
+          - replicaSetName
+          - serviceName
+          - statefulSetName
+          namespace_labels:
+          - key: '*'
+            tag_name: k8s.namespace.label.%s
+        owner_lookup_enabled: true
+        passthrough: false
+      memory_limiter:
+        check_interval: 5s
+        limit_mib: 1900
+      queued_retry:
+        num_workers: 16
+        queue_size: 10000
+        retry_on_failure: true
+      resource:
+        labels:
+          k8s.cluster.name: kubernetes
+      source:
+        annotation_prefix: k8s.pod.annotation.
+        collector: "kubernetes"
+        container_key: k8s.container.name
+        exclude_container_regex: "[123+]bar$|xyz"
+        exclude_host_regex: "hhh123"
+        exclude_namespace_regex: "kube\\s+"
+        exclude_pod_regex: "^foo.*"
+        namespace_key: k8s.namespace.name
+        pod_key: k8s.pod.name
+        pod_name_key: k8s.pod.pod_name
+        pod_template_hash_key: k8s.pod.label.pod-template-hash
+        source_category: 
+        source_category_prefix: 
+        source_category_replace_dash: 
+        source_host_key: k8s.pod.hostname
+        source_name: 
+    receivers:
+      jaeger:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:14250
+          thrift_binary:
+            endpoint: 0.0.0.0:6832
+          thrift_compact:
+            endpoint: 0.0.0.0:6831
+          thrift_http:
+            endpoint: 0.0.0.0:14268
+      opencensus:
+        endpoint: 0.0.0.0:55678
+      otlp:
+        endpoint: 0.0.0.0:55680
+      zipkin:
+        endpoint: 0.0.0.0:9411
+    service:
+      extensions:
+      - health_check
+      pipelines:
+        traces:
+          exporters:
+          - zipkin
+          processors:
+          - memory_limiter
+          - k8s_tagger
+          - source
+          - resource
+          - batch
+          - queued_retry
+          receivers:
+          - jaeger
+          - opencensus
+          - otlp
+          - zipkin
