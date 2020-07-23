@@ -25,7 +25,6 @@ If you don’t already have a Sumo account, you can create one by clicking the F
 The following are required to setup Sumo Logic's Kubernetes collection.
 
   * An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with [Manage Collectors](https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management) capability.
-  * Your Kubernetes cluster must allow [outbound access to Sumo Logic](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security) to setup collection. Using a proxy is not currently supported.
   * Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
 
 
@@ -48,6 +47,8 @@ The Helm chart installation requires two parameter overrides:
 
 The following parameter is optional, but we recommend setting it.
 * __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+
+If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installation_Behind_Proxy.md) you will need to set.
 
 Since we are installing with an existing Prometheus Operator we must also define the following values.
 

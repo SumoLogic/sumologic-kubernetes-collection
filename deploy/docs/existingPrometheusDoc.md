@@ -37,6 +37,8 @@ The Helm chart installation requires two parameter overrides:
 * __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
 * __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
+If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installation_Behind_Proxy.md) you will need to set.
+
 The following parameter is optional, but we recommend setting it.
 * __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
