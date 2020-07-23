@@ -279,6 +279,8 @@ fluentd:
         requests:
           memory: 768Mi
           cpu: 0.5
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
 
     ## Option to turn autoscaling on for fluentd and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
@@ -287,9 +289,6 @@ fluentd:
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
-
-    ## Option to define priorityClassName to assign a priority class to pods.
-    priorityClassName:
 
     rawConfig: |-
       @include common.conf
@@ -470,6 +469,8 @@ fluentd:
         requests:
           memory: 768Mi
           cpu: 0.5
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
 
     ## Option to turn autoscaling on for fluentd and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
@@ -478,9 +479,6 @@ fluentd:
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
-
-    ## Option to define priorityClassName to assign a priority class to pods.
-    priorityClassName:
 
     rawConfig: |-
       @include common.conf
@@ -1228,6 +1226,8 @@ otelcol:
       name: "sumologic/opentelemetry-collector"
       tag: "0.4.0.0"
       pullPolicy: IfNotPresent
+    ## Option to define priorityClassName to assign a priority class to pods.
+    priorityClassName:
   config:
     receivers:
       jaeger:
