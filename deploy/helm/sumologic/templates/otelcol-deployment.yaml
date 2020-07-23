@@ -28,6 +28,9 @@ spec:
       tolerations:
         {{ toYaml .Values.otelcol.deployment.tolerations | indent 8 }}
       {{- end }}
+      {{- if .Values.otelcol.deployment.priorityClassName }}
+      priorityClassName: {{ .Values.otelcol.deployment.priorityClassName | quote }}
+      {{- end }}
       containers:
       - name: otelcontrib-collector
         image: {{ .Values.otelcol.deployment.image.name }}:{{ .Values.otelcol.deployment.image.tag }}
