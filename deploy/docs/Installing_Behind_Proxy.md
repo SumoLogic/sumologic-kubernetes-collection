@@ -30,7 +30,7 @@ If you see the following in the setup job logs:
      59: resource "kubernetes_secret" "sumologic_collection_secret" {
 ```
 
-It likely means your proxy is restricting access to `https://kubernetes.default.svc`.  Get the IP of that service by running `kubectl -n default get service kubernetes`and then you can set the following property:
+It likely means your proxy is restricting access to `https://kubernetes.default.svc`. Get the IP address of that service by running `kubectl -n default get service kubernetes`and then you can set the following property:
 
 ```
 sumologic.cluster.host: https://<SERVICE_IP>:443
