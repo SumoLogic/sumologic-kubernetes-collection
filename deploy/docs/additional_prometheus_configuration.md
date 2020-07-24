@@ -28,6 +28,7 @@ prometheus-operator:  # For values.yaml
 
 The syntax of `writeRelabelConfigs` can be found [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write).
 You can supply any label you like. You can query Prometheus to see a complete list of metrics it’s scraping.
+You can provide any meaningful value for `<some_label>`.
 
 ## Trim and relabel metrics
 
@@ -105,7 +106,7 @@ metadata:
     release: collection  # ensure this matches the `release` label on your Prometheus pod
 spec:
   selector:
-    matchSelector:
+    matchLabel:
       app: example-metrics
   endpoints:
   - port: "8000"  # Same as service's port name
