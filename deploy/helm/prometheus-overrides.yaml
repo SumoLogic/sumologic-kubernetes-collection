@@ -204,19 +204,19 @@ prometheus:
             regex: kubelet;cloudprovider_.*_api_request_duration_seconds.*
             sourceLabels: [job, __name__]
       # scheduler metrics_latency_microseconds
-      # scheduler_e2e_scheduling_latency_microseconds
-      # scheduler_e2e_scheduling_latency_microseconds_bucket
-      # scheduler_e2e_scheduling_latency_microseconds_count
-      # scheduler_binding_latency_microseconds
-      # scheduler_binding_latency_microseconds_bucket
-      # scheduler_binding_latency_microseconds_count
-      # scheduler_scheduling_algorithm_latency_microseconds
-      # scheduler_scheduling_algorithm_latency_microseconds_bucket
-      # scheduler_scheduling_algorithm_latency_microseconds_count
+      # scheduler_e2e_scheduling_duration_seconds
+      # scheduler_e2e_scheduling_duration_seconds_bucket
+      # scheduler_e2e_scheduling_duration_seconds_count
+      # scheduler_binding_duration_seconds
+      # scheduler_binding_duration_seconds_bucket
+      # scheduler_binding_duration_seconds_count
+      # scheduler_scheduling_algorithm_duration_seconds
+      # scheduler_scheduling_algorithm_duration_seconds_bucket
+      # scheduler_scheduling_algorithm_duration_seconds_count
       - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.scheduler
         writeRelabelConfigs:
           - action: keep
-            regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_latency_microseconds.*
+            regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_duration_seconds.*
             sourceLabels: [job, __name__]
       # api server metrics:
       # apiserver_request_count
