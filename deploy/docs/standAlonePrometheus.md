@@ -70,7 +70,7 @@ helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<
 First, Download the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/prometheus-overrides.yaml
+$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.1/deploy/helm/prometheus-overrides.yaml
 ```
 
 Next, make the following modifications to the `remoteWrite` section of the `prometheus-overrides.yaml` file:
