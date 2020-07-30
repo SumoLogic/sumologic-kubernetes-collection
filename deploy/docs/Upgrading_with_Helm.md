@@ -34,7 +34,7 @@ In the above command, since no arguments were specified, the `--reuse-values` fl
 **Always download the latest version of `values.yaml` from the following link and synchronize it based on your existing `values.yaml` file before running the upgrade.**
 
 ```bash
-curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/values.yaml
+curl https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.1/deploy/helm/sumologic/values.yaml
 ```
 
 ### Example to upgrade using the `--version` flag:

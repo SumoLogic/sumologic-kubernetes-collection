@@ -90,7 +90,7 @@ Run the following commands to update the [remote write configuration](https://pr
 Run the following command to download our prometheus-overrides.yaml file. Please review our configuration as it will be applied to your existing operator configuration.
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.1/deploy/helm/prometheus-overrides.yaml
 ```
 
 Next you can upgrade your Prometheus-Operator.  The following command assumes it is installed with the release name `prometheus-operator`. Remember, this command will update your Prometheus Operator to be configured with our default settings. If you wish to preserve your settings and merge with what is required for Sumo logic, then please look at the section on [how to merge the configuration](#merge-prometheus-configuration).
