@@ -60,7 +60,7 @@ First you will generate the YAML to apply to your cluster.  The following comman
 kubectl run tools \
   -it --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:1.0.0-rc.0 -- \
+  --image sumologic/kubernetes-tools:1.0.0 -- \
   template \
   --name-template 'collection' \
   --set sumologic.accessId='<ACCESS_ID>' \
@@ -107,7 +107,7 @@ If you with to install the YAML in a different namespace, you can add the `--nam
 kubectl run tools \
   -it --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:1.0.0-rc.0 -- \
+  --image sumologic/kubernetes-tools:1.0.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -161,7 +161,7 @@ cat sumo-values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:1.0.0-rc.0 -- \
+    --image sumologic/kubernetes-tools:1.0.0 -- \
     template \
       --name-template 'collection' \
       | tee sumologic.yaml
@@ -180,7 +180,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:1.0.0-rc.0 -- \
+    --image sumologic/kubernetes-tools:1.0.0 -- \
     template \
       --name-template 'collection' \
       --version=1.0.0
