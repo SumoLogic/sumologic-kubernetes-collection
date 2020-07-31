@@ -48,7 +48,7 @@ The Helm chart installation requires two parameter overrides:
 The following parameter is optional, but we recommend setting it.
 * __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
-If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installation_Behind_Proxy.md) you will need to set.
+If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
 
 Since we are installing with an existing Prometheus Operator we must also define the following values.
 
