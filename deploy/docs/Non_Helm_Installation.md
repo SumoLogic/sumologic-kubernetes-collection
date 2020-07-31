@@ -43,13 +43,17 @@ Sumo Logic Apps for Kubernetes and Explore require you to add the following [fie
 
 These steps require that no Prometheus exists. If you already have Prometheus installed select from the following options:
 
+- [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
+- [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md) 
+- [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md) 
+
 In this method of installation, you will use our [templating tool](https://github.com/SumoLogic/sumologic-kubernetes-tools#k8s-template-generator) to generate the YAML needed to deploy Sumo Logic collection for Kubernetes.  This tool will use our Helm chart to generate the YAML.  You will configure the collection the same way that you would for Helm based install.  However, instead of using Helm to install the Chart, the tool will output the rendered YAML you can deploy.
 
 The installation requires two parameters:
 * __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
 * __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
-If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installation_Behind_Proxy.md) you will need to set.
+If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
 
 The following parameter is optional, but we recommend setting it.
 * __sumologic.clusterName__ - An identifier for your Kubernetes cluster.  This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
