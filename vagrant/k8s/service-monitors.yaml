@@ -1,0 +1,18 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: receiver-mock
+  namespace: sumologic
+  labels:
+    release: collection # Ensure this matches the `release` label on your Prometheus pod
+spec:
+  selector:
+    matchLabels:
+      app: receiver-mock
+  namespaceSelector:
+    matchNames:
+    - receiver-mock
+  endpoints:
+  - port: "3000" # Same as service's port name
+    interval: 1s
