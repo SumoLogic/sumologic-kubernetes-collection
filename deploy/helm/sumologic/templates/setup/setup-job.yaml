@@ -9,6 +9,7 @@ metadata:
   labels:
     app: {{ template "sumologic.labels.app.setup.job" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
+{{ toYaml .Values.sumologic.setup.job.podLabels | indent 4 }}
 spec:
   template:
     spec:

@@ -10,6 +10,12 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.logs.pod" . }}
+{{- if .Values.fluentd.podLabels }}
+{{ toYaml .Values.fluentd.podLabels | indent 6 }}
+{{- end }}
+{{- if .Values.fluentd.logs.statefulset.podLabels }}
+{{ toYaml .Values.fluentd.logs.statefulset.podLabels | indent 6 }}
+{{- end }}
   serviceName: {{ template "sumologic.metadata.name.logs.service-headless" . }}
   podManagementPolicy: "Parallel"
   replicas: {{ .Values.fluentd.logs.statefulset.replicaCount }}
@@ -18,6 +24,12 @@ spec:
       labels:
         app: {{ template "sumologic.labels.app.logs.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.fluentd.podLabels }}
+{{ toYaml .Values.fluentd.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.fluentd.logs.statefulset.podLabels }}
+{{ toYaml .Values.fluentd.logs.statefulset.podLabels | indent 8 }}
+{{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
 {{- if .Values.fluentd.logs.statefulset.nodeSelector }}
