@@ -52,3 +52,25 @@ helm-upgrade:
 
 apply-service-monitors:
 	kubectl apply -f ${k8s_path}/service-monitors.yaml
+
+## Collector removing
+clean:
+	${mkfile_path} \
+		remove-collector \
+		remove-service-monitors remove-receiver-mock remove-prometheus-crds remove-namespace
+
+remove-namespace:
+	kubectl delete -f ${k8s_path}/sumologic.yaml --ignore-not-found=true
+
+remove-prometheus-crds:
+	kubectl delete customresourcedefinitions.apiextensions.k8s.io  --ignore-not-found=true \
+		{alertmanagers,podmonitors,prometheuses,prometheusrules,servicemonitors,thanosrulers}.monitoring.coreos.com
+
+remove-receiver-mock:
+	kubectl delete -f ${k8s_path}/receiver-mock.yaml --ignore-not-found=true
+
+remove-collector:
+	helm delete -n "${namespace}" "${name}"
+
+remove-service-monitors:
+	kubectl delete -f ${k8s_path}/service-monitors.yaml --ignore-not-found=true
