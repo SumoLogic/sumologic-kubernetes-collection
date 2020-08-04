@@ -48,7 +48,8 @@ helm-upgrade:
 		--set sumologic.accessKey="${access_key}" \
 		--set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="${cluster}" \
 		--set sumologic.clusterName="${cluster}" \
-		--set sumologic.endpoint="${endpoint}"
+		--set sumologic.endpoint="${endpoint}" \
+		--set prometheus-operator.grafana.enabled=true
 
 apply-service-monitors:
 	kubectl apply -f ${k8s_path}/service-monitors.yaml
@@ -74,3 +75,11 @@ remove-collector:
 
 remove-service-monitors:
 	kubectl delete -f ${k8s_path}/service-monitors.yaml --ignore-not-found=true
+
+## k8s commands
+expose-prometheus:
+	kubectl port-forward -n "${namespace}" service/collection-prometheus-oper-prometheus --address=0.0.0.0 9090
+
+expose-grafana:
+	echo "Grafana credentials\n  login:    admin\n  password: prom-operator"
+	kubectl port-forward -n "${namespace}" service/collection-grafana --address=0.0.0.0 8080:80
