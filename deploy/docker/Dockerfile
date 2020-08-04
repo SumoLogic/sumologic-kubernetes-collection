@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.8.1-debian-1.0 AS builder
+FROM fluent/fluentd:v1.11.1-debian-1.0 AS builder
 
 # Use root account to use apt
 USER root
@@ -38,23 +38,11 @@ RUN gem install --local fluent-plugin-prometheus-format \
        && gem install --local fluent-plugin-enhance-k8s-metadata \
        && gem install --local fluent-plugin-datapoint \
        && gem install --local fluent-plugin-protobuf \
-       && gem install --local fluent-plugin-events \
-       && gem install --local fluent-plugin-zipkin
-
-# Start with fresh image
-FROM fluent/fluentd:v1.8.1-debian-1.0
-
-# Use root account to use apt
-USER root
+       && gem install --local fluent-plugin-events
 
 # Run dependencies
-RUN runDeps="sudo libsnappy-dev" \
- && apt-get update \
- && apt-get install -y --no-install-recommends $runDeps \
- && apt-get install -y gnupg \
+RUN apt-get update \
  && apt-get install -y curl \
- && apt-get install -y jq \
- && apt-get install -y wget \
  && apt-get install -y unzip
 
 # Install Terraform
@@ -67,10 +55,19 @@ RUN mkdir /tmp/terraform && \
     chmod +x /bin/terraform && \
     rm -rf /tmp/terraform
 
+# Start with fresh image
+FROM fluent/fluentd:v1.11.1-debian-1.0
+
+USER root
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libsnappy-dev
+
 # Create directory for terraform configuration
 RUN mkdir -p /terraform && \
     chown -R fluent /terraform
 
+COPY --from=builder /bin/terraform /bin/terraform
 COPY --from=builder /usr/local/bundle /usr/local/bundle
 COPY ./fluent.conf /fluentd/etc/
 COPY ./entrypoint.sh /bin/
