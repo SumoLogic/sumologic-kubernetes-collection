@@ -16,3 +16,60 @@ spec:
   endpoints:
   - port: "3000" # Same as service's port name
     interval: 1s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: microk8s-kubelet
+  labels:
+    release: collection # ensure this matches the `release` label on your Prometheus pod
+spec:
+  selector:
+    matchLabels:
+      k8s-app: kubelet
+  namespaceSelector:
+    matchNames:
+    - kube-system
+  endpoints:
+  - honorLabels: true
+    port: https-metrics
+    relabelings:
+    - sourceLabels:
+      - __metrics_path__
+      targetLabel: metrics_path
+    scheme: https
+    tlsConfig:
+      ca:
+        secret:
+          name: microk8s-certs
+          key: ca.crt
+      cert:
+        secret:
+          name: microk8s-certs
+          key: server.crt
+      keySecret:
+        name: microk8s-certs
+        key: server.key
+      insecureSkipVerify: true
+  - honorLabels: true
+    path: /metrics/cadvisor
+    port: https-metrics
+    relabelings:
+    - sourceLabels:
+      - __metrics_path__
+      targetLabel: metrics_path
+    scheme: https
+    tlsConfig:
+      ca:
+        secret:
+          name: microk8s-certs
+          key: ca.crt
+      cert:
+        secret:
+          name: microk8s-certs
+          key: server.crt
+      keySecret:
+        name: microk8s-certs
+        key: server.key
+      insecureSkipVerify: true

@@ -7,6 +7,7 @@ mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 root_dir := $(dir $(abspath $(mkfile_path)/..))
 helm_path = ${root_dir}deploy/helm/sumologic
 k8s_path = ${root_dir}vagrant/k8s
+dashboards_path = ${root_dir}vagrant/dashboards
 
 # Collector configuration
 cluster = microk8s
@@ -49,7 +50,8 @@ helm-upgrade:
 		--set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="${cluster}" \
 		--set sumologic.clusterName="${cluster}" \
 		--set sumologic.endpoint="${endpoint}" \
-		--set prometheus-operator.grafana.enabled=true
+		--set prometheus-operator.grafana.enabled=true \
+		-f "${root_dir}vagrant/values.yaml"
 
 apply-service-monitors:
 	kubectl apply -f ${k8s_path}/service-monitors.yaml
@@ -83,3 +85,14 @@ expose-prometheus:
 expose-grafana:
 	echo "Grafana credentials\n  login:    admin\n  password: prom-operator"
 	kubectl port-forward -n "${namespace}" service/collection-grafana --address=0.0.0.0 8080:80
+
+# Load grafana dashboards as configmaps
+grafana-dashboards:
+	kubectl -n sumologic create configmap sumologic-dashboards --from-file="${dashboards_path}"
+
+# Create secrets with microk8s certs
+create-secrets:
+	kubectl create secret -n "${namespace}" generic microk8s-certs \
+		--from-file=/var/snap/microk8s/current/certs/server.key \
+		--from-file=/var/snap/microk8s/current/certs/server.crt \
+		--from-file=/var/snap/microk8s/current/certs/ca.crt
