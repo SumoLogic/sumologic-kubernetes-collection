@@ -177,7 +177,36 @@ cat sumo-values.yaml | \
 
 **Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).**
 
-To upgrade you can simply re-generate the YAML when a new version of the Kubernetes collection is available.  If you wish to upgrade to a specific version, you can pass the `--version` flag when generating the YAML.
+To upgrade you can simply re-generate the YAML when a new version of the Kubernetes collection is available.  You can use the same commands used to create the YAML in the first place.
+
+```bash
+kubectl run tools \
+  -it --quiet --rm \
+  --restart=Never \
+  --image sumologic/kubernetes-tools:1.0.0 -- \
+  template \
+  --namespace 'my-namespace' \
+  --name-template 'collection' \
+  --set sumologic.accessId='<ACCESS_ID>' \
+  --set sumologic.accessKey='<ACCESS_KEY>' \
+  --set sumologic.clusterName='<CLUSTER_NAME>' \
+  | tee sumologic.yaml
+```
+
+If you have made customizations and installed with a `values.yaml`, you can do the same thing command as you did before to generate the YAML.
+
+```bash
+cat sumo-values.yaml | \
+     kubectl run tools \
+       -i --quiet --rm \
+       --restart=Never \
+       --image sumologic/kubernetes-tools:1.0.0 -- \
+       template \
+         --name-template 'collection' \
+         | tee sumologic.yaml
+```
+
+If you wish to upgrade to a specific version, you can pass the `--version` flag when generating the YAML. The following example would use version `1.0.0`.
 
 ```bash
 cat values.yaml | \
@@ -189,6 +218,13 @@ cat values.yaml | \
       --name-template 'collection' \
       --version=1.0.0
       | tee sumologic.yaml
+```
+
+Once you have generated the `sumologic.yaml`, you can run `kubectl apply` on the file containing the rendered YAML from the previous step to upgrade collection. You must change your `kubectl` context to the namespace you wish to install in.
+
+```bash
+kubectl config set-context --current --namespace=my-namespace
+kubectl apply -f sumologic.yaml
 ```
 
 ## Uninstalling Sumo Logic Collection
