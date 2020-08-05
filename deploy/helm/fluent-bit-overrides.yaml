@@ -12,6 +12,9 @@ resources: {}
 ## Comment it out if you wish to have the fluent-bit dependency installed.
 ## Setting the flag to true instead of commenting out will break other functionality.
 # enabled: false
+
+## Add custom pod labels to fluent-bit daemonset pods
+podLabels: {}
 service:
   flush: 5
 metrics:
