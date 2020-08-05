@@ -75,6 +75,28 @@ Examples:
 You can set all of the source [properties](https://www.terraform.io/docs/providers/sumologic/r/http_source.html#argument-reference)
 using `sumologic.sources.<logs,traces,metrics,traces>.<source ref name>.properties`.
 
+#### Processing Rules
+
+You can add [Processing Rules](https://help.sumologic.com/Manage/Collection/Processing-Rules) to an HTTP source via the values.yaml. Below is an example of an exclude rule to filter `DEBUG` log messages.  All logs from Kubernetes (Systemd, container and custom logs) will have this filter applied.
+
+```yaml
+sumologic:
+  # ...
+  sources:
+    # ...
+    logs:
+      # ...
+      default:
+        # ...
+        name: logs
+        config-name: endpoint-logs
+        properties:
+          filters:
+            - name: "Test Exclude Debug"
+              filter_type: "Exclude"
+              regexp: ".*DEBUG.*"
+```
+
 #### Fields
 
 The configuration snippet below configures two [fields](https://help.sumologic.com/Manage/Fields), (`node` and `deployment`) for the default logs source:
