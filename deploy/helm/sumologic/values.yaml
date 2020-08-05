@@ -637,6 +637,9 @@ fluent-bit:
   ## Setting the flag to true instead of commenting out will break other functionality.
   # enabled: false
 
+  ## Add custom pod labels to fluent-bit daemonset pods
+  podLabels: {}
+
   service:
     flush: 5
   metrics:
@@ -756,6 +759,8 @@ fluent-bit:
 ## Configure prometheus-operator
 ## ref: https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml
 prometheus-operator:
+  ## Labels to apply to all pormetheus operator resources
+  commonLabels: {}
   ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
   kubeApiServer:
     serviceMonitor:
@@ -803,6 +808,8 @@ prometheus-operator:
     enabled: false
     defaultDashboardsEnabled: false
   prometheusOperator:
+    ## Labels to add to the operator pod
+    podLabels: {}
     ## Resource limits for prometheus operator
     resources: {}
       # limits:
@@ -826,6 +833,8 @@ prometheus-operator:
         #   memory: 200Mi
     ## Resource limits for prometheus node exporter
     prometheus-node-exporter:
+      ## Additional labels for pods in the DaemonSet
+      podLabels: {}
       resources: {}
         # limits:
         #   cpu: 200m
