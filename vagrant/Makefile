@@ -21,9 +21,12 @@ namespace = sumologic
 ## Collector upgrade
 upgrade:
 	${mkfile_path} \
+		patch-context \
 		remove-tmp \
 		apply-namespace \
 		apply-receiver-mock \
+		create-secrets \
+		grafana-dashboards \
 		helm-dependencies \
 		helm-upgrade \
 		apply-service-monitors
@@ -55,6 +58,9 @@ helm-upgrade:
 
 apply-service-monitors:
 	kubectl apply -f ${k8s_path}/service-monitors.yaml
+
+apply-avalanche:
+	kubectl apply -f ${k8s_path}/avalanche.yaml
 
 ## Collector removing
 clean:
@@ -88,11 +94,17 @@ expose-grafana:
 
 # Load grafana dashboards as configmaps
 grafana-dashboards:
-	kubectl -n sumologic create configmap sumologic-dashboards --from-file="${dashboards_path}"
+	kubectl delete configmap -n "${namespace}" sumologic-dashboards || true
+	kubectl create configmap -n "${namespace}" sumologic-dashboards --from-file="${dashboards_path}"
 
 # Create secrets with microk8s certs
 create-secrets:
+	kubectl delete secret -n "${namespace}" microk8s-certs || true
 	kubectl create secret -n "${namespace}" generic microk8s-certs \
 		--from-file=/var/snap/microk8s/current/certs/server.key \
 		--from-file=/var/snap/microk8s/current/certs/server.crt \
 		--from-file=/var/snap/microk8s/current/certs/ca.crt
+
+# patch context to use sumologic namespace as default
+patch-context:
+	kubectl config set-context --current --namespace "${namespace}"
