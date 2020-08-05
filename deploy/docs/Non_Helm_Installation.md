@@ -105,7 +105,7 @@ Finally, you can run `kubectl apply` on the file containing the rendered YAML fr
 kubectl apply -f sumologic.yaml
 ```
 
-If you with to install the YAML in a different namespace, you can add the `--namespace` flag.  The following will render the YAML and install in the `my-namespace` namespace.
+If you wish to install the YAML in a different namespace, you can add the `--namespace` flag.  The following will render the YAML and install in the `my-namespace` namespace.
 
 ```bash
 kubectl run tools \
