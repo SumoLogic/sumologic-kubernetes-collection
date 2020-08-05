@@ -1,5 +1,5 @@
 # This file is auto-generated.
-## Labels to apply to all pormetheus operator resources
+## Labels to apply to all prometheus operator resources
 commonLabels: {}
 ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
 kubeApiServer:
