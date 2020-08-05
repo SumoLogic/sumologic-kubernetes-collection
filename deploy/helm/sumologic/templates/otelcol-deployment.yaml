@@ -13,11 +13,23 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.otelcol.pod" . }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 6 }}
+{{- end }}
+{{- if .Values.otelcol.deployment.podLabels }}
+{{ toYaml .Values.otelcol.deployment.podLabels | indent 6 }}
+{{- end }}
   template:
     metadata:
       labels:
         app: {{ template "sumologic.labels.app.otelcol.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.otelcol.deployment.podLabels }}
+{{ toYaml .Values.otelcol.deployment.podLabels | indent 6 }}
+{{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       {{- if .Values.otelcol.deployment.nodeSelector }}
