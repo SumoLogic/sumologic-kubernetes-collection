@@ -10,6 +10,9 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.events.pod" . }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 6 }}
+{{- end }}
 {{- if .Values.fluentd.podLabels }}
 {{ toYaml .Values.fluentd.podLabels | indent 6 }}
 {{- end }}
@@ -23,6 +26,9 @@ spec:
       labels:
         app: {{ template "sumologic.labels.app.events.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
 {{- if .Values.fluentd.podLabels }}
 {{ toYaml .Values.fluentd.podLabels | indent 8 }}
 {{- end }}
