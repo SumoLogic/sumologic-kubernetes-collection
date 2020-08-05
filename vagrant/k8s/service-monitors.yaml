@@ -22,8 +22,9 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: microk8s-kubelet
+  namespace: sumologic
   labels:
-    release: collection # ensure this matches the `release` label on your Prometheus pod
+    release: collection # Ensure this matches the `release` label on your Prometheus pod
 spec:
   selector:
     matchLabels:
@@ -73,3 +74,22 @@ spec:
         name: microk8s-certs
         key: server.key
       insecureSkipVerify: true
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: avalanche
+  namespace: sumologic
+  labels:
+    release: collection # Ensure this matches the `release` label on your Prometheus pod
+spec:
+  selector:
+    matchLabels:
+      app: avalanche
+  namespaceSelector:
+    matchNames:
+    - avalanche
+  endpoints:
+  - port: "http-avalanche" # Same as service's port name
+    interval: 30s
