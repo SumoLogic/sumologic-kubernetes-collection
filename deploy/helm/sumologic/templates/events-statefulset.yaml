@@ -23,6 +23,16 @@ spec:
   podManagementPolicy: "Parallel"
   template:
     metadata:
+      annotations:
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 6 }}
+{{- end }}
+{{- if .Values.fluentd.podAnnotations }}
+{{ toYaml .Values.fluentd.podAnnotations | indent 6 }}
+{{- end }}
+{{- if .Values.fluentd.events.statefulset.podAnnotations }}
+{{ toYaml .Values.fluentd.events.statefulset.podAnnotations | indent 6 }}
+{{- end }}
       labels:
         app: {{ template "sumologic.labels.app.events.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}

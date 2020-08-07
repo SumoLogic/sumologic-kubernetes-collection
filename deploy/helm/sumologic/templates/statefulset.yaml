@@ -24,6 +24,16 @@ spec:
   replicas: {{ .Values.fluentd.logs.statefulset.replicaCount }}
   template:
     metadata:
+      annotations:
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 6 }}
+{{- end }}
+{{- if .Values.fluentd.podAnnotations }}
+{{ toYaml .Values.fluentd.podAnnotations | indent 6 }}
+{{- end }}
+{{- if .Values.fluentd.logs.statefulset.podAnnotations }}
+{{ toYaml .Values.fluentd.logs.statefulset.podAnnotations | indent 6 }}
+{{- end }}
       labels:
         app: {{ template "sumologic.labels.app.logs.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
