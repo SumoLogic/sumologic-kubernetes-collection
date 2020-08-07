@@ -136,6 +136,12 @@ sumologic:
       default:
         name: logs
         config-name: endpoint-logs
+        # properties can be used to extend default settings, such as processing rules, fields etc
+        #properties:
+          #filters:
+            #- name: "Test Exclude Debug"
+            #filter_type: "Exclude"
+            #regexp: ".*DEBUG.*"
     events:
       default:
         name: events
