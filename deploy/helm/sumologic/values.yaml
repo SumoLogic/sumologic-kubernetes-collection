@@ -65,6 +65,9 @@ sumologic:
   ## Add custom labels to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
   podLabels: {}
 
+  ## Add custom annotations to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
+  podAnnotations: {}
+
   setup:
     clusterRole:
       annotations:
@@ -88,6 +91,8 @@ sumologic:
         helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
       ## Add custom labels only to setup job pod
       podLabels: {}
+      ## Add custom annotations only to setup job pod
+      podAnnotations: {}
     serviceAccount:
       annotations:
         helm.sh/hook: pre-install,pre-upgrade
@@ -191,6 +196,9 @@ fluentd:
   ## Add custom labels to all fluentd sts pods(logs, metrics, events)
   podLabels: {}
 
+  ## Add custom annotations to all fluentd sts pods(logs, metrics, events)
+  podAnnotations: {}
+
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
     ## After setting the value to true, run the helm upgrade command with the --force flag.
@@ -293,6 +301,8 @@ fluentd:
           cpu: 0.5
       ## Add custom labels only to logs fluentd sts pods
       podLabels: {}
+      ## Add custom annotations only to logs fluentd sts pods
+      podAnnotations: {}
     
     ## Option to turn autoscaling on for fluentd and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
@@ -483,6 +493,8 @@ fluentd:
           cpu: 0.5
       ## Add custom labels only to metrics fluentd sts pods
       podLabels: {}
+      ## Add custom annotations only to metrics fluentd sts pods
+      podAnnotations: {}
 
     ## Option to turn autoscaling on for fluentd and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
@@ -588,6 +600,8 @@ fluentd:
           cpu: "100m"
       ## Add custom labels only to events fluentd sts pods
       podLabels: {}
+      ## Add custom annotations only to events fluentd sts pods
+      podAnnotations: {}
 
     # Source category for the Events source. Default: "{clusterName}/events"
     sourceCategory: ""
@@ -645,6 +659,9 @@ fluent-bit:
 
   ## Add custom pod labels to fluent-bit daemonset pods
   podLabels: {}
+
+  ## Add custom pod annotations to fluent-bit daemonset pods
+  podAnnotations: {}
 
   service:
     flush: 5
@@ -816,6 +833,8 @@ prometheus-operator:
   prometheusOperator:
     ## Labels to add to the operator pod
     podLabels: {}
+    ## Annotations to add to the operator pod
+    podAnnotations: {}
     ## Resource limits for prometheus operator
     resources: {}
       # limits:
@@ -841,6 +860,8 @@ prometheus-operator:
     prometheus-node-exporter:
       ## Additional labels for pods in the DaemonSet
       podLabels: {}
+      ## Additional annotations for pods in the DaemonSet
+      podAnnotations: {}
       resources: {}
         # limits:
         #   cpu: 200m
@@ -1245,6 +1266,8 @@ otelcol:
         cpu: "200m"
     ## Add custom labels only to otelcol deployment.
     podLabels: {}
+    ## Add custom annotations only to otelcol deployment.
+    podAnnotations: {}
     # Memory Ballast size should be max 1/3 to 1/2 of memory.
     memBallastSizeMib: "683"
     image:
