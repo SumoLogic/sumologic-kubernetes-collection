@@ -787,6 +787,7 @@ spec:
   podManagementPolicy: "Parallel"
   template:
     metadata:
+      annotations:
       labels:
         app: collection-sumologic-fluentd-events
         
@@ -868,6 +869,7 @@ spec:
   replicas: 3
   template:
     metadata:
+      annotations:
       labels:
         app: collection-sumologic-fluentd-metrics
         
@@ -1008,6 +1010,7 @@ spec:
   replicas: 3
   template:
     metadata:
+      annotations:
       labels:
         app: collection-sumologic-fluentd-logs
         
