@@ -4,9 +4,7 @@ kind: ClusterRoleBinding
 metadata:
   name:  {{ template "sumologic.metadata.name.setup.roles.clusterrolebinding" . }}
   annotations:
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-weight: "2"
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+{{ include "sumologic.annotations.app.setup.helmsh" "2" | indent 4 }}
   labels:
     app: {{ template "sumologic.labels.app.setup.roles.clusterrolebinding" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
