@@ -69,35 +69,11 @@ sumologic:
   podAnnotations: {}
 
   setup:
-    clusterRole:
-      annotations:
-        helm.sh/hook: pre-install,pre-upgrade
-        helm.sh/hook-weight: "1"
-        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-    clusterRoleBinding:
-      annotations:
-        helm.sh/hook: pre-install,pre-upgrade
-        helm.sh/hook-weight: "2"
-        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-    configMap:
-      annotations:
-        helm.sh/hook: pre-install,pre-upgrade
-        helm.sh/hook-weight: "2"
-        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     job:
-      annotations:
-        helm.sh/hook: pre-install,pre-upgrade
-        helm.sh/hook-weight: "3"
-        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
       ## Add custom labels only to setup job pod
       podLabels: {}
       ## Add custom annotations only to setup job pod
       podAnnotations: {}
-    serviceAccount:
-      annotations:
-        helm.sh/hook: pre-install,pre-upgrade
-        helm.sh/hook-weight: "0"
-        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
     ## Configuration of additional collector fields
     ## https://help.sumologic.com/Manage/Fields#http-source-fields
