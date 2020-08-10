@@ -48,6 +48,8 @@ grafana:
 prometheusOperator:
   ## Labels to add to the operator pod
   podLabels: {}
+  ## Annotations to add to the operator pod
+  podAnnotations: {}
   ## Resource limits for prometheus operator
   resources: {}
   # limits:
@@ -73,6 +75,8 @@ prometheusOperator:
   prometheus-node-exporter:
     ## Additional labels for pods in the DaemonSet
     podLabels: {}
+    ## Additional annotations for pods in the DaemonSet
+    podAnnotations: {}
     resources: {}
     # limits:
     #   cpu: 200m
