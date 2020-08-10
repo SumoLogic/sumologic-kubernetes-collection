@@ -105,7 +105,7 @@ metadata:
     release: collection  # ensure this matches the `release` label on your Prometheus pod
 spec:
   selector:
-    matchSelector:
+    matchLabels:
       app: example-metrics
   endpoints:
   - port: "8000"  # Same as service's port name
