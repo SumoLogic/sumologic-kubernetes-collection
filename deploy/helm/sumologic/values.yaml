@@ -823,28 +823,30 @@ prometheus-operator:
       enabled: false
     tlsProxy:
       enabled: false
-    ## Resource limits for kube-state-metrics
-    kube-state-metrics:
-      resources: {}
-        # limits:
-        #   cpu: 200m
-        #   memory: 200Mi
-        # requests:
-        #   cpu: 200m
-        #   memory: 200Mi
-    ## Resource limits for prometheus node exporter
-    prometheus-node-exporter:
-      ## Additional labels for pods in the DaemonSet
-      podLabels: {}
-      ## Additional annotations for pods in the DaemonSet
-      podAnnotations: {}
-      resources: {}
-        # limits:
-        #   cpu: 200m
-        #   memory: 50Mi
-        # requests:
-        #   cpu: 100m
-        #   memory: 30Mi
+  ## Resource limits for kube-state-metrics
+  kube-state-metrics:
+    ## Custom labels to apply to service, deployment and pods
+    customLabels: {}
+    resources: {}
+      # limits:
+      #   cpu: 100m
+      #   memory: 64Mi
+      # requests:
+      #   cpu: 10m
+      #   memory: 32Mi
+  ## Resource limits for prometheus node exporter
+  prometheus-node-exporter:
+    ## Additional labels for pods in the DaemonSet
+    podLabels: {}
+    ## Additional annotations for pods in the DaemonSet
+    podAnnotations: {}
+    resources: {}
+      # limits:
+      #   cpu: 200m
+      #   memory: 50Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 30Mi
   prometheus:
     additionalServiceMonitors:
       - name: collection-sumologic-fluentd-logs
