@@ -21,6 +21,13 @@ spec:
 {{- end }}
   template:
     metadata:
+      annotations:
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 6 }}
+{{- end }}
+{{- if .Values.otelcol.deployment.podAnnotations }}
+{{ toYaml .Values.otelcol.deployment.podAnnotations | indent 6 }}
+{{- end }}
       labels:
         app: {{ template "sumologic.labels.app.otelcol.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}

@@ -4,7 +4,7 @@ kind: ClusterRoleBinding
 metadata:
   name:  {{ template "sumologic.metadata.name.setup.roles.clusterrolebinding" . }}
   annotations:
-{{ toYaml .Values.sumologic.setup.clusterRoleBinding.annotations | indent 4 }}
+{{ include "sumologic.annotations.app.setup.helmsh" "2" | indent 4 }}
   labels:
     app: {{ template "sumologic.labels.app.setup.roles.clusterrolebinding" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}

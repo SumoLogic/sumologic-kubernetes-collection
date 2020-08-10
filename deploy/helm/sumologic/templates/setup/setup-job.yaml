@@ -5,7 +5,10 @@ metadata:
   name: {{ template "sumologic.metadata.name.setup.job" . }}
   namespace: {{ .Release.Namespace }}
   annotations:
-{{ toYaml .Values.sumologic.setup.job.annotations | indent 4 }}
+{{ include "sumologic.annotations.app.setup.helmsh" "3" | indent 4 }}
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 2 }}
+{{- end }}
   labels:
     app: {{ template "sumologic.labels.app.setup.job" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
