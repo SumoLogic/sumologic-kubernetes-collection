@@ -703,7 +703,7 @@ fluent-bit:
       Skip_Long_Lines  On
       DB               /tail-db/tail-containers-state-sumo.db
       DB.Sync          Normal
-      Ignore_Older     24h
+
     [INPUT]
       Name            systemd
       Tag             host.*
