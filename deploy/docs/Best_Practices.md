@@ -10,6 +10,7 @@
 - [Modify the Log Level for Falco](#Modify-the-Log-Level-for-Falco)
 - [Override environment variables using annotations](#Override-environment-variables-using-annotations)
 - [Templating Kubernetes metadata](#Templating-Kubernetes-metadata)
+- [Configure Ignore_Older Config for Fluentbit](#Configure-Ignore-Older-Config-for-fluentbit)
 
 
 ### Multiline Log Support
@@ -321,3 +322,39 @@ The following Kubernetes metadata is available for string templating:
 Unlike the other templates, labels are not guaranteed to exist, so missing labels interpolate as `"undefined"`.
 
 For example, if you have only the label `app: travel` but you define `SOURCE_NAME="%{label:app}@%{label:version}"`, the source name will appear as `travel@undefined`.
+
+### Configure Ignore_Older Config for Fluentbit
+We have observed that the  `Ignore_Older` config does not work when `Multiline` is set to `On`.
+Default config:
+```
+    [INPUT]
+        Name             tail
+        Path             /var/log/containers/*.log
+        Multiline        On
+        Parser_Firstline multi_line
+        Tag              containers.*
+        Refresh_Interval 1
+        Rotate_Wait      60
+        Mem_Buf_Limit    5MB
+        Skip_Long_Lines  On
+        DB               /tail-db/tail-containers-state-sumo.db
+        DB.Sync          Normal
+```
+Please make the below changes to the `INPUT` section to turn off `Multiline` and add a `docker` parser to parse the time for `Ignore_Older` functionality to work properly.  
+<pre>
+[INPUT]
+    Name             tail
+    Path             /var/log/containers/*.log
+    <b>Multiline        Off</b>
+    Parser_Firstline multi_line
+    Tag              containers.*
+    Refresh_Interval 1
+    Rotate_Wait      60
+    Mem_Buf_Limit    5MB
+    Skip_Long_Lines  On
+    DB               /tail-db/tail-containers-state-sumo.db
+    DB.Sync          Normal
+    <b>Ignore_Older     24h</b>
+    <b>Parser           Docker</b>
+</pre>
+Ref: https://docs.fluentbit.io/manual/pipeline/inputs/tail
