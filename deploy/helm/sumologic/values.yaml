@@ -292,6 +292,12 @@ fluentd:
       @include common.conf
       @include logs.conf
 
+    ## Configuration for the forward input plugin that receives logs from FluentBit
+    ## ref: https://docs.fluentd.org/input/forward
+    input:
+      ## Use to specify additional config, including transport or security options.
+      forwardExtraConf: |-
+
     ## Configuration for sumologic output plugin
     ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
     ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/logs/logs.output.conf
