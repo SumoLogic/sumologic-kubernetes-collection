@@ -10,15 +10,6 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.metrics.pod" . }}
-{{- if .Values.sumologic.podLabels }}
-{{ toYaml .Values.sumologic.podLabels | indent 6 }}
-{{- end }}
-{{- if .Values.fluentd.podLabels }}
-{{ toYaml .Values.fluentd.podLabels | indent 6 }}
-{{- end }}
-{{- if .Values.fluentd.metrics.statefulset.podLabels }}
-{{ toYaml .Values.fluentd.metrics.statefulset.podLabels | indent 6 }}
-{{- end }}
   serviceName: {{ template "sumologic.metadata.name.metrics.service-headless" . }}
   podManagementPolicy: "Parallel"
   replicas: {{ .Values.fluentd.metrics.statefulset.replicaCount }}
