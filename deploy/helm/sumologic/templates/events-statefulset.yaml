@@ -10,15 +10,6 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.events.pod" . }}
-{{- if .Values.sumologic.podLabels }}
-{{ toYaml .Values.sumologic.podLabels | indent 6 }}
-{{- end }}
-{{- if .Values.fluentd.podLabels }}
-{{ toYaml .Values.fluentd.podLabels | indent 6 }}
-{{- end }}
-{{- if .Values.fluentd.events.statefulset.podLabels }}
-{{ toYaml .Values.fluentd.events.statefulset.podLabels | indent 6 }}
-{{- end }}
   serviceName: {{ template "sumologic.metadata.name.events.service-headless" . }}
   podManagementPolicy: "Parallel"
   template:
