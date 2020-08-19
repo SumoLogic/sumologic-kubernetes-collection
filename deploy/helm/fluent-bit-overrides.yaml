@@ -34,7 +34,7 @@ env:
 backend:
   type: forward
   forward:
-    # NOTE: Requires trailing "." for fully-qualified name resolution
+    ## NOTE: Requires trailing "." for fully-qualified name resolution
     host: ${CHART}.${NAMESPACE}.svc.cluster.local.
     port: 24321
     tls: "off"
@@ -50,7 +50,7 @@ input:
     enabled: true
 parsers:
   enabled: true
-  # This regex matches the first line of a multiline log starting with a date of the format :  "2019-11-17 07:14:12" or "2019-11-17T07:14:12"
+  ## This regex matches the first line of a multiline log starting with a date of the format :  "2019-11-17 07:14:12" or "2019-11-17T07:14:12"
   regex:
     - name: multi_line
       regex: (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
