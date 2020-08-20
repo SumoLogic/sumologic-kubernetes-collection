@@ -1,6 +1,8 @@
 prometheus-operator:
   grafana:
-    enabled: True
+    enabled: true
+    dashboardsConfigMaps:
+      default: sumologic-dashboards
     dashboardProviders:
       dashboardproviders.yaml:
         apiVersion: 1
@@ -13,5 +15,11 @@ prometheus-operator:
           editable: true
           options:
             path: /var/lib/grafana/dashboards/default
-    dashboardsConfigMaps:
-      default: sumologic-dashboards
+    prometheus:
+      prometheusSpec:
+        externalLabels:
+          cluster: microk8s
+sumologic:
+  accessId: dummy
+  accessKey: dummy
+  endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/

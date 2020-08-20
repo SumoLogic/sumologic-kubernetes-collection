@@ -10,10 +10,6 @@ k8s_path = ${root_dir}vagrant/k8s
 dashboards_path = ${root_dir}vagrant/dashboards
 
 # Collector configuration
-cluster = microk8s
-endpoint = http://receiver-mock.receiver-mock:3000/terraform/api/
-access_id = dummy
-access_key = dummy
 name = collection
 namespace = sumologic
 
@@ -48,12 +44,6 @@ helm-upgrade:
 	helm upgrade "${name}" "${helm_path}" \
 		--namespace "${namespace}" \
 		--install \
-		--set sumologic.accessId="${access_id}" \
-		--set sumologic.accessKey="${access_key}" \
-		--set prometheus-operator.prometheus.prometheusSpec.externalLabels.cluster="${cluster}" \
-		--set sumologic.clusterName="${cluster}" \
-		--set sumologic.endpoint="${endpoint}" \
-		--set prometheus-operator.grafana.enabled=true \
 		-f "${root_dir}vagrant/values.yaml"
 
 apply-service-monitors:
