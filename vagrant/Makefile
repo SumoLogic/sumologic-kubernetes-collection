@@ -19,7 +19,7 @@ upgrade:
 	${mkfile_path} \
 		patch-context \
 		remove-tmp \
-		apply-namespace \
+		apply-namespaces \
 		apply-receiver-mock \
 		create-secrets \
 		grafana-dashboards \
@@ -31,8 +31,9 @@ upgrade:
 remove-tmp:
 	rm -rf ${helm_path}/tmpcharts
 
-apply-namespace:
-	kubectl apply -f ${k8s_path}/sumologic.yaml
+apply-namespaces:
+	kubectl apply -f ${k8s_path}/sumologic-namespace.yaml
+	kubectl apply -f ${k8s_path}/redis-demo-namespace.yaml
 
 apply-receiver-mock:
 	kubectl apply -f ${k8s_path}/receiver-mock.yaml
@@ -52,14 +53,21 @@ apply-service-monitors:
 apply-avalanche:
 	kubectl apply -f ${k8s_path}/avalanche.yaml
 
+apply-redis-demo:
+	kubectl apply -f ${k8s_path}/redis-demo.yaml
+
 ## Collector removing
 clean:
 	${mkfile_path} \
 		remove-collector \
-		remove-service-monitors remove-receiver-mock remove-prometheus-crds remove-namespace
+		remove-service-monitors \
+		remove-receiver-mock \
+		remove-prometheus-crds \
+		remove-namespaces
 
-remove-namespace:
-	kubectl delete -f ${k8s_path}/sumologic.yaml --ignore-not-found=true
+remove-namespaces:
+	kubectl delete -f ${k8s_path}/sumologic-namespace.yaml --ignore-not-found=true
+	kubectl delete -f ${k8s_path}/redis-demo-namespace.yaml --ignore-not-found=true
 
 remove-prometheus-crds:
 	kubectl delete customresourcedefinitions.apiextensions.k8s.io  --ignore-not-found=true \

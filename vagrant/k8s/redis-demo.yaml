@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: redis-demo
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        sumologic.com/service: telegraf
+      annotations:
+        telegraf.influxdata.com/inputs: |+
+          [[inputs.redis]]
+          servers = ["tcp://localhost:6379"]
+        telegraf.influxdata.com/class: sumologic-prometheus
+        telegraf.influxdata.com/limits-cpu: '750m'
+    spec:
+      containers:
+        - name: redis
+          image: redis:alpine
