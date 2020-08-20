@@ -58,7 +58,7 @@ Reference: https://docs.fluentbit.io/manual/v/1.3/input/tail#docker_mode
 
 ### Fluentd Autoscaling
 
-We have provided an option to enable autoscaling for Fluentd deployments. This is disabled by default. 
+We have provided an option to enable autoscaling for both logs and metrics Fluentd statefulsets. This is disabled by default. 
 
 To enable autoscaling for Fluentd:
 
@@ -71,12 +71,22 @@ To enable autoscaling for Fluentd:
     enabled: true
   ```
 
-- Enable autoscaling for Fluentd
+- Enable autoscaling for Logs Fluentd statefulset 
 ```yaml
 fluentd:
-  ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
-  autoscaling:
-    enabled: true
+  logs:
+    ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
+    autoscaling:
+      enabled: true
+```
+
+- Enable autoscaling for Metrics Fluentd statefulset 
+```yaml
+fluentd:
+  metrics:
+    ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
+    autoscaling:
+      enabled: true
 ```
 
 
