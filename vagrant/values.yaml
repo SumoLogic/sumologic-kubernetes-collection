@@ -23,3 +23,6 @@ sumologic:
   accessId: dummy
   accessKey: dummy
   endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
+telegraf:
+  enabled: true
+  replicaCount: 1

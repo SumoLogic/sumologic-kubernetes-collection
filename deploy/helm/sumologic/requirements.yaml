@@ -15,3 +15,8 @@ dependencies:
     version: 2.11.1
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: metrics-server.enabled
+  - name: telegraf-operator
+    alias: telegraf
+    version: 1.1.2
+    repository: https://helm.influxdata.com/
+    condition: telegraf.enabled

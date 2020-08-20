@@ -1477,3 +1477,49 @@ otelcol:
           receivers: [jaeger, opencensus, otlp, zipkin]
           processors: [memory_limiter, k8s_tagger, source, resource, batch, queued_retry]
           exporters: [zipkin]
+
+## Configure telegraf-operator
+## This is an experimental configuration and shouldn't be used in production environment
+## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
+telegraf:
+  enabled: false
+  replicaCount: 1
+  classes:
+    secretName: "telegraf-operator-classes"
+    default: "sumologic-prometheus"
+    data:
+      sumologic-prometheus: |
+        [[outputs.prometheus_client]]
+        ## Address to listen on.
+        listen = ":9273"
+        ## Metric version controls the mapping from Telegraf metrics into
+        ## Prometheus format.  When using the prometheus input, use the same value in
+        ## both plugins to ensure metrics are round-tripped without modification.
+        ##
+        ##   example: metric_version = 1; deprecated in 1.13
+        ##            metric_version = 2; recommended version
+        metric_version = 2
+        ## Use HTTP Basic Authentication.
+        # basic_username = "Foo"
+        # basic_password = "Bar"
+        ## If set, the IP Ranges which are allowed to access metrics.
+        ##   ex: ip_range = ["192.168.0.0/24", "192.168.1.0/30"]
+        # ip_range = []
+        ## Path to publish the metrics on.
+        # path = "/metrics"
+        ## Expiration interval for each metric. 0 == no expiration
+        # expiration_interval = "60s"
+        ## Collectors to enable, valid entries are "gocollector" and "process".
+        ## If unset, both are enabled.
+        # collectors_exclude = ["gocollector", "process"]
+        ## Send string metrics as Prometheus labels.
+        ## Unless set to false all string metrics will be sent as labels.
+        # string_as_label = true
+        ## If set, enable TLS with the given certificate.
+        # tls_cert = "/etc/ssl/telegraf.crt"
+        # tls_key = "/etc/ssl/telegraf.key"
+        ## Set one or more allowed client CA certificate file names to
+        ## enable mutually authenticated TLS connections
+        # tls_allowed_cacerts = ["/etc/telegraf/clientca.pem"]
+        ## Export metric collection time.
+        # export_timestamp = false
