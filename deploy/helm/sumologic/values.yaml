@@ -1537,3 +1537,20 @@ otelcol:
           receivers: [jaeger, opencensus, otlp, zipkin]
           processors: [memory_limiter, k8s_tagger, source, resource, batch, queued_retry]
           exporters: [zipkin]
+
+## Configure telegraf-operator
+## This is an experimental configuration and shouldn't be used in production environment
+## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
+telegraf-operator:
+  enabled: false
+  replicaCount: 1
+  classes:
+    secretName: "telegraf-operator-classes"
+    default: "sumologic-prometheus"
+    data:
+      sumologic-prometheus: |
+        [[outputs.prometheus_client]]
+          ## Configuration details:
+          ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration
+          listen = ":9273"
+          metric_version = 2

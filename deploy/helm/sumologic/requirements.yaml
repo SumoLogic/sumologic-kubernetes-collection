@@ -16,3 +16,7 @@ dependencies:
     version: 2.11.1
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: metrics-server.enabled
+  - name: telegraf-operator
+    version: 1.1.4
+    repository: https://sumologic.github.io/influxdata-helm-charts
+    condition: telegraf-operator.enabled
