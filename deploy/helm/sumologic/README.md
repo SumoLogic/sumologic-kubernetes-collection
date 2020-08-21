@@ -1,0 +1,1 @@
+../../docs/HelmChartConfiguration.md
