@@ -17,13 +17,13 @@ spec:
     metadata:
       annotations:
 {{- if .Values.sumologic.podAnnotations }}
-{{ toYaml .Values.sumologic.podAnnotations | indent 6 }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
 {{- if .Values.fluentd.podAnnotations }}
-{{ toYaml .Values.fluentd.podAnnotations | indent 6 }}
+{{ toYaml .Values.fluentd.podAnnotations | indent 8 }}
 {{- end }}
 {{- if .Values.fluentd.logs.statefulset.podAnnotations }}
-{{ toYaml .Values.fluentd.logs.statefulset.podAnnotations | indent 6 }}
+{{ toYaml .Values.fluentd.logs.statefulset.podAnnotations | indent 8 }}
 {{- end }}
       labels:
         app: {{ template "sumologic.labels.app.logs.pod" . }}
