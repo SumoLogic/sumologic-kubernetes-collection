@@ -26,7 +26,7 @@ sumologic:
   #accessKey: ""
 
   ## Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
-  # ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
+  ## ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
   endpoint: ""
 
   ## proxy urls
@@ -36,7 +36,7 @@ sumologic:
   ## Collector name
   #collectorName: ""
 
-  # Cluster name: Note spaces are not allowed and will be replaced with dashes.
+  ## Cluster name: Note spaces are not allowed and will be replaced with dashes.
   clusterName: "kubernetes"
 
   ## Configuration of kubernetes for terraform client
