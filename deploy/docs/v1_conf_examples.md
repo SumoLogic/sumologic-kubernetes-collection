@@ -31,7 +31,9 @@ sumologic:
         name: My custom logs
 ```
 
-The `custom-log` will be available in Fluentd as the `SUMO_ENDPOINT_MY_CUSTOM_LOGS_SOURCE` environmental variable.
+The `custom-log` will be available in Fluentd as the `SUMO_ENDPOINT_MY_CUSTOM_LOGS_SOURCE` environmental variable. 
+
+**NOTE**: In case you want to send these logs to the default logs source, use `SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE` instead.
 
 ```yaml
 fluentd:
@@ -45,9 +47,9 @@ fluentd:
         data_type logs
         log_key log
         endpoint "#{ENV['SUMO_ENDPOINT_MY_CUSTOM_LOGS_SOURCE']}"
-        proxy_uri "#{ENV['PROXY_URI']}"
-        verify_ssl "#{ENV['VERIFY_SSL']}"
-        log_format "json_merge"
+        proxy_uri ""
+        verify_ssl "true"
+        log_format "fields"
         add_timestamp "false"
         <buffer>
           @type memory
