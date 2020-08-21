@@ -23,10 +23,10 @@ spec:
     metadata:
       annotations:
 {{- if .Values.sumologic.podAnnotations }}
-{{ toYaml .Values.sumologic.podAnnotations | indent 6 }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
 {{- if .Values.otelcol.deployment.podAnnotations }}
-{{ toYaml .Values.otelcol.deployment.podAnnotations | indent 6 }}
+{{ toYaml .Values.otelcol.deployment.podAnnotations | indent 8 }}
 {{- end }}
       labels:
         app: {{ template "sumologic.labels.app.otelcol.pod" . }}
