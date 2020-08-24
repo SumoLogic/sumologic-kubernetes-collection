@@ -136,7 +136,7 @@ fluentd:
 The following config parameters are set by default and their values can be set by changing the respective config in `values.yaml`. 
 
 ```bash
-compress gzip
+compress {{ .Values.fluentd.buffer.compress | quote }}
 flush_interval {{ .Values.fluentd.buffer.flushInterval | quote }}
 flush_thread_count {{ .Values.fluentd.buffer.numThreads | quote }}
 chunk_limit_size {{ .Values.fluentd.buffer.chunkLimitSize | quote }}

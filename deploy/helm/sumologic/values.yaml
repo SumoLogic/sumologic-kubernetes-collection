@@ -211,6 +211,9 @@ fluentd:
     totalLimitSize: "128m"
     retryMaxInterval: "10m"
     retryForever: true
+    ## usage of the gzip compression is highly not recommended due to fluentd issue:
+    ## rel: https://github.com/fluent/fluentd/issues/3056
+    compress: text
 
     ## File paths to buffer to, if Fluentd buffer type is specified as file above.
     ## Each sumologic output plugin buffers to its own unique file.
