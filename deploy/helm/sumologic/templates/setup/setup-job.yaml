@@ -4,6 +4,8 @@ kind: Job
 metadata:
   name: {{ template "sumologic.metadata.name.setup.job" . }}
   namespace: {{ .Release.Namespace }}
+  annotations:
+{{ include "sumologic.annotations.app.setup.helmsh" "3" | indent 4 }}
   labels:
     app: {{ template "sumologic.labels.app.setup.job" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
@@ -11,7 +13,6 @@ spec:
   template:
     metadata:
       annotations:
-{{ include "sumologic.annotations.app.setup.helmsh" "3" | indent 8 }}
 {{- if .Values.sumologic.podAnnotations }}
 {{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
