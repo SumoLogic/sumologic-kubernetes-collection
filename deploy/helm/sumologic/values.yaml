@@ -838,6 +838,8 @@ prometheus-operator:
   kube-state-metrics:
     ## Custom labels to apply to service, deployment and pods
     customLabels: {}
+    ## Additional annotations for pods in the DaemonSet
+    podAnnotations: {}
     resources: {}
       # limits:
       #   cpu: 100m
@@ -920,6 +922,10 @@ prometheus-operator:
       ## Prometheus default scrape interval, default from upstream Prometheus Operator Helm chart
       ## NOTE changing the scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
       scrapeInterval: "30s"
+      ## Add custom pod annotations and labels to prometheus pods
+      podMetadata:
+        labels: {}
+        annotations: {}
       ## Define resources requests and limits for single Pods.
       resources: {}
       # limits:
