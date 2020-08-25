@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nginx
+  namespace: demo-nginx-docker
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  serviceName: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+      annotations:
+        telegraf.influxdata.com/inputs: |+
+          [[inputs.nginx]]
+            urls = ["http://localhost/nginx_status"]
+        telegraf.influxdata.com/class: sumologic-prometheus
+        telegraf.influxdata.com/limits-cpu: '750m'
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9273"
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+      volumes:
+        - name: config-volume
+          configMap:
+            # Provide the name of the ConfigMap containing the files you want
+            # to add to the container
+            name: nginx-config
