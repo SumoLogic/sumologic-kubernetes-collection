@@ -101,3 +101,13 @@ create-secrets:
 # patch context to use sumologic namespace as default
 patch-context:
 	kubectl config set-context --current --namespace "${namespace}"
+
+# Application metrics demo
+## Docker based nginx
+application-metrics-nginx-docker-run:
+	kubectl create ns demo-nginx-docker || true
+	kubectl -n demo-nginx-docker apply -f ${k8s_path}/application_metrics/nginx/docker/configmap.yaml
+	kubectl -n demo-nginx-docker apply -f ${k8s_path}/application_metrics/nginx/docker/statefulset.yaml
+
+application-metrics-nginx-docker-clean:
+	kubectl delete ns demo-nginx-docker
