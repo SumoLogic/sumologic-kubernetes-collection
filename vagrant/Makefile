@@ -33,7 +33,6 @@ remove-tmp:
 
 apply-namespaces:
 	kubectl apply -f ${k8s_path}/sumologic-namespace.yaml
-	kubectl apply -f ${k8s_path}/redis-demo-namespace.yaml
 
 apply-receiver-mock:
 	kubectl apply -f ${k8s_path}/receiver-mock.yaml
@@ -53,9 +52,6 @@ apply-service-monitors:
 apply-avalanche:
 	kubectl apply -f ${k8s_path}/avalanche.yaml
 
-apply-redis-demo:
-	kubectl apply -f ${k8s_path}/redis-demo.yaml
-
 ## Collector removing
 clean:
 	${mkfile_path} \
@@ -67,7 +63,6 @@ clean:
 
 remove-namespaces:
 	kubectl delete -f ${k8s_path}/sumologic-namespace.yaml --ignore-not-found=true
-	kubectl delete -f ${k8s_path}/redis-demo-namespace.yaml --ignore-not-found=true
 
 remove-prometheus-crds:
 	kubectl delete customresourcedefinitions.apiextensions.k8s.io  --ignore-not-found=true \
@@ -132,3 +127,11 @@ application-metrics-nginx-ingress-official-run:
 application-metrics-nginx-ingress-official-docker-clean:
 	helm delete -n demo-nginx-ingress-official demo-nginx-ingress-official
 	kubectl delete ns demo-nginx-ingress-official
+
+## Docker based redis
+application-metrics-redis-docker-run:
+	kubectl create ns demo-redis-docker || true
+	kubectl -n demo-redis-docker apply -f ${k8s_path}/application_metrics/redis/docker/statefulset.yaml
+
+application-metrics-redis-docker-clean:
+	kubectl delete ns demo-redis-docker

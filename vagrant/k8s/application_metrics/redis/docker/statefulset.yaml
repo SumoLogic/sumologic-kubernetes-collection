@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: redis
-  namespace: redis-demo
+  namespace: demo-redis-docker
 spec:
   selector:
     matchLabels:
@@ -13,13 +13,15 @@ spec:
     metadata:
       labels:
         app: redis
-        sumologic.com/service: telegraf
       annotations:
         telegraf.influxdata.com/inputs: |+
           [[inputs.redis]]
           servers = ["tcp://localhost:6379"]
         telegraf.influxdata.com/class: sumologic-prometheus
         telegraf.influxdata.com/limits-cpu: '750m'
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9273"
+
     spec:
       containers:
         - name: redis
