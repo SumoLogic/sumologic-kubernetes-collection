@@ -33,7 +33,24 @@ To add Telegraf sidecar you need to set few annotations in a pod specification:
 This annotation defines which of the output configuration is used to expose metrics.
  - `telegraf.influxdata.com/limits-cpu` which defines cpu usage of the sidecar container
 
- ### Expose sidecar by `telegraf-metrics` service
+ ### Expose Metrics
+
+ There are two ways to expose metrics from telegraf to prometheus.
+ You can do this via `Service` or by additional annotations.
+
+ #### Expose sidecar using annotations
+
+ To expose telegraf metrics you can simply add following annotations to a pod specification
+
+ ```yaml
+ # ...
+ annotations:
+   # ...
+   prometheus.io/scrape: "true"
+   prometheus.io/port: "9273"
+ ```
+
+ #### Expose sidecar by `telegraf-metrics` service
 
  After sidecar is configured it needs to be exposed to be accessible via `telegraf-metrics` service.
  In order to do it label `sumologic.com/service: telegraf` is used. This label should be add to
