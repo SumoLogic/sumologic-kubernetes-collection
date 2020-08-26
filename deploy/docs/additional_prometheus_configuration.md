@@ -71,6 +71,8 @@ There are many pre-built libraries that the community has built to expose these,
 
 ### Set up a service monitor so that Prometheus pulls the data
 
+#### ServiceMonitor
+
 To expose metrics to prometheus, you need to have some service. Let's say here is our example service configuration:
 
 ```yaml
@@ -146,6 +148,20 @@ prometheus-operator:  # For values.yaml
           matchLabels:
             app: example-metrics
 ```
+
+#### Annotations
+
+Alternatively to Service and ServiceMonitor you can use dedicated annotations in your pod:
+
+```yaml
+# ...
+annotations:
+  prometheus.io/port: 8000 # Port which metrics should be scraped from
+  prometheus.io/scrape: true # Set if metrics should be scraped from this pod
+  prometheus.io/path: "/metrics" # Path which metrics should be scraped from
+```
+
+**Note: This solution works only to scrape metrics from one container within the pod**
 
 ### Create a new HTTP source in Sumo Logic.
 
