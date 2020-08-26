@@ -46,10 +46,12 @@ module Fluent
           if @type_selector.length > @valid_types.length || !@type_selector.any? || !@type_selector.all? {|type| @valid_types.any? {|valid| valid.casecmp?(type)}}
 
         normalize_param
-        connect_kubernetes
       end
 
       def start
+        log.info "Initializing kubernetes API clients"
+        connect_kubernetes
+
         log.info "Starting events collection for #{@resource_name}"
         
         super

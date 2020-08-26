@@ -47,7 +47,6 @@ module Fluent
       def configure(conf)
         super
         normalize_param
-        connect_kubernetes
         init_cache
         start_cache_timer
         @in_namespace_ac = @in_namespace_path.map { |path| record_accessor_create(path) }
@@ -56,6 +55,7 @@ module Fluent
 
       def start
         super
+        connect_kubernetes
         start_service_monitor
       end
 
