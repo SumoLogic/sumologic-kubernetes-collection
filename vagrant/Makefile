@@ -120,7 +120,7 @@ application-metrics-nginx-docker-clean:
 ## Nginx ingress controller
 ## rel: https://docs.nginx.com/nginx-ingress-controller/overview/
 
-application-metrics-nginx-ingress-official:
+application-metrics-nginx-ingress-official-run:
 	kubectl create ns demo-nginx-ingress-official || true
 	helm repo add nginx-stable https://helm.nginx.com/stable
 	helm repo update
@@ -129,6 +129,6 @@ application-metrics-nginx-ingress-official:
 		--namespace demo-nginx-ingress-official \
 		-f "${k8s_path}/application_metrics/nginx/ingress_official/values.yaml"
 
-application-metrics-nginx-docker-clean:
+application-metrics-nginx-ingress-official-docker-clean:
 	helm delete -n demo-nginx-ingress-official demo-nginx-ingress-official
 	kubectl delete ns demo-nginx-ingress-official
