@@ -1,0 +1,11 @@
+controller:
+  pod:
+    annotations:
+      prometheus.io/scrape: "true"
+      telegraf.influxdata.com/inputs: |+
+        [[inputs.nginx]]
+          urls = ["http://localhost:8080/stub_status"]
+      telegraf.influxdata.com/class: sumologic-prometheus
+      telegraf.influxdata.com/limits-cpu: '750m'
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9273"
