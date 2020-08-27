@@ -23,16 +23,22 @@ Parameter | Description | Default
 `sumologic.endpoint` | Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection. | `Nil`
 `sumologic.collectorName` | The name of the Sumo Logic collector that will be created in the SetUp job.  Defaults to `clusterName` if not specified. | `Nil`
 `sumologic.clusterName` | An identifier for the Kubernetes cluster. | `kubernetes`
+`sumologic.podLabels` | Additional labels for the pods. | `{}`
+`sumologic.podAnnotations` | Additional annotations for the pods. | `{}`
 `sumologic.setup.clusterRole.annotations` | Annotations for the ClusterRole. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"1"}]`
 `sumologic.setup.clusterRoleBinding.annotations` | Annotations for the ClusterRole. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"2"}]`
 `sumologic.setup.configMap"` | Annotations for the ConfigMap. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"2"}]`
 `sumologic.setup.job.annotations` | Annotations for the Job. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"3"}]`
+`sumologic.setup.job.podLabels` | Additional labels for the setup Job pod. | `{}`
+`sumologic.setup.job.podAnnotations` | Additional annotations for the setup Job pod. | `{}`
 `sumologic.setup.serviceAccount.annotations` | Annotations for the ServiceAccount. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"0"}]`
 `fluentd.additionalPlugins` | Additional Fluentd plugins to install from RubyGems. Please see our [documentation](./Additional_Fluentd_Plugins.md) for more information. | `[]`
 `fluentd.logLevel` | Sets the fluentd log level. The default log level, if not specified, is info.  Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs. | `info`
 `fluentd.verifySsl` | Verify SumoLogic HTTPS certificates. | `true`
 `fluentd.proxyUri` | Proxy URI for sumologic output plugin. | `Nil`
 `fluentd.securityContext` | the securityContext configuration for Fluentd | `{"fsGroup":999}`
+`fluentd.podLabels` | Additional labels for all fluentd pods | ``
+`fluentd.podAnnotations` | Additional annotations for all fluentd pods | ``
 `fluentd.persistence.enabled` | Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer. After setting the value to true, run the helm upgrade command with the --force flag. | `false`
 `fluentd.persistence.storageClass` | If defined, storageClassName: <storageClass>. If set to "-", storageClassName: "", which disables dynamic provisioning.  If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner.  (gp2 on AWS, standard on GKE, Azure & OpenStack) | `Nil`
 `fluentd.persistence.annotations` | Annotations for the persistence. | `Nil`
@@ -57,6 +63,8 @@ Parameter | Description | Default
 `fluentd.logs.statefulset.podAntiAffinity` | PodAntiAffinity for Fluentd log statefulset. | `soft`
 `fluentd.logs.statefulset.replicaCount` | Replica count for Fluentd log statefulset. | `3`
 `fluentd.logs.statefulset.resources` | Resources for Fluentd log statefulset. | `{"limits":{"cpu":1,"memory":"1Gi"},"requests":{"cpu":0.5,"memory":"768Mi"}}`
+`fluentd.logs.podLabels` | Additional labels for fluentd log pods. | `{}`
+`fluentd.logs.podAnnotations` | Additional annotations for fluentd log pods. | `{}`
 `fluentd.logs.autoscaling.enabled` | Option to turn autoscaling on for fluentd and specify params for HPA. Autoscaling needs metrics-server to access cpu metrics. | `false`
 `fluentd.logs.autoscaling.minReplicas` | Default min replicas for autoscaling. | `3`
 `fluentd.logs.autoscaling.maxReplicas` | Default max replicas for autoscaling. | `10`
@@ -116,6 +124,8 @@ Parameter | Description | Default
 `fluentd.metrics.statefulset.podAntiAffinity` | PodAntiAffinity for Fluentd metrics statefulset. | `soft`
 `fluentd.metrics.statefulset.replicaCount` | Replica count for Fluentd metrics statefulset. | `3`
 `fluentd.metrics.statefulset.resources` | Resources for Fluentd metrics statefulset.  | `{"limits":{"cpu":1,"memory":"1Gi"},"requests":{"cpu":0.5,"memory":"768Mi"}}`
+`fluentd.metrics.podLabels` | Additional labels for fluentd metrics pods. | `{}`
+`fluentd.metrics.podAnnotations` | Additional annotations for fluentd metrics pods. | `{}`
 `fluentd.metrics.autoscaling.enabled` | Option to turn autoscaling on for fluentd and specify params for HPA. Autoscaling needs metrics-server to access cpu metrics. | `false`
 `fluentd.metrics.autoscaling.minReplicas` | Default min replicas for autoscaling. | `3`
 `fluentd.metrics.autoscaling.maxReplicas` | Default max replicas for autoscaling. | `10`
@@ -128,11 +138,15 @@ Parameter | Description | Default
 `fluentd.events.statefulset.nodeSelector` | Node selector for Fluentd events statefulset. | `{}`
 `fluentd.events.statefulset.tolerations` | Tolerations for Fluentd events statefulset. | `{}`
 `fluentd.events.statefulset.resources` | Resources for Fluentd log statefulset. | `{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}`
+`fluentd.events.podLabels` | Additional labels for fluentd events pods. | `{}`
+`fluentd.events.podAnnotations` | Additional annotations for fluentd events pods. | `{}`
 `fluentd.events.sourceCategory` | Source category for the Events source. Default: "{clusterName}/events" | `Nil`
 `metrics-server.enabled` | Set the enabled flag to true for enabling metrics-server. This is required before enabling fluentd autoscaling unless you have an existing metrics-server in the cluster. | `false`
 `metrics-server.args` | Arguments for metric server. | `["--kubelet-insecure-tls","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"]`
 `fluent-bit.resources` | Resources for Fluent-bit daemonsets. | `{}`
 `fluent-bit.enabled` | Flag to control deploying Fluent-bit Helm sub-chart. | `true`
+`fluent-bit.podLabels` | Additional labels for fluent-bit pods. | `{}`
+`fluent-bit.podAnnotations` | Additional annotations for fluent-bit pods. | `{}`
 `fluent-bit.service.flush` | Frequency to flush fluent-bit buffer to fluentd. | `5`
 `fluent-bit.metrics.enabled` | Enable metrics from fluent-bit. | `true`
 `fluent-bit.env` | Environment variables for fluent-bit. | `[{"name":"CHART","valueFrom":{"configMapKeyRef":{"key":"fluentdLogs","name":"sumologic-configmap"}}},{"name":"NAMESPACE","valueFrom":{"fieldRef":{"fieldPath":"metadata.namespace"}}}]`
@@ -154,11 +168,12 @@ Parameter | Description | Default
 `prometheus-operator.alertmanager.enabled` | Deploy alertmanager. | `false`
 `prometheus-operator.grafana.enabled` | If true, deploy the grafana sub-chart. | `false`
 `prometheus-operator.grafana.defaultDashboardsEnabled` | Deploy default dashboards. These are loaded using the sidecar. | `false`
+`prometheus-operator.prometheusOperator.podLabels` | Additional labels for prometheus operator pods. | `{}`
+`prometheus-operator.prometheusOperator.podAnnotations` | Additional annotations for prometheus operator pods. | `{}`
 `prometheus-operator.prometheusOperator.resources` | Resource limits for prometheus operator.  Uses sub-chart defaults. | `{}`
 `prometheus-operator.prometheusOperator.admissionWebhooks.enabled` | Create PrometheusRules admission webhooks. Mutating webhook will patch PrometheusRules objects indicating they were validated. Validating webhook will check the rules syntax. | `false`
 `prometheus-operator.prometheusOperator.tlsProxy.enabled` | Enable a TLS proxy container. Only the squareup/ghostunnel command line arguments are currently supported and the secret where the cert is loaded from is expected to be provided by the admission webhook. | `false`
 `prometheus-operator.prometheusOperator.kube-state-metrics.resources` | Resource limits for kube state metrics.  Uses sub-chart defaults. | `{}`
-`prometheus-operator.prometheusOperator.prometheus-node-exporter.resources` | Resource limits for node exporter.  Uses sub-chart defaults. | `{}`
 `prometheus-operator.prometheus.additionalServiceMonitors` | List of ServiceMonitor objects to create. | `[{"additionalLabels":{"app":"collection-sumologic-fluentd-logs"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-logs","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-logs"}}},{"additionalLabels":{"app":"collection-sumologic-fluentd-metrics"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-metrics","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-metrics"}}},{"additionalLabels":{"app":"collection-sumologic-fluentd-events"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-events","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-events"}}},{"additionalLabels":{"app":"collection-fluent-bit"},"endpoints":[{"path":"/api/v1/metrics/prometheus","port":"metrics"}],"name":"collection-fluent-bit","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"fluent-bit"}}},{"additionalLabels":{"app":"collection-sumologic-otelcol"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-otelcol","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-otelcol"}}}]`
 `prometheus-operator.prometheus.prometheusSpec.resources` | Resource limits for prometheus.  Uses sub-chart defaults. | `{}`
 `prometheus-operator.prometheus.prometheusSpec.thanos.baseImage` | Base image for Thanos container. | `quay.io/thanos/thanos`
@@ -166,6 +181,9 @@ Parameter | Description | Default
 `prometheus-operator.prometheus.prometheusSpec.containers` | Containers allows injecting additional containers. This is meant to allow adding an authentication proxy to a Prometheus pod. | `[{"env":[{"name":"CHART","valueFrom":{"configMapKeyRef":{"key":"fluentdMetrics","name":"sumologic-configmap"}}},{"name":"NAMESPACE","valueFrom":{"configMapKeyRef":{"key":"fluentdNamespace","name":"sumologic-configmap"}}}],"name":"prometheus-config-reloader"}]`
 `prometheus-operator.prometheus.prometheusSpec.remoteWrite` | If specified, the remote_write spec. | See values.yaml
 `prometheus-operator.prometheus.prometheusSpec.walCompression` | Enables walCompression in Prometheus | `true`
+`prometheus-operator.prometheus-node-exporter.podLabels` | Additional labels for prometheus-node-exporter pods. | `{}`
+`prometheus-operator.prometheus-node-exporter.podAnnotations` | Additional annotations for prometheus-node-exporter pods. | `{}`
+`prometheus-operator.prometheus-node-exporter.resources` | Resource limits for node exporter.  Uses sub-chart defaults. | `{}`
 `falco.enabled` | Flag to control deploying Falco Helm sub-chart. | `false`
 `falco.ebpf.enabled` | Enable eBPF support for Falco instead of falco-probe kernel module. Set to false for GKE. | `true`
 `falco.falco.jsonOutput` | Output events in json. | `true`
