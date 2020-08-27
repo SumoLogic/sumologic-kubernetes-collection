@@ -115,14 +115,23 @@ application-metrics-nginx-docker-clean:
 ## Nginx ingress controller
 ## rel: https://docs.nginx.com/nginx-ingress-controller/overview/
 
-application-metrics-nginx-ingress-official-run:
+application-metrics-nginx-ingress-official-prometheus-run:
 	helm repo add nginx-stable https://helm.nginx.com/stable
 	helm repo update
 	helm upgrade demo-nginx-ingress-official nginx-stable/nginx-ingress \
 		--install \
 		--namespace demo-nginx-ingress-official \
 		--create-namespace \
-		-f "${k8s_path}/application_metrics/nginx/ingress_official/values.yaml"
+		-f "${k8s_path}/application_metrics/nginx/ingress_official/values.prometheus.yaml"
+
+application-metrics-nginx-ingress-official-telegraf-run:
+	helm repo add nginx-stable https://helm.nginx.com/stable
+	helm repo update
+	helm upgrade demo-nginx-ingress-official nginx-stable/nginx-ingress \
+		--install \
+		--namespace demo-nginx-ingress-official \
+		--create-namespace \
+		-f "${k8s_path}/application_metrics/nginx/ingress_official/values.telegraf.yaml"
 
 application-metrics-nginx-ingress-official-clean:
 	helm delete -n demo-nginx-ingress-official demo-nginx-ingress-official
