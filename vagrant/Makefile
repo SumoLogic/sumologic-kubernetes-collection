@@ -144,3 +144,17 @@ application-metrics-redis-docker-run:
 
 application-metrics-redis-docker-clean:
 	kubectl delete ns demo-redis-docker
+
+## Bitnami based redis
+application-metrics-redis-bitnami-telegraf-run:
+	helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo update
+	helm upgrade demo-redis-bitnami bitnami/redis \
+		--install \
+		--namespace demo-redis-bitnami \
+		--create-namespace \
+		-f "${k8s_path}/application_metrics/redis/bitnami/values.telegraf.yaml"
+
+application-metrics-redis-bitnami-clean:
+	helm delete -n demo-redis-bitnami demo-redis-bitnami
+	kubectl delete ns demo-redis-bitnami
