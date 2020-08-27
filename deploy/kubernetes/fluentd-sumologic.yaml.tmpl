@@ -168,8 +168,7 @@ data:
           @log_level error
           @include logs.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/logs.containers
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -185,8 +184,7 @@ data:
         sumo_client "k8s_1.2.0-beta.2"
         @include logs.output.conf
         <buffer>
-          @type file
-          path /fluentd/buffer/logs.default
+          @type memory
           @include buffer.output.conf
         </buffer>
       </store>
@@ -218,8 +216,7 @@ data:
           sumo_client "k8s_1.2.0-beta.2"
           @include logs.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/logs.kubelet
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -256,8 +253,7 @@ data:
           sumo_client "k8s_1.2.0-beta.2"
           @include logs.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/logs.systemd
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -312,8 +308,7 @@ data:
         verify_ssl "true"
         proxy_uri ""
         <buffer>
-          @type file
-          path /fluentd/buffer/events
+          @type memory
           @include buffer.output.conf
         </buffer>
       </store>
@@ -431,8 +426,7 @@ data:
           endpoint "#{ENV['SUMO_ENDPOINT_APISERVER_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/metrics.apiserver
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -447,8 +441,7 @@ data:
           endpoint "#{ENV['SUMO_ENDPOINT_KUBELET_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/metrics.container
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -463,8 +456,7 @@ data:
           endpoint "#{ENV['SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/metrics.control_plane
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -479,8 +471,7 @@ data:
           endpoint "#{ENV['SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/metrics.controller
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -495,8 +486,7 @@ data:
           endpoint "#{ENV['SUMO_ENDPOINT_KUBELET_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/metrics.kubelet
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -511,8 +501,7 @@ data:
           endpoint "#{ENV['SUMO_ENDPOINT_NODE_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/metrics.node
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -527,8 +516,7 @@ data:
           endpoint "#{ENV['SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/metrics.scheduler
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -543,8 +531,7 @@ data:
           endpoint "#{ENV['SUMO_ENDPOINT_STATE_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/metrics.state
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -559,8 +546,7 @@ data:
           endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
-            @type file
-            path /fluentd/buffer/metrics.default
+            @type memory
             @include buffer.output.conf
           </buffer>
         </store>
@@ -821,8 +807,6 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
-        - name: buffer
-          mountPath: "/fluentd/buffer"
         livenessProbe:
           httpGet:
             path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
@@ -842,15 +826,6 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-events
-  volumeClaimTemplates:
-  - metadata:
-      name: buffer
-    spec:
-      accessModes: [ReadWriteOnce]
-      storageClassName: 
-      resources:
-        requests:
-          storage: 10Gi
 ---
 # Source: sumologic/templates/metrics-statefulset.yaml
 
@@ -937,8 +912,6 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
-        - name: buffer
-          mountPath: "/fluentd/buffer"
         env:
         - name: SUMO_ENDPOINT_APISERVER_METRICS_SOURCE
           valueFrom:
@@ -982,15 +955,6 @@ spec:
               key: endpoint-metrics-kube-state
         - name: ADDITIONAL_PLUGINS
           value: ""
-  volumeClaimTemplates:
-  - metadata:
-      name: buffer
-    spec:
-      accessModes: [ReadWriteOnce]
-      storageClassName: 
-      resources:
-        requests:
-          storage: 10Gi
 
 ---
 # Source: sumologic/templates/statefulset.yaml
@@ -1078,8 +1042,6 @@ spec:
           mountPath: /fluentd/etc/
         - name: pos-files
           mountPath: /mnt/pos/
-        - name: buffer
-          mountPath: "/fluentd/buffer"
         env:
         - name: SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE
           valueFrom:
@@ -1088,15 +1050,6 @@ spec:
               key: endpoint-logs
         - name: ADDITIONAL_PLUGINS
           value: ""
-  volumeClaimTemplates:
-  - metadata:
-      name: buffer
-    spec:
-      accessModes: [ReadWriteOnce]
-      storageClassName: 
-      resources:
-        requests:
-          storage: 10Gi
 
 ---
 # Source: sumologic/templates/hpa.yaml
