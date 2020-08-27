@@ -183,7 +183,7 @@ fluentd:
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
     ## After setting the value to true, run the helm upgrade command with the --force flag.
-    enabled: true
+    enabled: false
 
     ## If defined, storageClassName: <storageClass>
     ## If set to "-", storageClassName: "", which disables dynamic provisioning
