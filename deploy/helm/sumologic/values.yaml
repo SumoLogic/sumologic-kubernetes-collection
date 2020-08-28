@@ -1317,6 +1317,50 @@ prometheus-operator:
               regex: kube-etcd;(?:etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
               sourceLabels: [job, __name__]
 
+        ## Redis application metrics
+        ## redis_blocked_clients
+        ## redis_cluster_known_nodes
+        ## redis_cluster_size
+        ## redis_cluster_slots_assigned
+        ## redis_cluster_slots_fail
+        ## redis_cluster_slots_ok
+        ## redis_cluster_slots_pfail
+        ## redis_commands_total
+        ## redis_connected_clients
+        ## redis_connected_slaves
+        ## redis_cpu_sys_seconds_total
+        ## redis_cpu_user_seconds_total
+        ## redis_db_keys
+        ## redis_evicted_keys_total
+        ## redis_expired_keys_total
+        ## redis_instance_info
+        ## redis_keyspace_hits_total
+        ## redis_keyspace_misses_total
+        ## redis_master_link_up
+        ## redis_master_repl_offset
+        ## redis_mem_fragmentation_bytes
+        ## redis_mem_fragmentation_ratio
+        ## redis_memory_max_bytes
+        ## redis_memory_used_bytes
+        ## redis_memory_used_overhead_bytes
+        ## redis_memory_used_rss_bytes
+        ## redis_memory_used_startup_bytes
+        ## redis_net_input_bytes_total
+        ## redis_net_output_bytes_total
+        ## redis_rdb_changes_since_last_save
+        ## redis_rdb_last_bgsave_status
+        ## redis_rejected_connections_total
+        ## redis_slave_repl_offset
+        ## redis_slowlog_last_id
+        ## redis_slowlog_length
+        ## redis_up
+        ## redis_uptime_in_seconds
+        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.redis
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:redis_blocked_clients|redis_cluster_(known_nodes|size|slots_(assigned|fail|ok|pfail))|redis_commands_total|redis_connected_(clients|slaves)|redis_cpu_(sys|user)_seconds_total|redis_db_keys|redis_(evicted|expired)_keys_total|redis_instance_info|redis_keyspace_(hits|misses)_total|redis_master_(link_up|repl_offset)|redis_mem_fragmentation_(bytes|ratio)|redis_memory_(max|used|used_overhead|used_rss|used_startup)_bytes|redis_net_(input|output)_bytes_total|redis_rdb_(changes_since_last_save|last_bgsave_status)|redis_rejected_connections_total|redis_slave_repl_offset|redis_slowlog_(last_id|length)|redis_up(|time_in_seconds))
+              sourceLabels: [__name__]
+
 ## Configure falco
 ## ref: https://github.com/falcosecurity/charts/blob/master/falco/values.yaml
 falco:
