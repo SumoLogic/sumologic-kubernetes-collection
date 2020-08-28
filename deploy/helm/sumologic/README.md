@@ -63,8 +63,8 @@ Parameter | Description | Default
 `fluentd.logs.statefulset.podAntiAffinity` | PodAntiAffinity for Fluentd log statefulset. | `soft`
 `fluentd.logs.statefulset.replicaCount` | Replica count for Fluentd log statefulset. | `3`
 `fluentd.logs.statefulset.resources` | Resources for Fluentd log statefulset. | `{"limits":{"cpu":1,"memory":"1Gi"},"requests":{"cpu":0.5,"memory":"768Mi"}}`
-`fluentd.logs.podLabels` | Additional labels for fluentd log pods. | `{}`
-`fluentd.logs.podAnnotations` | Additional annotations for fluentd log pods. | `{}`
+`fluentd.logs.statefulset.podLabels` | Additional labels for fluentd log pods. | `{}`
+`fluentd.logs.statefulset.podAnnotations` | Additional annotations for fluentd log pods. | `{}`
 `fluentd.logs.autoscaling.enabled` | Option to turn autoscaling on for fluentd and specify params for HPA. Autoscaling needs metrics-server to access cpu metrics. | `false`
 `fluentd.logs.autoscaling.minReplicas` | Default min replicas for autoscaling. | `3`
 `fluentd.logs.autoscaling.maxReplicas` | Default max replicas for autoscaling. | `10`
@@ -124,8 +124,8 @@ Parameter | Description | Default
 `fluentd.metrics.statefulset.podAntiAffinity` | PodAntiAffinity for Fluentd metrics statefulset. | `soft`
 `fluentd.metrics.statefulset.replicaCount` | Replica count for Fluentd metrics statefulset. | `3`
 `fluentd.metrics.statefulset.resources` | Resources for Fluentd metrics statefulset.  | `{"limits":{"cpu":1,"memory":"1Gi"},"requests":{"cpu":0.5,"memory":"768Mi"}}`
-`fluentd.metrics.podLabels` | Additional labels for fluentd metrics pods. | `{}`
-`fluentd.metrics.podAnnotations` | Additional annotations for fluentd metrics pods. | `{}`
+`fluentd.metrics.statefulset.podLabels` | Additional labels for fluentd metrics pods. | `{}`
+`fluentd.metrics.statefulset.podAnnotations` | Additional annotations for fluentd metrics pods. | `{}`
 `fluentd.metrics.autoscaling.enabled` | Option to turn autoscaling on for fluentd and specify params for HPA. Autoscaling needs metrics-server to access cpu metrics. | `false`
 `fluentd.metrics.autoscaling.minReplicas` | Default min replicas for autoscaling. | `3`
 `fluentd.metrics.autoscaling.maxReplicas` | Default max replicas for autoscaling. | `10`
@@ -138,8 +138,8 @@ Parameter | Description | Default
 `fluentd.events.statefulset.nodeSelector` | Node selector for Fluentd events statefulset. | `{}`
 `fluentd.events.statefulset.tolerations` | Tolerations for Fluentd events statefulset. | `{}`
 `fluentd.events.statefulset.resources` | Resources for Fluentd log statefulset. | `{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}`
-`fluentd.events.podLabels` | Additional labels for fluentd events pods. | `{}`
-`fluentd.events.podAnnotations` | Additional annotations for fluentd events pods. | `{}`
+`fluentd.events.statefulset.podLabels` | Additional labels for fluentd events pods. | `{}`
+`fluentd.events.statefulset.podAnnotations` | Additional annotations for fluentd events pods. | `{}`
 `fluentd.events.sourceCategory` | Source category for the Events source. Default: "{clusterName}/events" | `Nil`
 `metrics-server.enabled` | Set the enabled flag to true for enabling metrics-server. This is required before enabling fluentd autoscaling unless you have an existing metrics-server in the cluster. | `false`
 `metrics-server.args` | Arguments for metric server. | `["--kubelet-insecure-tls","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"]`
@@ -173,12 +173,16 @@ Parameter | Description | Default
 `prometheus-operator.prometheusOperator.resources` | Resource limits for prometheus operator.  Uses sub-chart defaults. | `{}`
 `prometheus-operator.prometheusOperator.admissionWebhooks.enabled` | Create PrometheusRules admission webhooks. Mutating webhook will patch PrometheusRules objects indicating they were validated. Validating webhook will check the rules syntax. | `false`
 `prometheus-operator.prometheusOperator.tlsProxy.enabled` | Enable a TLS proxy container. Only the squareup/ghostunnel command line arguments are currently supported and the secret where the cert is loaded from is expected to be provided by the admission webhook. | `false`
-`prometheus-operator.prometheusOperator.kube-state-metrics.resources` | Resource limits for kube state metrics.  Uses sub-chart defaults. | `{}`
+`prometheus-operator.kube-state-metrics.resources` | Resource limits for kube state metrics.  Uses sub-chart defaults. | `{}`
+`prometheus-operator.kube-state-metrics.customLabels` | Custom labels to apply to service, deployment and pods.  Uses sub-chart defaults. | `{}`
+ `prometheus-operator.kube-state-metrics.podAnnotations` | Additional annotations for pods in the DaemonSet.  Uses sub-chart defaults. | `{}`
 `prometheus-operator.prometheus.additionalServiceMonitors` | List of ServiceMonitor objects to create. | `[{"additionalLabels":{"app":"collection-sumologic-fluentd-logs"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-logs","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-logs"}}},{"additionalLabels":{"app":"collection-sumologic-fluentd-metrics"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-metrics","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-metrics"}}},{"additionalLabels":{"app":"collection-sumologic-fluentd-events"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-events","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-events"}}},{"additionalLabels":{"app":"collection-fluent-bit"},"endpoints":[{"path":"/api/v1/metrics/prometheus","port":"metrics"}],"name":"collection-fluent-bit","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"fluent-bit"}}},{"additionalLabels":{"app":"collection-sumologic-otelcol"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-otelcol","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-otelcol"}}}]`
 `prometheus-operator.prometheus.prometheusSpec.resources` | Resource limits for prometheus.  Uses sub-chart defaults. | `{}`
 `prometheus-operator.prometheus.prometheusSpec.thanos.baseImage` | Base image for Thanos container. | `quay.io/thanos/thanos`
 `prometheus-operator.prometheus.prometheusSpec.thanos.version` | Image tag for Thanos container. | `v0.10.0`
 `prometheus-operator.prometheus.prometheusSpec.containers` | Containers allows injecting additional containers. This is meant to allow adding an authentication proxy to a Prometheus pod. | `[{"env":[{"name":"CHART","valueFrom":{"configMapKeyRef":{"key":"fluentdMetrics","name":"sumologic-configmap"}}},{"name":"NAMESPACE","valueFrom":{"configMapKeyRef":{"key":"fluentdNamespace","name":"sumologic-configmap"}}}],"name":"prometheus-config-reloader"}]`
+`prometheus-operator.prometheus.prometheusSpec.podMetadata.labels` | Add custom pod labels to prometheus pods | `{}`
+`prometheus-operator.prometheus.prometheusSpec.podMetadata.annotations` | Add custom pod annotations to prometheus pods | `{}`
 `prometheus-operator.prometheus.prometheusSpec.remoteWrite` | If specified, the remote_write spec. | See values.yaml
 `prometheus-operator.prometheus.prometheusSpec.walCompression` | Enables walCompression in Prometheus | `true`
 `prometheus-operator.prometheus-node-exporter.podLabels` | Additional labels for prometheus-node-exporter pods. | `{}`
