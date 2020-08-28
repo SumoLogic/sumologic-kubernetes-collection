@@ -110,7 +110,7 @@ __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this do
 Once you have completed installation, you can [install the Kubernetes App and view the dashboards](https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards) or [open a new Explore tab](https://help.sumologic.com/Solutions/Kubernetes_Solution/05Navigate_your_Kubernetes_environment) in Sumo Logic. If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
 
 ## Customizing Installation
-All default properties for the Helm chart can be found in our [documentation](HelmChartConfiguration.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade.  Remember to define the properties in our [requirements section](#requirements) in the `values.yaml` as well or pass them in via `--set`
+All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade.  Remember to define the properties in our [requirements section](#requirements) in the `values.yaml` as well or pass them in via `--set`
   
 ```bash
 helm upgrade --install my-release sumologic/sumologic -f values.yaml

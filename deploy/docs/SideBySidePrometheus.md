@@ -114,7 +114,7 @@ sumologic_http_source.default_metrics_source: Importing from ID`, you can safely
 You can find more information in our [troubleshooting documentation](Troubleshoot_Collection.md).
 
 ## Customizing Installation
-All default properties for the Helm chart can be found in our [documentation](HelmChartConfiguration.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade. Remember to define the properties in our [requirements section](#requirements) in the `values.yaml` as well or pass them in via `--set`
+All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade. Remember to define the properties in our [requirements section](#requirements) in the `values.yaml` as well or pass them in via `--set`
   
 ```bash
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
