@@ -13,7 +13,7 @@ COPY gems/fluent-plugin*.gem ./
 # Fluentd plugin dependencies
 RUN gem install concurrent-ruby -v 1.1.5 \
        && gem install google-protobuf -v 3.9.2 \
-       && gem install kubeclient -v 4.5.0 \
+       && gem install kubeclient -v 4.9.0 \
        && gem install lru_redux -v 1.1.0 \
        && gem install snappy -v 0.0.17
 
