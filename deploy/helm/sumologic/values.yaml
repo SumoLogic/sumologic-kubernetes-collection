@@ -940,6 +940,8 @@ prometheus-operator:
       thanos:
         baseImage: quay.io/thanos/thanos
         version: v0.10.0
+        ## Defines the resource requirements for the Thanos sidecar. If not provided, no requests/limits will be set
+        resources: {}
       containers:
       - name: "prometheus-config-reloader"
         env:
