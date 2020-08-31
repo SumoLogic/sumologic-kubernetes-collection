@@ -48,7 +48,7 @@ Parser_Firstline multi_line
 Parser_1 optional_parser
 ```
 ### Collecting Log Lines Over 16KB (with multiline support)
-Docker daemon has a limit of 16KB/line so if a log line is greater than that, it might be truncated in Sumo.
+Docker daemon has a limit of 16KB/line so if a log line is longer than that, it might be truncated in Sumo.
 To fix this, fluent-bit exposes a parameter:  
 ``` bash
 Docker_Mode  On
