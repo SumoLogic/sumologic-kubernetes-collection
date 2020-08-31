@@ -105,8 +105,10 @@ The buffer configuration can be set in the `values.yaml` file under the `fluentd
 
 ```yaml
 fluentd:
-  ## Option to specify the Fluentd buffer as file/memory.
-  buffer: "file"
+  ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
+  persistence:
+    ## After setting the value to true, run the helm upgrade command with the --force flag.
+    enabled: true
 ```
 
 Additional buffering and flushing parameters can be added in the `extraConf`, in the `fluentd` buffer section.
@@ -121,12 +123,10 @@ fluentd:
 
 We have defined several file paths where the buffer chunks are stored.
 
-Ensure that you have **enough space in the path directory**. Running out of disk space is a common problem.
-
 Once the config has been modified in the `values.yaml` file you need to run the `helm upgrade` command to apply the changes.
 
 ```bash
-$ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml
+$ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml --force
 ```
 
 See the following links to official Fluentd buffer documentation: 
