@@ -11,6 +11,7 @@
 - [Override environment variables using annotations](#Override-environment-variables-using-annotations)
 - [Templating Kubernetes metadata](#Templating-Kubernetes-metadata)
 - [Configure Ignore_Older Config for Fluentbit](#Configure-Ignore-Older-Config-for-fluentbit)
+- [Disable logs, metrics, or falco](#Disable-logs-metrics-or-falco)
 
 
 ### Multiline Log Support
@@ -375,3 +376,11 @@ Please make the below changes to the `INPUT` section to turn off `Multiline` and
     <b>Parser           Docker</b>
 </pre>
 Ref: https://docs.fluentbit.io/manual/pipeline/inputs/tail
+
+###  Disable logs, metrics, or falco
+If you want to disable collection of logs, metrics or falco, please make the below changes respectively in the `values.yaml` file and run the `helm upgrade` command.
+| parameter  |  value | function |
+| ------------ | ------------ | ------------ |
+|  sumologic.logs.enabled |  false | disable logs collection |
+|  sumologic.metrics.enabled |  false | disable metrics collection |
+| falco.enabled  |  false | disable falco |
