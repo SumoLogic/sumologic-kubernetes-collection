@@ -180,3 +180,15 @@ application-metrics-jmxexporter-docker-run:
 
 application-metrics-jmxexporter-docker-clean:
 	kubectl delete ns demo-jmxexporter-docker
+
+## Jolokia based JMX
+application-metrics-jolokia-docker-build:
+	docker build /sumologic/vagrant/k8s/application_metrics/jmx/jolokia/docker/ -t localhost:32000/jolokia/docker
+	docker push localhost:32000/jolokia/docker
+
+application-metrics-jolokia-docker-run:
+	kubectl create ns demo-jolokia-docker || true
+	kubectl -n demo-jolokia-docker apply -f ${k8s_path}/application_metrics/jmx/jolokia/docker/statefulset.yaml
+
+application-metrics-jolokia-docker-clean:
+	kubectl delete ns demo-jolokia-docker
