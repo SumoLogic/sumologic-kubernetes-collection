@@ -1,0 +1,27 @@
+{{- $yamlFile := toYaml $.Values.otelcol.config }}
+{{- $_collector := .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
+{{- $sourceName := .Values.sumologic.sourceName | quote }}
+{{- $sourceCategory := .Values.sumologic.sourceCategory | quote }}
+{{- $sourceCategoryPrefix := .Values.sumologic.sourceCategoryPrefix | quote }}
+{{- $sourceCategoryReplaceDash := .Values.sumologic.sourceCategoryReplaceDash | quote }}
+{{- $excludeNamespaceRegex := .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
+{{ if eq .Values.sumologic.collectionMonitoring false }}
+  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
+{{- end }}
+{{- $excludePodRegex := .Values.fluentd.logs.containers.excludePodRegex | quote }}
+{{- $excludeContainerRegex := .Values.fluentd.logs.containers.excludeContainerRegex | quote }}
+{{- $excludeHostRegex := .Values.fluentd.logs.containers.excludeHostRegex | quote }}
+{{- $clusterName := include "sumologic.clusterNameReplaceSpaceWithDash" . }}
+
+{{- $yamlFile := replace "processors.source.collector.replace" $_collector $yamlFile }}
+{{- $yamlFile := replace "processors.source.name.replace" $sourceName $yamlFile }}
+{{- $yamlFile := replace "processors.source.category.replace" $sourceCategory $yamlFile }}
+{{- $yamlFile := replace "processors.source.category_prefix.replace" $sourceCategoryPrefix $yamlFile }}
+{{- $yamlFile := replace "processors.source.category_replace_dash.replace" $sourceCategoryReplaceDash $yamlFile }}
+{{- $yamlFile := replace "processors.source.exclude_namespace_regex.replace" $excludeNamespaceRegex $yamlFile }}
+{{- $yamlFile := replace "processors.source.exclude_pod_regex.replace" $excludePodRegex $yamlFile }}
+{{- $yamlFile := replace "processors.source.exclude_container_regex.replace" $excludeContainerRegex $yamlFile }}
+{{- $yamlFile := replace "processors.source.exclude_host_regex.replace" $excludeHostRegex $yamlFile }}
+{{- $yamlFile := replace "processors.resource.cluster.replace" $clusterName $yamlFile }}
+
+{{- $yamlFile | nindent 2 }}
