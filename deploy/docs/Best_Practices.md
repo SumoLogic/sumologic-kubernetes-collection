@@ -47,14 +47,21 @@ When Multiline is On, if the first line matches `Parser_Firstline`, the rest of 
 Parser_Firstline multi_line
 Parser_1 optional_parser
 ```
-### Collecting Log Lines Over 16KB
+### Collecting Log Lines Over 16KB (with multiline support)
 Docker daemon has a limit of 16KB/line so if a log line is greater than that, it might be truncated in Sumo.
 To fix this, fluent-bit exposes a parameter:  
 ``` bash
 Docker_Mode  On
 ```
-If enabled, the plugin will recombine split Docker log lines before passing them to any parser. This mode cannot be used at the same time as Multiline.
-Reference: https://docs.fluentbit.io/manual/v/1.3/input/tail#docker_mode
+If enabled, the plugin will recombine split Docker log lines before passing them to any parser.
+
+#### Multiline Support
+
+To add multiline support to docker mode, you need to follow [the multiline support](#multiline-log-support) section and assign created parser to the `Docker_Mode_Parser` parameter in the `Input plugin` configuration of fluent-bit:
+
+```
+Docker_Mode_Parser multi_line
+```
 
 ### Fluentd Autoscaling
 
