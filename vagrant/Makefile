@@ -177,3 +177,15 @@ application-metrics-jolokia-docker-run:
 
 application-metrics-jolokia-docker-clean:
 	kubectl delete ns demo-jolokia-docker
+
+application-metrics-postgres-bitnami-telegraf-run:
+	kubectl create ns demo-postgres-bitnami || true
+	helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo update
+	helm upgrade demo-postgres-bitnami bitnami/postgresql \
+		--install \
+		--namespace demo-postgres-bitnami \
+		-f "${k8s_path}/application_metrics/postgres/bitnami/values.telegraf.yaml"
+
+application-metrics-postgres-bitnami-clean:
+	kubectl delete ns demo-postgres-bitnami
