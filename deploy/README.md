@@ -7,7 +7,6 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
   - [Minimum Requirements](#minimum-requirements)
   - [Support Matrix](#support-matrix)
   - [Installation with Helm](./docs/Installation_with_Helm.md)
-  - [Upgrading with Helm](./docs/Upgrading_with_Helm.md) 
   - [Non Helm Installation](./docs/Non_Helm_Installation.md) 
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
