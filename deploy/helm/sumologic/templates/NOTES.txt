@@ -10,5 +10,5 @@ Check the release status by running:
   kubectl --namespace {{ .Release.Namespace }} get pods -l "release={{ .Release.Name }}"
 
 {{- if eq .Values.fluentd.persistence.enabled  false }}
-WARNING: File persistence for fluentd is disabled. This might lead to loss of data in case of memory buffer overflow. We recommend turning this property on for production environments.
+WARNING: File persistence for fluentd is disabled. This might lead to loss of data in case of memory buffer overflow. We recommend turning this property on for production environments by setting fluentd.persistence.enabled=true
 {{- end }}
