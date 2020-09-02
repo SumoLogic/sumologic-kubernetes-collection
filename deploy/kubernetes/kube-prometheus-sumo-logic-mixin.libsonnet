@@ -106,6 +106,13 @@
               "job",
               "__name__"
             ]
+          },
+          {
+            action: "drop",
+            regex: "POD",
+            sourceLabels: [
+              "container"
+            ]
           }
         ]
       },
