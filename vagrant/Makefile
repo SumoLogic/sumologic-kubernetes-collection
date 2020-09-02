@@ -189,3 +189,19 @@ application-metrics-postgres-bitnami-telegraf-run:
 
 application-metrics-postgres-bitnami-clean:
 	kubectl delete ns demo-postgres-bitnami
+
+application-metrics-kafka-strimzi-run:
+	helm repo add strimzi https://strimzi.io/charts/
+	helm upgrade kafka strimzi/strimzi-kafka-operator \
+		--install \
+		--create-namespace \
+		--namespace demo-kafka-strimzi
+	kubectl apply -f "${k8s_path}/application_metrics/kafka/strimzi/kafka-cluster.yaml"
+	helm upgrade kafka-lag-exporter \
+		https://github.com/lightbend/kafka-lag-exporter/releases/download/v0.6.3/kafka-lag-exporter-0.6.3.tgz \
+		--namespace demo-kafka-strimzi \
+		--set watchers.strimzi=true \
+		--install
+
+application-metrics-kafka-strimzi-clean:
+	kubectl delete ns demo-kafka-strimzi

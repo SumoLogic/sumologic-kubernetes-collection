@@ -1,0 +1,56 @@
+---
+apiVersion: kafka.strimzi.io/v1beta1
+kind: Kafka
+metadata:
+  name: my-cluster
+  namespace: demo-kafka-strimzi
+spec:
+  kafka:
+    replicas: 3
+    listeners:
+      plain: {}
+      tls: {}
+    config:
+      offsets.topic.replication.factor: 3
+      transaction.state.log.replication.factor: 3
+      transaction.state.log.min.isr: 2
+    storage:
+      type: ephemeral
+  zookeeper:
+    replicas: 3
+    storage:
+      type: ephemeral
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+  kafkaExporter:
+    # image: my-org/my-image:latest
+    groupRegex: ".*"
+    topicRegex: ".*"
+    resources:
+      requests:
+        cpu: 200m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 128Mi
+    logging: debug
+    enableSaramaLogging: true
+    template:
+      pod:
+        metadata:
+          labels:
+            label1: value1
+        imagePullSecrets:
+          - name: my-docker-credentials
+        securityContext:
+          runAsUser: 1000001
+          fsGroup: 0
+        terminationGracePeriodSeconds: 120
+    readinessProbe:
+      initialDelaySeconds: 15
+      timeoutSeconds: 5
+    livenessProbe:
+      initialDelaySeconds: 15
+      timeoutSeconds: 5
+# ...
