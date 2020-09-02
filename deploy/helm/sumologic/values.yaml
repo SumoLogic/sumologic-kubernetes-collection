@@ -1084,8 +1084,7 @@ prometheus-operator:
             - action: keep
               regex: kubelet;(?:container_network_receive_bytes_total|container_network_transmit_bytes_total)
               sourceLabels: [job, __name__]
-            - action: drop
-              regex: POD
+            - action: labeldrop
               sourceLabels: [container]
         ## node exporter metrics
         ## node_cpu_seconds_total
