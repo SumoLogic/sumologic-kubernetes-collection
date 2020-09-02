@@ -41,6 +41,7 @@ module SumoLogic
         client
       rescue StandardError => e
         log.error e
+        nil
       end
 
       def ssl_store

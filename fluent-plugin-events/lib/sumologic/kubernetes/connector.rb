@@ -35,6 +35,7 @@ module SumoLogic
         client
       rescue Exception => e
         log.error e
+        nil
       end
 
       def connect_kubernetes

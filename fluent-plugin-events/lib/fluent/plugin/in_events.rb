@@ -74,6 +74,11 @@ module Fluent
         now = Time.now.to_i
         watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
         if now - @last_recreated >= @watch_interval_seconds || !watcher_exists
+
+          if @clients[@api_version].nil? || @clients['v1'].nil?
+            log.warn "Client not initialized correctly. Attempting to recreate clients now."
+            connect_kubernetes
+          end
           
           log.debug "Recreating watcher thread. Use resource version from latest snapshot if watcher is running"
           pull_resource_version if watcher_exists
