@@ -106,6 +106,12 @@
               "job",
               "__name__"
             ]
+          },
+          {
+            action: "labeldrop",
+            sourceLabels: [
+              "container"
+            ]
           }
         ]
       },
