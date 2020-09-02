@@ -378,7 +378,7 @@ Please make the below changes to the `INPUT` section to turn off `Multiline` and
 Ref: https://docs.fluentbit.io/manual/pipeline/inputs/tail
 
 ###  Disable logs, metrics, or falco
-If you want to disable collection of logs, metrics or falco, please make the below changes respectively in the `values.yaml` file and run the `helm upgrade` command.
+If you want to disable the collection of logs, metrics, or falco, make the below changes respectively in the `values.yaml` file and run the `helm upgrade` command.
 | parameter  |  value | function |
 | ------------ | ------------ | ------------ |
 |  sumologic.logs.enabled |  false | disable logs collection |
