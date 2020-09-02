@@ -108,8 +108,7 @@
             ]
           },
           {
-            action: "drop",
-            regex: "POD",
+            action: "labeldrop",
             sourceLabels: [
               "container"
             ]
