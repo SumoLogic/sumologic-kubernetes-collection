@@ -1383,6 +1383,20 @@ prometheus-operator:
               regex: (?:nginx_ingress_controller_ingress_resources_total|nginx_ingress_controller_nginx_(last_reload_(milliseconds|status)|reload(s|_errors)_total)|nginx_ingress_controller_virtualserver(|route)_resources_total|nginx_ingress_nginx_connections_(accepted|active|handled|reading|waiting|writing)|nginx_ingress_nginx_http_requests_total)
               sourceLabels: [__name__]
 
+        ## Nginx telegraf metrics
+        ## nginx_accepts
+        ## nginx_active
+        ## nginx_handled
+        ## nginx_reading
+        ## nginx_requests
+        ## nginx_waiting
+        ## nginx_writing
+        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.nginx
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:nginx_(accepts|active|handled|reading|requests|waiting|writing))
+              sourceLabels: [__name__]
+
 ## Configure falco
 ## ref: https://github.com/falcosecurity/charts/blob/master/falco/values.yaml
 falco:
