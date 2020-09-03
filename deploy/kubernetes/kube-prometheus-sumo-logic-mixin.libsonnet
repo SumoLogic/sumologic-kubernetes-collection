@@ -131,9 +131,7 @@
           },
           {
             action: "labeldrop",
-            sourceLabels: [
-              "container"
-            ]
+            regex: "container"
           }
         ]
       },
