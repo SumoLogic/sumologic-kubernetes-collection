@@ -47,6 +47,7 @@ module Fluent
       def configure(conf)
         super
         normalize_param
+        log.info "Initializing kubernetes API clients"
         connect_kubernetes
         init_cache
         start_cache_timer

@@ -7,7 +7,9 @@ class EnhanceK8sMetadataFilterTest < Test::Unit::TestCase
   end
 
   test 'create driver' do
-    conf = %([])
+    conf = %{
+      kubernetes_url http://localhost:8080
+    }
     create_driver(conf)
   end
 
