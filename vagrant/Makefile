@@ -137,6 +137,20 @@ application-metrics-nginx-ingress-official-docker-clean:
 	helm delete -n demo-nginx-ingress-official demo-nginx-ingress-official
 	kubectl delete ns demo-nginx-ingress-official
 
+application-metrics-nginx-ingress-k8s-telegraf-run:
+	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+	helm repo update
+	helm upgrade demo-nginx-ingress-k8s ingress-nginx/ingress-nginx \
+		--install \
+		--create-namespace \
+		--namespace demo-nginx-ingress-k8s \
+		-f "${k8s_path}/application_metrics/nginx/ingress_k8s/values.telegraf.yaml"
+
+application-metrics-nginx-ingress-k8s-telegraf-clean:
+	helm delete -n demo-nginx-ingress-k8s demo-nginx-ingress-k8s
+	kubectl delete ns demo-nginx-ingress-k8s
+
 ## Docker based redis
 application-metrics-redis-docker-run:
 	kubectl create ns demo-redis-docker || true
