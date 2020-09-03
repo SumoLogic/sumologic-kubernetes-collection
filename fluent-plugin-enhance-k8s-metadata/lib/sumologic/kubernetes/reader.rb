@@ -4,8 +4,6 @@ module SumoLogic
     module Reader
       require_relative 'connector.rb'
 
-      include SumoLogic::Kubernetes::Connector
-
       MAX_BFS_DEPTH = 8
 
       # from https://kubernetes.io/docs/reference/kubectl/overview/#resource-types
@@ -106,17 +104,14 @@ module SumoLogic
 
       def fetch_resource(type, name, namespace, api_version = 'v1')
         log.debug "fetching resource: #{type}, name: #{name}, ns:#{namespace} with API version #{api_version}"
-        if !@clients.key?(api_version)
+        if @clients.key?(api_version)
+          resource = @clients[api_version].get_entity(type, name, namespace)
+          log.debug resource.to_s
+          resource
+        else
           log.warn "No client created for API #{api_version}. Please add it to the core_api_versions or api_groups config."
-          return nil
+          nil
         end
-        if @clients[api_version].nil?
-          log.warn "Client not initialized correctly for API #{api_version}. Attempting to recreate clients now."
-          connect_kubernetes
-        end
-        resource = @clients[api_version].get_entity(type, name, namespace)
-        log.debug resource.to_s
-        resource
       rescue Kubeclient::ResourceNotFoundError => e
         log.warn e
         nil

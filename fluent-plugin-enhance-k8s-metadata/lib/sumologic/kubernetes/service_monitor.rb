@@ -12,10 +12,6 @@ module SumoLogic
         thread_create(:"watch_endpoints") {
           loop do
             log.debug "Making new watch_endpoints call"
-            if @clients['v1'].nil?
-              log.warn "Client not initialized correctly for API v1. Attempting to recreate clients now."
-              connect_kubernetes
-            end
             params = Hash.new
             params[:as] = :raw
             params[:resource_version] = get_current_service_snapshot_resource_version

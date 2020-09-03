@@ -46,12 +46,11 @@ module Fluent
           if @type_selector.length > @valid_types.length || !@type_selector.any? || !@type_selector.all? {|type| @valid_types.any? {|valid| valid.casecmp?(type)}}
 
         normalize_param
+        log.info "Initializing kubernetes API clients"
+        connect_kubernetes
       end
 
       def start
-        log.info "Initializing kubernetes API clients"
-        connect_kubernetes
-
         log.info "Starting events collection for #{@resource_name}"
         
         super
@@ -74,11 +73,6 @@ module Fluent
         now = Time.now.to_i
         watcher_exists = Thread.list.select {|thread| thread.object_id == @watcher_id && thread.alive?}.count > 0
         if now - @last_recreated >= @watch_interval_seconds || !watcher_exists
-
-          if @clients[@api_version].nil? || @clients['v1'].nil?
-            log.warn "Client not initialized correctly. Attempting to recreate clients now."
-            connect_kubernetes
-          end
           
           log.debug "Recreating watcher thread. Use resource version from latest snapshot if watcher is running"
           pull_resource_version if watcher_exists
