@@ -165,8 +165,15 @@ prometheus:
     thanos:
       baseImage: quay.io/thanos/thanos
       version: v0.10.0
-      ## Defines the resource requirements for the Thanos sidecar. If not provided, no requests/limits will be set
-      resources: {}
+      ## Defines the resource requirements for the Thanos sidecar
+      ## Setting those as there are no default values in the upstream chart
+      resources:
+        limits:
+          cpu: 10m
+          memory: 16Mi
+        requests:
+          cpu: 1m
+          memory: 8Mi
     containers:
     - name: "prometheus-config-reloader"
       env:
