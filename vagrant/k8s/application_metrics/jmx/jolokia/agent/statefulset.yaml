@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jolokia
+  namespace: demo-jolokia-agent
+spec:
+  selector:
+    matchLabels:
+      app: jolokia
+  serviceName: jolokia
+  template:
+    metadata:
+      labels:
+        app: jolokia
+      annotations:
+        telegraf.influxdata.com/inputs: |+
+          [[inputs.jolokia2_agent]]
+            urls = ["http://127.0.0.1:8778/jolokia"]
+
+          [[inputs.jolokia2_agent.metric]]
+            name  = "java_lang_OperatingSystem"
+            mbean = "java.lang:type=OperatingSystem"
+            paths = ["ProcessCpuLoad","SystemCpuLoad"]
+          
+          [[inputs.jolokia2_agent.metric]]
+            name  = "java_lang_Memory"
+            mbean = "java.lang:type=Memory"
+            paths = ["HeapMemoryUsage", "NonHeapMemoryUsage"]
+
+          [[inputs.jolokia2_agent.metric]]
+            name     = "java_lang_GarbageCollector"
+            mbean    = "java.lang:name=*,type=GarbageCollector"
+            paths    = ["CollectionTime", "CollectionCount"]
+            tag_keys = ["name"]
+
+          [[inputs.jolokia2_agent.metric]]
+            name  = "java_lang_Runtime"
+            mbean = "java.lang:type=Runtime"
+            paths = ["Uptime"]
+
+          [[inputs.jolokia2_agent.metric]]
+            name  = "java_lang_Threading"
+            mbean = "java.lang:type=Threading"
+            paths = ["PeakThreadCount"]
+
+          [[inputs.jolokia2_agent.metric]]
+            name  = "java_lang_ClassLoading"
+            mbean = "java.lang:type=ClassLoading"
+            paths = ["UnloadedClassCount"]
+
+        telegraf.influxdata.com/class: sumologic-prometheus
+        telegraf.influxdata.com/limits-cpu: '750m'
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9273"
+    spec:
+      containers:
+      - name: jolokia
+        image: localhost:32000/jolokia/agent
+        imagePullPolicy: Always
