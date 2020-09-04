@@ -192,6 +192,18 @@ application-metrics-jolokia-docker-run:
 application-metrics-jolokia-docker-clean:
 	kubectl delete ns demo-jolokia-docker
 
+application-metrics-jmxexporter-docker-build:
+	docker build /sumologic/vagrant/k8s/application_metrics/jmx/jmxexporter/docker/ -t localhost:32000/jmxexporter/docker
+	docker push localhost:32000/jmxexporter/docker
+
+application-metrics-jmxexporter-docker-run:
+	kubectl create ns demo-jmxexporter-docker || true
+	kubectl -n demo-jmxexporter-docker create configmap --from-file=${k8s_path}/application_metrics/jmx/jmxexporter/docker/config.yaml jmxexporter-config || true
+	kubectl -n demo-jmxexporter-docker apply -f ${k8s_path}/application_metrics/jmx/jmxexporter/docker/statefulset.yaml
+
+application-metrics-jmxexporter-docker-clean:
+	kubectl delete ns demo-jmxexporter-docker
+
 application-metrics-postgres-bitnami-telegraf-run:
 	kubectl create ns demo-postgres-bitnami || true
 	helm repo add bitnami https://charts.bitnami.com/bitnami
