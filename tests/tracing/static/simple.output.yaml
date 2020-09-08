@@ -6,20 +6,20 @@ metadata:
   name: RELEASE-NAME-sumologic-otelcol
   labels:
     app: RELEASE-NAME-sumologic-fluentd-metrics
-    chart: "sumologic-1.1.0-beta.2"
+    chart: "sumologic-1.2.2-rc.0"
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
-  traces.otelcol.conf.yaml: |-
+  traces.otelcol.conf.yaml: |
     
     exporters:
       zipkin:
-        url: ""
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
     extensions:
       health_check: {}
     processors:
       batch:
-        send_batch_hard_limit: 512
+        send_batch_max_size: 512
         send_batch_size: 256
         timeout: 5s
       k8s_tagger:
@@ -90,7 +90,9 @@ data:
       opencensus:
         endpoint: 0.0.0.0:55678
       otlp:
-        endpoint: 0.0.0.0:55680
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:55680
       zipkin:
         endpoint: 0.0.0.0:9411
     service:

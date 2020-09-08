@@ -6,11 +6,11 @@ metadata:
   name:  RELEASE-NAME-sumologic-setup
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
     helm.sh/hook-weight: "2"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
   labels:
     app: RELEASE-NAME-sumologic
-    chart: "sumologic-1.0.0"
+    chart: "sumologic-1.2.2-rc.0"
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
@@ -104,16 +104,10 @@ data:
         collector_id = sumologic_collector.collector.id
     }
   
-    resource "kubernetes_namespace" "sumologic_collection_namespace" {
-      metadata {
-        name = var.namespace_name
-      }
-    }
-  
     resource "kubernetes_secret" "sumologic_collection_secret" {
       metadata {
         name = "sumologic"
-        namespace = kubernetes_namespace.sumologic_collection_namespace.metadata[0].name
+        namespace = var.namespace_name
       }
   
       data = {
@@ -161,8 +155,7 @@ data:
     terraform import sumologic_http_source.state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
   
   
-    # Kubernetes Namespace and Secret
-    terraform import kubernetes_namespace.sumologic_collection_namespace default
+    # Kubernetes Secret
     terraform import kubernetes_secret.sumologic_collection_secret default/sumologic
   
     terraform apply -auto-approve
