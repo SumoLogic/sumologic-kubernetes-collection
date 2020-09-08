@@ -12,6 +12,6 @@ dependencies:
     repository: https://falcosecurity.github.io/charts
     condition: falco.enabled
   - name: metrics-server
-    version: 2.11.1
-    repository: https://kubernetes-charts.storage.googleapis.com/
+    version: 4.3.1
+    repository: https://charts.bitnami.com/bitnami
     condition: metrics-server.enabled
