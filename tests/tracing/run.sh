@@ -14,6 +14,7 @@ docker run --rm \
   sumologic/kubernetes-tools:master \
   helm dependency update /chart
 
+SUCCESS=0
 for input_file in ${INPUT_FILES}; do
   test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
   output_file="${test_name}.output.yaml"
@@ -31,13 +32,15 @@ for input_file in ${INPUT_FILES}; do
       -s templates/otelcol-configmap.yaml 2>/dev/null 1> "${OUT}"
 
   test_output=$(diff "${STATICS_PATH}/${output_file}" "${OUT}" | cat -te)
+  rm "${OUT}"
 
   if [[ -n "${test_output}" ]]; then
     echo -e "\tOutput diff (${STATICS_PATH}/${output_file}):\n${test_output}"
     test_failed "${test_name}"
+    SUCCESS=1
   else
     test_passed "${test_name}"
   fi
-
-  rm "${OUT}"
 done
+
+exit $SUCCESS
