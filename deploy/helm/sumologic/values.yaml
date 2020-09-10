@@ -771,7 +771,7 @@ fluent-bit:
 
 ## Configure prometheus-operator
 ## ref: https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml
-prometheus-operator:
+kube-prometheus-stack:
   ## Labels to apply to all prometheus operator resources
   commonLabels: {}
   ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
