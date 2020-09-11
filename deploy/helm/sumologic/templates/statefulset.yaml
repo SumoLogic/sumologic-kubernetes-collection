@@ -87,10 +87,6 @@ spec:
 {{- end }}
 {{- end }}
       volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
       - name: config-volume
         configMap:
           name: {{ template "sumologic.metadata.name.logs.configmap" . }}
@@ -130,8 +126,6 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
 {{- if .Values.fluentd.persistence.enabled }}
         - name: buffer
           mountPath: "/fluentd/buffer"
