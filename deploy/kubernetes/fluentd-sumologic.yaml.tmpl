@@ -781,10 +781,6 @@ spec:
     spec:
       serviceAccountName: collection-sumologic
       volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
       - name: config-volume
         configMap:
           name: collection-sumologic-fluentd-events
@@ -805,8 +801,6 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
         livenessProbe:
           httpGet:
             path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
@@ -869,10 +863,6 @@ spec:
                   - prometheus-operator-prometheus
               topologyKey: "kubernetes.io/hostname"
       volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
       - name: config-volume
         configMap:
           name: collection-sumologic-fluentd-metrics
@@ -910,8 +900,6 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
         env:
         - name: SUMO_ENDPOINT_APISERVER_METRICS_SOURCE
           valueFrom:
@@ -999,10 +987,6 @@ spec:
                   - prometheus-operator-prometheus
               topologyKey: "kubernetes.io/hostname"
       volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
       - name: config-volume
         configMap:
           name: collection-sumologic-fluentd-logs
@@ -1040,8 +1024,6 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
         env:
         - name: SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE
           valueFrom:
