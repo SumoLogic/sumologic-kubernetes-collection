@@ -24,7 +24,8 @@ class EventsInputTest < Test::Unit::TestCase
     driver = Fluent::Test::Driver::Input.new(Fluent::Plugin::EventsInput).configure(conf)
   end
 
-  def configure_test_driver(config = %([]))
+  def configure_test_driver(config = %{})
+    config += %{kubernetes_url http://localhost:8080}
     driver = create_driver(config).instance
     connect_kubernetes_with_api_version(driver)
     driver.instance_variable_set(:@clients, @clients)
@@ -45,9 +46,9 @@ class EventsInputTest < Test::Unit::TestCase
   end
 
   test 'pull_resource_version correctly from eventlist with v1beta1 api version' do
-    config = %([
+    config = %{
       api_version "events.k8s.io/v1beta1"
-    ])
+    }
     driver = configure_test_driver(config)
     mock_get_events('api_list_events_v1beta1.json')
 
@@ -66,9 +67,9 @@ class EventsInputTest < Test::Unit::TestCase
   end
 
   test 'initialize_resource_version correctly for different client' do
-    config = %([
+    config = %{
       api_version "events.k8s.io/v1beta1"
-    ])
+    }
     driver = configure_test_driver(config)
     mock_get_config_map
 
@@ -93,9 +94,9 @@ class EventsInputTest < Test::Unit::TestCase
 
 
   test 'watch_events with customer defined type_selector' do
-    config = %([
+    config = %{
       type_selector ["ADDED", "MODIFIED", "DELETED"]
-    ])
+    }
     driver = configure_test_driver(config)
     mock_watch_events('api_watch_events_v1.txt')
 
@@ -110,28 +111,28 @@ class EventsInputTest < Test::Unit::TestCase
 
   test 'configuration error will be thrown if type_selector is invalid' do
     assert_raise Fluent::ConfigError do 
-      create_driver(%([
+      create_driver(%{
         type_selector ["ADDED", "MODIFIED", "DELETED", "BOOKED"]
-      ]))
+      })
     end
 
     assert_raise Fluent::ConfigError do
-      create_driver(%([
+      create_driver(%{
         type_selector ["ADDED", "MODIFIED", "INVALIDTYPE"]
-      ]))
+      })
     end
 
     assert_raise Fluent::ConfigError do
-      create_driver(%([
+      create_driver(%{
         type_selector []
-      ]))
+      })
     end
   end
 
   test 'watch other resources with default type_selector' do 
-    config = %([
+    config = %{
       resource_name "services"
-    ])
+    }
     driver = configure_test_driver(config)
     mock_watch_services
 
@@ -145,9 +146,9 @@ class EventsInputTest < Test::Unit::TestCase
   end
 
   test 'watch events correctly with v1beta1 api version' do
-    config = %([
+    config = %{
       api_version "events.k8s.io/v1beta1"
-    ])
+    }
     driver = configure_test_driver(config)
     mock_watch_events('api_watch_events_v1beta1.txt')
 

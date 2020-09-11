@@ -15,9 +15,28 @@ spec:
   replicas: {{ .Values.fluentd.metrics.statefulset.replicaCount }}
   template:
     metadata:
+      annotations:
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.fluentd.podAnnotations }}
+{{ toYaml .Values.fluentd.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.fluentd.metrics.statefulset.podAnnotations }}
+{{ toYaml .Values.fluentd.metrics.statefulset.podAnnotations | indent 8 }}
+{{- end }}
       labels:
         app: {{ template "sumologic.labels.app.metrics.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.fluentd.podLabels }}
+{{ toYaml .Values.fluentd.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.fluentd.metrics.statefulset.podLabels }}
+{{ toYaml .Values.fluentd.metrics.statefulset.podLabels | indent 8 }}
+{{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
 {{- if .Values.fluentd.metrics.statefulset.nodeSelector }}
