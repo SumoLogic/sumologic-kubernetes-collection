@@ -10,7 +10,7 @@ readonly PREVIOUS_VERSION=0.17
 
 readonly TEMP_FILE=upgrade-1.0.0-temp-file
 
-readonly MIN_BASH_VERSION=4.4
+readonly MIN_BASH_VERSION=4.0
 readonly MIN_YQ_VERSION=3.2.1
 
 readonly KEY_MAPPINGS="

@@ -3,7 +3,7 @@
 
 image:
   repository: sumologic/kubernetes-fluentd
-  tag: 1.2.2-rc.0
+  tag: 1.2.2
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -296,6 +296,11 @@ fluentd:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
 
+    ## Option to specify PodDisrutionBudgets
+    ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+    podDisruptionBudget:
+      minAvailable: 2
+
     rawConfig: |-
       @include common.conf
       @include logs.conf
@@ -493,6 +498,11 @@ fluentd:
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
+
+    ## Option to specify PodDisrutionBudgets
+    ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+    podDisruptionBudget:
+      minAvailable: 2
 
     rawConfig: |-
       @include common.conf
