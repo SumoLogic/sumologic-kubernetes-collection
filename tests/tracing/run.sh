@@ -8,6 +8,7 @@ readonly SCRIPT_PATH="$( dirname $(realpath ${0}) )"
 readonly STATICS_PATH="${SCRIPT_PATH}/static"
 readonly INPUT_FILES="$(ls "${STATICS_PATH}" | grep input)"
 readonly OUT="new_values.yaml"
+readonly CURRENT_CHART_VERSION=$(yq r ${SCRIPT_PATH}/../../deploy/helm/sumologic/Chart.yaml version)
 
 docker run --rm \
   -v ${SCRIPT_PATH}/../../deploy/helm/sumologic:/chart \
@@ -18,6 +19,8 @@ SUCCESS=0
 for input_file in ${INPUT_FILES}; do
   test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
   output_file="${test_name}.output.yaml"
+
+  sed -i "s/%CURRENT_CHART_VERSION%/${CURRENT_CHART_VERSION}/g" ${STATICS_PATH}/${output_file}
 
   test_start "${test_name}" ${input_file}
   docker run --rm \
