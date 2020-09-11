@@ -70,6 +70,36 @@ cd ../..
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
+echo "Test tracing configuration..."
+bash ./tests/tracing/run.sh
+
+if [ $? -eq 0 ]; then
+  echo "Tracing configuration test passed"
+else
+  echo "Tracing configuration test failed"
+  exit 1
+fi
+
+echo "Test terraform configuration..."
+bash ./tests/terraform/run.sh
+
+if [ $? -eq 0 ]; then
+  echo "Terraform configuration test passed"
+else
+  echo "Terraform configuration test failed"
+  exit 1
+fi
+
+echo "Test upgrade script..."
+bash ./tests/upgrade_script/run.sh
+
+if [ $? -eq 0 ]; then
+  echo "Upgrade Script test passed"
+else
+  echo "Upgrade Script test failed"
+  exit 1
+fi
+
 # Check for changes that require re-generating overrides yaml files
 if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "Generating deployment yaml from helm chart..."

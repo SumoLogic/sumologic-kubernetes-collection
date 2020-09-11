@@ -10,7 +10,29 @@
         writeRelabelConfigs: [
           {
             action: "keep",
-            regex: "kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)",
+            regex: "kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_horizontalpodautoscaler_spec_max_replicas|kube_horizontalpodautoscaler_spec_min_replicas|kube_horizontalpodautoscaler_status_current_replicas|kube_horizontalpodautoscaler_status_desired_replicas)",
+            sourceLabels: [
+              "job",
+              "__name__"
+            ]
+          },
+          {
+            action: "labelmap",
+            regex: "(pod|service)",
+            replacement: "service_discovery_${1}"
+          },
+          {
+            action: "labeldrop",
+            regex: "(pod|service)"
+          }
+        ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.state",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "kube-state-metrics;(?:kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)",
             sourceLabels: [
               "job",
               "__name__"
@@ -36,7 +58,7 @@
         writeRelabelConfigs: [
           {
             action: "keep",
-            regex: "kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_latency_microseconds.*",
+            regex: "kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_duration_seconds.*",
             sourceLabels: [
               "job",
               "__name__"
@@ -87,7 +109,7 @@
           },
           {
             action: "keep",
-            regex: "kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes)",
+            regex: "kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total)",
             sourceLabels: [
               "job",
               "container",
@@ -106,6 +128,10 @@
               "job",
               "__name__"
             ]
+          },
+          {
+            action: "labeldrop",
+            regex: "container"
           }
         ]
       },
