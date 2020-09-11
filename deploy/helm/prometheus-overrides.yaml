@@ -300,17 +300,17 @@ prometheus:
       ## container_fs_usage_bytes
       ## container_memory_working_set_bytes
       ## container_cpu_cfs_throttled_seconds_total
-      - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
-        writeRelabelConfigs:
-          - action: labelmap
-            regex: container_name
-            replacement: container
-          - action: drop
-            regex: POD
-            sourceLabels: [container]
-          - action: keep
-            regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total)
-            sourceLabels: [job, container, __name__]
+      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
+      writeRelabelConfigs:
+      - action: labelmap
+        regex: container_name
+        replacement: container
+      - action: drop
+        regex: POD
+        sourceLabels: [container]
+      - action: keep
+        regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total)
+        sourceLabels: [job, container, __name__]
     - ## cadvisor aggregate container metrics
       ## container_network_receive_bytes_total
       ## container_network_transmit_bytes_total
