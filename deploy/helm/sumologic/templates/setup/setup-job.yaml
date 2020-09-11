@@ -5,12 +5,27 @@ metadata:
   name: {{ template "sumologic.metadata.name.setup.job" . }}
   namespace: {{ .Release.Namespace }}
   annotations:
-{{ toYaml .Values.sumologic.setup.job.annotations | indent 4 }}
+{{ include "sumologic.annotations.app.setup.helmsh" "3" | indent 4 }}
   labels:
     app: {{ template "sumologic.labels.app.setup.job" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   template:
+    metadata:
+      annotations:
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.sumologic.setup.job.podAnnotations }}
+{{ toYaml .Values.sumologic.setup.job.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.sumologic.setup.job.podLabels }}
+{{ toYaml .Values.sumologic.setup.job.podLabels | indent 8 }}
+{{- end }}
     spec:
       restartPolicy: OnFailure
       serviceAccountName: {{ template "sumologic.metadata.name.setup.roles.serviceaccount" . }}

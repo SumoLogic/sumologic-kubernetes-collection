@@ -159,6 +159,20 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
 
+{{/*
+Generate helm.sh annotations. It takes weight as parameter.
+
+Example usage:
+
+{{ include "sumologic.annotations.app.setup.helmsh" "1" }}
+
+*/}}
+{{- define "sumologic.annotations.app.setup.helmsh" -}}
+helm.sh/hook: pre-install,pre-upgrade
+helm.sh/hook-weight: {{ printf "\"%s\"" . }}
+helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+{{- end -}}
+
 {{- define "sumologic.metadata.name.roles.clusterrole" -}}
 {{- template "sumologic.fullname" . }}
 {{- end -}}

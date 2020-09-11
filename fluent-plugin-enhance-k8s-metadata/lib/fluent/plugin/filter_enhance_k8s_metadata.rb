@@ -47,6 +47,7 @@ module Fluent
       def configure(conf)
         super
         normalize_param
+        log.info "Initializing kubernetes API clients"
         connect_kubernetes
         init_cache
         start_cache_timer
@@ -83,6 +84,10 @@ module Fluent
           metadata = get_pod_metadata(namespace_name, pod_name)
           service = @pods_to_services[pod_name]
           metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
+
+          if @data_type == 'metrics' && (record['node'].nil? || record['node'] == "")
+            record['node'] = metadata['node']
+          end
 
           ['pod_labels', 'owners', 'service'].each do |metadata_type|
             attachment = metadata[metadata_type]

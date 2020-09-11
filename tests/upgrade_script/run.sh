@@ -17,7 +17,7 @@ readonly INPUT_FILES="$(ls "${STATICS_PATH}" | grep input)"
 readonly TMP_OUT="tmp_out.log"
 readonly OUT="new_values.yaml"
 
-
+SUCCESS=0
 for input_file in ${INPUT_FILES}; do
   test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
   output_file="${test_name}.output.yaml"
@@ -28,6 +28,7 @@ for input_file in ${INPUT_FILES}; do
 
   test_output=$(diff "${STATICS_PATH}/${output_file}" "${OUT}")
   test_log=$(diff "${STATICS_PATH}/${log_file}" "${TMP_OUT}")
+  rm "${TMP_OUT}" "${OUT}"
 
   if [[ -n "${test_output}" || -n "${test_log}" ]]; then
     if [[ -n "${test_output}" ]]; then
@@ -37,9 +38,10 @@ for input_file in ${INPUT_FILES}; do
       echo -e "\tLog diff (${STATICS_PATH}/${log_file}):\n${test_log}"
     fi
     test_failed "${test_name}"
+    SUCCESS=1
   else
     test_passed "${test_name}"
   fi
-
-  rm "${TMP_OUT}" "${OUT}"
 done
+
+exit $SUCCESS

@@ -7,7 +7,6 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
   - [Minimum Requirements](#minimum-requirements)
   - [Support Matrix](#support-matrix)
   - [Installation with Helm](./docs/Installation_with_Helm.md)
-  - [Upgrading with Helm](./docs/Upgrading_with_Helm.md) 
   - [Non Helm Installation](./docs/Non_Helm_Installation.md) 
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
@@ -48,21 +47,20 @@ Name | Version
 K8s with EKS | 1.14<br/>1.15<br/>1.16
 K8s with Kops | 1.16<br/>1.17<br/>1.18
 K8s with GKE | 1.14<br/>1.15<br/>1.16
-K8s with AKS | 1.14<br/>1.15<br/>1.16
+K8s with AKS | 1.15<br/>1.16<br/>1.17
 Helm | 2.14.13 (Linux)
 kubectl | 1.15.0
 
-NOTE: Helm 3 compatibility is in the early stages and is not fully tested or supported. Please refer to this [guide](docs/Helm3.md) for more information on Helm 3. We recommend you thoroughly test the use of Helm 3 in your pre-production environments before use.
-
 The following matrix displays the tested package versions for our Helm chart.
 
-Sumo Logic Helm Chart | Prometheus Operator | Fluent Bit | Falco  | Metrics Server
-|:-------- |:-------- |:-------- |:-------- |:--------
-1.1.0 - Latest | 8.13.8 | 2.8.14 | 1.1.8 | 2.11.1
-1.0.0 | 8.2.0 | 2.8.1 | 1.1.6 | 2.7.0
-0.17.0 - 0.17.1 | 8.2.0 | 2.8.1 | 1.1.0 | 2.7.0
-0.14.0 - 0.16.0 | 8.2.0 | 2.8.1 | 1.1.1 | 2.7.0
-0.13.0 | 8.2.0 | 2.8.1 | 1.0.11 | 2.7.0
-0.12.0 | 8.2.0 | 2.8.1 | 1.0.9  |  -
-0.9.0 - 0.11.0 | 6.2.1 | 2.4.4 | 1.0.8   |  -
-0.6.0 - 0.8.0 | 6.2.1 | 2.4.4 | 1.0.5    |  -
+Sumo Logic Helm Chart | Prometheus Operator | FluentD | Fluent Bit | Falco  | Metrics Server
+|:-------- |:-------- |:-------- |:-------- |:-------- |:--------
+1.2.0 - Latest | 8.13.8 | 1.11.1 | 2.8.14 | 1.1.8 | 2.11.1
+1.1.0 | 8.13.8 | 1.8.1 | 2.8.14 | 1.1.8 | 2.11.1
+1.0.0 | 8.2.0 | 1.8.1 | 2.8.1 | 1.1.6 | 2.7.0
+0.17.0 - 0.17.4 | 8.2.0 | 1.6.3 | 2.8.1 | 1.1.0 | 2.7.0
+0.14.0 - 0.16.0 | 8.2.0 | 1.6.3 | 2.8.1 | 1.1.1 | 2.7.0
+0.13.0 | 8.2.0 | 1.6.3 | 2.8.1 | 1.0.11 | 2.7.0
+0.12.0 | 8.2.0 | 1.6.3 | 2.8.1 | 1.0.9  |  -
+0.9.0 - 0.11.0 | 6.2.1 | 1.6.3 | 2.4.4 | 1.0.8   |  -
+0.6.0 - 0.8.0 | 6.2.1 | 1.6.3 | 2.4.4 | 1.0.5    |  -

@@ -24,6 +24,9 @@ module SumoLogic
         labels = pod['metadata']['labels']
         metadata['pod_labels'] = {'pod_labels' => labels} if labels.is_a?(Hash)
 
+        node = pod['spec']['nodeName']
+        metadata['node'] = node
+
         owners = fetch_pod_owners(namespace, pod)
         metadata['owners'] = owners if owners.is_a?(Hash)
         metadata
@@ -109,7 +112,7 @@ module SumoLogic
           log.debug resource.to_s
           resource
         else
-          log.warn "No client created for API #{api_version}"
+          log.warn "No client created for API #{api_version}. Please add it to the core_api_versions or api_groups config."
           nil
         end
       rescue Kubeclient::ResourceNotFoundError => e
