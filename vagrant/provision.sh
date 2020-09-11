@@ -92,4 +92,5 @@ echo Dashboard token:
 kubectl -n kube-system describe secret default| awk '$1=="token:"{print $2}'
 echo
 
-ln -s /sumologic/vagrant/sumologic.sh /usr/local/bin/sumologic
+ln -s /sumologic/vagrant/scripts/sumo-make.sh /usr/local/bin/sumo-make
+ln -s /sumologic/vagrant/scripts/sumo-make-completion.sh /etc/bash_completion.d/sumo-make
