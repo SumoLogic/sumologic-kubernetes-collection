@@ -85,6 +85,10 @@ module Fluent
           service = @pods_to_services[pod_name]
           metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
 
+          if @data_type == 'metrics' && (record['node'].nil? || record['node'] == "")
+            record['node'] = metadata['node']
+          end
+
           ['pod_labels', 'owners', 'service'].each do |metadata_type|
             attachment = metadata[metadata_type]
             if attachment.nil? || attachment.empty?
