@@ -73,6 +73,7 @@ sumologic:
 
   setup:
     job:
+      nodeSelector: {}
       ## Add custom labels only to setup job pod
       podLabels: {}
       ## Add custom annotations only to setup job pod
