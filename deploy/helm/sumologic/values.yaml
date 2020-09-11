@@ -284,6 +284,9 @@ fluentd:
         requests:
           memory: 768Mi
           cpu: 0.5
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+
       ## Add custom labels only to logs fluentd sts pods
       podLabels: {}
       ## Add custom annotations only to logs fluentd sts pods
@@ -487,6 +490,9 @@ fluentd:
         requests:
           memory: 768Mi
           cpu: 0.5
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+      
       ## Add custom labels only to metrics fluentd sts pods
       podLabels: {}
       ## Add custom annotations only to metrics fluentd sts pods
@@ -1301,6 +1307,8 @@ otelcol:
       name: "sumologic/opentelemetry-collector"
       tag: "0.6.1.0"
       pullPolicy: IfNotPresent
+    ## Option to define priorityClassName to assign a priority class to pods.
+    priorityClassName:
   config:
     receivers:
       jaeger:

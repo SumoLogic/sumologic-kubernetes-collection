@@ -99,6 +99,9 @@ spec:
 {{- end }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
+      {{- if .Values.fluentd.logs.statefulset.priorityClassName }}
+      priorityClassName: {{ .Values.fluentd.logs.statefulset.priorityClassName | quote }}
+      {{- end }}
       containers:
       - name: fluentd
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
