@@ -1,6 +1,12 @@
 # Performance
 
-For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](./Best_Practices.md#Fluentd-Autoscaling), as this will allow Fluentd to automatically scale to support your data volume. However, the following examples will help you get an idea of the resources required to run collection on your cluster.
+For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](./Best_Practices.md#Fluentd-Autoscaling), as this will allow Fluentd to automatically scale to support your data volume. However, the following recommendations and corresponding examples will help you get an idea of the resources required to run collection on your cluster.
+
+## Recommendations
+
+1. At least **6 Fluentd-logs** pods per **1 TB/day** of logs.
+2. At least **5 Fluentd-metrics** pods per **120k DPM** of metrics.
+3. The Prometheus pod will use on average **2GiB** memory per **120k DPM**; however in our experience this has gone up to **5GiB**, so we recommend allocating ample memory resources for the Prometheus pod if you wish to collect a high volume of metrics for a larger cluster.
 
 ## Up to 500 application pods
 Our test cluster had 70 nodes running an average of 500 application pods, each generating either 128KB/s logs or 2400 DPM metrics. The application pods had about 20% churn rate.
