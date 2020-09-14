@@ -10,6 +10,8 @@
 - [Modify the Log Level for Falco](#Modify-the-Log-Level-for-Falco)
 - [Override environment variables using annotations](#Override-environment-variables-using-annotations)
 - [Templating Kubernetes metadata](#Templating-Kubernetes-metadata)
+- [Configure Ignore_Older Config for Fluentbit](#Configure-Ignore-Older-Config-for-fluentbit)
+- [Disable logs, metrics, or falco](#Disable-logs-metrics-or-falco)
 
 
 ### Multiline Log Support
@@ -46,18 +48,25 @@ When Multiline is On, if the first line matches `Parser_Firstline`, the rest of 
 Parser_Firstline multi_line
 Parser_1 optional_parser
 ```
-### Collecting Log Lines Over 16KB
-Docker daemon has a limit of 16KB/line so if a log line is greater than that, it might be truncated in Sumo.
+### Collecting Log Lines Over 16KB (with multiline support)
+Docker daemon has a limit of 16KB/line so if a log line is longer than that, it might be truncated in Sumo.
 To fix this, fluent-bit exposes a parameter:  
 ``` bash
 Docker_Mode  On
 ```
-If enabled, the plugin will recombine split Docker log lines before passing them to any parser. This mode cannot be used at the same time as Multiline.
-Reference: https://docs.fluentbit.io/manual/v/1.3/input/tail#docker_mode
+If enabled, the plugin will recombine split Docker log lines before passing them to any parser.
+
+#### Multiline Support
+
+To add multiline support to docker mode, you need to follow [the multiline support](#multiline-log-support) section and assign created parser to the `Docker_Mode_Parser` parameter in the `Input plugin` configuration of fluent-bit:
+
+```
+Docker_Mode_Parser multi_line
+```
 
 ### Fluentd Autoscaling
 
-We have provided an option to enable autoscaling for Fluentd deployments. This is disabled by default. 
+We have provided an option to enable autoscaling for both logs and metrics Fluentd statefulsets. This is disabled by default. 
 
 To enable autoscaling for Fluentd:
 
@@ -70,12 +79,22 @@ To enable autoscaling for Fluentd:
     enabled: true
   ```
 
-- Enable autoscaling for Fluentd
+- Enable autoscaling for Logs Fluentd statefulset 
 ```yaml
 fluentd:
-  ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
-  autoscaling:
-    enabled: true
+  logs:
+    ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
+    autoscaling:
+      enabled: true
+```
+
+- Enable autoscaling for Metrics Fluentd statefulset 
+```yaml
+fluentd:
+  metrics:
+    ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
+    autoscaling:
+      enabled: true
 ```
 
 
@@ -87,8 +106,10 @@ The buffer configuration can be set in the `values.yaml` file under the `fluentd
 
 ```yaml
 fluentd:
-  ## Option to specify the Fluentd buffer as file/memory.
-  buffer: "file"
+  ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
+  persistence:
+    ## After setting the value to true, run the helm upgrade command with the --force flag.
+    enabled: true
 ```
 
 Additional buffering and flushing parameters can be added in the `extraConf`, in the `fluentd` buffer section.
@@ -103,12 +124,10 @@ fluentd:
 
 We have defined several file paths where the buffer chunks are stored.
 
-Ensure that you have **enough space in the path directory**. Running out of disk space is a common problem.
-
 Once the config has been modified in the `values.yaml` file you need to run the `helm upgrade` command to apply the changes.
 
 ```bash
-$ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml
+$ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml --force
 ```
 
 See the following links to official Fluentd buffer documentation: 
@@ -321,3 +340,47 @@ The following Kubernetes metadata is available for string templating:
 Unlike the other templates, labels are not guaranteed to exist, so missing labels interpolate as `"undefined"`.
 
 For example, if you have only the label `app: travel` but you define `SOURCE_NAME="%{label:app}@%{label:version}"`, the source name will appear as `travel@undefined`.
+
+### Configure Ignore_Older Config for Fluentbit
+We have observed that the  `Ignore_Older` config does not work when `Multiline` is set to `On`.
+Default config:
+```
+    [INPUT]
+        Name             tail
+        Path             /var/log/containers/*.log
+        Multiline        On
+        Parser_Firstline multi_line
+        Tag              containers.*
+        Refresh_Interval 1
+        Rotate_Wait      60
+        Mem_Buf_Limit    5MB
+        Skip_Long_Lines  On
+        DB               /tail-db/tail-containers-state-sumo.db
+        DB.Sync          Normal
+```
+Please make the below changes to the `INPUT` section to turn off `Multiline` and add a `docker` parser to parse the time for `Ignore_Older` functionality to work properly.  
+<pre>
+[INPUT]
+    Name             tail
+    Path             /var/log/containers/*.log
+    <b>Multiline        Off</b>
+    Parser_Firstline multi_line
+    Tag              containers.*
+    Refresh_Interval 1
+    Rotate_Wait      60
+    Mem_Buf_Limit    5MB
+    Skip_Long_Lines  On
+    DB               /tail-db/tail-containers-state-sumo.db
+    DB.Sync          Normal
+    <b>Ignore_Older     24h</b>
+    <b>Parser           Docker</b>
+</pre>
+Ref: https://docs.fluentbit.io/manual/pipeline/inputs/tail
+
+###  Disable logs, metrics, or falco
+If you want to disable the collection of logs, metrics, or falco, make the below changes respectively in the `values.yaml` file and run the `helm upgrade` command.
+| parameter  |  value | function |
+| ------------ | ------------ | ------------ |
+|  sumologic.logs.enabled |  false | disable logs collection |
+|  sumologic.metrics.enabled |  false | disable metrics collection |
+| falco.enabled  |  false | disable falco |

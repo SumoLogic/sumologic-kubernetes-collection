@@ -19,7 +19,7 @@ prometheus-operator:  # For values.yaml
         # ...
         remoteWrite:
           # ...
-          - url: http://collection-sumologic.sumologic.svc.cluster.local/prometheus.metrics.<some_label>
+          - url: http://$(CHART).$(NAMESPACE).svc.cluster.local/prometheus.metrics.<some_label>
             writeRelabelConfigs:
             - action: keep
               regex: <metric1>|<metric2>|...
@@ -71,6 +71,8 @@ There are many pre-built libraries that the community has built to expose these,
 
 ### Set up a service monitor so that Prometheus pulls the data
 
+#### ServiceMonitor
+
 To expose metrics to prometheus, you need to have some service. Let's say here is our example service configuration:
 
 ```yaml
@@ -105,7 +107,7 @@ metadata:
     release: collection  # ensure this matches the `release` label on your Prometheus pod
 spec:
   selector:
-    matchSelector:
+    matchLabels:
       app: example-metrics
   endpoints:
   - port: "8000"  # Same as service's port name
@@ -146,6 +148,20 @@ prometheus-operator:  # For values.yaml
           matchLabels:
             app: example-metrics
 ```
+
+#### Annotations
+
+Alternatively to Service and ServiceMonitor you can use dedicated annotations in your pod:
+
+```yaml
+# ...
+annotations:
+  prometheus.io/port: 8000 # Port which metrics should be scraped from
+  prometheus.io/scrape: true # Set if metrics should be scraped from this pod
+  prometheus.io/path: "/metrics" # Path which metrics should be scraped from
+```
+
+**Note: This solution works only to scrape metrics from one container within the pod**
 
 ### Create a new HTTP source in Sumo Logic.
 
@@ -214,7 +230,7 @@ prometheus-operator:  # For values.yaml
         # ...
         remoteWrite:
           # ...
-          - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
+          - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
             writeRelabelConfigs:
             - action: keep
               regex: <YOUR_CUSTOM_MATCHER>
@@ -232,7 +248,7 @@ prometheus-operator:  # For values.yaml
         # ...
         remoteWrite:
           # ...
-          - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
+          - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
             writeRelabelConfigs:
             - action: keep
               regex: 'example-metrics'

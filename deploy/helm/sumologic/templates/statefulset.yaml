@@ -15,9 +15,28 @@ spec:
   replicas: {{ .Values.fluentd.logs.statefulset.replicaCount }}
   template:
     metadata:
+      annotations:
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.fluentd.podAnnotations }}
+{{ toYaml .Values.fluentd.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.fluentd.logs.statefulset.podAnnotations }}
+{{ toYaml .Values.fluentd.logs.statefulset.podAnnotations | indent 8 }}
+{{- end }}
       labels:
         app: {{ template "sumologic.labels.app.logs.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.fluentd.podLabels }}
+{{ toYaml .Values.fluentd.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.fluentd.logs.statefulset.podLabels }}
+{{ toYaml .Values.fluentd.logs.statefulset.podLabels | indent 8 }}
+{{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
 {{- if .Values.fluentd.logs.statefulset.nodeSelector }}
@@ -68,10 +87,6 @@ spec:
 {{- end }}
 {{- end }}
       volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
       - name: config-volume
         configMap:
           name: {{ template "sumologic.metadata.name.logs.configmap" . }}
@@ -80,6 +95,9 @@ spec:
 {{- end }}
       securityContext:
         fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
+      {{- if .Values.fluentd.logs.statefulset.priorityClassName }}
+      priorityClassName: {{ .Values.fluentd.logs.statefulset.priorityClassName | quote }}
+      {{- end }}
       containers:
       - name: fluentd
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -111,8 +129,6 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
 {{- if .Values.fluentd.persistence.enabled }}
         - name: buffer
           mountPath: "/fluentd/buffer"

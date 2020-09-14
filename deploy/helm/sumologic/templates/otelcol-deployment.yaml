@@ -13,11 +13,30 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.otelcol.pod" . }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 6 }}
+{{- end }}
+{{- if .Values.otelcol.deployment.podLabels }}
+{{ toYaml .Values.otelcol.deployment.podLabels | indent 6 }}
+{{- end }}
   template:
     metadata:
+      annotations:
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.otelcol.deployment.podAnnotations }}
+{{ toYaml .Values.otelcol.deployment.podAnnotations | indent 8 }}
+{{- end }}
       labels:
         app: {{ template "sumologic.labels.app.otelcol.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.otelcol.deployment.podLabels }}
+{{ toYaml .Values.otelcol.deployment.podLabels | indent 6 }}
+{{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       {{- if .Values.otelcol.deployment.nodeSelector }}
@@ -27,6 +46,9 @@ spec:
       {{- if .Values.otelcol.deployment.tolerations }}
       tolerations:
         {{ toYaml .Values.otelcol.deployment.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.otelcol.deployment.priorityClassName }}
+      priorityClassName: {{ .Values.otelcol.deployment.priorityClassName | quote }}
       {{- end }}
       containers:
       - name: otelcontrib-collector

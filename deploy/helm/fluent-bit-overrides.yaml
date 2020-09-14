@@ -12,24 +12,29 @@ resources: {}
 ## Comment it out if you wish to have the fluent-bit dependency installed.
 ## Setting the flag to true instead of commenting out will break other functionality.
 # enabled: false
+
+## Add custom pod labels to fluent-bit daemonset pods
+podLabels: {}
+## Add custom pod annotations to fluent-bit daemonset pods
+podAnnotations: {}
 service:
   flush: 5
 metrics:
   enabled: true
 env:
-  - name: CHART
-    valueFrom:
-      configMapKeyRef:
-        name: sumologic-configmap
-        key: fluentdLogs
-  - name: NAMESPACE
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.namespace
+- name: CHART
+  valueFrom:
+    configMapKeyRef:
+      name: sumologic-configmap
+      key: fluentdLogs
+- name: NAMESPACE
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.namespace
 backend:
   type: forward
   forward:
-    # NOTE: Requires trailing "." for fully-qualified name resolution
+    ## NOTE: Requires trailing "." for fully-qualified name resolution
     host: ${CHART}.${NAMESPACE}.svc.cluster.local.
     port: 24321
     tls: "off"
@@ -38,17 +43,17 @@ backend:
     shared_key:
 trackOffsets: true
 tolerations:
-  - effect: NoSchedule
-    operator: Exists
+- effect: NoSchedule
+  operator: Exists
 input:
   systemd:
     enabled: true
 parsers:
   enabled: true
-  # This regex matches the first line of a multiline log starting with a date of the format :  "2019-11-17 07:14:12" or "2019-11-17T07:14:12"
+  ## This regex matches the first line of a multiline log starting with a date of the format :  "2019-11-17 07:14:12" or "2019-11-17T07:14:12"
   regex:
-    - name: multi_line
-      regex: (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
+  - name: multi_line
+    regex: (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
 rawConfig: |-
   @INCLUDE fluent-bit-service.conf
 
@@ -64,7 +69,7 @@ rawConfig: |-
     Skip_Long_Lines  On
     DB               /tail-db/tail-containers-state-sumo.db
     DB.Sync          Normal
-    Ignore_Older     24h
+
   [INPUT]
     Name            systemd
     Tag             host.*

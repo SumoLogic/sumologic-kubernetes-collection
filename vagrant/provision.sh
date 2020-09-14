@@ -66,6 +66,9 @@ add-apt-repository \
 apt-get install -y docker-ce docker-ce-cli containerd.io
 usermod -aG docker vagrant
 
+# Install make
+apt-get install -y make
+
 # K8s needs some time to bootstrap
 while true; do
   kubectl -n kube-system get services 1>/dev/null 2>&1 && break
@@ -83,3 +86,5 @@ echo
 echo Dashboard token:
 kubectl -n kube-system describe secret default| awk '$1=="token:"{print $2}'
 echo
+
+ln -s /sumologic/vagrant/sumologic.sh /usr/local/bin/sumologic

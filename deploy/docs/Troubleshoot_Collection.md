@@ -260,7 +260,29 @@ helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VE
 
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
-There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, try running the commands in the "Configure Prometheus" section [here](./Non_Helm_Installation.md#missing-metrics-for-controller-manager-or-scheduler).
+There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, you can use the following steps.
+
+First get the `kube-controller` and `kube-scheduler` service name.  These are installed in the `kube-system` namespace.
+
+```
+kubectl get services -n kube-system
+```
+
+You should see two services that look like the following.  Note `collection` refers to the Helm release name you used on installation.
+
+```
+collection-prometheus-oper-kube-scheduler
+collection-prometheus-oper-kube-controller-manager
+```
+
+Run the following command to patch the labels on these services, again this command assumes the above service names which you may need to change.
+
+``` 
+kubectl -n kube-system patch service collection-prometheus-oper-kube-controller-manager -p '{"spec":{"selector":{"k8s-app": "kube-controller-manager"}}}'
+kubectl -n kube-system patch service collection-prometheus-oper-kube-scheduler -p '{"spec":{"selector":{"k8s-app": "kube-scheduler"}}}'
+kubectl -n kube-system patch service collection-prometheus-oper-kube-controller-manager --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
+kubectl -n kube-system patch service collection-prometheus-oper-kube-scheduler --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
+```
 
 ### Prometheus stuck in `Terminating` state after running `helm del collection`
 Delete the pod forcefully by adding `--force --grace-period=0` to the `kubectl delete pod` command.
@@ -340,3 +362,14 @@ helm init --service-account tiller --history-max 200
 
 If you are running the out of the box rancher monitoring setup, you cannot run our Prometheus operator alongside it. The Rancher Prometheus Operator setup will actually kill and permanently terminate our Prometheus Operator instance and will prevent the metrics system from coming up.
 If you have the Rancher prometheus operator setup running, they will have to use the UI to disable it before they can install our collection process.
+
+### Falco and Google Kubernetes Engine (GKE)
+
+`Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to use extended Berkeley Packet Filter (eBPF) to supply the stream of system calls to the Falco engine. eBPF is currently only supported on GKE and COS. For more information see [Installing Falco](https://falco.org/docs/installation/).
+
+To install on `GKE`, use the provided override file to customize your configuration and uncomment the following lines in the `values.yaml` file referenced below:
+
+```
+  #ebpf:
+  #  enabled: true
+```

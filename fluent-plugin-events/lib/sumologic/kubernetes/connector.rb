@@ -24,17 +24,30 @@ module SumoLogic
       end
 
       def create_client(base, ver)
-        url = "#{@kubernetes_url}/#{base}"
-        log.info "create client with URL: #{url} and apiVersion: #{ver}"
-        client = Kubeclient::Client.new(
-          url, ver,
-          ssl_options: ssl_options,
-          auth_options: auth_options
-        )
-        client.api_valid?
-        client
-      rescue Exception => e
-        log.error e
+        retries = 0
+        begin
+          client = nil
+          unless client
+            url = "#{@kubernetes_url}/#{base}"
+            log.info "create client with URL: #{url} and apiVersion: #{ver}"
+            client = Kubeclient::Client.new(
+              url, ver,
+              ssl_options: ssl_options,
+              auth_options: auth_options
+            )
+            client.api_valid?
+          end
+          client
+        rescue StandardError => e
+          ## retry up to ~4 minutes
+          if (retries += 1) <= 7
+            log.error "Error creating client (#{e}), retrying in #{2 ** retries} second(s)..."
+            sleep(2 ** retries)
+            retry
+          else
+            raise
+          end
+        end
       end
 
       def connect_kubernetes

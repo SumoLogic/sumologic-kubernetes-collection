@@ -3,35 +3,79 @@
 __NOTE__: The Sumo Logic Kubernetes collection process does not support collecting metrics from scaling Prometheus replicas. If you are running multiple Prometheus replicas, please follow our [Side-by-Side](SideBySidePrometheus.md) instructions.
 
 <!-- TOC -->
- 
-- [Install Fluentd, Fluent-bit, and Falco](#install-fluentd-fluent-bit-and-falco) 
-- [Overwrite Prometheus Remote Write Configuration](#overwrite-prometheus-remote-write-configuration) 
-- [Merge Prometheus Remote Write Configuration](#merge-prometheus-remote-write-configuration)  
+- [Prerequisite](#prerequisite)
+- [Install Sumo Logic Helm Chart](#install-sumo-logic-helm-chart) 
+- [Update Existing Prometheus Operator Helm Chart](#update-existing-prometheus-operator-helm-chart)
+- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic) 
+- [Merge Prometheus Configuration](#merge-prometheus-configuration) 
+- [Troubleshooting](#troubleshooting) 
+- [Customizing Installation](#customizing-installation)
+- [Upgrade Sumo Logic Collection](#upgrading-sumo-logic-collection)
+- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
 <!-- /TOC -->
 
-## Install Fluentd, Fluent-bit, and Falco
+This document will walk you through how to set up Sumo Logic Kubernetes collection when you already have Prometheus running using the Prometheus Operator. In these steps, you will modify your installed Prometheus operator to add in the minimum configuration that Sumo Logic needs.
 
-Installation of collection in a cluster where a prometheus operator already exists requires that you modify Sumo Logic's [values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/values.yaml) file. Run the following to download the `values.yaml` file
+If you do not wish to modify your Prometheus Operator and wish to run side-by-side with our collection, please refer to our [How to install our Prometheus side by side with your existing Prometheus](./SideBySidePrometheus.md) documentation.
+
+## Prerequisite
+
+Sumo Logic Apps for Kubernetes and Explore require you to add the following [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata. This is a one time setup per Sumo Logic account.
+- cluster
+- container
+- deployment
+- host
+- namespace
+- node
+- pod
+- service
+
+## Install Sumo Logic Helm Chart
+
+The Helm chart installation requires two parameter overrides:
+* __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
+* __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+
+If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
+
+The following parameter is optional, but we recommend setting it.
+* __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+
+The following helm commands support Helm2 or Helm3.
+
+To install the chart, first add the `sumologic` private repo:
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/sumologic/values.yaml
+helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Edit the `values.yaml` file, setting `prometheus-operator.enabled = false`. This modification will instruct Helm to install all the needed collection components (FluentD, FluentBit, and Falco), but it will not install the Prometheus Operator. Run the following command to install collection on your cluster.
+Next you can run `helm upgrade --install` to install our chart. An example command with the minimum parameters is provided below. The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to. The below command also disables the `prometheus-operator` sub-chart since we will be modifying the existing prometheus operator install.
 
 ```bash
-helm install sumologic/sumologic \
-    --name collection --namespace sumologic -f values.yaml \
-    --set sumologic.accessId=<SUMO_ACCESS_ID> \
-    --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
-    --set sumologic.clusterName=<MY_CLUSTER_NAME>
+helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false
+```
+> **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
+
+If you wish to install the chart in a different existing namespace you can do the following:
+
+```bash
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false
 ```
 
-**NOTE**:
-In case the prometheus-operator is installed in a different namespace as compared to where the Sumo Logic Solution is deployed, you would need to do the following two steps:
+For Helm3, if the namespace does not exist, you can add the `--create-namespace` flag.
 
-##### 1. Copy one of the configmaps that exposes the release name,  which is used in the remote write urls.
+```bash
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false --create-namespace
+```
+
+## Update Existing Prometheus Operator Helm Chart
+
+**Note that If you have made extensive customization to the current Prometheus Operator Helm install then you will need to [merge your existing configuration with ours](#merge-prometheus-configuration) avoiding conflicts or you may want to [run our Prometheus side-by-side](./SideBySidePrometheus.md).**
+
+Next you will modify your Prometheus Operator installation with the required configuration to collect the metrics into Sumo Logic. Please note that this process is best when you have not customized the existing Prometheus Operator installation. If you have, please look at [our section on merging the configuration](#merge-prometheus-configuration).
+
+If the Prometheus Operator is installed in a different namespace as compared to where the Sumo Logic Chart is deployed, you would need to do the following step to copy the `ConfigMap` that exposes the release name,  which is used in the remote write urls.
 
 For example:\
 If the Sumo Logic Solution is deployed in `<source-namespace>` and the existing prometheus-operator is in `<destination-namespace>`, run the below command:
@@ -40,26 +84,28 @@ kubectl get configmap sumologic-configmap \
 --namespace=<source-namespace> --export -o yaml | \
 kubectl apply --namespace=<destination-namespace> -f -
 ```
-##### 2. Update Prometheus remote write URL's
+
 Run the following commands to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator with the prometheus overrides we provide in our [prometheus-overrides.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/prometheus-overrides.yaml).
 
-Run the following command to download our prometheus-overrides.yaml file
+Run the following command to download our prometheus-overrides.yaml file. Please review our configuration as it will be applied to your existing operator configuration.
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.0/deploy/helm/prometheus-overrides.yaml > prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.2/deploy/helm/prometheus-overrides.yaml
 ```
 
-Next run
+Next you can upgrade your Prometheus-Operator.  The following command assumes it is installed with the release name `prometheus-operator`. Remember, this command will update your Prometheus Operator to be configured with our default settings. If you wish to preserve your settings and merge with what is required for Sumo logic, then please look at the section on [how to merge the configuration](#merge-prometheus-configuration).
 
 ```bash
-helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml \
-     --set prometheus-operator.prometheus-node-exporter.service.port=9200 \
-     --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
+helm upgrade prometheus-operator stable/prometheus-operator -f prometheus-overrides.yaml 
 ```
 
-## Merge Prometheus Remote Write Configuration
+## Viewing Data In Sumo Logic
 
-If you have customized your Prometheus remote write configuration, follow these steps to merge the configurations. 
+Once you have completed installation, you can [install the Kubernetes App and view the dashboards](https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards) or [open a new Explore tab](https://help.sumologic.com/Solutions/Kubernetes_Solution/05Navigate_your_Kubernetes_environment) in Sumo Logic. If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
+
+## Merge Prometheus Configuration
+
+If you have customized your Prometheus configuration, follow these steps to merge the configurations. 
 
 Helm supports providing multiple configuration files, and priority will be given to the last (right-most) file specified. You can obtain your current prometheus configuration by running
 
@@ -74,3 +120,93 @@ helm upgrade prometheus-operator stable/prometheus-operator -f current-values.ya
 ```
 
 __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
+
+## Troubleshooting
+
+### UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "prometheusrulemutate.monitoring.coreos.com"
+
+If you receive the above error, you can take the following steps and then repeat the `helm upgrade` command.
+
+```bash
+kubectl delete  validatingwebhookconfigurations.admissionregistration.k8s.io prometheus-operator-admission
+kubectl delete  MutatingWebhookConfiguration  prometheus-operator-admission
+```
+### Error: timed out waiting for the condition
+If `helm upgrade --install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm upgrade --install` command. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where the Helm chart was deployed. The pod name will contain `-setup` in the name.
+
+```sh
+kubectl get pods
+```
+> **Tip**: If the pod does not exist, it is possible it has been evicted.  Re-run the `helm upgrade --install` to recreate it and while that command is running, use another shell to get the name of the pod.
+
+Get the logs from that pod:
+```
+kubectl logs POD_NAME -f
+```
+
+### Error: collector with name 'sumologic' does not exist
+If you get `Error: collector with name 'sumologic' does not exist
+sumologic_http_source.default_metrics_source: Importing from ID`, you can safely ignore it and the installation should complete successfully. The installation process creates new [HTTP endpoints](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) in your Sumo Logic account, that are used to send data to Sumo. This error occurs if the endpoints had already been created by an earlier run of the installation process.
+
+You can find more information in our [troubleshooting documentation](Troubleshoot_Collection.md).
+
+## Customizing Installation
+All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade.  Remember to define the properties in our [requirements section](#requirements) in the `values.yaml` as well or pass them in via `--set`
+  
+```bash
+helm upgrade --install my-release sumologic/sumologic -f values.yaml
+```
+> **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
+
+## Upgrading Sumo Logic Collection
+
+**Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).**
+
+To upgrade our helm chart to a newer version, you must first run update your local helm repo.
+
+```bash
+helm repo update
+```
+
+Next, you can run `helm upgrade --install` to upgrade to that version. The following upgrades the current version of `my-release` to the latest.
+
+```bash
+helm upgrade --install my-release sumologic/sumologic -f values.yaml
+```
+
+If you wish to upgrade to a specific version, you can use the `--version` flag.
+
+```bash
+helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=1.0.0
+```
+
+If you no longer have your `values.yaml` from the first installation or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart. For example, if the release is called `my-release` you can run the following.
+
+```bash
+helm get values my-release
+```
+
+After upgrading the Sumo Logic chart, you can repeat the steps described in [Update Existing Prometheus Operator Helm Chart](#update-existing-prometheus-operator-helm-chart) to upgrade the Prometheus configuration.
+
+## Uninstalling Sumo Logic Collection
+
+To uninstall/delete the Helm chart:
+
+```bash
+helm delete my-release
+```
+> **Helm2 Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
+
+> **Helm3 Tip**: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.ease.
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+To remove the Kubernetes secret:
+
+```bash
+kubectl delete secret sumologic
+```
+
+Then delete the associated hosted collector in the Sumo Logic UI.
+
+Finally, you can restore your Prometheus to the original configuration before you installed Sumo Logic.
