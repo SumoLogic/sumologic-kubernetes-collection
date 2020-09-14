@@ -787,8 +787,9 @@ fluent-bit:
     @INCLUDE fluent-bit-output.conf
 
 ## Configure kube-prometheus-stack
+## We are using an alias prometheus-operator for the kube-prometheus-stack helm chart for backward compatibility. This will be changed in v2.0.
 ## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
-kube-prometheus-stack:
+prometheus-operator:
   ## Labels to apply to all prometheus operator resources
   commonLabels: {}
   ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
