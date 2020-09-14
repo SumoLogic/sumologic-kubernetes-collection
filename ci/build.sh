@@ -106,6 +106,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm init --client-only
   sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
+  sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
   cd deploy/helm/sumologic
   sudo helm dependency update
   cd ../../../
@@ -154,7 +155,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "Copy prometheus-operator section from 'values.yaml' to  'prometheus-overrides.yaml'"
   echo "# This file is auto-generated." > deploy/helm/prometheus-overrides.yaml
   # Copy lines of prometheus-operator section and remove indention from values.yaml
-  yq r deploy/helm/sumologic/values.yaml prometheus-operator >> deploy/helm/prometheus-overrides.yaml
+  yq r deploy/helm/sumologic/values.yaml kube-prometheus-stack >> deploy/helm/prometheus-overrides.yaml
 
   echo "Copy prometheus.prometheusSpec.remoteWrite from 'prometheus-overrides.yaml' and inject into 'deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet'"
   prometheus_remote_write=$(yq r deploy/helm/prometheus-overrides.yaml prometheus.prometheusSpec.remoteWrite -j | jq '.' | sed 's/^/    /')
@@ -200,6 +201,7 @@ function push_helm_chart() {
   git checkout -- .
   sudo helm init --client-only
   sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
+  sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
   sudo helm package deploy/helm/sumologic --dependency-update --version=$version --app-version=$version
   git fetch origin-repo
   git checkout gh-pages
