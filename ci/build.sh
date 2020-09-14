@@ -155,7 +155,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "Copy prometheus-operator section from 'values.yaml' to  'prometheus-overrides.yaml'"
   echo "# This file is auto-generated." > deploy/helm/prometheus-overrides.yaml
   # Copy lines of prometheus-operator section and remove indention from values.yaml
-  yq r deploy/helm/sumologic/values.yaml prometheus-operator >> deploy/helm/prometheus-overrides.yaml
+  yq r deploy/helm/sumologic/values.yaml kube-prometheus-stack >> deploy/helm/prometheus-overrides.yaml
 
   echo "Copy prometheus.prometheusSpec.remoteWrite from 'prometheus-overrides.yaml' and inject into 'deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet'"
   prometheus_remote_write=$(yq r deploy/helm/prometheus-overrides.yaml prometheus.prometheusSpec.remoteWrite -j | jq '.' | sed 's/^/    /')
