@@ -13,6 +13,9 @@ dashboards_path = ${root_dir}vagrant/dashboards
 name = collection
 namespace = sumologic
 
+build:
+	cd ${root_dir} && ${root_dir}ci/build.sh
+
 # Collector section
 ## Collector upgrade
 upgrade:
