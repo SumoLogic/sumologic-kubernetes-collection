@@ -266,9 +266,9 @@ fluentd:
     cacheSize: "10000"
     ## Option to control the enabling of metadata filter plugin cache_ttl (in seconds).
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-    cacheTtl: "3600"
+    cacheTtl: "7200"
     ## Option to control the interval at which metadata cache is asynchronously refreshed (in seconds).
-    cacheRefresh: "1800"
+    cacheRefresh: "3600"
     ## Option to give plugin specific log level
     pluginLogLevel: "error"
     ## Option to specify K8s API versions
