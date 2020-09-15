@@ -94,8 +94,8 @@ data:
     @include logs.source.default.conf
   logs.enhance.k8s.metadata.filter.conf: |-
     cache_size  "10000"
-    cache_ttl  "3600"
-    cache_refresh "1800"
+    cache_ttl  "7200"
+    cache_refresh "3600"
     in_namespace_path '$.kubernetes.namespace_name'
     in_pod_path '$.kubernetes.pod_name'
     core_api_versions v1
@@ -111,7 +111,7 @@ data:
     client_key ""
     bearer_token_file ""
     cache_size "10000"
-    cache_ttl "3600"
+    cache_ttl "7200"
     tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
   logs.kubernetes.sumologic.filter.conf: |-
     source_name "%{namespace}.%{pod}.%{container}"
@@ -443,8 +443,8 @@ data:
       <filter prometheus.metrics**>
         @type enhance_k8s_metadata
         cache_size  "10000"
-        cache_ttl  "3600"
-        cache_refresh "1800"
+        cache_ttl  "7200"
+        cache_refresh "3600"
         core_api_versions v1
         api_groups apps/v1,extensions/v1beta1
       </filter>
