@@ -22,6 +22,11 @@ if [ -n "$GITHUB_TOKEN" ]; then
   git checkout $TRAVIS_PULL_REQUEST_BRANCH
 fi
 
+## check the build script with shellcheck
+## TODO: the "|| true" prevents the build from failing on shellcheck errors - to be removed
+echo "Checking the build script with shellcheck..."
+shellcheck ci/build.sh || true
+
 # Check for invalid changes to generated yaml files (non-Tag builds)
 # Exclude branches that start with "revert-" to allow reverts
 if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ] && [[ ! "$TRAVIS_PULL_REQUEST_BRANCH" =~ ^revert- ]]; then
