@@ -94,7 +94,7 @@ spec:
 {{ toYaml .Values.fluentd.logs.extraVolumes | indent 6 }}
 {{- end }}
       securityContext:
-        fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
+        {{- toYaml .Values.fluentd.securityContext | nindent 8 }}
       {{- if .Values.fluentd.logs.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.fluentd.logs.statefulset.priorityClassName | quote }}
       {{- end }}

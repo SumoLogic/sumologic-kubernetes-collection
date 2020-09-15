@@ -54,7 +54,7 @@ spec:
 {{ toYaml .Values.fluentd.events.extraVolumes | indent 6 }}
 {{- end }}
       securityContext:
-        fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
+        {{- toYaml .Values.fluentd.securityContext | nindent 8 }}
       containers:
       - name: fluentd-events
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
