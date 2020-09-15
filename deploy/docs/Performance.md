@@ -4,8 +4,8 @@ For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](.
 
 ## Recommendations
 
-1. At least **6 Fluentd-logs** pods per **1 TB/day** of logs.
-2. At least **5 Fluentd-metrics** pods per **120k DPM** of metrics.
+1. At least **8 Fluentd-logs** pods per **1 TB/day** of logs.
+2. At least **4 Fluentd-metrics** pods per **120k DPM** of metrics.
 3. The Prometheus pod will use on average **2GiB** memory per **120k DPM**; however in our experience this has gone up to **5GiB**, so we recommend allocating ample memory resources for the Prometheus pod if you wish to collect a high volume of metrics for a larger cluster.
 
 ## Up to 500 application pods
