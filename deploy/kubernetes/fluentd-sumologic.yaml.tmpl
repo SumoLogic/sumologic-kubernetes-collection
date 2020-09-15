@@ -816,6 +816,7 @@ spec:
           name: collection-sumologic-fluentd-events
       securityContext:
         fsGroup: 999
+        
       containers:
       - name: fluentd-events
         image: sumologic/kubernetes-fluentd:1.2.2
@@ -898,6 +899,7 @@ spec:
           name: collection-sumologic-fluentd-metrics
       securityContext:
         fsGroup: 999
+        
       containers:
       - name: fluentd
         image: sumologic/kubernetes-fluentd:1.2.2
@@ -1022,6 +1024,7 @@ spec:
           name: collection-sumologic-fluentd-logs
       securityContext:
         fsGroup: 999
+        
       containers:
       - name: fluentd
         image: sumologic/kubernetes-fluentd:1.2.2
