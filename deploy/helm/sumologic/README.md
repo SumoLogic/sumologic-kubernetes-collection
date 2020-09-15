@@ -53,8 +53,8 @@ Parameter | Description | Default
 `fluentd.buffer.filePaths` | File paths to buffer to, if Fluentd buffer type is specified as file above. Each sumologic output plugin buffers to its own unique file. | `{"events":"/fluentd/buffer/events","logs":{"containers":"/fluentd/buffer/logs.containers","default":"/fluentd/buffer/logs.default","kubelet":"/fluentd/buffer/logs.kubelet","systemd":"/fluentd/buffer/logs.systemd"},"metrics":{"apiserver":"/fluentd/buffer/metrics.apiserver","container":"/fluentd/buffer/metrics.container","controller":"/fluentd/buffer/metrics.controller","default":"/fluentd/buffer/metrics.default","kubelet":"/fluentd/buffer/metrics.kubelet","node":"/fluentd/buffer/metrics.node","scheduler":"/fluentd/buffer/metrics.scheduler","state":"/fluentd/buffer/metrics.state"},"traces":"/fluentd/buffer/traces"}`
 `fluentd.buffer.extraConf` | Additional config for buffer settings | `Nil`
 `fluentd.metadata.cacheSize` | Option to control the enabling of metadata filter plugin cache_size. | `10000`
-`fluentd.metadata.cacheTtl` | Option to control the enabling of metadata filter plugin cache_ttl (in seconds). | `3600`
-`fluentd.metadata.cacheRefresh` | Option to control the interval at which metadata cache is asynchronously refreshed (in seconds). | `1800`
+`fluentd.metadata.cacheTtl` | Option to control the enabling of metadata filter plugin cache_ttl (in seconds). | `7200`
+`fluentd.metadata.cacheRefresh` | Option to control the interval at which metadata cache is asynchronously refreshed (in seconds). | `3600`
 `fluentd.metadata.pluginLogLevel` | Option to give plugin specific log level. | `error`
 `fluentd.logs.enabled` | Flag to control deploying the Fluentd logs statefulsets. | `true`
 `fluentd.logs.statefulset.nodeSelector` | Node selector for Fluentd log statefulset. | `{}`
