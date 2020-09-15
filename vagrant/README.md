@@ -37,6 +37,14 @@ helm2 init --wait
 
 and then run `helm2 version` to make sure everything is OK.
 
+## Build
+
+To perform docker image build and to run tests please use `build` target:
+
+```bash
+/sumologic/vagrant/Makefile build
+```
+
 ## Collector
 
 To install or upgrade collector please type:
