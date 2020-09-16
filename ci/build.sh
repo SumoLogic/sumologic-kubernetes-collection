@@ -59,7 +59,7 @@ for i in ./fluent-plugin* ; do
 
     echo "Build gem $PLUGIN_NAME $GEM_VERSION..."
     gem build "$PLUGIN_NAME"
-    mv *.gem ../deploy/docker/gems
+    mv ./*.gem ../deploy/docker/gems
 
     cd ..
   fi
