@@ -43,7 +43,7 @@ fi
 
 for i in ./fluent-plugin* ; do
   if [ -d "$i" ]; then
-    cd "$i"
+    cd "$i" || exit 1
     PLUGIN_NAME=$(basename "$i")
     # Strip everything after "-" (longest match) to avoid gem prerelease behavior
     GEM_VERSION=${VERSION%%-*}
@@ -66,10 +66,10 @@ for i in ./fluent-plugin* ; do
 done
 
 echo "Building docker image with $DOCKER_TAG:local in $(pwd)..."
-cd ./deploy/docker
+cd ./deploy/docker || exit 1
 docker build . -f ./Dockerfile -t "$DOCKER_TAG:local" --no-cache
 rm -f ./gems/*.gem
-cd ../..
+cd ../.. || exit 1
 
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
@@ -111,9 +111,9 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   sudo helm init --client-only
   sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
   sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-  cd deploy/helm/sumologic
+  cd deploy/helm/sumologic || exit 1
   sudo helm dependency update
-  cd ../../../
+  cd ../../../ || exit 1
 
   # NOTE(ryan, 2019-11-06): helm template -execute is going away in Helm 3 so we will need to revisit this
   # https://github.com/helm/helm/issues/5887
