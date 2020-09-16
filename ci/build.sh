@@ -4,7 +4,6 @@ VERSION="${TRAVIS_TAG:-0.0.0}"
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
 : "${DOCKER_USERNAME:=sumodocker}"
-DOCKER_TAGS="https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags"
 
 echo "Starting build process in: $(pwd) with version tag: ${VERSION}"
 err_report() {
