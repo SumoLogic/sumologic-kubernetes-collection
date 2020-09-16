@@ -93,6 +93,8 @@ data:
         protocols:
           grpc:
             endpoint: 0.0.0.0:55680
+          http:
+            endpoint: 0.0.0.0:55681
       zipkin:
         endpoint: 0.0.0.0:9411
     service:
