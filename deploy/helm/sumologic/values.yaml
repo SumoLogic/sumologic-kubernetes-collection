@@ -73,6 +73,10 @@ sumologic:
   ## Add custom annotations to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
   podAnnotations: {}
 
+  ## creation of Security Context Constraints in Openshift
+  scc:
+    create: false
+
   setup:
     job:
       nodeSelector: {}
@@ -696,6 +700,10 @@ fluent-bit:
   ## Add custom pod annotations to fluent-bit daemonset pods
   podAnnotations: {}
 
+  ## Set securityContext of fluent-bit daemonset pods as privileged for running in Openshift
+  # securityContext:
+  #   privileged: true
+ 
   service:
     flush: 5
   metrics:
