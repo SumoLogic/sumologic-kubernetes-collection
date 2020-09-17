@@ -19,6 +19,9 @@ prometheus-operator:
       prometheusSpec:
         externalLabels:
           cluster: microk8s
+    sidecar:
+      image:
+        sha: ''
 sumologic:
   accessId: dummy
   accessKey: dummy
