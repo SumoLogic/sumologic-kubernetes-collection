@@ -19,7 +19,7 @@ For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](.
       remoteTimeout: 1s
     ```
 5. For clusters with 2000 application pods, we found that the **Fluentd-events** pod had to be given a 1 GiB memory limit to accommodate the increased events load. If you find that the **Fluentd-events** pod is being OOMKilled, please increase the memory limits and requests accordingly.
-6. For our log generating test application pods, we found that changing the IOPS to 375 or 125GiB improved stability.
+6. For our log generating test application pods, we found that increasing the IOPS to 375 minimum improved stability.
 
 ## Up to 500 application pods
 Our test cluster had 70 nodes running an average of 500 application pods, each generating either 128KB/s logs or 2400 DPM metrics. The application pods had about 20% churn rate.
