@@ -19,11 +19,15 @@ For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](.
       remoteTimeout: 1s
     ```
 5. For clusters with 2000 application pods, we found that the **Fluentd-events** pod had to be given a 1 GiB memory limit to accommodate the increased events load. If you find that the **Fluentd-events** pod is being OOMKilled, please increase the memory limits and requests accordingly.
-6. For our log generating test application pods, we found that increasing the IOPS to 375 minimum improved stability.
+6. For our log generating test application pods, we found that increasing the IOPS to 300 minimum improved stability.
 
 ### Up to 500 application pods
 
-Our test cluster had 70 nodes running an average of 500 application pods, each generating either 128KB/s logs or 2400 DPM metrics. The application pods had about 20% churn rate.
+Our test cluster had 70 nodes (AWS m5a.2xlarge instances).
+
+We used 125 GiB GP2 volumes, which allowed for IOPS of 375. In addition we attached a 300GiB volume to the Prometheus pod.
+
+This cluster ran an average of 500 application pods, each generating either 128KB/s logs or 2400 DPM metrics. The application pods had about 20% churn rate.
 
 Data type | Rate per pod | Min # pods | Max # pods | Max Total rate
 --------- | ------------ | ---------- | ---------- | --------------
@@ -36,7 +40,11 @@ Prometheus memory consumption reached a maximum of **28GiB**, with an average of
 
 ### Up to 2000 application pods
 
-Our test cluster had 210 nodes running an average of 2000 application pods, each generating either 128KB/s logs or 2400 DPM metrics. The application pods had about 10% churn rate.
+Our test cluster had 210 nodes (AWS m5a.2xlarge instances). In addition we ran 1 extra node (m5a.4xlarge) to accommodate the Prometheus pod's memory usage.
+
+We used 125 GiB GP2 volumes, which allowed for IOPS of 375. In addition we attached a 300GiB volume to the Prometheus pod.
+
+This cluster ran an average of 2000 application pods, each generating either 128KB/s logs or 2400 DPM metrics. The application pods had about 10% churn rate.
 
 Data type | Rate per pod | Min # pods | Max # pods | Max Total rate
 --------- | ------------ | ---------- | ---------- | --------------
