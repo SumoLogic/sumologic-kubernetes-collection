@@ -12,13 +12,22 @@ err_report() {
 }
 trap 'err_report $LINENO' ERR
 
+function get_branch_to_checkout() {
+  [[ "${TRAVIS_EVENT_TYPE}" == pull_request ]] \
+    && echo "${TRAVIS_PULL_REQUEST_BRANCH}" \
+    || echo "${TRAVIS_BRANCH}"
+}
+
 # Set up Github
 if [ -n "$GITHUB_TOKEN" ]; then
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "Travis CI"
   git remote add origin-repo "https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git" > /dev/null 2>&1
   git fetch --unshallow origin-repo
-  git checkout "$TRAVIS_PULL_REQUEST_BRANCH"
+
+  readonly branch_to_checkout="$(get_branch_to_checkout)"
+  echo "Checking out the ${branch_to_checkout} branch..."
+  git checkout "${branch_to_checkout}"
 fi
 
 ## check the build script with shellcheck
