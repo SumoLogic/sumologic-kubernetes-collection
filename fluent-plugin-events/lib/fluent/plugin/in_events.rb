@@ -14,11 +14,9 @@ module Fluent
       
       # parameters for connecting to k8s api server
       config_param :kubernetes_url, :string, default: nil
+      # api_version is used to create a group api e.g. "events.k8s.io/v1beta1"
+      # or a regular api e.g. 'v1'
       config_param :api_version, :string, default: 'v1'
-      # if group APIs are used, they should be added here with base as key, e.g. 'extensions'
-      # and version as value, e.g. 'v1beta1'
-      # example: {'apps':'v1', 'extensions':'v1beta1'}
-      config_param :api_groups, :hash, default: nil
       config_param :client_cert, :string, default: nil
       config_param :client_key, :string, default: nil
       config_param :ca_file, :string, default: nil

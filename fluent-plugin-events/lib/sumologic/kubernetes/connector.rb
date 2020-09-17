@@ -7,8 +7,11 @@ module SumoLogic
       K8_POD_CA_CERT = 'ca.crt'.freeze
       K8_POD_TOKEN = 'token'.freeze
 
-      # Need different clients to access different API groups/versions
       CORE_API_VERSIONS = ['v1'].freeze
+
+      def connect_kubernetes
+        @clients = @api_version == 'v1' ? core_clients : core_clients.merge(group_clients)
+      end
 
       def core_clients
         CORE_API_VERSIONS.map do |ver|
@@ -16,19 +19,31 @@ module SumoLogic
         end.to_h
       end
 
-      # If @api_version is not v1, we will create client for other API groups/versions
       def group_clients
-        [@api_version].map do |ver|
-          [ver, create_client('apis', ver)]
-        end.to_h
+        elems = @api_version.split("/")
+        if elems.empty? then return {} end
+
+        # only a version: create a non-group api
+        if elems.length < 2
+          ver = elems[0]
+          return { ver => create_client('api', ver) }
+        end
+
+        # if there are more elements, each one should have
+        # a base as key e.g. 'extensions'
+        # and a version as value e.g. 'v1beta1'
+        base = sprintf "%s", elems[0]
+        ver = elems[1]
+        return { base+"/"+ver => create_client('apis/'+base, ver) }
       end
 
       def create_client(base, ver)
         retries = 0
+        url = "#{@kubernetes_url}/#{base}"
+
         begin
           client = nil
           unless client
-            url = "#{@kubernetes_url}/#{base}"
             log.info "create client with URL: #{url} and apiVersion: #{ver}"
             client = Kubeclient::Client.new(
               url, ver,
@@ -50,9 +65,6 @@ module SumoLogic
         end
       end
 
-      def connect_kubernetes
-        @clients = @api_version == 'v1' ? core_clients : core_clients.merge(group_clients)
-      end
 
       def ssl_store
         require 'openssl'
