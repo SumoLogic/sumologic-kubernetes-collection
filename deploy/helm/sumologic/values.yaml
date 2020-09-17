@@ -32,6 +32,8 @@ sumologic:
   ## proxy urls
   httpProxy: ""
   httpsProxy: ""
+  ## Exclude kubernetes internal traffic from proxy
+  noProxy: kubernetes.default.svc
 
   ## Collector name
   #collectorName: ""

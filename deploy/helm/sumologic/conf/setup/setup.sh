@@ -8,6 +8,7 @@ export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
 # Support proxy for terraform
 export HTTP_PROXY=${HTTP_PROXY:=""}
 export HTTPS_PROXY=${HTTPS_PROXY:=""}
+export NO_PROXY=${NO_PROXY:=""}
 
 COLLECTOR_NAME="{{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ .Values.sumologic.clusterName }}{{- end}}"
 
