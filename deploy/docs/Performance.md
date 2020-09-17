@@ -33,7 +33,8 @@ We observed **35 Fluentd-logs** pods and **25 Fluentd-metrics** pods were suffic
 
 Prometheus memory consumption reached a maximum of **28GiB**, with an average of **16GiB**.
 
-## Up to 2000 application pods
+### Up to 2000 application pods
+
 Our test cluster had 210 nodes running an average of 2000 application pods, each generating either 128KB/s logs or 2400 DPM metrics. The application pods had about 10% churn rate.
 
 Data type | Rate per pod | Min # pods | Max # pods | Max Total rate
