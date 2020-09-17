@@ -136,3 +136,11 @@ application-metrics-nginx-ingress-official-telegraf-run:
 application-metrics-nginx-ingress-official-clean:
 	helm delete -n demo-nginx-ingress-official demo-nginx-ingress-official
 	kubectl delete ns demo-nginx-ingress-official
+
+## Docker based redis
+application-metrics-redis-docker-run:
+	kubectl create ns demo-redis-docker || true
+	kubectl -n demo-redis-docker apply -f ${k8s_path}/application_metrics/redis/docker/statefulset.yaml
+
+application-metrics-redis-docker-clean:
+	kubectl delete ns demo-redis-docker

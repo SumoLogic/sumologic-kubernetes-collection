@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: demo-redis-docker
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+      annotations:
+        telegraf.influxdata.com/inputs: |+
+          [[inputs.redis]]
+          servers = ["tcp://localhost:6379"]
+        telegraf.influxdata.com/class: sumologic-prometheus
+        telegraf.influxdata.com/limits-cpu: '750m'
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9273"
+
+    spec:
+      containers:
+        - name: redis
+          image: redis:alpine
