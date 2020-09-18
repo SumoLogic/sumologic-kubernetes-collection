@@ -32,9 +32,9 @@ module SumoLogic
         # if there are more elements, each one should have
         # a base as key e.g. 'extensions'
         # and a version as value e.g. 'v1beta1'
-        base = sprintf "%s", elems[0]
+        base = elems[0].to_s
         ver = elems[1]
-        return { base+"/"+ver => create_client('apis/'+base, ver) }
+        return { base + "/" + ver => create_client('apis/' + base, ver) }
       end
 
       def create_client(base, ver)

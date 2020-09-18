@@ -24,9 +24,9 @@ module SumoLogic
             continue
           end
 
-          base = sprintf "%s", elem[0]
+          base = elem[0].to_s
           ver = elem[1]
-          [base+"/"+ver, create_client('apis/'+base, ver)]
+          [base + "/" + ver, create_client('apis/' + base, ver)]
         end.to_h
       end
 
