@@ -126,5 +126,4 @@ def init_globals
   @client_key = nil
   @ssl_partial_chain = false
   @bearer_token_file = nil
-  @api_groups = {}
 end

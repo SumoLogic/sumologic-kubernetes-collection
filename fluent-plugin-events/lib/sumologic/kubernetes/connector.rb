@@ -7,40 +7,35 @@ module SumoLogic
       K8_POD_CA_CERT = 'ca.crt'.freeze
       K8_POD_TOKEN = 'token'.freeze
 
-      CORE_API_VERSIONS = ['v1'].freeze
-
       def connect_kubernetes
-        @clients = @api_version == 'v1' ? core_clients : core_clients.merge(group_clients)
+        @clients = api_clients
       end
 
-      def core_clients
-        CORE_API_VERSIONS.map do |ver|
-          [ver, create_client('api', ver)]
-        end.to_h
-      end
+      CORE_API_VERSION = 'v1'
 
-      def group_clients
-        elems = @api_version.split("/")
-        if elems.empty? then return {} end
+      def api_clients
+        versions = @api_version != CORE_API_VERSION ? [@api_version, CORE_API_VERSION] : [CORE_API_VERSION]
+        ret = {}
 
-        # only a version: create a non-group api
-        if elems.length < 2
-          ver = elems[0]
-          return { ver => create_client('api', ver) }
+        versions.each do |ver|
+          elems = ver.split("/")
+          if elems.length < 2
+            # only a version: create a 'non-group' api
+            ret[ver] = create_client('api', ver)
+          else
+            # there are more elements, each one should have
+            # a base as key e.g. 'extensions' and a version as value e.g. 'v1beta1'
+            base = elems[0].to_s
+            version = elems[1]
+            ret[ base + "/" + version ] = create_client('apis/' + base, version)
+          end
         end
-
-        # if there are more elements, each one should have
-        # a base as key e.g. 'extensions'
-        # and a version as value e.g. 'v1beta1'
-        base = elems[0].to_s
-        ver = elems[1]
-        return { base + "/" + ver => create_client('apis/' + base, ver) }
+        ret
       end
 
       def create_client(base, ver)
         retries = 0
         url = "#{@kubernetes_url}/#{base}"
-
         begin
           client = nil
           unless client
