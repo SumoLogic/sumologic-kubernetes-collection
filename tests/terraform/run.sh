@@ -29,9 +29,10 @@ for input_file in ${INPUT_FILES}; do
     -v "${STATICS_PATH}/${input_file}":/values.yaml \
     sumologic/kubernetes-tools:master \
     helm template /chart -f /values.yaml \
+      --namespace sumologic \
       --set sumologic.accessId='accessId' \
       --set sumologic.accessKey='accessKey' \
-      -s templates/setup/setup-configmap.yaml 2>/dev/null 1> "${OUT}"
+      -s templates/setup/setup-configmap.yaml 1> "${OUT}"
 
   test_output=$(diff "${STATICS_PATH}/${output_file}" "${OUT}")
   rm "${OUT}"

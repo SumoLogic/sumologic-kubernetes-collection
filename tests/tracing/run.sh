@@ -33,7 +33,7 @@ for input_file in ${INPUT_FILES}; do
       --set sumologic.traces.enabled=true \
       --set sumologic.accessId='accessId' \
       --set sumologic.accessKey='accessKey' \
-      -s templates/otelcol-configmap.yaml 2>/dev/null 1> "${OUT}"
+      -s templates/otelcol-configmap.yaml 1> "${OUT}"
 
   test_output=$(diff "${STATICS_PATH}/${output_file}" "${OUT}" | cat -te)
   rm "${OUT}"
