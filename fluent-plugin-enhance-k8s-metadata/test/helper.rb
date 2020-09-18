@@ -29,10 +29,10 @@ def stub_apis
     )
   stub_request(:get, %r{/api/v1$})
     .to_return(body: test_resource('api_list_core_v1.json'), status: 200)
-  stub_request(:get, %r{/apis/apps/v1$})
-    .to_return(body: test_resource('api_list_apps_v1.json'), status: 200)
-  stub_request(:get, %r{/apis/extensions/v1beta1$})
-    .to_return(body: test_resource('api_list_extensions_v1beta1.json'), status: 200)
+  stub_request(:get, %r{/apis/apps$})
+    .to_return(body: test_resource('api_list_apps.json'), status: 200)
+  stub_request(:get, %r{/apis/extensions$})
+    .to_return(body: test_resource('api_list_extensions.json'), status: 200)
   stub_request(:get, %r{/api/v1/endpoints$})
     .to_return(body: test_resource('endpoints_list.json'), status: 200)
   stub_request(:get, %r{/api/v1/namespaces/sumologic/pods})
@@ -62,5 +62,5 @@ def init_globals
   @cache_size = 1000
   @cache_ttl = 60 * 60
   @core_api_versions = ['v1']
-  @api_groups = ['apps/v1', 'extensions/v1beta1']
+  @api_groups = {'apps':'v1', 'extensions':'v1beta1'}
 end

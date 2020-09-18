@@ -21,7 +21,7 @@ class EventsInputTest < Test::Unit::TestCase
   end
   
   def create_driver(conf)
-    driver = Fluent::Test::Driver::Input.new(Fluent::Plugin::EventsInput).configure(conf)
+    Fluent::Test::Driver::Input.new(Fluent::Plugin::EventsInput).configure(conf)
   end
 
   def configure_test_driver(config = %{})

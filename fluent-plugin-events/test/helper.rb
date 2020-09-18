@@ -26,6 +26,25 @@ stub_request(:any, %r{/apis$})
       'versions' => ['events.k8s.io/v1beta1']
     }.to_json
   )
+stub_request(:any, %r{/apis/events.k8s.io$})
+  .to_return(
+    status: 200,
+    body: '{
+      "kind": "APIGroup",
+      "apiVersion": "v1",
+      "name": "events.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "events.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "events.k8s.io/v1beta1",
+        "version": "v1beta1"
+      }
+    }',
+  )
 end
 
 def mock_get_events(file_name)
