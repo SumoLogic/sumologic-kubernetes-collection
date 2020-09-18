@@ -23,9 +23,9 @@ For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](.
 
 ### Up to 500 application pods
 
-Our test cluster had 70 nodes (AWS m5a.2xlarge instances).
+Our test cluster had 71 nodes (50 `m4.large` instances, 21 `m5a.2xlarge` instances).
 
-We used 125 GiB GP2 volumes, which allowed for IOPS of 375. In addition we attached a 300GiB volume to the Prometheus pod.
+We used 125 GiB GP2 volumes, which allowed for IOPS of 375.
 
 This cluster ran an average of 500 application pods, each generating either 128KB/s logs or 2400 DPM metrics. The application pods had about 20% churn rate.
 
@@ -40,9 +40,9 @@ Prometheus memory consumption reached a maximum of **28GiB**, with an average of
 
 ### Up to 2000 application pods
 
-Our test cluster had 210 nodes (AWS m5a.2xlarge instances). In addition we ran 1 extra node (m5a.4xlarge) to accommodate the Prometheus pod's memory usage.
+Our test cluster had 211 nodes (150 `m4.large` instances, 60 `m5a.2xlarge` instances, 1 `m5a.4xlarge` instance to accommodate the Prometheus pod's memory usage).
 
-We used 125 GiB GP2 volumes, which allowed for IOPS of 375. In addition we attached a 300GiB volume to the Prometheus pod.
+We used 125 GiB GP2 volumes, which allowed for IOPS of 375.
 
 This cluster ran an average of 2000 application pods, each generating either 128KB/s logs or 2400 DPM metrics. The application pods had about 10% churn rate.
 
