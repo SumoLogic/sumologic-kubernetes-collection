@@ -391,7 +391,7 @@ fluentd:
       extraFilterPluginConf: |-
 
       ## To enable stiching multiline logs in fluentd when fluent-bit Multiline feature is On
-      multilineStiching:
+      multiline:
         enabled: true
     
     ## Kubelet log configuration
