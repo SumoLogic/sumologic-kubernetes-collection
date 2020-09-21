@@ -269,6 +269,14 @@ spec:
         image: sumologic/kubernetes-fluentd:1.2.2
         imagePullPolicy: IfNotPresent
         command: ["/etc/terraform/setup.sh"]
+        resources:
+          limits:
+            cpu: 0.2
+            memory: 256Mi
+          requests:
+            cpu: 0.1
+            memory: 128Mi
+          
         volumeMounts:
         - name: setup
           mountPath: /etc/terraform

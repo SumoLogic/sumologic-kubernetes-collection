@@ -79,6 +79,13 @@ sumologic:
 
   setup:
     job:
+      resources:
+        limits:
+          memory: 256Mi
+          cpu: 0.2
+        requests:
+          memory: 128Mi
+          cpu: 0.1
       nodeSelector: {}
       ## Add custom labels only to setup job pod
       podLabels: {}

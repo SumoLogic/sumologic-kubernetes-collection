@@ -43,6 +43,8 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: ["/etc/terraform/setup.sh"]
+        resources:
+          {{- toYaml .Values.sumologic.setup.job.resources | nindent 10 }}
         volumeMounts:
         - name: setup
           mountPath: /etc/terraform
