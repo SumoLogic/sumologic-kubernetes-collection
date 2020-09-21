@@ -37,6 +37,8 @@ The Helm chart installation requires two parameter overrides:
 * __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
 * __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
+To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
+
 If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
 
 The following parameter is optional, but we recommend setting it.
