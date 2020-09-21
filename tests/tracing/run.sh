@@ -10,7 +10,6 @@ readonly INPUT_FILES="$(ls "${STATICS_PATH}" | grep input)"
 readonly OUT="new_values.yaml"
 readonly CURRENT_CHART_VERSION=$(yq r ${SCRIPT_PATH}/../../deploy/helm/sumologic/Chart.yaml version)
 
-rm -rf "${SCRIPT_PATH}/../../deploy/helm/sumologic/tmpcharts"
 docker run --rm \
   -v ${SCRIPT_PATH}/../../deploy/helm/sumologic:/chart \
   sumologic/kubernetes-tools:master \

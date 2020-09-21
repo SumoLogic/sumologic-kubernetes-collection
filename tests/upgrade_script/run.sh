@@ -17,12 +17,6 @@ readonly INPUT_FILES="$(ls "${STATICS_PATH}" | grep input)"
 readonly TMP_OUT="tmp_out.log"
 readonly OUT="new_values.yaml"
 
-rm -rf "${SCRIPT_PATH}/../../deploy/helm/sumologic/tmpcharts"
-docker run --rm \
-  -v ${SCRIPT_PATH}/../../deploy/helm/sumologic:/chart \
-  sumologic/kubernetes-tools:master \
-  helm dependency update /chart
-
 SUCCESS=0
 for input_file in ${INPUT_FILES}; do
   test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
