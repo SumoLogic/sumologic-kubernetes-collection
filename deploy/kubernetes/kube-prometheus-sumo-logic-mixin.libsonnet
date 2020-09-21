@@ -197,6 +197,30 @@
             ]
           }
         ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.applications.nginx-ingress",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "(?:nginx_ingress_controller_ingress_resources_total|nginx_ingress_controller_nginx_(last_reload_(milliseconds|status)|reload(s|_errors)_total)|nginx_ingress_controller_virtualserver(|route)_resources_total|nginx_ingress_nginx_connections_(accepted|active|handled|reading|waiting|writing)|nginx_ingress_nginx_http_requests_total)",
+            sourceLabels: [
+              "__name__"
+            ]
+          }
+        ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.applications.nginx",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "(?:nginx_(accepts|active|handled|reading|requests|waiting|writing))",
+            sourceLabels: [
+              "__name__"
+            ]
+          }
+        ]
       }
     ],
   },

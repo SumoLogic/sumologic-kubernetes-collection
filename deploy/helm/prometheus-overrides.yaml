@@ -552,3 +552,37 @@ prometheus:
       - action: keep
         regex: kube-etcd;(?:etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
         sourceLabels: [job, __name__]
+    - ## Nginx ingress controller metrics
+      ## rel: https://docs.nginx.com/nginx-ingress-controller/logging-and-monitoring/prometheus/#available-metrics
+      ## nginx_ingress_controller_ingress_resources_total
+      ## nginx_ingress_controller_nginx_last_reload_milliseconds
+      ## nginx_ingress_controller_nginx_last_reload_status
+      ## nginx_ingress_controller_nginx_reload_errors_total
+      ## nginx_ingress_controller_nginx_reloads_total
+      ## nginx_ingress_controller_virtualserver_resources_total
+      ## nginx_ingress_controller_virtualserverroute_resources_total
+      ## nginx_ingress_nginx_connections_accepted
+      ## nginx_ingress_nginx_connections_active
+      ## nginx_ingress_nginx_connections_handled
+      ## nginx_ingress_nginx_connections_reading
+      ## nginx_ingress_nginx_connections_waiting
+      ## nginx_ingress_nginx_connections_writing
+      ## nginx_ingress_nginx_http_requests_total
+      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.nginx-ingress
+      writeRelabelConfigs:
+      - action: keep
+        regex: (?:nginx_ingress_controller_ingress_resources_total|nginx_ingress_controller_nginx_(last_reload_(milliseconds|status)|reload(s|_errors)_total)|nginx_ingress_controller_virtualserver(|route)_resources_total|nginx_ingress_nginx_connections_(accepted|active|handled|reading|waiting|writing)|nginx_ingress_nginx_http_requests_total)
+        sourceLabels: [__name__]
+    - ## Nginx telegraf metrics
+      ## nginx_accepts
+      ## nginx_active
+      ## nginx_handled
+      ## nginx_reading
+      ## nginx_requests
+      ## nginx_waiting
+      ## nginx_writing
+      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.nginx
+      writeRelabelConfigs:
+      - action: keep
+        regex: (?:nginx_(accepts|active|handled|reading|requests|waiting|writing))
+        sourceLabels: [__name__]
