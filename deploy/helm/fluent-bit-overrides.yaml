@@ -17,6 +17,9 @@ resources: {}
 podLabels: {}
 ## Add custom pod annotations to fluent-bit daemonset pods
 podAnnotations: {}
+## Set securityContext of fluent-bit daemonset pods as privileged for running in Openshift
+# securityContext:
+#   privileged: true
 service:
   flush: 5
 metrics:
