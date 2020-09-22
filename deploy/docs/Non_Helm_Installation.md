@@ -129,7 +129,26 @@ Finally, you can run `kubectl apply` on the file containing the rendered YAML fr
 kubectl config set-context --current --namespace=my-namespace
 kubectl apply -f sumologic.yaml
 ```
+### Installation in Openshift Platform
+The daemonset/statefulset fails to create the pods in Openshift environment due to the request of elevated privileges, like HostPath mounts, privileged: true, etc.
 
+If you wish to install the chart in the Openshift Platform, it requires a SCC resource which is only created in Openshift (detected via API capabilities in the chart), you can do the following:
+
+```bash
+kubectl run tools \
+  -it --quiet --rm \
+  --restart=Never \
+  --image sumologic/kubernetes-tools:1.0.0 -- \
+  template \
+  --namespace 'my-namespace' \
+  --name-template 'collection' \
+  --set sumologic.accessId='<ACCESS_ID>' \
+  --set sumologic.accessKey='<ACCESS_KEY>' \
+  --set sumologic.clusterName='<CLUSTER_NAME>' \
+  --set sumologic.scc.create=true \
+  --set fluent-bit.securityContext.privileged=true \
+  | tee sumologic.yaml
+```
 ## Viewing Data In Sumo Logic
 
 Once you have completed installation, you can [install the Kubernetes App and view the dashboards](https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards) or [open a new Explore tab](https://help.sumologic.com/Solutions/Kubernetes_Solution/05Navigate_your_Kubernetes_environment) in Sumo Logic. If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
