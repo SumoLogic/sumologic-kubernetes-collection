@@ -185,6 +185,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- template "sumologic.fullname" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.podsecuritypolicy" -}}
+{{ template "sumologic.fullname" . }}-psp
+{{- end -}}
+
 {{- define "sumologic.metadata.name.logs" -}}
 {{ template "sumologic.fullname" . }}-fluentd-logs
 {{- end -}}

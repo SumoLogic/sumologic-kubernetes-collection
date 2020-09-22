@@ -2,7 +2,7 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: {{ template "sumologic.fullname" . }}-psp
+  name: {{ template "sumologic.metadata.name.podsecuritypolicy" . }}
   labels:
     app: {{ template "sumologic.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
