@@ -41,8 +41,8 @@ module Fluent
       config_param :ssl_partial_chain, :bool, default: false
 
       config_param :cache_size, :integer, default: 1000
-      config_param :cache_ttl, :integer, default: 60 * 60
-      config_param :cache_refresh, :integer, default: 60 * 30
+      config_param :cache_ttl, :integer, default: 60 * 60 * 2
+      config_param :cache_refresh, :integer, default: 60 * 60
 
       def configure(conf)
         super
