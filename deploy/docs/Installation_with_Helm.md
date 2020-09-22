@@ -81,6 +81,25 @@ For Helm3, if the namespace does not exist, you can add the `--create-namespace`
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME> --create-namespace"
 ```
 
+### Installing the helm chart in Openshift platform
+The daemonset/statefulset fails to create the pods in Openshift environment due to the request of elevated privileges, like HostPath mounts, privileged: true, etc.
+
+If you wish to install the chart in the Openshift Platform, it requires a SCC resource which is only created in Openshift (detected via API capabilities in the chart), you can do the following:
+
+1. Set `sumologic.scc.create` to `true`.
+
+2. Uncomment the below `securityContext` in the fluent-bit config section:
+```
+## Set securityContext of fluent-bit daemonset pods as privileged for running in Openshift
+    securityContext:
+      privileged: true
+```
+3. Run the below command to install the helm chart by passing the override `values.yaml` file.
+
+```bash
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" -f values.yaml
+```
+
 ## Viewing Data In Sumo Logic
 
 Once you have completed installation, you can [install the Kubernetes App and view the dashboards](https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards) or [open a new Explore tab](https://help.sumologic.com/Solutions/Kubernetes_Solution/05Navigate_your_Kubernetes_environment) in Sumo Logic. If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
