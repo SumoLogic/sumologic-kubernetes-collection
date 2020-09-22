@@ -86,18 +86,8 @@ The daemonset/statefulset fails to create the pods in Openshift environment due 
 
 If you wish to install the chart in the Openshift Platform, it requires a SCC resource which is only created in Openshift (detected via API capabilities in the chart), you can do the following:
 
-1. Set `sumologic.scc.create` to `true`.
-
-2. Uncomment the below `securityContext` in the fluent-bit config section:
-```
-## Set securityContext of fluent-bit daemonset pods as privileged for running in Openshift
-    securityContext:
-      privileged: true
-```
-3. Run the below command to install the helm chart by passing the override `values.yaml` file.
-
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" -f values.yaml
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
 ```
 
 ## Viewing Data In Sumo Logic
