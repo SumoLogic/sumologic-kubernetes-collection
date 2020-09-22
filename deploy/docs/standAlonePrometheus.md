@@ -67,6 +67,12 @@ For Helm3, if the namespace does not exist, you can add the `--create-namespace`
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false --create-namespace
 ```
 
+If you are installing the helm chart in Openshift platform, you can do the following:
+
+```bash
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"  --set prometheus-operator.enabled=false --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
+```
+
 ## Update Existing Prometheus
 
 First, Download the Prometheus Operator `prometheus-overrides.yaml` by running
