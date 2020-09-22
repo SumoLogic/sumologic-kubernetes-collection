@@ -60,6 +60,7 @@ Parameter | Description | Default
 `fluentd.metadata.cacheSize` | Option to control the enabling of metadata filter plugin cache_size. | `10000`
 `fluentd.metadata.cacheTtl` | Option to control the enabling of metadata filter plugin cache_ttl (in seconds). | `7200`
 `fluentd.metadata.cacheRefresh` | Option to control the interval at which metadata cache is asynchronously refreshed (in seconds). | `3600`
+`fluentd.metadata.cacheRefreshVariation` | Option to control the variation in seconds by which the cacheRefresh option is changed for each pod separately. For example, if cache refresh is 1 hour and variation is 15 minutes, then actual cache refresh interval will be a random value between 45 minutes and 1 hour 15 minutes, different for each pod. This helps spread the load on API server that the cache refresh induces. Setting this to 0 disables cache refresh variation. | `900`
 `fluentd.metadata.pluginLogLevel` | Option to give plugin specific log level. | `error`
 `fluentd.logs.enabled` | Flag to control deploying the Fluentd logs statefulsets. | `true`
 `fluentd.logs.statefulset.nodeSelector` | Node selector for Fluentd log statefulset. | `{}`
