@@ -33,7 +33,7 @@ module Fluent
       # Need different clients to access different API groups/versions
       # https://github.com/abonas/kubeclient/issues/208
       config_param :core_api_versions, :array, default: ['v1']
-      config_param :api_groups, :hash, default: {'apps':'v1', 'extensions':'v1beta1'}
+      config_param :api_groups, :array, default: ["apps/v1", "extensions/v1beta1"]
       # if `ca_file` is for an intermediate CA, or otherwise we do not have the
       # root CA and want to trust the intermediate CA certs we do have, set this
       # to `true` - this corresponds to the openssl s_client -partial_chain flag
