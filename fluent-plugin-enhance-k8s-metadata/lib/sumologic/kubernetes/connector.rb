@@ -18,16 +18,19 @@ module SumoLogic
       end
 
       def group_clients
-        @api_groups.map do |elem|
-          # elem should have base as key e.g. 'extensions' and version as values e.g. 'v1beta1'
-          if elem.length < 2
+        ret = {}
+        @api_groups.each do |api_ver|
+          elems = api_ver.split("/")
+          # elems should have base as first element e.g. 'extensions' and version as second element e.g. 'v1beta1'
+          if elems.length < 2
             continue
           end
 
-          base = elem[0].to_s
-          ver = elem[1]
-          [base + "/" + ver, create_client('apis/' + base, ver)]
-        end.to_h
+          base = elems[0]
+          ver = elems[1]
+          ret[ base + "/" + ver ] = create_client('apis/' + base, ver)
+        end
+        ret
       end
 
       def create_client(base, ver)
