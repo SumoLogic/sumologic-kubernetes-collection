@@ -43,6 +43,7 @@ Parameter | Description | Default
 `fluentd.securityContext` | the securityContext configuration for Fluentd | `{"fsGroup":999}`
 `fluentd.podLabels` | Additional labels for all fluentd pods | ``
 `fluentd.podAnnotations` | Additional annotations for all fluentd pods | ``
+`fluentd.podSecurityPolicy.create` | If true, create & use `podSecurityPolicy` for fluentd resources | `false`
 `fluentd.persistence.enabled` | Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer. After setting the value to true, run the helm upgrade command with the --force flag. | `false`
 `fluentd.persistence.storageClass` | If defined, storageClassName: <storageClass>. If set to "-", storageClassName: "", which disables dynamic provisioning.  If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner.  (gp2 on AWS, standard on GKE, Azure & OpenStack) | `Nil`
 `fluentd.persistence.annotations` | Annotations for the persistence. | `Nil`
