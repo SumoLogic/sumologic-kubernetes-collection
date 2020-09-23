@@ -57,3 +57,27 @@ function generate_file {
       "${@:2}" \
       -s "${template_name}" 2>/dev/null 1> "${OUT}"
 }
+
+function perform_test {
+  local input_file="${1}"
+  local template_name="${2}"
+
+  test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
+  output_file="${test_name}.output.yaml"
+
+  patch_test "${STATICS_PATH}/${output_file}" "${TMP_PATH}/${output_file}"
+
+  test_start "${test_name}" ${input_file}
+  generate_file "${template_name}" "${@:3}"
+
+  test_output=$(diff "${TMP_PATH}/${output_file}" "${OUT}" | cat -te)
+  rm "${OUT}"
+
+  if [[ -n "${test_output}" ]]; then
+    echo -e "\tOutput diff (${STATICS_PATH}/${output_file}):\n${test_output}"
+    test_failed "${test_name}"
+    SUCCESS=1
+  else
+    test_passed "${test_name}"
+  fi
+}
