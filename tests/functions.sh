@@ -1,5 +1,17 @@
 #!/bin/bash
 
+function test_start() {
+  echo -e "[.] $*";
+}
+
+function test_passed() {
+  echo -e "[+] $*";
+}
+
+function test_failed() {
+  echo -e "[-] $*";
+}
+
 function get_variables() {
   SCRIPT_PATH="${1}"
   readonly STATICS_PATH="${SCRIPT_PATH}/static"
@@ -23,4 +35,25 @@ function cleanup_environment() {
   if [[ -n "${TMP_PATH}" ]]; then
     rm -rf "${TMP_PATH}"
   fi
+}
+
+function patch_test() {
+  local input_file="${1}"
+  local output_file="${2}"
+  sed "s/%CURRENT_CHART_VERSION%/${CURRENT_CHART_VERSION}/g" "${input_file}" > "${output_file}"
+}
+
+function generate_file {
+  local template_name="${1}"
+
+  docker run --rm \
+    -v ${SCRIPT_PATH}/../../deploy/helm/sumologic:/chart \
+    -v "${STATICS_PATH}/${input_file}":/values.yaml \
+    sumologic/kubernetes-tools:master \
+    helm template /chart -f /values.yaml \
+      --namespace sumologic \
+      --set sumologic.accessId='accessId' \
+      --set sumologic.accessKey='accessKey' \
+      "${@:2}" \
+      -s "${template_name}" 2>/dev/null 1> "${OUT}"
 }
