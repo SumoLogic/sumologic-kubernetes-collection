@@ -23,6 +23,9 @@ Parameter | Description | Default
 `sumologic.endpoint` | Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection. | `Nil`
 `sumologic.collectorName` | The name of the Sumo Logic collector that will be created in the SetUp job.  Defaults to `clusterName` if not specified. | `Nil`
 `sumologic.clusterName` | An identifier for the Kubernetes cluster. | `kubernetes`
+`sumologic.httpProxy` | HTTP proxy URL | ``
+`sumologic.httpsProxy` | HTTPS proxy URL | ``
+`sumologic.noProxy` | List of comma separated hostnames which should be excluded from the proxy | `kubernetes.default.svc`
 `sumologic.podLabels` | Additional labels for the pods. | `{}`
 `sumologic.podAnnotations` | Additional annotations for the pods. | `{}`
 `sumologic.setup.clusterRole.annotations` | Annotations for the ClusterRole. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"1"}]`
