@@ -4,23 +4,19 @@ test_start()        { echo -e "[.] $*"; }
 test_passed()       { echo -e "[+] $*"; }
 test_failed()       { echo -e "[-] $*"; }
 
-readonly SCRIPT_PATH="$( dirname $(realpath ${0}) )"
-readonly STATICS_PATH="${SCRIPT_PATH}/static"
-readonly INPUT_FILES="$(ls "${STATICS_PATH}" | grep input)"
-readonly OUT="new_values.yaml"
-readonly CURRENT_CHART_VERSION=$(yq r ${SCRIPT_PATH}/../../deploy/helm/sumologic/Chart.yaml version)
+SCRIPT_PATH="$( dirname $(realpath ${0}) )"
 
-docker run --rm \
-  -v ${SCRIPT_PATH}/../../deploy/helm/sumologic:/chart \
-  sumologic/kubernetes-tools:master \
-  helm dependency update /chart
+source "${SCRIPT_PATH}/../functions.sh"
+
+get_variables "${SCRIPT_PATH}"
+prepare_environment
 
 SUCCESS=0
 for input_file in ${INPUT_FILES}; do
   test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
   output_file="${test_name}.output.yaml"
 
-  sed -i "s/%CURRENT_CHART_VERSION%/${CURRENT_CHART_VERSION}/g" ${STATICS_PATH}/${output_file}
+  sed "s/%CURRENT_CHART_VERSION%/${CURRENT_CHART_VERSION}/g" ${STATICS_PATH}/${output_file} > "${TMP_PATH}/${output_file}"
 
   test_start "${test_name}" ${input_file}
   docker run --rm \
@@ -34,7 +30,7 @@ for input_file in ${INPUT_FILES}; do
       --set sumologic.accessKey='accessKey' \
       -s templates/otelcol-configmap.yaml 2>/dev/null 1> "${OUT}"
 
-  test_output=$(diff "${STATICS_PATH}/${output_file}" "${OUT}" | cat -te)
+  test_output=$(diff "${TMP_PATH}/${output_file}" "${OUT}" | cat -te)
   rm "${OUT}"
 
   if [[ -n "${test_output}" ]]; then
@@ -45,5 +41,7 @@ for input_file in ${INPUT_FILES}; do
     test_passed "${test_name}"
   fi
 done
+
+cleanup_environment
 
 exit $SUCCESS

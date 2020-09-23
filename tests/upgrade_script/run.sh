@@ -11,11 +11,13 @@ test_start()        { echo -e "[.] $*"; }
 test_passed()       { echo -e "[+] $*"; }
 test_failed()       { echo -e "[-] $*"; }
 
-readonly SCRIPT_PATH="$( dirname $(realpath ${0}) )"
-readonly STATICS_PATH="${SCRIPT_PATH}/static"
-readonly INPUT_FILES="$(ls "${STATICS_PATH}" | grep input)"
-readonly TMP_OUT="tmp_out.log"
-readonly OUT="new_values.yaml"
+SCRIPT_PATH="$( dirname $(realpath ${0}) )"
+
+source "${SCRIPT_PATH}/../functions.sh"
+readonly TMP_OUT="tmp/out.log"
+
+get_variables "${SCRIPT_PATH}"
+prepare_environment
 
 SUCCESS=0
 for input_file in ${INPUT_FILES}; do
@@ -43,5 +45,7 @@ for input_file in ${INPUT_FILES}; do
     test_passed "${test_name}"
   fi
 done
+
+cleanup_environment
 
 exit $SUCCESS
