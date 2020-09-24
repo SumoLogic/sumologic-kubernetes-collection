@@ -86,7 +86,7 @@ function perform_test {
 
   patch_test "${TEST_STATICS_PATH}/${output_file}" "${TEST_TMP_PATH}/${output_file}"
 
-  test_start "${test_name}" "${input_file}"
+  test_start "${test_name}"
   generate_file "${template_name}"
 
   test_output=$(diff "${TEST_TMP_PATH}/${output_file}" "${TEST_OUT}" | cat -te)
