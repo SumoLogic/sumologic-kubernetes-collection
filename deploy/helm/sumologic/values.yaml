@@ -764,7 +764,7 @@ fluent-bit:
       - name: crio
         regex: ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
         timeKey: time
-        timeFormat: %Y-%m-%dT%H:%M:%S.%L%z
+        timeFormat: "%Y-%m-%dT%H:%M:%S.%L%z"
         
 
   rawConfig: |-
