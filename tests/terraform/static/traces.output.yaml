@@ -84,7 +84,7 @@ data:
   
   
     # Kubernetes Secret
-    terraform import kubernetes_secret.sumologic_collection_secret default/sumologic
+    terraform import kubernetes_secret.sumologic_collection_secret sumologic/sumologic
   
     terraform apply -auto-approve
   variables.tf: |-
@@ -100,5 +100,5 @@ data:
   
     variable "namespace_name" {
       type  = string
-      default = "default"
+      default = "sumologic"
     }

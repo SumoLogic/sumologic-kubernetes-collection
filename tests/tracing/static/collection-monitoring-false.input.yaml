@@ -1,5 +1,7 @@
 sumologic:
   collectionMonitoring: false
+  traces:
+    enabled: true
 fluentd:
   logs:
     containers:
