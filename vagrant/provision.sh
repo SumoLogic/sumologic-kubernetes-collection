@@ -79,8 +79,7 @@ done
 # install requirements for ci/build.sh
 snap install ruby --channel=2.6/stable --classic
 gem install bundler
-apt install -y gcc g++ libsnappy-dev
-snap install shellcheck
+apt install -y gcc g++ libsnappy-dev shellcheck
 
 # Init helm tiller
 sudo -H -u vagrant -i helm2 init --wait
