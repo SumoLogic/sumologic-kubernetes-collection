@@ -18,6 +18,39 @@ function get_branch_to_checkout() {
     || echo "${TRAVIS_BRANCH}"
 }
 
+function bundle_fluentd_plugins() {
+  local VERSION="${1}"
+
+  if [[ "${VERSION}" == "" ]] ; then
+    echo "Please provide the version when bundling fluentd plugins"
+    exit 1
+  fi
+
+  for i in ./fluent-plugin-*/ ; do
+    if [[ -d "${i}" ]]; then
+    (
+      cd "${i}" || exit 1
+      PLUGIN_NAME="$(basename "${i}")"
+      # Strip everything after "-" (longest match) to avoid gem prerelease behavior
+      GEM_VERSION="${VERSION%%-*}"
+      echo "Building gem ${PLUGIN_NAME} version ${GEM_VERSION} in $(pwd) ..."
+      sed -i.bak "s/0.0.0/${GEM_VERSION}/g" ./"${PLUGIN_NAME}".gemspec
+      rm -f ./"${PLUGIN_NAME}".gemspec.bak
+
+      echo "Install bundler..."
+      bundle install
+
+      echo "Run unit tests..."
+      bundle exec rake
+
+      echo "Build gem ${PLUGIN_NAME} ${GEM_VERSION}..."
+      gem build "${PLUGIN_NAME}"
+      mv ./*.gem ../deploy/docker/gems
+    )
+    fi
+  done
+}
+
 # Set up Github
 if [ -n "$GITHUB_TOKEN" ]; then
   git config --global user.email "travis@travis-ci.org"
@@ -50,29 +83,7 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ] && [[ ! 
   fi
 fi
 
-for i in ./fluent-plugin* ; do
-  if [ -d "$i" ]; then
-    cd "$i" || exit 1
-    PLUGIN_NAME=$(basename "$i")
-    # Strip everything after "-" (longest match) to avoid gem prerelease behavior
-    GEM_VERSION=${VERSION%%-*}
-    echo "Building gem $PLUGIN_NAME version $GEM_VERSION in $(pwd) ..."
-    sed -i.bak "s/0.0.0/$GEM_VERSION/g" "./$PLUGIN_NAME.gemspec"
-    rm -f "./$PLUGIN_NAME.gemspec.bak"
-
-    echo "Install bundler..."
-    bundle install
-
-    echo "Run unit tests..."
-    bundle exec rake
-
-    echo "Build gem $PLUGIN_NAME $GEM_VERSION..."
-    gem build "$PLUGIN_NAME"
-    mv ./*.gem ../deploy/docker/gems
-
-    cd ..
-  fi
-done
+bundle_fluentd_plugins "${VERSION}" || (echo "Failed bundling fluentd plugins" && exit 1)
 
 echo "Building docker image with $DOCKER_TAG:local in $(pwd)..."
 cd ./deploy/docker || exit 1
