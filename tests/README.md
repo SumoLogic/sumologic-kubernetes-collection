@@ -12,8 +12,8 @@ example_test/  # Test set name
 
 ## Configuration file
 
-`config.sh` should contain `TEST_TEMPLATE` env variable, which should point to the helm template
-name, e.g. for `deploy/helm/sumologic/templates/configmap.yaml` it will be `templates/configmap.yaml`:
+`config.sh` should export `TEST_TEMPLATE` env variable, which should point to the helm template
+file name, e.g. for `deploy/helm/sumologic/templates/configmap.yaml` it will be `templates/configmap.yaml`:
 
 ```bash
 TEST_TEMPLATE="templates/configmap.yaml"
