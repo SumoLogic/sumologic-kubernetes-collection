@@ -19,9 +19,9 @@ function get_branch_to_checkout() {
 }
 
 function bundle_fluentd_plugins() {
-  local VERSION="${1}"
+  local version="${1}"
 
-  if [[ "${VERSION}" == "" ]] ; then
+  if [[ "${version}" == "" ]] ; then
     echo "Please provide the version when bundling fluentd plugins"
     exit 1
   fi
@@ -30,12 +30,13 @@ function bundle_fluentd_plugins() {
     if [[ -d "${i}" ]]; then
     (
       cd "${i}" || exit 1
-      PLUGIN_NAME="$(basename "${i}")"
+      local plugin_name
+      plugin_name="$(basename "${i}")"
       # Strip everything after "-" (longest match) to avoid gem prerelease behavior
-      GEM_VERSION="${VERSION%%-*}"
-      echo "Building gem ${PLUGIN_NAME} version ${GEM_VERSION} in $(pwd) ..."
-      sed -i.bak "s/0.0.0/${GEM_VERSION}/g" ./"${PLUGIN_NAME}".gemspec
-      rm -f ./"${PLUGIN_NAME}".gemspec.bak
+      local gem_version="${version%%-*}"
+      echo "Building gem ${plugin_name} version ${gem_version} in $(pwd) ..."
+      sed -i.bak "s/0.0.0/${gem_version}/g" ./"${plugin_name}".gemspec
+      rm -f ./"${plugin_name}".gemspec.bak
 
       echo "Install bundler..."
       bundle install
@@ -43,8 +44,8 @@ function bundle_fluentd_plugins() {
       echo "Run unit tests..."
       bundle exec rake
 
-      echo "Build gem ${PLUGIN_NAME} ${GEM_VERSION}..."
-      gem build "${PLUGIN_NAME}"
+      echo "Build gem ${plugin_name} ${gem_version}..."
+      gem build "${plugin_name}"
       mv ./*.gem ../deploy/docker/gems
     )
     fi
