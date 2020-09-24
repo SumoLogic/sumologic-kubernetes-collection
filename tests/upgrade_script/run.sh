@@ -15,7 +15,7 @@ readonly TEST_TMP_OUT="tmp/out.log"
 set_variables "${SCRIPT_PATH}"
 prepare_tests
 
-SUCCESS=0
+TEST_SUCCESS=true
 for input_file in ${TEST_INPUT_FILES}; do
   test_name="$(echo "${input_file}" | sed -e 's/.input.yaml$//g')"
   output_file="${test_name}.output.yaml"
@@ -37,7 +37,7 @@ for input_file in ${TEST_INPUT_FILES}; do
       echo -e "\tLog diff (${TEST_STATICS_PATH}/${log_file}):\n${test_log}"
     fi
     test_failed "${test_name}"
-    SUCCESS=1
+    TEST_SUCCESS=false
   else
     test_passed "${test_name}"
   fi
@@ -45,4 +45,8 @@ done
 
 cleanup_tests
 
-exit $SUCCESS
+if [[ "${TEST_SUCCESS}" = "true" ]]; then
+  exit 0
+else
+  exit 1
+fi

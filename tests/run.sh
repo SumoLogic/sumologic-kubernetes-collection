@@ -4,7 +4,7 @@ readonly SCRIPT_PATH="$( dirname $(realpath ${0}) )"
 readonly CONFIG_FILES=$(find "${SCRIPT_PATH}"/* -maxdepth 1 -name 'config.sh')
 source "${SCRIPT_PATH}/functions.sh"
 
-export TEST_SUCCESS=0
+export TEST_SUCCESS=true
 
 prepare_environment "${SCRIPT_PATH}/../deploy/helm/sumologic"
 
@@ -18,4 +18,8 @@ for config_file in ${CONFIG_FILES}; do
   cleanup_tests
 done
 
-exit $TEST_SUCCESS
+if [[ "${TEST_SUCCESS}" = "true" ]]; then
+  exit 0
+else
+  exit 1
+fi
