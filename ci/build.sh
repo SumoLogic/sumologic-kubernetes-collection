@@ -95,19 +95,11 @@ cd ../.. || exit 1
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
 
-echo "Test tracing configuration..."
-if ./tests/tracing/run.sh; then
-  echo "Tracing configuration test passed"
+echo "Test helm templates generation"
+if ./tests/run.sh; then
+  echo "Helm templates generation test passed"
 else
-  echo "Tracing configuration test failed"
-  exit 1
-fi
-
-echo "Test terraform configuration..."
-if ./tests/terraform/run.sh; then
-  echo "Terraform configuration test passed"
-else
-  echo "Terraform configuration test failed"
+  echo "Tracing templates generation test failed"
   exit 1
 fi
 

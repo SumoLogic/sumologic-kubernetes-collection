@@ -12,52 +12,67 @@ function test_failed() {
   echo -e "[-] $*";
 }
 
-function get_variables() {
-  SCRIPT_PATH="${1}"
-  readonly STATICS_PATH="${SCRIPT_PATH}/static"
-  readonly TMP_PATH="${SCRIPT_PATH}/tmp"
-  readonly INPUT_FILES="$(ls "${STATICS_PATH}" | grep input)"
-  readonly OUT="${TMP_PATH}/new_values.yaml"
-  readonly CURRENT_CHART_VERSION=$(yq r ${SCRIPT_PATH}/../../deploy/helm/sumologic/Chart.yaml version)
+# Set variables used by the test
+function set_variables() {
+  # Path to the tests directory
+  TEST_SCRIPT_PATH="${1}"
+  # Path to the static files (input and output)
+  TEST_STATICS_PATH="${TEST_SCRIPT_PATH}/static"
+  # Path to the temporary directory (created by the prepare_tests)
+  TEST_TMP_PATH="${TEST_SCRIPT_PATH}/tmp"
+  # List of test input files
+  TEST_INPUT_FILES="$(ls "${TEST_STATICS_PATH}" | grep input)"
+  # Path to the temporary output file
+  TEST_OUT="${TEST_TMP_PATH}/new_values.yaml"
+  # Current version wchich should override the placeholder in test
+  CURRENT_CHART_VERSION=$(yq r ${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic/Chart.yaml version)
 }
 
+# Update helm chart and remove the tmpcharts eventually
 function prepare_environment() {
-  mkdir -p "${TMP_PATH}"
-
-  rm -rf "${SCRIPT_PATH}/../../deploy/helm/sumologic/tmpcharts"
+  local repo_path=${1}
+  rm -rf "${repo_path}/tmpcharts"
   docker run --rm \
-    -v ${SCRIPT_PATH}/../../deploy/helm/sumologic:/chart \
+    -v "${repo_path}":/chart \
     sumologic/kubernetes-tools:master \
     helm dependency update /chart
 }
 
-function cleanup_environment() {
-  if [[ -n "${TMP_PATH}" ]]; then
-    rm -rf "${TMP_PATH}"
+# Prepare temporary directory for tests
+function prepare_tests() {
+  mkdir -p "${TEST_TMP_PATH}"
+}
+
+# Remove temporary directory
+function cleanup_tests() {
+  if [[ -n "${TEST_TMP_PATH}" ]]; then
+    rm -rf "${TEST_TMP_PATH}"
   fi
 }
 
+# Patch tests with current helm chart version
 function patch_test() {
   local input_file="${1}"
   local output_file="${2}"
   sed "s/%CURRENT_CHART_VERSION%/${CURRENT_CHART_VERSION}/g" "${input_file}" > "${output_file}"
 }
 
+# Generate output file basing on the input values.yaml
 function generate_file {
   local template_name="${1}"
 
   docker run --rm \
-    -v ${SCRIPT_PATH}/../../deploy/helm/sumologic:/chart \
-    -v "${STATICS_PATH}/${input_file}":/values.yaml \
+    -v ${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic:/chart \
+    -v "${TEST_STATICS_PATH}/${input_file}":/values.yaml \
     sumologic/kubernetes-tools:master \
     helm template /chart -f /values.yaml \
       --namespace sumologic \
       --set sumologic.accessId='accessId' \
       --set sumologic.accessKey='accessKey' \
-      "${@:2}" \
-      -s "${template_name}" 2>/dev/null 1> "${OUT}"
+      -s "${template_name}" 2>/dev/null 1> "${TEST_OUT}"
 }
 
+# Run test
 function perform_test {
   local input_file="${1}"
   local template_name="${2}"
@@ -65,19 +80,28 @@ function perform_test {
   test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
   output_file="${test_name}.output.yaml"
 
-  patch_test "${STATICS_PATH}/${output_file}" "${TMP_PATH}/${output_file}"
+  patch_test "${TEST_STATICS_PATH}/${output_file}" "${TEST_TMP_PATH}/${output_file}"
 
   test_start "${test_name}" ${input_file}
-  generate_file "${template_name}" "${@:3}"
+  generate_file "${template_name}"
 
-  test_output=$(diff "${TMP_PATH}/${output_file}" "${OUT}" | cat -te)
-  rm "${OUT}"
+  test_output=$(diff "${TEST_TMP_PATH}/${output_file}" "${TEST_OUT}" | cat -te)
+  rm "${TEST_OUT}"
 
   if [[ -n "${test_output}" ]]; then
-    echo -e "\tOutput diff (${STATICS_PATH}/${output_file}):\n${test_output}"
+    echo -e "\tOutput diff (${TEST_STATICS_PATH}/${output_file}):\n${test_output}"
     test_failed "${test_name}"
-    SUCCESS=1
+    # Set all tests as failed
+    # This env comes from run.sh
+    TEST_SUCCESS=1
   else
     test_passed "${test_name}"
   fi
+}
+
+# Perform tests from the directory using TEST_INPUT_FILES
+function perform_tests {
+  for input_file in ${TEST_INPUT_FILES}; do
+    perform_test "${input_file}" "${TEST_TEMPLATE}"
+  done
 }
