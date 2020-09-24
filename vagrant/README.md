@@ -2,7 +2,18 @@
 
 ## Setting up
 
-Please install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/).
+Please install the following:
+
+- [VirtualBox](https://www.virtualbox.org/)
+- [Vagrant](https://www.vagrantup.com/)
+- [vagrant-disksize](https://github.com/sprotheroe/vagrant-disksize) plugin
+
+```bash
+brew cask install virtualbox
+brew cask install vagrant
+vagrant plugin install vagrant-disksize
+```
+
 After that you can run the Vagrant environment with just one command:
 
 ```bash
