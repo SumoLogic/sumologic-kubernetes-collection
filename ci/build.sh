@@ -84,6 +84,24 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ] && [[ ! 
   fi
 fi
 
+# Test if template files are generated correctly for various values.yaml
+echo "Test helm templates generation"
+if ./tests/run.sh; then
+  echo "Helm templates generation test passed"
+else
+  echo "Tracing templates generation test failed"
+  exit 1
+fi
+
+# Test upgrade script
+echo "Test upgrade script..."
+if ./tests/upgrade_script/run.sh; then
+  echo "Upgrade Script test passed"
+else
+  echo "Upgrade Script test failed"
+  exit 1
+fi
+
 bundle_fluentd_plugins "${VERSION}" || (echo "Failed bundling fluentd plugins" && exit 1)
 
 echo "Building docker image with $DOCKER_TAG:local in $(pwd)..."
@@ -94,30 +112,6 @@ cd ../.. || exit 1
 
 echo "Test docker image locally..."
 ruby deploy/test/test_docker.rb
-
-echo "Test tracing configuration..."
-if ./tests/tracing/run.sh; then
-  echo "Tracing configuration test passed"
-else
-  echo "Tracing configuration test failed"
-  exit 1
-fi
-
-echo "Test terraform configuration..."
-if ./tests/terraform/run.sh; then
-  echo "Terraform configuration test passed"
-else
-  echo "Terraform configuration test failed"
-  exit 1
-fi
-
-echo "Test upgrade script..."
-if ./tests/upgrade_script/run.sh; then
-  echo "Upgrade Script test passed"
-else
-  echo "Upgrade Script test failed"
-  exit 1
-fi
 
 # Check for changes that require re-generating overrides yaml files
 if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then

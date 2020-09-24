@@ -7,41 +7,46 @@
 #   1> tests/upgrade_script/static/${test_name}.log 2>&1 \
 # && cp new_values.yaml tests/upgrade_script/static/${test_name}.output.yaml
 
-test_start()        { echo -e "[.] $*"; }
-test_passed()       { echo -e "[+] $*"; }
-test_failed()       { echo -e "[-] $*"; }
+SCRIPT_PATH="$( dirname "$(realpath ${0})" )"
 
-readonly SCRIPT_PATH="$( dirname $(realpath ${0}) )"
-readonly STATICS_PATH="${SCRIPT_PATH}/static"
-readonly INPUT_FILES="$(ls "${STATICS_PATH}" | grep input)"
-readonly TMP_OUT="tmp_out.log"
-readonly OUT="new_values.yaml"
+source "${SCRIPT_PATH}/../functions.sh"
+readonly TEST_TMP_OUT="tmp/out.log"
 
-SUCCESS=0
-for input_file in ${INPUT_FILES}; do
-  test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
+set_variables "${SCRIPT_PATH}"
+prepare_tests
+
+TEST_SUCCESS=true
+for input_file in ${TEST_INPUT_FILES}; do
+  test_name="$(echo "${input_file}" | sed -e 's/.input.yaml$//g')"
   output_file="${test_name}.output.yaml"
   log_file="${test_name}.log"
 
-  test_start "${test_name}" ${input_file}
-  bash "${SCRIPT_PATH}/../../deploy/helm/sumologic/upgrade-1.0.0.sh" "${STATICS_PATH}/${input_file}" 1>"${TMP_OUT}" 2>&1
+  test_start "${test_name}"
+  bash "${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic/upgrade-1.0.0.sh" "${TEST_STATICS_PATH}/${input_file}" 1>"${TEST_TMP_OUT}" 2>&1
+  mv new_values.yaml "${TEST_OUT}"
 
-  test_output=$(diff "${STATICS_PATH}/${output_file}" "${OUT}")
-  test_log=$(diff "${STATICS_PATH}/${log_file}" "${TMP_OUT}")
-  rm "${TMP_OUT}" "${OUT}"
+  test_output=$(diff "${TEST_STATICS_PATH}/${output_file}" "${TEST_OUT}")
+  test_log=$(diff "${TEST_STATICS_PATH}/${log_file}" "${TEST_TMP_OUT}")
+  rm "${TEST_TMP_OUT}" "${TEST_OUT}"
 
   if [[ -n "${test_output}" || -n "${test_log}" ]]; then
     if [[ -n "${test_output}" ]]; then
-      echo -e "\tOutput diff (${STATICS_PATH}/${output_file}):\n${test_output}"
+      echo -e "\tOutput diff (${TEST_STATICS_PATH}/${output_file}):\n${test_output}"
     fi
     if [[ -n "${test_log}" ]]; then
-      echo -e "\tLog diff (${STATICS_PATH}/${log_file}):\n${test_log}"
+      echo -e "\tLog diff (${TEST_STATICS_PATH}/${log_file}):\n${test_log}"
     fi
     test_failed "${test_name}"
-    SUCCESS=1
+    TEST_SUCCESS=false
   else
     test_passed "${test_name}"
   fi
 done
 
-exit $SUCCESS
+cleanup_tests
+
+if [[ "${TEST_SUCCESS}" = "true" ]]; then
+  exit 0
+else
+  exit 1
+fi

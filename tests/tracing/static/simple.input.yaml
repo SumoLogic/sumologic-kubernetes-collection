@@ -5,3 +5,6 @@ fluentd:
       excludePodRegex: "^foo.*"
       excludeContainerRegex: "[123+]bar$|xyz"
       excludeHostRegex: hhh123
+sumologic:
+  traces:
+    enabled: true
