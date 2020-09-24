@@ -16,7 +16,7 @@ example_test/  # Test set name
 name, e.g. for `deploy/helm/sumologic/templates/configmap.yaml` it will be `templates/configmap.yaml`:
 
 ```bash
-TEST_TEMPLATE="templates/configmap.yaml`"
+TEST_TEMPLATE="templates/configmap.yaml"
 ```
 
 ## Input file
