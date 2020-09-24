@@ -1,6 +1,6 @@
 # Vagrant
 
-## Setting up
+## Prerequisites
 
 Please install the following:
 
@@ -8,13 +8,17 @@ Please install the following:
 - [Vagrant](https://www.vagrantup.com/)
 - [vagrant-disksize](https://github.com/sprotheroe/vagrant-disksize) plugin
 
+### MacOS
+
 ```bash
 brew cask install virtualbox
 brew cask install vagrant
 vagrant plugin install vagrant-disksize
 ```
 
-After that you can run the Vagrant environment with just one command:
+## Setting up
+
+You can set up the Vagrant environment with just one command:
 
 ```bash
 vagrant up
