@@ -20,12 +20,12 @@ function set_variables() {
   TEST_STATICS_PATH="${TEST_SCRIPT_PATH}/static"
   # Path to the temporary directory (created by the prepare_tests)
   TEST_TMP_PATH="${TEST_SCRIPT_PATH}/tmp"
-  # List of test input files
-  TEST_INPUT_FILES="$(ls "${TEST_STATICS_PATH}" | grep input)"
+  # List of test input files (names only)
+  TEST_INPUT_FILES="$(find "${TEST_STATICS_PATH}" -name '*input*' -exec basename {} \;)"
   # Path to the temporary output file
   TEST_OUT="${TEST_TMP_PATH}/new_values.yaml"
   # Current version wchich should override the placeholder in test
-  CURRENT_CHART_VERSION=$(yq r ${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic/Chart.yaml version)
+  CURRENT_CHART_VERSION=$(yq r "${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic/Chart.yaml" version)
 }
 
 # Update helm chart and remove the tmpcharts eventually
@@ -48,6 +48,10 @@ function cleanup_tests() {
   if [[ -n "${TEST_TMP_PATH}" ]]; then
     rm -rf "${TEST_TMP_PATH}"
   fi
+
+  for env_name in  $(env | grep -oE '^TEST_.*?=' | sed 's/=//g'); do
+    unset "${env_name}"
+  done
 }
 
 # Patch tests with current helm chart version
@@ -62,7 +66,7 @@ function generate_file {
   local template_name="${1}"
 
   docker run --rm \
-    -v ${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic:/chart \
+    -v "${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic":/chart \
     -v "${TEST_STATICS_PATH}/${input_file}":/values.yaml \
     sumologic/kubernetes-tools:master \
     helm template /chart -f /values.yaml \
@@ -77,7 +81,7 @@ function perform_test {
   local input_file="${1}"
   local template_name="${2}"
 
-  test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
+  test_name="${input_file//.input.yaml/}"
   output_file="${test_name}.output.yaml"
 
   patch_test "${TEST_STATICS_PATH}/${output_file}" "${TEST_TMP_PATH}/${output_file}"
@@ -93,7 +97,7 @@ function perform_test {
     test_failed "${test_name}"
     # Set all tests as failed
     # This env comes from run.sh
-    TEST_SUCCESS=1
+    export TEST_SUCCESS=1
   else
     test_passed "${test_name}"
   fi

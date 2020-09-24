@@ -1,3 +1,3 @@
 #!/bin/bash
 
-TEST_TEMPLATE="templates/setup/setup-configmap.yaml"
+export TEST_TEMPLATE="templates/setup/setup-configmap.yaml"

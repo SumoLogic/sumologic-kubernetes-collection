@@ -7,11 +7,7 @@
 #   1> tests/upgrade_script/static/${test_name}.log 2>&1 \
 # && cp new_values.yaml tests/upgrade_script/static/${test_name}.output.yaml
 
-test_start()        { echo -e "[.] $*"; }
-test_passed()       { echo -e "[+] $*"; }
-test_failed()       { echo -e "[-] $*"; }
-
-SCRIPT_PATH="$( dirname $(realpath ${0}) )"
+SCRIPT_PATH="$( dirname "$(realpath ${0})" )"
 
 source "${SCRIPT_PATH}/../functions.sh"
 readonly TEST_TMP_OUT="tmp/out.log"
@@ -21,11 +17,11 @@ prepare_tests
 
 SUCCESS=0
 for input_file in ${TEST_INPUT_FILES}; do
-  test_name=$(echo "${input_file}" | sed -e 's/.input.yaml$//g')
+  test_name="$(echo "${input_file}" | sed -e 's/.input.yaml$//g')"
   output_file="${test_name}.output.yaml"
   log_file="${test_name}.log"
 
-  test_start "${test_name}" ${input_file}
+  test_start "${test_name}" "${input_file}"
   bash "${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic/upgrade-1.0.0.sh" "${TEST_STATICS_PATH}/${input_file}" 1>"${TEST_TMP_OUT}" 2>&1
   mv new_values.yaml "${TEST_OUT}"
 
