@@ -6,14 +6,14 @@ USER root
 # Dependencies
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-       sudo \
-       make \
-       gcc \
-       g++ \
-       libc-dev \
-       ruby-dev \
-       libsnappy-dev \
        curl \
+       g++ \
+       gcc \
+       libc-dev \
+       libsnappy-dev \
+       make \
+       ruby-dev \
+       sudo \
        unzip
 
 # Fluentd plugin dependencies
