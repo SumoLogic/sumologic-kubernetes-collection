@@ -1479,6 +1479,73 @@ prometheus-operator:
             - action: keep
               regex: (?:redis_((blocked_|)clients|cluster_enabled|cmdstat_calls|connected_slaves|(evicted|expired|tracking_total)_keys|instantaneous_ops_per_sec|keyspace_(hitrate|hits|misses)|(master|slave)_repl_offset|maxmemory|mem_fragmentation_(bytes|ratio)|rdb_changes_since_last_save|rejected_connections|total_commands_processed|total_net_(input|output)_bytes|uptime|used_(cpu_(sys|user)|memory(_overhead|_rss|_startup|))))
               sourceLabels: [__name__]
+        
+        ## JMX Metrics
+        ## java_lang_ClassLoading_LoadedClassCount
+        ## java_lang_ClassLoading_TotalLoadedClassCount
+        ## java_lang_ClassLoading_UnloadedClassCount
+        ## java_lang_Compilation_TotalCompilationTime
+        ## java_lang_GarbageCollector_CollectionCount
+        ## java_lang_GarbageCollector_CollectionTime
+        ## java_lang_GarbageCollector_LastGcInfo_GcThreadCount
+        ## java_lang_GarbageCollector_LastGcInfo_duration
+        ## java_lang_GarbageCollector_LastGcInfo_memoryUsageAfterGc_*_used
+        ## java_lang_GarbageCollector_LastGcInfo_memoryUsageBeforeGc_*_used
+        ## java_lang_GarbageCollector_LastGcInfo_usageAfterGc_*_used  # only for adoptopenjdk-openj9
+        ## java_lang_GarbageCollector_LastGcInfo_usageBeforeGc_*_used  # only for adoptopenjdk-openj9
+        ## java_lang_MemoryPool_CollectionUsageThresholdSupported
+        ## java_lang_MemoryPool_CollectionUsage_committed
+        ## java_lang_MemoryPool_CollectionUsage_max
+        ## java_lang_MemoryPool_CollectionUsage_used
+        ## java_lang_MemoryPool_PeakUsage_committed
+        ## java_lang_MemoryPool_PeakUsage_max
+        ## java_lang_MemoryPool_PeakUsage_used
+        ## java_lang_MemoryPool_UsageThresholdSupported
+        ## java_lang_MemoryPool_Usage_committed
+        ## java_lang_MemoryPool_Usage_max
+        ## java_lang_MemoryPool_Usage_used
+        ## java_lang_Memory_HeapMemoryUsage_committed
+        ## java_lang_Memory_HeapMemoryUsage_max
+        ## java_lang_Memory_HeapMemoryUsage_used
+        ## java_lang_Memory_NonHeapMemoryUsage_committed
+        ## java_lang_Memory_NonHeapMemoryUsage_max
+        ## java_lang_Memory_NonHeapMemoryUsage_used
+        ## java_lang_Memory_ObjectPendingFinalizationCount
+        ## java_lang_OperatingSystem_AvailableProcessors
+        ## java_lang_OperatingSystem_CommittedVirtualMemorySize
+        ## java_lang_OperatingSystem_FreeMemorySize  # Added in jdk14
+        ## java_lang_OperatingSystem_FreePhysicalMemorySize
+        ## java_lang_OperatingSystem_FreeSwapSpaceSize
+        ## java_lang_OperatingSystem_MaxFileDescriptorCount
+        ## java_lang_OperatingSystem_OpenFileDescriptorCount
+        ## java_lang_OperatingSystem_ProcessCpuLoad
+        ## java_lang_OperatingSystem_ProcessCpuTime
+        ## java_lang_OperatingSystem_SystemCpuLoad
+        ## java_lang_OperatingSystem_SystemLoadAverage
+        ## java_lang_OperatingSystem_TotalMemorySize  # Added in jdk14
+        ## java_lang_OperatingSystem_TotalPhysicalMemorySize
+        ## java_lang_OperatingSystem_TotalSwapSpaceSize
+        ## java_lang_Runtime_BootClassPathSupported
+        ## java_lang_Runtime_Pid  # not available for jdk8
+        ## java_lang_Runtime_Uptime
+        ## java_lang_Runtime_StartTime
+        ## java_lang_Threading_CurrentThreadAllocatedBytes  # Added in jdk14
+        ## java_lang_Threading_CurrentThreadCpuTime
+        ## java_lang_Threading_CurrentThreadUserTime
+        ## java_lang_Threading_DaemonThreadCount
+        ## java_lang_Threading_ObjectMonitorUsageSupported
+        ## java_lang_Threading_PeakThreadCount
+        ## java_lang_Threading_SynchronizerUsageSupported
+        ## java_lang_Threading_ThreadAllocatedMemory*  # Not available for adoptopenjdk-openj9
+        ## java_lang_Threading_ThreadContentionMonitoring*
+        ## java_lang_Threading_ThreadCount
+        ## java_lang_Threading_ThreadCpuTime*
+        ## java_lang_Threading_TotalStartedThreadCount
+        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.jmx
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:java_lang_(ClassLoading_(TotalL|Unl|L)oadedClassCount|Compilation_TotalCompilationTime|GarbageCollector_(Collection(Count|Time)|LastGcInfo_(GcThreadCount|duration|(memoryU|u)sage(After|Before)Gc_.*_used))|MemoryPool_(CollectionUsage(ThresholdSupported|_committed|_max|_used)|(Peak|)Usage_(committed|max|used)|UsageThresholdSupported)|Memory_((Non|)HeapMemoryUsage_(committed|max|used)|ObjectPendingFinalizationCount)|OperatingSystem_(AvailableProcessors|(CommittedVirtual|(Free|Total)(Physical|))MemorySize|(Free|Total)SwapSpaceSize|(Max|Open)FileDescriptorCount|ProcessCpu(Load|Time)|System(CpuLoad|LoadAverage))|Runtime_(BootClassPathSupported|Pid|Uptime|StartTime)|Threading_(CurrentThread(AllocatedBytes|(Cpu|User)Time)|(Daemon|Peak|TotalStarted|)ThreadCount|(ObjectMonitor|Synchronizer)UsageSupported|Thread(AllocatedMemory.*|ContentionMonitoring.*|CpuTime.*))))
+              sourceLabels: [__name__]
 
 ## Configure falco
 ## ref: https://github.com/falcosecurity/charts/blob/master/falco/values.yaml
