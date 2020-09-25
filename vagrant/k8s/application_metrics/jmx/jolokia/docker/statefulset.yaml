@@ -19,50 +19,71 @@ spec:
             urls = ["http://127.0.0.1:8778/jolokia"]
 
             [[inputs.jolokia2_agent.metric]]
-              name  = "sumologic_java_lang_GarbageCollector"
-              mbean = "java.lang:name=*,type=GarbageCollector"
-              paths = ["LastGcInfo", "CollectionTime", "Valid", "CollectionCount"]
-              tag_keys = ["name"]
-            [[inputs.jolokia2_agent.metric]]
-              name  = "sumologic_java_lang_Threading"
-              mbean = "java.lang:type=Threading"
-              paths = ["ThreadAllocatedMemorySupported", "ThreadContentionMonitoringEnabled", "CurrentThreadAllocatedBytes", "TotalStartedThreadCount", "CurrentThreadCpuTimeSupported", "CurrentThreadUserTime", "PeakThreadCount", "ThreadAllocatedMemoryEnabled", "CurrentThreadCpuTime", "ThreadContentionMonitoringSupported", "ThreadCpuTimeSupported", "ThreadCount", "ThreadCpuTimeEnabled", "ObjectMonitorUsageSupported", "SynchronizerUsageSupported", "DaemonThreadCount"]
-              tag_keys = []
-            [[inputs.jolokia2_agent.metric]]
-              name  = "sumologic_java_lang_MemoryPool"
-              mbean = "java.lang:name=*,type=MemoryPool"
-              paths = ["Usage", "PeakUsage", "CollectionUsage", "UsageThresholdSupported", "CollectionUsageThresholdSupported", "Valid"]
-              tag_keys = ["name"]
-            [[inputs.jolokia2_agent.metric]]
-              name  = "sumologic_java_lang_Memory"
-              mbean = "java.lang:type=Memory"
-              paths = ["ObjectPendingFinalizationCount", "Verbose", "HeapMemoryUsage", "NonHeapMemoryUsage"]
-              tag_keys = []
-            [[inputs.jolokia2_agent.metric]]
-              name  = "sumologic_java_lang_OperatingSystem"
-              mbean = "java.lang:type=OperatingSystem"
-              paths = ["OpenFileDescriptorCount", "CommittedVirtualMemorySize", "FreePhysicalMemorySize", "SystemLoadAverage", "ProcessCpuLoad", "FreeSwapSpaceSize", "TotalPhysicalMemorySize", "TotalSwapSpaceSize", "TotalMemorySize", "ProcessCpuTime", "MaxFileDescriptorCount", "SystemCpuLoad", "AvailableProcessors", "CpuLoad", "FreeMemorySize"]
-              tag_keys = []
-            [[inputs.jolokia2_agent.metric]]
-              name  = "sumologic_java_lang_MemoryManager"
-              mbean = "java.lang:name=*,type=MemoryManager"
-              paths = ["Valid"]
-              tag_keys = ["name"]
-            [[inputs.jolokia2_agent.metric]]
-              name  = "sumologic_java_lang_ClassLoading"
+              name  = "java_lang_ClassLoading"
               mbean = "java.lang:type=ClassLoading"
-              paths = ["UnloadedClassCount", "LoadedClassCount", "Verbose", "TotalLoadedClassCount"]
-              tag_keys = []
+              paths = ["LoadedClassCount", "TotalLoadedClassCount", "UnloadedClassCount"]
+
             [[inputs.jolokia2_agent.metric]]
-              name  = "sumologic_java_lang_Compilation"
+              name  = "java_lang_Compilation"
               mbean = "java.lang:type=Compilation"
-              paths = ["CompilationTimeMonitoringSupported", "TotalCompilationTime"]
-              tag_keys = []
+              paths = ["TotalCompilationTime"]
+
             [[inputs.jolokia2_agent.metric]]
-              name  = "sumologic_java_lang_Runtime"
+              name  = "java_lang_GarbageCollector"
+              mbean = "java.lang:name=*,type=GarbageCollector"
+              paths = ["CollectionCount", "CollectionTime", "LastGcInfo"]
+              tag_keys = ["name"]
+
+            [[inputs.jolokia2_agent.metric]]
+              name  = "java_lang_MemoryPool"
+              mbean = "java.lang:name=*,type=MemoryPool"
+              paths = ["CollectionUsage", "CollectionUsageThresholdSupported", "PeakUsage", "Usage", "UsageThresholdSupported"]
+              tag_keys = ["name"]
+
+            [[inputs.jolokia2_agent.metric]]
+              name  = "java_lang_Memory"
+              mbean = "java.lang:type=Memory"
+              paths = ["HeapMemoryUsage", "NonHeapMemoryUsage", "ObjectPendingFinalizationCount"]
+
+            [[inputs.jolokia2_agent.metric]]
+              name  = "java_lang_OperatingSystem"
+              mbean = "java.lang:type=OperatingSystem"
+              paths = ["AvailableProcessors", "CommittedVirtualMemorySize", "FreePhysicalMemorySize", "FreeSwapSpaceSize", "MaxFileDescriptorCount", "OpenFileDescriptorCount", "ProcessCpuLoad", "ProcessCpuTime", "SystemCpuLoad", "SystemLoadAverage", "TotalPhysicalMemorySize", "TotalSwapSpaceSize"]
+
+            [[inputs.jolokia2_agent.metric]]
+              name  = "java_lang_Runtime"
               mbean = "java.lang:type=Runtime"
-              paths = ["Uptime", "StartTime", "Pid", "BootClassPathSupported"]
-              tag_keys = []
+              paths = ["BootClassPathSupported", "StartTime", "Uptime"]
+
+            [[inputs.jolokia2_agent.metric]]
+              name  = "java_lang_Threading"
+              mbean = "java.lang:type=Threading"
+              paths = ["CurrentThreadCpuTime", "CurrentThreadUserTime", "DaemonThreadCount", "ObjectMonitorUsageSupported", "PeakThreadCount", "SynchronizerUsageSupported", "ThreadContentionMonitoringEnabled", "ThreadContentionMonitoringSupported", "ThreadCount", "ThreadCpuTimeEnabled", "ThreadCpuTimeSupported", "TotalStartedThreadCount"]
+
+            # Metrics which are unavailable for some of the jvm implementations
+            ## Added in jdk14
+            [[inputs.jolokia2_agent.metric]]
+              name  = "java_lang_OperatingSystem"
+              mbean = "java.lang:type=OperatingSystem"
+              paths = ["FreeMemorySize", "TotalMemorySize"]
+
+            ## not available for jdk8
+            [[inputs.jolokia2_agent.metric]]
+              name  = "java_lang_Runtime"
+              mbean = "java.lang:type=Runtime"
+              paths = ["Pid"]
+
+            ## Added in jdk14
+            [[inputs.jolokia2_agent.metric]]
+              name  = "java_lang_Threading"
+              mbean = "java.lang:type=Threading"
+              paths = ["CurrentThreadAllocatedBytes"]
+
+            ## Not available for adoptopenjdk-openj9
+            [[inputs.jolokia2_agent.metric]]
+              name  = "java_lang_Threading"
+              mbean = "java.lang:type=Threading"
+              paths = ["ThreadAllocatedMemoryEnabled", "ThreadAllocatedMemorySupported"]
 
         telegraf.influxdata.com/class: sumologic-prometheus
         telegraf.influxdata.com/limits-cpu: '750m'
