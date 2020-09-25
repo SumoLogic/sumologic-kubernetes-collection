@@ -586,3 +586,38 @@ prometheus:
       - action: keep
         regex: (?:nginx_(accepts|active|handled|reading|requests|waiting|writing))
         sourceLabels: [__name__]
+    - ## Redis metrics
+      ## redis_blocked_clients
+      ## redis_clients
+      ## redis_cluster_enabled
+      ## redis_cmdstat_calls
+      ## redis_connected_slaves
+      ## redis_evicted_keys
+      ## redis_expired_keys
+      ## redis_instantaneous_ops_per_sec
+      ## redis_keyspace_hitrate
+      ## redis_keyspace_hits
+      ## redis_keyspace_misses
+      ## redis_master_repl_offset
+      ## redis_maxmemory
+      ## redis_mem_fragmentation_bytes
+      ## redis_mem_fragmentation_ratio
+      ## redis_rdb_changes_since_last_save
+      ## redis_rejected_connections
+      ## redis_slave_repl_offset
+      ## redis_total_commands_processed
+      ## redis_total_net_input_bytes
+      ## redis_total_net_output_bytes
+      ## redis_tracking_total_keys
+      ## redis_uptime
+      ## redis_used_cpu_sys
+      ## redis_used_cpu_user
+      ## redis_used_memory
+      ## redis_used_memory_overhead
+      ## redis_used_memory_rss
+      ## redis_used_memory_startup
+      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.redis
+      writeRelabelConfigs:
+      - action: keep
+        regex: (?:redis_((blocked_|)clients|cluster_enabled|cmdstat_calls|connected_slaves|(evicted|expired|tracking_total)_keys|instantaneous_ops_per_sec|keyspace_(hitrate|hits|misses)|(master|slave)_repl_offset|maxmemory|mem_fragmentation_(bytes|ratio)|rdb_changes_since_last_save|rejected_connections|total_commands_processed|total_net_(input|output)_bytes|uptime|used_(cpu_(sys|user)|memory(_overhead|_rss|_startup|))))
+        sourceLabels: [__name__]

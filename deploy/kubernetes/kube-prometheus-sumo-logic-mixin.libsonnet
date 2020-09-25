@@ -221,6 +221,18 @@
             ]
           }
         ]
+      },
+      {
+        url: $._config.sumologicCollectorSvc + "prometheus.metrics.applications.redis",
+        writeRelabelConfigs: [
+          {
+            action: "keep",
+            regex: "(?:redis_((blocked_|)clients|cluster_enabled|cmdstat_calls|connected_slaves|(evicted|expired|tracking_total)_keys|instantaneous_ops_per_sec|keyspace_(hitrate|hits|misses)|(master|slave)_repl_offset|maxmemory|mem_fragmentation_(bytes|ratio)|rdb_changes_since_last_save|rejected_connections|total_commands_processed|total_net_(input|output)_bytes|uptime|used_(cpu_(sys|user)|memory(_overhead|_rss|_startup|))))",
+            sourceLabels: [
+              "__name__"
+            ]
+          }
+        ]
       }
     ],
   },
