@@ -23,7 +23,9 @@ tag-and-push-local:
 	$(eval timestamp := $(shell date +%s))
 	docker tag sumologic/kubernetes-fluentd:local localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
 	docker push localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
-	sed -i 's/^\([[:space:]]\+\)tag:.*$$/\1tag: local-${timestamp}/' ${local_values_file}
+	touch ${local_values_file}
+	yq w -i ${local_values_file} image.repository localhost:32000/sumologic/kubernetes-fluentd
+	yq w -i ${local_values_file} image.tag local-${timestamp}
 
 generate-local-config:
 	${root_dir}vagrant/scripts/generate-local-config.sh
