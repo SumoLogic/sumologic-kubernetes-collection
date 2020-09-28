@@ -106,9 +106,11 @@ bundle_fluentd_plugins "${VERSION}" || (echo "Failed bundling fluentd plugins" &
 
 echo "Building docker image with $DOCKER_TAG:local in $(pwd)..."
 cd ./deploy/docker || exit 1
-readonly no_cache=$([ "$DOCKER_USE_CACHE" == "true" ] && echo "" || echo "--no-cache")
-# shellcheck disable=SC2086
-docker build . -f ./Dockerfile -t "$DOCKER_TAG:local" ${no_cache}
+no_cache="--no-cache"
+if [[ "$DOCKER_USE_CACHE" == "true" ]]; then
+  no_cache=""
+fi
+docker build . -f ./Dockerfile -t "$DOCKER_TAG:local" ${no_cache:+"--no-cache"}
 rm -f ./gems/*.gem
 cd ../.. || exit 1
 
