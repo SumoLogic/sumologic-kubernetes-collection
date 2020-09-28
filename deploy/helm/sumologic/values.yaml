@@ -1582,6 +1582,8 @@ otelcol:
       pullPolicy: IfNotPresent
     ## Option to define priorityClassName to assign a priority class to pods.
     priorityClassName:
+  # To enable collecting all logs, set to false
+  logLevelFilter: true
   config:
     receivers:
       jaeger:
