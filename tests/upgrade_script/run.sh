@@ -10,7 +10,7 @@
 SCRIPT_PATH="$( dirname "$(realpath ${0})" )"
 
 source "${SCRIPT_PATH}/../functions.sh"
-readonly TEST_TMP_OUT="tmp/out.log"
+readonly TEST_TMP_OUT="${SCRIPT_PATH}/tmp/out.log"
 
 set_variables "${SCRIPT_PATH}"
 prepare_tests
