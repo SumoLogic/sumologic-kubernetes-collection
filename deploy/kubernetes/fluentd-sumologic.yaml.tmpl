@@ -96,6 +96,7 @@ data:
     cache_size  "10000"
     cache_ttl  "7200"
     cache_refresh "3600"
+    cache_refresh_variation "900"
     in_namespace_path '$.kubernetes.namespace_name'
     in_pod_path '$.kubernetes.pod_name'
     core_api_versions v1
@@ -445,6 +446,7 @@ data:
         cache_size  "10000"
         cache_ttl  "7200"
         cache_refresh "3600"
+        cache_refresh_variation "900"
         core_api_versions v1
         api_groups apps/v1,extensions/v1beta1
       </filter>
