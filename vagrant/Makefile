@@ -17,6 +17,9 @@ namespace = sumologic
 build:
 	cd ${root_dir} && ${root_dir}ci/build.sh
 
+generate-local-config:
+	${root_dir}vagrant/scripts/generate-local-config.sh
+
 build-local:
 	DOCKER_USE_CACHE=true \
 	${mkfile_path} \
