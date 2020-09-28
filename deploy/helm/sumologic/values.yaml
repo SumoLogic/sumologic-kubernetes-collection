@@ -1008,12 +1008,12 @@ prometheus-operator:
         annotations: {}
       ## Define resources requests and limits for single Pods.
       resources: {}
-      # limits:
-      #   cpu: 800m
-      #   memory: 800Mi
-      # requests:
-      #   cpu: 400m
-      #   memory: 400Mi
+        limits:
+          cpu: 2
+          memory: 8Gi
+        requests:
+          cpu: 1
+          memory: 2Gi
       thanos:
         baseImage: quay.io/thanos/thanos
         version: v0.10.0
