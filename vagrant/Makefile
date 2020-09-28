@@ -15,15 +15,8 @@ name = collection
 namespace = sumologic
 
 build:
-	cd ${root_dir} && ${root_dir}ci/build.sh
-
-generate-local-config:
-	${root_dir}vagrant/scripts/generate-local-config.sh
-
-build-local:
-	DOCKER_USE_CACHE=true \
+	cd ${root_dir} && DOCKER_USE_CACHE=true ${root_dir}ci/build.sh
 	${mkfile_path} \
-		build \
 		tag-and-push-local
 
 tag-and-push-local:
@@ -31,6 +24,9 @@ tag-and-push-local:
 	docker tag sumologic/kubernetes-fluentd:local localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
 	docker push localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
 	sed -i 's/^\([[:space:]]\+\)tag:.*$$/\1tag: local-${timestamp}/' ${local_values_file}
+
+generate-local-config:
+	${root_dir}vagrant/scripts/generate-local-config.sh
 
 # Collector section
 ## Collector upgrade
