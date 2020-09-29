@@ -205,8 +205,12 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- template "sumologic.fullname" . }}-scc
 {{- end -}}
 
+{{- define "sumologic.metadata.name.fluentd" -}}
+{{ template "sumologic.fullname" . }}-fluentd
+{{- end -}}
+
 {{- define "sumologic.metadata.name.logs" -}}
-{{ template "sumologic.labels.app.fluentd" . }}-logs
+{{ template "sumologic.metadata.name.fluentd" . }}-logs
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service" -}}
@@ -230,7 +234,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics" -}}
-{{ template "sumologic.labels.app.fluentd" . }}-metrics
+{{ template "sumologic.metadata.name.fluentd" . }}-metrics
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.service" -}}
@@ -254,7 +258,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events" -}}
-{{ template "sumologic.labels.app.fluentd" . }}-events
+{{ template "sumologic.metadata.name.fluentd" . }}-events
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events.service" -}}
