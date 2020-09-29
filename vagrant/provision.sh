@@ -89,7 +89,7 @@ kubectl -n kube-system get services | grep -i kubernetes-dashboard | awk '{print
 echo
 
 echo Dashboard token:
-kubectl -n kube-system describe secret default| awk '$1=="token:"{print $2}'
+echo $(/sumologic/vagrant/scripts/get-dashboard-token.sh)
 echo
 
 ln -s /sumologic/vagrant/scripts/sumo-make.sh /usr/local/bin/sumo-make
