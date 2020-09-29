@@ -8,13 +8,27 @@ root_dir := $(dir $(abspath $(mkfile_path)/..))
 helm_path = ${root_dir}deploy/helm/sumologic
 k8s_path = ${root_dir}vagrant/k8s
 dashboards_path = ${root_dir}vagrant/dashboards
+local_values_file = ${root_dir}vagrant/values.local.yaml
 
 # Collector configuration
 name = collection
 namespace = sumologic
 
 build:
-	cd ${root_dir} && ${root_dir}ci/build.sh
+	cd ${root_dir} && DOCKER_USE_CACHE=true ${root_dir}ci/build.sh
+	${mkfile_path} \
+		tag-and-push-local
+
+tag-and-push-local:
+	$(eval timestamp := $(shell date +%s))
+	docker tag sumologic/kubernetes-fluentd:local localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
+	docker push localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
+	touch ${local_values_file}
+	yq w -i ${local_values_file} image.repository localhost:32000/sumologic/kubernetes-fluentd
+	yq w -i ${local_values_file} image.tag local-${timestamp}
+
+generate-local-config:
+	${root_dir}vagrant/scripts/generate-local-config.sh
 
 # Collector section
 ## Collector upgrade
@@ -44,10 +58,11 @@ helm-dependencies:
 	helm dependency update "${helm_path}"
 
 helm-upgrade:
+	$(eval local_values_param := $(shell [ -f ${local_values_file} ] && echo "-f ${local_values_file}" || echo ""))
 	helm upgrade "${name}" "${helm_path}" \
 		--namespace "${namespace}" \
 		--install \
-		-f "${root_dir}vagrant/values.yaml"
+		-f "${root_dir}vagrant/values.yaml" ${local_values_param}
 
 apply-service-monitors:
 	kubectl apply -f ${k8s_path}/service-monitors.yaml
