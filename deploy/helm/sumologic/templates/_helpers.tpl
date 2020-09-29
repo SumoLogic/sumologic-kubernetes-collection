@@ -35,8 +35,12 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.fluentd" -}}
+{{- template "sumologic.fullname" . }}-fluentd
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs" -}}
-{{- template "sumologic.fullname" . }}-fluentd-logs
+{{- template "sumologic.labels.app.fluentd" . }}-logs
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.pod" -}}
@@ -64,7 +68,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics" -}}
-{{- template "sumologic.fullname" . }}-fluentd-metrics
+{{- template "sumologic.labels.app.fluentd" . }}-metrics
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics.pod" -}}
@@ -92,7 +96,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.events" -}}
-{{- template "sumologic.fullname" . }}-fluentd-events
+{{- template "sumologic.labels.app.fluentd" . }}-events
 {{- end -}}
 
 {{- define "sumologic.labels.app.events.pod" -}}
@@ -202,7 +206,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs" -}}
-{{ template "sumologic.fullname" . }}-fluentd-logs
+{{ template "sumologic.labels.app.fluentd" . }}-logs
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service" -}}
@@ -226,7 +230,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics" -}}
-{{ template "sumologic.fullname" . }}-fluentd-metrics
+{{ template "sumologic.labels.app.fluentd" . }}-metrics
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.service" -}}
@@ -250,7 +254,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events" -}}
-{{ template "sumologic.fullname" . }}-fluentd-events
+{{ template "sumologic.labels.app.fluentd" . }}-events
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events.service" -}}
