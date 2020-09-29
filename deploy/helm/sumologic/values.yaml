@@ -1007,7 +1007,7 @@ prometheus-operator:
         labels: {}
         annotations: {}
       ## Define resources requests and limits for single Pods.
-      resources: {}
+      resources:
         limits:
           cpu: 2
           memory: 8Gi
