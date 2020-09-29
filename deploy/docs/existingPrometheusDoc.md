@@ -118,13 +118,13 @@ If you have customized your Prometheus configuration, follow these steps to merg
 Helm supports providing multiple configuration files, and priority will be given to the last (right-most) file specified. You can obtain your current prometheus configuration by running
 
 ```bash
-helm get values prometheus-operator > current-values.yaml
+helm get values $PROMETHEUS_OPERATOR_CHART_NAME > current-values.yaml
 ```
 
 Any section of `current-values.yaml` that conflicts with sections of our `prometheus-overrides.yaml` will have to be removed from the `prometheus-overrides.yaml` file and appended to `current-values.yaml` in relevant sections. For any config that doesn’t conflict, you can leave them in `prometheus-overrides.yaml`. Then run
 
 ```bash
-helm upgrade prometheus-operator stable/prometheus-operator -f current-values.yaml -f prometheus-overrides.yaml
+helm upgrade $PROMETHEUS_OPERATOR_CHART_NAME stable/prometheus-operator -f current-values.yaml -f prometheus-overrides.yaml
 ```
 
 __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
