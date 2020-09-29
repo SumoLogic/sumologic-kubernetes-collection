@@ -159,6 +159,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.podsecuritypolicy" -}}
+{{- template "sumologic.fullname" . }}-psp
+{{- end -}}
+
+{{- define "sumologic.labels.app.securitycontextconstraints" -}}
+{{- template "sumologic.fullname" . }}-scc
+{{- end -}}
+
 {{/*
 Generate helm.sh annotations. It takes weight as parameter.
 
@@ -187,6 +195,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.podsecuritypolicy" -}}
 {{ template "sumologic.fullname" . }}-psp
+{{- end -}}
+
+{{- define "sumologic.metadata.name.securitycontextconstraints" -}}
+{{- template "sumologic.fullname" . }}-scc
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs" -}}

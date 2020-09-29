@@ -5,9 +5,9 @@ metadata:
   annotations:
     kubernetes.io/description: |
       This provides the minimum requirements Sumo Logic Kubernetes Collection to run in Openshift.
-  name: {{ template "sumologic.fullname" . }}
+  name: {{ template "sumologic.metadata.name.securitycontextconstraints" . }}
   labels:
-    app: {{ template "sumologic.fullname" . }}
+    app: {{ template "sumologic.labels.app.securitycontextconstraints" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
