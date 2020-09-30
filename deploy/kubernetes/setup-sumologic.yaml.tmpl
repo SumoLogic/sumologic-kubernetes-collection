@@ -271,10 +271,10 @@ spec:
         command: ["/etc/terraform/setup.sh"]
         resources:
           limits:
-            cpu: 0.2
+            cpu: 200m
             memory: 256Mi
           requests:
-            cpu: 0.1
+            cpu: 100m
             memory: 128Mi
           
         volumeMounts:
