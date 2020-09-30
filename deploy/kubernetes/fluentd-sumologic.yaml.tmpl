@@ -201,7 +201,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.logs
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           @log_level error
           @include logs.output.conf
           <buffer>
@@ -229,7 +229,7 @@ data:
       <store>
         @type sumologic
         @id sumologic.endpoint.logs.default
-        sumo_client "k8s_1.3.0-beta.0"
+        sumo_client "k8s_1.3.0-beta.1"
         @include logs.output.conf
         <buffer>
           @type memory
@@ -261,7 +261,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.logs.kubelet
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           @include logs.output.conf
           <buffer>
             @type memory
@@ -299,7 +299,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.logs.systemd
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           @include logs.output.conf
           <buffer>
             @type memory
@@ -350,7 +350,7 @@ data:
       <store>
         @type sumologic
         @id sumologic.endpoint.events
-        sumo_client "k8s_1.3.0-beta.0"
+        sumo_client "k8s_1.3.0-beta.1"
         endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE']}"
         data_type logs
         disable_cookies true
@@ -472,7 +472,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.apiserver
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           endpoint "#{ENV['SUMO_ENDPOINT_APISERVER_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -487,7 +487,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.container
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           endpoint "#{ENV['SUMO_ENDPOINT_KUBELET_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -502,7 +502,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.control.plane
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           endpoint "#{ENV['SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -517,7 +517,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.kube.controller.manager
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           endpoint "#{ENV['SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -532,7 +532,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.kubelet
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           endpoint "#{ENV['SUMO_ENDPOINT_KUBELET_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -547,7 +547,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.node.exporter
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           endpoint "#{ENV['SUMO_ENDPOINT_NODE_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -562,7 +562,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.kube.scheduler
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           endpoint "#{ENV['SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -577,7 +577,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.kube.state
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           endpoint "#{ENV['SUMO_ENDPOINT_STATE_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -592,7 +592,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics
-          sumo_client "k8s_1.3.0-beta.0"
+          sumo_client "k8s_1.3.0-beta.1"
           endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -834,7 +834,7 @@ spec:
         
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:1.3.0-beta.0
+        image: sumologic/kubernetes-fluentd:1.3.0-beta.1
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -917,7 +917,7 @@ spec:
         
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:1.3.0-beta.0
+        image: sumologic/kubernetes-fluentd:1.3.0-beta.1
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -1042,7 +1042,7 @@ spec:
         
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:1.3.0-beta.0
+        image: sumologic/kubernetes-fluentd:1.3.0-beta.1
         imagePullPolicy: IfNotPresent
         resources:
           limits:
