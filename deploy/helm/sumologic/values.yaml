@@ -82,10 +82,10 @@ sumologic:
       resources:
         limits:
           memory: 256Mi
-          cpu: 0.2
+          cpu: 200m
         requests:
           memory: 128Mi
-          cpu: 0.1
+          cpu: 100m
       nodeSelector: {}
       ## Add custom labels only to setup job pod
       podLabels: {}
@@ -301,10 +301,10 @@ fluentd:
       resources:
         limits:
           memory: 1Gi
-          cpu: 1
+          cpu: 1000m
         requests:
           memory: 768Mi
-          cpu: 0.5
+          cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
 
@@ -535,10 +535,10 @@ fluentd:
       resources:
         limits:
           memory: 1Gi
-          cpu: 1
+          cpu: 1000m
         requests:
           memory: 768Mi
-          cpu: 0.5
+          cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
       
@@ -650,10 +650,10 @@ fluentd:
       resources:
         limits:
           memory: 512Mi
-          cpu: "200m"
+          cpu: 200m
         requests:
           memory: 256Mi
-          cpu: "100m"
+          cpu: 100m
       ## Add custom labels only to events fluentd sts pods
       podLabels: {}
       ## Add custom annotations only to events fluentd sts pods
@@ -1566,10 +1566,10 @@ otelcol:
     resources:
       limits:
         memory: 2Gi
-        cpu: 1
+        cpu: 1000m
       requests:
         memory: 384Mi
-        cpu: "200m"
+        cpu: 200m
     ## Add custom labels only to otelcol deployment.
     podLabels: {}
     ## Add custom annotations only to otelcol deployment.
