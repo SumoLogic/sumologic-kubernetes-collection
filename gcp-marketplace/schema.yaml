@@ -1,0 +1,51 @@
+x-google-marketplace:
+  # MUST be v2.
+  schemaVersion: v2
+
+  # MUST match the version of the Application custom resource object.
+  # This is the same as the top level applicationApiVersion field in v1.
+  applicationApiVersion: v1beta1
+
+  # The release version is required in the schema and MUST match the
+  # release tag on the the deployer.
+  publishedVersion: '1.2.2'
+  publishedVersionMetadata:
+    releaseNote: >-
+      This is the first release of Sumo Logic Collection in Google Cloud Marketplace.
+    # # releaseTypes list is optional.
+    # # "Security" should only be used if this is an important update to patch
+    # # an existing vulnerability, as such updates will display more prominently for users.
+    # releaseTypes:
+    # - Feature
+    # - BugFix
+    # - Security
+    # # If "recommended" is "true", users using older releases are encouraged
+    # # to update as soon as possible. This is useful if, for example, this release
+    # # fixes a critical issue.
+    # recommended: true
+
+  # Image declaration is required here. Refer to the Images section below.
+  images:
+    '':
+      properties:
+        imageRepo:
+          type: REPO_WITH_REGISTRY
+        imageTag:
+          type: TAG
+
+  # Other fields, like clusterConstraints, can be included here.
+
+properties:
+  # name property maps to Helm's Release.Name directive
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+  # namespace property maps to Helm's Release.Namespace directive
+  namespace:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+required:
+- name
+- namespace
