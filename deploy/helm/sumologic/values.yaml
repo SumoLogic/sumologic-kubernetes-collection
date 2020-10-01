@@ -1487,8 +1487,8 @@ prometheus-operator:
         ## java_lang_Compilation_TotalCompilationTime
         ## java_lang_GarbageCollector_CollectionCount
         ## java_lang_GarbageCollector_CollectionTime
-        ## java_lang_GarbageCollector_LastGcInfo_GcThreadCount
-        ## java_lang_GarbageCollector_LastGcInfo_duration
+        ## java_lang_GarbageCollector_LastGcInfo_GcThreadCount  # unavailable for adoptopenjdk-openj9
+        ## java_lang_GarbageCollector_LastGcInfo_duration  # unavailable for adoptopenjdk-openj9
         ## java_lang_GarbageCollector_LastGcInfo_memoryUsageAfterGc_*_used
         ## java_lang_GarbageCollector_LastGcInfo_memoryUsageBeforeGc_*_used
         ## java_lang_GarbageCollector_LastGcInfo_usageAfterGc_*_used  # only for adoptopenjdk-openj9
