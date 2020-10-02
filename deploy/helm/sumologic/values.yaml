@@ -3,7 +3,7 @@
 
 image:
   repository: sumologic/kubernetes-fluentd
-  tag: 1.2.3
+  tag: 1.3.0-beta.1
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -79,6 +79,13 @@ sumologic:
 
   setup:
     job:
+      resources:
+        limits:
+          memory: 256Mi
+          cpu: 2000m
+        # requests:
+        #   memory: 128Mi
+        #   cpu: 200m
       nodeSelector: {}
       ## Add custom labels only to setup job pod
       podLabels: {}
