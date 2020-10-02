@@ -1012,8 +1012,8 @@ prometheus-operator:
           cpu: 2000m
           memory: 8Gi
         requests:
-          cpu: 1000m
-          memory: 2Gi
+          cpu: 500m
+          memory: 1Gi
       thanos:
         baseImage: quay.io/thanos/thanos
         version: v0.10.0
