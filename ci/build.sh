@@ -41,9 +41,6 @@ function bundle_fluentd_plugins() {
       echo "Install bundler..."
       bundle install
 
-      echo "Run unit tests..."
-      bundle exec rake
-
       echo "Build gem ${plugin_name} ${gem_version}..."
       gem build "${plugin_name}"
       mv ./*.gem ../deploy/docker/gems
@@ -84,21 +81,11 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ] && [[ ! 
   fi
 fi
 
-# Test if template files are generated correctly for various values.yaml
-echo "Test helm templates generation"
-if ./tests/run.sh; then
-  echo "Helm templates generation test passed"
+echo "Running tests"
+if ./tests/run_tests; then
+  echo "Tests passed"
 else
-  echo "Tracing templates generation test failed"
-  exit 1
-fi
-
-# Test upgrade script
-echo "Test upgrade script..."
-if ./tests/upgrade_script/run.sh; then
-  echo "Upgrade Script test passed"
-else
-  echo "Upgrade Script test failed"
+  echo "Tests failed"
   exit 1
 fi
 
