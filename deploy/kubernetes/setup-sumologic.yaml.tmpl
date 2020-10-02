@@ -270,7 +270,12 @@ spec:
         imagePullPolicy: IfNotPresent
         command: ["/etc/terraform/setup.sh"]
         resources:
-          null
+          limits:
+            cpu: 2000m
+            memory: 256Mi
+          requests:
+            cpu: 200m
+            memory: 64Mi
           
         volumeMounts:
         - name: setup
