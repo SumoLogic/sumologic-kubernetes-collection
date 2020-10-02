@@ -155,13 +155,13 @@ prometheus:
       labels: {}
       annotations: {}
     ## Define resources requests and limits for single Pods.
-    resources:
-      limits:
-        cpu: 2000m
-        memory: 8Gi
-      requests:
-        cpu: 1000m
-        memory: 2Gi
+    resources: {}
+    # limits:
+    #   cpu: 2000m
+    #   memory: 8Gi
+    # requests:
+    #   cpu: 1000m
+    #   memory: 2Gi
     thanos:
       baseImage: quay.io/thanos/thanos
       version: v0.10.0
@@ -171,9 +171,9 @@ prometheus:
         limits:
           cpu: 10m
           memory: 32Mi
-        requests:
-          cpu: 1m
-          memory: 8Mi
+          # requests:
+          #   cpu: 1m
+          #   memory: 8Mi
     containers:
     - name: "prometheus-config-reloader"
       env:
