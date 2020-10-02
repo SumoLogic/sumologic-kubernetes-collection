@@ -410,7 +410,7 @@ fluentd:
       ## To enable stiching multiline logs in fluentd when fluent-bit Multiline feature is On
       multiline:
         enabled: true
-    
+
     ## Kubelet log configuration
     kubelet:
       enabled: true
@@ -541,7 +541,7 @@ fluentd:
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
-      
+
       ## Add custom labels only to metrics fluentd sts pods
       podLabels: {}
       ## Add custom annotations only to metrics fluentd sts pods
@@ -722,7 +722,7 @@ fluent-bit:
   ## Set securityContext of fluent-bit daemonset pods as privileged for running in Openshift
   # securityContext:
   #   privileged: true
- 
+
   service:
     flush: 5
   metrics:
@@ -770,7 +770,6 @@ fluent-bit:
         regex: ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
         timeKey: time
         timeFormat: "%Y-%m-%dT%H:%M:%S.%L%z"
-        
 
   rawConfig: |-
     @INCLUDE fluent-bit-service.conf
@@ -1443,7 +1442,7 @@ prometheus-operator:
             - action: keep
               regex: (?:nginx_(accepts|active|handled|reading|requests|waiting|writing))
               sourceLabels: [__name__]
-        
+
         ## Redis metrics
         ## redis_blocked_clients
         ## redis_clients
@@ -1479,7 +1478,7 @@ prometheus-operator:
             - action: keep
               regex: (?:redis_((blocked_|)clients|cluster_enabled|cmdstat_calls|connected_slaves|(evicted|expired|tracking_total)_keys|instantaneous_ops_per_sec|keyspace_(hitrate|hits|misses)|(master|slave)_repl_offset|maxmemory|mem_fragmentation_(bytes|ratio)|rdb_changes_since_last_save|rejected_connections|total_commands_processed|total_net_(input|output)_bytes|uptime|used_(cpu_(sys|user)|memory(_overhead|_rss|_startup|))))
               sourceLabels: [__name__]
-        
+
         ## JMX Metrics
         ## java_lang_ClassLoading_LoadedClassCount
         ## java_lang_ClassLoading_TotalLoadedClassCount
