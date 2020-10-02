@@ -1017,13 +1017,13 @@ prometheus-operator:
         version: v0.10.0
         ## Defines the resource requirements for the Thanos sidecar
         ## Setting those as there are no default values in the upstream chart
-        resources:
-          limits:
-            cpu: 10m
-            memory: 32Mi
-          # requests:
-          #   cpu: 1m
-          #   memory: 8Mi
+        # resources:
+        #   limits:
+        #     cpu: 10m
+        #     memory: 32Mi
+        #   requests:
+        #     cpu: 1m
+        #     memory: 8Mi
       containers:
       - name: "prometheus-config-reloader"
         env:
