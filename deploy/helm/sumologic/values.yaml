@@ -83,9 +83,9 @@ sumologic:
         limits:
           memory: 256Mi
           cpu: 2000m
-        # requests:
-        #   memory: 128Mi
-        #   cpu: 200m
+        requests:
+          memory: 64Mi
+          cpu: 200m
       nodeSelector: {}
       ## Add custom labels only to setup job pod
       podLabels: {}
@@ -858,6 +858,8 @@ prometheus-operator:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
+      resource: false
   kubeControllerManager:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -1005,25 +1007,25 @@ prometheus-operator:
         labels: {}
         annotations: {}
       ## Define resources requests and limits for single Pods.
-      resources: {}
-        # limits:
-        #   cpu: 2000m
-        #   memory: 8Gi
-        # requests:
-        #   cpu: 1000m
-        #   memory: 2Gi
+      resources:
+        limits:
+          cpu: 2000m
+          memory: 8Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
       thanos:
         baseImage: quay.io/thanos/thanos
         version: v0.10.0
         ## Defines the resource requirements for the Thanos sidecar
         ## Setting those as there are no default values in the upstream chart
-        # resources:
-        #   limits:
-        #     cpu: 10m
-        #     memory: 32Mi
-        #   requests:
-        #     cpu: 1m
-        #     memory: 8Mi
+        resources:
+          limits:
+            cpu: 10m
+            memory: 32Mi
+          requests:
+            cpu: 1m
+            memory: 8Mi
       containers:
       - name: "prometheus-config-reloader"
         env:
