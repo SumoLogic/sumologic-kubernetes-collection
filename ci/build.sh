@@ -123,7 +123,6 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm init --client-only
   sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
-  sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
   cd deploy/helm/sumologic || exit 1
   sudo helm dependency update
   cd ../../../ || exit 1
@@ -218,7 +217,6 @@ function push_helm_chart() {
   git checkout -- .
   sudo helm init --client-only
   sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
-  sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
   sudo helm package deploy/helm/sumologic --dependency-update --version="$version" --app-version="$version"
   git fetch origin-repo
   git checkout gh-pages
