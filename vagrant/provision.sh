@@ -79,7 +79,12 @@ done
 # install requirements for ci/build.sh
 snap install ruby --channel=2.6/stable --classic
 gem install bundler
-apt install -y gcc g++ libsnappy-dev shellcheck
+apt install -y gcc g++ libsnappy-dev
+
+SHELLCHECK_VERSION=v0.7.1
+curl -Lo- "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJf -
+sudo cp "shellcheck-${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin
+rm -rf "shellcheck-${SHELLCHECK_VERSION}/"
 
 # Init helm tiller
 sudo -H -u vagrant -i helm2 init --wait
