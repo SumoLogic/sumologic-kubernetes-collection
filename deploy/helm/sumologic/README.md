@@ -197,3 +197,8 @@ Parameter | Description | Default
 `falco.enabled` | Flag to control deploying Falco Helm sub-chart. | `false`
 `falco.ebpf.enabled` | Enable eBPF support for Falco instead of falco-probe kernel module. Set to false for GKE. | `true`
 `falco.falco.jsonOutput` | Output events in json. | `true`
+`telegraf-operator.enabled` | Flag to control deploying Telegraf Operator Helm sub-chart. | `false`
+`telegraf-operator.replicaCount` | Replica count for Telegraf Operator pods. | 1
+`telegraf-operator.classes.secretName` | Secret name in which the Telegraf Operator configuration will be stored. | `telegraf-operator-classes`
+`telegraf-operator.default` | Name of the default output configuration. | `sumologic-prometheus`
+`telegraf-operator.data` | Telegraf sidecar configuration. | `{"sumologic-prometheus": "[[outputs.prometheus_client]]\\n          ## Configuration details:\\n          ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration\\n          listen = ':9273'\\n          metric_version = 2\\n"}`
