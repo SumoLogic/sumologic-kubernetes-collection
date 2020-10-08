@@ -213,16 +213,29 @@ function push_docker_image() {
 function push_helm_chart() {
   local version="$1"
 
+  local sync_dir="${TRAVIS_BUILD_DIR}-helm-sync"
+
   echo "Pushing new Helm Chart release $version"
   set -x
+
   git checkout -- .
   sudo helm init --client-only
   sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
   sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-  sudo helm package deploy/helm/sumologic --dependency-update --version="$version" --app-version="$version"
+
+  # due to helm repo index issue: https://github.com/helm/helm/issues/7363
+  # we need to create new package in a different dir, merge the index and move the package back
+  mkdir -p "${sync_dir}"
+  sudo helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
+
   git fetch origin-repo
   git checkout gh-pages
-  sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
+
+  sudo helm repo index --url https://sumologic.github.io/sumologic-kubernetes-collection/ --merge ./index.yaml "${sync_dir}"
+
+  mv -f "${sync_dir}"/* .
+  rmdir "${sync_dir}"
+
   git add -A
   git commit -m "Push new Helm Chart release $version"
   git push --quiet origin-repo gh-pages
