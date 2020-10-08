@@ -19,8 +19,10 @@ spec:
   - name: jaeger-thrift-binary # Default endpoint for Jaeger Thrift Binary receiver.
     port: 6832
     protocol: UDP
+  {{- if eq .Values.sumologic.traces.otc_metrics.enabled true }}
   - name: metrics # Default endpoint for querying metrics.
     port: 8888
+  {{- end }}
   - name: zipkin # Default endpoint for Zipkin receiver.
     port: 9411
   - name: jaeger-grpc  # Default endpoint for Jaeger gRPC
