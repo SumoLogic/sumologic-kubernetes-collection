@@ -168,6 +168,9 @@ sumologic:
     fluentd_stdout: false
     ## How many spans per request should be send to receiver
     spans_per_request: 100
+    ## Metrics from Traces Collector
+    otc_metrics:
+      enabled: false
 
 fluentd:
   ## Specifies whether a PodSecurityPolicy should be created
