@@ -3,11 +3,12 @@ apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
 metadata:
   annotations:
+{{ include "sumologic.annotations.app.setup.helmsh" "0" | indent 4 }}
     kubernetes.io/description: |
       This provides the minimum requirements Sumo Logic Kubernetes Collection to run in Openshift.
-  name: {{ template "sumologic.metadata.name.securitycontextconstraints" . }}
+  name: {{ template "sumologic.metadata.name.setup.securitycontextconstraints" . }}
   labels:
-    app: {{ template "sumologic.labels.app.securitycontextconstraints" . }}
+    app: {{ template "sumologic.labels.app.setup.securitycontextconstraints" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
@@ -23,7 +24,7 @@ allowedUnsafeSysctls: []
 defaultAddCapabilities: []
 fsGroup:
   type: RunAsAny
-groups: 
+groups:
 - system:serviceaccounts:{{ .Release.Namespace }}
 priority: 0
 readOnlyRootFilesystem: false
