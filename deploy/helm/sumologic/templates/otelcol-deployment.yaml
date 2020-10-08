@@ -57,6 +57,9 @@ spec:
         command:
           - "/otelcontribcol"
           - "--config=/conf/traces.otelcol.conf.yaml"
+          {{- if eq .Values.sumologic.traces.otc_metrics.enabled false }}
+          - "--metrics-level=none"
+          {{- end }}
           - {{ printf "--mem-ballast-size-mib=%s" .Values.otelcol.deployment.memBallastSizeMib }}
         env:
         - name: GOGC
