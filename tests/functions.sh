@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+TEST_TEMPLATE="${TEST_TEMPLATE:-}"
+
 function test_start() {
   echo -e "[.] $*";
 }
