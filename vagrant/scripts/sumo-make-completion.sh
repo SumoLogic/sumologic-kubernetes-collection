@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 
-targets=$(cat /sumologic/vagrant/Makefile | grep -oE '^\S*\:' | sed 's/\:$//g')
+targets=$(grep -oE '^\S*\:' /sumologic/vagrant/Makefile | sed 's/\:$//g')
 complete -W "${targets}" sumo-make

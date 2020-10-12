@@ -41,8 +41,8 @@ HELM_2_VERSION=v2.16.9
 HELM_3_VERSION=v3.2.4
 
 mkdir /opt/helm2 /opt/helm3
-curl https://get.helm.sh/helm-${HELM_2_VERSION}-linux-amd64.tar.gz | tar -xz -C /opt/helm2
-curl https://get.helm.sh/helm-${HELM_3_VERSION}-linux-amd64.tar.gz | tar -xz -C /opt/helm3
+curl "https://get.helm.sh/helm-${HELM_2_VERSION}-linux-amd64.tar.gz" | tar -xz -C /opt/helm2
+curl "https://get.helm.sh/helm-${HELM_3_VERSION}-linux-amd64.tar.gz" | tar -xz -C /opt/helm3
 
 ln -s /opt/helm2/linux-amd64/helm /usr/bin/helm2
 ln -s /opt/helm3/linux-amd64/helm /usr/bin/helm3
@@ -94,7 +94,7 @@ kubectl -n kube-system get services | grep -i kubernetes-dashboard | awk '{print
 echo
 
 echo Dashboard token:
-echo $(/sumologic/vagrant/scripts/get-dashboard-token.sh)
+/sumologic/vagrant/scripts/get-dashboard-token.sh
 echo
 
 ln -s /sumologic/vagrant/scripts/sumo-make.sh /usr/local/bin/sumo-make

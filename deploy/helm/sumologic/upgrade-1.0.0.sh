@@ -126,10 +126,10 @@ readonly EXPECTED_PROMETHEUS_METRICS_CHANGES="/prometheus.metrics.state
 
 # https://slides.com/perk/how-to-train-your-bash#/41
 readonly LOG_FILE="/tmp/$(basename "$0").log"
-info()    { echo -e "[INFO]    $*" | tee -a "$LOG_FILE" >&2 ; }
-warning() { echo -e "[WARNING] $*" | tee -a "$LOG_FILE" >&2 ; }
-error()   { echo -e "[ERROR]   $*" | tee -a "$LOG_FILE" >&2 ; }
-fatal()   { echo -e "[FATAL]   $*" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
+info()    { echo -e "[INFO]    $*" | tee -a "${LOG_FILE}" >&2 ; }
+warning() { echo -e "[WARNING] $*" | tee -a "${LOG_FILE}" >&2 ; }
+error()   { echo -e "[ERROR]   $*" | tee -a "${LOG_FILE}" >&2 ; }
+fatal()   { echo -e "[FATAL]   $*" | tee -a "${LOG_FILE}" >&2 ; exit 1 ; }
 
 function print_help_and_exit() {
   readonly MAN="Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
@@ -157,7 +157,7 @@ Returns:
 For more details, please refer to Migration steps and Changelog here:
 https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v1.0/deploy/docs/v1_migration_doc.md"
 
-  echo "$MAN"
+  echo "${MAN}"
   exit 0
 }
 
@@ -176,7 +176,7 @@ function compare_versions() {
   local no_lower_than="${1}"
   local app_version="${2}"
 
-  if [[ "$(printf '%s\n' "${app_version}" "$no_lower_than" | sort -V | head -n 1)" == "${no_lower_than}" ]]; then
+  if [[ "$(printf '%s\n' "${app_version}" "${no_lower_than}" | sort -V | head -n 1)" == "${no_lower_than}" ]]; then
     echo "pass"
   else
     echo "fail"
@@ -206,19 +206,19 @@ function check_bash_version() {
 }
 
 function create_temp_file() {
-  echo -n > ${TEMP_FILE}
+  echo -n > "${TEMP_FILE}"
 }
 
 function migrate_customer_keys() {
   # Convert variables to arrays
   set +e
-  IFS=$'\n' read -r -d ' ' -a MAPPINGS <<< "$KEY_MAPPINGS"
+  IFS=$'\n' read -r -d ' ' -a MAPPINGS <<< "${KEY_MAPPINGS}"
   readonly MAPPINGS
-  IFS=$'\n' read -r -d ' ' -a MAPPINGS_MULTIPLE <<< "$KEY_MAPPINGS_MULTIPLE"
+  IFS=$'\n' read -r -d ' ' -a MAPPINGS_MULTIPLE <<< "${KEY_MAPPINGS_MULTIPLE}"
   readonly MAPPINGS_MULTIPLE
-  IFS=$'\n' read -r -d ' ' -a MAPPINGS_EMPTY <<< "$KEY_MAPPINGS_EMPTY"
+  IFS=$'\n' read -r -d ' ' -a MAPPINGS_EMPTY <<< "${KEY_MAPPINGS_EMPTY}"
   readonly MAPPINGS_EMPTY
-  IFS=$'\n' read -r -d ' ' -a CASTS_STRING <<< "$KEY_CASTS_STRING"
+  IFS=$'\n' read -r -d ' ' -a CASTS_STRING <<< "${KEY_CASTS_STRING}"
   readonly CASTS_STRING
   set -e
 
@@ -231,8 +231,8 @@ function migrate_customer_keys() {
         IFS=':' read -r -a maps <<< "${i}"
         if [[ ${maps[0]} == "${key}" ]]; then
           info "Mapping ${key} into ${maps[1]}"
-          yq w -i ${TEMP_FILE} -- "${maps[1]}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
-          yq d -i ${TEMP_FILE} -- "${maps[0]}"
+          yq w -i "${TEMP_FILE}" -- "${maps[1]}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
+          yq d -i "${TEMP_FILE}" -- "${maps[0]}"
         fi
       done
     elif [[ ${MAPPINGS_MULTIPLE[*]} =~ ${key}: ]]; then
@@ -243,25 +243,25 @@ function migrate_customer_keys() {
         if [[ ${maps[0]} == "${key}" ]]; then
           for element in "${maps[@]:1}"; do
             info "- ${element}"
-            yq w -i ${TEMP_FILE} -- "${element}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
-            yq d -i ${TEMP_FILE} -- "${maps[0]}"
+            yq w -i "${TEMP_FILE}" -- "${element}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
+            yq d -i "${TEMP_FILE}" -- "${maps[0]}"
           done
         fi
       done
     else
-      yq w -i ${TEMP_FILE} -- "${key}" "$(yq r "${OLD_VALUES_YAML}" -- "${key}")"
+      yq w -i "${TEMP_FILE}" -- "${key}" "$(yq r "${OLD_VALUES_YAML}" -- "${key}")"
     fi
 
     if [[ "${MAPPINGS_EMPTY[*]}" =~ ${key} ]]; then
       info "Removing ${key}"
-      yq d -i ${TEMP_FILE} -- "${key}"
+      yq d -i "${TEMP_FILE}" -- "${key}"
     fi
 
     if [[ "${CASTS_STRING[*]}" =~ ${key} ]]; then
       info "Casting ${key} to str"
       # As yq doesn't cast `on` and `off` from bool to cast, we use sed based casts
-      yq w -i ${TEMP_FILE} -- "${key}" "$(yq r "${OLD_VALUES_YAML}" "${key}")__YQ_REPLACEMENT_CAST"
-      sed -i.bak 's/\(^.*: \)\(.*\)__YQ_REPLACEMENT_CAST/\1"\2"/g' ${TEMP_FILE}
+      yq w -i "${TEMP_FILE}" -- "${key}" "$(yq r "${OLD_VALUES_YAML}" "${key}")__YQ_REPLACEMENT_CAST"
+      sed -i.bak 's/\(^.*: \)\(.*\)__YQ_REPLACEMENT_CAST/\1"\2"/g' "${TEMP_FILE}"
     fi
   done
   echo
@@ -288,21 +288,21 @@ FILTER="<filter containers.**>
   # Apply changes if required
   if [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addStream)" == "false" ] || [ "$(yq r "${OLD_VALUES_YAML}" -- sumologic.addTime)" == "false" ]; then
     info "Creating fluentd.logs.containers.extraFilterPluginConf to preserve addStream/addTime functionality"
-    yq w -i ${TEMP_FILE} -- fluentd.logs.containers.extraFilterPluginConf "$FILTER"
+    yq w -i "${TEMP_FILE}" -- fluentd.logs.containers.extraFilterPluginConf "${FILTER}"
   fi
 }
 
 function migrate_pre_upgrade_hook() {
   # Keep pre-upgrade hook
-  if [[ -n "$(yq r ${TEMP_FILE} -- sumologic.setup)" ]]; then
+  if [[ -n "$(yq r "${TEMP_FILE}" -- sumologic.setup)" ]]; then
     info "Updating setup hooks (sumologic.setup.*.annotations[helm.sh/hook]) to 'pre-install,pre-upgrade'"
-    yq w -i ${TEMP_FILE} -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
+    yq w -i "${TEMP_FILE}" -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
   fi
 }
 
 function check_falco_state() {
   # Print information about falco state
-  if [[ "$(yq r ${TEMP_FILE} -- falco.enabled)" == 'true' ]]; then
+  if [[ "$(yq r "${TEMP_FILE}" -- falco.enabled)" == 'true' ]]; then
     info 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 1.0)'
   else
     info 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it'
@@ -330,12 +330,12 @@ function migrate_prometheus_metrics() {
   metrics_length="$(yq r -l "${OLD_VALUES_YAML}" -- 'prometheus-operator.prometheus.prometheusSpec.remoteWrite')"
   metrics_length="$(( metrics_length - 1))"
 
-  for i in $(seq 0 ${metrics_length}); do
+  for i in $(seq 0 "${metrics_length}"); do
       metric_name="$(yq r "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].url" | grep -oE '/prometheus\.metrics.*' || true)"
       metric_regex_length="$(yq r -l "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs")"
       metric_regex_length="$(( metric_regex_length - 1))"
 
-      for j in $(seq 0 ${metric_regex_length}); do
+      for j in $(seq 0 "${metric_regex_length}"); do
           metric_regex_action=$(yq r "${OLD_VALUES_YAML}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].action")
           if [[ "${metric_regex_action}" = "keep" ]]; then
               break
@@ -348,7 +348,7 @@ function migrate_prometheus_metrics() {
         regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'head')"
         regex="$(get_regex "${i}" "${j}")"
         if [[ "${regex_0_17}" = "${regex}" ]]; then
-            yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+            yq w -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
         else
             warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually"
         fi
@@ -359,12 +359,12 @@ function migrate_prometheus_metrics() {
           regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'head')"
           regex="$(get_regex "${i}" "${j}")"
           if [[ "${regex_0_17}" = "${regex}" ]]; then
-              yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+              yq w -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
           else
               regex_1_0="$(get_release_regex "${metric_name}" '^\s*-' 'tail')"
               regex_0_17="$(get_release_regex "${metric_name}" '^\s*\+' 'tail')"
               if [[ "${regex_0_17}" = "${regex}" ]]; then
-                  yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
+                  yq w -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}].regex" "${regex_1_0}"
               else
                   warning "Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[${i}].writeRelabelConfigs[${j}]' (${metric_name}) detected, please migrate it manually"
               fi
@@ -375,15 +375,15 @@ function migrate_prometheus_metrics() {
 
 function fix_fluentbit_env() {
   # Fix fluent-bit env
-  if [[ -n "$(yq r ${TEMP_FILE} -- fluent-bit.env)" ]]; then
+  if [[ -n "$(yq r "${TEMP_FILE}" -- fluent-bit.env)" ]]; then
     info "Patching fluent-bit CHART environmental variable"
-    yq w -i ${TEMP_FILE} -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
+    yq w -i "${TEMP_FILE}" -- "fluent-bit.env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdLogs"
   fi
 }
 
 function fix_prometheus_service_monitors() {
   # Fix prometheus service monitors
-  if [[ -n "$(yq r ${TEMP_FILE} -- prometheus-operator.prometheus.additionalServiceMonitors)" ]]; then
+  if [[ -n "$(yq r "${TEMP_FILE}" -- prometheus-operator.prometheus.additionalServiceMonitors)" ]]; then
     info "Patching prometheus-operator.prometheus.additionalServiceMonitors"
     yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE})"
     yq d -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.additionalServiceMonitors(name==${HELM_RELEASE_NAME}-${NAMESPACE}-otelcol)"
@@ -438,9 +438,9 @@ prometheus-operator:
             app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "${TEMP_FILE}" -
   fi
 
-  if [[ -n "$(yq r ${TEMP_FILE} -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
+  if [[ -n "$(yq r "${TEMP_FILE}" -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
     info "Patching prometheus CHART environmental variable"
-    yq w -i ${TEMP_FILE} -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
+    yq w -i "${TEMP_FILE}" -- "prometheus-operator.prometheus.prometheusSpec.containers(name==prometheus-config-reloader).env(name==CHART).valueFrom.configMapKeyRef.key" "fluentdMetrics"
   fi
 }
 
@@ -449,7 +449,7 @@ function check_user_image() {
   readonly USER_VERSION="$(yq r "${OLD_VALUES_YAML}" -- image.tag)"
   if [[ -n "${USER_VERSION}" ]]; then
     if [[ "${USER_VERSION}" =~ ^"${PREVIOUS_VERSION}"\.[[:digit:]]+$ ]]; then
-      yq w -i ${TEMP_FILE} -- image.tag 1.0.0
+      yq w -i "${TEMP_FILE}" -- image.tag 1.0.0
       info "Changing image.tag from '${USER_VERSION}' to '1.0.0'"
     else
       warning "You are using unsupported version: ${USER_VERSION}"
@@ -459,30 +459,30 @@ function check_user_image() {
 }
 
 function migrate_fluentbit_db_path() {
-  grep 'tail-db/tail-containers-state.db' ${TEMP_FILE} 1>/dev/null 2>&1 || return 0
+  grep 'tail-db/tail-containers-state.db' "${TEMP_FILE}" 1>/dev/null 2>&1 || return 0
   # New fluent-bit db path
   info 'Replacing tail-db/tail-containers-state.db to tail-db/tail-containers-state-sumo.db'
   warning 'Please ensure that new fluent-bit configuration is correct'
 
-  sed -i.bak 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' ${TEMP_FILE}
+  sed -i.bak 's?tail-db/tail-containers-state.db?tail-db/tail-containers-state-sumo.db?g' "${TEMP_FILE}"
 }
 
 function fix_yq() {
   # account for yq bug that stringifies empty maps
-  sed -i.bak "s/'{}'/{}/g" ${TEMP_FILE}
+  sed -i.bak "s/'{}'/{}/g" "${TEMP_FILE}"
 }
 
 function rename_temp_file() {
-  mv ${TEMP_FILE} new_values.yaml
+  mv "${TEMP_FILE}" new_values.yaml
 }
 
 function cleanup_bak_file() {
-  rm ${TEMP_FILE}.bak
+  rm "${TEMP_FILE}.bak"
 }
 
 function echo_footer() {
   DONE="\nThank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.\nA new yaml file has been generated for you. Please check the current directory for new_values.yaml."
-  echo -e "$DONE"
+  echo -e "${DONE}"
 }
 
 check_if_print_help_and_exit "${OLD_VALUES_YAML}"
