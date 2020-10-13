@@ -10,7 +10,7 @@
 - [Modify the Log Level for Falco](#Modify-the-Log-Level-for-Falco)
 - [Override environment variables using annotations](#Override-environment-variables-using-annotations)
 - [Templating Kubernetes metadata](#Templating-Kubernetes-metadata)
-- [Configure Ignore_Older Config for Fluentbit](#Configure-Ignore-Older-Config-for-fluentbit)
+- [Configure Ignore_Older Config for Fluentbit](#Configure-Ignore_Older-Config-for-fluentbit)
 - [Disable logs, metrics, or falco](#Disable-logs-metrics-or-falco)
 
 
