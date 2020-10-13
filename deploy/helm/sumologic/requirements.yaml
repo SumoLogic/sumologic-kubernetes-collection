@@ -9,7 +9,7 @@ dependencies:
     alias: prometheus-operator
     condition: prometheus-operator.enabled,sumologic.metrics.enabled
   - name: falco
-    version: 1.4.0
+    version: 1.5.0
     repository: https://falcosecurity.github.io/charts
     condition: falco.enabled
   - name: metrics-server
