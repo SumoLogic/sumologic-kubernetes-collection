@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.11.1-debian-1.0 AS builder
+FROM fluent/fluentd:v1.11.3-debian-1.0 AS builder
 
 # Use root account to use apt
 USER root
@@ -62,7 +62,7 @@ RUN gem install \
         --local fluent-plugin-events
 
 # Start with fresh image
-FROM fluent/fluentd:v1.11.1-debian-1.0
+FROM fluent/fluentd:v1.11.3-debian-1.0
 
 USER root
 
