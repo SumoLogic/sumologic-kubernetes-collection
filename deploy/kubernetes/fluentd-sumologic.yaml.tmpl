@@ -48,7 +48,7 @@ data:
     @include common.conf
     @include logs.conf
   buffer.output.conf: |-
-    compress "text"
+    compress "gzip"
     flush_interval "5s"
     flush_thread_count "8"
     chunk_limit_size "1m"
@@ -367,7 +367,7 @@ data:
     </system>
   
   buffer.output.conf: |-
-    compress "text"
+    compress "gzip"
     flush_interval "5s"
     flush_thread_count "8"
     chunk_limit_size "1m"
@@ -393,7 +393,7 @@ data:
     @include common.conf
     @include metrics.conf
   buffer.output.conf: |-
-    compress "text"
+    compress "gzip"
     flush_interval "5s"
     flush_thread_count "8"
     chunk_limit_size "1m"
