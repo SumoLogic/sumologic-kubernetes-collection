@@ -55,6 +55,9 @@ spec:
 {{- end }}
       securityContext:
         {{- toYaml .Values.fluentd.securityContext | nindent 8 }}
+      {{- if .Values.fluentd.events.statefulset.priorityClassName }}
+      priorityClassName: {{ .Values.fluentd.events.statefulset.priorityClassName | quote }}
+      {{- end }}
       containers:
       - name: fluentd-events
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
