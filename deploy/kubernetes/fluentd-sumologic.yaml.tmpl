@@ -211,8 +211,15 @@ data:
         </store>
       </match>
     </label>
-  logs.source.default.conf: |-
+  logs.source.default.conf: |
     
+    <filter **>
+      @type grep
+      <exclude>
+        key message
+        pattern /disable filter chain optimization/
+      </exclude>
+    </filter>
     <filter **>
       @type kubernetes_sumologic
       source_name "k8s_default"
