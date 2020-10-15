@@ -654,6 +654,9 @@ fluentd:
         requests:
           memory: 256Mi
           cpu: 100m
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+
       ## Add custom labels only to events fluentd sts pods
       podLabels: {}
       ## Add custom annotations only to events fluentd sts pods
@@ -1571,6 +1574,9 @@ otelcol:
       requests:
         memory: 384Mi
         cpu: 200m
+    ## Option to define priorityClassName to assign a priority class to pods.
+    priorityClassName:
+
     ## Add custom labels only to otelcol deployment.
     podLabels: {}
     ## Add custom annotations only to otelcol deployment.
@@ -1581,8 +1587,6 @@ otelcol:
       name: "sumologic/opentelemetry-collector"
       tag: "0.6.1.0"
       pullPolicy: IfNotPresent
-    ## Option to define priorityClassName to assign a priority class to pods.
-    priorityClassName:
   # To enable collecting all logs, set to false
   logLevelFilter: true
   config:
