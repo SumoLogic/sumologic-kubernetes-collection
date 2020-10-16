@@ -71,13 +71,29 @@ We have provided an option to enable autoscaling for both logs and metrics Fluen
 To enable autoscaling for Fluentd:
 
 - Enable metrics-server dependency
+
   Note: If metrics-server is already installed, this step is not required.
-  ```yaml
-  ## Configure metrics-server
-  ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
-  metrics-server:
-    enabled: true
-  ```
+
+```yaml
+## Configure metrics-server
+## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
+metrics-server:
+  enabled: true
+```
+
+- Allow metrics-server communication with kubelet for [KOPS](https://github.com/kubernetes/kops)
+
+  Note: This step is required only for KOPS clusters
+
+```yaml
+## This goes to the kops cluster configuration file
+kubelet:
+   # ...
+   ## Enable webhook authorization for KOPS cluster
+   ## rel: https://github.com/kubernetes/kops/issues/7200
+   authenticationTokenWebhook: true
+   authorizationMode: Webhook
+```
 
 - Enable autoscaling for Logs Fluentd statefulset 
 ```yaml
