@@ -1,0 +1,37 @@
+sumologic:
+  metrics:
+    enabled: false
+  logs:
+    enabled: false
+  traces:
+    enabled: false
+  events:
+    enabled: false
+  setup:
+    additionalFiles:
+      custom:
+        setup.sh: |-
+          terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+          terraform import sumologic_http_source.default_events_source "$COLLECTOR_NAME/events"
+          terraform import sumologic_http_source.default_logs_source "$COLLECTOR_NAME/logs"
+          terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
+          terraform import sumologic_http_source.control_plane_metrics_source "$COLLECTOR_NAME/control-plane-metrics"
+          terraform import sumologic_http_source.controller_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
+          terraform import sumologic_http_source.default_metrics_source "$COLLECTOR_NAME/(default-metrics)"
+          terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
+          terraform import sumologic_http_source.node_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
+          terraform import sumologic_http_source.scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
+          terraform import sumologic_http_source.state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
+        main.tf: |-
+          locals {
+            default_events_source                       = "events"
+            default_logs_source                         = "logs"
+            apiserver_metrics_source                    = "apiserver-metrics"
+            control_plane_metrics_source                = "control-plane-metrics"
+            controller_metrics_source                   = "kube-controller-manager-metrics"
+            default_metrics_source                      = "(default-metrics)"
+            kubelet_metrics_source                      = "kubelet-metrics"
+            node_metrics_source                         = "node-exporter-metrics"
+            scheduler_metrics_source                    = "kube-scheduler-metrics"
+            state_metrics_source                        = "kube-state-metrics"
+          }
