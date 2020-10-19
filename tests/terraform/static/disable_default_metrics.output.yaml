@@ -1,0 +1,209 @@
+---
+# Source: sumologic/templates/setup/setup-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  RELEASE-NAME-sumologic-setup
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "2"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app: RELEASE-NAME-sumologic
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  custom.sh: |
+    #!/bin/bash
+    #
+    # This script copies files from /customer-scripts to /scripts/<dirname> basing on the filename
+    #
+    # Example file structure:
+    #
+    # /customer-scripts
+    # ├── dir1_main.tf
+    # ├── dir1_setup.sh
+    # ├── dir2_list.txt
+    # └── dir2_setup.sh
+    #
+    # Expected structure:
+    #
+    # /scripts
+    # ├── dir1
+    # │   ├── main.tf
+    # │   └── setup.sh
+    # └── dir2
+    #     ├── list.txt
+    #     └── setup.sh
+    #
+    # shellcheck disable=SC2010
+    # extract target directory names from the file names using _ as separator
+    for dir in $(ls -1 /customer-scripts | grep _ | grep -oE '^.*?_' | sed 's/_//g' | sort | uniq); do
+      target="/scripts/${dir}"
+      mkdir "${target}"
+      # shellcheck disable=SC2010
+      # Get files for given directory and take only filename part (after first _)
+      for file in $(ls -1 "/customer-scripts/${dir}_"* | grep -oE '_.*' | sed 's/_//g'); do
+        cp "/customer-scripts/${dir}_${file}" "${target}/${file}"
+      done
+      cd "${target}" && bash setup.sh
+    done
+  locals.tf: |
+    locals {
+      default_events_source                       = "events"
+      default_logs_source                         = "logs"
+      apiserver_metrics_source                    = "apiserver-metrics"
+      control_plane_metrics_source                = "control-plane-metrics"
+      controller_metrics_source                   = "kube-controller-manager-metrics"
+      kubelet_metrics_source                      = "kubelet-metrics"
+      node_metrics_source                         = "node-exporter-metrics"
+      scheduler_metrics_source                    = "kube-scheduler-metrics"
+      state_metrics_source                        = "kube-state-metrics"
+    }
+  main.tf: |
+    terraform {
+      required_providers {
+        sumologic  = "~> 2.3.0"
+        kubernetes = "~> 1.11.3"
+      }
+    }
+  providers.tf: |-
+    provider "sumologic" {}
+  
+    provider "kubernetes" {
+    
+        cluster_ca_certificate    = file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
+        host                      = "https://kubernetes.default.svc"
+        load_config_file          = "false"
+        token                     = file("/var/run/secrets/kubernetes.io/serviceaccount/token")
+    }
+  resources.tf: |
+    resource "sumologic_collector" "collector" {
+        name  = var.collector_name
+        fields  = {
+          cluster = var.cluster_name
+        }
+    }
+    
+    resource "sumologic_http_source" "default_events_source" {
+        name         = local.default_events_source
+        collector_id = sumologic_collector.collector.id
+        category     = "${var.cluster_name}/${local.default_events_source}"
+    }
+    
+    resource "sumologic_http_source" "default_logs_source" {
+        name         = local.default_logs_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "apiserver_metrics_source" {
+        name         = local.apiserver_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "control_plane_metrics_source" {
+        name         = local.control_plane_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "controller_metrics_source" {
+        name         = local.controller_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "kubelet_metrics_source" {
+        name         = local.kubelet_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "node_metrics_source" {
+        name         = local.node_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "scheduler_metrics_source" {
+        name         = local.scheduler_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "state_metrics_source" {
+        name         = local.state_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+  
+    resource "kubernetes_secret" "sumologic_collection_secret" {
+      metadata {
+        name = "sumologic"
+        namespace = var.namespace_name
+      }
+  
+      data = {
+        endpoint-events                           = sumologic_http_source.default_events_source.url
+        endpoint-logs                             = sumologic_http_source.default_logs_source.url
+        endpoint-metrics-apiserver                = sumologic_http_source.apiserver_metrics_source.url
+        endpoint-control_plane_metrics_source     = sumologic_http_source.control_plane_metrics_source.url
+        endpoint-metrics-kube-controller-manager  = sumologic_http_source.controller_metrics_source.url
+        endpoint-metrics-kubelet                  = sumologic_http_source.kubelet_metrics_source.url
+        endpoint-metrics-node-exporter            = sumologic_http_source.node_metrics_source.url
+        endpoint-metrics-kube-scheduler           = sumologic_http_source.scheduler_metrics_source.url
+        endpoint-metrics-kube-state               = sumologic_http_source.state_metrics_source.url
+      }
+  
+      type = "Opaque"
+    }
+  setup.sh: |
+    #!/bin/bash
+    cp /etc/terraform/{locals,main,providers,resources,variables}.tf /terraform
+    cd /terraform
+  
+    # Fix URL to remove "v1" or "v1/"
+    export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
+  
+    # Support proxy for terraform
+    export HTTP_PROXY=${HTTP_PROXY:=""}
+    export HTTPS_PROXY=${HTTPS_PROXY:=""}
+    export NO_PROXY=${NO_PROXY:=""}
+  
+    COLLECTOR_NAME="kubernetes"
+  
+    terraform init
+  
+    # Sumo Collector and HTTP sources
+    terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+    terraform import sumologic_http_source.default_events_source "$COLLECTOR_NAME/events"
+    terraform import sumologic_http_source.default_logs_source "$COLLECTOR_NAME/logs"
+    terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
+    terraform import sumologic_http_source.control_plane_metrics_source "$COLLECTOR_NAME/control-plane-metrics"
+    terraform import sumologic_http_source.controller_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
+    terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
+    terraform import sumologic_http_source.node_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
+    terraform import sumologic_http_source.scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
+    terraform import sumologic_http_source.state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
+  
+    # Kubernetes Secret
+    terraform import kubernetes_secret.sumologic_collection_secret sumologic/sumologic
+  
+    terraform apply -auto-approve
+  
+    # Cleanup env variables
+    export SUMOLOGIC_BASE_URL=
+    export SUMOLOGIC_ACCESSKEY=
+    export SUMOLOGIC_ACCESSID=
+  
+    bash /etc/terraform/custom.sh
+  variables.tf: |-
+    variable "cluster_name" {
+      type  = string
+      default = "kubernetes"
+    }
+  
+    variable "collector_name" {
+      type  = string
+      default = "kubernetes"
+    }
+  
+    variable "namespace_name" {
+      type  = string
+      default = "sumologic"
+    }
