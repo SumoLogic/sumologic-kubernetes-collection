@@ -125,8 +125,8 @@ data:
       type = "Opaque"
     }
   setup.sh: |-
-    #!/bin/sh
-    cp /etc/terraform/*.tf /terraform
+    #!/bin/bash
+    cp /etc/terraform/{locals,main,providers,resources,variables}.tf /terraform
     cd /terraform
   
     # Fix URL to remove "v1" or "v1/"

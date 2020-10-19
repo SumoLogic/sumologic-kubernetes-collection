@@ -1,0 +1,18 @@
+{{- if .Values.sumologic.setup.additionalFiles }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ template "sumologic.metadata.name.setup.configmap-custom" . }}
+  annotations:
+{{ include "sumologic.annotations.app.setup.helmsh" "2" | indent 4 }}
+  labels:
+    app: {{ template "sumologic.labels.app.setup.configmap-custom" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  {{- range $directory, $files := .Values.sumologic.setup.additionalFiles }}
+  {{- range $filename, $file := $files }}
+  {{ printf "%s_%s: |-" $directory $filename }}
+    {{- $file | nindent 4 }}
+  {{- end }}
+  {{- end }}
+{{- end }}
