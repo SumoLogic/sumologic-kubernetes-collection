@@ -1,6 +1,12 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+unless Vagrant.has_plugin?("vagrant-disksize")
+  puts "vagrant-disksize plugin unavailable\n" +
+       "please install it via 'vagrant plugin install vagrant-disksize'"
+  exit 1
+end
+
 Vagrant.configure('2') do |config|
   config.vm.box = 'ubuntu/bionic64'
   config.disksize.size = '50GB'

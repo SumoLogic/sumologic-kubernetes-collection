@@ -14,6 +14,9 @@ local_values_file = ${root_dir}vagrant/values.local.yaml
 name = collection
 namespace = sumologic
 
+test:
+	${root_dir}ci/tests.sh
+
 build:
 	cd ${root_dir} && DOCKER_USE_CACHE=true ${root_dir}ci/build.sh
 	${mkfile_path} \

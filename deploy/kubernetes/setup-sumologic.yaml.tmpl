@@ -30,7 +30,7 @@ data:
   main.tf: |
     terraform {
       required_providers {
-        sumologic  = "~> 2.0.3"
+        sumologic  = "= 2.3.0"
         kubernetes = "~> 1.11.3"
       }
     }
@@ -294,4 +294,10 @@ spec:
         - name: NO_PROXY
           value: kubernetes.default.svc
         
+      securityContext:
+        runAsUser: 999
+
+---
+# Source: sumologic/templates/setup/setup-scc.yaml
+
 

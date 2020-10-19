@@ -24,8 +24,8 @@ Parameter | Description | Default
 `sumologic.endpoint` | Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection. | `Nil`
 `sumologic.collectorName` | The name of the Sumo Logic collector that will be created in the SetUp job.  Defaults to `clusterName` if not specified. | `Nil`
 `sumologic.clusterName` | An identifier for the Kubernetes cluster. | `kubernetes`
-`sumologic.httpProxy` | HTTP proxy URL | ``
-`sumologic.httpsProxy` | HTTPS proxy URL | ``
+`sumologic.httpProxy` | HTTP proxy URL | `Nil`
+`sumologic.httpsProxy` | HTTPS proxy URL | `Nil`
 `sumologic.noProxy` | List of comma separated hostnames which should be excluded from the proxy | `kubernetes.default.svc`
 `sumologic.podLabels` | Additional labels for the pods. | `{}`
 `sumologic.podAnnotations` | Additional annotations for the pods. | `{}`
@@ -42,8 +42,8 @@ Parameter | Description | Default
 `fluentd.verifySsl` | Verify SumoLogic HTTPS certificates. | `true`
 `fluentd.proxyUri` | Proxy URI for sumologic output plugin. | `Nil`
 `fluentd.securityContext` | the securityContext configuration for Fluentd | `{"fsGroup":999}`
-`fluentd.podLabels` | Additional labels for all fluentd pods | ``
-`fluentd.podAnnotations` | Additional annotations for all fluentd pods | ``
+`fluentd.podLabels` | Additional labels for all fluentd pods | `{}`
+`fluentd.podAnnotations` | Additional annotations for all fluentd pods | `{}`
 `fluentd.podSecurityPolicy.create` | If true, create & use `podSecurityPolicy` for fluentd resources | `false`
 `fluentd.persistence.enabled` | Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer. After setting the value to true, run the helm upgrade command with the --force flag. | `false`
 `fluentd.persistence.storageClass` | If defined, storageClassName: <storageClass>. If set to "-", storageClassName: "", which disables dynamic provisioning.  If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner.  (gp2 on AWS, standard on GKE, Azure & OpenStack) | `Nil`
@@ -72,6 +72,7 @@ Parameter | Description | Default
 `fluentd.logs.statefulset.resources` | Resources for Fluentd log statefulset. | `{"limits":{"cpu":1,"memory":"1Gi"},"requests":{"cpu":0.5,"memory":"768Mi"}}`
 `fluentd.logs.statefulset.podLabels` | Additional labels for fluentd log pods. | `{}`
 `fluentd.logs.statefulset.podAnnotations` | Additional annotations for fluentd log pods. | `{}`
+`fluentd.logs.statefulset.priorityClassName` | Priority class name for fluentd log pods. | `Nil`
 `fluentd.logs.autoscaling.enabled` | Option to turn autoscaling on for fluentd and specify params for HPA. Autoscaling needs metrics-server to access cpu metrics. | `false`
 `fluentd.logs.autoscaling.minReplicas` | Default min replicas for autoscaling. | `3`
 `fluentd.logs.autoscaling.maxReplicas` | Default max replicas for autoscaling. | `10`
@@ -133,6 +134,7 @@ Parameter | Description | Default
 `fluentd.metrics.statefulset.resources` | Resources for Fluentd metrics statefulset.  | `{"limits":{"cpu":1,"memory":"1Gi"},"requests":{"cpu":0.5,"memory":"768Mi"}}`
 `fluentd.metrics.statefulset.podLabels` | Additional labels for fluentd metrics pods. | `{}`
 `fluentd.metrics.statefulset.podAnnotations` | Additional annotations for fluentd metrics pods. | `{}`
+`fluentd.logs.statefulset.priorityClassName` | Priority class name for fluentd metrics pods. | `Nil`
 `fluentd.metrics.autoscaling.enabled` | Option to turn autoscaling on for fluentd and specify params for HPA. Autoscaling needs metrics-server to access cpu metrics. | `false`
 `fluentd.metrics.autoscaling.minReplicas` | Default min replicas for autoscaling. | `3`
 `fluentd.metrics.autoscaling.maxReplicas` | Default max replicas for autoscaling. | `10`
@@ -147,6 +149,7 @@ Parameter | Description | Default
 `fluentd.events.statefulset.resources` | Resources for Fluentd log statefulset. | `{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}`
 `fluentd.events.statefulset.podLabels` | Additional labels for fluentd events pods. | `{}`
 `fluentd.events.statefulset.podAnnotations` | Additional annotations for fluentd events pods. | `{}`
+`fluentd.events.statefulset.priorityClassName` | Priority class name for fluentd events pods. | `Nil`
 `fluentd.events.sourceCategory` | Source category for the Events source. Default: "{clusterName}/events" | `Nil`
 `metrics-server.enabled` | Set the enabled flag to true for enabling metrics-server. This is required before enabling fluentd autoscaling unless you have an existing metrics-server in the cluster. | `false`
 `metrics-server.args` | Arguments for metric server. | `["--kubelet-insecure-tls","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"]`
@@ -205,6 +208,7 @@ Parameter | Description | Default
 `telegraf-operator.data` | Telegraf sidecar configuration. | `{"sumologic-prometheus": "[[outputs.prometheus_client]]\\n          ## Configuration details:\\n          ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration\\n          listen = ':9273'\\n          metric_version = 2\\n"}`
 `otelcol.deployment.replicas` | Set the number of OpenTelemetry Collector replicas. | `1`
 `otelcol.deployment.resources.limits.memory` | Sets the OpenTelemetry Collector memory limit. | `2Gi`
+`otelcol.deployment.priorityClassName` | Priority class name for OpenTelemetry Collector log pods. | `Nil`
 `otelcol.metrics_enabled` | Enable or disable generation of the metrics from Collector. | `false`
 `otelcol.config.service.pipelines.traces.receivers` | Sets the list of enabled receivers. | `{jaeger, opencensus, otlp, zipkin}`
 `otelcol.config.exporters.zipkin.timeout` | Sets the Zipkin (default) exporter timeout. Append the unit, e.g. `s` when setting the parameter | `5s`

@@ -7,17 +7,24 @@
 #   1> tests/upgrade_script/static/${test_name}.log 2>&1 \
 # && cp new_values.yaml tests/upgrade_script/static/${test_name}.output.yaml
 
-SCRIPT_PATH="$( dirname "$(realpath ${0})" )"
+SCRIPT_PATH="$( dirname "$(realpath "${0}")" )"
 
+# shellcheck disable=SC1090
 source "${SCRIPT_PATH}/../functions.sh"
 readonly TEST_TMP_OUT="${SCRIPT_PATH}/tmp/out.log"
 
 set_variables "${SCRIPT_PATH}"
+# reassign variables from set_variables
+TEST_SCRIPT_PATH="${TEST_SCRIPT_PATH}"
+TEST_STATICS_PATH="${TEST_STATICS_PATH}"
+TEST_INPUT_FILES="${TEST_INPUT_FILES}"
+TEST_OUT="${TEST_OUT}"
+
 prepare_tests
 
 TEST_SUCCESS=true
 for input_file in ${TEST_INPUT_FILES}; do
-  test_name="$(echo "${input_file}" | sed -e 's/.input.yaml$//g')"
+  test_name="${input_file//.input.yaml/}"
   output_file="${test_name}.output.yaml"
   log_file="${test_name}.log"
 

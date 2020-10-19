@@ -48,7 +48,7 @@ data:
     @include common.conf
     @include logs.conf
   buffer.output.conf: |-
-    compress "text"
+    compress "gzip"
     flush_interval "5s"
     flush_thread_count "8"
     chunk_limit_size "1m"
@@ -211,8 +211,15 @@ data:
         </store>
       </match>
     </label>
-  logs.source.default.conf: |-
+  logs.source.default.conf: |
     
+    <filter **>
+      @type grep
+      <exclude>
+        key message
+        pattern /disable filter chain optimization/
+      </exclude>
+    </filter>
     <filter **>
       @type kubernetes_sumologic
       source_name "k8s_default"
@@ -367,7 +374,7 @@ data:
     </system>
   
   buffer.output.conf: |-
-    compress "text"
+    compress "gzip"
     flush_interval "5s"
     flush_thread_count "8"
     chunk_limit_size "1m"
@@ -393,7 +400,7 @@ data:
     @include common.conf
     @include metrics.conf
   buffer.output.conf: |-
-    compress "text"
+    compress "gzip"
     flush_interval "5s"
     flush_thread_count "8"
     chunk_limit_size "1m"
@@ -1104,4 +1111,5 @@ spec:
 
 ---
 # Source: sumologic/templates/scc.yaml
+
 
