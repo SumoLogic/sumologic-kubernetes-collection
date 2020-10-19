@@ -13,7 +13,9 @@ resource "sumologic_collector" "collector" {
 {{- range $type, $sources := .Values.sumologic.sources }}
 {{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
 {{- range $key, $source := $sources }}
+{{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
 {{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) "Source" $source "Context" $ctx) | nindent 2 }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -29,7 +31,9 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
     {{- range $type, $sources := .Values.sumologic.sources }}
     {{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
     {{- range $key, $source := $sources }}
+    {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
     {{ include "terraform.sources.data" (dict "Endpoint" (include "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key)) "Name" (include "terraform.sources.name" (dict "Name" $key "Type" $type))) }}
+    {{- end }}
     {{- end }}
     {{- end }}
     {{- end }}
