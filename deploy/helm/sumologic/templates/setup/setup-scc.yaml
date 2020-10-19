@@ -1,0 +1,47 @@
+{{- if and .Values.sumologic.scc.create (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  annotations:
+{{ include "sumologic.annotations.app.setup.helmsh" "0" | indent 4 }}
+    kubernetes.io/description: |
+      This provides the minimum requirements Sumo Logic Kubernetes Collection to run in Openshift.
+  name: {{ template "sumologic.metadata.name.setup.securitycontextconstraints" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.setup.securitycontextconstraints" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+allowHostDirVolumePlugin: true
+allowHostIPC: false
+allowHostNetwork: true
+allowHostPID: true
+allowHostPorts: false
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: true
+allowedCapabilities: []
+allowedUnsafeSysctls: []
+defaultAddCapabilities: []
+fsGroup:
+  type: RunAsAny
+groups:
+- system:serviceaccounts:{{ .Release.Namespace }}
+priority: 0
+readOnlyRootFilesystem: false
+requiredDropCapabilities: []
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+seccompProfiles:
+- '*'
+supplementalGroups:
+  type: RunAsAny
+users:
+- system:serviceaccount:{{ .Release.Namespace }}:{{ template "sumologic.metadata.name.setup.job" . }}
+volumes:
+- hostPath
+- emptyDir
+- secret
+- configMap
+{{- end }}

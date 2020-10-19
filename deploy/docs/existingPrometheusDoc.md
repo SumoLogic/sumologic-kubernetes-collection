@@ -21,7 +21,7 @@ If you do not wish to modify your Prometheus Operator and wish to run side-by-si
 
 ## Prerequisite
 
-Sumo Logic Apps for Kubernetes and Explore require you to add the following [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata. This is a one time setup per Sumo Logic account.
+Sumo Logic Apps for Kubernetes and Explore require you to add the following [fields](https://help.sumologic.com/Manage/Fields#Manage_fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata. This is a one time setup per Sumo Logic account.
 - cluster
 - container
 - deployment
@@ -36,6 +36,8 @@ Sumo Logic Apps for Kubernetes and Explore require you to add the following [fie
 The Helm chart installation requires two parameter overrides:
 * __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
 * __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+
+To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
 
 If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
 
@@ -69,6 +71,12 @@ For Helm3, if the namespace does not exist, you can add the `--create-namespace`
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false --create-namespace
 ```
 
+If you are installing the helm chart in Openshift platform, you can do the following:
+
+```bash
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.enabled=false --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
+```
+
 ## Update Existing Prometheus Operator Helm Chart
 
 **Note that If you have made extensive customization to the current Prometheus Operator Helm install then you will need to [merge your existing configuration with ours](#merge-prometheus-configuration) avoiding conflicts or you may want to [run our Prometheus side-by-side](./SideBySidePrometheus.md).**
@@ -90,7 +98,7 @@ Run the following commands to update the [remote write configuration](https://pr
 Run the following command to download our prometheus-overrides.yaml file. Please review our configuration as it will be applied to your existing operator configuration.
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.2/deploy/helm/prometheus-overrides.yaml
+curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.3/deploy/helm/prometheus-overrides.yaml
 ```
 
 Next you can upgrade your Prometheus-Operator.  The following command assumes it is installed with the release name `prometheus-operator`. Remember, this command will update your Prometheus Operator to be configured with our default settings. If you wish to preserve your settings and merge with what is required for Sumo logic, then please look at the section on [how to merge the configuration](#merge-prometheus-configuration).
@@ -110,13 +118,13 @@ If you have customized your Prometheus configuration, follow these steps to merg
 Helm supports providing multiple configuration files, and priority will be given to the last (right-most) file specified. You can obtain your current prometheus configuration by running
 
 ```bash
-helm get values prometheus-operator > current-values.yaml
+helm get values $PROMETHEUS_OPERATOR_CHART_NAME > current-values.yaml
 ```
 
 Any section of `current-values.yaml` that conflicts with sections of our `prometheus-overrides.yaml` will have to be removed from the `prometheus-overrides.yaml` file and appended to `current-values.yaml` in relevant sections. For any config that doesn’t conflict, you can leave them in `prometheus-overrides.yaml`. Then run
 
 ```bash
-helm upgrade prometheus-operator stable/prometheus-operator -f current-values.yaml -f prometheus-overrides.yaml
+helm upgrade $PROMETHEUS_OPERATOR_CHART_NAME stable/prometheus-operator -f current-values.yaml -f prometheus-overrides.yaml
 ```
 
 __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)

@@ -2,7 +2,7 @@
 To see all available configuration for our sub-charts, please refer to their documentation.
 
   * [Falco](https://github.com/helm/charts/tree/master/stable/falco#configuration) - All Falco properties should be prefixed with `falco.` in our values.yaml to override a property not listed below.
-  * [Prometheus Operator](https://github.com/helm/charts/tree/master/stable/prometheus-operator#configuration) - All Prometheus Operator properties should be prefixed with `prometheus-operator.` in our values.yaml to override a property not listed below.
+  * [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#configuration) - All `kube-sprometheus-stack` properties should be prefixed with `prometheus-operator.` in our values.yaml to override a property not listed below.
   * [Fluent-bit](https://github.com/helm/charts/tree/master/stable/fluent-bit#configuration) - All Fluent-bit properties should be prefixed with `fluent-bit.` in our values.yaml to override a property not listed below.
   * [Metrics Server](https://github.com/helm/charts/tree/master/stable/metrics-server#configuration) - All Metrics Server properties should be prefixed with `metrics-server.` in our values.yaml to override a property not listed below.
   
@@ -17,14 +17,19 @@ Parameter | Description | Default
 `sumologic.setupEnabled` | If enabled, a pre-install hook will create Collector and Sources in Sumo Logic. | `true`
 `sumologic.logs.enabled` | Set the enabled flag to false for disabling logs ingestion altogether. | `true`
 `sumologic.metrics.enabled` | Set the enabled flag to false for disabling metrics ingestion altogether. | `true`
+`sumologic.traces.enabled` | Set the enabled flag to true to enable tracing ingestion. _Tracing must be enabled for the account first. Please contact your Sumo representative for activation details_ | `false`
 `sumologic.envFromSecret` | If enabled, accessId and accessKey will be sourced from Secret Name given. Be sure to include at least the following env variables in your secret (1) SUMOLOGIC_ACCESSID, (2) SUMOLOGIC_ACCESSKEY | `sumo-api-secret`
 `sumologic.accessId` | Sumo access ID. | `Nil`
 `sumologic.accessKey` | Sumo access key. | `Nil`
 `sumologic.endpoint` | Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection. | `Nil`
 `sumologic.collectorName` | The name of the Sumo Logic collector that will be created in the SetUp job.  Defaults to `clusterName` if not specified. | `Nil`
 `sumologic.clusterName` | An identifier for the Kubernetes cluster. | `kubernetes`
+`sumologic.httpProxy` | HTTP proxy URL | `Nil`
+`sumologic.httpsProxy` | HTTPS proxy URL | `Nil`
+`sumologic.noProxy` | List of comma separated hostnames which should be excluded from the proxy | `kubernetes.default.svc`
 `sumologic.podLabels` | Additional labels for the pods. | `{}`
 `sumologic.podAnnotations` | Additional annotations for the pods. | `{}`
+`sumologic.scc.create` | Create OpenShift's Security Context Constraint | `false`
 `sumologic.setup.clusterRole.annotations` | Annotations for the ClusterRole. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"1"}]`
 `sumologic.setup.clusterRoleBinding.annotations` | Annotations for the ClusterRole. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"2"}]`
 `sumologic.setup.configMap"` | Annotations for the ConfigMap. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"2"}]`
@@ -37,8 +42,9 @@ Parameter | Description | Default
 `fluentd.verifySsl` | Verify SumoLogic HTTPS certificates. | `true`
 `fluentd.proxyUri` | Proxy URI for sumologic output plugin. | `Nil`
 `fluentd.securityContext` | the securityContext configuration for Fluentd | `{"fsGroup":999}`
-`fluentd.podLabels` | Additional labels for all fluentd pods | ``
-`fluentd.podAnnotations` | Additional annotations for all fluentd pods | ``
+`fluentd.podLabels` | Additional labels for all fluentd pods | `{}`
+`fluentd.podAnnotations` | Additional annotations for all fluentd pods | `{}`
+`fluentd.podSecurityPolicy.create` | If true, create & use `podSecurityPolicy` for fluentd resources | `false`
 `fluentd.persistence.enabled` | Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer. After setting the value to true, run the helm upgrade command with the --force flag. | `false`
 `fluentd.persistence.storageClass` | If defined, storageClassName: <storageClass>. If set to "-", storageClassName: "", which disables dynamic provisioning.  If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner.  (gp2 on AWS, standard on GKE, Azure & OpenStack) | `Nil`
 `fluentd.persistence.annotations` | Annotations for the persistence. | `Nil`
@@ -53,8 +59,9 @@ Parameter | Description | Default
 `fluentd.buffer.filePaths` | File paths to buffer to, if Fluentd buffer type is specified as file above. Each sumologic output plugin buffers to its own unique file. | `{"events":"/fluentd/buffer/events","logs":{"containers":"/fluentd/buffer/logs.containers","default":"/fluentd/buffer/logs.default","kubelet":"/fluentd/buffer/logs.kubelet","systemd":"/fluentd/buffer/logs.systemd"},"metrics":{"apiserver":"/fluentd/buffer/metrics.apiserver","container":"/fluentd/buffer/metrics.container","controller":"/fluentd/buffer/metrics.controller","default":"/fluentd/buffer/metrics.default","kubelet":"/fluentd/buffer/metrics.kubelet","node":"/fluentd/buffer/metrics.node","scheduler":"/fluentd/buffer/metrics.scheduler","state":"/fluentd/buffer/metrics.state"},"traces":"/fluentd/buffer/traces"}`
 `fluentd.buffer.extraConf` | Additional config for buffer settings | `Nil`
 `fluentd.metadata.cacheSize` | Option to control the enabling of metadata filter plugin cache_size. | `10000`
-`fluentd.metadata.cacheTtl` | Option to control the enabling of metadata filter plugin cache_ttl (in seconds). | `3600`
-`fluentd.metadata.cacheRefresh` | Option to control the interval at which metadata cache is asynchronously refreshed (in seconds). | `1800`
+`fluentd.metadata.cacheTtl` | Option to control the enabling of metadata filter plugin cache_ttl (in seconds). | `7200`
+`fluentd.metadata.cacheRefresh` | Option to control the interval at which metadata cache is asynchronously refreshed (in seconds). | `3600`
+`fluentd.metadata.cacheRefreshVariation` | Option to control the variation in seconds by which the cacheRefresh option is changed for each pod separately. For example, if cache refresh is 1 hour and variation is 15 minutes, then actual cache refresh interval will be a random value between 45 minutes and 1 hour 15 minutes, different for each pod. This helps spread the load on API server that the cache refresh induces. Setting this to 0 disables cache refresh variation. | `900`
 `fluentd.metadata.pluginLogLevel` | Option to give plugin specific log level. | `error`
 `fluentd.logs.enabled` | Flag to control deploying the Fluentd logs statefulsets. | `true`
 `fluentd.logs.statefulset.nodeSelector` | Node selector for Fluentd log statefulset. | `{}`
@@ -65,6 +72,7 @@ Parameter | Description | Default
 `fluentd.logs.statefulset.resources` | Resources for Fluentd log statefulset. | `{"limits":{"cpu":1,"memory":"1Gi"},"requests":{"cpu":0.5,"memory":"768Mi"}}`
 `fluentd.logs.statefulset.podLabels` | Additional labels for fluentd log pods. | `{}`
 `fluentd.logs.statefulset.podAnnotations` | Additional annotations for fluentd log pods. | `{}`
+`fluentd.logs.statefulset.priorityClassName` | Priority class name for fluentd log pods. | `Nil`
 `fluentd.logs.autoscaling.enabled` | Option to turn autoscaling on for fluentd and specify params for HPA. Autoscaling needs metrics-server to access cpu metrics. | `false`
 `fluentd.logs.autoscaling.minReplicas` | Default min replicas for autoscaling. | `3`
 `fluentd.logs.autoscaling.maxReplicas` | Default max replicas for autoscaling. | `10`
@@ -126,6 +134,7 @@ Parameter | Description | Default
 `fluentd.metrics.statefulset.resources` | Resources for Fluentd metrics statefulset.  | `{"limits":{"cpu":1,"memory":"1Gi"},"requests":{"cpu":0.5,"memory":"768Mi"}}`
 `fluentd.metrics.statefulset.podLabels` | Additional labels for fluentd metrics pods. | `{}`
 `fluentd.metrics.statefulset.podAnnotations` | Additional annotations for fluentd metrics pods. | `{}`
+`fluentd.logs.statefulset.priorityClassName` | Priority class name for fluentd metrics pods. | `Nil`
 `fluentd.metrics.autoscaling.enabled` | Option to turn autoscaling on for fluentd and specify params for HPA. Autoscaling needs metrics-server to access cpu metrics. | `false`
 `fluentd.metrics.autoscaling.minReplicas` | Default min replicas for autoscaling. | `3`
 `fluentd.metrics.autoscaling.maxReplicas` | Default max replicas for autoscaling. | `10`
@@ -140,6 +149,7 @@ Parameter | Description | Default
 `fluentd.events.statefulset.resources` | Resources for Fluentd log statefulset. | `{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}`
 `fluentd.events.statefulset.podLabels` | Additional labels for fluentd events pods. | `{}`
 `fluentd.events.statefulset.podAnnotations` | Additional annotations for fluentd events pods. | `{}`
+`fluentd.events.statefulset.priorityClassName` | Priority class name for fluentd events pods. | `Nil`
 `fluentd.events.sourceCategory` | Source category for the Events source. Default: "{clusterName}/events" | `Nil`
 `metrics-server.enabled` | Set the enabled flag to true for enabling metrics-server. This is required before enabling fluentd autoscaling unless you have an existing metrics-server in the cluster. | `false`
 `metrics-server.args` | Arguments for metric server. | `["--kubelet-insecure-tls","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"]`
@@ -191,3 +201,19 @@ Parameter | Description | Default
 `falco.enabled` | Flag to control deploying Falco Helm sub-chart. | `false`
 `falco.ebpf.enabled` | Enable eBPF support for Falco instead of falco-probe kernel module. Set to false for GKE. | `true`
 `falco.falco.jsonOutput` | Output events in json. | `true`
+`telegraf-operator.enabled` | Flag to control deploying Telegraf Operator Helm sub-chart. | `false`
+`telegraf-operator.replicaCount` | Replica count for Telegraf Operator pods. | 1
+`telegraf-operator.classes.secretName` | Secret name in which the Telegraf Operator configuration will be stored. | `telegraf-operator-classes`
+`telegraf-operator.default` | Name of the default output configuration. | `sumologic-prometheus`
+`telegraf-operator.data` | Telegraf sidecar configuration. | `{"sumologic-prometheus": "[[outputs.prometheus_client]]\\n          ## Configuration details:\\n          ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration\\n          listen = ':9273'\\n          metric_version = 2\\n"}`
+`otelcol.deployment.replicas` | Set the number of OpenTelemetry Collector replicas. | `1`
+`otelcol.deployment.resources.limits.memory` | Sets the OpenTelemetry Collector memory limit. | `2Gi`
+`otelcol.deployment.priorityClassName` | Priority class name for OpenTelemetry Collector log pods. | `Nil`
+`otelcol.config.service.pipelines.traces.receivers` | Sets the list of enabled receivers. | `{jaeger, opencensus, otlp, zipkin}`
+`otelcol.config.exporters.zipkin.timeout` | Sets the Zipkin (default) exporter timeout. Append the unit, e.g. `s` when setting the parameter | `5s`
+`otelcol.config.exporters.logging.loglevel` | When tracing debug logging exporter is enabled, sets the verbosity level. Use either `info` or `debug`. | `info`
+`otelcol.config.service.pipelines.traces.exporters` | Sets the list of exporters enabled within OpenTelemetry Collector. Available values: `zipkin`, `logging`. Set to `{zipkin, logging}` to enable logging debugging exporter. | `{zipkin}` 
+`otelcol.config.service.pipelines.traces.processors` | Sets the list of enabled OpenTelemetry Collector processors. | `{memory_limiter, k8s_tagger, source, resource, batch, queued_retry}`
+`otelcol.config.processors.memory_limiter.limit_mib` | Sets the OpenTelemetry Collector memory limitter plugin value (in MiB). Should be at least 100 Mib less than the value of `otelcol.deployment.resources.limits.memory`.  | `1900` 
+`otelcol.config.processors.batch.send_batch_size` | Sets the preferred size of batch (in number of spans). | `256`
+`otelcol.config.processors.batch.send_batch_max_size` | Sets the maximum allowed size of a batch (in number of spans). Use with caution, setting too large value might cause 413 Payload Too Large errors. | `512`

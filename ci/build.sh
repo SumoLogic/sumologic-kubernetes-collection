@@ -1,10 +1,11 @@
 #!/bin/bash
 
+# shellcheck disable=SC2154
 VERSION="${TRAVIS_TAG:-0.0.0}"
+# shellcheck disable=SC2154
 VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
 : "${DOCKER_USERNAME:=sumodocker}"
-DOCKER_TAGS="https://registry.hub.docker.com/v1/repositories/sumologic/kubernetes-fluentd/tags"
 
 echo "Starting build process in: $(pwd) with version tag: ${VERSION}"
 err_report() {
@@ -13,114 +14,177 @@ err_report() {
 }
 trap 'err_report $LINENO' ERR
 
-# Set up Github
-if [ -n "$GITHUB_TOKEN" ]; then
+function get_branch_to_checkout() {
+  [[ "${TRAVIS_EVENT_TYPE}" == pull_request ]] \
+    && echo "${TRAVIS_PULL_REQUEST_BRANCH}" \
+    || echo "${TRAVIS_BRANCH}"
+}
+
+function bundle_fluentd_plugin() {
+  local plugin_name="${1}"
+  local version="${2}"
+  # Strip everything after "-" (longest match) to avoid gem prerelease behavior
+  local gem_version="${version%%-*}"
+
+  if [[ -z "${version}" ]] ; then
+    echo "Please provide the version when bundling fluentd plugins"
+    exit 1
+  fi
+  pushd "${plugin_name}" || exit 1
+
+  echo "Building gem ${plugin_name} version ${gem_version} in $(pwd) ..."
+  sed -i.bak "s/0.0.0/${gem_version}/g" ./"${plugin_name}".gemspec
+  rm -f ./"${plugin_name}".gemspec.bak
+
+  echo "Install bundler..."
+  bundle install
+
+  echo "Build gem ${plugin_name} ${gem_version}..."
+  gem build "${plugin_name}"
+  mv ./*.gem ../deploy/docker/gems
+  popd || exit 1
+}
+
+function bundle_fluentd_plugins() {
+  local version="${1}"
+
+  if [[ -z "${version}" ]] ; then
+    echo "Please provide the version when bundling fluentd plugins"
+    exit 1
+  fi
+
+  find . -maxdepth 1 -name 'fluent-plugin-*' -type 'd' -print |
+    while read -r line; do
+      # Run tests in their own context
+      (bundle_fluentd_plugin "$(basename "${line}")" "${version}") || exit 1
+    done
+}
+
+function set_up_github() {
+  local token="${1}"
+  local branch="${2}"
+
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "Travis CI"
-  git remote add origin-repo https://${GITHUB_TOKEN}@github.com/SumoLogic/sumologic-kubernetes-collection.git > /dev/null 2>&1
+  git remote add origin-repo "https://${token}@github.com/SumoLogic/sumologic-kubernetes-collection.git" > /dev/null 2>&1
   git fetch --unshallow origin-repo
-  git checkout $TRAVIS_PULL_REQUEST_BRANCH
-fi
 
-# Check for invalid changes to generated yaml files (non-Tag builds)
-# Exclude branches that start with "revert-" to allow reverts
-if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ] && [[ ! "$TRAVIS_PULL_REQUEST_BRANCH" =~ ^revert- ]]; then
+  readonly branch="$(get_branch_to_checkout)"
+  echo "Checking out the ${branch} branch..."
+  git checkout "${branch}"
+}
+
+function push_docker_image() {
+  local version="$1"
+
+  echo "Tagging docker image ${DOCKER_TAG}:local with ${DOCKER_TAG}:${version}..."
+  docker tag "${DOCKER_TAG}:local" "${DOCKER_TAG}:${version}"
+  echo "Pushing docker image ${DOCKER_TAG}:${version}..."
+  echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+  docker push "${DOCKER_TAG}:${version}"
+}
+
+function push_helm_chart() {
+  local version="$1"
+
+  local sync_dir="${TRAVIS_BUILD_DIR}-helm-sync"
+
+  echo "Pushing new Helm Chart release ${version}"
+  set -x
+
+  git checkout -- .
+  sudo helm init --client-only
+  sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
+  sudo helm repo add bitnami https://charts.bitnami.com/bitnami
+  sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+  # due to helm repo index issue: https://github.com/helm/helm/issues/7363
+  # we need to create new package in a different dir, merge the index and move the package back
+  mkdir -p "${sync_dir}"
+  sudo helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
+
+  git fetch origin-repo
+  git checkout gh-pages
+
+  sudo helm repo index --url https://sumologic.github.io/sumologic-kubernetes-collection/ --merge ./index.yaml "${sync_dir}"
+
+  mv -f "${sync_dir}"/* .
+  rmdir "${sync_dir}"
+
+  git add -A
+  git commit -m "Push new Helm Chart release ${version}"
+  git push --quiet origin-repo gh-pages
+  set +x
+}
+
+function validate_changes_to_generated_files() {
+  local changes
+  local recent_author
+
   # Check most recent commit author. If non-Travis, check for changes made to generated files
   recent_author=$(git log origin-repo/master..HEAD --format="%an" | grep -m1 "")
-  if echo $recent_author | grep -v -q -i "travis"; then
+  if echo "${recent_author}" | grep -v -q -i "travis"; then
     # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
-    changes=$(git log origin-repo/master..HEAD --name-only --format="" --author="$recent_author" | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml") || true
-    if [ -n "$changes" ]; then
-      echo "Aborting due to manual changes detected in the following generated files: $changes"
+    changes=$(git log origin-repo/master..HEAD --name-only --format="" --author="${recent_author}" | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml") || true
+    if [ -n "${changes}" ]; then
+      echo "Aborting due to manual changes detected in the following generated files: ${changes}"
       exit 1
     fi
   fi
-fi
+}
 
-for i in ./fluent-plugin* ; do
-  if [ -d "$i" ]; then
-    cd $i
-    PLUGIN_NAME=$(basename "$i")
-    # Strip everything after "-" (longest match) to avoid gem prerelease behavior
-    GEM_VERSION=${VERSION%%-*}
-    echo "Building gem $PLUGIN_NAME version $GEM_VERSION in $(pwd) ..."
-    sed -i.bak "s/0.0.0/$GEM_VERSION/g" ./$PLUGIN_NAME.gemspec
-    rm -f ./$PLUGIN_NAME.gemspec.bak
+function build_docker_image() {
+  local tag
+  local no_cache
+  tag="${1}"
 
-    echo "Install bundler..."
-    bundle install
-
-    echo "Run unit tests..."
-    bundle exec rake
-
-    echo "Build gem $PLUGIN_NAME $GEM_VERSION..."
-    gem build $PLUGIN_NAME
-    mv *.gem ../deploy/docker/gems
-
-    cd ..
+  echo "Building docker image with ${tag}:local in $(pwd)..."
+  pushd ./deploy/docker || exit 1
+  no_cache="--no-cache"
+  if [[ "${DOCKER_USE_CACHE}" == "true" ]]; then
+    no_cache=""
   fi
-done
+  docker build . -f ./Dockerfile -t "${tag}:local" ${no_cache:+"--no-cache"}
+  rm -f ./gems/*.gem
+  popd || exit 1
 
-echo "Building docker image with $DOCKER_TAG:local in $(pwd)..."
-cd ./deploy/docker
-docker build . -f ./Dockerfile -t $DOCKER_TAG:local --no-cache
-rm -f ./gems/*.gem
-cd ../..
+  echo "Test docker image locally..."
+  ruby deploy/test/test_docker.rb || exit 1
+}
 
-echo "Test docker image locally..."
-ruby deploy/test/test_docker.rb
+function generate_overrides() {
+  local with_files
+  local prometheus_remote_write
+  local branch
 
-echo "Test tracing configuration..."
-bash ./tests/tracing/run.sh
+  branch="${1}"
 
-if [ $? -eq 0 ]; then
-  echo "Tracing configuration test passed"
-else
-  echo "Tracing configuration test failed"
-  exit 1
-fi
-
-echo "Test terraform configuration..."
-bash ./tests/terraform/run.sh
-
-if [ $? -eq 0 ]; then
-  echo "Terraform configuration test passed"
-else
-  echo "Terraform configuration test failed"
-  exit 1
-fi
-
-echo "Test upgrade script..."
-bash ./tests/upgrade_script/run.sh
-
-if [ $? -eq 0 ]; then
-  echo "Upgrade Script test passed"
-else
-  echo "Upgrade Script test failed"
-  exit 1
-fi
-
-# Check for changes that require re-generating overrides yaml files
-if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "Generating deployment yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm init --client-only
   sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
   sudo helm repo add bitnami https://charts.bitnami.com/bitnami
-  cd deploy/helm/sumologic
-  sudo helm dependency update
-  cd ../../../
+  sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  sudo helm dependency update deploy/helm/sumologic
 
   # NOTE(ryan, 2019-11-06): helm template -execute is going away in Helm 3 so we will need to revisit this
   # https://github.com/helm/helm/issues/5887
-  with_files=$(ls deploy/helm/sumologic/templates/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\/g')
-  eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --name collection --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl --set sumologic.endpoint="bogus" --set sumologic.accessId="bogus" --set sumologic.accessKey="bogus"'
+  with_files=$(find deploy/helm/sumologic/templates/ -maxdepth 1 -iname "*.yaml" | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\/g')
+  # shellcheck disable=SC2086
+  helm template deploy/helm/sumologic \
+    ${with_files} \
+    --namespace "\$NAMESPACE" \
+    --name collection \
+    --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl \
+    --set sumologic.endpoint="bogus" \
+    --set sumologic.accessId="bogus" \
+    --set sumologic.accessKey="bogus"
 
-  if [[ $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
-      echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
+  if [[ -n $(git diff deploy/kubernetes/fluentd-sumologic.yaml.tmpl) ]]; then
+      echo "Detected changes in 'fluentd-sumologic.yaml.tmpl', committing the updated version to ${branch}..."
       git add deploy/kubernetes/fluentd-sumologic.yaml.tmpl
       git commit -m "Generate new 'fluentd-sumologic.yaml.tmpl'"
-      git push --quiet origin-repo "$TRAVIS_PULL_REQUEST_BRANCH"
+      git push --quiet origin-repo "${branch}"
   else
       echo "No changes in 'fluentd-sumologic.yaml.tmpl'."
   fi
@@ -128,13 +192,23 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   echo "Generating setup job yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/setup-sumologic.yaml.tmpl
 
-  with_files=$(ls deploy/helm/sumologic/templates/setup/*.yaml | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\/g')
-  eval 'sudo helm template deploy/helm/sumologic $with_files --namespace "\$NAMESPACE" --name collection --set dryRun=true >> deploy/kubernetes/setup-sumologic.yaml.tmpl --set sumologic.accessId="\$SUMOLOGIC_ACCESSID" --set sumologic.accessKey="\$SUMOLOGIC_ACCESSKEY" --set sumologic.collectorName="\$COLLECTOR_NAME" --set sumologic.clusterName="\$CLUSTER_NAME"'
-  if [[ $(git diff deploy/kubernetes/setup-sumologic.yaml.tmpl) ]]; then
-      echo "Detected changes in 'setup-sumologic.yaml.tmpl', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
+  with_files=$(find deploy/helm/sumologic/templates/setup/ -maxdepth 1 -iname "*.yaml" | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\/g')
+  # shellcheck disable=SC2086
+  helm template deploy/helm/sumologic \
+    ${with_files} \
+    --namespace "\$NAMESPACE" \
+    --name collection \
+    --set dryRun=true >> deploy/kubernetes/setup-sumologic.yaml.tmpl \
+    --set sumologic.accessId="\$SUMOLOGIC_ACCESSID" \
+    --set sumologic.accessKey="\$SUMOLOGIC_ACCESSKEY" \
+    --set sumologic.collectorName="\$COLLECTOR_NAME" \
+    --set sumologic.clusterName="\$CLUSTER_NAME"
+
+  if [[ -n $(git diff deploy/kubernetes/setup-sumologic.yaml.tmpl) ]]; then
+      echo "Detected changes in 'setup-sumologic.yaml.tmpl', committing the updated version to ${branch}..."
       git add deploy/kubernetes/setup-sumologic.yaml.tmpl
       git commit -m "Generate new 'setup-sumologic.yaml.tmpl'"
-      git push --quiet origin-repo "$TRAVIS_PULL_REQUEST_BRANCH"
+      git push --quiet origin-repo "${branch}"
   else
       echo "No changes in 'setup-sumologic.yaml.tmpl'."
   fi
@@ -165,62 +239,56 @@ if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
   prometheus_remote_write="${prometheus_remote_write//&/\\&}"
   prometheus_remote_write="${prometheus_remote_write//$'\n'/\\n}"
   echo "// This file is autogenerated" > deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet
-  sed "s#\[\/\*REMOTE_WRITE\*\/\]#$prometheus_remote_write#" ci/jsonnet-mixin.tmpl | sed 's#"http://$(CHART).$(NAMESPACE).svc.cluster.local:9888\/#$._config.sumologicCollectorSvc + "#g' | sed 's/+:     /+: /' | sed -r 's/"(\w*)":/\1:/g' > deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet
+  # shellcheck disable=SC2016
+  sed "s#\[\/\*REMOTE_WRITE\*\/\]#${prometheus_remote_write}#" ci/jsonnet-mixin.tmpl \
+    | sed 's#"http://$(CHART).$(NAMESPACE).svc.cluster.local:9888\/#$._config.sumologicCollectorSvc + "#g' \
+    | sed 's/+:     /+: /' \
+    | sed -r 's/"(\w*)":/\1:/g' > deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet
   
   echo "Copy falco section from 'values.yaml' to 'falco-overrides.yaml'"
   echo "# This file is auto-generated." > deploy/helm/falco-overrides.yaml
   # Copy lines of falco section and remove indention from values.yaml
   yq r deploy/helm/sumologic/values.yaml falco | yq d - enabled >> deploy/helm/falco-overrides.yaml
 
-  if [ "$(git diff deploy/helm/metrics-server-overrides.yaml)" ] || [ "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ "$(git diff deploy/helm/falco-overrides.yaml)" ] || [ "$(git diff deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet)" ]; then
-    echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml', 'falco-overrides.yaml', or 'kube-prometheus-sumo-logic-mixin.libsonnet', committing the updated version to $TRAVIS_PULL_REQUEST_BRANCH..."
+  if [ -n "$(git diff deploy/helm/metrics-server-overrides.yaml)" ] || [ -n "$(git diff deploy/helm/fluent-bit-overrides.yaml)" ] || [ -n "$(git diff deploy/helm/prometheus-overrides.yaml)" ] || [ -n "$(git diff deploy/helm/falco-overrides.yaml)" ] || [ -n "$(git diff deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet)" ]; then
+    echo "Detected changes in 'fluent-bit-overrides.yaml', 'prometheus-overrides.yaml', 'falco-overrides.yaml', or 'kube-prometheus-sumo-logic-mixin.libsonnet', committing the updated version to ${TRAVIS_PULL_REQUEST_BRANCH}..."
     git add deploy/helm/*-overrides.yaml
     git add deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet
     git commit -m "Generate new overrides yaml/libsonnet file(s)."
-    git push --quiet origin-repo "$TRAVIS_PULL_REQUEST_BRANCH"
+    git push --quiet origin-repo "${branch}"
   else
     echo "No changes in the generated overrides files."
   fi
+}
+
+# Set up Github
+if [ -n "${GITHUB_TOKEN}" ]; then
+  set_up_github "${GITHUB_TOKEN}" "$(get_branch_to_checkout)"
 fi
 
-function push_docker_image() {
-  local version="$1"
+# Check for invalid changes to generated yaml files (non-Tag builds)
+# Exclude branches that start with "revert-" to allow reverts
+if [ -n "${GITHUB_TOKEN}" ] && [ "${TRAVIS_EVENT_TYPE}" == "pull_request" ] && [[ ! "${TRAVIS_PULL_REQUEST_BRANCH}" =~ ^revert- ]]; then
+  validate_changes_to_generated_files || (echo "Aborting due to manual changes detected in generated files" && exit 1)
+fi
 
-  echo "Tagging docker image $DOCKER_TAG:local with $DOCKER_TAG:$version..."
-  docker tag $DOCKER_TAG:local $DOCKER_TAG:$version
-  echo "Pushing docker image $DOCKER_TAG:$version..."
-  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  docker push $DOCKER_TAG:$version
-}
+bundle_fluentd_plugins "${VERSION}" || (echo "Failed bundling fluentd plugins" && exit 1)
+build_docker_image "${DOCKER_TAG}" || (echo "Error during building docker image" && exit 1)
 
-function push_helm_chart() {
-  local version="$1"
+# Check for changes that require re-generating overrides yaml files
+if [ -n "${GITHUB_TOKEN}" ] && [ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]; then
+  generate_overrides "${TRAVIS_PULL_REQUEST_BRANCH}" || (echo "Error generating override files" && exit 1)
+fi
 
-  echo "Pushing new Helm Chart release $version"
-  set -x
-  git checkout -- .
-  sudo helm init --client-only
-  sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
-  sudo helm repo add bitnami https://charts.bitnami.com/bitnami
-  sudo helm package deploy/helm/sumologic --dependency-update --version=$version --app-version=$version
-  git fetch origin-repo
-  git checkout gh-pages
-  sudo helm repo index ./ --url https://sumologic.github.io/sumologic-kubernetes-collection/
-  git add -A
-  git commit -m "Push new Helm Chart release $version"
-  git push --quiet origin-repo gh-pages
-  set +x
-}
+if [ -n "${DOCKER_PASSWORD}" ] && [ -n "${TRAVIS_TAG}" ]; then
+  push_docker_image "${VERSION}"
+  push_helm_chart "${VERSION}"
 
-if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
-  push_docker_image "$VERSION"
-  push_helm_chart "$VERSION"
-
-elif [ -n "$DOCKER_PASSWORD" ] && [[ "$TRAVIS_BRANCH" == "master" || "$TRAVIS_BRANCH" =~ ^release-v[0-9]+\.[0-9]+$ ]] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+elif [ -n "${DOCKER_PASSWORD}" ] && [[ "${TRAVIS_BRANCH}" == "master" || "${TRAVIS_BRANCH}" =~ ^release-v[0-9]+\.[0-9]+$ ]] && [ "${TRAVIS_EVENT_TYPE}" == "push" ]; then
   dev_build_tag=$(git describe --tags --always)
   dev_build_tag=${dev_build_tag#v}
-  push_docker_image "$dev_build_tag"
-  push_helm_chart "$dev_build_tag"
+  push_docker_image "${dev_build_tag}"
+  push_helm_chart "${dev_build_tag}"
 
 else
   echo "Skip Docker pushing"

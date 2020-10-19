@@ -47,10 +47,6 @@ spec:
 {{ toYaml .Values.fluentd.events.statefulset.tolerations | indent 8 }}
 {{- end }}
       volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
       - name: config-volume
         configMap:
           name: {{ template "sumologic.metadata.name.events.configmap" . }}
@@ -58,7 +54,10 @@ spec:
 {{ toYaml .Values.fluentd.events.extraVolumes | indent 6 }}
 {{- end }}
       securityContext:
-        fsGroup: {{ .Values.fluentd.securityContext.fsGroup }}
+        {{- toYaml .Values.fluentd.securityContext | nindent 8 }}
+      {{- if .Values.fluentd.events.statefulset.priorityClassName }}
+      priorityClassName: {{ .Values.fluentd.events.statefulset.priorityClassName | quote }}
+      {{- end }}
       containers:
       - name: fluentd-events
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -68,8 +67,6 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
 {{- if .Values.fluentd.persistence.enabled }}
         - name: buffer
           mountPath: "/fluentd/buffer"

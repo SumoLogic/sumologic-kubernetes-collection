@@ -10,7 +10,7 @@ metadata:
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
   labels:
     app: RELEASE-NAME-sumologic
-    chart: "sumologic-1.2.2-rc.0"
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
@@ -30,7 +30,7 @@ data:
   main.tf: |
     terraform {
       required_providers {
-        sumologic  = "~> 2.0.3"
+        sumologic  = "= 2.3.0"
         kubernetes = "~> 1.11.3"
       }
     }
@@ -137,6 +137,7 @@ data:
     # Support proxy for terraform
     export HTTP_PROXY=${HTTP_PROXY:=""}
     export HTTPS_PROXY=${HTTPS_PROXY:=""}
+    export NO_PROXY=${NO_PROXY:=""}
   
     COLLECTOR_NAME="kubernetes"
   
@@ -157,7 +158,7 @@ data:
   
   
     # Kubernetes Secret
-    terraform import kubernetes_secret.sumologic_collection_secret default/sumologic
+    terraform import kubernetes_secret.sumologic_collection_secret sumologic/sumologic
   
     terraform apply -auto-approve
   variables.tf: |-
@@ -173,5 +174,5 @@ data:
   
     variable "namespace_name" {
       type  = string
-      default = "default"
+      default = "sumologic"
     }

@@ -3,7 +3,7 @@
 
 image:
   repository: sumologic/kubernetes-fluentd
-  tag: 1.2.2-rc.0
+  tag: 1.3.0
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -32,6 +32,8 @@ sumologic:
   ## proxy urls
   httpProxy: ""
   httpsProxy: ""
+  ## Exclude kubernetes internal traffic from proxy
+  noProxy: kubernetes.default.svc
 
   ## Collector name
   #collectorName: ""
@@ -71,8 +73,20 @@ sumologic:
   ## Add custom annotations to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
   podAnnotations: {}
 
+  ## creation of Security Context Constraints in Openshift
+  scc:
+    create: false
+
   setup:
     job:
+      resources:
+        limits:
+          memory: 256Mi
+          cpu: 2000m
+        requests:
+          memory: 64Mi
+          cpu: 200m
+      nodeSelector: {}
       ## Add custom labels only to setup job pod
       podLabels: {}
       ## Add custom annotations only to setup job pod
@@ -156,6 +170,9 @@ sumologic:
     spans_per_request: 100
 
 fluentd:
+  ## Specifies whether a PodSecurityPolicy should be created
+  podSecurityPolicy:
+    create: false
   additionalPlugins: []
 
   ## Sets the fluentd log level. The default log level, if not specified, is info.
@@ -211,9 +228,7 @@ fluentd:
     totalLimitSize: "128m"
     retryMaxInterval: "10m"
     retryForever: true
-    ## usage of the gzip compression is highly not recommended due to fluentd issue:
-    ## rel: https://github.com/fluent/fluentd/issues/3056
-    compress: text
+    compress: gzip
 
     ## File paths to buffer to, if Fluentd buffer type is specified as file above.
     ## Each sumologic output plugin buffers to its own unique file.
@@ -252,9 +267,14 @@ fluentd:
     cacheSize: "10000"
     ## Option to control the enabling of metadata filter plugin cache_ttl (in seconds).
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-    cacheTtl: "3600"
+    cacheTtl: "7200"
     ## Option to control the interval at which metadata cache is asynchronously refreshed (in seconds).
-    cacheRefresh: "1800"
+    cacheRefresh: "3600"
+    ## Option to control the variation in seconds by which the cacheRefresh option is changed for each pod separately.
+    ## For example, if cache refresh is 1 hour and variation is 15 minutes, then actual cache refresh interval
+    ## will be a random value between 45 minutes and 1 hour 15 minutes, different for each pod. This helps spread
+    ## the load on API server that the cache refresh induces. Setting this to 0 disables cache refresh variation.
+    cacheRefreshVariation: "900"
     ## Option to give plugin specific log level
     pluginLogLevel: "error"
     ## Option to specify K8s API versions
@@ -279,10 +299,13 @@ fluentd:
       resources:
         limits:
           memory: 1Gi
-          cpu: 1
+          cpu: 1000m
         requests:
           memory: 768Mi
-          cpu: 0.5
+          cpu: 500m
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+
       ## Add custom labels only to logs fluentd sts pods
       podLabels: {}
       ## Add custom annotations only to logs fluentd sts pods
@@ -295,6 +318,11 @@ fluentd:
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
+
+    ## Option to specify PodDisrutionBudgets
+    ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+    podDisruptionBudget:
+      minAvailable: 2
 
     rawConfig: |-
       @include common.conf
@@ -377,6 +405,10 @@ fluentd:
       ## To use additional filter plugins
       extraFilterPluginConf: |-
 
+      ## To enable stiching multiline logs in fluentd when fluent-bit Multiline feature is On
+      multiline:
+        enabled: true
+
     ## Kubelet log configuration
     kubelet:
       enabled: true
@@ -417,6 +449,8 @@ fluentd:
       ## Override output section for systemd logs. Leave empty for the default output section.
       overrideOutputConf: |-
 
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "k8s_systemd"
       ## Set the _sourceCategory metadata field in Sumo Logic.
       sourceCategory: "system"
       ## Set the prefix, for _sourceCategory metadata.
@@ -444,6 +478,28 @@ fluentd:
 
       ## Override output section for untagged logs. Leave empty for the default output section.
       overrideOutputConf: |-
+
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "k8s_default"
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "default"
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+      ## Used to replace - with another character.
+      sourceCategoryReplaceDash: "/"
+
+      ## A regular expression for facility.
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeFacilityRegex: ""
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeHostRegex: ""
+      ## A regular expression for priority.
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludePriorityRegex: ""
+      ## A regular expression for unit.
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeUnitRegex: ""
 
     ## Extra Environment Values - allows yaml definitions
     # extraEnvVars:
@@ -477,10 +533,13 @@ fluentd:
       resources:
         limits:
           memory: 1Gi
-          cpu: 1
+          cpu: 1000m
         requests:
           memory: 768Mi
-          cpu: 0.5
+          cpu: 500m
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+
       ## Add custom labels only to metrics fluentd sts pods
       podLabels: {}
       ## Add custom annotations only to metrics fluentd sts pods
@@ -493,6 +552,11 @@ fluentd:
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
+
+    ## Option to specify PodDisrutionBudgets
+    ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+    podDisruptionBudget:
+      minAvailable: 2
 
     rawConfig: |-
       @include common.conf
@@ -584,10 +648,13 @@ fluentd:
       resources:
         limits:
           memory: 512Mi
-          cpu: "200m"
+          cpu: 200m
         requests:
           memory: 256Mi
-          cpu: "100m"
+          cpu: 100m
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+
       ## Add custom labels only to events fluentd sts pods
       podLabels: {}
       ## Add custom annotations only to events fluentd sts pods
@@ -655,6 +722,10 @@ fluent-bit:
   ## Add custom pod annotations to fluent-bit daemonset pods
   podAnnotations: {}
 
+  ## Set securityContext of fluent-bit daemonset pods as privileged for running in Openshift
+  # securityContext:
+  #   privileged: true
+
   service:
     flush: 5
   metrics:
@@ -697,6 +768,11 @@ fluent-bit:
     regex:
       - name: multi_line
         regex: (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
+        ## cri-o parser
+      - name: crio
+        regex: ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+        timeKey: time
+        timeFormat: "%Y-%m-%dT%H:%M:%S.%L%z"
 
   rawConfig: |-
     @INCLUDE fluent-bit-service.conf
@@ -771,8 +847,9 @@ fluent-bit:
 
     @INCLUDE fluent-bit-output.conf
 
-## Configure prometheus-operator
-## ref: https://github.com/helm/charts/blob/master/stable/prometheus-operator/values.yaml
+## Configure kube-prometheus-stack
+## We are using an alias prometheus-operator for the kube-prometheus-stack helm chart for backward compatibility. This will be changed in v2.0.
+## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
 prometheus-operator:
   ## Labels to apply to all prometheus operator resources
   commonLabels: {}
@@ -785,6 +862,8 @@ prometheus-operator:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
+      resource: false
   kubeControllerManager:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -932,16 +1011,25 @@ prometheus-operator:
         labels: {}
         annotations: {}
       ## Define resources requests and limits for single Pods.
-      resources: {}
-      # limits:
-      #   cpu: 800m
-      #   memory: 800Mi
-      # requests:
-      #   cpu: 400m
-      #   memory: 400Mi
+      resources:
+        limits:
+          cpu: 2000m
+          memory: 8Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
       thanos:
         baseImage: quay.io/thanos/thanos
         version: v0.10.0
+        ## Defines the resource requirements for the Thanos sidecar
+        ## Setting those as there are no default values in the upstream chart
+        resources:
+          limits:
+            cpu: 10m
+            memory: 32Mi
+          requests:
+            cpu: 1m
+            memory: 8Mi
       containers:
       - name: "prometheus-config-reloader"
         env:
@@ -958,6 +1046,71 @@ prometheus-operator:
 
       ## Enable WAL compression to reduce Prometheus memory consumption
       walCompression: true
+
+      ## prometheus scrape config
+      additionalScrapeConfigs:
+        ## scraping metrics basing on annotations:
+        ##   - prometheus.io/scrape: true - to scrape metrics from the pod
+        ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
+        ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
+        ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
+        - job_name: 'kubernetes-pods'
+          kubernetes_sd_configs:
+          - role: pod
+          relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+            separator: ;
+            regex: Node;(.*)
+            target_label: node
+            replacement: ${1}
+            action: replace
+          - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+            separator: ;
+            regex: Pod;(.*)
+            target_label: pod
+            replacement: ${1}
+            action: replace
+          - source_labels: [__metrics_path__]
+            separator: ;
+            regex: (.*)
+            target_label: endpoint
+            replacement: $1
+            action: replace
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: namespace
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - source_labels: [__meta_kubernetes_service_name]
+            separator: ;
+            regex: (.*)
+            target_label: service
+            replacement: $1
+            action: replace
+          - source_labels: [__meta_kubernetes_pod_name]
+            separator: ;
+            regex: (.*)
+            target_label: pod
+            replacement: $1
+            action: replace
+          - source_labels: [__meta_kubernetes_service_name]
+            separator: ;
+            regex: (.*)
+            target_label: job
+            replacement: ${1}
+            action: replace
 
       remoteWrite:
         ## kube non pod state metrics
@@ -976,10 +1129,14 @@ prometheus-operator:
         ## kube_statefulset_replicas
         ## kube_statefulset_status_observed_generation
         ## kube_statefulset_status_replicas
+        ## kube_hpa_spec_max_replicas
+        ## kube_hpa_spec_min_replicas
+        ## kube_hpa_status_current_replicas
+        ## kube_hpa_status_desired_replicas
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
           writeRelabelConfigs:
             - action: keep
-              regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition)
+              regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_current_replicas|kube_hpa_status_desired_replicas)
               sourceLabels: [job, __name__]
             - action: labelmap
               regex: (pod|service)
@@ -1078,6 +1235,7 @@ prometheus-operator:
         ## container_fs_limit_bytes
         ## container_fs_usage_bytes
         ## container_memory_working_set_bytes
+        ## container_cpu_cfs_throttled_seconds_total
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
           writeRelabelConfigs:
             - action: labelmap
@@ -1087,7 +1245,7 @@ prometheus-operator:
               regex: POD
               sourceLabels: [container]
             - action: keep
-              regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes)
+              regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total)
               sourceLabels: [job,container,__name__]
         ## cadvisor aggregate container metrics
         ## container_network_receive_bytes_total
@@ -1254,6 +1412,145 @@ prometheus-operator:
               regex: kube-etcd;(?:etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
               sourceLabels: [job, __name__]
 
+        ## Nginx ingress controller metrics
+        ## rel: https://docs.nginx.com/nginx-ingress-controller/logging-and-monitoring/prometheus/#available-metrics
+        ## nginx_ingress_controller_ingress_resources_total
+        ## nginx_ingress_controller_nginx_last_reload_milliseconds
+        ## nginx_ingress_controller_nginx_last_reload_status
+        ## nginx_ingress_controller_nginx_reload_errors_total
+        ## nginx_ingress_controller_nginx_reloads_total
+        ## nginx_ingress_controller_virtualserver_resources_total
+        ## nginx_ingress_controller_virtualserverroute_resources_total
+        ## nginx_ingress_nginx_connections_accepted
+        ## nginx_ingress_nginx_connections_active
+        ## nginx_ingress_nginx_connections_handled
+        ## nginx_ingress_nginx_connections_reading
+        ## nginx_ingress_nginx_connections_waiting
+        ## nginx_ingress_nginx_connections_writing
+        ## nginx_ingress_nginx_http_requests_total
+        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.nginx-ingress
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:nginx_ingress_controller_ingress_resources_total|nginx_ingress_controller_nginx_(last_reload_(milliseconds|status)|reload(s|_errors)_total)|nginx_ingress_controller_virtualserver(|route)_resources_total|nginx_ingress_nginx_connections_(accepted|active|handled|reading|waiting|writing)|nginx_ingress_nginx_http_requests_total)
+              sourceLabels: [__name__]
+
+        ## Nginx telegraf metrics
+        ## nginx_accepts
+        ## nginx_active
+        ## nginx_handled
+        ## nginx_reading
+        ## nginx_requests
+        ## nginx_waiting
+        ## nginx_writing
+        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.nginx
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:nginx_(accepts|active|handled|reading|requests|waiting|writing))
+              sourceLabels: [__name__]
+
+        ## Redis metrics
+        ## redis_blocked_clients
+        ## redis_clients
+        ## redis_cluster_enabled
+        ## redis_cmdstat_calls
+        ## redis_connected_slaves
+        ## redis_evicted_keys
+        ## redis_expired_keys
+        ## redis_instantaneous_ops_per_sec
+        ## redis_keyspace_hitrate
+        ## redis_keyspace_hits
+        ## redis_keyspace_misses
+        ## redis_master_repl_offset
+        ## redis_maxmemory
+        ## redis_mem_fragmentation_bytes
+        ## redis_mem_fragmentation_ratio
+        ## redis_rdb_changes_since_last_save
+        ## redis_rejected_connections
+        ## redis_slave_repl_offset
+        ## redis_total_commands_processed
+        ## redis_total_net_input_bytes
+        ## redis_total_net_output_bytes
+        ## redis_tracking_total_keys
+        ## redis_uptime
+        ## redis_used_cpu_sys
+        ## redis_used_cpu_user
+        ## redis_used_memory
+        ## redis_used_memory_overhead
+        ## redis_used_memory_rss
+        ## redis_used_memory_startup
+        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.redis
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:redis_((blocked_|)clients|cluster_enabled|cmdstat_calls|connected_slaves|(evicted|expired|tracking_total)_keys|instantaneous_ops_per_sec|keyspace_(hitrate|hits|misses)|(master|slave)_repl_offset|maxmemory|mem_fragmentation_(bytes|ratio)|rdb_changes_since_last_save|rejected_connections|total_commands_processed|total_net_(input|output)_bytes|uptime|used_(cpu_(sys|user)|memory(_overhead|_rss|_startup|))))
+              sourceLabels: [__name__]
+
+        ## JMX Metrics
+        ## java_lang_ClassLoading_LoadedClassCount
+        ## java_lang_ClassLoading_TotalLoadedClassCount
+        ## java_lang_ClassLoading_UnloadedClassCount
+        ## java_lang_Compilation_TotalCompilationTime
+        ## java_lang_GarbageCollector_CollectionCount
+        ## java_lang_GarbageCollector_CollectionTime
+        ## java_lang_GarbageCollector_LastGcInfo_GcThreadCount  # unavailable for adoptopenjdk-openj9
+        ## java_lang_GarbageCollector_LastGcInfo_duration  # unavailable for adoptopenjdk-openj9
+        ## java_lang_GarbageCollector_LastGcInfo_memoryUsageAfterGc_*_used
+        ## java_lang_GarbageCollector_LastGcInfo_memoryUsageBeforeGc_*_used
+        ## java_lang_GarbageCollector_LastGcInfo_usageAfterGc_*_used  # only for adoptopenjdk-openj9
+        ## java_lang_GarbageCollector_LastGcInfo_usageBeforeGc_*_used  # only for adoptopenjdk-openj9
+        ## java_lang_MemoryPool_CollectionUsageThresholdSupported
+        ## java_lang_MemoryPool_CollectionUsage_committed
+        ## java_lang_MemoryPool_CollectionUsage_max
+        ## java_lang_MemoryPool_CollectionUsage_used
+        ## java_lang_MemoryPool_PeakUsage_committed
+        ## java_lang_MemoryPool_PeakUsage_max
+        ## java_lang_MemoryPool_PeakUsage_used
+        ## java_lang_MemoryPool_UsageThresholdSupported
+        ## java_lang_MemoryPool_Usage_committed
+        ## java_lang_MemoryPool_Usage_max
+        ## java_lang_MemoryPool_Usage_used
+        ## java_lang_Memory_HeapMemoryUsage_committed
+        ## java_lang_Memory_HeapMemoryUsage_max
+        ## java_lang_Memory_HeapMemoryUsage_used
+        ## java_lang_Memory_NonHeapMemoryUsage_committed
+        ## java_lang_Memory_NonHeapMemoryUsage_max
+        ## java_lang_Memory_NonHeapMemoryUsage_used
+        ## java_lang_Memory_ObjectPendingFinalizationCount
+        ## java_lang_OperatingSystem_AvailableProcessors
+        ## java_lang_OperatingSystem_CommittedVirtualMemorySize
+        ## java_lang_OperatingSystem_FreeMemorySize  # Added in jdk14
+        ## java_lang_OperatingSystem_FreePhysicalMemorySize
+        ## java_lang_OperatingSystem_FreeSwapSpaceSize
+        ## java_lang_OperatingSystem_MaxFileDescriptorCount
+        ## java_lang_OperatingSystem_OpenFileDescriptorCount
+        ## java_lang_OperatingSystem_ProcessCpuLoad
+        ## java_lang_OperatingSystem_ProcessCpuTime
+        ## java_lang_OperatingSystem_SystemCpuLoad
+        ## java_lang_OperatingSystem_SystemLoadAverage
+        ## java_lang_OperatingSystem_TotalMemorySize  # Added in jdk14
+        ## java_lang_OperatingSystem_TotalPhysicalMemorySize
+        ## java_lang_OperatingSystem_TotalSwapSpaceSize
+        ## java_lang_Runtime_BootClassPathSupported
+        ## java_lang_Runtime_Pid  # not available for jdk8
+        ## java_lang_Runtime_Uptime
+        ## java_lang_Runtime_StartTime
+        ## java_lang_Threading_CurrentThreadAllocatedBytes  # Added in jdk14
+        ## java_lang_Threading_CurrentThreadCpuTime
+        ## java_lang_Threading_CurrentThreadUserTime
+        ## java_lang_Threading_DaemonThreadCount
+        ## java_lang_Threading_ObjectMonitorUsageSupported
+        ## java_lang_Threading_PeakThreadCount
+        ## java_lang_Threading_SynchronizerUsageSupported
+        ## java_lang_Threading_ThreadAllocatedMemory*  # Not available for adoptopenjdk-openj9
+        ## java_lang_Threading_ThreadContentionMonitoring*
+        ## java_lang_Threading_ThreadCount
+        ## java_lang_Threading_ThreadCpuTime*
+        ## java_lang_Threading_TotalStartedThreadCount
+        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.jmx
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:java_lang_(ClassLoading_(TotalL|Unl|L)oadedClassCount|Compilation_TotalCompilationTime|GarbageCollector_(Collection(Count|Time)|LastGcInfo_(GcThreadCount|duration|(memoryU|u)sage(After|Before)Gc_.*_used))|MemoryPool_(CollectionUsage(ThresholdSupported|_committed|_max|_used)|(Peak|)Usage_(committed|max|used)|UsageThresholdSupported)|Memory_((Non|)HeapMemoryUsage_(committed|max|used)|ObjectPendingFinalizationCount)|OperatingSystem_(AvailableProcessors|(CommittedVirtual|(Free|Total)(Physical|))MemorySize|(Free|Total)SwapSpaceSize|(Max|Open)FileDescriptorCount|ProcessCpu(Load|Time)|System(CpuLoad|LoadAverage))|Runtime_(BootClassPathSupported|Pid|Uptime|StartTime)|Threading_(CurrentThread(AllocatedBytes|(Cpu|User)Time)|(Daemon|Peak|TotalStarted|)ThreadCount|(ObjectMonitor|Synchronizer)UsageSupported|Thread(AllocatedMemory.*|ContentionMonitoring.*|CpuTime.*))))
+              sourceLabels: [__name__]
+
 ## Configure falco
 ## ref: https://github.com/falcosecurity/charts/blob/master/falco/values.yaml
 falco:
@@ -1273,10 +1570,13 @@ otelcol:
     resources:
       limits:
         memory: 2Gi
-        cpu: 1
+        cpu: 1000m
       requests:
         memory: 384Mi
-        cpu: "200m"
+        cpu: 200m
+    ## Option to define priorityClassName to assign a priority class to pods.
+    priorityClassName:
+
     ## Add custom labels only to otelcol deployment.
     podLabels: {}
     ## Add custom annotations only to otelcol deployment.
@@ -1287,6 +1587,8 @@ otelcol:
       name: "sumologic/opentelemetry-collector"
       tag: "0.6.1.0"
       pullPolicy: IfNotPresent
+  # To enable collecting all logs, set to false
+  logLevelFilter: true
   config:
     receivers:
       jaeger:
@@ -1305,6 +1607,8 @@ otelcol:
         protocols:
           grpc:
             endpoint: "0.0.0.0:55680"
+          http:
+            endpoint: "0.0.0.0:55681"
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
@@ -1414,3 +1718,20 @@ otelcol:
           receivers: [jaeger, opencensus, otlp, zipkin]
           processors: [memory_limiter, k8s_tagger, source, resource, batch, queued_retry]
           exporters: [zipkin]
+
+## Configure telegraf-operator
+## This is an experimental configuration and shouldn't be used in production environment
+## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
+telegraf-operator:
+  enabled: false
+  replicaCount: 1
+  classes:
+    secretName: "telegraf-operator-classes"
+    default: "sumologic-prometheus"
+    data:
+      sumologic-prometheus: |
+        [[outputs.prometheus_client]]
+          ## Configuration details:
+          ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration
+          listen = ":9273"
+          metric_version = 2

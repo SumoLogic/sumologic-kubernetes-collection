@@ -41,8 +41,8 @@ HELM_2_VERSION=v2.16.9
 HELM_3_VERSION=v3.2.4
 
 mkdir /opt/helm2 /opt/helm3
-curl https://get.helm.sh/helm-${HELM_2_VERSION}-linux-amd64.tar.gz | tar -xz -C /opt/helm2
-curl https://get.helm.sh/helm-${HELM_3_VERSION}-linux-amd64.tar.gz | tar -xz -C /opt/helm3
+curl "https://get.helm.sh/helm-${HELM_2_VERSION}-linux-amd64.tar.gz" | tar -xz -C /opt/helm2
+curl "https://get.helm.sh/helm-${HELM_3_VERSION}-linux-amd64.tar.gz" | tar -xz -C /opt/helm3
 
 ln -s /opt/helm2/linux-amd64/helm /usr/bin/helm2
 ln -s /opt/helm3/linux-amd64/helm /usr/bin/helm3
@@ -76,6 +76,16 @@ while true; do
   sleep 1
 done
 
+# install requirements for ci/build.sh
+snap install ruby --channel=2.6/stable --classic
+gem install bundler
+apt install -y gcc g++ libsnappy-dev
+
+SHELLCHECK_VERSION=v0.7.1
+curl -Lo- "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJf -
+sudo cp "shellcheck-${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin
+rm -rf "shellcheck-${SHELLCHECK_VERSION}/"
+
 # Init helm tiller
 sudo -H -u vagrant -i helm2 init --wait
 
@@ -84,7 +94,8 @@ kubectl -n kube-system get services | grep -i kubernetes-dashboard | awk '{print
 echo
 
 echo Dashboard token:
-kubectl -n kube-system describe secret default| awk '$1=="token:"{print $2}'
+/sumologic/vagrant/scripts/get-dashboard-token.sh
 echo
 
-ln -s /sumologic/vagrant/sumologic.sh /usr/local/bin/sumologic
+ln -s /sumologic/vagrant/scripts/sumo-make.sh /usr/local/bin/sumo-make
+ln -s /sumologic/vagrant/scripts/sumo-make-completion.sh /etc/bash_completion.d/sumo-make

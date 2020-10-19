@@ -29,6 +29,10 @@ spec:
     spec:
       restartPolicy: OnFailure
       serviceAccountName: {{ template "sumologic.metadata.name.setup.roles.serviceaccount" . }}
+{{- if .Values.sumologic.setup.job.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.sumologic.setup.job.nodeSelector | indent 8 }}
+{{- end }}
       volumes:
       - name: setup
         configMap:
@@ -39,6 +43,8 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: ["/etc/terraform/setup.sh"]
+        resources:
+          {{- toYaml .Values.sumologic.setup.job.resources | nindent 10 }}
         volumeMounts:
         - name: setup
           mountPath: /etc/terraform
@@ -58,5 +64,9 @@ spec:
           value: {{ .Values.sumologic.httpProxy }}
         - name: HTTPS_PROXY
           value: {{ .Values.sumologic.httpsProxy }}
+        - name: NO_PROXY
+          value: {{ .Values.sumologic.noProxy }}
         {{ end }}
+      securityContext:
+        runAsUser: 999
 {{- end }}

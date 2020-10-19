@@ -10,6 +10,8 @@ kubelet:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
     interval:
+    ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
+    resource: false
 kubeControllerManager:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -155,16 +157,25 @@ prometheus:
       labels: {}
       annotations: {}
     ## Define resources requests and limits for single Pods.
-    resources: {}
-    # limits:
-    #   cpu: 800m
-    #   memory: 800Mi
-    # requests:
-    #   cpu: 400m
-    #   memory: 400Mi
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 8Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
     thanos:
       baseImage: quay.io/thanos/thanos
       version: v0.10.0
+      ## Defines the resource requirements for the Thanos sidecar
+      ## Setting those as there are no default values in the upstream chart
+      resources:
+        limits:
+          cpu: 10m
+          memory: 32Mi
+        requests:
+          cpu: 1m
+          memory: 8Mi
     containers:
     - name: "prometheus-config-reloader"
       env:
@@ -180,6 +191,70 @@ prometheus:
             key: fluentdNamespace
     ## Enable WAL compression to reduce Prometheus memory consumption
     walCompression: true
+    ## prometheus scrape config
+    additionalScrapeConfigs:
+    - ## scraping metrics basing on annotations:
+      ##   - prometheus.io/scrape: true - to scrape metrics from the pod
+      ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
+      ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
+      ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
+      job_name: 'kubernetes-pods'
+      kubernetes_sd_configs:
+      - role: pod
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+        separator: ;
+        regex: Node;(.*)
+        target_label: node
+        replacement: ${1}
+        action: replace
+      - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+        separator: ;
+        regex: Pod;(.*)
+        target_label: pod
+        replacement: ${1}
+        action: replace
+      - source_labels: [__metrics_path__]
+        separator: ;
+        regex: (.*)
+        target_label: endpoint
+        replacement: $1
+        action: replace
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: namespace
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+      - source_labels: [__meta_kubernetes_service_name]
+        separator: ;
+        regex: (.*)
+        target_label: service
+        replacement: $1
+        action: replace
+      - source_labels: [__meta_kubernetes_pod_name]
+        separator: ;
+        regex: (.*)
+        target_label: pod
+        replacement: $1
+        action: replace
+      - source_labels: [__meta_kubernetes_service_name]
+        separator: ;
+        regex: (.*)
+        target_label: job
+        replacement: ${1}
+        action: replace
     remoteWrite:
     - ## kube non pod state metrics
       ## kube_daemonset_status_current_number_scheduled
@@ -197,10 +272,14 @@ prometheus:
       ## kube_statefulset_replicas
       ## kube_statefulset_status_observed_generation
       ## kube_statefulset_status_replicas
+      ## kube_hpa_spec_max_replicas
+      ## kube_hpa_spec_min_replicas
+      ## kube_hpa_status_current_replicas
+      ## kube_hpa_status_desired_replicas
       url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
       writeRelabelConfigs:
       - action: keep
-        regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition)
+        regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_current_replicas|kube_hpa_status_desired_replicas)
         sourceLabels: [job, __name__]
       - action: labelmap
         regex: (pod|service)
@@ -299,6 +378,7 @@ prometheus:
       ## container_fs_limit_bytes
       ## container_fs_usage_bytes
       ## container_memory_working_set_bytes
+      ## container_cpu_cfs_throttled_seconds_total
       url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
       writeRelabelConfigs:
       - action: labelmap
@@ -308,7 +388,7 @@ prometheus:
         regex: POD
         sourceLabels: [container]
       - action: keep
-        regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes)
+        regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total)
         sourceLabels: [job, container, __name__]
     - ## cadvisor aggregate container metrics
       ## container_network_receive_bytes_total
@@ -474,3 +554,138 @@ prometheus:
       - action: keep
         regex: kube-etcd;(?:etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
         sourceLabels: [job, __name__]
+    - ## Nginx ingress controller metrics
+      ## rel: https://docs.nginx.com/nginx-ingress-controller/logging-and-monitoring/prometheus/#available-metrics
+      ## nginx_ingress_controller_ingress_resources_total
+      ## nginx_ingress_controller_nginx_last_reload_milliseconds
+      ## nginx_ingress_controller_nginx_last_reload_status
+      ## nginx_ingress_controller_nginx_reload_errors_total
+      ## nginx_ingress_controller_nginx_reloads_total
+      ## nginx_ingress_controller_virtualserver_resources_total
+      ## nginx_ingress_controller_virtualserverroute_resources_total
+      ## nginx_ingress_nginx_connections_accepted
+      ## nginx_ingress_nginx_connections_active
+      ## nginx_ingress_nginx_connections_handled
+      ## nginx_ingress_nginx_connections_reading
+      ## nginx_ingress_nginx_connections_waiting
+      ## nginx_ingress_nginx_connections_writing
+      ## nginx_ingress_nginx_http_requests_total
+      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.nginx-ingress
+      writeRelabelConfigs:
+      - action: keep
+        regex: (?:nginx_ingress_controller_ingress_resources_total|nginx_ingress_controller_nginx_(last_reload_(milliseconds|status)|reload(s|_errors)_total)|nginx_ingress_controller_virtualserver(|route)_resources_total|nginx_ingress_nginx_connections_(accepted|active|handled|reading|waiting|writing)|nginx_ingress_nginx_http_requests_total)
+        sourceLabels: [__name__]
+    - ## Nginx telegraf metrics
+      ## nginx_accepts
+      ## nginx_active
+      ## nginx_handled
+      ## nginx_reading
+      ## nginx_requests
+      ## nginx_waiting
+      ## nginx_writing
+      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.nginx
+      writeRelabelConfigs:
+      - action: keep
+        regex: (?:nginx_(accepts|active|handled|reading|requests|waiting|writing))
+        sourceLabels: [__name__]
+    - ## Redis metrics
+      ## redis_blocked_clients
+      ## redis_clients
+      ## redis_cluster_enabled
+      ## redis_cmdstat_calls
+      ## redis_connected_slaves
+      ## redis_evicted_keys
+      ## redis_expired_keys
+      ## redis_instantaneous_ops_per_sec
+      ## redis_keyspace_hitrate
+      ## redis_keyspace_hits
+      ## redis_keyspace_misses
+      ## redis_master_repl_offset
+      ## redis_maxmemory
+      ## redis_mem_fragmentation_bytes
+      ## redis_mem_fragmentation_ratio
+      ## redis_rdb_changes_since_last_save
+      ## redis_rejected_connections
+      ## redis_slave_repl_offset
+      ## redis_total_commands_processed
+      ## redis_total_net_input_bytes
+      ## redis_total_net_output_bytes
+      ## redis_tracking_total_keys
+      ## redis_uptime
+      ## redis_used_cpu_sys
+      ## redis_used_cpu_user
+      ## redis_used_memory
+      ## redis_used_memory_overhead
+      ## redis_used_memory_rss
+      ## redis_used_memory_startup
+      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.redis
+      writeRelabelConfigs:
+      - action: keep
+        regex: (?:redis_((blocked_|)clients|cluster_enabled|cmdstat_calls|connected_slaves|(evicted|expired|tracking_total)_keys|instantaneous_ops_per_sec|keyspace_(hitrate|hits|misses)|(master|slave)_repl_offset|maxmemory|mem_fragmentation_(bytes|ratio)|rdb_changes_since_last_save|rejected_connections|total_commands_processed|total_net_(input|output)_bytes|uptime|used_(cpu_(sys|user)|memory(_overhead|_rss|_startup|))))
+        sourceLabels: [__name__]
+    - ## JMX Metrics
+      ## java_lang_ClassLoading_LoadedClassCount
+      ## java_lang_ClassLoading_TotalLoadedClassCount
+      ## java_lang_ClassLoading_UnloadedClassCount
+      ## java_lang_Compilation_TotalCompilationTime
+      ## java_lang_GarbageCollector_CollectionCount
+      ## java_lang_GarbageCollector_CollectionTime
+      ## java_lang_GarbageCollector_LastGcInfo_GcThreadCount  # unavailable for adoptopenjdk-openj9
+      ## java_lang_GarbageCollector_LastGcInfo_duration  # unavailable for adoptopenjdk-openj9
+      ## java_lang_GarbageCollector_LastGcInfo_memoryUsageAfterGc_*_used
+      ## java_lang_GarbageCollector_LastGcInfo_memoryUsageBeforeGc_*_used
+      ## java_lang_GarbageCollector_LastGcInfo_usageAfterGc_*_used  # only for adoptopenjdk-openj9
+      ## java_lang_GarbageCollector_LastGcInfo_usageBeforeGc_*_used  # only for adoptopenjdk-openj9
+      ## java_lang_MemoryPool_CollectionUsageThresholdSupported
+      ## java_lang_MemoryPool_CollectionUsage_committed
+      ## java_lang_MemoryPool_CollectionUsage_max
+      ## java_lang_MemoryPool_CollectionUsage_used
+      ## java_lang_MemoryPool_PeakUsage_committed
+      ## java_lang_MemoryPool_PeakUsage_max
+      ## java_lang_MemoryPool_PeakUsage_used
+      ## java_lang_MemoryPool_UsageThresholdSupported
+      ## java_lang_MemoryPool_Usage_committed
+      ## java_lang_MemoryPool_Usage_max
+      ## java_lang_MemoryPool_Usage_used
+      ## java_lang_Memory_HeapMemoryUsage_committed
+      ## java_lang_Memory_HeapMemoryUsage_max
+      ## java_lang_Memory_HeapMemoryUsage_used
+      ## java_lang_Memory_NonHeapMemoryUsage_committed
+      ## java_lang_Memory_NonHeapMemoryUsage_max
+      ## java_lang_Memory_NonHeapMemoryUsage_used
+      ## java_lang_Memory_ObjectPendingFinalizationCount
+      ## java_lang_OperatingSystem_AvailableProcessors
+      ## java_lang_OperatingSystem_CommittedVirtualMemorySize
+      ## java_lang_OperatingSystem_FreeMemorySize  # Added in jdk14
+      ## java_lang_OperatingSystem_FreePhysicalMemorySize
+      ## java_lang_OperatingSystem_FreeSwapSpaceSize
+      ## java_lang_OperatingSystem_MaxFileDescriptorCount
+      ## java_lang_OperatingSystem_OpenFileDescriptorCount
+      ## java_lang_OperatingSystem_ProcessCpuLoad
+      ## java_lang_OperatingSystem_ProcessCpuTime
+      ## java_lang_OperatingSystem_SystemCpuLoad
+      ## java_lang_OperatingSystem_SystemLoadAverage
+      ## java_lang_OperatingSystem_TotalMemorySize  # Added in jdk14
+      ## java_lang_OperatingSystem_TotalPhysicalMemorySize
+      ## java_lang_OperatingSystem_TotalSwapSpaceSize
+      ## java_lang_Runtime_BootClassPathSupported
+      ## java_lang_Runtime_Pid  # not available for jdk8
+      ## java_lang_Runtime_Uptime
+      ## java_lang_Runtime_StartTime
+      ## java_lang_Threading_CurrentThreadAllocatedBytes  # Added in jdk14
+      ## java_lang_Threading_CurrentThreadCpuTime
+      ## java_lang_Threading_CurrentThreadUserTime
+      ## java_lang_Threading_DaemonThreadCount
+      ## java_lang_Threading_ObjectMonitorUsageSupported
+      ## java_lang_Threading_PeakThreadCount
+      ## java_lang_Threading_SynchronizerUsageSupported
+      ## java_lang_Threading_ThreadAllocatedMemory*  # Not available for adoptopenjdk-openj9
+      ## java_lang_Threading_ThreadContentionMonitoring*
+      ## java_lang_Threading_ThreadCount
+      ## java_lang_Threading_ThreadCpuTime*
+      ## java_lang_Threading_TotalStartedThreadCount
+      url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.jmx
+      writeRelabelConfigs:
+      - action: keep
+        regex: (?:java_lang_(ClassLoading_(TotalL|Unl|L)oadedClassCount|Compilation_TotalCompilationTime|GarbageCollector_(Collection(Count|Time)|LastGcInfo_(GcThreadCount|duration|(memoryU|u)sage(After|Before)Gc_.*_used))|MemoryPool_(CollectionUsage(ThresholdSupported|_committed|_max|_used)|(Peak|)Usage_(committed|max|used)|UsageThresholdSupported)|Memory_((Non|)HeapMemoryUsage_(committed|max|used)|ObjectPendingFinalizationCount)|OperatingSystem_(AvailableProcessors|(CommittedVirtual|(Free|Total)(Physical|))MemorySize|(Free|Total)SwapSpaceSize|(Max|Open)FileDescriptorCount|ProcessCpu(Load|Time)|System(CpuLoad|LoadAverage))|Runtime_(BootClassPathSupported|Pid|Uptime|StartTime)|Threading_(CurrentThread(AllocatedBytes|(Cpu|User)Time)|(Daemon|Peak|TotalStarted|)ThreadCount|(ObjectMonitor|Synchronizer)UsageSupported|Thread(AllocatedMemory.*|ContentionMonitoring.*|CpuTime.*))))
+        sourceLabels: [__name__]

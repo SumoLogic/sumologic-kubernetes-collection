@@ -35,8 +35,12 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.fluentd" -}}
+{{- template "sumologic.fullname" . }}-fluentd
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs" -}}
-{{- template "sumologic.fullname" . }}-fluentd-logs
+{{- template "sumologic.labels.app.fluentd" . }}-logs
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.pod" -}}
@@ -64,7 +68,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics" -}}
-{{- template "sumologic.fullname" . }}-fluentd-metrics
+{{- template "sumologic.labels.app.fluentd" . }}-metrics
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics.pod" -}}
@@ -92,7 +96,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.events" -}}
-{{- template "sumologic.fullname" . }}-fluentd-events
+{{- template "sumologic.labels.app.fluentd" . }}-events
 {{- end -}}
 
 {{- define "sumologic.labels.app.events.pod" -}}
@@ -159,6 +163,18 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.setup.securitycontextconstraints" -}}
+{{- template "sumologic.fullname" . }}-setup-scc
+{{- end -}}
+
+{{- define "sumologic.labels.app.podsecuritypolicy" -}}
+{{- template "sumologic.fullname" . }}-psp
+{{- end -}}
+
+{{- define "sumologic.labels.app.securitycontextconstraints" -}}
+{{- template "sumologic.fullname" . }}-scc
+{{- end -}}
+
 {{/*
 Generate helm.sh annotations. It takes weight as parameter.
 
@@ -185,8 +201,20 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- template "sumologic.fullname" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.podsecuritypolicy" -}}
+{{ template "sumologic.fullname" . }}-psp
+{{- end -}}
+
+{{- define "sumologic.metadata.name.securitycontextconstraints" -}}
+{{- template "sumologic.fullname" . }}-scc
+{{- end -}}
+
+{{- define "sumologic.metadata.name.fluentd" -}}
+{{ template "sumologic.fullname" . }}-fluentd
+{{- end -}}
+
 {{- define "sumologic.metadata.name.logs" -}}
-{{ template "sumologic.fullname" . }}-fluentd-logs
+{{ template "sumologic.metadata.name.fluentd" . }}-logs
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service" -}}
@@ -210,7 +238,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics" -}}
-{{ template "sumologic.fullname" . }}-fluentd-metrics
+{{ template "sumologic.metadata.name.fluentd" . }}-metrics
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.service" -}}
@@ -234,7 +262,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events" -}}
-{{ template "sumologic.fullname" . }}-fluentd-events
+{{ template "sumologic.metadata.name.fluentd" . }}-events
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events.service" -}}
@@ -291,6 +319,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.setup.roles.serviceaccount" -}}
 {{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.securitycontextconstraints" -}}
+{{- template "sumologic.metadata.name.setup" . }}-scc
 {{- end -}}
 
 {{- define "sumologic.labels.logs" -}}

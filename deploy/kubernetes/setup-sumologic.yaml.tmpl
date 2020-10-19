@@ -30,7 +30,7 @@ data:
   main.tf: |
     terraform {
       required_providers {
-        sumologic  = "~> 2.0.3"
+        sumologic  = "= 2.3.0"
         kubernetes = "~> 1.11.3"
       }
     }
@@ -135,6 +135,7 @@ data:
     # Support proxy for terraform
     export HTTP_PROXY=${HTTP_PROXY:=""}
     export HTTPS_PROXY=${HTTPS_PROXY:=""}
+    export NO_PROXY=${NO_PROXY:=""}
   
     COLLECTOR_NAME="$COLLECTOR_NAME"
   
@@ -265,9 +266,17 @@ spec:
           defaultMode: 0777
       containers:
       - name: setup
-        image: sumologic/kubernetes-fluentd:1.2.2-rc.0
+        image: sumologic/kubernetes-fluentd:1.3.0
         imagePullPolicy: IfNotPresent
         command: ["/etc/terraform/setup.sh"]
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 256Mi
+          requests:
+            cpu: 200m
+            memory: 64Mi
+          
         volumeMounts:
         - name: setup
           mountPath: /etc/terraform
@@ -282,5 +291,13 @@ spec:
           value: 
         - name: HTTPS_PROXY
           value: 
+        - name: NO_PROXY
+          value: kubernetes.default.svc
         
+      securityContext:
+        runAsUser: 999
+
+---
+# Source: sumologic/templates/setup/setup-scc.yaml
+
 

@@ -23,10 +23,11 @@ The following are required to set up Sumo Logic's Kubernetes collection.
   * An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with [Manage Collectors](https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management) capability.
   * Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
 
+To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
 
 ## Prerequisite
 
-Sumo Logic Apps for Kubernetes and Explore require you to add the following [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata. This is a one time setup per Sumo Logic account.
+Sumo Logic Apps for Kubernetes and Explore require you to add the following [fields](https://help.sumologic.com/Manage/Fields#Manage_fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata. This is a one time setup per Sumo Logic account.
 - cluster
 - container
 - deployment
@@ -78,6 +79,15 @@ For Helm3, if the namespace does not exist, you can add the `--create-namespace`
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME> --create-namespace"
+```
+
+### Installing the helm chart in Openshift platform
+The daemonset/statefulset fails to create the pods in Openshift environment due to the request of elevated privileges, like HostPath mounts, privileged: true, etc.
+
+If you wish to install the chart in the Openshift Platform, it requires a SCC resource which is only created in Openshift (detected via API capabilities in the chart), you can do the following:
+
+```bash
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
 ```
 
 ## Viewing Data In Sumo Logic

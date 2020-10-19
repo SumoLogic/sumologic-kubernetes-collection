@@ -19,7 +19,41 @@ prometheus-operator:
       prometheusSpec:
         externalLabels:
           cluster: microk8s
+    sidecar:
+      image:
+        sha: ''
 sumologic:
   accessId: dummy
   accessKey: dummy
   endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
+telegraf-operator:
+  enabled: true
+  replicaCount: 1
+
+falco:
+  enabled: true
+  customRules:
+    # Mark the following as known k8s api callers:
+    # * fluentd and its plugins
+    # * grafana sidecar
+    # * terraform provider started in setup job
+    # * telegraf operator
+    # * kube state metrics server
+    # * prometheus
+    # * prometheus operator
+    rules_user_known_k8s_api_callers.yaml: |-
+      - macro: user_known_contact_k8s_api_server_activities
+        condition: >
+          (proc.pcmdline = "fluentd /usr/local/bundle/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins") or
+          (proc.cmdline = "fluentd /usr/local/bundle/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins") or
+          (proc.cmdline = "ruby -Eascii-8bit:ascii-8bit /usr/local/bundle/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins --under-supervisor") or
+          (proc.cmdline = "event_loop -Eascii-8bit:ascii-8bit /usr/local/bundle/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins --under-supervisor") or
+          (proc.cmdline = "watch_endpoints -Eascii-8bit:ascii-8bit /usr/local/bundle/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins --under-supervisor") or
+          (proc.cmdline = "watch_events -Eascii-8bit:ascii-8bit /usr/local/bundle/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins --under-supervisor") or
+          (proc.cmdline = "filter_kuberne* /usr/local/bundle/bin/fluentd -c /fluentd/etc/fluent.conf -p /fluentd/plugins") or
+          (proc.cmdline = "python -u /app/sidecar.py") or
+          (proc.cmdline startswith "terraform-provi") or
+          (proc.cmdline startswith "manager --telegraf-default-class=sumologic-prometheus --telegraf-classes-directory=/etc/telegraf-operator --enable-default-internal-plugin --telegraf-image=docker.io/library/telegraf") or
+          (proc.cmdline startswith "kube-state-metr") or
+          (proc.cmdline startswith "prometheus") or
+          (proc.cmdline startswith "operator")

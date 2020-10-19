@@ -1,5 +1,29 @@
 # This file is auto-generated.
 ---
+# Source: sumologic/templates/logs-pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: collection-sumologic-fluentd-logs-pdb
+spec:
+  selector:
+    matchLabels:
+      app: collection-sumologic-fluentd-logs
+  minAvailable: 2
+  
+---
+# Source: sumologic/templates/metrics-pdb.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: collection-sumologic-fluentd-metrics-pdb
+spec:
+  selector:
+    matchLabels:
+      app: collection-sumologic-fluentd-metrics
+  minAvailable: 2
+  
+---
 # Source: sumologic/templates/chart-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -24,7 +48,7 @@ data:
     @include common.conf
     @include logs.conf
   buffer.output.conf: |-
-    compress "text"
+    compress "gzip"
     flush_interval "5s"
     flush_thread_count "8"
     chunk_limit_size "1m"
@@ -70,8 +94,9 @@ data:
     @include logs.source.default.conf
   logs.enhance.k8s.metadata.filter.conf: |-
     cache_size  "10000"
-    cache_ttl  "3600"
-    cache_refresh "1800"
+    cache_ttl  "7200"
+    cache_refresh "3600"
+    cache_refresh_variation "900"
     in_namespace_path '$.kubernetes.namespace_name'
     in_pod_path '$.kubernetes.pod_name'
     core_api_versions v1
@@ -87,7 +112,7 @@ data:
     client_key ""
     bearer_token_file ""
     cache_size "10000"
-    cache_ttl "3600"
+    cache_ttl "7200"
     tag_to_kubernetes_name_regexp '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
   logs.kubernetes.sumologic.filter.conf: |-
     source_name "%{namespace}.%{pod}.%{container}"
@@ -111,6 +136,7 @@ data:
     
   logs.source.containers.conf: |
     
+    
     <filter containers.**>
       @type record_transformer
       enable_ruby
@@ -127,10 +153,10 @@ data:
       @label @NORMAL
     </match>
     <label @NORMAL>
-      #  only match fluentd logs based on fluentd container name. by default, this is
-      #  <filter **collection-sumologic**>
     
-      <filter **collection-sumologic**>
+      # only match fluentd logs based on fluentd container log file name.
+      # by default, this is <filter **collection-sumologic-fluentd**>
+      <filter **collection-sumologic-fluentd**>
         # only ingest fluentd logs of levels: {error, fatal} and warning messages if buffer is full
         @type grep
         <regexp>
@@ -138,6 +164,17 @@ data:
           pattern /\[error\]|\[fatal\]|drop_oldest_chunk|retry succeeded/
         </regexp>
       </filter>
+  
+    
+     <filter **collection-sumologic-otelcol**>
+       @type grep
+       <regexp>
+         key log
+         # Select only known error/warning/fatal/panic levels or logs coming from one of the source known to provide useful data
+         pattern /\"level\":\"(error|warning|fatal|panic|dpanic)\"|\"caller\":\"(builder|service|kube|static)/
+       </regexp>
+     </filter>
+  
       # third-party kubernetes metadata  filter plugin
       <filter containers.**>
         @type kubernetes_metadata
@@ -164,7 +201,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.logs
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           @log_level error
           @include logs.output.conf
           <buffer>
@@ -174,14 +211,32 @@ data:
         </store>
       </match>
     </label>
-  logs.source.default.conf: |-
+  logs.source.default.conf: |
     
+    <filter **>
+      @type grep
+      <exclude>
+        key message
+        pattern /disable filter chain optimization/
+      </exclude>
+    </filter>
+    <filter **>
+      @type kubernetes_sumologic
+      source_name "k8s_default"
+      source_category "default"
+      source_category_prefix "kubernetes/"
+      source_category_replace_dash "/"
+      exclude_facility_regex ""
+      exclude_host_regex ""
+      exclude_priority_regex ""
+      exclude_unit_regex ""
+    </filter>
     <match **>
       @type copy
       <store>
         @type sumologic
         @id sumologic.endpoint.logs.default
-        sumo_client "k8s_1.2.2-rc.0"
+        sumo_client "k8s_1.3.0"
         @include logs.output.conf
         <buffer>
           @type memory
@@ -213,7 +268,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.logs.kubelet
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           @include logs.output.conf
           <buffer>
             @type memory
@@ -230,6 +285,7 @@ data:
     <label @SYSTEMD>
       <filter host.**>
         @type kubernetes_sumologic
+        source_name "k8s_systemd"
         source_category "system"
         source_category_prefix "kubernetes/"
         source_category_replace_dash "/"
@@ -250,7 +306,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.logs.systemd
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           @include logs.output.conf
           <buffer>
             @type memory
@@ -301,7 +357,7 @@ data:
       <store>
         @type sumologic
         @id sumologic.endpoint.events
-        sumo_client "k8s_1.2.2-rc.0"
+        sumo_client "k8s_1.3.0"
         endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE']}"
         data_type logs
         disable_cookies true
@@ -318,7 +374,7 @@ data:
     </system>
   
   buffer.output.conf: |-
-    compress "text"
+    compress "gzip"
     flush_interval "5s"
     flush_thread_count "8"
     chunk_limit_size "1m"
@@ -344,7 +400,7 @@ data:
     @include common.conf
     @include metrics.conf
   buffer.output.conf: |-
-    compress "text"
+    compress "gzip"
     flush_interval "5s"
     flush_thread_count "8"
     chunk_limit_size "1m"
@@ -406,8 +462,9 @@ data:
       <filter prometheus.metrics**>
         @type enhance_k8s_metadata
         cache_size  "10000"
-        cache_ttl  "3600"
-        cache_refresh "1800"
+        cache_ttl  "7200"
+        cache_refresh "3600"
+        cache_refresh_variation "900"
         core_api_versions v1
         api_groups apps/v1,extensions/v1beta1
       </filter>
@@ -422,7 +479,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.apiserver
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           endpoint "#{ENV['SUMO_ENDPOINT_APISERVER_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -437,7 +494,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.container
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           endpoint "#{ENV['SUMO_ENDPOINT_KUBELET_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -452,7 +509,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.control.plane
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           endpoint "#{ENV['SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -467,7 +524,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.kube.controller.manager
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           endpoint "#{ENV['SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -482,7 +539,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.kubelet
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           endpoint "#{ENV['SUMO_ENDPOINT_KUBELET_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -497,7 +554,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.node.exporter
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           endpoint "#{ENV['SUMO_ENDPOINT_NODE_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -512,7 +569,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.kube.scheduler
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           endpoint "#{ENV['SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -527,7 +584,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics.kube.state
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           endpoint "#{ENV['SUMO_ENDPOINT_STATE_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -542,7 +599,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.metrics
-          sumo_client "k8s_1.2.2-rc.0"
+          sumo_client "k8s_1.3.0"
           endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE']}"
         @include metrics.output.conf
           <buffer>
@@ -596,6 +653,7 @@ rules:
   resources:
     - configmaps
   verbs: ["create", "patch"]
+
 ---
 # Source: sumologic/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -622,8 +680,6 @@ metadata:
   name: collection-sumologic-fluentd-events-headless
   labels:
     app: collection-sumologic-fluentd-events-headless
-    sumologic.com/app: fluentd-events
-    sumologic.com/component: events
     
 spec:
   selector:
@@ -663,8 +719,6 @@ metadata:
   name: collection-sumologic-fluentd-metrics-headless
   labels:
     app: collection-sumologic-fluentd-metrics-headless
-    sumologic.com/app: fluentd-metrics
-    sumologic.com/component: metrics
     
 spec:
   selector:
@@ -714,8 +768,6 @@ metadata:
   name: collection-sumologic-fluentd-logs-headless
   labels:
     app: collection-sumologic-fluentd-logs-headless
-    sumologic.com/app: fluentd-logs
-    sumologic.com/component: logs
     
 spec:
   selector:
@@ -781,18 +833,15 @@ spec:
     spec:
       serviceAccountName: collection-sumologic
       volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
       - name: config-volume
         configMap:
           name: collection-sumologic-fluentd-events
       securityContext:
         fsGroup: 999
+        
       containers:
       - name: fluentd-events
-        image: sumologic/kubernetes-fluentd:1.2.2-rc.0
+        image: sumologic/kubernetes-fluentd:1.3.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -805,8 +854,6 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
         livenessProbe:
           httpGet:
             path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
@@ -869,25 +916,22 @@ spec:
                   - prometheus-operator-prometheus
               topologyKey: "kubernetes.io/hostname"
       volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
       - name: config-volume
         configMap:
           name: collection-sumologic-fluentd-metrics
       securityContext:
         fsGroup: 999
+        
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:1.2.2-rc.0
+        image: sumologic/kubernetes-fluentd:1.3.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
-            cpu: 1
+            cpu: 1000m
             memory: 1Gi
           requests:
-            cpu: 0.5
+            cpu: 500m
             memory: 768Mi
           
         ports:
@@ -910,8 +954,6 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
         env:
         - name: SUMO_ENDPOINT_APISERVER_METRICS_SOURCE
           valueFrom:
@@ -999,25 +1041,22 @@ spec:
                   - prometheus-operator-prometheus
               topologyKey: "kubernetes.io/hostname"
       volumes:
-      - name: pos-files
-        hostPath:
-          path: /var/run/fluentd-pos
-          type: ""
       - name: config-volume
         configMap:
           name: collection-sumologic-fluentd-logs
       securityContext:
         fsGroup: 999
+        
       containers:
       - name: fluentd
-        image: sumologic/kubernetes-fluentd:1.2.2-rc.0
+        image: sumologic/kubernetes-fluentd:1.3.0
         imagePullPolicy: IfNotPresent
         resources:
           limits:
-            cpu: 1
+            cpu: 1000m
             memory: 1Gi
           requests:
-            cpu: 0.5
+            cpu: 500m
             memory: 768Mi
           
         ports:
@@ -1040,8 +1079,6 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
-        - name: pos-files
-          mountPath: /mnt/pos/
         env:
         - name: SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE
           valueFrom:
@@ -1066,4 +1103,13 @@ spec:
 
 ---
 # Source: sumologic/templates/otelcol-service.yaml
+
+
+---
+# Source: sumologic/templates/psp.yaml
+
+
+---
+# Source: sumologic/templates/scc.yaml
+
 

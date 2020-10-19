@@ -33,7 +33,7 @@ module Fluent
       # Need different clients to access different API groups/versions
       # https://github.com/abonas/kubeclient/issues/208
       config_param :core_api_versions, :array, default: ['v1']
-      config_param :api_groups, :array, default: ['apps/v1', 'extensions/v1beta1']
+      config_param :api_groups, :array, default: ["apps/v1", "extensions/v1beta1"]
       # if `ca_file` is for an intermediate CA, or otherwise we do not have the
       # root CA and want to trust the intermediate CA certs we do have, set this
       # to `true` - this corresponds to the openssl s_client -partial_chain flag
@@ -41,8 +41,9 @@ module Fluent
       config_param :ssl_partial_chain, :bool, default: false
 
       config_param :cache_size, :integer, default: 1000
-      config_param :cache_ttl, :integer, default: 60 * 60
-      config_param :cache_refresh, :integer, default: 60 * 30
+      config_param :cache_ttl, :integer, default: 60 * 60 * 2
+      config_param :cache_refresh, :integer, default: 60 * 60
+      config_param :cache_refresh_variation, :integer, default: 60 * 15
 
       def configure(conf)
         super
@@ -85,6 +86,10 @@ module Fluent
           service = @pods_to_services[pod_name]
           metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
 
+          if @data_type == 'metrics' && (record['node'].nil? || record['node'] == "")
+            record['node'] = metadata['node']
+          end
+
           ['pod_labels', 'owners', 'service'].each do |metadata_type|
             attachment = metadata[metadata_type]
             if attachment.nil? || attachment.empty?
@@ -120,11 +125,17 @@ module Fluent
         log.debug "bearer_token_file: '#{@bearer_token_file}', exist: #{File.exist?(@bearer_token_file)}"
 
         @cache_ttl = :none if @cache_ttl <= 0
-        log.info "cache_ttl: #{@cache_ttl}, cache_size: #{@cache_size}, cache_refresh: #{@cache_refresh}"
+
+        @cache_refresh_variation = 0 if @cache_refresh_variation < 0
+        @cache_refresh_variation = 2 * @cache_refresh - 1 if @cache_refresh_variation >= @cache_refresh * 2
+
+        log.info "cache_ttl: #{@cache_ttl}, cache_size: #{@cache_size}, cache_refresh: #{@cache_refresh}, cache_refresh_variation: #{@cache_refresh_variation}"
       end
 
       def start_cache_timer
-        timer_execute(:"cache_refresher", @cache_refresh) {
+        cache_refresh_with_variation = apply_variation(@cache_refresh, @cache_refresh_variation)
+        log.info "Will refresh cache every #{format_time(cache_refresh_with_variation)}"
+        timer_execute(:"cache_refresher", cache_refresh_with_variation) {
           entries = @cache.to_a
           log.info "Refreshing metadata for #{entries.count} entries"
 
@@ -141,6 +152,17 @@ module Fluent
             end
           }
         }
+      end
+
+      def apply_variation(value, variation)
+        return value if variation <= 0
+
+        random_variation = rand(variation * 2 + 1) - variation
+        value + random_variation
+      end
+
+      def format_time(seconds)
+        Time.at(seconds).strftime("%Hh %Mm %Ss")
       end
     end
   end

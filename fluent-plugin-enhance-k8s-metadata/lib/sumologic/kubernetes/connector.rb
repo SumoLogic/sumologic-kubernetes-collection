@@ -18,17 +18,27 @@ module SumoLogic
       end
 
       def group_clients
-        @api_groups.map do |ver|
-          [ver, create_client('apis', ver)]
-        end.to_h
+        ret = {}
+        @api_groups.each do |api_ver|
+          elems = api_ver.split("/")
+          # elems should have base as first element e.g. 'extensions' and version as second element e.g. 'v1beta1'
+          if elems.length < 2
+            continue
+          end
+
+          base = elems[0]
+          ver = elems[1]
+          ret[ base + "/" + ver ] = create_client('apis/' + base, ver)
+        end
+        ret
       end
 
       def create_client(base, ver)
         retries = 0
+        url = "#{@kubernetes_url}/#{base}"
         begin
           client = nil
           unless client
-            url = "#{@kubernetes_url}/#{base}"
             log.info "create client with URL: #{url} and apiVersion: #{ver}"
             client = Kubeclient::Client.new(
               url,

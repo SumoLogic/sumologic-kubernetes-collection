@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jmxexporter
+  namespace: demo-jmxexporter-docker
+spec:
+  selector:
+    matchLabels:
+      app: jmxexporter
+  serviceName: jmxexporter
+  template:
+    metadata:
+      labels:
+        app: jmxexporter
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8888"
+    spec:
+      containers:
+      - name: jolokia
+        image: localhost:32000/jmxexporter/docker
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config.yaml
+          subPath: config.yaml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: jmxexporter-config

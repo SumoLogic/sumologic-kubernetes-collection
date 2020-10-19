@@ -27,9 +27,11 @@ The following are required to setup Sumo Logic's Kubernetes collection.
   * Your Kubernetes cluster must allow [outbound access to Sumo Logic](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security) to setup collection. Using a proxy is not currently supported.
   * Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
 
+To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
+
 ## Prerequisite
 
-Sumo Logic Apps for Kubernetes and Explore require you to add the following [fields](https://help.sumologic.com/Manage/Fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata. This is a one time setup per Sumo Logic account.
+Sumo Logic Apps for Kubernetes and Explore require you to add the following [fields](https://help.sumologic.com/Manage/Fields#Manage_fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata. This is a one time setup per Sumo Logic account.
 - cluster
 - container
 - deployment
@@ -127,7 +129,26 @@ Finally, you can run `kubectl apply` on the file containing the rendered YAML fr
 kubectl config set-context --current --namespace=my-namespace
 kubectl apply -f sumologic.yaml
 ```
+### Installation in Openshift Platform
+The daemonset/statefulset fails to create the pods in Openshift environment due to the request of elevated privileges, like HostPath mounts, privileged: true, etc.
 
+If you wish to install the chart in the Openshift Platform, it requires a SCC resource which is only created in Openshift (detected via API capabilities in the chart), you can do the following:
+
+```bash
+kubectl run tools \
+  -it --quiet --rm \
+  --restart=Never \
+  --image sumologic/kubernetes-tools:1.0.0 -- \
+  template \
+  --namespace 'my-namespace' \
+  --name-template 'collection' \
+  --set sumologic.accessId='<ACCESS_ID>' \
+  --set sumologic.accessKey='<ACCESS_KEY>' \
+  --set sumologic.clusterName='<CLUSTER_NAME>' \
+  --set sumologic.scc.create=true \
+  --set fluent-bit.securityContext.privileged=true \
+  | tee sumologic.yaml
+```
 ## Viewing Data In Sumo Logic
 
 Once you have completed installation, you can [install the Kubernetes App and view the dashboards](https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards) or [open a new Explore tab](https://help.sumologic.com/Solutions/Kubernetes_Solution/05Navigate_your_Kubernetes_environment) in Sumo Logic. If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).

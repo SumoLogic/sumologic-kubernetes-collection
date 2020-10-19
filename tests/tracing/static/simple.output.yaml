@@ -6,7 +6,7 @@ metadata:
   name: RELEASE-NAME-sumologic-otelcol
   labels:
     app: RELEASE-NAME-sumologic-fluentd-metrics
-    chart: "sumologic-1.2.2-rc.0"
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
@@ -93,6 +93,8 @@ data:
         protocols:
           grpc:
             endpoint: 0.0.0.0:55680
+          http:
+            endpoint: 0.0.0.0:55681
       zipkin:
         endpoint: 0.0.0.0:9411
     service:

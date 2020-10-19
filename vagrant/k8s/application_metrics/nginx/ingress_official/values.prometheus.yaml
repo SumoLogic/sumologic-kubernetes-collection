@@ -1,0 +1,7 @@
+prometheus:
+  create: true
+controller:
+  pod:
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9113"

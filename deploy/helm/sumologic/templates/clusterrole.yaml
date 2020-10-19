@@ -24,3 +24,13 @@ rules:
   resources:
     - configmaps
   verbs: ["create", "patch"]
+{{- if .Values.fluentd.podSecurityPolicy.create }}
+- apiGroups: ["policy"]
+  resources:
+  - podsecuritypolicies
+  resourceNames:
+  - {{ template "sumologic.metadata.name.events.statefulset" . }}
+  - {{ template "sumologic.metadata.name.metrics.statefulset" . }}
+  - {{ template "sumologic.metadata.name.logs.statefulset" . }}
+  verbs: ["use"]
+{{- end }}

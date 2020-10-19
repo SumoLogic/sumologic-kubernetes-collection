@@ -1,0 +1,39 @@
+{{- if .Values.fluentd.podSecurityPolicy.create }}
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: {{ template "sumologic.metadata.name.podsecuritypolicy" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.podsecuritypolicy" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  allowPrivilegeEscalation: true
+  allowedCapabilities:
+  - '*'
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+    # Forbid adding the root group.
+      - min: 999
+        max: 999
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  runAsUser:
+    rule: 'RunAsAny'
+  seLinux:
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+      # Forbid adding the root group.
+      - min: 1
+        max: 65535
+  volumes:
+    - 'configMap'
+    - 'persistentVolumeClaim'
+    - 'secret'
+{{- end }}

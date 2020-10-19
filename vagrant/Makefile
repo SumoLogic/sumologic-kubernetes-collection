@@ -8,10 +8,30 @@ root_dir := $(dir $(abspath $(mkfile_path)/..))
 helm_path = ${root_dir}deploy/helm/sumologic
 k8s_path = ${root_dir}vagrant/k8s
 dashboards_path = ${root_dir}vagrant/dashboards
+local_values_file = ${root_dir}vagrant/values.local.yaml
 
 # Collector configuration
 name = collection
 namespace = sumologic
+
+test:
+	${root_dir}ci/tests.sh
+
+build:
+	cd ${root_dir} && DOCKER_USE_CACHE=true ${root_dir}ci/build.sh
+	${mkfile_path} \
+		tag-and-push-local
+
+tag-and-push-local:
+	$(eval timestamp := $(shell date +%s))
+	docker tag sumologic/kubernetes-fluentd:local localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
+	docker push localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
+	touch ${local_values_file}
+	yq w -i ${local_values_file} image.repository localhost:32000/sumologic/kubernetes-fluentd
+	yq w -i ${local_values_file} image.tag local-${timestamp}
+
+generate-local-config:
+	${root_dir}vagrant/scripts/generate-local-config.sh
 
 # Collector section
 ## Collector upgrade
@@ -41,10 +61,11 @@ helm-dependencies:
 	helm dependency update "${helm_path}"
 
 helm-upgrade:
+	$(eval local_values_param := $(shell [ -f ${local_values_file} ] && echo "-f ${local_values_file}" || echo ""))
 	helm upgrade "${name}" "${helm_path}" \
 		--namespace "${namespace}" \
 		--install \
-		-f "${root_dir}vagrant/values.yaml"
+		-f "${root_dir}vagrant/values.yaml" ${local_values_param}
 
 apply-service-monitors:
 	kubectl apply -f ${k8s_path}/service-monitors.yaml
@@ -98,3 +119,107 @@ create-secrets:
 # patch context to use sumologic namespace as default
 patch-context:
 	kubectl config set-context --current --namespace "${namespace}"
+
+# Application metrics demo
+## Docker based nginx
+application-metrics-nginx-docker-run:
+	kubectl create ns demo-nginx-docker || true
+	kubectl -n demo-nginx-docker apply -f ${k8s_path}/application_metrics/nginx/docker/configmap.yaml
+	kubectl -n demo-nginx-docker apply -f ${k8s_path}/application_metrics/nginx/docker/statefulset.yaml
+
+application-metrics-nginx-docker-clean:
+	kubectl delete ns demo-nginx-docker
+
+## Nginx ingress controller
+## rel: https://docs.nginx.com/nginx-ingress-controller/overview/
+
+application-metrics-nginx-ingress-official-prometheus-run:
+	helm repo add nginx-stable https://helm.nginx.com/stable
+	helm repo update
+	helm upgrade demo-nginx-ingress-official nginx-stable/nginx-ingress \
+		--install \
+		--namespace demo-nginx-ingress-official \
+		--create-namespace \
+		-f "${k8s_path}/application_metrics/nginx/ingress_official/values.prometheus.yaml"
+
+application-metrics-nginx-ingress-official-telegraf-run:
+	helm repo add nginx-stable https://helm.nginx.com/stable
+	helm repo update
+	helm upgrade demo-nginx-ingress-official nginx-stable/nginx-ingress \
+		--install \
+		--namespace demo-nginx-ingress-official \
+		--create-namespace \
+		-f "${k8s_path}/application_metrics/nginx/ingress_official/values.telegraf.yaml"
+
+application-metrics-nginx-ingress-official-clean:
+	helm delete -n demo-nginx-ingress-official demo-nginx-ingress-official
+	kubectl delete ns demo-nginx-ingress-official
+
+## Docker based redis
+application-metrics-redis-docker-run:
+	kubectl create ns demo-redis-docker || true
+	kubectl -n demo-redis-docker apply -f ${k8s_path}/application_metrics/redis/docker/statefulset.yaml
+
+application-metrics-redis-docker-clean:
+	kubectl delete ns demo-redis-docker
+
+## Bitnami based redis
+application-metrics-redis-bitnami-telegraf-run:
+	helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo update
+	helm upgrade demo-redis-bitnami bitnami/redis \
+		--install \
+		--namespace demo-redis-bitnami \
+		--create-namespace \
+		-f "${k8s_path}/application_metrics/redis/bitnami/values.telegraf.yaml"
+
+application-metrics-redis-bitnami-prometheus-run:
+	helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo update
+	helm upgrade demo-redis-bitnami bitnami/redis \
+		--install \
+		--namespace demo-redis-bitnami \
+		--create-namespace \
+		-f "${k8s_path}/application_metrics/redis/bitnami/values.prometheus.yaml"
+
+application-metrics-redis-bitnami-clean:
+	helm delete -n demo-redis-bitnami demo-redis-bitnami
+	kubectl delete ns demo-redis-bitnami
+
+## JMXExporter based JMX
+application-metrics-jmxexporter-docker-build:
+	docker build /sumologic/vagrant/k8s/application_metrics/jmx/jmxexporter/docker/ -t localhost:32000/jmxexporter/docker
+	docker push localhost:32000/jmxexporter/docker
+
+application-metrics-jmxexporter-docker-run:
+	kubectl create ns demo-jmxexporter-docker || true
+	kubectl -n demo-jmxexporter-docker apply -f ${k8s_path}/application_metrics/jmx/jmxexporter/docker/configmap.yaml
+	kubectl -n demo-jmxexporter-docker apply -f ${k8s_path}/application_metrics/jmx/jmxexporter/docker/statefulset.yaml
+
+application-metrics-jmxexporter-docker-clean:
+	kubectl delete ns demo-jmxexporter-docker
+
+## Jolokia based JMX
+### Jolokia as javagent
+application-metrics-jolokia-docker-build:
+	docker build /sumologic/vagrant/k8s/application_metrics/jmx/jolokia/docker/ -t localhost:32000/jolokia/docker
+	docker push localhost:32000/jolokia/docker
+
+application-metrics-jolokia-docker-run:
+	kubectl create ns demo-jolokia-docker || true
+	kubectl -n demo-jolokia-docker apply -f ${k8s_path}/application_metrics/jmx/jolokia/docker/statefulset.yaml
+
+application-metrics-jolokia-docker-clean:
+	kubectl delete ns demo-jolokia-docker
+
+### Jolokia as standalone application
+application-metrics-jolokia-agent-build:
+	docker build /sumologic/vagrant/k8s/application_metrics/jmx/jolokia/agent/ -t localhost:32000/jolokia/agent
+	docker push localhost:32000/jolokia/agent
+
+application-metrics-jolokia-agent-run:
+	kubectl create ns demo-jolokia-agent || true
+	kubectl -n demo-jolokia-agent apply -f ${k8s_path}/application_metrics/jmx/jolokia/agent/statefulset.yaml
+
+application-metrics-jolokia-agent-clean:
+	kubectl delete ns demo-jolokia-agent
