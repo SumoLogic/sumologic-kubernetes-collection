@@ -24,7 +24,6 @@ If you don’t already have a Sumo account, you can create one by clicking the F
 The following are required to setup Sumo Logic's Kubernetes collection.
 
   * An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with [Manage Collectors](https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management) capability.
-  * Your Kubernetes cluster must allow [outbound access to Sumo Logic](https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security) to setup collection. Using a proxy is not currently supported.
   * Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
 
 To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
