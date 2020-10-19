@@ -38,6 +38,10 @@ spec:
         configMap:
           name: {{ template "sumologic.metadata.name.setup.configmap" . }}
           defaultMode: 0777
+      - name: custom
+        configMap:
+          name: {{ template "sumologic.metadata.name.setup.configmap-custom" . }}
+          defaultMode: 0777
       containers:
       - name: setup
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -48,6 +52,8 @@ spec:
         volumeMounts:
         - name: setup
           mountPath: /etc/terraform
+        - name: custom
+          mountPath: /customer-scripts
         {{- if .Values.sumologic.envFromSecret }}
         envFrom:
         - secretRef:

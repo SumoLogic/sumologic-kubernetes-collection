@@ -151,6 +151,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.setup.configmap-custom" -}}
+{{- template "sumologic.labels.app.setup" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.setup.roles.clusterrole" -}}
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
@@ -303,6 +307,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.setup.job" -}}
 {{ template "sumologic.metadata.name.setup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.setup.configmap-custom" -}}
+{{ template "sumologic.metadata.name.setup" . }}-custom
 {{- end -}}
 
 {{- define "sumologic.metadata.name.setup.configmap" -}}

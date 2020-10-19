@@ -1,5 +1,5 @@
-#!/bin/sh
-cp /etc/terraform/*.tf /terraform
+#!/bin/bash
+cp /etc/terraform/{locals,main,providers,resources,variables}.tf /terraform
 cd /terraform
 
 # Fix URL to remove "v1" or "v1/"
@@ -25,8 +25,14 @@ terraform import sumologic_http_source.{{ template "terraform.sources.name" (dic
 {{- end }}
 {{- end }}
 
-
 # Kubernetes Secret
 terraform import kubernetes_secret.sumologic_collection_secret {{ .Release.Namespace }}/sumologic
 
 terraform apply -auto-approve
+
+# Cleanup env variables
+export SUMOLOGIC_BASE_URL=
+export SUMOLOGIC_ACCESSKEY=
+export SUMOLOGIC_ACCESSID=
+
+bash /etc/terraform/custom.sh

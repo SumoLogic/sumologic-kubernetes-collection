@@ -71,8 +71,8 @@ RUN apt-get update \
         libsnappy-dev
 
 # Create directory for terraform configuration
-RUN mkdir -p /terraform \
- && chown -R fluent /terraform
+RUN mkdir -p /terraform /scripts \
+ && chown -R fluent /terraform /scripts
 
 COPY --from=builder /bin/terraform /bin/terraform
 COPY --from=builder /usr/local/bundle /usr/local/bundle
