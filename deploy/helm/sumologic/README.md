@@ -205,6 +205,7 @@ Parameter | Description | Default
 `telegraf-operator.data` | Telegraf sidecar configuration. | `{"sumologic-prometheus": "[[outputs.prometheus_client]]\\n          ## Configuration details:\\n          ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration\\n          listen = ':9273'\\n          metric_version = 2\\n"}`
 `otelcol.deployment.replicas` | Set the number of OpenTelemetry Collector replicas. | `1`
 `otelcol.deployment.resources.limits.memory` | Sets the OpenTelemetry Collector memory limit. | `2Gi`
+`otelcol.metrics_enabled` | Enable or disable generation of the metrics from Collector. | `false`
 `otelcol.config.service.pipelines.traces.receivers` | Sets the list of enabled receivers. | `{jaeger, opencensus, otlp, zipkin}`
 `otelcol.config.exporters.zipkin.timeout` | Sets the Zipkin (default) exporter timeout. Append the unit, e.g. `s` when setting the parameter | `5s`
 `otelcol.config.exporters.logging.loglevel` | When tracing debug logging exporter is enabled, sets the verbosity level. Use either `info` or `debug`. | `info`
