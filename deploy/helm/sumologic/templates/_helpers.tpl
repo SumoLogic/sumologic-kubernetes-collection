@@ -737,6 +737,26 @@ Example Usage:
 {{- end -}}
 
 {{/*
+Check if particular source is enabled or not
+
+Example Usage:
+{{- if eq (include "terraform.sources.to_create" (dict "Context" .Values "Type" "metrics" .Name "default" )) "true" }}
+
+*/}}
+{{- define "terraform.sources.to_create" -}}
+{{- $type := .Type -}}
+{{- $ctx := .Context -}}
+{{- $name := .Name -}}
+{{- $value := true -}}
+{{- if and (hasKey $ctx.sumologic.sources $type) (hasKey (index $ctx.sumologic.sources $type) $name) (hasKey (index $ctx.sumologic.sources $type $name) "create") -}}
+{{- if not (index $ctx.sumologic.sources $type $name "create") -}}
+{{- $value = false -}}
+{{- end -}}
+{{- end -}}
+{{ $value }}
+{{- end -}}
+
+{{/*
 Generate fluentd envs for given source type:
 
 Example:
