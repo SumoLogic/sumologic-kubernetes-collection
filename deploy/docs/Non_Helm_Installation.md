@@ -131,6 +131,7 @@ kubectl apply -f sumologic.yaml
 ```
 ### Installation in Openshift Platform
 The daemonset/statefulset fails to create the pods in Openshift environment due to the request of elevated privileges, like HostPath mounts, privileged: true, etc.
+Also, since the `prometheus-node-exporter` is already present in Openshift platform by default, we need to override the port being used by `prometheus-node-exporter` to `9200`.
 
 If you wish to install the chart in the Openshift Platform, it requires a SCC resource which is only created in Openshift (detected via API capabilities in the chart), you can do the following:
 
@@ -147,6 +148,8 @@ kubectl run tools \
   --set sumologic.clusterName='<CLUSTER_NAME>' \
   --set sumologic.scc.create=true \
   --set fluent-bit.securityContext.privileged=true \
+  --set prometheus-operator.prometheus-node-exporter.service.port=9200 \
+  --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
   | tee sumologic.yaml
 ```
 ## Viewing Data In Sumo Logic

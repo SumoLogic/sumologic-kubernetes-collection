@@ -702,6 +702,10 @@ metrics-server:
 ## Configure fluent-bit
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
 fluent-bit:
+  image:
+    fluent_bit:
+      repository: fluent/fluent-bit
+      tag: 1.6.0
   ## Resource limits for fluent-bit
   resources: {}
     # limits:
