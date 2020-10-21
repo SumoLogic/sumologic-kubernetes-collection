@@ -78,7 +78,7 @@ helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace -
 For Helm3, if the namespace does not exist, you can add the `--create-namespace` flag.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME> --create-namespace"
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --create-namespace
 ```
 
 ### Installing the helm chart in Openshift platform
