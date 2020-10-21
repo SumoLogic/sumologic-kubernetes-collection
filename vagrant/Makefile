@@ -79,6 +79,9 @@ clean:
 		remove-collector \
 		remove-service-monitors remove-receiver-mock remove-prometheus-crds remove-namespace
 
+remove-avalanche:
+	kubectl delete -f ${k8s_path}/avalanche.yaml --ignore-not-found=true
+
 remove-namespace:
 	kubectl delete -f ${k8s_path}/sumologic.yaml --ignore-not-found=true
 
