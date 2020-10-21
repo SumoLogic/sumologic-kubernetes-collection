@@ -15,13 +15,20 @@ prometheus-operator:
           editable: true
           options:
             path: /var/lib/grafana/dashboards/default
-    prometheus:
-      prometheusSpec:
-        externalLabels:
-          cluster: microk8s
     sidecar:
       image:
         sha: ''
+  prometheus:
+    prometheusSpec:
+      externalLabels:
+        cluster: microk8s
+      resources:
+        limits:
+          cpu: 4000m
+          memory: 12Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
 sumologic:
   accessId: dummy
   accessKey: dummy
