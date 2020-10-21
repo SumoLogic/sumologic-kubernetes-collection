@@ -95,6 +95,7 @@ function push_helm_chart() {
   git checkout -- .
   sudo helm init --client-only
   sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
+  sudo helm repo add bitnami https://charts.bitnami.com/bitnami
   sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
   # due to helm repo index issue: https://github.com/helm/helm/issues/7363
@@ -162,6 +163,7 @@ function generate_overrides() {
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
   sudo helm init --client-only
   sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
+  sudo helm repo add bitnami https://charts.bitnami.com/bitnami
   sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
   sudo helm dependency update deploy/helm/sumologic
 
