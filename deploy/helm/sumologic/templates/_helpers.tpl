@@ -139,6 +139,31 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.otelcol" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.otelagent" -}}
+{{- template "sumologic.fullname" . }}-otelagent
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelagent.pod" -}}
+{{- template "sumologic.labels.app.otelagent" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelagent.service" -}}
+{{- template "sumologic.labels.app.otelagent" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelagent.configmap" -}}
+{{- template "sumologic.labels.app.otelagent" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelagent.daemonset" -}}
+{{- template "sumologic.labels.app.otelagent" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelagent.component" -}}
+{{- template "sumologic.labels.app.otelagent" . }}-component
+{{- end -}}
+
+
 {{- define "sumologic.labels.app.setup" -}}
 {{- template "sumologic.labels.app" . }}
 {{- end -}}
@@ -303,6 +328,22 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.otelcol.deployment" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelagent" -}}
+{{ template "sumologic.fullname" . }}-otelagent
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelagent.service" -}}
+{{ template "sumologic.metadata.name.otelagent" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelagent.configmap" -}}
+{{ template "sumologic.metadata.name.otelagent" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelagent.daemonset" -}}
+{{ template "sumologic.metadata.name.otelagent" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.setup" -}}

@@ -1,0 +1,39 @@
+{{- if and (eq .Values.sumologic.traces.enabled true) (eq .Values.otelagent.enabled true) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.metadata.name.otelagent.service" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.otelagent.service" . }}
+    {{- include "sumologic.labels.traces" . | nindent 4 }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ template "sumologic.labels.app.otelagent.pod" . }}
+    component: {{ template "sumologic.labels.app.otelagent.component" . }}
+  ports:
+  - name: jaeger-sampling # Default endpoint for Jaeger Sampling (if enabled)
+    port: 5778
+  - name: jaeger-thrift-compact # Default endpoint for Jaeger Thrift Compact receiver.
+    port: 6831
+    protocol: UDP
+  - name: jaeger-thrift-binary # Default endpoint for Jaeger Thrift Binary receiver.
+    port: 6832
+    protocol: UDP
+  - name: metrics # Default endpoint for querying metrics.
+    port: 8888
+  - name: zipkin # Default endpoint for Zipkin receiver.
+    port: 9411
+  - name: jaeger-grpc  # Default endpoint for Jaeger gRPC
+    port: 14250
+  - name: jaegert-channel  # Default endpoint for Jaeger TChannel receiver.
+    port: 14267
+  - name: jaeger-thrift-http # Default endpoint for Jaeger HTTP receiver.
+    port: 14268
+  - name: opencensus # Default endpoint for Opencensus receiver.
+    port: 55678
+  - name: otlp-grpc # Default endpoint for OTLP gRPC receiver.
+    port: 55680
+  - name: otlp-http # Default endpoint for OTLP HTTP receiver.
+    port: 55681
+{{- end }}
