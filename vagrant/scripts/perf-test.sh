@@ -25,7 +25,7 @@ set -e
 
 readonly DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 readonly AVALANCHE_YAML_PATH="${DIR}/../k8s/avalanche.yaml"
-readonly RECEIVER_MOCK_POD="$(kubectl get pod -n receiver-mock --no-headers -lapp=receiver-mock --output custom-columns=NAME:.metadata.name)"
+readonly RECEIVER_MOCK_POD="$(kubectl get pod -n receiver-mock --no-headers -lapp=receiver-mock --output custom-columns=NAME:.metadata.name | head -1)"
 
 function is_avalanche_running() {
     local out
