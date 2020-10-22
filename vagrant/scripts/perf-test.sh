@@ -23,7 +23,7 @@ set -e
 #         diff:            543Mi
 # receiver-mock ingested 3575 metrics during the test
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+readonly DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 readonly AVALANCHE_YAML_PATH="${DIR}/../k8s/avalanche.yaml"
 readonly RECEIVER_MOCK_POD="$(kubectl get pod -n receiver-mock --no-headers -lapp=receiver-mock --output custom-columns=NAME:.metadata.name)"
 
