@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: avalanche
-        image: quay.io/freshtracks.io/avalanche:latest
+        image: quay.io/freshtracks.io/avalanche:master-2020-09-17-25296ea
         args:
         - --metric-count=200
         - --series-count=200
