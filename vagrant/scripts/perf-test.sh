@@ -47,7 +47,7 @@ function container_memory_rss() {
 }
 
 function ingested_metrics_count() {
-    kubectl exec -n receiver-mock "${RECEIVER_MOCK_POD}" \ -- curl -s -XGET localhost:3000/metrics | \
+    kubectl exec -n receiver-mock "${RECEIVER_MOCK_POD}" -- curl -s -XGET localhost:3000/metrics | \
         grep "^receiver_mock_metrics_count" | awk '{print $2}'
 }
 
