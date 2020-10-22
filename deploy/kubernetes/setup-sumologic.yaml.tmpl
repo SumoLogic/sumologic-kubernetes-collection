@@ -218,6 +218,21 @@ data:
   
 
 ---
+# Source: sumologic/templates/setup/setup-custom-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  collection-sumologic-setup-custom
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "2"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic
+    
+data:
+
+---
 # Source: sumologic/templates/setup/setup-serviceaccount.yaml
 
 apiVersion: v1
@@ -343,10 +358,6 @@ spec:
         
       securityContext:
         runAsUser: 999
-
----
-# Source: sumologic/templates/setup/setup-custom-configmap.yaml
-
 
 ---
 # Source: sumologic/templates/setup/setup-scc.yaml
