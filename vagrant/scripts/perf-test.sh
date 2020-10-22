@@ -65,6 +65,11 @@ function run_test() {
         exit 1
     fi
 
+    local PROMETHEUS_MEMORY_RSS_START
+    local PROMETHEUS_MEMORY_RSS_FINISH
+    local AVALANCHE_COUNT
+    local AVALANCHE_POD_NAME
+
     PROMETHEUS_MEMORY_RSS_START=$(container_memory_rss prometheus)
 
     echo "Setting up avalanche..."
@@ -98,7 +103,7 @@ function usage() {
     echo "${0} <test_duration_in_seconds>"
 }
 
-DURATION="${1}"
+readonly DURATION="${1}"
 if [[ -z "${DURATION}" ]] ; then
     usage
     exit 1
