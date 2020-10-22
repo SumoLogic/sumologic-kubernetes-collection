@@ -18,6 +18,7 @@ prometheus-operator:
     sidecar:
       image:
         sha: ''
+
   prometheus:
     prometheusSpec:
       externalLabels:
@@ -29,10 +30,26 @@ prometheus-operator:
         requests:
           cpu: 500m
           memory: 512Mi
+      remoteWrite:
+        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.avalanche
+          writeRelabelConfigs:
+            - action: keep
+              regex: avalanche.*
+              sourceLabels: [__name__]
+
+metrics:
+  enabled: true
+  output:
+    default:
+      tag: prometheus.metrics**
+      id: sumologic.endpoint.metrics
+      weight: 100
+
 sumologic:
   accessId: dummy
   accessKey: dummy
   endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
+
 telegraf-operator:
   enabled: true
   replicaCount: 1
