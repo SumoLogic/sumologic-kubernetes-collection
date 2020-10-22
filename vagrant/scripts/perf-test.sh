@@ -28,6 +28,7 @@ readonly AVALANCHE_YAML_PATH="${DIR}/../k8s/avalanche.yaml"
 readonly RECEIVER_MOCK_POD="$(kubectl get pod -n receiver-mock --no-headers -lapp=receiver-mock --output custom-columns=NAME:.metadata.name)"
 
 function is_avalanche_running() {
+    local out
     out="$(kubectl get pods --no-headers -n avalanche --output custom-columns=NAME:.metadata.name)"
     if [[ -z "${out}" ]]; then
         echo 1
@@ -46,10 +47,8 @@ function container_memory_rss() {
 }
 
 function ingested_metrics_count() {
-    local count
-    count="$(kubectl exec -n receiver-mock "${RECEIVER_MOCK_POD}" \
-        -- curl -s -XGET localhost:3000/metrics | grep "^receiver_mock_metrics_count" | awk '{print $2}')"
-    echo "${count}"
+    kubectl exec -n receiver-mock "${RECEIVER_MOCK_POD}" \ -- curl -s -XGET localhost:3000/metrics | \
+        grep "^receiver_mock_metrics_count" | awk '{print $2}'
 }
 
 function reset_receiver_mock_metrics() {
