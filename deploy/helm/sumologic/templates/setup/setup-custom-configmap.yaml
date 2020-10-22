@@ -1,4 +1,3 @@
-{{- if .Values.sumologic.setup.additionalFiles }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,6 +8,7 @@ metadata:
     app: {{ template "sumologic.labels.app.setup.configmap-custom" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
+{{- if .Values.sumologic.setup.additionalFiles }}
   {{- range $directory, $files := .Values.sumologic.setup.additionalFiles }}
   {{- range $filename, $file := $files }}
   {{ printf "%s_%s: |-" $directory $filename }}

@@ -1,0 +1,16 @@
+---
+# Source: sumologic/templates/setup/setup-custom-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  RELEASE-NAME-sumologic-setup-custom
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "2"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app: RELEASE-NAME-sumologic
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
