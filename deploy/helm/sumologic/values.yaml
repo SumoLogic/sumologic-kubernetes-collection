@@ -1598,8 +1598,8 @@ otelagent:
     tolerations: {}
     resources:
       limits:
-        memory: 1Gi
-        cpu: 500m
+        memory: 2Gi
+        cpu: 1000m
       requests:
         memory: 196Mi
         cpu: 50m
@@ -1652,7 +1652,7 @@ otelagent:
         ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
         ## Note that typically the total memory usage of process will be about 50MiB higher
         ## than this value.
-        limit_mib: 450
+        limit_mib: 1900
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
