@@ -1588,7 +1588,7 @@ otelcol:
   # To enable collecting all logs, set to false
   logLevelFilter: true
   # Metrics from Collector
-  metrics_enabled: false
+  metrics_enabled: true
   # Collector configuration
   config:
     receivers:
