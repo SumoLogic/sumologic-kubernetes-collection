@@ -9,6 +9,7 @@ helm_path = ${root_dir}deploy/helm/sumologic
 k8s_path = ${root_dir}vagrant/k8s
 dashboards_path = ${root_dir}vagrant/dashboards
 local_values_file = ${root_dir}vagrant/values.local.yaml
+vagrant_scripts_dir = ${root_dir}vagrant/scripts/
 
 # Collector configuration
 name = collection
@@ -31,7 +32,7 @@ tag-and-push-local:
 	yq w -i ${local_values_file} image.tag local-${timestamp}
 
 generate-local-config:
-	${root_dir}vagrant/scripts/generate-local-config.sh
+	${vagrant_scripts_dir}generate-local-config.sh
 
 # Collector section
 ## Collector upgrade
@@ -72,6 +73,25 @@ apply-service-monitors:
 
 apply-avalanche:
 	kubectl apply -f ${k8s_path}/avalanche.yaml
+
+# This applies prometheus remote write rule to forward all avalanche metrics to receiver-mock
+# Since this removes the generated values.local.yaml after it's applied subsequent 'make helm-upgrade'
+# will revert this change.
+apply-avalanche-remote-write: _apply-avalanche-remote-write-to-local-values helm-upgrade clean-local-values-yaml
+
+clean-local-values-yaml:
+	rm ${local_values_file}
+
+_apply-avalanche-remote-write-to-local-values: generate-local-config
+	yq w -s ${vagrant_scripts_dir}yq/update_remote_write_for_avalanche.yaml ../deploy/helm/sumologic/values.yaml | \
+	yq r - 'prometheus-operator.prometheus.prometheusSpec.remoteWrite' | \
+	yq prefix - 'prometheus-operator.prometheus.prometheusSpec.remoteWrite' > ${local_values_file}
+
+# Make sure avalanche remote write rule is applied in prometheus by running
+# 'apply-avalanche-remote-write' target and verifying it in prometheus itself:
+# kubectl exec -it prometheus-collection-prometheus-oper-prometheus-0 --container prometheus -- cat /etc/prometheus/config_out/prometheus.env.yaml
+run-perf-test:
+	TEST_DURATION=300 TEST_WARMUP_DURATION=30 ./scripts/perf-test.sh
 
 ## Collector removing
 clean:

@@ -29,20 +29,6 @@ prometheus-operator:
         requests:
           cpu: 500m
           memory: 512Mi
-      remoteWrite:
-        - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.avalanche
-          writeRelabelConfigs:
-            - action: keep
-              regex: avalanche.*
-              sourceLabels: [__name__]
-
-metrics:
-  enabled: true
-  output:
-    default:
-      tag: prometheus.metrics**
-      id: sumologic.endpoint.metrics
-      weight: 100
 
 sumologic:
   accessId: dummy
