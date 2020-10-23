@@ -209,7 +209,7 @@ Parameter | Description | Default
 `otelcol.deployment.replicas` | Set the number of OpenTelemetry Collector replicas. | `1`
 `otelcol.deployment.resources.limits.memory` | Sets the OpenTelemetry Collector memory limit. | `2Gi`
 `otelcol.deployment.priorityClassName` | Priority class name for OpenTelemetry Collector log pods. | `Nil`
-`otelcol.metrics_enabled` | Enable or disable generation of the metrics from Collector. | `false`
+`otelcol.metrics.enabled` | Enable or disable generation of the metrics from Collector. | `false`
 `otelcol.config.service.pipelines.traces.receivers` | Sets the list of enabled receivers. | `{jaeger, opencensus, otlp, zipkin}`
 `otelcol.config.exporters.zipkin.timeout` | Sets the Zipkin (default) exporter timeout. Append the unit, e.g. `s` when setting the parameter | `5s`
 `otelcol.config.exporters.logging.loglevel` | When tracing debug logging exporter is enabled, sets the verbosity level. Use either `info` or `debug`. | `info`
