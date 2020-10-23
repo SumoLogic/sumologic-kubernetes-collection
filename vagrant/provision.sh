@@ -5,7 +5,7 @@ set -x
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get --yes upgrade
-apt-get --yes install apt-transport-https
+apt-get --yes install apt-transport-https jq
 
 echo "export EDITOR=vim" >> /home/vagrant/.bashrc
 
@@ -24,6 +24,9 @@ microk8s.kubectl config view --raw > /sumologic/.kube-config
 
 snap alias microk8s.kubectl kubectl
 
+# allow webhook authentication
+echo "--authentication-token-webhook=true" >> /var/snap/microk8s/current/args/kubelet
+echo "--authorization-mode=Webhook" >> /var/snap/microk8s/current/args/kubelet
 # allow privileged
 echo "--allow-privileged=true" >> /var/snap/microk8s/current/args/kube-apiserver
 systemctl restart snap.microk8s.daemon-kubelet.service
