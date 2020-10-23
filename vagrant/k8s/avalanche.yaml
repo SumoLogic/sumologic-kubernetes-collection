@@ -7,10 +7,9 @@ metadata:
 spec:
   finalizers:
   - kubernetes
-
 ---
 # create deployment avalanche
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: avalanche
@@ -29,17 +28,14 @@ spec:
     spec:
       containers:
       - name: avalanche
-        image: quay.io/freshtracks.io/avalanche:master-2019-10-09-3efdac3
+        image: quay.io/freshtracks.io/avalanche:master-2020-09-17-25296ea
         args:
-        - --metric-count=120
-        - --series-count=100
+        - --metric-count=200
+        - --series-count=200
         - --port=9006
         - --series-interval=60000
         - --metric-interval=60000
-        - --value-interval=60
-        ports:
-        - containerPort: 9001
-
+        - --value-interval=30
 ---
 # create service avalanche-svc
 apiVersion: v1

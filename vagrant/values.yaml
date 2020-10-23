@@ -29,10 +29,12 @@ prometheus-operator:
         requests:
           cpu: 500m
           memory: 512Mi
+
 sumologic:
   accessId: dummy
   accessKey: dummy
   endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
+
 telegraf-operator:
   enabled: true
   replicaCount: 1
