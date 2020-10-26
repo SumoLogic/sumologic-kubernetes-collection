@@ -323,6 +323,8 @@ fluentd:
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
     podDisruptionBudget:
       minAvailable: 2
+    ## To use maxUnavailable, set minAvailable to null and uncomment the below:
+    #   maxUnavailable: 1
 
     rawConfig: |-
       @include common.conf
