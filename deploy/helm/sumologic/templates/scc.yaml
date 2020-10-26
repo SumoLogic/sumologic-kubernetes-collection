@@ -43,4 +43,5 @@ volumes:
 - emptyDir
 - secret
 - configMap
+- persistentVolumeClaim
 {{- end }}
