@@ -1,7 +1,5 @@
 lang: ruby
-# Somehow focal (20.04) is available for amd64 but when
-# ran on travis it falls back to xenial (16.04) so just use bionic (18.04)
-dist: bionic
+dist: focal
 arch: amd64
 services: docker
 
