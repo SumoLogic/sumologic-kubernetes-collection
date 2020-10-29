@@ -85,7 +85,7 @@ kubectl get configmap sumologic-configmap \
 kubectl apply --namespace=<destination-namespace> -f -
 ```
 
-Run the following commands to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator with the prometheus overrides based on out `values.yaml`.
+Run the following commands to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator with the prometheus overrides based on our `values.yaml`.
 
 First, generate the Prometheus Operator `prometheus-overrides.yaml` by running commands below:
 
