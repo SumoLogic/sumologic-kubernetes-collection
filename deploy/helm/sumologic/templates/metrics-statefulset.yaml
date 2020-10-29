@@ -16,6 +16,7 @@ spec:
   template:
     metadata:
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/metrics-configmap.yaml") . | sha256sum }}
 {{- if .Values.sumologic.podAnnotations }}
 {{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
