@@ -201,7 +201,7 @@ You can find more information on the `grep` filter plugin in the [fluentd docume
 If you want to capture container logs to a container that writes locally, you will need to ensure the logs get mounted to the host so fluent-bit can be configured to capture from the host.
 
 Example:
-In the `values.yaml` in the `fluent-bit.rawConfig section`, you have to add a new input specifying the file path, eg.
+In `values.yaml` in the `fluent-bit.rawConfig` section, you have to add a new input specifying the file path, eg.
 
 ```bash
 [INPUT]
