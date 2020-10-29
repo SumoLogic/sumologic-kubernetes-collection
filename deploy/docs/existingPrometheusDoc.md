@@ -85,13 +85,25 @@ kubectl get configmap sumologic-configmap \
 kubectl apply --namespace=<destination-namespace> -f -
 ```
 
-Run the following commands to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator with the prometheus overrides we provide in our [prometheus-overrides.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/prometheus-overrides.yaml).
+Run the following commands to update the [remote write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) of the prometheus operator with the prometheus overrides based on out `values.yaml`.
 
-Run the following command to download our prometheus-overrides.yaml file. Please review our configuration as it will be applied to your existing operator configuration.
+First, generate the Prometheus Operator `prometheus-overrides.yaml` by running commands below:
 
 ```bash
-curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.3/deploy/helm/prometheus-overrides.yaml
+ # using kubectl
+ kubectl run template-dependency \
+  -it --quiet --rm \
+  --restart=Never -n sumologic \
+  --image sumologic/kubernetes-tools:master \
+  -- template-dependency prometheus-operator > prometheus-overrides.yaml
+
+ # or using docker
+ docker run -it --rm \
+  sumologic/kubernetes-tools:master \
+  template-dependency prometheus-operator > prometheus-overrides.yaml
 ```
+
+Please review our configuration as it will be applied to your existing operator configuration.
 
 Next you can upgrade your Prometheus-Operator.  The following command assumes it is installed with the release name `prometheus-operator`. Remember, this command will update your Prometheus Operator to be configured with our default settings. If you wish to preserve your settings and merge with what is required for Sumo logic, then please look at the section on [how to merge the configuration](#merge-prometheus-configuration).
 
@@ -105,7 +117,7 @@ Once you have completed installation, you can [install the Kubernetes App and vi
 
 ## Merge Prometheus Configuration
 
-If you have customized your Prometheus configuration, follow these steps to merge the configurations. 
+If you have customized your Prometheus configuration, follow these steps to merge the configurations.
 
 Helm supports providing multiple configuration files, and priority will be given to the last (right-most) file specified. You can obtain your current prometheus configuration by running
 
