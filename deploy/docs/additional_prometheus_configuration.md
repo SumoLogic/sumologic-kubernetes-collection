@@ -2,7 +2,26 @@
 
 ## Configuration
 
-Prometheus configuration is located in `values.yaml` under `prometheus-operator` key for helm installation or in `prometheus-overrides.yaml` if you are using prometheus-operator directly. All changes described in this documentation should be introduced in those files depending of used deployment.
+Prometheus configuration is located in `values.yaml` under `prometheus-operator` key for helm installation.
+
+If the `prometheus-operator` has been installed directly, a `prometheus-overrides.yaml` should be generated
+using `docker`/`kubectl` and [sumologic-kubernetes-tools](prometheus-operator directly):
+
+```bash
+ # using kubectl
+ kubectl run template-dependency \
+  -it --quiet --rm \
+  --restart=Never -n sumologic \
+  --image sumologic/kubernetes-tools:master \
+  -- template-dependency prometheus-operator > prometheus-overrides.yaml
+
+ # or using docker
+ docker run -it --rm \
+  sumologic/kubernetes-tools:master \
+  template-dependency prometheus-operator > prometheus-overrides.yaml
+```
+
+All changes described in this documentation should be introduced in those files depending of used deployment.
 
 ## Filter metrics
 
