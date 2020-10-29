@@ -1602,6 +1602,16 @@ otelcol:
     #         name: secret_name
     #         key: secret_key
 
+    # extraVolumes:
+    #   - name: es-certs
+    #     secret:
+    #       defaultMode: 420
+    #       secretName: es-certs
+    # extraVolumeMounts:
+    #   - name: es-certs
+    #     mountPath: /certs
+    #     readOnly: true
+
   # To enable collecting all logs, set to false
   logLevelFilter: true
   # Metrics from Collector
