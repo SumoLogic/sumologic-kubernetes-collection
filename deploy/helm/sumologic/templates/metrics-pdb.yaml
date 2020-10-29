@@ -2,7 +2,7 @@
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
-  name: {{ template "sumologic.metadata.name.metrics.statefulset" . }}-pdb
+  name: {{ template "sumologic.metadata.name.metrics.pdb" . }}
 spec:
   selector:
     matchLabels:
