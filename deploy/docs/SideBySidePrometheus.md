@@ -57,8 +57,6 @@ Since we are installing with an existing Prometheus Operator we must also define
 * __prometheus-operator.prometheus-node-exporter.service.port=9200__ - Since node exporter uses a `NodePort` we have to change the port.
 * __prometheus-operator.prometheus-node-exporter.service.targetPort=9200__ - Since node exporter uses a `NodePort` we have to change the port.
 
-The following helm commands support Helm2 or Helm3.
-
 To install the chart, first add the `sumologic` private repo:
 
 ```bash
@@ -78,7 +76,7 @@ If you wish to install the chart in a different existing namespace you can do th
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.enabled=false --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
 ```
 
-For Helm3, if the namespace does not exist, you can add the `--create-namespace` flag.
+If the namespace does not exist, you can add the `--create-namespace` flag.
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.enabled=false --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200 --create-namespace
@@ -95,12 +93,6 @@ Once you have completed installation, you can [install the Kubernetes App and vi
 
 ## Troubleshooting Installation
 
-### Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists
-If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists` on a Helm2 installation, run the above command with the `--set prometheus-operator.prometheusOperator.createCustomResource=false` flag:
-
-```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false --set prometheus-operator.prometheusOperator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200 --set prometheus-operator.prometheusOperator.createCustomResource=false
-```
 ### Error: timed out waiting for the condition
 If `helm upgrade --install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm upgrade --install` command. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where the Helm chart was deployed. The pod name will contain `-setup` in the name.
 
@@ -170,7 +162,6 @@ To uninstall/delete the Helm chart:
 ```bash
 helm delete my-release
 ```
-> **Helm2 Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
 
 > **Helm3 Tip**: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.ease.
 

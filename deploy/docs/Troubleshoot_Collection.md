@@ -20,7 +20,6 @@
     - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator) 
   - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics) 
   - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
-  - [Error: could not find tiller](#error-could-not-find-tiller)
   - [Errors in helm installation](#errors-in-helm-installation)
   - [Rancher](#rancher)
 
@@ -286,77 +285,6 @@ kubectl -n kube-system patch service collection-prometheus-oper-kube-scheduler -
 
 ### Prometheus stuck in `Terminating` state after running `helm del collection`
 Delete the pod forcefully by adding `--force --grace-period=0` to the `kubectl delete pod` command.
-
-### Error: could not find tiller
-After running helm init you will see something like:
-
-```
-Warning: Tiller is already installed in the cluster.
-(Use --client-only to suppress this message, or --upgrade to upgrade Tiller to the current version.)
-Happy Helming!
-```
-
-However, when you try to run the helm install command it will error out:
-
-```
-Error: could not find tiller
-```
-
-To resolve this, you need to re-initalize tiller:
-
-```
-kubectl -n kube-system delete deployment tiller-deploy 
-
-kubectl -n kube-system delete service/tiller-deploy
-
-helm init --service-account tiller --history-max 200
-```
-
-### Errors in helm installation
-``` bash 
-Error: validation failed: [unable to recognize no matches for kind "ServiceMonitor" in version "monitoring.coreos.com/v1", unable to recognize "": no matches for kind "Prometheus" in version "monitoring.coreos.com/v1"
-```
-This is a known race condition with Helm and there is no workaround at this time. If this happens just re-run the `helm install` command and add in `--no-crd-hook` to the helm install command.
-
-```
- Error: namespaces "sumologic" is forbidden: User "system:serviceaccount:kube-system:default" cannot get resource "namespaces" in API group "" in the namespace "sumologic"
-```
-This occurs in Kubernetes 1.8 and greater because you need to enable Role Based Access Control (RBAC).
- 
-1. Delete Tiller if it is already deployed
-```
-kubectl -n kube-system delete deployment tiller-deploy 
-kubectl -n kube-system delete service/tiller-deploy
-```
-2. Create a file called rbac-config.yaml with the following content
-```yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: tiller
-  namespace: kube-system
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: tiller
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-  - kind: ServiceAccount
-    name: tiller
-    namespace: kube-system
-```
-3. Create the role for your cluster
-```
-kubectl create -f rbac-config.yaml
-```
-4. Initialize helm
-```
-helm init --service-account tiller --history-max 200
-```
 
 ### Rancher
 

@@ -142,7 +142,7 @@ If you receive the below error, it likely means your OS is picking up an older v
 ### Rollback
 
 If something goes wrong, or you want to go back to the previous version,
-you can [rollback changes using helm](https://v2.helm.sh/docs/helm/#helm-rollback):
+you can [rollback changes using helm](https://helm.sh/docs/helm/helm_rollback/):
 
 ```
 helm history collection

@@ -17,6 +17,6 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: metrics-server.enabled
   - name: telegraf-operator
-    version: 1.1.6
-    repository: https://sumologic.github.io/influxdata-helm-charts
+    version: 1.1.5
+    repository: https://helm.influxdata.com/
     condition: telegraf-operator.enabled

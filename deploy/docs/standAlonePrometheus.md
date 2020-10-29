@@ -40,8 +40,6 @@ If you are installing the collection in a cluster that requires proxying outboun
 The following parameter is optional, but we recommend setting it.
 * __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
-The following helm commands support Helm2 or Helm3.
-
 To install the chart, first add the `sumologic` private repo:
 
 ```bash
@@ -61,7 +59,7 @@ If you wish to install the chart in a different existing namespace you can do th
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false
 ```
 
-For Helm3, if the namespace does not exist, you can add the `--create-namespace` flag.
+If the namespace does not exist, you can add the `--create-namespace` flag.
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false --create-namespace
@@ -170,7 +168,6 @@ To uninstall/delete the Helm chart:
 ```bash
 helm delete my-release
 ```
-> **Helm2 Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
 
 > **Helm3 Tip**: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.ease.
 

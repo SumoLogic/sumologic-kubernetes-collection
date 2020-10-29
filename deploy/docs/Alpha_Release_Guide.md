@@ -4,7 +4,6 @@
 | --- |
 | We recommend testing alpha releases on non-production clusters. These releases are generated continuously from contributions to this repo and may not be fully tested. |
 
-
 As part of our [Travis CI script](../../ci/build.sh), we release an alpha Docker image as well as an alpha Helm chart release.
 
 ## Versioning
@@ -24,7 +23,7 @@ Follow the [Helm installation guide](./Installation_with_Helm.md), but override 
 
 ```
 helm repo update
-helm install sumologic/sumologic --name collection --namespace sumologic ... --version=0.11.3-alpha --set image.tag="0.11.3-alpha"
+helm install collection sumologic/sumologic --namespace sumologic --create-namespace ... --version=0.11.3-alpha --set image.tag="0.11.3-alpha"
 ```
 
 ### Non-helm installation
