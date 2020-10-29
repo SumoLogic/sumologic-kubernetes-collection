@@ -5,7 +5,7 @@
 Prometheus configuration is located in `values.yaml` under `prometheus-operator` key for helm installation.
 
 If the `prometheus-operator` has been installed directly, a `prometheus-overrides.yaml` should be generated
-using `docker`/`kubectl` and [sumologic-kubernetes-tools](prometheus-operator directly):
+using `docker`/`kubectl` and [sumologic-kubernetes-tools](https://github.com/sumologic/sumologic-kubernetes-tools#template-dependency-configuration):
 
 ```bash
  # using kubectl
