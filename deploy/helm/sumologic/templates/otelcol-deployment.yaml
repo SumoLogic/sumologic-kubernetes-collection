@@ -65,7 +65,10 @@ spec:
         - name: GOGC
           value: "80"
 {{- $ctx := .Values -}}
-{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces")}}
+{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") }}
+{{- if .Values.otelcol.deployment.extraEnvVars }}
+{{- toYaml .Values.otelcol.deployment.extraEnvVars | nindent 8 }}
+{{- end }}
         resources:
           {{- toYaml .Values.otelcol.deployment.resources | nindent 10 }}
         ports:
