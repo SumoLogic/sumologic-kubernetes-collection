@@ -14,6 +14,14 @@ err_report() {
 }
 trap 'err_report $LINENO' ERR
 
+function helm() {
+  docker run --rm \
+    -v "$(pwd):/chart" \
+    -w /chart \
+    sumologic/kubernetes-tools:1.0.0 \
+    helm "$@"
+}
+
 function get_branch_to_checkout() {
   [[ "${TRAVIS_EVENT_TYPE}" == pull_request ]] \
     && echo "${TRAVIS_PULL_REQUEST_BRANCH}" \
@@ -93,20 +101,16 @@ function push_helm_chart() {
   set -x
 
   git checkout -- .
-  sudo helm init --client-only
-  sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
-  sudo helm repo add bitnami https://charts.bitnami.com/bitnami
-  sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
   # due to helm repo index issue: https://github.com/helm/helm/issues/7363
   # we need to create new package in a different dir, merge the index and move the package back
   mkdir -p "${sync_dir}"
-  sudo helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
+  helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
 
   git fetch origin-repo
   git checkout gh-pages
 
-  sudo helm repo index --url https://sumologic.github.io/sumologic-kubernetes-collection/ --merge ./index.yaml "${sync_dir}"
+  helm repo index --url https://sumologic.github.io/sumologic-kubernetes-collection/ --merge ./index.yaml "${sync_dir}"
 
   mv -f "${sync_dir}"/* .
   rmdir "${sync_dir}"
@@ -161,21 +165,16 @@ function generate_overrides() {
 
   echo "Generating deployment yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/fluentd-sumologic.yaml.tmpl
-  sudo helm init --client-only
-  sudo helm repo add falcosecurity https://falcosecurity.github.io/charts
-  sudo helm repo add bitnami https://charts.bitnami.com/bitnami
-  sudo helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-  sudo helm dependency update deploy/helm/sumologic
+  helm dependency update deploy/helm/sumologic
 
-  # NOTE(ryan, 2019-11-06): helm template -execute is going away in Helm 3 so we will need to revisit this
-  # https://github.com/helm/helm/issues/5887
-  with_files=$(find deploy/helm/sumologic/templates/ -maxdepth 1 -iname "*.yaml" | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\/g')
+  # Get list of templates available for default values.yaml
+  with_files=$(find deploy/helm/sumologic/templates -maxdepth 1 -iname "*.yaml" ! -path "*/otelcol-*" ! -path "*/scc.yaml" ! -path "*/*hpa.yaml" ! -path "*/*psp.yaml" | sed 's#deploy/helm/sumologic/templates#-s templates#g' | sed 's/yaml/yaml /g')
   # shellcheck disable=SC2086
   helm template deploy/helm/sumologic \
     ${with_files} \
     --namespace "\$NAMESPACE" \
-    --name collection \
-    --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl \
+    --name-template collection \
+    --set dryRun=true >> deploy/kubernetes/fluentd-sumologic.yaml.tmpl 2>/dev/null \
     --set sumologic.endpoint="bogus" \
     --set sumologic.accessId="bogus" \
     --set sumologic.accessKey="bogus"
@@ -192,13 +191,14 @@ function generate_overrides() {
   echo "Generating setup job yaml from helm chart..."
   echo "# This file is auto-generated." > deploy/kubernetes/setup-sumologic.yaml.tmpl
 
-  with_files=$(find deploy/helm/sumologic/templates/setup/ -maxdepth 1 -iname "*.yaml" | sed 's#deploy/helm/sumologic/templates#-x templates#g' | sed 's/yaml/yaml \\/g')
+  # Get list of templates available for default values.yaml
+  with_files=$(find deploy/helm/sumologic/templates/setup -maxdepth 1 -iname "*.yaml" ! -path "*/setup-scc.yaml" | sed 's#deploy/helm/sumologic/templates#-s templates#g' | sed 's/yaml/yaml /g')
   # shellcheck disable=SC2086
   helm template deploy/helm/sumologic \
     ${with_files} \
     --namespace "\$NAMESPACE" \
-    --name collection \
-    --set dryRun=true >> deploy/kubernetes/setup-sumologic.yaml.tmpl \
+    --name-template collection \
+    --set dryRun=true >> deploy/kubernetes/setup-sumologic.yaml.tmpl 2>/dev/null \
     --set sumologic.accessId="\$SUMOLOGIC_ACCESSID" \
     --set sumologic.accessKey="\$SUMOLOGIC_ACCESSKEY" \
     --set sumologic.collectorName="\$COLLECTOR_NAME" \
