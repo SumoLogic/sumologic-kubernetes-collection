@@ -73,10 +73,20 @@ helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace -
 
 ## Update Existing Prometheus
 
-First, Download the Prometheus Operator `prometheus-overrides.yaml` by running
+First, generate the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
-$ curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v1.3/deploy/helm/prometheus-overrides.yaml
+ # using kubectl
+ kubectl run template-dependency \
+  -it --quiet --rm \
+  --restart=Never -n sumologic \
+  --image sumologic/kubernetes-tools:master \
+  -- template-dependency prometheus-operator > prometheus-overrides.yaml
+
+ # or using docker
+ docker run -it --rm \
+  sumologic/kubernetes-tools:master \
+  template-dependency prometheus-operator > prometheus-overrides.yaml
 ```
 
 Next, make the following modifications to the `remoteWrite` section of the `prometheus-overrides.yaml` file:
