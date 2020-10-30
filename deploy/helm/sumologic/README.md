@@ -143,6 +143,7 @@ Parameter | Description | Default
 `fluentd.metrics.outputConf` | Configuration for sumologic output plugin. | `@include metrics.output.conf`
 `fluentd.metrics.extraFilterPluginConf` | To use additional filter plugins. | `Nil`
 `fluentd.metrics.extraOutputPluginConf` | To use additional output plugins. | `Nil`
+`fluentd.metrics.overrideOutputConf` | Override output section for metrics. Leave empty for the default output section. | `Nil`
 `fluentd.events.enabled` | If enabled, collect K8s events. | `true`
 `fluentd.events.statefulset.nodeSelector` | Node selector for Fluentd events statefulset. | `{}`
 `fluentd.events.statefulset.tolerations` | Tolerations for Fluentd events statefulset. | `{}`
