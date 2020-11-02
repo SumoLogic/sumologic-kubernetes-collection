@@ -9,7 +9,7 @@ You can generate mixin configuration using `kubectl` or `docker`:
  kubectl run tools \
   -it --quiet --rm \
   --restart=Never -n sumologic \
-  --image sumologic/kubernetes-tools \
+  --image sumologic/kubernetes-tools:master \
   -- template-prometheus-mixin > kube-prometheus-sumo-logic-mixin.libsonnet
 
  # or using docker
