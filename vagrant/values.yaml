@@ -43,25 +43,27 @@ falco:
   enabled: true
   customRules:
     # Mark the following as known k8s api callers:
-    # * fluentd image
-    # * grafana sidecar
-    # * terraform provider started in setup job
-    # * telegraf operator
-    # * kube state metrics server
+    # * fluentd and its plugins from sumologic/kubernetes-fluentd image
     # * prometheus
     # * prometheus operator
+    # * telegraf operator
+    # * grafana sidecar
     rules_user_known_k8s_api_callers.yaml: |-
       - macro: user_known_contact_k8s_api_server_activities
         condition: >
           (container.image.repository = "sumologic/kubernetes-fluentd") or
-          (proc.cmdline = "python -u /app/sidecar.py") or
-          (proc.cmdline startswith "terraform-provi") or
-          (proc.cmdline startswith "manager --telegraf-default-class=sumologic-prometheus --telegraf-classes-directory=/etc/telegraf-operator --enable-default-internal-plugin --telegraf-image=docker.io/library/telegraf") or
-          (proc.cmdline startswith "kube-state-metr") or
-          (proc.cmdline startswith "prometheus") or
-          (proc.cmdline startswith "operator")
+          (container.image.repository = "quay.io/prometheus/prometheus") or
+          (container.image.repository = "quay.io/coreos/prometheus-operator") or
+          (container.image.repository = "quay.io/influxdb/telegraf-operator") or
+          (container.image.repository = "kiwigrid/k8s-sidecar")
     rules_user_sensitive_mount_containers.yaml: |-
       - macro: user_sensitive_mount_containers
         condition: >
           (container.image.repository = "falcosecurity/falco") or
           (container.image.repository = "quay.io/prometheus/node-exporter")
+    # NOTE: kube-proxy not exact matching because of regional ecr e.g.
+    # 602401143452.dkr.ecr.us-west-1.amazonaws.com/eks/kube-proxy
+    rules_user_privileged_containers.yaml: |-
+      - macro: user_privileged_containers
+        condition: >
+          (container.image.repository endswith ".amazonaws.com/eks/kube-proxy")
