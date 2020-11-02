@@ -1,9 +1,25 @@
 # kube-prometheus Mixin
 
 If you are already using kube-prometheus, you can use the Prometheus installation from there and send metrics to Sumo
-Logic using a mixin to add the correct remote_write configs and add the `cluster` external_label. The mixin is located
-in this repo at `deploy/kubernetes/kube-prometheus-sumo-logic-mixin.libsonnet`. The defaults assume you're deploying
-Sumo Logic collection via Helm and using few customizations. When deploying collection, disable the built-in Prometheus
+Logic using a mixin to add the correct remote_write configs and add the `cluster` external_label.
+You can generate mixin configuration using `kubectl` or `docker`:
+
+```bash
+ # using kubectl
+ kubectl run tools \
+  -it --quiet --rm \
+  --restart=Never -n sumologic \
+  --image sumologic/kubernetes-tools \
+  -- template-prometheus-mixin > kube-prometheus-sumo-logic-mixin.libsonnet
+
+ # or using docker
+ docker run -it --rm \
+  sumologic/kubernetes-tools:master \
+  template-prometheus-mixin > kube-prometheus-sumo-logic-mixin.libsonnet
+```
+
+The defaults assume you're deploying Sumo Logic collection via Helm and using few customizations.
+When deploying collection, disable the built-in Prometheus
 Operator either by using `--set prometheus-operator.enabled=false` or editing `values.yml`:
 
 ```yaml
@@ -59,38 +75,4 @@ local kp =
   };
 
 // ...
-```
-
-## Usage with `jsonnet-bundler`
-
-*jsonnetfile.json*:
-```json
-{
-    "dependencies": [
-        {
-            "name": "sumologic-kubernetes-collection",
-            "source": {
-                "git": {
-                    "remote": "https://github.com/SumoLogic/sumologic-kubernetes-collection",
-                    "subdir": "deploy/kubernetes"
-                }
-            },
-            "version": "master"
-        }
-    ]
-}
-```
-
-```shell
-$ jb install
-```
-
-```jsonnet
-local kp =
-  (import 'kube-prometheus/kube-prometheus.libsonnet') +
-  (import 'vendor/sumologic-kubernetes-collection/kube-prometheus-sumo-logic-mixin.libsonnet') + // import the collection mixin
-  {
-    _config+:: {
-      namespace: 'monitoring',
-...
 ```
