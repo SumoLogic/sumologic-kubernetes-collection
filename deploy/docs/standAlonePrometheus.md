@@ -77,7 +77,7 @@ First, generate the Prometheus Operator `prometheus-overrides.yaml` by running
 
 ```bash
  # using kubectl
- kubectl run template-dependency \
+ kubectl run tool \
   -it --quiet --rm \
   --restart=Never -n sumologic \
   --image sumologic/kubernetes-tools:master \

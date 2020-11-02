@@ -9,7 +9,7 @@ using `docker`/`kubectl` and [sumologic-kubernetes-tools](https://github.com/sum
 
 ```bash
  # using kubectl
- kubectl run template-dependency \
+ kubectl run tools \
   -it --quiet --rm \
   --restart=Never -n sumologic \
   --image sumologic/kubernetes-tools:master \
