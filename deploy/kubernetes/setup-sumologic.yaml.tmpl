@@ -1,7 +1,39 @@
 # This file is auto-generated.
 ---
+# Source: sumologic/templates/setup/setup-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name:  collection-sumologic-setup
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "2"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic
+    
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: collection-sumologic-setup
+subjects:
+  - kind: ServiceAccount
+    name: collection-sumologic-setup
+    namespace: $NAMESPACE
+---
+# Source: sumologic/templates/setup/setup-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name:  collection-sumologic-setup
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "0"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic
+---
 # Source: sumologic/templates/setup/setup-configmap.yaml
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -215,8 +247,6 @@ data:
       type  = string
       default = "$NAMESPACE"
     }
-  
-
 ---
 # Source: sumologic/templates/setup/setup-custom-configmap.yaml
 apiVersion: v1
@@ -231,70 +261,8 @@ metadata:
     app: collection-sumologic
     
 data:
-
----
-# Source: sumologic/templates/setup/setup-serviceaccount.yaml
-
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name:  collection-sumologic-setup
-  annotations:
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-weight: "0"
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-  labels:
-    app: collection-sumologic
-    
-
----
-# Source: sumologic/templates/setup/setup-clusterrole.yaml
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name:  collection-sumologic-setup
-  annotations:
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-weight: "1"
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-  labels:
-    app: collection-sumologic
-    
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-      - namespaces
-    verbs: ["get", "create", "describe", "patch"]
-
----
-# Source: sumologic/templates/setup/setup-clusterrolebinding.yaml
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name:  collection-sumologic-setup
-  annotations:
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-weight: "2"
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-  labels:
-    app: collection-sumologic
-    
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: collection-sumologic-setup
-subjects:
-  - kind: ServiceAccount
-    name: collection-sumologic-setup
-    namespace: $NAMESPACE
-
 ---
 # Source: sumologic/templates/setup/setup-job.yaml
-
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -336,7 +304,6 @@ spec:
           requests:
             cpu: 200m
             memory: 64Mi
-          
         volumeMounts:
         - name: setup
           mountPath: /etc/terraform
@@ -358,8 +325,23 @@ spec:
         
       securityContext:
         runAsUser: 999
-
 ---
-# Source: sumologic/templates/setup/setup-scc.yaml
-
-
+# Source: sumologic/templates/setup/setup-clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name:  collection-sumologic-setup
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "1"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app: collection-sumologic
+    
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - namespaces
+    verbs: ["get", "create", "describe", "patch"]
