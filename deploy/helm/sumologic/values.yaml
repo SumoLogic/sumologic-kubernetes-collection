@@ -187,6 +187,11 @@ fluentd:
   ## Proxy URI for sumologic output plugin
   proxyUri: ""
 
+  ## Enable and set compression encoding for fluentd output plugin
+  compression:
+    enabled: true
+    encoding: gzip
+
   securityContext:
     ## The group ID of all processes in the statefulset containers. By default this needs to be fluent(999).
     fsGroup: 999
