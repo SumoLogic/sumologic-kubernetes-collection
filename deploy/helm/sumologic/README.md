@@ -38,7 +38,7 @@ Parameter | Description | Default
 `sumologic.setup.job.podAnnotations` | Additional annotations for the setup Job pod. | `{}`
 `sumologic.setup.serviceAccount.annotations` | Annotations for the ServiceAccount. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"0"}]`
 `fluentd.additionalPlugins` | Additional Fluentd plugins to install from RubyGems. Please see our [documentation](./Additional_Fluentd_Plugins.md) for more information. | `[]`
-`fluentd.compression.enabled` | Flag to control if data is send to the Sumo Logic compressed or not | `true`
+`fluentd.compression.enabled` | Flag to control if data is sent to Sumo Logic compressed or not | `true`
 `fluentd.compression.encoding` | Specifies which encoding should be use to compress data (either `gzip` or `deflate`) | `gzip`
 `fluentd.logLevel` | Sets the fluentd log level. The default log level, if not specified, is info.  Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs. | `info`
 `fluentd.verifySsl` | Verify SumoLogic HTTPS certificates. | `true`
