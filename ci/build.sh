@@ -95,7 +95,7 @@ function push_docker_image() {
 function push_helm_chart() {
   local version="$1"
 
-  local sync_dir="${TRAVIS_BUILD_DIR}-helm-sync"
+  local sync_dir="./tmp-helm-sync"
 
   echo "Pushing new Helm Chart release ${version}"
   set -x
