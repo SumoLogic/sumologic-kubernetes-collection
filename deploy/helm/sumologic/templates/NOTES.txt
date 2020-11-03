@@ -12,3 +12,7 @@ Check the release status by running:
 {{- if eq .Values.fluentd.persistence.enabled  false }}
 WARNING: File persistence for fluentd is disabled. This might lead to loss of data in case of memory buffer overflow. We recommend turning this property on for production environments by setting fluentd.persistence.enabled=true
 {{- end }}
+
+We've tried to automatically create fields. In an unlikely scenario that this
+fails please refer to the following to create them manually:
+https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/2b3ca63/deploy/docs/Installation_with_Helm.md#prerequisite
