@@ -88,7 +88,7 @@ data:
     exclude_pod_regex ""
     exclude_container_regex ""
     exclude_host_regex ""
-  logs.output.conf: |-
+  logs.output.conf: |
     data_type logs
     log_key log
     endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE']}"
@@ -97,6 +97,8 @@ data:
     add_timestamp "true"
     timestamp_key "timestamp"
     proxy_uri ""
+    compress "true"
+    compress_encoding "gzip"
     
   logs.source.containers.conf: |
     
@@ -301,7 +303,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 32b7e94e9eef43a4232d6bf110fafe661cdbc2aa1951683ad60c415af11775ec
+        checksum/config: 1518b8eaf0e673b37ab13e6e072f050a3b45ecca786dfb3842f4b386cb798bae
       labels:
         app: collection-sumologic-fluentd-events
         
@@ -589,11 +591,13 @@ data:
       </match>
       
     </label>
-  metrics.output.conf: |-
+  metrics.output.conf: |
     data_type metrics
     metric_data_format prometheus
     disable_cookies true
     proxy_uri ""
+    compress "true"
+    compress_encoding "gzip"
 ---
 # Source: sumologic/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -661,7 +665,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: ef16142c85545fe389b3d38f760a39fa0414109e484883dcd75e9ab11ccbdc87
+        checksum/config: 5dd0f5537aa0bed112eed180c07b68b7261f97c31313b3a4f16aa513f8adcdea
       labels:
         app: collection-sumologic-fluentd-logs
         
@@ -831,7 +835,7 @@ metadata:
 data:
   fluent.conf: |-
     @include events.conf
-  events.conf: |-
+  events.conf: |
     <source>
       @type events
       deploy_namespace $NAMESPACE
@@ -865,6 +869,8 @@ data:
         disable_cookies true
         verify_ssl "true"
         proxy_uri ""
+        compress "true"
+        compress_encoding "gzip"
         <buffer>
           @type file
           path /fluentd/buffer/events
@@ -927,7 +933,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 995c20308c88a208d96c6e87815db0382f416612f07ee2c3dec0f95a506e8da5
+        checksum/config: e64629b38e8ad6d13ade338af2239443b24ee4b9d66815aab2755d132f90925d
       labels:
         app: collection-sumologic-fluentd-metrics
         
