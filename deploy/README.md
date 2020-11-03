@@ -36,7 +36,7 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 Name | Version
 -------- | -----
 K8s | 1.10+
-Helm | 2.12+
+Helm | 3.4+
 
 ## Support Matrix
 
@@ -48,7 +48,7 @@ K8s with EKS | 1.14<br/>1.15<br/>1.16<br/>1.17
 K8s with Kops | 1.16<br/>1.17<br/>1.18
 K8s with GKE | 1.15<br/>1.16
 K8s with AKS | 1.16<br/>1.17
-Helm | 2.14.13 (Linux)
+Helm | 3.4.0 (Linux)
 kubectl | 1.15.0
 
 The following matrix displays the tested package versions for our Helm chart.
