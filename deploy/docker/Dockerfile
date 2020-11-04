@@ -68,7 +68,9 @@ USER root
 
 RUN apt-get update \
  && apt-get install --yes --no-install-recommends \
-        libsnappy-dev
+        libsnappy-dev \
+        curl \
+        jq
 
 # Create directory for terraform configuration
 RUN mkdir -p /terraform /scripts \
