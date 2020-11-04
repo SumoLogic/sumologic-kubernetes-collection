@@ -49,6 +49,70 @@ data:
       done
       cd "${target}" && bash setup.sh
     done
+  fields.tf: |
+    resource "sumologic_field" "cluster" {
+      count = var.create_fields ? 1 : 0
+  
+      field_name = "cluster"
+      data_type = "String"
+      state = "Enabled"
+    }
+  
+    resource "sumologic_field" "container" {
+      count = var.create_fields ? 1 : 0
+  
+      field_name = "container"
+      data_type = "String"
+      state = "Enabled"
+    }
+  
+    resource "sumologic_field" "deployment" {
+      count = var.create_fields ? 1 : 0
+  
+      field_name = "deployment"
+      data_type = "String"
+      state = "Enabled"
+    }
+  
+    resource "sumologic_field" "host" {
+      count = var.create_fields ? 1 : 0
+  
+      field_name = "host"
+      data_type = "String"
+      state = "Enabled"
+    }
+  
+    resource "sumologic_field" "namespace" {
+      count = var.create_fields ? 1 : 0
+  
+      field_name = "namespace"
+      data_type = "String"
+      state = "Enabled"
+    }
+  
+    resource "sumologic_field" "node" {
+      count = var.create_fields ? 1 : 0
+  
+      field_name = "node"
+      data_type = "String"
+      state = "Enabled"
+    }
+  
+    resource "sumologic_field" "pod" {
+      count = var.create_fields ? 1 : 0
+  
+      field_name = "pod"
+      data_type = "String"
+      state = "Enabled"
+    }
+  
+    resource "sumologic_field" "service" {
+      count = var.create_fields ? 1 : 0
+  
+      field_name = "service"
+      data_type = "String"
+      state = "Enabled"
+    }
   locals.tf: |
     locals {
       default_events_source                       = "events"
@@ -208,39 +272,111 @@ data:
     }
   setup.sh: |
     #!/bin/bash
-    cp /etc/terraform/{locals,main,providers,resources,variables}.tf /terraform
-    cd /terraform
   
     # Fix URL to remove "v1" or "v1/"
     export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
-  
     # Support proxy for terraform
     export HTTP_PROXY=${HTTP_PROXY:=""}
     export HTTPS_PROXY=${HTTPS_PROXY:=""}
     export NO_PROXY=${NO_PROXY:=""}
   
+    function remaining_fields() {
+        local RESPONSE="$(curl -XGET -s \
+            -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+            "${SUMOLOGIC_BASE_URL}"v1/fields/quota)"
+  
+        echo "${RESPONSE}" | jq '.remaining'
+    }
+  
+    # Check if we'd have at least 10 fields remaining after 8 additional fields
+    # would be created for the collection
+    function should_create_fields() {
+        local REMAINING=$(remaining_fields)
+        if [[ $(( REMAINING - 8 )) -ge 10 ]] ; then
+            echo 1
+        else
+            echo 0
+        fi
+    }
+  
+    cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
+    cd /terraform
+  
     COLLECTOR_NAME="kubernetes"
   
     terraform init
   
-    # Sumo Collector and HTTP sources
-    terraform import sumologic_collector.collector "$COLLECTOR_NAME"
-    terraform import sumologic_http_source.default_events_source "$COLLECTOR_NAME/events"
-    terraform import sumologic_http_source.default_logs_source "$COLLECTOR_NAME/logs"
-    terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
-    terraform import sumologic_http_source.control_plane_metrics_source "$COLLECTOR_NAME/control-plane-metrics"
-    terraform import sumologic_http_source.controller_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
-    terraform import sumologic_http_source.default_metrics_source "$COLLECTOR_NAME/(default-metrics)"
-    terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
-    terraform import sumologic_http_source.node_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
-    terraform import sumologic_http_source.scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
-    terraform import sumologic_http_source.state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
-    terraform import sumologic_http_source.test_source_metrics_source "$COLLECTOR_NAME/(Test source)"
+    # Sumo Logic fields
+    readonly CREATE_FIELDS="$(should_create_fields)"
+    if [[ "${CREATE_FIELDS}" -eq 0 ]]; then
+        echo "Couldn't automatically create fields\n"
+        echo "There's not enough fields which we could use for collection fields creation"
+        echo "Please free some of them and rerun the setup job"
+    else
+        readonly FIELDS_RESPONSE="$(curl -XGET -s \
+            -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+            "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
+  
+        declare -ra FIELDS=("cluster" "container" "deployment" "host" "namespace" "node" "pod" "service")
+        for FIELD in "${FIELDS[@]}" ; do
+            FIELD_ID=$( echo "${FIELDS_RESPONSE}" | jq -r "select(.fieldName == \"${FIELD}\") | .fieldId" )
+            # Don't try to import non existing fields
+            if [[ -z "${FIELD_ID}" ]]; then
+                continue
+            fi
+  
+            terraform import \
+                -var="create_fields=${CREATE_FIELDS}" \
+                sumologic_field."${FIELD}" "${FIELD_ID}"
+        done
+    fi
+  
+    # Sumo Logic Collector and HTTP sources
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_collector.collector "$COLLECTOR_NAME"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.default_events_source "$COLLECTOR_NAME/events"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.default_logs_source "$COLLECTOR_NAME/logs"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.control_plane_metrics_source "$COLLECTOR_NAME/control-plane-metrics"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.controller_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.default_metrics_source "$COLLECTOR_NAME/(default-metrics)"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.node_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        sumologic_http_source.test_source_metrics_source "$COLLECTOR_NAME/(Test source)"
   
     # Kubernetes Secret
-    terraform import kubernetes_secret.sumologic_collection_secret sumologic/sumologic
+    terraform import \
+        -var="create_fields=${CREATE_FIELDS}" \
+        kubernetes_secret.sumologic_collection_secret sumologic/sumologic
   
-    terraform apply -auto-approve
+    # Apply planned changes
+    terraform apply -auto-approve \
+        -var="create_fields=${CREATE_FIELDS}"
   
     # Cleanup env variables
     export SUMOLOGIC_BASE_URL=
@@ -248,7 +384,7 @@ data:
     export SUMOLOGIC_ACCESSID=
   
     bash /etc/terraform/custom.sh
-  variables.tf: |-
+  variables.tf: |
     variable "cluster_name" {
       type  = string
       default = "kubernetes"
@@ -262,4 +398,9 @@ data:
     variable "namespace_name" {
       type  = string
       default = "sumologic"
+    }
+  
+    variable "create_fields" {
+      description = "If set, terraform will attempt to create fields at Sumo Logic"
+      type = bool
     }
