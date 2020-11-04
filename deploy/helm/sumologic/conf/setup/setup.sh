@@ -8,52 +8,82 @@ export HTTPS_PROXY=${HTTPS_PROXY:=""}
 export NO_PROXY=${NO_PROXY:=""}
 
 function remaining_fields() {
-    readonly RESPONSE="$(curl -XGET -s \
+    local RESPONSE="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
         "${SUMOLOGIC_BASE_URL}"v1/fields/quota)"
 
     echo "${RESPONSE}" | jq '.remaining'
 }
 
-mkdir /terraform/fields/
-cp /etc/terraform/{locals,main,providers,resources,variables}.tf /terraform/
-cp /etc/terraform/{main_fields,fields}.tf /terraform/fields/
+# Check if we'd have at least 10 fields remaining after 8 additional fields
+# would be created for the collection
+function should_create_fields() {
+    local REMAINING=$(remaining_fields)
+    if [[ $(( REMAINING - 8 )) -ge 10 ]] ; then
+        echo 1
+    else
+        echo 0
+    fi
+}
+
+cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
 cd /terraform
 
 COLLECTOR_NAME="{{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ .Values.sumologic.clusterName }}{{- end}}"
 
 terraform init
 
-# Sumo Collector and HTTP sources
-terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+# Sumo Logic fields
+readonly CREATE_FIELDS="$(should_create_fields)"
+if [[ "${CREATE_FIELDS}" -eq 0 ]]; then
+    echo "Couldn't automatically create fields\n"
+    echo "There's not enough fields which we could use for collection fields creation"
+    echo "Please free some of them and rerun the setup job"
+else
+    readonly FIELDS_RESPONSE="$(curl -XGET -s \
+        -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+        "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
+
+    declare -ra FIELDS=("cluster" "container" "deployment" "host" "namespace" "node" "pod" "service")
+    for FIELD in "${FIELDS[@]}" ; do
+        FIELD_ID=$( echo "${FIELDS_RESPONSE}" | jq -r "select(.fieldName == \"${FIELD}\") | .fieldId" )
+        # Don't try to import non existing fields
+        if [[ -z "${FIELD_ID}" ]]; then
+            continue
+        fi
+
+        terraform import \
+            -var="create_fields=${CREATE_FIELDS}" \
+            sumologic_field."${FIELD}" "${FIELD_ID}"
+    done
+fi
+
+# Sumo Logic Collector and HTTP sources
+terraform import \
+    -var="create_fields=${CREATE_FIELDS}" \
+    sumologic_collector.collector "$COLLECTOR_NAME"
+
 {{- $ctx := .Values -}}
 {{- range $type, $sources := .Values.sumologic.sources }}
 {{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
 {{- range $key, $source := $sources }}
 {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
-terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "$COLLECTOR_NAME/{{ $source.name }}"
+terraform import \
+    -var="create_fields=${CREATE_FIELDS}" \
+    sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "$COLLECTOR_NAME/{{ $source.name }}"
 {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
 
 # Kubernetes Secret
-terraform import kubernetes_secret.sumologic_collection_secret {{ .Release.Namespace }}/sumologic
+terraform import \
+    -var="create_fields=${CREATE_FIELDS}" \
+    kubernetes_secret.sumologic_collection_secret {{ .Release.Namespace }}/sumologic
 
-terraform apply -auto-approve
-
-# Fields
-#
-# Check if we have at least 10 fields remaining after we would
-# create 8 additional fields for the collection
-readonly REMAINING=$(remaining_fields)
-if [[ $(( REMAINING - 8 )) -ge -10 ]] ; then
-    echo "Creating fields..."
-    ( cd fields && terraform destroy -auto-approve )
-else
-    printf "Couldn't automatically create fields\n"
-    printf "There's only %s remaining and collection requires at least 8\n" "${REMAINING}"
-fi
+# Apply planned changes
+terraform apply -auto-approve \
+    -var="create_fields=${CREATE_FIELDS}"
 
 # Cleanup env variables
 export SUMOLOGIC_BASE_URL=

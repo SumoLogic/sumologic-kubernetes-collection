@@ -16,3 +16,8 @@ variable "namespace_name" {
   type  = string
   default = "{{ .Release.Namespace }}"
 }
+
+variable "create_fields" {
+  description = "If set, terraform will attempt to create fields at Sumo Logic"
+  type = bool
+}
