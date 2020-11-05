@@ -57,7 +57,6 @@ data:
       data_type = "String"
       state = "Enabled"
     }
-  
     resource "sumologic_field" "container" {
       count = var.create_fields ? 1 : 0
   
@@ -65,7 +64,6 @@ data:
       data_type = "String"
       state = "Enabled"
     }
-  
     resource "sumologic_field" "deployment" {
       count = var.create_fields ? 1 : 0
   
@@ -73,7 +71,6 @@ data:
       data_type = "String"
       state = "Enabled"
     }
-  
     resource "sumologic_field" "host" {
       count = var.create_fields ? 1 : 0
   
@@ -81,7 +78,6 @@ data:
       data_type = "String"
       state = "Enabled"
     }
-  
     resource "sumologic_field" "namespace" {
       count = var.create_fields ? 1 : 0
   
@@ -89,7 +85,6 @@ data:
       data_type = "String"
       state = "Enabled"
     }
-  
     resource "sumologic_field" "node" {
       count = var.create_fields ? 1 : 0
   
@@ -97,7 +92,6 @@ data:
       data_type = "String"
       state = "Enabled"
     }
-  
     resource "sumologic_field" "pod" {
       count = var.create_fields ? 1 : 0
   
@@ -105,7 +99,6 @@ data:
       data_type = "String"
       state = "Enabled"
     }
-  
     resource "sumologic_field" "service" {
       count = var.create_fields ? 1 : 0
   

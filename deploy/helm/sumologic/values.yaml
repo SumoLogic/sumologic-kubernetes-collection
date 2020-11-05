@@ -101,6 +101,19 @@ sumologic:
   logs:
     enabled: true
 
+    ## Fields to be created at Sumo Logic to ensure logs are tagged with
+    ## relevant metadata.
+    ## https://help.sumologic.com/Manage/Fields#Manage_fields
+    fields:
+      - cluster
+      - container
+      - deployment
+      - host
+      - namespace
+      - node
+      - pod
+      - service
+
   ### Metrics configuration
   ## Set the enabled flag to false for disabling metrics ingestion altogether.
   metrics:

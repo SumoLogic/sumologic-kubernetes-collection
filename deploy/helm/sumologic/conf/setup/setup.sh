@@ -44,7 +44,7 @@ else
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
         "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
 
-    declare -ra FIELDS=("cluster" "container" "deployment" "host" "namespace" "node" "pod" "service")
+    declare -ra FIELDS=({{ include "helm-toolkit.utils.joinListWithSpaces" .Values.sumologic.logs.fields }})
     for FIELD in "${FIELDS[@]}" ; do
         FIELD_ID=$( echo "${FIELDS_RESPONSE}" | jq -r "select(.fieldName == \"${FIELD}\") | .fieldId" )
         # Don't try to import non existing fields
