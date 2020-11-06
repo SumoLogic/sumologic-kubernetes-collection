@@ -322,7 +322,13 @@ fluentd:
       enabled: false
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+      metrics:
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 50
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
@@ -558,7 +564,13 @@ fluentd:
       enabled: false
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+      metrics:
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 50
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
