@@ -64,8 +64,8 @@ data:
   main.tf: |
     terraform {
       required_providers {
-        sumologic  = "~> 2.3.0"
-        kubernetes = "~> 1.11.3"
+        sumologic  = "~> 2.4.0"
+        kubernetes = "~> 1.13.0"
       }
     }
   providers.tf: |-
