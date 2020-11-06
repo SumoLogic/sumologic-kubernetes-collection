@@ -788,5 +788,9 @@ Example:
 */}}
 {{- define "helm-toolkit.utils.joinListWithSpaces" -}}
 {{- $local := dict "first" true -}}
-{{- range $k, $v := . -}}{{- if not $local.first }} {{ end -}}{{ $v | quote }}{{- $_ := set $local "first" false -}}{{- end -}}
+{{- range $k, $v := . -}}
+{{- if not $local.first }} {{ end -}}
+{{- $v | quote -}}
+{{- $_ := set $local "first" false -}}
+{{- end -}}
 {{- end -}}

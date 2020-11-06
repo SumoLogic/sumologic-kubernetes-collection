@@ -15,14 +15,14 @@ function remaining_fields() {
     echo "${RESPONSE}" | jq '.remaining'
 }
 
-# Check if we'd have at least 10 fields remaining after 8 additional fields
+# Check if we'd have at least 10 fields remaining after additional fields
 # would be created for the collection
 function should_create_fields() {
     local REMAINING=$(remaining_fields)
-    if [[ $(( REMAINING - 8 )) -ge 10 ]] ; then
-        echo 1
+    if [[ $(( REMAINING - {{ len .Values.sumologic.logs.fields }} )) -ge 10 ]] ; then
+        return 1
     else
-        echo 0
+        return 0
     fi
 }
 
@@ -34,12 +34,13 @@ COLLECTOR_NAME="{{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.co
 terraform init
 
 # Sumo Logic fields
-readonly CREATE_FIELDS="$(should_create_fields)"
-if [[ "${CREATE_FIELDS}" -eq 0 ]]; then
+if should_create_fields ; then
+    readonly CREATE_FIELDS=0
     echo "Couldn't automatically create fields\n"
     echo "There's not enough fields which we could use for collection fields creation"
     echo "Please free some of them and rerun the setup job"
 else
+    readonly CREATE_FIELDS=1
     readonly FIELDS_RESPONSE="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
         "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
@@ -53,33 +54,27 @@ else
         fi
 
         terraform import \
-            -var="create_fields=${CREATE_FIELDS}" \
+            -var="create_fields=1" \
             sumologic_field."${FIELD}" "${FIELD_ID}"
     done
 fi
 
 # Sumo Logic Collector and HTTP sources
-terraform import \
-    -var="create_fields=${CREATE_FIELDS}" \
-    sumologic_collector.collector "$COLLECTOR_NAME"
+terraform import sumologic_collector.collector "$COLLECTOR_NAME"
 
 {{- $ctx := .Values -}}
 {{- range $type, $sources := .Values.sumologic.sources }}
 {{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
 {{- range $key, $source := $sources }}
 {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
-terraform import \
-    -var="create_fields=${CREATE_FIELDS}" \
-    sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "$COLLECTOR_NAME/{{ $source.name }}"
+terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "$COLLECTOR_NAME/{{ $source.name }}"
 {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
 
 # Kubernetes Secret
-terraform import \
-    -var="create_fields=${CREATE_FIELDS}" \
-    kubernetes_secret.sumologic_collection_secret {{ .Release.Namespace }}/sumologic
+terraform import kubernetes_secret.sumologic_collection_secret {{ .Release.Namespace }}/sumologic
 
 # Apply planned changes
 terraform apply -auto-approve \
