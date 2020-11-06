@@ -287,9 +287,9 @@ data:
     # Sumo Logic fields
     if should_create_fields ; then
         readonly CREATE_FIELDS=0
-        echo "Couldn't automatically create fields\n"
-        echo "There's not enough fields which we could use for collection fields creation"
-        echo "Please free some of them and rerun the setup job"
+        echo "Couldn't automatically create fields"
+        echo "You do not have enough field capacity to create the required fields automatically."
+        echo "Please refer to https://help.sumologic.com/Manage/Fields to manually create the fields after you have removed unused fields to free up capacity."
     else
         readonly CREATE_FIELDS=1
         readonly FIELDS_RESPONSE="$(curl -XGET -s \
