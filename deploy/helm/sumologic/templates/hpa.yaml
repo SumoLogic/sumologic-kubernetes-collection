@@ -13,5 +13,19 @@ spec:
     name: {{ template "sumologic.metadata.name.logs.statefulset" . }}
   minReplicas: {{ .Values.fluentd.logs.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.fluentd.logs.autoscaling.maxReplicas }}
-  metrics: {{ toYaml .Values.fluentd.logs.autoscaling.metrics | nindent 2 }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.fluentd.logs.autoscaling.targetCPUUtilizationPercentage }}
+{{- if .Values.fluentd.logs.autoscaling.targetMemoryUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.fluentd.logs.autoscaling.targetMemoryUtilizationPercentage }}
+{{- end -}}
 {{- end -}}
