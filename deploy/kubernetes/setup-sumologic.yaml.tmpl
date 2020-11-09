@@ -271,9 +271,9 @@ data:
     function should_create_fields() {
         local REMAINING=$(remaining_fields)
         if [[ $(( REMAINING - 8 )) -ge 10 ]] ; then
-            return 1
-        else
             return 0
+        else
+            return 1
         fi
     }
   
@@ -284,6 +284,7 @@ data:
   
     terraform init
   
+    # Sumo Logic fields
     if should_create_fields ; then
         readonly CREATE_FIELDS=1
         readonly FIELDS_RESPONSE="$(curl -XGET -s \
