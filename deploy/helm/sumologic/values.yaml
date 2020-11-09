@@ -588,6 +588,9 @@ fluentd:
     outputConf: |-
       @include metrics.output.conf
 
+    ## Override output section for metrics. Leave empty for the default output section
+    overrideOutputConf: |-
+
     ## To use additional filter plugins
     extraFilterPluginConf: |-
 
