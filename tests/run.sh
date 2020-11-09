@@ -2,6 +2,15 @@
 
 readonly SCRIPT_PATH="$( dirname "$(realpath "${0}")" )"
 readonly CONFIG_FILES=$(find "${SCRIPT_PATH}"/* -maxdepth 1 -name 'config.sh')
+
+if ! docker info >/dev/null 2>&1 ; then
+  echo "Docker unavailable. Please start the daemon and rerun tests"
+  echo "Error:"
+  echo
+  docker info
+  exit 1
+fi
+
 # shellcheck disable=SC1090
 source "${SCRIPT_PATH}/functions.sh"
 
