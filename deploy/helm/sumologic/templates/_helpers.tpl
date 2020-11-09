@@ -778,3 +778,19 @@ Example:
               key: {{ template "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key) }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Generate a space separated list of quoted values:
+
+Example:
+
+{{ include "helm-toolkit.utils.joinListWithSpaces" .Values.sumologic.logs.fields }}
+*/}}
+{{- define "helm-toolkit.utils.joinListWithSpaces" -}}
+{{- $local := dict "first" true -}}
+{{- range $k, $v := . -}}
+{{- if not $local.first }} {{ end -}}
+{{- $v | quote -}}
+{{- $_ := set $local "first" false -}}
+{{- end -}}
+{{- end -}}
