@@ -2,6 +2,45 @@ apiVersion: v1
 entries:
   sumologic:
   - apiVersion: v1
+    appVersion: 2.0.0-dev.0-70-ga3cb862f
+    created: "2020-11-10T09:48:42.265498086Z"
+    dependencies:
+    - condition: fluent-bit.enabled,sumologic.logs.enabled
+      name: fluent-bit
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 2.10.1
+    - alias: prometheus-operator
+      condition: prometheus-operator.enabled,sumologic.metrics.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 9.3.4
+    - condition: falco.enabled
+      name: falco
+      repository: https://falcosecurity.github.io/charts
+      version: 1.5.0
+    - condition: metrics-server.enabled
+      name: metrics-server
+      repository: https://charts.bitnami.com/bitnami
+      version: 4.3.1
+    - condition: telegraf-operator.enabled
+      name: telegraf-operator
+      repository: https://sumologic.github.io/influxdata-helm-charts
+      version: 1.1.6
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
+    digest: 18802409de522f4898c946a22b260162a4be3e1602e94df3ade3ef72047e4d3e
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-2.0.0-dev.0-70-ga3cb862f.tgz
+    version: 2.0.0-dev.0-70-ga3cb862f
+  - apiVersion: v1
     appVersion: 2.0.0-dev.0-69-g4a887d70
     created: "2020-11-09T14:36:08.317118869Z"
     dependencies:
@@ -7258,4 +7297,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.0.0.tgz
     version: 0.0.0
-generated: "2020-11-09T14:36:08.281130006Z"
+generated: "2020-11-10T09:48:42.229946403Z"
