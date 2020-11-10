@@ -1033,6 +1033,8 @@ prometheus-operator:
       ## Prometheus default scrape interval, default from upstream Prometheus Operator Helm chart
       ## NOTE changing the scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
       scrapeInterval: "30s"
+      ## Prometheus data retention period
+      retention: "1d"
       ## Add custom pod annotations and labels to prometheus pods
       podMetadata:
         labels: {}
