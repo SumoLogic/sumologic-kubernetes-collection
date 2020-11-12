@@ -40,12 +40,24 @@ On the virtual machine, to perform docker image build and to run tests please us
 sumo-make build
 ```
 
+or
+
+```
+/sumologic/vagrant/Makefile build
+```
+
 ## Collector
 
 To install or upgrade collector please type:
 
 ```bash
 sumo-make upgrade
+```
+
+or
+
+```bash
+/sumologic/vagrant/Makefile upgrade
 ```
 
 This command will prepare environment (namespaces, receiver-mock, etc.)
@@ -57,7 +69,13 @@ To remove collector please use:
 sumo-make clean
 ```
 
-List of other useful options for `sumo-make`:
+or
+
+```bash
+/sumologic/vagrant/Makefile clean
+```
+
+List of other useful targets:
 
 - `expose-prometheus` - exposes prometheus on port 9090 of virtual machine
 - `expose-grafana` - exposes grafana on port 8080 of virtual machine
@@ -65,14 +83,16 @@ List of other useful options for `sumo-make`:
 
 ## Test
 
-To quickly test whether sumo-kubernetes-collection works receiver-mock can be used.
+In order to quickly test whether sumo-kubernetes-collection works, one can use `receiver-mock` for that purpose.
 
 To check receiver-mock logs please use:
+
 ```
 kubectl logs $(kubectl get pod -l app=receiver-mock -o jsonpath="{.items[0].metadata.name}"  -n receiver-mock) -n receiver-mock
 ```
+
 To check metrics exposed by receiver-mock please use:
+
 ```
 kubectl exec $(kubectl get pod -l app=receiver-mock -o jsonpath="{.items[0].metadata.name}"  -n receiver-mock) -it -n receiver-mock -- curl http://localhost:3000/metrics
 ```
-
