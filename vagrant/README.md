@@ -30,17 +30,31 @@ After successfull installation you can ssh to the virtual machine with:
 vagrant ssh
 ```
 
+NOTICE: The directory with sumo-kubernetes-collection repository on the host is synced with `/sumologic/` directory on the virtual machine.
+
 ## Build
 
-To perform docker image build and to run tests please use `build` target:
+On the virtual machine, to perform docker image build and to run tests please use `build` target:
 
 ```bash
+sumo-make build
+```
+
+or
+
+```
 /sumologic/vagrant/Makefile build
 ```
 
 ## Collector
 
 To install or upgrade collector please type:
+
+```bash
+sumo-make upgrade
+```
+
+or
 
 ```bash
 /sumologic/vagrant/Makefile upgrade
@@ -52,11 +66,33 @@ and after that it will install/upgrade collector in the vagrant environment.
 To remove collector please use:
 
 ```bash
+sumo-make clean
+```
+
+or
+
+```bash
 /sumologic/vagrant/Makefile clean
 ```
 
-List of other useful commands in the Makefile:
+List of other useful targets:
 
 - `expose-prometheus` - exposes prometheus on port 9090 of virtual machine
 - `expose-grafana` - exposes grafana on port 8080 of virtual machine
 - `apply-avalanche` - run one pod deployment of avalanche (metrics generator)
+
+## Test
+
+In order to quickly test whether sumo-kubernetes-collection works, one can use `receiver-mock` for that purpose.
+
+To check receiver-mock logs please use:
+
+```
+kubectl logs $(kubectl get pod -l app=receiver-mock -o jsonpath="{.items[0].metadata.name}"  -n receiver-mock) -n receiver-mock
+```
+
+To check metrics exposed by receiver-mock please use:
+
+```
+kubectl exec $(kubectl get pod -l app=receiver-mock -o jsonpath="{.items[0].metadata.name}"  -n receiver-mock) -it -n receiver-mock -- curl http://localhost:3000/metrics
+```
