@@ -30,7 +30,7 @@ After successfull installation you can ssh to the virtual machine with:
 vagrant ssh
 ```
 
-NOTICE: The directory with sumo-kubernetes-collection repository is synced with the virtual machine.
+NOTICE: The directory with sumo-kubernetes-collection repository on the host is synced with `/sumologic/` directory on the virtual machine.
 
 ## Build
 
