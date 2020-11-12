@@ -185,7 +185,7 @@ Parameter | Description | Default
 `prometheus-operator.prometheusOperator.podAnnotations` | Additional annotations for prometheus operator pods. | `{}`
 `prometheus-operator.prometheusOperator.resources` | Resource limits for prometheus operator.  Uses sub-chart defaults. | `{}`
 `prometheus-operator.prometheusOperator.admissionWebhooks.enabled` | Create PrometheusRules admission webhooks. Mutating webhook will patch PrometheusRules objects indicating they were validated. Validating webhook will check the rules syntax. | `false`
-`prometheus-operator.prometheusOperator.tlsProxy.enabled` | Enable a TLS proxy container. Only the squareup/ghostunnel command line arguments are currently supported and the secret where the cert is loaded from is expected to be provided by the admission webhook. | `false`
+`prometheus-operator.prometheusOperator.tls.enabled` | Enable TLS in prometheus operator. | `false`
 `prometheus-operator.kube-state-metrics.resources` | Resource limits for kube state metrics.  Uses sub-chart defaults. | `{}`
 `prometheus-operator.kube-state-metrics.customLabels` | Custom labels to apply to service, deployment and pods.  Uses sub-chart defaults. | `{}`
  `prometheus-operator.kube-state-metrics.podAnnotations` | Additional annotations for pods in the DaemonSet.  Uses sub-chart defaults. | `{}`
