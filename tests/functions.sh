@@ -37,7 +37,7 @@ function prepare_environment() {
   rm -rf "${repo_path}/tmpcharts"
   docker run --rm \
     -v "${repo_path}":/chart \
-    sumologic/kubernetes-tools:master \
+    sumologic/kubernetes-tools:2.0.0 \
     helm dependency update /chart
 }
 
@@ -71,7 +71,7 @@ function generate_file {
   docker run --rm \
     -v "${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic":/chart \
     -v "${TEST_STATICS_PATH}/${input_file}":/values.yaml \
-    sumologic/kubernetes-tools:master \
+    sumologic/kubernetes-tools:2.0.0 \
     helm template /chart -f /values.yaml \
       --namespace sumologic \
       --set sumologic.accessId='accessId' \

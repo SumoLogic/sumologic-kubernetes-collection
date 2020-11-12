@@ -12,12 +12,12 @@ using `docker`/`kubectl` and [sumologic-kubernetes-tools](https://github.com/sum
  kubectl run tools \
   -it --quiet --rm \
   --restart=Never -n sumologic \
-  --image sumologic/kubernetes-tools:master \
+  --image sumologic/kubernetes-tools:2.0.0 \
   -- template-dependency prometheus-operator > prometheus-overrides.yaml
 
  # or using docker
  docker run -it --rm \
-  sumologic/kubernetes-tools:master \
+  sumologic/kubernetes-tools:2.0.0 \
   template-dependency prometheus-operator > prometheus-overrides.yaml
 ```
 
