@@ -2,6 +2,45 @@ apiVersion: v1
 entries:
   sumologic:
   - apiVersion: v1
+    appVersion: 2.0.0-dev.0-73-g6ec7dcd1
+    created: "2020-11-12T12:10:14.129586691Z"
+    dependencies:
+    - condition: fluent-bit.enabled,sumologic.logs.enabled
+      name: fluent-bit
+      repository: https://charts.helm.sh/stable
+      version: 2.10.1
+    - alias: prometheus-operator
+      condition: prometheus-operator.enabled,sumologic.metrics.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 9.3.4
+    - condition: falco.enabled
+      name: falco
+      repository: https://falcosecurity.github.io/charts
+      version: 1.5.0
+    - condition: metrics-server.enabled
+      name: metrics-server
+      repository: https://charts.bitnami.com/bitnami
+      version: 4.3.1
+    - condition: telegraf-operator.enabled
+      name: telegraf-operator
+      repository: https://sumologic.github.io/influxdata-helm-charts
+      version: 1.1.6
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
+    digest: 05bad21c51515eb7249cc3bccb0f04c4e68776cc7f6a2ec8d2ea33e0108fbabf
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-2.0.0-dev.0-73-g6ec7dcd1.tgz
+    version: 2.0.0-dev.0-73-g6ec7dcd1
+  - apiVersion: v1
     appVersion: 2.0.0-dev.0-72-g71a75a29
     created: "2020-11-10T10:22:30.411478382Z"
     description: A Helm chart for collecting Kubernetes logs, metrics and events into
@@ -7206,4 +7245,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.0.0.tgz
     version: 0.0.0
-generated: "2020-11-10T14:09:04.74113975Z"
+generated: "2020-11-12T12:10:14.094978299Z"
