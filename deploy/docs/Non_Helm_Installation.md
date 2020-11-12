@@ -65,7 +65,7 @@ First you will generate the YAML to apply to your cluster.  The following comman
 kubectl run tools \
   -it --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:1.0.0 -- \
+  --image sumologic/kubernetes-tools:2.0.0 -- \
   template \
   --name-template 'collection' \
   --set sumologic.accessId='<ACCESS_ID>' \
@@ -112,7 +112,7 @@ If you wish to install the YAML in a different namespace, you can add the `--nam
 kubectl run tools \
   -it --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:1.0.0 -- \
+  --image sumologic/kubernetes-tools:2.0.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -137,7 +137,7 @@ If you wish to install the chart in the Openshift Platform, it requires a SCC re
 kubectl run tools \
   -it --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:1.0.0 -- \
+  --image sumologic/kubernetes-tools:2.0.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -185,7 +185,7 @@ cat sumo-values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:1.0.0 -- \
+    --image sumologic/kubernetes-tools:2.0.0 -- \
     template \
       --name-template 'collection' \
       | tee sumologic.yaml
@@ -203,7 +203,7 @@ To upgrade you can simply re-generate the YAML when a new version of the Kuberne
 kubectl run tools \
   -it --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:1.0.0 -- \
+  --image sumologic/kubernetes-tools:2.0.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -220,7 +220,7 @@ cat sumo-values.yaml | \
      kubectl run tools \
        -i --quiet --rm \
        --restart=Never \
-       --image sumologic/kubernetes-tools:1.0.0 -- \
+       --image sumologic/kubernetes-tools:2.0.0 -- \
        template \
          --name-template 'collection' \
          | tee sumologic.yaml
@@ -233,7 +233,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:1.0.0 -- \
+    --image sumologic/kubernetes-tools:2.0.0 -- \
     template \
       --name-template 'collection' \
       --version=1.0.0
