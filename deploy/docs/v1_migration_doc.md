@@ -204,4 +204,4 @@ sed 's/cluster kubernetes/cluster <CLUSTER_NAME>/g'  >> fluentd-sumologic.yaml
 - Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-fluentbit) to deploy Fluent Bit.
 
 ## Kubernetes App dashboard update
-After successful migration please make sure to update your Kubernetes App dashboard to the latest version.
+After successful migration please make sure to [reinstall your Kubernetes App](https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards) to the latest version.
