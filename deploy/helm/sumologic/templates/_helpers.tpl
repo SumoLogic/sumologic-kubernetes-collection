@@ -179,8 +179,30 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}-scc
 {{- end -}}
 
+{{- define "sumologic.labels.app.cleanup" -}}
+{{- template "sumologic.labels.app" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.cleanup.configmap" -}}
+{{- template "sumologic.labels.app.cleanup" . }}
+{{- end -}}
+
 {{/*
-Generate helm.sh annotations. It takes weight as parameter.
+Generate cleanup job helm.sh annotations. It takes weight as parameter.
+
+Example usage:
+
+{{ include "sumologic.annotations.app.cleanup.helmsh" "1" }}
+
+*/}}
+{{- define "sumologic.annotations.app.cleanup.helmsh" -}}
+helm.sh/hook: pre-delete
+helm.sh/hook-weight: {{ printf "\"%s\"" . }}
+helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+{{- end -}}
+
+{{/*
+Generate setup job helm.sh annotations. It takes weight as parameter.
 
 Example usage:
 
@@ -335,6 +357,14 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.setup.securitycontextconstraints" -}}
 {{- template "sumologic.metadata.name.setup" . }}-scc
+{{- end -}}
+
+{{- define "sumologic.metadata.name.cleanup" -}}
+{{ template "sumologic.fullname" . }}-cleanup
+{{- end -}}
+
+{{- define "sumologic.metadata.name.cleanup.configmap" -}}
+{{ template "sumologic.metadata.name.cleanup" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.logs" -}}
