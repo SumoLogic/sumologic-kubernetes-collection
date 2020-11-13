@@ -336,6 +336,7 @@ fluentd:
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
+      # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
@@ -572,6 +573,7 @@ fluentd:
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
+      # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
