@@ -530,6 +530,30 @@ Example:
 {{- end -}}
 
 {{/*
+Returns the name of kubernetes secret.
+
+Example usage:
+
+{{ include "terraform.secret.name" }}
+
+*/}}
+{{- define "terraform.secret.name" -}}
+{{ printf "%s" "sumologic" }}
+{{- end -}}
+
+{{/*
+Returns the name of kubernetes secret prefixed with release namespace.
+
+Example usage:
+
+{{ include "terraform.secret.fullname" }}
+
+*/}}
+{{- define "terraform.secret.fullname" -}}
+{{ .Release.Namespace }}/{{ template "terraform.secret.name" . }}
+{{- end -}}
+
+{{/*
 Convert source name to terraform metric name:
  * converts all `-` to `_`
  * adds `_$type_source` suffix
@@ -590,6 +614,18 @@ Example usage:
 */}}
 {{- define "terraform.sources.data" -}}
 {{ printf "%-41s = sumologic_http_source.%s.url" .Endpoint .Name }}
+{{- end -}}
+
+{{/*
+Returns the collector name.
+
+Example usage:
+
+{{ include "terraform.collector.name" . }}
+
+*/}}
+{{- define "terraform.collector.name" -}}
+{{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ .Values.sumologic.clusterName }}{{- end}}
 {{- end -}}
 
 {{/*

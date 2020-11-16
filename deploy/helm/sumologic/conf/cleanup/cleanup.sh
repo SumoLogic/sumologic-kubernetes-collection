@@ -9,12 +9,12 @@ export NO_PROXY=${NO_PROXY:=""}
 
 cd /cleanup/ || exit 1
 
-readonly COLLECTOR_NAME="{{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ .Values.sumologic.clusterName }}{{- end}}"
-
 terraform init
 
-terraform import sumologic_collector.collector "${COLLECTOR_NAME}"
-terraform import kubernetes_secret.sumologic_collection_secret "{{ .Release.Namespace }}/sumologic"
+# shellcheck disable=SC1083
+terraform import sumologic_collector.collector {{ template "terraform.collector.name" . }}
+# shellcheck disable=SC1083
+terraform import kubernetes_secret.sumologic_collection_secret {{ template "terraform.secret.fullname" . }}
 
 terraform destroy -auto-approve .
 
