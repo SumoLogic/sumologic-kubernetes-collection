@@ -1,21 +1,22 @@
 # Configuration
+
 To see all available configuration for our sub-charts, please refer to their documentation.
 
-  * [Falco](https://github.com/helm/charts/tree/master/stable/falco#configuration) - All Falco properties should be prefixed with `falco.` in our values.yaml to override a property not listed below.
-  * [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#configuration) - All `kube-sprometheus-stack` properties should be prefixed with `prometheus-operator.` in our values.yaml to override a property not listed below.
-  * [Fluent-bit](https://github.com/helm/charts/tree/master/stable/fluent-bit#configuration) - All Fluent-bit properties should be prefixed with `fluent-bit.` in our values.yaml to override a property not listed below.
-  * [Metrics Server](https://github.com/helm/charts/tree/master/stable/metrics-server#configuration) - All Metrics Server properties should be prefixed with `metrics-server.` in our values.yaml to override a property not listed below.
-  
+* [Falco](https://github.com/helm/charts/tree/master/stable/falco#configuration) - All Falco properties should be prefixed with `falco.` in our values.yaml to override a property not listed below.
+* [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#configuration) - All `kube-sprometheus-stack` properties should be prefixed with `prometheus-operator.` in our values.yaml to override a property not listed below.
+* [Fluent-bit](https://github.com/helm/charts/tree/master/stable/fluent-bit#configuration) - All Fluent-bit properties should be prefixed with `fluent-bit.` in our values.yaml to override a property not listed below.
+* [Metrics Server](https://github.com/helm/charts/tree/master/stable/metrics-server#configuration) - All Metrics Server properties should be prefixed with `metrics-server.` in our values.yaml to override a property not listed below.
+
 The following table lists the configurable parameters of the Sumo Logic chart and their default values.
-  
+
 Parameter | Description | Default
 --- | --- | ---
-`image.repository`  |   Image repository for Sumo Logic docker container.   |   `sumologic/kubernetes-fluentd`
+`image.repository` | Image repository for Sumo Logic docker container. | `sumologic/kubernetes-fluentd`
 `image.tag` | Image tag for Sumo Logic docker container. | `1.0.0-rc.2`
-`image.pullPolicy` | Image pullPolicy for Sumo Logic docker container.  | `IfNotPresent`
+`image.pullPolicy` | Image pullPolicy for Sumo Logic docker container. | `IfNotPresent`
 `nameOverride` | Used to override the Chart name. | `Nil`
 `sumologic.setupEnabled` | If enabled, a pre-install hook will create Collector and Sources in Sumo Logic. | `true`
-`sumologic.cleanUpEnabled` | If enabled, a pre-delete hook will destroy Collector in Sumo Logic. | `false`
+`sumologic.cleanUpEnabled` | If enabled, a pre-delete hook will destroy kubernetes secret and Sumo Logic Collector. | `false`
 `sumologic.logs.enabled` | Set the enabled flag to false for disabling logs ingestion altogether. | `true`
 `sumologic.metrics.enabled` | Set the enabled flag to false for disabling metrics ingestion altogether. | `true`
 `sumologic.traces.enabled` | Set the enabled flag to true to enable tracing ingestion. _Tracing must be enabled for the account first. Please contact your Sumo representative for activation details_ | `false`
@@ -217,8 +218,8 @@ Parameter | Description | Default
 `otelcol.config.service.pipelines.traces.receivers` | Sets the list of enabled receivers. | `{jaeger, opencensus, otlp, zipkin}`
 `otelcol.config.exporters.zipkin.timeout` | Sets the Zipkin (default) exporter timeout. Append the unit, e.g. `s` when setting the parameter | `5s`
 `otelcol.config.exporters.logging.loglevel` | When tracing debug logging exporter is enabled, sets the verbosity level. Use either `info` or `debug`. | `info`
-`otelcol.config.service.pipelines.traces.exporters` | Sets the list of exporters enabled within OpenTelemetry Collector. Available values: `zipkin`, `logging`. Set to `{zipkin, logging}` to enable logging debugging exporter. | `{zipkin}` 
+`otelcol.config.service.pipelines.traces.exporters` | Sets the list of exporters enabled within OpenTelemetry Collector. Available values: `zipkin`, `logging`. Set to `{zipkin, logging}` to enable logging debugging exporter. | `{zipkin}`
 `otelcol.config.service.pipelines.traces.processors` | Sets the list of enabled OpenTelemetry Collector processors. | `{memory_limiter, k8s_tagger, source, resource, batch, queued_retry}`
-`otelcol.config.processors.memory_limiter.limit_mib` | Sets the OpenTelemetry Collector memory limitter plugin value (in MiB). Should be at least 100 Mib less than the value of `otelcol.deployment.resources.limits.memory`.  | `1900` 
+`otelcol.config.processors.memory_limiter.limit_mib` | Sets the OpenTelemetry Collector memory limitter plugin value (in MiB). Should be at least 100 Mib less than the value of `otelcol.deployment.resources.limits.memory`. | `1900`
 `otelcol.config.processors.batch.send_batch_size` | Sets the preferred size of batch (in number of spans). | `256`
 `otelcol.config.processors.batch.send_batch_max_size` | Sets the maximum allowed size of a batch (in number of spans). Use with caution, setting too large value might cause 413 Payload Too Large errors. | `512`
