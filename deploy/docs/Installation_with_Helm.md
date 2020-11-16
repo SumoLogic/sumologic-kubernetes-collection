@@ -167,7 +167,8 @@ Once you have customized you can use the following commands to install or upgrad
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
 ```
 
-> **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
+> **Tip**: To filter or add custom metrics to Prometheus,
+> [please refer to this document](additional_prometheus_configuration.md)
 
 ## Upgrading Sumo Logic Collection
 
@@ -217,7 +218,8 @@ To uninstall/delete the Helm chart:
 helm delete my-release
 ```
 
-> **Helm3 Tip**: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.
+> **Helm3 Tip**: In Helm3 the default behavior is to purge history.
+> Use --keep-history to preserve it while deleting the release.
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
