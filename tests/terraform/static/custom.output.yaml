@@ -177,8 +177,6 @@ data:
     cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
     cd /terraform
   
-    COLLECTOR_NAME="kubernetes"
-  
     terraform init
   
     # Sumo Logic fields
@@ -207,8 +205,10 @@ data:
         echo "Please refer to https://help.sumologic.com/Manage/Fields to manually create the fields after you have removed unused fields to free up capacity."
     fi
   
+    readonly COLLECTOR_NAME="kubernetes"
+  
     # Sumo Logic Collector and HTTP sources
-    terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+    terraform import sumologic_collector.collector "${COLLECTOR_NAME}"
   
     # Kubernetes Secret
     terraform import kubernetes_secret.sumologic_collection_secret sumologic/sumologic

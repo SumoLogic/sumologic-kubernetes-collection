@@ -3,7 +3,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ template "sumologic.metadata.name.setup.job" . }}
-  namespace: {{ .Release.Namespace }}
   annotations:
 {{ include "sumologic.annotations.app.setup.helmsh" "3" | indent 4 }}
   labels:

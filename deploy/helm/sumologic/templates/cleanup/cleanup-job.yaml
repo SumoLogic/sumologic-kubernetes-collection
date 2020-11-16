@@ -1,0 +1,70 @@
+{{- if .Values.sumologic.cleanUpEnabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "sumologic.metadata.name.cleanup" . }}
+  annotations:
+{{ include "sumologic.annotations.app.cleanup.helmsh" "0" | indent 4 }}
+  labels:
+    app: {{ template "sumologic.metadata.name.cleanup" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  template:
+    metadata:
+      annotations:
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
+      volumes:
+      - name: configmap
+        configMap:
+          name: {{ template "sumologic.metadata.name.cleanup.configmap" . }}
+          defaultMode: 0777
+      - name: cleanup
+        emptyDir: {}
+      initContainers:
+      - name: copy-files
+        image: busybox
+        command: ['sh', '-c', 'cp /configmap/* /cleanup']
+        volumeMounts:
+          - name: configmap
+            mountPath: /configmap
+          - name: cleanup
+            mountPath: /cleanup
+      containers:
+        - name: cleanup
+          image: "hashicorp/terraform:0.12.29"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: cleanup
+            mountPath: /cleanup
+          command: ["/cleanup/cleanup.sh"]
+          {{- if .Values.sumologic.envFromSecret }}
+          envFrom:
+          - secretRef:
+              name: {{ .Values.sumologic.envFromSecret }}
+          {{ else }}
+          env:
+          - name: SUMOLOGIC_ACCESSID
+            value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
+          - name: SUMOLOGIC_ACCESSKEY
+            value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
+          - name: SUMOLOGIC_BASE_URL
+            value: {{ .Values.sumologic.endpoint }}
+          - name: HTTP_PROXY
+            value: {{ .Values.sumologic.httpProxy }}
+          - name: HTTPS_PROXY
+            value: {{ .Values.sumologic.httpsProxy }}
+          - name: NO_PROXY
+            value: {{ .Values.sumologic.noProxy }}
+          {{ end }}
+      securityContext:
+        runAsUser: 999
+{{- end }}
