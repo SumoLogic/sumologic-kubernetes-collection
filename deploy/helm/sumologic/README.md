@@ -28,6 +28,7 @@ Parameter | Description | Default
 `sumologic.httpProxy` | HTTP proxy URL | `Nil`
 `sumologic.httpsProxy` | HTTPS proxy URL | `Nil`
 `sumologic.noProxy` | List of comma separated hostnames which should be excluded from the proxy | `kubernetes.default.svc`
+`sumologic.pullSecrets` | Optional list of secrets that will be used for pulling images for Sumo Logic's jobs, deployments and statefulsets. | `Nil`
 `sumologic.podLabels` | Additional labels for the pods. | `{}`
 `sumologic.podAnnotations` | Additional annotations for the pods. | `{}`
 `sumologic.scc.create` | Create OpenShift's Security Context Constraint | `false`
