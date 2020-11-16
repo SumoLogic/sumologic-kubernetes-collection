@@ -730,6 +730,8 @@ metrics-server:
 ## Configure fluent-bit
 ## ref: https://github.com/fluent/helm-charts/blob/master/charts/fluent-bit/values.yaml
 fluent-bit:
+  image:
+    pullPolicy: IfNotPresent
   ## Resource limits for fluent-bit
   resources: {}
     # limits:
