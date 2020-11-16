@@ -16,6 +16,7 @@
       - [2.1: Deploy Fluentd](#21-deploy-fluentd)
       - [2.1: Deploy Prometheus](#22-deploy-prometheus)
       - [2.1: Deploy Fluent Bit](#23-deploy-fluent-bit)
+- [Kubernetes App dashboard update](#kubernetes-app-dashboard-update)
 
 
 <!-- /TOC -->
@@ -194,3 +195,6 @@ sed 's/cluster kubernetes/cluster <CLUSTER_NAME>/g'  >> fluentd-sumologic.yaml
 - Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-prometheus) to deploy Prometheus.
 ##### 2.3: Deploy Fluent Bit
 - Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/docs/Non_Helm_Installation.md#deploy-fluentbit) to deploy Fluent Bit.
+
+## Kubernetes App dashboard update
+After successful migration please make sure to [reinstall your Kubernetes App](https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards) to the latest version.
