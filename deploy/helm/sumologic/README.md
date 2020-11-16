@@ -16,7 +16,7 @@ Parameter | Description | Default
 `image.pullPolicy` | Image pullPolicy for Sumo Logic docker container. | `IfNotPresent`
 `nameOverride` | Used to override the Chart name. | `Nil`
 `sumologic.setupEnabled` | If enabled, a pre-install hook will create Collector and Sources in Sumo Logic. | `true`
-`sumologic.cleanUpEnabled` | If enabled, a pre-delete hook will destroy kubernetes secret and Sumo Logic Collector. | `false`
+`sumologic.cleanUpEnabled` | If enabled, a pre-delete hook will destroy Kubernetes secret and Sumo Logic Collector. | `false`
 `sumologic.logs.enabled` | Set the enabled flag to false for disabling logs ingestion altogether. | `true`
 `sumologic.metrics.enabled` | Set the enabled flag to false for disabling metrics ingestion altogether. | `true`
 `sumologic.traces.enabled` | Set the enabled flag to true to enable tracing ingestion. _Tracing must be enabled for the account first. Please contact your Sumo representative for activation details_ | `false`
