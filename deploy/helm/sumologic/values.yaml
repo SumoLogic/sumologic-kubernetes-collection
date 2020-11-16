@@ -737,7 +737,7 @@ fluent-bit:
     #   memory: 128Mi
     # requests:
     #   cpu: 10m
-  #   memory: 8Mi
+    #   memory: 8Mi
 
   ## Uncomment the flag below to not install fluent-bit helm chart as a dependency along with this helm chart.
   ## Comment it out if you wish to have the fluent-bit dependency installed.
@@ -865,7 +865,7 @@ fluent-bit:
           Match         *
           Host          ${CHART}.${NAMESPACE}.svc.cluster.local.
           Port          24321
-          Retry_Limit False
+          Retry_Limit   False
           tls           off
           tls.verify    on
           tls.debug     1
