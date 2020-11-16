@@ -54,11 +54,11 @@ spec:
       containers:
       - name: otelcontrib-agent
         image: {{ .Values.otelagent.daemonset.image.name }}:{{ .Values.otelagent.daemonset.image.tag }}
-        imagePullPolicy: {{ .Values.otelcol.deployment.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.otelagent.daemonset.image.pullPolicy }}
         command:
           - "/otelcontribcol"
           - "--config=/conf/traces.otelagent.conf.yaml"
-          - {{ printf "--mem-ballast-size-mib=%s" .Values.otelcol.deployment.memBallastSizeMib }}
+          - {{ printf "--mem-ballast-size-mib=%s" .Values.otelagent.daemonset.memBallastSizeMib }}
         env:
         - name: GOGC
           value: "80"
