@@ -12,7 +12,10 @@ cd /cleanup/ || exit 1
 readonly COLLECTOR_NAME="{{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ .Values.sumologic.clusterName }}{{- end}}"
 
 terraform init
+
 terraform import sumologic_collector.collector "${COLLECTOR_NAME}"
+terraform import kubernetes_secret.sumologic_collection_secret {{ .Release.Namespace }}/sumologic
+
 terraform destroy -auto-approve .
 
 # Cleanup env variables
