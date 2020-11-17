@@ -1,0 +1,14 @@
+{{- if .Values.sumologic.cleanUpEnabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.cleanup.configmap" . }}
+  annotations:
+{{ include "sumologic.annotations.app.cleanup.helmsh" "0" | indent 4 }}
+  labels:
+    app: {{ template "sumologic.labels.app.cleanup.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  {{- (tpl (.Files.Glob "conf/cleanup/cleanup.sh").AsConfig .) | nindent 2 }}
+  {{- (tpl (.Files.Glob "conf/setup/{locals,main,providers,resources,variables}.tf").AsConfig .) | nindent 2 }}
+{{- end }}

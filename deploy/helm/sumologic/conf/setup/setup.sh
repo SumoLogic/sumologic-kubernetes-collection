@@ -29,8 +29,6 @@ function should_create_fields() {
 cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
 cd /terraform
 
-COLLECTOR_NAME="{{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ .Values.sumologic.clusterName }}{{- end}}"
-
 terraform init
 
 # Sumo Logic fields
@@ -59,26 +57,29 @@ else
     echo "Please refer to https://help.sumologic.com/Manage/Fields to manually create the fields after you have removed unused fields to free up capacity."
 fi
 
+readonly COLLECTOR_NAME="{{ template "terraform.collector.name" . }}"
+
 # Sumo Logic Collector and HTTP sources
-terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+terraform import sumologic_collector.collector "${COLLECTOR_NAME}"
 
 {{- $ctx := .Values -}}
 {{- range $type, $sources := .Values.sumologic.sources }}
 {{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
 {{- range $key, $source := $sources }}
 {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
-terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "$COLLECTOR_NAME/{{ $source.name }}"
+terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "${COLLECTOR_NAME}/{{ $source.name }}"
 {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
 
 # Kubernetes Secret
-terraform import kubernetes_secret.sumologic_collection_secret {{ .Release.Namespace }}/sumologic
+terraform import kubernetes_secret.sumologic_collection_secret {{ template "terraform.secret.fullname" . }}
 
 # Apply planned changes
 terraform apply -auto-approve \
-    -var="create_fields=${CREATE_FIELDS}"
+    -var="create_fields=${CREATE_FIELDS}" \
+    || { echo "Error during applying terraform changes"; exit 1; }
 
 # Cleanup env variables
 export SUMOLOGIC_BASE_URL=

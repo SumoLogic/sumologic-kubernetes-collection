@@ -11,11 +11,12 @@ The following table lists the configurable parameters of the Sumo Logic chart an
 
 Parameter | Description | Default
 --- | --- | ---
-`image.repository`  |   Image repository for Sumo Logic docker container.   |   `sumologic/kubernetes-fluentd`
+`image.repository` | Image repository for Sumo Logic docker container. | `sumologic/kubernetes-fluentd`
 `image.tag` | Image tag for Sumo Logic docker container. | `1.0.0-rc.2`
-`image.pullPolicy` | Image pullPolicy for Sumo Logic docker container.  | `IfNotPresent`
+`image.pullPolicy` | Image pullPolicy for Sumo Logic docker container. | `IfNotPresent`
 `nameOverride` | Used to override the Chart name. | `Nil`
 `sumologic.setupEnabled` | If enabled, a pre-install hook will create Collector and Sources in Sumo Logic. | `true`
+`sumologic.cleanUpEnabled` | If enabled, a pre-delete hook will destroy Kubernetes secret and Sumo Logic Collector. | `false`
 `sumologic.logs.enabled` | Set the enabled flag to false for disabling logs ingestion altogether. | `true`
 `sumologic.metrics.enabled` | Set the enabled flag to false for disabling metrics ingestion altogether. | `true`
 `sumologic.traces.enabled` | Set the enabled flag to true to enable tracing ingestion. _Tracing must be enabled for the account first. Please contact your Sumo representative for activation details_ | `false`
@@ -28,6 +29,7 @@ Parameter | Description | Default
 `sumologic.httpProxy` | HTTP proxy URL | `Nil`
 `sumologic.httpsProxy` | HTTPS proxy URL | `Nil`
 `sumologic.noProxy` | List of comma separated hostnames which should be excluded from the proxy | `kubernetes.default.svc`
+`sumologic.pullSecrets` | Optional list of secrets that will be used for pulling images for Sumo Logic's jobs, deployments and statefulsets. | `Nil`
 `sumologic.podLabels` | Additional labels for the pods. | `{}`
 `sumologic.podAnnotations` | Additional annotations for the pods. | `{}`
 `sumologic.scc.create` | Create OpenShift's Security Context Constraint | `false`
@@ -217,8 +219,8 @@ Parameter | Description | Default
 `otelcol.config.service.pipelines.traces.receivers` | Sets the list of enabled receivers. | `{jaeger, opencensus, otlp, zipkin}`
 `otelcol.config.exporters.zipkin.timeout` | Sets the Zipkin (default) exporter timeout. Append the unit, e.g. `s` when setting the parameter | `5s`
 `otelcol.config.exporters.logging.loglevel` | When tracing debug logging exporter is enabled, sets the verbosity level. Use either `info` or `debug`. | `info`
-`otelcol.config.service.pipelines.traces.exporters` | Sets the list of exporters enabled within OpenTelemetry Collector. Available values: `zipkin`, `logging`. Set to `{zipkin, logging}` to enable logging debugging exporter. | `{zipkin}` 
+`otelcol.config.service.pipelines.traces.exporters` | Sets the list of exporters enabled within OpenTelemetry Collector. Available values: `zipkin`, `logging`. Set to `{zipkin, logging}` to enable logging debugging exporter. | `{zipkin}`
 `otelcol.config.service.pipelines.traces.processors` | Sets the list of enabled OpenTelemetry Collector processors. | `{memory_limiter, k8s_tagger, source, resource, batch, queued_retry}`
-`otelcol.config.processors.memory_limiter.limit_mib` | Sets the OpenTelemetry Collector memory limitter plugin value (in MiB). Should be at least 100 Mib less than the value of `otelcol.deployment.resources.limits.memory`.  | `1900` 
+`otelcol.config.processors.memory_limiter.limit_mib` | Sets the OpenTelemetry Collector memory limitter plugin value (in MiB). Should be at least 100 Mib less than the value of `otelcol.deployment.resources.limits.memory`. | `1900`
 `otelcol.config.processors.batch.send_batch_size` | Sets the preferred size of batch (in number of spans). | `256`
 `otelcol.config.processors.batch.send_batch_max_size` | Sets the maximum allowed size of a batch (in number of spans). Use with caution, setting too large value might cause 413 Payload Too Large errors. | `512`

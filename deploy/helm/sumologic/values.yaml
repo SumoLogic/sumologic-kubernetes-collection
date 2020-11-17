@@ -14,6 +14,9 @@ sumologic:
   ## If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
   setupEnabled: true
 
+  ## If enabled, a pre-delete hook will destroy Collector in Sumo Logic
+  cleanUpEnabled: false
+
   ## If enabled, accessId and accessKey will be sourced from Secret Name given
   ## Be sure to include at least the following env variables in your secret
   ## (1) SUMOLOGIC_ACCESSID, (2) SUMOLOGIC_ACCESSKEY
@@ -66,7 +69,16 @@ sumologic:
 
   ## If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace> and not add the fluentD/fluent-bit logs and Prometheus remotestorage metrics.
   collectionMonitoring: true
-  
+
+  ## Optionally specify an array of pullSecrets.
+  ## They will be added to serviceaccount that is used for Sumo Logic's jobs,
+  ## deployments and statefulsets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - name: myRegistryKeySecretName
+
   ## Add custom labels to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
   podLabels: {}
 
@@ -336,6 +348,7 @@ fluentd:
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
+      # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
@@ -572,6 +585,7 @@ fluentd:
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
+      # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
     ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
