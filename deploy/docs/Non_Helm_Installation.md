@@ -11,7 +11,7 @@ Fluent-Bit, Prometheus and Falco.
 * [Requirements](#requirements)
 * [Prerequisite](#prerequisite)
 * [Installation Steps](#installation-steps)
-  * [Authenticating with docker registry](#authenticating-with-docker-registry)
+  * [Authenticating with container registry](#authenticating-with-container-registry)
   * [Installation in Openshift Platform](#installation-in-openshift-platform)
 * [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 * [Troubleshooting Installation](#troubleshooting-installation)
@@ -158,7 +158,7 @@ kubectl config set-context --current --namespace=my-namespace
 kubectl apply -f sumologic.yaml
 ```
 
-### Authenticating with docker registry
+### Authenticating with container registry
 
 Sumo Logic docker images used in the collection are currently hosted on hub.docker.com which
 [requires authentication in order to provide higher quota for image pulls][docker-rate-limit].

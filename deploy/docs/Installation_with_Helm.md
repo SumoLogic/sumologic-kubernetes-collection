@@ -7,7 +7,7 @@ enriching them with deployment, pod, and service level metadata; and sends them 
 * [Requirements](#requirements)
 * [Prerequisite](#prerequisite)
 * [Installation Steps](#installation-steps)
-  * [Authenticating with docker registry](#authenticating-with-docker-registry)
+  * [Authenticating with container registry](#authenticating-with-container-registry)
   * [Installing the helm chart in Openshift platform](#installing-the-helm-chart-in-openshift-platform)
 * [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 * [Troubleshooting Installation](#troubleshooting-installation)
@@ -100,7 +100,7 @@ If the namespace does not exist, you can add the `--create-namespace` flag.
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --create-namespace
 ```
 
-### Authenticating with docker registry
+### Authenticating with container registry
 
 Sumo Logic docker images used in the collection are currently hosted on hub.docker.com which
 [requires authentication in order to provide higher quota for image pulls][docker-rate-limit].
