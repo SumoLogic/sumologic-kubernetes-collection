@@ -1,15 +1,19 @@
 # Deployment Guide
 
-This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic. See our [documentation guide](https://help.sumologic.com/Solutions/Kubernetes_Solution) for details on our Kubernetes Solution.
+This page has instructions for collecting Kubernetes logs, metrics, and events;
+enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
+See our [documentation guide](https://help.sumologic.com/Solutions/Kubernetes_Solution)
+for details on our Kubernetes Solution.
 
 - [Deployment Guide](#deployment-guide)
   - [Solution overview](#solution-overview)
   - [Minimum Requirements](#minimum-requirements)
   - [Support Matrix](#support-matrix)
   - [Installation with Helm](./docs/Installation_with_Helm.md)
-  - [Non Helm Installation](./docs/Non_Helm_Installation.md) 
+  - [Non Helm Installation](./docs/Non_Helm_Installation.md)
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
+  - [Authenticating with docker registry](./docs/Authenticating_with_docker_registry.md)
   - [Alpha Releases](./docs/Alpha_Release_Guide.md)
   - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
 - [Migration Steps](./docs/Migration_Steps.md)
@@ -22,14 +26,20 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 
 ![solution](/images/k8s_collection_diagram.png)
 
-* **K8S API Server**. Exposes API server metrics.
-* **Scheduler.** Makes Scheduler metrics available on an HTTP metrics port.
-* **Controller Manager.** Makes Controller Manager metrics available on an HTTP metrics port.
-* **node-exporter.** The `node_exporter` add-on exposes node metrics, including CPU, memory, disk, and network utilization.
-* **kube-state-metrics.** Listens to the Kubernetes API server; generates metrics about the state of the deployments, nodes, and pods in the cluster; and exports the metrics as plaintext on an HTTP endpoint listen port.
-* **Prometheus deployment.** Scrapes the metrics exposed by the `node-exporter` add-on for Kubernetes and the `kube-state-metrics` component; writes metrics to a port on the Fluentd deployment.
-* **Fluentd deployment.** Forwards logs and metrics to HTTP sources on a hosted collector. Includes multiple Fluentd plugins that parse and format the metrics and enrich them with metadata.
-* **Events Fluentd deployment.** Forwards events to an HTTP source on a hosted collector.
+- **K8S API Server**. Exposes API server metrics.
+- **Scheduler.** Makes Scheduler metrics available on an HTTP metrics port.
+- **Controller Manager.** Makes Controller Manager metrics available on an HTTP metrics port.
+- **node-exporter.** The `node_exporter` add-on exposes node metrics, including CPU,
+  memory, disk, and network utilization.
+- **kube-state-metrics.** Listens to the Kubernetes API server; generates metrics
+  about the state of the deployments, nodes, and pods in the cluster; and exports
+  the metrics as plaintext on an HTTP endpoint listen port.
+- **Prometheus deployment.** Scrapes the metrics exposed by the `node-exporter`
+  add-on for Kubernetes and the `kube-state-metrics` component; writes metrics
+  to a port on the Fluentd deployment.
+- **Fluentd deployment.** Forwards logs and metrics to HTTP sources on a hosted collector.
+  Includes multiple Fluentd plugins that parse and format the metrics and enrich them with metadata.
+- **Events Fluentd deployment.** Forwards events to an HTTP source on a hosted collector.
 
 ## Minimum Requirements
 
