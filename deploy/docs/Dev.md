@@ -4,7 +4,10 @@ This document contains information helpful for developers.
 
 ## Installation of non-official Helm charts
 
-Non-official Helm charts are available in [dev](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/gh-pages/dev) directory on [gh-pages](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/gh-pages) branch.
+Non-official Helm charts are available in [dev] directory on [gh-pages] branch.
+
+[dev]: https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/gh-pages/dev
+[gh-pages]: https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/gh-pages
 
 To use non-official Helm charts it is necessary to add repository containing them:
 
@@ -29,6 +32,7 @@ e.g.
 helm upgrade collection sumologic-dev/sumologic \
         --install \
         --namespace sumologic \
-        --version 2.0.0-dev.0-81-g07e8e27f \
+        --version 2.0.0-dev.0-83-g7cbe1a27 \
         -f /sumologic/vagrant/values.yaml,/sumologic/vagrant/values.local.yaml
 ```
+
