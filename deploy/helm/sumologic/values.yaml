@@ -948,7 +948,7 @@ prometheus-operator:
     ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     ##
     # imagePullSecrets:
-    # - name: "image-pull-secret"
+    #   - name: "image-pull-secret"
 
   ## Uncomment the flag below to not install prometheus-operator helm chart as a dependency along with this helm chart.
   ## Comment it out if you wish to have the prometheus-operator dependency installed.
