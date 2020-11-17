@@ -78,7 +78,8 @@ terraform import kubernetes_secret.sumologic_collection_secret {{ template "terr
 
 # Apply planned changes
 terraform apply -auto-approve \
-    -var="create_fields=${CREATE_FIELDS}"
+    -var="create_fields=${CREATE_FIELDS}" \
+    || { echo "Error during applying terraform changes"; exit 1; }
 
 # Cleanup env variables
 export SUMOLOGIC_BASE_URL=
