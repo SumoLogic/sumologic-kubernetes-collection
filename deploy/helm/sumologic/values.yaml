@@ -735,6 +735,13 @@ metrics-server:
   extraArgs:
    kubelet-insecure-tls: true
    kubelet-preferred-address-types: InternalIP,ExternalIP,Hostname
+  image:
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # pullSecrets:
+    #   - imagepullsecret
 
 ## Configure fluent-bit
 ## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
@@ -743,6 +750,10 @@ fluent-bit:
     fluent_bit:
       repository: fluent/fluent-bit
       tag: 1.6.0
+    # If specified, use these secrets to access the image
+    # pullSecrets:
+    #   - name: "image-pull-secret"
+
   ## Resource limits for fluent-bit
   resources: {}
     # limits:
@@ -931,6 +942,13 @@ prometheus-operator:
       interval:
   ## Ensure we use pre 1.14 recording rules consistently as current content depends on them.
   kubeTargetVersionOverride: 1.13.0-0
+
+  # global:
+    ## Reference to one or more secrets to be used when pulling images
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # imagePullSecrets:
+    # - name: "image-pull-secret"
 
   ## Uncomment the flag below to not install prometheus-operator helm chart as a dependency along with this helm chart.
   ## Comment it out if you wish to have the prometheus-operator dependency installed.
@@ -1801,12 +1819,15 @@ telegraf-operator:
           ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration
           listen = ":9273"
           metric_version = 2
+  # imagePullSecrets: []
 
 ## Configure falco
 ## This is an experimental configuration and shouldn't be used in production environment
 ## https://github.com/falcosecurity/charts/tree/master/falco
 falco:
   enabled: false
+  # image:
+    # pullSecrets: []
   customRules:
     # Mark the following as known k8s api callers:
     # * fluentd and its plugins from sumologic/kubernetes-fluentd image
