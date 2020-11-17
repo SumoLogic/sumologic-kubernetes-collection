@@ -69,7 +69,16 @@ sumologic:
 
   ## If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace> and not add the fluentD/fluent-bit logs and Prometheus remotestorage metrics.
   collectionMonitoring: true
-  
+
+  ## Optionally specify an array of pullSecrets.
+  ## They will be added to serviceaccount that is used for Sumo Logic's jobs,
+  ## deployments and statefulsets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - name: myRegistryKeySecretName
+
   ## Add custom labels to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
   podLabels: {}
 
