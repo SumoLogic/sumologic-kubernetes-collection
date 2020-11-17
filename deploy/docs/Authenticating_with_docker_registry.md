@@ -1,9 +1,9 @@
 # Authenticating with container registry
 
-Sumo Logic container images used in the collection are currently hosted on hub.docker.com which
+Sumo Logic container images used in the collection are currently hosted on [Docker Hub](https://hub.docker.com/) which
 [requires authentication in order to provide higher quota for image pulls][docker-rate-limit].
 
-In order to authenticate with container registry hosted at hub.docker.com when using
+In order to authenticate with container registry hosted at [Docker Hub](https://hub.docker.com/) when using
 helm installation one can use `sumologic.pullSecrets`, to pass Kubernetes secret
 names which contain the required credentials.
 
