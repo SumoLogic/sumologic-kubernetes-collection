@@ -530,7 +530,7 @@ Example:
 {{- end -}}
 
 {{/*
-Returns the name of kubernetes secret.
+Returns the name of Kubernetes secret.
 
 Example usage:
 
@@ -542,7 +542,7 @@ Example usage:
 {{- end -}}
 
 {{/*
-Returns the name of kubernetes secret prefixed with release namespace.
+Returns the name of Kubernetes secret prefixed with release namespace.
 
 Example usage:
 

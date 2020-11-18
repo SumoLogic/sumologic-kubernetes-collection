@@ -9,11 +9,11 @@ We are using two providers to perform those actions:
 
 ## Kubernetes Terraform provider
 
-[Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/) is responsible for creating the secret with the created HTTP source endpoints during setup process. The default configuration is expected to work in most cases, however, for self-hosted kubernetes clusters there can be a few exceptions. For these cases we expose the provider configuration in `values.yaml`.
+[Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/) is responsible for creating the secret with the created HTTP source endpoints during setup process. The default configuration is expected to work in most cases, however, for self-hosted Kubernetes clusters there can be a few exceptions. For these cases we expose the provider configuration in `values.yaml`.
 
 ```yaml
 sumologic:
-  # Configuration of kubernetes for terraform client
+  # Configuration of Kubernetes for Terraform client
   # https://www.terraform.io/docs/providers/kubernetes/index.html#argument-reference
   # All double quotes should be escaped here regarding terraform syntax
   cluster:
