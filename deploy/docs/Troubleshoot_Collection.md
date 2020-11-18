@@ -2,23 +2,23 @@
 
 <!-- TOC -->
 
-- [`helm install` hanging](#helm-install-hanging) 
-- [Namespace configuration](#namespace-configuration) 
-- [Gathering logs](#gathering-logs) 
-  - [Fluentd Logs](#fluentd-logs) 
-  - [Prometheus Logs](#prometheus-logs) 
-  - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo) 
-- [Gathering metrics](#gathering-metrics) 
-  - [Check the `/metrics` endpoint](#check-the-metrics-endpoint) 
-  - [Check the Prometheus UI](#check-the-prometheus-ui) 
-  - [Check Prometheus Remote Storage](#check-prometheus-remote-storage) 
-  - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics) 
-- [Common Issues](#common-issues) 
-  - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state) 
-  - [Missing `kubelet` metrics](#missing-kubelet-metrics) 
-    - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster) 
-    - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator) 
-  - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics) 
+- [`helm install` hanging](#helm-install-hanging)
+- [Namespace configuration](#namespace-configuration)
+- [Gathering logs](#gathering-logs)
+  - [Fluentd Logs](#fluentd-logs)
+  - [Prometheus Logs](#prometheus-logs)
+  - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
+- [Gathering metrics](#gathering-metrics)
+  - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
+  - [Check the Prometheus UI](#check-the-prometheus-ui)
+  - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+  - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics)
+- [Common Issues](#common-issues)
+  - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
+  - [Missing `kubelet` metrics](#missing-kubelet-metrics)
+    - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
+    - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator)
+  - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
   - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
   - [Errors in helm installation](#errors-in-helm-installation)
   - [Rancher](#rancher)
@@ -276,7 +276,7 @@ collection-prometheus-oper-kube-controller-manager
 
 Run the following command to patch the labels on these services, again this command assumes the above service names which you may need to change.
 
-``` 
+```
 kubectl -n kube-system patch service collection-prometheus-oper-kube-controller-manager -p '{"spec":{"selector":{"k8s-app": "kube-controller-manager"}}}'
 kubectl -n kube-system patch service collection-prometheus-oper-kube-scheduler -p '{"spec":{"selector":{"k8s-app": "kube-scheduler"}}}'
 kubectl -n kube-system patch service collection-prometheus-oper-kube-controller-manager --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'

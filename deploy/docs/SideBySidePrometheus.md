@@ -7,14 +7,14 @@ When installing our Helm Chart it is possible to have more than one Prometheus s
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
 
 <!-- TOC -->
-- [Requirements](#requirements) 
+- [Requirements](#requirements)
 - [Prerequisite](#prerequisite)
-- [Installation Steps](#installation-steps) 
-- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic) 
+- [Installation Steps](#installation-steps)
+- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Troubleshooting Installation](#troubleshooting-installation)
 - [Customizing Installation](#customizing-installation)
 - [Upgrade Sumo Logic Collection](#upgrading-sumo-logic-collection)
-- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection) 
+- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
 <!-- /TOC -->
 
@@ -113,7 +113,7 @@ You can find more information in our [troubleshooting documentation](Troubleshoo
 
 ## Customizing Installation
 All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade. Remember to define the properties in our [requirements section](#requirements) in the `values.yaml` as well or pass them in via `--set`
-  
+
 ```bash
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
 ```

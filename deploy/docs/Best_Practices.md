@@ -63,7 +63,7 @@ Parser_1 optional_parser
 
 Docker daemon has a limit of 16KB/line so if a log line is longer than that,
 it might be truncated in Sumo.
-To fix this, fluent-bit exposes a parameter:  
+To fix this, fluent-bit exposes a parameter:
 
 ``` bash
 Docker_Mode  On
@@ -113,7 +113,7 @@ To enable autoscaling for Fluentd:
      authorizationMode: Webhook
   ```
 
-- Enable autoscaling for Logs Fluentd statefulset 
+- Enable autoscaling for Logs Fluentd statefulset
 
   ```yaml
   fluentd:
@@ -123,7 +123,7 @@ To enable autoscaling for Fluentd:
         enabled: true
   ```
 
-- Enable autoscaling for Metrics Fluentd statefulset 
+- Enable autoscaling for Metrics Fluentd statefulset
 
   ```yaml
   fluentd:
