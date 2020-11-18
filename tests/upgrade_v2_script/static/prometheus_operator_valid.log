@@ -1,0 +1,8 @@
+[INFO]    Mapping prometheus-operator.prometheusOperator.tlsProxy.enabled into kube-prometheus-stack.prometheusOperator.tls.enabled
+[INFO]    Mapping prometheus-operator.prometheus.prometheusSpec.containers.[0].name's value from prometheus-config-reloader into config-reloader 
+
+[INFO]    Migrating from promtheus-operator to kube-prometheus-stack
+[INFO]    falco will be disabled. Change "falco.enabled" to "true" if you want to enable it
+
+Thank you for upgrading to v2.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
+A new yaml file has been generated for you. Please check the current directory for new_values.yaml.

@@ -1,0 +1,53 @@
+prometheus-operator:
+  prometheusOperator:
+    podLabels: {}
+    podAnnotations: {}
+    resources: {}
+    admissionWebhooks:
+      enabled: false
+    tlsProxy:
+      enabled: false
+  prometheus:
+    prometheusSpec:
+      scrapeInterval: 30s
+      retention: 1d
+      podMetadata:
+        labels: {}
+        annotations: {}
+      resources:
+        limits:
+          cpu: 2000m
+          memory: 8Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
+      thanos:
+        baseImage: quay.io/thanos/thanos
+        version: v0.10.0
+        resources:
+          limits:
+            cpu: 10m
+            memory: 32Mi
+          requests:
+            cpu: 1m
+            memory: 8Mi
+      containers:
+        - name: "prometheus-config-reloader"
+          env:
+            - name: CHART
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdMetrics
+            - name: NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdNamespace
+sumologic:
+  accessId: dummy
+  accessKey: dummy
+  endpoint: http://dummy.com/
+telegraf-operator:
+  enabled: true
+  replicaCount: 1
