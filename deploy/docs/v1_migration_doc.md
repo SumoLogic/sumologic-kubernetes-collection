@@ -85,7 +85,7 @@ fluentd:
         </filter>
 ```
 
-Until now, Helm users have not been able to modify their Fluentd configuration outside of the specific parameters that we exposed in the `values.yaml` file. Now, we expose the ability to modify the Fluentd configuration as needed. 
+Until now, Helm users have not been able to modify their Fluentd configuration outside of the specific parameters that we exposed in the `values.yaml` file. Now, we expose the ability to modify the Fluentd configuration as needed.
 
 Some use-cases include :
  - custom log pipelines,

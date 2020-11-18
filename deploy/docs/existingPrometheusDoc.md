@@ -232,7 +232,7 @@ to install collection on and **setting only the properties you wish to override*
 Once you have customized you can use the following commands to install or upgrade.
 Remember to define the properties in our [requirements section](#requirements)
 in the `values.yaml` as well or pass them in via `--set`
-  
+
 ```bash
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
 ```

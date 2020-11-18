@@ -4,7 +4,7 @@
 - [Multiline Log Support](#Multiline-Log-Support)
 - [Collecting Log Lines over 16KB](#Log-Lines-Over-16KB)
 - [Fluentd Autoscaling](#Fluentd-Autoscaling)
-- [Fluentd File-Based Buffer](#Fluentd-File-based-buffer) 
+- [Fluentd File-Based Buffer](#Fluentd-File-based-buffer)
 - [Excluding Logs From Specific Components](#Excluding-Logs-From-Specific-Components)
 - [Filtering Prometheus Metrics by Namespace](#Filtering-Prometheus-Metrics-by-Namespace)
 - [Modify the Log Level for Falco](#Modify-the-Log-Level-for-Falco)
@@ -50,7 +50,7 @@ Parser_1 optional_parser
 ```
 ### Collecting Log Lines Over 16KB (with multiline support)
 Docker daemon has a limit of 16KB/line so if a log line is longer than that, it might be truncated in Sumo.
-To fix this, fluent-bit exposes a parameter:  
+To fix this, fluent-bit exposes a parameter:
 ``` bash
 Docker_Mode  On
 ```
@@ -66,7 +66,7 @@ Docker_Mode_Parser multi_line
 
 ### Fluentd Autoscaling
 
-We have provided an option to enable autoscaling for both logs and metrics Fluentd statefulsets. This is disabled by default. 
+We have provided an option to enable autoscaling for both logs and metrics Fluentd statefulsets. This is disabled by default.
 
 To enable autoscaling for Fluentd:
 
@@ -95,7 +95,7 @@ kubelet:
    authorizationMode: Webhook
 ```
 
-- Enable autoscaling for Logs Fluentd statefulset 
+- Enable autoscaling for Logs Fluentd statefulset
 ```yaml
 fluentd:
   logs:
@@ -104,7 +104,7 @@ fluentd:
       enabled: true
 ```
 
-- Enable autoscaling for Metrics Fluentd statefulset 
+- Enable autoscaling for Metrics Fluentd statefulset
 ```yaml
 fluentd:
   metrics:
@@ -132,7 +132,7 @@ Additional buffering and flushing parameters can be added in the `extraConf`, in
 ```yaml
 fluentd:
 ## Option to specify the Fluentd buffer as file/memory.
-   buffer: 
+   buffer:
      type : "file"
      extraConf: |-
        retry_exponential_backoff_base 2s
@@ -146,7 +146,7 @@ Once the config has been modified in the `values.yaml` file you need to run the 
 $ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml --force
 ```
 
-See the following links to official Fluentd buffer documentation: 
+See the following links to official Fluentd buffer documentation:
  - https://docs.fluentd.org/configuration/buffer-section
  - https://docs.fluentd.org/buffer/file
 
@@ -208,7 +208,7 @@ In `values.yaml` in the `fluent-bit.rawConfig` section, you have to add a new in
     Name        tail
     Path        /var/log/syslog
 ```
-Reference: https://fluentbit.io/documentation/0.12/input/tail.html 
+Reference: https://fluentbit.io/documentation/0.12/input/tail.html
 
 ### Filtering Prometheus Metrics by Namespace
 If you want to filter metrics by namespace, it can be done in the prometheus remote write config. Here is an example of excluding kube-state metrics for namespace1 and namespace2:
@@ -341,16 +341,16 @@ spec:
 
 ### Templating Kubernetes metadata
 The following Kubernetes metadata is available for string templating:
- 
+
 | String template  | Description                                             |
-| ---------------  | ------------------------------------------------------  |                                         
+| ---------------  | ------------------------------------------------------  |
 | `%{namespace}`   | Namespace name                                          |
-| `%{pod}`         | Full pod name (e.g. `travel-products-4136654265-zpovl`) | 
-| `%{pod_name}`    | Friendly pod name (e.g. `travel-products`)              | 
-| `%{pod_id}`      | The pod's uid (a UUID)                                  | 
+| `%{pod}`         | Full pod name (e.g. `travel-products-4136654265-zpovl`) |
+| `%{pod_name}`    | Friendly pod name (e.g. `travel-products`)              |
+| `%{pod_id}`      | The pod's uid (a UUID)                                  |
 | `%{container}`   | Container name                                          |
 | `%{source_host}` | Host                                                    |
-| `%{label:foo}`   | The value of label `foo`                                | 
+| `%{label:foo}`   | The value of label `foo`                                |
 
 #### Missing labels
 Unlike the other templates, labels are not guaranteed to exist, so missing labels interpolate as `"undefined"`.
@@ -374,7 +374,7 @@ Default config:
         DB               /tail-db/tail-containers-state-sumo.db
         DB.Sync          Normal
 ```
-Please make the below changes to the `INPUT` section to turn off `Multiline` and add a `docker` parser to parse the time for `Ignore_Older` functionality to work properly.  
+Please make the below changes to the `INPUT` section to turn off `Multiline` and add a `docker` parser to parse the time for `Ignore_Older` functionality to work properly.
 <pre>
 [INPUT]
     Name             tail

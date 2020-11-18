@@ -1,10 +1,10 @@
 # Configuring Fluentd
 
-Until now, Helm users have not been able to modify their Fluentd configuration outside of the specific parameters that we exposed in the `values.yaml` file. Now, we expose the ability to modify the Fluentd configuration as needed. 
+Until now, Helm users have not been able to modify their Fluentd configuration outside of the specific parameters that we exposed in the `values.yaml` file. Now, we expose the ability to modify the Fluentd configuration as needed.
 
-Some use-cases include: 
- - custom log pipelines, 
- - adding Fluentd filter plugins (ex: fluentd throttle plugin), or 
+Some use-cases include:
+ - custom log pipelines,
+ - adding Fluentd filter plugins (ex: fluentd throttle plugin), or
  - adding Fluentd output plugins (ex: forward to both Sumo and S3)
  - additional configuration for sumologic output plugin
 
@@ -12,7 +12,7 @@ Some use-cases include:
 ```bash
 {{ .Values.fluentd.foo.bar | quote }}
 ```
-will **NOT** work if they are specified within one of the below mentioned plugin conf sections, since they are in the `values.yaml` file and are therefore interpreted as literal strings. 
+will **NOT** work if they are specified within one of the below mentioned plugin conf sections, since they are in the `values.yaml` file and are therefore interpreted as literal strings.
 
 Below you can see a few examples of how this configuration can be set.
 
@@ -31,7 +31,7 @@ sumologic:
         name: My custom logs
 ```
 
-The `custom-log` will be available in Fluentd as the `SUMO_ENDPOINT_MY_CUSTOM_LOGS_SOURCE` environmental variable. 
+The `custom-log` will be available in Fluentd as the `SUMO_ENDPOINT_MY_CUSTOM_LOGS_SOURCE` environmental variable.
 
 **NOTE**: In case you want to send these logs to the default logs source, use `SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE` instead.
 
@@ -82,7 +82,7 @@ fluentd:
           <exclude>
             key message
             pattern /uncool/
-          </exclude> 
+          </exclude>
         </filter>
 ```
 Reference documentation: [Fluentd Filter Plugin](https://docs.fluentd.org/filter)
@@ -103,7 +103,7 @@ fluentd:
             @type sumologic
             @id sumologic.endpoint.logs
             @include logs.output.conf
-            # Helm templating does not work in the `values.yaml` file so, you will *NOT* have an option to choose the file/memory buffer configs based on the fluentd.buffer.type value and will have to write them explicitly. 
+            # Helm templating does not work in the `values.yaml` file so, you will *NOT* have an option to choose the file/memory buffer configs based on the fluentd.buffer.type value and will have to write them explicitly.
             <buffer>
               @type file
               path /fluentd/buffer/logs.containers
@@ -133,7 +133,7 @@ fluentd:
 
 ### Additional Buffer/Flush/Retry Config parameters for Sumologic Output Plugin
 
-The following config parameters are set by default and their values can be set by changing the respective config in `values.yaml`. 
+The following config parameters are set by default and their values can be set by changing the respective config in `values.yaml`.
 
 ```bash
 compress {{ .Values.fluentd.buffer.compress | quote }}
@@ -152,5 +152,5 @@ fluentd:
     output:
       extraConf: |-
         retry_wait 2s
-        flush_at_shutdown true 
+        flush_at_shutdown true
 ```

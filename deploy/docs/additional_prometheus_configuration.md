@@ -219,7 +219,7 @@ fluentd:
       my_source:  # It matches sumologic.sources.my_source
         tag: prometheus.metrics.YOUR_TAG  # tag used by Fluentd's match clausule
         id: sumologic.endpoint.metrics
-      
+
       # alternative example source with all fields
       alternative_source:  # It doesn't match any source name
         tag: prometheus.metrics.YOUR_TAG**

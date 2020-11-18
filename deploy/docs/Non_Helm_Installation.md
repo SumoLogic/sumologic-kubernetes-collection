@@ -1,7 +1,7 @@
 # Non Helm Installation
 
 **Please note that our non-helm installation process still uses Helm to generate
-the YAML that you will deploy into your Kubernetes cluster.  
+the YAML that you will deploy into your Kubernetes cluster.
 We do not provide YAML that can be directly applied and it must be generated.**
 
 This document has instructions for setting up Sumo Logic collection using Fluentd,
@@ -247,7 +247,7 @@ We recommend creating a new `values.yaml` for each Kubernetes cluster you wish
 to install collection on and **setting only the properties you wish to override**.
 Once you have customized the file you can generate the YAML.
 The content of the `values.yaml` can be fed into the template generator as shown below.
-  
+
 ```bash
 cat sumo-values.yaml | \
   kubectl run tools \

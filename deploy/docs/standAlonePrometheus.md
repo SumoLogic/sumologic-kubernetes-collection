@@ -4,12 +4,12 @@ __NOTE__: The Sumo Logic Kubernetes collection process does not support collecti
 
 <!-- TOC -->
 - [Prerequisite](#prerequisite)
-- [Install Sumo Logic Helm Chart](#install-sumo-logic-helm-chart) 
-- [Update Existing Prometheus](#update-existing-prometheus) 
+- [Install Sumo Logic Helm Chart](#install-sumo-logic-helm-chart)
+- [Update Existing Prometheus](#update-existing-prometheus)
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Customizing Installation](#customizing-installation)
 - [Upgrade Sumo Logic Collection](#upgrading-sumo-logic-collection)
-- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection) 
+- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
 <!-- /TOC -->
 
@@ -127,7 +127,7 @@ Once you have completed installation, you can [install the Kubernetes App and vi
 
 ## Customizing Installation
 All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade.  Remember to define the properties in our [requirements section](#requirements) in the `values.yaml` as well or pass them in via `--set`
-  
+
 ```bash
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
 ```
