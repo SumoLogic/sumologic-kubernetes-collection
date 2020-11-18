@@ -46,7 +46,7 @@ sumologic:
 
   ## Configuration of Kubernetes for Terraform client
   ## https://www.terraform.io/docs/providers/kubernetes/index.html#argument-reference
-  ## All double quotes should be escaped here regarding terraform syntax
+  ## All double quotes should be escaped here regarding Terraform syntax
   cluster:
     host: "https://kubernetes.default.svc"
     # username:
