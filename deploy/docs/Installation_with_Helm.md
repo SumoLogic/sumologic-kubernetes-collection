@@ -102,7 +102,7 @@ helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace -
 
 ### Authenticating with container registry
 
-Sumo Logic docker images used in the collection are currently hosted on hub.docker.com which
+Sumo Logic container images used in the collection are currently hosted on hub.docker.com which
 [requires authentication in order to provide higher quota for image pulls][docker-rate-limit].
 
 Please refer to [our instructions](/deploy/docs/Authenticating_with_docker_registry.md)
