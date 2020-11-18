@@ -35,7 +35,7 @@ sumologic:
   ## proxy urls
   httpProxy: ""
   httpsProxy: ""
-  ## Exclude kubernetes internal traffic from proxy
+  ## Exclude Kubernetes internal traffic from proxy
   noProxy: kubernetes.default.svc
 
   ## Collector name
@@ -44,9 +44,9 @@ sumologic:
   ## Cluster name: Note spaces are not allowed and will be replaced with dashes.
   clusterName: "kubernetes"
 
-  ## Configuration of kubernetes for terraform client
+  ## Configuration of Kubernetes for Terraform client
   ## https://www.terraform.io/docs/providers/kubernetes/index.html#argument-reference
-  ## All double quotes should be escaped here regarding terraform syntax
+  ## All double quotes should be escaped here regarding Terraform syntax
   cluster:
     host: "https://kubernetes.default.svc"
     # username:
@@ -69,7 +69,16 @@ sumologic:
 
   ## If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace> and not add the fluentD/fluent-bit logs and Prometheus remotestorage metrics.
   collectionMonitoring: true
-  
+
+  ## Optionally specify an array of pullSecrets.
+  ## They will be added to serviceaccount that is used for Sumo Logic's jobs,
+  ## deployments and statefulsets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - name: myRegistryKeySecretName
+
   ## Add custom labels to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
   podLabels: {}
 
@@ -726,12 +735,23 @@ metrics-server:
   extraArgs:
    kubelet-insecure-tls: true
    kubelet-preferred-address-types: InternalIP,ExternalIP,Hostname
+  image:
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # pullSecrets:
+    #   - imagepullsecret
 
 ## Configure fluent-bit
 ## ref: https://github.com/fluent/helm-charts/blob/master/charts/fluent-bit/values.yaml
 fluent-bit:
   image:
     pullPolicy: IfNotPresent
+    # If specified, use these secrets to access the image
+    # pullSecrets:
+    #   - name: "image-pull-secret"
+
   ## Resource limits for fluent-bit
   resources: {}
     # limits:
@@ -926,6 +946,13 @@ prometheus-operator:
       interval:
   ## Ensure we use pre 1.14 recording rules consistently as current content depends on them.
   kubeTargetVersionOverride: 1.13.0-0
+
+  # global:
+    ## Reference to one or more secrets to be used when pulling images
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # imagePullSecrets:
+    #   - name: "image-pull-secret"
 
   ## Uncomment the flag below to not install prometheus-operator helm chart as a dependency along with this helm chart.
   ## Comment it out if you wish to have the prometheus-operator dependency installed.
@@ -1796,12 +1823,15 @@ telegraf-operator:
           ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration
           listen = ":9273"
           metric_version = 2
+  # imagePullSecrets: []
 
 ## Configure falco
 ## This is an experimental configuration and shouldn't be used in production environment
 ## https://github.com/falcosecurity/charts/tree/master/falco
 falco:
   enabled: false
+  # image:
+    # pullSecrets: []
   customRules:
     # Mark the following as known k8s api callers:
     # * fluentd and its plugins from sumologic/kubernetes-fluentd image

@@ -530,7 +530,7 @@ Example:
 {{- end -}}
 
 {{/*
-Returns the name of kubernetes secret.
+Returns the name of Kubernetes secret.
 
 Example usage:
 
@@ -542,7 +542,7 @@ Example usage:
 {{- end -}}
 
 {{/*
-Returns the name of kubernetes secret prefixed with release namespace.
+Returns the name of Kubernetes secret prefixed with release namespace.
 
 Example usage:
 
@@ -554,7 +554,7 @@ Example usage:
 {{- end -}}
 
 {{/*
-Convert source name to terraform metric name:
+Convert source name to Terraform metric name:
  * converts all `-` to `_`
  * adds `_$type_source` suffix
 
@@ -592,7 +592,7 @@ Example usage:
 {{- end -}}
 
 {{/*
-Generate line for local terraform section
+Generate line for local Terraform section
  * `terraform.sources.local = value`
 
 Example usage:
@@ -605,7 +605,7 @@ Example usage:
 {{- end -}}
 
 {{/*
-Generate line for data terraform section
+Generate line for data Terraform section
 
 Example usage:
 
@@ -664,7 +664,7 @@ resource "sumologic_http_source" "{{ .Name }}" {
 {{- end -}}
 
 {{/*
-Generate key for terraform object. Default behaviour is to print:
+Generate key for Terraform object. Default behaviour is to print:
 
 {{ name }} = {{ value }}
 
@@ -692,7 +692,7 @@ Example usage:
 {{- end -}}
 
 {{/*
-Generates terraform object for primitives, slices and maps
+Generates Terraform object for primitives, slices and maps
 
 Example usage:
 

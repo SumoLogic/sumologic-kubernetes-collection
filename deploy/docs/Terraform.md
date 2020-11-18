@@ -9,13 +9,13 @@ We are using two providers to perform those actions:
 
 ## Kubernetes Terraform provider
 
-[Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/) is responsible for creating the secret with the created HTTP source endpoints during setup process. The default configuration is expected to work in most cases, however, for self-hosted kubernetes clusters there can be a few exceptions. For these cases we expose the provider configuration in `values.yaml`.
+[Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/) is responsible for creating the secret with the created HTTP source endpoints during setup process. The default configuration is expected to work in most cases, however, for self-hosted Kubernetes clusters there can be a few exceptions. For these cases we expose the provider configuration in `values.yaml`.
 
 ```yaml
 sumologic:
-  # Configuration of kubernetes for terraform client
+  # Configuration of Kubernetes for Terraform client
   # https://www.terraform.io/docs/providers/kubernetes/index.html#argument-reference
-  # All double quotes should be escaped here regarding terraform syntax
+  # All double quotes should be escaped here regarding Terraform syntax
   cluster:
     host: "https://kubernetes.default.svc"
     # username:
@@ -56,7 +56,7 @@ sumologic:
         category: # this is backward compatibility property. It's deprecated and it's going to be removed in version 2.0
                   # Sets source category to "${var.cluster_name}/${local.default_events_source}" if true
                   # To overwrite category, please use `sumologic.sources[].properties.category`
-        properties: # Additional terraform properties like fields or content_type
+        properties: # Additional Terraform properties like fields or content_type
                     # ref: https://www.terraform.io/docs/providers/sumologic/r/collector.html
 ```
 
@@ -118,7 +118,7 @@ sumologic:
 
 #### Terraform variables
 
-You can use terraform extrapolation for properties:
+You can use Terraform extrapolation for properties:
 
 ```yaml
 sumologic:
