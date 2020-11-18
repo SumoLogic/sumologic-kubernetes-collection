@@ -902,7 +902,7 @@ fluent-bit:
 ## Configure kube-prometheus-stack
 ## We are using an alias prometheus-operator for the kube-prometheus-stack helm chart for backward compatibility. This will be changed in v2.0.
 ## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
-prometheus-operator:
+kube-prometheus-stack:
   ## Labels to apply to all prometheus operator resources
   commonLabels: {}
   ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
@@ -975,7 +975,7 @@ prometheus-operator:
       #   memory: 100Mi
     admissionWebhooks:
       enabled: false
-    tlsProxy:
+    tls:
       enabled: false
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
@@ -1092,7 +1092,7 @@ prometheus-operator:
             cpu: 1m
             memory: 8Mi
       containers:
-      - name: "prometheus-config-reloader"
+      - name: "config-reloader"
         env:
         - name: CHART
           valueFrom:
