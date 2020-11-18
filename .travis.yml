@@ -30,7 +30,7 @@ jobs:
       name: "tests.sh"
       script: bash ci/tests.sh
  
-    # stage name not required, will continue to use `test`, hence run in parallel
+    # stage name not required, will continue to use `tests`, hence run in parallel
     #
     # Enabled the following checks in markdownlint:
     # - MD009 - Trailing spaces
