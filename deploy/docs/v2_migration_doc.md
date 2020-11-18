@@ -34,7 +34,7 @@ the exact steps for migration.
   ```
 
 - Changes in Configuration Parameters
-  - `kube-prometheus-stack` dependency has been updated from `v9.3.4` to `v12.0.1`
+  - `kube-prometheus-stack` dependency has been updated from `v9.x` to `v12.y`
     which causes the following configuration options to need migrating:
 
     | Old Config | New Config |
