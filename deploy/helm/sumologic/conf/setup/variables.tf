@@ -18,7 +18,7 @@ variable "namespace_name" {
 }
 
 variable "create_fields" {
-  description = "If set, terraform will attempt to create fields at Sumo Logic"
+  description = "If set, Terraform will attempt to create fields at Sumo Logic"
   type        = bool
   default     = true
 }

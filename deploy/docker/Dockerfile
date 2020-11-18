@@ -72,7 +72,7 @@ RUN apt-get update \
         curl \
         jq
 
-# Create directory for terraform configuration
+# Create directory for Terraform configuration
 RUN mkdir -p /terraform /scripts \
  && chown -R fluent /terraform /scripts
 
