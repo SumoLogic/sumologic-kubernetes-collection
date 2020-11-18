@@ -1,8 +1,9 @@
 # Non Helm Installation
 
 **Please note that our non-helm installation process still uses Helm to generate
-the YAML that you will deploy into your Kubernetes cluster.
-We do not provide YAML that can be directly applied and it must be generated.**
+the YAML that you will deploy into your Kubernetes cluster.**
+
+**We do not provide YAML that can be directly applied and it must be generated.**
 
 This document has instructions for setting up Sumo Logic collection using Fluentd,
 Fluent-Bit, Prometheus and Falco.
