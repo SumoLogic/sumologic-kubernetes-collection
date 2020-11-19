@@ -60,8 +60,8 @@ fi
 readonly COLLECTOR_NAME="{{ template "terraform.collector.name" . }}"
 
 # Sumo Logic Collector and HTTP sources
-terraform import sumologic_collector.collector "${COLLECTOR_NAME}"
-
+# Only import sources when collector exists.
+if terraform import sumologic_collector.collector "${COLLECTOR_NAME}"; then
 {{- $ctx := .Values -}}
 {{- range $type, $sources := .Values.sumologic.sources }}
 {{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
@@ -72,6 +72,7 @@ terraform import sumologic_http_source.{{ template "terraform.sources.name" (dic
 {{- end }}
 {{- end }}
 {{- end }}
+fi
 
 # Kubernetes Secret
 terraform import kubernetes_secret.sumologic_collection_secret {{ template "terraform.secret.fullname" . }}
