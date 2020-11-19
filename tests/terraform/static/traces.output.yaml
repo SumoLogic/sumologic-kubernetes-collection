@@ -222,8 +222,10 @@ data:
     readonly COLLECTOR_NAME="kubernetes"
   
     # Sumo Logic Collector and HTTP sources
-    terraform import sumologic_collector.collector "${COLLECTOR_NAME}"
+    # Only import sources when collector exists.
+    if terraform import sumologic_collector.collector "${COLLECTOR_NAME}"; then
     terraform import sumologic_http_source.default_traces_source "${COLLECTOR_NAME}/traces"
+    fi
   
     # Kubernetes Secret
     terraform import kubernetes_secret.sumologic_collection_secret sumologic/sumologic
