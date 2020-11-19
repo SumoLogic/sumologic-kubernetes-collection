@@ -32,6 +32,7 @@ prometheus-operator:
             cpu: 1m
             memory: 8Mi
       containers:
+        - name: thanos-sidecar
         - name: "prometheus-config-reloader"
           env:
             - name: CHART

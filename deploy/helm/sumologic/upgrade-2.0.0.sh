@@ -18,7 +18,6 @@ prometheus-operator.prometheusOperator.tlsProxy.enabled:kube-prometheus-stack.pr
 "
 
 readonly KEY_VALUE_MAPPINGS="
-prometheus-operator.prometheus.prometheusSpec.containers.[0].name:prometheus-config-reloader:config-reloader
 "
 
 readonly KEYS_TO_DELETE="
@@ -117,7 +116,19 @@ function create_temp_file() {
 }
 
 function migrate_prometheus_operator_to_kube_prometheus_stack() {
-  info "Migrating from promtheus-operator to kube-prometheus-stack"
+  info "Migrating prometheus-config-reloader container to config-reloader in prometheusSpec"
+  yq m -i --arrays append \
+    "${TEMP_FILE}" \
+    <(
+      yq p <(
+        yq w <(
+          yq r "${TEMP_FILE}" -- 'prometheus-operator.prometheus.prometheusSpec.containers.(name==prometheus-config-reloader)' \
+          ) name config-reloader \
+        ) 'prometheus-operator.prometheus.prometheusSpec.containers[+]'
+      )
+  yq d -i "${TEMP_FILE}" "prometheus-operator.prometheus.prometheusSpec.containers.(name==prometheus-config-reloader)"
+
+  info "Migrating from prometheus-operator to kube-prometheus-stack"
   yq m -i \
     "${TEMP_FILE}" \
     <(
