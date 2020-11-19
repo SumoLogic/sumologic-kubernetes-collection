@@ -124,6 +124,9 @@ module Fluent
       end
 
       def escape(value)
+        if value.nil?
+          return value
+        end
         value.gsub(/\\/) { '\\\\' }.gsub(/\n/) { '\\n' }.gsub(/\"/) { '\\"' }
       end
 
