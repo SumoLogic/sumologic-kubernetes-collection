@@ -795,17 +795,17 @@ fluent-bit:
           HTTP_Port    2020
     inputs: |
       [INPUT]
-          Name             tail
-          Path             /var/log/containers/*.log
-          Multiline        On
-          Parser_Firstline multi_line
-          Tag              containers.*
-          Refresh_Interval 1
-          Rotate_Wait      60
-          Mem_Buf_Limit    5MB
-          Skip_Long_Lines  On
-          DB               /tail-db/tail-containers-state-sumo.db
-          DB.Sync          Normal
+          Name                tail
+          Path                /var/log/containers/*.log
+          Docker_Mode         On
+          Docker_Mode_Parser  multi_line
+          Tag                 containers.*
+          Refresh_Interval    1
+          Rotate_Wait         60
+          Mem_Buf_Limit       5MB
+          Skip_Long_Lines     On
+          DB                  /tail-db/tail-containers-state-sumo.db
+          DB.Sync             Normal
       [INPUT]
           Name            systemd
           Tag             host.*
