@@ -112,7 +112,7 @@ function push_helm_chart() {
 
   helm repo index --url https://sumologic.github.io/sumologic-kubernetes-collection/ --merge "${chart_dir}/index.yaml" "${sync_dir}"
 
-  mv -f "${sync_dir}"/* .
+  mv -f "${sync_dir}"/* "${chart_dir}"
   rmdir "${sync_dir}"
 
   git add -A
