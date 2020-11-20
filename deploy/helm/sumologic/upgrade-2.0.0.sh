@@ -4,8 +4,6 @@ set -euo pipefail
 IFS=$'\n\t'
 
 readonly OLD_VALUES_YAML="${1:---help}"
-readonly HELM_RELEASE_NAME="${2:-collection}"
-readonly NAMESPACE="${3:-sumologic}"
 readonly PREVIOUS_VERSION=1.3
 
 readonly TEMP_FILE=upgrade-2.0.0-temp-file
