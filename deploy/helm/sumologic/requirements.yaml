@@ -12,7 +12,7 @@ dependencies:
     repository: https://falcosecurity.github.io/charts
     condition: falco.enabled
   - name: metrics-server
-    version: 4.3.1
+    version: 5.0.2
     repository: https://charts.bitnami.com/bitnami
     condition: metrics-server.enabled
   - name: telegraf-operator
