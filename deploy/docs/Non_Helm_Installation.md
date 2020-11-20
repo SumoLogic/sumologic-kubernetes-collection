@@ -161,11 +161,18 @@ kubectl apply -f sumologic.yaml
 
 ### Authenticating with container registry
 
-Sumo Logic container images used in the collection are currently hosted on hub.docker.com which
+Sumo Logic container images used in the collection are currently hosted
+on [Docker Hub](https://hub.docker.com/) which
 [requires authentication in order to provide higher quota for image pulls][docker-rate-limit].
 
-Please refer to [our instructions](/deploy/docs/Authenticating_with_docker_registry.md)
-on how to provide credentials in order to authenticate with the registry.
+Please refer to
+[our instructions](/deploy/docs/Working_with_container_registries.md#authenticating-with-container-registry)
+on how to provide credentials in order to authenticate Docker Hub.
+
+An alternative would be to host Sumo Logic container images in one's contaer
+registries.
+To do so please refer to the following
+[instructions](/deploy/docs/Working_with_container_registries.md#hosting-sumo-logic-images)
 
 [docker-rate-limit]: https://www.docker.com/increase-rate-limits
 

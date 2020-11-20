@@ -13,7 +13,7 @@ for details on our Kubernetes Solution.
   - [Non Helm Installation](./docs/Non_Helm_Installation.md)
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
-  - [Authenticating with container registry](./docs/Authenticating_with_docker_registry.md)
+  - [Authenticating with container registry](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
   - [Alpha Releases](./docs/Alpha_Release_Guide.md)
   - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
 - [Migration Steps](./docs/Migration_Steps.md)
