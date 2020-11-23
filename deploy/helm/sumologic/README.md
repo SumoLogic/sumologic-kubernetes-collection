@@ -2,8 +2,8 @@
 To see all available configuration for our sub-charts, please refer to their documentation.
 
   * [Falco](https://github.com/helm/charts/tree/master/stable/falco#configuration) - All Falco properties should be prefixed with `falco.` in our values.yaml to override a property not listed below.
-  * [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#configuration) - All `kube-sprometheus-stack` properties should be prefixed with `prometheus-operator.` in our values.yaml to override a property not listed below.
-  * [Fluent-bit](https://github.com/helm/charts/tree/master/stable/fluent-bit#configuration) - All Fluent-bit properties should be prefixed with `fluent-bit.` in our values.yaml to override a property not listed below.
+  * [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#configuration) - All Kube Prometheus Stack properties should be prefixed with `prometheus-operator.` in our values.yaml to override a property not listed below.
+  * [Fluent Bit](https://github.com/helm/charts/tree/master/stable/fluent-bit#configuration) - All Fluent Bit properties should be prefixed with `fluent-bit.` in our values.yaml to override a property not listed below.
   * [Metrics Server](https://github.com/helm/charts/tree/master/stable/metrics-server#configuration) - All Metrics Server properties should be prefixed with `metrics-server.` in our values.yaml to override a property not listed below.
   
 The following table lists the configurable parameters of the Sumo Logic chart and their default values.
