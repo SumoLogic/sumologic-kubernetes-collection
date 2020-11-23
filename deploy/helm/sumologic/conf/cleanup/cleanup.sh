@@ -7,7 +7,8 @@ export HTTP_PROXY=${HTTP_PROXY:=""}
 export HTTPS_PROXY=${HTTPS_PROXY:=""}
 export NO_PROXY=${NO_PROXY:=""}
 
-cd /cleanup/ || exit 1
+cp /etc/terraform/*.tf /terraform/
+cd /terraform || exit 1
 
 terraform init
 

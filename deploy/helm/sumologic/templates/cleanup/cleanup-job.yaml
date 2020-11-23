@@ -32,20 +32,20 @@ spec:
       initContainers:
       - name: copy-files
         image: busybox
-        command: ['sh', '-c', 'cp /configmap/* /cleanup']
+        command: ['sh', '-c', 'cp /configmap/* /etc/terraform']
         volumeMounts:
           - name: configmap
             mountPath: /configmap
           - name: cleanup
-            mountPath: /cleanup
+            mountPath: /etc/terraform
       containers:
         - name: cleanup
-          image: "hashicorp/terraform:0.12.29"
-          imagePullPolicy: IfNotPresent
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
           - name: cleanup
-            mountPath: /cleanup
-          command: ["/cleanup/cleanup.sh"]
+            mountPath: /etc/terraform
+          command: ["/etc/terraform/cleanup.sh"]
           {{- if .Values.sumologic.envFromSecret }}
           envFrom:
           - secretRef:

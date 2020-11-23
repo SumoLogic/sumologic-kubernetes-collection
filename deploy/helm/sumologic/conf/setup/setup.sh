@@ -27,7 +27,7 @@ function should_create_fields() {
 }
 
 cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
-cd /terraform
+cd /terraform || exit 1
 
 terraform init
 
