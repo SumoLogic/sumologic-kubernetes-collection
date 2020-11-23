@@ -169,7 +169,7 @@ Please refer to
 [our instructions](/deploy/docs/Working_with_container_registries.md#authenticating-with-container-registry)
 on how to provide credentials in order to authenticate Docker Hub.
 
-An alternative would be to host Sumo Logic container images in one's contaer
+An alternative would be to host Sumo Logic container images in one's container
 registries.
 To do so please refer to the following
 [instructions](/deploy/docs/Working_with_container_registries.md#hosting-sumo-logic-images)
