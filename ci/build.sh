@@ -128,11 +128,13 @@ function build_docker_image() {
 
   echo "Building docker image with ${tag}:local in $(pwd)..."
   pushd ./deploy/docker || exit 1
+  cp ../helm/sumologic/conf/setup/main.tf . || exit 1
   no_cache="--no-cache"
   if [[ "${DOCKER_USE_CACHE}" == "true" ]]; then
     no_cache=""
   fi
   docker build . -f ./Dockerfile -t "${tag}:local" ${no_cache:+"--no-cache"}
+  rm main.tf
   rm -f ./gems/*.gem
   popd || exit 1
 

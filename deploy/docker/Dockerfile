@@ -41,15 +41,19 @@ RUN gem install \
         fluent-plugin-rewrite-tag-filter:2.2.0 \
         fluent-plugin-prometheus:1.6.1
 
-# Install Terraform
-ENV TERRAFORM_VERSION 0.12.26
+# Install Terraform ...
+ENV TERRAFORM_VERSION 0.12.29
 RUN mkdir /tmp/terraform \
  && curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o /tmp/terraform/terraform.zip \
  && cd /tmp/terraform \
  && unzip terraform.zip \
  && mv terraform /bin/terraform \
- && chmod +x /bin/terraform \
- && rm -rf /tmp/terraform
+ && chmod +x /bin/terraform
+
+# ... and providers
+COPY main.tf /tmp/terraform
+RUN cd /tmp/terraform \
+ && terraform init
 
 # FluentD plugins from this repository
 COPY gems/fluent-plugin*.gem ./
@@ -74,7 +78,7 @@ RUN apt-get update \
 
 # Create directory for Terraform configuration
 RUN mkdir -p /terraform /scripts \
- && chown -R fluent /terraform /scripts
+ && chown -R fluent:fluent /terraform /scripts
 
 COPY --from=builder /bin/terraform /bin/terraform
 COPY --from=builder /usr/local/bundle /usr/local/bundle
@@ -85,3 +89,6 @@ COPY ./entrypoint.sh /bin/
 RUN chown fluent /usr/local/bundle/*
 
 USER fluent
+
+COPY --from=builder --chown=fluent:fluent \
+    /tmp/terraform/.terraform /terraform/.terraform

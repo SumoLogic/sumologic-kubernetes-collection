@@ -118,7 +118,7 @@ data:
   main.tf: |
     terraform {
       required_providers {
-        sumologic  = "~> 2.4.0"
+        sumologic  = "~> 2.4"
         kubernetes = "~> 1.13.0"
       }
     }
@@ -181,7 +181,7 @@ data:
     }
   
     cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
-    cd /terraform
+    cd /terraform || exit 1
   
     terraform init
   
