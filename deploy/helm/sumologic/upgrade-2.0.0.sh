@@ -195,14 +195,6 @@ function migrate_pre_upgrade_hook() {
   fi
 }
 
-function check_falco_state() {
-  # Print information about falco state
-  if [[ "$(yq r "${TEMP_FILE}" -- falco.enabled)" == 'true' ]]; then
-    info 'falco will be enabled. Change "falco.enabled" to "false" if you want to disable it (default for 2.0)'
-  else
-    info 'falco will be disabled. Change "falco.enabled" to "true" if you want to enable it'
-  fi
-}
 
 function get_regex() {
     # Get regex from old yaml file and strip `'` and `"` from beginning/end of it
@@ -256,8 +248,6 @@ migrate_customer_keys
 
 migrate_pre_upgrade_hook
 migrate_prometheus_operator_to_kube_prometheus_stack
-
-check_falco_state
 
 check_user_image
 
