@@ -11,7 +11,7 @@ readonly PREVIOUS_VERSION=0.17
 readonly TEMP_FILE=upgrade-1.0.0-temp-file
 
 readonly MIN_BASH_VERSION=4.0
-readonly MIN_YQ_VERSION=3.2.1
+readonly MIN_YQ_VERSION=3.4.1
 
 readonly KEY_MAPPINGS="
 eventsDeployment.nodeSelector:fluentd.events.statefulset.nodeSelector
@@ -435,7 +435,7 @@ prometheus-operator:
             - ${NAMESPACE}
         selector:
           matchLabels:
-            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a -i "${TEMP_FILE}" -
+            app: ${HELM_RELEASE_NAME}-${NAMESPACE}-fluentd-events" | yq m -a=append -i "${TEMP_FILE}" -
   fi
 
   if [[ -n "$(yq r "${TEMP_FILE}" -- prometheus-operator.prometheus.prometheusSpec.containers)" ]]; then
