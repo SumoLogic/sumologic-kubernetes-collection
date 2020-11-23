@@ -69,6 +69,10 @@ echo "Test helm templates generation"
 echo "Test upgrade script..."
 ./tests/upgrade_script/run.sh || (echo "Failed testing upgrade script" && exit 1)
 
+# Test upgrade v2 script
+echo "Test upgrade v2 script..."
+./tests/upgrade_v2_script/run.sh || (echo "Failed testing upgrade v2 script" && exit 1)
+
 # Test fluentd plugins
 test_fluentd_plugins "${VERSION}" || (echo "Failed testing fluentd plugins" && exit 1)
 

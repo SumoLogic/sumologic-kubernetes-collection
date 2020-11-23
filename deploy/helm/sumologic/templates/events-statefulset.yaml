@@ -61,8 +61,8 @@ spec:
       {{- end }}
       containers:
       - name: fluentd-events
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: {{ .Values.fluentd.image.repository }}:{{ .Values.fluentd.image.tag }}
+        imagePullPolicy: {{ .Values.fluentd.image.pullPolicy }}
         resources:
           {{- toYaml .Values.fluentd.events.statefulset.resources | nindent 10 }}
         volumeMounts:

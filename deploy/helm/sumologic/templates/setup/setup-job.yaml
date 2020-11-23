@@ -43,8 +43,8 @@ spec:
           defaultMode: 0777
       containers:
       - name: setup
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: {{ .Values.sumologic.setup.job.image.repository }}:{{ .Values.sumologic.setup.job.image.tag }}
+        imagePullPolicy: {{ .Values.sumologic.setup.job.image.pullPolicy }}
         command: ["/etc/terraform/setup.sh"]
         resources:
           {{- toYaml .Values.sumologic.setup.job.resources | nindent 10 }}

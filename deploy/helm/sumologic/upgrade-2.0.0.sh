@@ -18,6 +18,12 @@ prometheus-operator.prometheusOperator.tlsProxy.enabled:kube-prometheus-stack.pr
 readonly KEY_VALUE_MAPPINGS="
 "
 
+readonly KEY_MAPPINGS_MULTIPLE="
+image.repository:fluentd.image.repository:sumologic.setup.job.image.repository
+image.tag:fluentd.image.tag:sumologic.setup.job.image.tag
+image.pullPolicy:fluentd.image.pullPolicy:sumologic.setup.job.image.pullPolicy
+"
+
 readonly KEYS_TO_DELETE="
 prometheus-operator
 "
@@ -114,6 +120,11 @@ function create_temp_file() {
 }
 
 function migrate_prometheus_operator_to_kube_prometheus_stack() {
+  # Nothing to migrate, return
+  if [[ -z $(yq r "${TEMP_FILE}" prometheus-operator) ]] ; then
+    return
+  fi
+
   info "Migrating prometheus-config-reloader container to config-reloader in prometheusSpec"
   yq m -i --arrays append \
     "${TEMP_FILE}" \
@@ -152,6 +163,8 @@ function migrate_customer_keys() {
   readonly MAPPINGS
   IFS=$'\n' read -r -d ' ' -a MAPPINGS_KEY_VALUE <<< "${KEY_VALUE_MAPPINGS}"
   readonly MAPPINGS_KEY_VALUE
+  IFS=$'\n' read -r -d ' ' -a MAPPINGS_MULTIPLE <<< "${KEY_MAPPINGS_MULTIPLE}"
+  readonly MAPPINGS_MULTIPLE
   set -e
 
   readonly CUSTOMER_KEYS=$(yq --printMode p r "${OLD_VALUES_YAML}" -- '**')
@@ -165,6 +178,19 @@ function migrate_customer_keys() {
           info "Mapping ${key} into ${maps[1]}"
           yq w -i "${TEMP_FILE}" -- "${maps[1]}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
           yq d -i "${TEMP_FILE}" -- "${maps[0]}"
+        fi
+      done
+    elif [[ ${MAPPINGS_MULTIPLE[*]} =~ ${key}: ]]; then
+      # whatever you want to do when arr contains value
+      info "Mapping ${key} into:"
+      for i in "${MAPPINGS_MULTIPLE[@]}"; do
+        IFS=':' read -r -a maps <<< "${i}"
+        if [[ ${maps[0]} == "${key}" ]]; then
+          for element in "${maps[@]:1}"; do
+            info "- ${element}"
+            yq w -i "${TEMP_FILE}" -- "${element}" "$(yq r "${OLD_VALUES_YAML}" -- "${maps[0]}")"
+            yq d -i "${TEMP_FILE}" -- "${maps[0]}"
+          done
         fi
       done
     else
@@ -195,7 +221,6 @@ function migrate_pre_upgrade_hook() {
   fi
 }
 
-
 function get_regex() {
     # Get regex from old yaml file and strip `'` and `"` from beginning/end of it
     local write_index="${1}"
@@ -208,8 +233,10 @@ function check_user_image() {
   readonly USER_VERSION="$(yq r "${OLD_VALUES_YAML}" -- image.tag)"
   if [[ -n "${USER_VERSION}" ]]; then
     if [[ "${USER_VERSION}" =~ ^"${PREVIOUS_VERSION}"\.[[:digit:]]+$ ]]; then
-      yq w -i "${TEMP_FILE}" -- image.tag 2.0.0
-      info "Changing image.tag from '${USER_VERSION}' to '2.0.0'"
+      info "Migrating from image.tag '${USER_VERSION}' to sumologic.setup.job.image.tag '2.0.0'"
+      yq w -i "${TEMP_FILE}" -- sumologic.setup.job.image.tag 2.0.0
+      info "Migrating from image.tag '${USER_VERSION}' to fluentd.image.tag '2.0.0'"
+      yq w -i "${TEMP_FILE}" -- fluentd.image.tag 2.0.0
     else
       warning "You are using unsupported version: ${USER_VERSION}"
       warning "Please upgrade to '${PREVIOUS_VERSION}.x' or ensure that new_values.yaml is valid"

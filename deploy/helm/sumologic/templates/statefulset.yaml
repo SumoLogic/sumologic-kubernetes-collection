@@ -101,8 +101,8 @@ spec:
       {{- end }}
       containers:
       - name: fluentd
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: {{ .Values.fluentd.image.repository }}:{{ .Values.fluentd.image.tag }}
+        imagePullPolicy: {{ .Values.fluentd.image.pullPolicy }}
         resources:
           {{- toYaml .Values.fluentd.logs.statefulset.resources | nindent 10 }}
         ports:
