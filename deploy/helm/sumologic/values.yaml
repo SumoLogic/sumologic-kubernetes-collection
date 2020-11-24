@@ -1692,7 +1692,6 @@ otelagent:
           receivers: [jaeger, opencensus, otlp, zipkin]
           processors: [memory_limiter, k8s_tagger, batch]
           exporters: [otlp]
-
   
 ##Configure otelcol
 otelcol:
