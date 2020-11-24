@@ -13,6 +13,7 @@ readonly MIN_YQ_VERSION=3.2.1
 
 readonly KEY_MAPPINGS="
 prometheus-operator.prometheusOperator.tlsProxy.enabled:kube-prometheus-stack.prometheusOperator.tls.enabled
+otelcol.deployment.image.name:otelcol.deployment.image.repository
 "
 
 readonly KEY_VALUE_MAPPINGS="
