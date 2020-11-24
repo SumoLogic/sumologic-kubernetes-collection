@@ -149,6 +149,40 @@ function migrate_prometheus_operator_to_kube_prometheus_stack() {
   yq d -i "${TEMP_FILE}" "prometheus-operator"
 }
 
+function migrate_sumologic_sources() {
+  # Nothing to migrate, return
+  if [[ -z $(yq r "${TEMP_FILE}" sumologic.sources) ]] ; then
+    return
+  fi
+
+  info "Migrating sumologic.sources to sumologic.collector.sources"
+  yq m -i \
+    "${TEMP_FILE}" \
+    <(
+      yq p \
+      <(yq r "${TEMP_FILE}" "sumologic.sources") \
+      "sumologic.collector.sources" \
+    )
+  yq d -i "${TEMP_FILE}" "sumologic.sources"
+}
+
+function migrate_sumologic_setup_fields() {
+  # Nothing to migrate, return
+  if [[ -z $(yq r "${TEMP_FILE}" sumologic.setup.fields) ]] ; then
+    return
+  fi
+
+  info "Migrating sumologic.setup.fields to sumologic.collector.fields"
+  yq m -i \
+    "${TEMP_FILE}" \
+    <(
+      yq p \
+      <(yq r "${TEMP_FILE}" "sumologic.setup.fields") \
+      "sumologic.collector.fields" \
+    )
+  yq d -i "${TEMP_FILE}" "sumologic.setup.fields"
+}
+
 function delete_migrated_unused_keys() {
   IFS=$'\n' read -r -d ' ' -a MAPPINGS_KEYS_TO_DELETE <<< "${KEYS_TO_DELETE}"
   readonly MAPPINGS_KEYS_TO_DELETE
@@ -214,14 +248,6 @@ function migrate_customer_keys() {
   echo
 }
 
-function migrate_pre_upgrade_hook() {
-  # Keep pre-upgrade hook
-  if [[ -n "$(yq r "${TEMP_FILE}" -- sumologic.setup)" ]]; then
-    info "Updating setup hooks (sumologic.setup.*.annotations[helm.sh/hook]) to 'pre-install,pre-upgrade'"
-    yq w -i "${TEMP_FILE}" -- 'sumologic.setup.*.annotations[helm.sh/hook]' 'pre-install,pre-upgrade'
-  fi
-}
-
 function get_regex() {
     # Get regex from old yaml file and strip `'` and `"` from beginning/end of it
     local write_index="${1}"
@@ -274,8 +300,9 @@ create_temp_file
 
 migrate_customer_keys
 
-migrate_pre_upgrade_hook
 migrate_prometheus_operator_to_kube_prometheus_stack
+migrate_sumologic_sources
+migrate_sumologic_setup_fields
 
 check_user_image
 

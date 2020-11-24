@@ -103,9 +103,51 @@ sumologic:
       ## Add custom annotations only to setup job pod
       podAnnotations: {}
 
+  collector:
     ## Configuration of additional collector fields
     ## https://help.sumologic.com/Manage/Fields#http-source-fields
     fields: {}
+
+    ## Configuration of http sources
+    ## See docs/Terraform.md for more information
+    ## name: source name visible in sumologic platform
+    ## config-name: This is mostly for backward compatibility
+    sources:
+      metrics:
+        default:
+          name: (default-metrics)
+          config-name: endpoint-metrics
+        apiserver:
+          name: apiserver-metrics
+          config-name: endpoint-metrics-apiserver
+        controller:
+          name: kube-controller-manager-metrics
+          config-name: endpoint-metrics-kube-controller-manager
+        scheduler:
+          name: kube-scheduler-metrics
+          config-name: endpoint-metrics-kube-scheduler
+        state:
+          name: kube-state-metrics
+          config-name: endpoint-metrics-kube-state
+        kubelet:
+          name: kubelet-metrics
+          config-name: endpoint-metrics-kubelet
+        node:
+          name: node-exporter-metrics
+          config-name: endpoint-metrics-node-exporter
+        control-plane:
+          name: control-plane-metrics
+      logs:
+        default:
+          name: logs
+          config-name: endpoint-logs
+
+          ## Properties can be used to extend default settings, such as processing rules, fields etc
+          #properties:
+          #  filters:
+          #    - name: "Test Exclude Debug"
+          #      filter_type: "Exclude"
+          #      regexp: ".*DEBUG.*"
 
   ### Logs configuration
   ## Set the enabled flag to false for disabling logs ingestion altogether.
@@ -129,47 +171,6 @@ sumologic:
   ## Set the enabled flag to false for disabling metrics ingestion altogether.
   metrics:
     enabled: true
-
-  ## Configuration of http sources
-  ## See docs/Terraform.md for more information
-  ## name: source name visible in sumologic platform
-  ## config-name: This is mostly for backward compatibility
-  sources:
-    metrics:
-      default:
-        name: (default-metrics)
-        config-name: endpoint-metrics
-      apiserver:
-        name: apiserver-metrics
-        config-name: endpoint-metrics-apiserver
-      controller:
-        name: kube-controller-manager-metrics
-        config-name: endpoint-metrics-kube-controller-manager
-      scheduler:
-        name: kube-scheduler-metrics
-        config-name: endpoint-metrics-kube-scheduler
-      state:
-        name: kube-state-metrics
-        config-name: endpoint-metrics-kube-state
-      kubelet:
-        name: kubelet-metrics
-        config-name: endpoint-metrics-kubelet
-      node:
-        name: node-exporter-metrics
-        config-name: endpoint-metrics-node-exporter
-      control-plane:
-        name: control-plane-metrics
-    logs:
-      default:
-        name: logs
-        config-name: endpoint-logs
-        
-        ## Properties can be used to extend default settings, such as processing rules, fields etc
-        #properties:
-        #  filters:
-        #    - name: "Test Exclude Debug"
-        #      filter_type: "Exclude"
-        #      regexp: ".*DEBUG.*"
 
     events:
       default:
@@ -636,7 +637,7 @@ fluentd:
     ## Output configuration
     ## tag: tag for fluentd match
     ## id: sumologic output @id
-    ## endpoint: [optional] [output key by default] It should match the sumologic.sources.metrics[].endpoint
+    ## endpoint: [optional] [output key by default] It should match the sumologic.collector.sources.metrics[].endpoint
     ## drop: [optional] [false by default] Change it to true to drop traffic for specific output
     ## weight: [optional [0 by default] Order of fluentd output (lower means higher priority)
     ## The weight has meaning in case of fluentd matches

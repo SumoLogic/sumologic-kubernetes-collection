@@ -216,7 +216,7 @@ fluentd:
     # ...
     output:
       # ...
-      my_source:  # It matches sumologic.sources.my_source
+      my_source:  # It matches sumologic.collector.sources.my_source
         tag: prometheus.metrics.YOUR_TAG  # tag used by Fluentd's match clausule
         id: sumologic.endpoint.metrics
 

@@ -1,0 +1,29 @@
+sumologic:
+  setupEnabled: true
+  cleanUpEnabled: false
+  noProxy: kubernetes.default.svc
+  collectorName: dummy
+  clusterName: kubernetes
+  collectionMonitoring: true
+  podLabels: {}
+  podAnnotations: {}
+  setup:
+    job:
+      image:
+        repository: sumologic/kubernetes-fluentd
+        tag: 1.3.0
+        pullPolicy: IfNotPresent
+      resources:
+        limits:
+          memory: 256Mi
+          cpu: 2000m
+        requests:
+          memory: 64Mi
+          cpu: 200m
+      nodeSelector: {}
+      podLabels: {}
+      podAnnotations: {}
+      annotations:
+        helm.sh/hook: pre-install,pre-upgrade
+  collector:
+    fields: {}

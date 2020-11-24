@@ -42,7 +42,7 @@ sumologic:
 ## Sumo Logic Terraform provider
 
 The [Sumo Logic Terraform provider](https://www.terraform.io/docs/providers/sumologic/) creates your HTTP sources.
-The related configuration section in the `values.yaml` file is under `sumologic.sources`:
+The related configuration section in the `values.yaml` file is under `sumologic.collector.sources`:
 
 ```yaml
 sumologic:
@@ -55,7 +55,7 @@ sumologic:
         config-name: # name which be used in secret to store the url. This is backward-compatibility option
         category: # this is backward compatibility property. It's deprecated and it's going to be removed in version 2.0
                   # Sets source category to "${var.cluster_name}/${local.default_events_source}" if true
-                  # To overwrite category, please use `sumologic.sources[].properties.category`
+                  # To overwrite category, please use `sumologic.collector.sources[].properties.category`
         properties: # Additional Terraform properties like fields or content_type
                     # ref: https://www.terraform.io/docs/providers/sumologic/r/collector.html
 ```
@@ -67,13 +67,13 @@ The variable name is built using the schema `SUMO_ENDPOINT_<source name>_<source
 where `<source name>` and `<source type>` are in uppercase and dashes are replaced with underscores.
 
 Examples:
- - `sumologic.sources.logs.example-source` becomes `SUMO_ENDPOINT_EXAMPLE_SOURCE_LOGS_SOURCE`
- - `sumologic.sources.traces.default` becomes `SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE`
+ - `sumologic.collector.sources.logs.example-source` becomes `SUMO_ENDPOINT_EXAMPLE_SOURCE_LOGS_SOURCE`
+ - `sumologic.collector.sources.traces.default` becomes `SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE`
 
 ### Properties
 
 You can set all of the source [properties](https://www.terraform.io/docs/providers/sumologic/r/http_source.html#argument-reference)
-using `sumologic.sources.<logs,traces,metrics,traces>.<source ref name>.properties`.
+using `sumologic.collector.sources.<logs,traces,metrics,traces>.<source ref name>.properties`.
 
 #### Processing Rules
 
