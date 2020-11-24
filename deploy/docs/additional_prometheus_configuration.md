@@ -2,9 +2,9 @@
 
 ## Configuration
 
-Prometheus configuration is located in `values.yaml` under `prometheus-operator` key for helm installation.
+Prometheus configuration is located in `values.yaml` under `kube-prometheus-stack` key for helm installation.
 
-If the `prometheus-operator` has been installed directly, a `prometheus-overrides.yaml` should be generated
+If the `kube-prometheus-stack` has been installed directly, a `prometheus-overrides.yaml` should be generated
 using `docker`/`kubectl` and [sumologic-kubernetes-tools](https://github.com/sumologic/sumologic-kubernetes-tools#template-dependency-configuration):
 
 ```bash
@@ -13,12 +13,12 @@ using `docker`/`kubectl` and [sumologic-kubernetes-tools](https://github.com/sum
   -it --quiet --rm \
   --restart=Never -n sumologic \
   --image sumologic/kubernetes-tools:2.0.0 \
-  -- template-dependency prometheus-operator > prometheus-overrides.yaml
+  -- template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 
  # or using docker
  docker run -it --rm \
   sumologic/kubernetes-tools:2.0.0 \
-  template-dependency prometheus-operator > prometheus-overrides.yaml
+  template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 ```
 
 All changes described in this documentation should be introduced in those files depending of used deployment.
@@ -30,7 +30,7 @@ The configuration contains a section like the following for each of the Kubernet
 If you would like to collect other metrics that are not listed in configuration, you can add a new section to the file.
 
 ```yaml
-prometheus-operator:  # For values.yaml
+kube-prometheus-stack:  # For values.yaml
     # ...
     prometheus:
       # ...
@@ -38,7 +38,7 @@ prometheus-operator:  # For values.yaml
         # ...
         remoteWrite:
           # ...
-          - url: http://$(CHART).$(NAMESPACE).svc.cluster.local/prometheus.metrics.<some_label>
+          - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.<some_label>
             writeRelabelConfigs:
             - action: keep
               regex: <metric1>|<metric2>|...
@@ -146,13 +146,13 @@ spec:
 # ...
 ```
 
-Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
+Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/kube-prometheus-stack/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
 If you want to keep all your changes inside configuration instead of serviceMonitors, you can add your changes to `prometheus.additionalServiceMonitors` section. For given serviceMonitor configuration it should looks like snippet below:
 
 ```yaml
-prometheus-operator:  # For values.yaml
+kube-prometheus-stack:  # For values.yaml
   # ...
   prometheus:
     # ...
@@ -241,7 +241,7 @@ NOTE: [Explanation of Fluentd match order](https://docs.fluentd.org/configuratio
 The configuration file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update it to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your Fluentd configmap in the previous step. Here is an example addition to the configuration file that will forward metrics to Sumo:
 
 ```yaml
-prometheus-operator:  # For values.yaml
+kube-prometheus-stack:  # For values.yaml
     # ...
     prometheus:
       # ...
@@ -259,7 +259,7 @@ prometheus-operator:  # For values.yaml
 According to our example, below config could be useful:
 
 ```yaml
-prometheus-operator:  # For values.yaml
+kube-prometheus-stack:  # For values.yaml
     # ...
     prometheus:
       # ...
@@ -277,10 +277,12 @@ prometheus-operator:  # For values.yaml
 Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and upgrade your sumologic or prometheus operator installation, depending on method used:
 
 * `helm upgrade collection sumologic/sumologic --reuse-values -f <path to values.yaml>` to upgrade sumologic collection
-* `helm upgrade prometheus-operator stable/prometheus-operator --reuse-values -f <path to prometheus-overrides.yaml>` to upgrade your prometheus-operator.
+* `helm upgrade kube-prometheus-stack stable/kube-prometheus-stack --reuse-values -f <path to prometheus-overrides.yaml>` to upgrade your kube-prometheus-stack.
 
 Note: When executing the helm upgrade, to avoid the error below, you need to add the argument `--force`.
 
-      invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
+```
+invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
+```
 
 If all goes well, you should now have your custom metrics piping into Sumo Logic.

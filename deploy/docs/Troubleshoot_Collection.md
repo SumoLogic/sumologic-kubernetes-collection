@@ -17,7 +17,7 @@
   - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
   - [Missing `kubelet` metrics](#missing-kubelet-metrics)
     - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
-    - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator)
+    - [2. Disable the `kubelet.serviceMonitor.https` flag in Kube Prometheus Stack](#2-disable-the-kubeletservicemonitorhttps-flag-in-kube-prometheus-stack)
   - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
   - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
   - [Errors in helm installation](#errors-in-helm-installation)
@@ -239,13 +239,14 @@ kops update cluster --yes
 kops rolling-update cluster --yes
 ```
 
-#### 2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator
+#### 2. Disable the `kubelet.serviceMonitor.https` flag in Kube Prometheus Stack
 
 The goal is to set the flag `kubelet.serviceMonitor.https=false` when deploying the prometheus operator.
 
-Add the following lines to the `prometheus-operator` section of your `values.yaml` file:
+Add the following lines to the `kube-prometheus-stack` section of your `values.yaml` file:
+
 ```
-prometheus-operator:
+kube-prometheus-stack:
   ...
   kubelet:
     serviceMonitor:
@@ -259,7 +260,7 @@ helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VE
 
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
-There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, you can use the following steps.
+There’s an issue with backwards compatibility in the current version of the kube-prometheus-stack helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, you can use the following steps.
 
 First get the `kube-controller` and `kube-scheduler` service name.  These are installed in the `kube-system` namespace.
 
