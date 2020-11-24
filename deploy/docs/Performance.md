@@ -9,7 +9,8 @@ For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](.
 3. The Prometheus pod will use on average **2GiB** memory per **120k DPM**; however in our experience this has gone up to **5GiB**, so we recommend allocating ample memory resources for the Prometheus pod if you wish to collect a high volume of metrics for a larger cluster.
 4. For clusters with 500 application pods or greater, we found the following configuration changes in the [`values.yaml`](./../helm/sumologic/values.yaml) file to lead to a more stable experience:
     - Increase the FluentBit in_tail `Mem_Buf_Limit` from 5MB to 64MB
-    - Set the `remote_timeout` to 1s (default 30s) for each item in the Prometheus remote write section under `prometheus-operator.prometheus.prometheusSpec.remoteWrite`:
+    - Set the `remote_timeout` to 1s (default 30s) for each item in the Prometheus remote write section under `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite`:
+
     ```
     - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.node
       writeRelabelConfigs:
@@ -18,6 +19,7 @@ For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](.
         sourceLabels: [job, __name__]
       remoteTimeout: 1s
     ```
+
 5. For clusters with 2000 application pods, we found that the **Fluentd-events** pod had to be given a 1 GiB memory limit to accommodate the increased events load. If you find that the **Fluentd-events** pod is being OOMKilled, please increase the memory limits and requests accordingly.
 6. For our log generating test application pods, we found that increasing the IOPS to 300 minimum improved stability.
 
@@ -50,7 +52,6 @@ Data type | Rate per pod | Min # pods | Max # pods | Max Total rate
 --------- | ------------ | ---------- | ---------- | --------------
 Logs      | 128 KB/s     | 900 pods   | 1875 pods  | **20 TB/day**
 Metrics   | 2400 DPM     | 125 pods   | 1100 pods  | **3.2M DPM** (including non-application metrics)
-
 
 We observed **135 Fluentd-logs** pods and **100 Fluentd-metrics** pods were sufficient for handling this load with the default resource limits. Additionally the **Fluentd-events** pod had to be given a 1 GiB memory limit to accommodate the increased events load.
 

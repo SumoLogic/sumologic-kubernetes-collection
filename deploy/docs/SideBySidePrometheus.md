@@ -66,26 +66,26 @@ helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collect
 Next you can run `helm upgrade --install` to install our chart. An example command with the minimum parameters is provided below. The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to. Node that because this is installing our chart in a cluster where an existing prometheus operator is running, we need to disable our operator and update the node exporter ports.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.enabled=false --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
+helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.prometheusOperator.enabled=false --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
 ```
 > **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
 
 If you wish to install the chart in a different existing namespace you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.enabled=false --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.prometheusOperator.enabled=false --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
 ```
 
 If the namespace does not exist, you can add the `--create-namespace` flag.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.enabled=false --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200 --create-namespace
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.prometheusOperator.enabled=false --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 --create-namespace
 ```
 
 If you are installing the helm chart in Openshift platform, you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"  --set prometheus-operator.prometheusOperator.enabled=false --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200  --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"  --set kube-prometheus-stack.prometheusOperator.enabled=false --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200  --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
 ```
 ## Viewing Data In Sumo Logic
 

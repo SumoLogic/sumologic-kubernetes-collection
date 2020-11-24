@@ -46,29 +46,29 @@ To install the chart, first add the `sumologic` private repo:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Next you can run `helm upgrade --install` to install our chart. An example command with the minimum parameters is provided below. The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to. The below command also disables the `prometheus-operator` sub-chart since we will be modifying the existing prometheus operator install.
+Next you can run `helm upgrade --install` to install our chart. An example command with the minimum parameters is provided below. The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to. The below command also disables the `kube-prometheus-stack` sub-chart since we will be modifying the existing prometheus operator install.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false
+helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.enabled=false
 ```
 > **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
 
 If you wish to install the chart in a different existing namespace you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.enabled=false
 ```
 
 If the namespace does not exist, you can add the `--create-namespace` flag.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.enabled=false --create-namespace
+helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.enabled=false --create-namespace
 ```
 
 If you are installing the helm chart in Openshift platform, you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"  --set prometheus-operator.enabled=false --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
+helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"  --set kube-prometheus-stack.enabled=false --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
 ```
 
 ## Update Existing Prometheus
@@ -81,12 +81,12 @@ First, generate the Prometheus Operator `prometheus-overrides.yaml` by running
   -it --quiet --rm \
   --restart=Never -n sumologic \
   --image sumologic/kubernetes-tools:2.0.0 \
-  -- template-dependency prometheus-operator > prometheus-overrides.yaml
+  -- template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 
  # or using docker
  docker run -it --rm \
   sumologic/kubernetes-tools:2.0.0 \
-  template-dependency prometheus-operator > prometheus-overrides.yaml
+  template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 ```
 
 Next, make the following modifications to the `remoteWrite` section of the `prometheus-overrides.yaml` file:
