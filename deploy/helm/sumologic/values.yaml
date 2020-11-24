@@ -373,7 +373,7 @@ fluentd:
 
     ## Configuration for sumologic output plugin
     ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/logs/logs.output.conf
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/logs/logs.output.conf
     output:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: for logs metadata, fields is required.
@@ -602,7 +602,7 @@ fluentd:
 
     ## Configuration for sumologic output plugin
     ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/metrics/metrics.output.conf
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/metrics/metrics.output.conf
     outputConf: |-
       @include metrics.output.conf
 

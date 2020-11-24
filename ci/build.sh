@@ -154,7 +154,7 @@ if [ -n "${DOCKER_PASSWORD}" ] && [ -n "${TRAVIS_TAG}" ]; then
   push_docker_image "${VERSION}"
   push_helm_chart "${VERSION}" "."
 
-elif [ -n "${DOCKER_PASSWORD}" ] && [[ "${TRAVIS_BRANCH}" == "master" || "${TRAVIS_BRANCH}" =~ ^release-v[0-9]+\.[0-9]+$ ]] && [ "${TRAVIS_EVENT_TYPE}" == "push" ]; then
+elif [ -n "${DOCKER_PASSWORD}" ] && [[ "${TRAVIS_BRANCH}" == "main" || "${TRAVIS_BRANCH}" =~ ^release-v[0-9]+\.[0-9]+$ ]] && [ "${TRAVIS_EVENT_TYPE}" == "push" ]; then
   dev_build_tag=$(git describe --tags --always)
   dev_build_tag=${dev_build_tag#v}
   push_docker_image "${dev_build_tag}"

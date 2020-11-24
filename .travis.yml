@@ -19,7 +19,7 @@ before_install:
 
 branches:
   only:
-  - master
+  - main
   - /^release-v\d+\.\d+$/
   - /^v\d+\.\d+\.\d+$/
   - /^v\d+\.\d+\.\d+-(alpha|beta|rc)\.\d+$/
