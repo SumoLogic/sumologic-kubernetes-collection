@@ -924,6 +924,45 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.0.0-dev.0-46-g4bcc092e.tgz
     version: 2.0.0-dev.0-46-g4bcc092e
+  - apiVersion: v2
+    appVersion: 2.0.0-dev.0-120-g2d241079
+    created: "2020-11-24T15:42:19.472148209Z"
+    dependencies:
+    - condition: fluent-bit.enabled,sumologic.logs.enabled
+      name: fluent-bit
+      repository: https://fluent.github.io/helm-charts
+      version: 0.7.4
+    - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 12.0.2
+    - condition: falco.enabled
+      name: falco
+      repository: https://falcosecurity.github.io/charts
+      version: 1.5.4
+    - condition: metrics-server.enabled
+      name: metrics-server
+      repository: https://charts.bitnami.com/bitnami
+      version: 5.0.2
+    - condition: telegraf-operator.enabled
+      name: telegraf-operator
+      repository: https://helm.influxdata.com/
+      version: 1.1.5
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
+    digest: f70d08455207614b4ba44c470d68790dc4db04ea2e322fc9af97c8526e0f91aa
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    type: application
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.0.0-dev.0-120-g2d241079.tgz
+    version: 2.0.0-dev.0-120-g2d241079
   - apiVersion: v1
     appVersion: 2.0.0-dev.0-119-gd842db01
     created: "2020-11-24T15:14:46.833240675Z"
@@ -7384,4 +7423,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-0.15.22-alpha-12-g4127801.tgz
     version: 0.15.22-alpha-12-g4127801
-generated: "2020-11-24T15:14:46.796699378Z"
+generated: "2020-11-24T15:42:19.436149924Z"
