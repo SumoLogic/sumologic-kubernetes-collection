@@ -13,7 +13,7 @@ before_install:
 script: bash ci/build.sh
 branches:
   only:
-  - master
+  - main
   - /^release-v\d+\.\d+$/
   - /^v\d+\.\d+\.\d+$/
   - /^v\d+\.\d+\.\d+-(alpha|beta|rc)\.\d+$/

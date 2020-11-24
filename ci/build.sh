@@ -73,10 +73,10 @@ shellcheck ci/build.sh || true
 # Exclude branches that start with "revert-" to allow reverts
 if [ -n "$GITHUB_TOKEN" ] && [ "$TRAVIS_EVENT_TYPE" == "pull_request" ] && [[ ! "$TRAVIS_PULL_REQUEST_BRANCH" =~ ^revert- ]]; then
   # Check most recent commit author. If non-Travis, check for changes made to generated files
-  recent_author=$(git log origin-repo/master..HEAD --format="%an" | grep -m1 "")
+  recent_author=$(git log origin-repo/main..HEAD --format="%an" | grep -m1 "")
   if echo "$recent_author" | grep -v -q -i "travis"; then
     # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
-    changes=$(git log origin-repo/master..HEAD --name-only --format="" --author="$recent_author" | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml") || true
+    changes=$(git log origin-repo/main..HEAD --name-only --format="" --author="$recent_author" | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml") || true
     if [ -n "$changes" ]; then
       echo "Aborting due to manual changes detected in the following generated files: $changes"
       exit 1
@@ -246,7 +246,7 @@ if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
   push_docker_image "$VERSION"
   push_helm_chart "$VERSION"
 
-elif [ -n "$DOCKER_PASSWORD" ] && [[ "$TRAVIS_BRANCH" == "master" || "$TRAVIS_BRANCH" =~ ^release-v[0-9]+\.[0-9]+$ ]] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+elif [ -n "$DOCKER_PASSWORD" ] && [[ "$TRAVIS_BRANCH" == "main" || "$TRAVIS_BRANCH" =~ ^release-v[0-9]+\.[0-9]+$ ]] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
   dev_build_tag=$(git describe --tags --always)
   dev_build_tag=${dev_build_tag#v}
   push_docker_image "$dev_build_tag"
