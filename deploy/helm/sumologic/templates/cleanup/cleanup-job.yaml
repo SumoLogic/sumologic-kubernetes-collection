@@ -40,8 +40,8 @@ spec:
             mountPath: /etc/terraform
       containers:
         - name: cleanup
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: {{ .Values.sumologic.setup.job.image.repository }}:{{ .Values.sumologic.setup.job.image.tag }}
+          imagePullPolicy: {{ .Values.sumologic.setup.job.image.pullPolicy }}
           volumeMounts:
           - name: cleanup
             mountPath: /etc/terraform

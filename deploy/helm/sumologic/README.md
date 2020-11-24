@@ -11,9 +11,6 @@ The following table lists the configurable parameters of the Sumo Logic chart an
 
 Parameter | Description | Default
 --- | --- | ---
-`image.repository` | Image repository for Sumo Logic docker container. | `sumologic/kubernetes-fluentd`
-`image.tag` | Image tag for Sumo Logic docker container. | `1.0.0-rc.2`
-`image.pullPolicy` | Image pullPolicy for Sumo Logic docker container. | `IfNotPresent`
 `nameOverride` | Used to override the Chart name. | `Nil`
 `sumologic.setupEnabled` | If enabled, a pre-install hook will create Collector and Sources in Sumo Logic. | `true`
 `sumologic.cleanUpEnabled` | If enabled, a pre-delete hook will destroy Kubernetes secret and Sumo Logic Collector. | `false`
@@ -39,7 +36,13 @@ Parameter | Description | Default
 `sumologic.setup.job.annotations` | Annotations for the Job. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"3"}]`
 `sumologic.setup.job.podLabels` | Additional labels for the setup Job pod. | `{}`
 `sumologic.setup.job.podAnnotations` | Additional annotations for the setup Job pod. | `{}`
+`sumologic.setup.job.image.repository` | Image repository for Sumo Logic setup job docker container. | `sumologic/kubernetes-fluentd`
+`sumologic.setup.job.image.tag` | Image tag for Sumo Logic setup job docker container. | `1.3.0`
+`sumologic.setup.job.image.pullPolicy` | Image pullPolicy for Sumo Logic docker container. | `IfNotPresent`
 `sumologic.setup.serviceAccount.annotations` | Annotations for the ServiceAccount. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"0"}]`
+`fluentd.image.repository` | Image repository for Sumo Logic docker container. | `sumologic/kubernetes-fluentd`
+`fluentd.image.tag` | Image tag for Sumo Logic docker container. | `1.3.0`
+`fluentd.image.pullPolicy` | Image pullPolicy for Sumo Logic docker container. | `IfNotPresent`
 `fluentd.additionalPlugins` | Additional Fluentd plugins to install from RubyGems. Please see our [documentation](./Additional_Fluentd_Plugins.md) for more information. | `[]`
 `fluentd.compression.enabled` | Flag to control if data is sent to Sumo Logic compressed or not | `true`
 `fluentd.compression.encoding` | Specifies which encoding should be used to compress data (either `gzip` or `deflate`) | `gzip`

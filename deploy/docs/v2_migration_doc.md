@@ -70,6 +70,9 @@ the exact steps for migration.
           - name: "config-reloader"
     ```
 
+- We've separated our fluentd image from setup job image, hence `image` was migrated
+  to `sumologic.setup.job.image` and to `fluentd.image`
+
 ## How to upgrade
 
 **Note: The below steps are using Helm 3. Helm 2 is not supported.**
