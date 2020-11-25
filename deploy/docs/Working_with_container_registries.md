@@ -1,4 +1,4 @@
-# Working with docker registries
+# Working with container registries
 
 ## Authenticating with container registry
 
