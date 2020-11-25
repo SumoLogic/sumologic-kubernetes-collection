@@ -53,6 +53,23 @@ entries:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-1.3.2-rc.0.tgz
     version: 1.3.2-rc.0
   - apiVersion: v1
+    appVersion: 1.3.2-6-ge7bf2a9d
+    created: "2020-11-25T16:04:17.836866652Z"
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
+    digest: a4b457ffa26c9811cd2a5656ce3f4d34db857ccfee6dc468a91c82480099eb4a
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-1.3.2-6-ge7bf2a9d.tgz
+    version: 1.3.2-6-ge7bf2a9d
+  - apiVersion: v1
     appVersion: 1.3.2-5-g8708146f
     created: "2020-11-24T14:44:02.094475647Z"
     description: A Helm chart for collecting Kubernetes logs, metrics, traces and
@@ -972,4 +989,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.6.0.tgz
     version: 0.6.0
-generated: "2020-11-24T14:44:02.066997678Z"
+generated: "2020-11-25T16:04:17.809778717Z"
