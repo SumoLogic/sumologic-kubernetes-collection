@@ -87,12 +87,24 @@ In order to quickly test whether sumo-kubernetes-collection works, one can use `
 
 To check receiver-mock logs please use:
 
+```bash
+sumo-make test-receiver-mock-logs
 ```
-kubectl logs $(kubectl get pod -l app=receiver-mock -o jsonpath="{.items[0].metadata.name}"  -n receiver-mock) -n receiver-mock
+
+or
+
+```bash
+/sumologic/vagrant/Makefile test-receiver-mock-logs
 ```
 
 To check metrics exposed by receiver-mock please use:
 
+```bash
+sumo-make test-receiver-mock-metrics
 ```
-kubectl exec $(kubectl get pod -l app=receiver-mock -o jsonpath="{.items[0].metadata.name}"  -n receiver-mock) -it -n receiver-mock -- curl http://localhost:3000/metrics
+
+or
+
+```bash
+/sumologic/vagrant/Makefile test-receiver-mock-metrics
 ```

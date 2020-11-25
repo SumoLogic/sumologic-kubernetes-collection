@@ -246,3 +246,9 @@ application-metrics-jolokia-agent-run:
 
 application-metrics-jolokia-agent-clean:
 	kubectl delete ns demo-jolokia-agent
+
+test-receiver-mock-logs:
+	kubectl logs $(shell kubectl get pod -l app=receiver-mock -o jsonpath='{.items[0].metadata.name}'  -n receiver-mock) -n receiver-mock
+
+test-receiver-mock-metrics:
+	kubectl exec $(shell kubectl get pod -l app=receiver-mock -o jsonpath="{.items[0].metadata.name}"  -n receiver-mock) -it -n receiver-mock -- curl http://localhost:3000/metrics
