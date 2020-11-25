@@ -148,6 +148,17 @@ sumologic:
           #    - name: "Test Exclude Debug"
           #      filter_type: "Exclude"
           #      regexp: ".*DEBUG.*"
+      events:
+        default:
+          name: events
+          config-name: endpoint-events
+          category: true
+      traces:
+        default:
+          name: traces
+          config-name: endpoint-traces
+          properties:
+            content_type: Zipkin
 
   ### Logs configuration
   ## Set the enabled flag to false for disabling logs ingestion altogether.
@@ -171,18 +182,6 @@ sumologic:
   ## Set the enabled flag to false for disabling metrics ingestion altogether.
   metrics:
     enabled: true
-
-    events:
-      default:
-        name: events
-        config-name: endpoint-events
-        category: true
-    traces:
-      default:
-        name: traces
-        config-name: endpoint-traces
-        properties:
-          content_type: Zipkin
 
   ### Traces configuration
   ## This is experimental feature and may be unavailable for your account

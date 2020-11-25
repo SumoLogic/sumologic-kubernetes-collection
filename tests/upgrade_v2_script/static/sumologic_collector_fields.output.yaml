@@ -23,7 +23,5 @@ sumologic:
       nodeSelector: {}
       podLabels: {}
       podAnnotations: {}
-      annotations:
-        helm.sh/hook: pre-install,pre-upgrade
   collector:
     fields: {}
