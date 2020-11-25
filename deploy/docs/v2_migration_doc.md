@@ -82,3 +82,65 @@ the exact steps for migration.
 ## How to upgrade
 
 **Note: The below steps are using Helm 3. Helm 2 is not supported.**
+
+### 1. Upgrade to helm chart version `v1.3.2`
+
+Run the below command to fetch the latest helm chart:
+
+```bash
+helm repo update
+```
+
+For the users who are not already on `v1.3.2` of the helm chart, please upgrade
+to that version first by running the below command.
+
+```bash
+helm upgrade collection sumologic/sumologic --reuse-values --version=1.3.2
+```
+
+### 2. Upgrade Prometheus CRDs
+
+Due to changes in `kube-prometheus-stack` which this chart depends on, one will
+need to run the following commands in order to update Prometheus related CRDs.
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+```
+
+### 3. Run upgrade script
+
+For Helm users, the only breaking changes are the renamed config parameters.
+For users who use a `values.yaml` file, we provide a script that users can run
+to convert their existing `values.yaml` file into one that is compatible with the major release.
+
+- Get the existing values for the helm chart and store it as `current_values.yaml`
+  with the below command:
+
+  ```bash
+  helm get values <RELEASE-NAME> > current_values.yaml
+  ```
+
+- Run `curl` the upgrade script as follows:
+
+  ```bash
+  curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/deploy/helm/sumologic/upgrade-2.0.0.sh
+  ```
+
+- Run the upgrade script on the above file with the below command.
+
+  ```bash
+  ./upgrade-2.0.0.sh current_values.yaml
+  ```
+
+- At this point, users can then run:
+
+  ```bash
+  helm upgrade collection sumologic/sumologic --version=2.0.0 -f new_values.yaml
+  ```
