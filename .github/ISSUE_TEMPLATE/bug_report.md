@@ -12,10 +12,6 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. 
-2.
-3.
-4.
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
@@ -27,5 +23,5 @@ A clear and concise description of what you expected to happen.
  - **Kernel** (e.g. `uname -a`):
  - **Others** (e.g. logs, cloud provider):
 
-**Anything else do we need to know** 
+**Anything else do we need to know**
 Add any other context about the problem here, e.g. issue happens only occasionally.
