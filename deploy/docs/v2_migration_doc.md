@@ -73,6 +73,12 @@ the exact steps for migration.
 - We've separated our fluentd image from setup job image, hence `image` was migrated
   to `sumologic.setup.job.image` and to `fluentd.image`
 
+- `sumologic.sources` become `sumologic.collector.sources` as Sources are being
+  created under Collectors
+
+- `sumologic.setup.fields` become `sumologic.collector.fields` as Fields are
+  set on a Collector
+
 ## How to upgrade
 
 **Note: The below steps are using Helm 3. Helm 2 is not supported.**

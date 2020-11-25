@@ -4,12 +4,17 @@ Terraform is used by sumologic-kubernetes-collection during the setup process
 to automatically create HTTP sources and store their URLs in the Kubernetes secret.
 
 We are using two providers to perform those actions:
- * [Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/)
- * [Sumo Logic Terraform provider](https://www.terraform.io/docs/providers/sumologic/)
+
+- [Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/)
+- [Sumo Logic Terraform provider](https://www.terraform.io/docs/providers/sumologic/)
 
 ## Kubernetes Terraform provider
 
-[Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/) is responsible for creating the secret with the created HTTP source endpoints during setup process. The default configuration is expected to work in most cases, however, for self-hosted Kubernetes clusters there can be a few exceptions. For these cases we expose the provider configuration in `values.yaml`.
+[Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/)
+is responsible for creating the secret with the created HTTP source endpoints during setup process.
+The default configuration is expected to work in most cases, however, for self-hosted
+Kubernetes clusters there can be a few exceptions.
+For these cases we expose the provider configuration in `values.yaml`.
 
 ```yaml
 sumologic:
@@ -42,22 +47,24 @@ sumologic:
 ## Sumo Logic Terraform provider
 
 The [Sumo Logic Terraform provider](https://www.terraform.io/docs/providers/sumologic/) creates your HTTP sources.
-The related configuration section in the `values.yaml` file is under `sumologic.sources`:
+The related configuration section in the `values.yaml` file is under `sumologic.collector.sources`:
 
 ```yaml
 sumologic:
   # ...
-  sources:
+  collector:
     # ...
-    logs: # source type, can be one of: logs/metrics/events/traces
-      example-source: # source reference name
-        name: # name of the source (visible on the sumologic platform)
-        config-name: # name which be used in secret to store the url. This is backward-compatibility option
-        category: # this is backward compatibility property. It's deprecated and it's going to be removed in version 2.0
-                  # Sets source category to "${var.cluster_name}/${local.default_events_source}" if true
-                  # To overwrite category, please use `sumologic.sources[].properties.category`
-        properties: # Additional Terraform properties like fields or content_type
-                    # ref: https://www.terraform.io/docs/providers/sumologic/r/collector.html
+    sources:
+      # ...
+      logs: # source type, can be one of: logs/metrics/events/traces
+        example-source: # source reference name
+          name: # name of the source (visible on the sumologic platform)
+          config-name: # name which be used in secret to store the url. This is backward-compatibility option
+          category: # this is backward compatibility property. It's deprecated and it's going to be removed in version 2.0
+                    # Sets source category to "${var.cluster_name}/${local.default_events_source}" if true
+                    # To overwrite category, please use `sumologic.collector.sources[].properties.category`
+          properties: # Additional Terraform properties like fields or content_type
+                      # ref: https://www.terraform.io/docs/providers/sumologic/r/collector.html
 ```
 
 ### Usage
@@ -67,53 +74,61 @@ The variable name is built using the schema `SUMO_ENDPOINT_<source name>_<source
 where `<source name>` and `<source type>` are in uppercase and dashes are replaced with underscores.
 
 Examples:
- - `sumologic.sources.logs.example-source` becomes `SUMO_ENDPOINT_EXAMPLE_SOURCE_LOGS_SOURCE`
- - `sumologic.sources.traces.default` becomes `SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE`
+
+- `sumologic.collector.sources.logs.example-source` becomes `SUMO_ENDPOINT_EXAMPLE_SOURCE_LOGS_SOURCE`
+- `sumologic.collector.sources.traces.default` becomes `SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE`
 
 ### Properties
 
 You can set all of the source [properties](https://www.terraform.io/docs/providers/sumologic/r/http_source.html#argument-reference)
-using `sumologic.sources.<logs,traces,metrics,traces>.<source ref name>.properties`.
+using `sumologic.collector.sources.<logs,traces,metrics,traces>.<source ref name>.properties`.
 
 #### Processing Rules
 
-You can add [Processing Rules](https://help.sumologic.com/Manage/Collection/Processing-Rules) to an HTTP source via values.yaml. Below is an example of an exclude rule to filter `DEBUG` log messages.  All logs from Kubernetes (Systemd, container, and custom logs) will have this filter applied.
+You can add [Processing Rules](https://help.sumologic.com/Manage/Collection/Processing-Rules) to an HTTP source via values.yaml.
+Below is an example of an exclude rule to filter `DEBUG` log messages.
+All logs from Kubernetes (Systemd, container, and custom logs) will have this filter applied.
 
 ```yaml
 sumologic:
   # ...
-  sources:
+  collector:
     # ...
-    logs:
+    sources:
       # ...
-      default:
+      logs:
         # ...
-        name: logs
-        config-name: endpoint-logs
-        properties:
-          filters:
-            - name: "Test Exclude Debug"
-              filter_type: "Exclude"
-              regexp: ".*DEBUG.*"
+        default:
+          # ...
+          name: logs
+          config-name: endpoint-logs
+          properties:
+            filters:
+              - name: "Test Exclude Debug"
+                filter_type: "Exclude"
+                regexp: ".*DEBUG.*"
 ```
 
 #### Fields
 
-The configuration snippet below configures two [fields](https://help.sumologic.com/Manage/Fields), (`node` and `deployment`) for the default logs source:
+The configuration snippet below configures two [fields](https://help.sumologic.com/Manage/Fields),
+(`node` and `deployment`) for the default logs source:
 
 ```yaml
 sumologic:
   # ...
-  sources:
+  collector:
     # ...
-    logs:
+    sources:
       # ...
-      default:
+      logs:
         # ...
-        properties:
-          fields:
-            node: hornetq-livestream-9
-            deployment: sumologic
+        default:
+          # ...
+          properties:
+            fields:
+              node: hornetq-livestream-9
+              deployment: sumologic
 ```
 
 #### Terraform variables
@@ -122,16 +137,18 @@ You can use Terraform extrapolation for properties:
 
 ```yaml
 sumologic:
-  sources:
-    logs:
-      example-source:
-        properties:
-          category: "${var.cluster_name}/my-name"
+  collector:
+    sources:
+      logs:
+        example-source:
+          properties:
+            category: "${var.cluster_name}/my-name"
 ```
 
 List of available variables:
- * var.cluster_name
- * var.namespace_name
- * var.collector_name
+
+- `var.cluster_name`
+- `var.namespace_name`
+- `var.collector_name`
 
 **Note** You have to manually activate fields using the Sumo Logic service.

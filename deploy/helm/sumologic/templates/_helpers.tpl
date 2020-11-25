@@ -754,9 +754,9 @@ Example usage:
 {{- $type := .Type -}}
 {{- $endpoint := .Endpoint -}}
 {{- if not $endpoint -}}
-{{- $source := (index $ctx.sumologic.sources $type "default") -}}
-{{- if (index $ctx.sumologic.sources $type .Name "config-name") -}}
-{{- $endpoint = index $ctx.sumologic.sources $type .Name "config-name" -}}
+{{- $source := (index $ctx.sumologic.collector.sources $type "default") -}}
+{{- if (index $ctx.sumologic.collector.sources $type .Name "config-name") -}}
+{{- $endpoint = index $ctx.sumologic.collector.sources $type .Name "config-name" -}}
 {{- else -}}
 {{- $endpoint = printf "endpoint-%s" (include "terraform.sources.name" (dict "Name" $name "Type" $type)) -}}
 {{- end -}}
@@ -818,8 +818,8 @@ Example Usage:
 {{- $ctx := .Context -}}
 {{- $name := .Name -}}
 {{- $value := true -}}
-{{- if and (hasKey $ctx.sumologic.sources $type) (hasKey (index $ctx.sumologic.sources $type) $name) (hasKey (index $ctx.sumologic.sources $type $name) "create") -}}
-{{- if not (index $ctx.sumologic.sources $type $name "create") -}}
+{{- if and (hasKey $ctx.sumologic.collector.sources $type) (hasKey (index $ctx.sumologic.collector.sources $type) $name) (hasKey (index $ctx.sumologic.collector.sources $type $name) "create") -}}
+{{- if not (index $ctx.sumologic.collector.sources $type $name "create") -}}
 {{- $value = false -}}
 {{- end -}}
 {{- end -}}
@@ -836,7 +836,7 @@ Example:
 {{- define "kubernetes.sources.envs" -}}
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
-{{- range $key, $source := (index .Context.sumologic.sources $type) }}
+{{- range $key, $source := (index .Context.sumologic.collector.sources $type) }}
         - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) }}
           valueFrom:
             secretKeyRef:
