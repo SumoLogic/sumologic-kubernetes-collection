@@ -5,8 +5,8 @@ to automatically create HTTP sources and store their URLs in the Kubernetes secr
 
 We are using two providers to perform those actions:
 
-* [Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/)
-* [Sumo Logic Terraform provider](https://www.terraform.io/docs/providers/sumologic/)
+- [Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/)
+- [Sumo Logic Terraform provider](https://www.terraform.io/docs/providers/sumologic/)
 
 ## Kubernetes Terraform provider
 
@@ -75,8 +75,8 @@ where `<source name>` and `<source type>` are in uppercase and dashes are replac
 
 Examples:
 
-* `sumologic.collector.sources.logs.example-source` becomes `SUMO_ENDPOINT_EXAMPLE_SOURCE_LOGS_SOURCE`
-* `sumologic.collector.sources.traces.default` becomes `SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE`
+- `sumologic.collector.sources.logs.example-source` becomes `SUMO_ENDPOINT_EXAMPLE_SOURCE_LOGS_SOURCE`
+- `sumologic.collector.sources.traces.default` becomes `SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE`
 
 ### Properties
 
@@ -147,8 +147,8 @@ sumologic:
 
 List of available variables:
 
-* `var.cluster_name`
-* `var.namespace_name`
-* `var.collector_name`
+- `var.cluster_name`
+- `var.namespace_name`
+- `var.collector_name`
 
 **Note** You have to manually activate fields using the Sumo Logic service.
