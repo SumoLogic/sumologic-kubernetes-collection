@@ -260,31 +260,38 @@ helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VE
 
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
-There’s an issue with backwards compatibility in the current version of the kube-prometheus-stack helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, you can use the following steps.
+There’s an issue with backwards compatibility in the current version of the
+kube-prometheus-stack helm chart that requires us to override the selectors
+for kube-scheduler and kube-controller-manager in order to see metrics from them.
+If you are not seeing metrics from these two targets, you can use the following steps.
 
-First get the `kube-controller` and `kube-scheduler` service name.  These are installed in the `kube-system` namespace.
+First get the `kube-controller` and `kube-scheduler` service name.
+These are installed in the `kube-system` namespace.
 
 ```
 kubectl get services -n kube-system
 ```
 
-You should see two services that look like the following.  Note `collection` refers to the Helm release name you used on installation.
+You should see two services that look like the following.
+Note `collection` refers to the Helm release name you used on installation.
 
 ```
-collection-prometheus-oper-kube-scheduler
-collection-prometheus-oper-kube-controller-manager
+collection-kube-prometheus-kube-scheduler
+collection-kube-prometheus-kube-controller-manager
 ```
 
-Run the following command to patch the labels on these services, again this command assumes the above service names which you may need to change.
+Run the following command to patch the labels on these services,
+again this command assumes the above service names which you may need to change.
 
 ```
-kubectl -n kube-system patch service collection-prometheus-oper-kube-controller-manager -p '{"spec":{"selector":{"k8s-app": "kube-controller-manager"}}}'
-kubectl -n kube-system patch service collection-prometheus-oper-kube-scheduler -p '{"spec":{"selector":{"k8s-app": "kube-scheduler"}}}'
-kubectl -n kube-system patch service collection-prometheus-oper-kube-controller-manager --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
-kubectl -n kube-system patch service collection-prometheus-oper-kube-scheduler --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
+kubectl -n kube-system patch service collection-kube-prometheus-kube-controller-manager -p '{"spec":{"selector":{"k8s-app": "kube-controller-manager"}}}'
+kubectl -n kube-system patch service collection-kube-prometheus-kube-scheduler -p '{"spec":{"selector":{"k8s-app": "kube-scheduler"}}}'
+kubectl -n kube-system patch service collection-kube-prometheus-kube-controller-manager --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
+kubectl -n kube-system patch service collection-kube-prometheus-kube-scheduler --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
 ```
 
 ### Prometheus stuck in `Terminating` state after running `helm del collection`
+
 Delete the pod forcefully by adding `--force --grace-period=0` to the `kubectl delete pod` command.
 
 ### Rancher
