@@ -241,10 +241,15 @@ helm delete my-release
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
-To remove the Kubernetes secret:
+### Post installation cleanup
+
+In order to clean up the Kubernetes secret and associated hosted collector one
+can use the optional cleanup job by setting `sumologic.cleanUpEnabled` to `true`.
+
+Alternatively the secret can be removed manually with:
 
 ```bash
 kubectl delete secret sumologic
 ```
 
-Then delete the associated hosted collector in the Sumo Logic UI.
+and the associated hosted collector can be deleted in the Sumo Logic UI.
