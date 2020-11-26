@@ -252,3 +252,12 @@ test-receiver-mock-logs:
 
 test-receiver-mock-metrics:
 	kubectl exec $(shell kubectl get pod -l app=receiver-mock -o jsonpath="{.items[0].metadata.name}"  -n receiver-mock) -it -n receiver-mock -- curl http://localhost:3000/metrics
+
+shellcheck:
+	$(MAKE) -C ${root_dir} shellcheck
+
+test:
+	$(MAKE) -C ${root_dir} test
+
+build:
+	$(MAKE) -C ${root_dir} build
