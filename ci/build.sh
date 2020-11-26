@@ -212,7 +212,7 @@ function push_docker_image() {
 
 function push_helm_chart() {
   local version="$1"
-
+  local chart_dir="$2"
   local sync_dir="${TRAVIS_BUILD_DIR}-helm-sync"
 
   echo "Pushing new Helm Chart release $version"
@@ -231,9 +231,9 @@ function push_helm_chart() {
   git fetch origin-repo
   git checkout gh-pages
 
-  sudo helm repo index --url https://sumologic.github.io/sumologic-kubernetes-collection/ --merge ./index.yaml "${sync_dir}"
+  sudo helm repo index --url "https://sumologic.github.io/sumologic-kubernetes-collection${chart_dir:1}/" --merge "${chart_dir}/index.yaml" "${sync_dir}"
 
-  mv -f "${sync_dir}"/* .
+  mv -f "${sync_dir}"/* "${chart_dir}"
   rmdir "${sync_dir}"
 
   git add -A
@@ -244,13 +244,13 @@ function push_helm_chart() {
 
 if [ -n "$DOCKER_PASSWORD" ] && [ -n "$TRAVIS_TAG" ]; then
   push_docker_image "$VERSION"
-  push_helm_chart "$VERSION"
+  push_helm_chart "${VERSION}" "."
 
 elif [ -n "$DOCKER_PASSWORD" ] && [[ "$TRAVIS_BRANCH" == "main" || "$TRAVIS_BRANCH" =~ ^release-v[0-9]+\.[0-9]+$ ]] && [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
   dev_build_tag=$(git describe --tags --always)
   dev_build_tag=${dev_build_tag#v}
   push_docker_image "$dev_build_tag"
-  push_helm_chart "$dev_build_tag"
+  push_helm_chart "${dev_build_tag}" "./dev"
 
 else
   echo "Skip Docker pushing"
