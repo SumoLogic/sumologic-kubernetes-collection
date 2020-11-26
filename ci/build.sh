@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # shellcheck disable=SC2154
 VERSION="${TRAVIS_TAG:-0.0.0}"
@@ -72,8 +72,7 @@ function set_up_github() {
   local token="${1}"
   local branch="${2}"
 
-  git config --global user.email "travis@travis-ci.org"
-  git config --global user.name "Travis CI"
+  git config --global user.name "Continuous Integration"
   git remote add origin-repo "https://${token}@github.com/SumoLogic/sumologic-kubernetes-collection.git" > /dev/null 2>&1
   git fetch --unshallow origin-repo
 

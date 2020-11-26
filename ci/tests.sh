@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -e
 
 VERSION="${TRAVIS_TAG:-0.0.0}"
@@ -52,14 +53,6 @@ function test_fluentd_plugins() {
       test_fluentd_plugin "$(basename "${line}")" "${version}" || exit 1
     done
 }
-
-echo "Checking the bash scripts with shellcheck..."
-  find . ! -path '*deploy/helm/sumologic/conf/setup/setup.sh' ! -path "*/tmp/*" -name '*.sh' -type 'f' -print |
-    while read -r file; do
-      # Run tests in their own context
-      echo "Checking ${file} with shellcheck"
-      shellcheck --enable all "${file}"
-    done
 
 # Test if template files are generated correctly for various values.yaml
 echo "Test helm templates generation"
