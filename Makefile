@@ -6,3 +6,6 @@ test:
 
 build:
 	./ci/build.sh
+
+push:
+	./ci/push.sh

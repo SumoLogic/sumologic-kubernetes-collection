@@ -1,14 +1,11 @@
-name: CI
+name: PRs checks
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
   markdownlint:
-    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -17,11 +14,11 @@ jobs:
           ruby-version: '2.6'
       - name: install markdownlint
         run: gem install mdl
+      # TODO: add in a separate PR
       # - name: markdownlint check
       #   run: make markdownlint
 
   shellcheck:
-    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
