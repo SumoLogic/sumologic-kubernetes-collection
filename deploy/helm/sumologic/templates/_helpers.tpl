@@ -387,6 +387,26 @@ sumologic.com/app: otelcol
 sumologic.com/component: traces
 {{- end -}}
 
+{{- define "sumologic.labels.scrape.logs" -}}
+sumologic.com/scrape: fluentd-logs
+{{ template "sumologic.labels.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.metrics" -}}
+sumologic.com/scrape: fluentd-metrics
+{{ template "sumologic.labels.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.events" -}}
+sumologic.com/scrape: fluentd-events
+{{ template "sumologic.labels.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.traces" -}}
+sumologic.com/scrape: otelcol
+{{ template "sumologic.labels.traces" . }}
+{{- end -}}
+
 {{/*
 Create common labels used throughout the chart.
 If dryRun=true, we do not create any chart labels.

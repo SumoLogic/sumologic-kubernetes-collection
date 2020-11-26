@@ -1026,7 +1026,7 @@ kube-prometheus-stack:
             - $(NAMESPACE)
         selector:
           matchLabels:
-            sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: fluentd-logs
       - name: collection-sumologic-fluentd-metrics
         additionalLabels:
           sumologic.com/app: fluentd-metrics
@@ -1037,7 +1037,7 @@ kube-prometheus-stack:
             - $(NAMESPACE)
         selector:
           matchLabels:
-            sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: fluentd-metrics
       - name: collection-sumologic-fluentd-events
         additionalLabels:
           sumologic.com/app: fluentd-events
@@ -1048,7 +1048,7 @@ kube-prometheus-stack:
             - $(NAMESPACE)
         selector:
           matchLabels:
-            sumologic.com/app: fluentd-events
+            sumologic.com/scrape: fluentd-events
       - name: collection-fluent-bit
         additionalLabels:
           app: collection-fluent-bit
@@ -1071,7 +1071,7 @@ kube-prometheus-stack:
             - $(NAMESPACE)
         selector:
           matchLabels:
-            sumologic.com/app: otelcol
+            sumologic.com/scrape: otelcol
     prometheusSpec:
       ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
       ## NOTE changing the scrape interval to be >1m can result in metrics
