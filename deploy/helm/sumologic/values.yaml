@@ -772,6 +772,12 @@ fluent-bit:
   ## Setting the flag to true instead of commenting out will break other functionality.
   # enabled: false
 
+  ## Configuration for fluent-bit service
+  service:
+    ## Add custom labels to fluent-bit service
+    labels:
+      sumologic.com/scrape: fluent-bit
+
   ## Add custom pod labels to fluent-bit daemonset pods
   podLabels: {}
 
@@ -1060,7 +1066,7 @@ kube-prometheus-stack:
             - $(NAMESPACE)
         selector:
           matchLabels:
-            app.kubernetes.io/name: fluent-bit
+            sumologic.com/scrape: fluent-bit
       - name: collection-sumologic-otelcol
         additionalLabels:
           sumologic.com/app: otelcol
