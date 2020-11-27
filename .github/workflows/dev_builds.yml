@@ -1,0 +1,26 @@
+name: Dev builds
+
+on:
+  push:
+    branches:
+      - main
+      # TODO remove
+      - 'github-actions-env-*'
+      - 'release-v[0-9]+.[0-9]+'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+      - run: gem install bundler
+      - run: git fetch --tags --prune --unshallow
+      - name: build
+        run: make build
+      - name: push
+        run: make push
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

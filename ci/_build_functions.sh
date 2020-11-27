@@ -16,12 +16,6 @@ function helm() {
     helm "$@"
 }
 
-function get_branch_to_checkout() {
-  [[ "${TRAVIS_EVENT_TYPE}" == pull_request ]] \
-    && echo "${TRAVIS_PULL_REQUEST_BRANCH}" \
-    || echo "${TRAVIS_BRANCH}"
-}
-
 function bundle_fluentd_plugin() {
   local plugin_name="${1}"
   local version="${2}"
@@ -63,26 +57,18 @@ function bundle_fluentd_plugins() {
 }
 
 function set_up_github() {
-  local token="${1}"
-  local branch="${2}"
-
-  git config --global user.name "Continuous Integration"
-  git remote add origin-repo "https://${token}@github.com/SumoLogic/sumologic-kubernetes-collection.git" > /dev/null 2>&1
-  git fetch --unshallow origin-repo
-
-  readonly branch="$(get_branch_to_checkout)"
-  echo "Checking out the ${branch} branch..."
-  git checkout "${branch}"
+  git config --global user.name "Continuous Integration [bot]"
 }
 
 function push_docker_image() {
   local version="$1"
+  local docker_tag="$2"
 
-  echo "Tagging docker image ${DOCKER_TAG}:local with ${DOCKER_TAG}:${version}..."
-  docker tag "${DOCKER_TAG}:local" "${DOCKER_TAG}:${version}"
-  echo "Pushing docker image ${DOCKER_TAG}:${version}..."
+  echo "Tagging docker image ${docker_tag}:local with ${docker_tag}:${version}..."
+  docker tag "${docker_tag}:local" "${docker_tag}:${version}"
+  echo "Pushing docker image ${docker_tag}:${version}..."
   echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-  docker push "${DOCKER_TAG}:${version}"
+  docker push "${docker_tag}:${version}"
 }
 
 function push_helm_chart() {
@@ -91,16 +77,13 @@ function push_helm_chart() {
   local sync_dir="./tmp-helm-sync"
 
   echo "Pushing new Helm Chart release ${version}"
-  set -x
 
-  git checkout -- .
-
+  set -e
   # due to helm repo index issue: https://github.com/helm/helm/issues/7363
   # we need to create new package in a different dir, merge the index and move the package back
   mkdir -p "${sync_dir}"
   helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
 
-  git fetch origin-repo
   git checkout gh-pages
 
   helm repo index --url "https://sumologic.github.io/sumologic-kubernetes-collection${chart_dir:1}/" --merge "${chart_dir}/index.yaml" "${sync_dir}"
@@ -110,8 +93,8 @@ function push_helm_chart() {
 
   git add -A
   git commit -m "Push new Helm Chart release ${version}"
-  git push --quiet origin-repo gh-pages
-  set +x
+  git push --quiet origin gh-pages
+  set +e
 }
 
 function build_docker_image() {
@@ -133,4 +116,8 @@ function build_docker_image() {
 
   echo "Test docker image locally..."
   ruby deploy/test/test_docker.rb || exit 1
+}
+
+function is_checkout_on_tag() {
+  git describe --exact-match --tags HEAD 2>/dev/null
 }
