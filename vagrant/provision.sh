@@ -77,7 +77,7 @@ done
 # install requirements for ci/build.sh
 snap install ruby --channel=2.6/stable --classic
 gem install bundler
-apt install -y gcc g++ libsnappy-dev
+apt install -y gcc g++ libsnappy-dev libicu-dev zlib1g-dev cmake pkg-config libssl-dev
 
 SHELLCHECK_VERSION=v0.7.1
 curl -Lo- "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJf -
