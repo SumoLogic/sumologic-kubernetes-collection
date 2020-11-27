@@ -1,7 +1,6 @@
-# fluent-plugin-kubernetes_metadata_filter, a plugin for [Fluentd](http://fluentd.org)
-[![Circle CI](https://circleci.com/gh/fabric8io/fluent-plugin-kubernetes_metadata_filter.svg?style=svg)](https://circleci.com/gh/fabric8io/fluent-plugin-kubernetes_metadata_filter)
-[![Code Climate](https://codeclimate.com/github/fabric8io/fluent-plugin-kubernetes_metadata_filter/badges/gpa.svg)](https://codeclimate.com/github/fabric8io/fluent-plugin-kubernetes_metadata_filter)
-[![Test Coverage](https://codeclimate.com/github/fabric8io/fluent-plugin-kubernetes_metadata_filter/badges/coverage.svg)](https://codeclimate.com/github/fabric8io/fluent-plugin-kubernetes_metadata_filter)
+# fluent-plugin-kubernetes-metadata-filter, a plugin for [Fluentd](http://fluentd.org)
+
+This code was retrieved from <https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter> at commit [84f66a8](https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter/commit/84f66a8f9e06ab5b5211053fcce4cd8ab4bd74ba). Original README follows.
 
 The Kubernetes metadata plugin filter enriches container log records with pod and namespace metadata.
 
