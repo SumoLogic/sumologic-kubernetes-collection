@@ -35,7 +35,6 @@ RUN gem install \
 RUN gem install \
         fluent-plugin-systemd:1.0.2 \
         fluent-plugin-record-modifier:2.0.1 \
-        fluent-plugin-kubernetes_metadata_filter:2.5.2 \
         fluent-plugin-sumologic_output:1.7.1 \
         fluent-plugin-concat:2.4.0 \
         fluent-plugin-rewrite-tag-filter:2.2.0 \
@@ -55,6 +54,7 @@ RUN mkdir /tmp/terraform \
 COPY gems/fluent-plugin*.gem ./
 RUN gem install \
         --local fluent-plugin-prometheus-format \
+        --local fluent-plugin-kubernetes-metadata-filter \
         --local fluent-plugin-kubernetes-sumologic \
         --local fluent-plugin-enhance-k8s-metadata \
         --local fluent-plugin-datapoint \
