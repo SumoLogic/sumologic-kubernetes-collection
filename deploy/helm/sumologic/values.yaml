@@ -774,8 +774,9 @@ fluent-bit:
 
   ## Configuration for fluent-bit service
   service:
+    ## Add custom labels to fluent-bit service
     labels:
-      sumologic.com/scrape: "true"
+      sumologic.com/scrape: "true"  # label used by fluent-bit service monitor
 
   ## Add custom pod labels to fluent-bit daemonset pods
   podLabels: {}

@@ -164,7 +164,7 @@ Parameter | Description | Default
 `metrics-server.args` | Arguments for metric server. | `["--kubelet-insecure-tls","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"]`
 `fluent-bit.resources` | Resources for Fluent-bit daemonsets. | `{}`
 `fluent-bit.enabled` | Flag to control deploying Fluent-bit Helm sub-chart. | `true`
-`fluent-bit.service.labels` | Additional labels for fluent-bit service. | `{sumologic.com/scrape: fluent-bit}`
+`fluent-bit.service.labels` | Labels for fluent-bit service. | `{sumologic.com/scrape: "true"}`
 `fluent-bit.podLabels` | Additional labels for fluent-bit pods. | `{}`
 `fluent-bit.podAnnotations` | Additional annotations for fluent-bit pods. | `{}`
 `fluent-bit.service.flush` | Frequency to flush fluent-bit buffer to fluentd. | `5`
