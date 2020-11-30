@@ -8,14 +8,9 @@ source "${ROOT_DIR}"/ci/_test_functions.sh
 # shellcheck disable=SC1090
 source "${ROOT_DIR}"/ci/_build_functions.sh
 
-if is_checkout_on_tag; then
-  VERSION="$(git describe --tags --always)"
-  readonly VERSION="${VERSION#v}"
-else
-  # Don't use non-tag 'git describe' output as this will
-  # fail when building fluentd plugins.
-  readonly VERSION="0.0.0"
-fi
+fetch_current_branch
+VERSION="$(git describe --tags)"
+readonly VERSION="${VERSION#v}"
 
 pushd "${ROOT_DIR}" || exit 1
 

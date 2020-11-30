@@ -5,7 +5,7 @@ readonly ROOT_DIR="$(dirname "$(dirname "${0}")")"
 source "${ROOT_DIR}"/ci/_build_functions.sh
 
 fetch_current_branch
-VERSION="$(git describe --tags --always)"
+VERSION="$(git describe --tags)"
 readonly VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
 : "${DOCKER_USERNAME:=sumodocker}"
@@ -16,8 +16,8 @@ if [[ -z "${DOCKER_PASSWORD}" ]]; then
   exit 1
 fi
 
-echo "Starting push in: $(pwd) with version tag: ${VERSION}"
 pushd "${ROOT_DIR}" || exit 1
+echo "Starting push in: $(pwd) with version tag: ${VERSION}"
 
 set_up_github
 push_docker_image "${VERSION}" "${DOCKER_TAG}"
