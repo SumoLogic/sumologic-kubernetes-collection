@@ -9,7 +9,7 @@ helm_path = ${root_dir}deploy/helm/sumologic
 k8s_path = ${root_dir}vagrant/k8s
 dashboards_path = ${root_dir}vagrant/dashboards
 local_values_file = ${root_dir}vagrant/values.local.yaml
-vagrant_scripts_dir = ${root_dir}vagrant/scripts/
+vagrant_scripts_dir = ${root_dir}vagrant/scripts
 
 # Collector configuration
 name = collection
@@ -32,7 +32,7 @@ tag-and-push-local:
 	yq w -i ${local_values_file} fluentd.image.tag local-${timestamp}
 
 generate-local-config:
-	${vagrant_scripts_dir}generate-local-config.sh
+	${vagrant_scripts_dir}/generate-local-config.sh
 
 # Collector section
 ## Collector upgrade
@@ -82,7 +82,7 @@ clean-local-values-yaml:
 	rm ${local_values_file}
 
 _apply-avalanche-remote-write-to-local-values: generate-local-config
-	yq w -s ${vagrant_scripts_dir}yq/update_remote_write_for_avalanche.yaml ../deploy/helm/sumologic/values.yaml | \
+	yq w -s ${vagrant_scripts_dir}/yq/update_remote_write_for_avalanche.yaml ../deploy/helm/sumologic/values.yaml | \
 	yq r - 'prometheus-operator.prometheus.prometheusSpec.remoteWrite' | \
 	yq prefix - 'prometheus-operator.prometheus.prometheusSpec.remoteWrite' > ${local_values_file}
 
