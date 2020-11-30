@@ -127,7 +127,7 @@ to convert their existing `values.yaml` file into one that is compatible with th
   helm get values <RELEASE-NAME> > current_values.yaml
   ```
 
-- Run `curl` the upgrade script as follows:
+- Download the upgrade script via:
 
   ```bash
   curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/deploy/helm/sumologic/upgrade-2.0.0.sh
@@ -136,7 +136,7 @@ to convert their existing `values.yaml` file into one that is compatible with th
 - Run the upgrade script on the above file with the below command.
 
   ```bash
-  ./upgrade-2.0.0.sh current_values.yaml
+  chmod +x upgrade-2.0.0.sh && ./upgrade-2.0.0.sh current_values.yaml
   ```
 
 - At this point, users can then run:
