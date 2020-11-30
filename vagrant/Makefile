@@ -119,7 +119,7 @@ remove-service-monitors:
 
 ## k8s commands
 expose-prometheus:
-	kubectl port-forward -n "${namespace}" service/collection-prometheus-oper-prometheus --address=0.0.0.0 9090
+	kubectl port-forward -n "${namespace}" service/collection-kube-prometheus-prometheus --address=0.0.0.0 9090
 
 expose-grafana:
 	echo "Grafana credentials\n  login:    admin\n  password: prom-operator"
