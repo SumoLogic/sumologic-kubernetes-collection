@@ -8,21 +8,19 @@ the YAML that you will deploy into your Kubernetes cluster.**
 This document has instructions for setting up Sumo Logic collection using Fluentd,
 Fluent-Bit, Prometheus and Falco.
 
-<!-- TOC -->
-* [Requirements](#requirements)
-* [Prerequisite](#prerequisite)
-* [Installation Steps](#installation-steps)
-  * [Authenticating with container registry](#authenticating-with-container-registry)
-  * [Installation in Openshift Platform](#installation-in-openshift-platform)
-* [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
-* [Troubleshooting Installation](#troubleshooting-installation)
-  * [Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists](#error-customresourcedefinitionsapiextensionsk8sio-alertmanagersmonitoringcoreoscom-already-exists)
-  * [Fluentd Pods Stuck in CreateContainerConfigError](#fluentd-pods-stuck-in-createcontainerconfigerror)
-  * [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
-* [Customizing Installation](#customizing-installation)
-* [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
-* [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
-<!-- /TOC -->
+- [Requirements](#requirements)
+- [Prerequisite](#prerequisite)
+- [Installation Steps](#installation-steps)
+  - [Authenticating with container registry](#authenticating-with-container-registry)
+  - [Installation in Openshift Platform](#installation-in-openshift-platform)
+- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
+- [Troubleshooting Installation](#troubleshooting-installation)
+  - [Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists](#error-customresourcedefinitionsapiextensionsk8sio-alertmanagersmonitoringcoreoscom-already-exists)
+  - [Fluentd Pods Stuck in CreateContainerConfigError](#fluentd-pods-stuck-in-createcontainerconfigerror)
+  - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
+- [Customizing Installation](#customizing-installation)
+- [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
+- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
 ## Requirements
 
@@ -31,9 +29,9 @@ the Free Trial button on https://www.sumologic.com/.
 
 The following are required to setup Sumo Logic's Kubernetes collection.
 
-* An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys)
+- An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys)
   with [Manage Collectors] capability.
-* Please review our [minimum requirements](../README.md#minimum-requirements)
+- Please review our [minimum requirements](../README.md#minimum-requirements)
   and [support matrix](../README.md#support-matrix)
 
 [Manage Collectors]: https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management
@@ -49,37 +47,42 @@ to your Fields table schema.
 This is to ensure your logs are tagged with relevant metadata.
 This is a one time setup per Sumo Logic account.
 
-* cluster
-* container
-* deployment
-* host
-* namespace
-* node
-* pod
-* service
+- cluster
+- container
+- deployment
+- host
+- namespace
+- node
+- pod
+- service
 
 ## Installation Steps
 
 These steps require that no Prometheus exists.
 If you already have Prometheus installed select from the following options:
 
-* [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
-* [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md)
-* [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md)
+- [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
+- [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md)
+- [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md)
 
-In this method of installation, you will use our [templating tool](https://github.com/SumoLogic/sumologic-kubernetes-tools#k8s-template-generator) to generate the YAML needed to deploy Sumo Logic collection for Kubernetes.  This tool will use our Helm chart to generate the YAML.  You will configure the collection the same way that you would for Helm based install.  However, instead of using Helm to install the Chart, the tool will output the rendered YAML you can deploy.
+In this method of installation, you will use our
+[templating tool](https://github.com/SumoLogic/sumologic-kubernetes-tools#k8s-template-generator)
+to generate the YAML needed to deploy Sumo Logic collection for Kubernetes.
+This tool will use our Helm chart to generate the YAML.
+You will configure the collection the same way that you would for Helm based install.
+However, instead of using Helm to install the Chart, the tool will output the rendered YAML you can deploy.
 
 The installation requires two parameters:
 
-* __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-* __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+- __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
+- __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 If you are installing the collection in a cluster that requires proxying outbound requests,
 please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
 
 The following parameter is optional, but we recommend setting it.
 
-* __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
+- __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 First you will generate the YAML to apply to your cluster.  The following command contains the minimum parameters that can generate the YAML to setup Sumo Logic's Kubernetes collection. This command will generate the YAML and pipe it a file called `sumologic.yaml`. Please note that `--namespace` is required

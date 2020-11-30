@@ -3,10 +3,10 @@
 Our [old collection method](https://github.com/SumoLogic/fluentd-kubernetes-sumologic)
 includes Fluentd for logs and Heapster for metrics.
 
-* If you plan to deploy the new collection method to the same namespace where
+- If you plan to deploy the new collection method to the same namespace where
   the old method was deployed to, you will need to delete the resources
   associated with Fluentd and Heapster first.
-* If you plan to deploy in a different namespace, you can set up the new
+- If you plan to deploy in a different namespace, you can set up the new
   collection method before deleting the resources to avoid losing any data.
   They should both be able to run at the same time and while there will be some duplication,
   there won’t be any loss in data.

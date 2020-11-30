@@ -76,9 +76,9 @@ You can use `inclusion` or `exclusion` configuration options to further filter m
 
 This filter will:
 
-* Trim the service metadata from the metric datapoint.
-* Rename the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
-* Only apply to metrics with the `kube-system` namespace
+- Trim the service metadata from the metric datapoint.
+- Rename the label/metadata `container_name` to `container`, and `pod_name` to `pod`.
+- Only apply to metrics with the `kube-system` namespace
 
 ## Custom Metrics
 
@@ -86,7 +86,12 @@ If you have custom metrics you'd like to send to Sumo via Prometheus, you just n
 
 ### Expose a `/metrics` endpoint on your service
 
-There are many pre-built libraries that the community has built to expose these, but really any output that aligns with the prometheus format can work. Here is a list of libraries: [Libraries](https://prometheus.io/docs/instrumenting/clientlibs). Manually verify that you have metrics exposed in Prometheus format by hitting the metrics endpoint, and verifying that the output follows the [Prometheus format](https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md).
+There are many pre-built libraries that the community has built to expose these,
+but really any output that aligns with the prometheus format can work.
+Here is a list of libraries: [Libraries](https://prometheus.io/docs/instrumenting/clientlibs).
+Manually verify that you have metrics exposed in Prometheus format by hitting
+the metrics endpoint, and verifying that the output follows the
+[Prometheus format](https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md).
 
 ### Set up a service monitor so that Prometheus pulls the data
 
@@ -182,7 +187,7 @@ annotations:
 
 **Note: This solution works only to scrape metrics from one container within the pod**
 
-### Create a new HTTP source in Sumo Logic.
+### Create a new HTTP source in Sumo Logic
 
 To avoid [blacklisting](https://help.sumologic.com/Metrics/Understand_and_Manage_Metric_Volume/Blacklisted_Metrics_Sources) metrics should be distributed across multiple HTTP sources. You can create a new HTTP source using `values.yaml`:
 
@@ -236,9 +241,12 @@ it would process all records and none of them would be taken by `my_source`.
 
 NOTE: [Explanation of Fluentd match order](https://docs.fluentd.org/configuration/config-file#note-on-match-order)
 
-### Update the prometheus-overrides.yaml file to forward the metrics to Fluentd.
+### Update the prometheus-overrides.yaml file to forward the metrics to Fluentd
 
-The configuration file controls what metrics get forwarded on to Sumo Logic. To send custom metrics to Sumo Logic you need to update it to include a rule to forward on your custom metrics. Make sure you include the same tag you created in your Fluentd configmap in the previous step. Here is an example addition to the configuration file that will forward metrics to Sumo:
+The configuration file controls what metrics get forwarded on to Sumo Logic.
+To send custom metrics to Sumo Logic you need to update it to include a rule to forward on your custom metrics.
+Make sure you include the same tag you created in your Fluentd configmap in the previous step.
+Here is an example addition to the configuration file that will forward metrics to Sumo:
 
 ```yaml
 kube-prometheus-stack:  # For values.yaml
@@ -276,8 +284,8 @@ kube-prometheus-stack:  # For values.yaml
 
 Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and upgrade your sumologic or prometheus operator installation, depending on method used:
 
-* `helm upgrade collection sumologic/sumologic --reuse-values -f <path to values.yaml>` to upgrade sumologic collection
-* `helm upgrade kube-prometheus-stack stable/kube-prometheus-stack --reuse-values -f <path to prometheus-overrides.yaml>` to upgrade your kube-prometheus-stack.
+- `helm upgrade collection sumologic/sumologic --reuse-values -f <path to values.yaml>` to upgrade sumologic collection
+- `helm upgrade kube-prometheus-stack stable/kube-prometheus-stack --reuse-values -f <path to prometheus-overrides.yaml>` to upgrade your kube-prometheus-stack.
 
 Note: When executing the helm upgrade, to avoid the error below, you need to add the argument `--force`.
 

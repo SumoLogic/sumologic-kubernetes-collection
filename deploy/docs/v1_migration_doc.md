@@ -1,6 +1,5 @@
 # Kubernetes Collection 1.0.0 - Breaking Changes
 
-<!-- TOC -->
 - [Helm Users](#helm-users)
   - [Changes](#changes)
   - [How to upgrade](#how-to-upgrade)
@@ -16,7 +15,6 @@
       - [2.1: Deploy Prometheus](#22-deploy-prometheus)
       - [2.1: Deploy Fluent Bit](#23-deploy-fluent-bit)
 - [Kubernetes App dashboard update](#kubernetes-app-dashboard-update)
-<!-- /TOC -->
 
 Based on the feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
@@ -45,38 +43,38 @@ the exact steps for migration.
     Fluentd specific configs, while configs for our dependency charts
     (`prometheus-operator`, `fluent-bit`, `metrics-server`, `falco`) have not changed.
 
-  | Old Config 	| New Config 	|
-  |:----------------------------------------:	|:-----------------------------------------------------:	|
-  | sumologic.eventCollectionEnabled 	| fluentd.events.enabled 	|
-  | sumologic.events.sourceCategory 	| fluentd.events.sourceCategory 	|
-  | sumologic.logFormat 	| fluentd.logs.output.logFormat 	|
-  | sumologic.flushInterval 	| fluentd.buffer.flushInterval 	|
-  | sumologic.numThreads 	| fluentd.buffer.numThreads 	|
-  | sumologic.chunkLimitSize 	| fluentd.buffer.chunkLimitSize 	|
-  | sumologic.queueChunkLimitSize 	| fluentd.buffer.queueChunkLimitSize 	|
-  | sumologic.totalLimitSize 	| fluentd.buffer.totalLimitSize 	|
-  | sumologic.sourceName 	| fluentd.logs.containers.sourceName 	|
-  | sumologic.sourceCategory 	| fluentd.logs.containers.sourceCategory 	|
-  | sumologic.sourceCategoryPrefix 	| fluentd.logs.containers.sourceCategoryPrefix 	|
-  | sumologic.sourceCategoryReplaceDash 	| fluentd.logs.containers.sourceCategoryReplaceDash 	|
-  | sumologic.addTimestamp 	| fluentd.logs.output.addTimestamp 	|
-  | sumologic.timestampKey 	| fluentd.logs.output.timestampKey 	|
-  | sumologic.verifySsl 	| fluentd.verifySsl 	|
-  | sumologic.excludeContainerRegex 	| fluentd.logs.containers.excludeContainerRegex 	|
-  | sumologic.excludeHostRegex 	| fluentd.logs.containers.excludeHostRegex 	|
-  | sumologic.excludeNamespaceRegex 	| fluentd.logs.containers.excludeNamespaceRegex 	|
-  | sumologic.excludePodRegex 	| fluentd.logs.containers.excludePodRegex 	|
-  | sumologic.fluentdLogLevel 	| fluentd.logLevel 	|
-  | sumologic.watchResourceEventsOverrides 	| fluentd.events.watchResourceEventsOverrides 	|
-  | sumologic.fluentd.buffer 	| fluentd.buffer.type 	|
-  | sumologic.fluentd.autoscaling.* 	| fluentd.logs.autoscaling.* , fluentd.metrics.autoscaling.* 	|
-  | sumologic.k8sMetadataFilter.watch 	| fluentd.logs.containers.k8sMetadataFilter.watch 	|
-  | sumologic.k8sMetadataFilter.verifySsl 	| fluentd.logs.containers.k8sMetadataFilter.verifySsl 	|
-  | sumologic.k8sMetadataFilter.cacheSize 	| fluentd.metadata.cacheSize 	|
-  | sumologic.k8sMetadataFilter.cacheTtl 	| fluentd.metadata.cacheTtl 	|
-  | sumologic.k8sMetadataFilter.cacheRefresh 	| fluentd.metadata.cacheRefresh 	|
-  | deployment.* 	| fluentd.logs.statefulset.* , fluentd.metrics.statefulset.*	|
-  | eventsDeployment.* 	| fluentd.eventsStatefulset.* 	|
+  | Old Config | New Config |
+  |:----------------------------------------:|:-----------------------------------------------------:|
+  | sumologic.eventCollectionEnabled | fluentd.events.enabled |
+  | sumologic.events.sourceCategory | fluentd.events.sourceCategory |
+  | sumologic.logFormat | fluentd.logs.output.logFormat |
+  | sumologic.flushInterval | fluentd.buffer.flushInterval |
+  | sumologic.numThreads | fluentd.buffer.numThreads |
+  | sumologic.chunkLimitSize | fluentd.buffer.chunkLimitSize |
+  | sumologic.queueChunkLimitSize | fluentd.buffer.queueChunkLimitSize |
+  | sumologic.totalLimitSize | fluentd.buffer.totalLimitSize |
+  | sumologic.sourceName | fluentd.logs.containers.sourceName |
+  | sumologic.sourceCategory | fluentd.logs.containers.sourceCategory |
+  | sumologic.sourceCategoryPrefix | fluentd.logs.containers.sourceCategoryPrefix |
+  | sumologic.sourceCategoryReplaceDash | fluentd.logs.containers.sourceCategoryReplaceDash |
+  | sumologic.addTimestamp | fluentd.logs.output.addTimestamp |
+  | sumologic.timestampKey | fluentd.logs.output.timestampKey |
+  | sumologic.verifySsl | fluentd.verifySsl |
+  | sumologic.excludeContainerRegex | fluentd.logs.containers.excludeContainerRegex |
+  | sumologic.excludeHostRegex | fluentd.logs.containers.excludeHostRegex |
+  | sumologic.excludeNamespaceRegex | fluentd.logs.containers.excludeNamespaceRegex |
+  | sumologic.excludePodRegex | fluentd.logs.containers.excludePodRegex |
+  | sumologic.fluentdLogLevel | fluentd.logLevel |
+  | sumologic.watchResourceEventsOverrides | fluentd.events.watchResourceEventsOverrides |
+  | sumologic.fluentd.buffer | fluentd.buffer.type |
+  | sumologic.fluentd.autoscaling.* | fluentd.logs.autoscaling.* , fluentd.metrics.autoscaling.* |
+  | sumologic.k8sMetadataFilter.watch | fluentd.logs.containers.k8sMetadataFilter.watch |
+  | sumologic.k8sMetadataFilter.verifySsl | fluentd.logs.containers.k8sMetadataFilter.verifySsl |
+  | sumologic.k8sMetadataFilter.cacheSize | fluentd.metadata.cacheSize |
+  | sumologic.k8sMetadataFilter.cacheTtl | fluentd.metadata.cacheTtl |
+  | sumologic.k8sMetadataFilter.cacheRefresh | fluentd.metadata.cacheRefresh |
+  | deployment.* | fluentd.logs.statefulset.* , fluentd.metrics.statefulset.*|
+  | eventsDeployment.* | fluentd.eventsStatefulset.* |
 
 - `sumologic.kubernetesMeta` and `sumologic.kubernetesMetaReduce` have been removed.
   The default log format (`fluentd.logs.output.logFormat`) is `fields`,
@@ -173,7 +171,11 @@ to convert their existing `values.yaml` file into one that is compatible with th
 If you receive the below error
 
 ```
-Error: UPGRADE FAILED: error validating "": error validating data: [ValidationError(StatefulSet.spec.template.spec.containers[0].resources.limits.cpu fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.limits.memory fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.requests.cpu fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.requests.memory fluentd): invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string"]
+Error: UPGRADE FAILED: error validating "": error validating data: [ValidationError(StatefulSet.spec.template.spec.containers[0].resources.limits.cpu fluentd):
+    invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.limits.memory fluentd):
+    invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.requests.cpu fluentd):
+    invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string", ValidationError(StatefulSet.spec.template.spec.containers[0].resources.requests.memory fluentd):
+    invalid type for io.k8s.apimachinery.pkg.api.resource.Quantity: got "map", expected "string"]
 ```
 
 it likely means your OS is picking up an older version

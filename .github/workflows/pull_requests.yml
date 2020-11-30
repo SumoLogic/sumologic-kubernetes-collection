@@ -14,9 +14,8 @@ jobs:
           ruby-version: '2.6'
       - name: install markdownlint
         run: gem install mdl
-      # TODO: add in a separate PR
-      # - name: markdownlint check
-      #   run: make markdownlint
+      - name: markdownlint check
+        run: make markdownlint
 
   shellcheck:
     runs-on: ubuntu-20.04

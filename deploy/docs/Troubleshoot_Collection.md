@@ -27,17 +27,25 @@
 
 ## `helm install` hanging
 
-If `helm install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm install` command. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where the Helm chart is deployed:
+If `helm install` hangs, it usually means the pre-install setup job is failing
+and is in a retry loop.
+Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm install` command.
+Kubernetes schedules the job in a pod, so you can look at logs from the pod to see
+why the job is failing.
+First find the pod name in the namespace where the Helm chart is deployed:
+
 ```sh
 kubectl get pods -n sumologic
 ```
 
 Get the logs from that pod:
+
 ```
 kubectl logs POD_NAME -f
 ```
 
 If you see `Secret 'sumologic::sumologic' exists, abort.` from the logs, delete the existing secret:
+
 ```
 kubectl delete secret sumologic -n sumologic
 ```
@@ -51,6 +59,7 @@ The following `kubectl` commands assume you are in the correct namespace `sumolo
 To run a single command in the `sumologic` namespace, pass in the flag `-n sumologic`.
 
 To set your namespace context more permanently, you can run
+
 ```sh
 kubectl config set-context $(kubectl config current-context) --namespace=sumologic
 ```
@@ -58,21 +67,27 @@ kubectl config set-context $(kubectl config current-context) --namespace=sumolog
 ## Gathering logs
 
 First check if your pods are in a healthy state. Run
+
 ```
 kubectl get pods
 ```
+
 to get a list of running pods. If any of them are not in the `Status: running` state, something is wrong. To get the logs for that pod, you can either:
 
 Stream the logs to `stdout`:
+
 ```
 kubectl logs POD_NAME -f
 ```
+
 Or write the current logs to a file:
+
 ```
 kubectl logs POD_NAME > pod_name.log
 ```
 
 To get a snapshot of the current state of the pod, you can run
+
 ```
 kubectl describe pods POD_NAME
 ```
@@ -84,6 +99,7 @@ kubectl logs collection-sumologic-xxxxxxxxx-xxxxx -f
 ```
 
 To enable more detailed debug or trace logs from all of Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section and apply the change to your deployment:
+
 ```
 <system>
   log_level debug # or trace
@@ -91,6 +107,7 @@ To enable more detailed debug or trace logs from all of Fluentd, add the followi
 ```
 
 To enable debug or trace logs from a specific Fluentd plugin, add the following option to the plugin's `.conf` section:
+
 ```
 <match **>
   @type sumologic
@@ -115,6 +132,7 @@ kubectl scale deployment/collection-sumologic --replicas=3
 ### Prometheus Logs
 
 To view Prometheus logs:
+
 ```
 kubectl logs prometheus-collection-prometheus-oper-prometheus-0 prometheus -f
 ```
@@ -208,9 +226,11 @@ Relevant Fluentd metrics include:
 ### Pod stuck in `ContainerCreating` state
 
 If you are seeing a pod stuck in the `ContainerCreating` state and seeing logs like
+
 ```
 Warning  FailedCreatePodSandBox  29s   kubelet, ip-172-20-87-45.us-west-1.compute.internal  Failed create pod sandbox: rpc error: code = DeadlineExceeded desc = context deadline exceeded
 ```
+
 you have an unhealthy node. Killing the node should resolve this issue.
 
 ### Missing `kubelet` metrics
@@ -220,11 +240,13 @@ Navigate to the `kubelet` targets using the steps above. You may see that the ta
 #### 1. Enable the `authenticationTokenWebhook` flag in the cluster
 
 The goal is to set the flag `--authentication-token-webhook=true` for `kubelet`. One way to do this is:
+
 ```
 kops get cluster -o yaml > NAME_OF_CLUSTER-cluster.yaml
 ```
 
 Then in that file make the following change:
+
 ```
 spec:
   kubelet:
@@ -233,6 +255,7 @@ spec:
 ```
 
 Then run
+
 ```
 kops replace -f NAME_OF_CLUSTER-cluster.yaml
 kops update cluster --yes
@@ -254,6 +277,7 @@ kube-prometheus-stack:
 ```
 
 and upgrade the helm chart:
+
 ```
 helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VERSION> -f values.yaml
 ```
@@ -301,7 +325,14 @@ If you have the Rancher prometheus operator setup running, they will have to use
 
 ### Falco and Google Kubernetes Engine (GKE)
 
-`Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to use extended Berkeley Packet Filter (eBPF) to supply the stream of system calls to the Falco engine. eBPF is currently only supported on GKE and COS. For more information see [Installing Falco](https://falco.org/docs/installation/).
+`Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default
+operating system for its worker node pools.
+COS is a security-enhanced operating system that limits access to certain parts of the underlying OS.
+Because of this security constraint, Falco cannot insert its kernel module to process events for system calls.
+However, COS provides the ability to use extended Berkeley Packet Filter (eBPF)
+to supply the stream of system calls to the Falco engine.
+eBPF is currently only supported on GKE and COS.
+For more information see [Installing Falco](https://falco.org/docs/installation/).
 
 To install on `GKE`, use the provided override file to customize your configuration and uncomment the following lines in the `values.yaml` file referenced below:
 
