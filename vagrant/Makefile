@@ -9,13 +9,17 @@ helm_path = ${root_dir}deploy/helm/sumologic
 k8s_path = ${root_dir}vagrant/k8s
 dashboards_path = ${root_dir}vagrant/dashboards
 local_values_file = ${root_dir}vagrant/values.local.yaml
+vagrant_scripts_dir = ${root_dir}vagrant/scripts/
 
 # Collector configuration
 name = collection
 namespace = sumologic
 
+test:
+	$(MAKE) -C ${root_dir} test
+
 build:
-	cd ${root_dir} && DOCKER_USE_CACHE=true ${root_dir}ci/build.sh
+	cd ${root_dir} && DOCKER_USE_CACHE=true $(MAKE) -C ${root_dir} build
 	${mkfile_path} \
 		tag-and-push-local
 
@@ -28,7 +32,7 @@ tag-and-push-local:
 	yq w -i ${local_values_file} image.tag local-${timestamp}
 
 generate-local-config:
-	${root_dir}vagrant/scripts/generate-local-config.sh
+	${vagrant_scripts_dir}generate-local-config.sh
 
 # Collector section
 ## Collector upgrade

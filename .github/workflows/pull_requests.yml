@@ -1,0 +1,42 @@
+name: PRs checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'release-v[0-9]+.[0-9]+'
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+      - run: gem install bundler
+      - name: yq
+        run: |
+            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/yq https://github.com/mikefarah/yq/releases/download/3.2.1/yq_linux_amd64
+            chmod +x /tmp/yq
+            sudo mv /tmp/yq /usr/local/bin/yq
+      - name: test
+        run: make test
+
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+      - run: gem install bundler
+      - name: yq
+        run: |
+            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/yq https://github.com/mikefarah/yq/releases/download/3.2.1/yq_linux_amd64
+            chmod +x /tmp/yq
+            sudo mv /tmp/yq /usr/local/bin/yq
+      - name: build
+        run: make build
