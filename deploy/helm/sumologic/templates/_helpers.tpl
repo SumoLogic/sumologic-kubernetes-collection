@@ -387,23 +387,27 @@ sumologic.com/app: otelcol
 sumologic.com/component: traces
 {{- end -}}
 
+{{- define "sumologic.label.scrape" -}}
+sumologic.com/scrape: "true"
+{{- end -}}
+
 {{- define "sumologic.labels.scrape.logs" -}}
-sumologic.com/scrape: fluentd-logs
+{{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.logs" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.scrape.metrics" -}}
-sumologic.com/scrape: fluentd-metrics
+{{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.metrics" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.scrape.events" -}}
-sumologic.com/scrape: fluentd-events
+{{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.events" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.scrape.traces" -}}
-sumologic.com/scrape: otelcol
+{{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.traces" . }}
 {{- end -}}
 
