@@ -252,3 +252,6 @@ markdownlint:
 
 mdl:
 	$(MAKE) -C ${root_dir} mdl
+
+yamllint:
+	$(MAKE) -C ${root_dir} yamllint

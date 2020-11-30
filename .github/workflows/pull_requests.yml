@@ -28,9 +28,18 @@ jobs:
       - name: shellcheck
         run: make shellcheck
 
+  yamllint:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: install yamllint
+        run: pip install yamllint
+      - name: yamllint
+        run: make yamllint
+
   test:
     runs-on: ubuntu-20.04
-    needs: [markdownlint, shellcheck]
+    needs: [markdownlint, shellcheck, yamllint]
 
     steps:
       - uses: actions/checkout@v2
