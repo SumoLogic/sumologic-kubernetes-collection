@@ -15,13 +15,13 @@ sumologic:
   ## If enabled, accessId and accessKey will be sourced from Secret Name given
   ## Be sure to include at least the following env variables in your secret
   ## (1) SUMOLOGIC_ACCESSID, (2) SUMOLOGIC_ACCESSKEY
-  #envFromSecret: sumo-api-secret
+  # envFromSecret: sumo-api-secret
 
   ## Sumo access ID
-  #accessId: ""
+  # accessId: ""
 
   ## Sumo access key
-  #accessKey: ""
+  # accessKey: ""
 
   ## Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
   ## ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
@@ -34,7 +34,7 @@ sumologic:
   noProxy: kubernetes.default.svc
 
   ## Collector name
-  #collectorName: ""
+  # collectorName: ""
 
   ## Cluster name: Note spaces are not allowed and will be replaced with dashes.
   clusterName: "kubernetes"
@@ -62,7 +62,8 @@ sumologic:
     #   args: []
     #   env: {}
 
-  ## If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace> and not add the fluentD/fluent-bit logs and Prometheus remotestorage metrics.
+  ## If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace>
+  ## and not add the fluentD/fluent-bit logs and Prometheus remotestorage metrics.
   collectionMonitoring: true
 
   ## Optionally specify an array of pullSecrets.
@@ -143,7 +144,7 @@ sumologic:
           config-name: endpoint-logs
 
           ## Properties can be used to extend default settings, such as processing rules, fields etc
-          #properties:
+          # properties:
           #  filters:
           #    - name: "Test Exclude Debug"
           #      filter_type: "Exclude"
@@ -224,7 +225,7 @@ fluentd:
   securityContext:
     ## The group ID of all processes in the statefulset containers. By default this needs to be fluent(999).
     fsGroup: 999
-  
+
   ## Add custom labels to all fluentd sts pods(logs, metrics, events)
   podLabels: {}
 
@@ -344,7 +345,7 @@ fluentd:
       podLabels: {}
       ## Add custom annotations only to logs fluentd sts pods
       podAnnotations: {}
-    
+
     ## Option to turn autoscaling on for fluentd and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
     autoscaling:
@@ -737,9 +738,10 @@ metrics-server:
   apiService:
     create: true
   extraArgs:
-   kubelet-insecure-tls: true
-   kubelet-preferred-address-types: InternalIP,ExternalIP,Hostname
-  image:
+    kubelet-insecure-tls: true
+    kubelet-preferred-address-types: InternalIP,ExternalIP,Hostname
+  ## Optionally specify image options for metrics-server
+  # image:
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -908,12 +910,13 @@ fluent-bit:
           Time_Format  "%Y-%m-%dT%H:%M:%S.%L%z"
 
 ## Configure kube-prometheus-stack
-## We are using an alias prometheus-operator for the kube-prometheus-stack helm chart for backward compatibility. This will be changed in v2.0.
 ## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
 kube-prometheus-stack:
   ## Labels to apply to all prometheus operator resources
   commonLabels: {}
-  ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
+  ## NOTE changing the serviceMonitor scrape interval to be >1m can result
+  ## in metrics from recording rules to be missing and empty panels in
+  ## Sumo Logic Kubernetes apps.
   kubeApiServer:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -1017,10 +1020,10 @@ kube-prometheus-stack:
         additionalLabels:
           sumologic.com/app: fluentd-logs
         endpoints:
-        - port: metrics
+          - port: metrics
         namespaceSelector:
           matchNames:
-          - $(NAMESPACE)
+            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: fluentd-logs
@@ -1028,10 +1031,10 @@ kube-prometheus-stack:
         additionalLabels:
           sumologic.com/app: fluentd-metrics
         endpoints:
-        - port: metrics
+          - port: metrics
         namespaceSelector:
           matchNames:
-          - $(NAMESPACE)
+            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: fluentd-metrics
@@ -1070,8 +1073,9 @@ kube-prometheus-stack:
           matchLabels:
             sumologic.com/app: otelcol
     prometheusSpec:
-      ## Prometheus default scrape interval, default from upstream Prometheus Operator Helm chart
-      ## NOTE changing the scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
+      ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
+      ## NOTE changing the scrape interval to be >1m can result in metrics
+      ## from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
       scrapeInterval: "30s"
       ## Prometheus data retention period
       retention: "1d"
@@ -1100,18 +1104,18 @@ kube-prometheus-stack:
             cpu: 1m
             memory: 8Mi
       containers:
-      - name: "config-reloader"
-        env:
-        - name: CHART
-          valueFrom:
-            configMapKeyRef:
-              name: sumologic-configmap
-              key: fluentdMetrics
-        - name: NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: sumologic-configmap
-              key: fluentdNamespace
+        - name: "config-reloader"
+          env:
+            - name: CHART
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdMetrics
+            - name: NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdNamespace
 
       ## Enable WAL compression to reduce Prometheus memory consumption
       walCompression: true
@@ -1125,61 +1129,61 @@ kube-prometheus-stack:
         ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
         - job_name: 'kubernetes-pods'
           kubernetes_sd_configs:
-          - role: pod
+            - role: pod
           relabel_configs:
-          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-            action: keep
-            regex: true
-          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
-            action: replace
-            target_label: __metrics_path__
-            regex: (.+)
-          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-            action: replace
-            regex: ([^:]+)(?::\d+)?;(\d+)
-            replacement: $1:$2
-            target_label: __address__
-          - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
-            separator: ;
-            regex: Node;(.*)
-            target_label: node
-            replacement: ${1}
-            action: replace
-          - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
-            separator: ;
-            regex: Pod;(.*)
-            target_label: pod
-            replacement: ${1}
-            action: replace
-          - source_labels: [__metrics_path__]
-            separator: ;
-            regex: (.*)
-            target_label: endpoint
-            replacement: $1
-            action: replace
-          - source_labels: [__meta_kubernetes_namespace]
-            action: replace
-            target_label: namespace
-          - action: labelmap
-            regex: __meta_kubernetes_pod_label_(.+)
-          - source_labels: [__meta_kubernetes_service_name]
-            separator: ;
-            regex: (.*)
-            target_label: service
-            replacement: $1
-            action: replace
-          - source_labels: [__meta_kubernetes_pod_name]
-            separator: ;
-            regex: (.*)
-            target_label: pod
-            replacement: $1
-            action: replace
-          - source_labels: [__meta_kubernetes_service_name]
-            separator: ;
-            regex: (.*)
-            target_label: job
-            replacement: ${1}
-            action: replace
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: true
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+              action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              target_label: __address__
+            - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+              separator: ;
+              regex: Node;(.*)
+              target_label: node
+              replacement: ${1}
+              action: replace
+            - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+              separator: ;
+              regex: Pod;(.*)
+              target_label: pod
+              replacement: ${1}
+              action: replace
+            - source_labels: [__metrics_path__]
+              separator: ;
+              regex: (.*)
+              target_label: endpoint
+              replacement: $1
+              action: replace
+            - source_labels: [__meta_kubernetes_namespace]
+              action: replace
+              target_label: namespace
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
+            - source_labels: [__meta_kubernetes_service_name]
+              separator: ;
+              regex: (.*)
+              target_label: service
+              replacement: $1
+              action: replace
+            - source_labels: [__meta_kubernetes_pod_name]
+              separator: ;
+              regex: (.*)
+              target_label: pod
+              replacement: $1
+              action: replace
+            - source_labels: [__meta_kubernetes_service_name]
+              separator: ;
+              regex: (.*)
+              target_label: job
+              replacement: ${1}
+              action: replace
 
       remoteWrite:
         ## kube non pod state metrics
@@ -1317,7 +1321,7 @@ kube-prometheus-stack:
               sourceLabels: [container]
             - action: keep
               regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total)
-              sourceLabels: [job,container,__name__]
+              sourceLabels: [job, container, __name__]
         ## cadvisor aggregate container metrics
         ## container_network_receive_bytes_total
         ## container_network_transmit_bytes_total
@@ -1622,17 +1626,7 @@ kube-prometheus-stack:
               regex: (?:java_lang_(ClassLoading_(TotalL|Unl|L)oadedClassCount|Compilation_TotalCompilationTime|GarbageCollector_(Collection(Count|Time)|LastGcInfo_(GcThreadCount|duration|(memoryU|u)sage(After|Before)Gc_.*_used))|MemoryPool_(CollectionUsage(ThresholdSupported|_committed|_max|_used)|(Peak|)Usage_(committed|max|used)|UsageThresholdSupported)|Memory_((Non|)HeapMemoryUsage_(committed|max|used)|ObjectPendingFinalizationCount)|OperatingSystem_(AvailableProcessors|(CommittedVirtual|(Free|Total)(Physical|))MemorySize|(Free|Total)SwapSpaceSize|(Max|Open)FileDescriptorCount|ProcessCpu(Load|Time)|System(CpuLoad|LoadAverage))|Runtime_(BootClassPathSupported|Pid|Uptime|StartTime)|Threading_(CurrentThread(AllocatedBytes|(Cpu|User)Time)|(Daemon|Peak|TotalStarted|)ThreadCount|(ObjectMonitor|Synchronizer)UsageSupported|Thread(AllocatedMemory.*|ContentionMonitoring.*|CpuTime.*))))
               sourceLabels: [__name__]
 
-## Configure falco
-## ref: https://github.com/falcosecurity/charts/blob/master/falco/values.yaml
-falco:
-  ## Set the enabled flag to true to enable falco.
-  enabled: false
-  #ebpf:
-  #  enabled: true
-  falco:
-    jsonOutput: true
-
-##Configure otelcol
+## Configure otelcol
 otelcol:
   deployment:
     nodeSelector: {}
@@ -1836,8 +1830,12 @@ telegraf-operator:
 ## https://github.com/falcosecurity/charts/tree/master/falco
 falco:
   enabled: false
+  # ebpf:
+  #   enabled: true
+  falco:
+    jsonOutput: true
   # image:
-    # pullSecrets: []
+  #   pullSecrets: []
   customRules:
     # Mark the following as known k8s api callers:
     # * fluentd and its plugins from sumologic/kubernetes-fluentd image

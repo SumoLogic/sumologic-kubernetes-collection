@@ -88,6 +88,8 @@ gem install mdl
 # shellcheck disable=SC2016
 echo 'export PATH="$PATH:$HOME/.gem/bin"' >> /home/vagrant/.bashrc
 
+apt-get install -y yamllint
+
 echo Dashboard local in-vagrant IP:
 kubectl -n kube-system get services | grep -i kubernetes-dashboard | awk '{print $3}'
 echo
