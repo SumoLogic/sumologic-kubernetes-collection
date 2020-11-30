@@ -85,14 +85,36 @@ the exact steps for migration.
 
 ### 1. Upgrade to helm chart version `v1.3.2`
 
-Run the below command to fetch the latest helm chart:
+#### Ensure you have sumologic helm repo added
+
+Before running commands shown below please make sure that you have
+sumologic helm repo configured.
+One can check that using:
+
+```
+helm repo list
+NAME                    URL
+...
+sumologic               https://sumologic.github.io/sumologic-kubernetes-collection
+...
+```
+
+If sumologic helm repo is not configured use the following command to add it:
+
+```
+helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
+```
+
+#### Update
+
+Run the command shown below to fetch the latest helm chart:
 
 ```bash
 helm repo update
 ```
 
-For the users who are not already on `v1.3.2` of the helm chart, please upgrade
-to that version first by running the below command.
+For users who are not already on `v1.3.2` of the helm chart, please upgrade
+to that version first by running the below command:
 
 ```bash
 helm upgrade collection sumologic/sumologic --reuse-values --version=1.3.2
