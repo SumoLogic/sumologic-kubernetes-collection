@@ -246,3 +246,9 @@ test-receiver-mock-metrics:
 
 shellcheck:
 	$(MAKE) -C ${root_dir} shellcheck
+
+markdownlint:
+	$(MAKE) -C ${root_dir} markdownlint
+
+mdl:
+	$(MAKE) -C ${root_dir} mdl

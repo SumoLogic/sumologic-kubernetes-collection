@@ -14,7 +14,11 @@ You should set these properties to the URL for your proxy environment.
 
 ## Error: timed out waiting for the condition
 
-If `helm upgrade --install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm upgrade --install` command. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where the Helm chart was deployed. The pod name will contain `-setup` in the name.
+If `helm upgrade --install` hangs, it usually means the pre-install setup job is failing and is in a retry loop.
+Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm upgrade --install` command.
+Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing.
+First find the pod name in the namespace where the Helm chart was deployed.
+The pod name will contain `-setup` in the name.
 
  ```sh
  kubectl get pods
@@ -22,7 +26,8 @@ If `helm upgrade --install` hangs, it usually means the pre-install setup job is
 
 If you see the following in the setup job logs:
 
-```kubernetes_secret.sumologic_collection_secret: Creating...
+```
+kubernetes_secret.sumologic_collection_secret: Creating...
 
    Error: Post "https://kubernetes.default.svc/api/v1/namespaces/sumologic/secrets": Service Unavailable
 

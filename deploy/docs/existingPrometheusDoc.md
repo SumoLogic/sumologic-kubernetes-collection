@@ -5,17 +5,15 @@ metrics from scaling Prometheus replicas.
 If you are running multiple Prometheus replicas, please follow our
 [Side-by-Side](SideBySidePrometheus.md) instructions.
 
-<!-- TOC -->
-* [Prerequisite](#prerequisite)
-* [Install Sumo Logic Helm Chart](#install-sumo-logic-helm-chart)
-* [Update Existing Kube Prometheus Stack Helm Chart](#update-existing-kube-prometheus-stack-helm-chart)
-* [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
-* [Merge Prometheus Configuration](#merge-prometheus-configuration)
-* [Troubleshooting](#troubleshooting)
-* [Customizing Installation](#customizing-installation)
-* [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
-* [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
-<!-- /TOC -->
+- [Prerequisite](#prerequisite)
+- [Install Sumo Logic Helm Chart](#install-sumo-logic-helm-chart)
+- [Update Existing Kube Prometheus Stack Helm Chart](#update-existing-kube-prometheus-stack-helm-chart)
+- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
+- [Merge Prometheus Configuration](#merge-prometheus-configuration)
+- [Troubleshooting](#troubleshooting)
+- [Customizing Installation](#customizing-installation)
+- [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
+- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
 This document will walk you through how to set up Sumo Logic Kubernetes collection
 when you already have Prometheus running using the Prometheus Operator.
@@ -34,21 +32,21 @@ to your Fields table schema.
 This is to ensure your logs are tagged with relevant metadata.
 This is a one time setup per Sumo Logic account.
 
-* cluster
-* container
-* deployment
-* host
-* namespace
-* node
-* pod
-* service
+- cluster
+- container
+- deployment
+- host
+- namespace
+- node
+- pod
+- service
 
 ## Install Sumo Logic Helm Chart
 
 The Helm chart installation requires two parameter overrides:
 
-* __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-* __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+- __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
+- __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 To get an idea of the resources this chart will require to run on your cluster,
 you can reference our [performance doc](./Performance.md).
@@ -58,7 +56,7 @@ please see the following [additional properties](./Installing_Behind_Proxy.md) y
 
 The following parameter is optional, but we recommend setting it.
 
-* __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
+- __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 To install the chart, first add the `sumologic` private repo:

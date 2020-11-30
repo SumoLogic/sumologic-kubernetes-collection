@@ -9,3 +9,8 @@ build:
 
 push:
 	./ci/push.sh
+
+markdownlint: mdl
+
+mdl:
+	mdl --style .markdownlint/style.rb deploy/docs

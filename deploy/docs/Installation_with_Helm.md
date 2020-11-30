@@ -3,20 +3,18 @@
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events;
 enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
 
-<!-- TOC -->
-* [Requirements](#requirements)
-* [Prerequisite](#prerequisite)
-* [Installation Steps](#installation-steps)
-  * [Authenticating with container registry](#authenticating-with-container-registry)
-  * [Installing the helm chart in Openshift platform](#installing-the-helm-chart-in-openshift-platform)
-* [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
-* [Troubleshooting Installation](#troubleshooting-installation)
-  * [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
-  * [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
-* [Customizing Installation](#customizing-installation)
-* [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
-* [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
-<!-- /TOC -->
+- [Requirements](#requirements)
+- [Prerequisite](#prerequisite)
+- [Installation Steps](#installation-steps)
+  - [Authenticating with container registry](#authenticating-with-container-registry)
+  - [Installing the helm chart in Openshift platform](#installing-the-helm-chart-in-openshift-platform)
+- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
+- [Troubleshooting Installation](#troubleshooting-installation)
+  - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
+  - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
+- [Customizing Installation](#customizing-installation)
+- [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
+- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
 ## Requirements
 
@@ -25,9 +23,9 @@ the Free Trial button on https://www.sumologic.com/.
 
 The following are required to set up Sumo Logic's Kubernetes collection.
 
-* An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with
+- An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with
   [Manage Collectors](https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management) capability.
-* Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
+- Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
 
 To get an idea of the resources this chart will require to run on your cluster,
 you can reference our [performance doc](./Performance.md).
@@ -40,35 +38,35 @@ to your Fields table schema.
 This is to ensure your logs are tagged with relevant metadata.
 This is a one time setup per Sumo Logic account.
 
-* cluster
-* container
-* deployment
-* host
-* namespace
-* node
-* pod
-* service
+- cluster
+- container
+- deployment
+- host
+- namespace
+- node
+- pod
+- service
 
 ## Installation Steps
 
 These steps require that no Prometheus exists.
 If you already have Prometheus installed select from the following options:
 
-* [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
-* [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md)
-* [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md)
+- [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
+- [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md)
+- [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md)
 
 The Helm chart installation requires two parameter overrides:
 
-* __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-* __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+- __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
+- __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 If you are installing the collection in a cluster that requires proxying outbound requests,
 please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
 
 The following parameter is optional, but we recommend setting it.
 
-* __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
+- __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 To install the chart, first add the `sumologic` private repo:

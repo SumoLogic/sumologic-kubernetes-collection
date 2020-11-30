@@ -7,6 +7,7 @@
 As part of our [Travis CI script](../../ci/build.sh), we release an alpha Docker image as well as an alpha Helm chart release.
 
 ## Versioning
+
 Release Type | Version Scheme | Example
 -------- | ----- | -----
 Major Release | `major.0.0` | `2.0.0`
