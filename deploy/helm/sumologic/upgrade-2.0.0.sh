@@ -9,7 +9,7 @@ readonly PREVIOUS_VERSION=1.3
 readonly TEMP_FILE=upgrade-2.0.0-temp-file
 
 readonly MIN_BASH_VERSION=4.0
-readonly MIN_YQ_VERSION=3.2.1
+readonly MIN_YQ_VERSION=3.4.0
 
 readonly KEY_MAPPINGS="
 prometheus-operator.prometheusOperator.tlsProxy.enabled:kube-prometheus-stack.prometheusOperator.tls.enabled
@@ -47,7 +47,7 @@ This script will automatically take the configurations of your existing values.y
 and return one that is compatible with v2.0.0.
 
 Requirements:
-  yq (>= ${MIN_YQ_VERSION}) https://github.com/mikefarah/yq/releases/tag/3.2.1
+  yq (>= ${MIN_YQ_VERSION}) https://github.com/mikefarah/yq/releases/tag/${MIN_YQ_VERSION}
   grep
   sed
   bash (>= ${MIN_BASH_VERSION})
@@ -109,7 +109,7 @@ function check_yq_version() {
   local yq_version
   yq_version=$(yq --version | grep -oE '[^[:space:]]+$')
 
-  check_app_version "grep" "${MIN_YQ_VERSION}" "${yq_version}"
+  check_app_version "yq" "${MIN_YQ_VERSION}" "${yq_version}"
 }
 
 function check_bash_version() {
