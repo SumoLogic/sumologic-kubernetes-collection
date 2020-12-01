@@ -17,8 +17,7 @@ fluentd:
       enabled: fluentd.logs.autoscaling.enabled, fluentd.metrics.autoscaling.enabled
       maxReplicas: fluentd.logs.autoscaling.maxReplicas, fluentd.metrics.autoscaling.maxReplicas
       minReplicas: fluentd.logs.autoscaling.minReplicas, fluentd.metrics.autoscaling.minReplicas
-      targetCPUUtilizationPercentage: fluentd.logs.autoscaling.targetCPUUtilizationPercentage,
-        fluentd.metrics.autoscaling.targetCPUUtilizationPercentage
+      targetCPUUtilizationPercentage: fluentd.logs.autoscaling.targetCPUUtilizationPercentage, fluentd.metrics.autoscaling.targetCPUUtilizationPercentage
   metrics:
     statefulset:
       affinity: fluentd.logs.statefulset.affinity, fluentd.metrics.statefulset.affinity
@@ -37,5 +36,4 @@ fluentd:
       enabled: fluentd.logs.autoscaling.enabled, fluentd.metrics.autoscaling.enabled
       maxReplicas: fluentd.logs.autoscaling.maxReplicas, fluentd.metrics.autoscaling.maxReplicas
       minReplicas: fluentd.logs.autoscaling.minReplicas, fluentd.metrics.autoscaling.minReplicas
-      targetCPUUtilizationPercentage: fluentd.logs.autoscaling.targetCPUUtilizationPercentage,
-        fluentd.metrics.autoscaling.targetCPUUtilizationPercentage
+      targetCPUUtilizationPercentage: fluentd.logs.autoscaling.targetCPUUtilizationPercentage, fluentd.metrics.autoscaling.targetCPUUtilizationPercentage

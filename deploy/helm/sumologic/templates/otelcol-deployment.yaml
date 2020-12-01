@@ -53,7 +53,7 @@ spec:
       {{- end }}
       containers:
       - name: otelcontrib-collector
-        image: {{ .Values.otelcol.deployment.image.name }}:{{ .Values.otelcol.deployment.image.tag }}
+        image: {{ .Values.otelcol.deployment.image.repository }}:{{ .Values.otelcol.deployment.image.tag }}
         imagePullPolicy: {{ .Values.otelcol.deployment.image.pullPolicy }}
         command:
           - "/otelcontribcol"

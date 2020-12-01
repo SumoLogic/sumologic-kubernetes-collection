@@ -1,11 +1,6 @@
 ## Sumo Logic Kubernetes Collection configuration file
 ## All the comments start with two or more # characters
 
-image:
-  repository: sumologic/kubernetes-fluentd
-  tag: 1.3.0
-  pullPolicy: IfNotPresent
-
 nameOverride: ""
 
 sumologic:
@@ -14,16 +9,19 @@ sumologic:
   ## If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
   setupEnabled: true
 
+  ## If enabled, a pre-delete hook will destroy Collector in Sumo Logic
+  cleanUpEnabled: false
+
   ## If enabled, accessId and accessKey will be sourced from Secret Name given
   ## Be sure to include at least the following env variables in your secret
   ## (1) SUMOLOGIC_ACCESSID, (2) SUMOLOGIC_ACCESSKEY
-  #envFromSecret: sumo-api-secret
+  # envFromSecret: sumo-api-secret
 
   ## Sumo access ID
-  #accessId: ""
+  # accessId: ""
 
   ## Sumo access key
-  #accessKey: ""
+  # accessKey: ""
 
   ## Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
   ## ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
@@ -32,18 +30,18 @@ sumologic:
   ## proxy urls
   httpProxy: ""
   httpsProxy: ""
-  ## Exclude kubernetes internal traffic from proxy
+  ## Exclude Kubernetes internal traffic from proxy
   noProxy: kubernetes.default.svc
 
   ## Collector name
-  #collectorName: ""
+  # collectorName: ""
 
   ## Cluster name: Note spaces are not allowed and will be replaced with dashes.
   clusterName: "kubernetes"
 
-  ## Configuration of kubernetes for terraform client
+  ## Configuration of Kubernetes for Terraform client
   ## https://www.terraform.io/docs/providers/kubernetes/index.html#argument-reference
-  ## All double quotes should be escaped here regarding terraform syntax
+  ## All double quotes should be escaped here regarding Terraform syntax
   cluster:
     host: "https://kubernetes.default.svc"
     # username:
@@ -64,9 +62,19 @@ sumologic:
     #   args: []
     #   env: {}
 
-  ## If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace> and not add the fluentD/fluent-bit logs and Prometheus remotestorage metrics.
+  ## If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace>
+  ## and not add the fluentD/fluent-bit logs and Prometheus remotestorage metrics.
   collectionMonitoring: true
-  
+
+  ## Optionally specify an array of pullSecrets.
+  ## They will be added to serviceaccount that is used for Sumo Logic's jobs,
+  ## deployments and statefulsets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - name: myRegistryKeySecretName
+
   ## Add custom labels to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
   podLabels: {}
 
@@ -79,6 +87,10 @@ sumologic:
 
   setup:
     job:
+      image:
+        repository: sumologic/kubernetes-fluentd
+        tag: 1.3.0
+        pullPolicy: IfNotPresent
       resources:
         limits:
           memory: 256Mi
@@ -92,9 +104,62 @@ sumologic:
       ## Add custom annotations only to setup job pod
       podAnnotations: {}
 
+  collector:
     ## Configuration of additional collector fields
     ## https://help.sumologic.com/Manage/Fields#http-source-fields
     fields: {}
+
+    ## Configuration of http sources
+    ## See docs/Terraform.md for more information
+    ## name: source name visible in sumologic platform
+    ## config-name: This is mostly for backward compatibility
+    sources:
+      metrics:
+        default:
+          name: (default-metrics)
+          config-name: endpoint-metrics
+        apiserver:
+          name: apiserver-metrics
+          config-name: endpoint-metrics-apiserver
+        controller:
+          name: kube-controller-manager-metrics
+          config-name: endpoint-metrics-kube-controller-manager
+        scheduler:
+          name: kube-scheduler-metrics
+          config-name: endpoint-metrics-kube-scheduler
+        state:
+          name: kube-state-metrics
+          config-name: endpoint-metrics-kube-state
+        kubelet:
+          name: kubelet-metrics
+          config-name: endpoint-metrics-kubelet
+        node:
+          name: node-exporter-metrics
+          config-name: endpoint-metrics-node-exporter
+        control-plane:
+          name: control-plane-metrics
+      logs:
+        default:
+          name: logs
+          config-name: endpoint-logs
+
+          ## Properties can be used to extend default settings, such as processing rules, fields etc
+          # properties:
+          #  filters:
+          #    - name: "Test Exclude Debug"
+          #      filter_type: "Exclude"
+          #      regexp: ".*DEBUG.*"
+      events:
+        default:
+          name: events
+          config-name: endpoint-events
+          category: true
+      traces:
+        default:
+          name: traces
+          config-name: endpoint-traces
+          properties:
+            content_type: Zipkin
 
   ### Logs configuration
   ## Set the enabled flag to false for disabling logs ingestion altogether.
@@ -119,59 +184,6 @@ sumologic:
   metrics:
     enabled: true
 
-  ## Configuration of http sources
-  ## See docs/Terraform.md for more information
-  ## name: source name visible in sumologic platform
-  ## config-name: This is mostly for backward compatibility
-  sources:
-    metrics:
-      default:
-        name: (default-metrics)
-        config-name: endpoint-metrics
-      apiserver:
-        name: apiserver-metrics
-        config-name: endpoint-metrics-apiserver
-      controller:
-        name: kube-controller-manager-metrics
-        config-name: endpoint-metrics-kube-controller-manager
-      scheduler:
-        name: kube-scheduler-metrics
-        config-name: endpoint-metrics-kube-scheduler
-      state:
-        name: kube-state-metrics
-        config-name: endpoint-metrics-kube-state
-      kubelet:
-        name: kubelet-metrics
-        config-name: endpoint-metrics-kubelet
-      node:
-        name: node-exporter-metrics
-        config-name: endpoint-metrics-node-exporter
-      control-plane:
-        name: control-plane-metrics
-    logs:
-      default:
-        name: logs
-        config-name: endpoint-logs
-        
-        ## Properties can be used to extend default settings, such as processing rules, fields etc
-        #properties:
-        #  filters:
-        #    - name: "Test Exclude Debug"
-        #      filter_type: "Exclude"
-        #      regexp: ".*DEBUG.*"
-
-    events:
-      default:
-        name: events
-        config-name: endpoint-events
-        category: true
-    traces:
-      default:
-        name: traces
-        config-name: endpoint-traces
-        properties:
-          content_type: Zipkin
-
   ### Traces configuration
   ## This is experimental feature and may be unavailable for your account
   traces:
@@ -180,6 +192,11 @@ sumologic:
     spans_per_request: 100
 
 fluentd:
+  image:
+    repository: sumologic/kubernetes-fluentd
+    tag: 1.3.0
+    pullPolicy: IfNotPresent
+
   ## Specifies whether a PodSecurityPolicy should be created
   podSecurityPolicy:
     create: false
@@ -205,7 +222,7 @@ fluentd:
   securityContext:
     ## The group ID of all processes in the statefulset containers. By default this needs to be fluent(999).
     fsGroup: 999
-  
+
   ## Add custom labels to all fluentd sts pods(logs, metrics, events)
   podLabels: {}
 
@@ -325,7 +342,7 @@ fluentd:
       podLabels: {}
       ## Add custom annotations only to logs fluentd sts pods
       podAnnotations: {}
-    
+
     ## Option to turn autoscaling on for fluentd and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
     autoscaling:
@@ -354,7 +371,7 @@ fluentd:
 
     ## Configuration for sumologic output plugin
     ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/logs/logs.output.conf
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/logs/logs.output.conf
     output:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: for logs metadata, fields is required.
@@ -583,7 +600,7 @@ fluentd:
 
     ## Configuration for sumologic output plugin
     ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/master/deploy/helm/sumologic/conf/metrics/metrics.output.conf
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/metrics/metrics.output.conf
     outputConf: |-
       @include metrics.output.conf
 
@@ -617,7 +634,7 @@ fluentd:
     ## Output configuration
     ## tag: tag for fluentd match
     ## id: sumologic output @id
-    ## endpoint: [optional] [output key by default] It should match the sumologic.sources.metrics[].endpoint
+    ## endpoint: [optional] [output key by default] It should match the sumologic.collector.sources.metrics[].endpoint
     ## drop: [optional] [false by default] Change it to true to drop traffic for specific output
     ## weight: [optional [0 by default] Order of fluentd output (lower means higher priority)
     ## The weight has meaning in case of fluentd matches
@@ -718,16 +735,26 @@ metrics-server:
   apiService:
     create: true
   extraArgs:
-   kubelet-insecure-tls: true
-   kubelet-preferred-address-types: InternalIP,ExternalIP,Hostname
+    kubelet-insecure-tls: true
+    kubelet-preferred-address-types: InternalIP,ExternalIP,Hostname
+  ## Optionally specify image options for metrics-server
+  # image:
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # pullSecrets:
+    #   - imagepullsecret
 
 ## Configure fluent-bit
-## ref: https://github.com/helm/charts/blob/master/stable/fluent-bit/values.yaml
+## ref: https://github.com/fluent/helm-charts/blob/master/charts/fluent-bit/values.yaml
 fluent-bit:
   image:
-    fluent_bit:
-      repository: fluent/fluent-bit
-      tag: 1.6.0
+    pullPolicy: IfNotPresent
+    # If specified, use these secrets to access the image
+    # pullSecrets:
+    #   - name: "image-pull-secret"
+
   ## Resource limits for fluent-bit
   resources: {}
     # limits:
@@ -742,6 +769,12 @@ fluent-bit:
   ## Setting the flag to true instead of commenting out will break other functionality.
   # enabled: false
 
+  ## Configuration for fluent-bit service
+  service:
+    ## Add custom labels to fluent-bit service
+    labels:
+      sumologic.com/scrape: "true"  # label used by fluent-bit service monitor
+
   ## Add custom pod labels to fluent-bit daemonset pods
   podLabels: {}
 
@@ -752,10 +785,6 @@ fluent-bit:
   # securityContext:
   #   privileged: true
 
-  service:
-    flush: 5
-  metrics:
-    enabled: true
   env:
     - name: CHART
       valueFrom:
@@ -767,119 +796,342 @@ fluent-bit:
         fieldRef:
           fieldPath: metadata.namespace
 
-  backend:
-    type: forward
-    forward:
-      ## NOTE: Requires trailing "." for fully-qualified name resolution
-      host: ${CHART}.${NAMESPACE}.svc.cluster.local.
-      port: 24321
-      tls: "off"
-      tls_verify: "on"
-      tls_debug: 1
-      shared_key:
-
-  trackOffsets: true
-
   tolerations:
     - effect: NoSchedule
       operator: Exists
 
-  input:
-    systemd:
-      enabled: true
+  extraVolumeMounts:
+    - mountPath: /tail-db
+      name: tail-db
+  extraVolumes:
+    - hostPath:
+        path: /var/lib/fluent-bit
+        type: DirectoryOrCreate
+      name: tail-db
 
-  parsers:
-    enabled: true
-    ## This regex matches the first line of a multiline log starting with a date of the format :  "2019-11-17 07:14:12" or "2019-11-17T07:14:12"
-    regex:
-      - name: multi_line
-        regex: (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
-        ## cri-o parser
-      - name: crio
-        regex: ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
-        timeKey: time
-        timeFormat: "%Y-%m-%dT%H:%M:%S.%L%z"
-
-  rawConfig: |-
-    @INCLUDE fluent-bit-service.conf
-
-    [INPUT]
-      Name               tail
-      Path               /var/log/containers/*.log
-      Docker_Mode        On
-      Docker_Mode_Parser multi_line
-      Tag                containers.*
-      Refresh_Interval   1
-      Rotate_Wait        60
-      Mem_Buf_Limit      5MB
-      Skip_Long_Lines    On
-      DB                 /tail-db/tail-containers-state-sumo.db
-      DB.Sync            Normal
-
-    [INPUT]
-      Name            systemd
-      Tag             host.*
-      DB              /tail-db/systemd-state-sumo.db
-      Systemd_Filter  _SYSTEMD_UNIT=addon-config.service
-      Systemd_Filter  _SYSTEMD_UNIT=addon-run.service
-      Systemd_Filter  _SYSTEMD_UNIT=cfn-etcd-environment.service
-      Systemd_Filter  _SYSTEMD_UNIT=cfn-signal.service
-      Systemd_Filter  _SYSTEMD_UNIT=clean-ca-certificates.service
-      Systemd_Filter  _SYSTEMD_UNIT=containerd.service
-      Systemd_Filter  _SYSTEMD_UNIT=coreos-metadata.service
-      Systemd_Filter  _SYSTEMD_UNIT=coreos-setup-environment.service
-      Systemd_Filter  _SYSTEMD_UNIT=coreos-tmpfiles.service
-      Systemd_Filter  _SYSTEMD_UNIT=dbus.service
-      Systemd_Filter  _SYSTEMD_UNIT=docker.service
-      Systemd_Filter  _SYSTEMD_UNIT=efs.service
-      Systemd_Filter  _SYSTEMD_UNIT=etcd-member.service
-      Systemd_Filter  _SYSTEMD_UNIT=etcd.service
-      Systemd_Filter  _SYSTEMD_UNIT=etcd2.service
-      Systemd_Filter  _SYSTEMD_UNIT=etcd3.service
-      Systemd_Filter  _SYSTEMD_UNIT=etcdadm-check.service
-      Systemd_Filter  _SYSTEMD_UNIT=etcdadm-reconfigure.service
-      Systemd_Filter  _SYSTEMD_UNIT=etcdadm-save.service
-      Systemd_Filter  _SYSTEMD_UNIT=etcdadm-update-status.service
-      Systemd_Filter  _SYSTEMD_UNIT=flanneld.service
-      Systemd_Filter  _SYSTEMD_UNIT=format-etcd2-volume.service
-      Systemd_Filter  _SYSTEMD_UNIT=kube-node-taint-and-uncordon.service
-      Systemd_Filter  _SYSTEMD_UNIT=kubelet.service
-      Systemd_Filter  _SYSTEMD_UNIT=ldconfig.service
-      Systemd_Filter  _SYSTEMD_UNIT=locksmithd.service
-      Systemd_Filter  _SYSTEMD_UNIT=logrotate.service
-      Systemd_Filter  _SYSTEMD_UNIT=lvm2-monitor.service
-      Systemd_Filter  _SYSTEMD_UNIT=mdmon.service
-      Systemd_Filter  _SYSTEMD_UNIT=nfs-idmapd.service
-      Systemd_Filter  _SYSTEMD_UNIT=nfs-mountd.service
-      Systemd_Filter  _SYSTEMD_UNIT=nfs-server.service
-      Systemd_Filter  _SYSTEMD_UNIT=nfs-utils.service
-      Systemd_Filter  _SYSTEMD_UNIT=node-problem-detector.service
-      Systemd_Filter  _SYSTEMD_UNIT=ntp.service
-      Systemd_Filter  _SYSTEMD_UNIT=oem-cloudinit.service
-      Systemd_Filter  _SYSTEMD_UNIT=rkt-gc.service
-      Systemd_Filter  _SYSTEMD_UNIT=rkt-metadata.service
-      Systemd_Filter  _SYSTEMD_UNIT=rpc-idmapd.service
-      Systemd_Filter  _SYSTEMD_UNIT=rpc-mountd.service
-      Systemd_Filter  _SYSTEMD_UNIT=rpc-statd.service
-      Systemd_Filter  _SYSTEMD_UNIT=rpcbind.service
-      Systemd_Filter  _SYSTEMD_UNIT=set-aws-environment.service
-      Systemd_Filter  _SYSTEMD_UNIT=system-cloudinit.service
-      Systemd_Filter  _SYSTEMD_UNIT=systemd-timesyncd.service
-      Systemd_Filter  _SYSTEMD_UNIT=update-ca-certificates.service
-      Systemd_Filter  _SYSTEMD_UNIT=user-cloudinit.service
-      Systemd_Filter  _SYSTEMD_UNIT=var-lib-etcd2.service
-      Max_Entries     1000
-      Read_From_Tail  true
-
-    @INCLUDE fluent-bit-output.conf
+  ## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit
+  config:
+    ## https://docs.fluentbit.io/manual/service
+    service: |
+      [SERVICE]
+          Flush        1
+          Daemon       Off
+          Log_Level    info
+          Parsers_File parsers.conf
+          Parsers_File custom_parsers.conf
+          HTTP_Server  On
+          HTTP_Listen  0.0.0.0
+          HTTP_Port    2020
+    inputs: |
+      [INPUT]
+          Name                tail
+          Path                /var/log/containers/*.log
+          Docker_Mode         On
+          Docker_Mode_Parser  multi_line
+          Tag                 containers.*
+          Refresh_Interval    1
+          Rotate_Wait         60
+          Mem_Buf_Limit       5MB
+          Skip_Long_Lines     On
+          DB                  /tail-db/tail-containers-state-sumo.db
+          DB.Sync             Normal
+      [INPUT]
+          Name            systemd
+          Tag             host.*
+          DB              /tail-db/systemd-state-sumo.db
+          Systemd_Filter  _SYSTEMD_UNIT=addon-config.service
+          Systemd_Filter  _SYSTEMD_UNIT=addon-run.service
+          Systemd_Filter  _SYSTEMD_UNIT=cfn-etcd-environment.service
+          Systemd_Filter  _SYSTEMD_UNIT=cfn-signal.service
+          Systemd_Filter  _SYSTEMD_UNIT=clean-ca-certificates.service
+          Systemd_Filter  _SYSTEMD_UNIT=containerd.service
+          Systemd_Filter  _SYSTEMD_UNIT=coreos-metadata.service
+          Systemd_Filter  _SYSTEMD_UNIT=coreos-setup-environment.service
+          Systemd_Filter  _SYSTEMD_UNIT=coreos-tmpfiles.service
+          Systemd_Filter  _SYSTEMD_UNIT=dbus.service
+          Systemd_Filter  _SYSTEMD_UNIT=docker.service
+          Systemd_Filter  _SYSTEMD_UNIT=efs.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd-member.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd2.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd3.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-check.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-reconfigure.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-save.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-update-status.service
+          Systemd_Filter  _SYSTEMD_UNIT=flanneld.service
+          Systemd_Filter  _SYSTEMD_UNIT=format-etcd2-volume.service
+          Systemd_Filter  _SYSTEMD_UNIT=kube-node-taint-and-uncordon.service
+          Systemd_Filter  _SYSTEMD_UNIT=kubelet.service
+          Systemd_Filter  _SYSTEMD_UNIT=ldconfig.service
+          Systemd_Filter  _SYSTEMD_UNIT=locksmithd.service
+          Systemd_Filter  _SYSTEMD_UNIT=logrotate.service
+          Systemd_Filter  _SYSTEMD_UNIT=lvm2-monitor.service
+          Systemd_Filter  _SYSTEMD_UNIT=mdmon.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-idmapd.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-mountd.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-server.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-utils.service
+          Systemd_Filter  _SYSTEMD_UNIT=node-problem-detector.service
+          Systemd_Filter  _SYSTEMD_UNIT=ntp.service
+          Systemd_Filter  _SYSTEMD_UNIT=oem-cloudinit.service
+          Systemd_Filter  _SYSTEMD_UNIT=rkt-gc.service
+          Systemd_Filter  _SYSTEMD_UNIT=rkt-metadata.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpc-idmapd.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpc-mountd.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpc-statd.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpcbind.service
+          Systemd_Filter  _SYSTEMD_UNIT=set-aws-environment.service
+          Systemd_Filter  _SYSTEMD_UNIT=system-cloudinit.service
+          Systemd_Filter  _SYSTEMD_UNIT=systemd-timesyncd.service
+          Systemd_Filter  _SYSTEMD_UNIT=update-ca-certificates.service
+          Systemd_Filter  _SYSTEMD_UNIT=user-cloudinit.service
+          Systemd_Filter  _SYSTEMD_UNIT=var-lib-etcd2.service
+          Max_Entries     1000
+          Read_From_Tail  true
+    ## NOTE: Requires trailing "." for fully-qualified name resolution
+    outputs: |
+      [OUTPUT]
+          Name          forward
+          Match         *
+          Host          ${CHART}.${NAMESPACE}.svc.cluster.local.
+          Port          24321
+          Retry_Limit   False
+          tls           off
+          tls.verify    on
+          tls.debug     1
+    customParsers: |
+      [PARSER]
+          Name        multi_line
+          Format      regex
+          Regex       (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
+      [PARSER]
+          Name         crio
+          Format       regex
+          Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+          Time_Key     time
+          Time_Format  "%Y-%m-%dT%H:%M:%S.%L%z"
 
 ## Configure kube-prometheus-stack
-## We are using an alias prometheus-operator for the kube-prometheus-stack helm chart for backward compatibility. This will be changed in v2.0.
 ## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
-prometheus-operator:
-  ## Labels to apply to all prometheus operator resources
+kube-prometheus-stack:
+
+  ## Uncomment the flag below to not install kube-prometheus-stack helm chart
+  ## as a dependency along with this helm chart.
+  ## Comment it out if you wish to have the prometheus-operator dependency installed.
+  ## Setting the flag to true instead of commenting out will break other functionality.
+  # enabled: false
+
+  # global:
+    ## Reference to one or more secrets to be used when pulling images
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ##
+    # imagePullSecrets:
+    #   - name: "image-pull-secret"
+
+  ## Labels to apply to all kube-prometheus-stack resources
   commonLabels: {}
-  ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
+
+  ## k8s pre-1.14 prometheus recording rules
+  additionalPrometheusRulesMap:
+    pre-1.14-node-rules:
+      groups:
+        - name: node-pre-1.14.rules
+          rules:
+            - expr: 1 - avg(rate(node_cpu_seconds_total{job="node-exporter",mode="idle"}[1m]))
+              record: :node_cpu_utilisation:avg1m
+            - expr: |-
+                1 - avg by (node) (
+                  rate(node_cpu_seconds_total{job="node-exporter",mode="idle"}[1m])
+                * on (namespace, pod) group_left(node)
+                  node_namespace_pod:kube_pod_info:)
+              record: node:node_cpu_utilisation:avg1m
+            - expr: |-
+                1 -
+                sum(
+                  node_memory_MemFree_bytes{job="node-exporter"} +
+                  node_memory_Cached_bytes{job="node-exporter"} +
+                  node_memory_Buffers_bytes{job="node-exporter"}
+                )
+                /
+                sum(node_memory_MemTotal_bytes{job="node-exporter"})
+              record: ':node_memory_utilisation:'
+            - expr: |-
+                (node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum)
+                /
+                node:node_memory_bytes_total:sum
+              record: node:node_memory_utilisation:ratio
+            - expr: |-
+                1 -
+                sum by (node) (
+                  (
+                    node_memory_MemFree_bytes{job="node-exporter"} +
+                    node_memory_Cached_bytes{job="node-exporter"} +
+                    node_memory_Buffers_bytes{job="node-exporter"}
+                  )
+                * on (namespace, pod) group_left(node)
+                  node_namespace_pod:kube_pod_info:
+                )
+                /
+                sum by (node) (
+                  node_memory_MemTotal_bytes{job="node-exporter"}
+                * on (namespace, pod) group_left(node)
+                  node_namespace_pod:kube_pod_info:
+                )
+              record: 'node:node_memory_utilisation:'
+            - expr: 1 - (node:node_memory_bytes_available:sum / node:node_memory_bytes_total:sum)
+              record: 'node:node_memory_utilisation_2:'
+            - expr: |-
+                max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
+                - node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
+                / node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
+              record: 'node:node_filesystem_usage:'
+            - expr: |-
+                sum by (node) (
+                  node_memory_MemTotal_bytes{job="node-exporter"}
+                  * on (namespace, pod) group_left(node)
+                    node_namespace_pod:kube_pod_info:
+                )
+              record: node:node_memory_bytes_total:sum
+            - expr: |-
+                sum(irate(node_network_receive_bytes_total{job="node-exporter",device!~"veth.+"}[1m])) +
+                sum(irate(node_network_transmit_bytes_total{job="node-exporter",device!~"veth.+"}[1m]))
+              record: :node_net_utilisation:sum_irate
+            - expr: |-
+                sum by (node) (
+                  (irate(node_network_receive_bytes_total{job="node-exporter",device!~"veth.+"}[1m]) +
+                  irate(node_network_transmit_bytes_total{job="node-exporter",device!~"veth.+"}[1m]))
+                * on (namespace, pod) group_left(node)
+                  node_namespace_pod:kube_pod_info:
+                )
+              record: node:node_net_utilisation:sum_irate
+            - expr: |-
+                sum(irate(node_network_receive_drop_total{job="node-exporter",device!~"veth.+"}[1m])) +
+                sum(irate(node_network_transmit_drop_total{job="node-exporter",device!~"veth.+"}[1m]))
+              record: :node_net_saturation:sum_irate
+            - expr: |-
+                sum by (node) (
+                  (irate(node_network_receive_drop_total{job="node-exporter",device!~"veth.+"}[1m]) +
+                  irate(node_network_transmit_drop_total{job="node-exporter",device!~"veth.+"}[1m]))
+                * on (namespace, pod) group_left(node)
+                  node_namespace_pod:kube_pod_info:
+                )
+              record: node:node_net_saturation:sum_irate
+            - expr: |-
+                max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
+                - node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
+                / node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
+              record: 'node:node_filesystem_usage:'
+            - expr: |-
+                sum(node_load1{job="node-exporter"})
+                /
+                sum(node:node_num_cpu:sum)
+              record: ':node_cpu_saturation_load1:'
+            - expr: |-
+                sum by (node) (
+                  node_load1{job="node-exporter"}
+                * on (namespace, pod) group_left(node)
+                  node_namespace_pod:kube_pod_info:
+                )
+                /
+                node:node_num_cpu:sum
+              record: 'node:node_cpu_saturation_load1:'
+            - expr: avg(irate(node_disk_io_time_weighted_seconds_total{job="node-exporter",device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+"}[1m]))
+              record: :node_disk_saturation:avg_irate
+            - expr: |-
+                avg by (node) (
+                  irate(node_disk_io_time_weighted_seconds_total{job="node-exporter",device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+"}[1m])
+                * on (namespace, pod) group_left(node)
+                  node_namespace_pod:kube_pod_info:
+                )
+              record: node:node_disk_saturation:avg_irate
+            - expr: avg(irate(node_disk_io_time_seconds_total{job="node-exporter",device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+"}[1m]))
+              record: :node_disk_utilisation:avg_irate
+            - expr: |-
+                avg by (node) (
+                  irate(node_disk_io_time_seconds_total{job="node-exporter",device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+"}[1m])
+                * on (namespace, pod) group_left(node)
+                  node_namespace_pod:kube_pod_info:
+                )
+              record: node:node_disk_utilisation:avg_irate
+            - expr: |-
+                1e3 * sum(
+                  (rate(node_vmstat_pgpgin{job="node-exporter"}[1m])
+                + rate(node_vmstat_pgpgout{job="node-exporter"}[1m]))
+                )
+              record: :node_memory_swap_io_bytes:sum_rate
+            - expr: |-
+                1e3 * sum by (node) (
+                  (rate(node_vmstat_pgpgin{job="node-exporter"}[1m])
+                + rate(node_vmstat_pgpgout{job="node-exporter"}[1m]))
+                * on (namespace, pod) group_left(node)
+                  node_namespace_pod:kube_pod_info:
+                )
+              record: node:node_memory_swap_io_bytes:sum_rate
+            - expr: |-
+                node:node_cpu_utilisation:avg1m
+                  *
+                node:node_num_cpu:sum
+                  /
+                scalar(sum(node:node_num_cpu:sum))
+              record: node:cluster_cpu_utilisation:ratio
+            - expr: |-
+                (node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum)
+                /
+                scalar(sum(node:node_memory_bytes_total:sum))
+              record: node:cluster_memory_utilisation:ratio
+            - expr: |-
+                sum by (node) (
+                  node_load1{job="node-exporter"}
+                * on (namespace, pod) group_left(node)
+                  node_namespace_pod:kube_pod_info:
+                )
+                /
+                node:node_num_cpu:sum
+              record: 'node:node_cpu_saturation_load1:'
+            - expr: |-
+                max by (instance, namespace, pod, device) (
+                  node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
+                  /
+                  node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
+                  )
+              record: 'node:node_filesystem_avail:'
+            - expr: |-
+                max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
+                - node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
+                / node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
+              record: 'node:node_filesystem_usage:'
+            - expr: |-
+                max(
+                  max(
+                    kube_pod_info{job="kube-state-metrics", host_ip!=""}
+                  ) by (node, host_ip)
+                  * on (host_ip) group_right (node)
+                  label_replace(
+                    (
+                      max(node_filesystem_files{job="node-exporter", mountpoint="/"})
+                      by (instance)
+                    ), "host_ip", "$1", "instance", "(.*):.*"
+                  )
+                ) by (node)
+              record: 'node:node_inodes_total:'
+            - expr: |-
+                max(
+                  max(
+                    kube_pod_info{job="kube-state-metrics", host_ip!=""}
+                  ) by (node, host_ip)
+                  * on (host_ip) group_right (node)
+                  label_replace(
+                    (
+                      max(node_filesystem_files_free{job="node-exporter", mountpoint="/"})
+                      by (instance)
+                    ), "host_ip", "$1", "instance", "(.*):.*"
+                  )
+                ) by (node)
+              record: 'node:node_inodes_free:'
+
+  ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording
+  ## rules to be missing and empty panels in Sumo Logic Kubernetes apps.
   kubeApiServer:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -914,13 +1166,6 @@ prometheus-operator:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
-  ## Ensure we use pre 1.14 recording rules consistently as current content depends on them.
-  kubeTargetVersionOverride: 1.13.0-0
-
-  ## Uncomment the flag below to not install prometheus-operator helm chart as a dependency along with this helm chart.
-  ## Comment it out if you wish to have the prometheus-operator dependency installed.
-  ## Setting the flag to true instead of commenting out will break other functionality.
-  # enabled: false
 
   alertmanager:
     enabled: false
@@ -942,7 +1187,7 @@ prometheus-operator:
       #   memory: 100Mi
     admissionWebhooks:
       enabled: false
-    tlsProxy:
+    tls:
       enabled: false
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
@@ -976,24 +1221,26 @@ prometheus-operator:
         additionalLabels:
           sumologic.com/app: fluentd-logs
         endpoints:
-        - port: metrics
+          - port: metrics
         namespaceSelector:
           matchNames:
-          - $(NAMESPACE)
+            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-fluentd-metrics
         additionalLabels:
           sumologic.com/app: fluentd-metrics
         endpoints:
-        - port: metrics
+          - port: metrics
         namespaceSelector:
           matchNames:
-          - $(NAMESPACE)
+            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-fluentd-events
         additionalLabels:
           sumologic.com/app: fluentd-events
@@ -1005,18 +1252,20 @@ prometheus-operator:
         selector:
           matchLabels:
             sumologic.com/app: fluentd-events
+            sumologic.com/scrape: "true"
       - name: collection-fluent-bit
         additionalLabels:
           app: collection-fluent-bit
         endpoints:
-          - port: metrics
+          - port: http
             path: /api/v1/metrics/prometheus
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
         selector:
           matchLabels:
-            app: fluent-bit
+            app.kubernetes.io/name: fluent-bit
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-otelcol
         additionalLabels:
           sumologic.com/app: otelcol
@@ -1028,9 +1277,11 @@ prometheus-operator:
         selector:
           matchLabels:
             sumologic.com/app: otelcol
+            sumologic.com/scrape: "true"
     prometheusSpec:
-      ## Prometheus default scrape interval, default from upstream Prometheus Operator Helm chart
-      ## NOTE changing the scrape interval to be >1m can result in metrics from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
+      ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
+      ## NOTE changing the scrape interval to be >1m can result in metrics
+      ## from recording rules to be missing and empty panels in Sumo Logic Kubernetes apps.
       scrapeInterval: "30s"
       ## Prometheus data retention period
       retention: "1d"
@@ -1059,18 +1310,18 @@ prometheus-operator:
             cpu: 1m
             memory: 8Mi
       containers:
-      - name: "prometheus-config-reloader"
-        env:
-        - name: CHART
-          valueFrom:
-            configMapKeyRef:
-              name: sumologic-configmap
-              key: fluentdMetrics
-        - name: NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: sumologic-configmap
-              key: fluentdNamespace
+        - name: "config-reloader"
+          env:
+            - name: CHART
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdMetrics
+            - name: NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdNamespace
 
       ## Enable WAL compression to reduce Prometheus memory consumption
       walCompression: true
@@ -1084,61 +1335,61 @@ prometheus-operator:
         ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
         - job_name: 'kubernetes-pods'
           kubernetes_sd_configs:
-          - role: pod
+            - role: pod
           relabel_configs:
-          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-            action: keep
-            regex: true
-          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
-            action: replace
-            target_label: __metrics_path__
-            regex: (.+)
-          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-            action: replace
-            regex: ([^:]+)(?::\d+)?;(\d+)
-            replacement: $1:$2
-            target_label: __address__
-          - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
-            separator: ;
-            regex: Node;(.*)
-            target_label: node
-            replacement: ${1}
-            action: replace
-          - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
-            separator: ;
-            regex: Pod;(.*)
-            target_label: pod
-            replacement: ${1}
-            action: replace
-          - source_labels: [__metrics_path__]
-            separator: ;
-            regex: (.*)
-            target_label: endpoint
-            replacement: $1
-            action: replace
-          - source_labels: [__meta_kubernetes_namespace]
-            action: replace
-            target_label: namespace
-          - action: labelmap
-            regex: __meta_kubernetes_pod_label_(.+)
-          - source_labels: [__meta_kubernetes_service_name]
-            separator: ;
-            regex: (.*)
-            target_label: service
-            replacement: $1
-            action: replace
-          - source_labels: [__meta_kubernetes_pod_name]
-            separator: ;
-            regex: (.*)
-            target_label: pod
-            replacement: $1
-            action: replace
-          - source_labels: [__meta_kubernetes_service_name]
-            separator: ;
-            regex: (.*)
-            target_label: job
-            replacement: ${1}
-            action: replace
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: true
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+              action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              target_label: __address__
+            - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+              separator: ;
+              regex: Node;(.*)
+              target_label: node
+              replacement: ${1}
+              action: replace
+            - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+              separator: ;
+              regex: Pod;(.*)
+              target_label: pod
+              replacement: ${1}
+              action: replace
+            - source_labels: [__metrics_path__]
+              separator: ;
+              regex: (.*)
+              target_label: endpoint
+              replacement: $1
+              action: replace
+            - source_labels: [__meta_kubernetes_namespace]
+              action: replace
+              target_label: namespace
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
+            - source_labels: [__meta_kubernetes_service_name]
+              separator: ;
+              regex: (.*)
+              target_label: service
+              replacement: $1
+              action: replace
+            - source_labels: [__meta_kubernetes_pod_name]
+              separator: ;
+              regex: (.*)
+              target_label: pod
+              replacement: $1
+              action: replace
+            - source_labels: [__meta_kubernetes_service_name]
+              separator: ;
+              regex: (.*)
+              target_label: job
+              replacement: ${1}
+              action: replace
 
       remoteWrite:
         ## kube non pod state metrics
@@ -1246,7 +1497,9 @@ prometheus-operator:
         ## kubelet_runtime_operations_duration_seconds_count
         ## kubelet_runtime_operations_duration_seconds_sum
         ## kubelet_running_container_count
+        ## kubelet_running_containers
         ## kubelet_running_pod_count
+        ## kubelet_running_pods
         ## kubelet_docker_operations_latency_microseconds
         ## kubelet_docker_operations_latency_microseconds_count
         ## kubelet_docker_operations_latency_microseconds_sum
@@ -1256,7 +1509,7 @@ prometheus-operator:
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.kubelet
           writeRelabelConfigs:
             - action: keep
-              regex: kubelet;(?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)_count|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
+              regex: kubelet;(?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
               sourceLabels: [job, __name__]
         ## cadvisor container metrics
         ## container_cpu_usage_seconds_total
@@ -1274,7 +1527,7 @@ prometheus-operator:
               sourceLabels: [container]
             - action: keep
               regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total)
-              sourceLabels: [job,container,__name__]
+              sourceLabels: [job, container, __name__]
         ## cadvisor aggregate container metrics
         ## container_network_receive_bytes_total
         ## container_network_transmit_bytes_total
@@ -1305,10 +1558,10 @@ prometheus-operator:
         ## :node_memory_utilisation:
         ## :node_net_saturation:sum_irate
         ## :node_net_utilisation:sum_irate
-        ## cluster_quantile:apiserver_request_latencies:histogram_quantile
-        ## cluster_quantile:scheduler_binding_latency:histogram_quantile
-        ## cluster_quantile:scheduler_e2e_scheduling_latency:histogram_quantile
-        ## cluster_quantile:scheduler_scheduling_algorithm_latency:histogram_quantile
+        ## cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
+        ## cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+        ## cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+        ## cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
         ## instance:node_filesystem_usage:sum
         ## instance:node_network_receive_bytes:rate:sum
         ## node:cluster_cpu_utilisation:ratio
@@ -1333,7 +1586,7 @@ prometheus-operator:
         - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.operator.rule
           writeRelabelConfigs:
             - action: keep
-              regex: 'cluster_quantile:apiserver_request_latencies:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_latency:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_latency:histogram_quantile|cluster_quantile:scheduler_binding_latency:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:'
+              regex: 'cluster_quantile:apiserver_request_duration_seconds:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile|cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:'
               sourceLabels: [__name__]
         ## health
         ## fluentbit_input_bytes_total
@@ -1579,17 +1832,6 @@ prometheus-operator:
               regex: (?:java_lang_(ClassLoading_(TotalL|Unl|L)oadedClassCount|Compilation_TotalCompilationTime|GarbageCollector_(Collection(Count|Time)|LastGcInfo_(GcThreadCount|duration|(memoryU|u)sage(After|Before)Gc_.*_used))|MemoryPool_(CollectionUsage(ThresholdSupported|_committed|_max|_used)|(Peak|)Usage_(committed|max|used)|UsageThresholdSupported)|Memory_((Non|)HeapMemoryUsage_(committed|max|used)|ObjectPendingFinalizationCount)|OperatingSystem_(AvailableProcessors|(CommittedVirtual|(Free|Total)(Physical|))MemorySize|(Free|Total)SwapSpaceSize|(Max|Open)FileDescriptorCount|ProcessCpu(Load|Time)|System(CpuLoad|LoadAverage))|Runtime_(BootClassPathSupported|Pid|Uptime|StartTime)|Threading_(CurrentThread(AllocatedBytes|(Cpu|User)Time)|(Daemon|Peak|TotalStarted|)ThreadCount|(ObjectMonitor|Synchronizer)UsageSupported|Thread(AllocatedMemory.*|ContentionMonitoring.*|CpuTime.*))))
               sourceLabels: [__name__]
 
-## Configure falco
-## ref: https://github.com/falcosecurity/charts/blob/master/falco/values.yaml
-falco:
-  ## Set the enabled flag to true to enable falco.
-  enabled: false
-  #ebpf:
-  #  enabled: true
-  falco:
-    jsonOutput: true
-
-
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
@@ -1692,8 +1934,8 @@ otelagent:
           receivers: [jaeger, opencensus, otlp, zipkin]
           processors: [memory_limiter, k8s_tagger, batch]
           exporters: [otlp]
-  
-##Configure otelcol
+
+## Configure otelcol
 otelcol:
   deployment:
     nodeSelector: {}
@@ -1716,7 +1958,7 @@ otelcol:
     ## Memory Ballast size should be max 1/3 to 1/2 of memory.
     memBallastSizeMib: "683"
     image:
-      name: "sumologic/opentelemetry-collector"
+      repository: "sumologic/opentelemetry-collector"
       tag: "0.12.0"
       pullPolicy: IfNotPresent
 
@@ -1890,12 +2132,19 @@ telegraf-operator:
           ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration
           listen = ":9273"
           metric_version = 2
+  # imagePullSecrets: []
 
 ## Configure falco
 ## This is an experimental configuration and shouldn't be used in production environment
 ## https://github.com/falcosecurity/charts/tree/master/falco
 falco:
   enabled: false
+  # ebpf:
+  #   enabled: true
+  falco:
+    jsonOutput: true
+  # image:
+  #   pullSecrets: []
   customRules:
     # Mark the following as known k8s api callers:
     # * fluentd and its plugins from sumologic/kubernetes-fluentd image

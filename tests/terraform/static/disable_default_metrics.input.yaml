@@ -1,5 +1,6 @@
 sumologic:
-  sources:
-    metrics:
-      default:
-        create: false
+  collector:
+    sources:
+      metrics:
+        default:
+          create: false

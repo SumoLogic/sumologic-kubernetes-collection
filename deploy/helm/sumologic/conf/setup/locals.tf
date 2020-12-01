@@ -1,6 +1,6 @@
 locals {
 {{- $ctx := .Values }}
-{{- range $type, $sources := .Values.sumologic.sources }}
+{{- range $type, $sources := .Values.sumologic.collector.sources }}
 {{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
 {{- range $key, $source := $sources }}
 {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}

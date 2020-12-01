@@ -9,17 +9,17 @@ helm_path = ${root_dir}deploy/helm/sumologic
 k8s_path = ${root_dir}vagrant/k8s
 dashboards_path = ${root_dir}vagrant/dashboards
 local_values_file = ${root_dir}vagrant/values.local.yaml
-vagrant_scripts_dir = ${root_dir}vagrant/scripts/
+vagrant_scripts_dir = ${root_dir}vagrant/scripts
 
 # Collector configuration
 name = collection
 namespace = sumologic
 
 test:
-	${root_dir}ci/tests.sh
+	$(MAKE) -C ${root_dir} test
 
 build:
-	cd ${root_dir} && DOCKER_USE_CACHE=true ${root_dir}ci/build.sh
+	cd ${root_dir} && DOCKER_USE_CACHE=true $(MAKE) -C ${root_dir} build
 	${mkfile_path} \
 		tag-and-push-local
 
@@ -28,11 +28,11 @@ tag-and-push-local:
 	docker tag sumologic/kubernetes-fluentd:local localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
 	docker push localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
 	touch ${local_values_file}
-	yq w -i ${local_values_file} image.repository localhost:32000/sumologic/kubernetes-fluentd
-	yq w -i ${local_values_file} image.tag local-${timestamp}
+	yq w -i ${local_values_file} fluentd.image.repository localhost:32000/sumologic/kubernetes-fluentd
+	yq w -i ${local_values_file} fluentd.image.tag local-${timestamp}
 
 generate-local-config:
-	${vagrant_scripts_dir}generate-local-config.sh
+	${vagrant_scripts_dir}/generate-local-config.sh
 
 # Collector section
 ## Collector upgrade
@@ -42,7 +42,6 @@ upgrade:
 		remove-tmp \
 		apply-namespace \
 		apply-receiver-mock \
-		create-secrets \
 		grafana-dashboards \
 		helm-dependencies \
 		helm-upgrade \
@@ -83,7 +82,7 @@ clean-local-values-yaml:
 	rm ${local_values_file}
 
 _apply-avalanche-remote-write-to-local-values: generate-local-config
-	yq w -s ${vagrant_scripts_dir}yq/update_remote_write_for_avalanche.yaml ../deploy/helm/sumologic/values.yaml | \
+	yq w -s ${vagrant_scripts_dir}/yq/update_remote_write_for_avalanche.yaml ../deploy/helm/sumologic/values.yaml | \
 	yq r - 'prometheus-operator.prometheus.prometheusSpec.remoteWrite' | \
 	yq prefix - 'prometheus-operator.prometheus.prometheusSpec.remoteWrite' > ${local_values_file}
 
@@ -120,7 +119,7 @@ remove-service-monitors:
 
 ## k8s commands
 expose-prometheus:
-	kubectl port-forward -n "${namespace}" service/collection-prometheus-oper-prometheus --address=0.0.0.0 9090
+	kubectl port-forward -n "${namespace}" service/collection-kube-prometheus-prometheus --address=0.0.0.0 9090
 
 expose-grafana:
 	echo "Grafana credentials\n  login:    admin\n  password: prom-operator"
@@ -130,14 +129,6 @@ expose-grafana:
 grafana-dashboards:
 	kubectl delete configmap -n "${namespace}" sumologic-dashboards || true
 	kubectl create configmap -n "${namespace}" sumologic-dashboards --from-file="${dashboards_path}"
-
-# Create secrets with microk8s certs
-create-secrets:
-	kubectl delete secret -n "${namespace}" microk8s-certs || true
-	kubectl create secret -n "${namespace}" generic microk8s-certs \
-		--from-file=/var/snap/microk8s/current/certs/server.key \
-		--from-file=/var/snap/microk8s/current/certs/server.crt \
-		--from-file=/var/snap/microk8s/current/certs/ca.crt
 
 # patch context to use sumologic namespace as default
 patch-context:
@@ -246,3 +237,21 @@ application-metrics-jolokia-agent-run:
 
 application-metrics-jolokia-agent-clean:
 	kubectl delete ns demo-jolokia-agent
+
+test-receiver-mock-logs:
+	kubectl logs $(shell kubectl get pod -l app=receiver-mock -o jsonpath='{.items[0].metadata.name}'  -n receiver-mock) -n receiver-mock
+
+test-receiver-mock-metrics:
+	kubectl exec $(shell kubectl get pod -l app=receiver-mock -o jsonpath="{.items[0].metadata.name}"  -n receiver-mock) -it -n receiver-mock -- curl http://localhost:3000/metrics
+
+shellcheck:
+	$(MAKE) -C ${root_dir} shellcheck
+
+markdownlint:
+	$(MAKE) -C ${root_dir} markdownlint
+
+mdl:
+	$(MAKE) -C ${root_dir} mdl
+
+yamllint:
+	$(MAKE) -C ${root_dir} yamllint

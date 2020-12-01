@@ -1,0 +1,22 @@
+fluentd:
+  image:
+    repository: sumologic/kubernetes-fluentd
+    tag: 2.0.0
+    pullPolicy: IfNotPresent
+  logLevel: info
+  logLevelFilter: true
+  compression:
+    enabled: true
+    encoding: gzip
+sumologic:
+  setup:
+    job:
+      image:
+        repository: sumologic/kubernetes-fluentd
+        tag: 2.0.0
+        pullPolicy: IfNotPresent
+  setupEnabled: true
+  cleanUpEnabled: false
+  accessId: dummy
+  accessKey: dummy
+nameOverride:

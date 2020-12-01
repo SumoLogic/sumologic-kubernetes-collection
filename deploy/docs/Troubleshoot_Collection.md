@@ -2,23 +2,23 @@
 
 <!-- TOC -->
 
-- [`helm install` hanging](#helm-install-hanging) 
-- [Namespace configuration](#namespace-configuration) 
-- [Gathering logs](#gathering-logs) 
-  - [Fluentd Logs](#fluentd-logs) 
-  - [Prometheus Logs](#prometheus-logs) 
-  - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo) 
-- [Gathering metrics](#gathering-metrics) 
-  - [Check the `/metrics` endpoint](#check-the-metrics-endpoint) 
-  - [Check the Prometheus UI](#check-the-prometheus-ui) 
-  - [Check Prometheus Remote Storage](#check-prometheus-remote-storage) 
-  - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics) 
-- [Common Issues](#common-issues) 
-  - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state) 
-  - [Missing `kubelet` metrics](#missing-kubelet-metrics) 
-    - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster) 
-    - [2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator](#2-disable-the-kubeletservicemonitorhttps-flag-in-the-prometheus-operator) 
-  - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics) 
+- [`helm install` hanging](#helm-install-hanging)
+- [Namespace configuration](#namespace-configuration)
+- [Gathering logs](#gathering-logs)
+  - [Fluentd Logs](#fluentd-logs)
+  - [Prometheus Logs](#prometheus-logs)
+  - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
+- [Gathering metrics](#gathering-metrics)
+  - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
+  - [Check the Prometheus UI](#check-the-prometheus-ui)
+  - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+  - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics)
+- [Common Issues](#common-issues)
+  - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
+  - [Missing `kubelet` metrics](#missing-kubelet-metrics)
+    - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
+    - [2. Disable the `kubelet.serviceMonitor.https` flag in Kube Prometheus Stack](#2-disable-the-kubeletservicemonitorhttps-flag-in-kube-prometheus-stack)
+  - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
   - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
   - [Errors in helm installation](#errors-in-helm-installation)
   - [Rancher](#rancher)
@@ -27,17 +27,25 @@
 
 ## `helm install` hanging
 
-If `helm install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm install` command. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where the Helm chart is deployed:
+If `helm install` hangs, it usually means the pre-install setup job is failing
+and is in a retry loop.
+Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm install` command.
+Kubernetes schedules the job in a pod, so you can look at logs from the pod to see
+why the job is failing.
+First find the pod name in the namespace where the Helm chart is deployed:
+
 ```sh
 kubectl get pods -n sumologic
 ```
 
 Get the logs from that pod:
+
 ```
 kubectl logs POD_NAME -f
 ```
 
 If you see `Secret 'sumologic::sumologic' exists, abort.` from the logs, delete the existing secret:
+
 ```
 kubectl delete secret sumologic -n sumologic
 ```
@@ -51,6 +59,7 @@ The following `kubectl` commands assume you are in the correct namespace `sumolo
 To run a single command in the `sumologic` namespace, pass in the flag `-n sumologic`.
 
 To set your namespace context more permanently, you can run
+
 ```sh
 kubectl config set-context $(kubectl config current-context) --namespace=sumologic
 ```
@@ -58,21 +67,27 @@ kubectl config set-context $(kubectl config current-context) --namespace=sumolog
 ## Gathering logs
 
 First check if your pods are in a healthy state. Run
+
 ```
 kubectl get pods
 ```
+
 to get a list of running pods. If any of them are not in the `Status: running` state, something is wrong. To get the logs for that pod, you can either:
 
 Stream the logs to `stdout`:
+
 ```
 kubectl logs POD_NAME -f
 ```
+
 Or write the current logs to a file:
+
 ```
 kubectl logs POD_NAME > pod_name.log
 ```
 
 To get a snapshot of the current state of the pod, you can run
+
 ```
 kubectl describe pods POD_NAME
 ```
@@ -84,6 +99,7 @@ kubectl logs collection-sumologic-xxxxxxxxx-xxxxx -f
 ```
 
 To enable more detailed debug or trace logs from all of Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section and apply the change to your deployment:
+
 ```
 <system>
   log_level debug # or trace
@@ -91,6 +107,7 @@ To enable more detailed debug or trace logs from all of Fluentd, add the followi
 ```
 
 To enable debug or trace logs from a specific Fluentd plugin, add the following option to the plugin's `.conf` section:
+
 ```
 <match **>
   @type sumologic
@@ -115,6 +132,7 @@ kubectl scale deployment/collection-sumologic --replicas=3
 ### Prometheus Logs
 
 To view Prometheus logs:
+
 ```
 kubectl logs prometheus-collection-prometheus-oper-prometheus-0 prometheus -f
 ```
@@ -208,9 +226,11 @@ Relevant Fluentd metrics include:
 ### Pod stuck in `ContainerCreating` state
 
 If you are seeing a pod stuck in the `ContainerCreating` state and seeing logs like
+
 ```
 Warning  FailedCreatePodSandBox  29s   kubelet, ip-172-20-87-45.us-west-1.compute.internal  Failed create pod sandbox: rpc error: code = DeadlineExceeded desc = context deadline exceeded
 ```
+
 you have an unhealthy node. Killing the node should resolve this issue.
 
 ### Missing `kubelet` metrics
@@ -220,11 +240,13 @@ Navigate to the `kubelet` targets using the steps above. You may see that the ta
 #### 1. Enable the `authenticationTokenWebhook` flag in the cluster
 
 The goal is to set the flag `--authentication-token-webhook=true` for `kubelet`. One way to do this is:
+
 ```
 kops get cluster -o yaml > NAME_OF_CLUSTER-cluster.yaml
 ```
 
 Then in that file make the following change:
+
 ```
 spec:
   kubelet:
@@ -233,19 +255,21 @@ spec:
 ```
 
 Then run
+
 ```
 kops replace -f NAME_OF_CLUSTER-cluster.yaml
 kops update cluster --yes
 kops rolling-update cluster --yes
 ```
 
-#### 2. Disable the `kubelet.serviceMonitor.https` flag in the Prometheus operator
+#### 2. Disable the `kubelet.serviceMonitor.https` flag in Kube Prometheus Stack
 
 The goal is to set the flag `kubelet.serviceMonitor.https=false` when deploying the prometheus operator.
 
-Add the following lines to the `prometheus-operator` section of your `values.yaml` file:
+Add the following lines to the `kube-prometheus-stack` section of your `values.yaml` file:
+
 ```
-prometheus-operator:
+kube-prometheus-stack:
   ...
   kubelet:
     serviceMonitor:
@@ -253,37 +277,45 @@ prometheus-operator:
 ```
 
 and upgrade the helm chart:
+
 ```
 helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VERSION> -f values.yaml
 ```
 
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
-There’s an issue with backwards compatibility in the current version of the prometheus-operator helm chart that requires us to override the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two targets, you can use the following steps.
+There’s an issue with backwards compatibility in the current version of the
+kube-prometheus-stack helm chart that requires us to override the selectors
+for kube-scheduler and kube-controller-manager in order to see metrics from them.
+If you are not seeing metrics from these two targets, you can use the following steps.
 
-First get the `kube-controller` and `kube-scheduler` service name.  These are installed in the `kube-system` namespace.
+First get the `kube-controller` and `kube-scheduler` service name.
+These are installed in the `kube-system` namespace.
 
 ```
 kubectl get services -n kube-system
 ```
 
-You should see two services that look like the following.  Note `collection` refers to the Helm release name you used on installation.
+You should see two services that look like the following.
+Note `collection` refers to the Helm release name you used on installation.
 
 ```
-collection-prometheus-oper-kube-scheduler
-collection-prometheus-oper-kube-controller-manager
+collection-kube-prometheus-kube-scheduler
+collection-kube-prometheus-kube-controller-manager
 ```
 
-Run the following command to patch the labels on these services, again this command assumes the above service names which you may need to change.
+Run the following command to patch the labels on these services,
+again this command assumes the above service names which you may need to change.
 
-``` 
-kubectl -n kube-system patch service collection-prometheus-oper-kube-controller-manager -p '{"spec":{"selector":{"k8s-app": "kube-controller-manager"}}}'
-kubectl -n kube-system patch service collection-prometheus-oper-kube-scheduler -p '{"spec":{"selector":{"k8s-app": "kube-scheduler"}}}'
-kubectl -n kube-system patch service collection-prometheus-oper-kube-controller-manager --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
-kubectl -n kube-system patch service collection-prometheus-oper-kube-scheduler --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
+```
+kubectl -n kube-system patch service collection-kube-prometheus-kube-controller-manager -p '{"spec":{"selector":{"k8s-app": "kube-controller-manager"}}}'
+kubectl -n kube-system patch service collection-kube-prometheus-kube-scheduler -p '{"spec":{"selector":{"k8s-app": "kube-scheduler"}}}'
+kubectl -n kube-system patch service collection-kube-prometheus-kube-controller-manager --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
+kubectl -n kube-system patch service collection-kube-prometheus-kube-scheduler --type=json -p='[{"op": "remove", "path": "/spec/selector/component"}]'
 ```
 
 ### Prometheus stuck in `Terminating` state after running `helm del collection`
+
 Delete the pod forcefully by adding `--force --grace-period=0` to the `kubectl delete pod` command.
 
 ### Rancher
@@ -293,7 +325,14 @@ If you have the Rancher prometheus operator setup running, they will have to use
 
 ### Falco and Google Kubernetes Engine (GKE)
 
-`Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to use extended Berkeley Packet Filter (eBPF) to supply the stream of system calls to the Falco engine. eBPF is currently only supported on GKE and COS. For more information see [Installing Falco](https://falco.org/docs/installation/).
+`Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default
+operating system for its worker node pools.
+COS is a security-enhanced operating system that limits access to certain parts of the underlying OS.
+Because of this security constraint, Falco cannot insert its kernel module to process events for system calls.
+However, COS provides the ability to use extended Berkeley Packet Filter (eBPF)
+to supply the stream of system calls to the Falco engine.
+eBPF is currently only supported on GKE and COS.
+For more information see [Installing Falco](https://falco.org/docs/installation/).
 
 To install on `GKE`, use the provided override file to customize your configuration and uncomment the following lines in the `values.yaml` file referenced below:
 

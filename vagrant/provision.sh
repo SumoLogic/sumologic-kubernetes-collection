@@ -51,11 +51,9 @@ ln -s /usr/bin/helm3 /usr/bin/helm
 usermod -a -G microk8s vagrant
 
 # install yq with access to file structure
-curl https://github.com/mikefarah/yq/releases/download/3.2.1/yq_linux_amd64 -L -o /usr/local/bin/yq-3.2.1
-chmod +x /usr/local/bin/yq-3.2.1
-curl https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64 -L -o /usr/local/bin/yq-3.3.0
-chmod +x /usr/local/bin/yq-3.3.0
-ln -s /usr/local/bin/yq-3.3.0 /usr/local/bin/yq
+curl https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -L -o /usr/local/bin/yq-3.4.1
+chmod +x /usr/local/bin/yq-3.4.1
+ln -s /usr/local/bin/yq-3.4.1 /usr/local/bin/yq
 
 # Install docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
@@ -79,12 +77,18 @@ done
 # install requirements for ci/build.sh
 snap install ruby --channel=2.6/stable --classic
 gem install bundler
-apt install -y gcc g++ libsnappy-dev
+apt install -y gcc g++ libsnappy-dev libicu-dev zlib1g-dev cmake pkg-config libssl-dev
 
 SHELLCHECK_VERSION=v0.7.1
 curl -Lo- "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJf -
 sudo cp "shellcheck-${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin
 rm -rf "shellcheck-${SHELLCHECK_VERSION}/"
+
+gem install mdl
+# shellcheck disable=SC2016
+echo 'export PATH="$PATH:$HOME/.gem/bin"' >> /home/vagrant/.bashrc
+
+apt-get install -y yamllint
 
 echo Dashboard local in-vagrant IP:
 kubectl -n kube-system get services | grep -i kubernetes-dashboard | awk '{print $3}'

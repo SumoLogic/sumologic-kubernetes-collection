@@ -14,7 +14,7 @@ fluentd:
 ```
 
 ## Docker
- 
+
 __Note__: You will want to update `<RELEASE>` to the [docker tag](https://hub.docker.com/r/sumologic/kubernetes-fluentd/tags) you wish to use.
 
 ```dockerfile

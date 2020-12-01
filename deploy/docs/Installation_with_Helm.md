@@ -3,19 +3,18 @@
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events;
 enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
 
-<!-- TOC -->
-* [Requirements](#requirements)
-* [Prerequisite](#prerequisite)
-* [Installation Steps](#installation-steps)
-  * [Installing the helm chart in Openshift platform](#installing-the-helm-chart-in-openshift-platform)
-* [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
-* [Troubleshooting Installation](#troubleshooting-installation)
-  * [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
-  * [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
-* [Customizing Installation](#customizing-installation)
-* [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
-* [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
-<!-- /TOC -->
+- [Requirements](#requirements)
+- [Prerequisite](#prerequisite)
+- [Installation Steps](#installation-steps)
+  - [Authenticating with container registry](#authenticating-with-container-registry)
+  - [Installing the helm chart in Openshift platform](#installing-the-helm-chart-in-openshift-platform)
+- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
+- [Troubleshooting Installation](#troubleshooting-installation)
+  - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
+  - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
+- [Customizing Installation](#customizing-installation)
+- [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
+- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
 ## Requirements
 
@@ -24,9 +23,9 @@ the Free Trial button on https://www.sumologic.com/.
 
 The following are required to set up Sumo Logic's Kubernetes collection.
 
-* An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with
+- An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with
   [Manage Collectors](https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management) capability.
-* Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
+- Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
 
 To get an idea of the resources this chart will require to run on your cluster,
 you can reference our [performance doc](./Performance.md).
@@ -39,35 +38,35 @@ to your Fields table schema.
 This is to ensure your logs are tagged with relevant metadata.
 This is a one time setup per Sumo Logic account.
 
-* cluster
-* container
-* deployment
-* host
-* namespace
-* node
-* pod
-* service
+- cluster
+- container
+- deployment
+- host
+- namespace
+- node
+- pod
+- service
 
 ## Installation Steps
 
 These steps require that no Prometheus exists.
 If you already have Prometheus installed select from the following options:
 
-* [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
-* [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md)
-* [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md)
+- [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
+- [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md)
+- [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md)
 
 The Helm chart installation requires two parameter overrides:
 
-* __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-* __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+- __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
+- __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 If you are installing the collection in a cluster that requires proxying outbound requests,
 please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
 
 The following parameter is optional, but we recommend setting it.
 
-* __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
+- __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 To install the chart, first add the `sumologic` private repo:
@@ -98,6 +97,23 @@ If the namespace does not exist, you can add the `--create-namespace` flag.
 ```bash
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --create-namespace
 ```
+
+### Authenticating with container registry
+
+Sumo Logic container images used in the collection are currently hosted
+on [Docker Hub](https://hub.docker.com/) which
+[requires authentication in order to provide higher quota for image pulls][docker-rate-limit].
+
+Please refer to
+[our instructions](/deploy/docs/Working_with_container_registries.md#authenticating-with-container-registry)
+on how to provide credentials in order to authenticate with Docker Hub.
+
+An alternative would be to host Sumo Logic container images in one's container
+registries.
+To do so please refer to the following
+[instructions](/deploy/docs/Working_with_container_registries.md#hosting-sumo-logic-images)
+
+[docker-rate-limit]: https://www.docker.com/increase-rate-limits
 
 ### Installing the helm chart in Openshift platform
 
@@ -167,7 +183,8 @@ Once you have customized you can use the following commands to install or upgrad
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
 ```
 
-> **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
+> **Tip**: To filter or add custom metrics to Prometheus,
+> [please refer to this document](additional_prometheus_configuration.md)
 
 ## Upgrading Sumo Logic Collection
 
@@ -217,14 +234,20 @@ To uninstall/delete the Helm chart:
 helm delete my-release
 ```
 
-> **Helm3 Tip**: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.
+> **Helm3 Tip**: In Helm3 the default behavior is to purge history.
+> Use --keep-history to preserve it while deleting the release.
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
-To remove the Kubernetes secret:
+### Post installation cleanup
+
+In order to clean up the Kubernetes secret and associated hosted collector one
+can use the optional cleanup job by setting `sumologic.cleanUpEnabled` to `true`.
+
+Alternatively the secret can be removed manually with:
 
 ```bash
 kubectl delete secret sumologic
 ```
 
-Then delete the associated hosted collector in the Sumo Logic UI.
+and the associated hosted collector can be deleted in the Sumo Logic UI.

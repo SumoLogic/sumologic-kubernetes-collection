@@ -22,6 +22,12 @@
 #
 # shellcheck disable=SC2010
 # extract target directory names from the file names using _ as separator
+err_report() {
+    echo "Custom script error on line $1"
+    exit 1
+}
+trap 'err_report $LINENO' ERR
+
 for dir in $(ls -1 /customer-scripts | grep _ | grep -oE '^.*?_' | sed 's/_//g' | sort | uniq); do
   target="/scripts/${dir}"
   mkdir "${target}"

@@ -204,8 +204,30 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}-scc
 {{- end -}}
 
+{{- define "sumologic.labels.app.cleanup" -}}
+{{- template "sumologic.labels.app" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.cleanup.configmap" -}}
+{{- template "sumologic.labels.app.cleanup" . }}
+{{- end -}}
+
 {{/*
-Generate helm.sh annotations. It takes weight as parameter.
+Generate cleanup job helm.sh annotations. It takes weight as parameter.
+
+Example usage:
+
+{{ include "sumologic.annotations.app.cleanup.helmsh" "1" }}
+
+*/}}
+{{- define "sumologic.annotations.app.cleanup.helmsh" -}}
+helm.sh/hook: pre-delete
+helm.sh/hook-weight: {{ printf "\"%s\"" . }}
+helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+{{- end -}}
+
+{{/*
+Generate setup job helm.sh annotations. It takes weight as parameter.
 
 Example usage:
 
@@ -378,6 +400,14 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- template "sumologic.metadata.name.setup" . }}-scc
 {{- end -}}
 
+{{- define "sumologic.metadata.name.cleanup" -}}
+{{ template "sumologic.fullname" . }}-cleanup
+{{- end -}}
+
+{{- define "sumologic.metadata.name.cleanup.configmap" -}}
+{{ template "sumologic.metadata.name.cleanup" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.logs" -}}
 sumologic.com/app: fluentd-logs
 sumologic.com/component: logs
@@ -396,6 +426,30 @@ sumologic.com/component: events
 {{- define "sumologic.labels.traces" -}}
 sumologic.com/app: otelcol
 sumologic.com/component: traces
+{{- end -}}
+
+{{- define "sumologic.label.scrape" -}}
+sumologic.com/scrape: "true"
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.logs" -}}
+{{ template "sumologic.label.scrape" . }}
+{{ template "sumologic.labels.logs" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.metrics" -}}
+{{ template "sumologic.label.scrape" . }}
+{{ template "sumologic.labels.metrics" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.events" -}}
+{{ template "sumologic.label.scrape" . }}
+{{ template "sumologic.labels.events" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.traces" -}}
+{{ template "sumologic.label.scrape" . }}
+{{ template "sumologic.labels.traces" . }}
 {{- end -}}
 
 {{/*
@@ -541,7 +595,31 @@ Example:
 {{- end -}}
 
 {{/*
-Convert source name to terraform metric name:
+Returns the name of Kubernetes secret.
+
+Example usage:
+
+{{ include "terraform.secret.name" }}
+
+*/}}
+{{- define "terraform.secret.name" -}}
+{{ printf "%s" "sumologic" }}
+{{- end -}}
+
+{{/*
+Returns the name of Kubernetes secret prefixed with release namespace.
+
+Example usage:
+
+{{ include "terraform.secret.fullname" }}
+
+*/}}
+{{- define "terraform.secret.fullname" -}}
+{{ .Release.Namespace }}/{{ template "terraform.secret.name" . }}
+{{- end -}}
+
+{{/*
+Convert source name to Terraform metric name:
  * converts all `-` to `_`
  * adds `_$type_source` suffix
 
@@ -579,7 +657,7 @@ Example usage:
 {{- end -}}
 
 {{/*
-Generate line for local terraform section
+Generate line for local Terraform section
  * `terraform.sources.local = value`
 
 Example usage:
@@ -592,7 +670,7 @@ Example usage:
 {{- end -}}
 
 {{/*
-Generate line for data terraform section
+Generate line for data Terraform section
 
 Example usage:
 
@@ -601,6 +679,18 @@ Example usage:
 */}}
 {{- define "terraform.sources.data" -}}
 {{ printf "%-41s = sumologic_http_source.%s.url" .Endpoint .Name }}
+{{- end -}}
+
+{{/*
+Returns the collector name.
+
+Example usage:
+
+{{ include "terraform.collector.name" . }}
+
+*/}}
+{{- define "terraform.collector.name" -}}
+{{- if .Values.sumologic.collectorName }}{{ .Values.sumologic.collectorName }}{{- else}}{{ .Values.sumologic.clusterName }}{{- end}}
 {{- end -}}
 
 {{/*
@@ -639,7 +729,7 @@ resource "sumologic_http_source" "{{ .Name }}" {
 {{- end -}}
 
 {{/*
-Generate key for terraform object. Default behaviour is to print:
+Generate key for Terraform object. Default behaviour is to print:
 
 {{ name }} = {{ value }}
 
@@ -667,7 +757,7 @@ Example usage:
 {{- end -}}
 
 {{/*
-Generates terraform object for primitives, slices and maps
+Generates Terraform object for primitives, slices and maps
 
 Example usage:
 
@@ -729,9 +819,9 @@ Example usage:
 {{- $type := .Type -}}
 {{- $endpoint := .Endpoint -}}
 {{- if not $endpoint -}}
-{{- $source := (index $ctx.sumologic.sources $type "default") -}}
-{{- if (index $ctx.sumologic.sources $type .Name "config-name") -}}
-{{- $endpoint = index $ctx.sumologic.sources $type .Name "config-name" -}}
+{{- $source := (index $ctx.sumologic.collector.sources $type "default") -}}
+{{- if (index $ctx.sumologic.collector.sources $type .Name "config-name") -}}
+{{- $endpoint = index $ctx.sumologic.collector.sources $type .Name "config-name" -}}
 {{- else -}}
 {{- $endpoint = printf "endpoint-%s" (include "terraform.sources.name" (dict "Name" $name "Type" $type)) -}}
 {{- end -}}
@@ -793,8 +883,8 @@ Example Usage:
 {{- $ctx := .Context -}}
 {{- $name := .Name -}}
 {{- $value := true -}}
-{{- if and (hasKey $ctx.sumologic.sources $type) (hasKey (index $ctx.sumologic.sources $type) $name) (hasKey (index $ctx.sumologic.sources $type $name) "create") -}}
-{{- if not (index $ctx.sumologic.sources $type $name "create") -}}
+{{- if and (hasKey $ctx.sumologic.collector.sources $type) (hasKey (index $ctx.sumologic.collector.sources $type) $name) (hasKey (index $ctx.sumologic.collector.sources $type $name) "create") -}}
+{{- if not (index $ctx.sumologic.collector.sources $type $name "create") -}}
 {{- $value = false -}}
 {{- end -}}
 {{- end -}}
@@ -811,7 +901,7 @@ Example:
 {{- define "kubernetes.sources.envs" -}}
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
-{{- range $key, $source := (index .Context.sumologic.sources $type) }}
+{{- range $key, $source := (index .Context.sumologic.collector.sources $type) }}
         - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) }}
           valueFrom:
             secretKeyRef:

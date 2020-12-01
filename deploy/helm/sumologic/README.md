@@ -1,20 +1,19 @@
 # Configuration
+
 To see all available configuration for our sub-charts, please refer to their documentation.
 
-  * [Falco](https://github.com/helm/charts/tree/master/stable/falco#configuration) - All Falco properties should be prefixed with `falco.` in our values.yaml to override a property not listed below.
-  * [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#configuration) - All `kube-sprometheus-stack` properties should be prefixed with `prometheus-operator.` in our values.yaml to override a property not listed below.
-  * [Fluent-bit](https://github.com/helm/charts/tree/master/stable/fluent-bit#configuration) - All Fluent-bit properties should be prefixed with `fluent-bit.` in our values.yaml to override a property not listed below.
-  * [Metrics Server](https://github.com/helm/charts/tree/master/stable/metrics-server#configuration) - All Metrics Server properties should be prefixed with `metrics-server.` in our values.yaml to override a property not listed below.
-  
+* [Falco](https://github.com/helm/charts/tree/master/stable/falco#configuration) - All Falco properties should be prefixed with `falco.` in our values.yaml to override a property not listed below.
+* [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#configuration) - All Kube Prometheus Stack properties should be prefixed with `kube-prometheus-stack.` in our values.yaml to override a property not listed below.
+* [Fluent Bit](https://github.com/helm/charts/tree/master/stable/fluent-bit#configuration) - All Fluent Bit properties should be prefixed with `fluent-bit.` in our values.yaml to override a property not listed below.
+* [Metrics Server](https://github.com/helm/charts/tree/master/stable/metrics-server#configuration) - All Metrics Server properties should be prefixed with `metrics-server.` in our values.yaml to override a property not listed below.
+
 The following table lists the configurable parameters of the Sumo Logic chart and their default values.
-  
+
 Parameter | Description | Default
 --- | --- | ---
-`image.repository`  |   Image repository for Sumo Logic docker container.   |   `sumologic/kubernetes-fluentd`
-`image.tag` | Image tag for Sumo Logic docker container. | `1.0.0-rc.2`
-`image.pullPolicy` | Image pullPolicy for Sumo Logic docker container.  | `IfNotPresent`
 `nameOverride` | Used to override the Chart name. | `Nil`
 `sumologic.setupEnabled` | If enabled, a pre-install hook will create Collector and Sources in Sumo Logic. | `true`
+`sumologic.cleanUpEnabled` | If enabled, a pre-delete hook will destroy Kubernetes secret and Sumo Logic Collector. | `false`
 `sumologic.logs.enabled` | Set the enabled flag to false for disabling logs ingestion altogether. | `true`
 `sumologic.metrics.enabled` | Set the enabled flag to false for disabling metrics ingestion altogether. | `true`
 `sumologic.traces.enabled` | Set the enabled flag to true to enable tracing ingestion. _Tracing must be enabled for the account first. Please contact your Sumo representative for activation details_ | `false`
@@ -27,6 +26,7 @@ Parameter | Description | Default
 `sumologic.httpProxy` | HTTP proxy URL | `Nil`
 `sumologic.httpsProxy` | HTTPS proxy URL | `Nil`
 `sumologic.noProxy` | List of comma separated hostnames which should be excluded from the proxy | `kubernetes.default.svc`
+`sumologic.pullSecrets` | Optional list of secrets that will be used for pulling images for Sumo Logic's jobs, deployments and statefulsets. | `Nil`
 `sumologic.podLabels` | Additional labels for the pods. | `{}`
 `sumologic.podAnnotations` | Additional annotations for the pods. | `{}`
 `sumologic.scc.create` | Create OpenShift's Security Context Constraint | `false`
@@ -36,7 +36,13 @@ Parameter | Description | Default
 `sumologic.setup.job.annotations` | Annotations for the Job. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"3"}]`
 `sumologic.setup.job.podLabels` | Additional labels for the setup Job pod. | `{}`
 `sumologic.setup.job.podAnnotations` | Additional annotations for the setup Job pod. | `{}`
+`sumologic.setup.job.image.repository` | Image repository for Sumo Logic setup job docker container. | `sumologic/kubernetes-fluentd`
+`sumologic.setup.job.image.tag` | Image tag for Sumo Logic setup job docker container. | `1.3.0`
+`sumologic.setup.job.image.pullPolicy` | Image pullPolicy for Sumo Logic docker container. | `IfNotPresent`
 `sumologic.setup.serviceAccount.annotations` | Annotations for the ServiceAccount. | `[{"helm.sh/hook":"pre-install,pre-upgrade","helm.sh/hook-delete-policy":"before-hook-creation,hook-succeeded","helm.sh/hook-weight":"0"}]`
+`fluentd.image.repository` | Image repository for Sumo Logic docker container. | `sumologic/kubernetes-fluentd`
+`fluentd.image.tag` | Image tag for Sumo Logic docker container. | `1.3.0`
+`fluentd.image.pullPolicy` | Image pullPolicy for Sumo Logic docker container. | `IfNotPresent`
 `fluentd.additionalPlugins` | Additional Fluentd plugins to install from RubyGems. Please see our [documentation](./Additional_Fluentd_Plugins.md) for more information. | `[]`
 `fluentd.compression.enabled` | Flag to control if data is sent to Sumo Logic compressed or not | `true`
 `fluentd.compression.encoding` | Specifies which encoding should be used to compress data (either `gzip` or `deflate`) | `gzip`
@@ -158,6 +164,7 @@ Parameter | Description | Default
 `metrics-server.args` | Arguments for metric server. | `["--kubelet-insecure-tls","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"]`
 `fluent-bit.resources` | Resources for Fluent-bit daemonsets. | `{}`
 `fluent-bit.enabled` | Flag to control deploying Fluent-bit Helm sub-chart. | `true`
+`fluent-bit.service.labels` | Labels for fluent-bit service. | `{sumologic.com/scrape: "true"}`
 `fluent-bit.podLabels` | Additional labels for fluent-bit pods. | `{}`
 `fluent-bit.podAnnotations` | Additional annotations for fluent-bit pods. | `{}`
 `fluent-bit.service.flush` | Frequency to flush fluent-bit buffer to fluentd. | `5`
@@ -176,31 +183,31 @@ Parameter | Description | Default
 `fluent-bit.parsers.enabled` | Enable custom parsers. | `true`
 `fluent-bit.parsers.regex` | List of regex parsers. | `[{"name":"multi_line","regex":"(?\u003clog\u003e^{\"log\":\"\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*)"}]`
 `fluent-bit.rawConfig` | DESCRIPTION | `@INCLUDE fluent-bit-service.conf [INPUT] Name tail Path /var/log/containers/*.log Multiline On Parser_Firstline multi_line Tag containers.* Refresh_Interval 1 Rotate_Wait 60 Mem_Buf_Limit 5MB Skip_Long_Lines On DB /tail-db/tail-containers-state-sumo.db DB.Sync Normal [INPUT] Name systemd Tag host.* Systemd_Filter _SYSTEMD_UNIT=addon-config.service Systemd_Filter _SYSTEMD_UNIT=addon-run.service Systemd_Filter _SYSTEMD_UNIT=cfn-etcd-environment.service Systemd_Filter _SYSTEMD_UNIT=cfn-signal.service Systemd_Filter _SYSTEMD_UNIT=clean-ca-certificates.service Systemd_Filter _SYSTEMD_UNIT=containerd.service Systemd_Filter _SYSTEMD_UNIT=coreos-metadata.service Systemd_Filter _SYSTEMD_UNIT=coreos-setup-environment.service Systemd_Filter _SYSTEMD_UNIT=coreos-tmpfiles.service Systemd_Filter _SYSTEMD_UNIT=dbus.service Systemd_Filter _SYSTEMD_UNIT=docker.service Systemd_Filter _SYSTEMD_UNIT=efs.service Systemd_Filter _SYSTEMD_UNIT=etcd-member.service Systemd_Filter _SYSTEMD_UNIT=etcd.service Systemd_Filter _SYSTEMD_UNIT=etcd2.service Systemd_Filter _SYSTEMD_UNIT=etcd3.service Systemd_Filter _SYSTEMD_UNIT=etcdadm-check.service Systemd_Filter _SYSTEMD_UNIT=etcdadm-reconfigure.service Systemd_Filter _SYSTEMD_UNIT=etcdadm-save.service Systemd_Filter _SYSTEMD_UNIT=etcdadm-update-status.service Systemd_Filter _SYSTEMD_UNIT=flanneld.service Systemd_Filter _SYSTEMD_UNIT=format-etcd2-volume.service Systemd_Filter _SYSTEMD_UNIT=kube-node-taint-and-uncordon.service Systemd_Filter _SYSTEMD_UNIT=kubelet.service Systemd_Filter _SYSTEMD_UNIT=ldconfig.service Systemd_Filter _SYSTEMD_UNIT=locksmithd.service Systemd_Filter _SYSTEMD_UNIT=logrotate.service Systemd_Filter _SYSTEMD_UNIT=lvm2-monitor.service Systemd_Filter _SYSTEMD_UNIT=mdmon.service Systemd_Filter _SYSTEMD_UNIT=nfs-idmapd.service Systemd_Filter _SYSTEMD_UNIT=nfs-mountd.service Systemd_Filter _SYSTEMD_UNIT=nfs-server.service Systemd_Filter _SYSTEMD_UNIT=nfs-utils.service Systemd_Filter _SYSTEMD_UNIT=node-problem-detector.service Systemd_Filter _SYSTEMD_UNIT=ntp.service Systemd_Filter _SYSTEMD_UNIT=oem-cloudinit.service Systemd_Filter _SYSTEMD_UNIT=rkt-gc.service Systemd_Filter _SYSTEMD_UNIT=rkt-metadata.service Systemd_Filter _SYSTEMD_UNIT=rpc-idmapd.service Systemd_Filter _SYSTEMD_UNIT=rpc-mountd.service Systemd_Filter _SYSTEMD_UNIT=rpc-statd.service Systemd_Filter _SYSTEMD_UNIT=rpcbind.service Systemd_Filter _SYSTEMD_UNIT=set-aws-environment.service Systemd_Filter _SYSTEMD_UNIT=system-cloudinit.service Systemd_Filter _SYSTEMD_UNIT=systemd-timesyncd.service Systemd_Filter _SYSTEMD_UNIT=update-ca-certificates.service Systemd_Filter _SYSTEMD_UNIT=user-cloudinit.service Systemd_Filter _SYSTEMD_UNIT=var-lib-etcd2.service Max_Entries 1000 Read_From_Tail true @INCLUDE fluent-bit-output.conf`
-`prometheus-operator.kubeTargetVersionOverride` | Provide a target gitVersion of K8S, in case .Capabilites.KubeVersion is not available (e.g. helm template). Changing this may break Sumo Logic apps. | `1.13.0-0`
-`prometheus-operator.enabled` | Flag to control deploying Prometheus Operator Helm sub-chart. | `true`
-`prometheus-operator.alertmanager.enabled` | Deploy alertmanager. | `false`
-`prometheus-operator.grafana.enabled` | If true, deploy the grafana sub-chart. | `false`
-`prometheus-operator.grafana.defaultDashboardsEnabled` | Deploy default dashboards. These are loaded using the sidecar. | `false`
-`prometheus-operator.prometheusOperator.podLabels` | Additional labels for prometheus operator pods. | `{}`
-`prometheus-operator.prometheusOperator.podAnnotations` | Additional annotations for prometheus operator pods. | `{}`
-`prometheus-operator.prometheusOperator.resources` | Resource limits for prometheus operator.  Uses sub-chart defaults. | `{}`
-`prometheus-operator.prometheusOperator.admissionWebhooks.enabled` | Create PrometheusRules admission webhooks. Mutating webhook will patch PrometheusRules objects indicating they were validated. Validating webhook will check the rules syntax. | `false`
-`prometheus-operator.prometheusOperator.tlsProxy.enabled` | Enable a TLS proxy container. Only the squareup/ghostunnel command line arguments are currently supported and the secret where the cert is loaded from is expected to be provided by the admission webhook. | `false`
-`prometheus-operator.kube-state-metrics.resources` | Resource limits for kube state metrics.  Uses sub-chart defaults. | `{}`
-`prometheus-operator.kube-state-metrics.customLabels` | Custom labels to apply to service, deployment and pods.  Uses sub-chart defaults. | `{}`
- `prometheus-operator.kube-state-metrics.podAnnotations` | Additional annotations for pods in the DaemonSet.  Uses sub-chart defaults. | `{}`
-`prometheus-operator.prometheus.additionalServiceMonitors` | List of ServiceMonitor objects to create. | `[{"additionalLabels":{"app":"collection-sumologic-fluentd-logs"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-logs","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-logs"}}},{"additionalLabels":{"app":"collection-sumologic-fluentd-metrics"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-metrics","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-metrics"}}},{"additionalLabels":{"app":"collection-sumologic-fluentd-events"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-events","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-events"}}},{"additionalLabels":{"app":"collection-fluent-bit"},"endpoints":[{"path":"/api/v1/metrics/prometheus","port":"metrics"}],"name":"collection-fluent-bit","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"fluent-bit"}}},{"additionalLabels":{"app":"collection-sumologic-otelcol"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-otelcol","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-otelcol"}}}]`
-`prometheus-operator.prometheus.prometheusSpec.resources` | Resource limits for prometheus.  Uses sub-chart defaults. | `{}`
-`prometheus-operator.prometheus.prometheusSpec.thanos.baseImage` | Base image for Thanos container. | `quay.io/thanos/thanos`
-`prometheus-operator.prometheus.prometheusSpec.thanos.version` | Image tag for Thanos container. | `v0.10.0`
-`prometheus-operator.prometheus.prometheusSpec.containers` | Containers allows injecting additional containers. This is meant to allow adding an authentication proxy to a Prometheus pod. | `[{"env":[{"name":"CHART","valueFrom":{"configMapKeyRef":{"key":"fluentdMetrics","name":"sumologic-configmap"}}},{"name":"NAMESPACE","valueFrom":{"configMapKeyRef":{"key":"fluentdNamespace","name":"sumologic-configmap"}}}],"name":"prometheus-config-reloader"}]`
-`prometheus-operator.prometheus.prometheusSpec.podMetadata.labels` | Add custom pod labels to prometheus pods | `{}`
-`prometheus-operator.prometheus.prometheusSpec.podMetadata.annotations` | Add custom pod annotations to prometheus pods | `{}`
-`prometheus-operator.prometheus.prometheusSpec.remoteWrite` | If specified, the remote_write spec. | See values.yaml
-`prometheus-operator.prometheus.prometheusSpec.walCompression` | Enables walCompression in Prometheus | `true`
-`prometheus-operator.prometheus-node-exporter.podLabels` | Additional labels for prometheus-node-exporter pods. | `{}`
-`prometheus-operator.prometheus-node-exporter.podAnnotations` | Additional annotations for prometheus-node-exporter pods. | `{}`
-`prometheus-operator.prometheus-node-exporter.resources` | Resource limits for node exporter.  Uses sub-chart defaults. | `{}`
+`kube-prometheus-stack.kubeTargetVersionOverride` | Provide a target gitVersion of K8S, in case .Capabilites.KubeVersion is not available (e.g. helm template). Changing this may break Sumo Logic apps. | `1.13.0-0`
+`kube-prometheus-stack.enabled` | Flag to control deploying Prometheus Operator Helm sub-chart. | `true`
+`kube-prometheus-stack.alertmanager.enabled` | Deploy alertmanager. | `false`
+`kube-prometheus-stack.grafana.enabled` | If true, deploy the grafana sub-chart. | `false`
+`kube-prometheus-stack.grafana.defaultDashboardsEnabled` | Deploy default dashboards. These are loaded using the sidecar. | `false`
+`kube-prometheus-stack.prometheusOperator.podLabels` | Additional labels for prometheus operator pods. | `{}`
+`kube-prometheus-stack.prometheusOperator.podAnnotations` | Additional annotations for prometheus operator pods. | `{}`
+`kube-prometheus-stack.prometheusOperator.resources` | Resource limits for prometheus operator.  Uses sub-chart defaults. | `{}`
+`kube-prometheus-stack.prometheusOperator.admissionWebhooks.enabled` | Create PrometheusRules admission webhooks. Mutating webhook will patch PrometheusRules objects indicating they were validated. Validating webhook will check the rules syntax. | `false`
+`kube-prometheus-stack.prometheusOperator.tls.enabled` | Enable TLS in prometheus operator. | `false`
+`kube-prometheus-stack.kube-state-metrics.resources` | Resource limits for kube state metrics.  Uses sub-chart defaults. | `{}`
+`kube-prometheus-stack.kube-state-metrics.customLabels` | Custom labels to apply to service, deployment and pods.  Uses sub-chart defaults. | `{}`
+`kube-prometheus-stack.kube-state-metrics.podAnnotations` | Additional annotations for pods in the DaemonSet.  Uses sub-chart defaults. | `{}`
+`kube-prometheus-stack.prometheus.additionalServiceMonitors` | List of ServiceMonitor objects to create. | `[{"additionalLabels":{"app":"collection-sumologic-fluentd-logs"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-logs","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-logs"}}},{"additionalLabels":{"app":"collection-sumologic-fluentd-metrics"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-metrics","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-metrics"}}},{"additionalLabels":{"app":"collection-sumologic-fluentd-events"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-fluentd-events","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-fluentd-events"}}},{"additionalLabels":{"app":"collection-fluent-bit"},"endpoints":[{"path":"/api/v1/metrics/prometheus","port":"metrics"}],"name":"collection-fluent-bit","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"fluent-bit"}}},{"additionalLabels":{"app":"collection-sumologic-otelcol"},"endpoints":[{"port":"metrics"}],"name":"collection-sumologic-otelcol","namespaceSelector":{"matchNames":["sumologic"]},"selector":{"matchLabels":{"app":"collection-sumologic-otelcol"}}}]`
+`kube-prometheus-stack.prometheus.prometheusSpec.resources` | Resource limits for prometheus.  Uses sub-chart defaults. | `{}`
+`kube-prometheus-stack.prometheus.prometheusSpec.thanos.baseImage` | Base image for Thanos container. | `quay.io/thanos/thanos`
+`kube-prometheus-stack.prometheus.prometheusSpec.thanos.version` | Image tag for Thanos container. | `v0.10.0`
+`kube-prometheus-stack.prometheus.prometheusSpec.containers` | Containers allows injecting additional containers. This is meant to allow adding an authentication proxy to a Prometheus pod. | `[{"env":[{"name":"CHART","valueFrom":{"configMapKeyRef":{"key":"fluentdMetrics","name":"sumologic-configmap"}}},{"name":"NAMESPACE","valueFrom":{"configMapKeyRef":{"key":"fluentdNamespace","name":"sumologic-configmap"}}}],"name":"prometheus-config-reloader"}]`
+`kube-prometheus-stack.prometheus.prometheusSpec.podMetadata.labels` | Add custom pod labels to prometheus pods | `{}`
+`kube-prometheus-stack.prometheus.prometheusSpec.podMetadata.annotations` | Add custom pod annotations to prometheus pods | `{}`
+`kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` | If specified, the remote_write spec. | See values.yaml
+`kube-prometheus-stack.prometheus.prometheusSpec.walCompression` | Enables walCompression in Prometheus | `true`
+`kube-prometheus-stack.prometheus-node-exporter.podLabels` | Additional labels for prometheus-node-exporter pods. | `{}`
+`kube-prometheus-stack.prometheus-node-exporter.podAnnotations` | Additional annotations for prometheus-node-exporter pods. | `{}`
+`kube-prometheus-stack.prometheus-node-exporter.resources` | Resource limits for node exporter.  Uses sub-chart defaults. | `{}`
 `falco.enabled` | Flag to control deploying Falco Helm sub-chart. | `false`
 `falco.ebpf.enabled` | Enable eBPF support for Falco instead of falco-probe kernel module. Set to false for GKE. | `true`
 `falco.falco.jsonOutput` | Output events in json. | `true`
@@ -217,8 +224,8 @@ Parameter | Description | Default
 `otelcol.config.service.pipelines.traces.receivers` | Sets the list of enabled receivers. | `{jaeger, opencensus, otlp, zipkin}`
 `otelcol.config.exporters.zipkin.timeout` | Sets the Zipkin (default) exporter timeout. Append the unit, e.g. `s` when setting the parameter | `5s`
 `otelcol.config.exporters.logging.loglevel` | When tracing debug logging exporter is enabled, sets the verbosity level. Use either `info` or `debug`. | `info`
-`otelcol.config.service.pipelines.traces.exporters` | Sets the list of exporters enabled within OpenTelemetry Collector. Available values: `zipkin`, `logging`. Set to `{zipkin, logging}` to enable logging debugging exporter. | `{zipkin}` 
+`otelcol.config.service.pipelines.traces.exporters` | Sets the list of exporters enabled within OpenTelemetry Collector. Available values: `zipkin`, `logging`. Set to `{zipkin, logging}` to enable logging debugging exporter. | `{zipkin}`
 `otelcol.config.service.pipelines.traces.processors` | Sets the list of enabled OpenTelemetry Collector processors. | `{memory_limiter, k8s_tagger, source, resource, batch, queued_retry}`
-`otelcol.config.processors.memory_limiter.limit_mib` | Sets the OpenTelemetry Collector memory limitter plugin value (in MiB). Should be at least 100 Mib less than the value of `otelcol.deployment.resources.limits.memory`.  | `1900` 
+`otelcol.config.processors.memory_limiter.limit_mib` | Sets the OpenTelemetry Collector memory limitter plugin value (in MiB). Should be at least 100 Mib less than the value of `otelcol.deployment.resources.limits.memory`. | `1900`
 `otelcol.config.processors.batch.send_batch_size` | Sets the preferred size of batch (in number of spans). | `256`
 `otelcol.config.processors.batch.send_batch_max_size` | Sets the maximum allowed size of a batch (in number of spans). Use with caution, setting too large value might cause 413 Payload Too Large errors. | `512`

@@ -39,6 +39,12 @@ data:
     #
     # shellcheck disable=SC2010
     # extract target directory names from the file names using _ as separator
+    err_report() {
+        echo "Custom script error on line $1"
+        exit 1
+    }
+    trap 'err_report $LINENO' ERR
+  
     for dir in $(ls -1 /customer-scripts | grep _ | grep -oE '^.*?_' | sed 's/_//g' | sort | uniq); do
       target="/scripts/${dir}"
       mkdir "${target}"
@@ -123,7 +129,7 @@ data:
   main.tf: |
     terraform {
       required_providers {
-        sumologic  = "~> 2.4.0"
+        sumologic  = "~> 2.4"
         kubernetes = "~> 1.13.0"
       }
     }
@@ -268,7 +274,7 @@ data:
   
     # Fix URL to remove "v1" or "v1/"
     export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
-    # Support proxy for terraform
+    # Support proxy for Terraform
     export HTTP_PROXY=${HTTP_PROXY:=""}
     export HTTPS_PROXY=${HTTPS_PROXY:=""}
     export NO_PROXY=${NO_PROXY:=""}
@@ -293,9 +299,7 @@ data:
     }
   
     cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
-    cd /terraform
-  
-    COLLECTOR_NAME="kubernetes"
+    cd /terraform || exit 1
   
     terraform init
   
@@ -325,26 +329,31 @@ data:
         echo "Please refer to https://help.sumologic.com/Manage/Fields to manually create the fields after you have removed unused fields to free up capacity."
     fi
   
+    readonly COLLECTOR_NAME="kubernetes"
+  
     # Sumo Logic Collector and HTTP sources
-    terraform import sumologic_collector.collector "$COLLECTOR_NAME"
-    terraform import sumologic_http_source.default_events_source "$COLLECTOR_NAME/events"
-    terraform import sumologic_http_source.default_logs_source "$COLLECTOR_NAME/logs"
-    terraform import sumologic_http_source.apiserver_metrics_source "$COLLECTOR_NAME/apiserver-metrics"
-    terraform import sumologic_http_source.control_plane_metrics_source "$COLLECTOR_NAME/control-plane-metrics"
-    terraform import sumologic_http_source.controller_metrics_source "$COLLECTOR_NAME/kube-controller-manager-metrics"
-    terraform import sumologic_http_source.default_metrics_source "$COLLECTOR_NAME/(default-metrics)"
-    terraform import sumologic_http_source.kubelet_metrics_source "$COLLECTOR_NAME/kubelet-metrics"
-    terraform import sumologic_http_source.node_metrics_source "$COLLECTOR_NAME/node-exporter-metrics"
-    terraform import sumologic_http_source.scheduler_metrics_source "$COLLECTOR_NAME/kube-scheduler-metrics"
-    terraform import sumologic_http_source.state_metrics_source "$COLLECTOR_NAME/kube-state-metrics"
-    terraform import sumologic_http_source.test_source_metrics_source "$COLLECTOR_NAME/(Test source)"
+    # Only import sources when collector exists.
+    if terraform import sumologic_collector.collector "${COLLECTOR_NAME}"; then
+    terraform import sumologic_http_source.default_events_source "${COLLECTOR_NAME}/events"
+    terraform import sumologic_http_source.default_logs_source "${COLLECTOR_NAME}/logs"
+    terraform import sumologic_http_source.apiserver_metrics_source "${COLLECTOR_NAME}/apiserver-metrics"
+    terraform import sumologic_http_source.control_plane_metrics_source "${COLLECTOR_NAME}/control-plane-metrics"
+    terraform import sumologic_http_source.controller_metrics_source "${COLLECTOR_NAME}/kube-controller-manager-metrics"
+    terraform import sumologic_http_source.default_metrics_source "${COLLECTOR_NAME}/(default-metrics)"
+    terraform import sumologic_http_source.kubelet_metrics_source "${COLLECTOR_NAME}/kubelet-metrics"
+    terraform import sumologic_http_source.node_metrics_source "${COLLECTOR_NAME}/node-exporter-metrics"
+    terraform import sumologic_http_source.scheduler_metrics_source "${COLLECTOR_NAME}/kube-scheduler-metrics"
+    terraform import sumologic_http_source.state_metrics_source "${COLLECTOR_NAME}/kube-state-metrics"
+    terraform import sumologic_http_source.test_source_metrics_source "${COLLECTOR_NAME}/(Test source)"
+    fi
   
     # Kubernetes Secret
     terraform import kubernetes_secret.sumologic_collection_secret sumologic/sumologic
   
     # Apply planned changes
     terraform apply -auto-approve \
-        -var="create_fields=${CREATE_FIELDS}"
+        -var="create_fields=${CREATE_FIELDS}" \
+        || { echo "Error during applying Terraform changes"; exit 1; }
   
     # Cleanup env variables
     export SUMOLOGIC_BASE_URL=
@@ -369,7 +378,7 @@ data:
     }
   
     variable "create_fields" {
-      description = "If set, terraform will attempt to create fields at Sumo Logic"
+      description = "If set, Terraform will attempt to create fields at Sumo Logic"
       type        = bool
       default     = true
     }
