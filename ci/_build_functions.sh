@@ -78,13 +78,14 @@ function push_helm_chart() {
 
   echo "Pushing new Helm Chart release ${version}"
 
-  set -e
   # due to helm repo index issue: https://github.com/helm/helm/issues/7363
   # we need to create new package in a different dir, merge the index and move the package back
   mkdir -p "${sync_dir}"
+  set -ex
   helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
 
   git fetch origin gh-pages
+  git reset --hard HEAD
   git checkout gh-pages
 
   helm repo index --url "https://sumologic.github.io/sumologic-kubernetes-collection${chart_dir:1}/" --merge "${chart_dir}/index.yaml" "${sync_dir}"
@@ -93,9 +94,10 @@ function push_helm_chart() {
   rmdir "${sync_dir}"
 
   git add -A
+  git status
   git commit -m "Push new Helm Chart release ${version}"
-  git push --quiet origin gh-pages
-  set +e
+  git push origin gh-pages
+  set +ex
 }
 
 function build_docker_image() {
