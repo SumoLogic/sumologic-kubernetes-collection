@@ -216,6 +216,7 @@ Parameter | Description | Default
 `telegraf-operator.classes.secretName` | Secret name in which the Telegraf Operator configuration will be stored. | `telegraf-operator-classes`
 `telegraf-operator.default` | Name of the default output configuration. | `sumologic-prometheus`
 `telegraf-operator.data` | Telegraf sidecar configuration. | `{"sumologic-prometheus": "[[outputs.prometheus_client]]\\n          ## Configuration details:\\n          ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration\\n          listen = ':9273'\\n          metric_version = 2\\n"}`
+`otelagent.enabled` | Enables OpenTelemetry Collector Agent mode DaemonSet.  | `false`
 `otelcol.deployment.replicas` | Set the number of OpenTelemetry Collector replicas. | `1`
 `otelcol.deployment.resources.limits.memory` | Sets the OpenTelemetry Collector memory limit. | `2Gi`
 `otelcol.deployment.priorityClassName` | Priority class name for OpenTelemetry Collector log pods. | `Nil`
