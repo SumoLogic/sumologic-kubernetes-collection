@@ -772,6 +772,12 @@ fluent-bit:
   ## Setting the flag to true instead of commenting out will break other functionality.
   # enabled: false
 
+  ## Configuration for fluent-bit service
+  service:
+    ## Add custom labels to fluent-bit service
+    labels:
+      sumologic.com/scrape: "true"  # label used by fluent-bit service monitor
+
   ## Add custom pod labels to fluent-bit daemonset pods
   podLabels: {}
 
@@ -1225,6 +1231,7 @@ kube-prometheus-stack:
         selector:
           matchLabels:
             sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-fluentd-metrics
         additionalLabels:
           sumologic.com/app: fluentd-metrics
@@ -1236,6 +1243,7 @@ kube-prometheus-stack:
         selector:
           matchLabels:
             sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-fluentd-events
         additionalLabels:
           sumologic.com/app: fluentd-events
@@ -1247,6 +1255,7 @@ kube-prometheus-stack:
         selector:
           matchLabels:
             sumologic.com/app: fluentd-events
+            sumologic.com/scrape: "true"
       - name: collection-fluent-bit
         additionalLabels:
           app: collection-fluent-bit
@@ -1259,6 +1268,7 @@ kube-prometheus-stack:
         selector:
           matchLabels:
             app.kubernetes.io/name: fluent-bit
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-otelcol
         additionalLabels:
           sumologic.com/app: otelcol
@@ -1270,6 +1280,7 @@ kube-prometheus-stack:
         selector:
           matchLabels:
             sumologic.com/app: otelcol
+            sumologic.com/scrape: "true"
     prometheusSpec:
       ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
       ## NOTE changing the scrape interval to be >1m can result in metrics

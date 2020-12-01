@@ -5,7 +5,7 @@ metadata:
   name: {{ template "sumologic.metadata.name.logs.service" . }}
   labels:
     app: {{ template "sumologic.labels.app.logs.service" . }}
-    {{- include "sumologic.labels.logs" . | nindent 4 }}
+    {{- include "sumologic.labels.scrape.logs" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:

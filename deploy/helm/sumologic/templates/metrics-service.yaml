@@ -5,7 +5,7 @@ metadata:
   name: {{ template "sumologic.metadata.name.metrics.service" . }}
   labels:
     app: {{ template "sumologic.labels.app.metrics.service" . }}
-    {{- include "sumologic.labels.metrics" . | nindent 4 }}
+    {{- include "sumologic.labels.scrape.metrics" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
