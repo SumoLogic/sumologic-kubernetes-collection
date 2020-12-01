@@ -16,6 +16,7 @@
   - [Missing labels](#missing-labels)
 - [Configure Ignore_Older Config for Fluentbit](#configure-ignore_older-config-for-fluentbit)
 - [Disable logs, metrics, or falco](#disable-logs-metrics-or-falco)
+- [Load Balancing Prometheus traffic between Fluentds](#load-balancing-prometheus-traffic-beteween-fluentds)
 
 ## Multiline Log Support
 
@@ -475,3 +476,25 @@ respectively in the `values.yaml` file and run the `helm upgrade` command.
 | `sumologic.logs.enabled` |  false | disable logs collection |
 | `sumologic.metrics.enabled` |  false | disable metrics collection |
 | `falco.enabled`  |  false | disable falco |
+
+## Load Balancing Prometheus traffic between Fluentds
+
+Equal utilization of the Fluentd pods is important for collection process.
+If Fluentd pod is under high pressure, incoming connections can be handled with some delay.
+To avoid backpressure, `remote_timeout` configuration options for Prometheus' `remote_write` can be used.
+By default this is `30s`, which means that Prometheus is going to wait such amount of time
+for connection to specific fluentd before trying to reach another.
+This significantly decreases performance and can lead to the Prometheus memory issues,
+so we decided to override it with `5s`.
+
+```yaml
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      additionalScrapeConfigs:
+        - #...
+          remoteTimeout: 5s
+```
+
+**NOTE** We observed that changing this value increases metrics loss during prometheus resharding,
+but the traffic is much better balanced between Fluentds and Prometheus is more stable in terms of memory.
