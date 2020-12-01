@@ -16,7 +16,7 @@
   - [Missing labels](#missing-labels)
 - [Configure Ignore_Older Config for Fluentbit](#configure-ignore_older-config-for-fluentbit)
 - [Disable logs, metrics, or falco](#disable-logs-metrics-or-falco)
-- [Load Balancing Prometheus traffic between Fluentds](#load-balancing-prometheus-traffic-beteween-fluentds)
+- [Load Balancing Prometheus traffic between Fluentds](#load-balancing-prometheus-traffic-between-fluentds)
 
 ## Multiline Log Support
 
