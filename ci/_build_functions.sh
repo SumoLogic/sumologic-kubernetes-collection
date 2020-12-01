@@ -125,7 +125,7 @@ function is_checkout_on_tag() {
 
 function fetch_current_branch() {
   # No need to fetch when we can already do 'git describe ...'
-  git describe --tags >/dev/null && exit 0
+  git describe --tags >/dev/null && return
 
   # No need to fetch full history with:
   # git fetch --tags --unshallow
