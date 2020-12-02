@@ -925,6 +925,45 @@ entries:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.0.0-dev.0-46-g4bcc092e.tgz
     version: 2.0.0-dev.0-46-g4bcc092e
   - apiVersion: v2
+    appVersion: 2.0.0-dev.0-149-gf808525
+    created: "2020-12-02T10:17:46.092124108Z"
+    dependencies:
+    - condition: fluent-bit.enabled,sumologic.logs.enabled
+      name: fluent-bit
+      repository: https://fluent.github.io/helm-charts
+      version: 0.7.4
+    - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 12.3.0
+    - condition: falco.enabled
+      name: falco
+      repository: https://falcosecurity.github.io/charts
+      version: 1.5.4
+    - condition: metrics-server.enabled
+      name: metrics-server
+      repository: https://charts.bitnami.com/bitnami
+      version: 5.0.2
+    - condition: telegraf-operator.enabled
+      name: telegraf-operator
+      repository: https://helm.influxdata.com/
+      version: 1.1.5
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
+    digest: ecb3faae0f6d87a320ed3b88b9a0b55131ee90f3d1ac0123c1a78788bc65a0b7
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    type: application
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.0.0-dev.0-149-gf808525.tgz
+    version: 2.0.0-dev.0-149-gf808525
+  - apiVersion: v2
     appVersion: 2.0.0-dev.0-148-g23c16eb
     created: "2020-12-02T07:25:18.648807114Z"
     dependencies:
@@ -7774,4 +7813,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-0.15.22-alpha-12-g4127801.tgz
     version: 0.15.22-alpha-12-g4127801
-generated: "2020-12-02T07:25:18.607707121Z"
+generated: "2020-12-02T10:17:46.046389932Z"
