@@ -51,4 +51,12 @@ class ReaderTest < Test::Unit::TestCase
     assert_equal 0, metadata.size
     assert log.logs.any? { |log| log.include?('404') }
   end
+
+  test 'fetch_pod_metadata for pod with non-existent owner logs warning' do
+    metadata = fetch_pod_metadata('sumologic', 'pod-with-nonexistent-owner')
+    assert_not_nil metadata
+    assert_equal '1691804714', metadata['pod_labels']['pod_labels']['pod-template-hash']
+    assert_empty metadata['owners']
+    assert log.logs.any? { |log| log.include?('failed to fetch resource') }, "'failed to fetch resource' not found in logs: #{log.logs}"
+  end
 end

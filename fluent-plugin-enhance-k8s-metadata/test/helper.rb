@@ -49,6 +49,14 @@ def stub_apis
     .to_return(body: test_resource('deploy_kube-system.json'), status: 200)
   stub_request(:get, %r{/api/v1/namespaces/non-exist/pods})
     .to_raise(Kubeclient::ResourceNotFoundError.new(404, nil, nil))
+  stub_pod_with_nonexistent_owner
+end
+
+def stub_pod_with_nonexistent_owner
+  stub_request(:get, %r{/api/v1/namespaces/sumologic/pods/pod-with-nonexistent-owner})
+    .to_return(body: test_resource('pod_with_nonexistent_owner.json'), status: 200)
+  stub_request(:get, %r{/apis/extensions/v1beta1/namespaces/sumologic/replicasets/non-existent-replicaset})
+    .to_return(status: 404)
 end
 
 def init_globals
