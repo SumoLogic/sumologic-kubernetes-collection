@@ -76,7 +76,7 @@ module SumoLogic
                 )
 
                 if owner.nil?
-                  log.warn "failed to fetch resource: #{type}, name: #{name}, ns:#{namespace} with API version #{api_version}"
+                  log.warn "failed to fetch resource: #{RESOURCE_MAPPING[owner_reference['kind']]}, name: #{owner_reference['name']}, ns:#{namespace} with API version #{owner_reference['apiVersion']}"
                   next
                 end
                 queue.push(owner)
