@@ -17,7 +17,7 @@ class ReaderTest < Test::Unit::TestCase
   end
 
   def log
-    Fluent::Test::TestLogger.new
+    @test_log ||= Fluent::Test::TestLogger.new
   end
 
   test 'fetch_resource is expected' do
@@ -49,5 +49,6 @@ class ReaderTest < Test::Unit::TestCase
     metadata = fetch_pod_metadata('non-exist', 'somepod')
     assert_not_nil metadata
     assert_equal 0, metadata.size
+    assert log.logs.any? { |log| log.include?('404') }
   end
 end
