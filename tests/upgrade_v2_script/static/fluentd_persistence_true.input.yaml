@@ -1,0 +1,88 @@
+image:
+  repository: ghcr.io/sumologic/kubernetes-fluentd
+  tag: 1.3.3
+  pullPolicy: IfNotPresent
+
+fluentd:
+  ## Specifies whether a PodSecurityPolicy should be created
+  podSecurityPolicy:
+    create: false
+  additionalPlugins: []
+
+  ## Sets the fluentd log level. The default log level, if not specified, is info.
+  ## Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs.
+  ## ref: https://docs.fluentd.org/deployment/logging
+  logLevel: "info"
+  ## to ingest all fluentd logs, turn the logLevelFilter to false
+  logLevelFilter: true
+
+  ## Verify SumoLogic HTTPS certificates
+  verifySsl: true
+  ## Proxy URI for sumologic output plugin
+  proxyUri: ""
+
+  securityContext:
+    ## The group ID of all processes in the statefulset containers. By default this needs to be fluent(999).
+    fsGroup: 999
+
+  ## Add custom labels to all fluentd sts pods(logs, metrics, events)
+  podLabels: {}
+
+  ## Add custom annotations to all fluentd sts pods(logs, metrics, events)
+  podAnnotations: {}
+
+  ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
+  persistence:
+    ## After setting the value to true, run the helm upgrade command with the --force flag.
+    enabled: true
+
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, Azure & OpenStack)
+    ##
+    # storageClass: "-"
+    # annotations: {}
+    accessMode: ReadWriteOnce
+    size: 10Gi
+
+  buffer:
+    ## Option to specify the Fluentd buffer as file/memory.
+    ## If fluentd.persistence.enabled is true, this will be ignored.
+    type: "memory"
+
+    ## How frequently to push logs to SumoLogic
+    ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
+    flushInterval: "5s"
+    ## Increase number of http threads to Sumo. May be required in heavy logging/high DPM clusters
+    numThreads: 8
+    chunkLimitSize: "1m"
+    queueChunkLimitSize: 128
+    totalLimitSize: "128m"
+    retryMaxInterval: "10m"
+    retryForever: true
+    ## usage of the gzip compression is highly not recommended due to fluentd issue:
+    ## rel: https://github.com/fluent/fluentd/issues/3056
+    compress: text
+
+    ## File paths to buffer to, if Fluentd buffer type is specified as file above.
+    ## Each sumologic output plugin buffers to its own unique file.
+    filePaths:
+      logs:
+        containers: /fluentd/buffer/logs.containers
+        kubelet: /fluentd/buffer/logs.kubelet
+        systemd: /fluentd/buffer/logs.systemd
+        default: /fluentd/buffer/logs.default
+      metrics:
+        apiserver: /fluentd/buffer/metrics.apiserver
+        kubelet: /fluentd/buffer/metrics.kubelet
+        container: /fluentd/buffer/metrics.container
+        controller: /fluentd/buffer/metrics.controller
+        scheduler: /fluentd/buffer/metrics.scheduler
+        state: /fluentd/buffer/metrics.state
+        node: /fluentd/buffer/metrics.node
+        control-plane: /fluentd/buffer/metrics.control_plane
+        default: /fluentd/buffer/metrics.default
+      events: /fluentd/buffer/events
+      traces: /fluentd/buffer/traces

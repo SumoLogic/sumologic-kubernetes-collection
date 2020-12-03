@@ -1,0 +1,55 @@
+fluentd:
+  image:
+    repository: ghcr.io/sumologic/kubernetes-fluentd
+    tag: 2.0.0
+    pullPolicy: IfNotPresent
+  podSecurityPolicy:
+    create: false
+  additionalPlugins: []
+  logLevel: info
+  logLevelFilter: true
+  verifySsl: true
+  proxyUri:
+  securityContext:
+    fsGroup: 999
+  podLabels: {}
+  podAnnotations: {}
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 10Gi
+  buffer:
+    type: memory
+    flushInterval: 5s
+    numThreads: 8
+    chunkLimitSize: 1m
+    queueChunkLimitSize: 128
+    totalLimitSize: 128m
+    retryMaxInterval: 10m
+    retryForever: true
+    compress: text
+    filePaths:
+      logs:
+        containers: /fluentd/buffer/logs.containers
+        kubelet: /fluentd/buffer/logs.kubelet
+        systemd: /fluentd/buffer/logs.systemd
+        default: /fluentd/buffer/logs.default
+      metrics:
+        apiserver: /fluentd/buffer/metrics.apiserver
+        kubelet: /fluentd/buffer/metrics.kubelet
+        container: /fluentd/buffer/metrics.container
+        controller: /fluentd/buffer/metrics.controller
+        scheduler: /fluentd/buffer/metrics.scheduler
+        state: /fluentd/buffer/metrics.state
+        node: /fluentd/buffer/metrics.node
+        control-plane: /fluentd/buffer/metrics.control_plane
+        default: /fluentd/buffer/metrics.default
+      events: /fluentd/buffer/events
+      traces: /fluentd/buffer/traces
+sumologic:
+  setup:
+    job:
+      image:
+        repository: ghcr.io/sumologic/kubernetes-fluentd
+        tag: 2.0.0
+        pullPolicy: IfNotPresent
