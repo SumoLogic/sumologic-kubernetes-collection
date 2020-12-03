@@ -57,6 +57,10 @@ class ReaderTest < Test::Unit::TestCase
     assert_not_nil metadata
     assert_equal '1691804714', metadata['pod_labels']['pod_labels']['pod-template-hash']
     assert_empty metadata['owners']
-    assert log.logs.any? { |log| log.include?('failed to fetch resource') }, "'failed to fetch resource' not found in logs: #{log.logs}"
+    expected_log_message = '[warn]: failed to fetch resource: replicasets, name: non-existent-replicaset, ns:sumologic with API version extensions/v1beta1'
+    assert(
+      log.logs.any? { |log| log.include?(expected_log_message) },
+      "'#{expected_log_message}' not found in logs: #{log.logs}"
+    )
   end
 end
