@@ -1,0 +1,23 @@
+{
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+        "labels": {
+            "pod-template-hash": "1691804714",
+            "run": "whatever"
+        },
+        "name": "whatever-5bf5d48c57-74ffa",
+        "uid": "1a1e5ad4-7818-11e9-90f1-02324f7e0d1f",
+        "ownerReferences": [
+            {
+                "apiVersion": "extensions/v1beta1",
+                "kind": "ReplicaSet",
+                "name": "non-existent-replicaset",
+                "uid": "1a1a368a-7818-11e9-90f1-02324f7e0d1f"
+            }
+        ]
+    },
+    "spec": {
+        "nodeName": "ip-172-20-62-243.us-west-1.compute.internal"
+    }
+}

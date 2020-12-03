@@ -17,7 +17,7 @@ class ReaderTest < Test::Unit::TestCase
   end
 
   def log
-    Fluent::Test::TestLogger.new
+    @test_log ||= Fluent::Test::TestLogger.new
   end
 
   test 'fetch_resource is expected' do
@@ -49,5 +49,18 @@ class ReaderTest < Test::Unit::TestCase
     metadata = fetch_pod_metadata('non-exist', 'somepod')
     assert_not_nil metadata
     assert_equal 0, metadata.size
+    assert log.logs.any? { |log| log.include?('404') }
+  end
+
+  test 'fetch_pod_metadata for pod with non-existent owner logs warning' do
+    metadata = fetch_pod_metadata('sumologic', 'pod-with-nonexistent-owner')
+    assert_not_nil metadata
+    assert_equal '1691804714', metadata['pod_labels']['pod_labels']['pod-template-hash']
+    assert_empty metadata['owners']
+    expected_log_message = '[warn]: failed to fetch resource: replicasets, name: non-existent-replicaset, ns:sumologic with API version extensions/v1beta1'
+    assert(
+      log.logs.any? { |log| log.include?(expected_log_message) },
+      "'#{expected_log_message}' not found in logs: #{log.logs}"
+    )
   end
 end
