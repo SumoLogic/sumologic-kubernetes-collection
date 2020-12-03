@@ -1,4 +1,6 @@
 prometheus-operator:
+  ## Ensure we use pre 1.14 recording rules consistently as current content depends on them.
+  kubeTargetVersionOverride: 1.13.0-0
   prometheusOperator:
     podLabels: {}
     podAnnotations: {}
