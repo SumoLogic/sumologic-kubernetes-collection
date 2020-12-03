@@ -69,6 +69,15 @@ function push_docker_image() {
   echo "Pushing docker image ${docker_tag}:${version}..."
   echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
   docker push "${docker_tag}:${version}"
+
+  if [[ -n "${CR_PAT}" && -n "${CR_OWNER}" ]]; then
+    echo "${CR_PAT}" | docker login ghcr.io -u "${CR_OWNER}" --password-stdin
+    readonly GHCR_IO_DOCKER_TAG="ghcr.io/${docker_tag}:${version}"
+    echo "Tagging docker image ${docker_tag}:local with ${GHCR_IO_DOCKER_TAG}..."
+    docker tag "${docker_tag}:local" "${GHCR_IO_DOCKER_TAG}"
+    echo "Pushing docker image ${GHCR_IO_DOCKER_TAG}..."
+    docker push "${GHCR_IO_DOCKER_TAG}"
+  fi
 }
 
 function push_helm_chart() {
