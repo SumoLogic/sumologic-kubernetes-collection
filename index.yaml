@@ -3,7 +3,7 @@ entries:
   sumologic:
   - apiVersion: v1
     appVersion: 1.3.3
-    created: "2020-12-04T17:17:10.989383305Z"
+    created: "2020-12-04T17:20:08.604042164Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -28,7 +28,7 @@ entries:
       version: 1.1.6
     description: A Helm chart for collecting Kubernetes logs, metrics, traces and
       events into Sumo Logic.
-    digest: 2d2e58e296d061786e7a65520665102adea2fc57f32cb5d18da462a7b87ee04f
+    digest: c53a5e518b4f6e9541f710e1b1b3f8e89cd7f0f301902505030f0af73004f3a2
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
     keywords:
@@ -1106,4 +1106,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.6.0.tgz
     version: 0.6.0
-generated: "2020-12-04T17:17:10.949436981Z"
+generated: "2020-12-04T17:20:08.567991028Z"
