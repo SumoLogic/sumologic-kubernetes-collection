@@ -33,10 +33,20 @@ jobs:
         with:
           ruby-version: '2.6'
       - run: gem install bundler
+      - uses: FranzDiebold/github-env-vars-action@v2
+      - name: helm2
+        run: |
+            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/helm.tar.gz https://get.helm.sh/helm-v2.16.11-linux-amd64.tar.gz
+            cd /tmp/ && tar xvf /tmp/helm.tar.gz
+            sudo mv /tmp/linux-amd64/helm /usr/local/bin/helm
       - name: yq
         run: |
             curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/yq https://github.com/mikefarah/yq/releases/download/3.2.1/yq_linux_amd64
             chmod +x /tmp/yq
             sudo mv /tmp/yq /usr/local/bin/yq
+      - name: build_travis
+        run: ./ci/build_travis.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.TRAVIS_GITHUB_TOKEN }}
       - name: build
         run: make build
