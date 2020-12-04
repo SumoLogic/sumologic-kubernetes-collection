@@ -23,3 +23,5 @@ jobs:
         run: make push
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          CR_PAT: ${{ secrets.CR_PAT }}
+          CR_OWNER: USERNAME
