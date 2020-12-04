@@ -271,6 +271,17 @@ function check_user_image() {
   fi
 }
 
+function check_fluentd_persistence() {
+  readonly FLUENTD_PERSISTENCE="$(yq r "${OLD_VALUES_YAML}" -- fluentd.persistence.enabled)"
+  if [[ "${FLUENTD_PERSISTENCE}" == "false" ]]; then
+    warning "You have fluentd.persistence.enabled set to 'false'"
+    warning "This chart starting with 2.0 sets it to 'true' by default"
+    warning "We're migrating your values.yaml with persistence set to 'false'"
+    warning "Please refer to the following doc in in case you wish to enable it:"
+    warning "https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-file-based-buffer"
+  fi
+}
+
 function fix_yq() {
   # account for yq bug that stringifies empty maps
   sed -i.bak "s/'{}'/{}/g" "${TEMP_FILE}"
@@ -305,6 +316,7 @@ migrate_sumologic_sources
 migrate_sumologic_setup_fields
 
 check_user_image
+check_fluentd_persistence
 
 fix_yq
 rename_temp_file
