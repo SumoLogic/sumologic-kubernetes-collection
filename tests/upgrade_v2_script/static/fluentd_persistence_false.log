@@ -1,15 +1,4 @@
-[INFO]    Mapping image.repository into:
-[INFO]    - fluentd.image.repository
-[INFO]    - sumologic.setup.job.image.repository
-[INFO]    Mapping image.tag into:
-[INFO]    - fluentd.image.tag
-[INFO]    - sumologic.setup.job.image.tag
-[INFO]    Mapping image.pullPolicy into:
-[INFO]    - fluentd.image.pullPolicy
-[INFO]    - sumologic.setup.job.image.pullPolicy
 
-[INFO]    Migrating from image.tag '1.3.3' to sumologic.setup.job.image.tag '2.0.0'
-[INFO]    Migrating from image.tag '1.3.3' to fluentd.image.tag '2.0.0'
 [WARNING] You have fluentd.persistence.enabled set to 'false'
 [WARNING] This chart starting with 2.0 sets it to 'true' by default
 [WARNING] We're migrating your values.yaml with persistence set to 'false'
