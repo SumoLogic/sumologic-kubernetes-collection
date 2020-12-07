@@ -7,6 +7,32 @@ on:
       - 'release-v[0-9]+.[0-9]+'
 
 jobs:
+  setup-image:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build setup image
+        working-directory: deploy/docker/setup/
+        run: make build
+      # We need to install awscli v1 via pip because it contains a version
+      # that supports ecr-public while github actions environment on Ubuntu 20.04
+      # contains aws v2.1.4 which doesn't know about it yet.
+      # (support for ecr-public landed in v2.1.6)
+      # ref: https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+      - name: install awscli
+        run: |
+          pip install awscli
+          echo "/home/runner/.local/bin" >> $GITHUB_PATH
+      - name: Login to AWS public ECR
+        working-directory: deploy/docker/setup/
+        run: make login
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_PUBLIC_ECR_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_PUBLIC_ECR_SECRET_ACCESS_KEY }}
+      - name: Push setup image
+        working-directory: deploy/docker/setup/
+        run: make push
+
   build:
     runs-on: ubuntu-20.04
     steps:

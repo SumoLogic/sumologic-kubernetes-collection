@@ -39,6 +39,14 @@ jobs:
       - name: yamllint
         run: make yamllint
 
+  setup-image:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build setup image
+        working-directory: deploy/docker/setup/
+        run: make build
+
   test:
     runs-on: ubuntu-20.04
     needs: [markdownlint, shellcheck, yamllint]
