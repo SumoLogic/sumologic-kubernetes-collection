@@ -7,20 +7,11 @@ source "${ROOT_DIR}"/ci/_build_functions.sh
 fetch_current_branch
 VERSION="$(git describe --tags)"
 readonly VERSION="${VERSION#v}"
-: "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
-: "${DOCKER_USERNAME:=sumodocker}"
-
-# shellcheck disable=SC2154
-if [[ -z "${DOCKER_PASSWORD}" ]]; then
-  echo "Provide DOCKER_PASSWORD in order to push built image to container registry"
-  exit 1
-fi
 
 pushd "${ROOT_DIR}" || exit 1
-echo "Starting push in: $(pwd) with version tag: ${VERSION}"
+echo "Starting to push helm chart in: $(pwd) with version tag: ${VERSION}"
 
 set_up_github
-push_docker_image "${VERSION}" "${DOCKER_TAG}"
 
 if is_checkout_on_tag; then
   push_helm_chart "${VERSION}" "."

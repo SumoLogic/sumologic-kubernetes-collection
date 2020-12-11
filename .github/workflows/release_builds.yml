@@ -40,17 +40,9 @@ jobs:
         working-directory: deploy/docker/setup/
         run: make push BUILD_TAG=${{ steps.extract_tag.outputs.tag }}
 
-  build:
+  push-helm-chart:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: '2.6'
-      - run: gem install bundler
-      - name: build
-        run: make build
-      - name: push
-        run: make push
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Push helm chart
+        run: make push-helm-chart
