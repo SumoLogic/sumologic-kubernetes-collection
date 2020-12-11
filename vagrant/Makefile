@@ -18,18 +18,18 @@ namespace = sumologic
 test:
 	$(MAKE) -C ${root_dir} test
 
-build:
-	cd ${root_dir} && DOCKER_USE_CACHE=true $(MAKE) -C ${root_dir} build
+build-setup:
+	cd ${root_dir} && $(MAKE) -C ${root_dir}deploy/docker/setup build
 	${mkfile_path} \
-		tag-and-push-local
+		tag-and-push-local-setup
 
-tag-and-push-local:
+tag-and-push-local-setup:
 	$(eval timestamp := $(shell date +%s))
-	docker tag sumologic/kubernetes-fluentd:local localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
-	docker push localhost:32000/sumologic/kubernetes-fluentd:local-${timestamp}
+	docker tag kubernetes-setup:latest localhost:32000/kubernetes-setup:local-${timestamp}
+	docker push localhost:32000/kubernetes-setup:local-${timestamp}
 	touch ${local_values_file}
-	yq w -i ${local_values_file} fluentd.image.repository localhost:32000/sumologic/kubernetes-fluentd
-	yq w -i ${local_values_file} fluentd.image.tag local-${timestamp}
+	yq w -i ${local_values_file} sumologic.setup.job.image.repository localhost:32000/kubernetes-setup
+	yq w -i ${local_values_file} sumologic.setup.job.image.tag local-${timestamp}
 
 generate-local-config:
 	${vagrant_scripts_dir}/generate-local-config.sh
