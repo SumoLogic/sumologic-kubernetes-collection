@@ -32,18 +32,18 @@ vagrant ssh
 
 NOTICE: The directory with sumo-kubernetes-collection repository on the host is synced with `/sumologic/` directory on the virtual machine.
 
-## Build
+## Build setup job
 
-On the virtual machine, to perform docker image build and to run tests please use `build` target:
+On the virtual machine, to build the setup job Docker image please use `build-setup` target:
 
 ```bash
-sumo-make build
+sumo-make build-setup
 ```
 
 or
 
-```
-/sumologic/vagrant/Makefile build
+```bash
+/sumologic/vagrant/Makefile build-setup
 ```
 
 ## Collector
