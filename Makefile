@@ -4,11 +4,8 @@ shellcheck:
 test:
 	./ci/tests.sh
 
-build:
-	./ci/build.sh
-
-push:
-	./ci/push.sh
+push-helm-chart:
+	./ci/push-helm-chart.sh
 
 markdownlint: mdl
 
