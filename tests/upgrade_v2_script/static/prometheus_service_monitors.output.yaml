@@ -7,44 +7,85 @@ kube-prometheus-stack:
     resources: {}
     admissionWebhooks:
       enabled: false
+  alertmanager:
+    enabled: false
+  grafana:
+    enabled: false
+    defaultDashboardsEnabled: false
+  kube-state-metrics:
+    customLabels: {}
+    podAnnotations: {}
+    resources: {}
+  prometheus-node-exporter:
+    podLabels: {}
+    podAnnotations: {}
+    resources: {}
   prometheus:
+    additionalServiceMonitors:
+      - name: collection-sumologic-fluentd-logs
+        additionalLabels:
+          sumologic.com/app: fluentd-logs
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-fluentd-metrics
+        additionalLabels:
+          sumologic.com/app: fluentd-metrics
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-fluentd-events
+        additionalLabels:
+          sumologic.com/app: fluentd-events
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-events
+            sumologic.com/scrape: "true"
+      - name: collection-fluent-bit
+        additionalLabels:
+          app: collection-fluent-bit
+        endpoints:
+          - port: metrics
+            path: /api/v1/metrics/prometheus
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            app: fluent-bit
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol
+        additionalLabels:
+          sumologic.com/app: otelcol
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol
+            sumologic.com/scrape: "true"
     prometheusSpec:
-      scrapeInterval: 30s
-      retention: 1d
-      podMetadata:
-        labels: {}
-        annotations: {}
-      resources:
-        limits:
-          cpu: 2000m
-          memory: 8Gi
-        requests:
-          cpu: 500m
-          memory: 1Gi
-      thanos:
-        baseImage: quay.io/thanos/thanos
-        version: v0.10.0
-        resources:
-          limits:
-            cpu: 10m
-            memory: 32Mi
-          requests:
-            cpu: 1m
-            memory: 8Mi
       containers:
-        - name: thanos-sidecar
         - name: config-reloader
-          env:
-            - name: CHART
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: fluentdMetrics
-            - name: NAMESPACE
-              valueFrom:
-                configMapKeyRef:
-                  name: sumologic-configmap
-                  key: fluentdNamespace
   additionalPrometheusRulesMap:
     pre-1.14-node-rules:
       groups:
@@ -241,10 +282,3 @@ kube-prometheus-stack:
                   )
                 ) by (node)
               record: 'node:node_inodes_free:'
-sumologic:
-  accessId: dummy
-  accessKey: dummy
-  endpoint: http://dummy.com/
-telegraf-operator:
-  enabled: true
-  replicaCount: 1
