@@ -69,6 +69,15 @@ function push_docker_image() {
   echo "Pushing docker image ${docker_tag}:${version}..."
   echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
   docker push "${docker_tag}:${version}"
+
+  if [[ -n "${CR_PAT}" && -n "${CR_OWNER}" ]]; then
+    echo "${CR_PAT}" | docker login ghcr.io -u "${CR_OWNER}" --password-stdin
+    readonly GHCR_IO_DOCKER_TAG="ghcr.io/${docker_tag}:${version}"
+    echo "Tagging docker image ${docker_tag}:local with ${GHCR_IO_DOCKER_TAG}..."
+    docker tag "${docker_tag}:local" "${GHCR_IO_DOCKER_TAG}"
+    echo "Pushing docker image ${GHCR_IO_DOCKER_TAG}..."
+    docker push "${GHCR_IO_DOCKER_TAG}"
+  fi
 }
 
 function push_helm_chart() {
@@ -78,13 +87,14 @@ function push_helm_chart() {
 
   echo "Pushing new Helm Chart release ${version}"
 
-  set -e
   # due to helm repo index issue: https://github.com/helm/helm/issues/7363
   # we need to create new package in a different dir, merge the index and move the package back
   mkdir -p "${sync_dir}"
+  set -ex
   helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
 
   git fetch origin gh-pages
+  git reset --hard HEAD
   git checkout gh-pages
 
   helm repo index --url "https://sumologic.github.io/sumologic-kubernetes-collection${chart_dir:1}/" --merge "${chart_dir}/index.yaml" "${sync_dir}"
@@ -93,9 +103,10 @@ function push_helm_chart() {
   rmdir "${sync_dir}"
 
   git add -A
+  git status
   git commit -m "Push new Helm Chart release ${version}"
-  git push --quiet origin gh-pages
-  set +e
+  git push origin gh-pages
+  set +ex
 }
 
 function build_docker_image() {
@@ -125,7 +136,7 @@ function is_checkout_on_tag() {
 
 function fetch_current_branch() {
   # No need to fetch when we can already do 'git describe ...'
-  git describe --tags >/dev/null && exit 0
+  git describe --tags >/dev/null && return
 
   # No need to fetch full history with:
   # git fetch --tags --unshallow
