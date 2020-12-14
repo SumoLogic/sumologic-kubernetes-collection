@@ -376,6 +376,16 @@ function add_prometheus_pre_1_14_recording_rules() {
     --from <(echo "${PROMETHEUS_RULES}")
 }
 
+function add_new_scrape_labels_to_prometheus_service_monitors(){
+  if [[ -z "$(yq r "${TEMP_FILE}" -- 'prometheus-operator.prometheus.additionalServiceMonitors')" ]]; then
+    return
+  fi
+
+  info "Adding 'sumologic.com/scrape: \"true\"' scrape labels to prometheus service monitors"
+  yq w --style double -i "${TEMP_FILE}" \
+    'prometheus-operator.prometheus.additionalServiceMonitors.[*].selector.matchLabels."sumologic.com/scrape"' true
+}
+
 function migrate_sumologic_sources() {
   # Nothing to migrate, return
   if [[ -z $(yq r "${TEMP_FILE}" sumologic.sources) ]] ; then
@@ -540,6 +550,7 @@ create_temp_file
 migrate_customer_keys
 
 migrate_prometheus_recording_rules
+add_new_scrape_labels_to_prometheus_service_monitors
 migrate_prometheus_operator_to_kube_prometheus_stack
 
 migrate_sumologic_sources

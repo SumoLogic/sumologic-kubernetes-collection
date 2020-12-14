@@ -59,6 +59,7 @@ kube-prometheus-stack:
         selector:
           matchLabels:
             sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-fluentd-metrics
         additionalLabels:
           sumologic.com/app: fluentd-metrics
@@ -70,6 +71,7 @@ kube-prometheus-stack:
         selector:
           matchLabels:
             sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-fluentd-events
         additionalLabels:
           sumologic.com/app: fluentd-events
@@ -81,6 +83,7 @@ kube-prometheus-stack:
         selector:
           matchLabels:
             sumologic.com/app: fluentd-events
+            sumologic.com/scrape: "true"
       - name: collection-fluent-bit
         additionalLabels:
           app: collection-fluent-bit
@@ -93,6 +96,7 @@ kube-prometheus-stack:
         selector:
           matchLabels:
             app: fluent-bit
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-otelcol
         additionalLabels:
           sumologic.com/app: otelcol
@@ -104,6 +108,7 @@ kube-prometheus-stack:
         selector:
           matchLabels:
             sumologic.com/app: otelcol
+            sumologic.com/scrape: "true"
     prometheusSpec:
       scrapeInterval: 30s
       podMetadata:
