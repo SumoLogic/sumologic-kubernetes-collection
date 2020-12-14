@@ -928,11 +928,11 @@ Example:
 
 
 {{/*
-Returns kubernetes version minor as integer (without additional chars like +)
+Returns kubernetes minor version as integer (without additional chars like +)
 
 Example:
 
-{{ include "kubernetes.version.minor" . }}
+{{ include "kubernetes.minor" . }}
 */}}
 {{- define "kubernetes.minor" -}}
 {{- print (regexFind "^\\d+" .Capabilities.KubeVersion.Minor) -}}
