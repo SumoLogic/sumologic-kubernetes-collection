@@ -17,11 +17,11 @@ dependencies:
     repository: https://fluent.github.io/helm-charts
     condition: fluent-bit.enabled,sumologic.logs.enabled
   - name: kube-prometheus-stack
-    version: 12.7.0
+    version: 12.8.0
     repository: https://prometheus-community.github.io/helm-charts
     condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
   - name: falco
-    version: 1.5.5
+    version: 1.5.6
     repository: https://falcosecurity.github.io/charts
     condition: falco.enabled
   - name: metrics-server
