@@ -925,3 +925,15 @@ Example:
 {{- $_ := set $local "first" false -}}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Returns kubernetes minor version as integer (without additional chars like +)
+
+Example:
+
+{{ include "kubernetes.minor" . }}
+*/}}
+{{- define "kubernetes.minor" -}}
+{{- print (regexFind "^\\d+" .Capabilities.KubeVersion.Minor) -}}
+{{- end -}}

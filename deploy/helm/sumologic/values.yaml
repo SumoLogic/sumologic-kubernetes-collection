@@ -86,6 +86,8 @@ sumologic:
     create: false
 
   setup:
+    ## uncomment to force collection installation (disables k8s version verification)
+    # force: true
     job:
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup

@@ -1,0 +1,6 @@
+{{/* Check if kubernetes version is less or equal 1.16 */}}
+{{- if not .Values.sumologic.setup.force -}}
+{{- if and (eq .Capabilities.KubeVersion.Major "1") (lt (int (include "kubernetes.minor" .)) 16) -}}
+{{- fail "At least k8s 1.16 is required. Please update your k8s version or set sumologic.setup.force to true" -}}
+{{- end -}}
+{{- end -}}
