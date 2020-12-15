@@ -36,5 +36,11 @@ for dir in $(ls -1 /customer-scripts | grep _ | grep -oE '^.*?_' | sed 's/_//g' 
   for file in $(ls -1 "/customer-scripts/${dir}_"* | grep -oE '_.*' | sed 's/_//g'); do
     cp "/customer-scripts/${dir}_${file}" "${target}/${file}"
   done
+
+  if [[ ! -f setup.sh ]]; then
+    echo "You're missing setup.sh script in custom scripts directory: '${dir}'"
+    continue
+  fi
+
   cd "${target}" && bash setup.sh
 done
