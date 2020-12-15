@@ -73,7 +73,33 @@ as well as the exact steps for migration.
 - `sumologic.setup.fields` become `sumologic.collector.fields` as Fields are
   set on a Collector
 
+- `spec.selector` in Fluent Bit Helm Chart was modified from:
+
+  ```yaml
+  spec:
+  selector:
+    matchLabels:
+      app: fluent-bit
+      release: <RELEASE-NAME>
+  ```
+
+  to
+
+  ```yaml
+  spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fluent-bit
+      app.kubernetes.io/instance: <RELEASE-NAME>
+  ```
+
 ## How to upgrade
+
+### Requirements
+
+- helm3
+- yq in version: `3.4.0` <= `x` < `4.0.0`
+- bash 4.0 or higher
 
 **Note: The below steps are using Helm 3. Helm 2 is not supported.**
 
@@ -130,7 +156,104 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
 ```
 
-### 3. Run upgrade script
+### 3. Prepare Fluent Bit instance
+
+As `spec.selector` in Fluent Bit Helm chart was modified, it is required to manually recreate or delete existing DaemonSet
+with old version of `spec.selector` before upgrade.
+
+One of the following two strategies can be used:
+
+- #### Recreating Fluent Bit DaemonSet
+
+  Recreating Fluent Bit DaemonSet with new `spec.selector` may cause that applications' logs and Fluent Bit metrics
+  will not be available in the time of recreation. It usually shouldn't take more than several seconds.
+
+  To recreate the Fluent Bit DaemonSet with new `spec.selector` one can run the following command:
+
+  ```bash
+  kubectl get daemonset --namespace <NAMESPACE-NAME> --selector "app=fluent-bit,release=<RELEASE-NAME>" --output yaml | \
+  yq w - "items[*].spec.selector.matchLabels[app.kubernetes.io/name]" "fluent-bit" | \
+  yq w - "items[*].spec.selector.matchLabels[app.kubernetes.io/instance]" "<RELEASE-NAME>" | \
+  yq w - "items[*].spec.template.metadata.labels[app.kubernetes.io/name]" "fluent-bit" | \
+  yq w - "items[*].spec.template.metadata.labels[app.kubernetes.io/instance]" "<RELEASE-NAME>" | \
+  yq d - "items[*].spec.selector.matchLabels[app]" | \
+  yq d - "items[*].spec.selector.matchLabels[release]" | \
+  kubectl apply --namespace <NAMESPACE-NAME>  --force --filename -
+  ```
+
+- #### Preparing temporary instance of Fluent Bit
+
+  Create temporary instance of Fluent Bit and delete DaemonSet with old version of `spec.selector`.
+  This will cause application' logs to be duplicated until temporary instance of Fluent Bit is deleted
+  after the upgrade is complete. As temporary instance of Fluent Bit creates additional Pods
+  which are selected by the same Fluent Bit Service you may observe changes in Fluent Bit metrics.
+
+  Copy of database, in which Fluent Bit keeps track of monitored files and offsets, is used by temporary instance of Fluent Bit
+  (Fluent Bit database is copied in initContainer).
+  Temporary instance of Fluent Bit will start reading logs with offsets saved in database.
+
+  To create a temporary copy of Fluent Bit DaemonSet:
+
+  ```bash
+  INIT_CONTAINER=$(cat <<-"EOF"
+    name: init-tmp-fluent-bit
+    image: busybox:latest
+    command: ['sh', '-c', 'mkdir -p /tail-db/tmp; cp /tail-db/*.db /tail-db/tmp']
+    volumeMounts:
+      - mountPath: /tail-db
+        name: tail-db
+  EOF
+  ) && \
+  TMP_VOLUME=$(cat <<-"EOF"
+      hostPath:
+          path: /var/lib/fluent-bit/tmp
+          type: DirectoryOrCreate
+      name: tmp-tail-db
+  EOF
+  ) && \
+  kubectl get daemonset --namespace <NAMESPACE-NAME> --selector "app=fluent-bit,release=<RELEASE-NAME>" --output yaml | \
+  yq w - "items[*].metadata.name" "tmp-fluent-bit" | \
+  yq w - "items[*].metadata.labels[heritage]" "tmp" | \
+  yq w - "items[*].spec.template.metadata.labels[app.kubernetes.io/name]" "fluent-bit" | \
+  yq w - "items[*].spec.template.metadata.labels[app.kubernetes.io/instance]" "<RELEASE-NAME>" | \
+  yq w - "items[*].spec.template.spec.initContainers[+]" --from <(echo "${INIT_CONTAINER}") | \
+  yq w - "items[*].spec.template.spec.volumes[+]" --from <(echo "${TMP_VOLUME}") | \
+  yq w - "items[*].spec.template.spec.containers[*].volumeMounts[*].(.==tail-db)" "tmp-tail-db" | \
+  kubectl create --filename -
+  ```
+
+  Please make sure that Pods related to new DaemonSet are running:
+
+  ```bash
+  kubectl get pod --namespace <NAMESPACE-NAME> --selector "app=fluent-bit,release=<RELEASE-NAME>,app.kubernetes.io/name=fluent-bit,app.kubernetes.io/instance=<RELEASE-NAME>"
+  ```
+
+  Please check that the latest logs are duplicated in Sumo.
+
+  To delete Fluent Bit DaemonSet with old version of `spec.selector`:
+
+  ```bash
+  kubectl delete daemonset --namespace <NAMESPACE-NAME> --selector "app=fluent-bit,heritage=Helm,release=<RELEASE-NAME>"
+  ```
+
+  **Notice:** When collection upgrade creates new DaemonSet for Fluent Bit,
+  logs will be duplicated.
+  In order to stop data duplication it is required to remove the temporary copy
+  of Fluent Bit DaemonSet after the upgrade has finished.
+
+  After collection upgrade is done, in order to remove the temporary Fluent Bit
+  DaemonSet run the following commands:
+
+   ```bash
+  kubectl wait --for=condition=ready pod \
+    --namespace <NAMESPACE-NAME> \
+    --selector "app.kubernetes.io/name=fluent-bit,app.kubernetes.io/instance=<RELEASE-NAME>,app!=fluent-bit,release!=<RELEASE-NAME>" && \
+  kubectl delete daemonset \
+    --namespace <NAMESPACE-NAME> \
+    --selector "app=fluent-bit,release=<RELEASE-NAME>,heritage=tmp"
+  ```
+
+### 4. Run upgrade script
 
 For Helm users, the only breaking changes are the renamed config parameters.
 For users who use a `values.yaml` file, we provide a script that users can run
