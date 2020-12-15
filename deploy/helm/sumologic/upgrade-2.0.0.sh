@@ -386,6 +386,18 @@ function add_new_scrape_labels_to_prometheus_service_monitors(){
     'prometheus-operator.prometheus.additionalServiceMonitors.[*].selector.matchLabels."sumologic.com/scrape"' true
 }
 
+function kube_prometheus_stack_set_remote_write_timeout_to_5s() {
+  if [[ -z "$(yq r "${TEMP_FILE}" -- 'kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite')" ]]; then
+    return
+  fi
+
+  if [[ -n "$(yq r "${TEMP_FILE}" -- 'kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite.[*].remoteTimeout')" ]]; then
+    echo
+    info "kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite.[*].remoteTimeout is set"
+    info "Please note that we've set it by default to 5s in 2.0.0"
+  fi
+}
+
 function migrate_sumologic_sources() {
   # Nothing to migrate, return
   if [[ -z $(yq r "${TEMP_FILE}" sumologic.sources) ]] ; then
@@ -552,6 +564,7 @@ migrate_customer_keys
 migrate_prometheus_recording_rules
 add_new_scrape_labels_to_prometheus_service_monitors
 migrate_prometheus_operator_to_kube_prometheus_stack
+kube_prometheus_stack_set_remote_write_timeout_to_5s
 
 migrate_sumologic_sources
 migrate_sumologic_setup_fields
