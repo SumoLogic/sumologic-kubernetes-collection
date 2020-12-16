@@ -28,8 +28,7 @@ if [ -n "$GITHUB_TOKEN" ] ; then
     # NOTE(ryan, 2019-08-30): Append "|| true" to command to ignore non-zero exit code
     changes=$(git log origin-repo/main..HEAD --name-only --format="" --author="$recent_author" | grep -i "fluentd-sumologic.yaml.tmpl\|fluent-bit-overrides.yaml\|prometheus-overrides.yaml\|falco-overrides.yaml") || true
     if [ -n "$changes" ]; then
-      echo "Aborting due to manual changes detected in the following generated files: $changes"
-      exit 1
+      echo "WARNING: manual changes detected in the following generated files: $changes"
     fi
   fi
 fi
