@@ -3014,6 +3014,45 @@ entries:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-1.3.3-rc.0-1-gc255a24.tgz
     version: 1.3.3-rc.0-1-gc255a24
   - apiVersion: v1
+    appVersion: 1.3.3-4-g13a9e18
+    created: "2020-12-16T09:07:00.893268023Z"
+    dependencies:
+    - condition: fluent-bit.enabled,sumologic.logs.enabled
+      name: fluent-bit
+      repository: https://charts.helm.sh/stable
+      version: 2.10.1
+    - alias: prometheus-operator
+      condition: prometheus-operator.enabled,sumologic.metrics.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 9.3.4
+    - condition: falco.enabled
+      name: falco
+      repository: https://falcosecurity.github.io/charts
+      version: 1.4.0
+    - condition: metrics-server.enabled
+      name: metrics-server
+      repository: https://charts.helm.sh/stable
+      version: 2.11.2
+    - condition: telegraf-operator.enabled
+      name: telegraf-operator
+      repository: https://sumologic.github.io/influxdata-helm-charts
+      version: 1.1.6
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
+    digest: afbe209b49ec26d193cea5b5cae413b425e052b9ec1b31eb5691f5f205e736c6
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-1.3.3-4-g13a9e18.tgz
+    version: 1.3.3-4-g13a9e18
+  - apiVersion: v1
     appVersion: 1.3.3-1-g8053e29
     created: "2020-12-14T15:23:09.606191557Z"
     dependencies:
@@ -8905,4 +8944,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-0.15.22-alpha-12-g4127801.tgz
     version: 0.15.22-alpha-12-g4127801
-generated: "2020-12-16T08:30:55.572146742Z"
+generated: "2020-12-16T09:07:00.859999636Z"
