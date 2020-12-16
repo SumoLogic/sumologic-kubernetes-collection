@@ -925,3 +925,11 @@ Example:
 {{- $_ := set $local "first" false -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Overwrite selector labels for fluent-bit
+*/}}
+{{- define "fluent-bit.selectorLabels" -}}
+app: {{ include "fluent-bit.name" . }}
+release: {{ .Release.Name }}
+{{- end -}}
