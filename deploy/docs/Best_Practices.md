@@ -136,8 +136,8 @@ To enable autoscaling for Fluentd:
 
 ## Fluentd File-Based Buffer
 
-By default, we use the in-memory buffer for the Fluentd buffer, however for production
-environments we recommend you use the file-based buffer instead.
+Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less
+reliable in-memory buffer.
 
 The buffer configuration can be set in the `values.yaml` file under the `fluentd`
 key as follows:
@@ -163,6 +163,7 @@ fluentd:
 ```
 
 We have defined several file paths where the buffer chunks are stored.
+These can be observed under `fluentd.buffer.filePaths` key in `values.yaml`.
 
 Once the config has been modified in the `values.yaml` file you need to run
 the `helm upgrade` command to apply the changes.
