@@ -21,15 +21,6 @@ jobs:
       - name: Build kubernetes-setup
         run: make build BUILD_TAG=${{ steps.extract_tag.outputs.tag }}
         working-directory: deploy/docker/setup/
-      # We need to install awscli v1 via pip because it contains a version
-      # that supports ecr-public while github actions environment on Ubuntu 20.04
-      # contains aws v2.1.4 which doesn't know about it yet.
-      # (support for ecr-public landed in v2.1.6)
-      # ref: https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-      - name: install awscli
-        run: |
-          pip install awscli
-          echo "/home/runner/.local/bin" >> $GITHUB_PATH
       - name: Login to AWS public ECR
         working-directory: deploy/docker/setup/
         run: make login
