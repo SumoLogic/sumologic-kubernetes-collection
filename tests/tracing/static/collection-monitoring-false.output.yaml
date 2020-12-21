@@ -22,6 +22,19 @@ data:
         send_batch_max_size: 512
         send_batch_size: 256
         timeout: 5s
+      cascading_filter:
+        decision_wait: 30s
+        expected_new_traces_per_sec: 10
+        num_traces: 90000
+        policies:
+        - name: extended-duration
+          properties:
+            min_duration: 5s
+          spans_per_second: 500
+        - name: everything-else
+          spans_per_second: -1
+        probabilistic_filtering_ratio: 0.2
+        spans_per_second: 1660
       k8s_tagger:
         extract:
           annotations:
@@ -52,19 +65,6 @@ data:
       memory_limiter:
         check_interval: 5s
         limit_mib: 1900
-      cascading_filter:
-        decision_wait: 30s
-        expected_new_traces_per_sec: 10
-        num_traces: 90000
-        policies:
-        - name: extended-duration
-          properties:
-            min_duration: 5s
-          spans_per_second: 500
-        - name: everything-else
-          spans_per_second: -1
-        probabilistic_filtering_ratio: 0.2
-        spans_per_second: 1660
       resource:
         labels:
           k8s.cluster.name: kubernetes
