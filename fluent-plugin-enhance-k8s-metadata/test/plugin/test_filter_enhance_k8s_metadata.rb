@@ -67,7 +67,6 @@ class EnhanceK8sMetadataFilterTest < Test::Unit::TestCase
 
   def create_driver(conf)
     driver = Fluent::Test::Driver::Filter.new(Fluent::Plugin::EnhanceK8sMetadataFilter).configure(conf).instance
-    driver.instance_variable_set(:@pods_to_services, @pods_to_services)
     driver
   end
 

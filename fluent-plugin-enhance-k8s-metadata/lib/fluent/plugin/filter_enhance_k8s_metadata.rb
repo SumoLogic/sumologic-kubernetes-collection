@@ -83,7 +83,7 @@ module Fluent
             record.delete('service')
           end
           metadata = get_pod_metadata(namespace_name, pod_name)
-          service = @pods_to_services[pod_name]
+          service = @pods_to_services[pod_name] unless @pods_to_services.nil?
           metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
 
           if @data_type == 'metrics' && (record['node'].nil? || record['node'] == "")
