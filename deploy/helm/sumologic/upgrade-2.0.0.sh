@@ -10,6 +10,7 @@ readonly TEMP_FILE=upgrade-2.0.0-temp-file
 
 readonly MIN_BASH_VERSION=4.0
 readonly MIN_YQ_VERSION=3.4.0
+readonly MAX_YQ_VERSION=4.0.0
 
 readonly KEY_MAPPINGS="
 prometheus-operator.prometheusOperator.tlsProxy.enabled:kube-prometheus-stack.prometheusOperator.tls.enabled
@@ -47,7 +48,7 @@ This script will automatically take the configurations of your existing values.y
 and return one that is compatible with v2.0.0.
 
 Requirements:
-  yq (>= ${MIN_YQ_VERSION}) https://github.com/mikefarah/yq/releases/tag/${MIN_YQ_VERSION}
+  yq (${MAX_YQ_VERSION} > x >= ${MIN_YQ_VERSION}) https://github.com/mikefarah/yq/releases/tag/${MIN_YQ_VERSION}
   grep
   sed
   bash (>= ${MIN_BASH_VERSION})
@@ -105,11 +106,28 @@ function check_app_version() {
   fi
 }
 
+function check_app_version_with_max() {
+  local app_name="${1}"
+  local no_lower_than="${2}"
+  local lower_than="${3}"
+  local app_version="${4}"
+
+  if [[ -z ${app_version} ]] || [[ $(compare_versions "${no_lower_than}" "${app_version}") == "fail" ]]; then
+    error "${app_name} version: '${app_version}' is invalid - it should be no lower than ${no_lower_than}"
+    fatal "Please update your ${app_name} and retry."
+  fi
+
+  if [[ "${app_version}" == "${lower_than}" ]] || [[ $(compare_versions "${app_version}" "${lower_than}") == "fail" ]]; then
+    error "${app_name} version: '${app_version}' is invalid - it should be lower than ${lower_than}"
+    fatal "Please downgrade '${app_name}' and retry."
+  fi
+}
+
 function check_yq_version() {
   local yq_version
-  yq_version=$(yq --version | grep -oE '[^[:space:]]+$')
+  readonly yq_version=$(yq --version | grep -oE '[^[:space:]]+$')
 
-  check_app_version "yq" "${MIN_YQ_VERSION}" "${yq_version}"
+  check_app_version_with_max "yq" "${MIN_YQ_VERSION}" "${MAX_YQ_VERSION}" "${yq_version}"
 }
 
 function check_bash_version() {
