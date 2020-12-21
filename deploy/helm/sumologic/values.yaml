@@ -1983,7 +1983,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.12.0"
+      tag: "0.16.0-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -2103,15 +2103,36 @@ otelcol:
         ## than this value.
         limit_mib: 1900
 
-      ## The queued_retry processor uses a bounded queue to relay batches from the receiver or previous
-      ## processor to the next processor.
-      queued_retry:
-        ## Number of workers that dequeue batches
-        num_workers: 16
-        ## Maximum number of batches kept in memory before data is dropped
-        queue_size: 10000
-        ## Whether to retry on failure or give up and drop
-        retry_on_failure: true
+      ## Smart cascading filtering rules with preset limits.
+      cascading_filter:
+        ## (default = 30s): Wait time since the first span of a trace before making
+        ## a filtering decision
+        decision_wait: 30s
+        ## (default = 50000): Number of traces kept in memory
+        num_traces: 90000
+        ## (default = 0): Expected number of new traces (helps in allocating data structures)
+        expected_new_traces_per_sec: 10
+        ## (default = 0): defines maximum number of spans per second that
+        ## could be handled by this policy. When set to -1, it selects the traces
+        ## only if the global limit is not exceeded by other policies (however,
+        ## without further limitations).
+        spans_per_second: 1660
+        ## (default = 0.2): Ratio of spans that are always probabilistically filtered
+        ## (hence might be used for metrics calculation).
+        probabilistic_filtering_ratio: 0.2
+        ## (no default): Policies used to make a sampling decision
+        policies:
+          - name: extended-duration
+            ## Spans_per_second (default = 1500): Maximum total number of emitted
+            ## spans per second.
+            spans_per_second: 500
+            properties:
+              ## Selects the span if the duration is greater or equal the given
+              ## value (use s or ms as the suffix to indicate unit).
+              min_duration: 5s
+          - name: everything-else
+            spans_per_second: -1
+
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
@@ -2126,6 +2147,11 @@ otelcol:
     exporters:
       zipkin:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+
+      ## OpenTelemetry Protocol HTTP Exporter
+      # otlphttp:
+      #   endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+
       ## Following generates verbose logs with span content, useful to verify what
       ## metadata is being tagged. To enable, uncomment and add "logging" to exporters below.
       ## There are two levels that could be used: `debug` and `info` with the former
@@ -2137,7 +2163,7 @@ otelcol:
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, zipkin]
-          processors: [memory_limiter, k8s_tagger, source, resource, batch, queued_retry]
+          processors: [memory_limiter, k8s_tagger, source, resource, batch]
           exporters: [zipkin]
 
 ## Configure telegraf-operator
