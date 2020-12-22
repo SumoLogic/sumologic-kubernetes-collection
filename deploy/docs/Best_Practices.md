@@ -246,16 +246,23 @@ you will need to ensure the logs get mounted to the host so fluent-bit can be
 configured to capture from the host.
 
 Example:
-In `values.yaml` in the `fluent-bit.rawConfig` section, you have to add
-a new input specifying the file path, eg.
+In `values.yaml` in the `fluent-bit.config.input` section, you have to add
+a new `INPUT` specifying the file path (retaining the remaining part of `input`
+config), e.g.:
 
-```bash
-[INPUT]
-    Name        tail
-    Path        /var/log/syslog
+```yaml
+fluent-bit:
+  config:
+    # ...
+    inputs: |-
+      # Copy original fluent-bit.config.inputs here
+      # ...
+      [INPUT]
+          Name        tail
+          Path        /var/log/syslog
 ```
 
-Reference: https://fluentbit.io/documentation/0.12/input/tail.html
+Reference: https://docs.fluentbit.io/manual/pipeline/inputs/tail#configuration-file
 
 ## Filtering Prometheus Metrics by Namespace
 
