@@ -36,7 +36,7 @@ jobs:
       - uses: FranzDiebold/github-env-vars-action@v2
       - name: helm2
         run: |
-            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/helm.tar.gz https://get.helm.sh/helm-v2.16.11-linux-amd64.tar.gz
+            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/helm.tar.gz https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz
             cd /tmp/ && tar xvf /tmp/helm.tar.gz
             sudo mv /tmp/linux-amd64/helm /usr/local/bin/helm
       - name: yq

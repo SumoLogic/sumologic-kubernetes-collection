@@ -37,7 +37,7 @@ echo "sudo iptables -P FORWARD ACCEPT" >> /home/vagrant/.bashrc
 
 echo "export KUBECONFIG=/var/snap/microk8s/current/credentials/kubelet.config" >> /home/vagrant/.bashrc
 
-HELM_2_VERSION=v2.16.9
+HELM_2_VERSION=v2.17.0
 HELM_3_VERSION=v3.2.4
 
 mkdir /opt/helm2 /opt/helm3
