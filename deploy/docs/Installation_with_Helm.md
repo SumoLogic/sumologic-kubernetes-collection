@@ -30,6 +30,20 @@ The following are required to set up Sumo Logic's Kubernetes collection.
 To get an idea of the resources this chart will require to run on your cluster,
 you can reference our [performance doc](./Performance.md).
 
+### Kubernetes version
+
+As of `2.0.0` we're supporting clusters with kubernetes in version `1.16` and up.
+
+In case your cluster doesn't fullfil this requirement you might expect the following
+error to show up when performing `helm install ...`/`helm upgrade ...` steps:
+
+```
+...
+Release "collection" does not exist. Installing it now.
+Error: template: sumologic/templates/checks.txt:4:4: executing "sumologic/templates/checks.txt" at <fail "\nAt least k8s 1.16 is required. Please update your k8s version or set sumologic.setup.force to true">: error calling fail:
+At least k8s 1.16 is required. Please update your k8s version or set sumologic.setup.force to true
+```
+
 ## Prerequisite
 
 Sumo Logic Apps for Kubernetes and Explore require below listed fields to be added
