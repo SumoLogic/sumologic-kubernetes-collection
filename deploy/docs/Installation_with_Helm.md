@@ -32,20 +32,28 @@ you can reference our [performance doc](./Performance.md).
 
 ## Prerequisite
 
-Sumo Logic Apps for Kubernetes and Explore require you to add the following
-[fields](https://help.sumologic.com/Manage/Fields#Manage_fields) in the Sumo Logic UI
-to your Fields table schema.
-This is to ensure your logs are tagged with relevant metadata.
-This is a one time setup per Sumo Logic account.
+Sumo Logic Apps for Kubernetes and Explore require below listed fields to be added
+in Sumo Logic UI to your Fields table schema.
 
-- cluster
-- container
-- deployment
-- host
-- namespace
-- node
-- pod
-- service
+- `cluster`
+- `container`
+- `deployment`
+- `host`
+- `namespace`
+- `node`
+- `pod`
+- `service`
+
+This is normally done in the setup job when `sumologic.setupEnabled` is set
+to `true` (default behavior).
+
+In an unlikely scenario that this fails please create them manually by visiting
+[Fields#Manage_fields](https://help.sumologic.com/Manage/Fields#Manage_fields)
+in Sumo Logic UI.
+
+This is to ensure your logs are tagged with relevant metadata.
+
+This is a one time setup per Sumo Logic account.
 
 ## Installation Steps
 
