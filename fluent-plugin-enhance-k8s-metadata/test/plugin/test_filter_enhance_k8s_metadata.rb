@@ -56,10 +56,24 @@ class EnhanceK8sMetadataFilterTest < Test::Unit::TestCase
       driver = create_driver(conf)
 
       input_record = get_test_record[2]
-      assert_nil input_record['node']
+      assert_false input_record.key?('node')
       record = driver.filter('tag', 'time', input_record)
 
       assert_equal 'ip-172-20-62-242.us-west-1.compute.internal', record['node']
+    end
+
+    test 'do not attach node metadata to metrics when not found' do
+      conf = %{
+        kubernetes_url http://localhost:8080
+        data_type metrics
+      }
+      driver = create_driver(conf)
+
+      input_record = get_test_record[3]
+      assert_false input_record.key?('node')
+      record = driver.filter('tag', 'time', input_record)
+
+      assert_false record.key?('node')
     end
   end
 

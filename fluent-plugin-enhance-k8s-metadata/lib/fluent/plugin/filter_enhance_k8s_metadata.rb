@@ -86,7 +86,7 @@ module Fluent
           service = @pods_to_services[pod_name] unless @pods_to_services.nil?
           metadata['service'] = {'service' => service.sort!.join('_')} if !(service.nil? || service.empty?)
 
-          if @data_type == 'metrics' && (record['node'].nil? || record['node'] == "")
+          if @data_type == 'metrics' && (record['node'].nil? || record['node'] == "") && !metadata['node'].nil?
             record['node'] = metadata['node']
           end
 
