@@ -16,14 +16,21 @@ allowHostIPC: false
 allowHostNetwork: true
 allowHostPID: true
 allowHostPorts: true
-allowPrivilegeEscalation: true
-allowPrivilegedContainer: true
+allowPrivilegeEscalation: true # fluent-bit
+allowPrivilegedContainer: true # fluent-bit
 allowedCapabilities: []
 allowedUnsafeSysctls: []
 defaultAddCapabilities: []
 fsGroup:
-  type: RunAsAny
-groups: 
+  type: MustRunAs
+  ranges:
+    - min: 65534
+      max: 65534
+    - min: 999 # fluentd
+      max: 1000 # prometheus
+    - min: 2000 # prometheus
+      max: 2000 # prometheus
+groups:
 - system:serviceaccounts:{{ .Release.Namespace }}
 priority: 0
 readOnlyRootFilesystem: false
@@ -31,13 +38,11 @@ requiredDropCapabilities: []
 runAsUser:
   type: RunAsAny
 seLinuxContext:
-  type: RunAsAny
-seccompProfiles:
-- '*'
+  type: MustRunAs
+seccompProfiles: []
 supplementalGroups:
   type: RunAsAny
-users:
-- system:serviceaccount:{{ .Release.Namespace }}:{{ template "sumologic.metadata.name.setup.job" . }}
+users: []
 volumes:
 - hostPath
 - emptyDir
