@@ -12,36 +12,34 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
-allowHostDirVolumePlugin: true
+allowHostDirVolumePlugin: false
 allowHostIPC: false
-allowHostNetwork: true
-allowHostPID: true
+allowHostNetwork: false
+allowHostPID: false
 allowHostPorts: false
-allowPrivilegeEscalation: true
-allowPrivilegedContainer: true
+allowPrivilegeEscalation: false
+allowPrivilegedContainer: false
 allowedCapabilities: []
 allowedUnsafeSysctls: []
 defaultAddCapabilities: []
 fsGroup:
-  type: RunAsAny
+  type: MustRunAs
 groups:
 - system:serviceaccounts:{{ .Release.Namespace }}
 priority: 0
 readOnlyRootFilesystem: false
 requiredDropCapabilities: []
 runAsUser:
-  type: RunAsAny
+  type: MustRunAsRange 
+  uidRangeMax: 999 
+  uidRangeMin: 999
 seLinuxContext:
-  type: RunAsAny
-seccompProfiles:
-- '*'
+  type: MustRunAs
+seccompProfiles: []
 supplementalGroups:
-  type: RunAsAny
-users:
-- system:serviceaccount:{{ .Release.Namespace }}:{{ template "sumologic.metadata.name.setup.job" . }}
+  type: MustRunAs
+users: []
 volumes:
-- hostPath
-- emptyDir
 - secret
 - configMap
 {{- end }}
