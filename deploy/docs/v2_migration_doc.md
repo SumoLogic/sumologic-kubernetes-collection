@@ -5,33 +5,27 @@
 
 Based on the feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
-Here we detail the changes for both Helm and Non-Helm users, as well as
-the exact steps for migration.
+
+In this document we detail the changes for both Helm and Non-Helm users,
+as well as the exact steps for migration.
 
 ## Changes
 
 - Version `v2.0.0` is dropping support for Helm 2.
 
-- We've been using `kube-prometheus-stack` with an alias `prometheus-operator` since `v1.3.0`
-  to not introduce any breaking changes but with `v2.0.0` we're removing the alias,
-  hence all the options related to this dependency should be prefixed with
-  `kube-prometheus-stack` instead of `prometheus-operator`.
+- `kube-prometheus-stack` has been used in this chart since version `v1.3.0`
+  using an alias `prometheus-operator` in order not to introduce any breaking
+  changes (before that version, prometheus stack was provided by `prometheus-operator`
+  chart).
+  In `v2.0.0` this alias is being removed hence all the options related to this
+  dependency should be prefixed with `kube-prometheus-stack` instead of
+  `prometheus-operator`.
 
 - When upgrading `kube-prometheus-stack` from `v9.x` to `v12.y`, apart from changing
   below mentioned configuration parameters one has to also install new prometheus
   CRDs.
-  This can be done with the following commands:
-
-  ```bash
-  kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
-  kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
-  kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
-  kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
-  kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
-  kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
-  kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
-  kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.43/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
-  ```
+  This can be done using the code snippet mentioned in
+  [Upgrade Prometheus CRDs](#2-upgrade-prometheus-crds)
 
 - Changes in Configuration Parameters
   - `kube-prometheus-stack` dependency has been updated from `v9.x` to `v12.y`
