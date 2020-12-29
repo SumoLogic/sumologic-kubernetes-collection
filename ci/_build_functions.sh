@@ -78,6 +78,22 @@ function push_docker_image() {
     echo "Pushing docker image ${GHCR_IO_DOCKER_TAG}..."
     docker push "${GHCR_IO_DOCKER_TAG}"
   fi
+
+  if [[ -n "${AWS_ACCESS_KEY_ID}" && -n "${AWS_SECRET_ACCESS_KEY}" ]]; then
+    local ECR_URL
+    readonly ECR_URL="public.ecr.aws/sumologic"
+
+    aws ecr-public get-login-password --region us-east-1 \
+      | docker login --username AWS --password-stdin "${ECR_URL}"
+
+    local ECR_TAG
+    readonly ECR_TAG="public.ecr.aws/${docker_tag}:${version}"
+
+    echo "Tagging docker image ${docker_tag}:local with ${ECR_TAG}..."
+    docker tag "${docker_tag}:local" "${ECR_TAG}"
+    echo "Pushing docker image ${ECR_TAG}..."
+    docker push "${ECR_TAG}"
+  fi
 }
 
 function push_helm_chart() {
