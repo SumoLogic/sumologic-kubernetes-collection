@@ -621,13 +621,21 @@ function get_regex() {
 
 function check_user_image() {
   # Check user's image and echo warning if the image has been changed
+  local USER_VERSION
   readonly USER_VERSION="$(yq r "${OLD_VALUES_YAML}" -- image.tag)"
+  local USER_IMAGE_REPOSITORY
+  readonly USER_IMAGE_REPOSITORY="$(yq r "${OLD_VALUES_YAML}" -- image.repository)"
   if [[ -n "${USER_VERSION}" ]]; then
     if [[ "${USER_VERSION}" =~ ^"${PREVIOUS_VERSION}"\.[[:digit:]]+$ ]]; then
       info "Migrating from image.tag '${USER_VERSION}' to sumologic.setup.job.image.tag '2.0.0'"
       yq w -i "${TEMP_FILE}" -- sumologic.setup.job.image.tag 2.0.0
+      info "Migrating from image.repository '${USER_IMAGE_REPOSITORY}' to sumologic.setup.job.image.repository 'public.ecr.aws/sumologic/kubernetes-setup'"
+      yq w -i "${TEMP_FILE}" -- sumologic.setup.job.image.repository "public.ecr.aws/sumologic/kubernetes-setup"
+
       info "Migrating from image.tag '${USER_VERSION}' to fluentd.image.tag '2.0.0'"
       yq w -i "${TEMP_FILE}" -- fluentd.image.tag 2.0.0
+      info "Migrating from image.repository '${USER_IMAGE_REPOSITORY}' to fluentd.image.repository 'public.ecr.aws/sumologic/kubernetes-fluentd'"
+      yq w -i "${TEMP_FILE}" -- fluentd.image.repository "public.ecr.aws/sumologic/kubernetes-fluentd"
     else
       warning "You are using unsupported version: ${USER_VERSION}"
       warning "Please upgrade to '${PREVIOUS_VERSION}.x' or ensure that new_values.yaml is valid"
