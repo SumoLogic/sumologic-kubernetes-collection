@@ -547,6 +547,41 @@ function migrate_sumologic_setup_fields() {
   yq d -i "${TEMP_FILE}" "sumologic.setup.fields"
 }
 
+function migrate_metrics_server() {
+  local metrics_server
+  readonly metrics_server="$(yq r "${TEMP_FILE}" metrics-server)"
+
+  # Nothing to migrate, return
+  if [[ -z "${metrics_server}" ]] ; then
+    return
+  fi
+
+  info "Migrating metrics-server"
+
+  local param
+  local v
+  for v in $(yq r - "args[*]" <<< "${metrics_server}" )
+  do
+    # Strip '--' prefix
+    v="${v/#--/}"
+
+    # Split on '='
+    IFS='=' read -ra param <<< "${v}"
+
+    # 2 entries: this key has a value so use it
+    if [[ ${#param[@]} -eq 2 ]]; then
+      yq w -i "${TEMP_FILE}" "metrics-server.extraArgs.${param[0]}" "${param[1]}"
+    # 1 entry: this key has no value hence it's just a boolean flag
+    elif [[ ${#param[@]} -eq 1 ]]; then
+      yq w -i "${TEMP_FILE}" "metrics-server.extraArgs.${param[0]}" true
+    else
+      warning "Problem migrating metrics-server args: ${param[*]}"
+    fi
+  done
+
+  yq d -i "${TEMP_FILE}" "metrics-server.args"
+}
+
 function delete_migrated_unused_keys() {
   IFS=$'\n' read -r -d ' ' -a MAPPINGS_KEYS_TO_DELETE <<< "${KEYS_TO_DELETE}"
   readonly MAPPINGS_KEYS_TO_DELETE
@@ -692,6 +727,7 @@ kube_prometheus_stack_update_remote_write_regexes
 
 migrate_sumologic_sources
 migrate_sumologic_setup_fields
+migrate_metrics_server
 
 check_user_image
 check_fluentd_persistence
