@@ -110,6 +110,8 @@ as well as the exact steps for migration.
       app.kubernetes.io/instance: <RELEASE-NAME>
   ```
 
+- Persistence for Fluentd is enabled by default.
+
 ### How to upgrade
 
 #### Requirements
@@ -281,7 +283,31 @@ One of the following two strategies can be used:
     --selector "app=fluent-bit,release=<RELEASE-NAME>,heritage=tmp"
   ```
 
-#### 4. Run upgrade script
+#### 4. Configure Fluentd persistence
+
+Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less
+reliable in-memory buffer (`fluentd.persistence.enabled=true`) by default.
+
+When Fluentd persistence is enabled then no action is required in order to upgrade.
+
+When Fluentd persistence is disabled (default setting in `1.3.5` release)
+it is required to either go through persistence enabling procedure before upgrade (recommended)
+or preserve existing setting and modify default setting for Fluentd persistence in `2.0.0` release.
+
+**In order to enable persistence in existing collection** please follow one of persistence enabling procedures described in
+[Enabling Fluentd Persistence](FluentdPersistence.md#enabling-fluentd-persistence) guide before upgrade.
+
+If Fluentd persistence is disabled and it is desired to preserve this setting,
+modify defaults and disable persistence either by adding `--set fluentd.persistence.enabled=false`
+to `helm upgrade` command or in the `values.yaml` file under the `fluentd` key as follows:
+
+```yaml
+fluentd:
+  persistence:
+    enabled: false
+```
+
+#### 5. Run upgrade script
 
 For Helm users, the only breaking changes are the renamed config parameters.
 For users who use a `values.yaml` file, we provide a script that users can run
