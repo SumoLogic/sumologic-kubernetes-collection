@@ -99,7 +99,7 @@ fluent-bit:
       [OUTPUT]
         Name            forward
         Match           *
-        Host            ${CHART}.${NAMESPACE}.svc.cluster.local.
+        Host            ${FLUENTD_LOGS_SVC}.${NAMESPACE}.svc.cluster.local.
         Port            24321
         tls             off
         tls.verify      on

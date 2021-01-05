@@ -1,5 +1,6 @@
 
 [INFO]    Migrating prometheus remote write urls
+[INFO]    Migrating "fluent-bit.backend.forward.host" from "${CHART}.${NAMESPACE}.svc.cluster.local." to "${FLUENTD_LOGS_SVC}.${NAMESPACE}.svc.cluster.local."
 [WARNING] You have an unexpected section in your fluent-bit configuration that we're not migrating automatically. Please migrate it manually. Line: @INCLUDE fluent-bit-service.conf
 [WARNING] You have an unexpected section in your fluent-bit configuration that we're not migrating automatically. Please migrate it manually. Line: @INCLUDE fluent-bit-output.conf
 [INFO]    deleting prometheus-operator

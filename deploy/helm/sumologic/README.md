@@ -173,9 +173,9 @@ Parameter | Description | Default
 `fluent-bit.podAnnotations` | Additional annotations for fluent-bit pods. | `{}`
 `fluent-bit.service.flush` | Frequency to flush fluent-bit buffer to fluentd. | `5`
 `fluent-bit.metrics.enabled` | Enable metrics from fluent-bit. | `true`
-`fluent-bit.env` | Environment variables for fluent-bit. | `[{"name":"CHART","valueFrom":{"configMapKeyRef":{"key":"fluentdLogs","name":"sumologic-configmap"}}},{"name":"NAMESPACE","valueFrom":{"fieldRef":{"fieldPath":"metadata.namespace"}}}]`
+`fluent-bit.env` | Environment variables for fluent-bit. | `[{"name":"FLUENTD_LOGS_SVC","valueFrom":{"configMapKeyRef":{"key":"fluentdLogs","name":"sumologic-configmap"}}},{"name":"NAMESPACE","valueFrom":{"fieldRef":{"fieldPath":"metadata.namespace"}}}]`
 `fluent-bit.backend.type` | Set the backend to which Fluent-Bit should flush the information it gathers | `forward`
-`fluent-bit.backend.forward.host` | Target host where Fluent-Bit or Fluentd are listening for Forward messages. | `${CHART}.${NAMESPACE}.svc.cluster.local.`
+`fluent-bit.backend.forward.host` | Target host where Fluent-Bit or Fluentd are listening for Forward messages. | `${FLUENTD_LOGS_SVC}.${NAMESPACE}.svc.cluster.local.`
 `fluent-bit.backend.forward.port` | TCP Port of the target service. | `24321`
 `fluent-bit.backend.forward.tls` | Enable or disable TLS support. | `off`
 `fluent-bit.backend.forward.tls_verify` | Force certificate validation. | `on`
