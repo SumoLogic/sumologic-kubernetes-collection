@@ -106,14 +106,14 @@ Next, make the following modifications to the `remoteWrite` section of the `prom
 
 The URLs in `remoteWrite` section of the `prometheus-overrides.yaml` file uses `env` variables which need to be changed to point to the correct location.
 
-- Replace `$(CHART)` with the `release name-namespace` that you have used while installing the Sumo Logic helm chart.
+- Replace `$(FLUENTD_METRICS_SVC)` with the `release name-namespace` that you have used while installing the Sumo Logic helm chart followed by `-fluentd-metrics`.
 - Replace `$(NAMESPACE)` with the namespace where Prometheus is running.
 
 For example:\
 If you have installed the Sumo Logic helm chart with release name `collection` in the `sumologic` namespace and Prometheus is running in the `prometheus` namespace:
 
 ```
-`$(CHART).$(NAMESPACE)` will be replaced by `collection-sumologic.prometheus`
+`$(FLUENTD_METRICS_SVC).$(NAMESPACE)` will be replaced by `collection-sumologic-fluentd-metrics.prometheus`
 ```
 
 Next, copy the modified `remoteWrite` section of the `prometheus-overrides.yaml` file to your Prometheus configuration file’s `remote_write` section, as per the documentation [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)

@@ -203,7 +203,7 @@ Parameter | Description | Default
 `kube-prometheus-stack.prometheus.prometheusSpec.resources` | Resource limits for prometheus.  Uses sub-chart defaults. | `{}`
 `kube-prometheus-stack.prometheus.prometheusSpec.thanos.baseImage` | Base image for Thanos container. | `quay.io/thanos/thanos`
 `kube-prometheus-stack.prometheus.prometheusSpec.thanos.version` | Image tag for Thanos container. | `v0.10.0`
-`kube-prometheus-stack.prometheus.prometheusSpec.containers` | Containers allows injecting additional containers. This is meant to allow adding an authentication proxy to a Prometheus pod. | `[{"env":[{"name":"CHART","valueFrom":{"configMapKeyRef":{"key":"fluentdMetrics","name":"sumologic-configmap"}}},{"name":"NAMESPACE","valueFrom":{"configMapKeyRef":{"key":"fluentdNamespace","name":"sumologic-configmap"}}}],"name":"prometheus-config-reloader"}]`
+`kube-prometheus-stack.prometheus.prometheusSpec.containers` | Containers allows injecting additional containers. This is meant to allow adding an authentication proxy to a Prometheus pod. | `[{"env":[{"name":"FLUENTD_METRICS_SVC","valueFrom":{"configMapKeyRef":{"key":"fluentdMetrics","name":"sumologic-configmap"}}},{"name":"NAMESPACE","valueFrom":{"configMapKeyRef":{"key":"fluentdNamespace","name":"sumologic-configmap"}}}],"name":"prometheus-config-reloader"}]`
 `kube-prometheus-stack.prometheus.prometheusSpec.podMetadata.labels` | Add custom pod labels to prometheus pods | `{}`
 `kube-prometheus-stack.prometheus.prometheusSpec.podMetadata.annotations` | Add custom pod annotations to prometheus pods | `{}`
 `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` | If specified, the remote_write spec. | See values.yaml
