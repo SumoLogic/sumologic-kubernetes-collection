@@ -2,6 +2,45 @@ apiVersion: v1
 entries:
   sumologic:
   - apiVersion: v2
+    appVersion: 2.0.0-rc.1
+    created: "2021-01-05T18:15:58.100787783Z"
+    dependencies:
+    - condition: fluent-bit.enabled,sumologic.logs.enabled
+      name: fluent-bit
+      repository: https://fluent.github.io/helm-charts
+      version: 0.7.13
+    - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 12.10.4
+    - condition: falco.enabled
+      name: falco
+      repository: https://falcosecurity.github.io/charts
+      version: 1.5.7
+    - condition: metrics-server.enabled
+      name: metrics-server
+      repository: https://charts.bitnami.com/bitnami
+      version: 5.0.2
+    - condition: telegraf-operator.enabled
+      name: telegraf-operator
+      repository: https://helm.influxdata.com/
+      version: 1.1.5
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
+    digest: a137ed6eca2d1c85a96c5bd40bd5bf33af0df09965707468cb799eeaa76d4492
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    type: application
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-2.0.0-rc.1.tgz
+    version: 2.0.0-rc.1
+  - apiVersion: v2
     appVersion: 2.0.0-rc.0
     created: "2021-01-05T14:34:31.126867171Z"
     dependencies:
@@ -1340,4 +1379,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.6.0.tgz
     version: 0.6.0
-generated: "2021-01-05T14:34:31.090223883Z"
+generated: "2021-01-05T18:15:58.060428289Z"
