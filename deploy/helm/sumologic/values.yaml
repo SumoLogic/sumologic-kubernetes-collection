@@ -788,7 +788,7 @@ fluent-bit:
   #   privileged: true
 
   env:
-    - name: CHART
+    - name: FLUENTD_LOGS_SVC
       valueFrom:
         configMapKeyRef:
           name: sumologic-configmap
@@ -897,7 +897,7 @@ fluent-bit:
       [OUTPUT]
           Name          forward
           Match         *
-          Host          ${CHART}.${NAMESPACE}.svc.cluster.local.
+          Host          ${FLUENTD_LOGS_SVC}.${NAMESPACE}.svc.cluster.local.
           Port          24321
           Retry_Limit   False
           tls           off

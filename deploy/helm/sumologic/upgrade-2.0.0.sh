@@ -670,7 +670,14 @@ function migrate_fluent_bit() {
       local HOST
       readonly HOST="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.host')"
       if [[ -n "${HOST}" ]]; then
-        OUTPUTS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s\n" "${OUTPUTS}" "Host" "${HOST}")"
+        # shellcheck disable=SC2016
+        if [[ "${HOST}" == '${CHART}.${NAMESPACE}.svc.cluster.local.' ]]; then
+          info 'Migrating "fluent-bit.backend.forward.host" from "${CHART}.${NAMESPACE}.svc.cluster.local." to "${FLUENTD_LOGS_SVC}.${NAMESPACE}.svc.cluster.local."'
+          OUTPUTS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s\n" "${OUTPUTS}" "Host" '${FLUENTD_LOGS_SVC}.${NAMESPACE}.svc.cluster.local.')"
+        else
+          warning "Unexpected \"fluent-bit.backend.forward.host\" value: ${HOST}. Leaving it as is in new fluent-bit configuration"
+          OUTPUTS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s\n" "${OUTPUTS}" "Host" "${HOST}")"
+        fi
       fi
 
       local PORT
