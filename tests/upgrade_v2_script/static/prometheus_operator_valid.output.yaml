@@ -35,7 +35,7 @@ kube-prometheus-stack:
         - name: thanos-sidecar
         - name: config-reloader
           env:
-            - name: CHART
+            - name: FLUENTD_METRICS_SVC
               valueFrom:
                 configMapKeyRef:
                   name: sumologic-configmap

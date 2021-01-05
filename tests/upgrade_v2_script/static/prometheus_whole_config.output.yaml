@@ -134,7 +134,7 @@ kube-prometheus-stack:
       containers:
         - name: config-reloader
           env:
-            - name: CHART
+            - name: FLUENTD_METRICS_SVC
               valueFrom:
                 configMapKeyRef:
                   name: sumologic-configmap

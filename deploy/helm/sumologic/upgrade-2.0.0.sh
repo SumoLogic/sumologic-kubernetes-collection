@@ -191,7 +191,7 @@ function migrate_prometheus_recording_rules() {
 function kube_prometheus_stack_update_remote_write_regexes() {
   local URL_METRICS_OPERATOR_RULE
   # shellcheck disable=SC2016
-  readonly URL_METRICS_OPERATOR_RULE='http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.operator.rule'
+  readonly URL_METRICS_OPERATOR_RULE='http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.operator.rule'
 
   local PROMETHEUS_METRICS_OPERATOR_RULE_REGEX
   readonly PROMETHEUS_METRICS_OPERATOR_RULE_REGEX="cluster_quantile:apiserver_request_latencies:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_latency:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_latency:histogram_quantile|cluster_quantile:scheduler_binding_latency:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:"
@@ -218,7 +218,7 @@ function kube_prometheus_stack_update_remote_write_regexes() {
   if [[ -n "${TEMP_REWRITE_PROMETHEUS_METRICS_OPERATOR_RULE}" ]]; then
     info "Updating prometheus regex in rewrite rule for url: ${URL_METRICS_OPERATOR_RULE}..."
     # shellcheck disable=SC2016
-    yq delete -i "${TEMP_FILE}" 'kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite."url==http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.operator.rule"'
+    yq delete -i "${TEMP_FILE}" 'kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite."url==http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.operator.rule"'
 
     local SCRIPT
     SCRIPT="$(cat <<- EOF
@@ -240,7 +240,7 @@ function kube_prometheus_stack_update_remote_write_regexes() {
 
   local URL_METRICS_CONTROL_PLANE_COREDNS
 # shellcheck disable=SC2016
-  readonly URL_METRICS_CONTROL_PLANE_COREDNS='http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane.coredns'
+  readonly URL_METRICS_CONTROL_PLANE_COREDNS='http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.control-plane.coredns'
 
   local PROMETHEUS_METRICS_CONTROL_PLANE_COREDNS_REGEX
   readonly PROMETHEUS_METRICS_CONTROL_PLANE_COREDNS_REGEX="coredns;(?:coredns_cache_(size|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))"
@@ -283,6 +283,26 @@ function kube_prometheus_stack_update_remote_write_regexes() {
 
     yq w -i "${TEMP_FILE}" --script <(echo "${SCRIPT}")
   fi
+}
+
+function kube_prometheus_stack_migrate_remote_write_urls() {
+  info "Migrating prometheus remote write urls"
+
+  # shellcheck disable=SC2016
+  sed -i'.bak' \
+    's#http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus#http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus#g' \
+    "${TEMP_FILE}" && \
+  rm "${TEMP_FILE}".bak
+}
+
+function kube_prometheus_stack_migrate_chart_env_variable() {
+  if [[ -z "$(yq r "${TEMP_FILE}" -- 'kube-prometheus-stack.prometheus.prometheusSpec.containers.(name==config-reloader).env.(name==CHART)')" ]]; then
+    return
+  fi
+
+  yq w -i "${TEMP_FILE}" \
+    'kube-prometheus-stack.prometheus.prometheusSpec.containers.(name==config-reloader).env.(name==CHART).name' \
+    FLUENTD_METRICS_SVC
 }
 
 function add_prometheus_pre_1_14_recording_rules() {
@@ -723,7 +743,9 @@ migrate_prometheus_recording_rules
 add_new_scrape_labels_to_prometheus_service_monitors
 migrate_prometheus_operator_to_kube_prometheus_stack
 kube_prometheus_stack_set_remote_write_timeout_to_5s
+kube_prometheus_stack_migrate_remote_write_urls
 kube_prometheus_stack_update_remote_write_regexes
+kube_prometheus_stack_migrate_chart_env_variable
 
 migrate_sumologic_sources
 migrate_sumologic_setup_fields
