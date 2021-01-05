@@ -12,7 +12,7 @@ For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](.
     - Set the `remote_timeout` to 1s (default 30s) for each item in the Prometheus remote write section under `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite`:
 
     ```
-    - url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.node
+    - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.node
       writeRelabelConfigs:
       - action: keep
         regex: node-exporter;(?:node_load1|node_load5|node_load15|node_cpu_seconds_total)
