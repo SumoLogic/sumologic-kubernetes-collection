@@ -667,8 +667,8 @@ function check_user_image() {
       info "Migrating from image.repository '${USER_IMAGE_REPOSITORY}' to sumologic.setup.job.image.repository 'public.ecr.aws/sumologic/kubernetes-setup'"
       yq w -i "${TEMP_FILE}" -- sumologic.setup.job.image.repository "public.ecr.aws/sumologic/kubernetes-setup"
 
-      info "Migrating from image.tag '${USER_VERSION}' to fluentd.image.tag '2.0.0'"
-      yq w -i "${TEMP_FILE}" -- fluentd.image.tag 2.0.0
+      info "Migrating from image.tag '${USER_VERSION}' to fluentd.image.tag '1.11.5-sumo-0'"
+      yq w -i "${TEMP_FILE}" -- fluentd.image.tag '1.11.5-sumo-0'
       info "Migrating from image.repository '${USER_IMAGE_REPOSITORY}' to fluentd.image.repository 'public.ecr.aws/sumologic/kubernetes-fluentd'"
       yq w -i "${TEMP_FILE}" -- fluentd.image.repository "public.ecr.aws/sumologic/kubernetes-fluentd"
     else
