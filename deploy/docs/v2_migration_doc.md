@@ -103,7 +103,10 @@ as well as the exact steps for migration.
 
 **Note: The below steps are using Helm 3. Helm 2 is not supported.**
 
-### 1. Upgrade to helm chart version `v1.3.2`
+### 1. Upgrade to helm chart version `v1.3.5`
+
+If you're running a newer version than `v1.3.5`, instructions from this document
+will also work for you.
 
 #### Ensure you have sumologic helm repo added
 
@@ -133,11 +136,11 @@ Run the command shown below to fetch the latest helm chart:
 helm repo update
 ```
 
-For users who are not already on `v1.3.2` of the helm chart, please upgrade
+For users who are not already on `v1.3.5` of the helm chart, please upgrade
 to that version first by running the below command:
 
 ```bash
-helm upgrade collection sumologic/sumologic --reuse-values --version=1.3.2
+helm upgrade collection sumologic/sumologic --reuse-values --version=1.3.5
 ```
 
 ### 2. Upgrade Prometheus CRDs
