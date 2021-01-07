@@ -1,10 +1,7 @@
 
 [INFO]    Migrating prometheus remote write urls
-[WARNING] You have fluentd.persistence.enabled set to 'false'
-[WARNING] This chart starting with 2.0 sets it to 'true' by default
-[WARNING] We're migrating your values.yaml with persistence set to 'false'
-[WARNING] Please refer to the following doc in in case you wish to enable it:
-[WARNING] https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-file-based-buffer
+[WARNING] You have an unexpected section in your fluent-bit configuration that we're not migrating automatically. Please migrate it manually. Line: @INCLUDE fluent-bit-service.conf
+[WARNING] You have an unexpected section in your fluent-bit configuration that we're not migrating automatically. Please migrate it manually. Line: @INCLUDE fluent-bit-output.conf
 [INFO]    deleting prometheus-operator
 [INFO]    deleting fluent-bit.metrics
 [INFO]    deleting fluent-bit.trackOffsets
