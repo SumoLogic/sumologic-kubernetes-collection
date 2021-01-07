@@ -181,17 +181,14 @@ function migrate_prometheus_recording_rules() {
   fi
 
   local RECORDING_RULES_OVERRIDE
-  RECORDING_RULES_OVERRIDE=$(yq r "${TEMP_FILE}" -- 'prometheus-operator.kubeTargetVersionOverride')
+  readonly RECORDING_RULES_OVERRIDE=$(yq r "${TEMP_FILE}" -- 'prometheus-operator.kubeTargetVersionOverride')
 
   if [[ "${RECORDING_RULES_OVERRIDE}" == "1.13.0-0" ]]; then
+    add_prometheus_pre_1_14_recording_rules "${TEMP_FILE}"
     info "Removing prometheus kubeTargetVersionOverride='1.13.0-0'"
     yq d -i "${TEMP_FILE}" "prometheus-operator.kubeTargetVersionOverride"
-    add_prometheus_pre_1_14_recording_rules "${TEMP_FILE}"
-  elif [[ -z "${RECORDING_RULES_OVERRIDE}" ]]; then
-    add_prometheus_pre_1_14_recording_rules "${TEMP_FILE}"
-  else
-    warning "prometheus-operator.kubeTargetVersionOverride should be unset or set to '1.13.0-0'"
-    warning "Actually it's set to: ${RECORDING_RULES_OVERRIDE}"
+  elif [[ -n "${RECORDING_RULES_OVERRIDE}" ]]; then
+    warning "prometheus-operator.kubeTargetVersionOverride should be unset or set to '1.13.0-0' but it's set to: ${RECORDING_RULES_OVERRIDE}"
     warning "Please unset it or set it to '1.13.0-0' and rerun this script"
   fi
 }
@@ -515,6 +512,7 @@ function add_prometheus_pre_1_14_recording_rules() {
 	EOF
 )
 
+  info "Adding 'additionalPrometheusRulesMap.pre-1.14-node-rules' to kube-prometheus-stack chart configuration"
   yq w -i "${temp_file}" 'prometheus-operator.additionalPrometheusRulesMap."pre-1.14-node-rules"' \
     --from <(echo "${PROMETHEUS_RULES}")
 }

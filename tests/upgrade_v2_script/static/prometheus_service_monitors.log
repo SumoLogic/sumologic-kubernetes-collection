@@ -1,5 +1,6 @@
 [INFO]    Mapping prometheus-operator.prometheusOperator.tlsProxy.enabled into kube-prometheus-stack.prometheusOperator.tls.enabled
 
+[INFO]    Adding 'additionalPrometheusRulesMap.pre-1.14-node-rules' to kube-prometheus-stack chart configuration
 [INFO]    Removing prometheus kubeTargetVersionOverride='1.13.0-0'
 [INFO]    Adding 'sumologic.com/scrape: "true"' scrape labels to prometheus service monitors
 [INFO]    Migrating prometheus-config-reloader container to config-reloader in prometheusSpec
