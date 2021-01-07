@@ -152,17 +152,19 @@ function migrate_prometheus_operator_to_kube_prometheus_stack() {
     return
   fi
 
-  info "Migrating prometheus-config-reloader container to config-reloader in prometheusSpec"
-  yq m -i --arrays append \
-    "${TEMP_FILE}" \
-    <(
-      yq p <(
-        yq w <(
-          yq r "${TEMP_FILE}" -- 'prometheus-operator.prometheus.prometheusSpec.containers.(name==prometheus-config-reloader)' \
-          ) name config-reloader \
-        ) 'prometheus-operator.prometheus.prometheusSpec.containers[+]'
-      )
-  yq d -i "${TEMP_FILE}" "prometheus-operator.prometheus.prometheusSpec.containers.(name==prometheus-config-reloader)"
+  if [[ -n "$(yq r "${TEMP_FILE}" 'prometheus-operator.prometheus.prometheusSpec.containers.(name==prometheus-config-reloader)')" ]]; then
+    info "Migrating prometheus-config-reloader container to config-reloader in prometheusSpec"
+    yq m -i --arrays append \
+      "${TEMP_FILE}" \
+      <(
+        yq p <(
+          yq w <(
+            yq r "${TEMP_FILE}" -- 'prometheus-operator.prometheus.prometheusSpec.containers.(name==prometheus-config-reloader)' \
+            ) name config-reloader \
+          ) 'prometheus-operator.prometheus.prometheusSpec.containers[+]'
+        )
+    yq d -i "${TEMP_FILE}" "prometheus-operator.prometheus.prometheusSpec.containers.(name==prometheus-config-reloader)"
+  fi
 
   info "Migrating from prometheus-operator to kube-prometheus-stack"
   yq m -i \
