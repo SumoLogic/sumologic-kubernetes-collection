@@ -24,10 +24,6 @@ sumologic.addTimestamp:fluentd.logs.output.addTimestamp
 sumologic.chunkLimitSize:fluentd.buffer.chunkLimitSize
 sumologic.eventCollectionEnabled:fluentd.events.enabled
 sumologic.events.sourceCategory:fluentd.events.sourceCategory
-sumologic.excludeContainerRegex:fluentd.logs.containers.excludeContainerRegex
-sumologic.excludeHostRegex:fluentd.logs.containers.excludeHostRegex
-sumologic.excludeNamespaceRegex:fluentd.logs.containers.excludeNamespaceRegex
-sumologic.excludePodRegex:fluentd.logs.containers.excludePodRegex
 sumologic.fluentd.buffer:fluentd.buffer.type
 sumologic.fluentdLogLevel:fluentd.logLevel
 sumologic.flushInterval:fluentd.buffer.flushInterval
@@ -39,10 +35,6 @@ sumologic.k8sMetadataFilter.watch:fluentd.logs.containers.k8sMetadataFilter.watc
 sumologic.logFormat:fluentd.logs.output.logFormat
 sumologic.numThreads:fluentd.buffer.numThreads
 sumologic.queueChunkLimitSize:fluentd.buffer.queueChunkLimitSize
-sumologic.sourceCategory:fluentd.logs.containers.sourceCategory
-sumologic.sourceCategoryPrefix:fluentd.logs.containers.sourceCategoryPrefix
-sumologic.sourceCategoryReplaceDash:fluentd.logs.containers.sourceCategoryReplaceDash
-sumologic.sourceName:fluentd.logs.containers.sourceName
 sumologic.timestampKey:fluentd.logs.output.timestampKey
 sumologic.totalLimitSize:fluentd.buffer.totalLimitSize
 sumologic.verifySsl:fluentd.verifySsl
@@ -62,6 +54,14 @@ sumologic.fluentd.autoscaling.enabled:fluentd.logs.autoscaling.enabled:fluentd.m
 sumologic.fluentd.autoscaling.maxReplicas:fluentd.logs.autoscaling.maxReplicas:fluentd.metrics.autoscaling.maxReplicas
 sumologic.fluentd.autoscaling.minReplicas:fluentd.logs.autoscaling.minReplicas:fluentd.metrics.autoscaling.minReplicas
 sumologic.fluentd.autoscaling.targetCPUUtilizationPercentage:fluentd.logs.autoscaling.targetCPUUtilizationPercentage:fluentd.metrics.autoscaling.targetCPUUtilizationPercentage
+sumologic.excludeContainerRegex:fluentd.logs.containers.excludeContainerRegex:fluentd.logs.default.excludeContainerRegex:fluentd.logs.systemd.excludeContainerRegex:fluentd.logs.kubelet.excludeContainerRegex
+sumologic.excludeHostRegex:fluentd.logs.containers.excludeHostRegex:fluentd.logs.default.excludeHostRegex:fluentd.logs.systemd.excludeHostRegex:fluentd.logs.kubelet.excludeHostRegex
+sumologic.excludeNamespaceRegex:fluentd.logs.containers.excludeNamespaceRegex:fluentd.logs.default.excludeNamespaceRegex:fluentd.logs.systemd.excludeNamespaceRegex:fluentd.logs.kubelet.excludeNamespaceRegex
+sumologic.excludePodRegex:fluentd.logs.containers.excludePodRegex:fluentd.logs.default.excludePodRegex:fluentd.logs.systemd.excludePodRegex:fluentd.logs.kubelet.excludePodRegex
+sumologic.sourceCategory:fluentd.logs.containers.sourceCategory:fluentd.logs.default.sourceCategory:fluentd.logs.systemd.sourceCategory:fluentd.logs.kubelet.sourceCategory
+sumologic.sourceCategoryPrefix:fluentd.logs.containers.sourceCategoryPrefix:fluentd.logs.default.sourceCategoryPrefix:fluentd.logs.systemd.sourceCategoryPrefix:fluentd.logs.kubelet.sourceCategoryPrefix
+sumologic.sourceCategoryReplaceDash:fluentd.logs.containers.sourceCategoryReplaceDash:fluentd.logs.default.sourceCategoryReplaceDash:fluentd.logs.systemd.sourceCategoryReplaceDash:fluentd.logs.kubelet.sourceCategoryReplaceDash
+sumologic.sourceName:fluentd.logs.containers.sourceName:fluentd.logs.default.sourceName:fluentd.logs.systemd.sourceName:fluentd.logs.kubelet.sourceName
 "
 
 readonly KEY_MAPPINGS_EMPTY="

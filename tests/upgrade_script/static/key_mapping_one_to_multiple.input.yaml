@@ -18,3 +18,11 @@ sumologic:
       maxReplicas: fluentd.logs.autoscaling.maxReplicas, fluentd.metrics.autoscaling.maxReplicas
       minReplicas: fluentd.logs.autoscaling.minReplicas, fluentd.metrics.autoscaling.minReplicas
       targetCPUUtilizationPercentage: fluentd.logs.autoscaling.targetCPUUtilizationPercentage, fluentd.metrics.autoscaling.targetCPUUtilizationPercentage
+  excludeContainerRegex: fluentd.logs.containers.excludeContainerRegex
+  excludeHostRegex: fluentd.logs.containers.excludeHostRegex
+  excludeNamespaceRegex: fluentd.logs.containers.excludeNamespaceRegex
+  excludePodRegex: fluentd.logs.containers.excludePodRegex
+  sourceCategory: fluentd.logs.containers.sourceCategory
+  sourceCategoryPrefix: fluentd.logs.containers.sourceCategoryPrefix
+  sourceCategoryReplaceDash: fluentd.logs.containers.sourceCategoryReplaceDash
+  sourceName: fluentd.logs.containers.sourceName
