@@ -2105,17 +2105,15 @@ otelcol:
 
       ## Smart cascading filtering rules with preset limits.
       cascading_filter:
-        ## (default = 30s): Wait time since the first span of a trace before making
+        ## (default = 30s): Wait time since the first span of a trace arrived before making
         ## a filtering decision
         decision_wait: 30s
-        ## (default = 50000): Number of traces kept in memory
+        ## (default = 50000): Maximum number of traces kept in memory
         num_traces: 90000
         ## (default = 0): Expected number of new traces (helps in allocating data structures)
-        expected_new_traces_per_sec: 10
-        ## (default = 0): defines maximum number of spans per second that
-        ## could be handled by this policy. When set to -1, it selects the traces
-        ## only if the global limit is not exceeded by other policies (however,
-        ## without further limitations).
+        expected_new_traces_per_sec: 100
+        ## (default = 0): defines the global limit of maximum number of spans per second 
+        ## that are going to be emitted
         spans_per_second: 1660
         ## (default = 0.2): Ratio of spans that are always probabilistically filtered
         ## (hence might be used for metrics calculation).
@@ -2123,16 +2121,15 @@ otelcol:
         ## (no default): Policies used to make a sampling decision
         policies:
           - name: extended-duration
-            ## Spans_per_second (default = 1500): Maximum total number of emitted
-            ## spans per second.
+            ## Spans_per_second: max number of emitted spans per second by this policy.
             spans_per_second: 500
             properties:
               ## Selects the span if the duration is greater or equal the given
               ## value (use s or ms as the suffix to indicate unit).
               min_duration: 5s
           - name: everything-else
+            ## This selects all traces, up the to the global limit
             spans_per_second: -1
-
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
