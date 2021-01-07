@@ -33,6 +33,8 @@ spec:
   - name: opencensus # Default endpoint for Opencensus receiver.
     port: 55678
   - name: otlp-grpc # Default endpoint for OTLP gRPC receiver.
+    port: 4317
+  - name: otlp-grpc-old # Old endpoint for OTLP gRPC receiver.
     port: 55680
   - name: otlp-http # Default endpoint for OTLP HTTP receiver.
     port: 55681

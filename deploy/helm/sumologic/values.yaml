@@ -1877,7 +1877,7 @@ otelagent:
     memBallastSizeMib: "250"
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.12.0"
+      tag: "0.16.1-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -1915,7 +1915,7 @@ otelagent:
       otlp:
         protocols:
           grpc:
-            endpoint: "0.0.0.0:55680"
+            endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:55681"
       zipkin:
@@ -1949,7 +1949,7 @@ otelagent:
       health_check: {}
     exporters:
       otlp:
-        endpoint: "exporters.otlp.endpoint.replace:55680"
+        endpoint: "exporters.otlp.endpoint.replace:4317"
         insecure: true
     service:
       extensions: [health_check]
@@ -1983,7 +1983,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.16.0-sumo"
+      tag: "0.16.1-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -2027,7 +2027,7 @@ otelcol:
       otlp:
         protocols:
           grpc:
-            endpoint: "0.0.0.0:55680"
+            endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:55681"
       zipkin:
@@ -2147,11 +2147,6 @@ otelcol:
     exporters:
       zipkin:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
-
-      ## OpenTelemetry Protocol HTTP Exporter
-      # otlphttp:
-      #   endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
-
       ## Following generates verbose logs with span content, useful to verify what
       ## metadata is being tagged. To enable, uncomment and add "logging" to exporters below.
       ## There are two levels that could be used: `debug` and `info` with the former
