@@ -184,6 +184,10 @@ One of the following two strategies can be used:
   kubectl apply --namespace <NAMESPACE-NAME>  --force --filename -
   ```
 
+  **Notice**  When DaemonSet managed by helm is modified by the command specified above, one might expect
+  a warning similar to the one below:
+  `Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply`
+
 - #### Preparing temporary instance of Fluent Bit
 
   Create temporary instance of Fluent Bit and delete DaemonSet with old version of `spec.selector`.
