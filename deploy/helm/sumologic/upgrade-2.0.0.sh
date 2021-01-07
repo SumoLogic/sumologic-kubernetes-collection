@@ -28,6 +28,14 @@ image.pullPolicy:fluentd.image.pullPolicy:sumologic.setup.job.image.pullPolicy
 
 readonly KEYS_TO_DELETE="
 prometheus-operator
+fluent-bit.metrics
+fluent-bit.trackOffsets
+fluent-bit.service.flush
+fluent-bit.image.fluent_bit
+fluent-bit.backend
+fluent-bit.input
+fluent-bit.parsers
+fluent-bit.rawConfig
 "
 
 # https://slides.com/perk/how-to-train-your-bash#/41
@@ -602,12 +610,269 @@ function migrate_metrics_server() {
   yq d -i "${TEMP_FILE}" "metrics-server.args"
 }
 
+function migrate_fluent_bit() {
+  if [[ -z "$(yq r "${TEMP_FILE}" -- 'fluent-bit')" ]]; then
+    # Nothing to migrate, return
+    return
+  fi
+
+  if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.env.(name==CHART)')" ]]; then
+    yq w -i "${TEMP_FILE}" 'fluent-bit.env.(name==CHART).name' FLUENTD_LOGS_SVC
+  fi
+
+  if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.image.fluent_bit')" ]]; then
+    yq w -i "${TEMP_FILE}" 'fluent-bit.image.pullPolicy' IfNotPresent
+  fi
+
+  if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.service.flush')" ]]; then
+    yq w -i "${TEMP_FILE}" 'fluent-bit.service.labels."sumologic.com/scrape"' --style double true
+  fi
+
+  yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumeMounts[+].mountPath' '/tail-db'
+  yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumeMounts[0].name' 'tail-db'
+
+  yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumes[+].hostPath.path' '/var/lib/fluent-bit'
+  yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumes[0].hostPath.type' 'DirectoryOrCreate'
+  yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumes[0].name' 'tail-db'
+
+  local OUTPUTS=""
+  # Migrate fluent-bit.backend
+  if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend')" ]]; then
+    OUTPUTS="$(printf "%s[OUTPUT]\n" "${OUTPUTS}")"
+    if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.type')" ]]; then
+      OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "Name" "forward")"
+    fi
+    if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward')" ]]; then
+      OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "Match" "*")"
+
+      local HOST
+      readonly HOST="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.host')"
+      if [[ -n "${HOST}" ]]; then
+        OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "Host" "${HOST}")"
+      fi
+
+      local PORT
+      readonly PORT="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.port')"
+      if [[ -n "${PORT}" ]]; then
+        OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "Port" "${PORT}")"
+      fi
+
+      local TLS
+      readonly TLS="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.tls')"
+      if [[ -n "${TLS}" ]]; then
+        OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "tls" "${TLS}")"
+      fi
+
+      local TLS_VERIFY
+      readonly TLS_VERIFY="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.tls_verify')"
+      if [[ -n "${TLS_VERIFY}" ]]; then
+        OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "tls.verify" "${TLS_VERIFY}")"
+      fi
+
+      local TLS_DEBUG
+      readonly TLS_DEBUG="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.tls_debug')"
+      if [[ -n "${TLS_DEBUG}" ]]; then
+        OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "tls.debug" "${TLS_DEBUG}")"
+      fi
+    fi
+  fi
+
+  local PARSERS=""
+  # Migrate fluent-bit.parsers
+  # Below logic is based on the template:
+  # https://github.com/helm/charts/blob/7e45e678e39b88590fe877f159516f85f3fd3f38/stable/fluent-bit/templates/config.yaml
+  if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.parsers')" && "$(yq r "${TEMP_FILE}" -- 'fluent-bit.parsers.enabled')" == "true" ]]; then
+    for name in $(yq r "${TEMP_FILE}" -- 'fluent-bit.parsers.regex.[*].name' )
+    do
+      if [[ -n "${PARSERS}" ]]; then
+        PARSERS="$(printf "%s\n[PARSER]\n" "${PARSERS}")"
+      else
+        PARSERS="$(printf "[PARSER]\n")"
+      fi
+
+      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Name" "${name}")"
+      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Format" "regex")"
+
+      local REGEX
+      REGEX="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).regex" )"
+      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Regex" "${REGEX}")"
+
+      local TIMEKEY
+      TIMEKEY="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).timeKey" )"
+      if [[ -n "${TIMEKEY}" ]]; then
+        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Key" "${TIMEKEY}")"
+      fi
+
+      local TIMEFORMAT
+      TIMEFORMAT="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).timeFormat" )"
+      if [[ -n "${TIMEFORMAT}" ]]; then
+        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Format" "${TIMEFORMAT}")"
+      fi
+    done
+
+    for name in $(yq r "${TEMP_FILE}" -- 'fluent-bit.parsers.json.[*].name' )
+    do
+      if [[ -n "${PARSERS}" ]]; then
+        PARSERS="$(printf "%s\n[PARSER]\n" "${PARSERS}")"
+      else
+        PARSERS="$(printf "[PARSER]\n")"
+      fi
+
+      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Name" "${name}")"
+      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Format" "json")"
+
+      local TIMEKEY
+      TIMEKEY="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.json.(name==${name}).timeKey" )"
+      if [[ -n "${TIMEKEY}" ]]; then
+        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Key" "${TIMEKEY}")"
+      fi
+
+      local TIMEFORMAT
+      TIMEFORMAT="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.json.(name==${name}).timeFormat" )"
+      if [[ -n "${TIMEFORMAT}" ]]; then
+        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Format" "${TIMEFORMAT}")"
+      fi
+
+      local TIMEKEEP
+      TIMEKEEP="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.json.(name==${name}).timeKeep" )"
+      if [[ -n "${TIMEKEEP}" ]]; then
+        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Keep" "${TIMEKEEP}")"
+      fi
+
+      local DECODE_FIELD_AS
+      DECODE_FIELD_AS="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.json.(name==${name}).decodeFieldAs" )"
+      if [[ -n "${DECODE_FIELD_AS}" ]]; then
+        local DECODE_FIELD
+        DECODE_FIELD="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.json.(name==${name}).decodeField" )"
+        if [[ -z "${DECODE_FIELD}" ]]; then
+          DECODE_FIELD="log"
+        fi
+        PARSERS="$(printf "%s\n  %-14s%s %s" "${PARSERS}" "Decode_Field_As" "${DECODE_FIELD_AS}" "${DECODE_FIELD}")"
+      fi
+    done
+
+    for name in $(yq r "${TEMP_FILE}" -- 'fluent-bit.parsers.logfmt.[*].name' )
+    do
+      if [[ -n "${PARSERS}" ]]; then
+        PARSERS="$(printf "%s\n[PARSER]\n" "${PARSERS}")"
+      else
+        PARSERS="$(printf "[PARSER]\n")"
+      fi
+
+      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Name" "${name}")"
+      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Format" "logfmt")"
+
+      local REGEX
+      REGEX="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).regex" )"
+      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Regex" "${REGEX}")"
+
+      local TIMEKEY
+      TIMEKEY="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).timeKey" )"
+      if [[ -n "${TIMEKEY}" ]]; then
+        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Key" "${TIMEKEY}")"
+      fi
+
+      local TIMEFORMAT
+      TIMEFORMAT="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).timeFormat" )"
+      if [[ -n "${TIMEFORMAT}" ]]; then
+        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Format" "${TIMEFORMAT}")"
+      fi
+    done
+  fi
+
+  local INPUTS=""
+  local OUTPUTS=""
+  local FILTERS=""
+  local RAWCONFIG
+  readonly RAWCONFIG="$(yq r "${TEMP_FILE}" 'fluent-bit.rawConfig')"
+
+  local SECTION=""
+  while IFS= read -r line
+  do
+    if [[ "${line}" =~ ^\[.* ]]; then
+      if [[ "${line}" == "[INPUT]" ]]; then
+        SECTION="INPUT"
+        if [[ -n "${INPUTS}" ]]; then
+          INPUTS="$(printf "%s\n[INPUT]\n" "${INPUTS}")"
+        else
+          INPUTS="$(printf "[INPUT]\n")"
+        fi
+      elif [[ "${line}" == "[OUTPUT]" ]]; then
+        SECTION="OUTPUT"
+        if [[ -n "${OUTPUTS}" ]]; then
+          OUTPUTS="$(printf "%s\n[OUTPUT]\n" "${OUTPUTS}")"
+        else
+          OUTPUTS="$(printf "[OUTPUT]\n")"
+        fi
+      elif [[ "${line}" == "[PARSER]" ]]; then
+        SECTION="PARSER"
+        if [[ -n "${PARSERS}" ]]; then
+          PARSERS="$(printf "%s\n[PARSER]\n" "${PARSERS}")"
+        else
+          PARSERS="$(printf "[PARSER]\n")"
+        fi
+      elif [[ "${line}" == "[FILTER]" ]]; then
+        SECTION="FILTER"
+        if [[ -n "${FILTERS}" ]]; then
+          FILTERS="$(printf "%s\n[FILTER]\n" "${FILTERS}")"
+        else
+          FILTERS="$(printf "[FILTER]\n")"
+        fi
+      fi
+    elif [[ "${line}" =~ ^@.* ]]; then
+      # Don't migrate "@INCLUDE"s and other unrecognized sections
+      warning "You have an unexpected section in your fluent-bit configuration that we're not migrating automatically. Please migrate it manually. Line: ${line}"
+      continue
+    else
+      # Trim whitespace
+      line="$(echo "${line}" | awk '{$1=$1;print}')"
+
+      case "${SECTION}" in
+        "INPUT")
+          INPUTS="$(printf "%s\n  %s" "${INPUTS}" "${line}")"
+          ;;
+
+        "OUTPUT")
+          OUTPUTS="$(printf "%s\n  %s" "${OUTPUTS}" "${line}")"
+          ;;
+
+        "PARSER")
+          PARSERS="$(printf "%s\n  %s" "${PARSERS}" "${line}")"
+          ;;
+
+        "FILTER")
+          FILTERS="$(printf "%s\n  %s" "${FILTERS}" "${line}")"
+          ;;
+
+        *)
+          ;;
+      esac
+    fi
+  done < <(echo "${RAWCONFIG}")
+
+  if [[ -n "${INPUTS}" ]]; then
+    yq w -i "${TEMP_FILE}" 'fluent-bit.config.inputs' "${INPUTS}"
+  fi
+  if [[ -n "${OUTPUTS}" ]]; then
+    yq w -i "${TEMP_FILE}" 'fluent-bit.config.outputs' "${OUTPUTS}"
+  fi
+  if [[ -n "${PARSERS}" ]]; then
+    yq w -i "${TEMP_FILE}" 'fluent-bit.config.customParsers' "${PARSERS}"
+  fi
+  if [[ -n "${FILTERS}" ]]; then
+    yq w -i "${TEMP_FILE}" 'fluent-bit.config.filters' "${FILTERS}"
+  fi
+}
+
 function delete_migrated_unused_keys() {
+  set +e
   IFS=$'\n' read -r -d ' ' -a MAPPINGS_KEYS_TO_DELETE <<< "${KEYS_TO_DELETE}"
   readonly MAPPINGS_KEYS_TO_DELETE
   for i in "${MAPPINGS_KEYS_TO_DELETE[@]}"; do
+  info "deleting ${i}"
     yq d -i "${TEMP_FILE}" -- "${i}"
   done
+  set -e
 }
 
 function migrate_customer_keys() {
@@ -750,11 +1015,13 @@ kube_prometheus_stack_migrate_chart_env_variable
 migrate_sumologic_sources
 migrate_sumologic_setup_fields
 migrate_metrics_server
+migrate_fluent_bit
 
 check_user_image
 check_fluentd_persistence
 
 fix_yq
+delete_migrated_unused_keys
 rename_temp_file
 cleanup_bak_file
 
