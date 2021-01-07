@@ -83,9 +83,6 @@ kube-prometheus-stack:
           matchLabels:
             sumologic.com/app: otelcol
             sumologic.com/scrape: "true"
-    prometheusSpec:
-      containers:
-        - name: config-reloader
   additionalPrometheusRulesMap:
     pre-1.14-node-rules:
       groups:
