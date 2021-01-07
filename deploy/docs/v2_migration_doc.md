@@ -263,7 +263,7 @@ to convert their existing `values.yaml` file into one that is compatible with th
   with the below command:
 
   ```bash
-  helm get values <RELEASE-NAME> > current_values.yaml
+  helm get values --output yaml <RELEASE-NAME> > current_values.yaml
   ```
 
 - Download the upgrade script via:
