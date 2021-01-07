@@ -140,7 +140,7 @@ For users who are not already on `v1.3.5` of the helm chart, please upgrade
 to that version first by running the below command:
 
 ```bash
-helm upgrade collection sumologic/sumologic --reuse-values --version=1.3.5
+helm upgrade <RELEASE-NAME> sumologic/sumologic --reuse-values --version=1.3.5
 ```
 
 ### 2. Upgrade Prometheus CRDs
@@ -284,5 +284,5 @@ to convert their existing `values.yaml` file into one that is compatible with th
 - At this point, users can then run:
 
   ```bash
-  helm upgrade collection sumologic/sumologic --version=2.0.0 -f new_values.yaml
+  helm upgrade <RELEASE-NAME> sumologic/sumologic --version=2.0.0 -f new_values.yaml
   ```
