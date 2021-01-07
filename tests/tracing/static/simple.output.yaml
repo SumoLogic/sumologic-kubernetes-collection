@@ -24,7 +24,7 @@ data:
         timeout: 5s
       cascading_filter:
         decision_wait: 30s
-        expected_new_traces_per_sec: 10
+        expected_new_traces_per_sec: 100
         num_traces: 90000
         policies:
         - name: extended-duration

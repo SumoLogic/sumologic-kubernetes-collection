@@ -2112,7 +2112,7 @@ otelcol:
         num_traces: 90000
         ## (default = 0): Expected number of new traces (helps in allocating data structures)
         expected_new_traces_per_sec: 100
-        ## (default = 0): defines the global limit of maximum number of spans per second 
+        ## (default = 0): defines the global limit of maximum number of spans per second
         ## that are going to be emitted
         spans_per_second: 1660
         ## (default = 0.2): Ratio of spans that are always probabilistically filtered
