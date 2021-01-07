@@ -18,15 +18,6 @@ fluentd:
       addTimestamp: fluentd.logs.output.addTimestamp
       logFormat: fluentd.logs.output.logFormat
       timestampKey: fluentd.logs.output.timestampKey
-    containers:
-      excludeContainerRegex: fluentd.logs.containers.excludeContainerRegex
-      excludeHostRegex: fluentd.logs.containers.excludeHostRegex
-      excludeNamespaceRegex: fluentd.logs.containers.excludeNamespaceRegex
-      excludePodRegex: fluentd.logs.containers.excludePodRegex
-      sourceCategory: fluentd.logs.containers.sourceCategory
-      sourceCategoryPrefix: fluentd.logs.containers.sourceCategoryPrefix
-      sourceCategoryReplaceDash: fluentd.logs.containers.sourceCategoryReplaceDash
-      sourceName: fluentd.logs.containers.sourceName
   buffer:
     chunkLimitSize: fluentd.buffer.chunkLimitSize
     type: fluentd.buffer.type
