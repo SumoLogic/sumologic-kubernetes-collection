@@ -37,6 +37,46 @@
 [INFO]    Mapping sumologic.fluentd.autoscaling.targetCPUUtilizationPercentage into:
 [INFO]    - fluentd.logs.autoscaling.targetCPUUtilizationPercentage
 [INFO]    - fluentd.metrics.autoscaling.targetCPUUtilizationPercentage
+[INFO]    Mapping sumologic.excludeContainerRegex into:
+[INFO]    - fluentd.logs.containers.excludeContainerRegex
+[INFO]    - fluentd.logs.default.excludeContainerRegex
+[INFO]    - fluentd.logs.systemd.excludeContainerRegex
+[INFO]    - fluentd.logs.kubelet.excludeContainerRegex
+[INFO]    Mapping sumologic.excludeHostRegex into:
+[INFO]    - fluentd.logs.containers.excludeHostRegex
+[INFO]    - fluentd.logs.default.excludeHostRegex
+[INFO]    - fluentd.logs.systemd.excludeHostRegex
+[INFO]    - fluentd.logs.kubelet.excludeHostRegex
+[INFO]    Mapping sumologic.excludeNamespaceRegex into:
+[INFO]    - fluentd.logs.containers.excludeNamespaceRegex
+[INFO]    - fluentd.logs.default.excludeNamespaceRegex
+[INFO]    - fluentd.logs.systemd.excludeNamespaceRegex
+[INFO]    - fluentd.logs.kubelet.excludeNamespaceRegex
+[INFO]    Mapping sumologic.excludePodRegex into:
+[INFO]    - fluentd.logs.containers.excludePodRegex
+[INFO]    - fluentd.logs.default.excludePodRegex
+[INFO]    - fluentd.logs.systemd.excludePodRegex
+[INFO]    - fluentd.logs.kubelet.excludePodRegex
+[INFO]    Mapping sumologic.sourceCategory into:
+[INFO]    - fluentd.logs.containers.sourceCategory
+[INFO]    - fluentd.logs.default.sourceCategory
+[INFO]    - fluentd.logs.systemd.sourceCategory
+[INFO]    - fluentd.logs.kubelet.sourceCategory
+[INFO]    Mapping sumologic.sourceCategoryPrefix into:
+[INFO]    - fluentd.logs.containers.sourceCategoryPrefix
+[INFO]    - fluentd.logs.default.sourceCategoryPrefix
+[INFO]    - fluentd.logs.systemd.sourceCategoryPrefix
+[INFO]    - fluentd.logs.kubelet.sourceCategoryPrefix
+[INFO]    Mapping sumologic.sourceCategoryReplaceDash into:
+[INFO]    - fluentd.logs.containers.sourceCategoryReplaceDash
+[INFO]    - fluentd.logs.default.sourceCategoryReplaceDash
+[INFO]    - fluentd.logs.systemd.sourceCategoryReplaceDash
+[INFO]    - fluentd.logs.kubelet.sourceCategoryReplaceDash
+[INFO]    Mapping sumologic.sourceName into:
+[INFO]    - fluentd.logs.containers.sourceName
+[INFO]    - fluentd.logs.default.sourceName
+[INFO]    - fluentd.logs.systemd.sourceName
+[INFO]    - fluentd.logs.kubelet.sourceName
 
 [INFO]    falco will be disabled. Change "falco.enabled" to "true" if you want to enable it
 

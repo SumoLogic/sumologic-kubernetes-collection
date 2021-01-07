@@ -19,6 +19,42 @@ fluentd:
       minReplicas: fluentd.logs.autoscaling.minReplicas, fluentd.metrics.autoscaling.minReplicas
       targetCPUUtilizationPercentage: fluentd.logs.autoscaling.targetCPUUtilizationPercentage,
         fluentd.metrics.autoscaling.targetCPUUtilizationPercentage
+    containers:
+      excludeContainerRegex: fluentd.logs.containers.excludeContainerRegex
+      excludeHostRegex: fluentd.logs.containers.excludeHostRegex
+      excludeNamespaceRegex: fluentd.logs.containers.excludeNamespaceRegex
+      excludePodRegex: fluentd.logs.containers.excludePodRegex
+      sourceCategory: fluentd.logs.containers.sourceCategory
+      sourceCategoryPrefix: fluentd.logs.containers.sourceCategoryPrefix
+      sourceCategoryReplaceDash: fluentd.logs.containers.sourceCategoryReplaceDash
+      sourceName: fluentd.logs.containers.sourceName
+    default:
+      excludeContainerRegex: fluentd.logs.containers.excludeContainerRegex
+      excludeHostRegex: fluentd.logs.containers.excludeHostRegex
+      excludeNamespaceRegex: fluentd.logs.containers.excludeNamespaceRegex
+      excludePodRegex: fluentd.logs.containers.excludePodRegex
+      sourceCategory: fluentd.logs.containers.sourceCategory
+      sourceCategoryPrefix: fluentd.logs.containers.sourceCategoryPrefix
+      sourceCategoryReplaceDash: fluentd.logs.containers.sourceCategoryReplaceDash
+      sourceName: fluentd.logs.containers.sourceName
+    systemd:
+      excludeContainerRegex: fluentd.logs.containers.excludeContainerRegex
+      excludeHostRegex: fluentd.logs.containers.excludeHostRegex
+      excludeNamespaceRegex: fluentd.logs.containers.excludeNamespaceRegex
+      excludePodRegex: fluentd.logs.containers.excludePodRegex
+      sourceCategory: fluentd.logs.containers.sourceCategory
+      sourceCategoryPrefix: fluentd.logs.containers.sourceCategoryPrefix
+      sourceCategoryReplaceDash: fluentd.logs.containers.sourceCategoryReplaceDash
+      sourceName: fluentd.logs.containers.sourceName
+    kubelet:
+      excludeContainerRegex: fluentd.logs.containers.excludeContainerRegex
+      excludeHostRegex: fluentd.logs.containers.excludeHostRegex
+      excludeNamespaceRegex: fluentd.logs.containers.excludeNamespaceRegex
+      excludePodRegex: fluentd.logs.containers.excludePodRegex
+      sourceCategory: fluentd.logs.containers.sourceCategory
+      sourceCategoryPrefix: fluentd.logs.containers.sourceCategoryPrefix
+      sourceCategoryReplaceDash: fluentd.logs.containers.sourceCategoryReplaceDash
+      sourceName: fluentd.logs.containers.sourceName
   metrics:
     statefulset:
       affinity: fluentd.logs.statefulset.affinity, fluentd.metrics.statefulset.affinity
