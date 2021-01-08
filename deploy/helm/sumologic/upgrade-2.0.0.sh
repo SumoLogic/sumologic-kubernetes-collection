@@ -635,44 +635,47 @@ function migrate_fluent_bit() {
   yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumes[0].hostPath.type' 'DirectoryOrCreate'
   yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumes[0].name' 'tail-db'
 
+  local CONFIG_KEY_WIDTH
+  readonly CONFIG_KEY_WIDTH="16"
+
   local OUTPUTS=""
   # Migrate fluent-bit.backend
   if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend')" ]]; then
     OUTPUTS="$(printf "%s[OUTPUT]\n" "${OUTPUTS}")"
     if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.type')" ]]; then
-      OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "Name" "forward")"
+      OUTPUTS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s\n" "${OUTPUTS}" "Name" "forward")"
     fi
     if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward')" ]]; then
-      OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "Match" "*")"
+      OUTPUTS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s\n" "${OUTPUTS}" "Match" "*")"
 
       local HOST
       readonly HOST="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.host')"
       if [[ -n "${HOST}" ]]; then
-        OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "Host" "${HOST}")"
+        OUTPUTS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s\n" "${OUTPUTS}" "Host" "${HOST}")"
       fi
 
       local PORT
       readonly PORT="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.port')"
       if [[ -n "${PORT}" ]]; then
-        OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "Port" "${PORT}")"
+        OUTPUTS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s\n" "${OUTPUTS}" "Port" "${PORT}")"
       fi
 
       local TLS
       readonly TLS="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.tls')"
       if [[ -n "${TLS}" ]]; then
-        OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "tls" "${TLS}")"
+        OUTPUTS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s\n" "${OUTPUTS}" "tls" "${TLS}")"
       fi
 
       local TLS_VERIFY
       readonly TLS_VERIFY="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.tls_verify')"
       if [[ -n "${TLS_VERIFY}" ]]; then
-        OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "tls.verify" "${TLS_VERIFY}")"
+        OUTPUTS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s\n" "${OUTPUTS}" "tls.verify" "${TLS_VERIFY}")"
       fi
 
       local TLS_DEBUG
       readonly TLS_DEBUG="$(yq r "${TEMP_FILE}" -- 'fluent-bit.backend.forward.tls_debug')"
       if [[ -n "${TLS_DEBUG}" ]]; then
-        OUTPUTS="$(printf "%s\n  %-14s%s\n" "${OUTPUTS}" "tls.debug" "${TLS_DEBUG}")"
+        OUTPUTS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s\n" "${OUTPUTS}" "tls.debug" "${TLS_DEBUG}")"
       fi
     fi
   fi
@@ -690,23 +693,23 @@ function migrate_fluent_bit() {
         PARSERS="$(printf "[PARSER]\n")"
       fi
 
-      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Name" "${name}")"
-      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Format" "regex")"
+      PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Name" "${name}")"
+      PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Format" "regex")"
 
       local REGEX
       REGEX="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).regex" )"
-      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Regex" "${REGEX}")"
+      PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Regex" "${REGEX}")"
 
       local TIMEKEY
       TIMEKEY="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).timeKey" )"
       if [[ -n "${TIMEKEY}" ]]; then
-        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Key" "${TIMEKEY}")"
+        PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Time_Key" "${TIMEKEY}")"
       fi
 
       local TIMEFORMAT
       TIMEFORMAT="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).timeFormat" )"
       if [[ -n "${TIMEFORMAT}" ]]; then
-        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Format" "${TIMEFORMAT}")"
+        PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Time_Format" "${TIMEFORMAT}")"
       fi
     done
 
@@ -718,25 +721,25 @@ function migrate_fluent_bit() {
         PARSERS="$(printf "[PARSER]\n")"
       fi
 
-      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Name" "${name}")"
-      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Format" "json")"
+      PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Name" "${name}")"
+      PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Format" "json")"
 
       local TIMEKEY
       TIMEKEY="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.json.(name==${name}).timeKey" )"
       if [[ -n "${TIMEKEY}" ]]; then
-        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Key" "${TIMEKEY}")"
+        PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Time_Key" "${TIMEKEY}")"
       fi
 
       local TIMEFORMAT
       TIMEFORMAT="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.json.(name==${name}).timeFormat" )"
       if [[ -n "${TIMEFORMAT}" ]]; then
-        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Format" "${TIMEFORMAT}")"
+        PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Time_Format" "${TIMEFORMAT}")"
       fi
 
       local TIMEKEEP
       TIMEKEEP="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.json.(name==${name}).timeKeep" )"
       if [[ -n "${TIMEKEEP}" ]]; then
-        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Keep" "${TIMEKEEP}")"
+        PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Time_Keep" "${TIMEKEEP}")"
       fi
 
       local DECODE_FIELD_AS
@@ -747,7 +750,7 @@ function migrate_fluent_bit() {
         if [[ -z "${DECODE_FIELD}" ]]; then
           DECODE_FIELD="log"
         fi
-        PARSERS="$(printf "%s\n  %-14s%s %s" "${PARSERS}" "Decode_Field_As" "${DECODE_FIELD_AS}" "${DECODE_FIELD}")"
+        PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s %s" "${PARSERS}" "Decode_Field_As" "${DECODE_FIELD_AS}" "${DECODE_FIELD}")"
       fi
     done
 
@@ -759,34 +762,34 @@ function migrate_fluent_bit() {
         PARSERS="$(printf "[PARSER]\n")"
       fi
 
-      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Name" "${name}")"
-      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Format" "logfmt")"
+      PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Name" "${name}")"
+      PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Format" "logfmt")"
 
       local REGEX
       REGEX="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).regex" )"
-      PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Regex" "${REGEX}")"
+      PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Regex" "${REGEX}")"
 
       local TIMEKEY
       TIMEKEY="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).timeKey" )"
       if [[ -n "${TIMEKEY}" ]]; then
-        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Key" "${TIMEKEY}")"
+        PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Time_Key" "${TIMEKEY}")"
       fi
 
       local TIMEFORMAT
       TIMEFORMAT="$(yq r "${TEMP_FILE}" -- "fluent-bit.parsers.regex.(name==${name}).timeFormat" )"
       if [[ -n "${TIMEFORMAT}" ]]; then
-        PARSERS="$(printf "%s\n  %-14s%s" "${PARSERS}" "Time_Format" "${TIMEFORMAT}")"
+        PARSERS="$(printf "%s\n  %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "Time_Format" "${TIMEFORMAT}")"
       fi
     done
   fi
 
   local INPUTS=""
-  local OUTPUTS=""
   local FILTERS=""
   local RAWCONFIG
   readonly RAWCONFIG="$(yq r "${TEMP_FILE}" 'fluent-bit.rawConfig')"
 
   local SECTION=""
+  shopt -s extglob
   while IFS= read -r line
   do
     if [[ "${line}" =~ ^\[.* ]]; then
@@ -825,7 +828,7 @@ function migrate_fluent_bit() {
       continue
     else
       # Trim whitespace
-      line="$(echo "${line}" | awk '{$1=$1;print}')"
+      line="${line##+([[:space:]])}"
 
       case "${SECTION}" in
         "INPUT")
