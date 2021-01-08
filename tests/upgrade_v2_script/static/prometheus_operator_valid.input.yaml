@@ -12,7 +12,7 @@ prometheus-operator:
   prometheus:
     prometheusSpec:
       scrapeInterval: 30s
-      retention: 1d
+      retention: 7d
       podMetadata:
         labels: {}
         annotations: {}

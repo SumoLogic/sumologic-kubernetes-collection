@@ -177,6 +177,25 @@ function migrate_prometheus_operator_to_kube_prometheus_stack() {
   yq d -i "${TEMP_FILE}" "prometheus-operator"
 }
 
+function migrate_prometheus_retention_period() {
+  if [[ -z "$(yq r "${TEMP_FILE}" -- 'prometheus-operator')" ]]; then
+    return
+  fi
+  local RETENTION
+  readonly RETENTION="$(yq r "${TEMP_FILE}" -- 'prometheus-operator.prometheus.prometheusSpec.retention')"
+
+  if [[ -z "${RETENTION}" ]]; then
+    return
+  fi
+
+  if [[ "${RETENTION}" == "7d" ]]; then
+    info "Changing prometheus retention period from 7d to 1d"
+    yq w -i "${TEMP_FILE}" 'prometheus-operator.prometheus.prometheusSpec.retention' 1d
+  elif [[ "${RETENTION}" != "1d" ]]; then
+    warning "Prometheus retention set to ${RETENTION} (different than 7d - default for 1.3). Bailing migration to 1d (default for 2.0)"
+  fi
+}
+
 function migrate_prometheus_recording_rules() {
   if [[ -z "$(yq r "${TEMP_FILE}" -- 'prometheus-operator')" ]]; then
     return
@@ -1007,6 +1026,7 @@ create_temp_file
 
 migrate_customer_keys
 
+migrate_prometheus_retention_period
 migrate_prometheus_recording_rules
 add_new_scrape_labels_to_prometheus_service_monitors
 migrate_prometheus_operator_to_kube_prometheus_stack
