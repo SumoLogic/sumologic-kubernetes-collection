@@ -100,33 +100,18 @@ kubectl run tools \
   | tee sumologic.yaml
 ```
 
-Next, you will need to apply the required CRD's for the Prometheus Operator.
+Next, you will need to apply the required CRD's for `kube-prometheus-stack`.
 This is required before applying the generated YAML.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
-```
-
-If you are on Kubernetes 1.14 or earlier, you may received the following error:
-
-```
-ValidationError(CustomResourceDefinition.spec): unknown field "preserveUnknownFields" in io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1beta1.CustomResourceDefinitionSpec; if you choose to ignore these errors, turn validation off with --validate=false
-```
-
-Simply add the `--validate=false` flag to the `kubectl apply` commands.
-
-```bash
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml --validate=false
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml --validate=false
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml --validate=false
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml --validate=false
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml --validate=false
-kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml --validate=false
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.44.0/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.44.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.44.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.44.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.44.0/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.44.0/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.44.0/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.44.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
 ```
 
 Finally, you can run `kubectl apply` on the file containing the rendered YAML
