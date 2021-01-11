@@ -1,7 +1,22 @@
 # Kubernetes Collection `v2.0.0` - Breaking Changes
 
-- [Changes](#changes)
-- [How to upgrade](#how-to-upgrade)
+- [Helm Users](#helm-users)
+  - [Changes](#changes)
+  - [How to upgrade](#how-to-upgrade)
+    - [Requirements](#requirements)
+    - [1. Upgrade to helm chart version `v1.3.5`](#1-upgrade-to-helm-chart-version-v135)
+      - [Ensure you have sumologic helm repo added](#ensure-you-have-sumologic-helm-repo-added)
+      - [Update](#update)
+    - [2. Upgrade Prometheus CRDs](#2-upgrade-prometheus-crds)
+    - [3. Prepare Fluent Bit instance](#3-prepare-fluent-bit-instance)
+      - [Recreating Fluent Bit DaemonSet](#recreating-fluent-bit-daemonset)
+      - [Preparing temporary instance of Fluent Bit](#preparing-temporary-instance-of-fluent-bit)
+    - [4. Run upgrade script](#4-run-upgrade-script)
+- [Non-Helm Users](#non-helm-users)
+  - [Breaking Changes](#breaking-changes)
+  - [How to upgrade for Non-helm Users](#how-to-upgrade-for-non-helm-users)
+    - [1. Tear down existing Fluentd, Prometheus, Fluent Bit and Falco resources](#1-tear-down-existing-fluentd-prometheus-fluent-bit-and-falco-resources)
+    - [2. Deploy collection with new approach](#2-deploy-collection-with-new-approach)
 
 Based on the feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
@@ -9,7 +24,9 @@ to the Sumo Logic Kubernetes Collection solution.
 In this document we detail the changes for both Helm and Non-Helm users,
 as well as the exact steps for migration.
 
-## Changes
+## Helm Users
+
+### Changes
 
 - Version `v2.0.0` is dropping support for Helm 2.
 
@@ -93,9 +110,9 @@ as well as the exact steps for migration.
       app.kubernetes.io/instance: <RELEASE-NAME>
   ```
 
-## How to upgrade
+### How to upgrade
 
-### Requirements
+#### Requirements
 
 - helm3
 - yq in version: `3.4.0` <= `x` < `4.0.0`
@@ -103,12 +120,12 @@ as well as the exact steps for migration.
 
 **Note: The below steps are using Helm 3. Helm 2 is not supported.**
 
-### 1. Upgrade to helm chart version `v1.3.5`
+#### 1. Upgrade to helm chart version `v1.3.5`
 
 If you're running a newer version than `v1.3.5`, instructions from this document
 will also work for you.
 
-#### Ensure you have sumologic helm repo added
+##### Ensure you have sumologic helm repo added
 
 Before running commands shown below please make sure that you have
 sumologic helm repo configured.
@@ -128,7 +145,7 @@ If sumologic helm repo is not configured use the following command to add it:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-#### Update
+##### Update
 
 Run the command shown below to fetch the latest helm chart:
 
@@ -143,7 +160,7 @@ to that version first by running the below command:
 helm upgrade <RELEASE-NAME> sumologic/sumologic --reuse-values --version=1.3.5
 ```
 
-### 2. Upgrade Prometheus CRDs
+#### 2. Upgrade Prometheus CRDs
 
 Due to changes in `kube-prometheus-stack` which this chart depends on, one will
 need to run the following commands in order to update Prometheus related CRDs:
@@ -159,14 +176,14 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.44.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
 ```
 
-### 3. Prepare Fluent Bit instance
+#### 3. Prepare Fluent Bit instance
 
 As `spec.selector` in Fluent Bit Helm chart was modified, it is required to manually recreate or delete existing DaemonSet
 with old version of `spec.selector` before upgrade.
 
 One of the following two strategies can be used:
 
-- #### Recreating Fluent Bit DaemonSet
+- ##### Recreating Fluent Bit DaemonSet
 
   Recreating Fluent Bit DaemonSet with new `spec.selector` may cause that applications' logs and Fluent Bit metrics
   will not be available in the time of recreation. It usually shouldn't take more than several seconds.
@@ -188,7 +205,7 @@ One of the following two strategies can be used:
   a warning similar to the one below:
   `Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply`
 
-- #### Preparing temporary instance of Fluent Bit
+- ##### Preparing temporary instance of Fluent Bit
 
   Create temporary instance of Fluent Bit and delete DaemonSet with old version of `spec.selector`.
   This will cause application' logs to be duplicated until temporary instance of Fluent Bit is deleted
@@ -260,7 +277,7 @@ One of the following two strategies can be used:
     --selector "app=fluent-bit,release=<RELEASE-NAME>,heritage=tmp"
   ```
 
-### 4. Run upgrade script
+#### 4. Run upgrade script
 
 For Helm users, the only breaking changes are the renamed config parameters.
 For users who use a `values.yaml` file, we provide a script that users can run
@@ -290,3 +307,30 @@ to convert their existing `values.yaml` file into one that is compatible with th
   ```bash
   helm upgrade <RELEASE-NAME> sumologic/sumologic --version=2.0.0 -f new_values.yaml
   ```
+
+## Non-Helm Users
+
+### Breaking Changes
+
+- From this version we recommend to use helm3 template as replacement for pre-generated kubernetes templates.
+  Because of that, all custom changes made to the templates should be moved to `values.yaml`.
+  This will simplify and improve experience for non-helm installation
+
+### How to upgrade for Non-helm Users
+
+#### 1. Tear down existing Fluentd, Prometheus, Fluent Bit and Falco resources
+
+You will need the YAML files you created when you first installed collection.
+Run the following commands to remove Falco, Fluent-bit, Prometheus Operator and FluentD.
+You do not need to delete the Namespace and Secret you originally created as they will still be used.
+
+```sh
+kubectl delete -f falco.yaml
+kubectl delete -f fluent-bit.yaml
+kubectl delete -f prometheus.yaml
+kubectl delete -f fluentd-sumologic.yaml
+```
+
+#### 2. Deploy collection with new approach
+
+- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Non_Helm_Installation.md#customizing-installation) to deploy new collection.
