@@ -927,6 +927,7 @@ function migrate_customer_keys() {
 
   readonly CUSTOMER_KEYS=$(yq --printMode p r "${OLD_VALUES_YAML}" -- '**')
 
+  local OLD_VALUE
   for key in ${CUSTOMER_KEYS}; do
     if [[ ${MAPPINGS[*]} =~ ${key}: ]]; then
       # whatever you want to do when arr contains value
@@ -952,7 +953,13 @@ function migrate_customer_keys() {
         fi
       done
     else
-      yq w -i "${TEMP_FILE}" -- "${key}" "$(yq r "${OLD_VALUES_YAML}" -- "${key}")"
+      OLD_VALUE="$(yq r "${OLD_VALUES_YAML}" -- "${key}")"
+      if [[ -z "${OLD_VALUE}" ]];then
+        # Quote empty values to prevent errors when using helm templates.
+        yq w -i --style double "${TEMP_FILE}" -- "${key}" "${OLD_VALUE}"
+      else
+        yq w -i "${TEMP_FILE}" -- "${key}" "${OLD_VALUE}"
+      fi
     fi
 
     for i in "${MAPPINGS_KEY_VALUE[@]}"; do

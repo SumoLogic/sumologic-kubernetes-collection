@@ -10,29 +10,29 @@ kube-prometheus-stack:
   commonLabels: {}
   kubeApiServer:
     serviceMonitor:
-      interval:
+      interval: ""
   kubelet:
     serviceMonitor:
-      interval:
+      interval: ""
       resource: false
   kubeControllerManager:
     serviceMonitor:
-      interval:
+      interval: ""
   coreDns:
     serviceMonitor:
-      interval:
+      interval: ""
   kubeEtcd:
     serviceMonitor:
-      interval:
+      interval: ""
   kubeScheduler:
     serviceMonitor:
-      interval:
+      interval: ""
   kubeStateMetrics:
     serviceMonitor:
-      interval:
+      interval: ""
   nodeExporter:
     serviceMonitor:
-      interval:
+      interval: ""
   alertmanager:
     enabled: false
   grafana:
