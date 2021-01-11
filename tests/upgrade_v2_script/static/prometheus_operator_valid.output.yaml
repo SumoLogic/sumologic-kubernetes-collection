@@ -69,6 +69,17 @@ kube-prometheus-stack:
                 sum(node_memory_MemTotal_bytes{job="node-exporter"})
               record: ':node_memory_utilisation:'
             - expr: |-
+                sum by (node) (
+                  (
+                    node_memory_MemFree_bytes{job="node-exporter"} +
+                    node_memory_Cached_bytes{job="node-exporter"} +
+                    node_memory_Buffers_bytes{job="node-exporter"}
+                  )
+                  * on (namespace, pod) group_left(node)
+                    node_namespace_pod:kube_pod_info:
+                )
+              record: node:node_memory_bytes_available:sum
+            - expr: |-
                 (node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum)
                 /
                 node:node_memory_bytes_total:sum
