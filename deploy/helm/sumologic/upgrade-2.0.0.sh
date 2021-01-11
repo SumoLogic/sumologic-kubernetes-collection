@@ -544,7 +544,7 @@ function add_prometheus_pre_1_14_recording_rules() {
 	EOF
 )
 
-  info "Adding 'additionalPrometheusRulesMap.pre-1.14-node-rules' to kube-prometheus-stack chart configuration"
+  info "Adding 'additionalPrometheusRulesMap.pre-1.14-node-rules' to prometheus configuration"
   yq w -i "${temp_file}" 'prometheus-operator.additionalPrometheusRulesMap."pre-1.14-node-rules"' \
     --from <(echo "${PROMETHEUS_RULES}")
 }
@@ -909,7 +909,6 @@ function delete_migrated_unused_keys() {
   IFS=$'\n' read -r -d ' ' -a MAPPINGS_KEYS_TO_DELETE <<< "${KEYS_TO_DELETE}"
   readonly MAPPINGS_KEYS_TO_DELETE
   for i in "${MAPPINGS_KEYS_TO_DELETE[@]}"; do
-  info "deleting ${i}"
     yq d -i "${TEMP_FILE}" -- "${i}"
   done
   set -e

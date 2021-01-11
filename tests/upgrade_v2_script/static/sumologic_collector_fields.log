@@ -1,15 +1,6 @@
 
 [INFO]    Migrating prometheus remote write urls
 [INFO]    Migrating sumologic.setup.fields to sumologic.collector.fields
-[INFO]    deleting prometheus-operator
-[INFO]    deleting fluent-bit.metrics
-[INFO]    deleting fluent-bit.trackOffsets
-[INFO]    deleting fluent-bit.service.flush
-[INFO]    deleting fluent-bit.image.fluent_bit
-[INFO]    deleting fluent-bit.backend
-[INFO]    deleting fluent-bit.input
-[INFO]    deleting fluent-bit.parsers
-[INFO]    deleting fluent-bit.rawConfig
 
 Thank you for upgrading to v2.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
 A new yaml file has been generated for you. Please check the current directory for new_values.yaml.
