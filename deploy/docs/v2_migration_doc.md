@@ -176,6 +176,10 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.44.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
 ```
 
+If you have a separate Prometheus operator installation, you need to make sure its version
+is [v0.44.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.44.0) or higher
+before proceeding with the next steps of the collection upgrade.
+
 #### 3. Prepare Fluent Bit instance
 
 As `spec.selector` in Fluent Bit Helm chart was modified, it is required to manually recreate or delete existing DaemonSet
