@@ -861,7 +861,7 @@ function migrate_fluent_bit() {
       fi
     elif [[ "${line}" =~ ^@.* ]]; then
       # Don't migrate "@INCLUDE"s and other unrecognized sections
-      warning "You have an unexpected section in your fluent-bit configuration that we're not migrating automatically. Please migrate it manually. Line: ${line}"
+      warning "You have an unexpected section in your fluent-bit configuration that we're not migrating automatically. It shouldn't be necessary in 2.0 but please consider whether you need to migrate this manually. Line: ${line}"
       continue
     else
       # Trim whitespace
