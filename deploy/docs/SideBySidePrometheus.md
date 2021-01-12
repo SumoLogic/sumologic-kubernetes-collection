@@ -2,6 +2,8 @@
 
 When installing our Helm Chart it is possible to have more than one Prometheus server running in the same cluster. However, do note that you cannot have more than one Prometheus Operator running in the same cluster. This document will take you through the steps to set up Sumo Logic collection when you have an existing Prometheus Operator you wish to keep intact.
 
+**Note**: Make sure your `Prometheus Operator` and/or `Prometheus Operator Chart` are compatible with the version used by the Collection
+
 # Installation with Helm
 
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.

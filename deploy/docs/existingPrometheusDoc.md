@@ -117,7 +117,9 @@ Once you have completed installation, you can [install the Kubernetes App and vi
 
 ## Merge Prometheus Configuration
 
-If you have customized your Prometheus configuration, follow these steps to merge the configurations. 
+**Note**: Make sure your `Prometheus Operator` and/or `Prometheus Operator Chart` are compatible with the version used by the Collection
+
+If you have customized your Prometheus configuration, follow these steps to merge the configurations.
 
 Helm supports providing multiple configuration files, and priority will be given to the last (right-most) file specified. You can obtain your current prometheus configuration by running
 
