@@ -108,11 +108,13 @@ The buffer configuration can be set in the `values.yaml` file under the `fluentd
 fluentd:
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
-    ## After setting the value to true, run the helm upgrade command with the --force flag.
+    ## After changing this value please follow steps described in:
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v1.3/deploy/docs/FluentdPersistence.md
     enabled: true
 ```
 
 Additional buffering and flushing parameters can be added in the `extraConf`, in the `fluentd` buffer section.
+
 ```yaml
 fluentd:
 ## Option to specify the Fluentd buffer as file/memory.
@@ -124,13 +126,9 @@ fluentd:
 
 We have defined several file paths where the buffer chunks are stored.
 
-Once the config has been modified in the `values.yaml` file you need to run the `helm upgrade` command to apply the changes.
+After changing Fluentd persistence setting (enable or disable) follow steps described in [Fluentd Persistence](FluentdPersistence.md).
 
-```bash
-$ helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml --force
-```
-
-See the following links to official Fluentd buffer documentation: 
+See the following links to official Fluentd buffer documentation:
  - https://docs.fluentd.org/configuration/buffer-section
  - https://docs.fluentd.org/buffer/file
 
