@@ -11,7 +11,8 @@
     - [3. Prepare Fluent Bit instance](#3-prepare-fluent-bit-instance)
       - [Recreating Fluent Bit DaemonSet](#recreating-fluent-bit-daemonset)
       - [Preparing temporary instance of Fluent Bit](#preparing-temporary-instance-of-fluent-bit)
-    - [4. Run upgrade script](#4-run-upgrade-script)
+    - [4. Configure Fluentd persistence](#4-configure-fluentd-persistence)
+    - [5. Run upgrade script](#5-run-upgrade-script)
 - [Non-Helm Users](#non-helm-users)
   - [Breaking Changes](#breaking-changes)
   - [How to upgrade for Non-helm Users](#how-to-upgrade-for-non-helm-users)
@@ -179,20 +180,21 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 ```
 
 If you have a separate Prometheus operator installation, you need to make sure its version
-is [v0.44.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.44.0) or higher
-before proceeding with the next steps of the collection upgrade.
+is [v0.44.0](https://github.com/prometheus-operator/prometheus-operator/releases/tag/v0.44.0)
+or higher before proceeding with the next steps of the collection upgrade.
 
 #### 3. Prepare Fluent Bit instance
 
-As `spec.selector` in Fluent Bit Helm chart was modified, it is required to manually recreate or delete existing DaemonSet
-with old version of `spec.selector` before upgrade.
+As `spec.selector` in Fluent Bit Helm chart was modified, it is required to manually recreate
+or delete existing DaemonSet with old version of `spec.selector` before upgrade.
 
 One of the following two strategies can be used:
 
 - ##### Recreating Fluent Bit DaemonSet
 
-  Recreating Fluent Bit DaemonSet with new `spec.selector` may cause that applications' logs and Fluent Bit metrics
-  will not be available in the time of recreation. It usually shouldn't take more than several seconds.
+  Recreating Fluent Bit DaemonSet with new `spec.selector` may cause that
+  applications' logs and Fluent Bit metrics will not be available in the time of recreation.
+  It usually shouldn't take more than several seconds.
 
   To recreate the Fluent Bit DaemonSet with new `spec.selector` one can run the following command:
 
@@ -207,8 +209,8 @@ One of the following two strategies can be used:
   kubectl apply --namespace <NAMESPACE-NAME>  --force --filename -
   ```
 
-  **Notice**  When DaemonSet managed by helm is modified by the command specified above, one might expect
-  a warning similar to the one below:
+  **Notice**  When DaemonSet managed by helm is modified by the command specified above,
+  one might expect a warning similar to the one below:
   `Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply`
 
 - ##### Preparing temporary instance of Fluent Bit
@@ -218,8 +220,8 @@ One of the following two strategies can be used:
   after the upgrade is complete. As temporary instance of Fluent Bit creates additional Pods
   which are selected by the same Fluent Bit Service you may observe changes in Fluent Bit metrics.
 
-  Copy of database, in which Fluent Bit keeps track of monitored files and offsets, is used by temporary instance of Fluent Bit
-  (Fluent Bit database is copied in initContainer).
+  Copy of database, in which Fluent Bit keeps track of monitored files and offsets,
+  is used by temporary instance of Fluent Bit (Fluent Bit database is copied in initContainer).
   Temporary instance of Fluent Bit will start reading logs with offsets saved in database.
 
   To create a temporary copy of Fluent Bit DaemonSet:
@@ -255,7 +257,9 @@ One of the following two strategies can be used:
   Please make sure that Pods related to new DaemonSet are running:
 
   ```bash
-  kubectl get pod --namespace <NAMESPACE-NAME> --selector "app=fluent-bit,release=<RELEASE-NAME>,app.kubernetes.io/name=fluent-bit,app.kubernetes.io/instance=<RELEASE-NAME>"
+  kubectl get pod \
+    --namespace <NAMESPACE-NAME> \
+    --selector "app=fluent-bit,release=<RELEASE-NAME>,app.kubernetes.io/name=fluent-bit,app.kubernetes.io/instance=<RELEASE-NAME>"
   ```
 
   Please check that the latest logs are duplicated in Sumo.
@@ -263,7 +267,9 @@ One of the following two strategies can be used:
   To delete Fluent Bit DaemonSet with old version of `spec.selector`:
 
   ```bash
-  kubectl delete daemonset --namespace <NAMESPACE-NAME> --selector "app=fluent-bit,heritage=Helm,release=<RELEASE-NAME>"
+  kubectl delete daemonset \
+    --namespace <NAMESPACE-NAME> \
+    --selector "app=fluent-bit,heritage=Helm,release=<RELEASE-NAME>"
   ```
 
   **Notice:** When collection upgrade creates new DaemonSet for Fluent Bit,
@@ -294,8 +300,10 @@ When Fluentd persistence is disabled (default setting in `1.3.5` release)
 it is required to either go through persistence enabling procedure before upgrade (recommended)
 or preserve existing setting and modify default setting for Fluentd persistence in `2.0.0` release.
 
-**In order to enable persistence in existing collection** please follow one of persistence enabling procedures described in
-[Enabling Fluentd Persistence](FluentdPersistence.md#enabling-fluentd-persistence) guide before upgrade.
+**In order to enable persistence in existing collection** please follow one
+of persistence enabling procedures described in
+[Enabling Fluentd Persistence guide](FluentdPersistence.md#enabling-fluentd-persistence)
+before upgrade.
 
 If Fluentd persistence is disabled and it is desired to preserve this setting,
 modify defaults and disable persistence either by adding `--set fluentd.persistence.enabled=false`
@@ -370,9 +378,10 @@ to convert their existing `values.yaml` file into one that is compatible with th
 
 ### Breaking Changes
 
-- From this version we recommend to use helm3 template as replacement for pre-generated kubernetes templates.
+- From `v2.0.0` we recommend to use helm3 template as replacement for pre-generated
+  kubernetes templates.
   Because of that, all custom changes made to the templates should be moved to `values.yaml`.
-  This will simplify and improve experience for non-helm installation
+  This will simplify and improve experience for non-helm installation.
 
 ### How to upgrade for Non-helm Users
 
@@ -391,4 +400,7 @@ kubectl delete -f fluentd-sumologic.yaml
 
 #### 2. Deploy collection with new approach
 
-- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Non_Helm_Installation.md#customizing-installation) to deploy new collection.
+- Follow steps mentioned [here][non_helm_installation_customizing_installation]
+  to deploy new collection.
+
+[non_helm_installation_customizing_installation]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Non_Helm_Installation.md#customizing-installation
