@@ -91,7 +91,7 @@ sumologic:
     job:
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 2.0.0-rc.2
+        tag: 2.0.0-rc.3
         pullPolicy: IfNotPresent
       resources:
         limits:

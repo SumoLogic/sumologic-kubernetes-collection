@@ -164,10 +164,10 @@ Parameter | Description | Default
 `metrics-server.args` | Arguments for metric server. | `["--kubelet-insecure-tls","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"]`
 `fluent-bit.resources` | Resources for Fluent-bit daemonsets. | `{}`
 `fluent-bit.enabled` | Flag to control deploying Fluent-bit Helm sub-chart. | `true`
-`fluent-bit.config.service` | Configure Fluent-bit Helm sub-chart service. | [fluent-bit.config.service in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0-rc.2/deploy/helm/sumologic/values.yaml#L816-L824)
-`fluent-bit.config.inputs` | Configure Fluent-bit Helm sub-chart inputs. | [fluent-bit.config.inputs in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0-rc.2/deploy/helm/sumologic/values.yaml#L826-L891)
-`fluent-bit.config.outputs` | Configure Fluent-bit Helm sub-chart outputs. | [fluent-bit.config.outputs in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0-rc.2/deploy/helm/sumologic/values.yaml#L894-L902)
-`fluent-bit.config.customParsers` | Configure Fluent-bit Helm sub-chart customParsers. | [fluent-bit.config.customParsers in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0-rc.2/deploy/helm/sumologic/values.yaml#L904-L913)
+`fluent-bit.config.service` | Configure Fluent-bit Helm sub-chart service. | [fluent-bit.config.service in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0-rc.3/deploy/helm/sumologic/values.yaml#L816-L824)
+`fluent-bit.config.inputs` | Configure Fluent-bit Helm sub-chart inputs. | [fluent-bit.config.inputs in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0-rc.3/deploy/helm/sumologic/values.yaml#L826-L891)
+`fluent-bit.config.outputs` | Configure Fluent-bit Helm sub-chart outputs. | [fluent-bit.config.outputs in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0-rc.3/deploy/helm/sumologic/values.yaml#L894-L902)
+`fluent-bit.config.customParsers` | Configure Fluent-bit Helm sub-chart customParsers. | [fluent-bit.config.customParsers in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0-rc.3/deploy/helm/sumologic/values.yaml#L904-L913)
 `fluent-bit.service.labels` | Labels for fluent-bit service. | `{sumologic.com/scrape: "true"}`
 `fluent-bit.podLabels` | Additional labels for fluent-bit pods. | `{}`
 `fluent-bit.podAnnotations` | Additional annotations for fluent-bit pods. | `{}`
