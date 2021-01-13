@@ -116,9 +116,9 @@ as well as the exact steps for migration.
 
 #### Requirements
 
-- helm3
-- yq in version: `3.4.0` <= `x` < `4.0.0`
-- bash 4.0 or higher
+- `helm3`
+- `yq` in version: `3.4.0` <= `x` < `4.0.0`
+- `bash` 4.0 or higher
 
 **Note: The below steps are using Helm 3. Helm 2 is not supported.**
 
@@ -320,19 +320,47 @@ to convert their existing `values.yaml` file into one that is compatible with th
   helm get values --output yaml <RELEASE-NAME> > current_values.yaml
   ```
 
-- Download the upgrade script via:
+- Run the upgrade script. You can run it:
 
-  ```bash
-  curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/deploy/helm/sumologic/upgrade-2.0.0.sh
-  ```
+  - On your the host. Please refer to the [requirements](#requirements) so that you have
+    all the required software packages installed.
 
-- Run the upgrade script on the above file with the below command.
+    ```bash
+    curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/deploy/helm/sumologic/upgrade-2.0.0.sh \
+    && chmod +x upgrade-2.0.0.sh \
+    && ./upgrade-2.0.0.sh current_values.yaml
+    ```
 
-  ```bash
-  chmod +x upgrade-2.0.0.sh && ./upgrade-2.0.0.sh current_values.yaml
-  ```
+  - In a docker container:
 
-- At this point, users can then run:
+    ```bash
+    cat current_values.yaml | \
+      docker run \
+        --rm \
+        -i sumologic/kubernetes-tools:2.3.0 upgrade-2.0 | \
+      tee new_values.yaml
+    ```
+
+    Note that this will output both migration script logs and new values file but
+    only the values file contents will be put into `new_values.yaml` due to `tee`.
+
+  - In a container on your cluster:
+
+    ```bash
+    cat current_values.yaml | \
+      kubectl run kubernetes-tools -i \
+        --quiet \
+        --rm \
+        --restart=Never \
+        --image sumologic/kubernetes-tools:2.3.0 -- upgrade-2.0 | \
+      tee new_values.yaml
+    ```
+
+    Note that this will output both migration script logs and new values file but
+    only the values file contents will be put into `new_values.yaml` due to `tee`.
+
+- At this point you should have `new_values.yaml` in your working directory which
+  can be used for the upgrade:
 
   ```bash
   helm upgrade <RELEASE-NAME> sumologic/sumologic --version=2.0.0 -f new_values.yaml
