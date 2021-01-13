@@ -45,7 +45,7 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 
 Name | Version
 -------- | -----
-K8s | 1.10+
+K8s | 1.16+
 Helm | 3.4+
 
 ## Support Matrix
@@ -54,18 +54,20 @@ The following table displays the tested Kubernetes and Helm versions.
 
 Name | Version
 -------- | -----
-K8s with EKS | 1.14<br/>1.15<br/>1.16<br/>1.17
+K8s with EKS | 1.16<br/>1.17<br/>1.18
 K8s with Kops | 1.16<br/>1.17<br/>1.18
-K8s with GKE | 1.15<br/>1.16
-K8s with AKS | 1.16<br/>1.17
+K8s with GKE | 1.16
+K8s with AKS | 1.16<br/>1.17<br/>1.18
+OpenShift | 4.6
 Helm | 3.4.0 (Linux)
-kubectl | 1.15.0
+kubectl | 1.16.0
 
 The following matrix displays the tested package versions for our Helm chart.
 
 Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit | Falco  | Metrics Server | Telegraf Operator
 |:-------- |:-------- |:-------- |:-------- |:-------- |:-------- |:--------
-1.3.0 - Latest | 9.3.4 | 1.11.1 | 2.10.1 | 1.4.0 | 2.11.2 | 1.1.4
+2.0.0 - Latest | 12.3.0 | 1.11.5 | 0.7.13 (new fluent repository) | 1.5.7 | 5.0.2 | 1.1.5
+1.3.0 - 1.3.5 | 9.3.4 | 1.11.1 | 2.10.1 (old helm-stable repository) | 1.4.0 | 2.11.2 | 1.1.4
 1.2.0 - 1.2.3 | 8.13.8 | 1.11.1 | 2.8.14 | 1.1.8 | 2.11.1 | -
 1.1.0 | 8.13.8 | 1.8.1 | 2.8.14 | 1.1.8 | 2.11.1 | -
 1.0.0 | 8.2.0 | 1.8.1 | 2.8.1 | 1.1.6 | 2.7.0 | -
