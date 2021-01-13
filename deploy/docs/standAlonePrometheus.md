@@ -98,22 +98,22 @@ First, generate the Prometheus Operator `prometheus-overrides.yaml` by running
   template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 ```
 
-Next, make the following modifications to the `remoteWrite` section of the `prometheus-overrides.yaml` file:
+Next, change the `remoteWrite` section of the `prometheus-overrides.yaml` file to use snake_case instead of camelCase:
 
 - `writeRelabelConfigs:` change to `write_relabel_configs:`
 - `sourceLabels:` change to `source_labels:`
-- Modify remote URLs in the `remoteWrite` section of the `prometheus-overrides.yaml` file
+- `remoteTimeout:` change to `remote_timeout:`
 
-The URLs in `remoteWrite` section of the `prometheus-overrides.yaml` file uses `env` variables which need to be changed to point to the correct location.
+Next, replace the environment variables used in the `remoteWrite` section of the `prometheus-overrides.yaml` file:
 
-- Replace `$(FLUENTD_METRICS_SVC)` with the `release name-namespace` that you have used while installing the Sumo Logic helm chart followed by `-fluentd-metrics`.
-- Replace `$(NAMESPACE)` with the namespace where Prometheus is running.
+- Replace `$(FLUENTD_METRICS_SVC)` with the Helm release name that you used while installing the Sumo Logic Helm chart, followed by `-sumologic-fluentd-metrics`.
+- Replace `$(NAMESPACE)` with the namespace where Sumo Logic Helm chart is running.
 
 For example:\
-If you have installed the Sumo Logic helm chart with release name `collection` in the `sumologic` namespace and Prometheus is running in the `prometheus` namespace:
+If you have installed the Sumo Logic Helm chart with release name `collection` and it is running in the `sumologic` namespace,
 
 ```
-`$(FLUENTD_METRICS_SVC).$(NAMESPACE)` will be replaced by `collection-sumologic-fluentd-metrics.prometheus`
+`$(FLUENTD_METRICS_SVC).$(NAMESPACE)` will be replaced by `collection-sumologic-fluentd-metrics.sumologic`
 ```
 
 Next, copy the modified `remoteWrite` section of the `prometheus-overrides.yaml` file to your Prometheus configuration file’s `remote_write` section, as per the documentation [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
