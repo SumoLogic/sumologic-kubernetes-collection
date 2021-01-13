@@ -666,7 +666,7 @@ function migrate_fluent_bit() {
   yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumes[0].name' 'tail-db'
 
   local CONFIG_KEY_WIDTH
-  readonly CONFIG_KEY_WIDTH="16"
+  readonly CONFIG_KEY_WIDTH="22"
 
   local OUTPUTS=""
   # Migrate fluent-bit.backend
@@ -826,6 +826,8 @@ function migrate_fluent_bit() {
   readonly RAWCONFIG="$(yq r "${TEMP_FILE}" 'fluent-bit.rawConfig')"
 
   local SECTION=""
+  local KEY=""
+  local VALUE=""
   shopt -s extglob
   while IFS= read -r line
   do
@@ -866,27 +868,41 @@ function migrate_fluent_bit() {
     else
       # Trim whitespace
       line="${line##+([[:space:]])}"
+
       if [[ -n "${line}" ]]; then
-        case "${SECTION}" in
-          "INPUT")
-            INPUTS="$(printf "%s\n    %s" "${INPUTS}" "${line}")"
-            ;;
+        IFS=' ' read -ra ADDR <<< "${line}"
+        if [[ ${#ADDR[@]} -eq 2 ]]; then
+          KEY="${ADDR[0]}"
+          VALUE="${ADDR[1]}"
 
-          "OUTPUT")
-            OUTPUTS="$(printf "%s\n    %s" "${OUTPUTS}" "${line}")"
-            ;;
+          case "${SECTION}" in
+            "INPUT")
+              if [[ "${KEY}" == "Multiline" && -n "${VALUE}" ]]; then
+                info "Migrating fluent-bit's input config from Multiline to Docker_Mode"
+                KEY="Docker_Mode"
+              elif [[ "${KEY}" == "Parser_Firstline" && -n "${VALUE}" ]]; then
+                info "Migrating fluent-bit's input config from Parser_Firstline to Docker_Mode_Parser"
+                KEY="Docker_Mode_Parser"
+              fi
+              INPUTS="$(printf "%s\n    %-${CONFIG_KEY_WIDTH}s%s" "${INPUTS}" "${KEY}" "${VALUE}")"
+              ;;
 
-          "PARSER")
-            PARSERS="$(printf "%s\n    %s" "${PARSERS}" "${line}")"
-            ;;
+            "OUTPUT")
+              OUTPUTS="$(printf "%s\n    %-${CONFIG_KEY_WIDTH}s%s" "${OUTPUTS}" "${KEY}" "${VALUE}")"
+              ;;
 
-          "FILTER")
-            FILTERS="$(printf "%s\n    %s" "${FILTERS}" "${line}")"
-            ;;
+            "PARSER")
+              PARSERS="$(printf "%s\n    %-${CONFIG_KEY_WIDTH}s%s" "${PARSERS}" "${KEY}" "${VALUE}")"
+              ;;
 
-          *)
-            ;;
-        esac
+            "FILTER")
+              FILTERS="$(printf "%s\n    %-${CONFIG_KEY_WIDTH}s%s" "${FILTERS}" "${KEY}" "${VALUE}")"
+              ;;
+
+            *)
+              ;;
+          esac
+        fi
       fi
     fi
   done < <(echo "${RAWCONFIG}")
