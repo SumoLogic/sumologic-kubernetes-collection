@@ -74,7 +74,7 @@ If the namespace does not exist, you can add the `--create-namespace` flag.
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.enabled=false --create-namespace
 ```
 
-If you are installing the helm chart in Openshift platform, you can do the following:
+If you are installing the Helm chart in OpenShift platform, you can do the following:
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"  --set kube-prometheus-stack.enabled=false --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
@@ -92,7 +92,7 @@ First, generate the Prometheus Operator `prometheus-overrides.yaml` by running
   --image sumologic/kubernetes-tools:2.2.3 \
   -- template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 
- # or using docker
+ # or using Docker
  docker run -it --rm \
   sumologic/kubernetes-tools:2.2.3 \
   template-dependency kube-prometheus-stack > prometheus-overrides.yaml
@@ -112,7 +112,7 @@ Next, replace the environment variables used in the `remoteWrite` section of the
 For example:\
 If you have installed the Sumo Logic Helm chart with release name `collection` and it is running in the `sumologic` namespace,
 
-```
+```bash
 `$(FLUENTD_METRICS_SVC).$(NAMESPACE)` will be replaced by `collection-sumologic-fluentd-metrics.sumologic`
 ```
 
@@ -120,15 +120,14 @@ Next, copy the modified `remoteWrite` section of the `prometheus-overrides.yaml`
 
 Then run the following command to find the existing Prometheus pod.
 
-```
+```bash
 kubectl get pods | grep prometheus
 ```
 
 Finally, delete the existing Prometheus pod so that Kubernetes will respawn it with the updated configuration.
 
-```
+```bash
 kubectl delete pods <prometheus_pod_name>
-
 ```
 
 __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
@@ -162,7 +161,7 @@ helm upgrade --install my-release sumologic/sumologic -f values.yaml
 
 **Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).**
 
-To upgrade our helm chart to a newer version, you must first run update your local helm repo.
+To upgrade our Helm chart to a newer version, you must first run update your local Helm repo.
 
 ```bash
 helm repo update
@@ -180,7 +179,7 @@ If you wish to upgrade to a specific version, you can use the `--version` flag.
 helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=1.0.0
 ```
 
-If you no longer have your `values.yaml` from the first installation or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart. For example, if the release is called `my-release` you can run the following.
+If you no longer have your `values.yaml` from the first installation or do not remember the options you added via `--set` you can run the following to see the values for the currently installed Helm chart. For example, if the release is called `my-release` you can run the following.
 
 ```bash
 helm get values my-release
@@ -189,7 +188,7 @@ helm get values my-release
 If something goes wrong, or you want to go back to the previous version,
 you can [rollback changes using helm](https://helm.sh/docs/helm/helm_rollback/):
 
-```
+```bash
 helm history my-release
 helm rollback my-release <REVISION-NUMBER>
 ```
