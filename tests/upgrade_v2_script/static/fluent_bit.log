@@ -2,6 +2,8 @@
 [INFO]    Migrating prometheus remote write urls
 [INFO]    Migrating "fluent-bit.backend.forward.host" from "${CHART}.${NAMESPACE}.svc.cluster.local." to "${FLUENTD_LOGS_SVC}.${NAMESPACE}.svc.cluster.local."
 [WARNING] You have an unexpected section in your fluent-bit configuration that we're not migrating automatically. It shouldn't be necessary in 2.0 but please consider whether you need to migrate this manually. Line: @INCLUDE fluent-bit-service.conf
+[INFO]    Migrating fluent-bit's input config from Multiline to Docker_Mode
+[INFO]    Migrating fluent-bit's input config from Parser_Firstline to Docker_Mode_Parser
 [WARNING] You have an unexpected section in your fluent-bit configuration that we're not migrating automatically. It shouldn't be necessary in 2.0 but please consider whether you need to migrate this manually. Line: @INCLUDE fluent-bit-output.conf
 
 Thank you for upgrading to v2.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
