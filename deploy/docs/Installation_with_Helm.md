@@ -264,7 +264,7 @@ The command removes all the Kubernetes components associated with the chart and 
 ### Post installation cleanup
 
 In order to clean up the Kubernetes secret and associated hosted collector one
-can use the optional cleanup job by setting `sumologic.cleanUpEnabled` to `true`.
+can use the optional cleanup job by setting `sumologic.cleanupEnabled` to `true`.
 
 Alternatively the secret can be removed manually with:
 
