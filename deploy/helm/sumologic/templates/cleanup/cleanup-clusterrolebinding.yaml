@@ -1,0 +1,19 @@
+{{- if .Values.sumologic.cleanupEnabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name:  {{ template "sumologic.metadata.name.cleanup.roles.clusterrolebinding" . }}
+  annotations:
+{{ include "sumologic.annotations.app.cleanup.helmsh" "2" | indent 4 }}
+  labels:
+    app: {{ template "sumologic.labels.app.cleanup.roles.clusterrolebinding" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "sumologic.metadata.name.cleanup.roles.clusterrole" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "sumologic.metadata.name.cleanup.roles.serviceaccount" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
