@@ -1,4 +1,4 @@
-{{- if .Values.sumologic.cleanUpEnabled }}
+{{- if .Values.sumologic.cleanupEnabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:

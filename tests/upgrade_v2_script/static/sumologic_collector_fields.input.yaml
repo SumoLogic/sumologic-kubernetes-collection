@@ -1,6 +1,6 @@
 sumologic:
   setupEnabled: true
-  cleanUpEnabled: false
+  cleanupEnabled: false
   ## Exclude Kubernetes internal traffic from proxy
   noProxy: kubernetes.default.svc
   ## Collector name
