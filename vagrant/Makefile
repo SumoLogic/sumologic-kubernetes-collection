@@ -105,8 +105,9 @@ remove-namespace:
 	kubectl delete -f ${k8s_path}/sumologic.yaml --ignore-not-found=true
 
 remove-prometheus-crds:
-	kubectl delete customresourcedefinitions.apiextensions.k8s.io  --ignore-not-found=true \
-		{alertmanagers,podmonitors,prometheuses,prometheusrules,servicemonitors,thanosrulers}.monitoring.coreos.com
+	for crd in alertmanagers alertmanagerconfigs podmonitors probes prometheuses prometheusrules servicemonitors thanosrulers; do \
+		kubectl delete customresourcedefinitions.apiextensions.k8s.io --ignore-not-found=true $$crd.monitoring.coreos.com; \
+	done
 
 remove-receiver-mock:
 	kubectl delete -f ${k8s_path}/receiver-mock.yaml --ignore-not-found=true
