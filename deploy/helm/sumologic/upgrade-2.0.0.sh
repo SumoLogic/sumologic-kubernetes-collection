@@ -657,13 +657,6 @@ function migrate_fluent_bit() {
     yq w -i "${TEMP_FILE}" 'fluent-bit.service.labels."sumologic.com/scrape"' --style double true
   fi
 
-  yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumeMounts[+].mountPath' '/tail-db'
-  yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumeMounts[0].name' 'tail-db'
-
-  yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumes[+].hostPath.path' '/var/lib/fluent-bit'
-  yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumes[0].hostPath.type' 'DirectoryOrCreate'
-  yq w -i "${TEMP_FILE}" 'fluent-bit.extraVolumes[0].name' 'tail-db'
-
   local CONFIG_KEY_WIDTH
   readonly CONFIG_KEY_WIDTH="22"
 
