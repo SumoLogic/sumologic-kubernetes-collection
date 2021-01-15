@@ -22,6 +22,7 @@
   - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
   - [Errors in helm installation](#errors-in-helm-installation)
   - [Rancher](#rancher)
+  - [Falco](#falco)
 
 <!-- /TOC -->
 
@@ -327,3 +328,22 @@ To install on `GKE`, use the provided override file to customize your configurat
   #ebpf:
   #  enabled: true
 ```
+
+### Falco
+
+Falco does not provide modules for all kernels.
+When Falco module is not available for particular kernel, Falco tries to build it.
+Building a module requires `kernel-devel` package installed on nodes.
+
+For OpenShift, installation of `kernel-devel` on nodes is provided through MachineConfig used by
+[Machine Config operator](https://github.com/openshift/machine-config-operator).
+When update of machine configuration is needed machine is rebooted, please see
+[documentation](https://github.com/openshift/machine-config-operator/blob/master/docs/MachineConfigDaemon.md#coordinating-updates).
+The process of changing nodes configuration may require long time
+during which Pods scheduled on unchanged nodes are in `Init` state.
+
+Node configuration can be verified by following annotations:
+
+- `machineconfiguration.openshift.io/currentConfig`
+- `machineconfiguration.openshift.io/desiredConfig`
+- `machineconfiguration.openshift.io/state`
