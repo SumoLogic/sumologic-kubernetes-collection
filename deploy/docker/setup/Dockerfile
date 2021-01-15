@@ -1,4 +1,4 @@
-FROM alpine:3
+FROM alpine:3.12
 
 ENV TERRAFORM_VERSION 0.12.25-r0
 
