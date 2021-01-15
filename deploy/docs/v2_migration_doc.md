@@ -334,7 +334,7 @@ to convert their existing `values.yaml` file into one that is compatible with th
     all the required software packages installed.
 
     ```bash
-    curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/deploy/helm/sumologic/upgrade-2.0.0.sh \
+    curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v2.0/deploy/helm/sumologic/upgrade-2.0.0.sh \
     && chmod +x upgrade-2.0.0.sh \
     && ./upgrade-2.0.0.sh current_values.yaml
     ```
@@ -403,4 +403,4 @@ kubectl delete -f fluentd-sumologic.yaml
 - Follow steps mentioned [here][non_helm_installation_customizing_installation]
   to deploy new collection.
 
-[non_helm_installation_customizing_installation]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Non_Helm_Installation.md#customizing-installation
+[non_helm_installation_customizing_installation]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2.0/deploy/docs/Non_Helm_Installation.md#customizing-installation
