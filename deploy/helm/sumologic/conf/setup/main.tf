@@ -1,6 +1,6 @@
 terraform {
   required_providers {
-    sumologic  = "~> 2.4"
-    kubernetes = "~> 1.13.0"
+    sumologic  = "~> 2.6"
+    kubernetes = "~> 1.13"
   }
 }
