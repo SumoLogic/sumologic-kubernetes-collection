@@ -13,6 +13,8 @@
       - [Preparing temporary instance of Fluent Bit](#preparing-temporary-instance-of-fluent-bit)
     - [4. Configure Fluentd persistence](#4-configure-fluentd-persistence)
     - [5. Run upgrade script](#5-run-upgrade-script)
+    - [6. Troubleshooting](#6-troubleshooting)
+      - [Gzip compression errors](#gzip-compression-errors)
 - [Non-Helm Users](#non-helm-users)
   - [Breaking Changes](#breaking-changes)
   - [How to upgrade for Non-helm Users](#how-to-upgrade-for-non-helm-users)
@@ -113,6 +115,11 @@ as well as the exact steps for migration.
 
 - Persistence for Fluentd is enabled by default.
 
+- Gzip compression is enabled by default.
+  If you already had Fluentd persistence enabled, but gzip compression was disabled,
+  after the upgrade Fluentd will not be able to read the non-compressed chunks written before the upgrade.
+  To fix this, see [Troubleshooting - Gzip compression errors](#gzip-compression-errors).
+
 ### How to upgrade
 
 #### Requirements
@@ -134,7 +141,7 @@ Before running commands shown below please make sure that you have
 sumologic helm repo configured.
 One can check that using:
 
-```
+```bash
 helm repo list
 NAME                    URL
 ...
@@ -144,7 +151,7 @@ sumologic               https://sumologic.github.io/sumologic-kubernetes-collect
 
 If sumologic helm repo is not configured use the following command to add it:
 
-```
+```bash
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
@@ -373,6 +380,37 @@ to convert their existing `values.yaml` file into one that is compatible with th
   ```bash
   helm upgrade <RELEASE-NAME> sumologic/sumologic --version=2.0.0 -f new_values.yaml
   ```
+
+#### 6. Troubleshooting
+
+##### Gzip compression errors
+
+If after the upgrade you can see the following errors from Fluentd logs or metrics pods:
+
+```console
+2021-01-18 15:47:23 +0000 [warn]: #0 [sumologic.endpoint.logs.gc] failed to flush the buffer. retry_time=3 next_retry_seconds=2021-01-18 15:47:27 +0000 chunk="5b92e97a5ee3cbd7e59859644d9686e3" error_class=Zlib::GzipFile::Error error="not in gzip format"
+```
+
+This means Fluentd persistence has already been enabled before migration, but gzip compression was not.
+Fluentd is unable to read the non-compressed chunks persisted before the upgrade.
+
+To fix this, delete the Fluentd pods that emit this error,
+deleting their PVC-s at the same time to drop the non-compressed chunks.
+
+For example, if the namespace where the collection is installed is `collection`
+and the pod that emits the error is named `sumologic-fluentd-logs-1`,
+run the following set of commands:
+
+```bash
+NAMESPACE_NAME=collection
+POD_NAME=sumologic-fluentd-logs-1
+kubectl -n ${NAMESPACE_NAME} delete pvc "buffer-${POD_NAME}" &
+kubectl -n ${NAMESPACE_NAME} delete pod ${POD_NAME}
+kubectl -n ${NAMESPACE_NAME} delete pod ${POD_NAME}
+```
+
+The duplicated pod deletion command is there to make sure the pod is not stuck in `Pending` state
+with event `persistentvolumeclaim "buffer-sumologic-fluentd-logs-1" not found`.
 
 ## Non-Helm Users
 
