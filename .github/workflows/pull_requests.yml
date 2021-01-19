@@ -39,9 +39,18 @@ jobs:
       - name: yamllint
         run: make yamllint
 
+  helmlint:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint helm chart
+        run: |
+          make helm-dependency-update
+          make helm-lint
+
   test:
     runs-on: ubuntu-20.04
-    needs: [markdownlint, shellcheck, yamllint]
+    needs: [markdownlint, shellcheck, yamllint, helmlint]
 
     steps:
       - uses: actions/checkout@v2
