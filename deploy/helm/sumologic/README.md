@@ -110,7 +110,10 @@ Parameter | Description | Default
 `fluentd.logs.containers.k8sMetadataFilter.clientKey` | Path to a client key file to authenticate to the API server. | `Nil`
 `fluentd.logs.containers.k8sMetadataFilter.bearerTokenFile` | Path to a file containing the bearer token to use for authentication. | `Nil`
 `fluentd.logs.containers.extraFilterPluginConf` | To use additional filter plugins. | `Nil`
+`fluentd.logs.containers.extraOutputPluginConf` | To use additional output plugins. | `Nil`
 `fluentd.logs.kubelet.enabled` | Collect kubelet logs. | `true`
+`fluentd.logs.kubelet.extraFilterPluginConf` | To use additional filter plugins. | `Nil`
+`fluentd.logs.kubelet.extraOutputPluginConf` | To use additional output plugins. | `Nil`
 `fluentd.logs.kubelet.outputConf` | Output configuration for kubelet. | `@include logs.output.conf`
 `fluentd.logs.kubelet.overrideOutputConf` | Override output section for kubelet logs. Leave empty for the default output section. | `Nil`
 `fluentd.logs.kubelet.sourceName` | Set the _sourceName metadata field in Sumo Logic. | `k8s_kubelet`
@@ -122,6 +125,8 @@ Parameter | Description | Default
 `fluentd.logs.kubelet.excludePriorityRegex` | A regular expression for priority. Matching priority will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
 `fluentd.logs.kubelet.excludeUnitRegex` | A regular expression for unit. Matching unit will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
 `fluentd.logs.systemd.enabled` | Collect systemd logs. | `true`
+`fluentd.logs.systemd.extraFilterPluginConf` | To use additional filter plugins. | `Nil`
+`fluentd.logs.systemd.extraOutputPluginConf` | To use additional output plugins. | `Nil`
 `fluentd.logs.systemd.outputConf` | Output configuration for systemd. | `@include logs.output.conf`
 `fluentd.logs.systemd.overrideOutputConf` | Override output section for systemd logs. Leave empty for the default output section. | `Nil`
 `fluentd.logs.systemd.sourceCategory` | Set the _sourceCategory metadata field in Sumo Logic. | `system`
@@ -131,6 +136,8 @@ Parameter | Description | Default
 `fluentd.logs.systemd.excludeHostRegex` | A regular expression for hosts. Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
 `fluentd.logs.systemd.excludePriorityRegex` | A regular expression for priority. Matching priority will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
 `fluentd.logs.systemd.excludeUnitRegex` | A regular expression for unit. Matching unit will be excluded from Sumo. The logs will still be sent to FluentD. | `Nil`
+`fluentd.logs.default.extraFilterPluginConf` | To use additional filter plugins. | `Nil`
+`fluentd.logs.default.extraOutputPluginConf` | To use additional output plugins. | `Nil`
 `fluentd.logs.default.outputConf` | Default log configuration (catch-all). | `@include logs.output.conf`
 `fluentd.logs.default.overrideOutputConf` | Override output section for untagged logs. Leave empty for the default output section. | `Nil`
 `fluentd.metrics.enabled` | Flag to control deploying the Fluentd metrics statefulsets. | `true`
