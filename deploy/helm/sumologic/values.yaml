@@ -443,6 +443,9 @@ fluentd:
       ## To use additional filter plugins
       extraFilterPluginConf: |-
 
+      ## To use additional output plugins
+      extraOutputPluginConf: |-
+
       ## To enable stiching multiline logs in fluentd when fluent-bit Multiline feature is On
       multiline:
         enabled: true
@@ -450,6 +453,12 @@ fluentd:
     ## Kubelet log configuration
     kubelet:
       enabled: true
+      ## To use additional filter plugins
+      extraFilterPluginConf: |-
+
+      ## To use additional output plugins
+      extraOutputPluginConf: |-
+
       outputConf: |-
         @include logs.output.conf
 
@@ -481,6 +490,12 @@ fluentd:
     ## Systemd log configuration
     systemd:
       enabled: true
+      ## To use additional filter plugins
+      extraFilterPluginConf: |-
+
+      ## To use additional output plugins
+      extraOutputPluginConf: |-
+
       outputConf: |-
         @include logs.output.conf
 
@@ -511,6 +526,12 @@ fluentd:
 
     ## Default log configuration (catch-all)
     default:
+      ## To use additional filter plugins
+      extraFilterPluginConf: |-
+
+      ## To use additional output plugins
+      extraOutputPluginConf: |-
+
       outputConf: |-
         @include logs.output.conf
 
