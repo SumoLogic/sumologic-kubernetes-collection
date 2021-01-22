@@ -1,0 +1,15 @@
+{{- if and (eq .Values.sumologic.scc.create true) (.Capabilities.APIVersions.Has "security.openshift.io/v1")}}
+{{- if and (eq .Values.falco.enabled true) (eq .Values.falco.addKernelDevel true) }}
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    app: {{ template "sumologic.labels.app.machineconfig.master" . }}
+    {{- include "sumologic.labels.machineconfig.master" . | nindent 4 }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+  name: {{ template "sumologic.labels.app.machineconfig.master" . }}
+spec:
+  extensions:
+    - kernel-devel
+{{- end }}
+{{- end }}

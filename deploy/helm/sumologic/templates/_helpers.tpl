@@ -175,6 +175,22 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}-scc
 {{- end -}}
 
+{{- define "sumologic.labels.app.machineconfig.worker" -}}
+{{- template "sumologic.fullname" . }}-worker-extensions
+{{- end -}}
+
+{{- define "sumologic.labels.machineconfig.worker" -}}
+machineconfiguration.openshift.io/role: worker
+{{- end -}}
+
+{{- define "sumologic.labels.app.machineconfig.master" -}}
+{{- template "sumologic.fullname" . }}-master-extensions
+{{- end -}}
+
+{{- define "sumologic.labels.machineconfig.master" -}}
+machineconfiguration.openshift.io/role: master
+{{- end -}}
+
 {{/*
 Generate helm.sh annotations. It takes weight as parameter.
 
