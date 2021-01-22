@@ -5,5 +5,8 @@
 {
     "default": true,
     "MD004": { "style": "dash" },
-    "MD013": { "line_length": 120, "code_blocks": false, "tables": false }
+    "MD013": { "line_length": 120, "code_blocks": false, "tables": false },
+    "MD033": false, // no-inline-html
+    "MD034": false, // no-bare-urls
+    "MD040": false // fenced-code-language
 }
