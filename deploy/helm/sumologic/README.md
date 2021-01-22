@@ -214,7 +214,7 @@ Parameter | Description | Default
 `falco.enabled` | Flag to control deploying Falco Helm sub-chart. | `false`
 `falco.addKernelDevel` | Flag to control installation of `kernel-devel` on nodes using MachineConfig, required to build falco modules (only for OpenShift)| `true`
 `falco.extraInitContainers` | InitContainers for Falco pod |  `[{'name': 'init-falco', 'image': 'busybox', 'command': ['sh', '-c', 'while [ -f /host/etc/redhat-release ] && [ -z "$(ls /host/usr/src/kernels)" ] ; do\necho "waiting for kernel headers to be installed"\nsleep 3\ndone\n'], 'volumeMounts': [{'mountPath': '/host/usr', 'name': 'usr-fs', 'readOnly': True}, {'mountPath': '/host/etc', 'name': 'etc-fs', 'readOnly': True}]}]`
-`falco.ebpf.enabled` | Enable eBPF support for Falco instead of falco-probe kernel module. Set to false for GKE. | `true`
+`falco.ebpf.enabled` | Enable eBPF support for Falco instead of falco-probe kernel module. Set to true for GKE. | `false`
 `falco.falco.jsonOutput` | Output events in json. | `true`
 `telegraf-operator.enabled` | Flag to control deploying Telegraf Operator Helm sub-chart. | `false`
 `telegraf-operator.replicaCount` | Replica count for Telegraf Operator pods. | 1
