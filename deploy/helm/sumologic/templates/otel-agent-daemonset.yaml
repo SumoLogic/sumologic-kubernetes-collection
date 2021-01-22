@@ -53,7 +53,7 @@ spec:
       {{- end }}
       containers:
       - name: otelcontrib-agent
-        image: {{ .Values.otelagent.daemonset.image.name }}:{{ .Values.otelagent.daemonset.image.tag }}
+        image: {{ .Values.otelagent.daemonset.image.repository }}:{{ .Values.otelagent.daemonset.image.tag }}
         imagePullPolicy: {{ .Values.otelagent.daemonset.image.pullPolicy }}
         command:
           - "/otelcontribcol"
