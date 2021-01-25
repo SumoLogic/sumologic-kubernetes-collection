@@ -5,7 +5,7 @@ readonly ROOT_DIR="$(dirname "$(dirname "${0}")")"
 source "${ROOT_DIR}"/ci/_build_functions.sh
 
 fetch_current_branch
-VERSION="$(git describe --tags)"
+VERSION="$(git describe --tags --abbrev=40)"
 readonly VERSION="${VERSION#v}"
 : "${DOCKER_TAG:=sumologic/kubernetes-fluentd}"
 : "${DOCKER_USERNAME:=sumodocker}"
