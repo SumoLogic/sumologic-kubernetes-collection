@@ -281,11 +281,11 @@ Follow the below steps to deploy new resources.
 
 ##### 2.2 Deploy Prometheus
 
-- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Non_Helm_Installation.md#deploy-prometheus) to deploy Prometheus.
+- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v1.0/deploy/docs/Non_Helm_Installation.md#deploy-prometheus) to deploy Prometheus.
 
 ##### 2.3: Deploy Fluent Bit
 
-- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Non_Helm_Installation.md#deploy-fluentbit) to deploy Fluent Bit.
+- Follow steps mentioned [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v1.0/deploy/docs/Non_Helm_Installation.md#deploy-fluentbit) to deploy Fluent Bit.
 
 ## Kubernetes App dashboard update
 
