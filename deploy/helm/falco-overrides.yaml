@@ -25,6 +25,9 @@ extraInitContainers:
 #     - mountPath: /host/etc
 #       name: etc-fs
 #       readOnly: true
+# Enable eBPF support for Falco instead of falco-probe kernel module.
+# Set to true for GKE, for details see:
+# https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v1.3/deploy/docs/Troubleshoot_Collection.md#falco-and-google-kubernetes-engine-gke
 #ebpf:
 #  enabled: true
 falco:
