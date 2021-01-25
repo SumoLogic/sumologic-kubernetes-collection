@@ -23,7 +23,8 @@
   - [Error: could not find tiller](#error-could-not-find-tiller)
   - [Errors in helm installation](#errors-in-helm-installation)
   - [Rancher](#rancher)
-  - [Falco](#falco)
+  - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
+  - [Falco and OpenShift](#falco-and-openshift)
 
 <!-- /TOC -->
 
@@ -366,7 +367,7 @@ If you have the Rancher prometheus operator setup running, they will have to use
 
 ### Falco and Google Kubernetes Engine (GKE)
 
-`Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to use extended Berkeley Packet Filter (eBPF) to supply the stream of system calls to the Falco engine. eBPF is currently only supported on GKE and COS. For more information see [Installing Falco](https://falco.org/docs/installation/).
+`Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco cannot insert its kernel module to process events for system calls. However, COS provides the ability to use extended Berkeley Packet Filter (eBPF) to supply the stream of system calls to the Falco engine. eBPF is currently only supported on GKE and COS. For more information see [Falco documentation](https://falco.org/docs/getting-started/third-party/#gke).
 
 To install on `GKE`, use the provided override file to customize your configuration and uncomment the following lines in the `values.yaml` file referenced below:
 
@@ -375,7 +376,7 @@ To install on `GKE`, use the provided override file to customize your configurat
   #  enabled: true
 ```
 
-### Falco
+### Falco and OpenShift
 
 Falco does not provide modules for all kernels.
 When Falco module is not available for particular kernel, Falco tries to build it.
