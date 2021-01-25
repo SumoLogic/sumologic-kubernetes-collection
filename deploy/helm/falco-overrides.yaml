@@ -2,6 +2,29 @@
 image:
   registry: public.ecr.aws
   repository: sumologic/falco
+# Add kernel-devel package through MachineConfig,
+# required to enable building of missing falco modules (only for OpenShift with Machine Config operator)
+addKernelDevel: false
+# Add initContainers to Falco pod
+extraInitContainers:
+# Add initContainer to wait until kernel-devel is installed on host (uncomment when addKernelDevel set on true)
+# - name: init-falco
+#   image: busybox
+#   command:
+#     - 'sh'
+#     - '-c'
+#     - |
+#       while [ -f /host/etc/redhat-release ] && [ -z "$(ls /host/usr/src/kernels)" ] ; do
+#       echo "waiting for kernel headers to be installed"
+#       sleep 3
+#       done
+#   volumeMounts:
+#     - mountPath: /host/usr
+#       name: usr-fs
+#       readOnly: true
+#     - mountPath: /host/etc
+#       name: etc-fs
+#       readOnly: true
 #ebpf:
 #  enabled: true
 falco:
