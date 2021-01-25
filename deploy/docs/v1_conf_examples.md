@@ -105,7 +105,7 @@ Reference documentation: [Fluentd Filter Plugin](https://docs.fluentd.org/filter
 
 The example below shows how you can override the entire output section for the container logs pipeline.
 
-You can look at the Default output section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/logs/logs.source.containers.conf#L51)
+You can look at the Default output section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/dc0ee4b26eddaf5eabbb2f5478421ea020d055fb/deploy/helm/sumologic/conf/logs/logs.source.containers.conf#L75)
 
 ```yaml
 fluentd:
