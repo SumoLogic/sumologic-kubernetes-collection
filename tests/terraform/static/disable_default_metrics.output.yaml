@@ -164,7 +164,7 @@ data:
     resource "sumologic_http_source" "default_events_source" {
         name         = local.default_events_source
         collector_id = sumologic_collector.collector.id
-        category     = "${var.cluster_name}/${local.default_events_source}"
+        category = "${var.cluster_name}/${local.default_events_source}"
     }
     
     resource "sumologic_http_source" "default_logs_source" {
