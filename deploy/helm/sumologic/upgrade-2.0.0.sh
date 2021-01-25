@@ -1025,7 +1025,7 @@ function check_fluentd_persistence() {
     warning "This chart starting with 2.0 sets it to 'true' by default"
     warning "We're migrating your values.yaml with persistence set to 'false'"
     warning "Please refer to the following doc in in case you wish to enable it:"
-    warning "https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-file-based-buffer"
+    warning "https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2.0/deploy/docs/Best_Practices.md#fluentd-file-based-buffer"
   fi
 }
 

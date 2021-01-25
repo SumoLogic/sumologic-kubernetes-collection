@@ -234,7 +234,7 @@ fluentd:
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
     ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/FluentdPersistence.md
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2.0/deploy/docs/FluentdPersistence.md
     enabled: true
 
     ## If defined, storageClassName: <storageClass>
@@ -374,7 +374,7 @@ fluentd:
 
     ## Configuration for sumologic output plugin
     ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/logs/logs.output.conf
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2.0/deploy/helm/sumologic/conf/logs/logs.output.conf
     output:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: for logs metadata, fields is required.
@@ -603,7 +603,7 @@ fluentd:
 
     ## Configuration for sumologic output plugin
     ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/metrics/metrics.output.conf
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2.0/deploy/helm/sumologic/conf/metrics/metrics.output.conf
     outputConf: |-
       @include metrics.output.conf
 
