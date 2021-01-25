@@ -90,7 +90,7 @@ Reference documentation: [Fluentd Filter Plugin](https://docs.fluentd.org/filter
 ## Override Fluentd Output plugin to forward data to Sumo as well as S3
 The example below shows how you can override the entire output section for the container logs pipeline.
 
-You can look at the Default output section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/logs/logs.source.containers.conf#L51)
+You can look at the Default output section [here](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/c4f5f87db1c8e8799403da9da070658f79bc1e6a/deploy/helm/sumologic/conf/logs/logs.source.containers.conf#L75)
 
 ```yaml
 fluentd:
