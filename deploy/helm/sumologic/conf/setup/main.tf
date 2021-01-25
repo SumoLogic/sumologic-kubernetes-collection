@@ -1,6 +1,12 @@
 terraform {
   required_providers {
-    sumologic  = "~> 2.6"
-    kubernetes = "~> 1.13"
+    sumologic = {
+      source  = "sumologic/sumologic"
+      version = "~> 2.6"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 1.13"
+    }
   }
 }
