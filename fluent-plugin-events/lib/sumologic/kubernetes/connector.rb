@@ -45,6 +45,7 @@ module SumoLogic
               ssl_options: ssl_options,
               auth_options: auth_options
             )
+            client.faraday_client.adapter(:net_http_persistent)
             client.api_valid?
           end
           client

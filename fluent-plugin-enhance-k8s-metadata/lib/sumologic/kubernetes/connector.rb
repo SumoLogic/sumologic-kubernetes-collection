@@ -51,6 +51,7 @@ module SumoLogic
                 read: 5
               }
             )
+            client.faraday_client.adapter(:net_http_persistent)
             client.api_valid?
           end
           client

@@ -18,7 +18,8 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency 'fluentd', ['>= 0.14.0', '< 1.12']
   gem.add_runtime_dependency "lru_redux"
-  gem.add_runtime_dependency "kubeclient", '< 5'
+  # gem.add_runtime_dependency "kubeclient", '< 5' # Git version of Kubeclient specified in Gemfile
+  gem.add_runtime_dependency 'net-http-persistent', '~> 3.1'
 
   gem.add_development_dependency "bundler", "~> 2.0"
   gem.add_development_dependency "rake"
