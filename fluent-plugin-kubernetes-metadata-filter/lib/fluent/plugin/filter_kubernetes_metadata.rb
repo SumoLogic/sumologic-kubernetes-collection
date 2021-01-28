@@ -240,6 +240,7 @@ module Fluent::Plugin
           auth_options: auth_options,
           as: :parsed_symbolized
         )
+        @client.faraday_client.adapter(:net_http_persistent)
 
         begin
           @client.api_valid?

@@ -9,6 +9,7 @@ RUN apt-get update \
         curl \
         g++ \
         gcc \
+        git \
         libc-dev \
         libsnappy-dev \
         make \
@@ -20,9 +21,13 @@ RUN apt-get update \
 RUN gem install \
         concurrent-ruby:1.1.5 \
         google-protobuf:3.9.2 \
-        kubeclient:4.9.1 \
         lru_redux:1.1.0 \
-        snappy:0.0.17
+        net-http-persistent:3.1.0 \
+        snappy:0.0.17 \
+        specific_install:0.3.5
+
+# Use unreleased Kubeclient version with persistent HTTP connections.
+RUN gem specific_install https://github.com/abonas/kubeclient --ref 3267dc3fd02c49e3b19f1210ff7cb84c3b2a4478
 
 # FluentD plugins to allow customers to forward data if needed to various cloud providers
 RUN gem install \
