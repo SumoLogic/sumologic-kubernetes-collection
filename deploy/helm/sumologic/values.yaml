@@ -2016,7 +2016,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.16.2-sumo"
+      tag: "0.19.2-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -2119,10 +2119,11 @@ otelcol:
 
       ## Resource processor sets the associted cluster attribute
       resource:
-        labels: {
-          k8s.cluster.name: "processors.resource.cluster.replace"
-        }
-
+        attributes:
+          - key: k8s.cluster.name
+            value: "processors.resource.cluster.replace"
+            action: upsert
+              
       ## The memory_limiter processor is used to prevent out of memory situations on the collector.
       memory_limiter:
         ## check_interval is the time between measurements of memory usage for the
