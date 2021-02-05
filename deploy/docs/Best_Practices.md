@@ -9,9 +9,9 @@
 - [Add a local file to fluent-bit configuration](#add-a-local-file-to-fluent-bit-configuration)
 - [Filtering Prometheus Metrics by Namespace](#filtering-prometheus-metrics-by-namespace)
 - [Modify the Log Level for Falco](#modify-the-log-level-for-falco)
-- [Override environment variables using annotations](#override-environment-variables-using-annotations)
-  - [Exclude data using annotations](#exclude-data-using-annotations)
-  - [Include excluded using annotations](#include-excluded-using-annotations)
+- [Overriding metadata using annotations](#overriding-metadata-using-annotations)
+- [Excluding data using annotations](#excluding-data-using-annotations)
+  - [Including subsets of excluded data](#including-subsets-of-excluded-data)
 - [Templating Kubernetes metadata](#templating-kubernetes-metadata)
   - [Missing labels](#missing-labels)
 - [Configure Ignore_Older Config for Fluentbit](#configure-ignore_older-config-for-fluentbit)
@@ -313,14 +313,18 @@ falco:
     loglevel: debug
 ```
 
-## Override environment variables using annotations
+## Overriding metadata using annotations
 
-You can override the `LOG_FORMAT`, `KUBERNETES_META_REDUCE`, `SOURCE_CATEGORY`
-and `SOURCE_NAME` environment variables, per pod, using
-[Kubernetes annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/).
+You can use [Kubernetes annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/)
+to override some metadata and settings per pod.
+
+- `sumologic.com/format` overrides log format (see `fluentd.logs.output.logFormat` for description)
+- `sumologic.com/sourceCategory` overrides the `_sourceCategory` metadata
+- `sumologic.com/sourceName` overrides the `_sourceName` metadata
+
 For example:
 
-```
+```yaml
 apiVersion: v1
 kind: ReplicationController
 metadata:
@@ -336,7 +340,6 @@ spec:
         app: mywebsite
       annotations:
         sumologic.com/format: "text"
-        sumologic.com/kubernetes_meta_reduce: "true"
         sumologic.com/sourceCategory: "mywebsite/nginx"
         sumologic.com/sourceName: "mywebsite_nginx"
     spec:
@@ -347,12 +350,13 @@ spec:
         - containerPort: 80
 ```
 
-### Exclude data using annotations
+### Excluding data using annotations
 
-You can also use the `sumologic.com/exclude` annotation to exclude data from Sumo.
-This data is sent to FluentD, but not to Sumo.
+You can use the `sumologic.com/exclude` [annotation](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/)
+to exclude data from Sumo.
+This data is sent to Fluentd, but not to Sumo.
 
-```
+```yaml
 apiVersion: v1
 kind: ReplicationController
 metadata:
@@ -367,9 +371,6 @@ spec:
       labels:
         app: mywebsite
       annotations:
-        sumologic.com/format: "text"
-        sumologic.com/sourceCategory: "mywebsite/nginx"
-        sumologic.com/sourceName: "mywebsite_nginx"
         sumologic.com/exclude: "true"
     spec:
       containers:
@@ -379,14 +380,13 @@ spec:
         - containerPort: 80
 ```
 
-### Include excluded using annotations
+#### Including subsets of excluded data
 
-If you excluded a whole namespace, but still need one or few pods to be still included
-for shipping to Sumo Logic, you can use the `sumologic.com/include` annotation
-to include data to Sumo.
+If you excluded a whole namespace, but still need one or few pods to be still included for shipping to Sumo,
+you can use the `sumologic.com/include` annotation to include it.
 It takes precedence over the exclusion described above.
 
-```
+```yaml
 apiVersion: v1
 kind: ReplicationController
 metadata:
