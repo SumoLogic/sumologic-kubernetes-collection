@@ -66,8 +66,10 @@ data:
         check_interval: 5s
         limit_mib: 1900
       resource:
-        labels:
-          k8s.cluster.name: kubernetes
+        attributes:
+        - action: upsert
+          key: k8s.cluster.name
+          value: kubernetes
       source:
         annotation_prefix: k8s.pod.annotation.
         collector: "kubernetes"
