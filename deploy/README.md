@@ -12,6 +12,7 @@ for details on our Kubernetes Solution.
   - [Installation with Helm](./docs/Installation_with_Helm.md)
   - [Non Helm Installation](./docs/Non_Helm_Installation.md)
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
+  - [Additional Prometheus configuration](./docs/additional_prometheus_configuration.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
   - [Authenticating with container registry](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
   - [Alpha Releases](./docs/Alpha_Release_Guide.md)
