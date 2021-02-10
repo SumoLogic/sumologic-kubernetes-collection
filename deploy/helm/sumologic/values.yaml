@@ -2123,7 +2123,7 @@ otelcol:
           - key: k8s.cluster.name
             value: "processors.resource.cluster.replace"
             action: upsert
-              
+
       ## The memory_limiter processor is used to prevent out of memory situations on the collector.
       memory_limiter:
         ## check_interval is the time between measurements of memory usage for the
