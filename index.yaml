@@ -274,45 +274,6 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-2.0.0-beta.0.tgz
     version: 2.0.0-beta.0
-  - apiVersion: v2
-    appVersion: 1.3.6
-    created: "2021-02-10T10:36:16.7184277Z"
-    dependencies:
-    - condition: fluent-bit.enabled,sumologic.logs.enabled
-      name: fluent-bit
-      repository: https://fluent.github.io/helm-charts
-      version: 0.7.13
-    - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
-      name: kube-prometheus-stack
-      repository: https://prometheus-community.github.io/helm-charts
-      version: 12.3.0
-    - condition: falco.enabled
-      name: falco
-      repository: https://falcosecurity.github.io/charts
-      version: 1.5.7
-    - condition: metrics-server.enabled
-      name: metrics-server
-      repository: https://charts.bitnami.com/bitnami
-      version: 5.0.2
-    - condition: telegraf-operator.enabled
-      name: telegraf-operator
-      repository: https://helm.influxdata.com/
-      version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
-      events into Sumo Logic.
-    digest: 9bec4871f7b9d2bfde406bd1375a8aee7dea652409d619e2369a56617be0713b
-    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
-    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
-    keywords:
-    - monitoring
-    - logging
-    name: sumologic
-    sources:
-    - https://github.com/SumoLogic/sumologic-kubernetes-collection
-    type: application
-    urls:
-    - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-1.3.6.tgz
-    version: 1.3.6
   - apiVersion: v1
     appVersion: 1.3.6-rc.0
     created: "2021-02-08T22:49:08.045006883Z"
@@ -1613,4 +1574,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.6.0.tgz
     version: 0.6.0
-generated: "2021-02-10T10:36:16.684057532Z"
+generated: "2021-02-08T22:49:08.0059636Z"
