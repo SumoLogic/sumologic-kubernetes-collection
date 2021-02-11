@@ -13,6 +13,8 @@ data:
   traces.otelcol.conf.yaml: |
     
     exporters:
+      otlphttp:
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
       zipkin:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
     extensions:

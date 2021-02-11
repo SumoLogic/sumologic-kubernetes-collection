@@ -2163,13 +2163,18 @@ otelcol:
       ## being much more verbose and including (sampled) spans content
       # logging:
       #   loglevel: debug
+      otlphttp:
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
     service:
       extensions: [health_check]
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, zipkin]
           processors: [memory_limiter, k8s_tagger, source, resource, batch]
+          ## To enable otlphttp exporter comment out following line
           exporters: [zipkin]
+          ## and uncomment next one
+          # exporters: [otlphttp]
 
 ## Configure telegraf-operator
 ## This is an experimental configuration and shouldn't be used in production environment
