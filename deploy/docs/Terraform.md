@@ -81,7 +81,7 @@ Examples:
 ### Properties
 
 You can set all of the source [properties](https://www.terraform.io/docs/providers/sumologic/r/http_source.html#argument-reference)
-using `sumologic.collector.sources.<logs,traces,metrics,traces>.<source ref name>.properties`.
+using `sumologic.collector.sources.<events,logs,metrics,traces>.<source ref name>.properties`.
 
 #### Processing Rules
 
