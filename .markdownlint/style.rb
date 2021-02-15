@@ -3,7 +3,7 @@
 rule 'MD002'
 rule 'MD003'
 rule 'MD004', :style => :dash
-rule 'MD005'
+# rule 'MD005' Disable due to https://github.com/markdownlint/markdownlint/issues/374
 rule 'MD006'
 rule 'MD007'
 rule 'MD009'
