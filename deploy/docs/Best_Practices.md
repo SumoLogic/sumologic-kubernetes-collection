@@ -209,7 +209,7 @@ excludePodRegex
   excludeNamespaceRegex: “(sumologic|kube-public)”
   ```
 
-If you wish to exclude messages based on the content of the message, you can leverage
+If you wish to exclude logs based on the content of the log message, you can leverage
 the fluentd `grep` filter plugin.
 We expose `fluentd.logs.containers.extraFilterPluginConf` which allows you to inject
 additional filter plugins to process data.
@@ -231,7 +231,7 @@ fluentd:
         <filter containers.**>
           @type grep
           <exclude>
-            key message
+            key log
             pattern /(.*connection accepted from.*|.*authenticated as principal.*|.*client metadata from.*)/
           </exclude>
         </filter>
