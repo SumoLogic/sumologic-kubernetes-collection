@@ -2,6 +2,13 @@
 
 For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](./Best_Practices.md#Fluentd-Autoscaling), as this will allow Fluentd to automatically scale to support your data volume. However, the following recommendations and corresponding examples will help you get an idea of the resources required to run collection on your cluster.
 
+- [Recommendations](#recommendations)
+  - [Up to 500 application pods](#up-to-500-application-pods)
+  - [Up to 2000 application pods](#up-to-2000-application-pods)
+- [Troubleshooting](#troubleshooting)
+  - [Upgrade collection](#upgrade-collection)
+  - [Fluent Bit](#fluent-bit)
+
 ## Recommendations
 
 1. At least **8 Fluentd-logs** pods per **1 TB/day** of logs.
@@ -56,3 +63,25 @@ Metrics   | 2400 DPM     | 125 pods   | 1100 pods  | **3.2M DPM** (including non
 We observed **135 Fluentd-logs** pods and **100 Fluentd-metrics** pods were sufficient for handling this load with the default resource limits. Additionally the **Fluentd-events** pod had to be given a 1 GiB memory limit to accommodate the increased events load.
 
 Prometheus memory consumption reached a maximum of **60GiB**, with an average of **45GiB**.
+
+## Troubleshooting
+
+In case of high load, some configuration has to be tweak up to prevent loosing logs.
+In this section we provide general recommendations which should be consider in case of observing such behavior.
+
+### Upgrade collection
+
+Ensure that your collection is [up to date](https://github.com/SumoLogic/sumologic-kubernetes-collection/releases)
+with all potential bug and performance fixes.
+
+### Fluent Bit
+
+If you see in Fluent Bit a lot of following logs:
+
+```text
+[2021/02/15 09:02:07] [ warn] [input] tail.0 paused (mem buf overlimit)
+[2021/02/15 09:02:07] [ warn] [input] tail.0 resume (mem buf overlimit)
+```
+
+You should increase `Mem_Buf_Limit` in `fluent-bit.config.inputs` for specified input plugin (tail in this case).
+More details about it you can find in [official Fluent Bit documentation](https://docs.fluentbit.io/manual/administration/backpressure)
