@@ -346,6 +346,11 @@ fluentd:
       ## Add custom annotations only to logs fluentd sts pods
       podAnnotations: {}
 
+      ## Set securityContext for containers running in pods in logs statefulset.
+      containers:
+        fluentd:
+          securityContext: {}
+
     ## Option to turn autoscaling on for fluentd and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
     autoscaling:
@@ -604,6 +609,11 @@ fluentd:
       ## Add custom annotations only to metrics fluentd sts pods
       podAnnotations: {}
 
+      ## Set securityContext for containers running in pods in metrics statefulset.
+      containers:
+        fluentd:
+          securityContext: {}
+
     ## Option to turn autoscaling on for fluentd and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
     autoscaling:
@@ -722,6 +732,11 @@ fluentd:
       podLabels: {}
       ## Add custom annotations only to events fluentd sts pods
       podAnnotations: {}
+
+      ## Set securityContext for containers running in pods in events statefulset.
+      containers:
+        fluentd:
+          securityContext: {}
 
     ## Source category for the Events source. Default: "{clusterName}/events"
     sourceCategory: ""

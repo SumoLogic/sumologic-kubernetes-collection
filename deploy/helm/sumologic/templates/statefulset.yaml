@@ -105,6 +105,10 @@ spec:
         imagePullPolicy: {{ .Values.fluentd.image.pullPolicy }}
         resources:
           {{- toYaml .Values.fluentd.logs.statefulset.resources | nindent 10 }}
+        {{- if .Values.fluentd.logs.statefulset.containers.fluentd.securityContext }}
+        securityContext:
+          {{- toYaml .Values.fluentd.logs.statefulset.containers.fluentd.securityContext | nindent 10 }}
+        {{- end }}
         ports:
         {{- if .Values.sumologic.traces.enabled }}
         - name: zipkin-write
