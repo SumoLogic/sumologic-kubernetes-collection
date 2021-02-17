@@ -65,6 +65,10 @@ spec:
         imagePullPolicy: {{ .Values.fluentd.image.pullPolicy }}
         resources:
           {{- toYaml .Values.fluentd.events.statefulset.resources | nindent 10 }}
+        {{- if .Values.fluentd.events.statefulset.containers.fluentd.securityContext }}
+        securityContext:
+          {{- toYaml .Values.fluentd.events.statefulset.containers.fluentd.securityContext | nindent 10 }}
+        {{- end }}
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
