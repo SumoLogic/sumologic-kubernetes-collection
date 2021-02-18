@@ -650,8 +650,12 @@ function migrate_fluent_bit() {
     yq w -i "${TEMP_FILE}" 'fluent-bit.env.(name==CHART).name' FLUENTD_LOGS_SVC
   fi
 
-  if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.image.fluent_bit')" ]]; then
-    yq w -i "${TEMP_FILE}" 'fluent-bit.image.pullPolicy' IfNotPresent
+  local default_image_pull_policy="IfNotPresent"
+  local image_pull_policy
+  readonly image_pull_policy="$(yq r "${TEMP_FILE}" -- 'fluent-bit.image.pullPolicy')"
+  if [[ -n ${image_pull_policy} ]] && [[ ${image_pull_policy} != "${default_image_pull_policy}" ]]; then
+    info "Leaving the fluent-bit.image.pullPolicy set to '${image_pull_policy}'"
+    info "Please note that in v2.0 the fluent-bit.image.pullPolicy is set to '${default_image_pull_policy}' by default"
   fi
 
   local default_image_tag="1.6.10"
@@ -660,7 +664,7 @@ function migrate_fluent_bit() {
   if [[ -n ${image_tag} ]] && [[ ${image_tag} != "${default_image_tag}" ]]; then
     info "Leaving the fluent-bit.image.tag set to '${image_tag}'"
     info "Please note that in v2.0 the fluent-bit.image.tag is set to '${default_image_tag}' by default"
-   fi
+  fi
 
   if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.service.flush')" ]]; then
     yq w -i "${TEMP_FILE}" 'fluent-bit.service.labels."sumologic.com/scrape"' --style double true
