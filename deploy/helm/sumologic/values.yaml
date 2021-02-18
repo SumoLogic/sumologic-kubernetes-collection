@@ -850,9 +850,9 @@ fluent-bit:
     inputs: |
       [INPUT]
           Name                tail
-          Path                /var/log/containers/*.log
+          Path                /var/log/containers/example*.log
           Docker_Mode         On
-          Docker_Mode_Parser  multi_line
+          Parser              crio
           Tag                 containers.*
           Refresh_Interval    1
           Rotate_Wait         60
@@ -925,6 +925,10 @@ fluent-bit:
           tls           off
           tls.verify    on
           tls.debug     1
+      [OUTPUT]
+          Name          stdout
+          Format        msgpack
+          Match         containers.*
     customParsers: |
       [PARSER]
           Name        multi_line
@@ -934,8 +938,12 @@ fluent-bit:
           Name         crio
           Format       regex
           Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+      [PARSER]
+          Name         containerd
+          Format       regex
+          Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
           Time_Key     time
-          Time_Format  "%Y-%m-%dT%H:%M:%S.%L%z"
+          Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
 
 ## Configure kube-prometheus-stack
 ## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
