@@ -768,6 +768,7 @@ metrics-server:
 ## ref: https://github.com/fluent/helm-charts/blob/master/charts/fluent-bit/values.yaml
 fluent-bit:
   image:
+    repository: public.ecr.aws/sumologic/fluent-bit
     pullPolicy: IfNotPresent
     # If specified, use these secrets to access the image
     # pullSecrets:
@@ -2196,6 +2197,8 @@ otelcol:
 ## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
 telegraf-operator:
   enabled: false
+  image:
+    sidecarImage: public.ecr.aws/sumologic/telegraf:1.14.4
   replicaCount: 1
   classes:
     secretName: "telegraf-operator-classes"
@@ -2214,6 +2217,9 @@ telegraf-operator:
 ## https://github.com/falcosecurity/charts/tree/master/falco
 falco:
   enabled: false
+  image:
+    registry: public.ecr.aws
+    repository: sumologic/falco
 
   ## Add kernel-devel package through MachineConfig, required to enable building of missing falco modules (only for OpenShift)
   addKernelDevel: true
