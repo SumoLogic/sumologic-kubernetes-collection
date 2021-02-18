@@ -36,7 +36,8 @@ fluent-bit:
     - effect: NoSchedule
       operator: Exists
   image:
-    pullPolicy: IfNotPresent
+    repository: public.ecr.aws/sumologic/fluent-bit
+    tag: 1.6.10
   service:
     labels:
       sumologic.com/scrape: "true"
