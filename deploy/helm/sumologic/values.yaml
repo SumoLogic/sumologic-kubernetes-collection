@@ -842,6 +842,7 @@ fluent-bit:
           HTTP_Listen  0.0.0.0
           HTTP_Port    2020
     ## https://docs.fluentbit.io/manual/pipeline/inputs
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2.0/deploy/docs/ContainerLogs.md
     inputs: |
       [INPUT]
           Name                tail
@@ -930,7 +931,13 @@ fluent-bit:
           Format       regex
           Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
           Time_Key     time
-          Time_Format  "%Y-%m-%dT%H:%M:%S.%L%z"
+          Time_Format  %Y-%m-%dT%H:%M:%S.%L%z
+      [PARSER]
+          Name         containerd
+          Format       regex
+          Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+          Time_Key     time
+          Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
 
 ## Configure kube-prometheus-stack
 ## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml

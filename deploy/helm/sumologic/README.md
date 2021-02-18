@@ -165,7 +165,7 @@ Parameter | Description | Default
 `fluent-bit.resources` | Resources for Fluent-bit daemonsets. | `{}`
 `fluent-bit.enabled` | Flag to control deploying Fluent-bit Helm sub-chart. | `true`
 `fluent-bit.config.service` | Configure Fluent-bit Helm sub-chart service. | [fluent-bit.config.service in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0/deploy/helm/sumologic/values.yaml#L817-L827)
-`fluent-bit.config.inputs` | Configure Fluent-bit Helm sub-chart inputs. | [fluent-bit.config.inputs in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0/deploy/helm/sumologic/values.yaml#L828-L895)
+`fluent-bit.config.inputs` | Configure Fluent-bit Helm sub-chart inputs. Configuration for logs from different container runtimes is described in [Container log parsing](../../docs/ContainerLogs.md). | [fluent-bit.config.inputs in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0/deploy/helm/sumologic/values.yaml#L828-L895)
 `fluent-bit.config.outputs` | Configure Fluent-bit Helm sub-chart outputs. | [fluent-bit.config.outputs in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0/deploy/helm/sumologic/values.yaml#L896-L906)
 `fluent-bit.config.customParsers` | Configure Fluent-bit Helm sub-chart customParsers. | [fluent-bit.config.customParsers in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0/deploy/helm/sumologic/values.yaml#L907-L917)
 `fluent-bit.service.labels` | Labels for fluent-bit service. | `{sumologic.com/scrape: "true"}`
