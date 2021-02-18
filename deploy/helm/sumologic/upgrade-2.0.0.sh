@@ -15,6 +15,8 @@ readonly MAX_YQ_VERSION=4.0.0
 readonly KEY_MAPPINGS="
 prometheus-operator.prometheusOperator.tlsProxy.enabled:kube-prometheus-stack.prometheusOperator.tls.enabled
 otelcol.deployment.image.name:otelcol.deployment.image.repository
+fluent-bit.image.fluent_bit.repository:fluent-bit.image.repository
+fluent-bit.image.fluent_bit.tag:fluent-bit.image.tag
 "
 
 readonly KEY_VALUE_MAPPINGS="
@@ -31,7 +33,6 @@ prometheus-operator
 fluent-bit.metrics
 fluent-bit.trackOffsets
 fluent-bit.service.flush
-fluent-bit.image.fluent_bit
 fluent-bit.backend
 fluent-bit.input
 fluent-bit.parsers
@@ -652,6 +653,14 @@ function migrate_fluent_bit() {
   if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.image.fluent_bit')" ]]; then
     yq w -i "${TEMP_FILE}" 'fluent-bit.image.pullPolicy' IfNotPresent
   fi
+
+  local default_image_tag="1.6.10"
+  local image_tag
+  readonly image_tag="$(yq r "${TEMP_FILE}" -- 'fluent-bit.image.tag')"
+  if [[ -n ${image_tag} ]] && [[ ${image_tag} != "${default_image_tag}" ]]; then
+    info "Leaving the fluent-bit.image.tag set to '${image_tag}'"
+    info "Please note that in v2.0 the fluent-bit.image.tag is set to '${default_image_tag}' by default"
+   fi
 
   if [[ -n "$(yq r "${TEMP_FILE}" -- 'fluent-bit.service.flush')" ]]; then
     yq w -i "${TEMP_FILE}" 'fluent-bit.service.labels."sumologic.com/scrape"' --style double true
