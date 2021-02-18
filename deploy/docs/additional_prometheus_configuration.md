@@ -194,12 +194,14 @@ To avoid [blacklisting](https://help.sumologic.com/Metrics/Understand_and_Manage
 ```yaml
 sumologic:
   # ...
-  sources:
+  collector:
     # ...
-    metrics:
+    sources:
       # ...
-      my_source:
-        name: my-source-name
+      metrics:
+        # ...
+        my_source:
+          name: my-source-name
 ```
 
 This will create a new HTTP source with the name `my-source-name` in your Sumo Logic account.
