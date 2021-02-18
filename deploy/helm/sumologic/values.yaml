@@ -2052,12 +2052,12 @@ otelcol:
     #     mountPath: /certs
     #     readOnly: true
 
-  # To enable collecting all logs, set to false
+  ## To enable collecting all logs, set to false
   logLevelFilter: true
-  # Metrics from Collector
+  ## Metrics from Collector
   metrics:
     enabled: true
-  # Collector configuration
+  ## Collector configuration
   config:
     receivers:
       jaeger:
@@ -2235,11 +2235,12 @@ telegraf-operator:
 ## https://github.com/falcosecurity/charts/tree/master/falco
 falco:
   enabled: false
-  # Add kernel-devel package through MachineConfig, required to enable building of missing falco modules (only for OpenShift)
+
+  ## Add kernel-devel package through MachineConfig, required to enable building of missing falco modules (only for OpenShift)
   addKernelDevel: true
-  # Add initContainers to Falco pod
+  ## Add initContainers to Falco pod
   extraInitContainers:
-    # Add initContainer to wait until kernel-devel is installed on host
+    ## Add initContainer to wait until kernel-devel is installed on host
     - name: init-falco
       image: busybox
       command:
@@ -2257,9 +2258,9 @@ falco:
         - mountPath: /host/etc
           name: etc-fs
           readOnly: true
-  # Enable eBPF support for Falco instead of falco-probe kernel module.
-  # Set to true for GKE, for details see:
-  # https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Troubleshoot_Collection.md#falco-and-google-kubernetes-engine-gke
+  ## Enable eBPF support for Falco instead of falco-probe kernel module.
+  ## Set to true for GKE, for details see:
+  ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Troubleshoot_Collection.md#falco-and-google-kubernetes-engine-gke
   # ebpf:
   #   enabled: true
   falco:
@@ -2267,12 +2268,12 @@ falco:
   # image:
   #   pullSecrets: []
   customRules:
-    # Mark the following as known k8s api callers:
-    # * fluentd and its plugins from sumologic/kubernetes-fluentd image
-    # * prometheus
-    # * prometheus operator
-    # * telegraf operator
-    # * grafana sidecar
+    ## Mark the following as known k8s api callers:
+    ## * fluentd and its plugins from sumologic/kubernetes-fluentd image
+    ## * prometheus
+    ## * prometheus operator
+    ## * telegraf operator
+    ## * grafana sidecar
     rules_user_known_k8s_api_callers.yaml: |-
       - macro: user_known_contact_k8s_api_server_activities
         condition: >
@@ -2286,8 +2287,8 @@ falco:
         condition: >
           (container.image.repository = "falcosecurity/falco") or
           (container.image.repository = "quay.io/prometheus/node-exporter")
-    # NOTE: kube-proxy not exact matching because of regional ecr e.g.
-    # 602401143452.dkr.ecr.us-west-1.amazonaws.com/eks/kube-proxy
+    ## NOTE: kube-proxy not exact matching because of regional ecr e.g.
+    ## 602401143452.dkr.ecr.us-west-1.amazonaws.com/eks/kube-proxy
     rules_user_privileged_containers.yaml: |-
       - macro: user_privileged_containers
         condition: >
