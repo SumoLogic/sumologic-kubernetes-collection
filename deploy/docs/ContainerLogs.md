@@ -142,7 +142,7 @@ and `time` key will be visible in Sumo:
 
 ## Configuration for containerd log format
 
-In order to collect logs in containerd log format modify, Fluent Bit input section to following form:
+In order to collect logs in containerd log format, modify Fluent Bit input section to following form:
 
 ```yaml
 fluent-bit:
