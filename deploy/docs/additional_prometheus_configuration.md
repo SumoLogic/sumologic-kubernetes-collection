@@ -225,7 +225,7 @@ fluentd:
       # ...
       my_source:  # It matches sumologic.collector.sources.my_source
         tag: prometheus.metrics.YOUR_TAG  # tag used by Fluentd's match clausule
-        id: sumologic.endpoint.metrics
+        id: sumologic.endpoint.metrics.YOUR_TAG
 
       # alternative example source with all fields
       alternative_source:  # It doesn't match any source name
@@ -234,12 +234,28 @@ fluentd:
         source: my_source  # you can specify which source should be used (the output key (alternative_source) is taken by default)
         weight: 10  # optional, by default takes 0 and it is use to prioritise outputs (less means more important)
         drop: true  # Drop records which match the tag (false by default)
+  # ...
+  buffer:
+    # ...
+    filePaths:  # required if fluentd.buffer.enabled is true
+      # ...
+      metrics:
+        # ...
+        my_source: /fluentd/buffer/metrics.my_source
 ```
 
 The weight concept helps to keep Fluentd outputs in the correct order.
 In the above example, the `alternative_source` covers all tags for the `my_source`.
 This means if `alternative_source` has less weight than `my_source`
 it would process all records and none of them would be taken by `my_source`.
+
+`fluent.buffer.filePaths` is required if `fluentd.buffer.enabled` is set to `true` (default value).
+If you do not set it, fluentd is going to raise following errors:
+
+```text
+2021-02-23 13:09:19 +0000 [warn]: #0 [sumologic.endpoint.metrics.YOUR_TAG] failed to write data into buffer by buffer overflow action=:drop_oldest_chunk
+2021-02-23 13:09:19 +0000 [error]: #0 [sumologic.endpoint.metrics.YOUR_TAG] no queued chunks to be dropped for drop_oldest_chunk
+```
 
 NOTE: [Explanation of Fluentd match order](https://docs.fluentd.org/configuration/config-file#note-on-match-order)
 
