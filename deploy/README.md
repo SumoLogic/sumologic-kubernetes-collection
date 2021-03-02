@@ -66,9 +66,11 @@ kubectl | 1.16.0
 
 The following matrix displays the tested package versions for our Helm chart.
 
-Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit | Falco  | Metrics Server | Telegraf Operator
+Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit | Falco | Metrics Server | Telegraf Operator
 |:-------- |:-------- |:-------- |:-------- |:-------- |:-------- |:--------
-2.0.0 - Latest | 12.3.0 | 1.11.5 | 0.7.13 (new fluent repository) | 1.5.7 | 5.0.2 | 1.1.5
+2.0.2 - Latest | 12.3.0 | 1.12.0 | 0.7.13 (new fluent repository) | 1.5.7 | 5.0.2 | 1.1.5
+2.0.0 - 2.0.1 | 12.3.0 | 1.11.5 | 0.7.13 (new fluent repository) | 1.5.7 | 5.0.2 | 1.1.5
+1.3.6 | 9.3.4 | 1.11.5 | 2.10.1 (old helm-stable repository) | 1.5.7 | 2.11.2 | 1.1.6
 1.3.5 | 9.3.4 | 1.11.1 | 2.10.1 (old helm-stable repository) | 1.5.7 | 2.11.2 | 1.1.6
 1.3.1 - 1.3.4 | 9.3.4 | 1.11.1 | 2.10.1 | 1.4.0 | 2.11.2 | 1.1.6
 1.3.0 | 9.3.4 | 1.11.1 | 2.10.1 | 1.4.0 | 2.11.2 | 1.1.4
