@@ -252,6 +252,7 @@ function kube_prometheus_stack_update_remote_write_regexes() {
 	  path: 'kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite.[+]'
 	  value:
 	    url: ${URL_METRICS_OPERATOR_RULE}
+	    remoteTimeout: 5s
 	    writeRelabelConfigs:
 	      - action: keep
 	        regex: 'cluster_quantile:apiserver_request_duration_seconds:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile|cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:'
@@ -300,6 +301,7 @@ function kube_prometheus_stack_update_remote_write_regexes() {
 	  path: 'kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite.[+]'
 	  value:
 	    url: ${URL_METRICS_CONTROL_PLANE_COREDNS}
+	    remoteTimeout: 5s
 	    writeRelabelConfigs:
 	      - action: keep
 	        regex: 'coredns;(?:coredns_cache_(size|entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))'
@@ -560,15 +562,55 @@ function add_new_scrape_labels_to_prometheus_service_monitors(){
 }
 
 function kube_prometheus_stack_set_remote_write_timeout_to_5s() {
-  if [[ -z "$(yq r "${TEMP_FILE}" -- 'kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite')" ]]; then
+  local prometheus_spec
+  readonly prometheus_spec="$(yq r "${TEMP_FILE}" -- "kube-prometheus-stack.prometheus.prometheusSpec")"
+
+  if [[ -z "$(yq r - 'remoteWrite' <<< "${prometheus_spec}")" ]]; then
+    # No remoteWrite to migrate
     return
   fi
 
-  if [[ -n "$(yq r "${TEMP_FILE}" -- 'kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite.[*].remoteTimeout')" ]]; then
+  if [[ -n "$(yq r - 'remoteWrite.[*].remoteTimeout' <<< "${prometheus_spec}")" ]]; then
     echo
     info "kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite.[*].remoteTimeout is set"
     info "Please note that we've set it by default to 5s in 2.0.0"
   fi
+
+  local new_remote_write
+  new_remote_write=""
+
+  local remote_timeout
+  local remote_write
+
+  local len
+  readonly len="$(yq r --length - "remoteWrite" <<< "${prometheus_spec}")"
+  for (( i=0; i<len; i++ ))
+  do
+    remote_timeout="$(yq r - "remoteWrite[${i}].remoteTimeout" <<< "${prometheus_spec}")"
+    if [[ -z "${remote_timeout}" ]] ; then
+      # Append remoteWrite element with remoteTimeout set to 5s
+      remote_write="$(yq r - "remoteWrite[${i}]" <<< "${prometheus_spec}")"
+      new_remote_write="$(yq m --arrays append \
+          <( yq p \
+            <(yq w - 'remoteTimeout' 5s <<< "${remote_write}") \
+            "remoteWrite.[+]" ) \
+          <( echo "${new_remote_write}" )
+        )"
+    else
+      # Append unchanged remoteWrite element to the list
+      remote_write="$(yq r - "remoteWrite[${i}]" <<< "${prometheus_spec}")"
+      new_remote_write="$(yq m --arrays append \
+          <( yq p \
+            <( echo "${remote_write}" ) \
+            "remoteWrite.[+]" ) \
+          <( echo "${new_remote_write}" )
+        )"
+    fi
+  done
+
+
+  yq w -i "${TEMP_FILE}" "kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite" \
+    --from <(yq r - "remoteWrite" <<< "${new_remote_write}")
 }
 
 function migrate_sumologic_sources() {
