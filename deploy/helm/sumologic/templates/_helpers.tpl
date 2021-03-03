@@ -312,6 +312,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.logs" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.pdb" -}}
+{{ template "sumologic.metadata.name.logs.statefulset" . }}-pdb
+{{- end -}}
+
 {{- define "sumologic.metadata.name.logs.hpa" -}}
 {{- template "sumologic.metadata.name.logs" . }}
 {{- end -}}
