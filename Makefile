@@ -29,3 +29,6 @@ yamllint:
 	yamllint -c .yamllint.yaml\
 		deploy/helm/sumologic/values.yaml \
 		vagrant/values.yaml
+
+markdown-links-lint:
+	./ci/markdown_links_lint.sh

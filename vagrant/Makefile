@@ -244,6 +244,9 @@ mdl:
 yamllint:
 	$(MAKE) -C ${root_dir} yamllint
 
+markdown-links-lint:
+	$(MAKE) -C ${root_dir} markdown-links-lint
+
 ## Testing tools
 logs-keeper:
 	kubectl delete configmap -n "logs-keeper" logs-keeper || true
