@@ -48,6 +48,14 @@ jobs:
           make helm-dependency-update
           make helm-lint
 
+  md-links-lint:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint markdown links
+        run: |
+          make markdown-links-lint
+
   test:
     runs-on: ubuntu-20.04
     needs: [markdownlint, shellcheck, yamllint, helmlint]
