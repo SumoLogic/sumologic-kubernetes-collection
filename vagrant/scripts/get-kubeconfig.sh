@@ -7,7 +7,7 @@ clean_up() {
 	rm "${SSH_CONFIG_PATH}" || true
 	rm "${CONFIG_PATH}" || true
 	rmdir "${TEMP_DIR}" || true
-	popd || true
+	popd > /dev/null || true
 }
 
 err_report() {
@@ -30,7 +30,7 @@ vagrant ssh-config > "${SSH_CONFIG_PATH}"
 ssh -o StrictHostKeyChecking=no -F "${SSH_CONFIG_PATH}" default 'kubectl config view --raw' | \
 	sed "s/127.0.0.1/${VAGRANT_IP}/g" > "${CONFIG_PATH}"
 
-mv "${KUBECONFIG_PATH}" "${KUBECONFIG_PATH}.bkp.$(date +%s)"
+mv -v "${KUBECONFIG_PATH}" "${KUBECONFIG_PATH}.bkp.$(date +%s)"
 cp "${CONFIG_PATH}" "${KUBECONFIG_PATH}"
 
 clean_up
