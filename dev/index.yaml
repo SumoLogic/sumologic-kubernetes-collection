@@ -6095,6 +6095,45 @@ entries:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.0.0-7-g4cc58f1.tgz
     version: 2.0.0-7-g4cc58f1
   - apiVersion: v2
+    appVersion: 2.0.0-69-g4017b93e66adfe8cae58c87458cf9641140c45d0
+    created: "2021-03-09T09:48:52.031975135Z"
+    dependencies:
+    - condition: fluent-bit.enabled,sumologic.logs.enabled
+      name: fluent-bit
+      repository: https://fluent.github.io/helm-charts
+      version: 0.11.0
+    - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 12.3.0
+    - condition: falco.enabled
+      name: falco
+      repository: https://falcosecurity.github.io/charts
+      version: 1.5.7
+    - condition: metrics-server.enabled
+      name: metrics-server
+      repository: https://charts.bitnami.com/bitnami
+      version: 5.5.0
+    - condition: telegraf-operator.enabled
+      name: telegraf-operator
+      repository: https://helm.influxdata.com/
+      version: 1.1.5
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
+    digest: 160d24f72a7a64d5fd23f3de60d2478d8ced5ea8be3eadfc46c5498cce895cf7
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    type: application
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.0.0-69-g4017b93e66adfe8cae58c87458cf9641140c45d0.tgz
+    version: 2.0.0-69-g4017b93e66adfe8cae58c87458cf9641140c45d0
+  - apiVersion: v2
     appVersion: 2.0.0-67-g88cdfdd3e98e65059867d2622630a62e99fc4d7d
     created: "2021-03-05T13:10:11.434632529Z"
     dependencies:
@@ -16393,4 +16432,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-0.15.22-alpha-12-g4127801.tgz
     version: 0.15.22-alpha-12-g4127801
-generated: "2021-03-05T13:10:11.391794473Z"
+generated: "2021-03-09T09:48:51.987705125Z"
