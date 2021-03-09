@@ -94,6 +94,11 @@ echo 'export PATH="$PATH:$HOME/.gem/bin"' >> /home/vagrant/.bashrc
 
 apt-get install -y yamllint
 
+K9S_VERSION=v0.24.2
+mkdir /opt/k9s
+curl -Lo- "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz" | tar -C /opt/k9s -xzf -
+ln -s /opt/k9s/k9s /usr/bin/k9s
+
 echo Dashboard local in-vagrant IP:
 kubectl -n kube-system get services | grep -i kubernetes-dashboard | awk '{print $3}'
 echo
