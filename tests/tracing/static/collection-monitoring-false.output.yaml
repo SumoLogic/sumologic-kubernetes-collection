@@ -117,7 +117,7 @@ data:
       pipelines:
         traces:
           exporters:
-          - zipkin
+          - otlphttp
           processors:
           - memory_limiter
           - k8s_tagger
