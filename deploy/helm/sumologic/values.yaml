@@ -1941,7 +1941,7 @@ otelagent:
     memBallastSizeMib: "250"
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.19.2-sumo"
+      tag: "v0.21.1-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -2047,7 +2047,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.19.2-sumo"
+      tag: "v0.21.1-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -2216,17 +2216,18 @@ otelcol:
       # logging:
       #   loglevel: debug
       otlphttp:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+        compression: gzip
     service:
       extensions: [health_check]
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, zipkin]
           processors: [memory_limiter, k8s_tagger, source, resource, batch]
-          ## To enable otlphttp exporter comment out following line
-          exporters: [zipkin]
+          ## To enable zipkin exporter comment out following line
+          exporters: [otlphttp]
           ## and uncomment next one
-          # exporters: [otlphttp]
+          # exporters: [zipkin]
 
 ## Configure telegraf-operator
 ## This is an experimental configuration and shouldn't be used in production environment
