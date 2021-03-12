@@ -136,8 +136,10 @@ kubectl scale deployment/collection-sumologic --replicas=3
 To view Prometheus logs:
 
 ```
-kubectl logs prometheus-collection-prometheus-oper-prometheus-0 prometheus -f
+kubectl logs prometheus-collection-kube-prometheus-prometheus-0 prometheus -f
 ```
+
+Where `collection` is the `helm` release name.
 
 ### Send data to Fluentd stdout instead of to Sumo
 
@@ -185,7 +187,7 @@ Then, in your browser, go to `localhost:8080/metrics`. You should see Prometheus
 First run the following command to expose the Prometheus UI:
 
 ```sh
-kubectl port-forward prometheus-collection-prometheus-oper-prometheus-0 8080:9090
+kubectl port-forward prometheus-collection-kube-prometheus-prometheus-0 8080:9090
 ```
 
 Then, in your browser, go to `localhost:8080`. You should be in the Prometheus UI now.
