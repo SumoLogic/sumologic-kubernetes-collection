@@ -942,6 +942,8 @@ fluent-bit:
           tls           off
           tls.verify    on
           tls.debug     1
+          # Disable keepalive for better load balancing
+          net.keepalive off
     customParsers: |
       [PARSER]
           Name        multi_line
