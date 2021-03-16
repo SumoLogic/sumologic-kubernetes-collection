@@ -167,6 +167,7 @@ Parameter | Description | Default
 `fluentd.events.statefulset.podAnnotations` | Additional annotations for fluentd events pods. | `{}`
 `fluentd.events.statefulset.priorityClassName` | Priority class name for fluentd events pods. | `Nil`
 `fluentd.events.sourceCategory` | Source category for the Events source. Default: "{clusterName}/events" | `Nil`
+`fluentd.events.overrideOutputConf` | Override output section for events. Leave empty for the default output section. | `Nil`
 `metrics-server.enabled` | Set the enabled flag to true for enabling metrics-server. This is required before enabling fluentd autoscaling unless you have an existing metrics-server in the cluster. | `false`
 `metrics-server.args` | Arguments for metric server. | `["--kubelet-insecure-tls","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"]`
 `fluent-bit.resources` | Resources for Fluent-bit daemonsets. | `{}`

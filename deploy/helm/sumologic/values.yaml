@@ -738,6 +738,9 @@ fluentd:
         fluentd:
           securityContext: {}
 
+    ## Override output section for events. Leave empty for the default output section
+    overrideOutputConf: |-
+
     ## Source category for the Events source. Default: "{clusterName}/events"
     sourceCategory: ""
     ## Override Kubernetes resource types you want to get events for from different Kubernetes
