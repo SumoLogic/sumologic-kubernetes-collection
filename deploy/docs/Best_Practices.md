@@ -10,6 +10,7 @@
 - [Filtering Prometheus Metrics by Namespace](#filtering-prometheus-metrics-by-namespace)
 - [Modify the Log Level for Falco](#modify-the-log-level-for-falco)
 - [Overriding metadata using annotations](#overriding-metadata-using-annotations)
+  - [Overriding source category with pod annotations](#overriding-source-category-with-pod-annotations)
 - [Excluding data using annotations](#excluding-data-using-annotations)
   - [Including subsets of excluded data](#including-subsets-of-excluded-data)
 - [Templating Kubernetes metadata](#templating-kubernetes-metadata)
@@ -318,9 +319,12 @@ falco:
 You can use [Kubernetes annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/)
 to override some metadata and settings per pod.
 
-- `sumologic.com/format` overrides log format (see `fluentd.logs.output.logFormat` for description)
-- `sumologic.com/sourceCategory` overrides the `_sourceCategory` metadata
-- `sumologic.com/sourceName` overrides the `_sourceName` metadata
+- `sumologic.com/format` overrides the value of the `fluentd.logs.output.logFormat` property
+- `sumologic.com/sourceCategory` overrides the value of the `fluentd.logs.containers.sourceCategory` property
+- `sumologic.com/sourceCategoryPrefix` overrides the value of the `fluentd.logs.containers.sourceCategoryPrefix` property
+- `sumologic.com/sourceCategoryReplaceDash` overrides the value of the `fluentd.logs.containers.sourceCategoryReplaceDash`
+  property
+- `sumologic.com/sourceName` overrides the value of the `fluentd.logs.containers.sourceName` property
 
 For example:
 
@@ -349,6 +353,42 @@ spec:
         ports:
         - containerPort: 80
 ```
+
+### Overriding source category with pod annotations
+
+The following example shows how to customize the source category for data from a specific deployment.
+The resulting value of `_sourceCategory` field will be `my-component`:
+
+```yaml
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: my-component-deployment
+spec:
+  replicas: 1
+  selector:
+    app: my-component
+  template:
+    metadata:
+      annotations:
+        sumologic.com/sourceCategory: "my-component"
+        sumologic.com/sourceCategoryPrefix: ""
+        sumologic.com/sourceCategoryReplaceDash: "-"
+      labels:
+        app: my-component
+      name: my-component
+    spec:
+      containers:
+      - name: my-component
+        image: my-image
+```
+
+The `sumologic.com/sourceCategory` annotation defines the source category for the data.
+
+The empty `sumologic.com/sourceCategoryPrefix` annotation removes the default prefix added to the source category.
+
+The `sumologic.com/sourceCategoryReplaceDash` annotation with value `-` prevents the dash in the source category
+from being replaced with another character.
 
 ### Excluding data using annotations
 
