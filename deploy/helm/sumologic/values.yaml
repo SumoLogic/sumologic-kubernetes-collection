@@ -1941,7 +1941,7 @@ otelagent:
     memBallastSizeMib: "250"
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "v0.21.1-sumo"
+      tag: "0.22.0-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -2047,7 +2047,7 @@ otelcol:
     memBallastSizeMib: "683"
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "v0.21.1-sumo"
+      tag: "0.22.0-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
