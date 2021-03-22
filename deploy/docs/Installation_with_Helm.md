@@ -20,8 +20,8 @@ If you don’t already have a Sumo account, you can create one by clicking the F
 
 The following are required to set up Sumo Logic's Kubernetes collection.
 
-  * An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with [Manage Collectors](https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management) capability.
-  * Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
+- An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with [Manage Collectors](https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management) capability.
+- Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
 
 To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
 
@@ -39,20 +39,24 @@ Sumo Logic Apps for Kubernetes and Explore require you to add the following [fie
 
 ## Installation Steps
 
-These steps require that no Prometheus exists. If you already have Prometheus installed select from the following options:
+These steps require that no Prometheus exists.
+If you already have Prometheus installed select from the following options:
 
 - [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
 - [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md) 
 - [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md) 
 
 The Helm chart installation requires two parameter overrides:
-* __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-* __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+
+- __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
+- __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
 
 The following parameter is optional, but we recommend setting it.
-* __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+
+- __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
+  This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 The following helm commands support Helm2 or Helm3.
 
@@ -65,30 +69,56 @@ helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collect
 Next you can run `helm upgrade --install` to install our chart. An example command with the minimum parameters is provided below. The following command will install the Sumo Logic chart with the release name `my-release` in the namespace your `kubectl` context is currently set to.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
+helm upgrade --install my-release sumologic/sumologic \
+  --version=1.3 \
+  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
+
 > **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
 
 If you wish to install the chart in a different existing namespace you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
+helm upgrade --install my-release sumologic/sumologic \
+  --namespace=my-namespace \
+  --version=1.3 \
+  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
 For Helm3, if the namespace does not exist, you can add the `--create-namespace` flag.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME> --create-namespace"
+helm upgrade --install my-release sumologic/sumologic \
+  --namespace=my-namespace \
+  --create-namespace \
+  --version=1.3 \
+  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
 ### Installing the helm chart in Openshift platform
+
 The daemonset/statefulset fails to create the pods in Openshift environment due to the request of elevated privileges, like HostPath mounts, privileged: true, etc.
 Also, since the `prometheus-node-exporter` is already present in Openshift platform by default, we need to override the port being used by `prometheus-node-exporter` to `9200`.
 
 If you wish to install the chart in the Openshift Platform, it requires a SCC resource which is only created in Openshift (detected via API capabilities in the chart), you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true --set prometheus-operator.prometheus-node-exporter.service.port=9200 --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
+helm upgrade --install my-release sumologic/sumologic \
+  --namespace=my-namespace \
+  --version=1.3 \
+  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+  --set sumologic.scc.create=true \
+  --set fluent-bit.securityContext.privileged=true \
+  --set prometheus-operator.prometheus-node-exporter.service.port=9200 \
+  --set prometheus-operator.prometheus-node-exporter.service.targetPort=9200
 ```
 
 ## Viewing Data In Sumo Logic
@@ -98,40 +128,61 @@ Once you have completed installation, you can [install the Kubernetes App and vi
 ## Troubleshooting Installation
 
 ### Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists
+
 If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists` on a Helm2 installation, run the above command with the `--set prometheus-operator.prometheusOperator.createCustomResource=false` parameter:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set prometheus-operator.prometheusOperator.createCustomResource=false
+helm upgrade --install my-release sumologic/sumologic \
+  --version=1.3 \
+  --set sumologic.accessId="<SUMO_ACCESS_ID"> \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+  --set prometheus-operator.prometheusOperator.createCustomResource=false
 ```
+
 ### Error: timed out waiting for the condition
-If `helm upgrade --install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm upgrade --install` command. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where the Helm chart was deployed. The pod name will contain `-setup` in the name.
+
+If `helm upgrade --install` hangs, it usually means the pre-install setup job is failing and is in a retry loop.
+Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm upgrade --install` command.
+Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing.
+First find the pod name in the namespace where the Helm chart was deployed.
+The pod name will contain `-setup` in the name.
 
 ```sh
 kubectl get pods
 ```
+
 > **Tip**: If the pod does not exist, it is possible it has been evicted.  Re-run the `helm upgrade --install` to recreate it and while that command is running, use another shell to get the name of the pod.
 
 Get the logs from that pod:
+
 ```
 kubectl logs POD_NAME -f
 ```
+
 ### Error: collector with name 'sumologic' does not exist
+
 If you get `Error: collector with name 'sumologic' does not exist
-sumologic_http_source.default_metrics_source: Importing from ID`, you can safely ignore it and the installation should complete successfully. The installation process creates new [HTTP endpoints](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) in your Sumo Logic account, that are used to send data to Sumo. This error occurs if the endpoints had already been created by an earlier run of the installation process.
+sumologic_http_source.default_metrics_source: Importing from ID`, you can safely ignore it and the installation should complete successfully.
+The installation process creates new [HTTP endpoints](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source) in your Sumo Logic account, that are used to send data to Sumo.
+This error occurs if the endpoints had already been created by an earlier run of the installation process.
 
 You can find more information in our [troubleshooting documentation](Troubleshoot_Collection.md).
 
 ## Customizing Installation
+
 All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md). We recommend creating a new `values.yaml` for each Kubernetes cluster you wish to install collection on and **setting only the properties you wish to override**. Once you have customized you can use the following commands to install or upgrade. 
-  
+
 ```bash
-helm upgrade --install my-release sumologic/sumologic -f values.yaml
+helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=1.3
 ```
+
 > **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
 
 ## Upgrading Sumo Logic Collection
 
-**Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).**
+**Note, if you are upgrading to version 1.x of our collection from a version before 1.x,
+please see our [migration guide](v1_migration_doc.md).**
 
 To upgrade our helm chart to a newer version, you must first run update your local helm repo.
 
@@ -139,10 +190,12 @@ To upgrade our helm chart to a newer version, you must first run update your loc
 helm repo update
 ```
 
-Next, you can run `helm upgrade --install` to upgrade to that version. The following upgrades the current version of `my-release` to the latest.
+Next, you can run `helm upgrade --install` to upgrade to that version.
+
+The following command upgrades the current version of `my-release` to the latest `1.x` release.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic -f values.yaml
+helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=1
 ```
 
 If you wish to upgrade to a specific version, you can use the `--version` flag.
@@ -151,7 +204,9 @@ If you wish to upgrade to a specific version, you can use the `--version` flag.
 helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=1.0.0
 ```
 
-If you no longer have your `values.yaml` from the first installation or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart. For example, if the release is called `my-release` you can run the following.
+If you no longer have your `values.yaml` from the first installation or do not remember the options you added
+via `--set` you can run the following to see the values for the currently installed helm chart.
+For example, if the release is called `my-release` you can run the following.
 
 ```bash
 helm get values my-release
@@ -172,6 +227,7 @@ To uninstall/delete the Helm chart:
 ```bash
 helm delete my-release
 ```
+
 > **Helm2 Tip**: Use helm delete --purge my-release to completely remove the release from Helm internal storage
 
 > **Helm3 Tip**: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.
