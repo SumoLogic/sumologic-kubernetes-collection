@@ -14,13 +14,13 @@
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
   - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics)
 - [Common Issues](#common-issues)
+  - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
   - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
   - [Missing `kubelet` metrics](#missing-kubelet-metrics)
     - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
     - [2. Disable the `kubelet.serviceMonitor.https` flag in Kube Prometheus Stack](#2-disable-the-kubeletservicemonitorhttps-flag-in-kube-prometheus-stack)
   - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
   - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
-  - [Errors in helm installation](#errors-in-helm-installation)
   - [Rancher](#rancher)
   - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
   - [Falco and OpenShift](#falco-and-openshift)
@@ -226,6 +226,29 @@ Relevant Fluentd metrics include:
 - fluentd_output_status_retry_count
 
 ## Common Issues
+
+### Missing metrics - cannot see cluster in Explore
+
+If you are not seeing metrics coming in to Sumo or/and your cluster is not showing
+up in [Explore][explore] it is most likely due to the fact that Prometheus pod
+is not running.
+
+One can verify that by using the following command:
+
+```
+$ kubectl get pod -n <NAMESPACE> -l app=prometheus
+NAME                                 READY   STATUS    RESTARTS   AGE
+prometheus-<NAMESPACE>-prometheus-0  2/2     Running   1          4d20h
+```
+
+In case it is not running one can check prometheus-operator logs for any related
+issues:
+
+```
+kubectl logs -n <NAMESPACE> -l app=kube-prometheus-stack-operator
+```
+
+[explore]: https://help.sumologic.com/Visualizations-and-Alerts/Explore
 
 ### Pod stuck in `ContainerCreating` state
 
