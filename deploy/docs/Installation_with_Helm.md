@@ -103,7 +103,10 @@ The following command will install the Sumo Logic chart with the release name
 `my-release` in the namespace your `kubectl` context is currently set to.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
+helm upgrade --install my-release sumologic/sumologic \
+  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
 > **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
@@ -111,13 +114,22 @@ helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<
 If you wish to install the chart in a different existing namespace you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
+helm upgrade --install my-release sumologic/sumologic \
+  --namespace=my-namespace \
+  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
 If the namespace does not exist, you can add the `--create-namespace` flag.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --create-namespace
+helm upgrade --install my-release sumologic/sumologic \
+  --namespace=my-namespace \
+  --create-namespace \
+  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
 ### Authenticating with container registry
@@ -146,7 +158,13 @@ If you wish to install the chart in the Openshift Platform, it requires a SCC re
 which is only created in Openshift (detected via API capabilities in the chart), you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
+helm upgrade --install my-release sumologic/sumologic \
+  --namespace=my-namespace \
+  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+  --set sumologic.scc.create=true \
+  --set fluent-bit.securityContext.privileged=true
 ```
 
 ## Viewing Data In Sumo Logic
@@ -210,8 +228,6 @@ helm upgrade --install my-release sumologic/sumologic -f values.yaml
 
 ## Upgrading Sumo Logic Collection
 
-**Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).**
-
 To upgrade our helm chart to a newer version, you must first run update your local helm repo.
 
 ```bash
@@ -228,7 +244,7 @@ helm upgrade --install my-release sumologic/sumologic -f values.yaml
 If you wish to upgrade to a specific version, you can use the `--version` flag.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=1.0.0
+helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=2.0.0
 ```
 
 If you no longer have your `values.yaml` from the first installation or do not remember
