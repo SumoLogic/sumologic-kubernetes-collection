@@ -92,7 +92,7 @@ function perform_test {
   test_start "${test_name}"
   generate_file "${template_name}"
 
-  test_output=$(diff "${TEST_TMP_PATH}/${output_file}" "${TEST_OUT}" | cat -te)
+  test_output=$(diff -c "${TEST_TMP_PATH}/${output_file}" "${TEST_OUT}" | cat -te)
   rm "${TEST_OUT}"
 
   if [[ -n "${test_output}" ]]; then
