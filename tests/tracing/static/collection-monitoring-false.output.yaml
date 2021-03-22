@@ -14,8 +14,8 @@ data:
     
     exporters:
       otlphttp:
-        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
         compression: gzip
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
       zipkin:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
     extensions:
