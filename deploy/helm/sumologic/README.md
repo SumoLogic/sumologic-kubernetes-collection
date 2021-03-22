@@ -6,6 +6,9 @@ To see all available configuration for our sub-charts, please refer to their doc
 * [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#configuration) - All Kube Prometheus Stack properties should be prefixed with `kube-prometheus-stack.` in our values.yaml to override a property not listed below.
 * [Fluent Bit](https://github.com/helm/charts/tree/master/stable/fluent-bit#configuration) - All Fluent Bit properties should be prefixed with `fluent-bit.` in our values.yaml to override a property not listed below.
 * [Metrics Server](https://github.com/helm/charts/tree/master/stable/metrics-server#configuration) - All Metrics Server properties should be prefixed with `metrics-server.` in our values.yaml to override a property not listed below.
+* [Tailing Sidecar Operator](https://github.com/SumoLogic/tailing-sidecar/tree/main/helm/tailing-sidecar-operator#configuration) -
+  All Tailing Sidecar Operator properties should be prefixed with `tailing-sidecar-operator` in our values.yaml to
+  override a property not listed below.
 
 The following table lists the configurable parameters of the Sumo Logic chart and their default values.
 
@@ -242,3 +245,4 @@ Parameter | Description | Default
 `otelcol.config.processors.memory_limiter.limit_mib` | Sets the OpenTelemetry Collector memory limitter plugin value (in MiB). Should be at least 100 Mib less than the value of `otelcol.deployment.resources.limits.memory`. | `1900`
 `otelcol.config.processors.batch.send_batch_size` | Sets the preferred size of batch (in number of spans). | `256`
 `otelcol.config.processors.batch.send_batch_max_size` | Sets the maximum allowed size of a batch (in number of spans). Use with caution, setting too large value might cause 413 Payload Too Large errors. | `512`
+`tailing-sidecar-operator.enabled` | Flag to control deploying Tailing Sidecar Operator Helm sub-chart. | `false`
