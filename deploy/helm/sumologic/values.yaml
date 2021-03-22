@@ -2311,3 +2311,8 @@ falco:
       - macro: user_privileged_containers
         condition: >
           (container.image.repository endswith ".amazonaws.com/eks/kube-proxy")
+
+## Configure Tailing Sidecar Operator
+## ref: https://github.com/SumoLogic/tailing-sidecar/blob/main/helm/tailing-sidecar-operator/values.yaml
+tailing-sidecar-operator:
+  enabled: false
