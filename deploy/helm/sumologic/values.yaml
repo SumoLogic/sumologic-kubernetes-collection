@@ -106,6 +106,9 @@ sumologic:
       ## Add custom annotations only to setup job pod
       podAnnotations: {}
 
+    ## uncomment for the debug mode (disables the automatic run of the setup.sh script)
+    # debug: true
+
   collector:
     ## Configuration of additional collector fields
     ## https://help.sumologic.com/Manage/Fields#http-source-fields

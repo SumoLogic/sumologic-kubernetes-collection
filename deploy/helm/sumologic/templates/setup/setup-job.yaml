@@ -71,6 +71,10 @@ spec:
           value: {{ .Values.sumologic.httpsProxy }}
         - name: NO_PROXY
           value: {{ .Values.sumologic.noProxy }}
+{{- if .Values.sumologic.setup.debug }}
+        - name: DEBUG_MODE
+          value: "true"
+{{- end }}
         {{ end }}
       securityContext:
         runAsUser: 999
