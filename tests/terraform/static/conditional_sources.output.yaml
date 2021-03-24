@@ -167,18 +167,33 @@ data:
     export HTTPS_PROXY=${HTTPS_PROXY:=""}
     export NO_PROXY=${NO_PROXY:=""}
   
-    function remaining_fields() {
-        local RESPONSE="$(curl -XGET -s \
+    function get_remaining_fields() {
+        local RESPONSE
+        readonly RESPONSE="$(curl -XGET -s \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}"v1/fields/quota)"
   
-        echo "${RESPONSE}" | jq '.remaining'
+        echo "${RESPONSE}"
     }
   
     # Check if we'd have at least 10 fields remaining after additional fields
     # would be created for the collection
     function should_create_fields() {
-        local REMAINING=$(remaining_fields)
+        local RESPONSE
+        readonly RESPONSE=$(get_remaining_fields)
+  
+        if ! jq -e <<< "${RESPONSE}" ; then
+            printf "Failed requesting fields API:\n%s\n" "${RESPONSE}"
+            return 1
+        fi
+  
+        if ! jq -e '.remaining' <<< "${RESPONSE}" ; then
+            printf "Failed requesting fields API:\n%s\n" "${RESPONSE}"
+            return 1
+        fi
+  
+        local REMAINING
+        readonly REMAINING=$(jq -e '.remaining' <<< "${RESPONSE}")
         if [[ $(( REMAINING - 8 )) -ge 10 ]] ; then
             return 0
         else
