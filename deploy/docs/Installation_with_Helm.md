@@ -104,6 +104,7 @@ The following command will install the Sumo Logic chart with the release name
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
+  --version=2.0 \
   --set sumologic.accessId="<SUMO_ACCESS_ID>" \
   --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>"
@@ -116,6 +117,7 @@ If you wish to install the chart in a different existing namespace you can do th
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
   --namespace=my-namespace \
+  --version=2.0 \
   --set sumologic.accessId="<SUMO_ACCESS_ID>" \
   --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>"
@@ -127,6 +129,7 @@ If the namespace does not exist, you can add the `--create-namespace` flag.
 helm upgrade --install my-release sumologic/sumologic \
   --namespace=my-namespace \
   --create-namespace \
+  --version=2.0 \
   --set sumologic.accessId="<SUMO_ACCESS_ID>" \
   --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>"
@@ -160,6 +163,7 @@ which is only created in Openshift (detected via API capabilities in the chart),
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
   --namespace=my-namespace \
+  --version=2.0 \
   --set sumologic.accessId="<SUMO_ACCESS_ID>" \
   --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
