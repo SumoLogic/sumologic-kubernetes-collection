@@ -5,7 +5,7 @@ readonly ROOT_DIR="$(dirname "$(dirname "${0}")")"
 source "${ROOT_DIR}"/ci/_build_functions.sh
 
 fetch_current_branch
-VERSION="$(git describe --tags --abbrev=40)"
+VERSION="$(git describe --tags --abbrev=10)"
 readonly VERSION="${VERSION#v}"
 
 pushd "${ROOT_DIR}" || exit 1
