@@ -64,7 +64,7 @@ fluentd:
     enabled: true
     statefulset:
       nodeSelector: {}
-      tolerations: {}
+      tolerations: []
       affinity: {}
       podAntiAffinity: soft
       replicaCount: 3
@@ -158,7 +158,7 @@ fluentd:
     enabled: true
     statefulset:
       nodeSelector: {}
-      tolerations: {}
+      tolerations: []
       affinity: {}
       podAntiAffinity: soft
       replicaCount: 3
@@ -228,7 +228,7 @@ fluentd:
     enabled: true
     statefulset:
       nodeSelector: {}
-      tolerations: {}
+      tolerations: []
       resources:
         limits:
           memory: 512Mi
