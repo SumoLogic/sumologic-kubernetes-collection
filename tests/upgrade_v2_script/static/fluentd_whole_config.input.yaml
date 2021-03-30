@@ -128,7 +128,7 @@ fluentd:
     enabled: true
     statefulset:
       nodeSelector: {}
-      tolerations: {}
+      tolerations: []
       affinity: {}
       ## Acceptable values for podAntiAffinity:
       ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
@@ -365,7 +365,7 @@ fluentd:
     enabled: true
     statefulset:
       nodeSelector: {}
-      tolerations: {}
+      tolerations: []
       affinity: {}
       ## Acceptable values for podAntiAffinity:
       ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
@@ -490,7 +490,7 @@ fluentd:
 
     statefulset:
       nodeSelector: {}
-      tolerations: {}
+      tolerations: []
       resources:
         limits:
           memory: 512Mi

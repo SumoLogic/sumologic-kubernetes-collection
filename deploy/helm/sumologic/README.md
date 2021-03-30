@@ -76,7 +76,7 @@ Parameter | Description | Default
 `fluentd.metadata.pluginLogLevel` | Option to give plugin specific log level. | `error`
 `fluentd.logs.enabled` | Flag to control deploying the Fluentd logs statefulsets. | `true`
 `fluentd.logs.statefulset.nodeSelector` | Node selector for Fluentd log statefulset. | `{}`
-`fluentd.logs.statefulset.tolerations` | Tolerations for Fluentd log statefulset. | `{}`
+`fluentd.logs.statefulset.tolerations` | Tolerations for Fluentd log statefulset. | `[]`
 `fluentd.logs.statefulset.affinity` | Affinity for Fluentd log statefulset. | `{}`
 `fluentd.logs.statefulset.podAntiAffinity` | PodAntiAffinity for Fluentd log statefulset. | `soft`
 `fluentd.logs.statefulset.replicaCount` | Replica count for Fluentd log statefulset. | `3`
@@ -145,7 +145,7 @@ Parameter | Description | Default
 `fluentd.logs.default.overrideOutputConf` | Override output section for untagged logs. Leave empty for the default output section. | `Nil`
 `fluentd.metrics.enabled` | Flag to control deploying the Fluentd metrics statefulsets. | `true`
 `fluentd.metrics.statefulset.nodeSelector` | Node selector for Fluentd metrics statefulset. | `{}`
-`fluentd.metrics.statefulset.tolerations` | Tolerations for Fluentd metrics statefulset. | `{}`
+`fluentd.metrics.statefulset.tolerations` | Tolerations for Fluentd metrics statefulset. | `[]`
 `fluentd.metrics.statefulset.affinity` | Affinity for Fluentd metrics statefulset. | `{}`
 `fluentd.metrics.statefulset.podAntiAffinity` | PodAntiAffinity for Fluentd metrics statefulset. | `soft`
 `fluentd.metrics.statefulset.replicaCount` | Replica count for Fluentd metrics statefulset. | `3`
@@ -164,7 +164,7 @@ Parameter | Description | Default
 `fluentd.metrics.overrideOutputConf` | Override output section for metrics. Leave empty for the default output section. | `Nil`
 `fluentd.events.enabled` | If enabled, collect K8s events. | `true`
 `fluentd.events.statefulset.nodeSelector` | Node selector for Fluentd events statefulset. | `{}`
-`fluentd.events.statefulset.tolerations` | Tolerations for Fluentd events statefulset. | `{}`
+`fluentd.events.statefulset.tolerations` | Tolerations for Fluentd events statefulset. | `[]`
 `fluentd.events.statefulset.resources` | Resources for Fluentd log statefulset. | `{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}`
 `fluentd.events.statefulset.podLabels` | Additional labels for fluentd events pods. | `{}`
 `fluentd.events.statefulset.podAnnotations` | Additional annotations for fluentd events pods. | `{}`
