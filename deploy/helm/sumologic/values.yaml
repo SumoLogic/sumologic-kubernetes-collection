@@ -432,6 +432,8 @@ fluentd:
       ## A regular expression for pods.
       ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
       excludePodRegex: ""
+      perContainerAnnotationsEnabled: false
+      perContainerAnnotationPrefixes: []
 
       ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
       k8sMetadataFilter:
