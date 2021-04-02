@@ -16,6 +16,7 @@
 - [Common Issues](#common-issues)
   - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
   - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
+  - [Fluentd Pod stuck in `Pending` state after recreation](#fluentd-pod-stuck-in-pending-state-after-recreation)
   - [Missing `kubelet` metrics](#missing-kubelet-metrics)
     - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
     - [2. Disable the `kubelet.serviceMonitor.https` flag in Kube Prometheus Stack](#2-disable-the-kubeletservicemonitorhttps-flag-in-kube-prometheus-stack)
@@ -259,6 +260,21 @@ Warning  FailedCreatePodSandBox  29s   kubelet, ip-172-20-87-45.us-west-1.comput
 ```
 
 you have an unhealthy node. Killing the node should resolve this issue.
+
+### Fluentd Pod stuck in `Pending` state after recreation
+
+If you are seeing a Fluentd Pod stuck in the `Pending` state, using the [file based buffering](./Best_Practices.md#fluentd-file-based-buffer)
+(default since v2.0) and seeing logs like
+
+```
+Warning  FailedScheduling  16s (x23 over 31m)  default-scheduler  0/6 nodes are available: 2 node(s) had volume node affinity conflict, 4 node(s) were unschedulable.
+```
+
+you have a volume node affinity conflict. It can happen when Fluentd Pod was running in one AZ and has been rescheduled into
+another AZ. Deleting the existing PVC and then killing the Pod should resolve this issue.
+
+The Fluentd StatefulSet Pods and their PVCs are bound by their number: `*-sumologic-fluentd-logs-1` Pod will be using
+the `buffer-*-sumologic-fluentd-logs-1` PVC.
 
 ### Missing `kubelet` metrics
 
