@@ -180,6 +180,8 @@ sumologic:
   ## Set the enabled flag to false for disabling logs ingestion altogether.
   logs:
     enabled: true
+    ## Set provider service (either fluentd or otelcol)
+    provider: fluentd
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
     ## relevant metadata.
