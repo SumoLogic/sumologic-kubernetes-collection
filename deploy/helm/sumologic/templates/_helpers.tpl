@@ -297,7 +297,11 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs" -}}
-{{ template "sumologic.metadata.name.fluentd" . }}-logs
+{{- if eq .Values.sumologic.logs.provider "fluentd" -}}
+template "sumologic.metadata.name.fluentd" . }}-logs
+{{- else if eq .Values.sumologic.logs.provider "otelcol" -}}
+template "sumologic.metadata.name.otelcol" . }}-logs
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service" -}}
