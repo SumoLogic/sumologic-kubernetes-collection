@@ -6,6 +6,9 @@ metadata:
   labels:
     app: {{ template "sumologic.labels.app.logs.service-headless" . }}
     {{- include "sumologic.labels.logs" . | nindent 4 }}
+{{- if .Values.fluentd.podLabels }}
+{{ toYaml .Values.fluentd.podLabels | indent 4 }}
+{{- end }}
 spec:
   selector:
     app: {{ template "sumologic.labels.app.logs.pod" . }}
