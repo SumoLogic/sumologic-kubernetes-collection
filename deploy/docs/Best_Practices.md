@@ -96,7 +96,7 @@ To enable autoscaling for Fluentd:
 
   ```yaml
   ## Configure metrics-server
-  ## ref: https://github.com/helm/charts/blob/master/stable/metrics-server/values.yaml
+  ## ref: https://github.com/bitnami/charts/tree/master/bitnami/metrics-server/values.yaml
   metrics-server:
     enabled: true
   ```
