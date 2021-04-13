@@ -32,3 +32,6 @@ yamllint:
 
 markdown-links-lint:
 	./ci/markdown_links_lint.sh
+
+markdown-link-check:
+	./ci/markdown_link_check.sh
