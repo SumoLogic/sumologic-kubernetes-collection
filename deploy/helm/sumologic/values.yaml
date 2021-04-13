@@ -1931,17 +1931,17 @@ kube-prometheus-stack:
         # List of Metrics are on following dochub page:
         # https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kafka/Kafka_Metrics
         # Metrics follow folloing format:
-        #Kafka_broker_*
-        #kafka_controller_*
-        #kafka_java_lang_*
-        #kafka_partition_*
-        #kafka_purgatory_*
-        #kafka_network_*
-        #kafka_replica_*
-        #kafka_request_*
-        #kafka_topic_*
-        #kafka_topics_*
-        #kafka_zookeeper_*
+        # Kafka_broker_*
+        # kafka_controller_*
+        # kafka_java_lang_*
+        # kafka_partition_*
+        # kafka_purgatory_*
+        # kafka_network_*
+        # kafka_replica_*
+        # kafka_request_*
+        # kafka_topic_*
+        # kafka_topics_*
+        # kafka_zookeeper_*
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.kafka
           remoteTimeout: 5s
           writeRelabelConfigs:
