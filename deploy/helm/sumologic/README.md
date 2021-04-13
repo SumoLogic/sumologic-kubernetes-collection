@@ -46,7 +46,7 @@ Parameter | Description | Default
 `fluentd.image.repository` | Image repository for Sumo Logic docker container. | `sumologic/kubernetes-fluentd`
 `fluentd.image.tag` | Image tag for Sumo Logic docker container. | `1.3.0`
 `fluentd.image.pullPolicy` | Image pullPolicy for Sumo Logic docker container. | `IfNotPresent`
-`fluentd.additionalPlugins` | Additional Fluentd plugins to install from RubyGems. Please see our [documentation](./Additional_Fluentd_Plugins.md) for more information. | `[]`
+`fluentd.additionalPlugins` | Additional Fluentd plugins to install from RubyGems. Please see our [documentation](../../docs/Additional_Fluentd_Plugins.md) for more information. | `[]`
 `fluentd.compression.enabled` | Flag to control if data is sent to Sumo Logic compressed or not | `true`
 `fluentd.compression.encoding` | Specifies which encoding should be used to compress data (either `gzip` or `deflate`) | `gzip`
 `fluentd.logLevel` | Sets the fluentd log level. The default log level, if not specified, is info.  Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs. | `info`
@@ -56,7 +56,7 @@ Parameter | Description | Default
 `fluentd.podLabels` | Additional labels for all fluentd pods | `{}`
 `fluentd.podAnnotations` | Additional annotations for all fluentd pods | `{}`
 `fluentd.podSecurityPolicy.create` | If true, create & use `podSecurityPolicy` for fluentd resources | `false`
-`fluentd.persistence.enabled` | Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer. After changing this value follow steps described in [Fluentd Persistence](FluentdPersistence.md).| `true`
+`fluentd.persistence.enabled` | Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer. After changing this value follow steps described in [Fluentd Persistence](../../docs/FluentdPersistence.md).| `true`
 `fluentd.persistence.storageClass` | If defined, storageClassName: <storageClass>. If set to "-", storageClassName: "", which disables dynamic provisioning.  If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner.  (gp2 on AWS, standard on GKE, Azure & OpenStack) | `Nil`
 `fluentd.persistence.annotations` | Annotations for the persistence. | `Nil`
 `fluentd.persistence.accessMode` | The accessMode for persistence. | `ReadWriteOnce`

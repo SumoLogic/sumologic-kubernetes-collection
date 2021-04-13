@@ -52,7 +52,8 @@ You can supply any label you like. You can query Prometheus to see a complete li
 
 You can specify relabeling, and additional inclusion or exclusion options in `fluentd-sumologic.yaml`.
 
-The options you can use are described [here](../../fluent-plugin-prometheus-format/README.md).
+The options you can use are described
+[here](https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/main/fluent-plugin-prometheus-format).
 
 Make your edits in the `<filter>` stanza in the ConfigMap section of `fluentd-sumologic.yaml`.
 
@@ -151,7 +152,9 @@ spec:
 # ...
 ```
 
-Detailed instructions on service monitors can be found via [Prometheus-Operator](https://github.com/coreos/kube-prometheus-stack/blob/master/Documentation/user-guides/getting-started.md#related-resources) website.
+Detailed instructions on service monitors can be found via
+[Prometheus-Operator][prometheus_operator_getting_started] website.
+
 Once you have created this yaml file, go ahead and run `kubectl create -f name_of_yaml.yaml -n sumologic`. This will create the service monitor in the sumologic namespace.
 
 If you want to keep all your changes inside configuration instead of serviceMonitors, you can add your changes to `prometheus.additionalServiceMonitors` section. For given serviceMonitor configuration it should looks like snippet below:
@@ -172,6 +175,8 @@ kube-prometheus-stack:  # For values.yaml
           matchLabels:
             app: example-metrics
 ```
+
+[prometheus_operator_getting_started]: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources
 
 #### Annotations
 
