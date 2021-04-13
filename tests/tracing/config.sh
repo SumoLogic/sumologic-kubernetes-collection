@@ -1,3 +1,3 @@
 #!/bin/bash
 
-export TEST_TEMPLATE="templates/otelcol-configmap.yaml"
+export TEST_TEMPLATE="templates/traces/otelcol/configmap.yaml"

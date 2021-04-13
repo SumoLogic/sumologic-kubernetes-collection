@@ -2,10 +2,10 @@
 
 To see all available configuration for our sub-charts, please refer to their documentation.
 
-* [Falco](https://github.com/helm/charts/tree/master/stable/falco#configuration) - All Falco properties should be prefixed with `falco.` in our values.yaml to override a property not listed below.
+* [Falco](https://github.com/falcosecurity/charts/tree/master/falco#configuration) - All Falco properties should be prefixed with `falco.` in our values.yaml to override a property not listed below.
 * [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#configuration) - All Kube Prometheus Stack properties should be prefixed with `kube-prometheus-stack.` in our values.yaml to override a property not listed below.
-* [Fluent Bit](https://github.com/helm/charts/tree/master/stable/fluent-bit#configuration) - All Fluent Bit properties should be prefixed with `fluent-bit.` in our values.yaml to override a property not listed below.
-* [Metrics Server](https://github.com/helm/charts/tree/master/stable/metrics-server#configuration) - All Metrics Server properties should be prefixed with `metrics-server.` in our values.yaml to override a property not listed below.
+* [Fluent Bit](https://github.com/fluent/helm-charts/blob/main/charts/fluent-bit/values.yaml) - All Fluent Bit properties should be prefixed with `fluent-bit.` in our values.yaml to override a property not listed below.
+* [Metrics Server](https://github.com/bitnami/charts/tree/master/bitnami/metrics-server/#parameters) - All Metrics Server properties should be prefixed with `metrics-server.` in our values.yaml to override a property not listed below.
 * [Tailing Sidecar Operator](https://github.com/SumoLogic/tailing-sidecar/tree/main/helm/tailing-sidecar-operator#configuration) -
   All Tailing Sidecar Operator properties should be prefixed with `tailing-sidecar-operator` in our values.yaml to
   override a property not listed below.
