@@ -7,9 +7,6 @@ metadata:
     app: {{ template "sumologic.labels.app.logs.service" . }}
     {{- include "sumologic.labels.scrape.logs" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
-{{- if .Values.fluentd.podLabels }}
-{{ toYaml .Values.fluentd.podLabels | indent 4 }}
-{{- end }}
 spec:
   selector:
     app: {{ template "sumologic.labels.app.logs.pod" . }}
