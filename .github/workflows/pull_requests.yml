@@ -48,6 +48,14 @@ jobs:
           make helm-dependency-update
           make helm-lint
 
+  markdown-link-check:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@master
+    - uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        config-file: '.markdown_link_check.json'
+
   md-links-lint:
     runs-on: ubuntu-20.04
     steps:
