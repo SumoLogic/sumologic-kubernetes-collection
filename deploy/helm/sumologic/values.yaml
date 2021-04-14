@@ -1946,7 +1946,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:kafka_(broker_.*|controller_.*|ava_lang_.*|partition_.*|purgatory_.*|network_.*|replica_.*|request_.*|topic_.*|topics_.*|zookeeper_.*))
+              regex: (?:kafka_(broker_.*|controller_.*|java_lang_.*|partition_.*|purgatory_.*|network_.*|replica_.*|request_.*|topic_.*|topics_.*|zookeeper_.*))
               sourceLabels: [__name__]
 
 ## Configure optional OpenTelemetry Collector in Agent mode
