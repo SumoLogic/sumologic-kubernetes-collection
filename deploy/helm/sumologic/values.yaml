@@ -1927,6 +1927,28 @@ kube-prometheus-stack:
               regex: (?:java_lang_(ClassLoading_(TotalL|Unl|L)oadedClassCount|Compilation_TotalCompilationTime|GarbageCollector_(Collection(Count|Time)|LastGcInfo_(GcThreadCount|duration|(memoryU|u)sage(After|Before)Gc_.*_used))|MemoryPool_(CollectionUsage(ThresholdSupported|_committed|_max|_used)|(Peak|)Usage_(committed|max|used)|UsageThresholdSupported)|Memory_((Non|)HeapMemoryUsage_(committed|max|used)|ObjectPendingFinalizationCount)|OperatingSystem_(AvailableProcessors|(CommittedVirtual|(Free|Total)(Physical|))MemorySize|(Free|Total)SwapSpaceSize|(Max|Open)FileDescriptorCount|ProcessCpu(Load|Time)|System(CpuLoad|LoadAverage))|Runtime_(BootClassPathSupported|Pid|Uptime|StartTime)|Threading_(CurrentThread(AllocatedBytes|(Cpu|User)Time)|(Daemon|Peak|TotalStarted|)ThreadCount|(ObjectMonitor|Synchronizer)UsageSupported|Thread(AllocatedMemory.*|ContentionMonitoring.*|CpuTime.*))))
               sourceLabels: [__name__]
 
+        # Kafka Metrics
+        # List of Metrics are on following dochub page:
+        # https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kafka/Kafka_Metrics
+        # Metrics follow following format:
+        # kafka_broker_*
+        # kafka_controller_*
+        # kafka_java_lang_*
+        # kafka_partition_*
+        # kafka_purgatory_*
+        # kafka_network_*
+        # kafka_replica_*
+        # kafka_request_*
+        # kafka_topic_*
+        # kafka_topics_*
+        # kafka_zookeeper_*
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.kafka
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:kafka_(broker_.*|controller_.*|java_lang_.*|partition_.*|purgatory_.*|network_.*|replica_.*|request_.*|topic_.*|topics_.*|zookeeper_.*))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
