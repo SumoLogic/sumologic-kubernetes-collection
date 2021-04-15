@@ -1948,7 +1948,7 @@ kube-prometheus-stack:
             - action: keep
               regex: (?:kafka_(broker_.*|controller_.*|java_lang_.*|partition_.*|purgatory_.*|network_.*|replica_.*|request_.*|topic_.*|topics_.*|zookeeper_.*))
               sourceLabels: [__name__]
-      
+
         # MySQL Telegraf Metrics
         # List of Metrics are on following github page:
         # https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mysql#metrics
