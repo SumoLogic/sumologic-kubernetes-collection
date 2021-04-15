@@ -1949,6 +1949,47 @@ kube-prometheus-stack:
               regex: (?:kafka_(broker_.*|controller_.*|java_lang_.*|partition_.*|purgatory_.*|network_.*|replica_.*|request_.*|topic_.*|topics_.*|zookeeper_.*))
               sourceLabels: [__name__]
 
+        ## MySQL Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/v1.18.1/plugins/inputs/mysql#metrics
+        ## Metrics follow following format:
+        ## mysql_uptime
+        ## mysql_connection_errors_*
+        ## mysql_queries
+        ## mysql_slow_queries
+        ## mysql_questions
+        ## mysql_table_open_cache_*
+        ## mysql_table_locks_*
+        ## mysql_commands_*
+        ## mysql_select_*
+        ## mysql_sort_*
+        ## mysql_mysqlx_connections_*
+        ## mysql_mysqlx_worker_*
+        ## mysql_connections
+        ## mysql_aborted_*
+        ## mysql_locked_connects
+        ## mysql_bytes_*
+        ## mysql_qcache_*
+        ## mysql_threads_*
+        ## mysql_opened_*
+        ## mysql_created_tmp_*
+        ## mysql_innodb_buffer_pool_*
+        ## mysql_innodb_data_*
+        ## mysql_innodb_rows_*
+        ## mysql_innodb_row_lock_*
+        ## mysql_innodb_log_waits
+        ## mysql_perf_schema_events_statements_*
+        ## mysql_perf_schema_table_io_waits_*
+        ## mysql_perf_schema_index_io_waits_*
+        ## mysql_perf_schema_read*
+        ## mysql_perf_schema_write*
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.mysql
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:mysql_((uptime|connection_errors_.*|queries|slow_queries|questions|table_open_cache_.*|table_locks_.*|commands_.*|select_.*|sort_.*|mysqlx_connections_.*|mysqlx_worker_.*|connections|aborted_.*|locked_connects|bytes_.*|qcache_.*|threads_.*|opened_.*|created_tmp_.*)|innodb_(buffer_pool_.*|data_.*|rows_.*|row_lock_.*|log_waits)|perf_schema_(events_statements_.*|table_io_waits_.*|index_io_waits_.*|read.*|write.*)))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
