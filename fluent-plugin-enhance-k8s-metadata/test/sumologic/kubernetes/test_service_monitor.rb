@@ -82,7 +82,8 @@ class ServiceMonitorTest < Test::Unit::TestCase
         "tiller-deploy-69458576b-27mp8": ["tiller-deploy"],
         "fluentd-59d9c9656d-cg5m4": ["fluentd"],
         "fluentd-59d9c9656d-5pwjg": ["fluentd"],
-        "fluentd-59d9c9656d-zlhjh": ["fluentd"]
+        "fluentd-59d9c9656d-zlhjh": ["fluentd"],
+        "mysts-0": ["mysts"]
       }
       assert_expected_state(expected)
     end
