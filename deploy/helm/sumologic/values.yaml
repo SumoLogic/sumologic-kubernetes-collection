@@ -1994,56 +1994,52 @@ kube-prometheus-stack:
         ## List of Metrics are on following dochub page:
         ## https://help.sumologic.com/07Sumo-Logic-Apps/12Databases/PostgreSQL/Metrics_for_the_Sumo_Logic_PostgreSQL_App
         ## Metrics follow following format:
-        ## postgresql_numbackends
-        ## postgresql_xact_commit
-        ## postgresql_xact_rollback
-        ## postgresql_blks_read
         ## postgresql_blks_hit
-        ## postgresql_tup_inserted
-        ## postgresql_tup_updated
-        ## postgresql_tup_deleted
-        ## postgresql_deadlocks
-        ## postgresql_tup_fetched
-        ## postgresql_tup_returned
-        ## postgresql_checkpoints_timed
-        ## postgresql_checkpoints_req
+        ## postgresql_blks_read
+        ## postgresql_buffers_backend
         ## postgresql_buffers_checkpoint
         ## postgresql_buffers_clean
-        ## postgresql_buffers_backend
-        ## postgresql_stat_ssl_compression_count
-        ## postgresql_replication_delay
-        ## postgresql_replication_lag
-        ## postgresql_replay_lag
-        ## postgresql_flush_lag
-        ## postgresql_write_lag
+        ## postgresql_checkpoints_req
+        ## postgresql_checkpoints_timed
         ## postgresql_db_size
-        ## postgresql_num_locks
-        ## postgresql_seq_scan
-        ## postgresql_seq_tup_read
+        ## postgresql_deadlocks
+        ## postgresql_flush_lag
+        ## postgresql_heap_blks_hit
+        ## postgresql_heap_blks_read
+        ## postgresql_idx_blks_hit
+        ## postgresql_idx_blks_read
         ## postgresql_idx_scan
         ## postgresql_idx_tup_fetch
-        ## postgresql_n_tup_ins
-        ## postgresql_n_tup_upd
+        ## postgresql_idx_tup_read
+        ## postgresql_index_size
+        ## postgresql_n_dead_tup
+        ## postgresql_n_live_tup
         ## postgresql_n_tup_del
         ## postgresql_n_tup_hot_upd
-        ## postgresql_n_live_tup
-        ## postgresql_n_dead_tup
-        ## postgresql_idx_scan
-        ## postgresql_idx_tup_read
-        ## postgresql_idx_tup_fetch
-        ## postgresql_idx_blks_read
-        ## postgresql_idx_blks_hit
-        ## postgresql_heap_blks_read
-        ## postgresql_heap_blks_hit
-        ## postgresql_idx_blks_read
-        ## postgresql_idx_blks_hit
-        ## postgresql_index_size
+        ## postgresql_n_tup_ins
+        ## postgresql_n_tup_upd
+        ## postgresql_num_locks
+        ## postgresql_numbackends
+        ## postgresql_replay_lag
+        ## postgresql_replication_delay
+        ## postgresql_replication_lag
+        ## postgresql_seq_scan
+        ## postgresql_seq_tup_read
+        ## postgresql_stat_ssl_compression_count
         ## postgresql_table_size
+        ## postgresql_tup_deleted
+        ## postgresql_tup_fetched
+        ## postgresql_tup_inserted
+        ## postgresql_tup_returned
+        ## postgresql_tup_updated
+        ## postgresql_write_lag
+        ## postgresql_xact_commit
+        ## postgresql_xact_rollback
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.postgresql
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:postgresql_(blks_.*|buffers_.*|checkpoints_.*|db_size.*|deadlocks.*|flush_lag.*|heap_blks_.*|idx_blks_.*|idx_scan.*|idx_tup_.*|index_size.*|n_dead_tup.*|n_live_tup.*|n_tup_.*|num_locks.*|numbackends.*|replay_lag.*|replication_delay.*|replication_lag.*|seq_scan.*|seq_tup_read.*|stat_ssl_compression_count.*|table_size.*|tup_deleted.*|tup_.*|write_lag.*|xact_.*))
+              regex: (?:postgresql_(blks_.*|buffers_.*|checkpoints_.*|db_size|deadlocks|flush_lag|heap_blks_.*|idx_blks_.*|idx_scan|idx_tup_.*|index_size|n_dead_tup|n_live_tup|n_tup_.*|num_locks|numbackends|replay_lag|replication_.*|seq_scan|seq_tup_read|stat_ssl_compression_count|table_size|tup_.*|write_lag.*|xact_.*))
               sourceLabels: [__name__]
 
 ## Configure optional OpenTelemetry Collector in Agent mode
