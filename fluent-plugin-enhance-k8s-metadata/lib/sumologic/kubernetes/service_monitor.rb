@@ -45,7 +45,7 @@ module SumoLogic
 
           result['items'].each do |endpoint|
             service = endpoint['metadata']['name']
-            get_pods_for_service(endpoint).each {|pod| new_snapshot_pods_to_services[pod] << service}
+            get_pods_for_service(endpoint).each {|pod| new_snapshot_pods_to_services[pod] << service unless new_snapshot_pods_to_services[pod].include? service}
           end
 
           log.debug "Reinitializing @pods_to_services to #{new_snapshot_pods_to_services}"
