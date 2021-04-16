@@ -10,13 +10,11 @@ for file in ${FILES}; do
     # filter in only linked to this repository
     # filter out all links pointing to specific release, tag or commit
     # filter out links ended with /releases
-    grep -HnoP '\[[^\]]*\]\([^\)]*\)' "${file}" \
+    if grep -HnoP '\[[^\]]*\]\([^\)]*\)' "${file}" \
         | grep 'sumologic-kubernetes-collection' \
         | grep -vP '(\/(blob|tree)\/(v\d+\.|[a-f0-9]{40}\/|release\-))' \
-        | grep -vP '\/releases\)'
+        | grep -vP '\/releases\)'; then
     
-    # Set RET_VAL to 1 if grep was successful (found something)
-    if $?; then
         RET_VAL=1
     fi
 done
