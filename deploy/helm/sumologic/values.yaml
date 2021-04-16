@@ -2043,7 +2043,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:postgresql_(blks_hit.*|blks_read.*|buffers_backend.*|buffers_checkpoint.*|buffers_clean.*|checkpoints_req.*|checkpoints_timed.*|db_size.*|deadlocks.*|flush_lag.*|heap_blks_hit.*|heap_blks_read.*|idx_blks_hit.*|idx_blks_read.*|idx_scan.*|idx_tup_fetch.*|idx_tup_read.*|index_size.*|n_dead_tup.*|n_live_tup.*|n_tup_del.*|n_tup_hot_upd.*|n_tup_ins.*|n_tup_upd.*|num_locks.*|numbackends.*|replay_lag.*|replication_delay.*|replication_lag.*|seq_scan.*|seq_tup_read.*|stat_ssl_compression_count.*|table_size.*|tup_deleted.*|tup_fetched.*|tup_inserted.*|tup_returned.*|tup_updated.*|write_lag.*|xact_commit.*|xact_rollback.*)
+              regex: (?:postgresql_(blks_.*|buffers_.*|checkpoints_.*|db_size.*|deadlocks.*|flush_lag.*|heap_blks_.*|idx_blks_.*|idx_scan.*|idx_tup_.*|index_size.*|n_dead_tup.*|n_live_tup.*|n_tup_.*|num_locks.*|numbackends.*|replay_lag.*|replication_delay.*|replication_lag.*|seq_scan.*|seq_tup_read.*|stat_ssl_compression_count.*|table_size.*|tup_deleted.*|tup_.*|write_lag.*|xact_.*))
               sourceLabels: [__name__]
 
 ## Configure optional OpenTelemetry Collector in Agent mode
