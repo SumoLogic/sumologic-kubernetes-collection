@@ -458,7 +458,7 @@ spec:
 The following Kubernetes metadata is available for string templating:
 
 | String template  | Description                                             |
-| ---------------  | ------------------------------------------------------  |
+|------------------|---------------------------------------------------------|
 | `%{namespace}`   | Namespace name                                          |
 | `%{pod}`         | Full pod name (e.g. `travel-products-4136654265-zpovl`) |
 | `%{pod_name}`    | Friendly pod name (e.g. `travel-products`)              |
@@ -522,11 +522,11 @@ Ref: https://docs.fluentbit.io/manual/pipeline/inputs/tail
 If you want to disable the collection of logs, metrics, or falco, make the below changes
 respectively in the `values.yaml` file and run the `helm upgrade` command.
 
-| parameter  |  value | function |
-| ------------ | ------------ | ------------ |
-| `sumologic.logs.enabled` |  false | disable logs collection |
-| `sumologic.metrics.enabled` |  false | disable metrics collection |
-| `falco.enabled`  |  false | disable falco |
+| parameter                   | value | function                   |
+|-----------------------------|-------|----------------------------|
+| `sumologic.logs.enabled`    | false | disable logs collection    |
+| `sumologic.metrics.enabled` | false | disable metrics collection |
+| `falco.enabled`             | false | disable falco              |
 
 ## Load Balancing Prometheus traffic between Fluentds
 
