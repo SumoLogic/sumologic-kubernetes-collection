@@ -2035,11 +2035,15 @@ kube-prometheus-stack:
         ## postgresql_write_lag
         ## postgresql_xact_commit
         ## postgresql_xact_rollback
+        ## postgresql_toast_blks_read
+        ## postgresql_toast_blks_hit
+        ## postgresql_tidx_blks_read
+        ## postgresql_tidx_blks_hit
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.postgresql
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:postgresql_(blks_.*|buffers_.*|checkpoints_.*|db_size|deadlocks|flush_lag|heap_blks_.*|idx_blks_.*|idx_scan|idx_tup_.*|index_size|n_dead_tup|n_live_tup|n_tup_.*|num_locks|numbackends|replay_lag|replication_.*|seq_scan|seq_tup_read|stat_ssl_compression_count|table_size|tup_.*|write_lag.*|xact_.*))
+              regex: (?:postgresql_(blks_.*|buffers_.*|checkpoints_.*|db_size|deadlocks|flush_lag|heap_blks_.*|idx_blks_.*|idx_scan|idx_tup_.*|index_size|n_dead_tup|n_live_tup|n_tup_.*|num_locks|numbackends|replay_lag|replication_.*|seq_scan|seq_tup_read|stat_ssl_compression_count|table_size|tidx_blks_.*|toast_blks_.*|tup_.*|write_lag.*|xact_.*))
               sourceLabels: [__name__]
 
 ## Configure optional OpenTelemetry Collector in Agent mode
