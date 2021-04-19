@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+GREP="grep"
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    GREP="ggrep"
+fi
+
+if ! command -v "${GREP}" ; then
+    echo "${GREP} is missing from the system, please install it."
+    exit 1
+fi
+
 # Get all markdown files
 readonly FILES=$(find . -type f -name '*.md')
 
@@ -10,10 +20,10 @@ for file in ${FILES}; do
     # filter in only linked to this repository
     # filter out all links pointing to specific release, tag or commit
     # filter out links ended with /releases
-    if grep -HnoP '\[[^\]]*\]\([^\)]*\)' "${file}" \
-        | grep 'sumologic-kubernetes-collection' \
-        | grep -vP '(\/(blob|tree)\/(v\d+\.|[a-f0-9]{40}\/|release\-))' \
-        | grep -vP '\/releases\)'; then
+    if "${GREP}" -HnoP '\[[^\]]*\]\([^\)]*\)' "${file}" \
+        | "${GREP}" 'sumologic-kubernetes-collection' \
+        | "${GREP}" -vP '(\/(blob|tree)\/(v\d+\.|[a-f0-9]{40}\/|release\-))' \
+        | "${GREP}" -vP '\/releases\)'; then
     
         RET_VAL=1
     fi
