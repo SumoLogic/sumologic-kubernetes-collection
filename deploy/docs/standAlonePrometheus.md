@@ -137,10 +137,11 @@ __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this do
 Once you have completed installation, you can
 [install the Kubernetes App and view the dashboards][sumo-k8s-app-dashboards]
 or [open a new Explore tab] in Sumo Logic.
-If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
+If you do not see data in Sumo Logic, you can review our
+[troubleshooting guide](./Troubleshoot_Collection.md).
 
 [sumo-k8s-app-dashboards]: https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards
-[open a new Explore tab]: https://help.sumologic.com/Solutions/Kubernetes_Solution/05Navigate_your_Kubernetes_environment
+[open a new Explore tab]: https://help.sumologic.com/Observability_Solution/Kubernetes_Solution/Navigate_your_Kubernetes_environment
 
 ## Customizing Installation
 

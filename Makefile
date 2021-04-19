@@ -1,3 +1,5 @@
+lint: shellcheck markdownlint helm-lint yamllint markdown-links-lint markdown-table-formatter-check
+
 shellcheck:
 	./ci/shellcheck.sh
 
@@ -32,3 +34,12 @@ yamllint:
 
 markdown-links-lint:
 	./ci/markdown_links_lint.sh
+
+markdown-link-check:
+	./ci/markdown_link_check.sh
+
+markdown-table-formatter-check:
+	./ci/markdown_table_formatter.sh --check
+
+markdown-table-formatter-format:
+	./ci/markdown_table_formatter.sh --format

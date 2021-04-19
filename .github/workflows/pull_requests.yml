@@ -48,6 +48,14 @@ jobs:
           make helm-dependency-update
           make helm-lint
 
+  markdown-link-check:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          config-file: '.markdown_link_check.json'
+
   md-links-lint:
     runs-on: ubuntu-20.04
     steps:
@@ -56,10 +64,26 @@ jobs:
         run: |
           make markdown-links-lint
 
+  markdown-table-formatter-check:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - name: Install markdown-table-formatter
+        run: npm install markdown-table-formatter --save
+      - name: Run markdown-table-formatter
+        run: CMD=./node_modules/.bin/markdown-table-formatter make markdown-table-formatter-check
+
   test:
     runs-on: ubuntu-20.04
-    needs: [markdownlint, shellcheck, yamllint, helmlint]
-
+    needs:
+      - markdownlint
+      - shellcheck
+      - yamllint
+      - helmlint
+      - md-links-lint
+      - markdown-link-check
+      - markdown-table-formatter-check
     steps:
       - uses: actions/checkout@v2
       - name: yq
