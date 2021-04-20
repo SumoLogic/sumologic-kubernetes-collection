@@ -1,9 +1,9 @@
 {{- $yamlFile := toYaml $.Values.otelcol.config }}
 {{- $_collector := .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
-{{- $sourceName := .Values.sumologic.sourceName | quote }}
-{{- $sourceCategory := .Values.sumologic.sourceCategory | quote }}
-{{- $sourceCategoryPrefix := .Values.sumologic.sourceCategoryPrefix | quote }}
-{{- $sourceCategoryReplaceDash := .Values.sumologic.sourceCategoryReplaceDash | quote }}
+{{- $sourceName := .Values.fluentd.logs.containers.sourceName | quote }}
+{{- $sourceCategory := .Values.fluentd.logs.containers.sourceCategory | quote }}
+{{- $sourceCategoryPrefix := .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}
+{{- $sourceCategoryReplaceDash := .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}
 {{- $excludeNamespaceRegex := .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
 {{ if eq .Values.sumologic.collectionMonitoring false }}
   {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
