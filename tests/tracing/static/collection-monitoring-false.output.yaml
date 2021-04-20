@@ -85,11 +85,11 @@ data:
         pod_key: k8s.pod.name
         pod_name_key: k8s.pod.pod_name
         pod_template_hash_key: k8s.pod.label.pod-template-hash
-        source_category: 
-        source_category_prefix: 
-        source_category_replace_dash: 
+        source_category: "%{namespace}/%{pod_name}"
+        source_category_prefix: "kubernetes/"
+        source_category_replace_dash: "/"
         source_host_key: k8s.pod.hostname
-        source_name: 
+        source_name: "%{namespace}.%{pod}.%{container}"
     receivers:
       jaeger:
         protocols:
