@@ -14,6 +14,7 @@ for details on our Kubernetes Solution.
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
   - [Additional Prometheus configuration](./docs/additional_prometheus_configuration.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
+  - [Advanced Configuration/Security best practices](./docs/Security_Best_Practices.md)
   - [Authenticating with container registry](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
   - [Alpha Releases](./docs/Alpha_Release_Guide.md)
   - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
