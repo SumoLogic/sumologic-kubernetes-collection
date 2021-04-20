@@ -452,6 +452,12 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.cleanup" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.fluentd.serviceLabels" -}}
+{{- if .Values.fluentd.serviceLabels -}}
+{{- toYaml .Values.fluentd.serviceLabels -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic.labels.logs" -}}
 sumologic.com/app: fluentd-logs
 sumologic.com/component: logs
