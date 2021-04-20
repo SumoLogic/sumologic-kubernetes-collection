@@ -234,6 +234,9 @@ fluentd:
   ## Add custom annotations to all fluentd sts pods(logs, metrics, events)
   podAnnotations: {}
 
+  ## Add custom labels to all fluentd svc (logs, metrics, events)
+  serviceLabels: {}
+
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
     ## After changing this value please follow steps described in:
