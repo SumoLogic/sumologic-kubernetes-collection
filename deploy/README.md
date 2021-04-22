@@ -56,7 +56,7 @@ The following matrix displays the tested package versions for our Helm chart.
 
 Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit | Falco  | Metrics Server | Telegraf Operator
 |:-------- |:-------- |:-------- |:-------- |:-------- |:-------- |:--------
-1.3.6 | 9.3.4 | 1.11.5 | 2.10.1 | 1.5.7 | 2.11.2 | 1.1.6
+1.3.6 - Current | 9.3.4 | 1.11.5 | 2.10.1 | 1.5.7 | 2.11.2 | 1.1.6
 1.3.5 | 9.3.4 | 1.11.1 | 2.10.1 | 1.5.7 | 2.11.2 | 1.1.6
 1.3.1 - 1.3.4 | 9.3.4 | 1.11.1 | 2.10.1 | 1.4.0 | 2.11.2 | 1.1.6
 1.3.0 | 9.3.4 | 1.11.1 | 2.10.1 | 1.4.0 | 2.11.2 | 1.1.4
