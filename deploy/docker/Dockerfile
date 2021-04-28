@@ -46,7 +46,7 @@ RUN gem install \
         fluent-plugin-prometheus:1.6.1
 
 # Install Terraform
-ENV TERRAFORM_VERSION 0.12.26
+ENV TERRAFORM_VERSION 0.13.7
 RUN mkdir /tmp/terraform \
  && curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o /tmp/terraform/terraform.zip \
  && cd /tmp/terraform \

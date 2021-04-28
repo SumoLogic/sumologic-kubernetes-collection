@@ -21,8 +21,14 @@ data:
   main.tf: |
     terraform {
       required_providers {
-        sumologic  = "~> 2.6"
-        kubernetes = "~> 1.11.3"
+        sumologic = {
+          source  = "sumologic/sumologic"
+          version = "~> 2.6"
+        }
+        kubernetes = {
+          source  = "hashicorp/kubernetes"
+          version = "~> 1.11.3"
+        }
       }
     }
   providers.tf: |-
