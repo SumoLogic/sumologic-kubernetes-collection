@@ -25,6 +25,7 @@
   - [Rancher](#rancher)
   - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
   - [Falco and OpenShift](#falco-and-openshift)
+  - [Gzip compression errors](#gzip-compression-errors)
 
 <!-- /TOC -->
 
