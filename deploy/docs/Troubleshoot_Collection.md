@@ -412,8 +412,7 @@ fluentd:
 
 After that, please remove Fluentd pods and associated PVC-s.
 
-For example, if the namespace where the collection is installed is `collection`
-and the pod that emits the error is named `sumologic-fluentd-logs-1`,
+For example, if the namespace where the collection is installed is `collection`,
 run the following set of commands:
 
 ```bash
