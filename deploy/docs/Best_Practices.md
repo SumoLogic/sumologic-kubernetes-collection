@@ -20,6 +20,7 @@
 - [Disable logs, metrics, or falco](#disable-logs-metrics-or-falco)
 - [Load Balancing Prometheus traffic between Fluentds](#load-balancing-prometheus-traffic-between-fluentds)
 - [Changing scrape interval for Prometheus](#changing-scrape-interval-for-prometheus)
+- [Get logs not available on stdout](#get-logs-not-available-on-stdout)
 
 ## Multiline Log Support
 
@@ -285,6 +286,9 @@ fluent-bit:
 ```
 
 Reference: https://docs.fluentbit.io/manual/pipeline/inputs/tail#configuration-file
+
+**Notice:** In some cases Tailing Sidecar Operator may help in getting logs not available on standard output (STDOUT),
+please see section [Get logs not available on stdout](#get-logs-not-available-on-stdout).
 
 ## Filtering Prometheus Metrics by Namespace
 
@@ -580,3 +584,31 @@ kube-prometheus-stack:  # For values.yaml
   prometheus:
     prometheusSpec:
       scrapeInterval: '1m'
+```
+
+## Get logs not available on stdout
+
+When logs from a pod are not available on stdout, [Tailing Sidecar Operator](https://github.com/SumoLogic/tailing-sidecar)
+can help with collecting them using standard logging pipeline.
+To tail logs using Tailing Sidecar Operator the file with those logs needs to be accessible through a volume
+mounted to sidecar container.
+
+Providing that the file with logs is accessible through volume, to enable tailing of logs using Tailing Sidecar Operator:
+
+- Enable Tailing Sidecar Operator by modifying `values.yaml`:
+
+  ```yaml
+  tailing-sidecar-operator:
+    enabled: true
+  ```
+
+- Add annotation to pod from which you want to tail logs in the following format:
+
+  ```yaml
+  metadata:
+    annotations:
+      tailing-sidecar: <sidecar-name-0>:<volume-name-0>:<path-to-tail-0>;<sidecar-name-1>:<volume-name-1>:<path-to-tail-1>
+  ```
+
+Example of using Tailing Sidecar Operator is described in the
+[blog post](https://www.sumologic.com/blog/tailing-sidecar-operator/).
