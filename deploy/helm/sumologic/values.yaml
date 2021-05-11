@@ -2049,7 +2049,7 @@ kube-prometheus-stack:
             - action: keep
               regex: (?:postgresql_(blks_(hit|read)|buffers_(backend|checkpoint|clean)|checkpoints_(req|timed)|db_size|deadlocks|flush_lag|heap_blks_(hit|read)|idx_blks_(hit|read)|idx_scan|idx_tup_(fetch|read)|index_size|n_dead_tup|n_live_tup|n_tup_(upd|ins|del|hot_upd)|num_locks|numbackends|replay_lag|replication_(delay|lag)|seq_scan|seq_tup_read|stat_ssl_compression_count|table_size|tidx_blks_(hit|read)|toast_blks_(hit|read)|tup_(deleted|fetched|inserted|returned|updated)|write_lag|xact_(commit|rollback)))
               sourceLabels: [__name__]
-        
+
         ## Apache Telegraf Metrics
         ## List of Metrics are on following github page:
         ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/apache
