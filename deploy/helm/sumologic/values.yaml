@@ -2050,6 +2050,49 @@ kube-prometheus-stack:
               regex: (?:postgresql_(blks_(hit|read)|buffers_(backend|checkpoint|clean)|checkpoints_(req|timed)|db_size|deadlocks|flush_lag|heap_blks_(hit|read)|idx_blks_(hit|read)|idx_scan|idx_tup_(fetch|read)|index_size|n_dead_tup|n_live_tup|n_tup_(upd|ins|del|hot_upd)|num_locks|numbackends|replay_lag|replication_(delay|lag)|seq_scan|seq_tup_read|stat_ssl_compression_count|table_size|tidx_blks_(hit|read)|toast_blks_(hit|read)|tup_(deleted|fetched|inserted|returned|updated)|write_lag|xact_(commit|rollback)))
               sourceLabels: [__name__]
 
+        ## Apache Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/apache
+        ## Metrics follow following format:
+        ## apache_BusyWorkers
+        ## apache_BytesPerReq
+        ## apache_BytesPerSec
+        ## apache_CPUChildrenSystem
+        ## apache_CPUChildrenUser
+        ## apache_CPULoad
+        ## apache_CPUSystem
+        ## apache_CPUUser
+        ## apache_DurationPerReq
+        ## apache_IdleWorkers
+        ## apache_Load1
+        ## apache_Load5
+        ## apache_Load15
+        ## apache_ParentServerConfigGeneration
+        ## apache_ParentServerMPMGeneration
+        ## apache_ReqPerSec
+        ## apache_ServerUptimeSeconds
+        ## apache_TotalAccesses
+        ## apache_TotalDuration
+        ## apache_TotalkBytes
+        ## apache_Uptime
+        ## apache_scboard_closing
+        ## apache_scboard_dnslookup
+        ## apache_scboard_finishing
+        ## apache_scboard_idle_cleanup
+        ## apache_scboard_keepalive
+        ## apache_scboard_logging
+        ## apache_scboard_open
+        ## apache_scboard_reading
+        ## apache_scboard_sending
+        ## apache_scboard_starting
+        ## apache_scboard_waiting
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.apache
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:apache_((BusyWorkers|BytesPerReq|BytesPerSec|CPUChildrenSystem|CPUChildrenUser|CPULoad|CPUSystem|CPUUser|DurationPerReq|IdleWorkers|Load1|Load15|Load5|ParentServerConfigGeneration|ParentServerMPMGeneration|ReqPerSec|ServerUptimeSeconds|TotalAccesses|TotalDuration|TotalkBytes|Uptime)|(scboard_(closing|dnslookup|finishing|idle_cleanup|keepalive|logging|open|reading|sending|starting|waiting))))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
