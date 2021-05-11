@@ -1340,7 +1340,7 @@ kube-prometheus-stack:
             sumologic.com/scrape: "true"
       - name: collection-fluent-bit
         additionalLabels:
-          app: collection-fluent-bit
+          sumologic.com/app: collection-fluent-bit
         endpoints:
           - port: http
             path: /api/v1/metrics/prometheus
