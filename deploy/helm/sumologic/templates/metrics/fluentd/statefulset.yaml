@@ -10,6 +10,9 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.metrics.pod" . }}
+{{- if .Values.fluentd.statefulsetPVCLabels }}
+{{ toYaml .Values.fluentd.statefulsetPVCLabels | indent 6 }}
+{{- end }}
   serviceName: {{ template "sumologic.metadata.name.metrics.service-headless" . }}
   podManagementPolicy: "Parallel"
 {{- if not .Values.fluentd.metrics.autoscaling.enabled }}

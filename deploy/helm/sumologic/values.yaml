@@ -238,6 +238,9 @@ fluentd:
   ## Add custom labels to all fluentd svc (logs, metrics, events)
   serviceLabels: {}
 
+  ## Add custom labels to all fluentd statefulset PVC (logs, metrics, events)
+  statefulsetPVCLabels: {}
+
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
     ## After changing this value please follow steps described in:
