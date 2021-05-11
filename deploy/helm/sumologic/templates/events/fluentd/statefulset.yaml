@@ -10,9 +10,6 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.events.pod" . }}
-{{- if .Values.fluentd.statefulsetPVCLabels }}
-{{ toYaml .Values.fluentd.statefulsetPVCLabels | indent 6 }}
-{{- end }}
   serviceName: {{ template "sumologic.metadata.name.events.service-headless" . }}
   podManagementPolicy: "Parallel"
   template:
@@ -105,6 +102,10 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: buffer
+{{- if .Values.fluentd.PVCLabels }}
+      labels:
+{{ toYaml .Values.fluentd.PVCLabels | indent 8 }}
+{{- end }}
     spec:
       accessModes: [{{ .Values.fluentd.persistence.accessMode }}]
       storageClassName: {{ .Values.fluentd.persistence.storageClass }}
