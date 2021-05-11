@@ -71,13 +71,25 @@ helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace -
 If the namespace does not exist, you can add the `--create-namespace` flag.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.enabled=false --create-namespace
+helm upgrade --install my-release sumologic/sumologic \
+  --set sumologic.accessId=<SUMO_ACCESS_ID> \
+  --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+  --set kube-prometheus-stack.enabled=false \
+  --create-namespace
 ```
 
 If you are installing the Helm chart in OpenShift platform, you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>"  --set kube-prometheus-stack.enabled=false --set sumologic.scc.create=true --set fluent-bit.securityContext.privileged=true
+helm upgrade --install my-release sumologic/sumologic \
+  --namespace=my-namespace \
+  --set sumologic.accessId=<SUMO_ACCESS_ID> \
+  --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+  --set kube-prometheus-stack.enabled=false \
+  --set sumologic.scc.create=true \
+  --set fluent-bit.securityContext.privileged=true
 ```
 
 ## Update Existing Prometheus

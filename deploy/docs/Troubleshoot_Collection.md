@@ -25,6 +25,7 @@
   - [Rancher](#rancher)
   - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
   - [Falco and OpenShift](#falco-and-openshift)
+  - [Gzip compression errors](#gzip-compression-errors)
 
 <!-- /TOC -->
 
@@ -389,3 +390,40 @@ Node configuration can be verified by following annotations:
 - `machineconfiguration.openshift.io/currentConfig`
 - `machineconfiguration.openshift.io/desiredConfig`
 - `machineconfiguration.openshift.io/state`
+
+### Gzip compression errors
+
+If you observe the following errors from Fluentd pods:
+
+```console
+2021-01-18 15:47:23 +0000 [warn]: #0 [sumologic.endpoint.logs.gc] failed to flush the buffer. retry_time=3 next_retry_seconds=2021-01-18 15:47:27 +0000 chunk="5b92e97a5ee3cbd7e59859644d9686e3" error_class=Zlib::GzipFile::Error error="not in gzip format"
+```
+
+Please see [migration topic on that](./v2_migration_doc.md#gzip-compression-errors).
+
+If the problem still occurs, please disable gzip compression for buffer.
+Add following configuration to your `values.yaml` and upgrade collection:
+
+```yaml
+fluentd:
+  buffer:
+    compress: text
+```
+
+After that, please remove Fluentd pods and associated PVC-s.
+
+For example, if the namespace where the collection is installed is `collection`,
+run the following set of commands:
+
+```bash
+NAMESPACE_NAME=collection
+
+for POD_NAME in $(kubectl get pods --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep fluentd); do
+  kubectl -n ${NAMESPACE_NAME} delete pvc "buffer-${POD_NAME}" &
+  kubectl -n ${NAMESPACE_NAME} delete pod ${POD_NAME}
+  kubectl -n ${NAMESPACE_NAME} delete pod ${POD_NAME}
+done
+```
+
+The duplicated pod deletion command is there to make sure the pod is not stuck in `Pending` state
+with event `persistentvolumeclaim "buffer-sumologic-fluentd-logs-1" not found`.
