@@ -150,9 +150,9 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: buffer
-{{- if .Values.fluentd.PVCLabels }}
+{{- if .Values.fluentd.pvcLabels }}
       labels:
-{{ toYaml .Values.fluentd.PVCLabels | indent 8 }}
+{{ toYaml .Values.fluentd.pvcLabels | indent 8 }}
 {{- end }}      
     spec:
       accessModes: [{{ .Values.fluentd.persistence.accessMode }}]
