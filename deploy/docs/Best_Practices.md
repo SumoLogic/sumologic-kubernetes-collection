@@ -19,6 +19,7 @@
 - [Configure Ignore_Older Config for Fluentbit](#configure-ignore_older-config-for-fluentbit)
 - [Disable logs, metrics, or falco](#disable-logs-metrics-or-falco)
 - [Load Balancing Prometheus traffic between Fluentds](#load-balancing-prometheus-traffic-between-fluentds)
+- [Changing scrape interval for Prometheus](#changing-scrape-interval-for-prometheus)
 
 ## Multiline Log Support
 
@@ -566,3 +567,16 @@ kube-prometheus-stack:
 
 **NOTE** We observed that changing this value increases metrics loss during prometheus resharding,
 but the traffic is much better balanced between Fluentds and Prometheus is more stable in terms of memory.
+
+## Changing scrape interval for Prometheus
+
+Default scrapeInterval for collection is `30s`. This is the recommended value which ensures that all of Sumo Logic dashboards
+are filled up with proper data.
+
+To change it, you can use following configuration:
+
+```yaml
+kube-prometheus-stack:  # For values.yaml
+  prometheus:
+    prometheusSpec:
+      scrapeInterval: '1m'
