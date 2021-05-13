@@ -1333,7 +1333,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum (container_memory_working_set_bytes{pod=~\"prometheus-collection-prometheus-oper.*$\",container=~\".+\"}/1024/1024/1024) by (pod)",
+              "expr": "sum (container_memory_working_set_bytes{pod=~\"prometheus-collection-kube-prometheus-prometheus.*$\",container=~\".+\"}/1024/1024/1024) by (pod)",
               "hide": false,
               "interval": "",
               "legendFormat": "",
