@@ -1,6 +1,7 @@
 # Advanced Configuration / Best Practices
 
 - [Multiline Log Support](#multiline-log-support)
+  - [MySQL slow logs example](#mysql-slow-logs-example)
 - [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
   - [Multiline Support](#multiline-support)
 - [Fluentd Autoscaling](#fluentd-autoscaling)
@@ -59,6 +60,22 @@ the rest of the lines will be matched against `Parser_N`.
 ```bash
 Parser_Firstline multi_line
 Parser_1 optional_parser
+```
+
+### MySQL slow logs example
+
+For example to detect mulitlines for `slow logs` correctly,
+ensure that `Fluent Bit` reads `slow log` files and update your configuration
+with following snippet:
+
+```
+fluent-bit:
+  config:
+    customParsers: |
+      [PARSER]
+          Name        multi_line
+          Format      regex
+          Regex       (?<log>^{"log":"(\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*|#\sTime:\s+.*))
 ```
 
 ## Collecting Log Lines Over 16KB (with multiline support)
