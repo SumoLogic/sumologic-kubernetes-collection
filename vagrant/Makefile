@@ -69,7 +69,7 @@ clean-local-values-yaml:
 	rm ${local_values_file}
 
 _apply-avalanche-remote-write-to-local-values: generate-local-config
-	yq w -s ${vagrant_scripts_dir}/yq/update_remote_write_for_avalanche.yaml ../deploy/helm/sumologic/values.yaml | \
+	yq w -s ${vagrant_scripts_dir}/yq/update_remote_write_for_avalanche.yaml ${helm_path}/values.yaml | \
 	yq r - 'prometheus-operator.prometheus.prometheusSpec.remoteWrite' | \
 	yq prefix - 'prometheus-operator.prometheus.prometheusSpec.remoteWrite' > ${local_values_file}
 
