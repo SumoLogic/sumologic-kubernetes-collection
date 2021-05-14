@@ -54,6 +54,7 @@ Parameter | Description | Default
 `fluentd.proxyUri` | Proxy URI for sumologic output plugin. | `Nil`
 `fluentd.securityContext` | the securityContext configuration for Fluentd | `{"fsGroup":999}`
 `fluentd.podLabels` | Additional labels for all fluentd pods | `{}`
+`fluentd.pvcLabels` | Additional labels for all fluentd PVCs | `{}`
 `fluentd.podAnnotations` | Additional annotations for all fluentd pods | `{}`
 `fluentd.podSecurityPolicy.create` | If true, create & use `podSecurityPolicy` for fluentd resources | `false`
 `fluentd.persistence.enabled` | Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer. After changing this value follow steps described in [Fluentd Persistence](FluentdPersistence.md).| `true`
