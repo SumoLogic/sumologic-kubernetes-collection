@@ -27,6 +27,7 @@ sumologic:
   ## Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
   ## ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
   endpoint: ""
+  open_endpoint: ""
 
   ## proxy urls
   httpProxy: ""
@@ -2618,6 +2619,34 @@ otelcol:
               exporters:
                 - sumologic
 
+  logs:
+    enabled: true
+    config:
+      receivers:
+        fluentforward:
+          endpoint: 0.0.0.0:24321
+      extensions:
+        health_check: {}
+        # sumologic:
+        #   access_id: '{{ .Values.sumologic.accessId }}'
+        #   access_key: '{{ .Values.sumologic.accessKey }}'
+        #   collector_name: otc-{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName}}
+        #   api_base_url: '{{ .Values.sumologic.open_endpoint }}'
+      exporters:
+        sumologic:
+          log_format: json
+          endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+      service:
+        extensions:
+          - health_check
+          # - sumologic
+        pipelines:
+          logs:
+            receivers:
+              - fluentforward
+            processors: []
+            exporters:
+              - sumologic
   deployment:
     nodeSelector: {}
     tolerations: []
