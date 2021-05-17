@@ -1,0 +1,11 @@
+{{- if and (eq .Values.sumologic.logs.enabled true) (eq .Values.sumologic.logs.provider "otelcol") (eq .Values.otelcol.logs.enabled true) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.logs.configmap" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.logs.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  {{- (tpl (.Files.Glob "conf/logs/otelcol/config.yaml").AsConfig .) | nindent 2 }}
+{{- end }}

@@ -27,6 +27,7 @@ sumologic:
   ## Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
   ## ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
   endpoint: ""
+  open_endpoint: "https://nite-open-events.sumologic.net"
 
   ## proxy urls
   httpProxy: ""
@@ -2352,6 +2353,42 @@ otelagent:
 
 ## Configure otelcol
 otelcol:
+  statefulset:
+    image:
+      repository: "public.ecr.aws/sumologic/sumologic-otel-collector-dev"
+      tag: "f2f66621f31fd56eb3c59a267c78145ce7d3180a"
+      pullPolicy: IfNotPresent
+    containers:
+      otelcol:
+        securityContext: {}
+  logs:
+    enabled: true
+    config:
+      receivers:
+        fluentforward:
+          endpoint: 0.0.0.0:24321
+      extensions:
+        health_check: {}
+        # sumologic:
+        #   access_id: '{{ .Values.sumologic.accessId }}'
+        #   access_key: '{{ .Values.sumologic.accessKey }}'
+        #   collector_name: otc-{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName}}
+        #   api_base_url: '{{ .Values.sumologic.open_endpoint }}'
+      exporters:
+        sumologic:
+          log_format: json
+          endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+      service:
+        extensions:
+          - health_check
+          # - sumologic
+        pipelines:
+          logs:
+            receivers:
+              - fluentforward
+            processors: []
+            exporters:
+              - sumologic
   deployment:
     nodeSelector: {}
     tolerations: []
