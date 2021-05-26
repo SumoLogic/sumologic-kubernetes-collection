@@ -68,7 +68,7 @@ sumologic:
   collectionMonitoring: true
 
   ## Optionally specify an array of pullSecrets.
-  ## They will be added to serviceaccount that is used for Sumo Logic's jobs,
+  ## They will be added to serviceaccount that is used for Sumo Logic's
   ## deployments and statefulsets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -94,6 +94,14 @@ sumologic:
         repository: public.ecr.aws/sumologic/kubernetes-setup
         tag: 3.0.0
         pullPolicy: IfNotPresent
+      ## Optionally specify an array of pullSecrets.
+      ## They will be added to serviceaccount that is used for Sumo Logic's
+      ## setup job.
+      ## Secrets must be manually created in the namespace.
+      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ##
+      # pullSecrets:
+      #   - name: myRegistryKeySecretName
       resources:
         limits:
           memory: 256Mi
