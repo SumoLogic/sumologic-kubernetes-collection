@@ -2297,6 +2297,17 @@ falco:
   #   enabled: true
   falco:
     jsonOutput: true
+    ## The location of the rules file(s). This can contain one or more paths to
+    ## separate rules files.
+    ## Explicitly add missing /etc/falco/rules.available/application_rules.yaml
+    ## before https://github.com/falcosecurity/charts/issues/230 gets resolved.
+    rulesFile:
+      - /etc/falco/falco_rules.yaml
+      - /etc/falco/falco_rules.local.yaml
+      - /etc/falco/k8s_audit_rules.yaml
+      - /etc/falco/rules.d
+      - /etc/falco/rules.available/application_rules.yaml
+
   # image:
   #   pullSecrets: []
   customRules:
