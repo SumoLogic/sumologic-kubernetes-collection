@@ -1830,11 +1830,89 @@ kube-prometheus-stack:
         ## nginx_requests
         ## nginx_waiting
         ## nginx_writing
+        ## **************** Nginx Plus telegraf metrics
+        ## nginx_plus_api_connections_accepted
+        ## nginx_plus_api_connections_active
+        ## nginx_plus_api_connections_dropped
+        ## nginx_plus_api_connections_idle
+        ## nginx_plus_api_http_caches_cold
+        ## nginx_plus_api_http_caches_hit_bytes
+        ## nginx_plus_api_http_caches_max_size
+        ## nginx_plus_api_http_caches_miss_bytes
+        ## nginx_plus_api_http_caches_size
+        ## nginx_plus_api_http_caches_updating_bytes
+        ## nginx_plus_api_http_location_zones_discarded
+        ## nginx_plus_api_http_location_zones_received
+        ## nginx_plus_api_http_location_zones_requests
+        ## nginx_plus_api_http_location_zones_responses_1xx
+        ## nginx_plus_api_http_location_zones_responses_2xx
+        ## nginx_plus_api_http_location_zones_responses_3xx
+        ## nginx_plus_api_http_location_zones_responses_4xx
+        ## nginx_plus_api_http_location_zones_responses_5xx
+        ## nginx_plus_api_http_location_zones_responses_total
+        ## nginx_plus_api_http_location_zones_sent
+        ## nginx_plus_api_http_requests_current
+        ## nginx_plus_api_http_requests_total
+        ## nginx_plus_api_http_server_zones_discarded
+        ## nginx_plus_api_http_server_zones_processing
+        ## nginx_plus_api_http_server_zones_received
+        ## nginx_plus_api_http_server_zones_requests
+        ## nginx_plus_api_http_server_zones_responses_1xx
+        ## nginx_plus_api_http_server_zones_responses_2xx
+        ## nginx_plus_api_http_server_zones_responses_3xx
+        ## nginx_plus_api_http_server_zones_responses_4xx
+        ## nginx_plus_api_http_server_zones_responses_5xx
+        ## nginx_plus_api_http_server_zones_responses_total
+        ## nginx_plus_api_http_server_zones_sent
+        ## nginx_plus_api_http_upstream_peers_backup
+        ## nginx_plus_api_http_upstream_peers_downtime
+        ## nginx_plus_api_http_upstream_peers_fails
+        ## nginx_plus_api_http_upstream_peers_healthchecks_fails
+        ## nginx_plus_api_http_upstream_peers_healthchecks_unhealthy
+        ## nginx_plus_api_http_upstream_peers_received
+        ## nginx_plus_api_http_upstream_peers_requests
+        ## nginx_plus_api_http_upstream_peers_response_time
+        ## nginx_plus_api_http_upstream_peers_responses_1xx
+        ## nginx_plus_api_http_upstream_peers_responses_2xx
+        ## nginx_plus_api_http_upstream_peers_responses_3xx
+        ## nginx_plus_api_http_upstream_peers_responses_4xx
+        ## nginx_plus_api_http_upstream_peers_responses_5xx
+        ## nginx_plus_api_http_upstream_peers_responses_total
+        ## nginx_plus_api_http_upstream_peers_sent
+        ## nginx_plus_api_http_upstream_peers_unavail
+        ## nginx_plus_api_resolver_zones_addr
+        ## nginx_plus_api_resolver_zones_formerr
+        ## nginx_plus_api_resolver_zones_name
+        ## nginx_plus_api_resolver_zones_noerror
+        ## nginx_plus_api_resolver_zones_notimp
+        ## nginx_plus_api_resolver_zones_nxdomain
+        ## nginx_plus_api_resolver_zones_refused
+        ## nginx_plus_api_resolver_zones_servfail
+        ## nginx_plus_api_resolver_zones_srv
+        ## nginx_plus_api_resolver_zones_timedout
+        ## nginx_plus_api_ssl_handshakes_failed
+        ## nginx_plus_api_ssl_session_reuses
+        ## nginx_plus_api_stream_server_zones_connections
+        ## nginx_plus_api_stream_server_zones_received
+        ## nginx_plus_api_stream_server_zones_sent
+        ## nginx_plus_api_stream_upstream_peers_active
+        ## nginx_plus_api_stream_upstream_peers_backup
+        ## nginx_plus_api_stream_upstream_peers_connect_time
+        ## nginx_plus_api_stream_upstream_peers_downtime
+        ## nginx_plus_api_stream_upstream_peers_fails
+        ## nginx_plus_api_stream_upstream_peers_healthchecks_fails
+        ## nginx_plus_api_stream_upstream_peers_healthchecks_last_passed
+        ## nginx_plus_api_stream_upstream_peers_healthchecks_unhealthy
+        ## nginx_plus_api_stream_upstream_peers_received
+        ## nginx_plus_api_stream_upstream_peers_response_time
+        ## nginx_plus_api_stream_upstream_peers_sent
+        ## nginx_plus_api_stream_upstream_peers_unavail
+
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.nginx
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:nginx_(accepts|active|handled|reading|requests|waiting|writing))
+              regex: (?:nginx_(accepts|active|handled|reading|requests|waiting|writing)|nginx_plus_api_connections_(accepted|active|dropped|idle)|nginx_plus_api_http_caches_(cold|hit_bytes|max_size|miss_bytes|size|updating_bytes)|nginx_plus_api_http_location_zones_(discarded|received|requests|sent)|nginx_plus_api_http_location_zones_responses_(1xx|2xx|3xx|4xx|5xx|total)|nginx_plus_api_http_requests_(current|total)|nginx_plus_api_http_server_zones_(discarded|processing|received|requests|sent)|nginx_plus_api_http_server_zones_responses_(1xx|2xx|3xx|4xx|5xx|total)|nginx_plus_api_http_upstream_peers_(backup|downtime|fails|healthchecks_fails|healthchecks_unhealthy|received|requests|sent|unavail|response_time)|nginx_plus_api_http_upstream_peers_responses_(1xx|2xx|3xx|4xx|5xx|total)|nginx_plus_api_resolver_zones_(addr|formerr|name|noerror|notimp|nxdomain|refused|servfail|srv|timedout)|nginx_plus_api_ssl_(handshakes_failed|session_reuses)|nginx_plus_api_stream_server_zones_(connections|received|sent)|nginx_plus_api_stream_upstream_peers_(active|backup|connect_time|downtime|fails|healthchecks_fails|healthchecks_last_passed|healthchecks_unhealthy|received|response_time|sent|unavail))
               sourceLabels: [__name__]
 
         ## Redis metrics
