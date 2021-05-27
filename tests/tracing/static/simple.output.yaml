@@ -11,7 +11,6 @@ metadata:
     heritage: "Helm"
 data:
   traces.otelcol.conf.yaml: |
-    
     exporters:
       otlphttp:
         compression: gzip
@@ -72,7 +71,7 @@ data:
         attributes:
         - action: upsert
           key: k8s.cluster.name
-          value: kubernetes
+          value: "kubernetes"
       source:
         annotation_prefix: k8s.pod.annotation.
         collector: "kubernetes"
