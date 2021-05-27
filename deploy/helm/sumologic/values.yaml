@@ -2078,7 +2078,7 @@ kube-prometheus-stack:
         ## mysql_perf_schema_index_io_waits_*
         ## mysql_perf_schema_read*
         ## mysql_perf_schema_write*
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.mysql
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.mysql
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2134,7 +2134,7 @@ kube-prometheus-stack:
         ## postgresql_toast_blks_hit
         ## postgresql_tidx_blks_read
         ## postgresql_tidx_blks_hit
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.postgresql
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.postgresql
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2177,7 +2177,7 @@ kube-prometheus-stack:
         ## apache_scboard_sending
         ## apache_scboard_starting
         ## apache_scboard_waiting
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.apache
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.apache
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
