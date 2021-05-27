@@ -993,3 +993,31 @@ Example:
 {{- $annotations_match := list $matches_with_quotes_with_commas }}
 {{- print $annotations_match }}
 {{- end -}}
+
+
+{{/*
+Return k8s.cluster.name for opentelemetry collector
+
+Example:
+
+{{ include "otelcol.k8s.cluster.name" . }}
+*/}}
+{{- define "otelcol.k8s.cluster.name" -}}
+{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
+{{- end -}}
+
+
+{{/*
+Returns list of namespaces to exclude
+
+Example:
+
+{{ include "fluentd.excludeNamespaces" . }}
+*/}}
+{{- define "fluentd.excludeNamespaces" -}}
+{{- $excludeNamespaceRegex := .Values.fluentd.logs.containers.excludeNamespaceRegex | quote -}}
+{{- if eq .Values.sumologic.collectionMonitoring false -}}
+  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
+{{- end -}}
+{{ print $excludeNamespaceRegex }}
+{{- end -}}
