@@ -7,6 +7,7 @@
 - [Fluentd Autoscaling](#fluentd-autoscaling)
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
 - [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
+- [Excluding Metrics](#excluding-metrics)
 - [Add a local file to fluent-bit configuration](#add-a-local-file-to-fluent-bit-configuration)
 - [Filtering Prometheus Metrics by Namespace](#filtering-prometheus-metrics-by-namespace)
 - [Modify the Log Level for Falco](#modify-the-log-level-for-falco)
@@ -261,6 +262,26 @@ You can find more information on the `grep` filter plugin in the
 [fluentd documentation](https://docs.fluentd.org/filter/grep).
 Refer to our [documentation](v1_conf_examples.md) for other examples of how you can
 customize the fluentd pipeline.
+
+## Excluding Metrics
+
+You can filter out metrics directly in promethus using [this documentation](additional_prometheus_configuration.md#filter-metrics).
+
+You can also exclude metrics by any tag in Fluentd.
+For example to filter out metrics from `sumologic` namespace, you can use following configuration:
+
+```yaml
+fluentd:
+  metrics:
+    extraFilterPluginConf: |-
+      <filter **>
+        @type grep
+          <exclude>
+            key namespace
+            pattern /^sumologic$/
+          </exclude>
+      </filter>
+```
 
 ## Add a local file to fluent-bit configuration
 
