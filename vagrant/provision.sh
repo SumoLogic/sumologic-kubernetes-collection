@@ -44,7 +44,7 @@ echo "sudo iptables -P FORWARD ACCEPT" >> /home/vagrant/.bashrc
 
 echo "export KUBECONFIG=/var/snap/microk8s/current/credentials/kubelet.config" >> /home/vagrant/.bashrc
 
-HELM_3_VERSION=v3.2.4
+HELM_3_VERSION=v3.5.4
 
 mkdir /opt/helm3
 curl "https://get.helm.sh/helm-${HELM_3_VERSION}-linux-amd64.tar.gz" | tar -xz -C /opt/helm3
