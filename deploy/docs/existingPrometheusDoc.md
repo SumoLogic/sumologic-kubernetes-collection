@@ -111,7 +111,7 @@ kube-prometheus-stack is in `<destination-namespace>`, run the below command:
 
 ```bash
 kubectl get configmap sumologic-configmap \
---namespace=<source-namespace> --export -o yaml | \
+--namespace=<source-namespace> -o yaml | \
 kubectl apply --namespace=<destination-namespace> -f -
 ```
 
