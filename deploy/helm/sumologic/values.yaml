@@ -3038,7 +3038,7 @@ otelagent:
         ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
         ## Note that typically the total memory usage of process will be about 50MiB higher
         ## than this value.
-        limit_mib: 2800
+        limit_mib: 1900
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
