@@ -63,6 +63,7 @@ spec:
           value: "80"
 {{- $ctx := .Values -}}
 {{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") }}
+{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics") }}
 {{- if .Values.otelagent.daemonset.extraEnvVars }}
 {{- toYaml .Values.otelagent.daemonset.extraEnvVars | nindent 8 }}
 {{- end }}
