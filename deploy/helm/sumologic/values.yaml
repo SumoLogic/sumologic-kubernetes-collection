@@ -822,12 +822,12 @@ metrics-server:
 ## Configure fluent-bit
 ## ref: https://github.com/fluent/helm-charts/blob/master/charts/fluent-bit/values.yaml
 fluent-bit:
+  ## If specified, use these secrets to access the image
+  # imagePullSecrets:
+  #   - name: "image-pull-secret"
   image:
     repository: public.ecr.aws/sumologic/fluent-bit
     pullPolicy: IfNotPresent
-    # If specified, use these secrets to access the image
-    # pullSecrets:
-    #   - name: "image-pull-secret"
 
   ## Resource limits for fluent-bit
   resources: {}
