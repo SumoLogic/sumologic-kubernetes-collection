@@ -3228,7 +3228,7 @@ otelcol:
 
       ## Add System metadata - needed for Sumologic exporter source_host
       resourcedetection:
-        detectors: [ec2]
+        detectors: [system]
         timeout: 10s
         override: false
 
@@ -3266,7 +3266,7 @@ otelcol:
         ## Desired source name. Useful if you want to override the source name configured for the source.
         source_name: "exporters.sumologic.source_name.replace"
         ## Desired host name. Useful if you want to override the source host configured for the source.
-        source_host: "${host.name}"
+        source_host: "%{host.name}"
         ## List of regexes for attributes which should be send as metadata
         metadata_attributes:
           - k8s.*
