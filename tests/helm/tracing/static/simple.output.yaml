@@ -22,6 +22,7 @@ data:
         max_request_body_size: 1048576
         metadata_attributes:
         - k8s.*
+        - host.name
         metric_format: prometheus
         retry_on_failure:
           enabled: true
@@ -33,7 +34,7 @@ data:
           num_consumers: 10
           queue_size: 5000
         source_category:
-        source_host: exporters.sumologic.source_host.replace
+        source_host: '%{host.name}'
         source_name:
         timeout: 5s
       zipkin:
@@ -84,6 +85,11 @@ data:
         - action: upsert
           key: k8s.cluster.name
           value: kubernetes
+      resourcedetection:
+        detectors:
+        - system
+        override: false
+        timeout: 10s
       source:
         annotation_prefix: k8s.pod.annotation.
         collector: "kubernetes"
@@ -136,6 +142,8 @@ data:
           - resourcedetection
           - resource
           - batch
+          receivers:
+          - otlp
         traces:
           exporters:
           - otlphttp
