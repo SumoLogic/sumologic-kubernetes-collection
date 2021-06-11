@@ -33,9 +33,9 @@ data:
           enabled: false
           num_consumers: 10
           queue_size: 5000
-        source_category:
+        source_category: 
         source_host: '%{host.name}'
-        source_name:
+        source_name: 
         timeout: 5s
       zipkin:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
