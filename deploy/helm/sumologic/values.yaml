@@ -3225,6 +3225,13 @@ otelcol:
         send_batch_max_size: 512
         ## Time duration after which a batch will be sent regardless of size
         timeout: 5s
+
+      ## Add System metadata - needed for Sumologic exporter source_host
+      resourcedetection:
+        detectors: [ec2]
+        timeout: 10s
+        override: false
+
     extensions:
       health_check: {}
       memory_ballast:
@@ -3259,10 +3266,11 @@ otelcol:
         ## Desired source name. Useful if you want to override the source name configured for the source.
         source_name: "exporters.sumologic.source_name.replace"
         ## Desired host name. Useful if you want to override the source host configured for the source.
-        source_host: "exporters.sumologic.source_host.replace"
+        source_host: "${host.name}"
         ## List of regexes for attributes which should be send as metadata
         metadata_attributes:
           - k8s.*
+          - host.name
         ## Is the timeout for every attempt to send data to the backend. Maximum connection timeout is 55s.
         timeout: 5s
         retry_on_failure:
