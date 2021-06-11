@@ -145,9 +145,9 @@ spec:
 {{- end }}
         env:
 {{- $ctx := .Values -}}
-{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs")}}
+{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs") | nindent 8 }}
 {{- if .Values.sumologic.traces.enabled }}
-{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces")}}
+{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") | nindent 8 }}
 {{- end }}
         {{- if .Values.fluentd.logs.extraEnvVars }}
 {{ toYaml .Values.fluentd.logs.extraEnvVars | nindent 8 }}
