@@ -885,6 +885,11 @@ fluent-bit:
         path: /var/lib/fluent-bit
         type: DirectoryOrCreate
       name: tail-db
+  
+  updateStrategy: {}
+    # type: RollingUpdate
+    # rollingUpdate:
+    #   maxUnavailable: 1
 
   ## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit
   config:
