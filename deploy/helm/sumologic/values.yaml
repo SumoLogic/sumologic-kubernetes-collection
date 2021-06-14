@@ -3277,7 +3277,7 @@ otelcol:
           enabled: true
           ## Time to wait after the first failure before retrying
           initial_interval: 5s
-          ## Is the upper bound on backoff
+          ## Upper bound on backoff
           max_interval: 30s
           ## Is the maximum amount of time spent trying to send a batch
           max_elapsed_time: 120s
