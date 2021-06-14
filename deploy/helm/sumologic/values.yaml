@@ -68,7 +68,7 @@ sumologic:
   collectionMonitoring: true
 
   ## Optionally specify an array of pullSecrets.
-  ## They will be added to serviceaccount that is used for Sumo Logic's jobs,
+  ## They will be added to serviceaccount that is used for Sumo Logic's
   ## deployments and statefulsets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -94,6 +94,14 @@ sumologic:
         repository: public.ecr.aws/sumologic/kubernetes-setup
         tag: 3.0.0
         pullPolicy: IfNotPresent
+      ## Optionally specify an array of pullSecrets.
+      ## They will be added to serviceaccount that is used for Sumo Logic's
+      ## setup job.
+      ## Secrets must be manually created in the namespace.
+      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ##
+      # pullSecrets:
+      #   - name: myRegistryKeySecretName
       resources:
         limits:
           memory: 256Mi
@@ -159,7 +167,8 @@ sumologic:
         default:
           name: events
           config-name: endpoint-events
-          category: true
+          properties:
+            category: "${var.cluster_name}/${local.default_events_source}"
       traces:
         default:
           name: traces
@@ -307,6 +316,9 @@ fluentd:
     output: false
 
   metadata:
+    ## Option to control capturing of annotations by metadata filter plugin.
+    annotation_match:
+      - 'sumologic\.com.*'
     ## Option to control the enabling of metadata filter plugin cache_size.
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     cacheSize: "10000"
@@ -388,8 +400,9 @@ fluentd:
       forwardExtraConf: |-
 
     ## Configuration for sumologic output plugin
-    ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/logs/fluentd/logs.output.conf
+    ## See below links for full reference:
+    ## https://github.com/SumoLogic/fluentd-output-sumologic
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/logs/fluentd/logs.output.conf
     output:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: for logs metadata, fields is required.
@@ -440,11 +453,14 @@ fluentd:
       ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
       excludePodRegex: ""
 
-      ## Defines whether container-level pod annotations are enabled. Setting this to `true` might slightly affect Fluentd performance.
-      ## ref: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.1-sumo-2/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
+      ## Defines whether container-level pod annotations are enabled.
+      ## Setting this to `true` might slightly affect Fluentd performance.
+      ## See below link for full reference:
+      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.1-sumo-2/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
       perContainerAnnotationsEnabled: false
       ## Defines the list of prefixes of container-level pod annotations.
-      ## ref: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.1-sumo-2/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
+      ## See below link for full reference:
+      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.1-sumo-2/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
       perContainerAnnotationPrefixes: []
 
       ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
@@ -650,8 +666,9 @@ fluentd:
       @include metrics.conf
 
     ## Configuration for sumologic output plugin
-    ## ref: https://github.com/SumoLogic/fluentd-output-sumologic
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/metrics/fluentd/metrics.output.conf
+    ## See below links for full reference:
+    ## https://github.com/SumoLogic/fluentd-output-sumologic
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/metrics/fluentd/metrics.output.conf
     outputConf: |-
       @include metrics.output.conf
 
@@ -808,12 +825,12 @@ metrics-server:
 ## Configure fluent-bit
 ## ref: https://github.com/fluent/helm-charts/blob/master/charts/fluent-bit/values.yaml
 fluent-bit:
+  ## If specified, use these secrets to access the image
+  # imagePullSecrets:
+  #   - name: "image-pull-secret"
   image:
     repository: public.ecr.aws/sumologic/fluent-bit
     pullPolicy: IfNotPresent
-    # If specified, use these secrets to access the image
-    # pullSecrets:
-    #   - name: "image-pull-secret"
 
   ## Resource limits for fluent-bit
   resources: {}
@@ -1336,7 +1353,7 @@ kube-prometheus-stack:
             sumologic.com/scrape: "true"
       - name: collection-fluent-bit
         additionalLabels:
-          app: collection-fluent-bit
+          sumologic.com/app: collection-fluent-bit
         endpoints:
           - port: http
             path: /api/v1/metrics/prometheus
@@ -1491,13 +1508,14 @@ kube-prometheus-stack:
         ## kube_statefulset_status_replicas
         ## kube_hpa_spec_max_replicas
         ## kube_hpa_spec_min_replicas
+        ## kube_hpa_status_condition
         ## kube_hpa_status_current_replicas
         ## kube_hpa_status_desired_replicas
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_current_replicas|kube_hpa_status_desired_replicas)
+              regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_(condition|(current|desired)_replicas))
               sourceLabels: [job, __name__]
             - action: labelmap
               regex: (pod|service)
@@ -2068,7 +2086,7 @@ kube-prometheus-stack:
         ## mysql_perf_schema_index_io_waits_*
         ## mysql_perf_schema_read*
         ## mysql_perf_schema_write*
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.mysql
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.mysql
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2124,7 +2142,7 @@ kube-prometheus-stack:
         ## postgresql_toast_blks_hit
         ## postgresql_tidx_blks_read
         ## postgresql_tidx_blks_hit
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.postgresql
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.postgresql
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2167,7 +2185,7 @@ kube-prometheus-stack:
         ## apache_scboard_sending
         ## apache_scboard_starting
         ## apache_scboard_waiting
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.apache
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.apache
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep

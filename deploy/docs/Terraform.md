@@ -60,9 +60,6 @@ sumologic:
         example-source: # source reference name
           name: # name of the source (visible on the sumologic platform)
           config-name: # name which be used in secret to store the url. This is backward-compatibility option
-          category: # this is backward compatibility property. It's deprecated and it's going to be removed in version 2.0
-                    # Sets source category to "${var.cluster_name}/${local.default_events_source}" if true
-                    # To overwrite category, please use `sumologic.collector.sources[].properties.category`
           properties: # Additional Terraform properties like fields or content_type
                       # ref: https://www.terraform.io/docs/providers/sumologic/r/collector.html
 ```

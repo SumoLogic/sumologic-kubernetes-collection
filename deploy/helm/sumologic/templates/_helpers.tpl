@@ -755,9 +755,6 @@ Example usage:
 resource "sumologic_http_source" "{{ .Name }}" {
     name         = local.{{ .Name }}
     collector_id = sumologic_collector.collector.id
-    {{- if $source.category }}
-    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.default_events_source}\"" }}{{- end}}
-    {{- end }}
     {{- if $source.properties }}
     {{- range $fkey, $fvalue := $source.properties }}
     {{- include "terraform.generate-object" (dict "Name" $fkey "Value" $fvalue "KeyLength" (include "terraform.max-key-length" $source.properties) "Indent" 2) -}}
@@ -984,4 +981,15 @@ Example:
 */}}
 {{- define "kubernetes.minor" -}}
 {{- print (regexFind "^\\d+" .Capabilities.KubeVersion.Minor) -}}
+{{- end -}}
+
+{{- define "fluentd.metadata.annotations_match.quotes" -}}
+{{- $matches_with_quotes := list -}}
+{{- range $match := .Values.fluentd.metadata.annotation_match  }}
+{{- $match_with_quotes := printf "\"%s\"" $match }}
+{{- $matches_with_quotes = append $matches_with_quotes $match_with_quotes }}
+{{- end }}
+{{- $matches_with_quotes_with_commas := join "," $matches_with_quotes }}
+{{- $annotations_match := list $matches_with_quotes_with_commas }}
+{{- print $annotations_match }}
 {{- end -}}
