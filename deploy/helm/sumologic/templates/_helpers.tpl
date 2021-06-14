@@ -982,3 +982,14 @@ Example:
 {{- define "kubernetes.minor" -}}
 {{- print (regexFind "^\\d+" .Capabilities.KubeVersion.Minor) -}}
 {{- end -}}
+
+{{- define "fluentd.metadata.annotations_match.quotes" -}}
+{{- $matches_with_quotes := list -}}
+{{- range $match := .Values.fluentd.metadata.annotation_match  }}
+{{- $match_with_quotes := printf "\"%s\"" $match }}
+{{- $matches_with_quotes = append $matches_with_quotes $match_with_quotes }}
+{{- end }}
+{{- $matches_with_quotes_with_commas := join "," $matches_with_quotes }}
+{{- $annotations_match := list $matches_with_quotes_with_commas }}
+{{- print $annotations_match }}
+{{- end -}}

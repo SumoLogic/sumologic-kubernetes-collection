@@ -318,7 +318,7 @@ fluentd:
   metadata:
     ## Option to control capturing of annotations by metadata filter plugin.
     annotation_match:
-      - '"sumologic\\.com.*"'
+      - 'sumologic\.com.*'
     ## Option to control the enabling of metadata filter plugin cache_size.
     ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
     cacheSize: "10000"
