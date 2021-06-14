@@ -3279,7 +3279,7 @@ otelcol:
           initial_interval: 5s
           ## Upper bound on backoff
           max_interval: 30s
-          ## Is the maximum amount of time spent trying to send a batch
+          ## Maximum amount of time spent trying to send a batch
           max_elapsed_time: 120s
         sending_queue:
           enabled: false
