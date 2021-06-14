@@ -3271,7 +3271,7 @@ otelcol:
         metadata_attributes:
           - k8s.*
           - host.name
-        ## Is the timeout for every attempt to send data to the backend. Maximum connection timeout is 55s.
+        ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
         timeout: 5s
         retry_on_failure:
           enabled: true
