@@ -1,15 +1,15 @@
-name: PRs Labels
+name: PRs labels check
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, labeled, unlabeled, synchronize]
 
 jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - uses: jesusvasquez333/verify-pr-label-action@v1.4.0
+      - uses: mheap/github-action-required-labels@v1
         with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
-          invalid-labels: 'do-not-merge/hold'
-          pull-request-number: '${{ github.event.pull_request.number }}'
+          mode: exactly
+          count: 0
+          labels: "do-not-merge/hold"
