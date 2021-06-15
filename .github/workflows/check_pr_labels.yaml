@@ -12,3 +12,4 @@ jobs:
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           invalid-labels: 'do-not-merge/hold'
+          pull-request-number: '${{ github.event.pull_request.number }}'
