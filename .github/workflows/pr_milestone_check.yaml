@@ -1,0 +1,16 @@
+name: PRs milestone check
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+  pull_request_review:
+    types: [submitted]
+  pull_request_review_comment:
+    types: [created]
+  push:
+
+jobs:
+  check-milestone:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: siimon/milestone-check-action@releases/v2
