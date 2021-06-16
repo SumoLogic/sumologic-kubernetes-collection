@@ -1811,11 +1811,64 @@ kube-prometheus-stack:
         ## nginx_ingress_nginx_connections_waiting
         ## nginx_ingress_nginx_connections_writing
         ## nginx_ingress_nginx_http_requests_total
+        ## nginx_ingress_nginxplus_connections_accepted
+        ## nginx_ingress_nginxplus_connections_active
+        ## nginx_ingress_nginxplus_connections_dropped
+        ## nginx_ingress_nginxplus_connections_idle
+        ## nginx_ingress_nginxplus_http_requests_current
+        ## nginx_ingress_nginxplus_http_requests_total
+        ## nginx_ingress_nginxplus_resolver_addr
+        ## nginx_ingress_nginxplus_resolver_formerr
+        ## nginx_ingress_nginxplus_resolver_name
+        ## nginx_ingress_nginxplus_resolver_noerror
+        ## nginx_ingress_nginxplus_resolver_notimp
+        ## nginx_ingress_nginxplus_resolver_nxdomain
+        ## nginx_ingress_nginxplus_resolver_refused
+        ## nginx_ingress_nginxplus_resolver_servfail
+        ## nginx_ingress_nginxplus_resolver_srv
+        ## nginx_ingress_nginxplus_resolver_timedout
+        ## nginx_ingress_nginxplus_resolver_unknown
+        ## nginx_ingress_nginxplus_ssl_handshakes_failed
+        ## nginx_ingress_nginxplus_ssl_session_reuses
+        ## nginx_ingress_nginxplus_stream_server_zone_connections
+        ## nginx_ingress_nginxplus_stream_server_zone_received
+        ## nginx_ingress_nginxplus_stream_server_zone_sent
+        ## nginx_ingress_nginxplus_stream_upstream_server_active
+        ## nginx_ingress_nginxplus_stream_upstream_server_connect_time
+        ## nginx_ingress_nginxplus_stream_upstream_server_fails
+        ## nginx_ingress_nginxplus_stream_upstream_server_health_checks_fails
+        ## nginx_ingress_nginxplus_stream_upstream_server_health_checks_unhealthy
+        ## nginx_ingress_nginxplus_stream_upstream_server_received
+        ## nginx_ingress_nginxplus_stream_upstream_server_response_time
+        ## nginx_ingress_nginxplus_stream_upstream_server_sent
+        ## nginx_ingress_nginxplus_stream_upstream_server_unavail
+        ## nginx_ingress_nginxplus_stream_upstream_server_state
+        ## nginx_ingress_nginxplus_location_zone_discarded
+        ## nginx_ingress_nginxplus_location_zone_received
+        ## nginx_ingress_nginxplus_location_zone_requests
+        ## nginx_ingress_nginxplus_location_zone_responses
+        ## nginx_ingress_nginxplus_location_zone_sent
+        ## nginx_ingress_nginxplus_server_zone_discarded
+        ## nginx_ingress_nginxplus_server_zone_processing
+        ## nginx_ingress_nginxplus_server_zone_received
+        ## nginx_ingress_nginxplus_server_zone_requests
+        ## nginx_ingress_nginxplus_server_zone_responses
+        ## nginx_ingress_nginxplus_server_zone_sent
+        ## nginx_ingress_nginxplus_upstream_server_fails
+        ## nginx_ingress_nginxplus_upstream_server_header_time
+        ## nginx_ingress_nginxplus_upstream_server_health_checks_fails
+        ## nginx_ingress_nginxplus_upstream_server_health_checks_unhealthy
+        ## nginx_ingress_nginxplus_upstream_server_received
+        ## nginx_ingress_nginxplus_upstream_server_sent
+        ## nginx_ingress_nginxplus_upstream_server_unavail
+        ## nginx_ingress_nginxplus_upstream_server_response_time
+        ## nginx_ingress_nginxplus_upstream_server_responses
+        ## nginx_ingress_nginxplus_upstream_server_requests
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.nginx-ingress
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:nginx_ingress_controller_ingress_resources_total|nginx_ingress_controller_nginx_(last_reload_(milliseconds|status)|reload(s|_errors)_total)|nginx_ingress_controller_virtualserver(|route)_resources_total|nginx_ingress_nginx_connections_(accepted|active|handled|reading|waiting|writing)|nginx_ingress_nginx_http_requests_total)
+              regex: (?:nginx_ingress_controller_ingress_resources_total|nginx_ingress_controller_nginx_(last_reload_(milliseconds|status)|reload(s|_errors)_total)|nginx_ingress_controller_virtualserver(|route)_resources_total|nginx_ingress_nginx_connections_(accepted|active|handled|reading|waiting|writing)|nginx_ingress_nginx_http_requests_total|nginx_ingress_nginxplus_(connections_(accepted|active|dropped|idle)|http_requests_(current|total)|resolver_(addr|formerr|name|noerror|notimp|nxdomain|refused|servfail|srv|timedout|unknown)|ssl_(handshakes_failed|session_reuses)|stream_server_zone_(connections|received|sent)|stream_upstream_server_(active|connect_time|fails|health_checks_fails|health_checks_unhealthy|received|response_time|sent|unavail|state)|(location|server)_zone_(discarded|received|requests|responses|sent|processing)|upstream_server_(fails|header_time|health_checks_fails|health_checks_unhealthy|received|sent|unavail|response_time|responses|requests)))
               sourceLabels: [__name__]
 
         ## Nginx telegraf metrics
