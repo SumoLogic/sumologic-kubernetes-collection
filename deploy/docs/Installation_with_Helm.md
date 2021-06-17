@@ -134,9 +134,11 @@ helm upgrade --install my-release sumologic/sumologic \
 
 ### Authenticating with container registry
 
-Sumo Logic container images used in the collection are currently hosted
-on [Docker Hub](https://hub.docker.com/) which
-[requires authentication in order to provide higher quota for image pulls][docker-rate-limit].
+Sumo Logic container images used for collection are currently hosted on
+[Amazon Public ECR][aws-public-ecr-docs] which requires authentication to provide
+a higher quota for image pulls.
+To find a comprehensive information on this please refer to
+[Amazon Elastic Container Registry pricing][aws-ecr-pricing].
 
 Please refer to
 [our instructions](/deploy/docs/Working_with_container_registries.md#authenticating-with-container-registry)
@@ -147,7 +149,8 @@ registries.
 To do so please refer to the following
 [instructions](/deploy/docs/Working_with_container_registries.md#hosting-sumo-logic-images)
 
-[docker-rate-limit]: https://www.docker.com/increase-rate-limits
+[aws-public-ecr-docs]: https://aws.amazon.com/blogs/aws/amazon-ecr-public-a-new-public-container-registry/
+[aws-ecr-pricing]: https://aws.amazon.com/ecr/pricing/
 
 ### Installing the helm chart in Openshift platform
 
