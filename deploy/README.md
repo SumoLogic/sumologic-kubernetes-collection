@@ -20,6 +20,7 @@ for details on our Kubernetes Solution.
   - [Support Matrix](#support-matrix)
   - [Installation with Helm](./docs/Installation_with_Helm.md)
   - [Non Helm Installation](./docs/Non_Helm_Installation.md)
+  - [Container log parsing (Docker, CRI-O, containerd)](./docs/ContainerLogs.md)
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
   - [Additional Prometheus configuration](./docs/additional_prometheus_configuration.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
