@@ -23,5 +23,7 @@
 {{- $yamlFile := replace "processors.source.exclude_container_regex.replace" $excludeContainerRegex $yamlFile }}
 {{- $yamlFile := replace "processors.source.exclude_host_regex.replace" $excludeHostRegex $yamlFile }}
 {{- $yamlFile := replace "processors.resource.cluster.replace" $clusterName $yamlFile }}
+{{- $yamlFile := replace "exporters.sumologic.source_name.replace" $sourceName $yamlFile }}
+{{- $yamlFile := replace "exporters.sumologic.source_category.replace" $sourceCategory $yamlFile }}
 
 {{- $yamlFile | nindent 2 }}
