@@ -1,0 +1,7 @@
+# Add 'documentation' label to any change to *.md files
+documentation:
+- any: ['**/*.md']
+
+# Add 'ci' label to any change in .github/ directory
+ci:
+- any: ['.github/**/*']
