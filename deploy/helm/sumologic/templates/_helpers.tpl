@@ -1036,11 +1036,45 @@ Example Usage:
 */}}
 {{- define "logs.enabled" -}}
 {{- $enabled := false -}}
-{{- if eq .Values.sumologic.logs.enabled true -}}
-{{- if and (eq .Values.sumologic.logs.provider "fluentd") (eq .Values.fluentd.logs.enabled true) -}}
+{{- if eq (include "logs.otelcol.enabled" .) "true" }}
 {{- $enabled = true -}}
 {{- end -}}
+{{- if eq (include "logs.fluentd.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Check if otelcol logs provider is enabled
+
+Example Usage:
+{{- if eq (include "logs.otelcol.enabled" .) "true" }}
+
+*/}}
+{{- define "logs.otelcol.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.logs.enabled true -}}
 {{- if and (eq .Values.sumologic.logs.provider "otelcol") (eq .Values.otelcol.logs.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Check if fluentd logs provider is enabled
+
+Example Usage:
+{{- if eq (include "logs.fluentd.enabled" .) "true" }}
+
+*/}}
+{{- define "logs.fluentd.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.logs.enabled true -}}
+{{- if and (eq .Values.sumologic.logs.provider "fluentd") (eq .Values.fluentd.logs.enabled true) -}}
 {{- $enabled = true -}}
 {{- end -}}
 {{- end -}}
