@@ -1025,3 +1025,24 @@ Example:
 {{- end -}}
 {{ print $excludeNamespaceRegex }}
 {{- end -}}
+
+
+{{/*
+Check if any logs provider is enabled
+
+Example Usage:
+{{- if eq (include "logs.enabled" .) "true" }}
+
+*/}}
+{{- define "logs.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.logs.enabled true -}}
+{{- if and (eq .Values.sumologic.logs.provider "fluentd") (eq .Values.fluentd.logs.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- if and (eq .Values.sumologic.logs.provider "otelcol") (eq .Values.otelcol.logs.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
