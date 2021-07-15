@@ -1,4 +1,4 @@
-{{- if and (eq .Values.sumologic.logs.enabled true) (eq .Values.sumologic.logs.provider "fluentd") (eq .Values.fluentd.logs.enabled true) }}
+{{- if eq (include "logs.fluentd.enabled" .) "true" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
