@@ -1,4 +1,4 @@
-{{- if eq (include "logs.fluentd.enabled" .) "true" }}
+{{- if eq (include "logs.otelcol.enabled" .) "true" }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/logs/fluentd/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/logs/otelcol/configmap.yaml") . | sha256sum }}
 {{- if .Values.sumologic.podAnnotations }}
 {{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
@@ -102,14 +102,14 @@ spec:
       priorityClassName: {{ .Values.fluentd.logs.statefulset.priorityClassName | quote }}
       {{- end }}
       containers:
-      - name: fluentd
-        image: {{ .Values.fluentd.image.repository }}:{{ .Values.fluentd.image.tag }}
-        imagePullPolicy: {{ .Values.fluentd.image.pullPolicy }}
+      - name: otelcol
+        image: {{ .Values.otelcol.statefulset.image.repository }}:{{ .Values.otelcol.statefulset.image.tag }}
+        imagePullPolicy: {{ .Values.otelcol.statefulset.image.pullPolicy }}
         resources:
           {{- toYaml .Values.fluentd.logs.statefulset.resources | nindent 10 }}
         {{- if .Values.fluentd.logs.statefulset.containers.fluentd.securityContext }}
         securityContext:
-          {{- toYaml .Values.fluentd.logs.statefulset.containers.fluentd.securityContext | nindent 10 }}
+          {{- toYaml .Values.fluentd.otelcol.statefulset.containers.otelcol.securityContext | nindent 10 }}
         {{- end }}
         ports:
         {{- if .Values.sumologic.traces.enabled }}
@@ -122,24 +122,16 @@ spec:
           protocol: TCP
         livenessProbe:
           httpGet:
-            path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
-            port: 9880
-          initialDelaySeconds: 300
-          periodSeconds: 30
-          timeoutSeconds: 3
+            path: /
+            port: 13133 # Health Check extension default port.
         readinessProbe:
           httpGet:
-            path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
-            port: 9880
-          initialDelaySeconds: 30
-          periodSeconds: 5
+            path: /
+            port: 13133 # Health Check extension default port.
         volumeMounts:
         - name: config-volume
-          mountPath: /fluentd/etc/
-{{- if .Values.fluentd.persistence.enabled }}
-        - name: buffer
-          mountPath: "/fluentd/buffer"
-{{- end}}
+          mountPath: /etc/otel/config.yaml
+          subPath: config.yaml
 {{- if .Values.fluentd.logs.extraVolumeMounts }}
 {{ toYaml .Values.fluentd.logs.extraVolumeMounts | indent 8 }}
 {{- end }}
@@ -154,19 +146,4 @@ spec:
         {{- end }}
         - name: ADDITIONAL_PLUGINS
           value: {{ join " " .Values.fluentd.additionalPlugins | quote }}
-{{- if .Values.fluentd.persistence.enabled }}
-  volumeClaimTemplates:
-  - metadata:
-      name: buffer
-{{- if .Values.fluentd.pvcLabels }}
-      labels:
-{{ toYaml .Values.fluentd.pvcLabels | indent 8 }}
-{{- end }}
-    spec:
-      accessModes: [{{ .Values.fluentd.persistence.accessMode }}]
-      storageClassName: {{ .Values.fluentd.persistence.storageClass }}
-      resources:
-        requests:
-          storage: {{ .Values.fluentd.persistence.size }}
-{{- end }}
 {{- end }}

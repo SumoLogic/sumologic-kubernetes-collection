@@ -27,6 +27,7 @@ sumologic:
   ## Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
   ## ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
   endpoint: ""
+  open_endpoint: "https://nite-open-events.sumologic.net"
 
   ## proxy urls
   httpProxy: ""
@@ -180,6 +181,8 @@ sumologic:
   ## Set the enabled flag to false for disabling logs ingestion altogether.
   logs:
     enabled: true
+    ## Set provider service (either fluentd or otelcol)
+    provider: fluentd
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
     ## relevant metadata.
@@ -2350,6 +2353,128 @@ otelagent:
 
 ## Configure otelcol
 otelcol:
+  statefulset:
+    image:
+      repository: "public.ecr.aws/sumologic/sumologic-otel-collector-dev"
+      tag: "f2f66621f31fd56eb3c59a267c78145ce7d3180a"
+      pullPolicy: IfNotPresent
+    containers:
+      otelcol:
+        securityContext: {}
+  logs:
+    enabled: true
+    config:
+      receivers:
+        fluentforward:
+          endpoint: 0.0.0.0:24321
+      extensions:
+        health_check: {}
+        # sumologic:
+        #   access_id: '{{ .Values.sumologic.accessId }}'
+        #   access_key: '{{ .Values.sumologic.accessKey }}'
+        #   collector_name: otc-{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName}}
+        #   api_base_url: '{{ .Values.sumologic.open_endpoint }}'
+      exporters:
+        sumologic:
+          log_format: json
+          endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+      processors:
+        attributes:
+          actions:
+            - action: extract
+              key: fluent.tag
+              pattern: ^containers\.var\.log\.pods\.(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]{36})\.(?P<container_name>[^\._]+)\.(?P<run_id>\d+)\.log$
+            - action: delete
+              key: fluent.tag
+            - action: insert
+              key: k8s.pod.name
+              from_attribute: pod_name
+            - action: delete
+              key: pod_name
+            - action: insert
+              key: k8s.pod.uid
+              from_attribute: uid
+            - action: delete
+              key: uid
+            - action: insert
+              key: k8s.namespace.name
+              from_attribute: namespace
+            - action: delete
+              key: namespace
+            - action: insert
+              key: k8s.container.name
+              from_attribute: container_name
+            - action: delete
+              key: container_name
+            - action: insert
+              key: k8s.instance.id
+              from_attribute: run_id
+            - action: delete
+              key: run_id
+        groupbyattrs:
+          keys:
+            - fluent.tag
+            - k8s.container.name
+            - k8s.instance.id
+            - k8s.namespace.name
+            - k8s.pod.name
+            - k8s.pod.uid
+        batch:
+          send_batch_size: 10000
+          timeout: 10s
+        resource:
+          attributes:
+          - key: agent
+            value: otelcol
+            action: insert
+        k8s_tagger:
+          # Has to be false to enrich metadata
+          passthrough: false
+          owner_lookup_enabled: true # To enable fetching additional metadata using `owner` relationship
+          extract:
+            metadata:
+              ## extract the following well-known metadata fields
+              - containerId
+              - containerName
+              - clusterName
+              - daemonSetName
+              - deploymentName
+              - hostName
+              - namespace
+              - nodeName
+              - podId
+              - podName
+              - replicaSetName
+              - serviceName
+              - statefulSetName
+            annotations:
+              - tag_name: "pod_annotations_%s"
+                key: "*"
+            namespace_labels:
+              - tag_name: "namespace_labels_%s"
+                key: "*"
+            labels:
+              - tag_name: "pod_labels_%s"
+                key: "*"
+          pod_association:
+          - from: resource_attribute
+            name: k8s.pod.uid
+      service:
+        extensions:
+          - health_check
+          # - sumologic
+        pipelines:
+          logs:
+            receivers:
+              - fluentforward
+            processors:
+              - attributes
+              - groupbyattrs
+              - batch
+              - k8s_tagger
+              - resource
+            exporters:
+              - sumologic
   deployment:
     nodeSelector: {}
     tolerations: []

@@ -1,0 +1,1 @@
+{{ tpl (toYaml .Values.otelcol.logs.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}
