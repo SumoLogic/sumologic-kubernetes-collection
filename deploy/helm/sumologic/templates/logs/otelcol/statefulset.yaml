@@ -144,19 +144,4 @@ spec:
         {{- if .Values.logs.extraEnvVars }}
 {{ toYaml .Values.logs.extraEnvVars | nindent 8 }}
         {{- end }}
-{{- if .Values.logs.persistence.enabled }}
-  volumeClaimTemplates:
-  - metadata:
-      name: buffer
-{{- if .Values.logs.pvcLabels }}
-      labels:
-{{ toYaml .Values.logs.pvcLabels | indent 8 }}
-{{- end }}
-    spec:
-      accessModes: [{{ .Values.logs.persistence.accessMode }}]
-      storageClassName: {{ .Values.logs.persistence.storageClass }}
-      resources:
-        requests:
-          storage: {{ .Values.logs.persistence.size }}
-{{- end }}
 {{- end }}
