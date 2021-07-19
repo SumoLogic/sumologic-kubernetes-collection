@@ -2691,7 +2691,6 @@ otelcol:
               key: run_id
         groupbyattrs:
           keys:
-            - fluent.tag
             - k8s.container.name
             - k8s.instance.id
             - k8s.namespace.name
