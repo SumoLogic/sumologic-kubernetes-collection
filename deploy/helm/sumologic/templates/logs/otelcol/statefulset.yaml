@@ -12,8 +12,8 @@ spec:
       app: {{ template "sumologic.labels.app.logs.pod" . }}
   serviceName: {{ template "sumologic.metadata.name.logs.service-headless" . }}
   podManagementPolicy: "Parallel"
-{{- if not .Values.fluentd.logs.autoscaling.enabled }}
-  replicas: {{ .Values.fluentd.logs.statefulset.replicaCount }}
+{{- if not .Values.logs.autoscaling.enabled }}
+  replicas: {{ .Values.logs.statefulset.replicaCount }}
 {{- end }}
   template:
     metadata:
@@ -22,11 +22,11 @@ spec:
 {{- if .Values.sumologic.podAnnotations }}
 {{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
-{{- if .Values.fluentd.podAnnotations }}
-{{ toYaml .Values.fluentd.podAnnotations | indent 8 }}
+{{- if .Values.otelcol.podAnnotations }}
+{{ toYaml .Values.otelcol.podAnnotations | indent 8 }}
 {{- end }}
-{{- if .Values.fluentd.logs.statefulset.podAnnotations }}
-{{ toYaml .Values.fluentd.logs.statefulset.podAnnotations | indent 8 }}
+{{- if .Values.logs.statefulset.podAnnotations }}
+{{ toYaml .Values.logs.statefulset.podAnnotations | indent 8 }}
 {{- end }}
       labels:
         app: {{ template "sumologic.labels.app.logs.pod" . }}
@@ -34,28 +34,28 @@ spec:
 {{- if .Values.sumologic.podLabels }}
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}
-{{- if .Values.fluentd.podLabels }}
-{{ toYaml .Values.fluentd.podLabels | indent 8 }}
+{{- if .Values.otelcol.podLabels }}
+{{ toYaml .Values.otelcol.podLabels | indent 8 }}
 {{- end }}
-{{- if .Values.fluentd.logs.statefulset.podLabels }}
-{{ toYaml .Values.fluentd.logs.statefulset.podLabels | indent 8 }}
+{{- if .Values.logs.statefulset.podLabels }}
+{{ toYaml .Values.logs.statefulset.podLabels | indent 8 }}
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
-{{- if .Values.fluentd.logs.statefulset.nodeSelector }}
+{{- if .Values.logs.statefulset.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.fluentd.logs.statefulset.nodeSelector | indent 8 }}
+{{ toYaml .Values.logs.statefulset.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.fluentd.logs.statefulset.tolerations }}
+{{- if .Values.logs.statefulset.tolerations }}
       tolerations:
-{{ toYaml .Values.fluentd.logs.statefulset.tolerations | indent 8 }}
+{{ toYaml .Values.logs.statefulset.tolerations | indent 8 }}
 {{- end }}
-{{- if or .Values.fluentd.logs.statefulset.affinity  .Values.fluentd.logs.statefulset.podAntiAffinity }}
+{{- if or .Values.logs.statefulset.affinity  .Values.fluentd.logs.statefulset.podAntiAffinity }}
       affinity:
-{{- if .Values.fluentd.logs.statefulset.affinity }}
-{{ toYaml .Values.fluentd.logs.statefulset.affinity | indent 8 }}
+{{- if .Values.logs.statefulset.affinity }}
+{{ toYaml .Values.logs.statefulset.affinity | indent 8 }}
 {{- end }}
-{{- if eq .Values.fluentd.logs.statefulset.podAntiAffinity "hard"}}
+{{- if eq .Values.logs.statefulset.podAntiAffinity "hard"}}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
@@ -70,7 +70,7 @@ spec:
                 values:
                 - prometheus-operator-prometheus
             topologyKey: "kubernetes.io/hostname"
-{{else if eq .Values.fluentd.logs.statefulset.podAntiAffinity "soft"}}
+{{else if eq .Values.logs.statefulset.podAntiAffinity "soft"}}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
@@ -93,23 +93,23 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "sumologic.metadata.name.logs.configmap" . }}
-{{- if .Values.fluentd.logs.extraVolumes }}
-{{ toYaml .Values.fluentd.logs.extraVolumes | indent 6 }}
+{{- if .Values.logs.extraVolumes }}
+{{ toYaml .Values.logs.extraVolumes | indent 6 }}
 {{- end }}
       securityContext:
-        {{- toYaml .Values.fluentd.securityContext | nindent 8 }}
-      {{- if .Values.fluentd.logs.statefulset.priorityClassName }}
-      priorityClassName: {{ .Values.fluentd.logs.statefulset.priorityClassName | quote }}
+        {{- toYaml .Values.otelcol.securityContext | nindent 8 }}
+      {{- if .Values.logs.statefulset.priorityClassName }}
+      priorityClassName: {{ .Values.logs.statefulset.priorityClassName | quote }}
       {{- end }}
       containers:
       - name: otelcol
         image: {{ .Values.otelcol.statefulset.image.repository }}:{{ .Values.otelcol.statefulset.image.tag }}
         imagePullPolicy: {{ .Values.otelcol.statefulset.image.pullPolicy }}
         resources:
-          {{- toYaml .Values.fluentd.logs.statefulset.resources | nindent 10 }}
-        {{- if .Values.fluentd.logs.statefulset.containers.fluentd.securityContext }}
+          {{- toYaml .Values.logs.statefulset.resources | nindent 10 }}
+        {{- if .Values.logs.statefulset.containers.otelcol.securityContext }}
         securityContext:
-          {{- toYaml .Values.fluentd.otelcol.statefulset.containers.otelcol.securityContext | nindent 10 }}
+          {{- toYaml .Values.logs.statefulset.containers.otelcol.securityContext | nindent 10 }}
         {{- end }}
         ports:
         {{- if .Values.sumologic.traces.enabled }}
@@ -132,8 +132,8 @@ spec:
         - name: config-volume
           mountPath: /etc/otel/config.yaml
           subPath: config.yaml
-{{- if .Values.fluentd.logs.extraVolumeMounts }}
-{{ toYaml .Values.fluentd.logs.extraVolumeMounts | indent 8 }}
+{{- if .Values.logs.extraVolumeMounts }}
+{{ toYaml .Values.logs.extraVolumeMounts | indent 8 }}
 {{- end }}
         env:
 {{- $ctx := .Values -}}
@@ -141,9 +141,22 @@ spec:
 {{- if .Values.sumologic.traces.enabled }}
 {{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces")}}
 {{- end }}
-        {{- if .Values.fluentd.logs.extraEnvVars }}
-{{ toYaml .Values.fluentd.logs.extraEnvVars | nindent 8 }}
+        {{- if .Values.logs.extraEnvVars }}
+{{ toYaml .Values.logs.extraEnvVars | nindent 8 }}
         {{- end }}
-        - name: ADDITIONAL_PLUGINS
-          value: {{ join " " .Values.fluentd.additionalPlugins | quote }}
+{{- if .Values.logs.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: buffer
+{{- if .Values.logs.pvcLabels }}
+      labels:
+{{ toYaml .Values.logs.pvcLabels | indent 8 }}
+{{- end }}
+    spec:
+      accessModes: [{{ .Values.logs.persistence.accessMode }}]
+      storageClassName: {{ .Values.logs.persistence.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.logs.persistence.size }}
+{{- end }}
 {{- end }}

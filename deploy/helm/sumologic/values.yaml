@@ -3004,8 +3004,26 @@ logs:
 
     ## Set securityContext for containers running in pods in logs statefulset.
     containers:
-      fluentd:
+      otelcol:
         securityContext: {}
+
+    ## Extra Environment Values - allows yaml definitions
+    # extraEnvVars:
+    #   - name: VALUE_FROM_SECRET
+    #     valueFrom:
+    #       secretKeyRef:
+    #         name: secret_name
+    #         key: secret_key
+
+    # extraVolumes:
+    #   - name: es-certs
+    #     secret:
+    #       defaultMode: 420
+    #       secretName: es-certs
+    # extraVolumeMounts:
+    #   - name: es-certs
+    #     mountPath: /certs
+    #     readOnly: true
 
   ## Option to turn autoscaling on for fluentd and specify params for HPA.
   ## Autoscaling needs metrics-server to access cpu metrics.
@@ -3022,6 +3040,24 @@ logs:
     minAvailable: 2
   ## To use maxUnavailable, set minAvailable to null and uncomment the below:
   #   maxUnavailable: 1
+
+  ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
+  persistence:
+    ## After changing this value please follow steps described in:
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/FluentdPersistence.md
+    enabled: true
+
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, Azure & OpenStack)
+    ##
+    # storageClass: "-"
+    # annotations: {}
+    accessMode: ReadWriteOnce
+    size: 10Gi
+
 ## Configure telegraf-operator
 ## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
 telegraf-operator:
