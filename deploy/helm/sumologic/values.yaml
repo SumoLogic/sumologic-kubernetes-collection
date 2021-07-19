@@ -2968,6 +2968,9 @@ otelcol:
           ## and uncomment next one
           # exporters: [zipkin]
 
+## Configure logs pipeline.
+## This section affects only otelcol provider.
+## In the future it will be used by fluentd as well.
 logs:
   statefulset:
     nodeSelector: {}
@@ -2988,9 +2991,9 @@ logs:
     ## Option to define priorityClassName to assign a priority class to pods.
     priorityClassName:
 
-    ## Add custom labels only to logs fluentd sts pods
+    ## Add custom labels only to logs sts pods
     podLabels: {}
-    ## Add custom annotations only to logs fluentd sts pods
+    ## Add custom annotations only to logs sts pods
     podAnnotations: {}
 
     ## Set securityContext for containers running in pods in logs statefulset.
@@ -3016,7 +3019,7 @@ logs:
     #     mountPath: /certs
     #     readOnly: true
 
-  ## Option to turn autoscaling on for fluentd and specify params for HPA.
+  ## Option to turn autoscaling on for logs and specify params for HPA.
   ## Autoscaling needs metrics-server to access cpu metrics.
   autoscaling:
     enabled: false
