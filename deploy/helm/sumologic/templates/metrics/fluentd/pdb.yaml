@@ -1,4 +1,4 @@
-{{- if and .Values.sumologic.metrics.enabled .Values.fluentd.metrics.enabled -}}
+{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
 {{- if .Values.fluentd.metrics.podDisruptionBudget -}}
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget

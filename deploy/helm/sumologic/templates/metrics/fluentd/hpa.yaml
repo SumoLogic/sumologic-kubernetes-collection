@@ -1,4 +1,4 @@
-{{- if .Values.fluentd.metrics.autoscaling.enabled}}
+{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
