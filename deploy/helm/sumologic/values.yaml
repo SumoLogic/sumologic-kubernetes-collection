@@ -2656,8 +2656,6 @@ otelcol:
             - host
             - node
             - pod
-            ## ToDo: Remove before merge
-            - agent
       processors:
         attributes:
           actions:
@@ -2719,11 +2717,6 @@ otelcol:
           send_batch_size: 256
           ## Time duration after which a batch will be sent regardless of size
           timeout: 5s
-        resource:
-          attributes:
-            - key: agent
-              value: otelcol
-              action: insert
         k8s_tagger:
           ## Has to be false to enrich metadata
           passthrough: false
@@ -2769,7 +2762,6 @@ otelcol:
               - attributes
               - groupbyattrs
               - k8s_tagger
-              - resource
               - batch
             exporters:
               - sumologic
