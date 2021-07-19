@@ -138,9 +138,6 @@ spec:
         env:
 {{- $ctx := .Values -}}
 {{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs")}}
-{{- if .Values.sumologic.traces.enabled }}
-{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces")}}
-{{- end }}
         {{- if .Values.logs.extraEnvVars }}
 {{ toYaml .Values.logs.extraEnvVars | nindent 8 }}
         {{- end }}
