@@ -2721,13 +2721,13 @@ otelcol:
           timeout: 5s
         resource:
           attributes:
-          - key: agent
-            value: otelcol
-            action: insert
+            - key: agent
+              value: otelcol
+              action: insert
         k8s_tagger:
-          # Has to be false to enrich metadata
+          ## Has to be false to enrich metadata
           passthrough: false
-          owner_lookup_enabled: true # To enable fetching additional metadata using `owner` relationship
+          owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
           extract:
             metadata:
               ## extract the following well-known metadata fields
@@ -2754,8 +2754,8 @@ otelcol:
               - tag_name: "pod_labels_%s"
                 key: "*"
           pod_association:
-          - from: resource_attribute
-            name: k8s.pod.uid
+            - from: resource_attribute
+              name: k8s.pod.uid
       service:
         extensions:
           - health_check
