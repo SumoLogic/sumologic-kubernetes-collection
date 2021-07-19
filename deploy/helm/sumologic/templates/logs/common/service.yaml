@@ -1,4 +1,4 @@
-{{- if eq (include "logs.fluentd.enabled" .) "true" }}
+{{- if eq (include "logs.otelcol.enabled" .) "true" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,8 +7,8 @@ metadata:
     app: {{ template "sumologic.labels.app.logs.service" . }}
     {{- include "sumologic.labels.scrape.logs" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
-{{- if .Values.fluentd.serviceLabels }}
-{{ toYaml .Values.fluentd.serviceLabels | indent 4 }}
+{{- if (include "service.labels" (dict "Provider" .Values.sumologic.logs.provider "Values" .Values )) }}
+{{ include "service.labels" (dict "Provider" .Values.sumologic.logs.provider "Values" .Values ) | indent 4 }}
 {{- end }}
 spec:
   selector:

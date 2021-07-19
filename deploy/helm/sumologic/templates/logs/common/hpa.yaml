@@ -1,4 +1,4 @@
-{{- if eq (include "logs.fluentd.enabled" .) "true" }}
+{{- if eq (include "logs.otelcol.enabled" .) "true" }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -11,21 +11,21 @@ spec:
     apiVersion: apps/v1
     kind: StatefulSet
     name: {{ template "sumologic.metadata.name.logs.statefulset" . }}
-  minReplicas: {{ .Values.fluentd.logs.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.fluentd.logs.autoscaling.maxReplicas }}
+  minReplicas: {{ .Values.logs.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.logs.autoscaling.maxReplicas }}
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: {{ .Values.fluentd.logs.autoscaling.targetCPUUtilizationPercentage }}
-{{- if .Values.fluentd.logs.autoscaling.targetMemoryUtilizationPercentage }}
+        averageUtilization: {{ .Values.logs.autoscaling.targetCPUUtilizationPercentage }}
+{{- if .Values.logs.autoscaling.targetMemoryUtilizationPercentage }}
   - type: Resource
     resource:
       name: memory
       target:
         type: Utilization
-        averageUtilization: {{ .Values.fluentd.logs.autoscaling.targetMemoryUtilizationPercentage }}
+        averageUtilization: {{ .Values.logs.autoscaling.targetMemoryUtilizationPercentage }}
 {{- end -}}
 {{- end -}}

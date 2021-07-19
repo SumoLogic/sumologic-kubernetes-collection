@@ -1138,8 +1138,10 @@ Example Usage:
 {{ $enabled }}
 {{- end -}}
 
+
 {{/*
 Add service labels
+
 Example Usage:
 {{- if eq (include "service.labels" dict("Provider" "fluentd" "Values" .Values)) "true" }}
 
