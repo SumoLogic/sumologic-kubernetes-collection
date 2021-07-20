@@ -4,3 +4,7 @@
 {{- fail "\nAt least k8s 1.16 is required. Please update your k8s version or set sumologic.setup.force to true" -}}
 {{- end -}}
 {{- end -}}
+{{/* Check if metrics provider is set to either fluentd or otelcol */}}
+{{- if not (or (eq .Values.sumologic.metrics.provider "fluentd") (eq .Values.sumologic.metrics.provider "otelcol")) -}}
+{{- fail "\nsumologic.metrics.provider should be set to either fluentd or otelcol" -}}
+{{- end -}}
