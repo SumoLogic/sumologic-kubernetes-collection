@@ -38,6 +38,8 @@ spec:
             mountPath: /configmap
           - name: cleanup
             mountPath: /etc/terraform
+      nodeSelector:
+        kubernetes.io/os: linux
       containers:
         - name: cleanup
           image: {{ .Values.sumologic.setup.job.image.repository }}:{{ .Values.sumologic.setup.job.image.tag }}

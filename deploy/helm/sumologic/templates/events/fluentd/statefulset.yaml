@@ -59,6 +59,8 @@ spec:
       {{- if .Values.fluentd.events.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.fluentd.events.statefulset.priorityClassName | quote }}
       {{- end }}
+      nodeSelector:
+        kubernetes.io/os: linux
       containers:
       - name: fluentd-events
         image: {{ .Values.fluentd.image.repository }}:{{ .Values.fluentd.image.tag }}

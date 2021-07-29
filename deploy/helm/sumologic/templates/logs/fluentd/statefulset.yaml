@@ -101,6 +101,8 @@ spec:
       {{- if .Values.fluentd.logs.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.fluentd.logs.statefulset.priorityClassName | quote }}
       {{- end }}
+      nodeSelector:
+        kubernetes.io/os: linux
       containers:
       - name: fluentd
         image: {{ .Values.fluentd.image.repository }}:{{ .Values.fluentd.image.tag }}

@@ -41,6 +41,8 @@ spec:
         configMap:
           name: {{ template "sumologic.metadata.name.setup.configmap-custom" . }}
           defaultMode: 0777
+      nodeSelector:
+        kubernetes.io/os: linux
       containers:
       - name: setup
         image: {{ .Values.sumologic.setup.job.image.repository }}:{{ .Values.sumologic.setup.job.image.tag }}

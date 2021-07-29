@@ -51,6 +51,8 @@ spec:
       {{- if .Values.otelcol.deployment.priorityClassName }}
       priorityClassName: {{ .Values.otelcol.deployment.priorityClassName | quote }}
       {{- end }}
+      nodeSelector:
+        kubernetes.io/os: linux
       containers:
       - name: otelcontrib-collector
         image: {{ .Values.otelcol.deployment.image.repository }}:{{ .Values.otelcol.deployment.image.tag }}

@@ -51,6 +51,8 @@ spec:
       {{- if .Values.otelagent.daemonset.priorityClassName }}
       priorityClassName: {{ .Values.otelagent.daemonset.priorityClassName | quote }}
       {{- end }}
+      nodeSelector:
+        kubernetes.io/os: linux
       containers:
       - name: otelcontrib-agent
         image: {{ .Values.otelagent.daemonset.image.repository }}:{{ .Values.otelagent.daemonset.image.tag }}
