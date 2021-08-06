@@ -2747,7 +2747,24 @@ otelcol:
                 key: "*"
           pod_association:
             - from: resource_attribute
-              name: k8s.pod.uid
+              name: k8s.pod.uid        ## Source processor adds Sumo Logic related metadata
+        source:
+          collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+          source_name: '{{ .Values.fluentd.logs.containers.sourceName | quote }}'
+          source_category: '{{ .Values.fluentd.logs.containers.sourceCategory | quote }}'
+          source_category_prefix: '{{ .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}'
+          source_category_replace_dash: '{{ .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}'
+          exclude_namespace_regex: '{{ include "fluentd.excludeNamespaces" . }}'
+          exclude_pod_regex: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
+          exclude_container_regex: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
+          exclude_host_regex: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
+          annotation_prefix: "k8s.pod.annotation."
+          pod_template_hash_key: "k8s.pod.label.pod-template-hash"
+          pod_name_key: "k8s.pod.pod_name"
+          namespace_key: "k8s.namespace.name"
+          pod_key: "k8s.pod.name"
+          container_key: "k8s.container.name"
+          source_host_key: "k8s.pod.hostname"
       service:
         extensions:
           - health_check
@@ -2761,6 +2778,7 @@ otelcol:
               - attributes
               - groupbyattrs
               - k8s_tagger
+              - source
               - batch
             exporters:
               - sumologic
