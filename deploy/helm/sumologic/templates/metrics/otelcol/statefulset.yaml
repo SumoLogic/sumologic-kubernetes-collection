@@ -103,7 +103,7 @@ spec:
       {{- end }}
       containers:
       - name: otelcol
-        image: {{ .Values.otelcol.statefulset.image.repository }}:{{ .Values.fluentd.image.tag }}
+        image: {{ .Values.otelcol.statefulset.image.repository }}:{{ .Values.otelcol.statefulset.image.tag }}
         imagePullPolicy: {{ .Values.otelcol.statefulset.image.pullPolicy }}
         resources:
           {{- toYaml .Values.metrics.statefulset.resources | nindent 10 }}
@@ -123,6 +123,10 @@ spec:
           httpGet:
             path: /
             port: 13133 # Health Check extension default port.
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/otel/config.yaml
+          subPath: config.yaml
 {{- if .Values.metrics.extraVolumeMounts }}
 {{ toYaml .Values.metrics.extraVolumeMounts | indent 8 }}
 {{- end }}

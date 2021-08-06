@@ -19,7 +19,7 @@ spec:
   - name: jaeger-thrift-binary # Default endpoint for Jaeger Thrift Binary receiver.
     port: 6832
     protocol: UDP
-  {{- if eq .Values.otelcol.metrics.enabled true }}
+  {{- if eq .Values.otelcol.monitoring.metrics.enabled true }}
   - name: metrics # Default endpoint for querying metrics.
     port: 8888
   {{- end }}

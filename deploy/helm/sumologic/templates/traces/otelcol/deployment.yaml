@@ -58,7 +58,7 @@ spec:
         command:
           - "/otelcontribcol"
           - "--config=/conf/traces.otelcol.conf.yaml"
-          {{- if eq .Values.otelcol.metrics.enabled false }}
+          {{- if eq .Values.otelcol.monitoring.metrics.enabled false }}
           - "--metrics-level=none"
           {{- end }}
           - {{ printf "--mem-ballast-size-mib=%s" .Values.otelcol.deployment.memBallastSizeMib }}
