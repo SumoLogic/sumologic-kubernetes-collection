@@ -2487,8 +2487,8 @@ otelcol:
 
   statefulset:
     image:
-      repository: public.ecr.aws/a4t4y2n3/sumologic-otel-collector-dev
-      tag: da62c511f214446196f44d1fedd8a34e07d2b267
+      repository: public.ecr.aws/sumologic/sumologic-otel-collector
+      tag: 0.0.18
       pullPolicy: IfNotPresent
 
   metrics:
