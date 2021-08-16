@@ -1,4 +1,4 @@
-{{- if eq (include "logs.otelcol.enabled" .) "true" }}
+{{- if and (eq (include "logs.otelcol.enabled" .) "true") (.Values.logs.autoscaling.enabled) }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
