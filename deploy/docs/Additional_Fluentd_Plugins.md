@@ -1,6 +1,7 @@
 # Adding Additional Fluentd Plugins
 
-To add additional Fluentd plugins, you can modify `values.yaml` or create a new Docker image from our provided Docker image.
+To add additional Fluentd plugins, you can modify `values.yaml`
+or create a new container image from our provided image.
 
 ## Configuration
 
@@ -15,15 +16,43 @@ fluentd:
 
 ## Docker
 
-__Note__: You will want to update `<RELEASE>` to the [docker tag](https://hub.docker.com/r/sumologic/kubernetes-fluentd/tags) you wish to use.
+Use the [Sumo Logic Fluentd](https://gallery.ecr.aws/sumologic/kubernetes-fluentd) image as the base image.
+
+__Note:__ To choose between Debian-based and Alpine-based image,
+see [Choosing Fluentd base image](./Best_Practices.md#choosing-fluentd-base-image).
+
+To create a Debian-based image:
 
 ```dockerfile
-FROM sumologic/kubernetes-fluentd:<RELEASE>
+FROM public.ecr.aws/sumologic/kubernetes-fluentd:<RELEASE>
 
 USER root
-# Add the plugins you wish to install below.
+
+# Install any system dependencies if required.
+RUN apt-get install some-dependency
+
+# Install the required plugins.
 RUN gem install fluent-plugin-route
 RUN gem install fluent-plugin-aws-elasticsearch-service
 
-USER fluent
+# Use numeric user ID - see https://github.com/SumoLogic/sumologic-kubernetes-fluentd/pull/118
+USER 999:999
+```
+
+To create an Alpine-based image:
+
+```dockerfile
+FROM public.ecr.aws/sumologic/kubernetes-fluentd:<RELEASE>-alpine
+
+USER root
+
+# Install any system dependencies if required.
+RUN apk add --no-cache some-dependency
+
+# Install the required plugins.
+RUN gem install fluent-plugin-route
+RUN gem install fluent-plugin-aws-elasticsearch-service
+
+# Use numeric user ID - see https://github.com/SumoLogic/sumologic-kubernetes-fluentd/pull/118
+USER 999:999
 ```
