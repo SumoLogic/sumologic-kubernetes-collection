@@ -4,6 +4,7 @@
   - [MySQL slow logs example](#mysql-slow-logs-example)
 - [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
   - [Multiline Support](#multiline-support)
+- [Choosing Fluentd Base Image](#choosing-fluentd-base-image)
 - [Fluentd Autoscaling](#fluentd-autoscaling)
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
 - [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
@@ -102,6 +103,42 @@ to the `Docker_Mode_Parser` parameter in the `Input plugin` configuration of flu
 ```
 Docker_Mode_Parser multi_line
 ```
+
+## Choosing Fluentd Base Image
+
+Historically, the Fluentd container image used with the collection was based on Debian Linux distribution.
+
+Currently, an Alpine-based image is also available and can be used instead of the Debian-based image.
+
+The Debian-based image is the default, so you do not need to change anything to use it.
+
+To use an Alpine-based image with the collection, specify an Alpine image's tag in `fluentd.image.tag` chart property:
+
+```yaml
+fluentd:
+  image:
+    tag: <Fluentd-release>-alpine
+```
+
+For example:
+
+```yaml
+fluentd:
+  image:
+    tag: 1.12.2-sumo-4-alpine
+```
+
+Go to the [official Sumo Logic's Fluentd image repository](https://gallery.ecr.aws/sumologic/kubernetes-fluentd)
+to find the latest release of Fluentd.
+The Alpine-based releases are the ones with the `-alpine` suffix.
+
+Both Debian-based and Alpine-based images support the same architectures:
+
+- x86-64,
+- ARM 32-bit,
+- ARM 64-bit.
+
+The source code and the `Dockerfile`s for both images can be found at https://github.com/SumoLogic/sumologic-kubernetes-fluentd.
 
 ## Fluentd Autoscaling
 
