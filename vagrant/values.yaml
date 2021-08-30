@@ -68,3 +68,12 @@ falco:
       - macro: user_privileged_containers
         condition: >
           (container.image.repository endswith ".amazonaws.com/eks/kube-proxy")
+
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |
+        # Filter out receiver-mock logs to prevent snowball effect
+        <match **receiver-mock**>
+          @type null
+        </match>
