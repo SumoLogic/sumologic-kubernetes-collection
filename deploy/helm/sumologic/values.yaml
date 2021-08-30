@@ -82,6 +82,10 @@ sumologic:
   ## Add custom annotations to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
   podAnnotations: {}
 
+  ## Add custom annotations to sumologic serviceAccounts
+  serviceAccount:
+    annotations: {}
+
   ## creation of Security Context Constraints in Openshift
   scc:
     create: false
