@@ -15,13 +15,23 @@ spec:
 {{- if .Values.sumologic.podAnnotations }}
 {{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
+{{- if .Values.sumologic.cleanup.job.podAnnotations }}
+{{ toYaml .Values.sumologic.cleanup.job.podAnnotations | indent 8 }}
+{{- end }}
       labels:
 {{- if .Values.sumologic.podLabels }}
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}
+{{- if .Values.sumologic.cleanup.job.podLabels }}
+{{ toYaml .Values.sumologic.cleanup.job.podLabels | indent 8 }}
+{{- end }}
     spec:
       restartPolicy: OnFailure
       serviceAccountName: {{ template "sumologic.metadata.name.cleanup.roles.serviceaccount" . }}
+{{- if .Values.sumologic.cleanup.job.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.sumologic.cleanup.job.nodeSelector | indent 8 }}
+{{- end }}
       volumes:
       - name: configmap
         configMap:
@@ -40,8 +50,8 @@ spec:
             mountPath: /etc/terraform
       containers:
         - name: cleanup
-          image: {{ .Values.sumologic.setup.job.image.repository }}:{{ .Values.sumologic.setup.job.image.tag }}
-          imagePullPolicy: {{ .Values.sumologic.setup.job.image.pullPolicy }}
+          image: {{ .Values.sumologic.cleanup.job.image.repository }}:{{ .Values.sumologic.cleanup.job.image.tag }}
+          imagePullPolicy: {{ .Values.sumologic.cleanup.job.image.pullPolicy }}
           volumeMounts:
           - name: cleanup
             mountPath: /etc/terraform
