@@ -2546,6 +2546,13 @@ otelcol:
             - node
             - pod
       processors:
+        metricstransform:
+          transforms:
+            # rename all prometheus_remote_write_$name metrics to $name
+            include: ^prometheus_remote_write_(.*)$$
+            match_type: regexp
+            action: update
+            new_name: $$1
         resource:
           attributes:
             - key: k8s.namespace.name
@@ -2630,6 +2637,7 @@ otelcol:
               - telegraf
             processors:
               - memory_limiter
+              - metricstransform
               - resource
               - k8s_tagger
               - source
