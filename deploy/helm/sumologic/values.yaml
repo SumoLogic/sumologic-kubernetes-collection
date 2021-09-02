@@ -2494,6 +2494,7 @@ otelcol:
 
   metrics:
     enabled: true
+    logLevel: info
     config:
       receivers:
         telegraf:
