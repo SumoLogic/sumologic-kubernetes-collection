@@ -2530,7 +2530,7 @@ otelcol:
         health_check: {}
       exporters:
         sumologic:
-          log_format: json
+          metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
           source_host: '%{host}'
           metadata_attributes:
