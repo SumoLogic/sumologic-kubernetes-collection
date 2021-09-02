@@ -2606,7 +2606,6 @@ otelcol:
         ## Source processor adds Sumo Logic related metadata
         source:
           collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
-          source_name: '{{ .Values.fluentd.logs.containers.sourceName | quote }}'
           source_category: '{{ .Values.fluentd.logs.containers.sourceCategory | quote }}'
           source_category_prefix: '{{ .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}'
           source_category_replace_dash: '{{ .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}'
