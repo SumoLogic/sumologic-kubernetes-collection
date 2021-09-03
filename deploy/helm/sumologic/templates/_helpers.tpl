@@ -1054,7 +1054,7 @@ Example Usage:
 {{- define "metrics.otelcol.enabled" -}}
 {{- $enabled := false -}}
 {{- if eq .Values.sumologic.metrics.enabled true -}}
-{{- if and (eq .Values.sumologic.metrics.metadata.provider "otelcol") (eq .Values.otelcol.metrics.enabled true) -}}
+{{- if and (eq .Values.sumologic.metrics.metadata.provider "otelcol") (eq .Values.otelcol.metadata.metrics.enabled true) -}}
 {{- $enabled = true -}}
 {{- end -}}
 {{- end -}}

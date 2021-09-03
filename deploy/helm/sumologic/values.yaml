@@ -245,86 +245,87 @@ sumologic:
 ## This section affects only otelcol provider.
 ## In the future it will be used by fluentd as well.
 metrics:
-  statefulset:
-    nodeSelector: {}
-    tolerations: []
-    affinity: {}
-    ## Acceptable values for podAntiAffinity:
-    ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
-    ## hard: specifies rules that must be met for a pod to be scheduled onto a node
-    podAntiAffinity: "soft"
-    replicaCount: 3
-    resources:
-      limits:
-        memory: 1Gi
-        cpu: 1000m
-      requests:
-        memory: 768Mi
-        cpu: 500m
-    ## Option to define priorityClassName to assign a priority class to pods.
-    priorityClassName:
+  metadata:
+    statefulset:
+      nodeSelector: {}
+      tolerations: []
+      affinity: {}
+      ## Acceptable values for podAntiAffinity:
+      ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
+      ## hard: specifies rules that must be met for a pod to be scheduled onto a node
+      podAntiAffinity: "soft"
+      replicaCount: 3
+      resources:
+        limits:
+          memory: 1Gi
+          cpu: 1000m
+        requests:
+          memory: 768Mi
+          cpu: 500m
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
 
-    ## Add custom labels only to metrics sts pods
-    podLabels: {}
-    ## Add custom annotations only to metrics sts pods
-    podAnnotations: {}
+      ## Add custom labels only to metrics sts pods
+      podLabels: {}
+      ## Add custom annotations only to metrics sts pods
+      podAnnotations: {}
 
-    ## Set securityContext for containers running in pods in metrics statefulset.
-    containers:
-      otelcol:
-        securityContext: {}
+      ## Set securityContext for containers running in pods in metrics statefulset.
+      containers:
+        otelcol:
+          securityContext: {}
 
-    ## Extra Environment Values - allows yaml definitions
-    # extraEnvVars:
-    #   - name: VALUE_FROM_SECRET
-    #     valueFrom:
-    #       secretKeyRef:
-    #         name: secret_name
-    #         key: secret_key
+      ## Extra Environment Values - allows yaml definitions
+      # extraEnvVars:
+      #   - name: VALUE_FROM_SECRET
+      #     valueFrom:
+      #       secretKeyRef:
+      #         name: secret_name
+      #         key: secret_key
 
-    # extraVolumes:
-    #   - name: es-certs
-    #     secret:
-    #       defaultMode: 420
-    #       secretName: es-certs
-    # extraVolumeMounts:
-    #   - name: es-certs
-    #     mountPath: /certs
-    #     readOnly: true
+      # extraVolumes:
+      #   - name: es-certs
+      #     secret:
+      #       defaultMode: 420
+      #       secretName: es-certs
+      # extraVolumeMounts:
+      #   - name: es-certs
+      #     mountPath: /certs
+      #     readOnly: true
 
-  ## Option to turn autoscaling on for metrics and specify params for HPA.
-  ## Autoscaling needs metrics-server to access cpu metrics.
-  autoscaling:
-    enabled: false
-    minReplicas: 3
-    maxReplicas: 10
-    targetCPUUtilizationPercentage: 50
-    # targetMemoryUtilizationPercentage: 50
+    ## Option to turn autoscaling on for metrics and specify params for HPA.
+    ## Autoscaling needs metrics-server to access cpu metrics.
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
+      # targetMemoryUtilizationPercentage: 50
 
-  ## Option to specify PodDisrutionBudgets
-  ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
-  podDisruptionBudget:
-    minAvailable: 2
-  ## To use maxUnavailable, set minAvailable to null and uncomment the below:
-  #   maxUnavailable: 1
+    ## Option to specify PodDisrutionBudgets
+    ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+    podDisruptionBudget:
+      minAvailable: 2
+    ## To use maxUnavailable, set minAvailable to null and uncomment the below:
+    #   maxUnavailable: 1
 
-  ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
-  ## ToDo: implement on otelcol side
-  persistence:
-    ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/FluentdPersistence.md
-    enabled: true
+    ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
+    ## ToDo: implement on otelcol side
+    persistence:
+      ## After changing this value please follow steps described in:
+      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/FluentdPersistence.md
+      enabled: true
 
-    ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
-    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-    ##   GKE, Azure & OpenStack)
-    ##
-    # storageClass: "-"
-    # annotations: {}
-    accessMode: ReadWriteOnce
-    size: 10Gi
+      ## If defined, storageClassName: <storageClass>
+      ## If set to "-", storageClassName: "", which disables dynamic provisioning
+      ## If undefined (the default) or set to null, no storageClassName spec is
+      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+      ##   GKE, Azure & OpenStack)
+      ##
+      # storageClass: "-"
+      # annotations: {}
+      accessMode: ReadWriteOnce
+      size: 10Gi
 
 fluentd:
   image:
@@ -2492,156 +2493,156 @@ otelcol:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
       tag: 0.0.18
       pullPolicy: IfNotPresent
+  metadata:
+    metrics:
+      enabled: true
+      logLevel: info
+      config:
+        receivers:
+          telegraf:
+            agent_config: |
+              [agent]
+                interval = "30s"
+                flush_interval = "30s"
 
-  metrics:
-    enabled: true
-    logLevel: info
-    config:
-      receivers:
-        telegraf:
-          agent_config: |
-            [agent]
-              interval = "30s"
-              flush_interval = "30s"
-
-            [[inputs.http_listener_v2]]
-              service_address = ":9888"
-              data_format = "prometheusremotewrite"
-              paths = [
-                "/prometheus.metrics",
-                "/prometheus.metrics.apiserver",
-                "/prometheus.metrics.applications.apache",
-                "/prometheus.metrics.applications.jmx",
-                "/prometheus.metrics.applications.kafka",
-                "/prometheus.metrics.applications.mysql",
-                "/prometheus.metrics.applications.nginx",
-                "/prometheus.metrics.applications.nginx-ingress",
-                "/prometheus.metrics.applications.postgresql",
-                "/prometheus.metrics.applications.redis",
-                "/prometheus.metrics.container",
-                "/prometheus.metrics.controller-manager",
-                "/prometheus.metrics.control-plane.coredns",
-                "/prometheus.metrics.control-plane.kube-etcd",
-                "/prometheus.metrics.kubelet",
-                "/prometheus.metrics.node",
-                "/prometheus.metrics.operator.rule",
-                "/prometheus.metrics.scheduler",
-                "/prometheus.metrics.state"
-              ]
-      extensions:
-        health_check: {}
-      exporters:
-        sumologic:
-          metric_format: prometheus
-          endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
-          metadata_attributes:
-            - k8s.*
-            - pod_.*
-            - namespace_.*
-
-            - Deployment
-            - container
-            - node
-            - pod
-      processors:
-        metricstransform:
-          transforms:
-            # rename all prometheus_remote_write_$name metrics to $name
-            include: ^prometheus_remote_write_(.*)$$
-            match_type: regexp
-            action: update
-            new_name: $$1
-        resource:
-          attributes:
-            - key: k8s.namespace.name
-              from_attribute: namespace
-              action: upsert
-            - key: k8s.pod.name
-              from_attribute: pod
-              action: upsert
-        ## The memory_limiter processor is used to prevent out of memory situations on the collector.
-        memory_limiter:
-          ## check_interval is the time between measurements of memory usage for the
-          ## purposes of avoiding going over the limits. Defaults to zero, so no
-          ## checks will be performed. Values below 1 second are not recommended since
-          ## it can result in unnecessary CPU consumption.
-          check_interval: 5s
-
-          ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
-          ## Note that typically the total memory usage of process will be about 50MiB higher
-          ## than this value.
-          limit_mib: 1900
-
-        ## The batch processor accepts spans and places them into batches grouped by node and resource
-        batch:
-          ## Number of spans after which a batch will be sent regardless of time
-          send_batch_size: 256
-          ## Time duration after which a batch will be sent regardless of size
-          timeout: 5s
-        k8s_tagger:
-          ## Has to be false to enrich metadata
-          passthrough: false
-          owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
-          extract:
-            metadata:
-              ## extract the following well-known metadata fields
-              - containerId
-              - containerName
-              - clusterName
-              - daemonSetName
-              - deploymentName
-              - hostName
-              - namespace
-              - nodeName
-              - podId
-              - podName
-              - replicaSetName
-              - serviceName
-              - statefulSetName
-            annotations:
-              - tag_name: "pod_annotations_%s"
-                key: "*"
-            namespace_labels:
-              - tag_name: "namespace_labels_%s"
-                key: "*"
-            labels:
-              - tag_name: "pod_labels_%s"
-                key: "*"
-          pod_association:
-            - from: build_hostname
-        ## Source processor adds Sumo Logic related metadata
-        source:
-          collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
-          source_category: '{{ .Values.fluentd.logs.containers.sourceCategory | quote }}'
-          source_category_prefix: '{{ .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}'
-          source_category_replace_dash: '{{ .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}'
-          exclude_namespace_regex: '{{ include "fluentd.excludeNamespaces" . }}'
-          exclude_pod_regex: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
-          exclude_container_regex: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
-          exclude_host_regex: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
-          annotation_prefix: "k8s.pod.annotation."
-          pod_template_hash_key: "k8s.pod.label.pod-template-hash"
-          pod_name_key: "k8s.pod.pod_name"
-          namespace_key: "k8s.namespace.name"
-          pod_key: "k8s.pod.name"
-          container_key: "k8s.container.name"
-          source_host_key: "k8s.pod.hostname"
-      service:
+              [[inputs.http_listener_v2]]
+                service_address = ":9888"
+                data_format = "prometheusremotewrite"
+                paths = [
+                  "/prometheus.metrics",
+                  "/prometheus.metrics.apiserver",
+                  "/prometheus.metrics.applications.apache",
+                  "/prometheus.metrics.applications.jmx",
+                  "/prometheus.metrics.applications.kafka",
+                  "/prometheus.metrics.applications.mysql",
+                  "/prometheus.metrics.applications.nginx",
+                  "/prometheus.metrics.applications.nginx-ingress",
+                  "/prometheus.metrics.applications.postgresql",
+                  "/prometheus.metrics.applications.redis",
+                  "/prometheus.metrics.container",
+                  "/prometheus.metrics.controller-manager",
+                  "/prometheus.metrics.control-plane.coredns",
+                  "/prometheus.metrics.control-plane.kube-etcd",
+                  "/prometheus.metrics.kubelet",
+                  "/prometheus.metrics.node",
+                  "/prometheus.metrics.operator.rule",
+                  "/prometheus.metrics.scheduler",
+                  "/prometheus.metrics.state"
+                ]
         extensions:
-          - health_check
-        pipelines:
-          metrics:
-            receivers:
-              - telegraf
-            processors:
-              - memory_limiter
-              - metricstransform
-              - resource
-              - k8s_tagger
-              - source
-              - batch
-            exporters:
-              - sumologic
+          health_check: {}
+        exporters:
+          sumologic:
+            metric_format: prometheus
+            endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+            metadata_attributes:
+              - k8s.*
+              - pod_.*
+              - namespace_.*
+
+              - Deployment
+              - container
+              - node
+              - pod
+        processors:
+          metricstransform:
+            transforms:
+              # rename all prometheus_remote_write_$name metrics to $name
+              include: ^prometheus_remote_write_(.*)$$
+              match_type: regexp
+              action: update
+              new_name: $$1
+          resource:
+            attributes:
+              - key: k8s.namespace.name
+                from_attribute: namespace
+                action: upsert
+              - key: k8s.pod.name
+                from_attribute: pod
+                action: upsert
+          ## The memory_limiter processor is used to prevent out of memory situations on the collector.
+          memory_limiter:
+            ## check_interval is the time between measurements of memory usage for the
+            ## purposes of avoiding going over the limits. Defaults to zero, so no
+            ## checks will be performed. Values below 1 second are not recommended since
+            ## it can result in unnecessary CPU consumption.
+            check_interval: 5s
+
+            ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
+            ## Note that typically the total memory usage of process will be about 50MiB higher
+            ## than this value.
+            limit_mib: 1900
+
+          ## The batch processor accepts spans and places them into batches grouped by node and resource
+          batch:
+            ## Number of spans after which a batch will be sent regardless of time
+            send_batch_size: 256
+            ## Time duration after which a batch will be sent regardless of size
+            timeout: 5s
+          k8s_tagger:
+            ## Has to be false to enrich metadata
+            passthrough: false
+            owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
+            extract:
+              metadata:
+                ## extract the following well-known metadata fields
+                - containerId
+                - containerName
+                - clusterName
+                - daemonSetName
+                - deploymentName
+                - hostName
+                - namespace
+                - nodeName
+                - podId
+                - podName
+                - replicaSetName
+                - serviceName
+                - statefulSetName
+              annotations:
+                - tag_name: "pod_annotations_%s"
+                  key: "*"
+              namespace_labels:
+                - tag_name: "namespace_labels_%s"
+                  key: "*"
+              labels:
+                - tag_name: "pod_labels_%s"
+                  key: "*"
+            pod_association:
+              - from: build_hostname
+          ## Source processor adds Sumo Logic related metadata
+          source:
+            collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+            source_category: '{{ .Values.fluentd.logs.containers.sourceCategory | quote }}'
+            source_category_prefix: '{{ .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}'
+            source_category_replace_dash: '{{ .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}'
+            exclude_namespace_regex: '{{ include "fluentd.excludeNamespaces" . }}'
+            exclude_pod_regex: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
+            exclude_container_regex: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
+            exclude_host_regex: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
+            annotation_prefix: "k8s.pod.annotation."
+            pod_template_hash_key: "k8s.pod.label.pod-template-hash"
+            pod_name_key: "k8s.pod.pod_name"
+            namespace_key: "k8s.namespace.name"
+            pod_key: "k8s.pod.name"
+            container_key: "k8s.container.name"
+            source_host_key: "k8s.pod.hostname"
+        service:
+          extensions:
+            - health_check
+          pipelines:
+            metrics:
+              receivers:
+                - telegraf
+              processors:
+                - memory_limiter
+                - metricstransform
+                - resource
+                - k8s_tagger
+                - source
+                - batch
+              exporters:
+                - sumologic
 
   deployment:
     nodeSelector: {}
@@ -2689,9 +2690,8 @@ otelcol:
   ## To enable collecting all logs, set to false
   logLevelFilter: true
   ## Metrics from Collector
-  monitoring:
-    metrics:
-      enabled: true
+  metrics:
+    enabled: true
   ## Collector configuration
   config:
     receivers:

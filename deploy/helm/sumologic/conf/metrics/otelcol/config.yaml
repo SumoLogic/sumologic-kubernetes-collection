@@ -1,1 +1,1 @@
-{{ tpl (toYaml .Values.otelcol.metrics.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}
+{{ tpl (toYaml .Values.otelcol.metadata.metrics.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}
