@@ -198,8 +198,7 @@ sumologic:
         default:
           name: events
           config-name: endpoint-events
-          properties:
-            category: "${var.cluster_name}/${local.default_events_source}"
+          category: true
       traces:
         default:
           name: traces
