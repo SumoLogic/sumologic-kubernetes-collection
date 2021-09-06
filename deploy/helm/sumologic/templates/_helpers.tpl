@@ -325,7 +325,11 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics" -}}
+{{- if eq .Values.sumologic.metrics.metadata.provider "fluentd" -}}
 {{ template "sumologic.metadata.name.fluentd" . }}-metrics
+{{- else if eq .Values.sumologic.metrics.metadata.provider "otelcol" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}-metrics
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.service" -}}
@@ -1023,4 +1027,69 @@ Example:
   {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
 {{- end -}}
 {{ print $excludeNamespaceRegex }}
+{{- end -}}
+
+
+{{/*
+Check if any metrics provider is enabled
+Example Usage:
+{{- if eq (include "metrics.enabled" .) "true" }}
+
+*/}}
+{{- define "metrics.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Check if otelcol metrics provider is enabled
+Example Usage:
+{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+
+*/}}
+{{- define "metrics.otelcol.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.metrics.enabled true -}}
+{{- if and (eq .Values.sumologic.metrics.metadata.provider "otelcol") (eq .Values.otelcol.metadata.metrics.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Check if fluentd metrics provider is enabled
+Example Usage:
+{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
+
+*/}}
+{{- define "metrics.fluentd.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.metrics.enabled true -}}
+{{- if and (eq .Values.sumologic.metrics.metadata.provider "fluentd") (eq .Values.fluentd.metrics.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Add service labels
+Example Usage:
+{{- if eq (include "service.labels" dict("Provider" "fluentd" "Values" .Values)) "true" }}
+
+*/}}
+{{- define "service.labels" -}}
+{{- if (get (get .Values .Provider) "serviceLabels") }}
+{{ toYaml (get (get .Values .Provider) "serviceLabels") }}
+{{- end }}
 {{- end -}}

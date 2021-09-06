@@ -1,5 +1,5 @@
-{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
-{{- if .Values.fluentd.metrics.podDisruptionBudget -}}
+{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+{{- if .Values.metrics.metadatapodDisruptionBudget -}}
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
@@ -8,6 +8,6 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.metrics.statefulset" . }}
-{{ toYaml .Values.fluentd.metrics.podDisruptionBudget | indent 2 }}
+{{ toYaml .Values.metrics.metadatapodDisruptionBudget | indent 2 }}
 {{- end -}}
 {{- end -}}

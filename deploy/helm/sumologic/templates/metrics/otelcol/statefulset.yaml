@@ -1,0 +1,142 @@
+{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "sumologic.metadata.name.metrics.statefulset" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.metrics.statefulset" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.labels.app.metrics.pod" . }}
+  serviceName: {{ template "sumologic.metadata.name.metrics.service-headless" . }}
+  podManagementPolicy: "Parallel"
+{{- if not .Values.metrics.metadata.autoscaling.enabled }}
+  replicas: {{ .Values.metrics.metadata.statefulset.replicaCount }}
+{{- end }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/metrics/otelcol/configmap.yaml") . | sha256sum }}
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.otelcol.podAnnotations }}
+{{ toYaml .Values.otelcol.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.metrics.metadata.statefulset.podAnnotations }}
+{{ toYaml .Values.metrics.metadata.statefulset.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+        app: {{ template "sumologic.labels.app.metrics.pod" . }}
+        {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.otelcol.podLabels }}
+{{ toYaml .Values.otelcol.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.metrics.metadata.statefulset.podLabels }}
+{{ toYaml .Values.metrics.metadata.statefulset.podLabels | indent 8 }}
+{{- end }}
+    spec:
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
+{{- if .Values.metrics.metadata.statefulset.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.metrics.metadata.statefulset.nodeSelector | indent 8 }}
+{{- end }}
+{{- if .Values.metrics.metadata.statefulset.tolerations }}
+      tolerations:
+{{ toYaml .Values.metrics.metadata.statefulset.tolerations | indent 8 }}
+{{- end }}
+{{- if or .Values.metrics.metadata.statefulset.affinity  .Values.metrics.metadata.statefulset.podAntiAffinity }}
+      affinity:
+{{- if .Values.metrics.metadata.statefulset.affinity }}
+{{ toYaml .Values.metrics.metadata.statefulset.affinity | indent 8 }}
+{{- end }}
+{{- if eq .Values.metrics.metadata.statefulset.podAntiAffinity "hard"}}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - {{ template "sumologic.labels.app.logs" . }}
+                - {{ template "sumologic.labels.app.metrics" . }}
+              - key: app
+                operator: In
+                values:
+                - prometheus-operator-prometheus
+            topologyKey: "kubernetes.io/hostname"
+{{else if eq .Values.metrics.metadata.statefulset.podAntiAffinity "soft"}}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ template "sumologic.labels.app.logs.pod" . }}
+                  - {{ template "sumologic.labels.app.metrics.pod" . }}
+                - key: app
+                  operator: In
+                  values:
+                  - prometheus-operator-prometheus
+              topologyKey: "kubernetes.io/hostname"
+{{- end }}
+{{- end }}
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ template "sumologic.metadata.name.metrics.configmap" . }}
+{{- if .Values.metrics.metadataextraVolumes }}
+{{ toYaml .Values.metrics.metadataextraVolumes | indent 6 }}
+{{- end }}
+      securityContext:
+        {{- toYaml .Values.otelcol.securityContext | nindent 8 }}
+      {{- if .Values.metrics.metadata.statefulset.priorityClassName }}
+      priorityClassName: {{ .Values.metrics.metadata.statefulset.priorityClassName | quote }}
+      {{- end }}
+      containers:
+      - name: otelcol
+        image: {{ .Values.otelcol.statefulset.image.repository }}:{{ .Values.otelcol.statefulset.image.tag }}
+        imagePullPolicy: {{ .Values.otelcol.statefulset.image.pullPolicy }}
+        args:
+          - --log-level={{ .Values.otelcol.metadata.metrics.logLevel }}
+          - --config=/etc/otel/config.yaml
+        resources:
+          {{- toYaml .Values.metrics.metadata.statefulset.resources | nindent 10 }}
+        {{- if .Values.metrics.metadata.statefulset.containers.otelcol.securityContext }}
+        securityContext:
+          {{- toYaml .Values.metrics.metadata.statefulset.containers.otelcol.securityContext | nindent 10 }}
+        {{- end }}
+        ports:
+        - name: prom-write
+          containerPort: 9888
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/otel/config.yaml
+          subPath: config.yaml
+{{- if .Values.metrics.metadataextraVolumeMounts }}
+{{ toYaml .Values.metrics.metadataextraVolumeMounts | indent 8 }}
+{{- end }}
+        env:
+{{- $ctx := .Values -}}
+{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics")}}
+        {{- if .Values.metrics.metadataextraEnvVars }}
+{{ toYaml .Values.metrics.metadataextraEnvVars | nindent 8 }}
+        {{- end }}
+{{- end }}

@@ -1,4 +1,4 @@
-{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
+{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,8 +6,8 @@ metadata:
   labels:
     app: {{ template "sumologic.labels.app.metrics.service-headless" . }}
     {{- include "sumologic.labels.metrics" . | nindent 4 }}
-{{- if .Values.fluentd.serviceLabels }}
-{{ toYaml .Values.fluentd.serviceLabels | indent 4 }}
+{{- if .Values.otelcol.serviceLabels }}
+{{ toYaml .Values.otelcol.serviceLabels | indent 4 }}
 {{- end }}
 spec:
   selector:
