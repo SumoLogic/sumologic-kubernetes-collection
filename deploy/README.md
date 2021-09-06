@@ -65,15 +65,15 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 
 The following table displays the tested Kubernetes and Helm versions.
 
-| Name          | Version                         |
-|---------------|---------------------------------|
-| K8s with EKS  | 1.16<br/>1.17<br/>1.18<br/>1.19 |
-| K8s with Kops | 1.16<br/>1.17<br/>1.18<br/>1.19 |
-| K8s with GKE  | 1.17<br/>1.18                   |
-| K8s with AKS  | 1.18<br/>1.19<br/>1.20          |
-| OpenShift     | 4.6<br/>4.7                     |
-| Helm          | 3.4.0 (Linux)                   |
-| kubectl       | 1.16.0                          |
+| Name          | Version                                           |
+|---------------|---------------------------------------------------|
+| K8s with EKS  | 1.16<br/>1.17<br/>1.18<br/>1.19<br/>1.20<br/>1.21 |
+| K8s with Kops | 1.16<br/>1.17<br/>1.18<br/>1.19<br/>1.20<br/>1.21 |
+| K8s with GKE  | 1.17<br/>1.18<br/>1.19<br/>1.20                   |
+| K8s with AKS  | 1.18<br/>1.19<br/>1.20<br/>1.21                   |
+| OpenShift     | 4.6<br/>4.7                                       |
+| Helm          | 3.4.0 (Linux)                                     |
+| kubectl       | 1.16.0                                            |
 
 The following matrix displays the tested package versions for our Helm chart.
 
