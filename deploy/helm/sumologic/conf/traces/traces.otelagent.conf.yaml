@@ -5,4 +5,4 @@
 
 {{- $yamlFile := replace "exporters.otlp.endpoint.replace" $collectorAddress $yamlFile }}
 
-{{- $yamlFile | nindent 2 }}
+{{- tpl ($yamlFile | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}

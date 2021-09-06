@@ -24,4 +24,4 @@
 {{- $yamlFile := replace "processors.source.exclude_host_regex.replace" $excludeHostRegex $yamlFile }}
 {{- $yamlFile := replace "processors.resource.cluster.replace" $clusterName $yamlFile }}
 
-{{- $yamlFile | nindent 2 }}
+{{- tpl ($yamlFile | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}
