@@ -122,33 +122,6 @@ sumologic:
     ## uncomment for the debug mode (disables the automatic run of the setup.sh script)
     # debug: true
 
-  cleanup:
-    job:
-      image:
-        repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 3.0.0
-        pullPolicy: IfNotPresent
-      ## Optionally specify an array of pullSecrets.
-      ## They will be added to serviceaccount that is used for Sumo Logic's
-      ## cleanup job.
-      ## Secrets must be manually created in the namespace.
-      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-      ##
-      # pullSecrets:
-      #   - name: myRegistryKeySecretName
-      resources:
-        limits:
-          memory: 256Mi
-          cpu: 2000m
-        requests:
-          memory: 64Mi
-          cpu: 200m
-      nodeSelector: {}
-      ## Add custom labels only to cleanup job pod
-      podLabels: {}
-      ## Add custom annotations only to cleanup job pod
-      podAnnotations: {}
-
   collector:
     ## Configuration of additional collector fields
     ## https://help.sumologic.com/Manage/Fields#http-source-fields
