@@ -755,6 +755,9 @@ Example usage:
 resource "sumologic_http_source" "{{ .Name }}" {
     name         = local.{{ .Name }}
     collector_id = sumologic_collector.collector.id
+    {{- if $source.category }}
+    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.default_events_source}\"" }}{{- end}}
+    {{- end }}
     {{- if $source.properties }}
     {{- range $fkey, $fvalue := $source.properties }}
     {{- include "terraform.generate-object" (dict "Name" $fkey "Value" $fvalue "KeyLength" (include "terraform.max-key-length" $source.properties) "Indent" 2) -}}
