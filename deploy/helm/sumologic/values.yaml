@@ -2471,6 +2471,8 @@ otelcol:
       logLevel: info
       config:
         receivers:
+          ## Configuration for Telegraf Receiver
+          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/receiver/telegrafreceiver
           telegraf:
             agent_config: |
               [agent]
@@ -2504,6 +2506,8 @@ otelcol:
         extensions:
           health_check: {}
         exporters:
+          ## Configuration for Sumo Logic Exporter
+          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
           sumologic:
             metric_format: prometheus
             endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
@@ -2517,6 +2521,8 @@ otelcol:
               - node
               - pod
         processors:
+          ## Configuration for Metrics Transform Processor
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor
           metricstransform:
             transforms:
               # rename all prometheus_remote_write_$name metrics to $name
@@ -2524,6 +2530,8 @@ otelcol:
               match_type: regexp
               action: update
               new_name: $$1
+          ## Configuration for Resource Processor
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor
           resource:
             attributes:
               - key: k8s.namespace.name
@@ -2532,7 +2540,9 @@ otelcol:
               - key: k8s.pod.name
                 from_attribute: pod
                 action: upsert
+          ## Configuration for Memory Limiter Processor
           ## The memory_limiter processor is used to prevent out of memory situations on the collector.
+          ## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
           memory_limiter:
             ## check_interval is the time between measurements of memory usage for the
             ## purposes of avoiding going over the limits. Defaults to zero, so no
@@ -2544,13 +2554,16 @@ otelcol:
             ## Note that typically the total memory usage of process will be about 50MiB higher
             ## than this value.
             limit_mib: 1900
-
+          ## Configuration for Batch Processor
           ## The batch processor accepts spans and places them into batches grouped by node and resource
+          ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
           batch:
             ## Number of spans after which a batch will be sent regardless of time
             send_batch_size: 256
             ## Time duration after which a batch will be sent regardless of size
             timeout: 5s
+          ## Configuration for Kubernetes Processor
+          ## ref: https://github.com/SumoLogic/opentelemetry-collector-contrib/blob/main/processor/k8sprocessor
           k8s_tagger:
             ## Has to be false to enrich metadata
             passthrough: false
@@ -2582,7 +2595,9 @@ otelcol:
                   key: "*"
             pod_association:
               - from: build_hostname
+          ## Configuration for Source Processor
           ## Source processor adds Sumo Logic related metadata
+          ## ref: https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/main/processor/sourceprocessor
           source:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
             source_category: '{{ .Values.fluentd.logs.containers.sourceCategory | quote }}'
