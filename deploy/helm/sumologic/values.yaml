@@ -2627,11 +2627,6 @@ otelcol:
           endpoint: 0.0.0.0:24321
       extensions:
         health_check: {}
-        # sumologic:
-        #   access_id: '{{ .Values.sumologic.accessId }}'
-        #   access_key: '{{ .Values.sumologic.accessKey }}'
-        #   collector_name: otc-{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName}}
-        #   api_base_url: '{{ .Values.sumologic.open_endpoint }}'
       exporters:
         sumologic:
           log_format: json
