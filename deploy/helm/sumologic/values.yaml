@@ -3046,8 +3046,6 @@ logs:
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   ## ToDo: implement on otelcol side
   persistence:
-    ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/FluentdPersistence.md
     enabled: true
 
     ## If defined, storageClassName: <storageClass>
