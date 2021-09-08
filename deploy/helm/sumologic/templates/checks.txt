@@ -7,7 +7,7 @@
 
 {{/* Check if metrics provider is set to either fluentd or otelcol */}}
 {{- if not (or (eq .Values.sumologic.metrics.metadata.provider "fluentd") (eq .Values.sumologic.metrics.metadata.provider "otelcol")) -}}
-{{- fail "\nsumologic.metrics.provider should be set to either fluentd or otelcol" -}}
+{{- fail "\nsumologic.metrics.metadata.provider should be set to either fluentd or otelcol" -}}
 {{- end -}}
 
 {{/* Check if logs provider is set to either fluentd or otelcol */}}
