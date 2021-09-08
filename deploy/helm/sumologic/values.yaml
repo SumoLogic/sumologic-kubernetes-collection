@@ -2662,36 +2662,36 @@ otelcol:
           actions:
             - action: extract
               key: fluent.tag
-              pattern: ^containers\.var\.log\.pods\.(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]{36})\.(?P<container_name>[^\._]+)\.(?P<run_id>\d+)\.log$
+              pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
             - action: delete
               key: fluent.tag
+
+            - action: insert
+              key: k8s.container.id
+              from_attribute: container_id
+            - action: delete
+              key: container_id
+
             - action: insert
               key: k8s.pod.name
-              from_attribute: pod_name
+              from_attribute: k8s_pod_name
             - action: delete
-              key: pod_name
-            - action: insert
-              key: k8s.pod.uid
-              from_attribute: uid
-            - action: delete
-              key: uid
+              key: k8s_pod_name
+
             - action: insert
               key: k8s.namespace.name
-              from_attribute: namespace
+              from_attribute: k8s_namespace
             - action: delete
-              key: namespace
+              key: k8s_namespace
+
             - action: insert
               key: k8s.container.name
-              from_attribute: container_name
+              from_attribute: k8s_container_name
             - action: delete
-              key: container_name
-            - action: insert
-              key: k8s.instance.id
-              from_attribute: run_id
-            - action: delete
-              key: run_id
+              key: k8s_container_name
         groupbyattrs:
           keys:
+            - k8s.container.id
             - k8s.container.name
             - k8s.instance.id
             - k8s.namespace.name
