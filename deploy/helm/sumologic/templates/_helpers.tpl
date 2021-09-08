@@ -297,9 +297,9 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs" -}}
-{{- if eq .Values.sumologic.logs.provider "fluentd" -}}
+{{- if eq .Values.sumologic.logs.metadata.provider "fluentd" -}}
 {{ template "sumologic.metadata.name.fluentd" . }}-logs
-{{- else if eq .Values.sumologic.logs.provider "otelcol" -}}
+{{- else if eq .Values.sumologic.logs.metadata.provider "otelcol" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}-logs
 {{- end -}}
 {{- end -}}
@@ -1114,7 +1114,7 @@ Example Usage:
 {{- define "logs.otelcol.enabled" -}}
 {{- $enabled := false -}}
 {{- if eq .Values.sumologic.logs.enabled true -}}
-{{- if and (eq .Values.sumologic.logs.provider "otelcol") (eq .Values.otelcol.metadata.logs.enabled true) -}}
+{{- if and (eq .Values.sumologic.logs.metadata.provider "otelcol") (eq .Values.otelcol.metadata.logs.enabled true) -}}
 {{- $enabled = true -}}
 {{- end -}}
 {{- end -}}
@@ -1131,7 +1131,7 @@ Example Usage:
 {{- define "logs.fluentd.enabled" -}}
 {{- $enabled := false -}}
 {{- if eq .Values.sumologic.logs.enabled true -}}
-{{- if and (eq .Values.sumologic.logs.provider "fluentd") (eq .Values.fluentd.logs.enabled true) -}}
+{{- if and (eq .Values.sumologic.logs.metadata.provider "fluentd") (eq .Values.fluentd.logs.enabled true) -}}
 {{- $enabled = true -}}
 {{- end -}}
 {{- end -}}

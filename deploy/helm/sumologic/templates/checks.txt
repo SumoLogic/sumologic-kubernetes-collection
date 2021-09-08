@@ -11,6 +11,6 @@
 {{- end -}}
 
 {{/* Check if logs provider is set to either fluentd or otelcol */}}
-{{- if not (or (eq .Values.sumologic.logs.provider "fluentd") (eq .Values.sumologic.logs.provider "otelcol")) -}}
-{{- fail "\nsumologic.logs.provider should be set to either fluentd or otelcol" -}}
+{{- if not (or (eq .Values.sumologic.logs.metadata.provider "fluentd") (eq .Values.sumologic.logs.metadata.provider "otelcol")) -}}
+{{- fail "\nsumologic.logs.metadata.provider should be set to either fluentd or otelcol" -}}
 {{- end -}}
