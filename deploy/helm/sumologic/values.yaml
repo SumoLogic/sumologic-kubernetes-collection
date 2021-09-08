@@ -2622,6 +2622,7 @@ otelcol:
 
     logs:
       enabled: true
+      logLevel: info
       config:
         receivers:
           fluentforward:

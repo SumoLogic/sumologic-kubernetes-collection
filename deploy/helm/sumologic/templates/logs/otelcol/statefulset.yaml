@@ -105,6 +105,9 @@ spec:
       - name: otelcol
         image: {{ .Values.otelcol.statefulset.image.repository }}:{{ .Values.otelcol.statefulset.image.tag }}
         imagePullPolicy: {{ .Values.otelcol.statefulset.image.pullPolicy }}
+        args:
+          - --log-level={{ .Values.otelcol.metadata.logs.logLevel }}
+          - --config=/etc/otel/config.yaml
         resources:
           {{- toYaml .Values.logs.metadata.statefulset.resources | nindent 10 }}
         {{- if .Values.logs.metadata.statefulset.containers.otelcol.securityContext }}
