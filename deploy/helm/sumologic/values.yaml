@@ -2337,7 +2337,36 @@ kube-prometheus-stack:
             - action: keep
               regex: (?:apache_((BusyWorkers|BytesPerReq|BytesPerSec|CPUChildrenSystem|CPUChildrenUser|CPULoad|CPUSystem|CPUUser|DurationPerReq|IdleWorkers|Load1|Load15|Load5|ParentServerConfigGeneration|ParentServerMPMGeneration|ReqPerSec|ServerUptimeSeconds|TotalAccesses|TotalDuration|TotalkBytes|Uptime)|(scboard_(closing|dnslookup|finishing|idle_cleanup|keepalive|logging|open|reading|sending|starting|waiting))))
               sourceLabels: [__name__]
-
+        ## Rabbitmq Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/rabbitmq
+        ## Metrics follow following format:
+        ## rabbitmq_overview_clustering_listerners
+        ## rabbitmq_overview_connections
+        ## rabbitmq_overview_exchanges
+        ## rabbitmq_overview_consumers
+        ## rabbitmq_overview_queues
+        ## rabbitmq_overview_messages_*
+        ## rabbitmq_node_mem_*
+        ## rabbitmq_node_uptime
+        ## rabbitmq_node_fd_used
+        ## rabbitmq_node_mnesia_disk_tx_count
+        ## rabbitmq_node_mnesia_ram_tx_count
+        ## rabbitmq_node_gc_num_rate
+        ## rabbitmq_queue_messages_publish_rate
+        ## rabbitmq_queue_messages_memory
+        ## rabbitmq_queue_messages_deliver_rate
+        ## rabbitmq_queue_messages_max_time
+        ## rabbitmq_exchange_messages_publish_in
+        ## rabbitmq_exchange_messages_publish_in_rate
+        ## rabbitmq_exchange_messages_publish_out_rate
+        ## rabbitmq_exchange_messages_publish_out
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.rabbitmq
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:rabbitmq_(overview_(clustering_listeners|connections|exchanges|consumers|queues|messages_.*|)|node_(mem_.*|uptime|fd_used|mnesia_(disk_tx_count|ram_tx_count)|gc_num_rate)|rabbitmq_queue_messages(publish_rate|deliver_rate|memory)|rabbitmq_exchange_messages(publish_in|publish_in_rate|publish_out_rate|publish_out)))
+              sourceLabels: [__name__]
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
