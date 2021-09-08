@@ -12,8 +12,8 @@ spec:
       app: {{ template "sumologic.labels.app.logs.pod" . }}
   serviceName: {{ template "sumologic.metadata.name.logs.service-headless" . }}
   podManagementPolicy: "Parallel"
-{{- if not .Values.logs.autoscaling.enabled }}
-  replicas: {{ .Values.logs.statefulset.replicaCount }}
+{{- if not .Values.logs.metadata.autoscaling.enabled }}
+  replicas: {{ .Values.logs.metadata.statefulset.replicaCount }}
 {{- end }}
   template:
     metadata:
@@ -25,8 +25,8 @@ spec:
 {{- if .Values.otelcol.podAnnotations }}
 {{ toYaml .Values.otelcol.podAnnotations | indent 8 }}
 {{- end }}
-{{- if .Values.logs.statefulset.podAnnotations }}
-{{ toYaml .Values.logs.statefulset.podAnnotations | indent 8 }}
+{{- if .Values.logs.metadata.statefulset.podAnnotations }}
+{{ toYaml .Values.logs.metadata.statefulset.podAnnotations | indent 8 }}
 {{- end }}
       labels:
         app: {{ template "sumologic.labels.app.logs.pod" . }}
@@ -37,25 +37,25 @@ spec:
 {{- if .Values.otelcol.podLabels }}
 {{ toYaml .Values.otelcol.podLabels | indent 8 }}
 {{- end }}
-{{- if .Values.logs.statefulset.podLabels }}
-{{ toYaml .Values.logs.statefulset.podLabels | indent 8 }}
+{{- if .Values.logs.metadata.statefulset.podLabels }}
+{{ toYaml .Values.logs.metadata.statefulset.podLabels | indent 8 }}
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
-{{- if .Values.logs.statefulset.nodeSelector }}
+{{- if .Values.logs.metadata.statefulset.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.logs.statefulset.nodeSelector | indent 8 }}
+{{ toYaml .Values.logs.metadata.statefulset.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.logs.statefulset.tolerations }}
+{{- if .Values.logs.metadata.statefulset.tolerations }}
       tolerations:
-{{ toYaml .Values.logs.statefulset.tolerations | indent 8 }}
+{{ toYaml .Values.logs.metadata.statefulset.tolerations | indent 8 }}
 {{- end }}
-{{- if or .Values.logs.statefulset.affinity  .Values.fluentd.logs.statefulset.podAntiAffinity }}
+{{- if or .Values.logs.metadata.statefulset.affinity  .Values.fluentd.logs.statefulset.podAntiAffinity }}
       affinity:
-{{- if .Values.logs.statefulset.affinity }}
-{{ toYaml .Values.logs.statefulset.affinity | indent 8 }}
+{{- if .Values.logs.metadata.statefulset.affinity }}
+{{ toYaml .Values.logs.metadata.statefulset.affinity | indent 8 }}
 {{- end }}
-{{- if eq .Values.logs.statefulset.podAntiAffinity "hard"}}
+{{- if eq .Values.logs.metadata.statefulset.podAntiAffinity "hard"}}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
@@ -70,7 +70,7 @@ spec:
                 values:
                 - prometheus-operator-prometheus
             topologyKey: "kubernetes.io/hostname"
-{{else if eq .Values.logs.statefulset.podAntiAffinity "soft"}}
+{{else if eq .Values.logs.metadata.statefulset.podAntiAffinity "soft"}}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
@@ -98,18 +98,18 @@ spec:
 {{- end }}
       securityContext:
         {{- toYaml .Values.otelcol.securityContext | nindent 8 }}
-      {{- if .Values.logs.statefulset.priorityClassName }}
-      priorityClassName: {{ .Values.logs.statefulset.priorityClassName | quote }}
+      {{- if .Values.logs.metadata.statefulset.priorityClassName }}
+      priorityClassName: {{ .Values.logs.metadata.statefulset.priorityClassName | quote }}
       {{- end }}
       containers:
       - name: otelcol
         image: {{ .Values.otelcol.statefulset.image.repository }}:{{ .Values.otelcol.statefulset.image.tag }}
         imagePullPolicy: {{ .Values.otelcol.statefulset.image.pullPolicy }}
         resources:
-          {{- toYaml .Values.logs.statefulset.resources | nindent 10 }}
-        {{- if .Values.logs.statefulset.containers.otelcol.securityContext }}
+          {{- toYaml .Values.logs.metadata.statefulset.resources | nindent 10 }}
+        {{- if .Values.logs.metadata.statefulset.containers.otelcol.securityContext }}
         securityContext:
-          {{- toYaml .Values.logs.statefulset.containers.otelcol.securityContext | nindent 10 }}
+          {{- toYaml .Values.logs.metadata.statefulset.containers.otelcol.securityContext | nindent 10 }}
         {{- end }}
         ports:
         {{- if .Values.sumologic.traces.enabled }}
