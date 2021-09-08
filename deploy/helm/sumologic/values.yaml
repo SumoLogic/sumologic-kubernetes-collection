@@ -2337,7 +2337,37 @@ kube-prometheus-stack:
             - action: keep
               regex: (?:apache_((BusyWorkers|BytesPerReq|BytesPerSec|CPUChildrenSystem|CPUChildrenUser|CPULoad|CPUSystem|CPUUser|DurationPerReq|IdleWorkers|Load1|Load15|Load5|ParentServerConfigGeneration|ParentServerMPMGeneration|ReqPerSec|ServerUptimeSeconds|TotalAccesses|TotalDuration|TotalkBytes|Uptime)|(scboard_(closing|dnslookup|finishing|idle_cleanup|keepalive|logging|open|reading|sending|starting|waiting))))
               sourceLabels: [__name__]
-
+        ## Tomcat Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/tomcat
+        ## Metrics follow following format:
+        ## tomcat_connector_max_threads
+        ## tomcat_connector_current_thread_count
+        ## tomcat_connector_current_thread_busy
+        ## tomcat_connector_max_time
+        ## tomcat_connector_processing_time
+        ## tomcat_connector_request_count
+        ## tomcat_connector_error_count
+        ## tomcat_connector_bytes_received
+        ## tomcat_connector_bytes_sent
+        ## tomcat_jvm_memory_free
+        ## tomcat_jvm_memory_total
+        ## tomcat_jvm_memory_max
+        ## tomcat_jvm_memorypool_max_threads
+        ## tomcat_jvm_memorypool_current_thread_count
+        ## tomcat_jvm_memorypool_current_threads_busy
+        ## tomcat_jvm_memorypool_max_time
+        ## tomcat_jvm_memorypool_processing_time
+        ## tomcat_jvm_memorypool_request_count
+        ## tomcat_jvm_memorypool_error_count
+        ## tomcat_jvm_memorypool_bytes_received
+        ## tomcat_jvm_memorypool_bytes_sent
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.tomcat
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:tomcat_(connector_*|jvm_memory_*|tomcat_jvm_memorypool_*))
+              sourceLabels: [__name__]
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
