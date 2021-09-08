@@ -2540,6 +2540,8 @@ otelcol:
               - key: k8s.pod.name
                 from_attribute: pod
                 action: upsert
+              - key: host
+                action: delete
           ## Configuration for Memory Limiter Processor
           ## The memory_limiter processor is used to prevent out of memory situations on the collector.
           ## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
