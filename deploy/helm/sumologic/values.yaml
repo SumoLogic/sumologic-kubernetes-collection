@@ -2467,7 +2467,7 @@ otelcol:
   statefulset:
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.0.18
+      tag: 0.0.23-beta.0
       pullPolicy: IfNotPresent
   metadata:
     metrics:
@@ -2569,7 +2569,7 @@ otelcol:
             ## Time duration after which a batch will be sent regardless of size
             timeout: 5s
           ## Configuration for Kubernetes Processor
-          ## ref: https://github.com/SumoLogic/opentelemetry-collector-contrib/blob/main/processor/k8sprocessor
+          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
           k8s_tagger:
             ## Has to be false to enrich metadata
             passthrough: false
@@ -2603,16 +2603,17 @@ otelcol:
               - from: build_hostname
           ## Configuration for Source Processor
           ## Source processor adds Sumo Logic related metadata
-          ## ref: https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/main/processor/sourceprocessor
+          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
           source:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
             source_category: '{{ .Values.fluentd.logs.containers.sourceCategory | quote }}'
             source_category_prefix: '{{ .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}'
             source_category_replace_dash: '{{ .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}'
-            exclude_namespace_regex: '{{ include "fluentd.excludeNamespaces" . }}'
-            exclude_pod_regex: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
-            exclude_container_regex: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
-            exclude_host_regex: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
+            exclude:
+              namespace: '{{ include "fluentd.excludeNamespaces" . }}'
+              pod: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
+              container: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
+              host: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
             annotation_prefix: "k8s.pod.annotation."
             pod_template_hash_key: "k8s.pod.label.pod-template-hash"
             pod_name_key: "k8s.pod.pod_name"
