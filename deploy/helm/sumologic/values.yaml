@@ -2738,8 +2738,7 @@ otelcol:
                 - tag_name: "pod_labels_%s"
                   key: "*"
             pod_association:
-              - from: resource_attribute
-                name: k8s.pod.uid        ## Source processor adds Sumo Logic related metadata
+              - from: build_hostname
           source:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
             source_name: '{{ .Values.fluentd.logs.containers.sourceName | quote }}'
