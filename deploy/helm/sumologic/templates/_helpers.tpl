@@ -297,7 +297,11 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs" -}}
+{{- if eq .Values.sumologic.logs.metadata.provider "fluentd" -}}
 {{ template "sumologic.metadata.name.fluentd" . }}-logs
+{{- else if eq .Values.sumologic.logs.metadata.provider "otelcol" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}-logs
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service" -}}
@@ -1081,9 +1085,63 @@ Example Usage:
 {{ $enabled }}
 {{- end -}}
 
+{{/*
+Check if any logs provider is enabled
+
+Example Usage:
+{{- if eq (include "logs.enabled" .) "true" }}
+
+*/}}
+{{- define "logs.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq (include "logs.otelcol.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{- if eq (include "logs.fluentd.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Check if otelcol logs provider is enabled
+
+Example Usage:
+{{- if eq (include "logs.otelcol.enabled" .) "true" }}
+
+*/}}
+{{- define "logs.otelcol.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.logs.enabled true -}}
+{{- if and (eq .Values.sumologic.logs.metadata.provider "otelcol") (eq .Values.otelcol.metadata.logs.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+{{/*
+Check if fluentd logs provider is enabled
+
+Example Usage:
+{{- if eq (include "logs.fluentd.enabled" .) "true" }}
+
+*/}}
+{{- define "logs.fluentd.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.logs.enabled true -}}
+{{- if and (eq .Values.sumologic.logs.metadata.provider "fluentd") (eq .Values.fluentd.logs.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
 
 {{/*
 Add service labels
+
 Example Usage:
 {{- if eq (include "service.labels" dict("Provider" "fluentd" "Values" .Values)) "true" }}
 
