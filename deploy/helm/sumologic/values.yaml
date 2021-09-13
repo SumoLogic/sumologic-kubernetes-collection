@@ -2338,6 +2338,50 @@ kube-prometheus-stack:
               regex: (?:apache_((BusyWorkers|BytesPerReq|BytesPerSec|CPUChildrenSystem|CPUChildrenUser|CPULoad|CPUSystem|CPUUser|DurationPerReq|IdleWorkers|Load1|Load15|Load5|ParentServerConfigGeneration|ParentServerMPMGeneration|ReqPerSec|ServerUptimeSeconds|TotalAccesses|TotalDuration|TotalkBytes|Uptime)|(scboard_(closing|dnslookup|finishing|idle_cleanup|keepalive|logging|open|reading|sending|starting|waiting))))
               sourceLabels: [__name__]
 
+        ## MongoDB Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mongodb
+        ## Metrics follow following format:
+        ## mongodb_active_reads
+        ## mongodb_active_writes
+        ## mongodb_commands_per_sec
+        ## mongodb_connections_current
+        ## mongodb_db_stats_storage_size
+        ## mongodb_deletes_per_sec
+        ## mongodb_document_*
+        ## mongodb_flushes_per_sec
+        ## mongodb_getmores_per_sec
+        ## mongodb_inserts_per_sec
+        ## mongodb_net_*_bytes_count
+        ## mongodb_open_connections 
+        ## mongodb_page_faults
+        ## mongodb_percent_cache_dirty
+        ## mongodb_percent_cache_used
+        ## mongodb_queries_per_sec
+        ## mongodb_queued_reads
+        ## mongodb_queued_writes
+        ## mongodb_repl_commands_per_sec
+        ## mongodb_repl_deletes_per_sec
+        ## mongodb_repl_getmores_per_sec
+        ## mongodb_repl_inserts_per_sec
+        ## mongodb_repl_oplog_window_sec
+        ## mongodb_repl_oplog_window_sec
+        ## mongodb_repl_queries
+        ## mongodb_repl_queries
+        ## mongodb_repl_queries_per_sec
+        ## mongodb_repl_updates_per_sec
+        ## mongodb_resident_megabytes
+        ## mongodb_updates_per_sec
+        ## mongodb_uptime_ns
+        ## mongodb_vsize_megabytes
+        ## mongodb_wtcache_bytes_read_into
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.mongodb
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:mongodb_(active_*|commands_*|connections_*|db_stats_storage_size|delete_*|document_*|flushes_*|getmores_*|inserts_*|net_*|open_connections|page_faults|percent_*|queries_*|queued_*|repl_*|resident_megabytes|updates_per_sec|uptime_ns|vsize_megabytes|wtcache_bytes_read_into))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
