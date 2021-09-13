@@ -2590,12 +2590,6 @@ otelcol:
                 - replicaSetName
                 - serviceName
                 - statefulSetName
-              annotations:
-                - tag_name: "pod_annotations_%s"
-                  key: "*"
-              namespace_labels:
-                - tag_name: "namespace_labels_%s"
-                  key: "*"
               labels:
                 - tag_name: "pod_labels_%s"
                   key: "*"
