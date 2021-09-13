@@ -2546,6 +2546,11 @@ otelcol:
                 action: upsert
               - key: host
                 action: delete
+              - key: prometheus_service
+                from_attribute: service
+                action: upsert
+              - key: service
+                action: delete
           ## Configuration for Memory Limiter Processor
           ## The memory_limiter processor is used to prevent out of memory situations on the collector.
           ## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
@@ -2592,6 +2597,7 @@ otelcol:
               labels:
                 - tag_name: "pod_labels_%s"
                   key: "*"
+              delimiter: "_"
             pod_association:
               - from: build_hostname
           ## Configuration for Source Processor
