@@ -2366,7 +2366,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:tomcat_(connector_*|jvm_memory_*|tomcat_jvm_memorypool_*))
+              regex: (?:tomcat_(connector_*|jvm_memory_*|jvm_memorypool_*))
               sourceLabels: [__name__]
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
