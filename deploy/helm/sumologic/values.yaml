@@ -2379,7 +2379,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:mongodb_(active_*|commands_*|connections_*|db_stats_storage_size|delete_*|document_*|flushes_*|getmores_*|inserts_*|net_*|open_connections|page_faults|percent_*|queries_*|queued_*|repl_*|resident_megabytes|updates_per_sec|uptime_ns|vsize_megabytes|wtcache_bytes_read_into))
+              regex: (?:mongodb_(active_(reads|writes)|commands_.*|connections_current|db_stats_storage_size|deletes_.*|document_.*|flushes_.*|getmores_.*|inserts_.*|net_.*|open_connections|page_faults|percent_cache_(dirty|used)|queries_.*|queued_(reads|writes)|repl_.*|resident_megabytes|updates_per_sec|uptime_ns|vsize_megabytes|wtcache_bytes_read_into))
               sourceLabels: [__name__]
 
 ## Configure optional OpenTelemetry Collector in Agent mode
