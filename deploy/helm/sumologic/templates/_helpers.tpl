@@ -44,7 +44,11 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs" -}}
-{{- template "sumologic.labels.app.fluentd" . }}-logs
+{{- if eq .Values.sumologic.logs.metadata.provider "fluentd" -}}
+{{ template "sumologic.labels.app.fluentd" . }}-logs
+{{- else if eq .Values.sumologic.logs.metadata.provider "otelcol" -}}
+{{ template "sumologic.labels.app.otelcol" . }}-logs
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.pod" -}}
@@ -72,7 +76,11 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics" -}}
-{{- template "sumologic.labels.app.fluentd" . }}-metrics
+{{- if eq .Values.sumologic.metrics.metadata.provider "fluentd" -}}
+{{ template "sumologic.labels.app.fluentd" . }}-metrics
+{{- else if eq .Values.sumologic.metrics.metadata.provider "otelcol" -}}
+{{ template "sumologic.labels.app.otelcol" . }}-metrics
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics.pod" -}}
