@@ -2365,7 +2365,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:rabbitmq_(overview_(clustering_listeners|connections|exchanges|consumers|queues|messages_.*|)|node_(mem_.*|uptime|fd_used|mnesia_(disk_tx_count|ram_tx_count)|gc_num_rate)|rabbitmq_queue_messages(publish_rate|deliver_rate|memory)|rabbitmq_exchange_messages(publish_in|publish_in_rate|publish_out_rate|publish_out)))
+              regex: (?:rabbitmq_(overview_(clustering_listeners|connections|exchanges|consumers|queues|messages_.*|)|node_(mem_.*|uptime|fd_used|mnesia_(disk_tx_count|ram_tx_count)|gc_num_rate)|queue_messages_(publish_rate|deliver_rate|memory|max_time)|exchange_messages_publish_(in|in_rate|out|out_rate)))
               sourceLabels: [__name__]
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
