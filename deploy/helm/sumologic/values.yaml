@@ -2337,7 +2337,7 @@ kube-prometheus-stack:
             - action: keep
               regex: (?:apache_((BusyWorkers|BytesPerReq|BytesPerSec|CPUChildrenSystem|CPUChildrenUser|CPULoad|CPUSystem|CPUUser|DurationPerReq|IdleWorkers|Load1|Load15|Load5|ParentServerConfigGeneration|ParentServerMPMGeneration|ReqPerSec|ServerUptimeSeconds|TotalAccesses|TotalDuration|TotalkBytes|Uptime)|(scboard_(closing|dnslookup|finishing|idle_cleanup|keepalive|logging|open|reading|sending|starting|waiting))))
               sourceLabels: [__name__]
-        
+
         ## SQLServer Telegraf Metrics
         ## List of Metrics are on following github page:
         ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/sqlserver
