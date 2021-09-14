@@ -2484,6 +2484,9 @@ otelcol:
                 flush_interval = "30s"
 
               [[inputs.http_listener_v2]]
+                # wait longer than prometheus
+                read_timeout = "30s"
+                write_timeout = "30s"
                 service_address = ":9888"
                 data_format = "prometheusremotewrite"
                 paths = [
@@ -2515,6 +2518,8 @@ otelcol:
           sumologic:
             metric_format: prometheus
             endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+            sending_queue:
+              enabled: true
             metadata_attributes:
               - k8s.*
               - pod_.*
@@ -2570,9 +2575,9 @@ otelcol:
           ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
           batch:
             ## Number of spans after which a batch will be sent regardless of time
-            send_batch_size: 256
+            send_batch_size: 4096
             ## Time duration after which a batch will be sent regardless of size
-            timeout: 5s
+            timeout: 30s
           ## Configuration for Kubernetes Processor
           ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
           k8s_tagger:
@@ -2650,10 +2655,12 @@ otelcol:
           sumologic:
             log_format: json
             endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+            ## ToDo: Move sources to sourceprocessor
             source_name: "%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}"
-            ## ToDo: Add `-` replacement configuration, by default with `/`
             source_category: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
             source_host: '%{k8s.pod.hostname}'
+            sending_queue:
+              enabled: true
             metadata_attributes:
               - k8s.*
               - pod_.*
@@ -2754,6 +2761,7 @@ otelcol:
               labels:
                 - tag_name: "pod_labels_%s"
                   key: "*"
+              delimiter: "_"
             pod_association:
               - from: build_hostname
           source:
