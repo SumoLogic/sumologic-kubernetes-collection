@@ -2337,7 +2337,38 @@ kube-prometheus-stack:
             - action: keep
               regex: (?:apache_((BusyWorkers|BytesPerReq|BytesPerSec|CPUChildrenSystem|CPUChildrenUser|CPULoad|CPUSystem|CPUUser|DurationPerReq|IdleWorkers|Load1|Load15|Load5|ParentServerConfigGeneration|ParentServerMPMGeneration|ReqPerSec|ServerUptimeSeconds|TotalAccesses|TotalDuration|TotalkBytes|Uptime)|(scboard_(closing|dnslookup|finishing|idle_cleanup|keepalive|logging|open|reading|sending|starting|waiting))))
               sourceLabels: [__name__]
-
+        ## haproxy_active_servers
+        ## haproxy_backup_servers
+        ## haproxy_bin
+        ## haproxy_bout
+        ## haproxy_chkfail
+        ## haproxy_ctime
+        ## haproxy_dreq
+        ## haproxy_dresp
+        ## haproxy_econ
+        ## haproxy_ereq
+        ## haproxy_eresp 
+        ## haproxy_http_response_4xx
+        ## haproxy_http_response_5xx
+        ## haproxy_http_response_*
+        ## haproxy_qcur
+        ## haproxy_qmax
+        ## haproxy_qtime
+        ## haproxy_rate
+        ## haproxy_rtime
+        ## haproxy_scur
+        ## haproxy_slim
+        ## haproxy_smax 
+        ## haproxy_ttime
+        ## haproxy_weight
+        ## haproxy_wredis
+        ## haproxy_wretr
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.haproxy
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:haproxy_(active_.*|backup_.*|bin|bout|chkfail|ctime|dreq|dresp|econ|ereq|eresp|http_.*|qcur|qmax|qtime|rate|rtime|scur|slim|smax|ttime|weight|wredis|wretr))
+              sourceLabels: [__name__]
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
