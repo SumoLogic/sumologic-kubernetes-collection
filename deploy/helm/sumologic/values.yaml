@@ -2337,6 +2337,27 @@ kube-prometheus-stack:
             - action: keep
               regex: (?:apache_((BusyWorkers|BytesPerReq|BytesPerSec|CPUChildrenSystem|CPUChildrenUser|CPULoad|CPUSystem|CPUUser|DurationPerReq|IdleWorkers|Load1|Load15|Load5|ParentServerConfigGeneration|ParentServerMPMGeneration|ReqPerSec|ServerUptimeSeconds|TotalAccesses|TotalDuration|TotalkBytes|Uptime)|(scboard_(closing|dnslookup|finishing|idle_cleanup|keepalive|logging|open|reading|sending|starting|waiting))))
               sourceLabels: [__name__]
+        
+        ## SQLServer Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/sqlserver
+        ## Metrics follow following format:
+        ## sqlserver_cpu_sqlserver_process_cpu
+        ## sqlserver_database_io_read_bytes
+        ## sqlserver_database_io_read_latency_ms
+        ## sqlserver_database_io_write_bytes
+        ## sqlserver_database_io_write_latency_ms
+        ## sqlserver_memory_clerks_size_kb
+        ## sqlserver_performance_value
+        ## sqlserver_server_properties_server_memory
+        ## sqlserver_volume_space_total_space_bytes
+        ## sqlserver_volume_space_used_space_bytes
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.sqlserver
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:sqlserver_(cpu_sqlserver_process_cpu|database_io_(read_(bytes|latency_ms)|write_(bytes|latency_ms))|memory_clerks_size_kb|performance_value|server_properties_server_memory|volume_space_(total_space_bytes|used_space_bytes)))
+              sourceLabels: [__name__]
 
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
