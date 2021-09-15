@@ -2363,6 +2363,41 @@ kube-prometheus-stack:
               regex: (?:sqlserver_(cpu_sqlserver_process_cpu|database_io_(read_(bytes|latency_ms)|write_(bytes|latency_ms))|memory_clerks_size_kb|performance_value|server_properties_server_memory|volume_space_(total_space_bytes|used_space_bytes)))
               sourceLabels: [__name__]
 
+        ## Haproxy Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/haproxy
+        ## Metrics follow following format:
+        ## haproxy_active_servers
+        ## haproxy_backup_servers
+        ## haproxy_bin
+        ## haproxy_bout
+        ## haproxy_chkfail
+        ## haproxy_ctime
+        ## haproxy_dreq
+        ## haproxy_dresp
+        ## haproxy_econ
+        ## haproxy_ereq
+        ## haproxy_eresp
+        ## haproxy_http_response_*
+        ## haproxy_qcur
+        ## haproxy_qmax
+        ## haproxy_qtime
+        ## haproxy_rate
+        ## haproxy_rtime
+        ## haproxy_scur
+        ## haproxy_slim
+        ## haproxy_smax
+        ## haproxy_ttime
+        ## haproxy_weight
+        ## haproxy_wredis
+        ## haproxy_wretr
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.haproxy
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:haproxy_(active_servers|backup_servers|bin|bout|chkfail|ctime|dreq|dresp|econ|ereq|eresp|http_response_(1xx|2xx|3xx|4xx|5xx|other)|qcur|qmax|qtime|rate|rtime|scur|slim|smax|ttime|weight|wredis|wretr))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
