@@ -2363,7 +2363,7 @@ kube-prometheus-stack:
               regex: (?:sqlserver_(cpu_sqlserver_process_cpu|database_io_(read_(bytes|latency_ms)|write_(bytes|latency_ms))|memory_clerks_size_kb|performance_value|server_properties_server_memory|volume_space_(total_space_bytes|used_space_bytes)))
               sourceLabels: [__name__]
 
-       ## Haproxy Telegraf Metrics
+        ## Haproxy Telegraf Metrics
         ## List of Metrics are on following github page:
         ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/haproxy
         ## Metrics follow following format:
@@ -2377,7 +2377,7 @@ kube-prometheus-stack:
         ## haproxy_dresp
         ## haproxy_econ
         ## haproxy_ereq
-        ## haproxy_eresp 
+        ## haproxy_eresp
         ## haproxy_http_response_*
         ## haproxy_qcur
         ## haproxy_qmax
@@ -2386,7 +2386,7 @@ kube-prometheus-stack:
         ## haproxy_rtime
         ## haproxy_scur
         ## haproxy_slim
-        ## haproxy_smax 
+        ## haproxy_smax
         ## haproxy_ttime
         ## haproxy_weight
         ## haproxy_wredis
@@ -2396,6 +2396,7 @@ kube-prometheus-stack:
           writeRelabelConfigs:
             - action: keep
               regex: (?:haproxy_(active_servers|backup_servers|bin|bout|chkfail|ctime|dreq|dresp|econ|ereq|eresp|http_response_(1xx|2xx|3xx|4xx|5xx|other)|qcur|qmax|qtime|rate|rtime|scur|slim|smax|ttime|weight|wredis|wretr))
+              sourceLabels: [__name__]
 
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
