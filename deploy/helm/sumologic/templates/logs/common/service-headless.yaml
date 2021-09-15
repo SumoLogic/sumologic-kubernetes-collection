@@ -1,18 +1,18 @@
-{{- if eq (include "logs.fluentd.enabled" .) "true" }}
+{{- if eq (include "logs.otelcol.enabled" .) "true" }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "sumologic.metadata.name.logs.service" . }}
+  name: {{ template "sumologic.metadata.name.logs.service-headless" . }}
   labels:
-    app: {{ template "sumologic.labels.app.logs.service" . }}
-    {{- include "sumologic.labels.scrape.logs" . | nindent 4 }}
-    {{- include "sumologic.labels.common" . | nindent 4 }}
-{{- if .Values.fluentd.serviceLabels }}
-{{ toYaml .Values.fluentd.serviceLabels | indent 4 }}
+    app: {{ template "sumologic.labels.app.logs.service-headless" . }}
+    {{- include "sumologic.labels.logs" . | nindent 4 }}
+{{- if .Values.otelcol.serviceLabels }}
+{{ toYaml .Values.otelcol.serviceLabels | indent 4 }}
 {{- end }}
 spec:
   selector:
     app: {{ template "sumologic.labels.app.logs.pod" . }}
+  clusterIP: None
   ports:
   {{- if .Values.sumologic.traces.enabled }}
   - name: zipkin-write
