@@ -3,8 +3,6 @@ name: PRs labels check
 on:
   pull_request_target:
     types: [opened, reopened, ready_for_review, labeled, unlabeled, synchronize]
-  pull_request:
-    types: [opened, reopened, ready_for_review, labeled, unlabeled, synchronize]
 
 jobs:
   label:
