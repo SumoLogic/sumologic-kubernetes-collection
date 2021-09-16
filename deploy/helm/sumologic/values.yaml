@@ -2650,7 +2650,6 @@ otelcol:
                 - clusterName
                 - daemonSetName
                 - deploymentName
-                - namespace  # needed to identify Pods by Pod name and namespace
                 - replicaSetName
                 - serviceName
                 - statefulSetName
@@ -2659,7 +2658,7 @@ otelcol:
                   key: "*"
               delimiter: "_"
             pod_association:
-              - from: build_hostname  # Pods are identified by Pod name and namespace, currently namespace extraction is needed
+              - from: build_hostname  # Pods are identified by Pod name and namespace
           ## Configuration for Source Processor
           ## Source processor adds Sumo Logic related metadata
           ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
