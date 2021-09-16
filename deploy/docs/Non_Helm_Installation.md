@@ -186,8 +186,16 @@ kubectl run tools \
   --set sumologic.clusterName='<CLUSTER_NAME>' \
   --set sumologic.scc.create=true \
   --set fluent-bit.securityContext.privileged=true \
+  --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
+  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
   | tee sumologic.yaml
 ```
+
+**Notice:** Prometheus Operator is deployed by default on OpenShift platform,
+you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
+`kube-prometheus-stack.prometheusOperator.prometheusInstanceNamespaces` parameter in values.yaml or
+exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
+using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
 
 ## Viewing Data In Sumo Logic
 
