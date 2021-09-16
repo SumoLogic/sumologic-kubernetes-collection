@@ -109,7 +109,7 @@ helm upgrade --install my-release sumologic/sumologic \
     --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
     --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
     --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
-    --set kube-prometheus-stack.prometheusOperator.prometheusInstanceNamespaces=[my-namespace] \
+    --set kube-prometheus-stack.prometheusOperator.namespaces.additional=[my-namespace] \
     --set sumologic.scc.create=true \
     --set fluent-bit.securityContext.privileged=true
 ```
