@@ -2685,6 +2685,9 @@ otelcol:
                 action: upsert
               - key: service
                 action: delete
+              - key: _origin  # add "_origin" metadata to metrics to keep the same format as for metrics from Fluentd
+                value: kubernetes
+                action: upsert
           ## Configuration for Memory Limiter Processor
           ## The memory_limiter processor is used to prevent out of memory situations on the collector.
           ## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
