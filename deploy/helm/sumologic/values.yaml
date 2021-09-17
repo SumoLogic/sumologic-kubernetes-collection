@@ -2398,6 +2398,75 @@ kube-prometheus-stack:
               regex: (?:haproxy_(active_servers|backup_servers|bin|bout|chkfail|ctime|dreq|dresp|econ|ereq|eresp|http_response_(1xx|2xx|3xx|4xx|5xx|other)|qcur|qmax|qtime|rate|rtime|scur|slim|smax|ttime|weight|wredis|wretr))
               sourceLabels: [__name__]
 
+        ## Cassandra Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/cassandra
+        ## cassandra_CacheMetrics_ChunkCache_OneMinuteRate
+        ## cassandra_ClientMetrics_connectedNativeClients_Value
+        ## cassandra_ClientMetrics_RequestDiscarded_OneMinuteRate
+        ## cassandra_CommitLogMetrics_CompletedTasks_Value
+        ## cassandra_CommitLogMetrics_PendingTasks_Value
+        ## cassandra_DroppedMessageMetrics_Dropped_OneMinuteRate
+        ## cassandra_java_GarbageCollector_*_CollectionCount
+        ## cassandra_java_GarbageCollector_*_CollectionTime
+        ## cassandra_java_GarbageCollector_*_LastGcInfo_duration
+        ## cassandra_java_GarbageCollector_*_LastGcInfo_GcThreadCount
+        ## cassandra_java_GarbageCollector_*_LastGcInfo_memoryUsageAfterGc_*_used
+        ## cassandra_java_GarbageCollector_*_LastGcInfo_memoryUsageBeforeGc_*_used
+        ## cassandra_java_Memory_HeapMemoryUsage_used
+        ## cassandra_java_OperatingSystem_AvailableProcessors
+        ## cassandra_java_OperatingSystem_FreePhysicalMemorySize
+        ## cassandra_java_OperatingSystem_SystemCpuLoad
+        ## cassandra_java_OperatingSystem_TotalPhysicalMemorySize
+        ## cassandra_java_OperatingSystem_TotalSwapSpaceSize
+        ## cassandra_Net_FailureDetector_DownEndpointCount
+        ## cassandra_Net_FailureDetector_UpEndpointCount
+        ## cassandra_TableMetrics_AllMemtablesHeapSize_Value
+        ## cassandra_TableMetrics_AllMemtablesLiveDataSize_Value
+        ## cassandra_TableMetrics_CompactionBytesWritten_Count
+        ## cassandra_TableMetrics_EstimatedPartitionCount_Value
+        ## cassandra_TableMetrics_KeyCacheHitRate_Value
+        ## cassandra_TableMetrics_LiveSSTableCount_Value
+        ## cassandra_TableMetrics_MemtableColumnsCount_Value
+        ## cassandra_TableMetrics_MemtableLiveDataSize_Value
+        ## cassandra_TableMetrics_MemtableOffHeapSize_Value
+        ## cassandra_TableMetrics_MemtableOnHeapSize_Value
+        ## cassandra_TableMetrics_MemtableSwitchCount_Count
+        ## cassandra_TableMetrics_PendingCompactions_Value
+        ## cassandra_TableMetrics_PendingFlushes_Count
+        ## cassandra_TableMetrics_PercentRepaired_Value
+        ## cassandra_TableMetrics_RangeLatency_Count
+        ## cassandra_TableMetrics_ReadLatency_50thPercentile
+        ## cassandra_TableMetrics_ReadLatency_Max
+        ## cassandra_TableMetrics_ReadLatency_OneMinuteRate
+        ## cassandra_TableMetrics_RowCacheHit_Count
+        ## cassandra_TableMetrics_RowCacheMiss_Count
+        ## cassandra_TableMetrics_SSTablesPerReadHistogram_50thPercentile
+        ## cassandra_TableMetrics_SSTablesPerReadHistogram_99thPercentile
+        ## cassandra_TableMetrics_SSTablesPerReadHistogram_Count
+        ## cassandra_TableMetrics_SSTablesPerReadHistogram_Max
+        ## cassandra_TableMetrics_TombstoneScannedHistogram_50thPercentile
+        ## cassandra_TableMetrics_TombstoneScannedHistogram_99thPercentile
+        ## cassandra_TableMetrics_TombstoneScannedHistogram_Max
+        ## cassandra_TableMetrics_TotalDiskSpaceUsed_Count
+        ## cassandra_TableMetrics_WaitingOnFreeMemtableSpace_Max
+        ## cassandra_TableMetrics_WriteLatency_50thPercentile
+        ## cassandra_TableMetrics_WriteLatency_99thPercentile
+        ## cassandra_TableMetrics_WriteLatency_Max
+        ## cassandra_TableMetrics_WriteLatency_OneMinuteRate
+        ## cassandra_ThreadPoolMetrics_internal_Count
+        ## cassandra_ThreadPoolMetrics_internal_Value
+        ## cassandra_ThreadPoolMetrics_request_Count
+        ## cassandra_ThreadPoolMetrics_request_Value
+        ## cassandra_ThreadPoolMetrics_transport_Count
+        ## cassandra_ThreadPoolMetrics_transport_Value
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.cassandra
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:cassandra_(CacheMetrics_ChunkCache_OneMinuteRate|ClientMetrics_(connectedNativeClients_Value|RequestDiscarded_OneMinuteRate)|CommitLogMetrics_(CompletedTasks_Value|PendingTasks_Value)|DroppedMessageMetrics_Dropped_OneMinuteRate|java_(GarbageCollector_(ConcurrentMarkSweep|ParNew)_(CollectionCount|CollectionTime|LastGcInfo_duration|LastGcInfo_GcThreadCount|LastGcInfo_memoryUsageAfterGc_.*_used|LastGcInfo_memoryUsageBeforeGc_.*_used)|Memory_HeapMemoryUsage_used|OperatingSystem_(AvailableProcessors|FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize|TotalSwapSpaceSize))|Net_FailureDetector_(DownEndpointCount|UpEndpointCount)|TableMetrics_(AllMemtablesHeapSize_Value|AllMemtablesLiveDataSize_Value|CompactionBytesWritten_Count|EstimatedPartitionCount_Value|KeyCacheHitRate_Value|LiveSSTableCount_Value|MemtableColumnsCount_Value|MemtableLiveDataSize_Value|MemtableOffHeapSize_Value|MemtableOnHeapSize_Value|MemtableSwitchCount_Count|PendingCompactions_Value|PendingFlushes_Count|PercentRepaired_Value|RangeLatency_Count|ReadLatency_50thPercentile|ReadLatency_Max|ReadLatency_OneMinuteRate|RowCacheHit_Count|RowCacheMiss_Count|SSTablesPerReadHistogram_50thPercentile|SSTablesPerReadHistogram_99thPercentile|SSTablesPerReadHistogram_Count|SSTablesPerReadHistogram_Max|TombstoneScannedHistogram_50thPercentile|TombstoneScannedHistogram_99thPercentile|TombstoneScannedHistogram_Max|TotalDiskSpaceUsed_Count|WaitingOnFreeMemtableSpace_Max|WriteLatency_50thPercentile|WriteLatency_99thPercentile|WriteLatency_Max|WriteLatency_OneMinuteRate)|ThreadPoolMetrics_(internal_(Count|Value)|request_(Count|Value)|transport_(Count|Value))))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
