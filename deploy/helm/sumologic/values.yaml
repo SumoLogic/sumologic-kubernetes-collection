@@ -2921,6 +2921,11 @@ otelcol:
                 action: upsert
               - key: pod  # remove pod to avoid duplication when attribute translation is enabled
                 action: delete
+              - key: k8s.container.name  # add container in OpenTelemetry convention to unify configuration for Source processor
+                from_attribute: container
+                action: upsert
+              - key: container  # remove container to avoid duplication when attribute translation is enabled
+                action: delete
               - key: prometheus_service
                 from_attribute: service
                 action: upsert
@@ -2981,11 +2986,6 @@ otelcol:
           ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
           source:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
-            exclude:
-              namespace: '{{ include "fluentd.excludeNamespaces" . }}'
-              pod: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
-              container: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
-              host: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
         service:
           extensions:
             - health_check
