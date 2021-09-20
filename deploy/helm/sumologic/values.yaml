@@ -2592,7 +2592,7 @@ otelcol:
   statefulset:
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.0.25-beta.0
+      tag: 0.0.27-beta.0
       pullPolicy: IfNotPresent
   metadata:
     metrics:
@@ -2769,7 +2769,7 @@ otelcol:
         extensions:
           health_check: {}
         exporters:
-          sumologic:
+          sumologic/containers:
             log_format: json
             endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
             ## ToDo: Move sources to sourceprocessor
@@ -2789,45 +2789,27 @@ otelcol:
               - host
               - node
               - pod
+          sumologic/systemd:
+            log_format: json
+            endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+            ## ToDo: Move sources to sourceprocessor
+            source_name: "%{_sourceName}"
+            source_category: "%{_sourceCategory}"
+            source_host: "%{_sourceHost}"
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              - _collector
+              - _sourceCategory
+              - _sourceHost
+              - _sourceName
+
         processors:
-          attributes:
+          ## Common processors
+          attributes/remove_fluent_tag:
             actions:
-              - action: extract
-                key: fluent.tag
-                pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
               - action: delete
                 key: fluent.tag
-
-              - action: insert
-                key: k8s.container.id
-                from_attribute: container_id
-              - action: delete
-                key: container_id
-
-              - action: insert
-                key: k8s.pod.name
-                from_attribute: k8s_pod_name
-              - action: delete
-                key: k8s_pod_name
-
-              - action: insert
-                key: k8s.namespace.name
-                from_attribute: k8s_namespace
-              - action: delete
-                key: k8s_namespace
-
-              - action: insert
-                key: k8s.container.name
-                from_attribute: k8s_container_name
-              - action: delete
-                key: k8s_container_name
-          groupbyattrs:
-            keys:
-              - k8s.container.id
-              - k8s.container.name
-              - k8s.namespace.name
-              - k8s.pod.name
-
           ## The memory_limiter processor is used to prevent out of memory situations on the collector.
           memory_limiter:
             ## check_interval is the time between measurements of memory usage for the
@@ -2840,13 +2822,52 @@ otelcol:
             ## Note that typically the total memory usage of process will be about 50MiB higher
             ## than this value.
             limit_mib: 1900
-
           ## The batch processor accepts spans and places them into batches grouped by node and resource
           batch:
             ## Number of spans after which a batch will be sent regardless of time
             send_batch_size: 256
             ## Time duration after which a batch will be sent regardless of size
             timeout: 5s
+
+          ## Containers related processors
+          filter/include_fluent_tag_containers:
+            logs:
+              include:
+                match_type: regexp
+                record_attributes:
+                  - key: fluent.tag
+                    value: containers\..+
+          attributes/containers:
+            actions:
+              - action: extract
+                key: fluent.tag
+                pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
+              - action: insert
+                key: k8s.container.id
+                from_attribute: container_id
+              - action: delete
+                key: container_id
+              - action: insert
+                key: k8s.pod.name
+                from_attribute: k8s_pod_name
+              - action: delete
+                key: k8s_pod_name
+              - action: insert
+                key: k8s.namespace.name
+                from_attribute: k8s_namespace
+              - action: delete
+                key: k8s_namespace
+              - action: insert
+                key: k8s.container.name
+                from_attribute: k8s_container_name
+              - action: delete
+                key: k8s_container_name
+          groupbyattrs/containers:
+            keys:
+              - k8s.container.id
+              - k8s.container.name
+              - k8s.namespace.name
+              - k8s.pod.name
           k8s_tagger:
             ## Has to be false to enrich metadata
             passthrough: false
@@ -2879,7 +2900,7 @@ otelcol:
               delimiter: "_"
             pod_association:
               - from: build_hostname
-          source:
+          source/containers:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
             source_name: '{{ .Values.fluentd.logs.containers.sourceName | quote }}'
             source_category: '{{ .Values.fluentd.logs.containers.sourceCategory | quote }}'
@@ -2897,6 +2918,41 @@ otelcol:
             pod_key: "k8s.pod.name"
             container_key: "k8s.container.name"
             source_host_key: "k8s.pod.hostname"
+
+          ## Systemd related processors
+          filter/include_fluent_tag_host:
+            logs:
+              include:
+                match_type: regexp
+                record_attributes:
+                  - key: fluent.tag
+                    value: host\..+
+          filter/include_systemd:
+            logs:
+              include:
+                match_type: regexp
+                record_attributes:
+                  - key: _SYSTEMD_UNIT
+                    value: .+
+          filter/exclude_kubelet:
+            logs:
+              exclude:
+                match_type: service
+                record_attributes:
+                  - key: _SYSTEMD_UNIT
+                    value: kubelet.service
+          groupbyattrs/systemd:
+            keys:
+              - _SYSTEMD_UNIT
+              - _HOSTNAME
+          source/systemd:
+            collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+            source_name: '{{ .Values.fluentd.logs.systemd.sourceName | quote }}'
+            source_category: '{{ .Values.fluentd.logs.systemd.sourceCategory | quote }}'
+            source_category_prefix: '{{ .Values.fluentd.logs.systemd.sourceCategoryPrefix | quote }}'
+            source_category_replace_dash: '{{ .Values.fluentd.logs.systemd.sourceCategoryReplaceDash | quote }}'
+            source_host_key: "_HOSTNAME"
+
         service:
           extensions:
             - health_check
@@ -2907,13 +2963,30 @@ otelcol:
                 - fluentforward
               processors:
                 - memory_limiter
-                - attributes
-                - groupbyattrs
+                - filter/include_fluent_tag_containers
+                - attributes/containers
+                - attributes/remove_fluent_tag
+                - groupbyattrs/containers
                 - k8s_tagger
-                - source
+                - source/containers
                 - batch
               exporters:
-                - sumologic
+                - sumologic/containers
+            logs/systemd:
+              receivers:
+                - fluentforward
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_host
+                - attributes/remove_fluent_tag
+                - filter/include_systemd
+                - filter/exclude_kubelet
+                - groupbyattrs/systemd
+                - source/systemd
+                - batch
+              exporters:
+                - sumologic/systemd
+
   deployment:
     nodeSelector: {}
     tolerations: []
