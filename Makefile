@@ -12,7 +12,9 @@ push-helm-chart:
 markdownlint: mdl
 
 mdl:
-	mdl --style .markdownlint/style.rb deploy/docs
+	mdl --style .markdownlint/style.rb \
+		deploy/docs \
+		CHANGELOG.md
 
 helm-dependency-update:
 	helm dependency update deploy/helm/sumologic
