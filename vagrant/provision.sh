@@ -9,7 +9,7 @@ apt-get --yes install apt-transport-https jq
 
 echo "export EDITOR=vim" >> /home/vagrant/.bashrc
 
-snap install microk8s --classic --channel=1.18/stable
+snap install microk8s --classic --channel=1.21/stable
 microk8s.status --wait-ready
 ufw allow in on cbr0
 ufw allow out on cbr0
@@ -94,7 +94,7 @@ echo 'export PATH="$PATH:$HOME/.gem/bin"' >> /home/vagrant/.bashrc
 
 apt-get install -y yamllint
 
-K9S_VERSION=v0.24.2
+K9S_VERSION=v0.24.15
 mkdir /opt/k9s
 curl -Lo- "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz" | tar -C /opt/k9s -xzf -
 ln -s /opt/k9s/k9s /usr/bin/k9s
