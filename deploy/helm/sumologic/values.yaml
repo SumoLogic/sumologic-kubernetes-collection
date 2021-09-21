@@ -2779,22 +2779,13 @@ otelcol:
             sending_queue:
               enabled: true
             metadata_attributes:
+              - _collector
               - _sourceCategory
               - _sourceHost
               - _sourceName
-              - k8s.*
-              - pod_.*
-              - namespace_.*
-              - Deployment
-              - Namespace
-              - container
-              - host
-              - node
-              - pod
           sumologic/systemd:
             log_format: json
             endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-            ## ToDo: Move sources to sourceprocessor
             source_name: "%{_sourceName}"
             source_category: "%{_sourceCategory}"
             source_host: "%{_sourceHost}"
