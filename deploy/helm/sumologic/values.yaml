@@ -2973,10 +2973,10 @@ otelcol:
                 - memory_limiter
                 - filter/include_fluent_tag_containers
                 - attributes/containers
-                - attributes/remove_fluent_tag
                 - groupbyattrs/containers
                 - k8s_tagger
                 - source/containers
+                - attributes/remove_fluent_tag
                 - batch
               exporters:
                 - sumologic
@@ -2986,11 +2986,11 @@ otelcol:
               processors:
                 - memory_limiter
                 - filter/include_fluent_tag_host
-                - attributes/remove_fluent_tag
                 - filter/include_systemd
                 - filter/exclude_kubelet
                 - groupbyattrs/systemd
                 - source/systemd
+                - attributes/remove_fluent_tag
                 - batch
               exporters:
                 - sumologic
@@ -3000,10 +3000,10 @@ otelcol:
               processors:
                 - memory_limiter
                 - filter/include_fluent_tag_host
-                - attributes/remove_fluent_tag
                 - filter/include_kubelet
                 - groupbyattrs/systemd
                 - source/kubelet
+                - attributes/remove_fluent_tag
                 - batch
               exporters:
                 - sumologic
