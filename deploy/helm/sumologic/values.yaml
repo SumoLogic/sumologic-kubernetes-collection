@@ -2953,6 +2953,28 @@ otelcol:
               _SYSTEMD_UNIT: '{{ .Values.fluentd.logs.systemd.excludeUnitRegex | quote }}'
             source_host_key: "_HOSTNAME"
 
+          ## kubelet related processors
+          filter/include_kubelet:
+            logs:
+              include:
+                match_type: service
+                record_attributes:
+                  - key: _SYSTEMD_UNIT
+                    value: kubelet.service
+
+          source/kubelet:
+            collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+            source_name: '{{ .Values.fluentd.logs.kubelet.sourceName | quote }}'
+            source_category: '{{ .Values.fluentd.logs.kubelet.sourceCategory | quote }}'
+            source_category_prefix: '{{ .Values.fluentd.logs.kubelet.sourceCategoryPrefix | quote }}'
+            source_category_replace_dash: '{{ .Values.fluentd.logs.kubelet.sourceCategoryReplaceDash | quote }}'
+            exclude:
+              SYSLOG_FACILITY: '{{ .Values.fluentd.logs.kubelet.excludeFacilityRegex | quote }}'
+              _HOSTNAME: '{{ .Values.fluentd.logs.kubelet.excludeHostRegex | quote }}'
+              PRIORITY: '{{ .Values.fluentd.logs.kubelet.excludePriorityRegex | quote }}'
+              _SYSTEMD_UNIT: '{{ .Values.fluentd.logs.kubelet.excludeUnitRegex | quote }}'
+            source_host_key: "_HOSTNAME"
+
         service:
           extensions:
             - health_check
@@ -2983,6 +3005,19 @@ otelcol:
                 - filter/exclude_kubelet
                 - groupbyattrs/systemd
                 - source/systemd
+                - batch
+              exporters:
+                - sumologic/systemd
+            logs/kubelet:
+              receivers:
+                - fluentforward
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_host
+                - attributes/remove_fluent_tag
+                - filter/include_kubelet
+                - groupbyattrs/systemd
+                - source/kubelet
                 - batch
               exporters:
                 - sumologic/systemd
