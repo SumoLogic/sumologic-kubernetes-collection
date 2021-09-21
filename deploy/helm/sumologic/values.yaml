@@ -2769,21 +2769,7 @@ otelcol:
         extensions:
           health_check: {}
         exporters:
-          sumologic/containers:
-            log_format: json
-            endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-            ## ToDo: Move sources to sourceprocessor
-            source_name: "%{_sourceName}"
-            source_category: "%{_sourceCategory}"
-            source_host: "%{_sourceHost}"
-            sending_queue:
-              enabled: true
-            metadata_attributes:
-              - _collector
-              - _sourceCategory
-              - _sourceHost
-              - _sourceName
-          sumologic/systemd:
+          sumologic:
             log_format: json
             endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
             source_name: "%{_sourceName}"
@@ -2993,7 +2979,7 @@ otelcol:
                 - source/containers
                 - batch
               exporters:
-                - sumologic/containers
+                - sumologic
             logs/systemd:
               receivers:
                 - fluentforward
@@ -3007,7 +2993,7 @@ otelcol:
                 - source/systemd
                 - batch
               exporters:
-                - sumologic/systemd
+                - sumologic
             logs/kubelet:
               receivers:
                 - fluentforward
@@ -3020,7 +3006,7 @@ otelcol:
                 - source/kubelet
                 - batch
               exporters:
-                - sumologic/systemd
+                - sumologic
 
   deployment:
     nodeSelector: {}
