@@ -2938,12 +2938,19 @@ otelcol:
             keys:
               - _SYSTEMD_UNIT
               - _HOSTNAME
+              - SYSLOG_FACILITY
+              - PRIORITY
           source/systemd:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
             source_name: '{{ .Values.fluentd.logs.systemd.sourceName | quote }}'
             source_category: '{{ .Values.fluentd.logs.systemd.sourceCategory | quote }}'
             source_category_prefix: '{{ .Values.fluentd.logs.systemd.sourceCategoryPrefix | quote }}'
             source_category_replace_dash: '{{ .Values.fluentd.logs.systemd.sourceCategoryReplaceDash | quote }}'
+            exclude:
+              SYSLOG_FACILITY: '{{ .Values.fluentd.logs.systemd.excludeFacilityRegex | quote }}'
+              _HOSTNAME: '{{ .Values.fluentd.logs.systemd.excludeHostRegex | quote }}'
+              PRIORITY: '{{ .Values.fluentd.logs.systemd.excludePriorityRegex | quote }}'
+              _SYSTEMD_UNIT: '{{ .Values.fluentd.logs.systemd.excludeUnitRegex | quote }}'
             source_host_key: "_HOSTNAME"
 
         service:
