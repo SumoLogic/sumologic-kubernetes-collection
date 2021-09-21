@@ -1,6 +1,6 @@
 # Opentelemetry Collector
 
-Opentelemetry Collector is a software to receive and process logs, metrics and traces.
+Opentelemetry Collector is a software to receive, process and export logs, metrics and traces.
 We offer it as drop-in replacement for Fluentd in our collection.
 
 **This feature is currently in beta and is not recommended for production environments.**
