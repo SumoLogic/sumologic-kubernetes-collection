@@ -2811,7 +2811,39 @@ otelcol:
         extensions:
           health_check: {}
         exporters:
-          sumologic:
+          sumologic/containers:
+            log_format: json
+            endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+            source_name: "%{_sourceName}"
+            source_category: "%{_sourceCategory}"
+            source_host: "%{_sourceHost}"
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              ## Required to be used in headers
+              - _sourceCategory
+              - _sourceHost
+              - _sourceName
+              ## Attributes to be send as fields
+              - _collector
+              - k8s.*
+              - pod_.*
+              - namespace_.*
+              ## ToDo: remove below duplication of k8s.* attributes
+              ## after https://github.com/SumoLogic/sumologic-otel-collector/pull/245 being resolved
+              - cluster
+              - container
+              - daemonset
+              - deployment
+              - namespace
+              - node
+              - service
+              - host
+              - pod
+              - pod_id
+              - replicaset
+              - statefulset
+          sumologic/systemd:
             log_format: json
             endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
             source_name: "%{_sourceName}"
@@ -3021,7 +3053,7 @@ otelcol:
                 - attributes/remove_fluent_tag
                 - batch
               exporters:
-                - sumologic
+                - sumologic/containers
             logs/systemd:
               receivers:
                 - fluentforward
@@ -3035,7 +3067,7 @@ otelcol:
                 - attributes/remove_fluent_tag
                 - batch
               exporters:
-                - sumologic
+                - sumologic/systemd
             logs/kubelet:
               receivers:
                 - fluentforward
@@ -3048,7 +3080,7 @@ otelcol:
                 - attributes/remove_fluent_tag
                 - batch
               exporters:
-                - sumologic
+                - sumologic/systemd
 
   deployment:
     nodeSelector: {}
