@@ -2989,7 +2989,7 @@ otelcol:
           filter/exclude_kubelet:
             logs:
               exclude:
-                match_type: service
+                match_type: strict
                 record_attributes:
                   - key: _SYSTEMD_UNIT
                     value: kubelet.service
@@ -3016,7 +3016,7 @@ otelcol:
           filter/include_kubelet:
             logs:
               include:
-                match_type: service
+                match_type: strict
                 record_attributes:
                   - key: _SYSTEMD_UNIT
                     value: kubelet.service
