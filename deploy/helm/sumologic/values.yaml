@@ -2467,6 +2467,48 @@ kube-prometheus-stack:
               regex: (?:cassandra_(CacheMetrics_ChunkCache_OneMinuteRate|ClientMetrics_(connectedNativeClients_Value|RequestDiscarded_OneMinuteRate)|CommitLogMetrics_(CompletedTasks_Value|PendingTasks_Value)|DroppedMessageMetrics_Dropped_OneMinuteRate|java_(GarbageCollector_(ConcurrentMarkSweep|ParNew)_(CollectionCount|CollectionTime|LastGcInfo_duration|LastGcInfo_GcThreadCount|LastGcInfo_memoryUsageAfterGc_.*_used|LastGcInfo_memoryUsageBeforeGc_.*_used)|Memory_HeapMemoryUsage_used|OperatingSystem_(AvailableProcessors|FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize|TotalSwapSpaceSize))|Net_FailureDetector_(DownEndpointCount|UpEndpointCount)|TableMetrics_(AllMemtablesHeapSize_Value|AllMemtablesLiveDataSize_Value|CompactionBytesWritten_Count|EstimatedPartitionCount_Value|KeyCacheHitRate_Value|LiveSSTableCount_Value|MemtableColumnsCount_Value|MemtableLiveDataSize_Value|MemtableOffHeapSize_Value|MemtableOnHeapSize_Value|MemtableSwitchCount_Count|PendingCompactions_Value|PendingFlushes_Count|PercentRepaired_Value|RangeLatency_Count|ReadLatency_50thPercentile|ReadLatency_Max|ReadLatency_OneMinuteRate|RowCacheHit_Count|RowCacheMiss_Count|SSTablesPerReadHistogram_50thPercentile|SSTablesPerReadHistogram_99thPercentile|SSTablesPerReadHistogram_Count|SSTablesPerReadHistogram_Max|TombstoneScannedHistogram_50thPercentile|TombstoneScannedHistogram_99thPercentile|TombstoneScannedHistogram_Max|TotalDiskSpaceUsed_Count|WaitingOnFreeMemtableSpace_Max|WriteLatency_50thPercentile|WriteLatency_99thPercentile|WriteLatency_Max|WriteLatency_OneMinuteRate)|ThreadPoolMetrics_(internal_(Count|Value)|request_(Count|Value)|transport_(Count|Value))))
               sourceLabels: [__name__]
 
+        ## MongoDB Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mongodb
+        ## Metrics follow following format:
+        ## mongodb_active_reads
+        ## mongodb_active_writes
+        ## mongodb_commands_per_sec
+        ## mongodb_connections_current
+        ## mongodb_db_stats_storage_size
+        ## mongodb_deletes_per_sec
+        ## mongodb_document_*
+        ## mongodb_flushes_per_sec
+        ## mongodb_getmores_per_sec
+        ## mongodb_inserts_per_sec
+        ## mongodb_net_*_bytes_count
+        ## mongodb_open_connections
+        ## mongodb_page_faults
+        ## mongodb_percent_cache_dirty
+        ## mongodb_percent_cache_used
+        ## mongodb_queries_per_sec
+        ## mongodb_queued_reads
+        ## mongodb_queued_writes
+        ## mongodb_repl_queries
+        ## mongodb_repl_commands_per_sec
+        ## mongodb_repl_deletes_per_sec
+        ## mongodb_repl_getmores_per_sec
+        ## mongodb_repl_inserts_per_sec
+        ## mongodb_repl_oplog_window_sec
+        ## mongodb_repl_queries_per_sec
+        ## mongodb_repl_updates_per_sec
+        ## mongodb_resident_megabytes
+        ## mongodb_updates_per_sec
+        ## mongodb_uptime_ns
+        ## mongodb_vsize_megabytes
+        ## mongodb_wtcache_bytes_read_into
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.mongodb
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:mongodb_(active_(reads|writes)|commands_per_sec|connections_current|db_stats_storage_size|deletes_per_sec|document_.*|flushes_per_sec|getmores_per_sec|inserts_per_sec|net_.*_bytes_count|open_connections|page_faults|percent_cache_(dirty|used)|queries_per_sec|queued_(reads|writes)|repl_((commands|deletes|getmores|inserts|oplog|queries|updates)_per_sec|queries|oplog_window_sec)|resident_megabytes|updates_per_sec|uptime_ns|vsize_megabytes|wtcache_bytes_read_into))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
