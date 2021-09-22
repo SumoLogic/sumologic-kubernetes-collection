@@ -2489,6 +2489,7 @@ kube-prometheus-stack:
         ## mongodb_queries_per_sec
         ## mongodb_queued_reads
         ## mongodb_queued_writes
+        ## mongodb_repl_queries
         ## mongodb_repl_commands_per_sec
         ## mongodb_repl_deletes_per_sec
         ## mongodb_repl_getmores_per_sec
@@ -2505,7 +2506,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:mongodb_(active_(reads|writes)|commands_per_sec|connections_current|db_stats_storage_size|deletes_per_sec|document_.*|flushes_per_sec|getmores_per_sec|inserts_per_sec|net_.*_bytes_count|open_connections|page_faults|percent_cache_(dirty|used)|queries_per_sec|queued_(reads|writes)|repl_((commands|deletes|getmores|inserts|oplog|queries|updates)_per_sec)|queries)|resident_megabytes|updates_per_sec|uptime_ns|vsize_megabytes|wtcache_bytes_read_into))
+              regex: (?:mongodb_(active_(reads|writes)|commands_per_sec|connections_current|db_stats_storage_size|deletes_per_sec|document_.*|flushes_per_sec|getmores_per_sec|inserts_per_sec|net_.*_bytes_count|open_connections|page_faults|percent_cache_(dirty|used)|queries_per_sec|queued_(reads|writes)|repl_((commands|deletes|getmores|inserts|oplog|queries|updates)_per_sec|queries|oplog_window_sec)|resident_megabytes|updates_per_sec|uptime_ns|vsize_megabytes|wtcache_bytes_read_into))
               sourceLabels: [__name__]
 
 ## Configure optional OpenTelemetry Collector in Agent mode
