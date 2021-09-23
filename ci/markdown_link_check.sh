@@ -9,5 +9,6 @@ fi
 readonly FILES=$(find . -type f -name '*.md')
 
 for file in ${FILES}; do
-    markdown-link-check --progress --config .markdown_link_check.json "${file}"
+    markdown-link-check --progress --verbose \
+        --config .markdown_link_check.json "${file}"
 done

@@ -4,7 +4,7 @@
 
 Please install the following:
 
-- [VirtualBox](https://www.virtualbox.org/)
+- [VirtualBox](https://www.oracle.com/virtualization/technologies/vm/downloads/virtualbox-downloads.html)
 - [Vagrant](https://www.vagrantup.com/)
 - [vagrant-disksize](https://github.com/sprotheroe/vagrant-disksize) plugin
 
