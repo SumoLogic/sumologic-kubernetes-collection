@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     distro for systemd logs (when `sumologic.logs.metadata.provider` is set to
     `otelcol`)
 
-    One notable change comparing the new behavior to `fluentd` metadat enrichment
+    One notable change comparing the new behavior to `fluentd` metadata enrichment
     is that setting source name in `sourceprocessor` configuration is respected
     i.e.  whatever is set in
     `otelcol.metadata.logs.config.processors.source/systemd:.source_name` will be
