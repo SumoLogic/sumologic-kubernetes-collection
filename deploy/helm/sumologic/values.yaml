@@ -3019,6 +3019,11 @@ otelcol:
                 record_attributes:
                   - key: fluent.tag
                     value: host\..+
+          attributes/extract_systemd_source_name_from_fluent_tag:
+            actions:
+              - action: extract
+                key: fluent.tag
+                pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
           filter/include_systemd:
             logs:
               include:
@@ -3039,9 +3044,10 @@ otelcol:
               - _HOSTNAME
               - SYSLOG_FACILITY
               - PRIORITY
+              - _sourceName
           source/systemd:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
-            source_name: '{{ .Values.fluentd.logs.systemd.sourceName | quote }}'
+            source_name: '%{_sourceName}'
             source_category: '{{ .Values.fluentd.logs.systemd.sourceCategory | quote }}'
             source_category_prefix: '{{ .Values.fluentd.logs.systemd.sourceCategoryPrefix | quote }}'
             source_category_replace_dash: '{{ .Values.fluentd.logs.systemd.sourceCategoryReplaceDash | quote }}'
@@ -3060,7 +3066,6 @@ otelcol:
                 record_attributes:
                   - key: _SYSTEMD_UNIT
                     value: kubelet.service
-
           source/kubelet:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
             source_name: '{{ .Values.fluentd.logs.kubelet.sourceName | quote }}'
