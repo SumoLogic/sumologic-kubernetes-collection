@@ -2509,6 +2509,46 @@ kube-prometheus-stack:
               regex: (?:mongodb_(active_(reads|writes)|commands_per_sec|connections_current|db_stats_storage_size|deletes_per_sec|document_.*|flushes_per_sec|getmores_per_sec|inserts_per_sec|net_.*_bytes_count|open_connections|page_faults|percent_cache_(dirty|used)|queries_per_sec|queued_(reads|writes)|repl_((commands|deletes|getmores|inserts|oplog|queries|updates)_per_sec|queries|oplog_window_sec)|resident_megabytes|updates_per_sec|uptime_ns|vsize_megabytes|wtcache_bytes_read_into))
               sourceLabels: [__name__]
 
+        ## Rabbitmq Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/rabbitmq
+        ## Metrics follow following format:
+        ## rabbitmq_exchange_messages_publish_in
+        ## rabbitmq_exchange_messages_publish_in_rate
+        ## rabbitmq_exchange_messages_publish_out
+        ## rabbitmq_exchange_messages_publish_out_rate
+        ## rabbitmq_node_disk_free
+        ## rabbitmq_node_disk_free_limit
+        ## rabbitmq_node_fd_used
+        ## rabbitmq_node_gc_num_rate
+        ## rabbitmq_node_mem_limit
+        ## rabbitmq_node_mem_used
+        ## rabbitmq_node_mnesia_disk_tx_count
+        ## rabbitmq_node_mnesia_ram_tx_count
+        ## rabbitmq_node_uptime
+        ## rabbitmq_overview_clustering_listerners
+        ## rabbitmq_overview_connections
+        ## rabbitmq_overview_consumers
+        ## rabbitmq_overview_exchanges
+        ## rabbitmq_overview_messages_delivered
+        ## rabbitmq_overview_messages_published
+        ## rabbitmq_overview_messages_unacked
+        ## rabbitmq_overview_queues
+        ## rabbitmq_queue_consumers
+        ## rabbitmq_queue_memory
+        ## rabbitmq_queue_messages_deliver_rate
+        ## rabbitmq_queue_messages_max_time
+        ## rabbitmq_queue_messages_memory
+        ## rabbitmq_queue_messages_publish_rate
+        ## rabbitmq_queue_messages_unack
+        ## rabbitmq_queue_slave_nodes
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.rabbitmq
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:rabbitmq_(exchange_messages_publish_(in_rate|in|out_rate|out)|node_(disk_free_limit|disk_free|mem_(limit|used)|uptime|fd_used|mnesia_(disk_tx_count|ram_tx_count)|gc_num_rate)|overview_(clustering_listerners|connections|exchanges|consumers|queues|messages_(delivered|published|unacked))|queue_(consumers|memory|slave_nodes|messages_(publish_rate|deliver_rate|memory|max_time|unack))))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
