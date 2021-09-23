@@ -12,12 +12,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - otelcol: add systemd logs pipeline (#1767)
 
   - This change introduces logs metadata enrichment with Sumo Open Telemetry
-    distro for systemd logs.
+    distro for systemd logs (when `sumologic.logs.metadata.provider` is set to
+    `otelcol`)
 
-    One notable change in behavior with respect to `fluentd` is that
-    `.Values.fluentd.logs.systemd.sourceName` is respected and
-    will set `_sourceName` of processed logs while fluentd would set this field
-    to the corresponding systemd serice's name e.g. `docker` for `docker.service`.
+    One notable change comparing the new behavior to `fluentd` metadata enrichment
+    is that setting source name in `sourceprocessor` configuration is respected
+    i.e.  whatever is set in
+    `otelcol.metadata.logs.config.processors.source/systemd.source_name` will be
+    set as source name for systemd logs.
+
+    The old behavior is being retained i.e. extracting the source name from
+    `fluent.tag` using `attributes/extract_systemd_source_name_from_fluent_tag`
+    processor. For instance, for `fluent.tag=host.docker.service`, source name
+    will be set to `docker`.
+
+    In order to set the source name to something else please change
+    `otelcol.metadata.logs.config.processors.source/systemd:.source_name`
+    configuration value.
 
 ## [v2.1.5][v2_1_5] - 2021-07-21
 
