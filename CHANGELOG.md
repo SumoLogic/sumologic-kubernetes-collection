@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     One notable change comparing the new behavior to `fluentd` metadata enrichment
     is that setting source name in `sourceprocessor` configuration is respected
     i.e.  whatever is set in
-    `otelcol.metadata.logs.config.processors.source/systemd:.source_name` will be
+    `otelcol.metadata.logs.config.processors.source/systemd.source_name` will be
     set as source name for systemd logs.
 
     The old behavior is being retained i.e. extracting the source name from
