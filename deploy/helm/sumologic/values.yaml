@@ -1082,7 +1082,7 @@ fluent-bit:
       [PARSER]
           Name        multi_line
           Format      regex
-          Regex       (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
+          Regex       (?<log>^{"log":"\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
       [PARSER]
           Name         crio
           Format       regex
@@ -2549,7 +2549,52 @@ kube-prometheus-stack:
               regex: (?:rabbitmq_(exchange_messages_publish_(in_rate|in|out_rate|out)|node_(disk_free_limit|disk_free|mem_(limit|used)|uptime|fd_used|mnesia_(disk_tx_count|ram_tx_count)|gc_num_rate)|overview_(clustering_listerners|connections|exchanges|consumers|queues|messages_(delivered|published|unacked))|queue_(consumers|memory|slave_nodes|messages_(publish_rate|deliver_rate|memory|max_time|unack))))
               sourceLabels: [__name__]
 
-        ## Rabbitmq Telegraf Metrics
+        ## Tomcat Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/tomcat
+        ## Metrics follow following format:
+        ## tomcat_connector_bytes_received
+        ## tomcat_connector_bytes_sent
+        ## tomcat_connector_current_thread_busy
+        ## tomcat_connector_current_thread_count
+        ## tomcat_connector_current_threads_busy
+        ## tomcat_connector_error_count
+        ## tomcat_connector_max_threads
+        ## tomcat_connector_max_time
+        ## tomcat_connector_processing_time
+        ## tomcat_connector_request_count
+        ## tomcat_jmx_jvm_memory_HeapMemoryUsage_max
+        ## tomcat_jmx_jvm_memory_HeapMemoryUsage_used
+        ## tomcat_jmx_jvm_memory_NonHeapMemoryUsage_max
+        ## tomcat_jmx_jvm_memory_NonHeapMemoryUsage_used
+        ## tomcat_jmx_OperatingSystem_FreePhysicalMemorySize
+        ## tomcat_jmx_OperatingSystem_FreeSwapSpaceSize
+        ## tomcat_jmx_OperatingSystem_SystemCpuLoad
+        ## tomcat_jmx_OperatingSystem_TotalPhysicalMemorySize
+        ## tomcat_jmx_OperatingSystem_TotalSwapSpaceSize
+        ## tomcat_jmx_Servlet_processingTime
+        ## tomcat_jvm_memory_free
+        ## tomcat_jvm_memory_max
+        ## tomcat_jvm_memory_total
+        ## tomcat_jvm_memorypool_bytes_received
+        ## tomcat_jvm_memorypool_bytes_sent
+        ## tomcat_jvm_memorypool_current_thread_count
+        ## tomcat_jvm_memorypool_current_threads_busy
+        ## tomcat_jvm_memorypool_error_count
+        ## tomcat_jvm_memorypool_max
+        ## tomcat_jvm_memorypool_max_threads
+        ## tomcat_jvm_memorypool_max_time
+        ## tomcat_jvm_memorypool_processing_time
+        ## tomcat_jvm_memorypool_request_count
+        ## tomcat_jvm_memorypool_used
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.tomcat
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:tomcat_(connector_(bytes_(received|sent)|current_(thread_(busy|count)|threads_busy)|error_count|max_threads|max_time|processing_time|request_count)|jmx_(jvm_memory_(HeapMemoryUsage_(max|used)|NonHeapMemoryUsage_(max|used))|OperatingSystem_(FreePhysicalMemorySize|FreeSwapSpaceSize|SystemCpuLoad|TotalPhysicalMemorySize|TotalSwapSpaceSize)|Servlet_processingTime)|jvm_memory_(free|max|total)|jvm_memorypool_(bytes_(received|sent)|current_thread_count|current_threads_busy|error_count|max_threads|max_time|max|processing_time|request_count|used)))
+              sourceLabels: [__name__]
+
+        ## Varnish Telegraf Metrics
         ## List of Metrics are on following github page:
         ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/varnish
         ## Metrics follow following format:
