@@ -167,8 +167,17 @@ helm upgrade --install my-release sumologic/sumologic \
   --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
   --set sumologic.scc.create=true \
-  --set fluent-bit.securityContext.privileged=true
+  --set fluent-bit.securityContext.privileged=true \
+  --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
+  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
+  --set kube-prometheus-stack.prometheusOperator.namespaces.additional=[my-namespace]
 ```
+
+**Notice:** Prometheus Operator is deployed by default on OpenShift platform,
+you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
+`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in values.yaml or
+exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
+using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
 
 ## Viewing Data In Sumo Logic
 

@@ -7,14 +7,14 @@ kube-prometheus-stack:
       dashboardproviders.yaml:
         apiVersion: 1
         providers:
-        - name: 'default'
-          orgId: 1
-          folder: ''
-          type: file
-          disableDeletion: false
-          editable: true
-          options:
-            path: /var/lib/grafana/dashboards/default
+          - name: 'default'
+            orgId: 1
+            folder: ''
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/default
     sidecar:
       image:
         sha: ''
@@ -111,6 +111,7 @@ fluent-bit:
           Systemd_Filter  _SYSTEMD_UNIT=format-etcd2-volume.service
           Systemd_Filter  _SYSTEMD_UNIT=kube-node-taint-and-uncordon.service
           Systemd_Filter  _SYSTEMD_UNIT=kubelet.service
+          Systemd_Filter  _SYSTEMD_UNIT=snap.microk8s.daemon-kubelite.service
           Systemd_Filter  _SYSTEMD_UNIT=ldconfig.service
           Systemd_Filter  _SYSTEMD_UNIT=locksmithd.service
           Systemd_Filter  _SYSTEMD_UNIT=logrotate.service
@@ -148,3 +149,65 @@ fluentd:
         </match>
       multiline:
         enabled: false
+
+otelcol:
+  metadata:
+    logs:
+      config:
+        processors:
+          # Filter out receiver-mock logs to prevent snowball effect
+          filter/exclude_fluent_tag_receiver_mock_container:
+            logs:
+              exclude:
+                match_type: regexp
+                record_attributes:
+                  - key: fluent.tag
+                    value: containers\.var\.log\.containers\.receiver-mock.*
+          filter/exclude_systemd_snap_kubelite:
+            logs:
+              exclude:
+                match_type: strict
+                record_attributes:
+                  - key: _SYSTEMD_UNIT
+                    value: snap.microk8s.daemon-kubelite.service
+        service:
+          extensions:
+            - health_check
+            # - sumologic
+          pipelines:
+            logs:
+              receivers:
+                - fluentforward
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_containers
+
+                # Vagrant specific
+                - filter/exclude_fluent_tag_receiver_mock_container
+
+                - attributes/containers
+                - attributes/remove_fluent_tag
+                - groupbyattrs/containers
+                - k8s_tagger
+                - source/containers
+                - batch
+              exporters:
+                - sumologic/containers
+            logs/systemd:
+              receivers:
+                - fluentforward
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_host
+
+                # Vagrant specific
+                - filter/exclude_fluent_tag_receiver_mock_container
+
+                - attributes/remove_fluent_tag
+                - filter/include_systemd
+                - filter/exclude_systemd_snap_kubelite
+                - groupbyattrs/systemd
+                - source/systemd
+                - batch
+              exporters:
+                - sumologic/systemd

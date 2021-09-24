@@ -183,6 +183,10 @@ sumologic:
   ## Set the enabled flag to false for disabling logs ingestion altogether.
   logs:
     enabled: true
+    metadata:
+      ## Set provider service (either fluentd or otelcol).
+      ## Otelcol is experimental and may behave in unexpected way.
+      provider: fluentd
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
     ## relevant metadata.
@@ -2337,37 +2341,219 @@ kube-prometheus-stack:
             - action: keep
               regex: (?:apache_((BusyWorkers|BytesPerReq|BytesPerSec|CPUChildrenSystem|CPUChildrenUser|CPULoad|CPUSystem|CPUUser|DurationPerReq|IdleWorkers|Load1|Load15|Load5|ParentServerConfigGeneration|ParentServerMPMGeneration|ReqPerSec|ServerUptimeSeconds|TotalAccesses|TotalDuration|TotalkBytes|Uptime)|(scboard_(closing|dnslookup|finishing|idle_cleanup|keepalive|logging|open|reading|sending|starting|waiting))))
               sourceLabels: [__name__]
+
+        ## SQLServer Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/sqlserver
+        ## Metrics follow following format:
+        ## sqlserver_cpu_sqlserver_process_cpu
+        ## sqlserver_database_io_read_bytes
+        ## sqlserver_database_io_read_latency_ms
+        ## sqlserver_database_io_write_bytes
+        ## sqlserver_database_io_write_latency_ms
+        ## sqlserver_memory_clerks_size_kb
+        ## sqlserver_performance_value
+        ## sqlserver_server_properties_server_memory
+        ## sqlserver_volume_space_total_space_bytes
+        ## sqlserver_volume_space_used_space_bytes
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.sqlserver
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:sqlserver_(cpu_sqlserver_process_cpu|database_io_(read_(bytes|latency_ms)|write_(bytes|latency_ms))|memory_clerks_size_kb|performance_value|server_properties_server_memory|volume_space_(total_space_bytes|used_space_bytes)))
+              sourceLabels: [__name__]
+
+        ## Haproxy Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/haproxy
+        ## Metrics follow following format:
+        ## haproxy_active_servers
+        ## haproxy_backup_servers
+        ## haproxy_bin
+        ## haproxy_bout
+        ## haproxy_chkfail
+        ## haproxy_ctime
+        ## haproxy_dreq
+        ## haproxy_dresp
+        ## haproxy_econ
+        ## haproxy_ereq
+        ## haproxy_eresp
+        ## haproxy_http_response_*
+        ## haproxy_qcur
+        ## haproxy_qmax
+        ## haproxy_qtime
+        ## haproxy_rate
+        ## haproxy_rtime
+        ## haproxy_scur
+        ## haproxy_slim
+        ## haproxy_smax
+        ## haproxy_ttime
+        ## haproxy_weight
+        ## haproxy_wredis
+        ## haproxy_wretr
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.haproxy
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:haproxy_(active_servers|backup_servers|bin|bout|chkfail|ctime|dreq|dresp|econ|ereq|eresp|http_response_(1xx|2xx|3xx|4xx|5xx|other)|qcur|qmax|qtime|rate|rtime|scur|slim|smax|ttime|weight|wredis|wretr))
+              sourceLabels: [__name__]
+
+        ## Cassandra Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/cassandra
+        ## cassandra_CacheMetrics_ChunkCache_OneMinuteRate
+        ## cassandra_ClientMetrics_connectedNativeClients_Value
+        ## cassandra_ClientMetrics_RequestDiscarded_OneMinuteRate
+        ## cassandra_CommitLogMetrics_CompletedTasks_Value
+        ## cassandra_CommitLogMetrics_PendingTasks_Value
+        ## cassandra_DroppedMessageMetrics_Dropped_OneMinuteRate
+        ## cassandra_java_GarbageCollector_*_CollectionCount
+        ## cassandra_java_GarbageCollector_*_CollectionTime
+        ## cassandra_java_GarbageCollector_*_LastGcInfo_duration
+        ## cassandra_java_GarbageCollector_*_LastGcInfo_GcThreadCount
+        ## cassandra_java_GarbageCollector_*_LastGcInfo_memoryUsageAfterGc_*_used
+        ## cassandra_java_GarbageCollector_*_LastGcInfo_memoryUsageBeforeGc_*_used
+        ## cassandra_java_Memory_HeapMemoryUsage_used
+        ## cassandra_java_OperatingSystem_AvailableProcessors
+        ## cassandra_java_OperatingSystem_FreePhysicalMemorySize
+        ## cassandra_java_OperatingSystem_SystemCpuLoad
+        ## cassandra_java_OperatingSystem_TotalPhysicalMemorySize
+        ## cassandra_java_OperatingSystem_TotalSwapSpaceSize
+        ## cassandra_Net_FailureDetector_DownEndpointCount
+        ## cassandra_Net_FailureDetector_UpEndpointCount
+        ## cassandra_TableMetrics_AllMemtablesHeapSize_Value
+        ## cassandra_TableMetrics_AllMemtablesLiveDataSize_Value
+        ## cassandra_TableMetrics_CompactionBytesWritten_Count
+        ## cassandra_TableMetrics_EstimatedPartitionCount_Value
+        ## cassandra_TableMetrics_KeyCacheHitRate_Value
+        ## cassandra_TableMetrics_LiveSSTableCount_Value
+        ## cassandra_TableMetrics_MemtableColumnsCount_Value
+        ## cassandra_TableMetrics_MemtableLiveDataSize_Value
+        ## cassandra_TableMetrics_MemtableOffHeapSize_Value
+        ## cassandra_TableMetrics_MemtableOnHeapSize_Value
+        ## cassandra_TableMetrics_MemtableSwitchCount_Count
+        ## cassandra_TableMetrics_PendingCompactions_Value
+        ## cassandra_TableMetrics_PendingFlushes_Count
+        ## cassandra_TableMetrics_PercentRepaired_Value
+        ## cassandra_TableMetrics_RangeLatency_Count
+        ## cassandra_TableMetrics_ReadLatency_50thPercentile
+        ## cassandra_TableMetrics_ReadLatency_Max
+        ## cassandra_TableMetrics_ReadLatency_OneMinuteRate
+        ## cassandra_TableMetrics_RowCacheHit_Count
+        ## cassandra_TableMetrics_RowCacheMiss_Count
+        ## cassandra_TableMetrics_SSTablesPerReadHistogram_50thPercentile
+        ## cassandra_TableMetrics_SSTablesPerReadHistogram_99thPercentile
+        ## cassandra_TableMetrics_SSTablesPerReadHistogram_Count
+        ## cassandra_TableMetrics_SSTablesPerReadHistogram_Max
+        ## cassandra_TableMetrics_TombstoneScannedHistogram_50thPercentile
+        ## cassandra_TableMetrics_TombstoneScannedHistogram_99thPercentile
+        ## cassandra_TableMetrics_TombstoneScannedHistogram_Max
+        ## cassandra_TableMetrics_TotalDiskSpaceUsed_Count
+        ## cassandra_TableMetrics_WaitingOnFreeMemtableSpace_Max
+        ## cassandra_TableMetrics_WriteLatency_50thPercentile
+        ## cassandra_TableMetrics_WriteLatency_99thPercentile
+        ## cassandra_TableMetrics_WriteLatency_Max
+        ## cassandra_TableMetrics_WriteLatency_OneMinuteRate
+        ## cassandra_ThreadPoolMetrics_internal_Count
+        ## cassandra_ThreadPoolMetrics_internal_Value
+        ## cassandra_ThreadPoolMetrics_request_Count
+        ## cassandra_ThreadPoolMetrics_request_Value
+        ## cassandra_ThreadPoolMetrics_transport_Count
+        ## cassandra_ThreadPoolMetrics_transport_Value
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.cassandra
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:cassandra_(CacheMetrics_ChunkCache_OneMinuteRate|ClientMetrics_(connectedNativeClients_Value|RequestDiscarded_OneMinuteRate)|CommitLogMetrics_(CompletedTasks_Value|PendingTasks_Value)|DroppedMessageMetrics_Dropped_OneMinuteRate|java_(GarbageCollector_(ConcurrentMarkSweep|ParNew)_(CollectionCount|CollectionTime|LastGcInfo_duration|LastGcInfo_GcThreadCount|LastGcInfo_memoryUsageAfterGc_.*_used|LastGcInfo_memoryUsageBeforeGc_.*_used)|Memory_HeapMemoryUsage_used|OperatingSystem_(AvailableProcessors|FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize|TotalSwapSpaceSize))|Net_FailureDetector_(DownEndpointCount|UpEndpointCount)|TableMetrics_(AllMemtablesHeapSize_Value|AllMemtablesLiveDataSize_Value|CompactionBytesWritten_Count|EstimatedPartitionCount_Value|KeyCacheHitRate_Value|LiveSSTableCount_Value|MemtableColumnsCount_Value|MemtableLiveDataSize_Value|MemtableOffHeapSize_Value|MemtableOnHeapSize_Value|MemtableSwitchCount_Count|PendingCompactions_Value|PendingFlushes_Count|PercentRepaired_Value|RangeLatency_Count|ReadLatency_50thPercentile|ReadLatency_Max|ReadLatency_OneMinuteRate|RowCacheHit_Count|RowCacheMiss_Count|SSTablesPerReadHistogram_50thPercentile|SSTablesPerReadHistogram_99thPercentile|SSTablesPerReadHistogram_Count|SSTablesPerReadHistogram_Max|TombstoneScannedHistogram_50thPercentile|TombstoneScannedHistogram_99thPercentile|TombstoneScannedHistogram_Max|TotalDiskSpaceUsed_Count|WaitingOnFreeMemtableSpace_Max|WriteLatency_50thPercentile|WriteLatency_99thPercentile|WriteLatency_Max|WriteLatency_OneMinuteRate)|ThreadPoolMetrics_(internal_(Count|Value)|request_(Count|Value)|transport_(Count|Value))))
+              sourceLabels: [__name__]
+
+        ## MongoDB Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mongodb
+        ## Metrics follow following format:
+        ## mongodb_active_reads
+        ## mongodb_active_writes
+        ## mongodb_commands_per_sec
+        ## mongodb_connections_current
+        ## mongodb_db_stats_storage_size
+        ## mongodb_deletes_per_sec
+        ## mongodb_document_*
+        ## mongodb_flushes_per_sec
+        ## mongodb_getmores_per_sec
+        ## mongodb_inserts_per_sec
+        ## mongodb_net_*_bytes_count
+        ## mongodb_open_connections
+        ## mongodb_page_faults
+        ## mongodb_percent_cache_dirty
+        ## mongodb_percent_cache_used
+        ## mongodb_queries_per_sec
+        ## mongodb_queued_reads
+        ## mongodb_queued_writes
+        ## mongodb_repl_queries
+        ## mongodb_repl_commands_per_sec
+        ## mongodb_repl_deletes_per_sec
+        ## mongodb_repl_getmores_per_sec
+        ## mongodb_repl_inserts_per_sec
+        ## mongodb_repl_oplog_window_sec
+        ## mongodb_repl_queries_per_sec
+        ## mongodb_repl_updates_per_sec
+        ## mongodb_resident_megabytes
+        ## mongodb_updates_per_sec
+        ## mongodb_uptime_ns
+        ## mongodb_vsize_megabytes
+        ## mongodb_wtcache_bytes_read_into
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.mongodb
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:mongodb_(active_(reads|writes)|commands_per_sec|connections_current|db_stats_storage_size|deletes_per_sec|document_.*|flushes_per_sec|getmores_per_sec|inserts_per_sec|net_.*_bytes_count|open_connections|page_faults|percent_cache_(dirty|used)|queries_per_sec|queued_(reads|writes)|repl_((commands|deletes|getmores|inserts|oplog|queries|updates)_per_sec|queries|oplog_window_sec)|resident_megabytes|updates_per_sec|uptime_ns|vsize_megabytes|wtcache_bytes_read_into))
+              sourceLabels: [__name__]
+
         ## Tomcat Telegraf Metrics
         ## List of Metrics are on following github page:
         ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/tomcat
         ## Metrics follow following format:
-        ## tomcat_connector_max_threads
-        ## tomcat_connector_current_thread_count
+        ## tomcat_connector_bytes_received
+        ## tomcat_connector_bytes_sent
         ## tomcat_connector_current_thread_busy
+        ## tomcat_connector_current_thread_count
+        ## tomcat_connector_current_threads_busy
+        ## tomcat_connector_error_count
+        ## tomcat_connector_max_threads
         ## tomcat_connector_max_time
         ## tomcat_connector_processing_time
         ## tomcat_connector_request_count
-        ## tomcat_connector_error_count
-        ## tomcat_connector_bytes_received
-        ## tomcat_connector_bytes_sent
+        ## tomcat_jmx_jvm_memory_HeapMemoryUsage_max
+        ## tomcat_jmx_jvm_memory_HeapMemoryUsage_used
+        ## tomcat_jmx_jvm_memory_NonHeapMemoryUsage_max
+        ## tomcat_jmx_jvm_memory_NonHeapMemoryUsage_used
+        ## tomcat_jmx_OperatingSystem_FreePhysicalMemorySize
+        ## tomcat_jmx_OperatingSystem_FreeSwapSpaceSize
+        ## tomcat_jmx_OperatingSystem_SystemCpuLoad
+        ## tomcat_jmx_OperatingSystem_TotalPhysicalMemorySize
+        ## tomcat_jmx_OperatingSystem_TotalSwapSpaceSize
+        ## tomcat_jmx_Servlet_processingTime
         ## tomcat_jvm_memory_free
-        ## tomcat_jvm_memory_total
         ## tomcat_jvm_memory_max
-        ## tomcat_jvm_memorypool_max_threads
+        ## tomcat_jvm_memory_total
+        ## tomcat_jvm_memorypool_bytes_received
+        ## tomcat_jvm_memorypool_bytes_sent
         ## tomcat_jvm_memorypool_current_thread_count
         ## tomcat_jvm_memorypool_current_threads_busy
+        ## tomcat_jvm_memorypool_error_count
+        ## tomcat_jvm_memorypool_max
+        ## tomcat_jvm_memorypool_max_threads
         ## tomcat_jvm_memorypool_max_time
         ## tomcat_jvm_memorypool_processing_time
         ## tomcat_jvm_memorypool_request_count
-        ## tomcat_jvm_memorypool_error_count
-        ## tomcat_jvm_memorypool_bytes_received
-        ## tomcat_jvm_memorypool_bytes_sent
+        ## tomcat_jvm_memorypool_used
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.tomcat
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:tomcat_(connector_.*|jvm_memory_.*|jvm_memorypool_.*))
+              regex: (?:tomcat_(connector_(bytes_(received|sent)|current_(thread_(busy|count)|threads_busy)|error_count|max_threads|max_time|processing_time|request_count)|jmx_(jvm_memory_(HeapMemoryUsage_(max|used)|NonHeapMemoryUsage_(max|used))|OperatingSystem_(FreePhysicalMemorySize|FreeSwapSpaceSize|SystemCpuLoad|TotalPhysicalMemorySize|TotalSwapSpaceSize)|Servlet_processingTime)|jvm_memory_(free|max|total)|jvm_memorypool_(bytes_(received|sent)|current_thread_count|current_threads_busy|error_count|max_threads|max_time|max|processing_time|request_count|used)))
               sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
@@ -2493,7 +2679,7 @@ otelcol:
   statefulset:
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.0.18
+      tag: 0.0.27-beta.0
       pullPolicy: IfNotPresent
   metadata:
     metrics:
@@ -2501,6 +2687,8 @@ otelcol:
       logLevel: info
       config:
         receivers:
+          ## Configuration for Telegraf Receiver
+          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/receiver/telegrafreceiver
           telegraf:
             agent_config: |
               [agent]
@@ -2508,6 +2696,9 @@ otelcol:
                 flush_interval = "30s"
 
               [[inputs.http_listener_v2]]
+                # wait longer than prometheus
+                read_timeout = "30s"
+                write_timeout = "30s"
                 service_address = ":9888"
                 data_format = "prometheusremotewrite"
                 paths = [
@@ -2534,9 +2725,13 @@ otelcol:
         extensions:
           health_check: {}
         exporters:
+          ## Configuration for Sumo Logic Exporter
+          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
           sumologic:
             metric_format: prometheus
             endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+            sending_queue:
+              enabled: true
             metadata_attributes:
               - k8s.*
               - pod_.*
@@ -2547,6 +2742,8 @@ otelcol:
               - node
               - pod
         processors:
+          ## Configuration for Metrics Transform Processor
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor
           metricstransform:
             transforms:
               # rename all prometheus_remote_write_$name metrics to $name
@@ -2554,14 +2751,162 @@ otelcol:
               match_type: regexp
               action: update
               new_name: $$1
+          ## Configuration for Resource Processor
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor
           resource:
             attributes:
               - key: k8s.namespace.name
                 from_attribute: namespace
                 action: upsert
+              - key: namespace  # remove namespace to avoid duplication when attribute translation is enabled
+                action: delete
               - key: k8s.pod.name
                 from_attribute: pod
                 action: upsert
+              - key: pod  # remove pod to avoid duplication when attribute translation is enabled
+                action: delete
+              - key: host
+                action: delete
+              - key: prometheus_service
+                from_attribute: service
+                action: upsert
+              - key: service
+                action: delete
+              - key: _origin  # add "_origin" metadata to metrics to keep the same format as for metrics from Fluentd
+                value: kubernetes
+                action: upsert
+          ## Configuration for Memory Limiter Processor
+          ## The memory_limiter processor is used to prevent out of memory situations on the collector.
+          ## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
+          memory_limiter:
+            ## check_interval is the time between measurements of memory usage for the
+            ## purposes of avoiding going over the limits. Defaults to zero, so no
+            ## checks will be performed. Values below 1 second are not recommended since
+            ## it can result in unnecessary CPU consumption.
+            check_interval: 5s
+
+            ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
+            ## Note that typically the total memory usage of process will be about 50MiB higher
+            ## than this value.
+            limit_mib: 1900
+          ## Configuration for Batch Processor
+          ## The batch processor accepts spans and places them into batches grouped by node and resource
+          ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
+          batch:
+            ## Number of spans after which a batch will be sent regardless of time
+            send_batch_size: 4096
+            ## Time duration after which a batch will be sent regardless of size
+            timeout: 30s
+          ## Configuration for Kubernetes Processor
+          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
+          k8s_tagger:
+            ## Has to be false to enrich metadata
+            passthrough: false
+            owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
+            extract:
+              metadata:
+                ## extract the following well-known metadata fields
+                - clusterName
+                - daemonSetName
+                - deploymentName
+                - replicaSetName
+                - serviceName
+                - statefulSetName
+              labels:
+                - tag_name: "pod_labels_%s"
+                  key: "*"
+              delimiter: "_"
+            pod_association:
+              - from: build_hostname  # Pods are identified by Pod name and namespace
+          ## Configuration for Source Processor
+          ## Source processor adds Sumo Logic related metadata
+          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
+          source:
+            collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+            exclude:
+              namespace: '{{ include "fluentd.excludeNamespaces" . }}'
+              pod: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
+              container: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
+              host: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
+        service:
+          extensions:
+            - health_check
+          pipelines:
+            metrics:
+              receivers:
+                - telegraf
+              processors:
+                - memory_limiter
+                - metricstransform
+                - resource
+                - k8s_tagger
+                - source
+                - batch
+              exporters:
+                - sumologic
+
+    logs:
+      enabled: true
+      logLevel: info
+      config:
+        receivers:
+          fluentforward:
+            endpoint: 0.0.0.0:24321
+        extensions:
+          health_check: {}
+        exporters:
+          sumologic/containers:
+            log_format: json
+            endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+            source_name: "%{_sourceName}"
+            source_category: "%{_sourceCategory}"
+            source_host: "%{_sourceHost}"
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              ## Required to be used in headers
+              - _sourceCategory
+              - _sourceHost
+              - _sourceName
+              ## Attributes to be send as fields
+              - _collector
+              - k8s.*
+              - pod_.*
+              - namespace_.*
+              ## ToDo: remove below duplication of k8s.* attributes
+              ## after https://github.com/SumoLogic/sumologic-otel-collector/pull/245 being resolved
+              - cluster
+              - container
+              - daemonset
+              - deployment
+              - namespace
+              - node
+              - service
+              - host
+              - pod
+              - pod_id
+              - replicaset
+              - statefulset
+          sumologic/systemd:
+            log_format: json
+            endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+            source_name: "%{_sourceName}"
+            source_category: "%{_sourceCategory}"
+            source_host: "%{_sourceHost}"
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              - _collector
+              - _sourceCategory
+              - _sourceHost
+              - _sourceName
+
+        processors:
+          ## Common processors
+          attributes/remove_fluent_tag:
+            actions:
+              - action: delete
+                key: fluent.tag
           ## The memory_limiter processor is used to prevent out of memory situations on the collector.
           memory_limiter:
             ## check_interval is the time between measurements of memory usage for the
@@ -2574,13 +2919,52 @@ otelcol:
             ## Note that typically the total memory usage of process will be about 50MiB higher
             ## than this value.
             limit_mib: 1900
-
           ## The batch processor accepts spans and places them into batches grouped by node and resource
           batch:
             ## Number of spans after which a batch will be sent regardless of time
             send_batch_size: 256
             ## Time duration after which a batch will be sent regardless of size
             timeout: 5s
+
+          ## Containers related processors
+          filter/include_fluent_tag_containers:
+            logs:
+              include:
+                match_type: regexp
+                record_attributes:
+                  - key: fluent.tag
+                    value: containers\..+
+          attributes/containers:
+            actions:
+              - action: extract
+                key: fluent.tag
+                pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
+              - action: insert
+                key: k8s.container.id
+                from_attribute: container_id
+              - action: delete
+                key: container_id
+              - action: insert
+                key: k8s.pod.name
+                from_attribute: k8s_pod_name
+              - action: delete
+                key: k8s_pod_name
+              - action: insert
+                key: k8s.namespace.name
+                from_attribute: k8s_namespace
+              - action: delete
+                key: k8s_namespace
+              - action: insert
+                key: k8s.container.name
+                from_attribute: k8s_container_name
+              - action: delete
+                key: k8s_container_name
+          groupbyattrs/containers:
+            keys:
+              - k8s.container.id
+              - k8s.container.name
+              - k8s.namespace.name
+              - k8s.pod.name
           k8s_tagger:
             ## Has to be false to enrich metadata
             passthrough: false
@@ -2610,41 +2994,137 @@ otelcol:
               labels:
                 - tag_name: "pod_labels_%s"
                   key: "*"
+              delimiter: "_"
             pod_association:
               - from: build_hostname
-          ## Source processor adds Sumo Logic related metadata
-          source:
+          source/containers:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+            source_name: '{{ .Values.fluentd.logs.containers.sourceName | quote }}'
             source_category: '{{ .Values.fluentd.logs.containers.sourceCategory | quote }}'
             source_category_prefix: '{{ .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}'
             source_category_replace_dash: '{{ .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}'
-            exclude_namespace_regex: '{{ include "fluentd.excludeNamespaces" . }}'
-            exclude_pod_regex: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
-            exclude_container_regex: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
-            exclude_host_regex: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
-            annotation_prefix: "k8s.pod.annotation."
-            pod_template_hash_key: "k8s.pod.label.pod-template-hash"
+            exclude:
+              k8s.namespace.name: '{{ include "fluentd.excludeNamespaces" . }}'
+              k8s.pod.name: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
+              k8s.container.name: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
+              k8s.pod.hostname: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
+            annotation_prefix: "pod_annotations_"
+            pod_template_hash_key: "pod_labels_pod-template-hash"
             pod_name_key: "k8s.pod.pod_name"
             namespace_key: "k8s.namespace.name"
             pod_key: "k8s.pod.name"
             container_key: "k8s.container.name"
             source_host_key: "k8s.pod.hostname"
+
+          ## Systemd related processors
+          filter/include_fluent_tag_host:
+            logs:
+              include:
+                match_type: regexp
+                record_attributes:
+                  - key: fluent.tag
+                    value: host\..+
+          filter/include_systemd:
+            logs:
+              include:
+                match_type: regexp
+                record_attributes:
+                  - key: _SYSTEMD_UNIT
+                    value: .+
+          filter/exclude_kubelet:
+            logs:
+              exclude:
+                match_type: strict
+                record_attributes:
+                  - key: _SYSTEMD_UNIT
+                    value: kubelet.service
+          groupbyattrs/systemd:
+            keys:
+              - _SYSTEMD_UNIT
+              - _HOSTNAME
+              - SYSLOG_FACILITY
+              - PRIORITY
+          source/systemd:
+            collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+            source_name: '{{ .Values.fluentd.logs.systemd.sourceName | quote }}'
+            source_category: '{{ .Values.fluentd.logs.systemd.sourceCategory | quote }}'
+            source_category_prefix: '{{ .Values.fluentd.logs.systemd.sourceCategoryPrefix | quote }}'
+            source_category_replace_dash: '{{ .Values.fluentd.logs.systemd.sourceCategoryReplaceDash | quote }}'
+            exclude:
+              SYSLOG_FACILITY: '{{ .Values.fluentd.logs.systemd.excludeFacilityRegex | quote }}'
+              _HOSTNAME: '{{ .Values.fluentd.logs.systemd.excludeHostRegex | quote }}'
+              PRIORITY: '{{ .Values.fluentd.logs.systemd.excludePriorityRegex | quote }}'
+              _SYSTEMD_UNIT: '{{ .Values.fluentd.logs.systemd.excludeUnitRegex | quote }}'
+            source_host_key: "_HOSTNAME"
+
+          ## kubelet related processors
+          filter/include_kubelet:
+            logs:
+              include:
+                match_type: strict
+                record_attributes:
+                  - key: _SYSTEMD_UNIT
+                    value: kubelet.service
+
+          source/kubelet:
+            collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+            source_name: '{{ .Values.fluentd.logs.kubelet.sourceName | quote }}'
+            source_category: '{{ .Values.fluentd.logs.kubelet.sourceCategory | quote }}'
+            source_category_prefix: '{{ .Values.fluentd.logs.kubelet.sourceCategoryPrefix | quote }}'
+            source_category_replace_dash: '{{ .Values.fluentd.logs.kubelet.sourceCategoryReplaceDash | quote }}'
+            exclude:
+              SYSLOG_FACILITY: '{{ .Values.fluentd.logs.kubelet.excludeFacilityRegex | quote }}'
+              _HOSTNAME: '{{ .Values.fluentd.logs.kubelet.excludeHostRegex | quote }}'
+              PRIORITY: '{{ .Values.fluentd.logs.kubelet.excludePriorityRegex | quote }}'
+              _SYSTEMD_UNIT: '{{ .Values.fluentd.logs.kubelet.excludeUnitRegex | quote }}'
+            source_host_key: "_HOSTNAME"
+
         service:
           extensions:
             - health_check
+            # - sumologic
           pipelines:
-            metrics:
+            logs:
               receivers:
-                - telegraf
+                - fluentforward
               processors:
                 - memory_limiter
-                - metricstransform
-                - resource
+                - filter/include_fluent_tag_containers
+                - attributes/containers
+                - groupbyattrs/containers
                 - k8s_tagger
-                - source
+                - source/containers
+                - attributes/remove_fluent_tag
                 - batch
               exporters:
-                - sumologic
+                - sumologic/containers
+            logs/systemd:
+              receivers:
+                - fluentforward
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_host
+                - filter/include_systemd
+                - filter/exclude_kubelet
+                - groupbyattrs/systemd
+                - source/systemd
+                - attributes/remove_fluent_tag
+                - batch
+              exporters:
+                - sumologic/systemd
+            logs/kubelet:
+              receivers:
+                - fluentforward
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_host
+                - filter/include_kubelet
+                - groupbyattrs/systemd
+                - source/kubelet
+                - attributes/remove_fluent_tag
+                - batch
+              exporters:
+                - sumologic/systemd
 
   deployment:
     nodeSelector: {}
@@ -2849,6 +3329,90 @@ otelcol:
           exporters: [otlphttp]
           ## and uncomment next one
           # exporters: [zipkin]
+
+## Configure logs pipeline.
+## This section affects only otelcol provider.
+## In the future it will be used by fluentd as well.
+logs:
+  metadata:
+    statefulset:
+      nodeSelector: {}
+      tolerations: []
+      affinity: {}
+      ## Acceptable values for podAntiAffinity:
+      ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
+      ## hard: specifies rules that must be met for a pod to be scheduled onto a node
+      podAntiAffinity: "soft"
+      replicaCount: 3
+      resources:
+        limits:
+          memory: 1Gi
+          cpu: 1000m
+        requests:
+          memory: 768Mi
+          cpu: 500m
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+
+      ## Add custom labels only to logs sts pods
+      podLabels: {}
+      ## Add custom annotations only to logs sts pods
+      podAnnotations: {}
+
+      ## Set securityContext for containers running in pods in logs statefulset.
+      containers:
+        otelcol:
+          securityContext: {}
+
+      ## Extra Environment Values - allows yaml definitions
+      # extraEnvVars:
+      #   - name: VALUE_FROM_SECRET
+      #     valueFrom:
+      #       secretKeyRef:
+      #         name: secret_name
+      #         key: secret_key
+
+      # extraVolumes:
+      #   - name: es-certs
+      #     secret:
+      #       defaultMode: 420
+      #       secretName: es-certs
+      # extraVolumeMounts:
+      #   - name: es-certs
+      #     mountPath: /certs
+      #     readOnly: true
+
+    ## Option to turn autoscaling on for logs and specify params for HPA.
+    ## Autoscaling needs metrics-server to access cpu metrics.
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
+      # targetMemoryUtilizationPercentage: 50
+
+    ## Option to specify PodDisrutionBudgets
+    ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+    podDisruptionBudget:
+      minAvailable: 2
+      ## To use maxUnavailable, set minAvailable to null and uncomment the below:
+      # maxUnavailable: 1
+
+    ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
+    ## ToDo: implement on otelcol side
+    persistence:
+      enabled: true
+
+      ## If defined, storageClassName: <storageClass>
+      ## If set to "-", storageClassName: "", which disables dynamic provisioning
+      ## If undefined (the default) or set to null, no storageClassName spec is
+      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+      ##   GKE, Azure & OpenStack)
+      ##
+      # storageClass: "-"
+      # annotations: {}
+      accessMode: ReadWriteOnce
+      size: 10Gi
 
 ## Configure telegraf-operator
 ## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
