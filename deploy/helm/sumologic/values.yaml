@@ -1082,7 +1082,7 @@ fluent-bit:
       [PARSER]
           Name        multi_line
           Format      regex
-          Regex       (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
+          Regex       (?<log>^{"log":"\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
       [PARSER]
           Name         crio
           Format       regex
