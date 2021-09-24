@@ -2549,7 +2549,7 @@ kube-prometheus-stack:
               regex: (?:rabbitmq_(exchange_messages_publish_(in_rate|in|out_rate|out)|node_(disk_free_limit|disk_free|mem_(limit|used)|uptime|fd_used|mnesia_(disk_tx_count|ram_tx_count)|gc_num_rate)|overview_(clustering_listerners|connections|exchanges|consumers|queues|messages_(delivered|published|unacked))|queue_(consumers|memory|slave_nodes|messages_(publish_rate|deliver_rate|memory|max_time|unack))))
               sourceLabels: [__name__]
 
-        ## Rabbitmq Telegraf Metrics
+        ## Memcache Telegraf Metrics
         ## List of Metrics are on following github page:
         ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/memcache
         ## Metrics follow following format:
