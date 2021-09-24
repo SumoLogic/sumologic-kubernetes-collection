@@ -2549,6 +2549,49 @@ kube-prometheus-stack:
               regex: (?:rabbitmq_(exchange_messages_publish_(in_rate|in|out_rate|out)|node_(disk_free_limit|disk_free|mem_(limit|used)|uptime|fd_used|mnesia_(disk_tx_count|ram_tx_count)|gc_num_rate)|overview_(clustering_listerners|connections|exchanges|consumers|queues|messages_(delivered|published|unacked))|queue_(consumers|memory|slave_nodes|messages_(publish_rate|deliver_rate|memory|max_time|unack))))
               sourceLabels: [__name__]
 
+        ## Rabbitmq Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/memcache
+        ## Metrics follow following format:
+        ## memcached_accepting_conns
+        ## memcached_auth_cmds
+        ## memcached_auth_errors
+        ## memcached_bytes
+        ## memcached_bytes_read
+        ## memcached_bytes_written
+        ## memcached_cas_*
+        ## memcached_cas_*
+        ## memcached_cmd_*
+        ## memcached_cmd_flush
+        ## memcached_cmd_get
+        ## memcached_cmd_set
+        ## memcached_cmd_touch
+        ## memcached_conn_yields
+        ## memcached_connection_structures
+        ## memcached_curr_connections
+        ## memcached_curr_items
+        ## memcached_decr_*
+        ## memcached_delete_*
+        ## memcached_evictions
+        ## memcached_get_hits
+        ## memcached_get_misses
+        ## memcached_hash_bytes
+        ## memcached_hash_is_expanding
+        ## memcached_incr_*
+        ## memcached_limit_maxbytes
+        ## memcached_listen_disabled_num
+        ## memcached_reclaimed
+        ## memcached_threads
+        ## memcached_total_connections
+        ## memcached_total_items
+        ## memcached_uptime
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.memcache
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:memcached_(accepting_conns|auth_(cmds|errors)|bytes_(read|written)|bytes|cas_*|cmd_.*|conn_yields|connection_structures|curr_(connections|items)|decr_.*|delete_.*|evictions|get_(hits|misses)|hash_(bytes|is_expanding)|incr_.*|limit_maxbytes|listen_disabled_num|reclaimed|threads|total_(connections|items)|uptime))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
