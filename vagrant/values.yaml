@@ -154,7 +154,6 @@ otelcol:
   metadata:
     logs:
       config:
-        exporters:
         processors:
           # Filter out receiver-mock logs to prevent snowball effect
           filter/exclude_fluent_tag_receiver_mock_container:
