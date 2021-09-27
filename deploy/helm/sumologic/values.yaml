@@ -2667,6 +2667,49 @@ kube-prometheus-stack:
               regex: (?:varnish_(backend_(busy|conn|fail|recycle|req|retry|reuse|unhealthy)|bans_(completed|deleted|dups|lurker_(contention|obj_killed|tests_tested|tested|)|obj_killed|obj|persisted_(bytes|fragmentation))|bans|boot_.*_.*_(bodybytes|hdrbytes)|cache_(hit_grace|hitpass|miss|hit)|client_(req_400|req_417|req|resp_500)|n_(backend|expired|lru_nuked|vcl_avail)|pools|s0_g_(bytes|space)|s_(fetch|pipe_(in|out)|req_(bodybytes|hdrbytes)|resp_(bodybytes|hdrbytes)|sess)|sess_(closed_err|closed|conn|drop|dropped|fail|queued)|thread_queue_len|threads_(created|destroyed|failed|limited)|threads|uptime|vmods))
               sourceLabels: [__name__]
 
+        ## Memcached Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/memcache
+        ## Metrics follow following format:
+        ## memcached_accepting_conns
+        ## memcached_auth_cmds
+        ## memcached_auth_errors
+        ## memcached_bytes
+        ## memcached_bytes_read
+        ## memcached_bytes_written
+        ## memcached_cas_*
+        ## memcached_cas_*
+        ## memcached_cmd_*
+        ## memcached_cmd_flush
+        ## memcached_cmd_get
+        ## memcached_cmd_set
+        ## memcached_cmd_touch
+        ## memcached_conn_yields
+        ## memcached_connection_structures
+        ## memcached_curr_connections
+        ## memcached_curr_items
+        ## memcached_decr_*
+        ## memcached_delete_*
+        ## memcached_evictions
+        ## memcached_get_hits
+        ## memcached_get_misses
+        ## memcached_hash_bytes
+        ## memcached_hash_is_expanding
+        ## memcached_incr_*
+        ## memcached_limit_maxbytes
+        ## memcached_listen_disabled_num
+        ## memcached_reclaimed
+        ## memcached_threads
+        ## memcached_total_connections
+        ## memcached_total_items
+        ## memcached_uptime
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.memcached
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:memcached_(accepting_conns|auth_(cmds|errors)|bytes_(read|written)|bytes|cas_*|cmd_.*|conn_yields|connection_structures|curr_(connections|items)|decr_.*|delete_.*|evictions|get_(hits|misses)|hash_(bytes|is_expanding)|incr_.*|limit_maxbytes|listen_disabled_num|reclaimed|threads|total_(connections|items)|uptime))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
