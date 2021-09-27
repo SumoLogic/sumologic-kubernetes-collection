@@ -154,7 +154,6 @@ otelcol:
   metadata:
     logs:
       config:
-        exporters:
         processors:
           # Filter out receiver-mock logs to prevent snowball effect
           filter/exclude_fluent_tag_receiver_mock_container:
@@ -198,6 +197,7 @@ otelcol:
                 - k8s_tagger
                 - source/containers
                 - attributes/remove_fluent_tag
+                - resource/containers_copy_node_to_host
                 - batch
               exporters:
                 - sumologic/containers
