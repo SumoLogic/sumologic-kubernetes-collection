@@ -2931,6 +2931,10 @@ otelcol:
               - key: _origin  # add "_origin" metadata to metrics to keep the same format as for metrics from Fluentd
                 value: kubernetes
                 action: upsert
+          resource/remove_k8s_pod_pod_name:
+            attributes:
+              - action: delete
+                key: k8s.pod.pod_name
           ## Configuration for Memory Limiter Processor
           ## The memory_limiter processor is used to prevent out of memory situations on the collector.
           ## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
@@ -2997,6 +3001,7 @@ otelcol:
                 - resource
                 - k8s_tagger
                 - source
+                - resource/remove_k8s_pod_pod_name
                 - batch
               exporters:
                 - sumologic
