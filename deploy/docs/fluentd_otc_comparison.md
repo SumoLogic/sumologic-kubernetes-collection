@@ -1,4 +1,4 @@
-# Comparison of functionality of Fluentd and Opentelemetry Collector
+# Comparison of Fluentd and Opentelemetry Collector functionality
 
 - [Sumologic supported Fluentd plugins](#sumologic-supported-fluentd-plugins)
   - [Sumologic Output Plugin](#sumologic-output-plugin)
@@ -122,7 +122,7 @@ Additional behavior:
 | [Using _sumo_metadata to propagate configuration to output plugin][sumo_metadata]                                                                       | Use `_sourceName`, `_sourceCategory` and `_sourceHost` attributes in [source templates in exporter][otelcol_source_templates] |
 | [Setting host to `record["_HOSTNAME"]` if `record['_SYSTEMD_UNIT']` exists][fluent_syslog]                                                              | [`processors.source.source_host_key: "_HOSTNAME"`][source_processor]                                                          |
 | [Using `namespace`, `pod`, `pod_name`, `pod_id`, `container`, `source_host`, `labels`, `namespace_labels` in source templates][fluent_source_templates] | [Support all resource attributes plus matching `pod_name_key`][source_processor_source_templates]                             |
-| [Setting `undefined` for non-existing field in source templates][fluent_undefined]                                                                     | [Supported by source processor, not documented][otelcol_undefined]                                                            |
+| [Setting `undefined` for non-existing field in source templates][fluent_undefined]                                                                      | [Supported by source processor, not documented][otelcol_undefined]                                                            |
 | [Filtering out records with `annotations["sumologic.com/exclude"]` set to `true`][fluent_annotations]                                                   | [Supported by source processor][otelcol_annotations]                                                                          |
 | [Filtering in records with `annotations["sumologic.com/include"]` set to `true`][fluent_annotations]                                                    | [Supported by source processor][otelcol_annotations]                                                                          |
 | [Ignoring `exclude` configuration if `annotations["sumologic.com/include"]` is set to `true`][otelcol_annotations]                                      | [Supported by source processor][otelcol_annotations]                                                                          |
