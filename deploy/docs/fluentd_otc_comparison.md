@@ -104,20 +104,65 @@ It should cover [fluent_plugin_protobuf][fluent_plugin_protobuf] functionality a
 | `source_name`                                               | [processors.source.source_name][source_processor] along with [exporters.sumologic.sourceName: '%{_sourceName}'][sumologic_exporter]                          |
 | `log_format`                                                | N/A                                                                                                                                                          |
 | `source_host`                                               | [processors.source.source_host][source_processor] along with [exporters.sumologic.sourceHost: '%{_sourceHost}'][sumologic_exporter]                          |
-| `exclude_container_regex`                                   | [processors.source.exclude][source_filtering]                                                                                                                  |
-| `exclude_facility_regex`                                    | [processors.source.exclude][source_filtering]                                                                                                                  |
-| `exclude_host_regex`                                        | [processors.source.exclude][source_filtering]                                                                                                                  |
-| `exclude_namespace_regex`                                   | [processors.source.exclude][source_filtering]                                                                                                                  |
-| `exclude_pod_regex`                                         | [processors.source.exclude][source_filtering]                                                                                                                  |
-| `exclude_priority_regex`                                    | [processors.source.exclude][source_filtering]                                                                                                                  |
-| `exclude_unit_regex`                                        | [processors.source.exclude][source_filtering]                                                                                                                  |
+| `exclude_container_regex`                                   | [processors.source.exclude][source_filtering]                                                                                                                |
+| `exclude_facility_regex`                                    | [processors.source.exclude][source_filtering]                                                                                                                |
+| `exclude_host_regex`                                        | [processors.source.exclude][source_filtering]                                                                                                                |
+| `exclude_namespace_regex`                                   | [processors.source.exclude][source_filtering]                                                                                                                |
+| `exclude_pod_regex`                                         | [processors.source.exclude][source_filtering]                                                                                                                |
+| `exclude_priority_regex`                                    | [processors.source.exclude][source_filtering]                                                                                                                |
+| `exclude_unit_regex`                                        | [processors.source.exclude][source_filtering]                                                                                                                |
 | `per_container_annotations_enabled`                         | TBD                                                                                                                                                          |
 | `per_container_annotation_prefixes`                         | TBD                                                                                                                                                          |
 
-[fluent_plugin_k8s_sumologic]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/main/fluent-plugin-kubernetes-sumologic#configuration
+Additional behavior:
+
+| description                                                                                                                                             | otelcol                                                                                                                       |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| [Allow to use sanitized pod name in source templates](#sanitized-pod-name)                                                                              | [processors.source.pod_name_key][source_keys]                                                                                 |
+| [Using _sumo_metadata to propagate configuration to output plugin][sumo_metadata]                                                                       | use `_sourceName`, `_sourceCategory` and `_sourceHost` attributes in [source templates in exporter][otelcol_source_templates] |
+| [Setting host to `record\["_HOSTNAME"\]` if record\['_SYSTEMD_UNIT'\] exists][fluent_syslog]                                                            | [`processors.source.source_host_key: "_HOSTNAME"`][source_processor]                                                          |
+| [Using `namespace`, `pod`, `pod_name`, `pod_id`, `container`, `source_host`, `labels`, `namespace_labels` in source templates][fluent_source_templates] | [support all resource attributes plus matching `pod_name_key`][source_processor_source_templates]                             |
+| [Setting `undefined` for non-existing field in source templates][fluentd_undefined]                                                                     | [supported by source processor, not documented][otelcol_undefined]                                                            |
+| [Filtering out records with `annotations\["sumologic.com/exclude"\]` set to 'true'][fluent_annotations]                                                 | [supported by source processor][otelcol_annotations]                                                                          |
+| [Filtering in records with `annotations\["sumologic.com/include"\]` set to `true`][fluent_annotations]                                                  | [supported by source processor][otelcol_annotations]                                                                          |
+| [Ignoring `exclude` configuration if `annotations\["sumologic.com/include"\]` is not set to `true`][otelcol_annotations]                                | [supported by source processor][otelcol_annotations]                                                                          |
+| [Setting `log_format` to `annotations\["sumologic.com/format"\]`][fluent_format]                                                                        | `log_format` is configured statically in [sumologic exporter][sumologic_exporter]                                             |
+| [Setting sourceHost to `annotations\["sumologic.com/sourceHost"\]`][fluent_source_host]                                                                 | [not supported by source processor][otelcol_annotations]                                                                      |
+| [Setting sourceName to `annotations\["sumologic.com/sourceName"\]`][fluent_source_name]                                                                 | [not supported by source processor][otelcol_annotations]                                                                      |
+| [Support for per container sourceCategory][fluent_container_source_category] (precedence over annotations described below)                              | [supported by source processor][otelcol_annotations]                                                                          |
+| [Setting sourceCategory as `sourceCategoryPrefix` + `sourceCategory` and replacing dash with `sourceCategoryReplaceDash`][fluent_source_category]       | [supported by source processor][otelcol_annotations]                                                                          |
+| [overwrite `sourceCategory` by `annotations\["sumologic.com/sourceCategory"\]`][fluent_source_category]                                                 | [supported by source processor][otelcol_annotations]                                                                          |
+| [overwrite `sourceCategoryPrefix` by `annotations\["sumologic.com/sourceCategoryPrefix"\]`][fluent_source_category]                                     | [supported by source processor][otelcol_annotations]                                                                          |
+| [overwrite `sourceCategoryReplaceDash` by `annotations\["sumologic.com/sourceCategoryReplaceDash"\]`][fluent_source_category]                           | [supported by source processor][otelcol_annotations]                                                                          |
+
+#### sanitized pod name
+
+Sanitized pod name is name portion of the pod. Please consider following examples:
+
+- for a daemonset pod dset-otelcol-sumo-xa314 it's going to be dset-otelcol-sumo
+- for a deployment pod dep-otelcol-sumo-75675f5861-qasd2 it's going to be dep-otelcol-sumo
+- for a statefulset pod st-otelcol-sumo-0 it's going to be st-otelcol-sumo
+
+[fluent_plugin_k8s_sumologic]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic#configuration
 [source_processor]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.27-beta.0/pkg/processor/sourceprocessor#config
 [sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.27-beta.0/pkg/exporter/sumologicexporter/README.md#sumo-logic-exporter
 [source_filtering]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.27-beta.0/pkg/processor/sourceprocessor#filtering-section
+[source_keys]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/processor/sourceprocessor#keys-section
+[sumo_metadata]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic#fluent-plugin-kubernetes-sumologic
+[otelcol_source_templates]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/exporter/sumologicexporter#source-templates
+[fluent_syslog]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic/lib/fluent/plugin/filter_kubernetes_sumologic.rb#L130-L146
+[fluent_source_templates]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/b2ff4a79d6db5695b36f277ead7371c152fe5520/deploy/docs/Best_Practices.md#templating-kubernetes-metadata
+[source_processor_source_templates]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/processor/sourceprocessor#name-translation-and-template-keys
+[fluentd_undefined]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic/lib/fluent/plugin/filter_kubernetes_sumologic.rb#L165
+[otelcol_undefined]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.28-beta.0/pkg/processor/sourceprocessor/attribute_filler.go#L113-L123
+[fluent_annotations]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic#pod-annotations
+[otelcol_annotations]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.29-beta.0/pkg/processor/sourceprocessor#pod-annotations
+[otelcol_annotations_exclude]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic/lib/fluent/plugin/filter_kubernetes_sumologic.rb#L171-L183
+[fluent_format]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic/lib/fluent/plugin/filter_kubernetes_sumologic.rb#L192
+[fluent_source_host]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic/lib/fluent/plugin/filter_kubernetes_sumologic.rb#L194-L196
+[fluent_source_name]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic/lib/fluent/plugin/filter_kubernetes_sumologic.rb#L197-L199
+[fluent_source_category]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/5a020be965d59b69b6456b1ad1f67e372bc55c72/fluent-plugin-kubernetes-sumologic/lib/fluent/plugin/filter_kubernetes_sumologic.rb#L248-L271
+[fluent_container_source_category]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/5a020be965d59b69b6456b1ad1f67e372bc55c72/fluent-plugin-kubernetes-sumologic/lib/fluent/plugin/filter_kubernetes_sumologic.rb#L274-L288
 
 ### fluent-plugin-kubernetes-metadata-filter
 
