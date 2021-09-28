@@ -2921,8 +2921,6 @@ otelcol:
                 action: upsert
               - key: pod  # remove pod to avoid duplication when attribute translation is enabled
                 action: delete
-              - key: host
-                action: delete
               - key: prometheus_service
                 from_attribute: service
                 action: upsert
