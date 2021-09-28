@@ -30,6 +30,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     `otelcol.metadata.logs.config.processors.source/systemd:.source_name`
     configuration value.
 
+## [v2.1.6][v2_1_6] - 2021-09-28
+
+### Changed
+
+- Fixing regex for Istio logs, splitting istio logs (#1781)
+- docs: improve documentation for installation on OpenShift
+- chore: bump telegraf operator subchart to 1.2.0 (#1723)
+- feat(helm): add sumologic.serviceAccount.annotations so custom annotation cen be added #1716
+
+[v2_1_6]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.1.6
+
 ## [v2.1.5][v2_1_5] - 2021-07-21
 
 ### Changed
