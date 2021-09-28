@@ -48,10 +48,10 @@ Additional behavior:
 
 [fields_base]: https://github.com/SumoLogic/fluentd-output-sumologic/blob/1.7.2/lib/fluent/plugin/out_sumologic.rb#L284-L285
 [fluentd_output_plugin]: https://github.com/sumologic/fluentd-output-sumologic/tree/1.7.2#configuration
-[otelcol_basic_confg]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.27-beta.0/docs/Configuration.md#basic-configuration
-[otelcol_proxy]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.27-beta.0/docs/Configuration.md#proxy-support
-[otelcol_source_config]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.27-beta.0/pkg/processor/sourceprocessor#config
-[otelcol_sumologic_config]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.27-beta.0/pkg/exporter/sumologicexporter/README.md#sumo-logic-exporter
+[otelcol_basic_confg]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.28-beta.0/docs/Configuration.md#basic-configuration
+[otelcol_proxy]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.28-beta.0/docs/Configuration.md#proxy-support
+[otelcol_source_config]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/processor/sourceprocessor#config
+[otelcol_sumologic_config]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.28-beta.0/pkg/exporter/sumologicexporter/README.md#sumo-logic-exporter
 [otelocl_tls_config]: https://github.com/open-telemetry/opentelemetry-collector/blob/v0.36.0/config/configtls/README.md#tls--mtls-configuration
 [resource_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.36.0/processor/resourceprocessor#resource-processor
 [source_category_precedence]: https://github.com/SumoLogic/fluentd-output-sumologic/blob/1.7.2/lib/fluent/plugin/out_sumologic.rb#L278-L279
@@ -64,7 +64,7 @@ In order to receive prometheus data and for their initial processing [telegrafre
 It should cover [fluent-plugin-datapoint][fluent_plugin_datapoint] functionality and more.
 
 [fluent_plugin_datapoint]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-datapoint
-[telegrafreceiver]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.27-beta.0/pkg/receiver/telegrafreceiver
+[telegrafreceiver]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/receiver/telegrafreceiver
 
 ### fluent-plugin-protobuf
 
@@ -72,7 +72,7 @@ In order to receive prometheus data and for their initial processing [telegrafre
 It should cover [fluent_plugin_protobuf][fluent_plugin_protobuf] functionality and more.
 
 [fluent_plugin_protobuf]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-protobuf
-[telegrafreceiver]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.27-beta.0/pkg/receiver/telegrafreceiver
+[telegrafreceiver]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/receiver/telegrafreceiver
 
 ### fluent-plugin-prometheus-format
 
@@ -161,12 +161,12 @@ Sanitized pod name is name portion of the pod. Please consider following example
 [otelcol_source_templates]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/exporter/sumologicexporter#source-templates
 [otelcol_undefined]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.28-beta.0/pkg/processor/sourceprocessor/attribute_filler.go#L113-L123
 [source_containers]: https://github.com/SumoLogic/sumologic-otel-collector/tree/fc8c36401b58ba48de62fbdcd993b765ec101eff/pkg/processor/sourceprocessor#container-level-pod-annotations
-[source_filtering]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.27-beta.0/pkg/processor/sourceprocessor#filtering-section
+[source_filtering]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/processor/sourceprocessor#filtering-section
 [source_keys]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/processor/sourceprocessor#keys-section
-[source_processor]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.27-beta.0/pkg/processor/sourceprocessor#config
+[source_processor]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/processor/sourceprocessor#config
 [source_processor_source_templates]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/processor/sourceprocessor#name-translation-and-template-keys
 [sumo_metadata]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic#fluent-plugin-kubernetes-sumologic
-[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.27-beta.0/pkg/exporter/sumologicexporter/README.md#sumo-logic-exporter
+[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.28-beta.0/pkg/exporter/sumologicexporter/README.md#sumo-logic-exporter
 
 ### fluent-plugin-kubernetes-metadata-filter
 
@@ -184,8 +184,8 @@ Sanitized pod name is name portion of the pod. Please consider following example
 | `cache_ttl`                                                | N/A                                                                                                   |
 
 [fluent_plugin_k8s_metadata]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-kubernetes-metadata-filter#configuration
-[k8sprocessor]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.27-beta.0/pkg/processor/k8sprocessor
-[k8sprocessor_field_extract]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.27-beta.0/pkg/processor/k8sprocessor#field-extract-config
+[k8sprocessor]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.28-beta.0/pkg/processor/k8sprocessor
+[k8sprocessor_field_extract]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.28-beta.0/pkg/processor/k8sprocessor#field-extract-config
 [kubeconfig_auth_type]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.36.0/internal/k8sconfig/config.go#L53-L60
 
 ### fluent-plugin-enhance-k8s-metadata
@@ -203,7 +203,7 @@ Sanitized pod name is name portion of the pod. Please consider following example
 | `data_type`                                                        | N/A                                                                                     |
 
 [fluent_plugin_enhance_k8s_metadata]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-enhance-k8s-metadata#configuration
-[pod_association]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.27-beta.0/pkg/processor/k8sprocessor/doc.go#L17-L46
+[pod_association]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.28-beta.0/pkg/processor/k8sprocessor/doc.go#L17-L46
 
 ### fluent-plugin-events
 
