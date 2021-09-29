@@ -108,6 +108,9 @@ spec:
         args:
           - --log-level={{ .Values.otelcol.metadata.metrics.logLevel }}
           - --config=/etc/otel/config.yaml
+          {{- if eq .Values.otelcol.metrics.enabled false }}
+          - --metrics-level=none
+          {{- end }}
         resources:
           {{- toYaml .Values.metrics.metadata.statefulset.resources | nindent 10 }}
         {{- if .Values.metrics.metadata.statefulset.containers.otelcol.securityContext }}

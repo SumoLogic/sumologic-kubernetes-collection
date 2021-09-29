@@ -56,10 +56,10 @@ spec:
         image: {{ .Values.otelcol.deployment.image.repository }}:{{ .Values.otelcol.deployment.image.tag }}
         imagePullPolicy: {{ .Values.otelcol.deployment.image.pullPolicy }}
         command:
-          - "/otelcontribcol"
-          - "--config=/conf/traces.otelcol.conf.yaml"
+          - /otelcontribcol
+          - --config=/conf/traces.otelcol.conf.yaml
           {{- if eq .Values.otelcol.metrics.enabled false }}
-          - "--metrics-level=none"
+          - --metrics-level=none
           {{- end }}
           - {{ printf "--mem-ballast-size-mib=%s" .Values.otelcol.deployment.memBallastSizeMib }}
         env:
