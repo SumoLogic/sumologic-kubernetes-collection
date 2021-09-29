@@ -3016,6 +3016,9 @@ otelcol:
         exporters:
           sumologic/containers:
             log_format: json
+            json_logs:
+              add_timestamp: true
+              tiestamp_key: timestamp
             endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
             source_name: "%{_sourceName}"
             source_category: "%{_sourceCategory}"
@@ -3048,6 +3051,9 @@ otelcol:
               - statefulset
           sumologic/systemd:
             log_format: json
+            json_logs:
+              add_timestamp: true
+              tiestamp_key: timestamp
             endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
             source_name: "%{_sourceName}"
             source_category: "%{_sourceCategory}"
