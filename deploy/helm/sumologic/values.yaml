@@ -2907,6 +2907,18 @@ otelcol:
               match_type: regexp
               action: update
               new_name: $$1
+          ## NOTE: Drop these for now and and when proper configuration options
+          ## are exposed and source processor is configured then send them
+          ## as headers.
+          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/issues/265
+          resource/delete_source_metadata:
+            attributes:
+              - key: _sourceCategory
+                action: delete
+              - key: _sourceHost
+                action: delete
+              - key: _sourceName
+                action: delete
           ## Configuration for Resource Processor
           ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor
           resource:
@@ -3000,6 +3012,7 @@ otelcol:
                 - k8s_tagger
                 - source
                 - resource/remove_k8s_pod_pod_name
+                - resource/delete_source_metadata
                 - batch
               exporters:
                 - sumologic
