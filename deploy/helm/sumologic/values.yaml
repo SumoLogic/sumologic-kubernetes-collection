@@ -2835,7 +2835,7 @@ otelcol:
   statefulset:
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.0.29-beta.0
+      tag: 0.0.30-beta.0
       pullPolicy: IfNotPresent
   metadata:
     metrics:
@@ -3176,6 +3176,7 @@ otelcol:
               - from: build_hostname
           source/containers:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+            source_host: "%{k8s.pod.hostname}"
             source_name: "%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}"
             source_category: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
             source_category_prefix: '{{ .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}'
@@ -3189,7 +3190,6 @@ otelcol:
             pod_template_hash_key: "pod_labels_pod-template-hash"
             pod_name_key: "k8s.pod.pod_name"
             pod_key: "k8s.pod.name"
-            source_host_key: "k8s.pod.hostname"
 
           ## Systemd related processors
           filter/include_fluent_tag_host:
@@ -3227,6 +3227,7 @@ otelcol:
               - _sourceName
           source/systemd:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+            source_host: "%{_HOSTNAME}"
             source_name: '%{_sourceName}'
             source_category: '{{ .Values.fluentd.logs.systemd.sourceCategory | quote }}'
             source_category_prefix: '{{ .Values.fluentd.logs.systemd.sourceCategoryPrefix | quote }}'
@@ -3236,7 +3237,6 @@ otelcol:
               _HOSTNAME: '{{ .Values.fluentd.logs.systemd.excludeHostRegex | quote }}'
               PRIORITY: '{{ .Values.fluentd.logs.systemd.excludePriorityRegex | quote }}'
               _SYSTEMD_UNIT: '{{ .Values.fluentd.logs.systemd.excludeUnitRegex | quote }}'
-            source_host_key: "_HOSTNAME"
 
           ## kubelet related processors
           filter/include_kubelet:
@@ -3248,6 +3248,7 @@ otelcol:
                     value: kubelet.service
           source/kubelet:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+            source_host: "%{_HOSTNAME}"
             source_name: '{{ .Values.fluentd.logs.kubelet.sourceName | quote }}'
             source_category: '{{ .Values.fluentd.logs.kubelet.sourceCategory | quote }}'
             source_category_prefix: '{{ .Values.fluentd.logs.kubelet.sourceCategoryPrefix | quote }}'
@@ -3257,7 +3258,6 @@ otelcol:
               _HOSTNAME: '{{ .Values.fluentd.logs.kubelet.excludeHostRegex | quote }}'
               PRIORITY: '{{ .Values.fluentd.logs.kubelet.excludePriorityRegex | quote }}'
               _SYSTEMD_UNIT: '{{ .Values.fluentd.logs.kubelet.excludeUnitRegex | quote }}'
-            source_host_key: "_HOSTNAME"
 
         service:
           extensions:
