@@ -110,6 +110,8 @@ spec:
           - --config=/etc/otel/config.yaml
           {{- if eq .Values.otelcol.metrics.enabled false }}
           - --metrics-level=none
+          {{- else }}
+          - --metrics-prefix=
           {{- end }}
         resources:
           {{- toYaml .Values.metrics.metadata.statefulset.resources | nindent 10 }}

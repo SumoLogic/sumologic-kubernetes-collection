@@ -22,4 +22,8 @@ spec:
     port: 24231
     targetPort: 24231
     protocol: TCP
+  - name: otelcol-metrics
+    port: 8888
+    targetPort: 8888
+    protocol: TCP
 {{- end }}
