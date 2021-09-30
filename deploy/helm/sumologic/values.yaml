@@ -1424,11 +1424,35 @@ kube-prometheus-stack:
           matchLabels:
             sumologic.com/app: fluentd-logs
             sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-logs
+        additionalLabels:
+          sumologic.com/app: otelcol-logs
+        endpoints:
+          - port: otelcol-metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-fluentd-metrics
         additionalLabels:
           sumologic.com/app: fluentd-metrics
         endpoints:
           - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-metrics
+        additionalLabels:
+          sumologic.com/app: otelcol-metrics
+        endpoints:
+          - port: otelcol-metrics
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
