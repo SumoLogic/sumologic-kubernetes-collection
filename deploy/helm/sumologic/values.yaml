@@ -3198,6 +3198,10 @@ otelcol:
               delimiter: "_"
             pod_association:
               - from: build_hostname
+          resource/remove_too_long_fields:
+            attributes:
+              - action: delete
+                key: pod_annotations_telegraf.influxdata.com/inputs
           source/containers:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
             source_host: "%{k8s.pod.hostname}"
@@ -3300,6 +3304,7 @@ otelcol:
                 - source/containers
                 - attributes/remove_fluent_tag
                 - resource/containers_copy_node_to_host
+                - resource/remove_too_long_fields
                 - batch
               exporters:
                 - sumologic/containers
