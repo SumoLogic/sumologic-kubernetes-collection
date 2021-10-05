@@ -3361,8 +3361,8 @@ metadata:
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
-            - pod_.*
-            - namespace_.*
+            - pod_labels_.*
+            - namespace_labels_.*
         sumologic/apiserver:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
@@ -3370,8 +3370,8 @@ metadata:
             enabled: true
           metadata_attributes:
             - k8s.*
-            - pod_.*
-            - namespace_.*
+            - pod_labels_.*
+            - namespace_labels_.*
         sumologic/control_plane:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
@@ -3379,8 +3379,8 @@ metadata:
             enabled: true
           metadata_attributes:
             - k8s.*
-            - pod_.*
-            - namespace_.*
+            - pod_labels_.*
+            - namespace_labels_.*
         sumologic/controller:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
@@ -3388,8 +3388,8 @@ metadata:
             enabled: true
           metadata_attributes:
             - k8s.*
-            - pod_.*
-            - namespace_.*
+            - pod_labels_.*
+            - namespace_labels_.*
         sumologic/kubelet:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
@@ -3397,8 +3397,8 @@ metadata:
             enabled: true
           metadata_attributes:
             - k8s.*
-            - pod_.*
-            - namespace_.*
+            - pod_labels_.*
+            - namespace_labels_.*
         sumologic/node:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
@@ -3406,8 +3406,8 @@ metadata:
             enabled: true
           metadata_attributes:
             - k8s.*
-            - pod_.*
-            - namespace_.*
+            - pod_labels_.*
+            - namespace_labels_.*
         sumologic/scheduler:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
@@ -3415,8 +3415,8 @@ metadata:
             enabled: true
           metadata_attributes:
             - k8s.*
-            - pod_.*
-            - namespace_.*
+            - pod_labels_.*
+            - namespace_labels_.*
         sumologic/state:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
@@ -3424,8 +3424,8 @@ metadata:
             enabled: true
           metadata_attributes:
             - k8s.*
-            - pod_.*
-            - namespace_.*
+            - pod_labels_.*
+            - namespace_labels_.*
       processors:
         ## Configuration for Metrics Transform Processor
         ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/metricstransformprocessor
@@ -3704,8 +3704,8 @@ metadata:
             ## Attributes to be send as fields
             - _collector
             - k8s.*
-            - pod_.*
-            - namespace_.*
+            - pod_labels_.*
+            - namespace_labels_.*
         sumologic/systemd:
           log_format: json
           json_logs:
