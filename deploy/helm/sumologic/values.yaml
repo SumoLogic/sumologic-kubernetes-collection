@@ -2914,8 +2914,8 @@ otelcol:
               enabled: true
             metadata_attributes:
               - k8s.*
-              - pod_.*
-              - namespace_.*
+              - pod_labels_.*
+              - namespace_labels_.*
 
               - Deployment
               - container
@@ -3067,8 +3067,8 @@ otelcol:
               ## Attributes to be send as fields
               - _collector
               - k8s.*
-              - pod_.*
-              - namespace_.*
+              - pod_labels_.*
+              - namespace_labels.*
               ## ToDo: remove below duplication of k8s.* attributes
               ## after https://github.com/SumoLogic/sumologic-otel-collector/pull/245 being resolved
               - cluster
