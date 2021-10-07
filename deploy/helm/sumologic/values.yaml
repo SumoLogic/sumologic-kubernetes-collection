@@ -1546,6 +1546,7 @@ kube-prometheus-stack:
       walCompression: true
 
       ## prometheus scrape config
+      ## rel: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
       additionalScrapeConfigs:
         ## scraping metrics basing on annotations:
         ##   - prometheus.io/scrape: true - to scrape metrics from the pod
