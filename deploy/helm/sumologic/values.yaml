@@ -2860,7 +2860,7 @@ otelcol:
   statefulset:
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.0.30-beta.0
+      tag: 0.0.32-beta.0
       pullPolicy: IfNotPresent
   metadata:
     metrics:
@@ -2917,11 +2917,6 @@ otelcol:
               - k8s.*
               - pod_.*
               - namespace_.*
-
-              - Deployment
-              - container
-              - node
-              - pod
         processors:
           ## Configuration for Metrics Transform Processor
           ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor
@@ -3070,20 +3065,6 @@ otelcol:
               - k8s.*
               - pod_.*
               - namespace_.*
-              ## ToDo: remove below duplication of k8s.* attributes
-              ## after https://github.com/SumoLogic/sumologic-otel-collector/pull/245 being resolved
-              - cluster
-              - container
-              - daemonset
-              - deployment
-              - namespace
-              - node
-              - service
-              - host
-              - pod
-              - pod_id
-              - replicaset
-              - statefulset
           sumologic/systemd:
             log_format: json
             json_logs:
