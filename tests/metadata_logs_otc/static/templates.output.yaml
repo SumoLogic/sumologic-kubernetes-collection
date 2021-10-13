@@ -1,0 +1,259 @@
+---
+# Source: sumologic/templates/logs/otelcol/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-logs
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-logs
+    chart: "sumologic-2.2.0-dev.0"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  config.yaml: |
+    
+    exporters:
+      sumologic/containers:
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+        json_logs:
+          add_timestamp: true
+          timestamp_key: timestamp
+        log_format: json
+        metadata_attributes:
+        - _collector
+        - k8s.*
+        - pod_.*
+        - namespace_.*
+        sending_queue:
+          enabled: true
+        source_category: '%{_sourceCategory}'
+        source_host: '%{_sourceHost}'
+        source_name: '%{_sourceName}'
+      sumologic/systemd:
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+        json_logs:
+          add_timestamp: true
+          timestamp_key: timestamp
+        log_format: json
+        metadata_attributes:
+        - _collector
+        sending_queue:
+          enabled: true
+        source_category: '%{_sourceCategory}'
+        source_host: '%{_sourceHost}'
+        source_name: '%{_sourceName}'
+    extensions:
+      health_check: {}
+    processors:
+      attributes/containers:
+        actions:
+        - action: extract
+          key: fluent.tag
+          pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
+        - action: insert
+          from_attribute: container_id
+          key: k8s.container.id
+        - action: delete
+          key: container_id
+        - action: insert
+          from_attribute: k8s_pod_name
+          key: k8s.pod.name
+        - action: delete
+          key: k8s_pod_name
+        - action: insert
+          from_attribute: k8s_namespace
+          key: k8s.namespace.name
+        - action: delete
+          key: k8s_namespace
+        - action: insert
+          from_attribute: k8s_container_name
+          key: k8s.container.name
+        - action: delete
+          key: k8s_container_name
+      attributes/extract_systemd_source_name_from_fluent_tag:
+        actions:
+        - action: extract
+          key: fluent.tag
+          pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+      attributes/remove_fluent_tag:
+        actions:
+        - action: delete
+          key: fluent.tag
+      batch:
+        send_batch_size: 256
+        timeout: 5s
+      filter/exclude_kubelet:
+        logs:
+          exclude:
+            match_type: strict
+            record_attributes:
+            - key: _SYSTEMD_UNIT
+              value: kubelet.service
+      filter/include_fluent_tag_containers:
+        logs:
+          include:
+            match_type: regexp
+            record_attributes:
+            - key: fluent.tag
+              value: containers\..+
+      filter/include_fluent_tag_host:
+        logs:
+          include:
+            match_type: regexp
+            record_attributes:
+            - key: fluent.tag
+              value: host\..+
+      filter/include_kubelet:
+        logs:
+          include:
+            match_type: strict
+            record_attributes:
+            - key: _SYSTEMD_UNIT
+              value: kubelet.service
+      filter/include_systemd:
+        logs:
+          include:
+            match_type: regexp
+            record_attributes:
+            - key: _SYSTEMD_UNIT
+              value: .+
+      groupbyattrs/containers:
+        keys:
+        - k8s.container.id
+        - k8s.container.name
+        - k8s.namespace.name
+        - k8s.pod.name
+      groupbyattrs/systemd:
+        keys:
+        - _SYSTEMD_UNIT
+        - _HOSTNAME
+        - SYSLOG_FACILITY
+        - PRIORITY
+        - _sourceName
+      k8s_tagger:
+        extract:
+          annotations:
+          - key: '*'
+            tag_name: pod_annotations_%s
+          delimiter: _
+          labels:
+          - key: '*'
+            tag_name: pod_labels_%s
+          metadata:
+          - containerId
+          - containerName
+          - clusterName
+          - daemonSetName
+          - deploymentName
+          - hostName
+          - namespace
+          - nodeName
+          - podId
+          - podName
+          - replicaSetName
+          - serviceName
+          - statefulSetName
+          namespace_labels:
+          - key: '*'
+            tag_name: namespace_labels_%s
+        owner_lookup_enabled: true
+        passthrough: false
+        pod_association:
+        - from: build_hostname
+      memory_limiter:
+        check_interval: 5s
+        limit_mib: 1900
+      resource/containers_copy_node_to_host:
+        attributes:
+        - action: upsert
+          from_attribute: k8s.node.name
+          key: k8s.pod.hostname
+      source/containers:
+        annotation_prefix: pod_annotations_
+        collector: "my_collectorName"
+        exclude:
+          k8s.container.name: "my_containers_excludeContainerRegex"
+          k8s.namespace.name: "my_containers_excludeNamespaceRegex"
+          k8s.pod.hostname: "my_containers_excludeHostRegex"
+          k8s.pod.name: "my_containers_excludePodRegex"
+        pod_key: k8s.pod.name
+        pod_name_key: k8s.pod.pod_name
+        pod_template_hash_key: pod_labels_pod-template-hash
+        source_category: '%{k8s.namespace.name}/%{k8s.pod.pod_name}'
+        source_category_prefix: "my_containers_sourceCategoryPrefix"
+        source_category_replace_dash: "my_containers_sourceCategoryReplaceDash"
+        source_host: '%{k8s.pod.hostname}'
+        source_name: '%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}'
+      source/kubelet:
+        collector: "my_collectorName"
+        exclude:
+          _HOSTNAME: "my_kubelet_excludeHostRegex"
+          _SYSTEMD_UNIT: "my_kubelet_excludeUnitRegex"
+          PRIORITY: "my_kubelet_excludePriorityRegex"
+          SYSLOG_FACILITY: "my_kubelet_excludeFacilityRegex"
+        source_category: "kubelet"
+        source_category_prefix: "my_kubelet_sourceCategoryPrefix"
+        source_category_replace_dash: "my_kubelet_sourceCategoryReplaceDash"
+        source_host: '%{_HOSTNAME}'
+        source_name: "k8s_kubelet"
+      source/systemd:
+        collector: "my_collectorName"
+        exclude:
+          _HOSTNAME: "my_systemd_excludeHostRegex"
+          _SYSTEMD_UNIT: "my_systemd_excludeUnitRegex"
+          PRIORITY: "my_systemd_excludePriorityRegex"
+          SYSLOG_FACILITY: "my_systemd_excludeFacilityRegex"
+        source_category: "system"
+        source_category_prefix: "my_systemd_sourceCategoryPrefix"
+        source_category_replace_dash: "my_systemd_sourceCategoryReplaceDash"
+        source_host: '%{_HOSTNAME}'
+        source_name: '%{_sourceName}'
+    receivers:
+      fluentforward:
+        endpoint: 0.0.0.0:24321
+    service:
+      extensions:
+      - health_check
+      pipelines:
+        logs:
+          exporters:
+          - sumologic/containers
+          processors:
+          - memory_limiter
+          - filter/include_fluent_tag_containers
+          - attributes/containers
+          - groupbyattrs/containers
+          - k8s_tagger
+          - source/containers
+          - attributes/remove_fluent_tag
+          - resource/containers_copy_node_to_host
+          - batch
+          receivers:
+          - fluentforward
+        logs/kubelet:
+          exporters:
+          - sumologic/systemd
+          processors:
+          - memory_limiter
+          - filter/include_fluent_tag_host
+          - filter/include_kubelet
+          - groupbyattrs/systemd
+          - source/kubelet
+          - attributes/remove_fluent_tag
+          - batch
+          receivers:
+          - fluentforward
+        logs/systemd:
+          exporters:
+          - sumologic/systemd
+          processors:
+          - memory_limiter
+          - filter/include_fluent_tag_host
+          - filter/include_systemd
+          - filter/exclude_kubelet
+          - groupbyattrs/systemd
+          - source/systemd
+          - attributes/remove_fluent_tag
+          - batch
+          receivers:
+          - fluentforward
