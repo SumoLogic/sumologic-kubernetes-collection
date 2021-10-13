@@ -3196,6 +3196,9 @@ otelcol:
             pod_template_hash_key: "pod_labels_pod-template-hash"
             pod_name_key: "k8s.pod.pod_name"
             pod_key: "k8s.pod.name"
+            container_annotations:
+              enabled: '{{ .Values.fluentd.logs.containers.perContainerAnnotationsEnabled }}'
+              prefixes: '{{ toJson .Values.fluentd.logs.containers.perContainerAnnotationPrefixes }}'
 
           ## Systemd related processors
           filter/include_fluent_tag_host:
