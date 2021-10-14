@@ -171,6 +171,9 @@ data:
       source/containers:
         annotation_prefix: pod_annotations_
         collector: "my_collectorName"
+        container_annotations:
+          enabled: false
+          prefixes: []
         exclude:
           k8s.container.name: "my_containers_excludeContainerRegex"
           k8s.namespace.name: "my_containers_excludeNamespaceRegex"
