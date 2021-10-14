@@ -3023,6 +3023,11 @@ otelcol:
           ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
           source:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+          ## Configuration to drop pod_annotations_.* attributes
+          resource/delete_pod_annotations:
+            attributes:
+              - action: delete
+                pattern: ^pod_annotations_.*
         service:
           extensions:
             - health_check
@@ -3038,6 +3043,7 @@ otelcol:
                 - source
                 - resource/remove_k8s_pod_pod_name
                 - resource/delete_source_metadata
+                - resource/delete_pod_annotations
                 - batch
               exporters:
                 - sumologic
@@ -3215,6 +3221,12 @@ otelcol:
             pod_name_key: "k8s.pod.pod_name"
             pod_key: "k8s.pod.name"
 
+          ## Configuration to drop pod_annotations_.* attributes
+          resource/delete_pod_annotations:
+            attributes:
+              - action: delete
+                pattern: ^pod_annotations_.*
+
           ## Systemd related processors
           filter/include_fluent_tag_host:
             logs:
@@ -3300,6 +3312,7 @@ otelcol:
                 - source/containers
                 - attributes/remove_fluent_tag
                 - resource/containers_copy_node_to_host
+                - resource/delete_pod_annotations
                 - batch
               exporters:
                 - sumologic/containers
