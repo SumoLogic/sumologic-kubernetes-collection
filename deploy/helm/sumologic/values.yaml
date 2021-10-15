@@ -2947,7 +2947,7 @@ otelcol:
   statefulset:
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.0.35-beta.0
+      tag: 0.0.37-beta.0
       pullPolicy: IfNotPresent
   metadata:
     metrics:
@@ -2969,6 +2969,7 @@ otelcol:
                 write_timeout = "30s"
                 service_address = ":9888"
                 data_format = "prometheusremotewrite"
+                path_tag = true
                 paths = [
                   "/prometheus.metrics",
                   "/prometheus.metrics.apiserver",
@@ -2995,9 +2996,72 @@ otelcol:
         exporters:
           ## Configuration for Sumo Logic Exporter
           ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
-          sumologic:
+          sumologic/default:
             metric_format: prometheus
             endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              - k8s.*
+              - pod_.*
+              - namespace_.*
+          sumologic/apiserver:
+            metric_format: prometheus
+            endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              - k8s.*
+              - pod_.*
+              - namespace_.*
+          sumologic/control_plane:
+            metric_format: prometheus
+            endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              - k8s.*
+              - pod_.*
+              - namespace_.*
+          sumologic/controller:
+            metric_format: prometheus
+            endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              - k8s.*
+              - pod_.*
+              - namespace_.*
+          sumologic/kubelet:
+            metric_format: prometheus
+            endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              - k8s.*
+              - pod_.*
+              - namespace_.*
+          sumologic/node:
+            metric_format: prometheus
+            endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              - k8s.*
+              - pod_.*
+              - namespace_.*
+          sumologic/scheduler:
+            metric_format: prometheus
+            endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
+            sending_queue:
+              enabled: true
+            metadata_attributes:
+              - k8s.*
+              - pod_.*
+              - namespace_.*
+          sumologic/state:
+            metric_format: prometheus
+            endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
             sending_queue:
               enabled: true
             metadata_attributes:
@@ -3057,6 +3121,53 @@ otelcol:
             attributes:
               - action: delete
                 key: k8s.pod.pod_name
+          ## NOTE: below listed rules could be simplified if routingprocessor
+          ## supports regex matching. At this point we could group route entries
+          ## going to the same set of exporters.
+          routing:
+            ## NOTE: add a feature to routingprocessor to drop the routing
+            ## attribute to prevent it being sent to the exporters.
+            from_attribute: http_listener_v2_path
+            attribute_source: resource
+            default_exporters:
+              - sumologic/default
+            table:
+              ## apiserver metrics
+              - value: /prometheus.metrics.apiserver
+                exporters:
+                  - sumologic/apiserver
+              ## container metrics
+              - value: /prometheus.metrics.container
+                exporters:
+                  - sumologic/kubelet
+              ## control-plane metrics
+              - value: /prometheus.metrics.control-plane.coredns
+                exporters:
+                  - sumologic/control_plane
+              - value: /prometheus.metrics.control-plane.kube-etcd
+                exporters:
+                  - sumologic/control_plane
+              ## controller metrics
+              - value: /prometheus.metrics.controller-manager
+                exporters:
+                  - sumologic/controller
+              ## kubelet metrics
+              - value: /prometheus.metrics.kubelet
+                exporters:
+                  - sumologic/kubelet
+              ## node metrics
+              - value: /prometheus.metrics.node
+                exporters:
+                  - sumologic/node
+              ## scheduler metrics
+              - value: /prometheus.metrics.scheduler
+                exporters:
+                  - sumologic/scheduler
+              ## state metrics
+              - value: /prometheus.metrics.state
+                exporters:
+                  - sumologic/state
+
           ## Configuration for Memory Limiter Processor
           ## The memory_limiter processor is used to prevent out of memory situations on the collector.
           ## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
@@ -3122,8 +3233,16 @@ otelcol:
                 - resource/remove_k8s_pod_pod_name
                 - resource/delete_source_metadata
                 - batch
+                - routing
               exporters:
-                - sumologic
+                - sumologic/default
+                - sumologic/apiserver
+                - sumologic/control_plane
+                - sumologic/controller
+                - sumologic/kubelet
+                - sumologic/node
+                - sumologic/scheduler
+                - sumologic/state
 
     logs:
       enabled: true

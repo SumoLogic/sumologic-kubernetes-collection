@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 24a99dcc7c91e76c25201052ede2a0a3d8bdedf3969038e06b5b135c756cc844
+        checksum/config: a07dfb64aa3e81f8159f73a37f5081dc25a29cea3214ac82566ffc1ef646eb09
         someAnnotation: someValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-metrics
@@ -65,7 +65,7 @@ spec:
       priorityClassName: "prio"
       containers:
       - name: otelcol
-        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.0.35-beta.0
+        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.0.37-beta.0
         imagePullPolicy: IfNotPresent
         args:
           - --log-level=info
