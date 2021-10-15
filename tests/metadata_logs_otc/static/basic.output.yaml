@@ -260,3 +260,6 @@ data:
           - batch
           receivers:
           - fluentforward
+      telemetry:
+        logs:
+          level: info

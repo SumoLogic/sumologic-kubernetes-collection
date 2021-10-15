@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: a07dfb64aa3e81f8159f73a37f5081dc25a29cea3214ac82566ffc1ef646eb09
+        checksum/config: 913a542a5141112b182e9490691e05ebd1d760a08b9a5d2f1cd491b3b4b06549
         someAnnotation: someValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-metrics
@@ -68,7 +68,6 @@ spec:
         image: public.ecr.aws/sumologic/sumologic-otel-collector:0.0.37-beta.0
         imagePullPolicy: IfNotPresent
         args:
-          - --log-level=info
           - --config=/etc/otel/config.yaml
         resources:
           limits:
