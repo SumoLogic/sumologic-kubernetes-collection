@@ -171,6 +171,9 @@ data:
       source/containers:
         annotation_prefix: pod_annotations_
         collector: "kubernetes"
+        container_annotations:
+          enabled: false
+          prefixes: []
         exclude:
           k8s.container.name: ""
           k8s.namespace.name: ""

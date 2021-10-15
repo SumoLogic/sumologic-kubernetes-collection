@@ -1,0 +1,110 @@
+---
+# Source: sumologic/templates/logs/otelcol/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-logs
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-logs
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+      app: RELEASE-NAME-sumologic-otelcol-logs
+  serviceName: RELEASE-NAME-sumologic-fluentd-logs-headless
+  podManagementPolicy: "Parallel"
+  replicas: 4
+  template:
+    metadata:
+      annotations:
+        checksum/config: f0366e61637c44c3ef0274b75dedbf0c8c8f8644ab2f2999a5184fd0d0ffb580
+        someAnnotation: someValue
+      labels:
+        app: RELEASE-NAME-sumologic-otelcol-logs
+        chart: "sumologic-2.2.0-dev.0"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+        someLabel: someValue
+    spec:
+      serviceAccountName: RELEASE-NAME-sumologic
+      nodeSelector:
+        sumologic.com/kind: worker
+      tolerations:
+        - effect: NoSchedule
+          key: worker
+          operator: Equal
+          value: worker
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - RELEASE-NAME-sumologic-otelcol-logs
+                - RELEASE-NAME-sumologic-fluentd-metrics
+              - key: app
+                operator: In
+                values:
+                - prometheus-operator-prometheus
+            topologyKey: "kubernetes.io/hostname"
+
+      volumes:
+      - name: config-volume
+        configMap:
+          name: RELEASE-NAME-sumologic-otelcol-logs
+      - name: es-certs
+        secret:
+          defaultMode: 420
+          secretName: es-certs
+      securityContext:
+        fsGroup: 999
+      priorityClassName: "prio"
+      containers:
+      - name: otelcol
+        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.0.35-beta.0
+        imagePullPolicy: IfNotPresent
+        args:
+          - --log-level=info
+          - --config=/etc/otel/config.yaml
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+          requests:
+            cpu: 100m
+            memory: 777Mi
+        ports:
+        - name: fluent-bit
+          containerPort: 24321
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/otel/config.yaml
+          subPath: config.yaml
+        - mountPath: /certs
+          name: es-certs
+          readOnly: true
+        env:
+        - name: SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE
+          valueFrom:
+            secretKeyRef:
+              name: sumologic
+              key: endpoint-logs
+
+        - name: VALUE_FROM_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: secret_key
+              name: secret_name
