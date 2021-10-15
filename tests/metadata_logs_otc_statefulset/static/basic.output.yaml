@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 7c14330d39a9e374d2e4643e950d59912856c03fa2be48049a5e70a0d16fbaaa
+        checksum/config: c2141155b83a478af4ddfcaa994eda46f6662e5756580efba5c8fd84c9e65f6d
         someAnnotation: someValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-logs
@@ -92,6 +92,8 @@ spec:
         - name: config-volume
           mountPath: /etc/otel/config.yaml
           subPath: config.yaml
+        - name: file-storage
+          mountPath: /var/lib/storage/otc
         - mountPath: /certs
           name: es-certs
           readOnly: true
@@ -107,3 +109,12 @@ spec:
             secretKeyRef:
               key: secret_key
               name: secret_name
+  volumeClaimTemplates:
+  - metadata:
+      name: file-storage
+    spec:
+      accessModes: [ReadWriteOnce]
+      storageClassName: 
+      resources:
+        requests:
+          storage: 10Gi
