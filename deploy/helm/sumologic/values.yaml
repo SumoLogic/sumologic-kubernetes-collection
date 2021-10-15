@@ -3218,6 +3218,9 @@ otelcol:
           source:
             collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
         service:
+          telemetry:
+            logs:
+              level: '{{ .Values.otelcol.metadata.metrics.logLevel }}'
           extensions:
             - health_check
           pipelines:
@@ -3475,6 +3478,9 @@ otelcol:
               _SYSTEMD_UNIT: '{{ .Values.fluentd.logs.kubelet.excludeUnitRegex | quote }}'
 
         service:
+          telemetry:
+            logs:
+              level: '{{ .Values.otelcol.metadata.logs.logLevel }}'
           extensions:
             - health_check
             # - sumologic

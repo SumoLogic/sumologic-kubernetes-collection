@@ -106,7 +106,6 @@ spec:
         image: {{ .Values.otelcol.statefulset.image.repository }}:{{ .Values.otelcol.statefulset.image.tag }}
         imagePullPolicy: {{ .Values.otelcol.statefulset.image.pullPolicy }}
         args:
-          - --log-level={{ .Values.otelcol.metadata.logs.logLevel }}
           - --config=/etc/otel/config.yaml
           {{- if eq .Values.otelcol.metrics.enabled false }}
           - --metrics-level=none
