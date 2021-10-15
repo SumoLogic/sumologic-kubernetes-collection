@@ -3038,7 +3038,7 @@ otelcol:
               - action: extract
                 key: url
                 pattern: http://[^/]+/(?P<prometheus_tag>.+)$
-          ## NOTE: below listed rules could coud be simplified if routingprocessor
+          ## NOTE: below listed rules could be simplified if routingprocessor
           ## supports regex matching. At this point we could group route entries
           ## going to the same set of exporters.
           routing:
