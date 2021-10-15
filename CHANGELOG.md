@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Before upgrading to this version, you need to upgrade the Prometheus Operator CRDs
+by running the following commands on your cluster:
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+```
+
 ### Added
 
 - otelcol: add systemd logs pipeline [#1767]
@@ -31,6 +44,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     configuration value.
 
 [#1767]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1767
+
+### Changed
+
+- feat(metrics): upgrade kube-prometheus-stack to v16 [#1816]
+
+  This update changes the version of kube-state-metrics from v1 to v2.
+
+[#1816]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1816
 
 ## [v2.1.6][v2_1_6] - 2021-09-28
 
