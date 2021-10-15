@@ -2735,6 +2735,93 @@ kube-prometheus-stack:
               regex: (?:memcached_(accepting_conns|auth_(cmds|errors)|bytes_(read|written)|bytes|cas_*|cmd_.*|conn_yields|connection_structures|curr_(connections|items)|decr_.*|delete_.*|evictions|get_(hits|misses)|hash_(bytes|is_expanding)|incr_.*|limit_maxbytes|listen_disabled_num|reclaimed|threads|total_(connections|items)|uptime))
               sourceLabels: [__name__]
 
+        ## Elasticsearch Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/elasticsearch
+        ## elasticsearch_cluster_health_active_primary_shards
+        ## elasticsearch_cluster_health_active_shards
+        ## elasticsearch_cluster_health_delayed_unassigned_shards
+        ## elasticsearch_cluster_health_indices_status_code
+        ## elasticsearch_cluster_health_initializing_shards
+        ## elasticsearch_cluster_health_number_of_data_nodes
+        ## elasticsearch_cluster_health_number_of_nodes
+        ## elasticsearch_cluster_health_number_of_pending_tasks
+        ## elasticsearch_cluster_health_relocating_shards
+        ## elasticsearch_cluster_health_unassigned_shards
+        ## elasticsearch_clusterstats_indices_fielddata_evictions
+        ## elasticsearch_clusterstats_nodes_jvm_mem_heap_used_in_bytes
+        ## elasticsearch_fs_total_free_in_bytes
+        ## elasticsearch_fs_total_total_in_bytes
+        ## elasticsearch_indices_flush_total
+        ## elasticsearch_indices_flush_total_time_in_millis
+        ## elasticsearch_indices_get_exists_time_in_millis
+        ## elasticsearch_indices_get_exists_total
+        ## elasticsearch_indices_get_missing_time_in_millis
+        ## elasticsearch_indices_get_missing_total
+        ## elasticsearch_indices_get_time_in_millis
+        ## elasticsearch_indices_get_total
+        ## elasticsearch_indices_indexing_delete_time_in_millis
+        ## elasticsearch_indices_indexing_delete_total
+        ## elasticsearch_indices_indexing_index_time_in_millis
+        ## elasticsearch_indices_indexing_index_total
+        ## elasticsearch_indices_merges_total_time_in_millis
+        ## elasticsearch_indices_search_query_time_in_millis
+        ## elasticsearch_indices_search_query_total
+        ## elasticsearch_indices_segments_fixed_bit_set_memory_in_bytes
+        ## elasticsearch_indices_segments_terms_memory_in_bytes
+        ## elasticsearch_indices_stats_primaries_docs_count
+        ## elasticsearch_indices_stats_primaries_indexing_index_time_in_millis
+        ## elasticsearch_indices_stats_primaries_query_cache_cache_size
+        ## elasticsearch_indices_stats_primaries_query_cache_evictions
+        ## elasticsearch_indices_stats_primaries_segments_doc_values_memory_in_bytes
+        ## elasticsearch_indices_stats_primaries_segments_index_writer_memory_in_bytes
+        ## elasticsearch_indices_stats_primaries_segments_memory_in_bytes
+        ## elasticsearch_indices_stats_total___fielddata_memory_size_in_bytes
+        ## elasticsearch_indices_stats_total___indexing_index_total
+        ## elasticsearch_indices_stats_total___merges_total
+        ## elasticsearch_indices_stats_total_docs_count
+        ## elasticsearch_indices_stats_total_fielddata_memory_size_in_bytes
+        ## elasticsearch_indices_stats_total_flush_total_time_in_millis
+        ## elasticsearch_indices_stats_total_indexing_delete_total
+        ## elasticsearch_indices_stats_total_indexing_index_time_in_millis
+        ## elasticsearch_indices_stats_total_indexing_index_total
+        ## elasticsearch_indices_stats_total_merges_total_docs
+        ## elasticsearch_indices_stats_total_merges_total_size_in_bytes
+        ## elasticsearch_indices_stats_total_merges_total_time_in_millis
+        ## elasticsearch_indices_stats_total_query_cache_evictions
+        ## elasticsearch_indices_stats_total_refresh_total
+        ## elasticsearch_indices_stats_total_refresh_total_time_in_millis
+        ## elasticsearch_indices_stats_total_search_fetch_time_in_millis
+        ## elasticsearch_indices_stats_total_search_fetch_total
+        ## elasticsearch_indices_stats_total_search_query_time_in_millis
+        ## elasticsearch_indices_stats_total_search_query_total
+        ## elasticsearch_indices_stats_total_segments_fixed_bit_set_memory_in_bytes
+        ## elasticsearch_indices_stats_total_segments_index_writer_memory_in_bytes
+        ## elasticsearch_indices_stats_total_segments_memory_in_bytes
+        ## elasticsearch_indices_stats_total_segments_terms_memory_in_bytes
+        ## elasticsearch_indices_stats_total_store_size_in_bytes
+        ## elasticsearch_indices_stats_total_translog_operations
+        ## elasticsearch_indices_stats_total_translog_size_in_bytes
+        ## elasticsearch_jvm_gc_collectors_*_collection_time_in_millis
+        ## elasticsearch_jvm_mem_heap_committed_in_bytes
+        ## elasticsearch_jvm_mem_heap_used_in_bytes
+        ## elasticsearch_jvm_mem_heap_used_percent
+        ## elasticsearch_os_cpu_load_average_5m
+        ## elasticsearch_os_cpu_percent
+        ## elasticsearch_process_open_file_descriptors
+        ## elasticsearch_thread_pool_analyze_completed
+        ## elasticsearch_thread_pool_analyze_threads
+        ## elasticsearch_thread_pool_get_rejected
+        ## elasticsearch_thread_pool_search_queue
+        ## elasticsearch_transport_rx_size_in_bytes
+        ## elasticsearch_transport_tx_size_in_bytes
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.elasticsearch
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:elasticsearch_(cluster_health_(active_(primary_shards|shards)|delayed_unassigned_shards|indices_status_code|initializing_shards|number_of_(data_nodes|nodes|pending_tasks)|relocating_shards|unassigned_shards)|clusterstats_(indices_fielddata_evictions|nodes_jvm_mem_heap_used_in_bytes)|fs_total_(free_in_bytes|total_in_bytes)|indices_(flush_(total|total_time_in_millis)|get_(exists_time_in_millis|exists_total|missing_time_in_millis|missing_total|time_in_millis|total)|indexing_delete_time_in_millis|indexing_delete_total|indexing_index_time_in_millis|indexing_index_total|merges_total_time_in_millis|search_query_time_in_millis|search_query_total|segments_fixed_bit_set_memory_in_bytes|segments_terms_memory_in_bytes|stats_primaries_(docs_count|indexing_index_time_in_millis|query_cache_cache_size|query_cache_evictions|segments_doc_values_memory_in_bytes|segments_index_writer_memory_in_bytes|segments_memory_in_bytes)|stats_total___(fielddata_memory_size_in_bytes|indexing_index_total|merges_total)|stats_total_(docs_count|fielddata_memory_size_in_bytes|flush_total_time_in_millis|indexing_delete_total|indexing_index_time_in_millis|indexing_index_total|merges_total_docs|merges_total_size_in_bytes|merges_total_time_in_millis|query_cache_evictions|refresh_total|refresh_total_time_in_millis|search_fetch_time_in_millis|search_fetch_total|search_query_time_in_millis|search_query_total|segments_fixed_bit_set_memory_in_bytes|segments_index_writer_memory_in_bytes|segments_memory_in_bytes|segments_terms_memory_in_bytes|store_size_in_bytes|translog_operations|translog_size_in_bytes))|jvm_(gc_collectors_.*_collection_time_in_millis|mem_heap_committed_in_bytes|mem_heap_used_in_bytes|mem_heap_used_percent)|os_cpu_(load_average_5m|percent)|process_open_file_descriptors|thread_pool_(analyze_completed|analyze_threads|get_rejected|search_queue)|transport_(rx_size_in_bytes|tx_size_in_bytes)))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
