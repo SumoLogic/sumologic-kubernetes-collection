@@ -2944,6 +2944,19 @@ otelcol:
   ## Add custom labels to all otelcol statefulset PVC (logs, metrics, events)
   pvcLabels: {}
 
+  persistence:
+    enabled: true
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, Azure & OpenStack)
+    ##
+    # storageClass: "-"
+    # annotations: {}
+    accessMode: ReadWriteOnce
+    size: 10Gi
+
   statefulset:
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
@@ -2993,14 +3006,22 @@ otelcol:
                 ]
         extensions:
           health_check: {}
+          ## Configuration for File Storage extension
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/storage/filestorage
+          file_storage:
+            directory: /var/lib/storage/otc
+            timeout: 10s
         exporters:
           ## Configuration for Sumo Logic Exporter
           ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
           sumologic/default:
             metric_format: prometheus
             endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+            ## Configuration for sending queue
+            ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
+              persistent_storage_enabled: '{{ .Values.otelcol.persistence.enabled }}'
             metadata_attributes:
               - k8s.*
               - pod_.*
@@ -3223,6 +3244,7 @@ otelcol:
               level: '{{ .Values.otelcol.metadata.metrics.logLevel }}'
           extensions:
             - health_check
+            - file_storage
           pipelines:
             metrics:
               receivers:
@@ -3256,6 +3278,11 @@ otelcol:
             endpoint: 0.0.0.0:24321
         extensions:
           health_check: {}
+          ## Configuration for File Storage extension
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/storage/filestorage
+          file_storage:
+            directory: /var/lib/storage/otc
+            timeout: 10s
         exporters:
           sumologic/containers:
             log_format: json
@@ -3266,8 +3293,11 @@ otelcol:
             source_name: "%{_sourceName}"
             source_category: "%{_sourceCategory}"
             source_host: "%{_sourceHost}"
+            ## Configuration for sending queue
+            ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
+              persistent_storage_enabled: '{{ .Values.otelcol.persistence.enabled }}'
             metadata_attributes:
               ## Attributes to be send as fields
               - _collector
@@ -3283,8 +3313,11 @@ otelcol:
             source_name: "%{_sourceName}"
             source_category: "%{_sourceCategory}"
             source_host: "%{_sourceHost}"
+            ## Configuration for sending queue
+            ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
+              persistent_storage_enabled: '{{ .Values.otelcol.persistence.enabled }}'
             metadata_attributes:
               - _collector
 
@@ -3483,6 +3516,7 @@ otelcol:
               level: '{{ .Values.otelcol.metadata.logs.logLevel }}'
           extensions:
             - health_check
+            - file_storage
             # - sumologic
           pipelines:
             logs:
