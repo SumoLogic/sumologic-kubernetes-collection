@@ -51,7 +51,12 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 
   This update changes the version of kube-state-metrics from v1 to v2.
 
+- feat(logs): upgrade fluent-bit chart to v0.19.1 [#1824]
+
+  This upgrades Fluent Bit to v1.8.8.
+
 [#1816]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1816
+[#1824]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1824
 
 ## [v2.1.6][v2_1_6] - 2021-09-28
 
