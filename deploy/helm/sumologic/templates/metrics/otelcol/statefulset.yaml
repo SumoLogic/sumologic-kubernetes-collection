@@ -134,7 +134,7 @@ spec:
           subPath: config.yaml
 {{- if .Values.otelcol.persistence.enabled }}
         - name: file-storage
-          mountPath: "/var/lib/storage/otc"
+          mountPath: /var/lib/storage/otc
 {{- end}}
 {{- if .Values.metrics.metadata.statefulset.extraVolumeMounts }}
 {{ toYaml .Values.metrics.metadata.statefulset.extraVolumeMounts | indent 8 }}

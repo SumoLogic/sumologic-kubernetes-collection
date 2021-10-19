@@ -43,6 +43,9 @@ data:
         source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
     extensions:
+      file_storage:
+        directory: /var/lib/storage/otc
+        timeout: 10s
       health_check: {}
     processors:
       attributes/containers:
