@@ -22,7 +22,7 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 
 ### Added
 
-- otelcol: add systemd logs pipeline [#1767]
+- otelcol: add systemd logs pipeline [#1767][#1767]
 
   - This change introduces logs metadata enrichment with Sumo Open Telemetry
     distro for systemd logs (when `sumologic.logs.metadata.provider` is set to
@@ -47,11 +47,16 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 
 ### Changed
 
-- feat(metrics): upgrade kube-prometheus-stack to v16 [#1816]
+- feat(metrics): upgrade kube-prometheus-stack to v16 [#1816][#1816]
 
   This update changes the version of kube-state-metrics from v1 to v2.
+- chore(deps): upgrade fluentd image to `1.12.2-sumo-5` [#1829][#1829]
+
+  Updates version of fluentd-output-sumologicplugin to [1.7.3][1.7.3]
 
 [#1816]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1816
+[#1829]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1829
+[1.7.3]: https://github.com/SumoLogic/fluentd-output-sumologic/releases/tag/1.7.3
 
 ## [v2.1.6][v2_1_6] - 2021-09-28
 
@@ -71,7 +76,7 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 
 ### Changed
 
-- fix(deps): Upgrade Fluentd from `v1.12.2-sumo-0` to `v1.12.2-sumo-2` [#1693]
+- fix(deps): Upgrade Fluentd from `v1.12.2-sumo-0` to `v1.12.2-sumo-2` [#1693][#1693]
 
 [v2_1_5]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.1.5
 [#1693]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1693
