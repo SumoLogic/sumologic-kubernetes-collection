@@ -50,11 +50,17 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 - feat(metrics): upgrade kube-prometheus-stack to v16 [#1816][#1816]
 
   This update changes the version of kube-state-metrics from v1 to v2.
+
 - chore(deps): upgrade fluentd image to `1.12.2-sumo-5` [#1829][#1829]
 
   Updates version of fluentd-output-sumologicplugin to [1.7.3][1.7.3]
 
+- feat(logs): upgrade fluent-bit chart to v0.19.1 [#1824]
+
+  This upgrades Fluent Bit to v1.8.8.
+
 [#1816]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1816
+[#1824]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1824
 [#1829]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1829
 [1.7.3]: https://github.com/SumoLogic/fluentd-output-sumologic/releases/tag/1.7.3
 
