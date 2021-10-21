@@ -2998,7 +2998,7 @@ otelcol:
         extensions:
           health_check: {}
           ## Configuration for File Storage extension
-          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/storage/filestorage
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
           file_storage:
             directory: /var/lib/storage/otc
             timeout: 10s
@@ -3082,7 +3082,7 @@ otelcol:
               - namespace_.*
         processors:
           ## Configuration for Metrics Transform Processor
-          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/metricstransformprocessor
           metricstransform:
             transforms:
               # rename all prometheus_remote_write_$name metrics to $name
@@ -3103,7 +3103,7 @@ otelcol:
               - key: _sourceName
                 action: delete
           ## Configuration for Resource Processor
-          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/resourceprocessor
           resource:
             attributes:
               - key: k8s.namespace.name
@@ -3270,7 +3270,7 @@ otelcol:
         extensions:
           health_check: {}
           ## Configuration for File Storage extension
-          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/storage/filestorage
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
           file_storage:
             directory: /var/lib/storage/otc
             timeout: 10s
