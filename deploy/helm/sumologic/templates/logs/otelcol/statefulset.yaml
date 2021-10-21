@@ -137,7 +137,7 @@ spec:
         - name: config-volume
           mountPath: /etc/otel/config.yaml
           subPath: config.yaml
-{{- if .Values.otelcol.persistence.enabled }}
+{{- if .Values.otelcol.metadata.persistence.enabled }}
         - name: file-storage
           mountPath: /var/lib/storage/otc
 {{- end}}
@@ -150,19 +150,19 @@ spec:
         {{- if .Values.logs.metadata.statefulset.extraEnvVars }}
 {{ toYaml .Values.logs.metadata.statefulset.extraEnvVars | nindent 8 }}
         {{- end }}
-{{- if .Values.otelcol.persistence.enabled }}
+{{- if .Values.otelcol.metadata.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: file-storage
-{{- if .Values.otelcol.pvcLabels }}
+{{- if .Values.otelcol.metadata.persistence.pvcLabels }}
       labels:
-{{ toYaml .Values.otelcol.pvcLabels | indent 8 }}
+{{ toYaml .Values.otelcol.metadata.persistence.pvcLabels | indent 8 }}
 {{- end }}
     spec:
-      accessModes: [{{ .Values.otelcol.persistence.accessMode }}]
-      storageClassName: {{ .Values.otelcol.persistence.storageClass }}
+      accessModes: [{{ .Values.otelcol.metadata.persistence.accessMode }}]
+      storageClassName: {{ .Values.otelcol.metadata.persistence.storageClass }}
       resources:
         requests:
-          storage: {{ .Values.otelcol.persistence.size }}
+          storage: {{ .Values.otelcol.metadata.persistence.size }}
 {{- end }}
 {{- end }}

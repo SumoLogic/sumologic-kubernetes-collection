@@ -2941,22 +2941,20 @@ otelcol:
   ## Add custom labels to all otelcol svc (logs, metrics, events)
   serviceLabels: {}
 
-  ## Add custom labels to all otelcol statefulset PVC (logs, metrics, events)
-  pvcLabels: {}
-
-  persistence:
-    enabled: true
-    # storageClass: "-"
-    # annotations: {}
-    accessMode: ReadWriteOnce
-    size: 10Gi
-
   statefulset:
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
       tag: 0.0.37-beta.0
       pullPolicy: IfNotPresent
   metadata:
+    persistence:
+      enabled: true
+      # storageClass: "-"
+      # annotations: {}
+      accessMode: ReadWriteOnce
+      size: 10Gi
+      ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
+      pvcLabels: {}
     metrics:
       enabled: true
       logLevel: info
@@ -3015,7 +3013,7 @@ otelcol:
             ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
-              persistent_storage_enabled: '{{ .Values.otelcol.persistence.enabled }}'
+              persistent_storage_enabled: '{{ .Values.otelcol.metadata.persistence.enabled }}'
             metadata_attributes:
               - k8s.*
               - pod_.*
@@ -3291,7 +3289,7 @@ otelcol:
             ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
-              persistent_storage_enabled: '{{ .Values.otelcol.persistence.enabled }}'
+              persistent_storage_enabled: '{{ .Values.otelcol.metadata.persistence.enabled }}'
             metadata_attributes:
               ## Attributes to be send as fields
               - _collector
@@ -3311,7 +3309,7 @@ otelcol:
             ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
-              persistent_storage_enabled: '{{ .Values.otelcol.persistence.enabled }}'
+              persistent_storage_enabled: '{{ .Values.otelcol.metadata.persistence.enabled }}'
             metadata_attributes:
               - _collector
 
