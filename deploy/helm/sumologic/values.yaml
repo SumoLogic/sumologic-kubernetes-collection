@@ -2950,7 +2950,6 @@ otelcol:
     persistence:
       enabled: true
       # storageClass: "-"
-      # annotations: {}
       accessMode: ReadWriteOnce
       size: 10Gi
       ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
