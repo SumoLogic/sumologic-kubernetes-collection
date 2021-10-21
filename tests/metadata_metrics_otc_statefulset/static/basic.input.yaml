@@ -3,11 +3,11 @@ sumologic:
     metadata:
       provider: otelcol
 
-## Configure logs pipeline.
-## This section affects only otelcol provider.
-## In the future it will be used by fluentd as well.
-metrics:
-  metadata:
+metadata:
+  ## Configure metrics pipeline.
+  ## This section affects only otelcol provider.
+  ## In the future it will be used by fluentd as well.
+  metrics:
     statefulset:
       nodeSelector:
         sumologic.com/kind: worker
