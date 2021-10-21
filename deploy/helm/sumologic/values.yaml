@@ -3009,7 +3009,7 @@ otelcol:
             metric_format: prometheus
             endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
             ## Configuration for sending queue
-            ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/exporterhelper#configuration
+            ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
               persistent_storage_enabled: '{{ .Values.otelcol.metadata.persistence.enabled }}'
@@ -3285,7 +3285,7 @@ otelcol:
             source_category: "%{_sourceCategory}"
             source_host: "%{_sourceHost}"
             ## Configuration for sending queue
-            ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/exporterhelper#configuration
+            ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
               persistent_storage_enabled: '{{ .Values.otelcol.metadata.persistence.enabled }}'
@@ -3305,7 +3305,7 @@ otelcol:
             source_category: "%{_sourceCategory}"
             source_host: "%{_sourceHost}"
             ## Configuration for sending queue
-            ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/exporterhelper#configuration
+            ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
               persistent_storage_enabled: '{{ .Values.otelcol.metadata.persistence.enabled }}'
