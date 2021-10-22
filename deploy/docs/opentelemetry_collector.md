@@ -30,7 +30,7 @@ the same way for Opentelemetry Collector like for Fluentd.
 ### Metrics Configuration
 
 All Opentelemetry Collector configuration for metrics is located in
-[`values.yaml`][values] as `otelcol.metadata.metrics.config`.
+[`values.yaml`][values] as `metadata.metrics.config`.
 
 If you want to modify it, please see [Sumologic Opentelemetry Collector configuration][configuration]
 for more information.

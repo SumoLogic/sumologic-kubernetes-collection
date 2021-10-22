@@ -2842,312 +2842,6 @@ otelagent:
 ## Configure otelcol
 otelcol:
   metadata:
-    metrics:
-      enabled: true
-      logLevel: info
-      config:
-        receivers:
-          ## Configuration for Telegraf Receiver
-          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/receiver/telegrafreceiver
-          telegraf:
-            agent_config: |
-              [agent]
-                interval = "30s"
-                flush_interval = "30s"
-
-              [[inputs.http_listener_v2]]
-                # wait longer than prometheus
-                read_timeout = "30s"
-                write_timeout = "30s"
-                service_address = ":9888"
-                data_format = "prometheusremotewrite"
-                path_tag = true
-                paths = [
-                  "/prometheus.metrics",
-                  "/prometheus.metrics.apiserver",
-                  "/prometheus.metrics.applications.apache",
-                  "/prometheus.metrics.applications.jmx",
-                  "/prometheus.metrics.applications.kafka",
-                  "/prometheus.metrics.applications.mysql",
-                  "/prometheus.metrics.applications.nginx",
-                  "/prometheus.metrics.applications.nginx-ingress",
-                  "/prometheus.metrics.applications.postgresql",
-                  "/prometheus.metrics.applications.redis",
-                  "/prometheus.metrics.container",
-                  "/prometheus.metrics.controller-manager",
-                  "/prometheus.metrics.control-plane.coredns",
-                  "/prometheus.metrics.control-plane.kube-etcd",
-                  "/prometheus.metrics.kubelet",
-                  "/prometheus.metrics.node",
-                  "/prometheus.metrics.operator.rule",
-                  "/prometheus.metrics.scheduler",
-                  "/prometheus.metrics.state"
-                ]
-        extensions:
-          health_check: {}
-          ## Configuration for File Storage extension
-          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
-          file_storage:
-            directory: /var/lib/storage/otc
-            timeout: 10s
-        exporters:
-          ## Configuration for Sumo Logic Exporter
-          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
-          sumologic/default:
-            metric_format: prometheus
-            endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
-            ## Configuration for sending queue
-            ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
-            sending_queue:
-              enabled: true
-              persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-            metadata_attributes:
-              - k8s.*
-              - pod_.*
-              - namespace_.*
-          sumologic/apiserver:
-            metric_format: prometheus
-            endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
-            sending_queue:
-              enabled: true
-            metadata_attributes:
-              - k8s.*
-              - pod_.*
-              - namespace_.*
-          sumologic/control_plane:
-            metric_format: prometheus
-            endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
-            sending_queue:
-              enabled: true
-            metadata_attributes:
-              - k8s.*
-              - pod_.*
-              - namespace_.*
-          sumologic/controller:
-            metric_format: prometheus
-            endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
-            sending_queue:
-              enabled: true
-            metadata_attributes:
-              - k8s.*
-              - pod_.*
-              - namespace_.*
-          sumologic/kubelet:
-            metric_format: prometheus
-            endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
-            sending_queue:
-              enabled: true
-            metadata_attributes:
-              - k8s.*
-              - pod_.*
-              - namespace_.*
-          sumologic/node:
-            metric_format: prometheus
-            endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
-            sending_queue:
-              enabled: true
-            metadata_attributes:
-              - k8s.*
-              - pod_.*
-              - namespace_.*
-          sumologic/scheduler:
-            metric_format: prometheus
-            endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
-            sending_queue:
-              enabled: true
-            metadata_attributes:
-              - k8s.*
-              - pod_.*
-              - namespace_.*
-          sumologic/state:
-            metric_format: prometheus
-            endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
-            sending_queue:
-              enabled: true
-            metadata_attributes:
-              - k8s.*
-              - pod_.*
-              - namespace_.*
-        processors:
-          ## Configuration for Metrics Transform Processor
-          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/metricstransformprocessor
-          metricstransform:
-            transforms:
-              # rename all prometheus_remote_write_$name metrics to $name
-              include: ^prometheus_remote_write_(.*)$$
-              match_type: regexp
-              action: update
-              new_name: $$1
-          ## NOTE: Drop these for now and and when proper configuration options
-          ## are exposed and source processor is configured then send them
-          ## as headers.
-          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/issues/265
-          resource/delete_source_metadata:
-            attributes:
-              - key: _sourceCategory
-                action: delete
-              - key: _sourceHost
-                action: delete
-              - key: _sourceName
-                action: delete
-          ## Configuration for Resource Processor
-          ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/resourceprocessor
-          resource:
-            attributes:
-              - key: k8s.namespace.name
-                from_attribute: namespace
-                action: upsert
-              - key: namespace  # remove namespace to avoid duplication when attribute translation is enabled
-                action: delete
-              - key: k8s.pod.name
-                from_attribute: pod
-                action: upsert
-              - key: pod  # remove pod to avoid duplication when attribute translation is enabled
-                action: delete
-              - key: k8s.container.name  # add container in OpenTelemetry convention to unify configuration for Source processor
-                from_attribute: container
-                action: upsert
-              - key: container  # remove container to avoid duplication when attribute translation is enabled
-                action: delete
-              - key: prometheus_service
-                from_attribute: service
-                action: upsert
-              - key: service
-                action: delete
-              - key: _origin  # add "_origin" metadata to metrics to keep the same format as for metrics from Fluentd
-                value: kubernetes
-                action: upsert
-          resource/remove_k8s_pod_pod_name:
-            attributes:
-              - action: delete
-                key: k8s.pod.pod_name
-          ## NOTE: below listed rules could be simplified if routingprocessor
-          ## supports regex matching. At this point we could group route entries
-          ## going to the same set of exporters.
-          routing:
-            ## NOTE: add a feature to routingprocessor to drop the routing
-            ## attribute to prevent it being sent to the exporters.
-            from_attribute: http_listener_v2_path
-            attribute_source: resource
-            default_exporters:
-              - sumologic/default
-            table:
-              ## apiserver metrics
-              - value: /prometheus.metrics.apiserver
-                exporters:
-                  - sumologic/apiserver
-              ## container metrics
-              - value: /prometheus.metrics.container
-                exporters:
-                  - sumologic/kubelet
-              ## control-plane metrics
-              - value: /prometheus.metrics.control-plane.coredns
-                exporters:
-                  - sumologic/control_plane
-              - value: /prometheus.metrics.control-plane.kube-etcd
-                exporters:
-                  - sumologic/control_plane
-              ## controller metrics
-              - value: /prometheus.metrics.controller-manager
-                exporters:
-                  - sumologic/controller
-              ## kubelet metrics
-              - value: /prometheus.metrics.kubelet
-                exporters:
-                  - sumologic/kubelet
-              ## node metrics
-              - value: /prometheus.metrics.node
-                exporters:
-                  - sumologic/node
-              ## scheduler metrics
-              - value: /prometheus.metrics.scheduler
-                exporters:
-                  - sumologic/scheduler
-              ## state metrics
-              - value: /prometheus.metrics.state
-                exporters:
-                  - sumologic/state
-
-          ## Configuration for Memory Limiter Processor
-          ## The memory_limiter processor is used to prevent out of memory situations on the collector.
-          ## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
-          memory_limiter:
-            ## check_interval is the time between measurements of memory usage for the
-            ## purposes of avoiding going over the limits. Defaults to zero, so no
-            ## checks will be performed. Values below 1 second are not recommended since
-            ## it can result in unnecessary CPU consumption.
-            check_interval: 5s
-
-            ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
-            ## Note that typically the total memory usage of process will be about 50MiB higher
-            ## than this value.
-            limit_mib: 1900
-          ## Configuration for Batch Processor
-          ## The batch processor accepts spans and places them into batches grouped by node and resource
-          ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
-          batch:
-            ## Number of spans after which a batch will be sent regardless of time
-            send_batch_size: 4096
-            ## Time duration after which a batch will be sent regardless of size
-            timeout: 30s
-          ## Configuration for Kubernetes Processor
-          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
-          k8s_tagger:
-            ## Has to be false to enrich metadata
-            passthrough: false
-            owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
-            extract:
-              metadata:
-                ## extract the following well-known metadata fields
-                - clusterName
-                - daemonSetName
-                - deploymentName
-                - nodeName
-                - replicaSetName
-                - serviceName
-                - statefulSetName
-              labels:
-                - tag_name: "pod_labels_%s"
-                  key: "*"
-              delimiter: "_"
-            pod_association:
-              - from: build_hostname  # Pods are identified by Pod name and namespace
-          ## Configuration for Source Processor
-          ## Source processor adds Sumo Logic related metadata
-          ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
-          source:
-            collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
-        service:
-          telemetry:
-            logs:
-              level: '{{ .Values.otelcol.metadata.metrics.logLevel }}'
-          extensions:
-            - health_check
-            - file_storage
-          pipelines:
-            metrics:
-              receivers:
-                - telegraf
-              processors:
-                - memory_limiter
-                - metricstransform
-                - resource
-                - k8s_tagger
-                - source
-                - resource/remove_k8s_pod_pod_name
-                - resource/delete_source_metadata
-                - batch
-                - routing
-              exporters:
-                - sumologic/default
-                - sumologic/apiserver
-                - sumologic/control_plane
-                - sumologic/controller
-                - sumologic/kubelet
-                - sumologic/node
-                - sumologic/scheduler
-                - sumologic/state
-
     logs:
       enabled: true
       logLevel: info
@@ -3679,6 +3373,311 @@ metadata:
   ## This section affects only otelcol provider.
   ## In the future it will be used by fluentd as well.
   metrics:
+    enabled: true
+    logLevel: info
+    config:
+      receivers:
+        ## Configuration for Telegraf Receiver
+        ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/receiver/telegrafreceiver
+        telegraf:
+          agent_config: |
+            [agent]
+              interval = "30s"
+              flush_interval = "30s"
+
+            [[inputs.http_listener_v2]]
+              # wait longer than prometheus
+              read_timeout = "30s"
+              write_timeout = "30s"
+              service_address = ":9888"
+              data_format = "prometheusremotewrite"
+              path_tag = true
+              paths = [
+                "/prometheus.metrics",
+                "/prometheus.metrics.apiserver",
+                "/prometheus.metrics.applications.apache",
+                "/prometheus.metrics.applications.jmx",
+                "/prometheus.metrics.applications.kafka",
+                "/prometheus.metrics.applications.mysql",
+                "/prometheus.metrics.applications.nginx",
+                "/prometheus.metrics.applications.nginx-ingress",
+                "/prometheus.metrics.applications.postgresql",
+                "/prometheus.metrics.applications.redis",
+                "/prometheus.metrics.container",
+                "/prometheus.metrics.controller-manager",
+                "/prometheus.metrics.control-plane.coredns",
+                "/prometheus.metrics.control-plane.kube-etcd",
+                "/prometheus.metrics.kubelet",
+                "/prometheus.metrics.node",
+                "/prometheus.metrics.operator.rule",
+                "/prometheus.metrics.scheduler",
+                "/prometheus.metrics.state"
+              ]
+      extensions:
+        health_check: {}
+        ## Configuration for File Storage extension
+        ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
+        file_storage:
+          directory: /var/lib/storage/otc
+          timeout: 10s
+      exporters:
+        ## Configuration for Sumo Logic Exporter
+        ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
+        sumologic/default:
+          metric_format: prometheus
+          endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+          ## Configuration for sending queue
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
+          sending_queue:
+            enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+          metadata_attributes:
+            - k8s.*
+            - pod_.*
+            - namespace_.*
+        sumologic/apiserver:
+          metric_format: prometheus
+          endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
+          sending_queue:
+            enabled: true
+          metadata_attributes:
+            - k8s.*
+            - pod_.*
+            - namespace_.*
+        sumologic/control_plane:
+          metric_format: prometheus
+          endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
+          sending_queue:
+            enabled: true
+          metadata_attributes:
+            - k8s.*
+            - pod_.*
+            - namespace_.*
+        sumologic/controller:
+          metric_format: prometheus
+          endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
+          sending_queue:
+            enabled: true
+          metadata_attributes:
+            - k8s.*
+            - pod_.*
+            - namespace_.*
+        sumologic/kubelet:
+          metric_format: prometheus
+          endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
+          sending_queue:
+            enabled: true
+          metadata_attributes:
+            - k8s.*
+            - pod_.*
+            - namespace_.*
+        sumologic/node:
+          metric_format: prometheus
+          endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
+          sending_queue:
+            enabled: true
+          metadata_attributes:
+            - k8s.*
+            - pod_.*
+            - namespace_.*
+        sumologic/scheduler:
+          metric_format: prometheus
+          endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
+          sending_queue:
+            enabled: true
+          metadata_attributes:
+            - k8s.*
+            - pod_.*
+            - namespace_.*
+        sumologic/state:
+          metric_format: prometheus
+          endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
+          sending_queue:
+            enabled: true
+          metadata_attributes:
+            - k8s.*
+            - pod_.*
+            - namespace_.*
+      processors:
+        ## Configuration for Metrics Transform Processor
+        ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/metricstransformprocessor
+        metricstransform:
+          transforms:
+            # rename all prometheus_remote_write_$name metrics to $name
+            include: ^prometheus_remote_write_(.*)$$
+            match_type: regexp
+            action: update
+            new_name: $$1
+        ## NOTE: Drop these for now and and when proper configuration options
+        ## are exposed and source processor is configured then send them
+        ## as headers.
+        ## ref: https://github.com/SumoLogic/sumologic-otel-collector/issues/265
+        resource/delete_source_metadata:
+          attributes:
+            - key: _sourceCategory
+              action: delete
+            - key: _sourceHost
+              action: delete
+            - key: _sourceName
+              action: delete
+        ## Configuration for Resource Processor
+        ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/resourceprocessor
+        resource:
+          attributes:
+            - key: k8s.namespace.name
+              from_attribute: namespace
+              action: upsert
+            - key: namespace  # remove namespace to avoid duplication when attribute translation is enabled
+              action: delete
+            - key: k8s.pod.name
+              from_attribute: pod
+              action: upsert
+            - key: pod  # remove pod to avoid duplication when attribute translation is enabled
+              action: delete
+            - key: k8s.container.name  # add container in OpenTelemetry convention to unify configuration for Source processor
+              from_attribute: container
+              action: upsert
+            - key: container  # remove container to avoid duplication when attribute translation is enabled
+              action: delete
+            - key: prometheus_service
+              from_attribute: service
+              action: upsert
+            - key: service
+              action: delete
+            - key: _origin  # add "_origin" metadata to metrics to keep the same format as for metrics from Fluentd
+              value: kubernetes
+              action: upsert
+        resource/remove_k8s_pod_pod_name:
+          attributes:
+            - action: delete
+              key: k8s.pod.pod_name
+        ## NOTE: below listed rules could be simplified if routingprocessor
+        ## supports regex matching. At this point we could group route entries
+        ## going to the same set of exporters.
+        routing:
+          ## NOTE: add a feature to routingprocessor to drop the routing
+          ## attribute to prevent it being sent to the exporters.
+          from_attribute: http_listener_v2_path
+          attribute_source: resource
+          default_exporters:
+            - sumologic/default
+          table:
+            ## apiserver metrics
+            - value: /prometheus.metrics.apiserver
+              exporters:
+                - sumologic/apiserver
+            ## container metrics
+            - value: /prometheus.metrics.container
+              exporters:
+                - sumologic/kubelet
+            ## control-plane metrics
+            - value: /prometheus.metrics.control-plane.coredns
+              exporters:
+                - sumologic/control_plane
+            - value: /prometheus.metrics.control-plane.kube-etcd
+              exporters:
+                - sumologic/control_plane
+            ## controller metrics
+            - value: /prometheus.metrics.controller-manager
+              exporters:
+                - sumologic/controller
+            ## kubelet metrics
+            - value: /prometheus.metrics.kubelet
+              exporters:
+                - sumologic/kubelet
+            ## node metrics
+            - value: /prometheus.metrics.node
+              exporters:
+                - sumologic/node
+            ## scheduler metrics
+            - value: /prometheus.metrics.scheduler
+              exporters:
+                - sumologic/scheduler
+            ## state metrics
+            - value: /prometheus.metrics.state
+              exporters:
+                - sumologic/state
+
+        ## Configuration for Memory Limiter Processor
+        ## The memory_limiter processor is used to prevent out of memory situations on the collector.
+        ## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
+        memory_limiter:
+          ## check_interval is the time between measurements of memory usage for the
+          ## purposes of avoiding going over the limits. Defaults to zero, so no
+          ## checks will be performed. Values below 1 second are not recommended since
+          ## it can result in unnecessary CPU consumption.
+          check_interval: 5s
+
+          ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
+          ## Note that typically the total memory usage of process will be about 50MiB higher
+          ## than this value.
+          limit_mib: 1900
+        ## Configuration for Batch Processor
+        ## The batch processor accepts spans and places them into batches grouped by node and resource
+        ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
+        batch:
+          ## Number of spans after which a batch will be sent regardless of time
+          send_batch_size: 4096
+          ## Time duration after which a batch will be sent regardless of size
+          timeout: 30s
+        ## Configuration for Kubernetes Processor
+        ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
+        k8s_tagger:
+          ## Has to be false to enrich metadata
+          passthrough: false
+          owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
+          extract:
+            metadata:
+              ## extract the following well-known metadata fields
+              - clusterName
+              - daemonSetName
+              - deploymentName
+              - nodeName
+              - replicaSetName
+              - serviceName
+              - statefulSetName
+            labels:
+              - tag_name: "pod_labels_%s"
+                key: "*"
+            delimiter: "_"
+          pod_association:
+            - from: build_hostname  # Pods are identified by Pod name and namespace
+        ## Configuration for Source Processor
+        ## Source processor adds Sumo Logic related metadata
+        ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
+        source:
+          collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+      service:
+        telemetry:
+          logs:
+            level: '{{ .Values.metadata.metrics.logLevel }}'
+        extensions:
+          - health_check
+          - file_storage
+        pipelines:
+          metrics:
+            receivers:
+              - telegraf
+            processors:
+              - memory_limiter
+              - metricstransform
+              - resource
+              - k8s_tagger
+              - source
+              - resource/remove_k8s_pod_pod_name
+              - resource/delete_source_metadata
+              - batch
+              - routing
+            exporters:
+              - sumologic/default
+              - sumologic/apiserver
+              - sumologic/control_plane
+              - sumologic/controller
+              - sumologic/kubelet
+              - sumologic/node
+              - sumologic/scheduler
+              - sumologic/state
+
     statefulset:
       nodeSelector: {}
       tolerations: []
