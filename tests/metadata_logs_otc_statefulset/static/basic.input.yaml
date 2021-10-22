@@ -6,7 +6,6 @@ sumologic:
 metadata:
   ## Configure logs pipeline.
   ## This section affects only otelcol provider.
-  ## In the future it will be used by fluentd as well.
   logs:
     statefulset:
       nodeSelector:

@@ -3077,7 +3077,6 @@ metadata:
 
   ## Configure metrics pipeline.
   ## This section affects only otelcol provider.
-  ## In the future it will be used by fluentd as well.
   metrics:
     enabled: true
     logLevel: info
@@ -3449,7 +3448,6 @@ metadata:
 
   ## Configure logs pipeline.
   ## This section affects only otelcol provider.
-  ## In the future it will be used by fluentd as well.
   logs:
     enabled: true
     logLevel: info

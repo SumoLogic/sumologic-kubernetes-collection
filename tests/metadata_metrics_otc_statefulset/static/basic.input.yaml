@@ -6,7 +6,6 @@ sumologic:
 metadata:
   ## Configure metrics pipeline.
   ## This section affects only otelcol provider.
-  ## In the future it will be used by fluentd as well.
   metrics:
     statefulset:
       nodeSelector:
