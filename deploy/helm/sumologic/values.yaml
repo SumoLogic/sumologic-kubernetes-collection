@@ -1491,10 +1491,39 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## kube_daemonset_status_current_number_scheduled
+      ## kube_daemonset_status_desired_number_scheduled
+      ## kube_daemonset_status_number_misscheduled
+      ## kube_daemonset_status_number_unavailable
+      ## kube_deployment_spec_replicas
+      ## kube_deployment_status_replicas_available
+      ## kube_deployment_status_replicas_unavailable
+      ## kube_node_info
+      ## kube_node_status_allocatable
+      ## kube_node_status_capacity
+      ## kube_node_status_condition
+      ## kube_statefulset_metadata_generation
+      ## kube_statefulset_replicas
+      ## kube_statefulset_status_observed_generation
+      ## kube_statefulset_status_replicas
+      ## kube_hpa_spec_max_replicas
+      ## kube_hpa_spec_min_replicas
+      ## kube_hpa_status_condition
+      ## kube_hpa_status_current_replicas
+      ## kube_hpa_status_desired_replicas
+      ## kube pod state metrics
+      ## kube_pod_container_info
+      ## kube_pod_container_resource_limits
+      ## kube_pod_container_resource_requests
+      ## kube_pod_container_status_ready
+      ## kube_pod_container_status_restarts_total
+      ## kube_pod_container_status_terminated_reason
+      ## kube_pod_container_status_waiting_reason
+      ## kube_pod_status_phase
       metricRelabelings:
-        - action: drop
-          regex: '.*'
-          sourceLabels: [__name__]
+        - action: keep
+          regex: (?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_(condition|(current|desired)_replicas)|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)
+          sourceLabels: [ __name__]
   nodeExporter:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
