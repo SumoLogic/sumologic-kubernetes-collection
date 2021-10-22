@@ -1245,42 +1245,84 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
   kubelet:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
       ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
       resource: false
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
   kubeControllerManager:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
   coreDns:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
   kubeEtcd:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
   kubeScheduler:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
   kubeStateMetrics:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
   nodeExporter:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
 
   alertmanager:
     enabled: false
+    serviceMonitor:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
   grafana:
     enabled: false
     defaultDashboardsEnabled: false
+    serviceMonitor:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
   prometheusOperator:
     ## Labels to add to the operator pod
     podLabels: {}
@@ -1298,6 +1340,12 @@ kube-prometheus-stack:
       enabled: false
     tls:
       enabled: false
+    serviceMonitor:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
+
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
     ## Custom labels to apply to service, deployment and pods
@@ -1325,12 +1373,21 @@ kube-prometheus-stack:
       #   cpu: 100m
       #   memory: 30Mi
   prometheus:
+    serviceMonitor:
+      metricRelabelings:
+        - action: drop
+          regex: '.*'
+          sourceLabels: [__name__]
     additionalServiceMonitors:
       - name: collection-sumologic-fluentd-logs
         additionalLabels:
           sumologic.com/app: fluentd-logs
         endpoints:
           - port: metrics
+            metricRelabelings:
+              - action: drop
+                regex: '.*'
+                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1343,6 +1400,10 @@ kube-prometheus-stack:
           sumologic.com/app: otelcol-logs
         endpoints:
           - port: otelcol-metrics
+            metricRelabelings:
+              - action: drop
+                regex: '.*'
+                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1355,6 +1416,10 @@ kube-prometheus-stack:
           sumologic.com/app: fluentd-metrics
         endpoints:
           - port: metrics
+            metricRelabelings:
+              - action: drop
+                regex: '.*'
+                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1367,6 +1432,10 @@ kube-prometheus-stack:
           sumologic.com/app: otelcol-metrics
         endpoints:
           - port: otelcol-metrics
+            metricRelabelings:
+              - action: drop
+                regex: '.*'
+                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1379,6 +1448,10 @@ kube-prometheus-stack:
           sumologic.com/app: fluentd-events
         endpoints:
           - port: metrics
+            metricRelabelings:
+              - action: drop
+                regex: '.*'
+                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1392,6 +1465,10 @@ kube-prometheus-stack:
         endpoints:
           - port: http
             path: /api/v1/metrics/prometheus
+            metricRelabelings:
+              - action: drop
+                regex: '.*'
+                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1404,6 +1481,10 @@ kube-prometheus-stack:
           sumologic.com/app: otelcol
         endpoints:
           - port: metrics
+            metricRelabelings:
+              - action: drop
+                regex: '.*'
+                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
