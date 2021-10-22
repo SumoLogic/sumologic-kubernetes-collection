@@ -1245,10 +1245,19 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## apiserver_request_count
+      ## apiserver_request_total
+      ## apiserver_request_duration_seconds_count
+      ## apiserver_request_duration_seconds_sum
+      ## apiserver_request_latencies_count
+      ## apiserver_request_latencies_sum
+      ## apiserver_request_latencies_summary
+      ## apiserver_request_latencies_summary_count
+      ## apiserver_request_latencies_summary_sum
       metricRelabelings:
-        - action: drop
-          regex: '.*'
-          sourceLabels: [__name__]
+        - action: keep
+          regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum))
+          sourceLabels: [ __name__]
   kubelet:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
