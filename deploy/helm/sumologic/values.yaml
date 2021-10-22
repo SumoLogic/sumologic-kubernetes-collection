@@ -1442,9 +1442,14 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## node exporter metrics
+      ## node_cpu_seconds_total
+      ## node_load1
+      ## node_load5
+      ## node_load15
       metricRelabelings:
-        - action: drop
-          regex: '.*'
+        - action: keep
+          regex: (?:node_load1|node_load5|node_load15|node_cpu_seconds_total)
           sourceLabels: [__name__]
 
   alertmanager:
