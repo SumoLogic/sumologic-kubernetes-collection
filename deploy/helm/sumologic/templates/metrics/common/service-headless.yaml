@@ -6,8 +6,8 @@ metadata:
   labels:
     app: {{ template "sumologic.labels.app.metrics.service-headless" . }}
     {{- include "sumologic.labels.metrics" . | nindent 4 }}
-{{- if .Values.otelcol.serviceLabels }}
-{{ toYaml .Values.otelcol.serviceLabels | indent 4 }}
+{{- if .Values.metadata.serviceLabels }}
+{{ toYaml .Values.metadata.serviceLabels | indent 4 }}
 {{- end }}
 spec:
   selector:
