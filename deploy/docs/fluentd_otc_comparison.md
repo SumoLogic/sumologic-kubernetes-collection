@@ -239,7 +239,7 @@ Events are not supported by `Opentelemetry Collector`
 | [fluentd.metrics.autoscaling.targetCPUUtilizationPercentage][readme]    | [metrics.metadata.autoscaling.targetCPUUtilizationPercentage][readme]                                    |
 | [fluentd.metrics.autoscaling.targetMemoryUtilizationPercentage][readme] | [metrics.metadata.autoscaling.targetMemoryUtilizationPercentage][readme]                                 |
 | [fluentd.metrics.podDisruptionBudget][readme]                           | [metrics.metadata.podDisruptionBudget][readme]                                                           |
-| [fluentd.metrics.enabled][readme]                                       | [otelcol.metadata.metrics.enabled][readme]                                                               |
+| [fluentd.metrics.enabled][readme]                                       | [metadata.metrics.enabled][readme]                                                               |
 | [sumologic.collector.sources.metrics][readme]                           | `default` source is used for all metrics ingestion                                                       |
 | [fluentd.metrics.extraEnvVars][readme]                                  | [metrics.metadata.statefulset.extraEnvVars][readme]                                                      |
 | [fluentd.metrics.extraVolumes][readme]                                  | [metrics.metadata.statefulset.extraVolumes][readme]                                                      |
@@ -252,12 +252,12 @@ Events are not supported by `Opentelemetry Collector`
 | [fluentd.image.tag][readme]                                             | [metadata.image.tag][readme]                                                                             |
 | [fluentd.image.pullPolicy][readme]                                      | [metadata.image.pullPolicy][readme]                                                                      |
 | [fluentd.podSecurityPolicy.create][readme]                              | Not supported                                                                                            |
-| [fluentd.logLevel][readme]                                              | [otelcol.metadata.metrics.logLevel][readme]                                                              |
+| [fluentd.logLevel][readme]                                              | [metadata.metrics.logLevel][readme]                                                              |
 | [fluentd.logLevelFilter][readme]                                        | Not supported. Own logs are being ingested                                                               |
-| [fluentd.verifySsl][readme]                                             | [otelcol.metadata.metrics.config.exporters.sumologic.tls.insecure_skip_verify](#sumologic-output-plugin) |
+| [fluentd.verifySsl][readme]                                             | [metadata.metrics.config.exporters.sumologic.tls.insecure_skip_verify](#sumologic-output-plugin) |
 | [fluentd.proxyUri][readme]                                              | [metrics.metadata.statefulset.extraEnvVars](#sumologic-output-plugin)                                    |
-| [fluentd.compression.enabled][readme]                                   | [otelcol.metadata.metrics.config.exporters.sumologic.compress_encoding](#sumologic-output-plugin)        |
-| [fluentd.compression.encoding][readme]                                  | [otelcol.metadata.metrics.config.exporters.sumologic.compress_encoding](#sumologic-output-plugin)        |
+| [fluentd.compression.enabled][readme]                                   | [metadata.metrics.config.exporters.sumologic.compress_encoding](#sumologic-output-plugin)        |
+| [fluentd.compression.encoding][readme]                                  | [metadata.metrics.config.exporters.sumologic.compress_encoding](#sumologic-output-plugin)        |
 | [fluentd.securityContext.fsGroup][readme]                               | [metadata.securityContext.fsGroup][readme]                                                               |
 | [fluentd.buffer][readme]                                                | Persistence is not supported                                                                             |
 | [otelcol.metrics.enabled][readme]                                       | Respected                                                                                                |
@@ -270,8 +270,8 @@ Events are not supported by `Opentelemetry Collector`
 | [fluentd.metadata.pluginLogLevel][readme]                               | [Not supported](#fluent-plugin-enhance-k8s-metadata)                                                     |
 | [fluentd.metadata.coreApiVersions][readme]                              | [Not supported](#fluent-plugin-enhance-k8s-metadata)                                                     |
 | [fluentd.metadata.apiGroups][readme]                                    | [Not supported](#fluent-plugin-enhance-k8s-metadata)                                                     |
-| [sumologic.collectorName][readme]                                       | `otelcol.metadata.metrics.config.processors.source.collector`                                            |
-| [sumologic.clusterName][readme]                                         | `otelcol.metadata.metrics.config.processors.source.collector`                                            |
+| [sumologic.collectorName][readme]                                       | `metadata.metrics.config.processors.source.collector`                                            |
+| [sumologic.clusterName][readme]                                         | `metadata.metrics.config.processors.source.collector`                                            |
 
 [filter_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.36.0/processor/filterprocessor#filter-processor
 [readme]: ../helm/sumologic/README.md
