@@ -1122,7 +1122,7 @@ Example Usage:
 {{- define "logs.otelcol.enabled" -}}
 {{- $enabled := false -}}
 {{- if eq .Values.sumologic.logs.enabled true -}}
-{{- if and (eq .Values.sumologic.logs.metadata.provider "otelcol") (eq .Values.otelcol.metadata.logs.enabled true) -}}
+{{- if and (eq .Values.sumologic.logs.metadata.provider "otelcol") (eq .Values.metadata.logs.enabled true) -}}
 {{- $enabled = true -}}
 {{- end -}}
 {{- end -}}
