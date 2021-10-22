@@ -2822,6 +2822,39 @@ kube-prometheus-stack:
               regex: (?:elasticsearch_(cluster_health_(active_(primary_shards|shards)|delayed_unassigned_shards|indices_status_code|initializing_shards|number_of_(data_nodes|nodes|pending_tasks)|relocating_shards|unassigned_shards)|clusterstats_(indices_fielddata_evictions|nodes_jvm_mem_heap_used_in_bytes)|fs_total_(free_in_bytes|total_in_bytes)|indices_(flush_(total|total_time_in_millis)|get_(exists_time_in_millis|exists_total|missing_time_in_millis|missing_total|time_in_millis|total)|indexing_delete_time_in_millis|indexing_delete_total|indexing_index_time_in_millis|indexing_index_total|merges_total_time_in_millis|search_query_time_in_millis|search_query_total|segments_fixed_bit_set_memory_in_bytes|segments_terms_memory_in_bytes|stats_primaries_(docs_count|indexing_index_time_in_millis|query_cache_cache_size|query_cache_evictions|segments_doc_values_memory_in_bytes|segments_index_writer_memory_in_bytes|segments_memory_in_bytes)|stats_total___(fielddata_memory_size_in_bytes|indexing_index_total|merges_total)|stats_total_(docs_count|fielddata_memory_size_in_bytes|flush_total_time_in_millis|indexing_delete_total|indexing_index_time_in_millis|indexing_index_total|merges_total_docs|merges_total_size_in_bytes|merges_total_time_in_millis|query_cache_evictions|refresh_total|refresh_total_time_in_millis|search_fetch_time_in_millis|search_fetch_total|search_query_time_in_millis|search_query_total|segments_fixed_bit_set_memory_in_bytes|segments_index_writer_memory_in_bytes|segments_memory_in_bytes|segments_terms_memory_in_bytes|store_size_in_bytes|translog_operations|translog_size_in_bytes))|jvm_(gc_collectors_.*_collection_time_in_millis|mem_heap_committed_in_bytes|mem_heap_used_in_bytes|mem_heap_used_percent)|os_cpu_(load_average_5m|percent)|process_open_file_descriptors|thread_pool_(analyze_completed|analyze_threads|get_rejected|search_queue)|transport_(rx_size_in_bytes|tx_size_in_bytes)))
               sourceLabels: [__name__]
 
+        ## Activemq Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/activemq
+        ## activemq_queue_*
+        ## activemq_topic_*
+        ## activemq_*_QueueSize
+        ## activemq_broker_AverageMessageSize
+        ## activemq_broker_CurrentConnectionsCount
+        ## activemq_broker_MemoryLimit
+        ## activemq_broker_StoreLimit
+        ## activemq_broker_TempLimit
+        ## activemq_broker_TotalConnectionsCount
+        ## activemq_broker_TotalConnectionsCountactivemq_broker_TotalProducerCount
+        ## activemq_broker_TotalConsumerCount
+        ## activemq_broker_TotalDequeueCount
+        ## activemq_broker_TotalEnqueueCount
+        ## activemq_broker_TotalMessageCount
+        ## activemq_broker_TotalProducerCount
+        ## activemq_broker_UptimeMillis
+        ## activemq_jvm_memory_HeapMemoryUsage_max
+        ## activemq_jvm_memory_HeapMemoryUsage_used
+        ## activemq_jvm_memory_NonHeapMemoryUsage_used
+        ## activemq_jvm_runtime_Uptime
+        ## activemq_OperatingSystem_FreePhysicalMemorySize
+        ## activemq_OperatingSystem_SystemCpuLoad
+        ## activemq_OperatingSystem_TotalPhysicalMemorySize
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.activemq
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:activemq_(topic_.*|queue_.*|.*_QueueSize|broker_(AverageMessageSize|CurrentConnectionsCount|MemoryLimit|StoreLimit|TempLimit|TotalConnectionsCount|TotalConnectionsCountactivemq_broker_TotalProducerCount|TotalConsumerCount|TotalDequeueCount|TotalEnqueueCount|TotalMessageCount|TotalProducerCount|UptimeMillis)|jvm_memory_(HeapMemoryUsage_max|HeapMemoryUsage_used|NonHeapMemoryUsage_used)|jvm_runtime_Uptime|OperatingSystem_(FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize)))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
