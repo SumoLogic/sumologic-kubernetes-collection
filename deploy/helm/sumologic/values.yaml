@@ -2841,20 +2841,6 @@ otelagent:
 
 ## Configure otelcol
 otelcol:
-  securityContext:
-    ## ToDo: Verify following comment
-    ## The group ID of all processes in the statefulset containers. By default this needs to be otelcol(999).
-    fsGroup: 999
-
-  ## Add custom labels to all otelcol sts pods(logs, metrics, events)
-  podLabels: {}
-
-  ## Add custom annotations to all otelcol sts pods(logs, metrics, events)
-  podAnnotations: {}
-
-  ## Add custom labels to all otelcol svc (logs, metrics, events)
-  serviceLabels: {}
-
   metadata:
     metrics:
       enabled: true
@@ -3665,6 +3651,20 @@ metadata:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
     tag: 0.0.37-beta.0
     pullPolicy: IfNotPresent
+
+  securityContext:
+    ## ToDo: Verify following comment
+    ## The group ID of all processes in the statefulset containers. By default this needs to be otelcol(999).
+    fsGroup: 999
+
+  ## Add custom labels to all otelcol sts pods(logs and metrics)
+  podLabels: {}
+
+  ## Add custom annotations to all otelcol sts pods(logs and metrics)
+  podAnnotations: {}
+
+  ## Add custom labels to all otelcol svc (logs and metrics)
+  serviceLabels: {}
 
   ## Configure persistence for Opentelemetry Collector
   persistence:
