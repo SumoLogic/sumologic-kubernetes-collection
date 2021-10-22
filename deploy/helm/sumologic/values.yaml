@@ -1350,7 +1350,27 @@ kube-prometheus-stack:
       interval:
       ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
       resource: false
+      ## kubelet metrics:
+      ## kubelet_docker_operations_errors
+      ## kubelet_docker_operations_errors_total
+      ## kubelet_docker_operations_duration_seconds_count
+      ## kubelet_docker_operations_duration_seconds_sum
+      ## kubelet_runtime_operations_duration_seconds_count
+      ## kubelet_runtime_operations_duration_seconds_sum
+      ## kubelet_running_container_count
+      ## kubelet_running_containers
+      ## kubelet_running_pod_count
+      ## kubelet_running_pods
+      ## kubelet_docker_operations_latency_microseconds
+      ## kubelet_docker_operations_latency_microseconds_count
+      ## kubelet_docker_operations_latency_microseconds_sum
+      ## kubelet_runtime_operations_latency_microseconds
+      ## kubelet_runtime_operations_latency_microseconds_count
+      ## kubelet_runtime_operations_latency_microseconds_sum
       metricRelabelings:
+        - action: keep
+          regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
+          sourceLabels: [__name__]
         - action: drop
           regex: '.*'
           sourceLabels: [__name__]
