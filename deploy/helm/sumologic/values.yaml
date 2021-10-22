@@ -1254,9 +1254,19 @@ kube-prometheus-stack:
       ## apiserver_request_latencies_summary
       ## apiserver_request_latencies_summary_count
       ## apiserver_request_latencies_summary_sum
+      ## scheduler metrics_latency_microseconds
+      ## scheduler_e2e_scheduling_duration_seconds_bucket
+      ## scheduler_e2e_scheduling_duration_seconds_count
+      ## scheduler_e2e_scheduling_duration_seconds_sum
+      ## scheduler_binding_duration_seconds_bucket
+      ## scheduler_binding_duration_seconds_count
+      ## scheduler_binding_duration_seconds_sum
+      ## scheduler_scheduling_algorithm_duration_seconds_bucket
+      ## scheduler_scheduling_algorithm_duration_seconds_count
+      ## scheduler_scheduling_algorithm_duration_seconds_sum
       metricRelabelings:
         - action: keep
-          regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum))
+          regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum)|scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_duration_seconds.*)
           sourceLabels: [ __name__]
   kubelet:
     serviceMonitor:
@@ -1308,26 +1318,81 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+
+      ## controller manager metrics
+      ## https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
+      ## e.g.
+      ## cloudprovider_aws_api_request_duration_seconds_bucket
+      ## cloudprovider_aws_api_request_duration_seconds_count
+      ## cloudprovider_aws_api_request_duration_seconds_sum
       metricRelabelings:
-        - action: drop
-          regex: '.*'
+        - action: keep
+          regex: (?:cloudprovider_.*_api_request_duration_seconds.*)
           sourceLabels: [__name__]
   coreDns:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+
+      ## coredns:
+      ## coredns_cache_size
+      ## coredns_cache_entries
+      ## coredns_cache_hits_total
+      ## coredns_cache_misses_total
+      ## coredns_dns_request_duration_seconds_count
+      ## coredns_dns_request_duration_seconds_sum
+      ## coredns_dns_request_count_total
+      ## coredns_dns_requests_total
+      ## coredns_dns_response_rcode_count_total
+      ## coredns_dns_responses_total
+      ## coredns_forward_request_count_total
+      ## coredns_forward_requests_total
+      ## process_cpu_seconds_total
+      ## process_open_fds
+      ## process_resident_memory_bytes
       metricRelabelings:
-        - action: drop
-          regex: '.*'
+        - action: keep
+          regex: (?:coredns_cache_(size|entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
           sourceLabels: [__name__]
   kubeEtcd:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## etcd_request_cache_get_duration_seconds_count
+      ## etcd_request_cache_get_duration_seconds_sum
+      ## etcd_request_cache_add_duration_seconds_count
+      ## etcd_request_cache_add_duration_seconds_sum
+      ## etcd_request_cache_add_latencies_summary_count
+      ## etcd_request_cache_add_latencies_summary_sum
+      ## etcd_request_cache_get_latencies_summary_count
+      ## etcd_request_cache_get_latencies_summary_sum
+      ## etcd_helper_cache_hit_count
+      ## etcd_helper_cache_hit_total
+      ## etcd_helper_cache_miss_count
+      ## etcd_helper_cache_miss_total
+      ## etcd server:
+      ## etcd_debugging_mvcc_db_total_size_in_bytes
+      ## etcd_debugging_store_expires_total
+      ## etcd_debugging_store_watchers
+      ## etcd_disk_backend_commit_duration_seconds_bucket
+      ## etcd_disk_wal_fsync_duration_seconds_bucket
+      ## etcd_grpc_proxy_cache_hits_total
+      ## etcd_grpc_proxy_cache_misses_total
+      ## etcd_network_client_grpc_received_bytes_total
+      ## etcd_network_client_grpc_sent_bytes_total
+      ## etcd_server_has_leader
+      ## etcd_server_leader_changes_seen_total
+      ## etcd_server_proposals_applied_total
+      ## etcd_server_proposals_committed_total
+      ## etcd_server_proposals_failed_total
+      ## etcd_server_proposals_pending
+      ## process_cpu_seconds_total
+      ## process_open_fds
+      ## process_resident_memory_bytes
       metricRelabelings:
-        - action: drop
-          regex: '.*'
-          sourceLabels: [__name__]
+        - action: keep
+          regex: (?:etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total)|etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+          sourceLabels: [ __name__]
   kubeScheduler:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
