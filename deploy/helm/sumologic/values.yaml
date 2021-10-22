@@ -1038,6 +1038,8 @@ kube-prometheus-stack:
           rules:
             - expr: sum(min(kube_pod_info) by (node))
               record: ':kube_pod_info_node_count:'
+            - expr: 1 - (node:node_memory_bytes_available:sum / node:node_memory_bytes_total:sum)
+              record: 'node:node_memory_utilisation_2:'
             - expr: 1 - avg(rate(node_cpu_seconds_total{job="node-exporter",mode="idle"}[1m]))
               record: :node_cpu_utilisation:avg1m
             - expr: |-
