@@ -1036,6 +1036,8 @@ kube-prometheus-stack:
       groups:
         - name: node-pre-1.14.rules
           rules:
+            - expr: sum(min(kube_pod_info) by (node))
+              record: ':kube_pod_info_node_count:'
             - expr: 1 - avg(rate(node_cpu_seconds_total{job="node-exporter",mode="idle"}[1m]))
               record: :node_cpu_utilisation:avg1m
             - expr: |-
