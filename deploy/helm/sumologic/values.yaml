@@ -3741,23 +3741,6 @@ metadata:
     ## To use maxUnavailable, set minAvailable to null and uncomment the below:
     #   maxUnavailable: 1
 
-    ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
-    ## ToDo: implement on otelcol side
-    persistence:
-      ## After changing this value please follow steps described in:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/FluentdPersistence.md
-      enabled: true
-
-      ## If defined, storageClassName: <storageClass>
-      ## If set to "-", storageClassName: "", which disables dynamic provisioning
-      ## If undefined (the default) or set to null, no storageClassName spec is
-      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-      ##   GKE, Azure & OpenStack)
-      ##
-      # storageClass: "-"
-      # annotations: {}
-      accessMode: ReadWriteOnce
-      size: 10Gi
   ## Configure logs pipeline.
   ## This section affects only otelcol provider.
   ## In the future it will be used by fluentd as well.
@@ -3824,22 +3807,6 @@ metadata:
       minAvailable: 2
       ## To use maxUnavailable, set minAvailable to null and uncomment the below:
       # maxUnavailable: 1
-
-    ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
-    ## ToDo: implement on otelcol side
-    persistence:
-      enabled: true
-
-      ## If defined, storageClassName: <storageClass>
-      ## If set to "-", storageClassName: "", which disables dynamic provisioning
-      ## If undefined (the default) or set to null, no storageClassName spec is
-      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-      ##   GKE, Azure & OpenStack)
-      ##
-      # storageClass: "-"
-      # annotations: {}
-      accessMode: ReadWriteOnce
-      size: 10Gi
 
 ## Configure telegraf-operator
 ## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
