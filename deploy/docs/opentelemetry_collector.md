@@ -55,7 +55,7 @@ the same way for Opentelemetry Collector like for Fluentd.
 ### Logs Configuration
 
 All Opentelemetry Collector configuration for logs is located in
-[`values.yaml`][values] as `otelcol.metadata.logs.config`.
+[`values.yaml`][values] as `metadata.logs.config`.
 
 If you want to modify it, please see [Sumologic Opentelemetry Collector configuration][configuration]
 for more information.
