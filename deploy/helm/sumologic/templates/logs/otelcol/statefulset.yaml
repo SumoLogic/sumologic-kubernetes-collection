@@ -22,8 +22,8 @@ spec:
 {{- if .Values.sumologic.podAnnotations }}
 {{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
-{{- if .Values.otelcol.podAnnotations }}
-{{ toYaml .Values.otelcol.podAnnotations | indent 8 }}
+{{- if .Values.metadata.podAnnotations }}
+{{ toYaml .Values.metadata.podAnnotations | indent 8 }}
 {{- end }}
 {{- if .Values.metadata.logs.statefulset.podAnnotations }}
 {{ toYaml .Values.metadata.logs.statefulset.podAnnotations | indent 8 }}
@@ -34,8 +34,8 @@ spec:
 {{- if .Values.sumologic.podLabels }}
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}
-{{- if .Values.otelcol.podLabels }}
-{{ toYaml .Values.otelcol.podLabels | indent 8 }}
+{{- if .Values.metadata.podLabels }}
+{{ toYaml .Values.metadata.podLabels | indent 8 }}
 {{- end }}
 {{- if .Values.metadata.logs.statefulset.podLabels }}
 {{ toYaml .Values.metadata.logs.statefulset.podLabels | indent 8 }}
@@ -97,7 +97,7 @@ spec:
 {{ toYaml .Values.metadata.logs.statefulset.extraVolumes | indent 6 }}
 {{- end }}
       securityContext:
-        {{- toYaml .Values.otelcol.securityContext | nindent 8 }}
+        {{- toYaml .Values.metadata.securityContext | nindent 8 }}
       {{- if .Values.metadata.logs.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.metadata.logs.statefulset.priorityClassName | quote }}
       {{- end }}
@@ -112,9 +112,9 @@ spec:
           {{- end }}
         resources:
           {{- toYaml .Values.metadata.logs.statefulset.resources | nindent 10 }}
-        {{- if .Values.metadata.logs.statefulset.containers.otelcol.securityContext }}
+        {{- if .Values.metadata.logs.statefulset.containers.metadata.securityContext }}
         securityContext:
-          {{- toYaml .Values.metadata.logs.statefulset.containers.otelcol.securityContext | nindent 10 }}
+          {{- toYaml .Values.metadata.logs.statefulset.containers.metadata.securityContext | nindent 10 }}
         {{- end }}
         ports:
         {{- if .Values.sumologic.traces.enabled }}
