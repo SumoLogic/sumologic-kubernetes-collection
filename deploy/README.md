@@ -26,6 +26,7 @@ for details on our Kubernetes Solution.
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
   - [Advanced Configuration/Security best practices](./docs/Security_Best_Practices.md)
   - [Authenticating with container registry](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
+    - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
   - [Dev Releases](./docs/Dev.md)
   - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
   - [Upgrade from v1.3 to v2.0](./docs/v2_migration_doc.md)

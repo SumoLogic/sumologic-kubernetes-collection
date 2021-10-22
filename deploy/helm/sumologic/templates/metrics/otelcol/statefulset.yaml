@@ -101,9 +101,6 @@ spec:
       {{- if .Values.metadata.metrics.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.metadata.metrics.statefulset.priorityClassName | quote }}
       {{- end }}
-{{- if .Values.sumologic.pullSecrets }}
-      imagePullSecrets: {{ toYaml .Values.sumologic.pullSecrets | nindent 8 }}
-{{- end }}
       containers:
       - name: otelcol
         image: {{ .Values.metadata.image.repository }}:{{ .Values.metadata.image.tag }}

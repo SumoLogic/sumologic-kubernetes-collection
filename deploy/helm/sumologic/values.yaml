@@ -3873,8 +3873,6 @@ falco:
       - /etc/falco/rules.d
       - /etc/falco/rules.available/application_rules.yaml
 
-  # image:
-  #   pullSecrets: []
   customRules:
     ## Mark the following as known k8s api callers:
     ## * fluentd and its plugins from sumologic/kubernetes-fluentd image
