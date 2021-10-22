@@ -3868,6 +3868,7 @@ falco:
   image:
     registry: public.ecr.aws
     repository: sumologic/falco
+    # pullSecrets: []
 
   ## Add kernel-devel package through MachineConfig, required to enable building of missing falco modules (only for OpenShift)
   addKernelDevel: true
