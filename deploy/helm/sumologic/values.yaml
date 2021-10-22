@@ -2861,13 +2861,6 @@ otelcol:
       tag: 0.0.37-beta.0
       pullPolicy: IfNotPresent
   metadata:
-    persistence:
-      enabled: true
-      # storageClass: "-"
-      accessMode: ReadWriteOnce
-      size: 10Gi
-      ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
-      pvcLabels: {}
     metrics:
       enabled: true
       logLevel: info
@@ -2926,7 +2919,7 @@ otelcol:
             ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
-              persistent_storage_enabled: '{{ .Values.otelcol.metadata.persistence.enabled }}'
+              persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
             metadata_attributes:
               - k8s.*
               - pod_.*
@@ -3202,7 +3195,7 @@ otelcol:
             ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
-              persistent_storage_enabled: '{{ .Values.otelcol.metadata.persistence.enabled }}'
+              persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
             metadata_attributes:
               ## Attributes to be send as fields
               - _collector
@@ -3222,7 +3215,7 @@ otelcol:
             ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
             sending_queue:
               enabled: true
-              persistent_storage_enabled: '{{ .Values.otelcol.metadata.persistence.enabled }}'
+              persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
             metadata_attributes:
               - _collector
 
@@ -3672,6 +3665,15 @@ otelcol:
           # exporters: [zipkin]
 
 metadata:
+  ## Configure persistence for Opentelemetry Collector
+  persistence:
+      enabled: true
+      # storageClass: "-"
+      accessMode: ReadWriteOnce
+      size: 10Gi
+      ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
+      pvcLabels: {}
+
   ## Configure metrics pipeline.
   ## This section affects only otelcol provider.
   ## In the future it will be used by fluentd as well.
