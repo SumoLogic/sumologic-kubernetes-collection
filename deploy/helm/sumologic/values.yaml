@@ -3667,12 +3667,12 @@ otelcol:
 metadata:
   ## Configure persistence for Opentelemetry Collector
   persistence:
-      enabled: true
-      # storageClass: "-"
-      accessMode: ReadWriteOnce
-      size: 10Gi
-      ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
-      pvcLabels: {}
+    enabled: true
+    # storageClass: "-"
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
+    pvcLabels: {}
 
   ## Configure metrics pipeline.
   ## This section affects only otelcol provider.
