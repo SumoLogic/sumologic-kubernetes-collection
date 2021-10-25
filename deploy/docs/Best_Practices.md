@@ -23,6 +23,7 @@
 - [Load Balancing Prometheus traffic between Fluentds](#load-balancing-prometheus-traffic-between-fluentds)
 - [Changing scrape interval for Prometheus](#changing-scrape-interval-for-prometheus)
 - [Get logs not available on stdout](#get-logs-not-available-on-stdout)
+- [Adding custom fields](#adding-custom-fields)
 
 ## Multiline Log Support
 
@@ -670,3 +671,55 @@ Providing that the file with logs is accessible through volume, to enable tailin
 
 Example of using Tailing Sidecar Operator is described in the
 [blog post](https://www.sumologic.com/blog/tailing-sidecar-operator/).
+
+## Adding custom fields
+
+In order to add custom fields to container logs, the following configuration has to be applied:
+
+```yaml
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |
+        <filter **>
+          @type record_modifier
+          <record>
+            _sumo_metadata ${{:_fields => "<DEFINITION OF CUSTOM FIELDS>"}}
+          </record>
+        </filter>
+      extraOutputPluginConf: |
+        <filter **>
+          @type record_modifier
+          <record>
+            _sumo_metadata ${record["_sumo_metadata"][:fields] = "#{record["_sumo_metadata"][:fields]},#{record["_sumo_metadata"][:_fields]}"; record["_sumo_metadata"]}
+          </record>
+        </filter>
+```
+
+where `<DEFINITION OF CUSTOM FIELDS>` has to be `key1=value1,key2=value2,...` formatted string.
+
+**NOTE** Do not forget to [add field in Sumo Logic service][sumo_add_fields]
+
+[sumo_add_fields]: https://help.sumologic.com/Manage/Fields#add-field
+
+Please consider the following configuration which adds `container_image` from kubernetes enrichment.
+
+```yaml
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |
+        <filter **>
+          @type record_modifier
+          <record>
+            _sumo_metadata ${{:_fields => "container_image=#{record["kubernetes"]["container_image"]}"}}
+          </record>
+        </filter>
+      extraOutputPluginConf: |
+        <filter **>
+          @type record_modifier
+          <record>
+            _sumo_metadata ${record["_sumo_metadata"][:fields] = "#{record["_sumo_metadata"][:fields]},#{record["_sumo_metadata"][:_fields]}"; record["_sumo_metadata"]}
+          </record>
+        </filter>
+```
