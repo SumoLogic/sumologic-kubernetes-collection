@@ -1124,8 +1124,6 @@ kube-prometheus-stack:
           rules:
             - expr: sum(min(kube_pod_info) by (node))
               record: ':kube_pod_info_node_count:'
-            - expr: 1 - (node:node_memory_bytes_available:sum / node:node_memory_bytes_total:sum)
-              record: 'node:node_memory_utilisation_2:'
             - expr: 1 - avg(rate(node_cpu_seconds_total{job="node-exporter",mode="idle"}[1m]))
               record: :node_cpu_utilisation:avg1m
             - expr: |-
@@ -1217,24 +1215,10 @@ kube-prometheus-stack:
                 )
               record: node:node_net_saturation:sum_irate
             - expr: |-
-                max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
-                - node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
-                / node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
-              record: 'node:node_filesystem_usage:'
-            - expr: |-
                 sum(node_load1{job="node-exporter"})
                 /
                 sum(node:node_num_cpu:sum)
               record: ':node_cpu_saturation_load1:'
-            - expr: |-
-                sum by (node) (
-                  node_load1{job="node-exporter"}
-                * on (namespace, pod) group_left(node)
-                  node_namespace_pod:kube_pod_info:
-                )
-                /
-                node:node_num_cpu:sum
-              record: 'node:node_cpu_saturation_load1:'
             - expr: avg(irate(node_disk_io_time_weighted_seconds_total{job="node-exporter",device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+"}[1m]))
               record: :node_disk_saturation:avg_irate
             - expr: |-
@@ -1295,11 +1279,6 @@ kube-prometheus-stack:
                   node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
                   )
               record: 'node:node_filesystem_avail:'
-            - expr: |-
-                max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
-                - node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
-                / node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
-              record: 'node:node_filesystem_usage:'
             - expr: |-
                 max(
                   max(
