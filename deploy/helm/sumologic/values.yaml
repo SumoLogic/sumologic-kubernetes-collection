@@ -1314,10 +1314,11 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
       ## apiserver_request_count
       ## apiserver_request_total
       ## apiserver_request_duration_seconds_count
-      ## apiserver_request_duration_seconds_bucket  # required by cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
+      ## apiserver_request_duration_seconds_bucket
       ## apiserver_request_duration_seconds_sum
       ## apiserver_request_latencies_count
       ## apiserver_request_latencies_sum
@@ -1334,6 +1335,7 @@ kube-prometheus-stack:
       interval:
       ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
       resource: false
+      ## see docs/scrape_metrics.md
       ## kubelet metrics:
       ## kubelet_docker_operations_errors
       ## kubelet_docker_operations_errors_total
@@ -1355,11 +1357,11 @@ kube-prometheus-stack:
         - action: keep
           regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
           sourceLabels: [__name__]
-
+      ## see docs/scrape_metrics.md
       ## cadvisor container metrics
       ## container_cpu_usage_seconds_total
-      ## container_fs_limit_bytes.
-      ## container_fs_usage_bytes.
+      ## container_fs_limit_bytes
+      ## container_fs_usage_bytes
       ## container_memory_working_set_bytes
       ## container_cpu_cfs_throttled_seconds_total
       ##
@@ -1378,7 +1380,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
-
+      ## see docs/scrape_metrics.md
       ## controller manager metrics
       ## https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
       ## e.g.
@@ -1393,7 +1395,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
-
+      ## see docs/scrape_metrics.md
       ## coredns:
       ## coredns_cache_size
       ## coredns_cache_entries
@@ -1418,6 +1420,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
       ## etcd_request_cache_get_duration_seconds_count
       ## etcd_request_cache_get_duration_seconds_sum
       ## etcd_request_cache_add_duration_seconds_count
@@ -1457,14 +1460,15 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
       ## scheduler metrics_latency_microseconds
-      ## scheduler_e2e_scheduling_duration_seconds_bucket  # in addition required by cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+      ## scheduler_e2e_scheduling_duration_seconds_bucket
       ## scheduler_e2e_scheduling_duration_seconds_count
       ## scheduler_e2e_scheduling_duration_seconds_sum
-      ## scheduler_binding_duration_seconds_bucket  # required by cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+      ## scheduler_binding_duration_seconds_bucket
       ## scheduler_binding_duration_seconds_count
       ## scheduler_binding_duration_seconds_sum
-      ## scheduler_scheduling_algorithm_duration_seconds_bucket  # required by cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
+      ## scheduler_scheduling_algorithm_duration_seconds_bucket
       ## scheduler_scheduling_algorithm_duration_seconds_count
       ## scheduler_scheduling_algorithm_duration_seconds_sum
       metricRelabelings:
@@ -1475,6 +1479,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
       ## kube_daemonset_status_current_number_scheduled
       ## kube_daemonset_status_desired_number_scheduled
       ## kube_daemonset_status_number_misscheduled
@@ -1504,7 +1509,7 @@ kube-prometheus-stack:
       ## kube_pod_container_status_terminated_reason
       ## kube_pod_container_status_waiting_reason
       ## kube_pod_status_phase
-      ## kube_pod_info  # required by :kube_pod_info_node_count:, node_namespace_pod:kube_pod_info:, node:node_num_cpu:sum, :node_cpu_saturation_load1:, node:node_num_cpu:sum, node:cluster_cpu_utilisation:ratio, node:node_memory_bytes_total:sum, node:cluster_memory_utilisation:ratio, node:node_memory_bytes_available:sum, node:node_cpu_utilisation:avg1m, node:node_disk_saturation:avg_irate, node:node_disk_utilisation:avg_irate, node:node_inodes_free:, node:node_inodes_total:, node:node_memory_swap_io_bytes:sum_rate, node:node_memory_utilisation:, node:node_memory_utilisation:ratio, node:node_memory_utilisation_2:, node:node_net_saturation:sum_irate, node:node_net_utilisation:sum_irate
+      ## kube_pod_info
       metricRelabelings:
         - action: keep
           regex: (?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_(condition|(current|desired)_replicas)|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase|kube_pod_info)
@@ -1513,27 +1518,28 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
       ## node exporter metrics
-      ## node_cpu_seconds_total  # in addition required by node:node_num_cpu:sum, :node_cpu_saturation_load1:, :node_cpu_utilisation:avg1m, node:cluster_cpu_utilisation:ratio, node:node_cpu_saturation_load1:, node:node_cpu_utilisation:avg1m, 
-      ## node_load1  # in addition required by :node_cpu_saturation_load1:, node:node_cpu_saturation_load1:
+      ## node_cpu_seconds_total
+      ## node_load1
       ## node_load5
       ## node_load15
-      ## node_disk_io_time_weighted_seconds_total  # required by :node_disk_saturation:avg_irate, node:node_disk_saturation:avg_irate
-      ## node_disk_io_time_seconds_total  # required by :node_disk_utilisation:avg_irate, node:node_disk_utilisation:avg_irate
-      ## node_vmstat_pgpgin  # required by :node_memory_swap_io_bytes:sum_rate, node:node_memory_swap_io_bytes:sum_rate
-      ## node_vmstat_pgpgout  # required by :node_memory_swap_io_bytes:sum_rate, node:node_memory_swap_io_bytes:sum_rate
-      ## node_memory_MemFree_bytes  # required by :node_memory_utilisation:, node:node_memory_bytes_available:sum, node:node_memory_utilisation:, node:node_memory_utilisation:ratio, node:node_memory_utilisation_2:
-      ## node_memory_Cached_bytes  # required by :node_memory_utilisation:, node:node_memory_bytes_available:sum, node:node_memory_utilisation:, node:node_memory_utilisation:ratio, node:node_memory_utilisation_2:
-      ## node_memory_Buffers_bytes  # required by :node_memory_utilisation:, node:node_memory_bytes_available:sum, node:node_memory_utilisation:, node:node_memory_utilisation:ratio, node:node_memory_utilisation_2:
-      ## node_memory_MemTotal_bytes  # required by :node_memory_utilisation:, node:node_memory_bytes_total:sum, node:cluster_memory_utilisation:ratio, node:node_memory_bytes_available:sum, node:node_memory_utilisation:, node:node_memory_utilisation:ratio, node:node_memory_utilisation_2:
-      ## node_network_receive_drop_total  # required by :node_net_saturation:sum_irate, node:node_net_saturation:sum_irate
-      ## node_network_transmit_drop_total  # required by :node_net_saturation:sum_irate, node:node_net_saturation:sum_irate
-      ## node_network_receive_bytes_total  # required by :node_net_utilisation:sum_irate, instance:node_network_receive_bytes:rate:sum, node:node_net_utilisation:sum_irate
-      ## node_network_transmit_bytes_total  # required by :node_net_utilisation:sum_irate, node:node_net_utilisation:sum_irate
-      ## node_filesystem_avail_bytes  # required by node:node_filesystem_avail:, node:node_filesystem_usage:
-      ## node_filesystem_size_bytes  # required by node:node_filesystem_avail:, node:node_filesystem_usage:
-      ## node_filesystem_files_free  # required by node:node_inodes_free:
-      ## node_filesystem_files  # required by node:node_inodes_total:
+      ## node_disk_io_time_weighted_seconds_total
+      ## node_disk_io_time_seconds_total
+      ## node_vmstat_pgpgin
+      ## node_vmstat_pgpgout
+      ## node_memory_MemFree_bytes
+      ## node_memory_Cached_bytes
+      ## node_memory_Buffers_bytes
+      ## node_memory_MemTotal_bytes
+      ## node_network_receive_drop_total
+      ## node_network_transmit_drop_total
+      ## node_network_receive_bytes_total
+      ## node_network_transmit_bytes_total
+      ## node_filesystem_avail_bytes
+      ## node_filesystem_size_bytes
+      ## node_filesystem_files_free
+      ## node_filesystem_files
       metricRelabelings:
         - action: keep
           regex: (?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
