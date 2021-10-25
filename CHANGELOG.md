@@ -7,19 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Before upgrading to this version, you need to upgrade the Prometheus Operator CRDs
-by running the following commands on your cluster:
-
-```shell
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.48.1/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
-```
-
 ### Added
 
 - otelcol: add systemd logs pipeline [#1767][#1767]
@@ -45,12 +32,6 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 
 [#1767]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1767
 
-### Changed
-
-- feat(metrics): upgrade kube-prometheus-stack to v16 [#1816][#1816]
-
-  This update changes the version of kube-state-metrics from v1 to v2.
-
 - chore(deps): upgrade fluentd image to `1.12.2-sumo-5` [#1829][#1829]
 
   Updates version of fluentd-output-sumologicplugin to [1.7.3][1.7.3]
@@ -59,7 +40,6 @@ kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheu
 
   This upgrades Fluent Bit to v1.8.8.
 
-[#1816]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1816
 [#1824]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1824
 [#1829]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1829
 [1.7.3]: https://github.com/SumoLogic/fluentd-output-sumologic/releases/tag/1.7.3
