@@ -30,8 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     `otelcol.metadata.logs.config.processors.source/systemd:.source_name`
     configuration value.
 
-[#1767]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1767
-
 - chore(deps): upgrade fluentd image to `1.12.2-sumo-5` [#1829][#1829]
 
   Updates version of fluentd-output-sumologicplugin to [1.7.3][1.7.3]
@@ -40,6 +38,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   This upgrades Fluent Bit to v1.8.8.
 
+- Update falco subchart to 1.11.1 [#1618][#1618]
+
+[#1618]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1618
+[#1767]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1767
 [#1824]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1824
 [#1829]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1829
 [1.7.3]: https://github.com/SumoLogic/fluentd-output-sumologic/releases/tag/1.7.3
