@@ -12,7 +12,7 @@ function helm() {
   docker run --rm \
     -v "$(pwd):/chart" \
     -w /chart \
-    sumologic/kubernetes-tools:2.2.3 \
+    sumologic/kubernetes-tools:2.5.0 \
     helm "$@"
 }
 
@@ -27,25 +27,36 @@ function push_helm_chart() {
 
   echo "Pushing new Helm Chart release ${version}"
 
-  # due to helm repo index issue: https://github.com/helm/helm/issues/7363
-  # we need to create new package in a different dir, merge the index and move the package back
-  mkdir -p "${sync_dir}"
   set -ex
-  helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
+  while true; do
+    # due to helm repo index issue: https://github.com/helm/helm/issues/7363
+    # we need to create new package in a different dir, merge the index and move the package back
+    mkdir -p "${sync_dir}"
+    helm package deploy/helm/sumologic --dependency-update --version="${version}" --app-version="${version}" --destination "${sync_dir}"
 
-  git fetch origin gh-pages
-  git reset --hard HEAD
-  git checkout gh-pages
+    git fetch "${remote}" gh-pages
+    git stash push
+    git checkout -B gh-pages "${remote}/gh-pages"
 
-  helm repo index --url "https://sumologic.github.io/sumologic-kubernetes-collection${chart_dir:1}/" --merge "${chart_dir}/index.yaml" "${sync_dir}"
+    helm repo index --url "https://sumologic.github.io/sumologic-kubernetes-collection${chart_dir:1}/" --merge "${chart_dir}/index.yaml" "${sync_dir}"
 
-  mv -f "${sync_dir}"/* "${chart_dir}"
-  rmdir "${sync_dir}"
+    mv -f "${sync_dir}"/* "${chart_dir}"
+    rmdir "${sync_dir}"
 
-  git add -A
-  git status
-  git commit -m "Push new Helm Chart release ${version}"
-  git push origin gh-pages
+    git add -A
+    git status
+    git commit -m "Push new Helm Chart release ${version}"
+
+    if git push "${remote}" gh-pages; then
+      # Push was successful, we're done
+      break
+    fi
+
+    # Go back to the branch we checkout out at before gh-pages
+    git checkout -
+    # Pop the changes in case there are any
+    git stash pop
+  done
   set +ex
 }
 
