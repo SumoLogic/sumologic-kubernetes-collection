@@ -1036,7 +1036,11 @@ Example:
 {{- define "fluentd.excludeNamespaces" -}}
 {{- $excludeNamespaceRegex := .Values.fluentd.logs.containers.excludeNamespaceRegex | quote -}}
 {{- if eq .Values.sumologic.collectionMonitoring false -}}
-  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
+  {{- if .Values.fluentd.logs.containers.excludeNamespaceRegex -}}
+  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote -}}
+  {{- else -}}
+  {{- $excludeNamespaceRegex = printf "%s" .Release.Namespace | quote -}}
+  {{- end -}}
 {{- end -}}
 {{ print $excludeNamespaceRegex }}
 {{- end -}}

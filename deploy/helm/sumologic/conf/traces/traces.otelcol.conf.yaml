@@ -4,10 +4,7 @@
 {{- $sourceCategory := .Values.fluentd.logs.containers.sourceCategory | quote }}
 {{- $sourceCategoryPrefix := .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}
 {{- $sourceCategoryReplaceDash := .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}
-{{- $excludeNamespaceRegex := .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
-{{ if eq .Values.sumologic.collectionMonitoring false }}
-  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
-{{- end }}
+{{- $excludeNamespaceRegex := include "fluentd.excludeNamespaces" . }}
 {{- $excludePodRegex := .Values.fluentd.logs.containers.excludePodRegex | quote }}
 {{- $excludeContainerRegex := .Values.fluentd.logs.containers.excludeContainerRegex | quote }}
 {{- $excludeHostRegex := .Values.fluentd.logs.containers.excludeHostRegex | quote }}
