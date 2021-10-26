@@ -170,7 +170,7 @@ helm upgrade --install my-release sumologic/sumologic \
   --set fluent-bit.securityContext.privileged=true \
   --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
   --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
-  --set kube-prometheus-stack.prometheusOperator.namespaces.additional=[my-namespace]
+  --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace}
 ```
 
 **Notice:** Prometheus Operator is deployed by default on OpenShift platform,
