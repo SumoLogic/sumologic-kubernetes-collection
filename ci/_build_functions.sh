@@ -24,6 +24,7 @@ function push_helm_chart() {
   local version="$1"
   local chart_dir="$2"
   local sync_dir="./tmp-helm-sync"
+  local remote="origin"
 
   echo "Pushing new Helm Chart release ${version}"
 
