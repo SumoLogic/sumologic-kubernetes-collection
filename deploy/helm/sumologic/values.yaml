@@ -1290,9 +1290,12 @@ kube-prometheus-stack:
         - action: keep
           regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
           sourceLabels: [__name__]
+        - action: labelmap
+          regex: container_name
+          replacement: container
         - action: drop
           sourceLabels: [container]
-          regex: (POD|)
+          regex: POD
         - action: labeldrop
           regex: (id|name)
   kubeControllerManager:
@@ -1849,12 +1852,6 @@ kube-prometheus-stack:
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.container
           remoteTimeout: 5s
           writeRelabelConfigs:
-            - action: labelmap
-              regex: container_name
-              replacement: container
-            - action: drop
-              regex: POD
-              sourceLabels: [container]
             - action: keep
               regex: kubelet;.+;(?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total)
               sourceLabels: [job, container, __name__]
