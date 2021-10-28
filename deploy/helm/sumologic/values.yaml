@@ -1036,6 +1036,8 @@ kube-prometheus-stack:
       groups:
         - name: node-pre-1.14.rules
           rules:
+            - expr: sum(min(kube_pod_info) by (node))
+              record: ':kube_pod_info_node_count:'
             - expr: 1 - avg(rate(node_cpu_seconds_total{job="node-exporter",mode="idle"}[1m]))
               record: :node_cpu_utilisation:avg1m
             - expr: |-
@@ -1127,24 +1129,10 @@ kube-prometheus-stack:
                 )
               record: node:node_net_saturation:sum_irate
             - expr: |-
-                max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
-                - node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
-                / node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
-              record: 'node:node_filesystem_usage:'
-            - expr: |-
                 sum(node_load1{job="node-exporter"})
                 /
                 sum(node:node_num_cpu:sum)
               record: ':node_cpu_saturation_load1:'
-            - expr: |-
-                sum by (node) (
-                  node_load1{job="node-exporter"}
-                * on (namespace, pod) group_left(node)
-                  node_namespace_pod:kube_pod_info:
-                )
-                /
-                node:node_num_cpu:sum
-              record: 'node:node_cpu_saturation_load1:'
             - expr: avg(irate(node_disk_io_time_weighted_seconds_total{job="node-exporter",device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+"}[1m]))
               record: :node_disk_saturation:avg_irate
             - expr: |-
@@ -1206,11 +1194,6 @@ kube-prometheus-stack:
                   )
               record: 'node:node_filesystem_avail:'
             - expr: |-
-                max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
-                - node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
-                / node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
-              record: 'node:node_filesystem_usage:'
-            - expr: |-
                 max(
                   max(
                     kube_pod_info{job="kube-state-metrics", host_ip!=""}
@@ -1245,36 +1228,244 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
+      ## apiserver_request_count
+      ## apiserver_request_total
+      ## apiserver_request_duration_seconds_count
+      ## apiserver_request_duration_seconds_bucket
+      ## apiserver_request_duration_seconds_sum
+      ## apiserver_request_latencies_count
+      ## apiserver_request_latencies_sum
+      ## apiserver_request_latencies_summary
+      ## apiserver_request_latencies_summary_count
+      ## apiserver_request_latencies_summary_sum
+      metricRelabelings:
+        - action: keep
+          regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum)|apiserver_request_duration_seconds_bucket)
+          sourceLabels: [ __name__]
   kubelet:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## Enable scraping /metrics/probes from kubelet's service
+      probes: false
       ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
       resource: false
+      ## see docs/scrape_metrics.md
+      ## kubelet metrics:
+      ## kubelet_docker_operations_errors
+      ## kubelet_docker_operations_errors_total
+      ## kubelet_docker_operations_duration_seconds_count
+      ## kubelet_docker_operations_duration_seconds_sum
+      ## kubelet_runtime_operations_duration_seconds_count
+      ## kubelet_runtime_operations_duration_seconds_sum
+      ## kubelet_running_container_count
+      ## kubelet_running_containers
+      ## kubelet_running_pod_count
+      ## kubelet_running_pods
+      ## kubelet_docker_operations_latency_microseconds
+      ## kubelet_docker_operations_latency_microseconds_count
+      ## kubelet_docker_operations_latency_microseconds_sum
+      ## kubelet_runtime_operations_latency_microseconds
+      ## kubelet_runtime_operations_latency_microseconds_count
+      ## kubelet_runtime_operations_latency_microseconds_sum
+      metricRelabelings:
+        - action: keep
+          regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
+          sourceLabels: [__name__]
+        - action: labeldrop
+          regex: id
+      ## see docs/scrape_metrics.md
+      ## cadvisor container metrics
+      ## container_cpu_usage_seconds_total
+      ## container_fs_limit_bytes
+      ## container_fs_usage_bytes
+      ## container_memory_working_set_bytes
+      ## container_cpu_cfs_throttled_seconds_total
+      ##
+      ## cadvisor aggregate container metrics
+      ## container_network_receive_bytes_total
+      ## container_network_transmit_bytes_total
+      cAdvisorMetricRelabelings:
+        - action: keep
+          regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
+          sourceLabels: [__name__]
+        - action: labelmap
+          regex: container_name
+          replacement: container
+        - action: drop
+          sourceLabels: [container]
+          regex: POD
+        - action: labeldrop
+          regex: (id|name)
   kubeControllerManager:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
+      ## controller manager metrics
+      ## https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
+      ## e.g.
+      ## cloudprovider_aws_api_request_duration_seconds_bucket
+      ## cloudprovider_aws_api_request_duration_seconds_count
+      ## cloudprovider_aws_api_request_duration_seconds_sum
+      metricRelabelings:
+        - action: keep
+          regex: (?:cloudprovider_.*_api_request_duration_seconds.*)
+          sourceLabels: [__name__]
   coreDns:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
+      ## coredns:
+      ## coredns_cache_size
+      ## coredns_cache_entries
+      ## coredns_cache_hits_total
+      ## coredns_cache_misses_total
+      ## coredns_dns_request_duration_seconds_count
+      ## coredns_dns_request_duration_seconds_sum
+      ## coredns_dns_request_count_total
+      ## coredns_dns_requests_total
+      ## coredns_dns_response_rcode_count_total
+      ## coredns_dns_responses_total
+      ## coredns_forward_request_count_total
+      ## coredns_forward_requests_total
+      ## process_cpu_seconds_total
+      ## process_open_fds
+      ## process_resident_memory_bytes
+      metricRelabelings:
+        - action: keep
+          regex: (?:coredns_cache_(size|entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+          sourceLabels: [__name__]
   kubeEtcd:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
+      ## etcd_request_cache_get_duration_seconds_count
+      ## etcd_request_cache_get_duration_seconds_sum
+      ## etcd_request_cache_add_duration_seconds_count
+      ## etcd_request_cache_add_duration_seconds_sum
+      ## etcd_request_cache_add_latencies_summary_count
+      ## etcd_request_cache_add_latencies_summary_sum
+      ## etcd_request_cache_get_latencies_summary_count
+      ## etcd_request_cache_get_latencies_summary_sum
+      ## etcd_helper_cache_hit_count
+      ## etcd_helper_cache_hit_total
+      ## etcd_helper_cache_miss_count
+      ## etcd_helper_cache_miss_total
+      ## etcd server:
+      ## etcd_debugging_mvcc_db_total_size_in_bytes
+      ## etcd_debugging_store_expires_total
+      ## etcd_debugging_store_watchers
+      ## etcd_disk_backend_commit_duration_seconds_bucket
+      ## etcd_disk_wal_fsync_duration_seconds_bucket
+      ## etcd_grpc_proxy_cache_hits_total
+      ## etcd_grpc_proxy_cache_misses_total
+      ## etcd_network_client_grpc_received_bytes_total
+      ## etcd_network_client_grpc_sent_bytes_total
+      ## etcd_server_has_leader
+      ## etcd_server_leader_changes_seen_total
+      ## etcd_server_proposals_applied_total
+      ## etcd_server_proposals_committed_total
+      ## etcd_server_proposals_failed_total
+      ## etcd_server_proposals_pending
+      ## process_cpu_seconds_total
+      ## process_open_fds
+      ## process_resident_memory_bytes
+      metricRelabelings:
+        - action: keep
+          regex: (?:etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total)|etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+          sourceLabels: [ __name__]
   kubeScheduler:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
+      ## scheduler metrics_latency_microseconds
+      ## scheduler_e2e_scheduling_duration_seconds_bucket
+      ## scheduler_e2e_scheduling_duration_seconds_count
+      ## scheduler_e2e_scheduling_duration_seconds_sum
+      ## scheduler_binding_duration_seconds_bucket
+      ## scheduler_binding_duration_seconds_count
+      ## scheduler_binding_duration_seconds_sum
+      ## scheduler_scheduling_algorithm_duration_seconds_bucket
+      ## scheduler_scheduling_algorithm_duration_seconds_count
+      ## scheduler_scheduling_algorithm_duration_seconds_sum
+      metricRelabelings:
+        - action: keep
+          regex: (?:scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_duration_seconds.*)
+          sourceLabels: [__name__]
   kubeStateMetrics:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
+      ## kube_daemonset_status_current_number_scheduled
+      ## kube_daemonset_status_desired_number_scheduled
+      ## kube_daemonset_status_number_misscheduled
+      ## kube_daemonset_status_number_unavailable
+      ## kube_deployment_spec_replicas
+      ## kube_deployment_status_replicas_available
+      ## kube_deployment_status_replicas_unavailable
+      ## kube_node_info
+      ## kube_node_status_allocatable
+      ## kube_node_status_capacity
+      ## kube_node_status_condition
+      ## kube_statefulset_metadata_generation
+      ## kube_statefulset_replicas
+      ## kube_statefulset_status_observed_generation
+      ## kube_statefulset_status_replicas
+      ## kube_hpa_spec_max_replicas
+      ## kube_hpa_spec_min_replicas
+      ## kube_hpa_status_condition
+      ## kube_hpa_status_current_replicas
+      ## kube_hpa_status_desired_replicas
+      ## kube pod state metrics
+      ## kube_pod_container_info
+      ## kube_pod_container_resource_limits
+      ## kube_pod_container_resource_requests
+      ## kube_pod_container_status_ready
+      ## kube_pod_container_status_restarts_total
+      ## kube_pod_container_status_terminated_reason
+      ## kube_pod_container_status_waiting_reason
+      ## kube_pod_status_phase
+      ## kube_pod_info
+      metricRelabelings:
+        - action: keep
+          regex: (?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_(condition|(current|desired)_replicas)|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase|kube_pod_info)
+          sourceLabels: [ __name__]
   nodeExporter:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
+      ## see docs/scrape_metrics.md
+      ## node exporter metrics
+      ## node_cpu_seconds_total
+      ## node_load1
+      ## node_load5
+      ## node_load15
+      ## node_disk_io_time_weighted_seconds_total
+      ## node_disk_io_time_seconds_total
+      ## node_vmstat_pgpgin
+      ## node_vmstat_pgpgout
+      ## node_memory_MemFree_bytes
+      ## node_memory_Cached_bytes
+      ## node_memory_Buffers_bytes
+      ## node_memory_MemTotal_bytes
+      ## node_network_receive_drop_total
+      ## node_network_transmit_drop_total
+      ## node_network_receive_bytes_total
+      ## node_network_transmit_bytes_total
+      ## node_filesystem_avail_bytes
+      ## node_filesystem_size_bytes
+      ## node_filesystem_files_free
+      ## node_filesystem_files
+      metricRelabelings:
+        - action: keep
+          regex: (?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
+          sourceLabels: [__name__]
 
   alertmanager:
     enabled: false
@@ -1706,7 +1897,7 @@ kube-prometheus-stack:
         ## cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
         ## cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
         ## cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
-        ## instance:node_filesystem_usage:sum
+        ## instance:node_filesystem_usage:sum  # no rules definition found
         ## instance:node_network_receive_bytes:rate:sum
         ## node:cluster_cpu_utilisation:ratio
         ## node:cluster_memory_utilisation:ratio
