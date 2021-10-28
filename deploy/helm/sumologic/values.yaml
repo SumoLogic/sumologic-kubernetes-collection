@@ -1466,19 +1466,9 @@ kube-prometheus-stack:
 
   alertmanager:
     enabled: false
-    serviceMonitor:
-      metricRelabelings:
-        - action: drop
-          regex: .*
-          sourceLabels: [__name__]
   grafana:
     enabled: false
     defaultDashboardsEnabled: false
-    serviceMonitor:
-      metricRelabelings:
-        - action: drop
-          regex: .*
-          sourceLabels: [__name__]
   prometheusOperator:
     ## Labels to add to the operator pod
     podLabels: {}
@@ -1496,12 +1486,6 @@ kube-prometheus-stack:
       enabled: false
     tls:
       enabled: false
-    serviceMonitor:
-      metricRelabelings:
-        - action: drop
-          regex: .*
-          sourceLabels: [__name__]
-
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
     ## Custom labels to apply to service, deployment and pods
@@ -1529,21 +1513,12 @@ kube-prometheus-stack:
       #   cpu: 100m
       #   memory: 30Mi
   prometheus:
-    serviceMonitor:
-      metricRelabelings:
-        - action: drop
-          regex: .*
-          sourceLabels: [__name__]
     additionalServiceMonitors:
       - name: collection-sumologic-fluentd-logs
         additionalLabels:
           sumologic.com/app: fluentd-logs
         endpoints:
           - port: metrics
-            metricRelabelings:
-              - action: drop
-                regex: .*
-                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1556,10 +1531,6 @@ kube-prometheus-stack:
           sumologic.com/app: otelcol-logs
         endpoints:
           - port: otelcol-metrics
-            metricRelabelings:
-              - action: drop
-                regex: .*
-                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1572,10 +1543,6 @@ kube-prometheus-stack:
           sumologic.com/app: fluentd-metrics
         endpoints:
           - port: metrics
-            metricRelabelings:
-              - action: drop
-                regex: .*
-                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1588,10 +1555,6 @@ kube-prometheus-stack:
           sumologic.com/app: otelcol-metrics
         endpoints:
           - port: otelcol-metrics
-            metricRelabelings:
-              - action: drop
-                regex: .*
-                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1604,10 +1567,6 @@ kube-prometheus-stack:
           sumologic.com/app: fluentd-events
         endpoints:
           - port: metrics
-            metricRelabelings:
-              - action: drop
-                regex: .*
-                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1621,10 +1580,6 @@ kube-prometheus-stack:
         endpoints:
           - port: http
             path: /api/v1/metrics/prometheus
-            metricRelabelings:
-              - action: drop
-                regex: .*
-                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
@@ -1637,10 +1592,6 @@ kube-prometheus-stack:
           sumologic.com/app: otelcol
         endpoints:
           - port: metrics
-            metricRelabelings:
-              - action: drop
-                regex: .*
-                sourceLabels: [__name__]
         namespaceSelector:
           matchNames:
             - $(NAMESPACE)
