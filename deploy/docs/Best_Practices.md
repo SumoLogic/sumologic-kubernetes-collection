@@ -35,37 +35,35 @@ the first line of multiline logs.
 See [collecting multiline logs](https://help.sumologic.com/?cid=49494) for details
 on configuring a boundary regex.
 
-New parsers can be defined under the `parsers` key of the fluent-bit
-configuration section in the `values.yaml` file as follows:
+New parsers can be defined under the `fluent-bit.config.customParsers` key in
+`values.yaml` file as follows:
 
 ```yaml
-parsers:
-  enabled: true
-  regex:
-    - name: multi_line
-    regex: (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}.*)
-    - name: new_parser_name
-    ## This parser matches lines that start with time of the format : 07:14:12
-    regex: (?<log>^{"log":"\d{2}:\d{2}:\d{2}.*)
+fluent-bit:
+  config:
+    customParsers: |
+      [PARSER]
+          Name        multi_line
+          Format      regex
+          Regex       (?<log>^{"log":"\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
+      [PARSER]
+          Name        new_multi_line_parser
+          Format      regex
+          Regex       (?<log>^{"log":"\d{2}:\d{2}:\d{2}.*)
 ```
 
-The regex used for `Parser_Firstline` needs to have at least one named capture group.
+This way one can add a parser called `new_multi_line_parser` which matches lines
+that start with time of the format : `07:14:12`.
 
-To use the newly defined parser to detect the first line of multiline logs,
-change the `Parser_Firstline` parameter in the `Input plugin` configuration of fluent-bit:
+To start using the newly defined parser, define it in `Docker_Mode_Parser` parameter
+in the `Input plugin` configuration of fluent-bit in `values.yaml` under
+`fluent-bit.config.inputs`:
 
-```bash
-Parser_Firstline new_parser_name
+```
+Docker_Mode_Parser new_multi_line_parser
 ```
 
-You can also use the optional-extra parser to interpret and structure multiline entries.
-When Multiline is On, if the first line matches `Parser_Firstline`,
-the rest of the lines will be matched against `Parser_N`.
-
-```bash
-Parser_Firstline multi_line
-Parser_1 optional_parser
-```
+The regex used for needs to have at least one named capture group.
 
 ### MySQL slow logs example
 
@@ -97,8 +95,8 @@ If enabled, the plugin will recombine split Docker log lines before passing them
 
 ### Multiline Support
 
-To add multiline support to docker mode, you need to follow
-[the multiline support](#multiline-log-support) section and assign created parser
+To add multiline support to docker mode, you need to follow the
+[multiline log support](#multiline-log-support) section and assign created parser
 to the `Docker_Mode_Parser` parameter in the `Input plugin` configuration of fluent-bit:
 
 ```
