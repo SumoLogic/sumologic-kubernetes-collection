@@ -22,8 +22,8 @@ data:
         metadata_attributes:
         - _collector
         - k8s.*
-        - pod_.*
-        - namespace_.*
+        - pod_labels_.*
+        - namespace_labels_.*
         sending_queue:
           enabled: true
           persistent_storage_enabled: true
@@ -173,6 +173,10 @@ data:
         - action: upsert
           from_attribute: k8s.node.name
           key: k8s.pod.hostname
+      resource/delete_pod_annotations:
+        attributes:
+        - action: delete
+          pattern: ^pod_annotations_.*
       source/containers:
         annotation_prefix: pod_annotations_
         collector: "kubernetes"
@@ -236,6 +240,7 @@ data:
           - source/containers
           - attributes/remove_fluent_tag
           - resource/containers_copy_node_to_host
+          - resource/delete_pod_annotations
           - batch
           receivers:
           - fluentforward
