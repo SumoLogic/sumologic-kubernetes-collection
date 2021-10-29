@@ -22,8 +22,8 @@ data:
         metadata_attributes:
         - _collector
         - k8s.*
-        - pod_.*
-        - namespace_.*
+        - pod_labels_.*
+        - namespace_labels_.*
         sending_queue:
           enabled: true
           persistent_storage_enabled: true
