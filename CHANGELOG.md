@@ -34,15 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   Updates version of fluentd-output-sumologicplugin to [1.7.3][1.7.3]
 
-- feat(logs): upgrade fluent-bit chart to v0.19.1 [#1824]
-
-  This upgrades Fluent Bit to v1.8.8.
-
 - Update falco subchart to 1.11.1 [#1618][#1618]
 
 [#1618]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1618
 [#1767]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1767
-[#1824]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1824
 [#1829]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1829
 [1.7.3]: https://github.com/SumoLogic/fluentd-output-sumologic/releases/tag/1.7.3
 
