@@ -1,6 +1,6 @@
 {{- if eq (include "logs.otelcol.enabled" .) "true" }}
 {{- if .Values.metadata.logs.podDisruptionBudget -}}
-apiVersion: policy/v1beta1
+apiVersion: {{ include "apiVersion.podDisruptionBudget" . }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "sumologic.metadata.name.logs.pdb" . }}
