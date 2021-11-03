@@ -67,12 +67,17 @@ function patch_test() {
 # Generate output file basing on the input values.yaml
 function generate_file {
   local template_name="${1}"
+  local kube_api_versions_flags=""
+  if (( ${#KUBE_API_VERSIONS[@]} )); then
+    kube_api_versions_flags=${KUBE_API_VERSIONS[@]/#/--api-versions }
+  fi
 
   docker run --rm \
     -v "${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic":/chart \
     -v "${TEST_STATICS_PATH}/${input_file}":/values.yaml \
     sumologic/kubernetes-tools:2.4.1 \
     helm template /chart -f /values.yaml \
+      ${kube_api_versions_flags} \
       --namespace sumologic \
       --set sumologic.accessId='accessId' \
       --set sumologic.accessKey='accessKey' \
