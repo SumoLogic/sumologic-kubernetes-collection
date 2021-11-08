@@ -211,7 +211,7 @@ sumologic:
 fluentd:
   image:
     repository: public.ecr.aws/sumologic/kubernetes-fluentd
-    tag: 1.12.2-sumo-2
+    tag: 1.12.2-sumo-6
     pullPolicy: IfNotPresent
 
   ## Specifies whether a PodSecurityPolicy should be created
