@@ -71,8 +71,7 @@ This is a one time setup per Sumo Logic account.
 
 ## Installation Steps
 
-These steps require that no Prometheus exists.
-If you already have Prometheus installed select from the following options:
+> **Note**: These steps will deploy Prometheus as part of installation. If you already have Prometheus installed select from the following options:
 
 - [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
 - [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md)
