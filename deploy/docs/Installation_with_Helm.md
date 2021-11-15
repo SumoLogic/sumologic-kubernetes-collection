@@ -154,11 +154,30 @@ To do so please refer to the following
 
 ### Installing the helm chart in Openshift platform
 
-The daemonset/statefulset fails to create the pods in Openshift environment due to
-the request of elevated privileges, like HostPath mounts, privileged: true, etc.
+If you wish to install the chart in the Openshift Platform, it requires:
 
-If you wish to install the chart in the Openshift Platform, it requires a SCC resource
-which is only created in Openshift (detected via API capabilities in the chart), you can do the following:
+- SCC resource which is only created in Openshift (detected via API capabilities in the chart).
+
+  Without SCC the daemonset/statefulset fails to create the pods in Openshift environment due to
+  the request of elevated privileges, like HostPath mounts, privileged: true, etc.
+- Adjusting Fluent Bit parser to CRI-O log format, please see also details about [configuration for CRI-O log format][cri-o-format]
+- Limiting scope for Prometheus Operator
+
+  Prometheus Operator is deployed by default on OpenShift platform,
+  you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
+  `kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in values.yaml or
+  exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
+  using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
+
+Above described settings specific for OpenShit platform are gathered in [examples/values_openshift.yaml](../../examples/values_openshift.yaml).
+
+You may get prepared `values_openshift.yaml` using:
+
+```bash
+wget https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/examples/values_openshift.yaml
+```
+
+and then you can do the following:
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
@@ -166,18 +185,10 @@ helm upgrade --install my-release sumologic/sumologic \
   --set sumologic.accessId="<SUMO_ACCESS_ID>" \
   --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
-  --set sumologic.scc.create=true \
-  --set fluent-bit.securityContext.privileged=true \
-  --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
-  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
-  --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace}
+  -f values_openshift.yaml
 ```
 
-**Notice:** Prometheus Operator is deployed by default on OpenShift platform,
-you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
-`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in values.yaml or
-exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
-using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
+[cri-o-format]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/ContainerLogs.md#configuration-for-cri-o-log-format
 
 ## Viewing Data In Sumo Logic
 
