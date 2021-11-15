@@ -124,7 +124,7 @@ For example:
 ```yaml
 fluentd:
   image:
-    tag: 1.12.2-sumo-5-alpine
+    tag: 1.12.2-sumo-6-alpine
 ```
 
 Go to the [official Sumo Logic's Fluentd image repository](https://gallery.ecr.aws/sumologic/kubernetes-fluentd)
