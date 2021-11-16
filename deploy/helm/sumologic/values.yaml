@@ -673,6 +673,10 @@ fluentd:
     ## To use additional output plugins
     extraOutputPluginConf: |-
 
+    ## Configuration for fluentd metrics metadata enrichment
+    metadataEnrichment:
+      enabled: true
+
     ## Extra Environment Values - allows yaml definitions
     # extraEnvVars:
     #   - name: VALUE_FROM_SECRET
