@@ -3,7 +3,7 @@ entries:
   sumologic:
   - apiVersion: v2
     appVersion: 2.2.0
-    created: "2021-11-17T10:58:19.355881952Z"
+    created: "2021-11-17T10:59:53.485629501Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -30,7 +30,7 @@ entries:
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
     description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
-    digest: e97e635168ba33d04a30be7d308ae59305d4ffbf1290c6494e474727e632da5d
+    digest: c2753ca0006899bfc2288db21844667a98951f1387ebeca739b8303684f3e81b
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
     keywords:
@@ -3152,4 +3152,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.6.0.tgz
     version: 0.6.0
-generated: "2021-11-17T10:58:19.260380431Z"
+generated: "2021-11-17T10:59:53.392740904Z"
