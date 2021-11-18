@@ -33,6 +33,7 @@ for details on our Kubernetes Solution.
 - [Migration Steps](./docs/Migration_Steps.md)
 - [Troubleshooting Collection](./docs/Troubleshoot_Collection.md)
 - [Monitoring the Monitoring](./docs/monitoring-lag.md)
+- [Performance estimates for running collection chart](./docs/Performance.md)
 
 ## Solution overview
 
