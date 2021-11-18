@@ -306,3 +306,24 @@ kubectl delete secret sumologic
 ```
 
 and the associated hosted collector can be deleted in the Sumo Logic UI.
+
+### Removing the kubelet Service
+
+The Helm chart uses the Prometheus Operator to manage Prometheus instances.
+This operator creates a Service for scraping metrics exposed by the kubelet (subject to configuration in the
+`kube-prometheus-stack.prometheusOperator.kubeletService` key in `values.yaml`), which isn't removed by the chart
+uninstall process.
+This Service is largely harmless, but can cause issues if a different release of the chart is installed, resulting in
+duplicated metrics from the kubelet.
+See [this issue](https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/1101) and the corresponding
+[upstream issue](https://github.com/prometheus-community/helm-charts/issues/1523) for a more detailed explanation.
+
+To remove this service after uninstalling the chart, run:
+
+```bash
+kubectl delete svc <release_name>-kube-prometheus-kubelet -n kube-system
+```
+
+Please keep in mind that if you've changed any configuration values related to this service (they reside under the
+`kube-prometheus-stack.prometheusOperator.kubeletService` key in `values.yaml`), you should substitute those values in
+the command provided above.
