@@ -61,7 +61,6 @@ spec:
           {{- if eq .Values.otelcol.metrics.enabled false }}
           - --metrics-level=none
           {{- end }}
-          - {{ printf "--mem-ballast-size-mib=%s" .Values.otelcol.deployment.memBallastSizeMib }}
         env:
         - name: GOGC
           value: "80"
