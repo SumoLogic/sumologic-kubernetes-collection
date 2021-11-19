@@ -19,24 +19,15 @@ data:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
     extensions:
       health_check: {}
+      memory_ballast:
+        size_mib: 683
     processors:
       batch:
         send_batch_max_size: 512
         send_batch_size: 256
         timeout: 5s
       cascading_filter:
-        decision_wait: 30s
-        expected_new_traces_per_sec: 100
-        num_traces: 90000
-        policies:
-        - name: extended-duration
-          properties:
-            min_duration: 5s
-          spans_per_second: 500
-        - name: everything-else
-          spans_per_second: -1
-        probabilistic_filtering_ratio: 0.2
-        spans_per_second: 1660
+        num_traces: 200000
       k8s_tagger:
         extract:
           annotations:
@@ -113,6 +104,7 @@ data:
     service:
       extensions:
       - health_check
+      - memory_ballast
       pipelines:
         traces:
           exporters:
@@ -122,6 +114,7 @@ data:
           - k8s_tagger
           - source
           - resource
+          - cascading_filter
           - batch
           receivers:
           - jaeger
