@@ -122,7 +122,6 @@ fluentd:
     ## Option to specify K8s API groups
     apiGroups:
       - apps/v1
-      - extensions/v1beta1
 
   logs:
     enabled: true
