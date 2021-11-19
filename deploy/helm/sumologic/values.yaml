@@ -3208,31 +3208,8 @@ otelcol:
 
       ## Smart cascading filtering rules with preset limits.
       cascading_filter:
-        ## (default = 30s): Wait time since the first span of a trace arrived before making
-        ## a filtering decision
-        decision_wait: 30s
-        ## (default = 50000): Maximum number of traces kept in memory
-        num_traces: 90000
-        ## (default = 0): Expected number of new traces (helps in allocating data structures)
-        expected_new_traces_per_sec: 100
-        ## (default = 0): defines the global limit of maximum number of spans per second
-        ## that are going to be emitted
-        spans_per_second: 1660
-        ## (default = 0.2): Ratio of spans that are always probabilistically filtered
-        ## (hence might be used for metrics calculation).
-        probabilistic_filtering_ratio: 0.2
-        ## (no default): Policies used to make a sampling decision
-        policies:
-          - name: extended-duration
-            ## Spans_per_second: max number of emitted spans per second by this policy.
-            spans_per_second: 500
-            properties:
-              ## Selects the span if the duration is greater or equal the given
-              ## value (use s or ms as the suffix to indicate unit).
-              min_duration: 5s
-          - name: everything-else
-            ## This selects all traces, up the to the global limit
-            spans_per_second: -1
+        ## Max number of traces for which decisions are kept in memory
+        num_traces: 200000
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
@@ -3264,7 +3241,7 @@ otelcol:
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, zipkin]
-          processors: [memory_limiter, k8s_tagger, source, resource, batch]
+          processors: [memory_limiter, k8s_tagger, source, resource, cascading_filter, batch]
           ## To enable zipkin exporter comment out following line
           exporters: [otlphttp]
           ## and uncomment next one
