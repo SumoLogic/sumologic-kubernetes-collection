@@ -59,7 +59,6 @@ fluentd:
       - v1
     apiGroups:
       - apps/v1
-      - extensions/v1beta1
   logs:
     enabled: true
     statefulset:

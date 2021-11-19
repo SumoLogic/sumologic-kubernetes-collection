@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+- fix: fix Fluentd to support Kubernetes 1.22 [#1892][#1892]
+
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.2.0...main
+[#1892]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1892
+
 ## [v2.2.0][v2_2_0] - 2021-11-17
 
 ### Added
