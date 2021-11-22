@@ -43,6 +43,10 @@ spec:
       nodeSelector:
 {{ toYaml .Values.fluentd.events.statefulset.nodeSelector | indent 8 }}
 {{- end }}
+{{- if or .Values.fluentd.events.statefulset.affinity }}
+      affinity:
+{{ toYaml .Values.fluentd.events.statefulset.affinity | indent 8 }}
+{{- end }}
 {{- if .Values.fluentd.events.statefulset.tolerations }}
       tolerations:
 {{ toYaml .Values.fluentd.events.statefulset.tolerations | indent 8 }}
