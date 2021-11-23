@@ -9,7 +9,7 @@ source "${ROOT_DIR}"/ci/_build_functions.sh
 fetch_current_branch
 RELEASE_VERSION="$(git describe --tags --abbrev=10)"
 readonly RELEASE_VERSION="${RELEASE_VERSION#v}"
-DEV_VERSION="$(git describe --tags --long)"
+DEV_VERSION="$(git describe --tags --long --abbrev=10)"
 readonly DEV_VERSION="${DEV_VERSION#v}"
 
 pushd "${ROOT_DIR}" || exit 1
