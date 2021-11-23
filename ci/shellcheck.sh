@@ -7,5 +7,5 @@ find . ! -path '*deploy/helm/sumologic/conf/setup/setup.sh' ! -path "*/tmp/*" -n
     while read -r file; do
         # Run tests in their own context
         echo "Checking ${file} with shellcheck"
-        shellcheck --enable all "${file}"
+        shellcheck --enable all --external-sources --exclude SC2155 "${file}"
     done

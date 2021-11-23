@@ -10,15 +10,11 @@
 SCRIPT_PATH="$( dirname "$(realpath "${0}")" )"
 
 # shellcheck disable=SC1090
+# shellcheck source=tests/functions.sh
 source "${SCRIPT_PATH}/../functions.sh"
 readonly TEST_TMP_OUT="${SCRIPT_PATH}/tmp/out.log"
 
 set_variables "${SCRIPT_PATH}"
-# reassign variables from set_variables
-TEST_SCRIPT_PATH="${TEST_SCRIPT_PATH}"
-TEST_STATICS_PATH="${TEST_STATICS_PATH}"
-TEST_INPUT_FILES="${TEST_INPUT_FILES}"
-TEST_OUT="${TEST_OUT}"
 
 prepare_tests
 

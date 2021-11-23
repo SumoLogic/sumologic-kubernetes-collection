@@ -19,6 +19,10 @@ file name, e.g. for `deploy/helm/sumologic/templates/configmap.yaml` it will be 
 TEST_TEMPLATE="templates/configmap.yaml"
 ```
 
+There's also a shared config file: `shared_config.sh` which will be sourced for
+all tests with particular tests `config.sh`s taking precedence (as they will be
+sourced later).
+
 ## Input file
 
 Input file e.g. `test_name.input.yaml` should be compatible with `values.yaml`

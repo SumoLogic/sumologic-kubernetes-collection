@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2154,SC2086
 
 
 TEST_TEMPLATE="${TEST_TEMPLATE:-}"
@@ -67,16 +68,27 @@ function patch_test() {
 # Generate output file basing on the input values.yaml
 function generate_file {
   local template_name="${1}"
+  local kube_api_versions_flags=""
+  # shellcheck disable=SC2154
+  if (( ${#KUBE_API_VERSIONS[*]} )); then
+    kube_api_versions_flags=${KUBE_API_VERSIONS[*]/#/--api-versions }
+  fi
 
-  docker run --rm \
+  if ! docker run --rm \
     -v "${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic":/chart \
     -v "${TEST_STATICS_PATH}/${input_file}":/values.yaml \
     sumologic/kubernetes-tools:2.4.1 \
     helm template /chart -f /values.yaml \
+      ${kube_api_versions_flags} \
       --namespace sumologic \
       --set sumologic.accessId='accessId' \
       --set sumologic.accessKey='accessKey' \
-      -s "${template_name}" 2>/dev/null 1> "${TEST_OUT}"
+      -s "${template_name}" 1> "${TEST_OUT}" ; then
+    echo "Error with template ${template_name} in ${TEST_STATICS_PATH}/${input_file}"
+    return 1
+  fi
+
+  return 0
 }
 
 # Run test
@@ -90,7 +102,10 @@ function perform_test {
   patch_test "${TEST_STATICS_PATH}/${output_file}" "${TEST_TMP_PATH}/${output_file}"
 
   test_start "${test_name}"
-  generate_file "${template_name}"
+  if ! generate_file "${template_name}"; then 
+    test_failed "${test_name}"
+    return
+  fi
 
   test_output=$(diff -c "${TEST_TMP_PATH}/${output_file}" "${TEST_OUT}" | cat -te)
   rm "${TEST_OUT}"
