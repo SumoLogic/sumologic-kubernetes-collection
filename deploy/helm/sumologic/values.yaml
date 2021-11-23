@@ -762,6 +762,7 @@ fluentd:
     statefulset:
       nodeSelector: {}
       tolerations: []
+      affinity: {}
       resources:
         limits:
           memory: 512Mi
