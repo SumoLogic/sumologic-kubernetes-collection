@@ -7,12 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
 - feat: add affinity to fluentd events statefulset [#1895][#1895]
-- fix: fix Fluentd to support Kubernetes 1.22 [#1892][#1892]
 - feat(helm): add PodDisruptionBudget api version helm chart helpers [#1865][#1865]
+
+### Changed
+
+- fix: fix Fluentd to support Kubernetes 1.22 [#1892][#1892]
+- Update OpenTelemetry Collector version to v0.38.1-sumo [#1893][#1893]
+
+  - Move insecure parameter to separate configuration variable
+  - Fix OTLP/HTTP metadata tagging
+  - Update [Cascading Filter processor](https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor) to a new version which adds new features such filtering by number of errors and switches to a new,
+    [easier to use config format](https://help.sumologic.com/Traces/Getting_Started_with_Transaction_Tracing/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F)
+  - Change the default number of traces for Cascading Filter to 200000
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.2.0...main
 [#1895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1895
+[#1893]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1893
 [#1892]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1892
 [#1865]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1865
 
