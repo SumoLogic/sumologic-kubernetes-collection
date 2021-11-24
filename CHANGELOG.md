@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- feat: add affinity to fluentd events statefulset [#1895][#1895]
 - fix: fix Fluentd to support Kubernetes 1.22 [#1892][#1892]
+- feat(helm): add PodDisruptionBudget api version helm chart helpers [#1865][#1865]
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.2.0...main
+[#1895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1895
 [#1892]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1892
+[#1865]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1865
 
 ## [v2.2.0][v2_2_0] - 2021-11-17
 
