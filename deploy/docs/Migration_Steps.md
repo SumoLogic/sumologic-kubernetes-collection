@@ -1,4 +1,4 @@
-# Migration Steps
+# Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`
 
 Our [old collection method](https://github.com/SumoLogic/fluentd-kubernetes-sumologic)
 includes Fluentd for logs and Heapster for metrics.

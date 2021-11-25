@@ -6,6 +6,7 @@
   - [fluent-plugin-protobuf](#fluent-plugin-protobuf)
   - [fluent-plugin-prometheus-format](#fluent-plugin-prometheus-format)
   - [fluent-plugin-kubernetes-sumologic](#fluent-plugin-kubernetes-sumologic)
+    - [sanitized pod name](#sanitized-pod-name)
   - [fluent-plugin-kubernetes-metadata-filter](#fluent-plugin-kubernetes-metadata-filter)
   - [fluent-plugin-enhance-k8s-metadata](#fluent-plugin-enhance-k8s-metadata)
   - [fluent-plugin-events](#fluent-plugin-events)
