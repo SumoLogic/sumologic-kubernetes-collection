@@ -58,7 +58,6 @@ spec:
         command:
           - "/otelcontribcol"
           - "--config=/conf/traces.otelagent.conf.yaml"
-          - {{ printf "--mem-ballast-size-mib=%s" .Values.otelagent.daemonset.memBallastSizeMib }}
         env:
         - name: GOGC
           value: "80"

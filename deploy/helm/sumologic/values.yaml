@@ -2976,11 +2976,9 @@ otelagent:
     podLabels: {}
     ## Add custom annotations only to otelagent daemonset.
     podAnnotations: {}
-    ## Memory Ballast size should be max 1/3 to 1/2 of memory.
-    memBallastSizeMib: "250"
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.22.0-sumo"
+      tag: "0.38.1-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3050,12 +3048,17 @@ otelagent:
         timeout: 5s
     extensions:
       health_check: {}
+      memory_ballast:
+        ## Memory Ballast size should be max 1/3 to 1/2 of memory.
+        size_mib: 250
     exporters:
       otlp:
         endpoint: "exporters.otlp.endpoint.replace:4317"
-        insecure: true
+        tls:
+          ## This disables TLS when communicating with the gateway (within the same cluster)
+          insecure: true
     service:
-      extensions: [health_check]
+      extensions: [health_check, memory_ballast]
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, zipkin]
@@ -3082,11 +3085,9 @@ otelcol:
     podLabels: {}
     ## Add custom annotations only to otelcol deployment.
     podAnnotations: {}
-    ## Memory Ballast size should be max 1/3 to 1/2 of memory.
-    memBallastSizeMib: "683"
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.22.0-sumo"
+      tag: "0.38.1-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3209,31 +3210,8 @@ otelcol:
 
       ## Smart cascading filtering rules with preset limits.
       cascading_filter:
-        ## (default = 30s): Wait time since the first span of a trace arrived before making
-        ## a filtering decision
-        decision_wait: 30s
-        ## (default = 50000): Maximum number of traces kept in memory
-        num_traces: 90000
-        ## (default = 0): Expected number of new traces (helps in allocating data structures)
-        expected_new_traces_per_sec: 100
-        ## (default = 0): defines the global limit of maximum number of spans per second
-        ## that are going to be emitted
-        spans_per_second: 1660
-        ## (default = 0.2): Ratio of spans that are always probabilistically filtered
-        ## (hence might be used for metrics calculation).
-        probabilistic_filtering_ratio: 0.2
-        ## (no default): Policies used to make a sampling decision
-        policies:
-          - name: extended-duration
-            ## Spans_per_second: max number of emitted spans per second by this policy.
-            spans_per_second: 500
-            properties:
-              ## Selects the span if the duration is greater or equal the given
-              ## value (use s or ms as the suffix to indicate unit).
-              min_duration: 5s
-          - name: everything-else
-            ## This selects all traces, up the to the global limit
-            spans_per_second: -1
+        ## Max number of traces for which decisions are kept in memory
+        num_traces: 200000
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
@@ -3245,6 +3223,9 @@ otelcol:
         timeout: 5s
     extensions:
       health_check: {}
+      memory_ballast:
+        ## Memory Ballast size should be max 1/3 to 1/2 of memory.
+        size_mib: 683
     exporters:
       zipkin:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
@@ -3258,11 +3239,11 @@ otelcol:
         traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
         compression: gzip
     service:
-      extensions: [health_check]
+      extensions: [health_check, memory_ballast]
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, zipkin]
-          processors: [memory_limiter, k8s_tagger, source, resource, batch]
+          processors: [memory_limiter, k8s_tagger, source, resource, cascading_filter, batch]
           ## To enable zipkin exporter comment out following line
           exporters: [otlphttp]
           ## and uncomment next one
