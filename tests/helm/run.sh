@@ -12,16 +12,16 @@ if ! docker info >/dev/null 2>&1 ; then
 fi
 
 # shellcheck disable=SC1090
-# shellcheck source=tests/functions.sh
+# shellcheck source=tests/helm/functions.sh
 source "${SCRIPT_PATH}/functions.sh"
 
 export TEST_SUCCESS=true
 
-# prepare_environment "${SCRIPT_PATH}/../deploy/helm/sumologic"
+prepare_environment "${SCRIPT_PATH}/../../deploy/helm/sumologic"
 
 if [[ -f "${SCRIPT_PATH}/shared_config.sh" ]] ; then
   echo "Sourcing ${SCRIPT_PATH}/shared_config.sh for all tests envs"
-  # shellcheck source=tests/shared_config.sh
+  # shellcheck source=tests/helm/shared_config.sh
   source "${SCRIPT_PATH}/shared_config.sh"
 fi
 

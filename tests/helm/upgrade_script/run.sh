@@ -2,15 +2,15 @@
 
 # Test generation:
 # export test_name=example_test; \
-# bash deploy/helm/sumologic/upgrade-2.0.0.sh \
-#   tests/upgrade_v2_script/static/${test_name}.input.yaml \
-#   1> tests/upgrade_v2_script/static/${test_name}.log 2>&1 \
-# && cp new_values.yaml tests/upgrade_v2_script/static/${test_name}.output.yaml
+# bash deploy/helm/sumologic/upgrade-1.0.0.sh \
+#   tests/upgrade_script/static/${test_name}.input.yaml \
+#   1> tests/upgrade_script/static/${test_name}.log 2>&1 \
+# && cp new_values.yaml tests/upgrade_script/static/${test_name}.output.yaml
 
 SCRIPT_PATH="$( dirname "$(realpath "${0}")" )"
 
 # shellcheck disable=SC1090
-# shellcheck source=tests/functions.sh
+# shellcheck source=tests/helm/functions.sh
 source "${SCRIPT_PATH}/../functions.sh"
 readonly TEST_TMP_OUT="${SCRIPT_PATH}/tmp/out.log"
 
@@ -25,7 +25,7 @@ for input_file in ${TEST_INPUT_FILES}; do
   log_file="${test_name}.log"
 
   test_start "${test_name}"
-  bash "${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic/upgrade-2.0.0.sh" "${TEST_STATICS_PATH}/${input_file}" 1>"${TEST_TMP_OUT}" 2>&1
+  bash "${TEST_SCRIPT_PATH}/../../../deploy/helm/sumologic/upgrade-1.0.0.sh" "${TEST_STATICS_PATH}/${input_file}" 1>"${TEST_TMP_OUT}" 2>&1
   mv new_values.yaml "${TEST_OUT}"
 
   test_output=$(diff "${TEST_STATICS_PATH}/${output_file}" "${TEST_OUT}")
