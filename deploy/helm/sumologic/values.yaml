@@ -840,7 +840,7 @@ fluent-bit:
   # imagePullSecrets:
   #   - name: "image-pull-secret"
   image:
-    repository: public.ecr.aws/sumologic/fluent-bit
+    repository: fluent/fluent-bit
     pullPolicy: IfNotPresent
 
   ## Resource limits for fluent-bit
@@ -992,6 +992,7 @@ fluent-bit:
           tls.debug     1
           # Disable keepalive for better load balancing
           net.keepalive off
+          workers       4
     customParsers: |
       [PARSER]
           Name        multi_line
