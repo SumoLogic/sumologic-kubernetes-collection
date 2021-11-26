@@ -15,6 +15,7 @@ The following table lists the configurable parameters of the Sumo Logic chart an
 Parameter | Description | Default
 --- | --- | ---
 `nameOverride` | Used to override the Chart name. | `Nil`
+`fullnameOverride` | Used to override the chart's full name. | `Nil`
 `sumologic.setupEnabled` | If enabled, a pre-install hook will create Collector and Sources in Sumo Logic. | `true`
 `sumologic.cleanupEnabled` | If enabled, a pre-delete hook will destroy Kubernetes secret and Sumo Logic Collector. | `false`
 `sumologic.logs.enabled` | Set the enabled flag to false for disabling logs ingestion altogether. | `true`
@@ -165,6 +166,7 @@ Parameter | Description | Default
 `fluentd.metrics.extraFilterPluginConf` | To use additional filter plugins. | `Nil`
 `fluentd.metrics.extraOutputPluginConf` | To use additional output plugins. | `Nil`
 `fluentd.metrics.overrideOutputConf` | Override output section for metrics. Leave empty for the default output section. | `Nil`
+`fluentd.metrics.metadataEnrichment.enabled` | Control whether metadata enrichment should be performed for metrics. | `true`
 `fluentd.events.enabled` | If enabled, collect K8s events. | `true`
 `fluentd.events.statefulset.nodeSelector` | Node selector for Fluentd events statefulset. | `{}`
 `fluentd.events.statefulset.tolerations` | Tolerations for Fluentd events statefulset. | `[]`
@@ -175,7 +177,9 @@ Parameter | Description | Default
 `fluentd.events.sourceCategory` | Source category for the Events source. Default: "{clusterName}/events" | `Nil`
 `fluentd.events.overrideOutputConf` | Override output section for events. Leave empty for the default output section. | `Nil`
 `metrics-server.enabled` | Set the enabled flag to true for enabling metrics-server. This is required before enabling fluentd autoscaling unless you have an existing metrics-server in the cluster. | `false`
+`metrics-server.fullnameOverride` | Used to override the chart's full name. | `Nil`
 `metrics-server.args` | Arguments for metric server. | `["--kubelet-insecure-tls","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname"]`
+`fluent-bit.fullnameOverride` | Used to override the chart's full name. | `Nil`
 `fluent-bit.resources` | Resources for Fluent-bit daemonsets. | `{}`
 `fluent-bit.enabled` | Flag to control deploying Fluent-bit Helm sub-chart. | `true`
 `fluent-bit.config.service` | Configure Fluent-bit Helm sub-chart service. | [fluent-bit.config.service in values.yaml](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.0.0/deploy/helm/sumologic/values.yaml#L817-L827)
@@ -202,6 +206,7 @@ Parameter | Description | Default
 `fluent-bit.parsers.regex` | List of regex parsers. | `[{"name":"multi_line","regex":"(?\u003clog\u003e^{\"log\":\"\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*)"}]`
 `kube-prometheus-stack.kubeTargetVersionOverride` | Provide a target gitVersion of K8S, in case .Capabilites.KubeVersion is not available (e.g. helm template). Changing this may break Sumo Logic apps. | `1.13.0-0`
 `kube-prometheus-stack.enabled` | Flag to control deploying Prometheus Operator Helm sub-chart. | `true`
+`kube-prometheus-stack.fullnameOverride` | Used to override the chart's full name. | `Nil`
 `kube-prometheus-stack.alertmanager.enabled` | Deploy alertmanager. | `false`
 `kube-prometheus-stack.grafana.enabled` | If true, deploy the grafana sub-chart. | `false`
 `kube-prometheus-stack.grafana.defaultDashboardsEnabled` | Deploy default dashboards. These are loaded using the sidecar. | `false`
@@ -210,6 +215,7 @@ Parameter | Description | Default
 `kube-prometheus-stack.prometheusOperator.resources` | Resource limits for prometheus operator.  Uses sub-chart defaults. | `{}`
 `kube-prometheus-stack.prometheusOperator.admissionWebhooks.enabled` | Create PrometheusRules admission webhooks. Mutating webhook will patch PrometheusRules objects indicating they were validated. Validating webhook will check the rules syntax. | `false`
 `kube-prometheus-stack.prometheusOperator.tls.enabled` | Enable TLS in prometheus operator. | `false`
+`kube-prometheus-stack.kube-state-metrics.fullnameOverride` | Used to override the chart's full name. | `Nil`
 `kube-prometheus-stack.kube-state-metrics.resources` | Resource limits for kube state metrics.  Uses sub-chart defaults. | `{}`
 `kube-prometheus-stack.kube-state-metrics.customLabels` | Custom labels to apply to service, deployment and pods.  Uses sub-chart defaults. | `{}`
 `kube-prometheus-stack.kube-state-metrics.podAnnotations` | Additional annotations for pods in the DaemonSet.  Uses sub-chart defaults. | `{}`
@@ -222,15 +228,18 @@ Parameter | Description | Default
 `kube-prometheus-stack.prometheus.prometheusSpec.podMetadata.annotations` | Add custom pod annotations to prometheus pods | `{}`
 `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` | If specified, the remote_write spec. | See values.yaml
 `kube-prometheus-stack.prometheus.prometheusSpec.walCompression` | Enables walCompression in Prometheus | `true`
+`kube-prometheus-stack.prometheus-node-exporter.fullnameOverride` | Used to override the chart's full name. | `Nil`
 `kube-prometheus-stack.prometheus-node-exporter.podLabels` | Additional labels for prometheus-node-exporter pods. | `{}`
 `kube-prometheus-stack.prometheus-node-exporter.podAnnotations` | Additional annotations for prometheus-node-exporter pods. | `{}`
 `kube-prometheus-stack.prometheus-node-exporter.resources` | Resource limits for node exporter.  Uses sub-chart defaults. | `{}`
 `falco.enabled` | Flag to control deploying Falco Helm sub-chart. | `false`
+`falco.fullnameOverride` | Used to override the chart's full name. | `Nil`
 `falco.addKernelDevel` | Flag to control installation of `kernel-devel` on nodes using MachineConfig, required to build falco modules (only for OpenShift)| `true`
 `falco.extraInitContainers` | InitContainers for Falco pod |  `[{'name': 'init-falco', 'image': 'busybox', 'command': ['sh', '-c', 'while [ -f /host/etc/redhat-release ] && [ -z "$(ls /host/usr/src/kernels)" ] ; do\necho "waiting for kernel headers to be installed"\nsleep 3\ndone\n'], 'volumeMounts': [{'mountPath': '/host/usr', 'name': 'usr-fs', 'readOnly': True}, {'mountPath': '/host/etc', 'name': 'etc-fs', 'readOnly': True}]}]`
 `falco.ebpf.enabled` | Enable eBPF support for Falco instead of falco-probe kernel module. Set to true for GKE. | `false`
 `falco.falco.jsonOutput` | Output events in json. | `true`
 `telegraf-operator.enabled` | Flag to control deploying Telegraf Operator Helm sub-chart. | `false`
+`telegraf-operator.fullnameOverride` | Used to override the chart's full name. | `Nil`
 `telegraf-operator.replicaCount` | Replica count for Telegraf Operator pods. | 1
 `telegraf-operator.classes.secretName` | Secret name in which the Telegraf Operator configuration will be stored. | `telegraf-operator-classes`
 `telegraf-operator.default` | Name of the default output configuration. | `sumologic-prometheus`
@@ -249,3 +258,4 @@ Parameter | Description | Default
 `otelcol.config.processors.batch.send_batch_size` | Sets the preferred size of batch (in number of spans). | `256`
 `otelcol.config.processors.batch.send_batch_max_size` | Sets the maximum allowed size of a batch (in number of spans). Use with caution, setting too large value might cause 413 Payload Too Large errors. | `512`
 `tailing-sidecar-operator.enabled` | Flag to control deploying Tailing Sidecar Operator Helm sub-chart. | `false`
+`tailing-sidecar-operator.fullnameOverride` | Used to override the chart's full name. | `Nil`

@@ -2,6 +2,7 @@
 ## All the comments start with two or more # characters
 
 nameOverride: ""
+fullnameOverride: ""
 
 sumologic:
   ### Setup
@@ -211,7 +212,7 @@ sumologic:
 fluentd:
   image:
     repository: public.ecr.aws/sumologic/kubernetes-fluentd
-    tag: 1.12.2-sumo-2
+    tag: 1.12.2-sumo-6
     pullPolicy: IfNotPresent
 
   ## Specifies whether a PodSecurityPolicy should be created
@@ -671,6 +672,10 @@ fluentd:
 
     ## To use additional output plugins
     extraOutputPluginConf: |-
+
+    ## Configuration for fluentd metrics metadata enrichment
+    metadataEnrichment:
+      enabled: true
 
     ## Extra Environment Values - allows yaml definitions
     # extraEnvVars:

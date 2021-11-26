@@ -71,8 +71,7 @@ This is a one time setup per Sumo Logic account.
 
 ## Installation Steps
 
-These steps require that no Prometheus exists.
-If you already have Prometheus installed select from the following options:
+> **Note**: These steps will deploy Prometheus as part of installation. If you already have Prometheus installed select from the following options:
 
 - [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
 - [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md)
@@ -169,12 +168,13 @@ helm upgrade --install my-release sumologic/sumologic \
   --set sumologic.scc.create=true \
   --set fluent-bit.securityContext.privileged=true \
   --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
-  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
+  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
+  --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace}
 ```
 
 **Notice:** Prometheus Operator is deployed by default on OpenShift platform,
 you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
-`kube-prometheus-stack.prometheusOperator.prometheusInstanceNamespaces` parameter in values.yaml or
+`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in values.yaml or
 exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
 using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
 
