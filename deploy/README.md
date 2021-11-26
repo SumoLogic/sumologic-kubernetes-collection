@@ -86,7 +86,7 @@ The following table displays the tested Kubernetes and Helm versions.
 |---------------|---------------------------------|
 | K8s with EKS  | 1.18<br/>1.19<br/>1.20<br/>1.21 |
 | K8s with Kops | 1.18<br/>1.19<br/>1.20<br/>1.21 |
-| K8s with GKE  | 1.20                            |
+| K8s with GKE  | 1.20<br/>1.21                   |
 | K8s with AKS  | 1.19<br/>1.20<br/>1.21          |
 | OpenShift     | 4.6<br/>4.7                     |
 | Helm          | 3.5.4 (Linux)                   |
