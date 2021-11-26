@@ -29,7 +29,7 @@ function set_variables() {
   # Path to the temporary output file
   TEST_OUT="${TEST_TMP_PATH}/new_values.yaml"
   # Current version wchich should override the placeholder in test
-  CURRENT_CHART_VERSION=$(yq r "${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic/Chart.yaml" version)
+  CURRENT_CHART_VERSION=$(yq r "${TEST_SCRIPT_PATH}/../../../deploy/helm/sumologic/Chart.yaml" version)
 }
 
 # Update helm chart and remove the tmpcharts eventually
@@ -75,7 +75,7 @@ function generate_file {
   fi
 
   if ! docker run --rm \
-    -v "${TEST_SCRIPT_PATH}/../../deploy/helm/sumologic":/chart \
+    -v "${TEST_SCRIPT_PATH}/../../../deploy/helm/sumologic":/chart \
     -v "${TEST_STATICS_PATH}/${input_file}":/values.yaml \
     sumologic/kubernetes-tools:2.4.1 \
     helm template /chart -f /values.yaml \
