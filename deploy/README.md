@@ -1,6 +1,17 @@
 # Deployment Guide
 
-Documentation versions:
+This page has instructions for collecting Kubernetes logs, metrics, and events;
+enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
+See our [documentation guide](https://help.sumologic.com/Solutions/Kubernetes_Solution)
+for details on our Kubernetes Solution.
+
+- [Documentation versions](#documentation-versions)
+- [Solution overview](#solution-overview)
+- [Minimum Requirements](#minimum-requirements)
+- [Support Matrix](#support-matrix)
+
+## Documentation versions
+
 | version                                                                                                   | status                   |
 |-----------------------------------------------------------------------------------------------------------|--------------------------|
 | [v2.2](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.2/deploy/README.md)   | current / supported      |
@@ -9,30 +20,35 @@ Documentation versions:
 | [v1.3](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v1.3/deploy/README.md)   | deprecated / unsupported |
 | [v0.17](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v0.17/deploy/README.md) | deprecated / unsupported |
 
-This page has instructions for collecting Kubernetes logs, metrics, and events;
-enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
-See our [documentation guide](https://help.sumologic.com/Solutions/Kubernetes_Solution)
-for details on our Kubernetes Solution.
+---
 
-- [Deployment Guide](#deployment-guide)
-  - [Solution overview](#solution-overview)
-  - [Minimum Requirements](#minimum-requirements)
-  - [Support Matrix](#support-matrix)
+Documentation links:
+
+- Installation
   - [Installation with Helm](./docs/Installation_with_Helm.md)
   - [Non Helm Installation](./docs/Non_Helm_Installation.md)
-  - [Container log parsing (Docker, CRI-O, containerd)](./docs/ContainerLogs.md)
+
+- Configuration
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
   - [Additional Prometheus configuration](./docs/additional_prometheus_configuration.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
   - [Advanced Configuration/Security best practices](./docs/Security_Best_Practices.md)
   - [Authenticating with container registry](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
     - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
-  - [Dev Releases](./docs/Dev.md)
+  - [Container log parsing (Docker, CRI-O, containerd)](./docs/ContainerLogs.md)
+  - Open Telemetry `beta`
+    - [Open Telemetry with `sumologic-kubernetes-collection`](./docs/opentelemetry_collector.md)
+    - [Comparison of Fluentd and Opentelemetry Collector functionality](./docs/fluentd_otc_comparison.md)
+
+- Upgrades
   - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
   - [Upgrade from v1.3 to v2.0](./docs/v2_migration_doc.md)
-- [Migration Steps](./docs/Migration_Steps.md)
+
+- [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`](./docs/Migration_Steps.md)
 - [Troubleshooting Collection](./docs/Troubleshoot_Collection.md)
 - [Monitoring the Monitoring](./docs/monitoring-lag.md)
+- [Performance estimates for running collection chart](./docs/Performance.md)
+- [Dev Releases](./docs/Dev.md)
 
 ## Solution overview
 
