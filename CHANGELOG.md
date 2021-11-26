@@ -19,10 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   - Move insecure parameter to separate configuration variable
   - Fix OTLP/HTTP metadata tagging
-  - Update [Cascading Filter processor](https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor) to a new version which adds new features such filtering by number of errors and switches to a new,
-    [easier to use config format](https://help.sumologic.com/Traces/Getting_Started_with_Transaction_Tracing/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F)
+  - Update [Cascading Filter processor][v0.38.1-cfp] to a new version which adds new features such filtering
+    by number of errors and switches to a new, [easier to use config format][v0.38.1-cfp-help]
   - Change the default number of traces for Cascading Filter to 200000
 
+[v0.38.1-cfp]: https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
+[v0.38.1-cfp-help]: https://help.sumologic.com/Traces/Getting_Started_with_Transaction_Tracing/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.2.0...main
 [#1895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1895
 [#1893]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1893
