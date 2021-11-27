@@ -34,6 +34,10 @@ function get_remaining_fields() {
 # Check if we'd have at least 10 fields remaining after additional fields
 # would be created for the collection
 function should_create_fields() {
+{{- if .Values.sumologic.setupTest }}
+    return 1
+{{- end }}
+
     local RESPONSE
     readonly RESPONSE=$(get_remaining_fields)
 
@@ -87,6 +91,7 @@ else
     echo "Please refer to https://help.sumologic.com/Manage/Fields to manually create the fields after you have removed unused fields to free up capacity."
 fi
 
+{{- if not .Values.sumologic.setupTest }}
 readonly COLLECTOR_NAME="{{ template "terraform.collector.name" . }}"
 
 # Sumo Logic Collector and HTTP sources
@@ -103,6 +108,7 @@ terraform import sumologic_http_source.{{ template "terraform.sources.name" (dic
 {{- end }}
 {{- end }}
 fi
+{{- end }}
 
 # Kubernetes Secret
 terraform import kubernetes_secret.sumologic_collection_secret {{ template "terraform.secret.fullname" . }}

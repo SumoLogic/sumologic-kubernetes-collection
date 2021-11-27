@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"encoding/json"
@@ -8,8 +8,12 @@ import (
 )
 
 const (
-	_helmSumoLogicChartRelPath = "../../../deploy/helm/sumologic/"
-	_kindImagesJSONPath        = "../kind_images.json"
+	_helmSumoLogicChartRelPath = "../../deploy/helm/sumologic/"
+	_kindImagesJSONPath        = "kind_images.json"
+
+	EnvNameKindImage = "KIND_NODE_IMAGE"
+
+	YamlPathReceiverMock = "yamls/receiver-mock.yaml"
 )
 
 var (
@@ -22,22 +26,23 @@ type KindImagesSpec struct {
 	Default   string   `json:"default"`
 }
 
-func init() {
+func InitializeConstants() error {
 	var err error
 	HelmSumoLogicChartAbsPath, err = filepath.Abs(_helmSumoLogicChartRelPath)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	b, err := ioutil.ReadFile(_kindImagesJSONPath)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if err = json.Unmarshal(b, &KindImages); err != nil {
-		panic(err)
+		return err
 	}
 
-	log.Printf("Successfully read kind images spec, default: %v, supported: %v",
-		KindImages.Default, KindImages.Supported,
-	)
+	log.Printf("Successfully read kind images spec")
+	log.Printf("Default kind image: %v", KindImages.Default)
+	log.Printf("Supported kind images: %v", KindImages.Supported)
+	return nil
 }

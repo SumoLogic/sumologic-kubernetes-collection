@@ -9,6 +9,7 @@ sumologic:
 
   ## If enabled, a pre-install hook will create Collector and Sources in Sumo Logic
   setupEnabled: true
+  setupTest: true
 
   ## If enabled, a pre-delete hook will destroy Collector in Sumo Logic
   cleanupEnabled: false
