@@ -10,6 +10,18 @@ This directory contains `sumologic-kubernetes-collection` integration tests util
 [kubernetes_e2e_framework]: https://github.com/kubernetes-sigs/e2e-framework
 [kind]: https://kind.sigs.k8s.io/
 
+---
+
+- [Quickstart](#quickstart)
+- [Using pre-existing clusters](#using-pre-existing-clusters)
+  - [Creating `kind` cluster](#creating-kind-cluster)
+  - [Reusing a preexisting cluster](#reusing-a-preexisting-cluster)
+- [Runtime options](#runtime-options)
+- [Running specified tests](#running-specified-tests)
+- [K8s node images matrix](#k8s-node-images-matrix)
+
+---
+
 ## Quickstart
 
 Running tests should be as simple as running:
@@ -20,27 +32,30 @@ make test
 
 in this directory.
 
-This would:
+This will:
 
-- create `kind` cluster(s) for tests as necessary
+- create `kind` cluster for each test
+  - on CI this will create a new cluster for each test and for each k8s version
+    as defined in [kind_images.json](./kind_images.json)
+  - see [Reusing a preexisting cluster](#reusing-a-preexisting-cluster) in order to reuse a cluser
 - run the tests (using Go toolchain i.e. `go test ....`)
 - destroy created `kind` cluster(s)
 
 ## Using pre-existing clusters
 
-One should pay special care when reusing clusters across test runs since left over
+You should pay special care when reusing clusters across test runs since left over
 artifacts in clusters might cause false positives or false negatives in test results.
 
 ### Creating `kind` cluster
 
-One can use the `create-cluster` make target in order to create a cluster and reuse
+You can use the `create-cluster` make target in order to create a cluster and reuse
 it on subsequent tests runs to save time.
 
-After one's done with the cluster, `delete-cluster` can be used in order to remove it.
+After you're done with the cluster, `delete-cluster` can be used in order to remove it.
 
 ### Reusing a preexisting cluster
 
-In order to use a preexisting cluster one can use:
+In order to use a preexisting cluster you can use:
 
 - `USE_KUBECONFIG` which when set to anything else than an empty string indicates that
   tests should not create a cluster but use a pre-existing one
@@ -69,6 +84,29 @@ The test framework has the following runtime options that can be utilized:
   ```shell
   HELM_NO_DEPENDENCY_UPDATE=1 make test
   ```
+
+## Running specified tests
+
+[Testing framework][sig_e2e_testing_harness] that's used in the tests allows filtering
+tests by feature names, labels and step names.
+
+This might be handy if you'd like to use those abstractions but its consequence is that
+it will run all the code related to setup and/or teardown so e.g. all kind clusters
+that were supposed to be created for tests that got filtered out would be created anyway.
+
+Because of that reason we suggest to use `go` related test filtering like so:
+
+```shell
+make test TEST_NAME="Test_Helm_Default"
+```
+
+or
+
+```shell
+go test -v -count 1 -run=Test_Helm_Default .
+```
+
+[sig_e2e_testing_harness]: https://github.com/kubernetes-sigs/e2e-framework/blob/main/docs/design/test-harness-framework.md
 
 ## K8s node images matrix
 

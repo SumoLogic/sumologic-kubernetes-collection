@@ -102,6 +102,7 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       kind_images: ${{ steps.set_kind_images.outputs.kind_images }}
+      test_names: ${{ steps.set_test_names.outputs.test_names }}
     steps:
       - uses: actions/checkout@v2
       - id: set_kind_images
@@ -109,15 +110,26 @@ jobs:
         working-directory: ./tests/integration/
         run: |
           echo "::set-output name=kind_images::$(jq -cM '.supported' kind_images.json)"
+      - name: Print kind images
+        run: echo "Kind images ${{ steps.set_kind_images.outputs.kind_images }}"
+      - id: set_test_names
+        name: Set test names
+        working-directory: ./tests/integration/
+        # grep magic described in https://unix.stackexchange.com/a/13472
+        run: |
+          echo "::set-output name=test_names::$(grep -rhoP "(?<=^func )(Test[a-zA-z_0-9]+)(?=\(t \*testing.T\) {)" . | jq -R . | jq -cs .)"
+      - name: Print test names
+        run: echo "Test names ${{ steps.set_test_names.outputs.test_names }}"
 
   integration-tests:
     runs-on: ubuntu-20.04
-    name: Integration test (${{ matrix.kind_images }})
+    name: IT - ${{ matrix.test_name }} - ${{ matrix.kind_image }}
     needs:
       - setup-integration-tests
     strategy:
       matrix:
-        kind_images: ${{ fromJSON(needs.setup-integration-tests.outputs.kind_images) }}
+        kind_image: ${{ fromJSON(needs.setup-integration-tests.outputs.kind_images) }}
+        test_name: ${{ fromJSON(needs.setup-integration-tests.outputs.test_names) }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup go
@@ -139,6 +151,6 @@ jobs:
           key: ${{ runner.os }}-go-integration-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-integration-
-      - name: Run integration tests
+      - name: Run integration test - ${{ matrix.test_name }}
         working-directory: ./tests/integration/
-        run: make test
+        run: make test TEST_NAME=${{matrix.test_name}} KIND_NODE_IMAGE=${{matrix.kind_image}}
