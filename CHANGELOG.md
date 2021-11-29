@@ -9,11 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add support for GKE 1.21 [#1907][#1907]
 - feat: add affinity to fluentd events statefulset [#1895][#1895]
 - feat(helm): add PodDisruptionBudget api version helm chart helpers [#1865][#1865]
 
 ### Changed
 
+- Remove support for EKS 1.17, GKE 1.18 and 1.19 [#1906][#1906]
 - fix: fix Fluentd to support Kubernetes 1.22 [#1892][#1892]
 - Update OpenTelemetry Collector version to v0.38.1-sumo [#1893][#1893]
 
@@ -26,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v0.38.1-cfp]: https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
 [v0.38.1-cfp-help]: https://help.sumologic.com/Traces/Getting_Started_with_Transaction_Tracing/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.2.0...main
+[#1907]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1907
+[#1906]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1906
 [#1895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1895
 [#1893]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1893
 [#1892]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1892
