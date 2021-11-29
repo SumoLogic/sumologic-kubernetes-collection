@@ -3,8 +3,10 @@ module github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration
 go 1.17
 
 require (
-	github.com/gruntwork-io/terratest v0.38.4
+	github.com/gruntwork-io/terratest v0.38.5
 	github.com/stretchr/testify v1.7.0
+	k8s.io/api v0.21.1
+	k8s.io/apimachinery v0.21.1
 	sigs.k8s.io/e2e-framework v0.0.4
 )
 
@@ -55,8 +57,6 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	k8s.io/api v0.21.1 // indirect
-	k8s.io/apimachinery v0.21.1 // indirect
 	k8s.io/client-go v0.21.1 // indirect
 	k8s.io/klog/v2 v2.8.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20210305001622-591a79e4bda7 // indirect
