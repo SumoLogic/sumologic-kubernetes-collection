@@ -14,3 +14,62 @@ jobs:
       - uses: actions/checkout@v2
       - name: Push dev helm chart
         run: make push-helm-chart
+
+  # Add this to dev builds as that's the only way for cache to be shared across branches.
+  # https://docs.github.com/en/actions/advanced-guides/caching-dependencies-to-speed-up-workflows#matching-a-cache-key
+  setup-integration-tests:
+    runs-on: ubuntu-20.04
+    outputs:
+      kind_images: ${{ steps.set_kind_images.outputs.kind_images }}
+      test_names: ${{ steps.set_test_names.outputs.test_names }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set_kind_images
+        name: Set kind images
+        working-directory: ./tests/integration/
+        run: |
+          echo "::set-output name=kind_images::$(jq -cM '.supported' kind_images.json)"
+      - name: Print kind images
+        run: echo "Kind images ${{ steps.set_kind_images.outputs.kind_images }}"
+      - id: set_test_names
+        name: Set test names
+        working-directory: ./tests/integration/
+        # grep magic described in https://unix.stackexchange.com/a/13472
+        run: |
+          echo "::set-output name=test_names::$(grep -rhoP "(?<=^func )(Test[a-zA-z_0-9]+)(?=\(t \*testing.T\) {)" . | jq -R . | jq -cs .)"
+      - name: Print test names
+        run: echo "Test names ${{ steps.set_test_names.outputs.test_names }}"
+
+  integration-tests:
+    runs-on: ubuntu-20.04
+    name: IT - ${{ matrix.test_name }} - ${{ matrix.kind_image }}
+    needs:
+      - setup-integration-tests
+    strategy:
+      matrix:
+        kind_image: ${{ fromJSON(needs.setup-integration-tests.outputs.kind_images) }}
+        test_name: ${{ fromJSON(needs.setup-integration-tests.outputs.test_names) }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17.3'
+      - uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: v0.11.1
+          # Cluster will be created by the tests themselves so no need to create it here.
+          skipClusterCreation: "true"
+      # As described in
+      # https://github.com/mvdan/github-actions-golang#how-do-i-set-up-caching-between-builds
+      - uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/go/pkg/mod
+            /home/runner/.cache/go-build
+          key: ${{ runner.os }}-go-integration-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-integration-
+      - name: Run integration test - ${{ matrix.test_name }}
+        working-directory: ./tests/integration/
+        run: make test TEST_NAME=${{matrix.test_name}} KIND_NODE_IMAGE=${{matrix.kind_image}}
