@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Update kuberenetes-tools to 2.6.0
   - Update telegraf-operator subchart to 1.3.3
 - Bump Sumo OT distro to `0.0.42-beta.0` [#1921][#1921]
+- chore(deps): bump falco subchart to 1.16.2 [#1917][#1917]
 - Remove support for EKS 1.17, GKE 1.18 and 1.19 [#1906][#1906]
 - fix: fix Fluentd to support Kubernetes 1.22 [#1892][#1892]
 - Update OpenTelemetry Collector version to v0.38.1-sumo [#1893][#1893]
@@ -41,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#1892]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1892
 [#1865]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1865
 [#1921]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1921
+[#1917]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1917
 
 ## [v2.2.0][v2_2_0] - 2021-11-17
 
