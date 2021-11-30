@@ -139,6 +139,23 @@ fluent-bit:
           Max_Entries     1000
           Read_From_Tail  true
     ## NOTE: Requires trailing "." for fully-qualified name resolution
+
+    # Filter out receiver-mock logs to prevent snowball effect
+    # NOTE: kubernetes filter is copied as is in default values.yaml of fluen-bit's chart:
+    # https://github.com/fluent/helm-charts/blob/fluent-bit-0.12.1/charts/fluent-bit/values.yaml#L187-L195
+    filters: |
+      [FILTER]
+        Name                 kubernetes
+        Match                kube.*
+        Merge_Log            On
+        Keep_Log             Off
+        K8S-Logging.Parser   On
+        K8S-Logging.Exclude  On
+      [FILTER]
+        Name                 grep
+        Match                containers.var.log.containers.receiver-mock*
+        Exclude              log .*
+
 fluentd:
   logs:
     containers:
