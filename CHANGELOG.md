@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Bump Sumo OT distro to `0.0.42-beta.0` [#1921][#1921]
 - Remove support for EKS 1.17, GKE 1.18 and 1.19 [#1906][#1906]
 - fix: fix Fluentd to support Kubernetes 1.22 [#1892][#1892]
 - Update OpenTelemetry Collector version to v0.38.1-sumo [#1893][#1893]
@@ -34,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#1893]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1893
 [#1892]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1892
 [#1865]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1865
+[#1921]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1921
 
 ## [v2.2.0][v2_2_0] - 2021-11-17
 
