@@ -1491,6 +1491,10 @@ kube-prometheus-stack:
       enabled: false
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
+    ## Use the GCR repo, it's more recent and has ARM images starting from 1.9.8
+    image:
+      repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
+      tag: v1.9.8
     ## Custom labels to apply to service, deployment and pods
     customLabels: {}
     ## Additional annotations for pods in the DaemonSet
