@@ -23,9 +23,9 @@ import (
 
 func Test_Helm_Default(t *testing.T) {
 	var (
-		epoch          = time.Now().Unix()
-		namespace      = fmt.Sprintf("ns-test-%d", epoch)
-		releaseName    = fmt.Sprintf("release-test-%d", epoch)
+		now            = time.Now()
+		namespace      = generateNamespaceName(now)
+		releaseName    = generateReleaseName(now)
 		valuesFilePath = "values/values_default.yaml"
 
 		tickDuration = time.Second

@@ -141,6 +141,17 @@ jobs:
           version: v0.11.1
           # Cluster will be created by the tests themselves so no need to create it here.
           skipClusterCreation: "true"
+
+      - name: install falco
+        run: |
+          git clone https://github.com/falcosecurity/falco.git
+          cd falco
+          mkdir build
+          cd build
+          cmake ..
+          whoami
+          make install_driver
+
       # As described in
       # https://github.com/mvdan/github-actions-golang#how-do-i-set-up-caching-between-builds
       - uses: actions/cache@v2

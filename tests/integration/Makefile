@@ -7,6 +7,7 @@ KUBE_CONFIG ?= $(shell mktemp)
 .PHONY: create-cluster
 create-cluster:
 	kind create cluster \
+		--config yamls/cluster.yaml \
 		--name $(CLUSTER_NAME) \
 		--image $(KIND_NODE_IMAGE) \
 		--kubeconfig $(KUBE_CONFIG)
