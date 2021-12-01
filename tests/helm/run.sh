@@ -15,7 +15,11 @@ fi
 # shellcheck source=tests/helm/functions.sh
 source "${SCRIPT_PATH}/functions.sh"
 
-export TEST_SUCCESS=true
+# This ended up being a file because below we're using a subshell (in order to avoid 'leaking'
+# environment variable exported by commands in the subshell ) and we want to take all tests
+# results into account.
+export TEST_SUCCESS_FILE="$(mktemp)"
+echo "true" > "${TEST_SUCCESS_FILE}"
 
 prepare_environment "${SCRIPT_PATH}/../../deploy/helm/sumologic"
 
@@ -39,7 +43,7 @@ for config_file in ${CONFIG_FILES}; do
   )
 done
 
-if [[ "${TEST_SUCCESS}" = "true" ]]; then
+if [[ "$(cat "${TEST_SUCCESS_FILE}")" = "true" ]]; then
   exit 0
 else
   exit 1

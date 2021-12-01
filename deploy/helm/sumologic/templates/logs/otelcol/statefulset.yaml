@@ -144,12 +144,14 @@ spec:
 {{- if .Values.metadata.logs.statefulset.extraVolumeMounts }}
 {{ toYaml .Values.metadata.logs.statefulset.extraVolumeMounts | indent 8 }}
 {{- end }}
+{{- if or .Values.sumologic.collector.sources .Values.metadata.logs.statefulset.extraEnvVars }}
         env:
 {{- $ctx := .Values -}}
-{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs")}}
-        {{- if .Values.metadata.logs.statefulset.extraEnvVars }}
-{{ toYaml .Values.metadata.logs.statefulset.extraEnvVars | nindent 8 }}
-        {{- end }}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs") -}}
+{{- if .Values.metadata.logs.statefulset.extraEnvVars }}
+{{- toYaml .Values.metadata.logs.statefulset.extraEnvVars | nindent 8 }}
+{{- end }}
+{{- end }}
 {{- if .Values.metadata.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:

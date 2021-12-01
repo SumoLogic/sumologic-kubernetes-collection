@@ -53,7 +53,7 @@ function cleanup_tests() {
     rm -rf "${TEST_TMP_PATH}"
   fi
 
-  for env_name in  $(env | grep -oE '^TEST_.*?=' | grep -v "TEST_SUCCESS" | sed 's/=//g'); do
+  for env_name in  $(env | grep -oE '^TEST_.*?=' | sed 's/=//g'); do
     unset "${env_name}"
   done
 }
@@ -114,8 +114,8 @@ function perform_test {
     echo -e "\tOutput diff (${TEST_STATICS_PATH}/${output_file}):\n${test_output}"
     test_failed "${test_name}"
     # Set all tests as failed
-    # This env comes from run.sh
-    export TEST_SUCCESS=false
+    # This file has been created in run.sh
+    echo "false" > "${TEST_SUCCESS_FILE}"
   else
     test_passed "${test_name}"
   fi
