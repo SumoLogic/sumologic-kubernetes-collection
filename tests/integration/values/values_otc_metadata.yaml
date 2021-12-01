@@ -1,0 +1,58 @@
+sumologic:
+  setupEnabled: true
+  accessId: "dummy"
+  accessKey: "dummy"
+  endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
+
+  logs:
+    metadata:
+      provider: otelcol
+
+  metrics:
+    metadata:
+      provider: otelcol
+
+# Prevent snowball effect by filtering out receiver mock logs
+fluent-bit:
+  config:
+    filters: |
+      [FILTER]
+          Name    grep
+          Match   containers.var.log.containers.receiver-mock*
+          Exclude log .*
+
+# Request less resources so that this fits on Github actions runners environment
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+
+# Request less resources so that this fits on Github actions runners environment
+metadata:
+  persistence:
+    size: 128Mi
+
+  logs:
+    statefulset:
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+  metrics:
+    statefulset:
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi

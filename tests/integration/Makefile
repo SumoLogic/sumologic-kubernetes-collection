@@ -2,15 +2,15 @@
 # For default and supported images used in tests please see kind_images.json
 KIND_NODE_IMAGE ?= $(shell jq '.default' kind_images.json)
 CLUSTER_NAME ?= sumologic
-KUBE_CONFIG ?= $(shell mktemp)
+KUBE_CONFIG := $(shell mktemp)
 
 .PHONY: create-cluster
 create-cluster:
 	kind create cluster \
+		--config yamls/cluster.yaml \
 		--name $(CLUSTER_NAME) \
 		--image $(KIND_NODE_IMAGE) \
 		--kubeconfig $(KUBE_CONFIG)
-	@echo "KUBECONFIG $(KUBE_CONFIG)"
 
 .PHONY: delete-cluster
 delete-cluster:
