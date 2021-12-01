@@ -1676,8 +1676,10 @@ kube-prometheus-stack:
           cpu: 500m
           memory: 1Gi
       thanos:
-        baseImage: quay.io/thanos/thanos
-        version: v0.10.0
+        ## Use our own image until Thanos upstream adds arm64 docker images
+        ## to their registry.
+        baseImage: public.ecr.aws/sumologic/thanos
+        version: v0.23.1
         ## Defines the resource requirements for the Thanos sidecar
         ## Setting those as there are no default values in the upstream chart
         resources:
