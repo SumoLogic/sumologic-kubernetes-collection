@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update dependencies for ARM support [#1919][#1919]
+  - Update kube-state-metrics to 1.9.8
+  - Update kubernetes-setup to 3.1.1
+  - Update kuberenetes-tools to 2.6.0
+  - Update telegraf-operator subchart to 1.3.3
 - Bump Sumo OT distro to `0.0.42-beta.0` [#1921][#1921]
 - Remove support for EKS 1.17, GKE 1.18 and 1.19 [#1906][#1906]
 - fix: fix Fluentd to support Kubernetes 1.22 [#1892][#1892]
