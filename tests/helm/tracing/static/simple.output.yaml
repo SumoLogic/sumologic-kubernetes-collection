@@ -15,6 +15,28 @@ data:
       otlphttp:
         compression: gzip
         traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+      sumologic:
+        compress_encoding: gzip
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+        log_format: text
+        max_request_body_size: 1048576
+        metadata_attributes:
+        - k8s.*
+        - host.name
+        metric_format: prometheus
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 120s
+          max_interval: 30s
+        sending_queue:
+          enabled: false
+          num_consumers: 10
+          queue_size: 5000
+        source_category: 
+        source_host: '%{host.name}'
+        source_name: 
+        timeout: 5s
       zipkin:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
     extensions:
@@ -63,6 +85,11 @@ data:
         - action: upsert
           key: k8s.cluster.name
           value: kubernetes
+      resourcedetection:
+        detectors:
+        - system
+        override: false
+        timeout: 10s
       source:
         annotation_prefix: k8s.pod.annotation.
         collector: "kubernetes"
@@ -106,6 +133,17 @@ data:
       - health_check
       - memory_ballast
       pipelines:
+        metrics:
+          exporters:
+          - sumologic
+          processors:
+          - memory_limiter
+          - k8s_tagger
+          - resourcedetection
+          - resource
+          - batch
+          receivers:
+          - otlp
         traces:
           exporters:
           - otlphttp

@@ -965,14 +965,29 @@ Example:
 {{- define "kubernetes.sources.envs" -}}
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
-{{- range $key, $source := (index .Context.sumologic.collector.sources $type) }}
-        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) }}
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: {{ template "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key) }}
+{{- range $name, $source := (index .Context.sumologic.collector.sources $type) }}
+{{ include "kubernetes.sources.env" (dict "Context" $ctx "Type" $type  "Name" $name ) }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Generate fluentd envs for given source type:
+
+Example:
+
+{{ include "kubernetes.sources.env" (dict "Context" .Values "Type" "metrics" "Name" $name ) }}
+*/}}
+{{- define "kubernetes.sources.env" -}}
+{{- $ctx := .Context -}}
+{{- $type := .Type -}}
+{{- $name := .Name -}}
+- name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $name "Type" $type)) }}
+  valueFrom:
+    secretKeyRef:
+      name: sumologic
+      key: {{ template "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $name) }}
+{{- end -}}
+
 
 {{/*
 Generate a space separated list of quoted values:
