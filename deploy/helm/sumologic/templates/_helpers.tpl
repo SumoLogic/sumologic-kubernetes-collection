@@ -965,8 +965,8 @@ Example:
 {{- define "kubernetes.sources.envs" -}}
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
-{{- range $name, $source := (index .Context.sumologic.collector.sources $type) }}
-{{ include "kubernetes.sources.env" (dict "Context" $ctx "Type" $type  "Name" $name ) }}
+{{- range $name, $source := (index .Context.sumologic.collector.sources $type) -}}
+{{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" $type  "Name" $name ) | nindent 8 -}}
 {{- end }}
 {{- end -}}
 
