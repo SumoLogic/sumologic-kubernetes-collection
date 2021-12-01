@@ -21,12 +21,12 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
-func Test_Helm_Default(t *testing.T) {
+func Test_Helm_OT_Metadata(t *testing.T) {
 	var (
 		now            = time.Now()
 		namespace      = generateNamespaceName(now)
 		releaseName    = generateReleaseName(now)
-		valuesFilePath = "values/values_default.yaml"
+		valuesFilePath = "values/values_otc_metadata.yaml"
 
 		tickDuration = time.Second
 		waitDuration = time.Minute
@@ -52,50 +52,76 @@ func Test_Helm_Default(t *testing.T) {
 				require.Len(t, secret.Data, 10)
 				return ctx
 			}).
-		Assess("3 fluentd logs pods are created and running",
+		Assess("3 otelcol logs pods are created, running and ready",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				require.Eventually(t, func() bool {
 					pods := k8s.ListPods(t, ctxopts.KubectlOptions(ctx), v1.ListOptions{
-						LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName),
+						LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-logs", releaseName),
 						FieldSelector: "status.phase=Running",
 					})
-					return len(pods) == 3
-				}, waitDuration, tickDuration)
 
+					if len(pods) != 3 {
+						return false
+					}
+
+					for _, pod := range pods {
+						for _, container := range pod.Status.ContainerStatuses {
+							if !container.Ready {
+								return false
+							}
+						}
+					}
+
+					return true
+				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("3 fluentd logs buffers PVCs are created",
+		Assess("3 otelcol logs buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				assert.Eventually(t, func() bool {
 					var pvcs corev1.PersistentVolumeClaimList
 					err := envConf.Client().
 						Resources(namespace).
 						List(ctx, &pvcs,
-							resources.WithLabelSelector(fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName)),
+							resources.WithLabelSelector(fmt.Sprintf("app=%s-sumologic-otelcol-logs", releaseName)),
 						)
+
 					return err == nil && len(pvcs.Items) == 3
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("3 fluentd metrics pods are created and running",
+		Assess("3 otelcol metrics pods are created, running and ready",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				require.Eventually(t, func() bool {
 					pods := k8s.ListPods(t, ctxopts.KubectlOptions(ctx), v1.ListOptions{
-						LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-metrics", releaseName),
+						LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-metrics", releaseName),
 						FieldSelector: "status.phase=Running",
 					})
-					return len(pods) == 3
+
+					if len(pods) != 3 {
+						return false
+					}
+
+					for _, pod := range pods {
+						for _, container := range pod.Status.ContainerStatuses {
+							if !container.Ready {
+								return false
+							}
+						}
+					}
+
+					return true
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("3 fluentd metrics buffers PVCs are created",
+		Assess("3 otelcol metrics buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				assert.Eventually(t, func() bool {
 					var pvcs corev1.PersistentVolumeClaimList
 					err := envConf.Client().
 						Resources(namespace).
 						List(ctx, &pvcs,
-							resources.WithLabelSelector(fmt.Sprintf("app=%s-sumologic-fluentd-metrics", releaseName)),
+							resources.WithLabelSelector(fmt.Sprintf("app=%s-sumologic-otelcol-metrics", releaseName)),
 						)
 					return err == nil && len(pvcs.Items) == 3
 				}, waitDuration, tickDuration)

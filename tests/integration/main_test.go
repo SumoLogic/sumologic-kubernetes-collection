@@ -31,8 +31,12 @@ var (
 func TestMain(m *testing.M) {
 	internal.InitializeConstants()
 
-	if len(os.Getenv(envNameUseKubeConfig)) > 0 {
-		testenv = env.NewWithKubeConfig(os.Getenv(envNameKubeConfig))
+	if useKubeConfig := os.Getenv(envNameUseKubeConfig); len(useKubeConfig) > 0 {
+		kubeconfig := os.Getenv(envNameKubeConfig)
+
+		testenv = env.
+			NewWithKubeConfig(kubeconfig).
+			BeforeEachTest(InjectKubectlOptionsFromKubeconfig(kubeconfig))
 	} else {
 		cfg, err := envconf.NewFromFlags()
 		if err != nil {
@@ -50,6 +54,17 @@ func TestMain(m *testing.M) {
 	}
 
 	os.Exit(testenv.Run(m))
+}
+
+// InjectKubectlOptionsFromKubeconfig injects kubectl options to the context that will be propagated in tests.
+// This makes the kubectl options readily available for each test.
+func InjectKubectlOptionsFromKubeconfig(kubeconfig string) func(context.Context, *envconf.Config, *testing.T) (context.Context, error) {
+	return func(ctx context.Context, cfg *envconf.Config, t *testing.T) (context.Context, error) {
+		kubectlOptions := k8s.NewKubectlOptions("", kubeconfig, "")
+		k8s.RunKubectl(t, kubectlOptions, "describe", "node")
+		t.Logf("Kube config: %s", kubeconfig)
+		return ctxopts.WithKubectlOptions(ctx, kubectlOptions), nil
+	}
 }
 
 type kindContextKey string
