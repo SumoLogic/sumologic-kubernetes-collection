@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update fluentd to 1.12.2-sumo-10
 - Update dependencies for ARM support [#1919][#1919]
   - Update kube-state-metrics to 1.9.8
   - Update kubernetes-setup to 3.1.1
