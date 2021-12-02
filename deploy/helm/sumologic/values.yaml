@@ -383,6 +383,21 @@ fluentd:
         fluentd:
           securityContext: {}
 
+      # This supports either a structured array or a templatable string
+      initContainers: []
+
+      # Array mode
+      # initContainers:
+      #   - name: do-something
+      #     image: bitnami/kubectl:1.22
+      #     command: ['kubectl', 'version']
+
+      # String mode
+      # initContainers: |-
+      #   - name: do-something
+      #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
+      #     command: ['kubectl', 'version']
+
     ## Option to turn autoscaling on for fluentd and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
     autoscaling:
@@ -657,6 +672,21 @@ fluentd:
         fluentd:
           securityContext: {}
 
+      # This supports either a structured array or a templatable string
+      initContainers: []
+
+      # Array mode
+      # initContainers:
+      #   - name: do-something
+      #     image: bitnami/kubectl:1.22
+      #     command: ['kubectl', 'version']
+
+      # String mode
+      # initContainers: |-
+      #   - name: do-something
+      #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
+      #     command: ['kubectl', 'version']
+
     ## Option to turn autoscaling on for fluentd and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
     autoscaling:
@@ -782,6 +812,21 @@ fluentd:
       containers:
         fluentd:
           securityContext: {}
+
+      # This supports either a structured array or a templatable string
+      initContainers: []
+
+      # Array mode
+      # initContainers:
+      #   - name: do-something
+      #     image: bitnami/kubectl:1.22
+      #     command: ['kubectl', 'version']
+
+      # String mode
+      # initContainers: |-
+      #   - name: do-something
+      #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
+      #     command: ['kubectl', 'version']
 
     ## Override output section for events. Leave empty for the default output section
     overrideOutputConf: |-

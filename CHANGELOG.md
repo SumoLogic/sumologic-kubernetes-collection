@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- feat(helm): add fluentd init containers [#1928][#1928]
 - Add support for GKE 1.21 [#1907][#1907]
 - feat: add affinity to fluentd events statefulset [#1895][#1895]
 - feat(helm): add PodDisruptionBudget api version helm chart helpers [#1865][#1865]
@@ -44,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#1865]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1865
 [#1921]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1921
 [#1917]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1917
+[#1928]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1928
 
 ## [v2.2.0][v2_2_0] - 2021-11-17
 
