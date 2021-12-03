@@ -3,7 +3,7 @@ module github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration
 go 1.17
 
 require (
-	github.com/gruntwork-io/terratest v0.38.5
+	github.com/gruntwork-io/terratest v0.38.6
 	github.com/stretchr/testify v1.7.0
 	k8s.io/api v0.22.4
 	k8s.io/apimachinery v0.22.4
