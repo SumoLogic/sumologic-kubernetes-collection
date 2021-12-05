@@ -28,8 +28,9 @@ func Test_Helm_Default(t *testing.T) {
 		releaseName    = generateReleaseName(now)
 		valuesFilePath = "values/values_default.yaml"
 
-		tickDuration = time.Second
-		waitDuration = time.Minute * 2
+		tickDuration    = time.Second
+		waitDuration    = time.Minute * 2
+		expectedMetrics = internal.DefaultExpectedMetrics
 	)
 
 	feat := features.New("installation").
@@ -144,7 +145,17 @@ func Test_Helm_Default(t *testing.T) {
 
 				require.EqualValues(t, 0, daemonsets[0].Status.NumberUnavailable)
 				return ctx
-			}).
+						}).
+		Assess("metrics are present", // TODO: extract this out to a separate feature
+			stepfuncs.WaitUntilExpectedMetricsPresent(
+				expectedMetrics,
+				"receiver-mock",
+				"receiver-mock",
+				internal.ReceiverMockServicePort,
+				waitDuration,
+				tickDuration,
+			),
+		).
 		Feature()
 
 	testenv.Test(t, feat)
