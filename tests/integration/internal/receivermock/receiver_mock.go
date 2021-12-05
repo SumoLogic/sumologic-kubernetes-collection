@@ -11,26 +11,28 @@ import (
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 )
 
+// Mapping of metric names to the number of times the metric was observed 
+type MetricCounts map[string]int
+
 // A HTTP client for the receiver-mock API
 type ReceiverMockClient struct {
 	baseUrl   url.URL
 	tlsConfig tls.Config
-	t         *testing.T
 }
 
 func NewReceiverMockClient(t *testing.T, baseUrl url.URL) *ReceiverMockClient {
-	return &ReceiverMockClient{baseUrl: baseUrl, t: t, tlsConfig: tls.Config{}}
+	return &ReceiverMockClient{baseUrl: baseUrl, tlsConfig: tls.Config{}}
 }
 
-func (client *ReceiverMockClient) GetMetricCounts() (map[string]int, error) {
+func (client *ReceiverMockClient) GetMetricCounts(t *testing.T) (MetricCounts, error) {
 	path, err := url.Parse("metrics-list")
 	if err != nil {
-		client.t.Fatal(err)
+		t.Fatal(err)
 	}
 	url := client.baseUrl.ResolveReference(path)
 
 	statusCode, body := http_helper.HttpGet(
-		client.t,
+		t,
 		url.String(),
 		&client.tlsConfig,
 	)
@@ -39,7 +41,7 @@ func (client *ReceiverMockClient) GetMetricCounts() (map[string]int, error) {
 	}
 	metricCounts, err := parseMetricList(body)
 	if err != nil {
-		client.t.Fatal(err)
+		t.Fatal(err)
 	}
 	return metricCounts, nil
 }
@@ -56,7 +58,7 @@ func parseMetricList(rawMetricsValues string) (map[string]int, error) {
 		// the last colon of the line is the split point
 		splitIndex := strings.LastIndex(line, ":")
 		if splitIndex == -1 || splitIndex == 0 {
-			return nil, fmt.Errorf("failed to parse metrics list line: '%s'", line)
+			return nil, fmt.Errorf("failed to parse metrics list line: %q", line)
 		}
 		metricName := line[:splitIndex]
 		metricCountString := strings.TrimSpace(line[splitIndex+1:])
