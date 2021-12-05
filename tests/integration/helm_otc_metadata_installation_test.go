@@ -18,6 +18,7 @@ import (
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
+	k8sinternal "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/k8s"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
@@ -52,31 +53,15 @@ func Test_Helm_OT_Metadata(t *testing.T) {
 				require.Len(t, secret.Data, 10)
 				return ctx
 			}).
-		Assess("3 otelcol logs pods are created, running and ready",
+		Assess("otelcol logs pods are available",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				require.Eventually(t, func() bool {
-					pods := k8s.ListPods(t, ctxopts.KubectlOptions(ctx), v1.ListOptions{
-						LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-logs", releaseName),
-						FieldSelector: "status.phase=Running",
-					})
-
-					if len(pods) != 3 {
-						return false
-					}
-
-					for _, pod := range pods {
-						for _, container := range pod.Status.ContainerStatuses {
-							if !container.Ready {
-								return false
-							}
-						}
-					}
-
-					return true
-				}, waitDuration, tickDuration)
+				filters := v1.ListOptions{
+					LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-logs", releaseName),
+				}
+				k8sinternal.WaitUntilPodsAvailable(t, ctxopts.KubectlOptions(ctx), filters, 3, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("3 otelcol logs buffers PVCs are created",
+		Assess("otelcol logs buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				assert.Eventually(t, func() bool {
 					var pvcs corev1.PersistentVolumeClaimList
@@ -90,31 +75,15 @@ func Test_Helm_OT_Metadata(t *testing.T) {
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("3 otelcol metrics pods are created, running and ready",
+		Assess("otelcol metrics pods are available",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				require.Eventually(t, func() bool {
-					pods := k8s.ListPods(t, ctxopts.KubectlOptions(ctx), v1.ListOptions{
-						LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-metrics", releaseName),
-						FieldSelector: "status.phase=Running",
-					})
-
-					if len(pods) != 3 {
-						return false
-					}
-
-					for _, pod := range pods {
-						for _, container := range pod.Status.ContainerStatuses {
-							if !container.Ready {
-								return false
-							}
-						}
-					}
-
-					return true
-				}, waitDuration, tickDuration)
+				filters := v1.ListOptions{
+					LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-metrics", releaseName),
+				}
+				k8sinternal.WaitUntilPodsAvailable(t, ctxopts.KubectlOptions(ctx), filters, 3, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("3 otelcol metrics buffers PVCs are created",
+		Assess("otelcol metrics buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				assert.Eventually(t, func() bool {
 					var pvcs corev1.PersistentVolumeClaimList
@@ -127,18 +96,15 @@ func Test_Helm_OT_Metadata(t *testing.T) {
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("1 fluentd events pod is created and running",
+		Assess("fluentd events pod is available",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				require.Eventually(t, func() bool {
-					pods := k8s.ListPods(t, ctxopts.KubectlOptions(ctx), v1.ListOptions{
-						LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-events", releaseName),
-						FieldSelector: "status.phase=Running",
-					})
-					return len(pods) == 1
-				}, waitDuration, tickDuration)
+				filters := v1.ListOptions{
+					LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-events", releaseName),
+				}
+				k8sinternal.WaitUntilPodsAvailable(t, ctxopts.KubectlOptions(ctx), filters, 1, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("1 fluentd events buffers PVCs are created",
+		Assess("fluentd events buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				assert.Eventually(t, func() bool {
 					var pvcs corev1.PersistentVolumeClaimList
@@ -151,15 +117,12 @@ func Test_Helm_OT_Metadata(t *testing.T) {
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("1 prometheus pod is created and running",
+		Assess("prometheus pod is available",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				require.Eventually(t, func() bool {
-					pods := k8s.ListPods(t, ctxopts.KubectlOptions(ctx), v1.ListOptions{
-						LabelSelector: "app=prometheus",
-						FieldSelector: "status.phase=Running",
-					})
-					return len(pods) == 1
-				}, waitDuration, tickDuration)
+				filters := v1.ListOptions{
+					LabelSelector: "app=prometheus",
+				}
+				k8sinternal.WaitUntilPodsAvailable(t, ctxopts.KubectlOptions(ctx), filters, 1, waitDuration, tickDuration)
 				return ctx
 			}).
 		Assess("fluent-bit daemonset is running",
