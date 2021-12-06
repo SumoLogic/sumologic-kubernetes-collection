@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"sigs.k8s.io/e2e-framework/klient"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/support/kind"
@@ -87,8 +88,16 @@ func CreateKindCluster() func(context.Context, *envconf.Config, *testing.T) (con
 		ctx = ctxopts.WithKubectlOptions(ctx, kubectlOptions)
 		t.Logf("Kube config: %s", kubecfg)
 
-		// update envconfig with kubeconfig
+		// update envconfig with kubeconfig...
 		cfg.WithKubeconfigFile(kubecfg)
+
+		// ...and with new klient.Client since otherwise it would be reused as per:
+		// https://github.com/kubernetes-sigs/e2e-framework/blob/55d8b7e4/pkg/envconf/config.go#L116-L132
+		cl, err := klient.NewWithKubeConfigFile(kubecfg)
+		if err != nil {
+			return ctx, err
+		}
+		cfg.WithClient(cl)
 
 		// store entire cluster value in ctx for future access using the cluster name
 		return context.WithValue(ctx, kindContextKey(clusterName), k), nil
