@@ -18,9 +18,6 @@ kube-prometheus-stack:
   prometheus:
     prometheusSpec:
       resources:
-        limits:
-          cpu: 100m
-          memory: 64Mi
         requests:
           cpu: 100m
           memory: 64Mi
@@ -30,27 +27,18 @@ fluentd:
   logs:
     statefulset:
       resources:
-        limits:
-          memory: 64Mi
-          cpu: 100m
         requests:
           memory: 64Mi
           cpu: 100m
   metrics:
     statefulset:
       resources:
-        limits:
-          memory: 64Mi
-          cpu: 100m
         requests:
           memory: 64Mi
           cpu: 100m
   events:
     statefulset:
       resources:
-        limits:
-          memory: 64Mi
-          cpu: 100m
         requests:
           memory: 64Mi
           cpu: 100m
