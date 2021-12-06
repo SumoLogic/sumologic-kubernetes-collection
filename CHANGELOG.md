@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update fluentd to 1.12.2-sumo-10
+- Update fluentd to 1.12.2-sumo-10 [#1927][#1927]
 - Update dependencies for ARM support [#1919][#1919]
   - Update kube-state-metrics to 1.9.8
   - Update kubernetes-setup to 3.1.1
@@ -34,6 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     by number of errors and switches to a new, [easier to use config format][v0.38.1-cfp-help]
   - Change the default number of traces for Cascading Filter to 200000
 
+### Fixed
+
+- Reduced the number of API server calls from the metrics metadata enrichment plugin by a significant amount [#1927][#1927]
+
 [v0.38.1-cfp]: https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
 [v0.38.1-cfp-help]: https://help.sumologic.com/Traces/Getting_Started_with_Transaction_Tracing/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.2.0...main
@@ -45,6 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#1865]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1865
 [#1921]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1921
 [#1917]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1917
+[#1919]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1919
+[#1927]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1927
 [#1928]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1928
 
 ## [v2.2.0][v2_2_0] - 2021-11-17
