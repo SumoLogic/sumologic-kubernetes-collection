@@ -30,7 +30,7 @@ func Test_Helm_Default(t *testing.T) {
 		valuesFilePath = "values/values_default.yaml"
 
 		tickDuration = time.Second
-		waitDuration = time.Minute
+		waitDuration = time.Minute * 2
 	)
 
 	feat := features.New("installation").
