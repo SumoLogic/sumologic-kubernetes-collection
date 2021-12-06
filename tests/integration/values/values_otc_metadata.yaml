@@ -26,9 +26,6 @@ kube-prometheus-stack:
   prometheus:
     prometheusSpec:
       resources:
-        limits:
-          cpu: 100m
-          memory: 128Mi
         requests:
           cpu: 100m
           memory: 128Mi
@@ -41,18 +38,12 @@ metadata:
   logs:
     statefulset:
       resources:
-        limits:
-          cpu: 100m
-          memory: 128Mi
         requests:
           cpu: 100m
           memory: 128Mi
   metrics:
     statefulset:
       resources:
-        limits:
-          cpu: 100m
-          memory: 128Mi
         requests:
           cpu: 100m
           memory: 128Mi
