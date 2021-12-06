@@ -18,7 +18,6 @@ import (
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
-	k8sinternal "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/k8s"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
@@ -54,13 +53,15 @@ func Test_Helm_Default(t *testing.T) {
 				return ctx
 			}).
 		Assess("fluentd logs pods are available",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				filters := v1.ListOptions{
+			stepfuncs.WaitUntilPodsAvailable(
+				v1.ListOptions{
 					LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName),
-				}
-				k8sinternal.WaitUntilPodsAvailable(t, ctxopts.KubectlOptions(ctx), filters, 3, waitDuration*2, tickDuration)
-				return ctx
-			}).
+				},
+				3,
+				waitDuration,
+				tickDuration,
+			),
+		).
 		Assess("fluentd logs buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				assert.Eventually(t, func() bool {
@@ -75,13 +76,15 @@ func Test_Helm_Default(t *testing.T) {
 				return ctx
 			}).
 		Assess("fluentd metrics pods are available",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				filters := v1.ListOptions{
+			stepfuncs.WaitUntilPodsAvailable(
+				v1.ListOptions{
 					LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-metrics", releaseName),
-				}
-				k8sinternal.WaitUntilPodsAvailable(t, ctxopts.KubectlOptions(ctx), filters, 3, waitDuration, tickDuration)
-				return ctx
-			}).
+				},
+				3,
+				waitDuration,
+				tickDuration,
+			),
+		).
 		Assess("fluentd metrics buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				assert.Eventually(t, func() bool {
@@ -96,13 +99,15 @@ func Test_Helm_Default(t *testing.T) {
 				return ctx
 			}).
 		Assess("fluentd events pods are available",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				filters := v1.ListOptions{
+			stepfuncs.WaitUntilPodsAvailable(
+				v1.ListOptions{
 					LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-events", releaseName),
-				}
-				k8sinternal.WaitUntilPodsAvailable(t, ctxopts.KubectlOptions(ctx), filters, 1, waitDuration, tickDuration)
-				return ctx
-			}).
+				},
+				1,
+				waitDuration,
+				tickDuration,
+			),
+		).
 		Assess("fluentd events buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				assert.Eventually(t, func() bool {
@@ -117,13 +122,15 @@ func Test_Helm_Default(t *testing.T) {
 				return ctx
 			}).
 		Assess("prometheus pods are available",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				filters := v1.ListOptions{
+			stepfuncs.WaitUntilPodsAvailable(
+				v1.ListOptions{
 					LabelSelector: "app=prometheus",
-				}
-				k8sinternal.WaitUntilPodsAvailable(t, ctxopts.KubectlOptions(ctx), filters, 1, waitDuration, tickDuration)
-				return ctx
-			}).
+				},
+				1,
+				waitDuration,
+				tickDuration,
+			),
+		).
 		Assess("fluent-bit daemonset is running",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				var daemonsets []appsv1.DaemonSet
