@@ -29,6 +29,7 @@ function push_helm_chart() {
   echo "Pushing new Helm Chart release ${version}"
 
   set -ex
+  # this loop is to allow for concurent builds: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1853 
   while true; do
     # due to helm repo index issue: https://github.com/helm/helm/issues/7363
     # we need to create new package in a different dir, merge the index and move the package back
@@ -48,15 +49,15 @@ function push_helm_chart() {
     git status
     git commit -m "Push new Helm Chart release ${version}"
 
-    if git push "${remote}" gh-pages; then
-      # Push was successful, we're done
-      break
-    fi
-
     # Go back to the branch we checkout out at before gh-pages
     git checkout -
     # Pop the changes in case there are any
     git stash pop
+
+    if git push "${remote}" gh-pages; then
+      # Push was successful, we're done
+      break
+    fi
   done
   set +ex
 }
