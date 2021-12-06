@@ -19,11 +19,11 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: ac88f1125e73352099b2d81f2db345d99c54f48476063b86c47accb16a2121d6
+        checksum/config: 875cbb3e6d8fecbb6c823ed34044a22ca3436d55eaaf43866126bda2977d1314
         someAnnotation: someValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-metrics
-        chart: "sumologic-2.2.0"
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
         someLabel: someValue
