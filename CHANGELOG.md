@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for GKE 1.21 [#1907][#1907]
 - feat: add affinity to fluentd events statefulset [#1895][#1895]
 - feat(helm): add PodDisruptionBudget api version helm chart helpers [#1865][#1865]
+- feat: add option to disable `service` enrichment [#1936](#1936)
 
 ### Changed
 
@@ -52,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#1919]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1919
 [#1927]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1927
 [#1928]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1928
+[#1936]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1936
 
 ## [v2.2.0][v2_2_0] - 2021-11-17
 
