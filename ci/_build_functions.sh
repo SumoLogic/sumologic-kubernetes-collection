@@ -52,7 +52,8 @@ function push_helm_chart() {
     # Go back to the branch we checkout out at before gh-pages
     git checkout -
     # Pop the changes in case there are any
-    git stash pop
+    # this command will fail on empty stash, hence the || true
+    git stash pop || true
 
     if git push "${remote}" gh-pages; then
       # Push was successful, we're done
