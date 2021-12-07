@@ -89,7 +89,7 @@ First you will generate the YAML to apply to your cluster.  The following comman
 
 ```bash
 kubectl run tools \
-  -it --quiet --rm \
+  -i --quiet --rm \
   --restart=Never \
   --image sumologic/kubernetes-tools:2.6.0 -- \
   template \
@@ -126,7 +126,7 @@ The following will render the YAML and install in the `my-namespace` namespace.
 
 ```bash
 kubectl run tools \
-  -it --quiet --rm \
+  -i --quiet --rm \
   --restart=Never \
   --image sumologic/kubernetes-tools:2.6.0 -- \
   template \
@@ -175,7 +175,7 @@ you can do the following:
 
 ```bash
 kubectl run tools \
-  -it --quiet --rm \
+  -i --quiet --rm \
   --restart=Never \
   --image sumologic/kubernetes-tools:2.6.0 -- \
   template \
@@ -277,7 +277,7 @@ You can use the same commands used to create the YAML in the first place.
 
 ```bash
 kubectl run tools \
-  -it --quiet --rm \
+  -i --quiet --rm \
   --restart=Never \
   --image sumologic/kubernetes-tools:2.6.0 -- \
   template \
