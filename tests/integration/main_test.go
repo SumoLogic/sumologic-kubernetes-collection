@@ -1,11 +1,10 @@
-package main
+package integration
 
 import (
 	"context"
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -18,6 +17,8 @@ import (
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
 const (
@@ -38,6 +39,8 @@ func TestMain(m *testing.M) {
 		testenv = env.
 			NewWithKubeConfig(kubeconfig).
 			BeforeEachTest(InjectKubectlOptionsFromKubeconfig(kubeconfig))
+
+		ConfigureTestEnv(testenv)
 	} else {
 		cfg, err := envconf.NewFromFlags()
 		if err != nil {
@@ -45,16 +48,46 @@ func TestMain(m *testing.M) {
 		}
 		testenv = env.NewWithConfig(cfg)
 
-		testenv.BeforeEachTest(
-			CreateKindCluster(),
-		)
-
-		testenv.AfterEachTest(
-			DestroyKindCluster(),
-		)
+		testenv.BeforeEachTest(CreateKindCluster())
+		ConfigureTestEnv(testenv)
+		testenv.AfterEachTest(DestroyKindCluster())
 	}
 
 	os.Exit(testenv.Run(m))
+}
+
+func ConfigureTestEnv(testenv env.Environment) {
+	const receiverMockNamespace = "receiver-mock"
+
+	// Before
+	for _, f := range stepfuncs.IntoTestEnvFuncs(
+		stepfuncs.KubectlApplyFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
+		stepfuncs.KubectlCreateNamespaceTestOpt(),
+		// SetHelmOptionsTestOpt picks a values file from `values` directory
+		// based on the test name ( the details of name generation can be found
+		// in `strings.ValueFileFromT()`.)
+		// This values file will be used throughout the test to install the
+		// collection's chart.
+		//
+		// The reason for this is to limit the amount of boilerplate in tests
+		// themselves but we cannot attach/map the values.yaml to the test itself
+		// so we do this mapping instead.
+		stepfuncs.SetHelmOptionsTestOpt(),
+		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
+		stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath),
+	) {
+		testenv.BeforeEachTest(f)
+	}
+
+	// After
+	for _, f := range stepfuncs.IntoTestEnvFuncs(
+		stepfuncs.PrintClusterStateOpt(),
+		stepfuncs.HelmDeleteTestOpt(),
+		stepfuncs.KubectlDeleteNamespaceTestOpt(),
+		stepfuncs.KubectlDeleteFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
+	) {
+		testenv.AfterEachTest(f)
+	}
 }
 
 // InjectKubectlOptionsFromKubeconfig injects kubectl options to the context that will be propagated in tests.
@@ -72,7 +105,7 @@ type kindContextKey string
 
 func CreateKindCluster() func(context.Context, *envconf.Config, *testing.T) (context.Context, error) {
 	return func(ctx context.Context, cfg *envconf.Config, t *testing.T) (context.Context, error) {
-		clusterName := clusterNameFromT(t)
+		clusterName := strings.NameFromT(t)
 		k := kind.NewCluster(clusterName)
 
 		// We only provide the config because the API is constructed in such a way
@@ -106,7 +139,7 @@ func CreateKindCluster() func(context.Context, *envconf.Config, *testing.T) (con
 
 func DestroyKindCluster() func(context.Context, *envconf.Config, *testing.T) (context.Context, error) {
 	return func(ctx context.Context, cfg *envconf.Config, t *testing.T) (context.Context, error) {
-		clusterName := clusterNameFromT(t)
+		clusterName := strings.NameFromT(t)
 		clusterVal := ctx.Value(kindContextKey(clusterName))
 		if clusterVal == nil {
 			return ctx, fmt.Errorf("destroy kind cluster func: context cluster is nil")
@@ -123,8 +156,4 @@ func DestroyKindCluster() func(context.Context, *envconf.Config, *testing.T) (co
 
 		return ctx, nil
 	}
-}
-
-func clusterNameFromT(t *testing.T) string {
-	return strings.ReplaceAll(strings.ToLower(t.Name()), "_", "-")
 }

@@ -3,15 +3,16 @@ package stepfuncs
 import (
 	"context"
 	"os"
+	"path"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/helm"
-	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
 const (
@@ -49,8 +50,17 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 //
 func HelmInstallOpt(path string, releaseName string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		ctx = ctxopts.WithHelmRelease(ctx, releaseName)
 		helm.Install(t, ctxopts.HelmOptions(ctx), path, releaseName)
 		return ctx
+	}
+}
+
+// HelmInstallTestOpt wraps HelmInstallOpt with helm release name generation for tests.
+func HelmInstallTestOpt(path string) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		releaseName := strings.ReleaseNameFromT(t)
+		return HelmInstallOpt(path, releaseName)(ctx, t, envConf)
 	}
 }
 
@@ -68,22 +78,12 @@ func HelmDeleteOpt(release string) features.Func {
 	}
 }
 
-// KubectlDeleteNamespaceOpt returns a features.Func that with delete the provided namespace.
-func KubectlDeleteNamespaceOpt(namespace string) features.Func {
+// HelmDeleteTestOpt wraps HelmDeleteOpt by taking the release name saved in context
+// by HelmInstallTestOpt/HelmInstallOpt.
+func HelmDeleteTestOpt() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s.DeleteNamespace(t, ctxopts.KubectlOptions(ctx), namespace)
-		return ctx
-	}
-}
-
-// SetKubectlNamespaceOpt returns a features.Func that will create the requested namespace
-// in the cluster and set it in kubectlOptions stored in the context.
-func SetKubectlNamespaceOpt(namespace string) features.Func {
-	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOptions := ctxopts.KubectlOptions(ctx)
-		kubectlOptions.Namespace = namespace
-		k8s.CreateNamespace(t, kubectlOptions, namespace)
-		return ctx
+		releaseName := ctxopts.HelmRelease(ctx)
+		return HelmDeleteOpt(releaseName)(ctx, t, envConf)
 	}
 }
 
@@ -106,42 +106,13 @@ func SetHelmOptionsOpt(valuesFilePath string) features.Func {
 	}
 }
 
-// KubectlApplyFOpt returns a features.Func that will run "kubectl apply -f" in the provided namespace
-// with the provided yaml file path as an argument.
-func KubectlApplyFOpt(yamlPath string, namespace string) features.Func {
-	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOpts := *ctxopts.KubectlOptions(ctx)
-		kubectlOpts.Namespace = namespace
-		k8s.KubectlApply(t, &kubectlOpts, yamlPath)
-		return ctx
-	}
-}
-
-// KubectlDeleteFOpt returns a features.Func that will run "kubectl delete -f" in the provided namespace
-// with the provided yaml file path as an argument.
-func KubectlDeleteFOpt(yamlPath string, namespace string) features.Func {
-	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOpts := *ctxopts.KubectlOptions(ctx)
-		kubectlOpts.Namespace = namespace
-		k8s.KubectlDelete(t, &kubectlOpts, yamlPath)
-		return ctx
-	}
-}
-
-// PrintClusterStateOpt returns a features.Func that will log the output of kubectl get all if the test
-// has failed of if the optional force flag has been set.
+// SetHelmOptionsTestOpt wraps SetHelmOptionsOpt by taking the values file from
+// `values` directory and concatenating that with a name name generated from a test name.
 //
-// NOTE:
-// By default the default cluster namespace will be used. If you'd like to specify the namespace
-// use SetKubectlNamespaceOpt.
-//
-func PrintClusterStateOpt(force ...bool) features.Func {
+// The details of values file name generation can be found in `strings.ValueFileFromT()`.
+func SetHelmOptionsTestOpt() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		if (len(force) == 1 && force[0]) || t.Failed() {
-			k8s.RunKubectl(t, ctxopts.KubectlOptions(ctx), "get", "all")
-			k8s.RunKubectl(t, ctxopts.KubectlOptions(ctx), "get", "events")
-		}
-
-		return ctx
+		valuesFilePath := path.Join("values", strings.ValueFileFromT(t))
+		return SetHelmOptionsOpt(valuesFilePath)(ctx, t, envConf)
 	}
 }
