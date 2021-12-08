@@ -191,7 +191,7 @@ sumologic:
     enabled: true
 
   ### Traces configuration
-  ## This is experimental feature and may be unavailable for your account
+  ## Set the enabled flag to true to enable traces ingestion.
   traces:
     enabled: false
     ## How many spans per request should be send to receiver
