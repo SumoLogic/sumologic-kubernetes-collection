@@ -211,9 +211,9 @@ sumologic:
       provider: fluentd
 
   ### Traces configuration
-  ## Set the enabled flag to true to enable traces ingestion.
+  ## Set the enabled flag to false for disabling traces ingestion altogether.
   traces:
-    enabled: false
+    enabled: true
     ## How many spans per request should be send to receiver
     spans_per_request: 100
 
