@@ -5,12 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-<!-- markdown-link-check-disable -->
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.0...main
-<!-- markdown-link-check-enable -->
-
 ## [v2.3.0][v2_3_0] - 2021-12-8
 
 ### Added
@@ -45,9 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Reduced the number of API server calls from the metrics metadata enrichment plugin by a significant amount [#1927][#1927]
 
-<!-- markdown-link-check-disable -->
 [v2_3_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
-<!-- markdown-link-check-enable -->
 [v0.38.1-cfp]: https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
 [v0.38.1-cfp-help]: https://help.sumologic.com/Traces/Getting_Started_with_Transaction_Tracing/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F
 [#1907]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1907
