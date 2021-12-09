@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- feat: add option to disable pod owners enrichment [#1959][#1959]
+
 <!-- markdown-link-check-disable -->
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.0...main
 <!-- markdown-link-check-enable -->
+[#1959]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1959
 
 ## [v2.3.0][v2_3_0] - 2021-12-8
 

@@ -220,7 +220,7 @@ sumologic:
 fluentd:
   image:
     repository: public.ecr.aws/sumologic/kubernetes-fluentd
-    tag: 1.12.2-sumo-11
+    tag: 1.12.2-sumo-12
     pullPolicy: IfNotPresent
 
   ## Specifies whether a PodSecurityPolicy should be created
@@ -351,6 +351,9 @@ fluentd:
     ## Option to specify K8s API groups
     apiGroups:
       - apps/v1
+    ## Option to control the enrichment of logs and metrics with pod owner metadata like `daemonset`, `deployment`,
+    ## `replicaset`, `statefulset`.
+    addOwners: true
     ## Option to control the enrichment of logs and metrics with `service` metadata.
     addService: true
 
