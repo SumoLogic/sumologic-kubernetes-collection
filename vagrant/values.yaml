@@ -145,16 +145,26 @@ fluent-bit:
     # https://github.com/fluent/helm-charts/blob/fluent-bit-0.12.1/charts/fluent-bit/values.yaml#L187-L195
     filters: |
       [FILTER]
-        Name                 kubernetes
-        Match                kube.*
-        Merge_Log            On
-        Keep_Log             Off
-        K8S-Logging.Parser   On
-        K8S-Logging.Exclude  On
+          Name                 kubernetes
+          Match                kube.*
+          Merge_Log            On
+          Keep_Log             Off
+          K8S-Logging.Parser   On
+          K8S-Logging.Exclude  On
       [FILTER]
-        Name                 grep
-        Match                containers.var.log.containers.receiver-mock*
-        Exclude              log .*
+          Name                 grep
+          Match                containers.var.log.containers.receiver-mock*
+          Exclude              log .*
+      [FILTER]
+          Name    lua
+          Match   containers.*
+          script  /fluent-bit/scripts/merge_containerd_multipart_logs.lua
+          call    merge_containerd_multipart_logs
+      [FILTER]
+          Name    lua
+          Match   containers.*
+          script  /fluent-bit/scripts/merge_multiline_logs.lua
+          call    merge_multiline_logs
 
 fluentd:
   logs:

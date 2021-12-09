@@ -944,6 +944,68 @@ fluent-bit:
         type: DirectoryOrCreate
       name: tail-db
 
+  luaScripts:
+    merge_containerd_multipart_logs.lua: |
+      local buffer = {} -- log line per tag
+      local delimiter = ""
+      local max_line_length = 262144 -- lua max string size is 300k
+
+      function merge_containerd_multipart_logs(tag, timestamp, record)
+          local logtag = record["logtag"]
+
+          if logtag == "P" then -- part of multipart log
+              local log_line = buffer[tag]
+              if log_line == nil then log_line = "" end
+              log_line = log_line .. delimiter .. record["log"]
+              if log_line:len() >= max_line_length then
+                  -- if we exceed the max size, return what we have
+                  record["log"] = log_line
+                  buffer[tag] = nil
+                  return 1, timestamp, record
+              else
+                  buffer[tag] = log_line
+                  return -1, 0, 0
+              end
+          elseif logtag == "F" and buffer[tag] ~= nil and buffer[tag]:len() > 0 then -- end of multipart log
+              record["log"] = buffer[tag] .. delimiter .. record["log"]
+              buffer[tag] = nil
+              return 1, timestamp, record
+          else -- full log
+              return 0, 0, 0
+          end
+      end
+
+    merge_multiline_logs.lua: |
+      -- the pattern uses Lua's pattern matching, which is similar, but not identical
+      -- to standard regex
+      local first_line_pattern = "^%d%d%d%d%-%d%d?%-%d%d?.%d%d:%d%d:%d%d"
+      local buffer = {} -- log line per tag
+      local delimiter = "\n"
+      local max_line_length = 262144 -- lua max string size is 300k
+
+      function merge_multiline_logs(tag, timestamp, record)
+          local log_body = record["log"]
+
+          if log_body:find(first_line_pattern) then -- first line, flush the current buffer
+              local log_line = buffer[tag]
+              buffer[tag] = log_body
+              if log_line ~= nil then
+                  record["log"] = log_line
+                  return 1, timestamp, record
+              end
+          elseif buffer[tag] ~= nil then -- buffer not empty, add to it
+              buffer[tag] = buffer[tag] .. delimiter .. log_body
+              if buffer[tag]:len() > max_line_length then -- buffer too large, flush
+                  record["log"] = buffer[tag]
+                  buffer[tag] = nil
+                  return 1, timestamp, record
+              end
+              return -1, 0, 0
+          else -- buffer empty, treat it as a single line
+              return 0, 0, 0
+          end
+      end
+
   ## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit
   config:
     ## https://docs.fluentbit.io/manual/service
@@ -1056,6 +1118,17 @@ fluent-bit:
           Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
           Time_Key     time
           Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
+    filters: |
+      [FILTER]
+          Name    lua
+          Match   containers.*
+          script  /fluent-bit/scripts/merge_containerd_multipart_logs.lua
+          call    merge_containerd_multipart_logs
+      [FILTER]
+          Name    lua
+          Match   containers.*
+          script  /fluent-bit/scripts/merge_multiline_logs.lua
+          call    merge_multiline_logs
 
 ## Configure kube-prometheus-stack
 ## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
