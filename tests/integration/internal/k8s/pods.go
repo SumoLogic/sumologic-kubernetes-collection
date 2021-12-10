@@ -35,11 +35,10 @@ func WaitUntilPodsAvailableE(
 	sleepDuration time.Duration,
 	sleepBetweenRetries time.Duration,
 ) error {
-	statusMsg := fmt.Sprintf("Wait for pods with filters %v to be available.", filters)
 	retries := int(sleepDuration / sleepBetweenRetries)
 	message, err := retry.DoWithRetryE(
 		t,
-		statusMsg,
+		fmt.Sprintf("WaitUntilPodsAvailable(%s)", formatSelectors(filters)),
 		retries,
 		sleepBetweenRetries,
 		func() (string, error) {
@@ -48,20 +47,32 @@ func WaitUntilPodsAvailableE(
 				return "", err
 			}
 			if len(pods) < minPods {
-				return "", fmt.Errorf("found %d pods with filters %v, need at least %d", len(pods), filters, minPods)
+				return "", fmt.Errorf(
+					"found %d pods (%s), need at least %d",
+					len(pods), formatSelectors(filters), minPods,
+				)
 			}
 			for _, pod := range pods {
 				if !k8s.IsPodAvailable(&pod) {
 					return "", k8s.NewPodNotAvailableError(&pod)
 				}
 			}
-			return fmt.Sprintf("Pods with filters %v are now available.", filters), nil
+			return fmt.Sprintf("Pods (%s) are now available.", formatSelectors(filters)), nil
 		},
 	)
 	if err != nil {
-		t.Logf("Timed out waiting for pods with filters %v to be available: %s", filters, err)
+		t.Logf(
+			"Timed out waiting for pods (%s) to be available: %s",
+			formatSelectors(filters), err,
+		)
 		return err
 	}
-	t.Logf(message)
+	t.Log(message)
 	return nil
+}
+
+func formatSelectors(listOptions v1.ListOptions) string {
+	return fmt.Sprintf("LabelSelector: %q, FieldSelector: %q",
+		listOptions.LabelSelector, listOptions.FieldSelector,
+	)
 }

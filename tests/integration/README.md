@@ -41,6 +41,20 @@ This will:
 - run the tests (using Go toolchain i.e. `go test ....`)
 - destroy created `kind` cluster(s)
 
+> **NOTE**: There is an assumption about mapping tests to helm values files.
+>
+> In order to keep the model of "one `kind` cluster per one test" we map the test name
+> (details can be found in [`strings.ValueFileFromT()`](./internal/strings/strings.go)) )
+>
+> Because of that the author of a test is supposed to create a values file in `values/`
+> directory which will map to his/hers test name.
+>
+> Exemplar mapping:
+>
+> | Test name | Values file path |
+> | --- | --- |
+> | `Test_Helm_Default_OT_Metadata` | `values/values_helm_default_ot_metadata.yaml` |
+
 ## Using pre-existing clusters
 
 You should pay special care when reusing clusters across test runs since left over

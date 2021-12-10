@@ -1,4 +1,4 @@
-package main
+package integration
 
 import (
 	"context"
@@ -6,46 +6,37 @@ import (
 	"testing"
 	"time"
 
+	appsv1 "k8s.io/api/apps/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/e2e-framework/pkg/envconf"
+	"sigs.k8s.io/e2e-framework/pkg/features"
+
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
-	"sigs.k8s.io/e2e-framework/pkg/envconf"
-	"sigs.k8s.io/e2e-framework/pkg/features"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
 func Test_Helm_Default(t *testing.T) {
+	const (
+		tickDuration = time.Second
+		waitDuration = time.Minute * 2
+	)
 	var (
-		now            = time.Now()
-		namespace      = generateNamespaceName(now)
-		releaseName    = generateReleaseName(now)
-		valuesFilePath = "values/values_default.yaml"
-
-		tickDuration    = time.Second
-		waitDuration    = time.Minute * 2
 		expectedMetrics = internal.DefaultExpectedMetrics
 	)
 
+	// TODO:
+	// Refactor this: we should find a way to inject this into step func helpers
+	// like stepfuncs.WaitUntilPodsAvailable() instead of relying on an implementation
+	// detail.
+	releaseName := strings.ReleaseNameFromT(t)
+
 	feat := features.New("installation").
-		// Setup
-		Setup(stepfuncs.SetKubectlNamespaceOpt(namespace)).
-		Setup(stepfuncs.KubectlApplyFOpt(internal.YamlPathReceiverMock, "receiver-mock")).
-		Setup(stepfuncs.SetHelmOptionsOpt(valuesFilePath)).
-		Setup(stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath)).
-		Setup(stepfuncs.HelmInstallOpt(internal.HelmSumoLogicChartAbsPath, releaseName)).
-		// Teardown
-		Teardown(stepfuncs.PrintClusterStateOpt()).
-		Teardown(stepfuncs.HelmDeleteOpt(releaseName)).
-		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(namespace)).
-		Teardown(stepfuncs.KubectlDeleteFOpt(internal.YamlPathReceiverMock, "receiver-mock")).
-		// Assess
 		Assess("sumologic secret is created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				k8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
@@ -65,13 +56,23 @@ func Test_Helm_Default(t *testing.T) {
 		).
 		Assess("fluentd logs buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				namespace := ctxopts.Namespace(ctx)
+				releaseName := ctxopts.HelmRelease(ctx)
+				kubectlOptions := ctxopts.KubectlOptions(ctx)
+
+				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
+				cl, err := k8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				require.NoError(t, err)
+
 				assert.Eventually(t, func() bool {
-					var pvcs corev1.PersistentVolumeClaimList
-					err := envConf.Client().
-						Resources(namespace).
-						List(ctx, &pvcs,
-							resources.WithLabelSelector(fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName)),
-						)
+					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
+						List(ctx, v1.ListOptions{
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName),
+						})
+					if !assert.NoError(t, err) {
+						return false
+					}
+
 					return err == nil && len(pvcs.Items) == 3
 				}, waitDuration, tickDuration)
 				return ctx
@@ -88,13 +89,23 @@ func Test_Helm_Default(t *testing.T) {
 		).
 		Assess("fluentd metrics buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				namespace := ctxopts.Namespace(ctx)
+				releaseName := ctxopts.HelmRelease(ctx)
+				kubectlOptions := ctxopts.KubectlOptions(ctx)
+
+				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
+				cl, err := k8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				require.NoError(t, err)
+
 				assert.Eventually(t, func() bool {
-					var pvcs corev1.PersistentVolumeClaimList
-					err := envConf.Client().
-						Resources(namespace).
-						List(ctx, &pvcs,
-							resources.WithLabelSelector(fmt.Sprintf("app=%s-sumologic-fluentd-metrics", releaseName)),
-						)
+					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
+						List(ctx, v1.ListOptions{
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-metrics", releaseName),
+						})
+					if !assert.NoError(t, err) {
+						return false
+					}
+
 					return err == nil && len(pvcs.Items) == 3
 				}, waitDuration, tickDuration)
 				return ctx
@@ -111,13 +122,23 @@ func Test_Helm_Default(t *testing.T) {
 		).
 		Assess("fluentd events buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				namespace := ctxopts.Namespace(ctx)
+				releaseName := ctxopts.HelmRelease(ctx)
+				kubectlOptions := ctxopts.KubectlOptions(ctx)
+
+				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
+				cl, err := k8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				require.NoError(t, err)
+
 				assert.Eventually(t, func() bool {
-					var pvcs corev1.PersistentVolumeClaimList
-					err := envConf.Client().
-						Resources(namespace).
-						List(ctx, &pvcs,
-							resources.WithLabelSelector(fmt.Sprintf("app=%s-sumologic-fluentd-events", releaseName)),
-						)
+					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
+						List(ctx, v1.ListOptions{
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-events", releaseName),
+						})
+					if !assert.NoError(t, err) {
+						return false
+					}
+
 					return err == nil && len(pvcs.Items) == 1
 				}, waitDuration, tickDuration)
 				return ctx
