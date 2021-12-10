@@ -44,7 +44,7 @@ This will:
 > **NOTE**: There is an assumption about mapping tests to helm values files.
 >
 > In order to keep the model of "one `kind` cluster per one test" we map the test name
-> (details can be find in [`strings.ValueFileFromT()`](./internal/strings/strings.go)) )
+> (details can be found in [`strings.ValueFileFromT()`](./internal/strings/strings.go)) )
 >
 > Because of that the author of a test is supposed to create a values file in `values/`
 > directory which will map to his/hers test name.
