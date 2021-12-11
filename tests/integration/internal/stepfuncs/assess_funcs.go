@@ -2,12 +2,13 @@ package stepfuncs
 
 import (
 	"context"
+	"fmt"
 	"net/url"
 	"testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
-	"github.com/stretchr/testify/require"
+	"github.com/gruntwork-io/terratest/modules/retry"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
@@ -59,21 +60,30 @@ func WaitUntilExpectedMetricsPresent(
 			Path:   "/",
 		}
 		client := receivermock.NewReceiverMockClient(t, baseUrl)
-		require.Eventually(t, func() bool {
-			metricCounts, err := client.GetMetricCounts(t)
-			if err != nil {
-				t.Log(err)
-				return false
-			}
-			for _, expectedMetricName := range expectedMetrics {
-				_, ok := metricCounts[expectedMetricName]
-				if !ok {
-					t.Logf("Couldn't find metric %q in %v", expectedMetricName, metricCounts)
-					return false
+		retries := int(waitDuration / tickDuration)
+		message, err := retry.DoWithRetryE(
+			t,
+			"WaitUntilExpectedMetricsPresent()",
+			retries,
+			tickDuration,
+			func() (string, error) {
+				metricCounts, err := client.GetMetricCounts(t)
+				if err != nil {
+					return "", err
 				}
-			}
-			return true
-		}, waitDuration, tickDuration)
+				for _, expectedMetricName := range expectedMetrics {
+					_, ok := metricCounts[expectedMetricName]
+					if !ok {
+						return "", fmt.Errorf("couldn't find metric %q in received metrics", expectedMetricName)
+					}
+				}
+				return fmt.Sprintf("All expected metrics were received: %v", expectedMetrics), nil
+			},
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Log(message)
 		return ctx
 	}
 }
