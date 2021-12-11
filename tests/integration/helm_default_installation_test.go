@@ -21,7 +21,7 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
-func Test_Helm_Default(t *testing.T) {
+func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 	const (
 		tickDuration = time.Second
 		waitDuration = time.Minute * 2
