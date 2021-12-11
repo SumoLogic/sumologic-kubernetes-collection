@@ -30,8 +30,9 @@ import (
 
 func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 	const (
-		tickDuration = 3 * time.Second
-		waitDuration = 3 * time.Minute
+		tickDuration            = 3 * time.Second
+		waitDuration            = 3 * time.Minute
+		logsGeneratorCount uint = 1000
 	)
 	var (
 		expectedMetrics = internal.DefaultExpectedMetrics
@@ -268,5 +269,56 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 		).
 		Feature()
 
-	testenv.Test(t, featInstall, featMetrics)
+	featLogs := features.New("logs").
+		Setup(stepfuncs.GenerateLogsWithDeployment(
+			logsGeneratorCount,
+			internal.LogsGeneratorName,
+			internal.LogsGeneratorNamespace,
+			internal.LogsGeneratorImage,
+		)).
+		Assess("logs from log generator present", stepfuncs.WaitUntilExpectedLogsPresent(
+			logsGeneratorCount,
+			map[string]string{
+				"namespace":      internal.LogsGeneratorName,
+				"pod_labels_app": internal.LogsGeneratorName,
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("expected container log metadata is present", stepfuncs.WaitUntilExpectedLogsPresent(
+			logsGeneratorCount,
+			map[string]string{
+				"namespace":      internal.LogsGeneratorName,
+				"pod_labels_app": internal.LogsGeneratorName,
+				"container":      internal.LogsGeneratorName,
+				"deployment":     internal.LogsGeneratorName,
+				"replicaset":     "",
+				"namespace_id":   "",
+				"pod":            "",
+				"pod_id":         "",
+				"container_id":   "",
+				"host":           "",
+				"master_url":     "",
+				"node":           "",
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Teardown(
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				opts := *ctxopts.KubectlOptions(ctx)
+				opts.Namespace = internal.LogsGeneratorNamespace
+				k8s.RunKubectl(t, &opts, "delete", "deployment", internal.LogsGeneratorName)
+				return ctx
+			}).
+		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace)).
+		Feature()
+
+	testenv.Test(t, featInstall, featMetrics, featLogs)
 }

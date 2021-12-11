@@ -18,6 +18,10 @@ const (
 	ReceiverMockServicePort = 3000
 	ReceiverMockServiceName = "receiver-mock"
 	ReceiverMockNamespace   = "receiver-mock"
+
+	LogsGeneratorNamespace = "logs-generator"
+	LogsGeneratorName      = "logs-generator"
+	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.7.0"
 )
 
 // metrics we expect the receiver to get
