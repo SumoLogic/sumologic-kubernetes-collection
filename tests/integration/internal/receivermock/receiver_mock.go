@@ -51,6 +51,7 @@ func NewClientWithK8sTunnel(
 		}
 }
 
+// GetMetricCounts returns the number of times each metric was received by receiver-mock
 func (client *ReceiverMockClient) GetMetricCounts(t *testing.T) (MetricCounts, error) {
 	path, err := url.Parse("metrics-list")
 	if err != nil {
@@ -88,6 +89,9 @@ func (m MetricsSamplesByTime) Less(i, j int) bool { return m[i].Timestamp > m[j]
 
 type MetadataFilters map[string]string
 
+// GetMetricSamples returns metric samples received by receiver-mock that pass
+// the provided metadata filter.
+// Note that in the filter semantics, empty strings match any value
 func (client *ReceiverMockClient) GetMetricsSamples(
 	metadataFilters MetadataFilters,
 ) ([]MetricSample, error) {
@@ -120,6 +124,48 @@ func (client *ReceiverMockClient) GetMetricsSamples(
 		return nil, err
 	}
 	return metricsSamples, nil
+}
+
+type LogsCountResponse struct {
+	Count uint
+}
+
+// GetLogsCount returns the numbers of logs received by receiver-mock that pass
+// the provided metadata filter.
+// Note that in the filter semantics, empty strings match any value
+func (client *ReceiverMockClient) GetLogsCount(t *testing.T, metadataFilters MetadataFilters) (uint, error) {
+	// TODO: move this path parsing outside of this function
+	path, err := url.Parse("logs/count")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	queryParams := url.Values{}
+	for key, value := range metadataFilters {
+		queryParams.Set(key, value)
+	}
+
+	url := client.baseUrl.ResolveReference(path)
+	url.RawQuery = queryParams.Encode()
+
+	statusCode, body, err := http_helper.HttpGetE(
+		t,
+		url.String(),
+		&client.tlsConfig,
+	)
+	if err != nil {
+		return 0, err
+	}
+	if statusCode != 200 {
+		return 0, fmt.Errorf("received status code %d in response to receiver request", statusCode)
+	}
+
+	var response LogsCountResponse
+	err = json.Unmarshal([]byte(body), &response)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return response.Count, nil
 }
 
 // parse metrics list returned by /metrics-list

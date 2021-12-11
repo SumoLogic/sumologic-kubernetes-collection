@@ -98,7 +98,7 @@ func GetLogsGeneratorDeployment(
 			},
 		},
 	}
-	deployment := appsv1.Deployment{
+	return appsv1.Deployment{
 		ObjectMeta: metadata,
 		Spec: appsv1.DeploymentSpec{
 			Replicas: &replicas,
@@ -108,7 +108,6 @@ func GetLogsGeneratorDeployment(
 			Template: podTemplateSpec,
 		},
 	}
-	return deployment
 }
 
 func optionsToArgumentList(options LogsGeneratorOptions) []string {

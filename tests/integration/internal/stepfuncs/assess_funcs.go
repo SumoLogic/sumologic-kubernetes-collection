@@ -8,7 +8,9 @@ import (
 
 	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/retry"
+	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	log "k8s.io/klog/v2"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
@@ -72,6 +74,52 @@ func WaitUntilExpectedMetricsPresent(
 			t.Fatal(err)
 		}
 		t.Log(message)
+		return ctx
+	}
+}
+
+// WaitUntilExpectedMetricsPresent returns a features.Func that can be used in `Assess` calls.
+// It will wait until the provided number of logs with the provided labels are returned by receiver-mock's HTTP API on
+// the provided Service and port, until it succeeds or waitDuration passes.
+func WaitUntilExpectedLogsPresent(
+	expectedLogsCount uint,
+	expectedLogsMetadata map[string]string,
+	receiverMockNamespace string,
+	receiverMockServiceName string,
+	receiverMockServicePort int,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		kubectlOpts := *ctxopts.KubectlOptions(ctx)
+		kubectlOpts.Namespace = receiverMockNamespace
+		terrak8s.WaitUntilServiceAvailable(t, &kubectlOpts, receiverMockServiceName, int(waitDuration), tickDuration)
+
+		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		defer closeTunnelFunc()
+
+		assert.Eventually(t, func() bool {
+			logsCount, err := client.GetLogsCount(t, expectedLogsMetadata)
+			if err != nil {
+				log.ErrorS(err, "failed getting log counts from receiver-mock")
+				return false
+			}
+			if logsCount < expectedLogsCount {
+				log.InfoS(
+					"received logs, less than expected",
+					"received", logsCount,
+					"expected", expectedLogsCount,
+				)
+				return false
+			}
+			log.InfoS(
+				"received enough logs",
+				"received", logsCount,
+				"expected", expectedLogsCount,
+				"metadata", expectedLogsMetadata,
+			)
+			return true
+		}, waitDuration, tickDuration)
 		return ctx
 	}
 }
