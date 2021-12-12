@@ -25,7 +25,6 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/receivermock"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
 func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
@@ -34,15 +33,7 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 		waitDuration            = 3 * time.Minute
 		logsGeneratorCount uint = 1000
 	)
-	var (
-		expectedMetrics = internal.DefaultExpectedMetrics
-	)
-
-	// TODO:
-	// Refactor this: we should find a way to inject this into step func helpers
-	// like stepfuncs.WaitUntilPodsAvailable() instead of relying on an implementation
-	// detail.
-	releaseName := strings.ReleaseNameFromT(t)
+	expectedMetrics := internal.DefaultExpectedMetrics
 
 	featInstall := features.New("installation").
 		Assess("sumologic secret is created",
@@ -52,14 +43,19 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 				require.Len(t, secret.Data, 10)
 				return ctx
 			}).
-		Assess("fluentd logs pods are available",
-			stepfuncs.WaitUntilPodsAvailable(
-				v1.ListOptions{
-					LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName),
-				},
-				3,
+		Assess("fluentd logs statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
+					},
+				),
 			),
 		).
 		Assess("fluentd logs buffers PVCs are created",
@@ -85,14 +81,19 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("fluentd metrics pods are available",
-			stepfuncs.WaitUntilPodsAvailable(
-				v1.ListOptions{
-					LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-metrics", releaseName),
-				},
-				3,
+		Assess("fluentd metrics statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-metrics"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-metrics"),
+					},
+				),
 			),
 		).
 		Assess("fluentd metrics buffers PVCs are created",
@@ -118,14 +119,19 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("fluentd events pods are available",
-			stepfuncs.WaitUntilPodsAvailable(
-				v1.ListOptions{
-					LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-events", releaseName),
-				},
-				1,
+		Assess("fluentd events statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
+					},
+				),
 			),
 		).
 		Assess("fluentd events buffers PVCs are created",
