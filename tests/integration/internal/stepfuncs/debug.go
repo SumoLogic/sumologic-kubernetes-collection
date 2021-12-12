@@ -2,7 +2,10 @@ package stepfuncs
 
 import (
 	"context"
+	"os"
+	"os/signal"
 	"testing"
+	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
@@ -25,6 +28,21 @@ func PrintClusterStateOpt(force ...bool) features.Func {
 			k8s.RunKubectl(t, ctxopts.KubectlOptions(ctx), "get", "events")
 		}
 
+		return ctx
+	}
+}
+
+// Wait is a step func that will wait for an hour or until a SIGKILL or SIGINT
+// will be received.
+// It can be used as a helper func in order to inspect cluster state at a particular step.
+func Wait() features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, os.Interrupt, os.Kill)
+		select {
+		case <-time.After(time.Hour):
+		case <-ch:
+		}
 		return ctx
 	}
 }

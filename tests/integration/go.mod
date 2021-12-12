@@ -7,6 +7,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	k8s.io/api v0.22.4
 	k8s.io/apimachinery v0.22.4
+	k8s.io/klog/v2 v2.9.0
 	sigs.k8s.io/e2e-framework v0.0.5
 )
 
@@ -58,7 +59,6 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	k8s.io/client-go v0.22.4 // indirect
-	k8s.io/klog/v2 v2.9.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20211109043538-20434351676c // indirect
 	k8s.io/utils v0.0.0-20210819203725-bdf08cb9a70a // indirect
 	sigs.k8s.io/controller-runtime v0.9.0 // indirect

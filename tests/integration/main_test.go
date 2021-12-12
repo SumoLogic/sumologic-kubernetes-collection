@@ -33,19 +33,20 @@ var (
 func TestMain(m *testing.M) {
 	internal.InitializeConstants()
 
+	cfg, err := envconf.NewFromFlags()
+	if err != nil {
+		log.Fatalf("envconf.NewFromFlags() failed: %s", err)
+	}
+
 	if useKubeConfig := os.Getenv(envNameUseKubeConfig); len(useKubeConfig) > 0 {
 		kubeconfig := os.Getenv(envNameKubeConfig)
 
-		testenv = env.
-			NewWithKubeConfig(kubeconfig).
+		cfg.WithKubeconfigFile(kubeconfig)
+		testenv = env.NewWithConfig(cfg).
 			BeforeEachTest(InjectKubectlOptionsFromKubeconfig(kubeconfig))
 
 		ConfigureTestEnv(testenv)
 	} else {
-		cfg, err := envconf.NewFromFlags()
-		if err != nil {
-			log.Fatalf("envconf.NewFromFlags() failed: %s", err)
-		}
 		testenv = env.NewWithConfig(cfg)
 
 		testenv.BeforeEachTest(CreateKindCluster())
