@@ -317,6 +317,11 @@ fluentd:
     ## will be a random value between 45 minutes and 1 hour 15 minutes, different for each pod. This helps spread
     ## the load on API server that the cache refresh induces. Setting this to 0 disables cache refresh variation.
     cacheRefreshVariation: "900"
+    # Option to control the delay with which cache refresh calls hit the api server.
+    # For example, if 0 then all metadata enrichment happen immediately. Setting this to a non-zero values ensures the
+    # traffic to api server is much distributed.
+    # Disclaimer: Not recommended for use, if your api server read latency is > 1s
+    cache_refresh_apiserver_request_delay: "0"
     ## Option to give plugin specific log level
     pluginLogLevel: "error"
     ## Option to specify K8s API versions
