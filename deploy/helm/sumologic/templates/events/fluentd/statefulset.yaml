@@ -43,6 +43,10 @@ spec:
       nodeSelector:
 {{ toYaml .Values.fluentd.events.statefulset.nodeSelector | indent 8 }}
 {{- end }}
+{{- if or .Values.fluentd.events.statefulset.affinity }}
+      affinity:
+{{ toYaml .Values.fluentd.events.statefulset.affinity | indent 8 }}
+{{- end }}
 {{- if .Values.fluentd.events.statefulset.tolerations }}
       tolerations:
 {{ toYaml .Values.fluentd.events.statefulset.tolerations | indent 8 }}
@@ -59,6 +63,14 @@ spec:
       {{- if .Values.fluentd.events.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.fluentd.events.statefulset.priorityClassName | quote }}
       {{- end }}
+{{- with .Values.fluentd.events.statefulset.initContainers }}
+      initContainers:
+      {{- if kindIs "string" . }}
+        {{- tpl . $ | nindent 8 }}
+      {{- else }}
+        {{-  toYaml . | nindent 8 }}
+      {{- end -}}
+{{- end }}
       containers:
       - name: fluentd-events
         image: {{ .Values.fluentd.image.repository }}:{{ .Values.fluentd.image.tag }}
@@ -94,7 +106,7 @@ spec:
           periodSeconds: 5
         env:
 {{- $ctx := .Values -}}
-{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "events")}}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "events") -}}
 {{- if .Values.fluentd.events.extraEnvVars }}
 {{ toYaml .Values.fluentd.events.extraEnvVars | nindent 8 }}
 {{- end }}
@@ -102,6 +114,10 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: buffer
+{{- if .Values.fluentd.pvcLabels }}
+      labels:
+{{ toYaml .Values.fluentd.pvcLabels | indent 8 }}
+{{- end }}
     spec:
       accessModes: [{{ .Values.fluentd.persistence.accessMode }}]
       storageClassName: {{ .Values.fluentd.persistence.storageClass }}

@@ -101,12 +101,12 @@ First, generate the Prometheus Operator `prometheus-overrides.yaml` by running
  kubectl run tool \
   -it --quiet --rm \
   --restart=Never -n sumologic \
-  --image sumologic/kubernetes-tools:2.2.3 \
+  --image sumologic/kubernetes-tools:2.6.0 \
   -- template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 
  # or using Docker
  docker run -it --rm \
-  sumologic/kubernetes-tools:2.2.3 \
+  sumologic/kubernetes-tools:2.6.0 \
   template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 ```
 

@@ -1,0 +1,241 @@
+fluentd:
+  podSecurityPolicy:
+    create: false
+  additionalPlugins: []
+  logLevel: info
+  logLevelFilter: true
+  verifySsl: true
+  proxyUri: ""
+  compression:
+    enabled: true
+    encoding: gzip
+  securityContext:
+    fsGroup: 999
+  podLabels: {}
+  podAnnotations: {}
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 10Gi
+  buffer:
+    type: memory
+    flushInterval: 5s
+    numThreads: 8
+    chunkLimitSize: 1m
+    queueChunkLimitSize: 128
+    totalLimitSize: 128m
+    retryMaxInterval: 10m
+    retryForever: true
+    compress: gzip
+    filePaths:
+      logs:
+        containers: /fluentd/buffer/logs.containers
+        kubelet: /fluentd/buffer/logs.kubelet
+        systemd: /fluentd/buffer/logs.systemd
+        default: /fluentd/buffer/logs.default
+      metrics:
+        apiserver: /fluentd/buffer/metrics.apiserver
+        kubelet: /fluentd/buffer/metrics.kubelet
+        container: /fluentd/buffer/metrics.container
+        controller: /fluentd/buffer/metrics.controller
+        scheduler: /fluentd/buffer/metrics.scheduler
+        state: /fluentd/buffer/metrics.state
+        node: /fluentd/buffer/metrics.node
+        control-plane: /fluentd/buffer/metrics.control_plane
+        default: /fluentd/buffer/metrics.default
+      events: /fluentd/buffer/events
+      traces: /fluentd/buffer/traces
+    extraConf: ""
+  monitoring:
+    input: false
+    output: false
+  metadata:
+    cacheSize: 10000
+    cacheTtl: 7200
+    cacheRefresh: 3600
+    cacheRefreshVariation: 900
+    pluginLogLevel: error
+    coreApiVersions:
+      - v1
+    apiGroups:
+      - apps/v1
+  logs:
+    enabled: true
+    statefulset:
+      nodeSelector: {}
+      tolerations: []
+      affinity: {}
+      podAntiAffinity: soft
+      replicaCount: 3
+      resources:
+        limits:
+          memory: 1Gi
+          cpu: 1000m
+        requests:
+          memory: 768Mi
+          cpu: 500m
+      priorityClassName: ""
+      podLabels: {}
+      podAnnotations: {}
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
+    podDisruptionBudget:
+      minAvailable: 2
+    rawConfig: |-
+      @include common.conf
+      @include logs.conf
+    input:
+      forwardExtraConf: ""
+    output:
+      logFormat: fields
+      addTimestamp: true
+      timestampKey: timestamp
+      pluginLogLevel: error
+      extraConf: ""
+    extraLogs: ""
+    containers:
+      overrideRawConfig: ""
+      outputConf: '@include logs.output.conf'
+      overrideOutputConf: ""
+      sourceName: '%{namespace}.%{pod}.%{container}'
+      sourceCategory: '%{namespace}/%{pod_name}'
+      sourceCategoryPrefix: kubernetes/
+      sourceCategoryReplaceDash: /
+      excludeContainerRegex: ""
+      excludeHostRegex: ""
+      excludeNamespaceRegex: ""
+      excludePodRegex: ""
+      k8sMetadataFilter:
+        watch: true
+        caFile: ""
+        verifySsl: true
+        clientCert: ""
+        clientKey: ""
+        bearerTokenFile: ""
+      extraFilterPluginConf: ""
+      multiline:
+        enabled: true
+    kubelet:
+      enabled: true
+      outputConf: '@include logs.output.conf'
+      overrideOutputConf: ""
+      sourceName: k8s_kubelet
+      sourceCategory: kubelet
+      sourceCategoryPrefix: kubernetes/
+      sourceCategoryReplaceDash: /
+      excludeFacilityRegex: ""
+      excludeHostRegex: ""
+      excludePriorityRegex: ""
+      excludeUnitRegex: ""
+    systemd:
+      enabled: true
+      outputConf: '@include logs.output.conf'
+      overrideOutputConf: ""
+      sourceName: k8s_systemd
+      sourceCategory: system
+      sourceCategoryPrefix: kubernetes/
+      sourceCategoryReplaceDash: /
+      excludeFacilityRegex: ""
+      excludeHostRegex: ""
+      excludePriorityRegex: ""
+      excludeUnitRegex: ""
+    default:
+      outputConf: '@include logs.output.conf'
+      overrideOutputConf: ""
+      sourceName: k8s_default
+      sourceCategory: default
+      sourceCategoryPrefix: kubernetes/
+      sourceCategoryReplaceDash: /
+      excludeFacilityRegex: ""
+      excludeHostRegex: ""
+      excludePriorityRegex: ""
+      excludeUnitRegex: ""
+  metrics:
+    enabled: true
+    statefulset:
+      nodeSelector: {}
+      tolerations: []
+      affinity: {}
+      podAntiAffinity: soft
+      replicaCount: 3
+      resources:
+        limits:
+          memory: 1Gi
+          cpu: 1000m
+        requests:
+          memory: 768Mi
+          cpu: 500m
+      priorityClassName: ""
+      podLabels: {}
+      podAnnotations: {}
+    autoscaling:
+      enabled: false
+      minReplicas: 3
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
+    podDisruptionBudget:
+      minAvailable: 2
+    rawConfig: |-
+      @include common.conf
+      @include metrics.conf
+    outputConf: '@include metrics.output.conf'
+    overrideOutputConf: ""
+    extraFilterPluginConf: ""
+    extraOutputPluginConf: ""
+    output:
+      apiserver:
+        tag: prometheus.metrics.apiserver**
+        id: sumologic.endpoint.metrics.apiserver
+        weight: 90
+      kubelet:
+        tag: prometheus.metrics.kubelet**
+        id: sumologic.endpoint.metrics.kubelet
+        weight: 90
+      container:
+        tag: prometheus.metrics.container**
+        id: sumologic.endpoint.metrics.container
+        source: kubelet
+        weight: 90
+      controller:
+        tag: prometheus.metrics.controller-manager**
+        id: sumologic.endpoint.metrics.kube.controller.manager
+        weight: 90
+      scheduler:
+        tag: prometheus.metrics.scheduler**
+        id: sumologic.endpoint.metrics.kube.scheduler
+        weight: 90
+      state:
+        tag: prometheus.metrics.state**
+        id: sumologic.endpoint.metrics.kube.state
+        weight: 90
+      node:
+        tag: prometheus.metrics.node**
+        id: sumologic.endpoint.metrics.node.exporter
+        weight: 90
+      control-plane:
+        tag: prometheus.metrics.control-plane**
+        id: sumologic.endpoint.metrics.control.plane
+        weight: 90
+      default:
+        tag: prometheus.metrics**
+        id: sumologic.endpoint.metrics
+        weight: 100
+  events:
+    enabled: true
+    statefulset:
+      nodeSelector: {}
+      tolerations: []
+      resources:
+        limits:
+          memory: 512Mi
+          cpu: 200m
+        requests:
+          memory: 256Mi
+          cpu: 100m
+      priorityClassName: ""
+      podLabels: {}
+      podAnnotations: {}
+    sourceCategory: ""

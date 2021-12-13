@@ -127,7 +127,7 @@ kube-prometheus-stack is in `<destination-namespace>`, run the below command:
 
 ```bash
 kubectl get configmap sumologic-configmap \
---namespace=<source-namespace> --export -o yaml | \
+--namespace=<source-namespace> -o yaml | \
 kubectl apply --namespace=<destination-namespace> -f -
 ```
 
@@ -142,12 +142,12 @@ First, generate the Prometheus Operator `prometheus-overrides.yaml` by running c
  kubectl run tools \
   -it --quiet --rm \
   --restart=Never -n sumologic \
-  --image sumologic/kubernetes-tools:2.2.3 \
+  --image sumologic/kubernetes-tools:2.6.0 \
   -- template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 
  # or using docker
  docker run -it --rm \
-  sumologic/kubernetes-tools:2.2.3 \
+  sumologic/kubernetes-tools:2.6.0 \
   template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 ```
 

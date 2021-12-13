@@ -89,9 +89,9 @@ First you will generate the YAML to apply to your cluster.  The following comman
 
 ```bash
 kubectl run tools \
-  -it --quiet --rm \
+  -i --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:2.2.3 -- \
+  --image sumologic/kubernetes-tools:2.6.0 -- \
   template \
   --name-template 'collection' \
   --set sumologic.accessId='<ACCESS_ID>' \
@@ -126,9 +126,9 @@ The following will render the YAML and install in the `my-namespace` namespace.
 
 ```bash
 kubectl run tools \
-  -it --quiet --rm \
+  -i --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:2.2.3 -- \
+  --image sumologic/kubernetes-tools:2.6.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -175,9 +175,9 @@ you can do the following:
 
 ```bash
 kubectl run tools \
-  -it --quiet --rm \
+  -i --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:2.2.3 -- \
+  --image sumologic/kubernetes-tools:2.6.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -186,8 +186,17 @@ kubectl run tools \
   --set sumologic.clusterName='<CLUSTER_NAME>' \
   --set sumologic.scc.create=true \
   --set fluent-bit.securityContext.privileged=true \
+  --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
+  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
+  --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace} \
   | tee sumologic.yaml
 ```
+
+**Notice:** Prometheus Operator is deployed by default on OpenShift platform,
+you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
+`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in values.yaml or
+exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
+using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
 
 ## Viewing Data In Sumo Logic
 
@@ -249,7 +258,7 @@ cat sumo-values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.2.3 -- \
+    --image sumologic/kubernetes-tools:2.6.0 -- \
     template \
       --name-template 'collection' \
       | tee sumologic.yaml
@@ -268,9 +277,9 @@ You can use the same commands used to create the YAML in the first place.
 
 ```bash
 kubectl run tools \
-  -it --quiet --rm \
+  -i --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:2.2.3 -- \
+  --image sumologic/kubernetes-tools:2.6.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -288,7 +297,7 @@ cat sumo-values.yaml | \
      kubectl run tools \
        -i --quiet --rm \
        --restart=Never \
-       --image sumologic/kubernetes-tools:2.2.3 -- \
+       --image sumologic/kubernetes-tools:2.6.0 -- \
        template \
          --name-template 'collection' \
          | tee sumologic.yaml
@@ -303,7 +312,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.2.3 -- \
+    --image sumologic/kubernetes-tools:2.6.0 -- \
     template \
       --name-template 'collection' \
       --version=1.0.0

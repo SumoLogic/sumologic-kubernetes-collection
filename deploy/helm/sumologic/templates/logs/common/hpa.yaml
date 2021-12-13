@@ -1,0 +1,31 @@
+{{- if and (eq (include "logs.otelcol.enabled" .) "true") (.Values.metadata.logs.autoscaling.enabled) }}
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "sumologic.metadata.name.logs.hpa" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.logs.hpa" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: {{ template "sumologic.metadata.name.logs.statefulset" . }}
+  minReplicas: {{ .Values.metadata.logs.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.metadata.logs.autoscaling.maxReplicas }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.metadata.logs.autoscaling.targetCPUUtilizationPercentage }}
+{{- if .Values.metadata.logs.autoscaling.targetMemoryUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.metadata.logs.autoscaling.targetMemoryUtilizationPercentage }}
+{{- end -}}
+{{- end -}}

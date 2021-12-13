@@ -427,3 +427,53 @@ done
 
 The duplicated pod deletion command is there to make sure the pod is not stuck in `Pending` state
 with event `persistentvolumeclaim "buffer-sumologic-fluentd-logs-1" not found`.
+
+### Error from Prometheus `init-config-reloader` container: `expand environment variables: found reference to unset environment variable "NAMESPACE"`
+
+If the Prometheus pod (that is the pod named `prometheus-<helm-release-name>-kube-prometheus-stack-prometheus-0`)
+goes into `Init:Error` or `Init:CrashLoopBackOff` state, check the status of its init containers:
+
+```sh
+kubectl -n <NAMESPACE> describe pod prometheus-<RELEASE>-kube-prometheus-stack-prometheus-0 | grep -A30 'Init Containers:'
+```
+
+Check if you see the following in the output:
+
+```console
+Init Containers:
+  init-config-reloader:
+    # ...
+    State:       Waiting
+      Reason:    CrashLoopBackOff
+    Last State:  Terminated
+      Reason:    Error
+      Message:   level=info ts=2021-12-10T07:36:25.578058224Z caller=main.go:148 msg="Starting prometheus-config-reloader" version="(version=0.49.0, branch=master, revision=2388bfa55)"
+level=info ts=2021-12-10T07:36:25.578252574Z caller=main.go:149 build_context="(go=go1.16.5, user=paulfantom, date=20210706-17:43:41)"
+expand environment variables: found reference to unset environment variable "NAMESPACE"
+      # ...
+```
+
+If you can see the message `expand environment variables: found reference to unset environment variable "NAMESPACE"`,
+than this is a sign that the Prometheus Operator version running in your cluster is much newer than supported by our chart.
+
+To make our collection work with this newer version of Prometheus Operator, add the following code to your `values.yaml` file
+and upgrade collection using `helm upgrade` command.
+
+```yaml
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      initContainers:
+        - name: "init-config-reloader"
+          env:
+            - name: FLUENTD_METRICS_SVC
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdMetrics
+            - name: NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdNamespace
+```

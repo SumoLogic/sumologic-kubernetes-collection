@@ -4,6 +4,7 @@
   - [Configuration for Docker log format](#configuration-for-docker-log-format)
   - [Configuration for CRI-O log format](#configuration-for-cri-o-log-format)
   - [Configuration for containerd log format](#configuration-for-containerd-log-format)
+  - [Support for multiline logs for containerd](#support-for-multiline-logs-for-containerd)
 
 ## Configuration for Docker log format
 
@@ -218,3 +219,90 @@ and `time` key will be visible in Sumo:
    "log":"this is a log message"
 }
 ```
+
+## Support for multiline logs for containerd
+
+If you are using `containerd` or `crio` and you have multiline logs (eg. stacktraces),
+you should use fluent-bit at least in version `1.8.9`.
+
+```yaml
+fluent-bit:
+  image:
+    tag: 1.8.9
+    repository: fluent/fluent-bit
+```
+
+This version introduced [multiline.parser][multiline-parsing] and built-in parsers (especially `cri`),
+which correctly handles containerd partial logs:
+
+```yaml
+fluent-bit:
+  config:
+    inputs: |
+      [INPUT]
+          Name                tail
+          Path                /var/log/containers/*.log
+          Multiline.parser    cri
+          Tag                 containers.*
+          Refresh_Interval    1
+          Rotate_Wait         60
+          Mem_Buf_Limit       5MB
+          Skip_Long_Lines     On
+          DB                  /tail-db/tail-containers-state-sumo.db
+          DB.Sync             Normal
+      # Put here rest of original configuration...
+```
+
+In addition it allows to specify custom multiline log using `MULTILINE_PARSER`.
+
+Please see [fluent-bit documentation][configurable-multiline-parsers] to learn more about this feature.
+
+For example, if continutation of multiline log is always starting from whitespace char,
+you can use the following configuration:
+
+```yaml
+fluent-bit:
+  config:
+    customParsers: |
+      [MULTILINE_PARSER]
+          name          multiline_stacktrace
+          type          regex
+          flush_timeout 10000
+          # Regex rules for multiline parsing
+          # ---------------------------------
+          #
+          # configuration hints:
+          #
+          #  - first state always has the name: start_state
+          #  - every field in the rule must be inside double quotes
+          #
+          # rules   |   state name   | regex pattern                   | next state name
+          # --------|----------------|--------------------------------------------------
+          # start_state matches all logs starting with non-whitespace char
+          rule       "start_state"    "^\S+"                            "cont"
+          # start_state matches all logs starting with whitespace char
+          rule       "cont"           "^\s+"                            "cont"
+      # Put here original parsers configuration...
+```
+
+In order to use the parser, configure [multiline filter][multiline-filter]:
+
+```yaml
+fluent-bit:
+  config:
+    filters: |
+      [FILTER]
+          Name                  multiline
+          Match                 containers.*
+          Multiline.key_content log
+          Multiline.parser      multiline_stacktrace
+```
+
+**Note:** This filter does not perform buffering that persists across different Chunks.
+This filter process one Chunk at a time and is not suitable for sources that might send multiline messages in separated chunks.
+There is [open issue][fluent-bit-multiline-issue] to support that case directly in tail plugin.
+
+[multiline-parsing]: https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/multiline-parsing
+[configurable-multiline-parsers]: https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/multiline-parsing#configurable-multiline-parsers
+[multiline-filter]: https://docs.fluentbit.io/manual/pipeline/filters/multiline-stacktrace
+[fluent-bit-multiline-issue]: https://github.com/fluent/fluent-bit/issues/4234

@@ -69,7 +69,7 @@ clean-local-values-yaml:
 	rm ${local_values_file}
 
 _apply-avalanche-remote-write-to-local-values: generate-local-config
-	yq w -s ${vagrant_scripts_dir}/yq/update_remote_write_for_avalanche.yaml ../deploy/helm/sumologic/values.yaml | \
+	yq w -s ${vagrant_scripts_dir}/yq/update_remote_write_for_avalanche.yaml ${helm_path}/values.yaml | \
 	yq r - 'prometheus-operator.prometheus.prometheusSpec.remoteWrite' | \
 	yq prefix - 'prometheus-operator.prometheus.prometheusSpec.remoteWrite' > ${local_values_file}
 
@@ -248,7 +248,16 @@ markdown-links-lint:
 	$(MAKE) -C ${root_dir} markdown-links-lint
 
 ## Testing tools
-logs-keeper:
-	kubectl delete configmap -n "logs-keeper" logs-keeper || true
-	kubectl apply -n "logs-keeper" -f ${k8s_path}/logs-keeper.yaml
-	kubectl create configmap -n "logs-keeper" logs-keeper --from-file="${root_dir}vagrant/logs-keeper/logs-keeper.py"
+apply-logs-keeper:
+	kubectl delete configmap -n logs-keeper logs-keeper || true
+	kubectl apply -n logs-keeper -f ${k8s_path}/logs-keeper.yaml
+	kubectl create configmap -n logs-keeper logs-keeper --from-file="${root_dir}vagrant/logs-keeper/logs-keeper.py"
+
+remove-logs-keeper:
+	kubectl delete ns logs-keeper --ignore-not-found=true
+
+apply-logs-generator:
+	kubectl apply -f ${k8s_path}/logs-generator.yaml
+
+remove-logs-generator:
+	kubectl delete -f ${k8s_path}/logs-generator.yaml --ignore-not-found=true

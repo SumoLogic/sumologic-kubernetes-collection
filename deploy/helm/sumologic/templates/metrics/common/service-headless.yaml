@@ -1,0 +1,25 @@
+{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.metadata.name.metrics.service-headless" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.metrics.service-headless" . }}
+    {{- include "sumologic.labels.metrics" . | nindent 4 }}
+{{- if .Values.metadata.serviceLabels }}
+{{ toYaml .Values.metadata.serviceLabels | indent 4 }}
+{{- end }}
+spec:
+  selector:
+    app: {{ template "sumologic.labels.app.metrics.pod" . }}
+  clusterIP: None
+  ports:
+  - name: prom-write
+    port: 9888
+    targetPort: 9888
+    protocol: TCP
+  - name: metrics
+    port: 24231
+    targetPort: 24231
+    protocol: TCP
+{{- end }}

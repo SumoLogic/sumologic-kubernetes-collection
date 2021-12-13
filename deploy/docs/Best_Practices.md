@@ -1,11 +1,14 @@
 # Advanced Configuration / Best Practices
 
 - [Multiline Log Support](#multiline-log-support)
+  - [MySQL slow logs example](#mysql-slow-logs-example)
 - [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
   - [Multiline Support](#multiline-support)
+- [Choosing Fluentd Base Image](#choosing-fluentd-base-image)
 - [Fluentd Autoscaling](#fluentd-autoscaling)
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
 - [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
+- [Excluding Metrics](#excluding-metrics)
 - [Add a local file to fluent-bit configuration](#add-a-local-file-to-fluent-bit-configuration)
 - [Filtering Prometheus Metrics by Namespace](#filtering-prometheus-metrics-by-namespace)
 - [Modify the Log Level for Falco](#modify-the-log-level-for-falco)
@@ -18,6 +21,9 @@
 - [Configure Ignore_Older Config for Fluentbit](#configure-ignore_older-config-for-fluentbit)
 - [Disable logs, metrics, or falco](#disable-logs-metrics-or-falco)
 - [Load Balancing Prometheus traffic between Fluentds](#load-balancing-prometheus-traffic-between-fluentds)
+- [Changing scrape interval for Prometheus](#changing-scrape-interval-for-prometheus)
+- [Get logs not available on stdout](#get-logs-not-available-on-stdout)
+- [Adding custom fields](#adding-custom-fields)
 
 ## Multiline Log Support
 
@@ -29,36 +35,50 @@ the first line of multiline logs.
 See [collecting multiline logs](https://help.sumologic.com/?cid=49494) for details
 on configuring a boundary regex.
 
-New parsers can be defined under the `parsers` key of the fluent-bit
-configuration section in the `values.yaml` file as follows:
+New parsers can be defined under the `fluent-bit.config.customParsers` key in
+`values.yaml` file as follows:
 
 ```yaml
-parsers:
-  enabled: true
-  regex:
-    - name: multi_line
-    regex: (?<log>^{"log":"\d{4}-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2}.*)
-    - name: new_parser_name
-    ## This parser matches lines that start with time of the format : 07:14:12
-    regex: (?<log>^{"log":"\d{2}:\d{2}:\d{2}.*)
+fluent-bit:
+  config:
+    customParsers: |
+      [PARSER]
+          Name        multi_line
+          Format      regex
+          Regex       (?<log>^{"log":"\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
+      [PARSER]
+          Name        new_multi_line_parser
+          Format      regex
+          Regex       (?<log>^{"log":"\d{2}:\d{2}:\d{2}.*)
 ```
 
-The regex used for `Parser_Firstline` needs to have at least one named capture group.
+This way one can add a parser called `new_multi_line_parser` which matches lines
+that start with time of the format : `07:14:12`.
 
-To use the newly defined parser to detect the first line of multiline logs,
-change the `Parser_Firstline` parameter in the `Input plugin` configuration of fluent-bit:
+To start using the newly defined parser, define it in `Docker_Mode_Parser` parameter
+in the `Input plugin` configuration of fluent-bit in `values.yaml` under
+`fluent-bit.config.inputs`:
 
-```bash
-Parser_Firstline new_parser_name
+```
+Docker_Mode_Parser new_multi_line_parser
 ```
 
-You can also use the optional-extra parser to interpret and structure multiline entries.
-When Multiline is On, if the first line matches `Parser_Firstline`,
-the rest of the lines will be matched against `Parser_N`.
+The regex used for needs to have at least one named capture group.
 
-```bash
-Parser_Firstline multi_line
-Parser_1 optional_parser
+### MySQL slow logs example
+
+For example to detect mulitlines for `slow logs` correctly,
+ensure that `Fluent Bit` reads `slow log` files and update your configuration
+with following snippet:
+
+```
+fluent-bit:
+  config:
+    customParsers: |
+      [PARSER]
+          Name        multi_line
+          Format      regex
+          Regex       (?<log>^{"log":"(\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*|#\sTime:\s+.*))
 ```
 
 ## Collecting Log Lines Over 16KB (with multiline support)
@@ -75,13 +95,49 @@ If enabled, the plugin will recombine split Docker log lines before passing them
 
 ### Multiline Support
 
-To add multiline support to docker mode, you need to follow
-[the multiline support](#multiline-log-support) section and assign created parser
+To add multiline support to docker mode, you need to follow the
+[multiline log support](#multiline-log-support) section and assign created parser
 to the `Docker_Mode_Parser` parameter in the `Input plugin` configuration of fluent-bit:
 
 ```
 Docker_Mode_Parser multi_line
 ```
+
+## Choosing Fluentd Base Image
+
+Historically, the Fluentd container image used with the collection was based on Debian Linux distribution.
+
+Currently, an Alpine-based image is also available and can be used instead of the Debian-based image.
+
+The Debian-based image is the default, so you do not need to change anything to use it.
+
+To use an Alpine-based image with the collection, specify an Alpine image's tag in `fluentd.image.tag` chart property:
+
+```yaml
+fluentd:
+  image:
+    tag: <Fluentd-release>-alpine
+```
+
+For example:
+
+```yaml
+fluentd:
+  image:
+    tag: 1.12.2-sumo-6-alpine
+```
+
+Go to the [official Sumo Logic's Fluentd image repository](https://gallery.ecr.aws/sumologic/kubernetes-fluentd)
+to find the latest release of Fluentd.
+The Alpine-based releases are the ones with the `-alpine` suffix.
+
+Both Debian-based and Alpine-based images support the same architectures:
+
+- x86-64,
+- ARM 32-bit,
+- ARM 64-bit.
+
+The source code and the `Dockerfile`s for both images can be found at https://github.com/SumoLogic/sumologic-kubernetes-fluentd.
 
 ## Fluentd Autoscaling
 
@@ -243,6 +299,26 @@ You can find more information on the `grep` filter plugin in the
 Refer to our [documentation](v1_conf_examples.md) for other examples of how you can
 customize the fluentd pipeline.
 
+## Excluding Metrics
+
+You can filter out metrics directly in promethus using [this documentation](additional_prometheus_configuration.md#filter-metrics).
+
+You can also exclude metrics by any tag in Fluentd.
+For example to filter out metrics from `sumologic` namespace, you can use following configuration:
+
+```yaml
+fluentd:
+  metrics:
+    extraFilterPluginConf: |-
+      <filter **>
+        @type grep
+          <exclude>
+            key namespace
+            pattern /^sumologic$/
+          </exclude>
+      </filter>
+```
+
 ## Add a local file to fluent-bit configuration
 
 If you want to capture container logs to a container that writes locally,
@@ -267,6 +343,9 @@ fluent-bit:
 ```
 
 Reference: https://docs.fluentbit.io/manual/pipeline/inputs/tail#configuration-file
+
+**Notice:** In some cases Tailing Sidecar Operator may help in getting logs not available on standard output (STDOUT),
+please see section [Get logs not available on stdout](#get-logs-not-available-on-stdout).
 
 ## Filtering Prometheus Metrics by Namespace
 
@@ -549,3 +628,96 @@ kube-prometheus-stack:
 
 **NOTE** We observed that changing this value increases metrics loss during prometheus resharding,
 but the traffic is much better balanced between Fluentds and Prometheus is more stable in terms of memory.
+
+## Changing scrape interval for Prometheus
+
+Default scrapeInterval for collection is `30s`. This is the recommended value which ensures that all of Sumo Logic dashboards
+are filled up with proper data.
+
+To change it, you can use following configuration:
+
+```yaml
+kube-prometheus-stack:  # For values.yaml
+  prometheus:
+    prometheusSpec:
+      scrapeInterval: '1m'
+```
+
+## Get logs not available on stdout
+
+When logs from a pod are not available on stdout, [Tailing Sidecar Operator](https://github.com/SumoLogic/tailing-sidecar)
+can help with collecting them using standard logging pipeline.
+To tail logs using Tailing Sidecar Operator the file with those logs needs to be accessible through a volume
+mounted to sidecar container.
+
+Providing that the file with logs is accessible through volume, to enable tailing of logs using Tailing Sidecar Operator:
+
+- Enable Tailing Sidecar Operator by modifying `values.yaml`:
+
+  ```yaml
+  tailing-sidecar-operator:
+    enabled: true
+  ```
+
+- Add annotation to pod from which you want to tail logs in the following format:
+
+  ```yaml
+  metadata:
+    annotations:
+      tailing-sidecar: <sidecar-name-0>:<volume-name-0>:<path-to-tail-0>;<sidecar-name-1>:<volume-name-1>:<path-to-tail-1>
+  ```
+
+Example of using Tailing Sidecar Operator is described in the
+[blog post](https://www.sumologic.com/blog/tailing-sidecar-operator/).
+
+## Adding custom fields
+
+In order to add custom fields to container logs, the following configuration has to be applied:
+
+```yaml
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |
+        <filter **>
+          @type record_modifier
+          <record>
+            _sumo_metadata ${{:_fields => "<DEFINITION OF CUSTOM FIELDS>"}}
+          </record>
+        </filter>
+      extraOutputPluginConf: |
+        <filter **>
+          @type record_modifier
+          <record>
+            _sumo_metadata ${record["_sumo_metadata"][:fields] = "#{record["_sumo_metadata"][:fields]},#{record["_sumo_metadata"][:_fields]}"; record["_sumo_metadata"]}
+          </record>
+        </filter>
+```
+
+where `<DEFINITION OF CUSTOM FIELDS>` has to be `key1=value1,key2=value2,...` formatted string.
+
+**NOTE** Do not forget to [add field in Sumo Logic service][sumo_add_fields]
+
+[sumo_add_fields]: https://help.sumologic.com/Manage/Fields#add-field
+
+Please consider the following configuration which adds `container_image` from kubernetes enrichment.
+
+```yaml
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |
+        <filter **>
+          @type record_modifier
+          <record>
+            _sumo_metadata ${{:_fields => "container_image=#{record["kubernetes"]["container_image"]}"}}
+          </record>
+        </filter>
+      extraOutputPluginConf: |
+        <filter **>
+          @type record_modifier
+          <record>
+            _sumo_metadata ${record["_sumo_metadata"][:fields] = "#{record["_sumo_metadata"][:fields]},#{record["_sumo_metadata"][:_fields]}"; record["_sumo_metadata"]}
+          </record>
+        </filter>
+```

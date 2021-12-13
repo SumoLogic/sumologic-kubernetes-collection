@@ -1,0 +1,1 @@
+{{ tpl (toYaml .Values.metadata.logs.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}

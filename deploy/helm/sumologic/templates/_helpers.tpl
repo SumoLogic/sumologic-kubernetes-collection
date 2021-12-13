@@ -44,7 +44,11 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs" -}}
-{{- template "sumologic.labels.app.fluentd" . }}-logs
+{{- if eq .Values.sumologic.logs.metadata.provider "fluentd" -}}
+{{ template "sumologic.labels.app.fluentd" . }}-logs
+{{- else if eq .Values.sumologic.logs.metadata.provider "otelcol" -}}
+{{ template "sumologic.labels.app.otelcol" . }}-logs
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.pod" -}}
@@ -72,7 +76,11 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics" -}}
-{{- template "sumologic.labels.app.fluentd" . }}-metrics
+{{- if eq .Values.sumologic.metrics.metadata.provider "fluentd" -}}
+{{ template "sumologic.labels.app.fluentd" . }}-metrics
+{{- else if eq .Values.sumologic.metrics.metadata.provider "otelcol" -}}
+{{ template "sumologic.labels.app.otelcol" . }}-metrics
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics.pod" -}}
@@ -297,11 +305,15 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs" -}}
+{{- if eq .Values.sumologic.logs.metadata.provider "fluentd" -}}
 {{ template "sumologic.metadata.name.fluentd" . }}-logs
+{{- else if eq .Values.sumologic.logs.metadata.provider "otelcol" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}-logs
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service" -}}
-{{ template "sumologic.metadata.name.logs" . }}
+{{ template "sumologic.metadata.name.fluentd" . }}-logs
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service-headless" -}}
@@ -325,11 +337,15 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics" -}}
+{{- if eq .Values.sumologic.metrics.metadata.provider "fluentd" -}}
 {{ template "sumologic.metadata.name.fluentd" . }}-metrics
+{{- else if eq .Values.sumologic.metrics.metadata.provider "otelcol" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}-metrics
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.service" -}}
-{{ template "sumologic.metadata.name.metrics" . }}
+{{ template "sumologic.metadata.name.fluentd" . }}-metrics
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.service-headless" -}}
@@ -949,14 +965,29 @@ Example:
 {{- define "kubernetes.sources.envs" -}}
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
-{{- range $key, $source := (index .Context.sumologic.collector.sources $type) }}
-        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) }}
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: {{ template "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key) }}
+{{- range $name, $source := (index .Context.sumologic.collector.sources $type) -}}
+{{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" $type  "Name" $name ) | nindent 8 -}}
 {{- end }}
 {{- end -}}
+
+{{/*
+Generate fluentd envs for given source type:
+
+Example:
+
+{{ include "kubernetes.sources.env" (dict "Context" .Values "Type" "metrics" "Name" $name ) }}
+*/}}
+{{- define "kubernetes.sources.env" -}}
+{{- $ctx := .Context -}}
+{{- $type := .Type -}}
+{{- $name := .Name -}}
+- name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $name "Type" $type)) }}
+  valueFrom:
+    secretKeyRef:
+      name: sumologic
+      key: {{ template "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $name) }}
+{{- end -}}
+
 
 {{/*
 Generate a space separated list of quoted values:
@@ -984,4 +1015,166 @@ Example:
 */}}
 {{- define "kubernetes.minor" -}}
 {{- print (regexFind "^\\d+" .Capabilities.KubeVersion.Minor) -}}
+{{- end -}}
+
+{{- define "fluentd.metadata.annotations_match.quotes" -}}
+{{- $matches_with_quotes := list -}}
+{{- range $match := .Values.fluentd.metadata.annotation_match  }}
+{{- $match_with_quotes := printf "\"%s\"" $match }}
+{{- $matches_with_quotes = append $matches_with_quotes $match_with_quotes }}
+{{- end }}
+{{- $matches_with_quotes_with_commas := join "," $matches_with_quotes }}
+{{- $annotations_match := list $matches_with_quotes_with_commas }}
+{{- print $annotations_match }}
+{{- end -}}
+
+
+{{/*
+Return k8s.cluster.name for opentelemetry collector
+
+Example:
+
+{{ include "otelcol.k8s.cluster.name" . }}
+*/}}
+{{- define "otelcol.k8s.cluster.name" -}}
+{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
+{{- end -}}
+
+
+{{/*
+Returns list of namespaces to exclude
+
+Example:
+
+{{ include "fluentd.excludeNamespaces" . }}
+*/}}
+{{- define "fluentd.excludeNamespaces" -}}
+{{- $excludeNamespaceRegex := .Values.fluentd.logs.containers.excludeNamespaceRegex | quote -}}
+{{- if eq .Values.sumologic.collectionMonitoring false -}}
+  {{- if .Values.fluentd.logs.containers.excludeNamespaceRegex -}}
+  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote -}}
+  {{- else -}}
+  {{- $excludeNamespaceRegex = printf "%s" .Release.Namespace | quote -}}
+  {{- end -}}
+{{- end -}}
+{{ print $excludeNamespaceRegex }}
+{{- end -}}
+
+
+{{/*
+Check if any metrics provider is enabled
+Example Usage:
+{{- if eq (include "metrics.enabled" .) "true" }}
+
+*/}}
+{{- define "metrics.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Check if otelcol metrics provider is enabled
+Example Usage:
+{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+
+*/}}
+{{- define "metrics.otelcol.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.metrics.enabled true -}}
+{{- if and (eq .Values.sumologic.metrics.metadata.provider "otelcol") (eq .Values.metadata.metrics.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Check if fluentd metrics provider is enabled
+Example Usage:
+{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
+
+*/}}
+{{- define "metrics.fluentd.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.metrics.enabled true -}}
+{{- if and (eq .Values.sumologic.metrics.metadata.provider "fluentd") (eq .Values.fluentd.metrics.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+{{/*
+Check if any logs provider is enabled
+
+Example Usage:
+{{- if eq (include "logs.enabled" .) "true" }}
+
+*/}}
+{{- define "logs.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq (include "logs.otelcol.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{- if eq (include "logs.fluentd.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Check if otelcol logs provider is enabled
+
+Example Usage:
+{{- if eq (include "logs.otelcol.enabled" .) "true" }}
+
+*/}}
+{{- define "logs.otelcol.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.logs.enabled true -}}
+{{- if and (eq .Values.sumologic.logs.metadata.provider "otelcol") (eq .Values.metadata.logs.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+{{/*
+Check if fluentd logs provider is enabled
+
+Example Usage:
+{{- if eq (include "logs.fluentd.enabled" .) "true" }}
+
+*/}}
+{{- define "logs.fluentd.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.logs.enabled true -}}
+{{- if and (eq .Values.sumologic.logs.metadata.provider "fluentd") (eq .Values.fluentd.logs.enabled true) -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Add service labels
+
+Example Usage:
+{{- if eq (include "service.labels" dict("Provider" "fluentd" "Values" .Values)) "true" }}
+
+*/}}
+{{- define "service.labels" -}}
+{{- if (get (get .Values .Provider) "serviceLabels") }}
+{{ toYaml (get (get .Values .Provider) "serviceLabels") }}
+{{- end }}
 {{- end -}}

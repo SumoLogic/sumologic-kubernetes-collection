@@ -12,13 +12,22 @@ push-helm-chart:
 markdownlint: mdl
 
 mdl:
-	mdl --style .markdownlint/style.rb deploy/docs
+	mdl --style .markdownlint/style.rb \
+		deploy/docs \
+		CHANGELOG.md
 
 helm-dependency-update:
 	helm dependency update deploy/helm/sumologic
 
 helm-lint:
-	helm lint --strict \
+# TODO: we should add back the --strict flag but because we have made the PodDisruptionBudget
+# API version dependent on cluster capabilities and because helm lint does not accept
+# an --api-versions flag like helm template does we cannot make this configurable.
+#
+# Perhaps we could at some point run this against a cluster with particular k8s version?
+#
+# https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1943
+	helm lint \
 		--set sumologic.accessId=X \
 		--set sumologic.accessKey=X \
 		deploy/helm/sumologic/

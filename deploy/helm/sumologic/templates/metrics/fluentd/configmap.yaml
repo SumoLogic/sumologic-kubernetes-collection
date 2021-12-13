@@ -1,4 +1,4 @@
-{{- if and (eq .Values.sumologic.metrics.enabled true) (eq .Values.fluentd.metrics.enabled true) }}
+{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

@@ -134,9 +134,11 @@ helm upgrade --install my-release sumologic/sumologic \
 
 ### Authenticating with container registry
 
-Sumo Logic container images used in the collection are currently hosted
-on [Docker Hub](https://hub.docker.com/) which
-[requires authentication in order to provide higher quota for image pulls][docker-rate-limit].
+Sumo Logic container images used for collection are currently hosted on
+[Amazon Public ECR][aws-public-ecr-docs] which requires authentication to provide
+a higher quota for image pulls.
+To find a comprehensive information on this please refer to
+[Amazon Elastic Container Registry pricing][aws-ecr-pricing].
 
 Please refer to
 [our instructions](/deploy/docs/Working_with_container_registries.md#authenticating-with-container-registry)
@@ -147,7 +149,8 @@ registries.
 To do so please refer to the following
 [instructions](/deploy/docs/Working_with_container_registries.md#hosting-sumo-logic-images)
 
-[docker-rate-limit]: https://www.docker.com/increase-rate-limits
+[aws-public-ecr-docs]: https://aws.amazon.com/blogs/aws/amazon-ecr-public-a-new-public-container-registry/
+[aws-ecr-pricing]: https://aws.amazon.com/ecr/pricing/
 
 ### Installing the helm chart in Openshift platform
 
@@ -164,8 +167,17 @@ helm upgrade --install my-release sumologic/sumologic \
   --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
   --set sumologic.scc.create=true \
-  --set fluent-bit.securityContext.privileged=true
+  --set fluent-bit.securityContext.privileged=true \
+  --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
+  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
+  --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace}
 ```
+
+**Notice:** Prometheus Operator is deployed by default on OpenShift platform,
+you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
+`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in values.yaml or
+exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
+using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
 
 ## Viewing Data In Sumo Logic
 
@@ -294,3 +306,24 @@ kubectl delete secret sumologic
 ```
 
 and the associated hosted collector can be deleted in the Sumo Logic UI.
+
+### Removing the kubelet Service
+
+The Helm chart uses the Prometheus Operator to manage Prometheus instances.
+This operator creates a Service for scraping metrics exposed by the kubelet (subject to configuration in the
+`kube-prometheus-stack.prometheusOperator.kubeletService` key in `values.yaml`), which isn't removed by the chart
+uninstall process.
+This Service is largely harmless, but can cause issues if a different release of the chart is installed, resulting in
+duplicated metrics from the kubelet.
+See [this issue](https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/1101) and the corresponding
+[upstream issue](https://github.com/prometheus-community/helm-charts/issues/1523) for a more detailed explanation.
+
+To remove this service after uninstalling the chart, run:
+
+```bash
+kubectl delete svc <release_name>-kube-prometheus-kubelet -n kube-system
+```
+
+Please keep in mind that if you've changed any configuration values related to this service (they reside under the
+`kube-prometheus-stack.prometheusOperator.kubeletService` key in `values.yaml`), you should substitute those values in
+the command provided above.

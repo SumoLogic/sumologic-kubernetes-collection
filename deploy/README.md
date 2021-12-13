@@ -5,23 +5,51 @@ enriching them with deployment, pod, and service level metadata; and sending the
 See our [documentation guide](https://help.sumologic.com/Solutions/Kubernetes_Solution)
 for details on our Kubernetes Solution.
 
-- [Deployment Guide](#deployment-guide)
-  - [Solution overview](#solution-overview)
-  - [Minimum Requirements](#minimum-requirements)
-  - [Support Matrix](#support-matrix)
+- [Documentation versions](#documentation-versions)
+- [Solution overview](#solution-overview)
+- [Minimum Requirements](#minimum-requirements)
+- [Support Matrix](#support-matrix)
+
+## Documentation versions
+
+| version                                                                                                   | status                   |
+|-----------------------------------------------------------------------------------------------------------|--------------------------|
+| [v2.3](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.3/deploy/README.md)   | current / supported      |
+| [v2.2](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.2/deploy/README.md)   | deprecated / supported   |
+| [v2.1](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.1/deploy/README.md)   | deprecated / unsupported |
+| [v2.0](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.0/deploy/README.md)   | deprecated / unsupported |
+| [v1.3](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v1.3/deploy/README.md)   | deprecated / unsupported |
+| [v0.17](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v0.17/deploy/README.md) | deprecated / unsupported |
+
+---
+
+Documentation links:
+
+- Installation
   - [Installation with Helm](./docs/Installation_with_Helm.md)
   - [Non Helm Installation](./docs/Non_Helm_Installation.md)
+
+- Configuration
   - [Adding Additional FluentD Plugins](./docs/Additional_Fluentd_Plugins.md)
   - [Additional Prometheus configuration](./docs/additional_prometheus_configuration.md)
   - [Advanced Configuration/Best Practices](./docs/Best_Practices.md)
   - [Advanced Configuration/Security best practices](./docs/Security_Best_Practices.md)
   - [Authenticating with container registry](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
-  - [Alpha Releases](./docs/Alpha_Release_Guide.md)
+    - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
+  - [Container log parsing (Docker, CRI-O, containerd)](./docs/ContainerLogs.md)
+  - Open Telemetry `beta`
+    - [Open Telemetry with `sumologic-kubernetes-collection`](./docs/opentelemetry_collector.md)
+    - [Comparison of Fluentd and Opentelemetry Collector functionality](./docs/fluentd_otc_comparison.md)
+
+- Upgrades
   - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
   - [Upgrade from v1.3 to v2.0](./docs/v2_migration_doc.md)
-- [Migration Steps](./docs/Migration_Steps.md)
+
+- [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`](./docs/Migration_Steps.md)
 - [Troubleshooting Collection](./docs/Troubleshoot_Collection.md)
 - [Monitoring the Monitoring](./docs/monitoring-lag.md)
+- [Performance estimates for running collection chart](./docs/Performance.md)
+- [Dev Releases](./docs/Dev.md)
 
 ## Solution overview
 
@@ -48,28 +76,31 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 
 | Name | Version |
 |------|---------|
-| K8s  | 1.16+   |
+| K8s  | 1.17+   |
 | Helm | 3.4+    |
 
 ## Support Matrix
 
 The following table displays the tested Kubernetes and Helm versions.
 
-| Name          | Version                |
-|---------------|------------------------|
-| K8s with EKS  | 1.16<br/>1.17<br/>1.18 |
-| K8s with Kops | 1.16<br/>1.17<br/>1.18 |
-| K8s with GKE  | 1.16                   |
-| K8s with AKS  | 1.16<br/>1.17<br/>1.18 |
-| OpenShift     | 4.6                    |
-| Helm          | 3.4.0 (Linux)          |
-| kubectl       | 1.16.0                 |
+| Name          | Version                         |
+|---------------|---------------------------------|
+| K8s with EKS  | 1.18<br/>1.19<br/>1.20<br/>1.21 |
+| K8s with Kops | 1.18<br/>1.19<br/>1.20<br/>1.21 |
+| K8s with GKE  | 1.20<br/>1.21                   |
+| K8s with AKS  | 1.19<br/>1.20<br/>1.21          |
+| OpenShift     | 4.6<br/>4.7<br/>4.8             |
+| Helm          | 3.5.4 (Linux)                   |
+| kubectl       | 1.16.0                          |
 
 The following matrix displays the tested package versions for our Helm chart.
 
 | Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit                          | Falco  | Metrics Server | Telegraf Operator | Tailing Sidecar Operator |
 |:----------------------|:------------------------------------------|:--------|:------------------------------------|:-------|:---------------|:------------------|:-------------------------|
-| 2.1.1 - Latest        | 12.3.0                                    | 1.12.2  | 0.12.1 (downgraded)                 | 1.7.10 | 5.8.4          | 1.1.5             | 0.3.0                    |
+| 2.3.0 - Latest        | 12.10.0                                   | 1.12.2  | 0.12.1                              | 1.16.2 | 5.8.4          | 1.3.3             | 0.3.1                    |
+| 2.2.0                 | 12.10.0                                   | 1.12.2  | 0.12.1                              | 1.7.10 | 5.8.4          | 1.2.0             | 0.3.1                    |
+| 2.1.6                 | 12.3.0                                    | 1.12.2  | 0.12.1                              | 1.7.10 | 5.8.4          | 1.2.0             | 0.3.0                    |
+| 2.1.1 - 2.1.5         | 12.3.0                                    | 1.12.2  | 0.12.1 (downgraded)                 | 1.7.10 | 5.8.4          | 1.1.5             | 0.3.0                    |
 | 2.1.0                 | 12.3.0                                    | 1.12.1  | 0.15.1                              | 1.7.10 | 5.8.1          | 1.1.5             | 0.3.0                    |
 | 2.0.2 - 2.0.5         | 12.3.0                                    | 1.12.0  | 0.11.0                              | 1.5.7  | 5.0.2          | 1.1.5             | -                        |
 | 2.0.0 - 2.0.1         | 12.3.0                                    | 1.11.5  | 0.7.13 (new fluent repository)      | 1.5.7  | 5.0.2          | 1.1.5             | -                        |

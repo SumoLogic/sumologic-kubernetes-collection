@@ -1,0 +1,11 @@
+{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.metrics.configmap" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.metrics.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  {{- (tpl (.Files.Glob "conf/metrics/otelcol/config.yaml").AsConfig .) | nindent 2 }}
+{{- end }}

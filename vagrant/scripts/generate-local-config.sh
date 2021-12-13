@@ -1,3 +1,4 @@
 #!/bin/bash
 
-touch /sumologic/vagrant/values.local.yaml
+readonly SCRIPT_PATH="$( dirname "$(realpath "${0}")" )"
+touch "${SCRIPT_PATH}"/../values.local.yaml
