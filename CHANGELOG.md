@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat: add option to disable pod owners enrichment [#1959][#1959]
 
+### Changed
+
+- chore: bump Thanos image to our build of v0.23.1 [#1973][#1973]
+
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.0...main
 [#1959]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1959
 
