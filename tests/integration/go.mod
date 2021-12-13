@@ -7,7 +7,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	k8s.io/api v0.22.4
 	k8s.io/apimachinery v0.22.4
-	sigs.k8s.io/e2e-framework v0.0.4
+	sigs.k8s.io/e2e-framework v0.0.5
 )
 
 require (
