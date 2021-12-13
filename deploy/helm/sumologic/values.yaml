@@ -220,7 +220,7 @@ sumologic:
 fluentd:
   image:
     repository: public.ecr.aws/sumologic/kubernetes-fluentd
-    tag: 1.12.2-sumo-12
+    tag: 1.12.2-sumo-13
     pullPolicy: IfNotPresent
 
   ## Specifies whether a PodSecurityPolicy should be created
@@ -347,7 +347,7 @@ fluentd:
     # For example, if 0 then all metadata enrichment happen immediately. Setting this to a non-zero values ensures the
     # traffic to api server is much distributed.
     # Disclaimer: Not recommended for use, if your api server read latency is > 1s
-    cache_refresh_apiserver_request_delay: "0"
+    cacheRefreshApiserverRequestDelay: "0"
     ## Option to give plugin specific log level
     pluginLogLevel: "error"
     ## Option to specify K8s API versions
