@@ -16,10 +16,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: bump Thanos image to our build of v0.23.1 [#1973][#1973]
 - Introduced option to add cache refresh delay for metadata enrichment calls [#1974][#1974]
 
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.0...main
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.1...main
 [#1959]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1959
 [#1974]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1974
 [#1973]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1973
+
+## [v2.3.1][v2_3_1] - 2021-12-14
+
+### Fixed
+
+- Fix otelcol agent template [#1975][#1975]
+
+[v2_3_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.1
+[#1975]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1975
 
 ## [v2.3.0][v2_3_0] - 2021-12-8
 
