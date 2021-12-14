@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.0...main
 [#1959]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1959
 [#1974]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1974
+[#1973]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1973
 
 ## [v2.3.0][v2_3_0] - 2021-12-8
 
