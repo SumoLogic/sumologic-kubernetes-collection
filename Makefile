@@ -16,10 +16,16 @@ mdl:
 		deploy/docs \
 		CHANGELOG.md
 
-helm-dependency-update:
+.PHONY: helm-version
+helm-version:
+	helm version
+
+.PHONY: helm-dependency-update
+helm-dependency-update: helm-version
 	helm dependency update deploy/helm/sumologic
 
-helm-lint:
+.PHONY: helm-lint
+helm-lint: helm-version
 # TODO: we should add back the --strict flag but because we have made the PodDisruptionBudget
 # API version dependent on cluster capabilities and because helm lint does not accept
 # an --api-versions flag like helm template does we cannot make this configurable.
