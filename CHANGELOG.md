@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v2.3.1][v2_3_1] - 2021-12-14
+
+### Fixed
+
+- Fix otelcol agent template [#1975][#1975]
+
+<!-- markdown-link-check-disable -->
+[v2_3_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.1
+<!-- markdown-link-check-enable -->
+[1975]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1975
+
 ## [v2.3.0][v2_3_0] - 2021-12-8
 
 ### Added
