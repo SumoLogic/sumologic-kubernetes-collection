@@ -21,7 +21,7 @@ fluent-bit:
           Name                tail
           Path                /var/log/containers/*.log
           Read_from_head      true
-          Multiline.parser    test
+          Multiline.parser    cri
           Tag                 containers.*
           Refresh_Interval    1
           Rotate_Wait         60
@@ -98,7 +98,7 @@ fluent-bit:
           net.keepalive off
     customParsers: |
       [MULTILINE_PARSER]
-          Name          test
+          Name          multiline_stacktrace
           Type          regex
           Flush_timeout 1000
           # Regex rules for multiline parsing
@@ -111,8 +111,14 @@ fluent-bit:
           #
           # rules   |   state name   | regex pattern                   | next state name
           # --------|----------------|--------------------------------------------------
-          Rule         "start_state"   "/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z (stdout|stderr) [T|F] \w+ \d+ \d+\:\d+\:\d+ .*/"  "cont"
-          Rule         "cont"          "/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z (stdout|stderr) [T|F] \s+.*/"                     "cont"
+          Rule         "start_state"   "/^\w+ \d+ \d+\:\d+\:\d+ .*/"  "cont"
+          Rule         "cont"          "/^\s+.*/"                     "cont"
+    filters: |
+      [FILTER]
+          Name                  multiline
+          Match                 containers.*
+          Multiline.key_content log
+          Multiline.parser      multiline_stacktrace, multiline_stacktrace
 
 fluentd:
   logs:
