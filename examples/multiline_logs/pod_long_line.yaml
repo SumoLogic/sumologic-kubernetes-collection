@@ -12,7 +12,7 @@ spec:
     - >
       while true; do
         LONG_STRING="$(cat /dev/urandom | tr -dc ''a-z0-9'' | head -c 100000)"
-        echo "single line...
+        echo "Dec 13 09:41:08 single line...
       Dec 14 06:41:08 Exception in thread "main" java.lang.RuntimeException: Something has gone wrong, aborting!
           at com.myproject.module.MyProject.badMethod(MyProject.java:22)
           at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)
@@ -20,6 +20,6 @@ spec:
           at com.myproject.module.MyProject.someMethod(MyProject.java:10)"
         echo "    at com.myproject.module.MyProject.verylongLine(MyProject.java:100000) ${LONG_STRING} end of the long line"
         echo "    at com.myproject.module.MyProject.main(MyProject.java:6)
-      another line..."
+      Dec 15 09:41:08 another line..."
         sleep 5
       done
