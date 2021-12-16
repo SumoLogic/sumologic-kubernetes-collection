@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- feat: add experimental otelcol log collector [#1986][#1986]
 - feat: add option to disable pod owners enrichment [#1959][#1959]
 
 ### Changed
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(helm): add metrics port to otelcol pods [#1992][#1992]
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.1...main
+[#1986]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1986
 [#1959]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1959
 [#1974]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1974
 [#1973]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1973
