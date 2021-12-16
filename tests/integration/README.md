@@ -99,7 +99,7 @@ The test framework has the following runtime options that can be utilized:
   HELM_NO_DEPENDENCY_UPDATE=1 make test
   ```
 
-## Running specified tests
+## Filtering tests
 
 [Testing framework][sig_e2e_testing_harness] that's used in the tests allows filtering
 tests by feature names, labels and step names.
@@ -108,7 +108,9 @@ This might be handy if you'd like to use those abstractions but its consequence 
 it will run all the code related to setup and/or teardown so e.g. all kind clusters
 that were supposed to be created for tests that got filtered out would be created anyway.
 
-Because of that reason we suggest to use `go` related test filtering like so:
+### Running specific tests
+
+In order to run specific tests you can use `go` related test filtering like so:
 
 ```shell
 make test TEST_NAME="Test_Helm_Default"
@@ -120,7 +122,23 @@ or
 go test -v -count 1 -run=Test_Helm_Default .
 ```
 
+### Running specific features/assessments
+
+In order to run specific features you can use `TEST_ARGS` makefile argument in
+which you can specify [e2e framework's flags][sig_e2e_testing_harness_filtering_tests]:
+
+```shell
+make test TEST_NAME="Test_Helm_Default_OT_Metadata" TEST_ARGS="--assess '(metrics)'"
+```
+
+or
+
+```shell
+make test TEST_NAME="Test_Helm_Default_OT_Metadata" TEST_ARGS="--feature '(installation)'"
+```
+
 [sig_e2e_testing_harness]: https://github.com/kubernetes-sigs/e2e-framework/blob/main/docs/design/test-harness-framework.md
+[sig_e2e_testing_harness_filtering_tests]: https://github.com/kubernetes-sigs/e2e-framework/blob/fee1391aeccdc260069bd5e0b25c6b187c2293c4/docs/design/test-harness-framework.md#filtering-feature-tests
 
 ## K8s node images matrix
 

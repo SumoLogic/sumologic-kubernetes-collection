@@ -13,8 +13,11 @@ const (
 
 	EnvNameKindImage = "KIND_NODE_IMAGE"
 
-	YamlPathReceiverMock    = "yamls/receiver-mock.yaml"
+	YamlPathReceiverMock = "yamls/receiver-mock.yaml"
+
 	ReceiverMockServicePort = 3000
+	ReceiverMockServiceName = "receiver-mock"
+	ReceiverMockNamespace   = "receiver-mock"
 )
 
 // metrics we expect the receiver to get

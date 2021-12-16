@@ -45,7 +45,7 @@ func KubectlCreateNamespaceOpt(namespace string) features.Func {
 // a namespace name for test.
 func KubectlCreateNamespaceTestOpt() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		name := strings.NameFromT(t)
+		name := strings.NamespaceFromT(t)
 		return KubectlCreateNamespaceOpt(name)(ctx, t, envConf)
 	}
 }

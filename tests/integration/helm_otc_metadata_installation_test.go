@@ -3,28 +3,35 @@ package integration
 import (
 	"context"
 	"fmt"
+	"sort"
 	"testing"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	log "k8s.io/klog/v2"
+	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
+	"sigs.k8s.io/e2e-framework/klient/wait"
+	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/receivermock"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
 func Test_Helm_Default_OT_Metadata(t *testing.T) {
 	const (
-		tickDuration = time.Second
-		waitDuration = time.Minute * 2
+		tickDuration = 3 * time.Second
+		waitDuration = 3 * time.Minute
 	)
 
 	var (
@@ -37,11 +44,11 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 	// detail.
 	releaseName := strings.ReleaseNameFromT(t)
 
-	feat := features.New("installation").
+	featInstall := features.New("installation").
 		Assess("sumologic secret is created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				k8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
-				secret := k8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
+				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
+				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
 				require.Len(t, secret.Data, 10)
 				return ctx
 			}).
@@ -62,7 +69,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				kubectlOptions := ctxopts.KubectlOptions(ctx)
 
 				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
-				cl, err := k8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				cl, err := terrak8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
 				require.NoError(t, err)
 
 				assert.Eventually(t, func() bool {
@@ -95,7 +102,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				kubectlOptions := ctxopts.KubectlOptions(ctx)
 
 				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
-				cl, err := k8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				cl, err := terrak8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
 				require.NoError(t, err)
 
 				assert.Eventually(t, func() bool {
@@ -128,7 +135,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				kubectlOptions := ctxopts.KubectlOptions(ctx)
 
 				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
-				cl, err := k8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				cl, err := terrak8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
 				require.NoError(t, err)
 
 				assert.Eventually(t, func() bool {
@@ -159,7 +166,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				var daemonsets []appsv1.DaemonSet
 				require.Eventually(t, func() bool {
-					daemonsets = k8s.ListDaemonSets(t, ctxopts.KubectlOptions(ctx), v1.ListOptions{
+					daemonsets = terrak8s.ListDaemonSets(t, ctxopts.KubectlOptions(ctx), v1.ListOptions{
 						LabelSelector: "app.kubernetes.io/name=fluent-bit",
 					})
 
@@ -168,18 +175,108 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 
 				require.EqualValues(t, 0, daemonsets[0].Status.NumberUnavailable)
 				return ctx
-						}).
-		Assess("metrics are present", // TODO: extract this out to a separate feature
+			}).
+		Feature()
+
+	featMetrics := features.New("metrics").
+		Assess("expected metrics are present",
 			stepfuncs.WaitUntilExpectedMetricsPresent(
 				expectedMetrics,
-				"receiver-mock",
-				"receiver-mock",
+				internal.ReceiverMockNamespace,
+				internal.ReceiverMockServiceName,
 				internal.ReceiverMockServicePort,
 				waitDuration,
 				tickDuration,
 			),
 		).
+		Assess("expected labels are present",
+			// TODO: refactor into a step func?
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				// Get the receiver mock pod as metrics source
+				res := envConf.Client().Resources(internal.ReceiverMockNamespace)
+				podList := corev1.PodList{}
+				require.NoError(t,
+					wait.For(
+						conditions.New(res).
+							ResourceListN(
+								&podList,
+								1,
+								resources.WithLabelSelector("app=receiver-mock"),
+							),
+						wait.WithTimeout(waitDuration),
+						wait.WithInterval(tickDuration),
+					),
+				)
+				rClient, tunnelCloseFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+				defer tunnelCloseFunc()
+
+				assert.Eventually(t, func() bool {
+					filters := receivermock.MetadataFilters{
+						"__name__": "container_memory_working_set_bytes",
+						"pod":      podList.Items[0].Name,
+					}
+					metricsSamples, err := rClient.GetMetricsSamples(filters)
+					if err != nil {
+						log.ErrorS(err, "failed getting samples from receiver-mock")
+						return false
+					}
+
+					if len(metricsSamples) == 0 {
+						log.InfoS("got 0 metrics samples", "filters", filters)
+						return false
+					}
+
+					sort.Sort(receivermock.MetricsSamplesByTime(metricsSamples))
+					// For now let's take the newest metric sample only because it will have the most
+					// accurate labels and the most labels attached (for instance service/deployment
+					// labels might not be attached at the very first record).
+					sample := metricsSamples[0]
+					labels := sample.Labels
+					expectedLabels := receivermock.Labels{
+						"_origin":   "kubernetes",
+						"container": "receiver-mock",
+						// TODO: figure out why is this flaky and sometimes it's not there
+						// https://github.com/SumoLogic/sumologic-kubernetes-collection/runs/4508796836?check_suite_focus=true
+						// "deployment":                   "receiver-mock",
+						"endpoint": "https-metrics",
+						// TODO: verify the source of label's value.
+						// For OTC metadata enrichment this is set to <RELEASE_NAME>-sumologic-otelcol-metrics-<POD_IN_STS_NUMBER>
+						// hence with longer time range the time series about a particular metric
+						// that we receive diverge into n, where n is the number of metrics
+						// enrichment pods.
+						"host":                         "",
+						"http_listener_v2_path":        "/prometheus.metrics.container",
+						"image":                        "",
+						"instance":                     "",
+						"job":                          "kubelet",
+						"k8s.node.name":                "",
+						"metrics_path":                 "/metrics/cadvisor",
+						"namespace":                    "receiver-mock",
+						"node":                         "",
+						"pod_labels_app":               "receiver-mock",
+						"pod_labels_pod-template-hash": "",
+						"pod_labels_service":           "receiver-mock",
+						"pod":                          podList.Items[0].Name,
+						"prometheus_replica":           "",
+						"prometheus_service":           "",
+						"prometheus":                   "",
+						// TODO: figure out why is this flaky and sometimes it's not there
+						// https://github.com/SumoLogic/sumologic-kubernetes-collection/runs/4508796836?check_suite_focus=true
+						// "replicaset":                   "",
+						"service": "receiver-mock",
+					}
+
+					log.V(0).InfoS("sample's labels", "labels", labels)
+					if !labels.MatchAll(expectedLabels) {
+						return false
+					}
+
+					return true
+				}, waitDuration, tickDuration)
+				return ctx
+			},
+		).
 		Feature()
 
-	testenv.Test(t, feat)
+	testenv.Test(t, featInstall, featMetrics)
 }
