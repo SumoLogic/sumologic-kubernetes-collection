@@ -219,6 +219,10 @@ data:
     receivers:
       fluentforward:
         endpoint: 0.0.0.0:24321
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4318
     service:
       extensions:
       - health_check
@@ -252,6 +256,19 @@ data:
           - batch
           receivers:
           - fluentforward
+        logs/otc/containers:
+          exporters:
+          - sumologic/containers
+          processors:
+          - memory_limiter
+          - attributes/containers
+          - groupbyattrs/containers
+          - k8s_tagger
+          - source/containers
+          - resource/containers_copy_node_to_host
+          - batch
+          receivers:
+          - otlp
         logs/systemd:
           exporters:
           - sumologic/systemd

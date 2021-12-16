@@ -199,7 +199,7 @@ otelcol:
             - health_check
             # - sumologic
           pipelines:
-            logs:
+            logs/fluent-bit/containers:
               receivers:
                 - fluentforward
               processors:
@@ -218,7 +218,7 @@ otelcol:
                 - batch
               exporters:
                 - sumologic/containers
-            logs/systemd:
+            logs/fluent-bit/systemd:
               receivers:
                 - fluentforward
               processors:
@@ -237,7 +237,7 @@ otelcol:
                 - batch
               exporters:
                 - sumologic/systemd
-            logs/kubelet:
+            logs/fluent-bit/kubelet:
               receivers:
                 - fluentforward
               processors:

@@ -83,6 +83,9 @@ spec:
         - name: metrics
           containerPort: 8888
           protocol: TCP
+        - name: otlphttp
+          containerPort: 4318
+          protocol: TCP
         livenessProbe:
           httpGet:
             path: /

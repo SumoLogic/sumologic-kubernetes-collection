@@ -1,0 +1,100 @@
+---
+# Source: sumologic/templates/logs/collector/otelcol/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-logs-collector
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  template:
+    metadata:
+      annotations:
+        checksum/config: "%CONFIG_CHECKSUM%"
+      labels:
+        app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      securityContext:
+        fsGroup: 0
+        runAsGroup: 0
+        runAsUser: 0
+      containers:
+      - args:
+        - --config=/etc/otelcol/config.yaml
+        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.0.45-beta.0
+        imagePullPolicy: IfNotPresent
+        name: otelcol
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+        volumeMounts:
+        - mountPath: /etc/otelcol
+          name: otelcol-config
+        - mountPath: /var/log/pods
+          name: varlogpods
+          readOnly: true
+        - mountPath: /var/lib/docker/containers
+          name: varlibdockercontainers
+          readOnly: true
+        - mountPath: /var/lib/storage/otc
+          name: file-storage
+        env:
+        - name: LOGS_METADATA_SVC
+          valueFrom:
+            configMapKeyRef:
+              name: sumologic-configmap
+              key: fluentdLogs
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        securityContext:
+          {}
+      initContainers: # ensure the host path is owned by the otel user group
+      - name: changeowner
+        image: busybox
+        command:
+        - "sh"
+        - "-c"
+        - |
+          chown -R \
+            0:0 \
+            /var/lib/storage/otc
+        volumeMounts:
+        - mountPath: /var/lib/storage/otc
+          name: file-storage
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+          name: RELEASE-NAME-sumologic-otelcol-logs-collector
+        name: otelcol-config
+      - hostPath:
+          path: /var/log/pods
+          type: ""
+        name: varlogpods
+      - hostPath:
+          path: /var/lib/docker/containers
+          type: ""
+        name: varlibdockercontainers
+      - hostPath:
+          path: /var/lib/otc
+          type: DirectoryOrCreate
+        name: file-storage
+      serviceAccountName: RELEASE-NAME-sumologic-otelcol-logs-collector

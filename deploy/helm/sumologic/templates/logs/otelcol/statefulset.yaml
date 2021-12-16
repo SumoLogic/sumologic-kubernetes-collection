@@ -130,6 +130,9 @@ spec:
           containerPort: 8888
           protocol: TCP
         {{- end }}
+        - name: otlphttp
+          containerPort: 4318
+          protocol: TCP
         livenessProbe:
           httpGet:
             path: /

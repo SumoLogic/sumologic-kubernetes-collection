@@ -51,6 +51,42 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 {{- end -}}
 
+{{- define "sumologic.logs.collector.name" -}}
+{{- template "sumologic.fullname" . }}-otelcol-logs-collector
+{{- end -}}
+
+{{- define "sumologic.logs.collector.name.configmap" -}}
+{{- template "sumologic.logs.collector.name" . }}
+{{- end -}}
+
+{{- define "sumologic.logs.collector.name.serviceaccount" -}}
+{{- template "sumologic.logs.collector.name" . }}
+{{- end -}}
+
+{{- define "sumologic.logs.collector.name.daemonset" -}}
+{{- template "sumologic.logs.collector.name" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector" -}}
+{{- template "sumologic.fullname" . }}-otelcol-logs-collector
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.configmap" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.serviceaccount" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.daemonset" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.pod" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs.pod" -}}
 {{- template "sumologic.labels.app.logs" . }}
 {{- end -}}
