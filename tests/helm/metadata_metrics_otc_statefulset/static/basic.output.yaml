@@ -80,6 +80,9 @@ spec:
         - name: prom-write
           containerPort: 9888
           protocol: TCP
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
         livenessProbe:
           httpGet:
             path: /
