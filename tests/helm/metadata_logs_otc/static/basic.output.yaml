@@ -228,7 +228,7 @@ data:
       - health_check
       - file_storage
       pipelines:
-        logs:
+        logs/fluent/containers:
           exporters:
           - sumologic/containers
           processors:
@@ -243,7 +243,7 @@ data:
           - batch
           receivers:
           - fluentforward
-        logs/kubelet:
+        logs/fluent/kubelet:
           exporters:
           - sumologic/systemd
           processors:
@@ -256,20 +256,7 @@ data:
           - batch
           receivers:
           - fluentforward
-        logs/otc/containers:
-          exporters:
-          - sumologic/containers
-          processors:
-          - memory_limiter
-          - attributes/containers
-          - groupbyattrs/containers
-          - k8s_tagger
-          - source/containers
-          - resource/containers_copy_node_to_host
-          - batch
-          receivers:
-          - otlp
-        logs/systemd:
+        logs/fluent/systemd:
           exporters:
           - sumologic/systemd
           processors:
@@ -283,6 +270,19 @@ data:
           - batch
           receivers:
           - fluentforward
+        logs/otlp/containers:
+          exporters:
+          - sumologic/containers
+          processors:
+          - memory_limiter
+          - attributes/containers
+          - groupbyattrs/containers
+          - k8s_tagger
+          - source/containers
+          - resource/containers_copy_node_to_host
+          - batch
+          receivers:
+          - otlp
       telemetry:
         logs:
           level: info
