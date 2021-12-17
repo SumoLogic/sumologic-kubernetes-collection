@@ -36,7 +36,7 @@ jobs:
         working-directory: ./tests/integration/
         # grep magic described in https://unix.stackexchange.com/a/13472
         run: |
-          echo "::set-output name=test_names::$(grep -rhoP "(?<=^func )(Test[a-zA-z_0-9]+)(?=\(t \*testing.T\) {)" . | jq -R . | jq -cs .)"
+          echo "::set-output name=test_names::$(grep -shoP "(?<=^func )(Test[a-zA-z_0-9]+)(?=\(t \*testing.T\) {)" * | jq -R . | jq -cs .)"
       - name: Print test names
         run: echo "Test names ${{ steps.set_test_names.outputs.test_names }}"
 
