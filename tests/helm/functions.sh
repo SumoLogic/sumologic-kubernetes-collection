@@ -29,7 +29,7 @@ function set_variables() {
   # Path to the temporary output file
   TEST_OUT="${TEST_TMP_PATH}/new_values.yaml"
   # Current version wchich should override the placeholder in test
-  CURRENT_CHART_VERSION=$(yq r "${TEST_SCRIPT_PATH}/../../../deploy/helm/sumologic/Chart.yaml" version)
+  CURRENT_CHART_VERSION=$(grep "^version: .*" "${TEST_SCRIPT_PATH}/../../../deploy/helm/sumologic/Chart.yaml" | cut -f 2 -d " ")
 }
 
 # Update helm chart and remove the tmpcharts eventually
