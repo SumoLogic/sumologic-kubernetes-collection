@@ -6,7 +6,7 @@ require (
 	github.com/gruntwork-io/terratest v0.38.8
 	github.com/stretchr/testify v1.7.0
 	k8s.io/api v0.22.4
-	k8s.io/apimachinery v0.22.4
+	k8s.io/apimachinery v0.22.5
 	k8s.io/klog/v2 v2.9.0
 	sigs.k8s.io/e2e-framework v0.0.5
 )
@@ -47,7 +47,7 @@ require (
 	github.com/urfave/cli v1.22.2 // indirect
 	github.com/vladimirvivien/gexe v0.1.1 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
-	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
+	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
 	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c // indirect
 	golang.org/x/sys v0.0.0-20210616094352-59db8d763f22 // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
