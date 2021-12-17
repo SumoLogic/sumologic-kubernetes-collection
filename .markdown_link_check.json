@@ -7,5 +7,10 @@
       "pattern": "^/",
       "replacement": "{{BASEURL}}/"
     }
+  ],
+  "ignorePatterns": [
+    {
+      "pattern": "^https://mikefarah.gitbook.io/yq"
+    }
   ]
 }

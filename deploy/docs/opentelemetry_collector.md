@@ -218,8 +218,6 @@ Upgrade collection with  Opentelemetry Collector persistence enabled, e.g.
 helm upgrade <RELEASE-NAME> sumologic/sumologic --version=<VERSION> -f <VALUES>
 ```
 
-[yq]: https://mikefarah.gitbook.io/yq/v/v3.x/
-
 #### Enabling Opentelemetry Collector persistence by creating temporary instances and removing earlier created
 
 To create a temporary instances of Opentelemetry Collector StatefulSets and avoid a loss of logs or metrics one can run the following commands.
@@ -283,8 +281,6 @@ kubectl delete statefulset \
   --namespace ${NAMESPACE} \
   --selector "release==${RELEASE_NAME},heritage=tmp"
 ```
-
-[yq]: https://mikefarah.gitbook.io/yq/v/v3.x/
 
 ### Disabling persistence
 
@@ -364,8 +360,6 @@ Upgrade collection with  Opentelemetry Collector persistence disabled, e.g.
 ```bash
 helm upgrade <RELEASE-NAME> sumologic/sumologic --version=<VERSION> -f <VALUES>
 ```
-
-[yq]: https://mikefarah.gitbook.io/yq/v/v3.x/
 
 #### Disabling Opentelemetry Collector persistence by creating temporary instances nd removing earlier created
 
