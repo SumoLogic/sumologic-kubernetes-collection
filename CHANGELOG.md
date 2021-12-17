@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- chore(deps): bump Sumo OT distro to 0.0.43-beta.0 [#1995][#1995]
+
 ### Fixed
 
 - fix(helm): add job and cronjob to clusterrole's permission set [#1994][#1994]
 
 [#1994]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1994
+[#1995]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1995
 
 ## [v2.3.1][v2_3_1] - 2021-12-14
 
