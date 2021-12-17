@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- fix(helm): add job and cronjob to clusterrole's permission set [#1994][#1994]
+
+[#1994]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1994
+
 ## [v2.3.1][v2_3_1] - 2021-12-14
 
 ### Fixed
