@@ -1,10 +1,6 @@
 fluent-bit:
   luaScripts:
     script.lua: |
-      local buffer = {} -- log line per tag
-      local delimiter = ""
-      local max_line_length = 262144 -- lua max string size is 300k
-
       function dump(o, indent)
         if type(o) == 'table' then
           local s = ''
@@ -26,14 +22,62 @@ fluent-bit:
         end
       end
 
+      local function lines(str)
+        local result = {}
+        for line in str:gmatch '[^\n]+' do
+          table.insert(result, line)
+        end
+        return result
+      end
+
+      local function split(s, delimiter)
+        result = {};
+        for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+            table.insert(result, match);
+        end
+        return result;
+      end
+
+      function get_log_content(line)
+        table.remove(line, 1)
+        table.remove(line, 1)
+        table.remove(line, 1)
+        return table.concat(line, " ")
+      end
+
       function test(tag, timestamp, record)
-        print('************************************************')
-        print("tag:")
-        print(tag)
-        print("dump:")
-        print(dump(record, ''))
-        print('************************************************')
-        return 0, 0, record
+        -- print('************************************************')
+        -- print("tag:")
+        -- print(tag)
+        -- print("dump:")
+        -- print(dump(record, ''))
+        -- print('************************************************')
+
+        log_lines = lines(record['log'])
+        fake_date = "2021-12-17T11:38:47.982584219Z"
+        first_line = fake_date .. ' ' .. record["stream"] .. ' ' .. record["logtag"] .. ' ' .. log_lines[1]
+        log_lines[1] = first_line
+
+        new_lines = {}
+        buffer = ""
+
+        for k, v in pairs(log_lines) do
+          line = split(v, ' ')
+          log_tag = line[3]
+          
+          if log_tag == 'P' then
+              buffer = buffer .. get_log_content(line)
+              --print(buffer)
+          else
+              buffer = buffer .. get_log_content(line)
+              table.insert(new_lines, buffer)
+              -- print(buffer)
+              buffer = ""
+          end
+        end
+        
+        new_record = table.concat(new_lines, "\n")
+        return 0, timestamp, new_record
       end
   config:
     ## https://docs.fluentbit.io/manual/service
