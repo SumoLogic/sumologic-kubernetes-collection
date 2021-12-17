@@ -20,6 +20,11 @@ rules:
   - services
   - statefulsets
   verbs: ["get", "list", "watch"]
+- apiGroups: ["batch"]
+  resources:
+  - cronjobs
+  - jobs
+  verbs: ["get", "list", "watch"]
 - apiGroups: [""]
   resources:
     - configmaps
