@@ -1,7 +1,40 @@
 fluent-bit:
-  image:
-    tag: 1.8.11
-    repository: fluent/fluent-bit
+  luaScripts:
+    script.lua: |
+      local buffer = {} -- log line per tag
+      local delimiter = ""
+      local max_line_length = 262144 -- lua max string size is 300k
+
+      function dump(o, indent)
+        if type(o) == 'table' then
+          local s = ''
+          for k,v in pairs(o) do
+            if type(k) ~= 'number' then k = '"' .. k .. '"' end
+            s = s .. indent .. k .. ': '
+            if type(v) == 'table' then
+              local st = dump(v, indent .. ' ')
+              if string.len(st) > 0 then
+                s = s .. '\n' .. st
+              end
+            else
+              s = s .. dump(v, indent) .. '\n'
+            end
+          end
+          return s
+        else
+          return tostring(o)
+        end
+      end
+
+      function test(tag, timestamp, record)
+        print('************************************************')
+        print("tag:")
+        print(tag)
+        print("dump:")
+        print(dump(record, ''))
+        print('************************************************')
+        return 0, 0, record
+      end
   config:
     ## https://docs.fluentbit.io/manual/service
     service: |
@@ -19,14 +52,16 @@ fluent-bit:
     inputs: |
       [INPUT]
           Name                tail
-          Path                /var/log/containers/*.log
+          Path                /var/log/containers/example-pod-multiline-logs*.log
           Read_from_head      true
+          # Parser              containerd
           Multiline           On
           Parser_Firstline    containerd_multiline_pattern
+          Multiline_Flush     600
           Tag                 containers.*
           Refresh_Interval    1
           Rotate_Wait         60
-          Mem_Buf_Limit       5MB
+          Mem_Buf_Limit       100MB
           Skip_Long_Lines     On
           DB                  /tail-db/tail-containers-state-sumo.db
           DB.Sync             Normal
@@ -99,9 +134,25 @@ fluent-bit:
           net.keepalive off
     customParsers: |
       [PARSER]
+          Name        multi_line
+          Format      regex
+          Regex       (?<log>^{"log":"\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
+      [PARSER]
+          Name         crio
+          Format       regex
+          Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+          Time_Key     time
+          Time_Format  %Y-%m-%dT%H:%M:%S.%L%z
+      [PARSER]
+          Name         containerd
+          Format       regex
+          Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+          Time_Key     time
+          Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
+      [PARSER]
           Name         containerd_multiline_pattern
           Format       regex
-          Regex        (?<log>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z (stdout|stderr) [T|F] \w+ \d+ \d{2}:\d{2}:\d{2} .*$)
+          Regex        (?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\w+ \d+ \d{2}:\d{2}:\d{2} .*)
           Time_Key     time
           Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
       [MULTILINE_PARSER]
@@ -120,12 +171,13 @@ fluent-bit:
           # --------|----------------|--------------------------------------------------
           Rule         "start_state"   "/^\w+ \d+ \d+\:\d+\:\d+ .*/"  "cont"
           Rule         "cont"          "/^.*/"                     "cont"
-    # filters: |
-    #   [FILTER]
-    #       Name                  multiline
-    #       Match                 containers.*
-    #       Multiline.key_content log
-    #       Multiline.parser      cri, cri
+    filters: |
+      [FILTER]
+          Name    lua
+          Match   containers.*
+          script  /fluent-bit/scripts/script.lua
+          call    test
+
 
 fluentd:
   logs:
