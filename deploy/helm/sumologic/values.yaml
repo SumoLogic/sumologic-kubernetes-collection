@@ -4023,7 +4023,7 @@ metadata:
           - file_storage
           # - sumologic
         pipelines:
-          logs:
+          logs/fluent/containers:
             receivers:
               - fluentforward
             processors:
@@ -4038,7 +4038,7 @@ metadata:
               - batch
             exporters:
               - sumologic/containers
-          logs/systemd:
+          logs/fluent/systemd:
             receivers:
               - fluentforward
             processors:
@@ -4052,7 +4052,7 @@ metadata:
               - batch
             exporters:
               - sumologic/systemd
-          logs/kubelet:
+          logs/fluent/kubelet:
             receivers:
               - fluentforward
             processors:
@@ -4065,7 +4065,7 @@ metadata:
               - batch
             exporters:
               - sumologic/systemd
-          logs/otc/containers:
+          logs/otlp/containers:
             receivers:
               - otlp
             processors:
