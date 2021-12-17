@@ -120,6 +120,11 @@ spec:
         - name: prom-write
           containerPort: 9888
           protocol: TCP
+        {{- if eq .Values.otelcol.metrics.enabled true }}
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /
