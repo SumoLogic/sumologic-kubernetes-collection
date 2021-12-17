@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: long-logs
+data:
+  script.sh: |
+    #!/usr/local/bin/bash
+    LONG_STRING="$(cat /dev/urandom | tr -dc 'a-z0-9' | head -c 50000)"
+    while true; do
+      echo "Dec 13 09:41:08 1st single line..."
+      echo "Dec 13 09:41:08 2nd single line..."
+      echo "Dec 14 06:41:08 Exception in thread "main" java.lang.RuntimeException: Something has gone wrong, aborting! ${LONG_STRING} end of the first long line
+        at com.myproject.module.MyProject.badMethod(MyProject.java:22)
+        at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)
+        at com.myproject.module.MyProject.anotherMethod(MyProject.java:14)
+        at com.myproject.module.MyProject.someMethod(MyProject.java:10)"
+      for i in {1..50}; do
+        echo "    at com.myproject.module.MyProject.verylongLine(MyProject.java:100000) ${LONG_STRING} end of the long line No ${i}"
+      done  
+      echo "    at com.myproject.module.MyProject.main(MyProject.java:6)
+    Dec 15 09:41:08 another line..."
+      sleep 5
+    done
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod-multiline-logs-long-line
+spec:
+  containers:
+  - name: example-container-multiline-logs-long-line
+    image: bash
+    args:
+    - /tmp/script.sh
+    volumeMounts:
+      - name: long-logs
+        mountPath: /tmp/
+  volumes:
+    - name: long-logs
+      configMap:
+        name: long-logs
+        defaultMode: 0777

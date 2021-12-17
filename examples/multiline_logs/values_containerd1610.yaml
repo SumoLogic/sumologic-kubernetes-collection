@@ -1,35 +1,6 @@
 fluent-bit:
   luaScripts:
-    script.lua: |
-      function dump(o, indent)
-        if type(o) == 'table' then
-          local s = ''
-          for k,v in pairs(o) do
-            if type(k) ~= 'number' then k = '"' .. k .. '"' end
-            s = s .. indent .. k .. ': '
-            if type(v) == 'table' then
-              local st = dump(v, indent .. ' ')
-              if string.len(st) > 0 then
-                s = s .. '\n' .. st
-              end
-            else
-              s = s .. dump(v, indent) .. '\n'
-            end
-          end
-          return s
-        else
-          return tostring(o)
-        end
-      end
-
-      local function lines(str)
-        local result = {}
-        for line in str:gmatch '[^\n]+' do
-          table.insert(result, line)
-        end
-        return result
-      end
-
+    parse_logs.lua: |
       local function split(s, delimiter)
         result = {};
         for match in (s..delimiter):gmatch("(.-)"..delimiter) do
@@ -39,24 +10,27 @@ fluent-bit:
       end
 
       function get_log_content(line)
-        table.remove(line, 1)
-        table.remove(line, 1)
-        table.remove(line, 1)
+        -- remove elements specific containerd log format and get log as single string
+        table.remove(line, 1) -- remove date
+        table.remove(line, 1) -- remove stream
+        table.remove(line, 1) -- remove log tag
         return table.concat(line, " ")
       end
 
-      function test(tag, timestamp, record)
-        -- print('************************************************')
-        -- print("tag:")
-        -- print(tag)
-        -- print("dump:")
-        -- print(dump(record, ''))
-        -- print('************************************************')
+      function adjust_first_line(record, first_line)
+        -- adjust the first line to containerd format, it comes without date, stream and logtag
+        first_line = "date" .. ' ' .. record["stream"] .. ' ' .. record["logtag"] .. ' ' .. first_line
+        return first_line
+      end
 
-        log_lines = lines(record['log'])
-        fake_date = "2021-12-17T11:38:47.982584219Z"
-        first_line = fake_date .. ' ' .. record["stream"] .. ' ' .. record["logtag"] .. ' ' .. log_lines[1]
-        log_lines[1] = first_line
+      function parse_log(tag, timestamp, record)
+        if record['log'] == nil or record["stream"] == nil or record["logtag"] == nil then
+          print("lua script: incorrect log format")
+          return 0, timestamp, record
+        end
+
+        log_lines = split(record['log'], "\n")
+        log_lines[1] = adjust_first_line(record, log_lines[1])
 
         new_lines = {}
         buffer = ""
@@ -67,17 +41,16 @@ fluent-bit:
           
           if log_tag == 'P' then
               buffer = buffer .. get_log_content(line)
-              --print(buffer)
           else
               buffer = buffer .. get_log_content(line)
               table.insert(new_lines, buffer)
-              -- print(buffer)
               buffer = ""
           end
         end
         
-        new_record = table.concat(new_lines, "\n")
-        return 0, timestamp, new_record
+        new_log = table.concat(new_lines, "\n")
+        record['log'] = new_log
+        return 2, timestamp, record
       end
   config:
     ## https://docs.fluentbit.io/manual/service
@@ -98,7 +71,6 @@ fluent-bit:
           Name                tail
           Path                /var/log/containers/example-pod-multiline-logs*.log
           Read_from_head      true
-          # Parser              containerd
           Multiline           On
           Parser_Firstline    containerd_multiline_pattern
           Multiline_Flush     600
@@ -178,50 +150,17 @@ fluent-bit:
           net.keepalive off
     customParsers: |
       [PARSER]
-          Name        multi_line
-          Format      regex
-          Regex       (?<log>^{"log":"\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
-      [PARSER]
-          Name         crio
-          Format       regex
-          Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
-          Time_Key     time
-          Time_Format  %Y-%m-%dT%H:%M:%S.%L%z
-      [PARSER]
-          Name         containerd
-          Format       regex
-          Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
-          Time_Key     time
-          Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
-      [PARSER]
           Name         containerd_multiline_pattern
           Format       regex
           Regex        (?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\w+ \d+ \d{2}:\d{2}:\d{2} .*)
           Time_Key     time
           Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
-      [MULTILINE_PARSER]
-          Name          multiline_stacktrace
-          Type          regex
-          Flush_timeout 1000
-          # Regex rules for multiline parsing
-          # ---------------------------------
-          #
-          # configuration hints:
-          #
-          #  - first state always has the name: start_state
-          #  - every field in the rule must be inside double quotes
-          #
-          # rules   |   state name   | regex pattern                   | next state name
-          # --------|----------------|--------------------------------------------------
-          Rule         "start_state"   "/^\w+ \d+ \d+\:\d+\:\d+ .*/"  "cont"
-          Rule         "cont"          "/^.*/"                     "cont"
     filters: |
       [FILTER]
           Name    lua
           Match   containers.*
-          script  /fluent-bit/scripts/script.lua
-          call    test
-
+          script  /fluent-bit/scripts/parse_logs.lua
+          call    parse_log
 
 fluentd:
   logs:
