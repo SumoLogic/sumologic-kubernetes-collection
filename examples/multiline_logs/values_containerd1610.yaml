@@ -45,15 +45,16 @@ fluent-bit:
         return table.concat(line, " ")
       end
 
-      function test(tag, timestamp, record)
-        -- print('************************************************')
-        -- print("tag:")
-        -- print(tag)
-        -- print("dump:")
-        -- print(dump(record, ''))
-        -- print('************************************************')
+      function parse_log(tag, timestamp, record)
+        if record['log'] == nil or record["stream"] == nil or record["logtag"] == nil then
+          record = nil
+          print("incorrect log format")
+          print(dump(record, ''))
+          return 1, 0, record
+        end
 
         log_lines = lines(record['log'])
+
         fake_date = "2021-12-17T11:38:47.982584219Z"
         first_line = fake_date .. ' ' .. record["stream"] .. ' ' .. record["logtag"] .. ' ' .. log_lines[1]
         log_lines[1] = first_line
@@ -76,8 +77,12 @@ fluent-bit:
           end
         end
         
-        new_record = table.concat(new_lines, "\n")
-        return 0, timestamp, new_record
+        new_log = table.concat(new_lines, "\n")
+        record['log'] = new_log
+        -- print("--------------------------------------------------------")
+        -- print(dump(record, ''))
+        -- print("--------------------------------------------------------")
+        return 1, timestamp, record
       end
   config:
     ## https://docs.fluentbit.io/manual/service
@@ -220,7 +225,10 @@ fluent-bit:
           Name    lua
           Match   containers.*
           script  /fluent-bit/scripts/script.lua
-          call    test
+          call    parse_log
+      # [FILTER]
+      #     name             stdout
+      #     match            containers.*
 
 
 fluentd:
