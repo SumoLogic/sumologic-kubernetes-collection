@@ -313,6 +313,35 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				"k8s.container.id": "",
 				"host":             "",
 				"node":             "",
+				"_sourceName":      "",
+				"_sourceCategory":  "",
+				"_sourceHost":      "",
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("logs from node systemd present", stepfuncs.WaitUntilExpectedLogsPresent(
+			10, // we don't really control this, just want to check if the logs show up
+			map[string]string{
+				"_sourceName":     "",
+				"_sourceCategory": "kubernetes/system",
+				"_sourceHost":     "",
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("logs from kubelet present", stepfuncs.WaitUntilExpectedLogsPresent(
+			10, // we don't really control this, just want to check if the logs show up
+			map[string]string{
+				"_sourceName":     "k8s_kubelet",
+				"_sourceCategory": "kubernetes/kubelet",
+				"_sourceHost":     "",
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
