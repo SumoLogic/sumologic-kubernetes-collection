@@ -3,7 +3,7 @@ fluent-bit:
     parse_logs.lua: |
       local function split(s, delimiter)
         result = {};
-        for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        for match in (s..delimiter):gmatch('(.-)'..delimiter) do
             table.insert(result, match);
         end
         return result;
@@ -19,30 +19,28 @@ fluent-bit:
 
       function adjust_first_line(record, first_line)
         -- adjust the first line to containerd format, it comes without date, stream and logtag
-        first_line = "date" .. ' ' .. record["stream"] .. ' ' .. record["logtag"] .. ' ' .. first_line
+        first_line = 'date' .. ' ' .. record['stream'] .. ' ' .. record['logtag'] .. ' ' .. first_line
         return first_line
       end
 
       function parse_log(tag, timestamp, record)
-        if record['log'] == nil or record["stream"] == nil or record["logtag"] == nil then
-          print("lua script: incorrect log format")
+        if record['log'] == nil or record['stream'] == nil or record['logtag'] == nil then
+          print('lua script: incorrect log format')
           return 0, timestamp, record
         end
 
-        log_lines = split(record['log'], "\n")
+        log_lines = split(record['log'], '\n')
         log_lines[1] = adjust_first_line(record, log_lines[1])
 
         new_lines = {}
-        buffer = ""
+        buffer = ''
 
         for k, v in pairs(log_lines) do
           line = split(v, ' ')
           log_tag = line[3]
-          
-          if log_tag == 'P' then
-              buffer = buffer .. get_log_content(line)
-          else
-              buffer = buffer .. get_log_content(line)
+          buffer = buffer .. get_log_content(line)
+
+          if log_tag == 'F' then
               table.insert(new_lines, buffer)
               buffer = ""
           end
@@ -73,11 +71,11 @@ fluent-bit:
           Read_from_head      true
           Multiline           On
           Parser_Firstline    containerd_multiline_pattern
-          Multiline_Flush     600
+          Multiline_Flush     60
           Tag                 containers.*
           Refresh_Interval    1
           Rotate_Wait         60
-          Mem_Buf_Limit       100MB
+          Mem_Buf_Limit       5MB
           Skip_Long_Lines     On
           DB                  /tail-db/tail-containers-state-sumo.db
           DB.Sync             Normal
