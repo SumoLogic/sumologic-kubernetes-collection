@@ -26,6 +26,8 @@
   - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
   - [Falco and OpenShift](#falco-and-openshift)
   - [Gzip compression errors](#gzip-compression-errors)
+  - [Error from Prometheus `init-config-reloader` container: `expand environment variables: found reference to unset environment variable "NAMESPACE"`](#error-from-prometheus-init-config-reloader-container-expand-environment-variables-found-reference-to-unset-environment-variable-namespace)
+  - [`/fluentd/buffer` permissions issue](#fluentdbuffer-permissions-issue)
 
 <!-- /TOC -->
 
@@ -477,3 +479,79 @@ kube-prometheus-stack:
                   name: sumologic-configmap
                   key: fluentdNamespace
 ```
+
+### `/fluentd/buffer` permissions issue
+
+When you encounter the following (or a similar) error message in fluentd logs:
+
+```
+2021-11-23 07:05:56 +0000 [error]: #0 unexpected error error_class=Errno::EACCES error="Permission denied @ dir_s_mkdir - /fluentd/buffer/logs"
+```
+
+this means that most likely the volume that has been provisioned as PersistentVolume
+for your fluentd has incorrect ownership and/or permissions set.
+
+You can verify that with the following `kubectl` command:
+
+```
+$ kubectl exec -it -n <NAMESPACE> <RELEASE_NAME>-<NAMESPACE>-fluentd-logs-0 \
+  --container fluentd -- ls -ld /fluentd/buffer
+drwx------ 6 root root 4096 Dec 17 16:01 /fluentd/buffer
+```
+
+In the above snippet you can observe that `/fluentd/buffer/` is owned by `root`
+and only it can access it.
+
+There can be a multitude of reason why that's the case, this can depend on the
+cloud provider that you use and the StorageClasses that are available/set in your cluster.
+
+We have a couple of possible solutions for this issue:
+
+1. Use an init container that will `chown` the buffer directory. Init containers for
+   fluentd are available since collection chart version [`v2.3.0`][v2_3] and can
+   be utilized in the following manner:
+
+  ```yaml
+  fluentd:
+    logs:
+      enabled: true
+      statefulset:
+        initContainers:
+        - name: chown
+          image: busybox:latest
+          # Please note that the user that our fluentd instances run as has an ID of 999
+          # and a primary group 999
+          # rel: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/b8b51/Dockerfile#L113
+          command: ['chown', '-R', '999:999', '/fluentd/buffer']
+          volumeMounts:
+          - name: buffer
+            mountPath: "/fluentd/buffer"
+  ```
+
+1. Use a [security context][security_context] that will make your fluentd run as
+   a different user.
+   Mark that below snippet will run fluentd as `root` which in security constrained
+   environments might not be desired.
+
+  ```yaml
+  fluentd:
+    logs:
+      enabled: true
+      statefulset:
+        containers:
+          fluentd:
+            securityContext:
+              runAsUser: 0
+  ```
+
+1. Use a different [storage class][storage_class]:
+
+  ```
+  fluentd:
+    persistence:
+      storageClass: managed-csi
+  ```
+
+[v2_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
+[storage_class]: https://kubernetes.io/docs/concepts/storage/storage-classes/
+[security_context]: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
