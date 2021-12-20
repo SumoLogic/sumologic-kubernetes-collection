@@ -183,3 +183,54 @@ func WaitUntilStatefulSetIsReady(
 		return ctx
 	}
 }
+
+// WaitUntilDaemonSetIsReady waits for a specified duration and checks with the
+// specified tick interval whether the daemonset (as described by the provided options)
+// is ready.
+//
+// Readiness for a daemonset is defined as having Status.NumberUnavailable == 0.
+func WaitUntilDaemonSetIsReady(
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+	opts ...Option,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		ds := appsv1.DaemonSet{
+			ObjectMeta: v1.ObjectMeta{
+				Namespace: ctxopts.Namespace(ctx),
+			},
+		}
+
+		listOpts := []resources.ListOption{}
+		for _, opt := range opts {
+			opt.Apply(ctx, &ds)
+			listOpts = append(listOpts, opt.GetListOption(ctx))
+		}
+
+		res := envConf.Client().Resources(ctxopts.Namespace(ctx))
+		cond := conditions.
+			New(res).
+			ResourceListMatchN(&appsv1.DaemonSetList{Items: []appsv1.DaemonSet{ds}},
+				1,
+				func(obj k8s.Object) bool {
+					ds := obj.(*appsv1.DaemonSet)
+					log.V(5).InfoS("DaemonSet", "status", ds.Status)
+					if ds.Status.NumberUnavailable != 0 {
+						log.V(0).Infof("DaemonSet %q not yet fully ready", ds.Name)
+						return false
+					}
+					return true
+				},
+				listOpts...,
+			)
+
+		require.NoError(t,
+			wait.For(cond,
+				wait.WithTimeout(waitDuration),
+				wait.WithInterval(tickDuration),
+			),
+		)
+
+		return ctx
+	}
+}
