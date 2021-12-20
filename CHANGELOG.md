@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- feat: add CRI support to experimental otelcol log collector[#2017][#2017]
 - docs(readme): add support for AKS 1.22 [#2075][#2075]
 
 ### Changed
@@ -28,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2058]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2058
 [#2063]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2063
 [#2075]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2075
+[#2017]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2017
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...main
 
 ## [v2.4.1][v2_4_1]

@@ -4195,7 +4195,35 @@ otellogs:
         include_file_path: true
         include_file_name: false
         operators:
-
+          ## Detect the container runtime log format
+          ## Can be: docker-shim, CRI-O and containerd
+          - id: get-format
+            type: router
+            routes:
+              - output: parser-docker
+                expr: '$$body matches "^\\{"'
+              - output: parser-crio
+                expr: '$$body matches "^[^ Z]+ "'
+              - output: parser-containerd
+                expr: '$$body matches "^[^ Z]+Z"'
+          ## Parse CRI-O format
+          - id: parser-crio
+            type: regex_parser
+            regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$'
+            output: extract-metadata-from-filepath
+            timestamp:
+              parse_from: time
+              layout_type: gotime
+              layout: '2006-01-02T15:04:05.000000000-07:00'
+          ## Parse CRI-Containerd format
+          - id: parser-containerd
+            type: regex_parser
+            regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$'
+            output: extract-metadata-from-filepath
+            timestamp:
+              parse_from: time
+              layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          ## Parse docker-shim format
           ## parser-docker interprets the input string as JSON and moves the `time` field from the JSON to Timestamp field in the OTLP log
           ## record.
           # Input Body (string): '{"log":"2001-02-03 04:05:06 first line\n","stream":"stdout","time":"2021-11-25T09:59:13.23887954Z"}'
@@ -4204,7 +4232,7 @@ otellogs:
           # Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
           - id: parser-docker
             type: json_parser
-            # output: join-multipart-entries
+            output: extract-metadata-from-filepath
             timestamp:
               parse_from: time
               layout: '%Y-%m-%dT%H:%M:%S.%LZ'

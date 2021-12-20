@@ -31,7 +31,32 @@ data:
         include_file_name: false
         include_file_path: true
         operators:
+        - id: get-format
+          routes:
+          - expr: $$body matches "^\\{"
+            output: parser-docker
+          - expr: $$body matches "^[^ Z]+ "
+            output: parser-crio
+          - expr: $$body matches "^[^ Z]+Z"
+            output: parser-containerd
+          type: router
+        - id: parser-crio
+          output: extract-metadata-from-filepath
+          regex: ^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$
+          timestamp:
+            layout: "2006-01-02T15:04:05.000000000-07:00"
+            layout_type: gotime
+            parse_from: time
+          type: regex_parser
+        - id: parser-containerd
+          output: extract-metadata-from-filepath
+          regex: ^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$
+          timestamp:
+            layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+            parse_from: time
+          type: regex_parser
         - id: parser-docker
+          output: extract-metadata-from-filepath
           timestamp:
             layout: '%Y-%m-%dT%H:%M:%S.%LZ'
             parse_from: time
