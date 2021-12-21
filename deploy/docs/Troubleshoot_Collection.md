@@ -499,8 +499,8 @@ $ kubectl exec -it -n <NAMESPACE> <RELEASE_NAME>-<NAMESPACE>-fluentd-logs-0 \
 drwx------ 6 root root 4096 Dec 17 16:01 /fluentd/buffer
 ```
 
-In the above snippet you can observe that `/fluentd/buffer/` is owned by `root`
-and only it can access it.
+In the above snippet you can observe that `/fluentd/buffer/` is owned by `root`, and
+only that user can access it.
 
 There are many possible reasons for this behaviour, this can depend on the
 cloud provider that you use and the StorageClasses that are available/set in your cluster.
