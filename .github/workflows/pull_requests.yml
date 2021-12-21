@@ -151,6 +151,17 @@ jobs:
           key: ${{ runner.os }}-go-integration-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-integration-
+      - name: Prepare tmpfs mount for kind etcd
+        run: |
+          sudo mkdir -p /tmp/etcd
+          sudo mount -t tmpfs tmpfs /tmp/etcd
       - name: Run integration test - ${{ matrix.test_name }}
         working-directory: ./tests/integration/
-        run: make test TEST_NAME=${{matrix.test_name}} KIND_NODE_IMAGE=${{matrix.kind_image}}
+        run: |
+          cat <<EOT >>yamls/cluster.yaml
+            extraMounts:
+            - containerPath: /var/lib/etcd
+              hostPath: /tmp/etcd
+          EOT
+          cat yamls/cluster.yaml
+          make test TEST_NAME=${{matrix.test_name}} KIND_NODE_IMAGE=${{matrix.kind_image}}
