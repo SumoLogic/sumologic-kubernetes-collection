@@ -502,7 +502,7 @@ drwx------ 6 root root 4096 Dec 17 16:01 /fluentd/buffer
 In the above snippet you can observe that `/fluentd/buffer/` is owned by `root`
 and only it can access it.
 
-There can be a multitude of reason why that's the case, this can depend on the
+There are many possible reasons for this behaviour, this can depend on the
 cloud provider that you use and the StorageClasses that are available/set in your cluster.
 
 We have a couple of possible solutions for this issue:
