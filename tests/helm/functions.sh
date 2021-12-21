@@ -91,6 +91,17 @@ function generate_file {
   return 0
 }
 
+# Out templates have config checksums added as annotations which requires us to
+# change this every time anything in the config changes.
+# In order to avoid that let's just replace those with hardcoded placeholders.
+function clear_config_checksum() {
+  local file="${1}"
+  local tmpfile="$(mktemp)"
+
+  mv "${file}" "${tmpfile}"
+  sed 's#\(checksum/config: \)\(.*\)$#\1\"%CONFIG_CHECKSUM%\"#g' "${tmpfile}" > "${file}"
+}
+
 # Run test
 function perform_test {
   local input_file="${1}"
@@ -106,6 +117,8 @@ function perform_test {
     test_failed "${test_name}"
     return
   fi
+
+  clear_config_checksum "${TEST_OUT}"
 
   test_output=$(diff -c "${TEST_TMP_PATH}/${output_file}" "${TEST_OUT}" | cat -te)
   rm "${TEST_OUT}"

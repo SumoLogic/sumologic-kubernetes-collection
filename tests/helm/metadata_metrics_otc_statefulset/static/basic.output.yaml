@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 86de32ac8731e31b9d96d6dd8e8021e3a3798d59d5889452952a7a5c9fec4c09
+        checksum/config: "%CONFIG_CHECKSUM%"
         someAnnotation: someValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-metrics
