@@ -491,7 +491,7 @@ When you encounter the following (or a similar) error message in fluentd logs:
 this means that most likely the volume that has been provisioned as PersistentVolume
 for your fluentd has incorrect ownership and/or permissions set.
 
-You can verify that with the following `kubectl` command:
+You can verify that this is the case with the following `kubectl` command:
 
 ```
 $ kubectl exec -it -n <NAMESPACE> <RELEASE_NAME>-<NAMESPACE>-fluentd-logs-0 \
