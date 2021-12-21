@@ -5,13 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v2.3.2][v2_3_2]
 
-### Fixed
+### Release v2.3.2 - 2021-12-21
+
+#### Fixed
 
 - fix(helm): add job and cronjob to clusterrole's permission set [#1994][#1994]
 
 [#1994]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1994
+
+<!-- markdown-link-check-disable -->
+[v2_3_2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.2
+<!-- markdown-link-check-enable -->
 
 ## [v2.3.1][v2_3_1] - 2021-12-14
 
@@ -19,9 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix otelcol agent template [#1975][#1975]
 
-<!-- markdown-link-check-disable -->
 [v2_3_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.1
-<!-- markdown-link-check-enable -->
 [#1975]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1975
 
 ## [v2.3.0][v2_3_0] - 2021-12-8
