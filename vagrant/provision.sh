@@ -5,7 +5,7 @@ set -x
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get --yes upgrade
-apt-get --yes install apt-transport-https jq
+apt-get --yes install apt-transport-https jq make npm yamllint
 
 echo "export EDITOR=vim" >> /home/vagrant/.bashrc
 
@@ -68,9 +68,6 @@ add-apt-repository \
 apt-get install -y docker-ce docker-ce-cli containerd.io
 usermod -aG docker vagrant
 
-# Install make
-apt-get install -y make
-
 # K8s needs some time to bootstrap
 while true; do
   kubectl -n kube-system get services 1>/dev/null 2>&1 && break
@@ -88,11 +85,9 @@ curl -Lo- "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK
 sudo cp "shellcheck-${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin
 rm -rf "shellcheck-${SHELLCHECK_VERSION}/"
 
-gem install mdl
+npm install -g markdownlint-cli
 # shellcheck disable=SC2016
 echo 'export PATH="$PATH:$HOME/.gem/bin"' >> /home/vagrant/.bashrc
-
-apt-get install -y yamllint
 
 K9S_VERSION=v0.24.15
 mkdir /opt/k9s

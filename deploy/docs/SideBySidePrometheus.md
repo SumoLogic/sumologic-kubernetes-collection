@@ -4,7 +4,7 @@ When installing our Helm Chart it is possible to have more than one Prometheus s
 
 **Note**: Make sure your `Prometheus Operator` and/or `Prometheus Operator Chart` are compatible with the version used by the Collection
 
-# Installation with Helm
+## Installation with Helm
 
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
 
@@ -17,7 +17,7 @@ Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metr
 - [Upgrade Sumo Logic Collection](#upgrading-sumo-logic-collection)
 - [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
-## Requirements
+### Requirements
 
 If you don’t already have a Sumo account, you can create one by clicking the Free Trial button on https://www.sumologic.com/.
 
@@ -28,7 +28,7 @@ The following are required to setup Sumo Logic's Kubernetes collection.
 
 To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
 
-## Prerequisite
+### Prerequisite
 
 Sumo Logic Apps for Kubernetes and Explore require you to add the following [fields](https://help.sumologic.com/Manage/Fields#Manage_fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata. This is a one time setup per Sumo Logic account.
 
@@ -41,7 +41,7 @@ Sumo Logic Apps for Kubernetes and Explore require you to add the following [fie
 - pod
 - service
 
-## Installation Steps
+### Installation Steps
 
 The Helm chart installation requires two parameter overrides:
 
@@ -114,7 +114,7 @@ helm upgrade --install my-release sumologic/sumologic \
     --set fluent-bit.securityContext.privileged=true
 ```
 
-## Viewing Data In Sumo Logic
+### Viewing Data In Sumo Logic
 
 Once you have completed installation, you can
 [install the Kubernetes App and view the dashboards][sumo-k8s-app-dashboards]
@@ -125,9 +125,9 @@ If you do not see data in Sumo Logic, you can review our
 [sumo-k8s-app-dashboards]: https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards
 [open a new Explore tab]: https://help.sumologic.com/Observability_Solution/Kubernetes_Solution/Navigate_your_Kubernetes_environment
 
-## Troubleshooting Installation
+### Troubleshooting Installation
 
-### Error: timed out waiting for the condition
+#### Error: timed out waiting for the condition
 
 If `helm upgrade --install` hangs, it usually means the pre-install setup job
 is failing and is in a retry loop.
@@ -151,7 +151,7 @@ Get the logs from that pod:
 kubectl logs POD_NAME -f
 ```
 
-### Error: collector with name 'sumologic' does not exist
+#### Error: collector with name 'sumologic' does not exist
 
 If you get
 
@@ -167,7 +167,7 @@ This error occurs if the endpoints had already been created by an earlier run of
 
 You can find more information in our [troubleshooting documentation](Troubleshoot_Collection.md).
 
-## Customizing Installation
+### Customizing Installation
 
 All default properties for the Helm chart can be found in our
 [documentation](../helm/sumologic/README.md).
@@ -183,7 +183,7 @@ helm upgrade --install my-release sumologic/sumologic -f values.yaml
 
 > **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
 
-## Upgrading Sumo Logic Collection
+### Upgrading Sumo Logic Collection
 
 **Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).**
 
@@ -219,7 +219,7 @@ helm history my-release
 helm rollback my-release <REVISION-NUMBER>
 ```
 
-## Uninstalling Sumo Logic Collection
+### Uninstalling Sumo Logic Collection
 
 To uninstall/delete the Helm chart:
 
