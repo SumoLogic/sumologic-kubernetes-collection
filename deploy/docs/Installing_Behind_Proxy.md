@@ -10,9 +10,9 @@ fluentd.proxyUri
 
 You should set these properties to the URL for your proxy environment.
 
-# Troubleshooting
+## Troubleshooting
 
-## Error: timed out waiting for the condition
+### Error: timed out waiting for the condition
 
 If `helm upgrade --install` hangs, it usually means the pre-install setup job is failing and is in a retry loop.
 Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm upgrade --install` command.

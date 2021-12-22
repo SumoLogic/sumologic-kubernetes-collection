@@ -1,11 +1,10 @@
 /**
- * Note: This configuration is used by VS Code's Markdownlint extension and is only included for convenience.
- * The original and primary Markdownlint configuration as used in CI is .markdownlint/style.rb.
+ * Note: Configuration for https://github.com/igorshubovych/markdownlint-cli
  */
 {
     "default": true,
     "MD004": { "style": "dash" },
-    "MD013": { "line_length": 120, "code_blocks": false, "tables": false },
+    "MD013": { "line_length": 360, "code_blocks": false, "tables": false },
     "MD024": false, // no-duplicate-heading/no-duplicate-header
     "MD033": false, // no-inline-html
     "MD034": false, // no-bare-urls

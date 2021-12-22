@@ -190,7 +190,7 @@ annotations:
   prometheus.io/path: "/metrics" # Path which metrics should be scraped from
 ```
 
-**Note: This solution works only to scrape metrics from one container within the pod**
+> **Note: This solution works only to scrape metrics from one container within the pod**
 
 ### Create a new HTTP source in Sumo Logic
 

@@ -9,10 +9,8 @@ test:
 push-helm-chart:
 	./ci/push-helm-chart.sh
 
-markdownlint: mdl
-
-mdl:
-	mdl --style .markdownlint/style.rb \
+markdownlint:
+	markdownlint --config .markdownlint.jsonc \
 		deploy/docs \
 		CHANGELOG.md
 
