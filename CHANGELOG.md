@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- chore: update kubernetes-tools to 2.9.0 [#2013][#2013]
 - chore: bump Thanos image to our build of v0.23.1 [#1973][#1973]
 - Introduced option to add cache refresh delay for metadata enrichment calls [#1974][#1974]
 - chore(deps): bump Sumo OT distro to 0.0.43-beta.0 [#1993][#1993]
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#1983]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1983
 [#1992]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1992
 [#1993]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1993
+[#2013]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2013
 
 ## [v2.3.1][v2_3_1] - 2021-12-14
 

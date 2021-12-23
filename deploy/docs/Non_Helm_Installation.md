@@ -91,7 +91,7 @@ First you will generate the YAML to apply to your cluster.  The following comman
 kubectl run tools \
   -i --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:2.6.0 -- \
+  --image sumologic/kubernetes-tools:2.9.0 -- \
   template \
   --name-template 'collection' \
   --set sumologic.accessId='<ACCESS_ID>' \
@@ -128,7 +128,7 @@ The following will render the YAML and install in the `my-namespace` namespace.
 kubectl run tools \
   -i --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:2.6.0 -- \
+  --image sumologic/kubernetes-tools:2.9.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -177,7 +177,7 @@ you can do the following:
 kubectl run tools \
   -i --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:2.6.0 -- \
+  --image sumologic/kubernetes-tools:2.9.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -258,7 +258,7 @@ cat sumo-values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.6.0 -- \
+    --image sumologic/kubernetes-tools:2.9.0 -- \
     template \
       --name-template 'collection' \
       | tee sumologic.yaml
@@ -279,7 +279,7 @@ You can use the same commands used to create the YAML in the first place.
 kubectl run tools \
   -i --quiet --rm \
   --restart=Never \
-  --image sumologic/kubernetes-tools:2.6.0 -- \
+  --image sumologic/kubernetes-tools:2.9.0 -- \
   template \
   --namespace 'my-namespace' \
   --name-template 'collection' \
@@ -297,7 +297,7 @@ cat sumo-values.yaml | \
      kubectl run tools \
        -i --quiet --rm \
        --restart=Never \
-       --image sumologic/kubernetes-tools:2.6.0 -- \
+       --image sumologic/kubernetes-tools:2.9.0 -- \
        template \
          --name-template 'collection' \
          | tee sumologic.yaml
@@ -312,7 +312,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.6.0 -- \
+    --image sumologic/kubernetes-tools:2.9.0 -- \
     template \
       --name-template 'collection' \
       --version=1.0.0
