@@ -104,3 +104,17 @@ echo
 
 ln -s /sumologic/vagrant/scripts/sumo-make.sh /usr/local/bin/sumo-make
 ln -s /sumologic/vagrant/scripts/sumo-make-completion.sh /etc/bash_completion.d/sumo-make
+
+# Install Go
+GO_VERSION=1.17
+curl -LJ "https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o go.linux-amd64.tar.gz \
+    && rm -rf /usr/local/go \
+    && tar -C /usr/local -xzf go.linux-amd64.tar.gz \
+    && rm go.linux-amd64.tar.gz \
+    && ln -s /usr/local/go/bin/go /usr/local/bin
+
+# Install Kind
+KIND_VERSION=v0.11.1
+curl -Lo ./kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-amd64"
+chmod +x ./kind
+mv ./kind /usr/local/bin/kind
