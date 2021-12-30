@@ -22,6 +22,10 @@ const (
 	LogsGeneratorNamespace = "logs-generator"
 	LogsGeneratorName      = "logs-generator"
 	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.9.0"
+
+	MultilineLogsNamespace   = "default"
+	MultilineLogsPodName     = "example-pod-multiline-logs-long-lines"
+	MultilineLogsPodYamlPath = "yamls/pod_multiline_long_lines.yaml"
 )
 
 // metrics we expect the receiver to get

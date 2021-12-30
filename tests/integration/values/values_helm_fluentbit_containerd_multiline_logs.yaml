@@ -1,0 +1,134 @@
+sumologic:
+  setupEnabled: true
+  accessId: "dummy"
+  accessKey: "dummy"
+  endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
+  metrics:
+    enabled: false
+
+fluent-bit:
+  luaScripts:
+    parse_logs.lua: |
+      local function split(s, delimiter)
+        result = {};
+        for match in (s..delimiter):gmatch('(.-)'..delimiter) do
+            table.insert(result, match);
+        end
+        return result;
+      end
+
+      function get_log_content(line)
+        -- remove elements specific containerd log format and get log as single string
+        table.remove(line, 1) -- remove date
+        table.remove(line, 1) -- remove stream
+        table.remove(line, 1) -- remove log tag
+        return table.concat(line, " ")
+      end
+
+      function adjust_first_line(record, first_line)
+        -- adjust the first line to containerd format, it comes without date, stream and logtag
+        -- 'fake-date' string at the beginning is used only to have proper log format
+        first_line = 'fake-date' .. ' ' .. record['stream'] .. ' ' .. record['logtag'] .. ' ' .. first_line
+        return first_line
+      end
+
+      function parse_log(tag, timestamp, record)
+        if record['log'] == nil or record['stream'] == nil or record['logtag'] == nil then
+          -- log does not contain required attributes ('log', 'stream', 'logtag') to be processed by parse_log function
+          -- the record will not be modified
+          return 0, timestamp, record
+        end
+
+        log_lines = split(record['log'], '\n')
+        log_lines[1] = adjust_first_line(record, log_lines[1])
+
+        new_lines = {}
+        buffer = ''
+
+        for k, v in pairs(log_lines) do
+          line = split(v, ' ')
+          log_tag = line[3]
+          buffer = buffer .. get_log_content(line)
+
+          if log_tag == 'F' then
+              table.insert(new_lines, buffer)
+              buffer = ""
+          end
+        end
+        
+        new_log = table.concat(new_lines, "\n")
+        record['log'] = new_log
+        return 2, timestamp, record
+      end
+
+  config:
+    ## https://docs.fluentbit.io/manual/service
+    service: |
+      [SERVICE]
+          Flush        1
+          Daemon       Off
+          Log_Level    info
+          Parsers_File parsers.conf
+          Parsers_File custom_parsers.conf
+          HTTP_Server  On
+          HTTP_Listen  0.0.0.0
+          HTTP_Port    2020
+    ## https://docs.fluentbit.io/manual/pipeline/inputs
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/ContainerLogs.md
+    inputs: |
+      [INPUT]
+          Name                tail
+          Path                /var/log/containers/example-pod-multiline-logs-long-lines*.log
+          Read_from_head      true
+          Multiline           On
+          Parser_Firstline    containerd_multiline_pattern
+          Multiline_Flush     60
+          Tag                 containers.*
+          Refresh_Interval    1
+          Rotate_Wait         60
+          Mem_Buf_Limit       30MB
+          Skip_Long_Lines     On
+          DB                  /tail-db/tail-containers-state-sumo.db
+          DB.Sync             Normal
+    customParsers: |
+     [PARSER]
+         Name         containerd_multiline_pattern
+         Format       regex
+         Regex        (?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\w+ \d+ \d{2}:\d{2}:\d{2} .*)
+         Time_Key     time
+         Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
+    filters: |
+      [FILTER]
+          Name    lua
+          Match   containers.*
+          script  /fluent-bit/scripts/parse_logs.lua
+          call    parse_log
+
+  extraVolumeMounts:
+    - mountPath: /tail-db
+      name: tail-db
+    - mountPath: /run/log/journal
+      name: run-log-journal
+  extraVolumes:
+    - hostPath:
+        path: /var/lib/fluent-bit
+        type: DirectoryOrCreate
+      name: tail-db
+    # kind doesn't enable journald persistence, and the journal resides at /run/log/journal
+    # instead of /var/log/journal
+    - hostPath:
+        path: /run/log/journal
+        type: DirectoryOrCreate
+      name: run-log-journal
+
+fluentd:
+  logs:
+    containers:
+      multiline:
+        enabled: false
+    statefulset:
+      resources:
+        # Request less resources so that this fits on Github actions runners environment
+        requests:
+          memory: 64Mi
+          cpu: 100m

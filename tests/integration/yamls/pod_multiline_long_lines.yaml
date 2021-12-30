@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod-multiline-logs-long-lines
+  labels:
+    example: example-pod-multiline-logs-long-lines
+spec:
+  terminationGracePeriodSeconds: 300
+  containers:
+  - name: example-container-multiline-logs-long-lines
+    image: busybox
+    args:
+    - /bin/sh
+    - -c
+    - >
+      for i in $(seq 500); do
+        LONG_STRING="$(cat /dev/urandom | tr -dc ''a-z0-9'' | head -c 30000)";
+        echo "Dec 13 09:41:08 1st single line...";
+        echo "Dec 13 09:41:08 2nd single line...";
+        echo "Dec 14 06:41:08 Exception in thread "main" java.lang.RuntimeException: Something has gone wrong, aborting! ${LONG_STRING} end of the 1st long line
+          at com.myproject.module.MyProject.badMethod(MyProject.java:22)
+          at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)
+          at com.myproject.module.MyProject.anotherMethod(MyProject.java:14)
+          at com.myproject.module.MyProject.someMethod(MyProject.java:10)";
+        echo "    at com.myproject.module.MyProject.verylongLine(MyProject.java:100000) ${LONG_STRING} end of the 2nd long line";
+        echo "    at com.myproject.module.MyProject.main(MyProject.java:6)
+      Dec 15 09:41:08 another line in loop ${i}";
+      done
