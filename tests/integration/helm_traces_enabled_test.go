@@ -22,7 +22,6 @@ import (
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
 
 func Test_Helm_Traces_Enabled(t *testing.T) {
@@ -30,12 +29,6 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 		tickDuration = time.Second
 		waitDuration = time.Minute * 2
 	)
-
-	// TODO:
-	// Refactor this: we should find a way to inject this into step func helpers
-	// like stepfuncs.WaitUntilPodsAvailable() instead of relying on an implementation
-	// detail.
-	releaseName := strings.ReleaseNameFromT(t)
 
 	featInstall := features.New("installation").
 		Assess("sumologic secret is created",
@@ -46,14 +39,19 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				require.Len(t, secret.Data, 11)
 				return ctx
 			}).
-		Assess("fluentd logs pods are available",
-			stepfuncs.WaitUntilPodsAvailable(
-				metav1.ListOptions{
-					LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName),
-				},
-				1,
+		Assess("fluentd logs statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
+					},
+				),
 			),
 		).
 		Assess("fluentd logs buffers PVCs are created",
@@ -79,14 +77,19 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("fluentd metrics pods are available",
-			stepfuncs.WaitUntilPodsAvailable(
-				metav1.ListOptions{
-					LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-metrics", releaseName),
-				},
-				1,
+		Assess("fluentd metrics statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-metrics"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-metrics"),
+					},
+				),
 			),
 		).
 		Assess("fluentd metrics buffers PVCs are created",
@@ -112,14 +115,19 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("fluentd events pods are available",
-			stepfuncs.WaitUntilPodsAvailable(
-				metav1.ListOptions{
-					LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-events", releaseName),
-				},
-				1,
+		Assess("fluentd events statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
+					},
+				),
 			),
 		).
 		Assess("fluentd events buffers PVCs are created",
@@ -172,8 +180,10 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 		Feature()
 
 	featTraces := features.New("traces").
+		// TODO: Rewrite into similar step func as WaitUntilStatefulSetIsReady but for deployments
 		Assess("otelcol deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
+			releaseName := ctxopts.HelmRelease(ctx)
 			labelSelector := fmt.Sprintf("app=%s-sumologic-otelcol", releaseName)
 			ds := appsv1.DeploymentList{}
 
@@ -197,6 +207,7 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 			)
 			return ctx
 		}).
+		// TODO: Rewrite into similar step func as WaitUntilStatefulSetIsReady but for daemonsets
 		Assess("otelagent daemonset is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
 			nl := corev1.NodeList{}
@@ -204,6 +215,7 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				return ctx
 			}
 
+			releaseName := ctxopts.HelmRelease(ctx)
 			labelSelector := fmt.Sprintf("app=%s-sumologic-otelagent", releaseName)
 			ds := appsv1.DaemonSetList{}
 
