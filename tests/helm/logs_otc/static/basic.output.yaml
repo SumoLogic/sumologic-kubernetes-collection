@@ -20,6 +20,10 @@ data:
         directory: /var/lib/storage/otc
         timeout: 10s
       health_check: {}
+    processors:
+      batch:
+        send_batch_size: 256
+        timeout: 1s
     receivers:
       filelog/containers:
         include:
@@ -60,6 +64,8 @@ data:
         logs/containers:
           exporters:
           - otlphttp
+          processors:
+          - batch
           receivers:
           - filelog/containers
       telemetry:
