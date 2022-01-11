@@ -4176,6 +4176,8 @@ otellogs:
         logs/containers:
           receivers:
             - filelog/containers
+          processors:
+            - batch
           exporters:
             - otlphttp
     receivers:
@@ -4322,6 +4324,15 @@ otellogs:
     exporters:
       otlphttp:
         endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local:4318
+    processors:
+      ## The batch processor accepts spans and places them into batches grouped by node and resource
+      batch:
+        ## Number of spans after which a batch will be sent regardless of time
+        ## This is set to the same value as in the metadata enricher
+        ## TODO: Figure out what the optimal values should be for different configurations
+        send_batch_size: 256
+        ## Time duration after which a batch will be sent regardless of size
+        timeout: 1s
   daemonset:
     ## Set securityContext for containers running in pods in log collector daemonset
     securityContext:
