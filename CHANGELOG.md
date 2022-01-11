@@ -34,6 +34,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#1993]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1993
 [#2013]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2013
 
+## [v2.3.2][v2_3_2]
+
+### Release v2.3.2 - 2021-12-21
+
+#### Fixed
+
+- fix(helm): add job and cronjob to clusterrole's permission set [#1994][#1994]
+
+[#1994]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1994
+
+[v2_3_2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.2
+
 ## [v2.3.1][v2_3_1] - 2021-12-14
 
 ### Fixed
