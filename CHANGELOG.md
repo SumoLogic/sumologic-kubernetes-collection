@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- feat: add batching to otelcol log collector [#2018][#2018]
+- feat: add batching to experimental otelcol log collector [#2018][#2018]
 - feat: add experimental otelcol log collector [#1986][#1986]
 - feat: add option to disable pod owners enrichment [#1959][#1959]
 
