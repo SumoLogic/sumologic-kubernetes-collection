@@ -4176,10 +4176,10 @@ otellogs:
         logs/containers:
           receivers:
             - filelog/containers
-          exporters:
-            - otlphttp
           processors:
             - batch
+          exporters:
+            - otlphttp
     receivers:
       filelog/containers:
         include:
