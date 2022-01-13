@@ -117,3 +117,15 @@ The following matrix displays the tested package versions for our Helm chart.
 | 0.12.0                | 8.2.0                                     | 1.6.3   | 2.8.1                               | 1.0.9  | -              | -                 |                          |
 | 0.9.0 - 0.11.0        | 6.2.1                                     | 1.6.3   | 2.4.4                               | 1.0.8  | -              | -                 |                          |
 | 0.6.0 - 0.8.0         | 6.2.1                                     | 1.6.3   | 2.4.4                               | 1.0.5  | -              | -                 |                          |
+
+### ARM support
+
+The collection Helm Chart supports AWS Graviton CPUs, and has been tested in ARM-based EKS clusters. In principle, it
+should run fine on any ARM64 node, but there is currently no official support for non-AWS ARM environments. If you do
+however run into problems in such an environment, don't hesitate to open an [issue][issues] describing them.
+
+The only exception to the above is Falco, which currently lacks official ARM Docker images. See
+[this issue][falco] for more information.
+
+[falco]: https://github.com/falcosecurity/falco/issues/1589
+[issues]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues
