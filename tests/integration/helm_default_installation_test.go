@@ -30,7 +30,7 @@ import (
 func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 	const (
 		tickDuration            = 3 * time.Second
-		waitDuration            = 3 * time.Minute
+		waitDuration            = 5 * time.Minute
 		logsGeneratorCount uint = 1000
 	)
 	expectedMetrics := internal.DefaultExpectedMetrics
