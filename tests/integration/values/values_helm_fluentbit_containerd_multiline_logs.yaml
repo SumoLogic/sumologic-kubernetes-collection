@@ -6,6 +6,8 @@ sumologic:
   metrics:
     enabled: false
 
+## Fluent Bit configuration described in:
+## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/ContainerLogs.md#using-old-multiline-parser
 fluent-bit:
   luaScripts:
     parse_logs.lua: |
