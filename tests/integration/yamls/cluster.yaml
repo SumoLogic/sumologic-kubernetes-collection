@@ -2,3 +2,14 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
+  kubeadmConfigPatches:
+  # these changes allow us to scrape control plane metrics
+  # see kind docs on customizing kubeadm: https://kind.sigs.k8s.io/docs/user/configuration/#kubeadm-config-patches
+  # and kubeadm docs on configuring control plane components: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/control-plane-flags/
+  - |
+    kind: ClusterConfiguration
+    scheduler:
+        extraArgs:
+          bind-address: 0.0.0.0
+          port: "10251"
+
