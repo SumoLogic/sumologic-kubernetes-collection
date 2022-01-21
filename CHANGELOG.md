@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- feat: export scheduler_framework_extension_point_duration metrics [#2033][#2033]
 - docs: claim official ARM support [#2024][#2024]
 - feat: add batching to experimental otelcol log collector [#2018][#2018]
 - feat: add experimental otelcol log collector [#1986][#1986]
@@ -39,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2020]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2020
 [#2025]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2025
 [#2024]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2024
+[#2033]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2024
 
 ## [v2.3.2][v2_3_2]
 
