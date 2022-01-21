@@ -89,6 +89,11 @@ var (
 		// "apiserver_request_latencies_summary_count",
 		// "apiserver_request_latencies_summary_sum",
 	}
+	KubeControllerManagerMetrics = []string{
+		"cloudprovider_aws_api_request_duration_seconds_bucket",
+		"cloudprovider_aws_api_request_duration_seconds_count",
+		"cloudprovider_aws_api_request_duration_seconds_sum",
+	}
 	CAdvisorMetrics = []string{
 		"container_cpu_usage_seconds_total",
 		// These metrics will be available in containerd after kind upgrades past
@@ -119,6 +124,8 @@ var (
 		KubeletMetrics,
 		KubeSchedulerMetrics,
 		KubeApiServerMetrics,
+		// Need to upgrade kube-prometheus stack to use the secure metrics endpoint for controller metrics
+		// KubeControllerManagerMetrics,
 		CAdvisorMetrics,
 		NodeExporterMetrics,
 	}

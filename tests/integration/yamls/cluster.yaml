@@ -12,4 +12,6 @@ nodes:
         extraArgs:
           bind-address: 0.0.0.0
           port: "10251"
-
+    controllerManager:
+        extraArgs:
+          bind-address: 0.0.0.0
