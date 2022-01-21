@@ -94,6 +94,26 @@ var (
 		"cloudprovider_aws_api_request_duration_seconds_count",
 		"cloudprovider_aws_api_request_duration_seconds_sum",
 	}
+	CoreDNSMetrics = []string{
+		"coredns_cache_entries",
+		"coredns_cache_hits_total",
+		"coredns_cache_misses_total",
+		"coredns_dns_request_duration_seconds_count",
+		"coredns_dns_request_duration_seconds_sum",
+		"coredns_dns_requests_total",
+		"coredns_dns_responses_total",
+		"coredns_forward_requests_total",
+		"process_cpu_seconds_total",
+		"process_open_fds",
+		"process_resident_memory_bytes",
+		// Deprecated in https://coredns.io/2020/06/15/coredns-1.7.0-release/#metric-changes
+		// "coredns_cache_size",
+		// "coredns_dns_response_rcode_count_total",
+		// "coredns_forward_request_count_total",
+		// No idea where this came from, doesn't seem to exist
+		// TODO: confirm it doesn't exist and remove it from values.yaml
+		// "coredns_dns_request_count_total",
+	}
 	CAdvisorMetrics = []string{
 		"container_cpu_usage_seconds_total",
 		// These metrics will be available in containerd after kind upgrades past
@@ -126,6 +146,7 @@ var (
 		KubeApiServerMetrics,
 		// Need to upgrade kube-prometheus stack to use the secure metrics endpoint for controller metrics
 		// KubeControllerManagerMetrics,
+		CoreDNSMetrics,
 		CAdvisorMetrics,
 		NodeExporterMetrics,
 	}
