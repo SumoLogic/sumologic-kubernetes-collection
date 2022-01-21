@@ -64,6 +64,17 @@ var (
 		"kubelet_running_containers",
 		"kubelet_running_pods",
 	}
+	KubeSchedulerMetrics = []string{
+		"scheduler_e2e_scheduling_duration_seconds_count",
+		"scheduler_e2e_scheduling_duration_seconds_sum",
+		"scheduler_e2e_scheduling_duration_seconds_bucket",
+		"scheduler_scheduling_algorithm_duration_seconds_count",
+		"scheduler_scheduling_algorithm_duration_seconds_sum",
+		"scheduler_scheduling_algorithm_duration_seconds_bucket",
+		// Deprecated in Kubernetes 1.21: https://github.com/kubernetes/kubernetes/pull/96447
+		// TODO: Remove this and the values.yaml settings after we drop support for 1.20
+		// "scheduler_binding_duration_seconds",
+	}
 	CAdvisorMetrics = []string{
 		"container_cpu_usage_seconds_total",
 		// These metrics will be available in containerd after kind upgrades past
@@ -92,6 +103,7 @@ var (
 		KubeNodeMetrics,
 		KubePodMetrics,
 		KubeletMetrics,
+		KubeSchedulerMetrics,
 		CAdvisorMetrics,
 		NodeExporterMetrics,
 	}
