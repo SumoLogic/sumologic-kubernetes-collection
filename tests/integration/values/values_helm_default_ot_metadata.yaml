@@ -57,6 +57,111 @@ metadata:
         requests:
           cpu: 100m
           memory: 128Mi
+    config:
+      # Send otelcol and kindnet-cni logs to different receiver endpoints
+      # The additional receivers are defined in yamls/receiver-mock
+      processors:
+        # Add a routing_key key to the log based on the resource attribute "k8s.container.name"
+        # This is a resource attribute because we group based on it earlier in groupbyattr/containers
+        attributes/kindnet:
+          include:
+            match_type: regexp
+            resources: 
+            - key: "k8s.container.name"
+              value: "^kindnet.*"
+          actions:
+            - action: insert
+              key: routing_key
+              value: kindnet
+        attributes/otelcol:
+          include:
+            match_type: regexp
+            resources: 
+            - key: "k8s.container.name"
+              value: "^otel.*"
+          actions:
+            - action: upsert
+              key: routing_key
+              value: otelcol
+        # Group by the routing key. This is necessary because the routing processor doesn't work on log attributes.
+        groupbyattrs/routing:
+          keys:
+            - routing_key
+        # Route based on the resource-level routing_key attribute.
+        routing:
+          default_exporters:
+            - sumologic/containers
+          from_attribute: routing_key
+          attribute_source: resource
+          table:
+            - value: kindnet
+              exporters:
+                - sumologic/containers/kindnet
+            - value: otelcol
+              exporters:
+                - sumologic/containers/otelcol
+      # These exporters are identical, except for the endpoint
+      exporters:
+        sumologic/containers/otelcol:
+          log_format: json
+          json_logs:
+            add_timestamp: true
+            timestamp_key: timestamp
+          endpoint: http://receiver-mock-otelcol.receiver-mock:3000/receiver/v1/
+          source_name: "%{_sourceName}"
+          source_category: "%{_sourceCategory}"
+          source_host: "%{_sourceHost}"
+          ## Configuration for sending queue
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
+          sending_queue:
+            enabled: true
+            persistent_storage_enabled: false
+          metadata_attributes:
+            ## Attributes to be send as fields
+            - _collector
+            - k8s.*
+            - pod_labels_.*
+            - namespace_labels_.*
+            - routing_key
+        sumologic/containers/kindnet:
+          log_format: json
+          json_logs:
+            add_timestamp: true
+            timestamp_key: timestamp
+          endpoint: http://receiver-mock-kindnet.receiver-mock:3000/receiver/v1/
+          source_name: "%{_sourceName}"
+          source_category: "%{_sourceCategory}"
+          source_host: "%{_sourceHost}"
+          ## Configuration for sending queue
+          ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
+          sending_queue:
+            enabled: true
+            persistent_storage_enabled: false
+          metadata_attributes:
+            ## Attributes to be send as fields
+            - _collector
+            - k8s.*
+            - pod_labels_.*
+            - namespace_labels_.*
+            - routing_key
+      service:
+        pipelines:
+          logs/otlp/containers:
+            processors:
+              - memory_limiter
+              - groupbyattrs/containers
+              - k8s_tagger
+              - source/containers
+              - resource/containers_copy_node_to_host
+              - attributes/kindnet
+              - attributes/otelcol
+              - groupbyattrs/routing
+              - batch
+              - routing
+            exporters:
+              - sumologic/containers
+              - sumologic/containers/otelcol
+              - sumologic/containers/kindnet
   metrics:
     statefulset:
       resources:
