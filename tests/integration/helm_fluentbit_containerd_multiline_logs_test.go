@@ -22,11 +22,14 @@ import (
 
 func Test_Helm_FluentBit_Containerd_Multiline_Logs(t *testing.T) {
 	const (
-		tickDuration           = 3 * time.Second
-		waitDuration           = 3 * time.Minute
-		logRecords             = 4
-		logLoops               = 500
-		multilineLogCount uint = logRecords * logLoops
+		tickDuration                       = 3 * time.Second
+		waitDuration                       = 3 * time.Minute
+		singlelineLogRecordsBeginning      = 2
+		singlelineLogRecordsEnd            = 3
+		multilineLogRecords                = 1
+		logRecords                         = singlelineLogRecordsBeginning + singlelineLogRecordsEnd + multilineLogRecords
+		logLoops                           = 500 // number of loops in which logs are generated
+		multilineLogCount             uint = logRecords * logLoops
 	)
 
 	featInstall := features.New("installation").
@@ -92,12 +95,19 @@ func Test_Helm_FluentBit_Containerd_Multiline_Logs(t *testing.T) {
 		Feature()
 
 	featMultilineLogs := features.New("multiline logs").
-		Setup(stepfuncs.KubectlApplyFOpt(internal.MultilineLogsPodYamlPath, internal.MultilineLogsNamespace)).
+		Setup(stepfuncs.GenerateMultilineLogsWithPod(
+			internal.MultilineLogsPodName,
+			internal.MultilineLogsNamespace,
+			singlelineLogRecordsBeginning,
+			singlelineLogRecordsEnd,
+			multilineLogRecords,
+			logLoops,
+		)).
 		Assess("multiline logs present", stepfuncs.WaitUntilExpectedLogsPresent(
 			multilineLogCount,
 			map[string]string{
-				"namespace":          internal.MultilineLogsNamespace,
-				"pod_labels_example": internal.MultilineLogsPodName,
+				"namespace":      internal.MultilineLogsNamespace,
+				"pod_labels_app": internal.MultilineLogsPodName,
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
@@ -105,7 +115,7 @@ func Test_Helm_FluentBit_Containerd_Multiline_Logs(t *testing.T) {
 			waitDuration,
 			tickDuration,
 		)).
-		Teardown(stepfuncs.KubectlDeleteFOpt(internal.MultilineLogsPodYamlPath, internal.MultilineLogsNamespace)).
+		Teardown(stepfuncs.KubectlDeleteFOpt(internal.MultilineLogsPodYamlPath, internal.MultilineLogsNamespace)). //TODO: change this
 		Feature()
 
 	testenv.Test(t, featInstall, featMultilineLogs)

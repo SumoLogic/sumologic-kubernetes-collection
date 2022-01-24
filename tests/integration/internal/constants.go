@@ -23,7 +23,7 @@ const (
 	LogsGeneratorName      = "logs-generator"
 	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.9.0"
 
-	MultilineLogsNamespace   = "default"
+	MultilineLogsNamespace   = "multiline-logs-generator"
 	MultilineLogsPodName     = "example-pod-multiline-logs-long-lines"
 	MultilineLogsPodYamlPath = "yamls/pod_multiline_long_lines.yaml"
 )

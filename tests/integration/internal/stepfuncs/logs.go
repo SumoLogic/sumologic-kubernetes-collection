@@ -12,6 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/logsgenerator"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/multilinelogsgenerator"
 )
 
 type logsGeneratorImplType uint
@@ -71,6 +72,36 @@ func GenerateLogs(
 		default:
 			t.Fatalf("Unknown log generator deployment model: %v", implType)
 		}
+
+		return ctx
+	}
+}
+func GenerateMultilineLogsWithPod(
+	logsGeneratorName string,
+	logsGeneratorNamespace string,
+	singlelineLogsBeginningCount int,
+	singlelineLogsEndCount int,
+	multilineLogsCount int,
+	logloopsCount int,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		client := envConf.Client()
+
+		deployment := multilinelogsgenerator.GetMultilineLogsPod(
+			logsGeneratorNamespace,
+			logsGeneratorName,
+			singlelineLogsBeginningCount,
+			singlelineLogsEndCount,
+			multilineLogsCount,
+			logloopsCount,
+		)
+
+		// create the namespace
+		namespace := corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: logsGeneratorNamespace}}
+		require.NoError(t, client.Resources().Create(ctx, &namespace))
+
+		// create the deployment
+		client.Resources(logsGeneratorNamespace).Create(ctx, &deployment)
 
 		return ctx
 	}
