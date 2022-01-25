@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.0-rc.0...main
+
+## [v2.4.0_rc.0][v2_4.0_rc.0]
+
+### Released 2022-01-20
+
+### Added
+
 - feat: export scheduler_framework_extension_point_duration metrics [#2033][#2033]
 - docs: claim official ARM support [#2024][#2024]
 - feat: add batching to experimental otelcol log collector [#2018][#2018]
@@ -28,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(helm): add job and cronjob to clusterrole's permission set [#1983][#1983]
 - fix(helm): add metrics port to otelcol pods [#1992][#1992]
 
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.1...main
+[v2_4.0_rc.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.0-rc.0
 [#1986]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1986
 [#1959]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1959
 [#1974]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1974
@@ -44,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v2.3.2][v2_3_2]
 
-### Release v2.3.2 - 2021-12-21
+### Released 2021-12-21
 
 #### Fixed
 
