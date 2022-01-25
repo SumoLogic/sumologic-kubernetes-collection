@@ -4375,7 +4375,7 @@ otellogs:
 telegraf-operator:
   enabled: false
   image:
-    sidecarImage: public.ecr.aws/sumologic/telegraf:1.14.4
+    sidecarImage: public.ecr.aws/sumologic/telegraf:1.21.2
   replicaCount: 1
   classes:
     secretName: "telegraf-operator-classes"
