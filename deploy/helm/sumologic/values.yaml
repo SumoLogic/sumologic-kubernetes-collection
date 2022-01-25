@@ -896,6 +896,9 @@ fluent-bit:
   #   - name: "image-pull-secret"
   image:
     repository: public.ecr.aws/sumologic/fluent-bit
+    # This image is the vanilla 1.6.10 rebuilt from https://github.com/fluent/fluent-bit/tree/v1.6.10 in order
+    # to update vulnerable libssl from Debian. This was done on 25.01.2022 with no changes to the application or Dockerfile.
+    tag: 1.6.10-sumo-0
     pullPolicy: IfNotPresent
 
   ## Resource limits for fluent-bit
