@@ -1,9 +1,3 @@
-sumologic:
-  setupEnabled: true
-  accessId: "dummy"
-  accessKey: "dummy"
-  endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
-
 # Prevent snowball effect by filtering out receiver mock logs
 fluent-bit:
   config:
@@ -28,33 +22,3 @@ fluent-bit:
         path: /run/log/journal
         type: DirectoryOrCreate
       name: run-log-journal
-
-# Request less resources so that this fits on Github actions runners environment
-kube-prometheus-stack:
-  prometheus:
-    prometheusSpec:
-      resources:
-        requests:
-          cpu: 100m
-          memory: 64Mi
-
-# Request less resources so that this fits on Github actions runners environment
-fluentd:
-  logs:
-    statefulset:
-      resources:
-        requests:
-          memory: 64Mi
-          cpu: 100m
-  metrics:
-    statefulset:
-      resources:
-        requests:
-          memory: 64Mi
-          cpu: 100m
-  events:
-    statefulset:
-      resources:
-        requests:
-          memory: 64Mi
-          cpu: 100m
