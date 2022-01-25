@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(helm): add job and cronjob to clusterrole's permission set [#1983][#1983]
 - fix(helm): add metrics port to otelcol pods [#1992][#1992]
 
-[v2_4_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.0
+[v2_4_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.4.0
 [#1986]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1986
 [#1959]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1959
 [#1974]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1974
