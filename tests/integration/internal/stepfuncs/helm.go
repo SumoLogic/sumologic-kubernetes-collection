@@ -36,7 +36,9 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 			)
 			return ctx
 		}
-		helm.RunHelmCommandAndGetOutputE(t, ctxopts.HelmOptions(ctx), "dependency", "update", path)
+		_, err := helm.RunHelmCommandAndGetOutputE(t, ctxopts.HelmOptions(ctx), "dependency", "update", path)
+		require.NoError(t, err)
+
 		return ctx
 	}
 }

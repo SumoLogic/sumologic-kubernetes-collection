@@ -66,7 +66,7 @@ var (
 	}
 	CAdvisorMetrics = []string{
 		"container_cpu_usage_seconds_total",
-		// These metrics will be avaiable in containerd after kind upgrades past
+		// These metrics will be available in containerd after kind upgrades past
 		// https://github.com/containerd/containerd/issues/5882
 		// "container_fs_usage_bytes",
 		// "container_fs_limit_bytes",

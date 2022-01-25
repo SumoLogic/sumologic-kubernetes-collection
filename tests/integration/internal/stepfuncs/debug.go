@@ -45,7 +45,7 @@ func PrintClusterStateOpt(force ...bool) features.Func {
 func Wait() features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		ch := make(chan os.Signal, 1)
-		signal.Notify(ch, os.Interrupt, os.Kill)
+		signal.Notify(ch, os.Interrupt)
 		select {
 		case <-time.After(time.Hour):
 		case <-ch:
