@@ -8,7 +8,9 @@ This repo contains all required resources to collect data from Kubernetes cluste
 
 # Installation
 
-Detailed instructions are available in our Installation Guides below.
+Detailed instructions are available in our Installation Guides in documentation below.
+
+## Documentation
 
 Sumo Logic Helm Chart Version
 | version | status |
