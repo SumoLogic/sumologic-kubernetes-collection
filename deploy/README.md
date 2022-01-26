@@ -1,4 +1,4 @@
-# Deployment Guide
+# Deployment Guide for release v2.2
 
 This page has instructions for collecting Kubernetes logs, metrics, and events;
 enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
@@ -10,15 +10,7 @@ for details on our Kubernetes Solution.
 - [Minimum Requirements](#minimum-requirements)
 - [Support Matrix](#support-matrix)
 
-## Documentation versions
-
-| version                                                                                                   | status                   |
-|-----------------------------------------------------------------------------------------------------------|--------------------------|
-| [v2.2](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.2/deploy/README.md)   | current / supported      |
-| [v2.1](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.1/deploy/README.md)   | deprecated / unsupported |
-| [v2.0](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.0/deploy/README.md)   | deprecated / unsupported |
-| [v1.3](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v1.3/deploy/README.md)   | deprecated / unsupported |
-| [v0.17](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v0.17/deploy/README.md) | deprecated / unsupported |
+Documentation for other versions can be found in the [main README file](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/README.md#documentation).
 
 ---
 
