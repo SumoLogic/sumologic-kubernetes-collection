@@ -1,13 +1,7 @@
 sumologic:
-  setupEnabled: true
-  accessId: "dummy"
-  accessKey: "dummy"
-  endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
-
   logs:
     metadata:
       provider: otelcol
-
   metrics:
     metadata:
       provider: otelcol
@@ -36,30 +30,3 @@ fluent-bit:
         path: /run/log/journal
         type: DirectoryOrCreate
       name: run-log-journal
-
-# Request less resources so that this fits on Github actions runners environment
-kube-prometheus-stack:
-  prometheus:
-    prometheusSpec:
-      resources:
-        requests:
-          cpu: 100m
-          memory: 128Mi
-
-# Request less resources so that this fits on Github actions runners environment
-metadata:
-  persistence:
-    size: 128Mi
-
-  logs:
-    statefulset:
-      resources:
-        requests:
-          cpu: 100m
-          memory: 128Mi
-  metrics:
-    statefulset:
-      resources:
-        requests:
-          cpu: 100m
-          memory: 128Mi

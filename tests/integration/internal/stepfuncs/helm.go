@@ -36,7 +36,9 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 			)
 			return ctx
 		}
-		helm.RunHelmCommandAndGetOutputE(t, ctxopts.HelmOptions(ctx), "dependency", "update", path)
+		_, err := helm.RunHelmCommandAndGetOutputE(t, ctxopts.HelmOptions(ctx), "dependency", "update", path)
+		require.NoError(t, err)
+
 		return ctx
 	}
 }
@@ -99,9 +101,14 @@ func SetHelmOptionsOpt(valuesFilePath string) features.Func {
 		kubectlOptions := ctxopts.KubectlOptions(ctx)
 		require.NotNil(t, kubectlOptions)
 
+		// yamlFilePathCommon contains a shared set of values that:
+		// * decrease the requested resources so that pods fit on runners available on Github CI.
+		// * set dummy access keys, access IDs and receiver-mock's URL as endpoint in the chart.
+		const yamlFilePathCommon = "values/values_common.yaml"
+
 		return ctxopts.WithHelmOptions(ctx, &helm.Options{
 			KubectlOptions: kubectlOptions,
-			ValuesFiles:    []string{valuesFilePath},
+			ValuesFiles:    []string{yamlFilePathCommon, valuesFilePath},
 		})
 	}
 }

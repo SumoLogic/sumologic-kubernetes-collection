@@ -64,9 +64,96 @@ var (
 		"kubelet_running_containers",
 		"kubelet_running_pods",
 	}
+	KubeSchedulerMetrics = []string{
+		"scheduler_e2e_scheduling_duration_seconds_count",
+		"scheduler_e2e_scheduling_duration_seconds_sum",
+		"scheduler_e2e_scheduling_duration_seconds_bucket",
+		"scheduler_scheduling_algorithm_duration_seconds_count",
+		"scheduler_scheduling_algorithm_duration_seconds_sum",
+		"scheduler_scheduling_algorithm_duration_seconds_bucket",
+		// Deprecated in Kubernetes 1.21: https://github.com/kubernetes/kubernetes/pull/96447
+		// TODO: Remove this and the values.yaml settings after we drop support for 1.20
+		// "scheduler_binding_duration_seconds",
+	}
+	KubeApiServerMetrics = []string{
+		"apiserver_request_total",
+		"apiserver_request_duration_seconds_count",
+		"apiserver_request_duration_seconds_sum",
+		// We have the following metrics in our values.yaml, but they've been deprecated for a while
+		// Kubernetes 1.14 deprecation notice:
+		// https://github.com/kubernetes/kubernetes/blob/8ac5d4d6a92d59bba70844fbd6e5de2383a08c96/CHANGELOG/CHANGELOG-1.14.md#deprecated-metrics
+		// Kubernetes 1.17 disablement notice:
+		// https://github.com/kubernetes/kubernetes/blob/ea0764452222146c47ec826977f49d7001b0ea8c/CHANGELOG/CHANGELOG-1.17.md#deprecatedchanged-metrics
+		// TODO: Remove these from values.yaml and replace them with non-deprecated equivalents
+		// "apiserver_request_latencies_count",
+		// "apiserver_request_latencies_sum",
+		// "apiserver_request_latencies_summary",
+		// "apiserver_request_latencies_summary_count",
+		// "apiserver_request_latencies_summary_sum",
+	}
+	KubeEtcdMetrics = []string{
+		// Deprecated in etcd v3: https://github.com/kubernetes/kubernetes/pull/79520
+		// "etcd_request_cache_get_duration_seconds_count",
+		// "etcd_request_cache_get_duration_seconds_sum",
+		// "etcd_request_cache_add_duration_seconds_count",
+		// "etcd_request_cache_add_duration_seconds_sum",
+		// "etcd_request_cache_add_latencies_summary_count",
+		// "etcd_request_cache_add_latencies_summary_sum",
+		// "etcd_request_cache_get_latencies_summary_count",
+		// "etcd_request_cache_get_latencies_summary_sum",
+		// "etcd_helper_cache_hit_count",
+		// "etcd_helper_cache_hit_total",
+		// "etcd_helper_cache_miss_count",
+		// "etcd_helper_cache_miss_total",
+		// Deprecated in etcd 3.5: https://github.com/etcd-io/etcd/blob/e433d12656c5dbd41f4f6b085ced134647ffeb14/CHANGELOG-3.5.md#breaking-changes
+		// TODO: Replace with etcd_mvcc_db_total_size_in_bytes
+		//"etcd_debugging_mvcc_db_total_size_in_bytes",
+		"etcd_debugging_store_expires_total",
+		"etcd_debugging_store_watchers",
+		"etcd_disk_backend_commit_duration_seconds_bucket",
+		"etcd_disk_wal_fsync_duration_seconds_bucket",
+		"etcd_grpc_proxy_cache_hits_total",
+		"etcd_grpc_proxy_cache_misses_total",
+		"etcd_network_client_grpc_received_bytes_total",
+		"etcd_network_client_grpc_sent_bytes_total",
+		"etcd_server_has_leader",
+		"etcd_server_leader_changes_seen_total",
+		"etcd_server_proposals_applied_total",
+		"etcd_server_proposals_committed_total",
+		"etcd_server_proposals_failed_total",
+		"etcd_server_proposals_pending",
+		"process_cpu_seconds_total",
+		"process_open_fds",
+		"process_resident_memory_bytes",
+	}
+	KubeControllerManagerMetrics = []string{
+		"cloudprovider_aws_api_request_duration_seconds_bucket",
+		"cloudprovider_aws_api_request_duration_seconds_count",
+		"cloudprovider_aws_api_request_duration_seconds_sum",
+	}
+	CoreDNSMetrics = []string{
+		"coredns_cache_entries",
+		"coredns_cache_hits_total",
+		"coredns_cache_misses_total",
+		"coredns_dns_request_duration_seconds_count",
+		"coredns_dns_request_duration_seconds_sum",
+		"coredns_dns_requests_total",
+		"coredns_dns_responses_total",
+		"coredns_forward_requests_total",
+		"process_cpu_seconds_total",
+		"process_open_fds",
+		"process_resident_memory_bytes",
+		// Deprecated in https://coredns.io/2020/06/15/coredns-1.7.0-release/#metric-changes
+		// "coredns_cache_size",
+		// "coredns_dns_response_rcode_count_total",
+		// "coredns_forward_request_count_total",
+		// No idea where this came from, doesn't seem to exist
+		// TODO: confirm it doesn't exist and remove it from values.yaml
+		// "coredns_dns_request_count_total",
+	}
 	CAdvisorMetrics = []string{
 		"container_cpu_usage_seconds_total",
-		// These metrics will be avaiable in containerd after kind upgrades past
+		// These metrics will be available in containerd after kind upgrades past
 		// https://github.com/containerd/containerd/issues/5882
 		// "container_fs_usage_bytes",
 		// "container_fs_limit_bytes",
@@ -92,6 +179,12 @@ var (
 		KubeNodeMetrics,
 		KubePodMetrics,
 		KubeletMetrics,
+		KubeSchedulerMetrics,
+		KubeApiServerMetrics,
+		KubeEtcdMetrics,
+		// Need to upgrade kube-prometheus stack to use the secure metrics endpoint for controller metrics
+		// KubeControllerManagerMetrics,
+		CoreDNSMetrics,
 		CAdvisorMetrics,
 		NodeExporterMetrics,
 	}

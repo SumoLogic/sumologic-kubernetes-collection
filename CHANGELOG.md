@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+- chore: update the Telegraf image to 1.21.2 [#2036][#2036]
+
+### Fixed
+
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.0...main
+[#2036]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2036
+
+## [v2.4.0][v2_4_0]
+
+### Released 2022-01-25
+
+### Added
+
+- feat: export scheduler_framework_extension_point_duration metrics [#2033][#2033]
 - docs: claim official ARM support [#2024][#2024]
 - feat: add batching to experimental otelcol log collector [#2018][#2018]
 - feat: add experimental otelcol log collector [#1986][#1986]
@@ -20,14 +36,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: update kubernetes-tools to 2.9.0 [#2013][#2013]
 - chore: bump Thanos image to our build of v0.23.1 [#1973][#1973]
 - Introduced option to add cache refresh delay for metadata enrichment calls [#1974][#1974]
-- chore(deps): bump Sumo OT distro to 0.0.46-beta.0 [#2025][#2025]
+- chore(deps): bump Sumo OT distro to 0.0.47-beta.0 [#2035][#2035]
 
 ### Fixed
 
 - fix(helm): add job and cronjob to clusterrole's permission set [#1983][#1983]
 - fix(helm): add metrics port to otelcol pods [#1992][#1992]
 
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.1...main
+[v2_4_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.4.0
 [#1986]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1986
 [#1959]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1959
 [#1974]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1974
@@ -37,12 +53,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2013]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2013
 [#2018]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2018
 [#2020]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2020
-[#2025]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2025
+[#2035]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2035
 [#2024]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2024
+[#2033]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2024
 
 ## [v2.3.2][v2_3_2]
 
-### Release v2.3.2 - 2021-12-21
+### Released 2021-12-21
 
 #### Fixed
 

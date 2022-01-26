@@ -1445,12 +1445,15 @@ kube-prometheus-stack:
       ## scheduler_binding_duration_seconds_bucket
       ## scheduler_binding_duration_seconds_count
       ## scheduler_binding_duration_seconds_sum
+      ## scheduler_framework_extension_point_duration_seconds_bucket
+      ## scheduler_framework_extension_point_duration_seconds_count
+      ## scheduler_framework_extension_point_duration_seconds_sum
       ## scheduler_scheduling_algorithm_duration_seconds_bucket
       ## scheduler_scheduling_algorithm_duration_seconds_count
       ## scheduler_scheduling_algorithm_duration_seconds_sum
       metricRelabelings:
         - action: keep
-          regex: (?:scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_duration_seconds.*)
+          regex: (?:scheduler_(?:e2e_scheduling|binding|scheduler_framework_extension_point|scheduling_algorithm)_duration_seconds.*)
           sourceLabels: [__name__]
   kubeStateMetrics:
     serviceMonitor:
@@ -1844,6 +1847,9 @@ kube-prometheus-stack:
         ## scheduler_binding_duration_seconds_bucket
         ## scheduler_binding_duration_seconds_count
         ## scheduler_binding_duration_seconds_sum
+        ## scheduler_framework_extension_point_duration_seconds_bucket
+        ## scheduler_framework_extension_point_duration_seconds_count
+        ## scheduler_framework_extension_point_duration_seconds_sum
         ## scheduler_scheduling_algorithm_duration_seconds_bucket
         ## scheduler_scheduling_algorithm_duration_seconds_count
         ## scheduler_scheduling_algorithm_duration_seconds_sum
@@ -1851,7 +1857,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduling_algorithm)_duration_seconds.*
+              regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|scheduler_framework_extension_point|scheduling_algorithm)_duration_seconds.*
               sourceLabels: [job, __name__]
         ## api server metrics:
         ## apiserver_request_count
@@ -1956,6 +1962,7 @@ kube-prometheus-stack:
         ## :node_net_utilisation:sum_irate
         ## cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
         ## cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+        ## cluster_quantile:scheduler_framework_extension_point_duration_seconds:histogram_quantile
         ## cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
         ## cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
         ## instance:node_filesystem_usage:sum  # no rules definition found
@@ -1983,7 +1990,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: 'cluster_quantile:apiserver_request_duration_seconds:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile|cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:'
+              regex: 'cluster_quantile:apiserver_request_duration_seconds:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile|cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile|cluster_quantile:scheduler_framework_extension_point_duration_seconds:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:'
               sourceLabels: [__name__]
         ## health
         ## fluentbit_input_bytes_total
@@ -3370,7 +3377,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.0.46-beta.0
+    tag: 0.0.47-beta.0
     pullPolicy: IfNotPresent
 
   securityContext:
@@ -4153,7 +4160,7 @@ otellogs:
   ## Configure image for Opentelemetry Collector
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.0.46-beta.0
+    tag: 0.0.47-beta.0
     pullPolicy: IfNotPresent
 
   logLevel: info
@@ -4368,7 +4375,7 @@ otellogs:
 telegraf-operator:
   enabled: false
   image:
-    sidecarImage: public.ecr.aws/sumologic/telegraf:1.14.4
+    sidecarImage: public.ecr.aws/sumologic/telegraf:1.21.2
   replicaCount: 1
   classes:
     secretName: "telegraf-operator-classes"

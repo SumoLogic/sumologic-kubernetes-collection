@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/gruntwork-io/terratest v0.38.9
 	github.com/stretchr/testify v1.7.0
-	k8s.io/api v0.22.5
+	k8s.io/api v0.22.6
 	k8s.io/apimachinery v0.22.6
 	k8s.io/klog/v2 v2.10.0
 	sigs.k8s.io/e2e-framework v0.0.5

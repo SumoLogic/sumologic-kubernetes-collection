@@ -118,6 +118,18 @@ jobs:
       - name: Print test names
         run: echo "Test names ${{ steps.set_test_names.outputs.test_names }}"
 
+  lint-integration-tests:
+    name: Lint integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          working-directory: ./tests/integration/
+          # Optional: golangci-lint command line arguments.
+          args: --timeout=10m --verbose
+
   integration-tests:
     runs-on: ubuntu-20.04
     name: IT - ${{ matrix.test_name }} - ${{ matrix.kind_image }}
