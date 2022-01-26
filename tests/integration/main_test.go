@@ -26,12 +26,12 @@ const (
 	envNameKubeConfig    = "KUBECONFIG"
 )
 
-var (
-	testenv env.Environment
-)
+var testenv env.Environment
 
 func TestMain(m *testing.M) {
-	internal.InitializeConstants()
+	if err := internal.InitializeConstants(); err != nil {
+		log.Fatalf("failed initializing constants: %v", err)
+	}
 
 	cfg, err := envconf.NewFromFlags()
 	if err != nil {

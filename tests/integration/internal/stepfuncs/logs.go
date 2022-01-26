@@ -37,7 +37,8 @@ func GenerateLogsWithDeployment(
 		require.NoError(t, client.Resources().Create(ctx, &namespace))
 
 		// create the deployment
-		client.Resources(logsGeneratorNamespace).Create(ctx, &deployment)
+		err := client.Resources(logsGeneratorNamespace).Create(ctx, &deployment)
+		require.NoError(t, err)
 
 		return ctx
 	}
