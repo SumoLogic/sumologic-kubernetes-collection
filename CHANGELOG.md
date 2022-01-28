@@ -15,8 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix: fix scheduler metrics remote write and relabel regex [#2058][#2058]
+
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.0...main
 [#2036]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2036
+[#2058]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2058
 
 ## [v2.4.0][v2_4_0]
 
