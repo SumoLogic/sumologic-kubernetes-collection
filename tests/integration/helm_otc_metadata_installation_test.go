@@ -249,12 +249,10 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 					sample := metricsSamples[0]
 					labels := sample.Labels
 					expectedLabels := receivermock.Labels{
-						"_origin":   "kubernetes",
-						"container": "receiver-mock",
-						// TODO: figure out why is this flaky and sometimes it's not there
-						// https://github.com/SumoLogic/sumologic-kubernetes-collection/runs/4508796836?check_suite_focus=true
-						// "deployment":                   "receiver-mock",
-						"endpoint": "https-metrics",
+						"_origin":    "kubernetes",
+						"container":  "receiver-mock",
+						"deployment": "receiver-mock",
+						"endpoint":   "https-metrics",
 						// TODO: verify the source of label's value.
 						// For OTC metadata enrichment this is set to <RELEASE_NAME>-sumologic-otelcol-metrics-<POD_IN_STS_NUMBER>
 						// hence with longer time range the time series about a particular metric
@@ -276,10 +274,8 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 						"prometheus_replica":           "",
 						"prometheus_service":           "",
 						"prometheus":                   "",
-						// TODO: figure out why is this flaky and sometimes it's not there
-						// https://github.com/SumoLogic/sumologic-kubernetes-collection/runs/4508796836?check_suite_focus=true
-						// "replicaset":                   "",
-						"service": "receiver-mock",
+						"replicaset":                   "",
+						"service":                      "receiver-mock",
 					}
 
 					log.V(0).InfoS("sample's labels", "labels", labels)
