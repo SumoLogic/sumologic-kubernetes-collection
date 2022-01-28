@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - chore: update the Telegraf image to 1.21.2 [#2036][#2036]
+- chore(deps): bump Sumo OT distro to 0.0.48-beta.0 [#2056][#2056]
 
 ### Fixed
 
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.0...main
 [#2036]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2036
 [#2058]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2058
+[#2056]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2056
 
 ## [v2.4.0][v2_4_0]
 
