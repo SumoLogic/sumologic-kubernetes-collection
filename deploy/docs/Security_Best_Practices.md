@@ -91,3 +91,85 @@ fluentd:
   metrics:
     ...
 ```
+
+## Using a custom root CA for TLS interception
+
+Unfortunately, there isn't a uniform way of adding root certificates to application containers.
+Generally speaking, this can be done in two ways:
+
+- At container image build time, making use of the underlying OS certificate management facilities
+- At Pod start time, using `initContainers` and `extraVolumes`, also making use of the underlying OS certificate management facilities
+
+### Adding a custom root CA certificate by rebuilding container images
+
+Adding certificates during container build using the underlying Linux distribution's management facilities
+tends to be straightforward. There are three different base distributions among container images used by the
+collection Helm Chart: `debian`, `alpine` and `scratch`.
+
+For Debian and Alpine Linux, please consult the documentation of these distributions. For example, assuming `cert.pem`
+is the certificate file, the following suffices for Alpine Linux and `scratch`:
+
+```Dockerfile
+COPY cert.pem /usr/local/share/ca-certificates/cert.crt
+RUN cat /usr/local/share/ca-certificates/cert.crt >> /etc/ssl/certs/ca-certificates.crt
+```
+
+Keep in mind that this needs to be done as the root user, and then the user should be switched back to the original image's
+default.
+
+### Adding a custom root CA certificate using `initContainers`
+
+It's customary for Helm Charts to allow customizing a Pod's `initContainers` and Volumes, in part to allow changes like this one.
+In effect, what we do here is identical to what we'd do at build time, but it takes place during Pod initialization instead.
+
+Here's an example configuration of a root certificate being added to a FluentD StatefulSet this way. This assumes
+the certificate is contained in the `root-ca-cert` Secret, under the `cert.pem` key:
+
+```yaml
+fluentd:
+  metrics:
+    statefulset:
+      initContainers:
+        - name: update-certificates
+          image: odise/busybox-curl
+          command: 
+            - sh
+            - -c
+            - |
+              cp /etc/ssl/certs/ca-certificates.crt /certs/ca-certificates.crt
+              cat /root/ca-cert/cert.pem >> /certs/ca-certificates.crt
+          volumeMounts:
+            - name: root-ca-cert
+              mountPath: /root/ca-cert/
+              readOnly: true
+            - name: certs
+              mountPath: /certs/
+              readOnly: true
+
+    extraVolumes:
+      - name: root-ca-cert
+        secret:
+          secretName: root-ca-cert
+      - name: certs
+        emptyDir: {}
+    extraVolumeMounts:
+      - name: certs
+        mountPath: /etc/ssl/certs/
+        readOnly: true
+```
+
+Note that if you embed all the necessary certificates in the Secret, you can skip copying them from the `curl-busybox` image in the example
+and just mount the Secret directly to `/etc/ssl/certs/`. In that case, we can skip the `initContainers`:
+
+```yaml
+fluentd:
+  metrics:
+    extraVolumes:
+      - name: certs
+        secret:
+          secretName: root-ca-cert
+    extraVolumeMounts:
+      - name: certs
+        mountPath: /etc/ssl/certs/
+        readOnly: true
+```
