@@ -59,7 +59,9 @@ function should_create_fields() {
 cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
 cd /terraform || exit 1
 
-terraform init
+# Fall back to init -upgrade to prevent:
+# Error: Inconsistent dependency lock file
+terraform init -input=false -get=false || terraform init -input=false -upgrade
 
 # Sumo Logic fields
 if should_create_fields ; then

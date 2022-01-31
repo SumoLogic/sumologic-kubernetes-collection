@@ -10,7 +10,7 @@ export NO_PROXY=${NO_PROXY:=""}
 cp /etc/terraform/*.tf /terraform/
 cd /terraform || exit 1
 
-terraform init
+terraform init -input=false -get=false || terraform init -input=false -upgrade
 
 # shellcheck disable=SC1083
 terraform import sumologic_collector.collector {{ template "terraform.collector.name" . }}
