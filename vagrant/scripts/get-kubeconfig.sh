@@ -21,7 +21,7 @@ readonly DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 readonly ROOT_DIR="${DIR}/../../"
 readonly TEMP_DIR="$(mktemp -d)"
 readonly SSH_CONFIG_PATH="${TEMP_DIR}/ssh-connect.conf"
-readonly VAGRANT_IP="192.168.78.66"
+readonly VAGRANT_IP="192.168.56.2"
 readonly CONFIG_PATH="${TEMP_DIR}/config"
 readonly KUBECONFIG_PATH=~/.kube/config
 
