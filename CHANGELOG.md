@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: upgrade Fluentd to 1.14.4-sumo-1 [#2057][#2057]
 - chore: update the Telegraf image to 1.21.2 [#2036][#2036]
 - chore(deps): bump Sumo OT distro to 0.0.48-beta.0 [#2056][#2056]
+- chore: bump setup image to 3.2.1 [#2063][#2063]
 
 ### Fixed
 
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2056]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2056
 [#2057]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2057
 [#2058]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2058
+[#2063]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2063
 
 ## [v2.4.0][v2_4_0]
 
