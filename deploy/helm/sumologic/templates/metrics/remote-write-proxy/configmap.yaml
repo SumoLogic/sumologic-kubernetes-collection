@@ -1,0 +1,11 @@
+{{- if .Values.sumologic.metrics.remoteWriteProxy.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.remoteWriteProxy.configmap" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.remoteWriteProxy.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+{{- (tpl (.Files.Glob "conf/metrics/remote-write-proxy/remote-write-proxy.conf").AsConfig .) | nindent 4 }}
+{{- end }}
