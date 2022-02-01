@@ -209,6 +209,46 @@ sumologic:
       ## Set metadata provider service (either fluentd or otelcol).
       ## Otelcol is experimental and may behave in unexpected way.
       provider: fluentd
+      ## Enable a load balancing proxy for Prometheus remote writes.
+      # Prometheus remote write uses a single persistent HTTP connection per target,
+      # which interacts poorly with TCP load balancing with iptables that K8s Services do.
+      # Use a real HTTP load balancer for this instead.
+      # This is an advanced feature, enable only if you're experiencing performance
+      # issues with metrics metadata enrichment.
+    remoteWriteProxy:
+      enabled: false
+      config:
+        # Increase this if you've increased samples_per_send in Prometheus to prevent nginx
+        # from spilling proxied request bodies to disk
+        clientBodyBufferSize: "64k"
+        # This feature autodetects how much CPU is assigned to the nginx instance and sets
+        # the right amount of workers based on that. Disable to use the default of 8 workers.
+        workerCountAutotune: true
+      replicaCount: 3
+      image:
+        # TODO: Serve this image from the sumologic public ECR
+        repository: public.ecr.aws/nginx/nginx
+        tag: 1.21-alpine
+        pullPolicy: IfNotPresent
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 256Mi
+        requests:
+          cpu: 200m
+          memory: 128Mi
+      livenessProbe:
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+      readinessProbe:
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        timeoutSeconds: 3
+        successThreshold: 1
+        failureThreshold: 3
 
   ### Traces configuration
   ## Set the enabled flag to true to enable traces ingestion.

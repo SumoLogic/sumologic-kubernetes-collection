@@ -1,0 +1,16 @@
+{{- if .Values.sumologic.metrics.remoteWriteProxy.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.metadata.name.remoteWriteProxy.service" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.remoteWriteProxy.service" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  ports:
+    - name: http
+      port: 9888
+      targetPort: 80
+  selector:
+    app: {{ template "sumologic.labels.app.remoteWriteProxy.pod" . }}
+{{- end }}
