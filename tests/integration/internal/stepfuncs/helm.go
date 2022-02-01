@@ -2,11 +2,13 @@ package stepfuncs
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/helm"
+	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
@@ -51,7 +53,17 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 func HelmInstallOpt(path string, releaseName string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		ctx = ctxopts.WithHelmRelease(ctx, releaseName)
-		helm.Install(t, ctxopts.HelmOptions(ctx), path, releaseName)
+
+		err := helm.InstallE(t, ctxopts.HelmOptions(ctx), path, releaseName)
+		if err != nil {
+			// Print setup job logs if installation failed.
+			k8s.RunKubectl(t, ctxopts.KubectlOptions(ctx),
+				"logs", fmt.Sprintf("-ljob-name=%s-sumologic-setup", releaseName),
+			)
+
+			require.NoError(t, err)
+		}
+
 		return ctx
 	}
 }
