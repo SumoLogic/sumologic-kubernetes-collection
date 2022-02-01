@@ -10,6 +10,8 @@ export NO_PROXY=${NO_PROXY:=""}
 cp /etc/terraform/*.tf /terraform/
 cd /terraform || exit 1
 
+# Fall back to init -upgrade to prevent:
+# Error: Inconsistent dependency lock file
 terraform init -input=false -get=false || terraform init -input=false -upgrade
 
 # shellcheck disable=SC1083
