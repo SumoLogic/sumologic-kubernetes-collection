@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v2.4.1][v2_4_1]
+
+### Released 2022-02-01
 
 ### Added
 
@@ -15,9 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Backport release-v2.4] chore: bump sumologic terraform provider to v2.11.5 [#2066][#2066]
 - chore: bump setup image to 3.2.1 [#2064][#2064]
 
-### Fixed
-
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.0...main
+<!-- markdown-link-check-disable -->
+[v2_4_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.4.1
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...main
+<!-- markdown-link-check-enable -->
 [#2036]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2036
 [#2066]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2066
 [#2064]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2064
