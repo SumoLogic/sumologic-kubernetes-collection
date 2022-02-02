@@ -333,7 +333,7 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 			tickDuration,
 		)).
 		Assess("logs from kubelet present", stepfuncs.WaitUntilExpectedLogsPresent(
-			10, // we don't really control this, just want to check if the logs show up
+			1, // we don't really control this, just want to check if the logs show up
 			map[string]string{
 				"_sourceName":     "k8s_kubelet",
 				"_sourceCategory": "kubernetes/kubelet",
