@@ -33,6 +33,6 @@ dependencies:
     repository: https://helm.influxdata.com/
     condition: telegraf-operator.enabled
   - name: tailing-sidecar-operator
-    version: 0.3.1
+    version: 0.3.2
     repository: https://sumologic.github.io/tailing-sidecar
     condition: tailing-sidecar-operator.enabled
