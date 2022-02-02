@@ -20,12 +20,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix: fix scheduler metrics remote write and relabel regex [#2058][#2058]
 
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.0...main
 [#2036]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2036
 [#2056]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2056
 [#2057]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2057
 [#2058]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2058
 [#2063]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2063
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...main
+
+## [v2.4.1][v2_4_1]
+
+### Released 2022-02-02
+
+### Changed
+
+- [Backport release-v2.4] chore: update Telegraf to 1.21.2 [#2052][#2052]
+- [Backport release-v2.4] chore: bump sumologic terraform provider to v2.11.5 [#2066][#2066]
+- chore: bump setup image to 3.2.1 [#2064][#2064]
+
+[v2_4_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.4.1
+[#2052]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2052
+[#2066]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2066
+[#2064]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2064
 
 ## [v2.4.0][v2_4_0]
 
