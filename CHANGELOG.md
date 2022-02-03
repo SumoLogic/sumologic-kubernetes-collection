@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - docs(readme): add support for AKS 1.22 [#2076][#2076]
-- docs(readme): add support for AKS 1.22 [#2081][#2081]
+- docs(readme): add support for KOPS 1.22 [#2081][#2081]
 
 ### Changed
 
