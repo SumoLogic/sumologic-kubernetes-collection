@@ -3461,6 +3461,7 @@ metadata:
             [agent]
               interval = "30s"
               flush_interval = "30s"
+              omit_hostname = true
 
             [[inputs.http_listener_v2]]
               # wait longer than prometheus
