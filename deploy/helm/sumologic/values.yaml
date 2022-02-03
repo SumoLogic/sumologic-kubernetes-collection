@@ -96,7 +96,7 @@ sumologic:
     job:
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 3.2.1
+        tag: 3.2.2
         pullPolicy: IfNotPresent
       ## Optionally specify an array of pullSecrets.
       ## They will be added to serviceaccount that is used for Sumo Logic's
@@ -361,6 +361,10 @@ fluentd:
     addOwners: true
     ## Option to control the enrichment of logs and metrics with `service` metadata.
     addService: true
+    ## Option to specify custom API server URL instead of the default,
+    ## that is taken from KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT environment variables.
+    ## Example: "https://kubernetes.default.svc:443".
+    apiServerUrl: ""
 
   logs:
     enabled: true
@@ -4072,19 +4076,20 @@ metadata:
               - batch
             exporters:
               - sumologic/systemd
-          logs/otlp/containers:
-            receivers:
-              - otlp
-            processors:
-              - memory_limiter
-              - attributes/containers
-              - groupbyattrs/containers
-              - k8s_tagger
-              - source/containers
-              - resource/containers_copy_node_to_host
-              - batch
-            exporters:
-              - sumologic/containers
+          ## Uncomment this only if you're enabling the Otelcol Log Collector via otellogs.enabled
+          # logs/otlp/containers:
+          #   receivers:
+          #     - otlp
+          #   processors:
+          #     - memory_limiter
+          #     - attributes/containers
+          #     - groupbyattrs/containers
+          #     - k8s_tagger
+          #     - source/containers
+          #     - resource/containers_copy_node_to_host
+          #     - batch
+          #   exporters:
+          #     - sumologic/containers
     statefulset:
       nodeSelector: {}
       tolerations: []
@@ -4155,6 +4160,8 @@ metadata:
 ## which is consistent with CRI, but may possibly cause issues on older K8s versions.
 ## This is an alpha feature, and may change in the near future.
 otellogs:
+  ## In order to enable this feature, a configuration block under metadata.logs.config.service.pipelines.logs/otlp/containers
+  ## needs to be uncommented
   enabled: false
 
   ## Configure image for Opentelemetry Collector
@@ -4195,7 +4202,35 @@ otellogs:
         include_file_path: true
         include_file_name: false
         operators:
-
+          ## Detect the container runtime log format
+          ## Can be: docker-shim, CRI-O and containerd
+          - id: get-format
+            type: router
+            routes:
+              - output: parser-docker
+                expr: '$$body matches "^\\{"'
+              - output: parser-crio
+                expr: '$$body matches "^[^ Z]+ "'
+              - output: parser-containerd
+                expr: '$$body matches "^[^ Z]+Z"'
+          ## Parse CRI-O format
+          - id: parser-crio
+            type: regex_parser
+            regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$'
+            output: extract-metadata-from-filepath
+            timestamp:
+              parse_from: time
+              layout_type: gotime
+              layout: '2006-01-02T15:04:05.000000000-07:00'
+          ## Parse CRI-Containerd format
+          - id: parser-containerd
+            type: regex_parser
+            regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$'
+            output: extract-metadata-from-filepath
+            timestamp:
+              parse_from: time
+              layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          ## Parse docker-shim format
           ## parser-docker interprets the input string as JSON and moves the `time` field from the JSON to Timestamp field in the OTLP log
           ## record.
           # Input Body (string): '{"log":"2001-02-03 04:05:06 first line\n","stream":"stdout","time":"2021-11-25T09:59:13.23887954Z"}'
@@ -4204,7 +4239,7 @@ otellogs:
           # Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
           - id: parser-docker
             type: json_parser
-            # output: join-multipart-entries
+            output: extract-metadata-from-filepath
             timestamp:
               parse_from: time
               layout: '%Y-%m-%dT%H:%M:%S.%LZ'

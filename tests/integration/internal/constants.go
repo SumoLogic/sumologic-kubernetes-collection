@@ -179,7 +179,9 @@ var (
 		KubeNodeMetrics,
 		KubePodMetrics,
 		KubeletMetrics,
-		KubeSchedulerMetrics,
+		// See: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2079
+		// TODO: Enable this again after the above issue is resolved
+		// KubeSchedulerMetrics,
 		KubeApiServerMetrics,
 		KubeEtcdMetrics,
 		// Need to upgrade kube-prometheus stack to use the secure metrics endpoint for controller metrics

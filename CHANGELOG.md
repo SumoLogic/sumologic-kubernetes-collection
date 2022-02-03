@@ -9,27 +9,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- feat: add CRI support to experimental otelcol log collector[#2017][#2017]
 - docs(readme): add support for AKS 1.22 [#2075][#2075]
 - docs(readme): add support for KOPS 1.22 [#2080][#2080]
+- feat: add `fluentd.apiServerUrl` property [#2077][#2077]
 
 ### Changed
 
 - chore: upgrade Fluentd to 1.14.4-sumo-1 [#2057][#2057]
 - chore: update the Telegraf image to 1.21.2 [#2036][#2036]
 - chore(deps): bump Sumo OT distro to 0.0.48-beta.0 [#2056][#2056]
-- chore: bump setup image to 3.2.1 [#2063][#2063]
+- chore: bump setup image to 3.2.2 [#2083]
 
 ### Fixed
 
+- fix: disable the metadata pipeline for OTC log collector by default [#2084][#2084]
 - fix: fix scheduler metrics remote write and relabel regex [#2058][#2058]
 
 [#2036]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2036
 [#2056]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2056
 [#2057]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2057
 [#2058]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2058
-[#2063]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2063
 [#2075]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2075
 [#2080]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2080
+[#2017]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2017
+[#2077]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2077
+[#2083]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2083
+[#2084]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2084
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...main
 
 ## [v2.4.1][v2_4_1]
