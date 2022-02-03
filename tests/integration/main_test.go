@@ -117,7 +117,12 @@ func CreateKindCluster() func(context.Context, *envconf.Config, *testing.T) (con
 		}
 
 		kubectlOptions := k8s.NewKubectlOptions("", kubecfg, "")
-		k8s.WaitUntilAllNodesReady(t, kubectlOptions, 60, 2*time.Second)
+		err = k8s.WaitUntilAllNodesReadyE(t, kubectlOptions, 60, 2*time.Second)
+		if err != nil {
+			k8s.RunKubectl(t, kubectlOptions, "describe", "node")
+			return ctx, err
+		}
+
 		k8s.RunKubectl(t, kubectlOptions, "describe", "node")
 		ctx = ctxopts.WithKubectlOptions(ctx, kubectlOptions)
 		t.Logf("Kube config: %s", kubecfg)
