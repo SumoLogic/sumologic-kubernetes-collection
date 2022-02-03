@@ -15,9 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-<!-- markdown-link-check-disable -->
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...release-v2.4
-<!-- markdown-link-check-enable -->
 
 ## [v2.4.1][v2_4_1]
 
