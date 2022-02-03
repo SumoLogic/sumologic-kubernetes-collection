@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased][Unreleased]
+
+### Unreleased
+
+### Added
+
+- docs(readme): add support for AKS 1.22 [#2076][#2076]
+
+### Changed
+
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...release-v2.4
+
 ## [v2.4.1][v2_4_1]
 
 ### Released 2022-02-02
@@ -19,11 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- markdown-link-check-disable -->
 [v2_4_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.4.1
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...main
 <!-- markdown-link-check-enable -->
 [#2036]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2036
 [#2066]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2066
 [#2064]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2064
+[#2076]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2076
 
 ## [v2.4.0][v2_4_0]
 
