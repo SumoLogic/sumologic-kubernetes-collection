@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix: disable the metadata pipeline for OTC log collector by default [#2084][#2084]
 - fix: fix scheduler metrics remote write and relabel regex [#2058][#2058]
 
 [#2036]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2036
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2017]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2017
 [#2077]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2077
 [#2083]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2083
+[#2084]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2084
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...main
 
 ## [v2.4.1][v2_4_1]
