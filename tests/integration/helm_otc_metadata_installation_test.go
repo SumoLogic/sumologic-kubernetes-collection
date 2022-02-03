@@ -258,7 +258,6 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 						// hence with longer time range the time series about a particular metric
 						// that we receive diverge into n, where n is the number of metrics
 						// enrichment pods.
-						"host":                         "",
 						"http_listener_v2_path":        "/prometheus.metrics.container",
 						"image":                        "",
 						"instance":                     "",
@@ -279,11 +278,8 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 					}
 
 					log.V(0).InfoS("sample's labels", "labels", labels)
-					if !labels.MatchAll(expectedLabels) {
-						return false
-					}
+					return labels.MatchAll(expectedLabels)
 
-					return true
 				}, waitDuration, tickDuration)
 				return ctx
 			},
