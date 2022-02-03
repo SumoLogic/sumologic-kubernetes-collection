@@ -4076,19 +4076,20 @@ metadata:
               - batch
             exporters:
               - sumologic/systemd
-          logs/otlp/containers:
-            receivers:
-              - otlp
-            processors:
-              - memory_limiter
-              - attributes/containers
-              - groupbyattrs/containers
-              - k8s_tagger
-              - source/containers
-              - resource/containers_copy_node_to_host
-              - batch
-            exporters:
-              - sumologic/containers
+          ## Uncomment this only if you're enabling the Otelcol Log Collector via otellogs.enabled
+          # logs/otlp/containers:
+          #   receivers:
+          #     - otlp
+          #   processors:
+          #     - memory_limiter
+          #     - attributes/containers
+          #     - groupbyattrs/containers
+          #     - k8s_tagger
+          #     - source/containers
+          #     - resource/containers_copy_node_to_host
+          #     - batch
+          #   exporters:
+          #     - sumologic/containers
     statefulset:
       nodeSelector: {}
       tolerations: []
@@ -4159,6 +4160,8 @@ metadata:
 ## which is consistent with CRI, but may possibly cause issues on older K8s versions.
 ## This is an alpha feature, and may change in the near future.
 otellogs:
+  ## In order to enable this feature, a configuration block under metadata.logs.config.service.pipelines.logs/otlp/containers
+  ## needs to be uncommented
   enabled: false
 
   ## Configure image for Opentelemetry Collector

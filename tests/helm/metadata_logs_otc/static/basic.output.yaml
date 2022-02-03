@@ -270,19 +270,6 @@ data:
           - batch
           receivers:
           - fluentforward
-        logs/otlp/containers:
-          exporters:
-          - sumologic/containers
-          processors:
-          - memory_limiter
-          - attributes/containers
-          - groupbyattrs/containers
-          - k8s_tagger
-          - source/containers
-          - resource/containers_copy_node_to_host
-          - batch
-          receivers:
-          - otlp
       telemetry:
         logs:
           level: info
