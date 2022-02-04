@@ -12,10 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - docs(readme): add support for AKS 1.22 [#2076][#2076]
+- docs(readme): add support for KOPS 1.22 [#2081][#2081]
 
 ### Changed
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...release-v2.4
+[#2076]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2076
+[#2081]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2081
 
 ## [v2.4.1][v2_4_1]
 
@@ -35,7 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2036]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2036
 [#2066]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2066
 [#2064]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2064
-[#2076]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2076
 
 ## [v2.4.0][v2_4_0]
 
