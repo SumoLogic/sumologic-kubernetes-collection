@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add proxy for Prometheus remote write [#2065][#2065]
 - feat: add CRI support to experimental otelcol log collector[#2017][#2017]
 - docs(readme): add support for AKS 1.22 [#2075][#2075]
-- feat: add `fluentd.apiServerUrl` property [#2077]
+- docs(readme): add support for KOPS 1.22 [#2080][#2080]
+- feat: add `fluentd.apiServerUrl` property [#2077][#2077]
 - feat(otelcol/metrics): do not add host to metrics [#2085][#2085]
 
 ### Changed
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2057]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2057
 [#2058]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2058
 [#2075]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2075
+[#2080]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2080
 [#2017]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2017
 [#2077]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2077
 [#2083]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2083
