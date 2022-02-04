@@ -110,7 +110,8 @@ fi
 terraform import kubernetes_secret.sumologic_collection_secret {{ template "terraform.secret.fullname" . }}
 
 # Apply planned changes
-terraform apply -auto-approve \
+TF_LOG_PROVIDER=DEBUG terraform apply \
+    -auto-approve \
     -var="create_fields=${CREATE_FIELDS}" \
     || { echo "Error during applying Terraform changes"; exit 1; }
 
