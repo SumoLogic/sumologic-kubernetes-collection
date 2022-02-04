@@ -211,6 +211,25 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.otelagent" . }}-component
 {{- end -}}
 
+{{- define "sumologic.labels.app.remoteWriteProxy" -}}
+{{- template "sumologic.fullname" . }}-remote-write-proxy
+{{- end -}}
+
+{{- define "sumologic.labels.app.remoteWriteProxy.configmap" -}}
+{{- template "sumologic.labels.app.remoteWriteProxy" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.remoteWriteProxy.deployment" -}}
+{{- template "sumologic.labels.app.remoteWriteProxy" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.remoteWriteProxy.pod" -}}
+{{- template "sumologic.labels.app.remoteWriteProxy" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.remoteWriteProxy.service" -}}
+{{- template "sumologic.labels.app.remoteWriteProxy" . }}
+{{- end -}}
 
 {{- define "sumologic.labels.app.setup" -}}
 {{- template "sumologic.labels.app" . }}
@@ -380,6 +399,14 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 {{- end -}}
 
+{{- define "sumologic.metrics.metadata.endpoint" -}}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.enabled -}}
+{{ template "sumologic.metadata.name.remoteWriteProxy.service" . }}
+{{- else -}}
+{{ template "sumologic.metadata.name.metrics.service" . }}
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.metrics.service" -}}
 {{ template "sumologic.metadata.name.fluentd" . }}-metrics
 {{- end -}}
@@ -456,6 +483,22 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.otelagent" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.remoteWriteProxy" -}}
+{{ template "sumologic.fullname" . }}-remote-write-proxy
+{{- end -}}
+
+{{- define "sumologic.metadata.name.remoteWriteProxy.configmap" -}}
+{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.remoteWriteProxy.deployment" -}}
+{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.remoteWriteProxy.service" -}}
+{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.setup" -}}
 {{ template "sumologic.fullname" . }}-setup
 {{- end -}}
@@ -515,6 +558,11 @@ sumologic.com/component: logs
 
 {{- define "sumologic.labels.metrics" -}}
 sumologic.com/app: fluentd-metrics
+sumologic.com/component: metrics
+{{- end -}}
+
+{{- define "sumologic.labels.metrics.remoteWriteProxy" -}}
+sumologic.com/app: metrics-remote-write-proxy
 sumologic.com/component: metrics
 {{- end -}}
 

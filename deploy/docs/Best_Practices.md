@@ -610,7 +610,12 @@ respectively in the `values.yaml` file and run the `helm upgrade` command.
 ## Load Balancing Prometheus traffic between Fluentds
 
 Equal utilization of the Fluentd pods is important for collection process.
-If Fluentd pod is under high pressure, incoming connections can be handled with some delay.
+Unfortunately, Prometheus opens a single persistent connection for each remote write target.
+As Kubernetes Services do TCP load balancing on the node level using iptables, rather than
+actually proxying the connections, this results in a single FluentD pod getting all the traffic
+for a particular remote write target until a timeout or reset occurs.
+
+If the Fluentd pod is under high pressure, incoming connections can be handled with some delay.
 To avoid backpressure, `remote_timeout` configuration options for Prometheus' `remote_write` can be used.
 By default this is `30s`, which means that Prometheus is going to wait such amount of time
 for connection to specific fluentd before trying to reach another.
@@ -628,6 +633,15 @@ kube-prometheus-stack:
 
 **NOTE** We observed that changing this value increases metrics loss during prometheus resharding,
 but the traffic is much better balanced between Fluentds and Prometheus is more stable in terms of memory.
+
+### Using a load balancing proxy for Prometheus remote write
+
+In environments with a high volume of metrics (problems may start appearing around 30k samples per second),
+the above mitigations may not be sufficient. It is possible to remedy the problem by sharding Prometheus
+itself, but that can be complicated to set up and require manual intervention to scale.
+
+A simpler alternative is to put a HTTP load balancer between Prometheus and the metrics metadata Service.
+This can be enabled in `values.yaml` via the `sumologic.metrics.remoteWriteProxy.enabled` key.
 
 ## Changing scrape interval for Prometheus
 
