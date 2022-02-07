@@ -20,7 +20,7 @@ spec:
         checksum/config: "%CONFIG_CHECKSUM%"
       labels:
         app: RELEASE-NAME-sumologic-remote-write-proxy
-        chart: "sumologic-2.4.0"
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
     spec:
