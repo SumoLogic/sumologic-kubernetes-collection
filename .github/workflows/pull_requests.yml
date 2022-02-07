@@ -76,13 +76,9 @@ jobs:
     env:
       YQ_VERSION: 3.4.1
     needs:
-      - markdownlint
       - shellcheck
       - yamllint
       - helmlint
-      - md-links-lint
-      - markdown-link-check
-      - markdown-table-formatter-check
     steps:
       - uses: actions/checkout@v2
       - name: yq
