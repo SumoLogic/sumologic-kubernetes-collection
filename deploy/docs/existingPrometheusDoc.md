@@ -76,7 +76,7 @@ we will be modifying the existing prometheus operator install.
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.enabled=false
 ```
 
-> **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
+> __Note__: If the release exists, it will be upgraded, otherwise it will be installed.
 
 If the namespace does not exist, you can add the `--create-namespace` flag.
 
@@ -108,9 +108,9 @@ helm upgrade \
 
 ## Update Existing Kube Prometheus Stack Helm Chart
 
-**Note that if you have made extensive customization to the current Prometheus Operator Helm
+__Note that if you have made extensive customization to the current Prometheus Operator Helm
 install then you will need to [merge your existing configuration with ours](#merge-prometheus-configuration)
-avoiding conflicts or you may want to [run our Prometheus side-by-side](./SideBySidePrometheus.md).**
+avoiding conflicts or you may want to [run our Prometheus side-by-side](./SideBySidePrometheus.md).__
 
 Next you will modify your Prometheus Operator installation with the required configuration
 to collect the metrics into Sumo Logic.
@@ -175,7 +175,7 @@ If you do not see data in Sumo Logic, you can review our [troubleshooting guide]
 
 ## Merge Prometheus Configuration
 
-**Note**: Make sure your `Prometheus Operator` and/or `Prometheus Operator Chart` are compatible with the version used by the Collection
+__Note__: Make sure your `Prometheus Operator` and/or `Prometheus Operator Chart` are compatible with the version used by the Collection
 
 If you have customized your Prometheus configuration, follow these steps to merge the configurations.
 
@@ -223,7 +223,7 @@ The pod name will contain `-setup` in the name.
 kubectl get pods
 ```
 
-> **Tip**: If the pod does not exist, it is possible it has been evicted.
+> __Tip__: If the pod does not exist, it is possible it has been evicted.
 > Re-run the `helm upgrade --install` to recreate it and while that command is running,
 > use another shell to get the name of the pod.
 
@@ -248,7 +248,7 @@ You can find more information in our [troubleshooting documentation](Troubleshoo
 
 All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md).
 We recommend creating a new `values.yaml` for each Kubernetes cluster you wish
-to install collection on and **setting only the properties you wish to override**.
+to install collection on and __setting only the properties you wish to override__.
 Once you have customized you can use the following commands to install or upgrade.
 Remember to define the properties in our [requirements section](#requirements)
 in the `values.yaml` as well or pass them in via `--set`
@@ -257,12 +257,12 @@ in the `values.yaml` as well or pass them in via `--set`
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
 ```
 
-> **Tip**: To filter or add custom metrics to Prometheus,
+> __Tip__: To filter or add custom metrics to Prometheus,
 > [please refer to this document](additional_prometheus_configuration.md)
 
 ## Upgrading Sumo Logic Collection
 
-**Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).**
+__Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).__
 
 To upgrade our helm chart to a newer version, you must first run update your local helm repo.
 
@@ -298,7 +298,7 @@ To uninstall/delete the Helm chart:
 helm delete my-release
 ```
 
-> **Helm3 Tip**: In Helm3 the default behavior is to purge history.
+> __Helm3 Tip__: In Helm3 the default behavior is to purge history.
 > Use `--keep-history` to preserve it while deleting the release.
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
