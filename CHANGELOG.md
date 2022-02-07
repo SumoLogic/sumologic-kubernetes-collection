@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v2.5.0]
+
+### Released 2022-02-07
 
 ### Added
 
@@ -42,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2065]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2065
 [#2085]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2085
 [#2073]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2073
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...main
+[v2.5.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.5.0
 
 ## [v2.4.1][v2_4_1]
 
