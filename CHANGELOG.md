@@ -13,10 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.1...main
+
+## [v2.5.1]
+
+### Released 2022-02-07
+
+### Fixed
+
 - fix: invalid checksum source for remote write proxy deployment [#2091][#2091]
 
 [#2091]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2091
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.0...main
+[v2.5.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.5.1
 
 ## [v2.5.0]
 
