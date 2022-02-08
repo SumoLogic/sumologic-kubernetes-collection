@@ -1694,7 +1694,7 @@ kube-prometheus-stack:
     ## Use the GCR repo, it's more recent and has ARM images starting from 1.9.8
     image:
       repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
-      tag: v1.9.8
+      tag: v2.3.0
     # Do not collect metrics for CertificateSigningRequest or Ingress resources.
     # This is because the v1 version of kube-state-metrics uses API versions
     # that are removed in Kubernetes v1.22.
@@ -1867,8 +1867,8 @@ kube-prometheus-stack:
           requests:
             cpu: 1m
             memory: 8Mi
-      containers:
-        - name: "config-reloader"
+      initContainers:
+        - name: "init-config-reloader"
           env:
             - name: FLUENTD_METRICS_SVC
               valueFrom:
