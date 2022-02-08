@@ -144,6 +144,9 @@ The source code and the `Dockerfile`s for both images can be found at https://gi
 We have provided an option to enable autoscaling for both logs and metrics Fluentd statefulsets.
 This is disabled by default.
 
+Whenever your Fluentd pods CPU consumption is near the limit you could experience a [delay in data ingestion
+or even a data loss](monitoring-lag.md) in extreme situations. In such cases you should enable the autoscaling.
+
 To enable autoscaling for Fluentd:
 
 - Enable metrics-server dependency
