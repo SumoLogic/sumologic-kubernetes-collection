@@ -13,6 +13,18 @@ pipeline.
     This dashboard can be found from the `Cluster` level in `Explore`, and is a great way
     of holistically judging if your collection process is working as expected.
 
+1. Fluentd CPU usage
+
+    Whenever your Fluentd pods CPU consumption is near the limit you could experience
+    a delay in data ingestion or even a data loss in extreme situations. Many times it is
+    caused by unsufficient amount of Fluentd instances being available. We advise to use the
+    [Fluentd autoscaling](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2.5/deploy/docs/Best_Practices.md#fluentd-autoscaling)
+    with help of Horizontal Pod Autoscaler to mitigate this issue.
+
+    Also if the HPA is enabled but the maximum number of instances (configured in the HPA)
+    has been reached, it may cause a delay.
+    To mitigate this please increase the maximum number of instances for the HPA.
+
 1. Fluentd Queue Length
 
     On the health check dashboard you'll see a panel for Fluentd queue length.
