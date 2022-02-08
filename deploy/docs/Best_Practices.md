@@ -24,6 +24,7 @@
 - [Changing scrape interval for Prometheus](#changing-scrape-interval-for-prometheus)
 - [Get logs not available on stdout](#get-logs-not-available-on-stdout)
 - [Adding custom fields](#adding-custom-fields)
+- [Using custom Kubernetes API server address](#using-custom-kubernetes-api-server-address)
 
 ## Multiline Log Support
 
@@ -734,4 +735,35 @@ fluentd:
             _sumo_metadata ${record["_sumo_metadata"][:fields] = "#{record["_sumo_metadata"][:fields]},#{record["_sumo_metadata"][:_fields]}"; record["_sumo_metadata"]}
           </record>
         </filter>
+```
+
+## Using custom Kubernetes API server address
+
+In order to change API server address, the following configurations can be used.
+
+For the Fluentd:
+
+```yaml
+fluentd:
+  apiServerUrl: http://my-custom-k8s.api:12345
+```
+
+For the Opentelemetry Collector:
+
+```yaml
+metadata:
+  logs:
+    statefulset:
+      extraEnvVars:
+      - name: KUBERNETES_SERVICE_HOST
+        value: my-custom-k8s.api
+      - name: KUBERNETES_SERVICE_PORT
+        value: '12345'
+  metrics:
+    statefulset:
+      extraEnvVars:
+      - name: KUBERNETES_SERVICE_HOST
+        value: my-custom-k8s.api
+      - name: KUBERNETES_SERVICE_PORT
+        value: '12345'
 ```
