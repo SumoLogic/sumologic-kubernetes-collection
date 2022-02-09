@@ -251,7 +251,7 @@ example logs from `/var/log/containers/` directory in the containerd format:
 
 <!-- markdownlint-disable line_length -->
 
-```
+```bash
 sudo cat /var/log/containers/example-pod-multiline-logs-long-lines_default_example-container-multiline-logs-long-lines-d0c326514606bd3581b51b2f63ae0adf31c72c7b807f1b92f6e09dbbc264e082.log
 ...
 2022-02-09T12:05:00.798311401Z stdout F 2022-02-08T20:53:28.621+0000 1st single line...
@@ -320,7 +320,7 @@ the first line of a multiline log:
       [PARSER]
           Name         containerd_multiline_pattern
           Format       regex
-          Regex        (?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}.* .*)
+          Regex        (?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* .*)
           Time_Key     time
           Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
 ```
