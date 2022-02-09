@@ -3794,6 +3794,14 @@ metadata:
       containers:
         otelcol:
           securityContext: {}
+          livenessProbe:
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
 
       ## Extra Environment Values - allows yaml definitions
       # extraEnvVars:
@@ -4169,6 +4177,14 @@ metadata:
       containers:
         otelcol:
           securityContext: {}
+          livenessProbe:
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
 
       ## Extra Environment Values - allows yaml definitions
       # extraEnvVars:
