@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- feat: add otelcol's liveness and readiness probes configuration [#2105]
+
 ### Changed
 
 ### Fixed
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.1...main
+[#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
 
 ## [v2.5.1]
 
