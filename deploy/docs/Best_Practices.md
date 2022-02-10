@@ -194,6 +194,18 @@ To enable autoscaling for Fluentd:
         enabled: true
   ```
 
+### CPU resources warning
+
+When enabling the Fluentd Autoscaling please make sure to set Fluentd's `resources.requests.cpu` properly.
+Because of Fluentd's single threaded nature it rarely consumes more than `1000m` CPU (1 CPU core).
+
+For example setting `resources.requests.cpu=2000m` and the `autoscaling.targetCPUUtilizationPercentage=50` means
+that autoscaling will increase the number of application pods only if average CPU usage across all application pods
+in statefulset or daemonset is more than `1000m`. This combined with Fluentd's usage of around `1000m` at most will
+result in autoscaling not working properly.
+
+**For this reason we suggest to set the Fluentd's `resources.requests.cpu=1000m` or less when using autoscaling.**
+
 ## Fluentd File-Based Buffer
 
 Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less
