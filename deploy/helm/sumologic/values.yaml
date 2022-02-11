@@ -460,7 +460,7 @@ fluentd:
       enabled: false
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+      targetCPUUtilizationPercentage: 100
       # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
@@ -751,7 +751,7 @@ fluentd:
       enabled: false
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+      targetCPUUtilizationPercentage: 100
       # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
@@ -3831,7 +3831,7 @@ metadata:
       enabled: false
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+      targetCPUUtilizationPercentage: 100
       # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
@@ -4214,7 +4214,7 @@ metadata:
       enabled: false
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+      targetCPUUtilizationPercentage: 100
       # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
