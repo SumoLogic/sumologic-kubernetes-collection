@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat: add otelcol's liveness and readiness probes configuration [#2105]
+- feat: added remote write configs for couchbase [#2113][#2113]
 
 ### Changed
 
