@@ -28,7 +28,7 @@
 
 ## Multiline Log Support
 
-By default, we use a regex that matches the first line of multiline logs
+For logs in Docker format by default, we use a regex that matches the first line of multiline logs
 that start with dates in the following format: `2019-11-17 07:14:12`.
 
 If your logs have a different date format you can provide a custom regex to detect
@@ -65,6 +65,8 @@ Docker_Mode_Parser new_multi_line_parser
 ```
 
 The regex used for needs to have at least one named capture group.
+
+For detailed information about parsing container logs please see [here](ContainerLogs.md).
 
 ### MySQL slow logs example
 
