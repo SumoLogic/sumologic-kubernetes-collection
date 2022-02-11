@@ -3071,6 +3071,73 @@ kube-prometheus-stack:
               regex: (?:activemq_(topic_.*|queue_.*|.*_QueueSize|broker_(AverageMessageSize|CurrentConnectionsCount|MemoryLimit|StoreLimit|TempLimit|TotalConnectionsCount|TotalConsumerCount|TotalDequeueCount|TotalEnqueueCount|TotalMessageCount|TotalProducerCount|UptimeMillis)|jvm_memory_(HeapMemoryUsage_max|HeapMemoryUsage_used|NonHeapMemoryUsage_used)|jvm_runtime_Uptime|OperatingSystem_(FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize)))
               sourceLabels: [__name__]
 
+        ## Couchbase Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/couchbase
+        ## couchbase_node_memory_free
+        ## couchbase_node_memory_total
+        ## couchbase_bucket_item_count
+        ## couchbase_bucket_curr_connections
+        ## couchbase_bucket_ops_per_sec
+        ## couchbase_bucket_ep_num_value_ejects
+        ## couchbase_bucket_disk_write_queue
+        ## couchbase_bucket_ep_oom_errors
+        ## couchbase_bucket_delete_misses
+        ## couchbase_bucket_delete_hits
+        ## couchbase_bucket_bytes_read
+        ## couchbase_bucket_bytes_written
+        ## couchbase_bucket_cmd_get
+        ## couchbase_bucket_cmd_set
+        ## couchbase_bucket_cas_hits
+        ## couchbase_bucket_ops
+        ## couchbase_bucket_curr_items 
+        ## couchbase_bucket_mem_actual_free
+        ## couchbase_bucket_cpu_utilization_rate
+        ## couchbase_bucket_swap_used
+        ## couchbase_bucket_disk_used
+        ## couchbase_bucket_rest_requests
+        ## couchbase_bucket_hibernated_waked
+        ## couchbase_bucket_mem_used
+        ## couchbase_bucket_xdc_ops
+        ## couchbase_bucket_ep_mem_low_wat
+        ## couchbase_bucket_ep_mem_high_wat
+        ## couchbase_bucket_ep_ops_update
+        ## couchbase_bucket_ep_tmp_oom_errors
+        ## couchbase_bucket_ep_dcp_replica_count
+        ## couchbase_bucket_ep_dcp_replica_producer_count
+        ## couchbase_bucket_ep_dcp_xdcr_producer_count
+        ## couchbase_bucket_ep_dcp_replica_items_remaining
+        ## couchbase_bucket_ep_dcp_xdcr_items_remaining
+        ## couchbase_bucket_ep_dcp_replica_items_sent
+        ## couchbase_bucket_ep_dcp_xdcr_items_sent
+        ## couchbase_bucket_ep_dcp_replica_total_bytes
+        ## couchbase_bucket_ep_dcp_xdcr_total_bytes
+        ## couchbase_bucket_ep_num_ops_get_meta
+        ## couchbase_bucket_ep_num_ops_set_meta
+        ## couchbase_bucket_ep_num_ops_del_meta
+        ## couchbase_bucket_ep_dcp_xdcr_count
+        ## couchbase_bucket_ep_resident_items_rate
+        ## couchbase_bucket_vb_active_queue_size
+        ## couchbase_bucket_vb_replica_queue_size
+        ## couchbase_bucket_vb_pending_queue_size
+        ## couchbase_bucket_vb_active_queue_fill
+        ## couchbase_bucket_vb_replica_queue_fill
+        ## couchbase_bucket_vb_pending_queue_fill
+        ## couchbase_bucket_vb_avg_active_queue_age
+        ## couchbase_bucket_vb_avg_replica_queue_age
+        ## couchbase_bucket_vb_avg_pending_queue_age
+        ## couchbase_bucket_vb_active_num
+        ## couchbase_bucket_vb_replica_num
+        ## couchbase_bucket_vb_pending_num
+        ## couchbase_bucket_vb_pending_curr_items
+        ## couchbase_bucket_vb_active_resident_items_ratio
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.couchbase
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:couchbase_(node_.*|bucket_(ep_.*|vb_.*|delete_.*|cmd.*|bytes_.*|item_count|curr_connections|ops_per_sec|disk_write_queue|mem_.*|cas_hits|ops|curr_items|cpu_utilization_rate|swap_used|disk_used|rest_requests|hibernated_waked|xdc_ops)))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
