@@ -8,6 +8,11 @@ metadata:
     {{- include "sumologic.labels.scrape.traces" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
+  # Otel DNS load balancing requires collector service to be headless
+  # in order to skip k8s load balancing and instead populate DNS records.
+  {{- if eq .Values.sumologic.traces.loadBalancing true }}
+  clusterIP: None
+  {{- end }}
   selector:
     app: {{ template "sumologic.labels.app.otelcol.pod" . }}
   ports:
