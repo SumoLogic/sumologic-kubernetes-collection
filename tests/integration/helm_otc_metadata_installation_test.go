@@ -279,7 +279,6 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 
 					log.V(0).InfoS("sample's labels", "labels", labels)
 					return labels.MatchAll(expectedLabels)
-
 				}, waitDuration, tickDuration)
 				return ctx
 			},
@@ -287,17 +286,26 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 		Feature()
 
 	featLogs := features.New("logs").
-		Setup(stepfuncs.GenerateLogsWithDeployment(
+		Setup(stepfuncs.GenerateLogs(
+			stepfuncs.LogsGeneratorDeployment,
 			logsGeneratorCount,
 			internal.LogsGeneratorName,
 			internal.LogsGeneratorNamespace,
 			internal.LogsGeneratorImage,
 		)).
-		Assess("logs from log generator present", stepfuncs.WaitUntilExpectedLogsPresent(
+		Setup(stepfuncs.GenerateLogs(
+			stepfuncs.LogsGeneratorDaemonSet,
+			logsGeneratorCount,
+			internal.LogsGeneratorName,
+			internal.LogsGeneratorNamespace,
+			internal.LogsGeneratorImage,
+		)).
+		Assess("logs from log generator deployment present", stepfuncs.WaitUntilExpectedLogsPresent(
 			logsGeneratorCount,
 			map[string]string{
 				"namespace":      internal.LogsGeneratorName,
 				"pod_labels_app": internal.LogsGeneratorName,
+				"deployment":     internal.LogsGeneratorName,
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
@@ -305,7 +313,20 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 			waitDuration,
 			tickDuration,
 		)).
-		Assess("expected container log metadata is present", stepfuncs.WaitUntilExpectedLogsPresent(
+		Assess("logs from log generator daemonset present", stepfuncs.WaitUntilExpectedLogsPresent(
+			logsGeneratorCount,
+			map[string]string{
+				"namespace":      internal.LogsGeneratorName,
+				"pod_labels_app": internal.LogsGeneratorName,
+				"daemonset":      internal.LogsGeneratorName,
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("expected container log metadata is present for log generator deployment", stepfuncs.WaitUntilExpectedLogsPresent(
 			logsGeneratorCount,
 			map[string]string{
 				"_collector":       "kubernetes",
@@ -314,6 +335,30 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				"container":        internal.LogsGeneratorName,
 				"deployment":       internal.LogsGeneratorName,
 				"replicaset":       "",
+				"pod":              "",
+				"k8s.pod.id":       "",
+				"k8s.pod.pod_name": "",
+				"k8s.container.id": "",
+				"host":             "",
+				"node":             "",
+				"_sourceName":      "",
+				"_sourceCategory":  "",
+				"_sourceHost":      "",
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("expected container log metadata is present for log generator daemonset", stepfuncs.WaitUntilExpectedLogsPresent(
+			logsGeneratorCount,
+			map[string]string{
+				"_collector":       "kubernetes",
+				"namespace":        internal.LogsGeneratorName,
+				"pod_labels_app":   internal.LogsGeneratorName,
+				"container":        internal.LogsGeneratorName,
+				"daemonset":        internal.LogsGeneratorName,
 				"pod":              "",
 				"k8s.pod.id":       "",
 				"k8s.pod.pod_name": "",
@@ -361,6 +406,13 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				opts := *ctxopts.KubectlOptions(ctx)
 				opts.Namespace = internal.LogsGeneratorNamespace
 				terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.LogsGeneratorName)
+				return ctx
+			}).
+		Teardown(
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				opts := *ctxopts.KubectlOptions(ctx)
+				opts.Namespace = internal.LogsGeneratorNamespace
+				terrak8s.RunKubectl(t, &opts, "delete", "daemonset", internal.LogsGeneratorName)
 				return ctx
 			}).
 		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace)).
