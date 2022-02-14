@@ -3533,6 +3533,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3542,6 +3543,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3551,6 +3553,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3560,6 +3563,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3569,6 +3573,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3578,6 +3583,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3587,6 +3593,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
