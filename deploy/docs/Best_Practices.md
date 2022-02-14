@@ -27,7 +27,7 @@
 
 ## Multiline Log Support
 
-By default, we use a regex that matches the first line of multiline logs
+For logs in Docker format by default, we use a regex that matches the first line of multiline logs
 that start with dates in the following format: `2019-11-17 07:14:12`.
 
 If your logs have a different date format you can provide a custom regex to detect
@@ -64,6 +64,8 @@ Docker_Mode_Parser new_multi_line_parser
 ```
 
 The regex used for needs to have at least one named capture group.
+
+For detailed information about parsing container logs please see [here](ContainerLogs.md).
 
 ### MySQL slow logs example
 
@@ -144,6 +146,9 @@ The source code and the `Dockerfile`s for both images can be found at https://gi
 We have provided an option to enable autoscaling for both logs and metrics Fluentd statefulsets.
 This is disabled by default.
 
+Whenever your Fluentd pods CPU consumption is near the limit you could experience a [delay in data ingestion
+or even a data loss](monitoring-lag.md) in extreme situations. In such cases you should enable the autoscaling.
+
 To enable autoscaling for Fluentd:
 
 - Enable metrics-server dependency
@@ -190,6 +195,18 @@ To enable autoscaling for Fluentd:
       autoscaling:
         enabled: true
   ```
+
+### CPU resources warning
+
+When enabling the Fluentd Autoscaling please make sure to set Fluentd's `resources.requests.cpu` properly.
+Because of Fluentd's single threaded nature it rarely consumes more than `1000m` CPU (1 CPU core).
+
+For example setting `resources.requests.cpu=2000m` and the `autoscaling.targetCPUUtilizationPercentage=50` means
+that autoscaling will increase the number of application pods only if average CPU usage across all application pods
+in statefulset or daemonset is more than `1000m`. This combined with Fluentd's usage of around `1000m` at most will
+result in autoscaling not working properly.
+
+**For this reason we suggest to set the Fluentd's `resources.requests.cpu=1000m` or less when using autoscaling.**
 
 ## Fluentd File-Based Buffer
 
