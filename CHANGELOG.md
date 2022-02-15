@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-1`,
+  it is Fluent Bit 1.6.10 with updated dependencies,
+  image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2131][#2131]
+
 ### Fixed
 
 - fix: make metadata StatefulSets scale above 0.5 average CPU usage [#2114]
@@ -19,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.1...main
 [#2114]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2114
 [#2100]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2100
+[#2131]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2131
 
 ## [v2.5.1]
 
