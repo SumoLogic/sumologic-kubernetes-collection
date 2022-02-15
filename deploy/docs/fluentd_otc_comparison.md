@@ -54,12 +54,12 @@ Additional behavior:
 
 [fields_base]: https://github.com/SumoLogic/fluentd-output-sumologic/blob/1.7.2/lib/fluent/plugin/out_sumologic.rb#L284-L285
 [fluentd_output_plugin]: https://github.com/sumologic/fluentd-output-sumologic/tree/1.7.2#configuration
-[otelcol_basic_confg]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.35-beta.0/docs/Configuration.md#basic-configuration
-[otelcol_proxy]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.35-beta.0/docs/Configuration.md#proxy-support
-[otelcol_source_config]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/processor/sourceprocessor#config
-[otelcol_sumologic_config]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.35-beta.0/pkg/exporter/sumologicexporter/README.md#sumo-logic-exporter
-[otelocl_tls_config]: https://github.com/open-telemetry/opentelemetry-collector/blob/v0.36.0/config/configtls/README.md#tls--mtls-configuration
-[resource_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.36.0/processor/resourceprocessor#resource-processor
+[otelcol_basic_confg]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.50-beta.0/docs/Configuration.md#basic-configuration
+[otelcol_proxy]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.50-beta.0/docs/Configuration.md#proxy-support
+[otelcol_source_config]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/processor/sourceprocessor#config
+[otelcol_sumologic_config]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.50-beta.0/pkg/exporter/sumologicexporter/README.md#sumo-logic-exporter
+[otelocl_tls_config]: https://github.com/open-telemetry/opentelemetry-collector/blob/v0.44.0/config/configtls/README.md#tls--mtls-configuration
+[resource_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.44.0/processor/resourceprocessor#resource-processor
 [source_category_precedence]: https://github.com/SumoLogic/fluentd-output-sumologic/blob/1.7.2/lib/fluent/plugin/out_sumologic.rb#L278-L279
 [source_host_precedence]: https://github.com/SumoLogic/fluentd-output-sumologic/blob/1.7.2/lib/fluent/plugin/out_sumologic.rb#L281-L282
 [source_name_precedence]: https://github.com/SumoLogic/fluentd-output-sumologic/blob/1.7.2/lib/fluent/plugin/out_sumologic.rb#L275-L276
@@ -70,7 +70,7 @@ In order to receive prometheus data and for their initial processing [telegrafre
 It should cover [fluent-plugin-datapoint][fluent_plugin_datapoint] functionality and more.
 
 [fluent_plugin_datapoint]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-datapoint
-[telegrafreceiver]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/receiver/telegrafreceiver
+[telegrafreceiver]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/receiver/telegrafreceiver
 
 ### fluent-plugin-protobuf
 
@@ -78,7 +78,7 @@ In order to receive prometheus data and for their initial processing [telegrafre
 It should cover [fluent_plugin_protobuf][fluent_plugin_protobuf] functionality and more.
 
 [fluent_plugin_protobuf]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-protobuf
-[telegrafreceiver]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/receiver/telegrafreceiver
+[telegrafreceiver]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/receiver/telegrafreceiver
 
 ### fluent-plugin-prometheus-format
 
@@ -90,15 +90,15 @@ It should cover [fluent_plugin_protobuf][fluent_plugin_protobuf] functionality a
 | [exclusions][prom_form_excl]                                    | Use [filter processor][filter_processor]                                                                  |
 | [strict_exclusions][prom_form_strict_excl]                      | Use [filter processor][filter_processor]                                                                  |
 
-[filter_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.36.0/processor/filterprocessor#filter-processor
+[filter_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.44.0/processor/filterprocessor#filter-processor
 [fluent_plugin_prometheus_format]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-prometheus-format
-[groupbyattrs_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.36.0/processor/groupbyattrsprocessor#group-by-attributes-processor
+[groupbyattrs_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.44.0/processor/groupbyattrsprocessor#group-by-attributes-processor
 [prom_form_excl]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-prometheus-format#exclusions-hash-optional
 [prom_form_incl]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-prometheus-format#inclusions-hash-optional
 [prom_form_relabel]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-prometheus-format#relabel-hash-optional
 [prom_form_strict_excl]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-prometheus-format#strict_exclusions-bool-optional
 [prom_form_strict_incl]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-prometheus-format#strict_inclusions-bool-optional
-[resource_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.36.0/processor/resourceprocessor#resource-processor
+[resource_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.44.0/processor/resourceprocessor#resource-processor
 
 ### fluent-plugin-kubernetes-sumologic
 
@@ -162,17 +162,17 @@ Sanitized pod name is name portion of the pod. Please consider following example
 [kube_daemonset]: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
 [kube_deployment]: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
 [kube_statefulset]: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset
-[otelcol_annotations]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/processor/sourceprocessor#pod-annotations
+[otelcol_annotations]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/processor/sourceprocessor#pod-annotations
 [otelcol_annotations_exclude]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic/lib/fluent/plugin/filter_kubernetes_sumologic.rb#L171-L183
-[otelcol_source_templates]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/exporter/sumologicexporter#source-templates
-[otelcol_undefined]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.35-beta.0/pkg/processor/sourceprocessor/attribute_filler.go#L113-L123
-[source_containers]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/processor/sourceprocessor#container-level-pod-annotations
-[source_filtering]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/processor/sourceprocessor#filtering-section
-[source_keys]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/processor/sourceprocessor#keys-section
-[source_processor]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/processor/sourceprocessor#config
-[source_processor_source_templates]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/processor/sourceprocessor#name-translation-and-template-keys
+[otelcol_source_templates]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/exporter/sumologicexporter#source-templates
+[otelcol_undefined]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.50-beta.0/pkg/processor/sourceprocessor/attribute_filler.go#L113-L123
+[source_containers]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/processor/sourceprocessor#container-level-pod-annotations
+[source_filtering]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/processor/sourceprocessor#filtering-section
+[source_keys]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/processor/sourceprocessor#keys-section
+[source_processor]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/processor/sourceprocessor#config
+[source_processor_source_templates]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/processor/sourceprocessor#name-translation-and-template-keys
 [sumo_metadata]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic#fluent-plugin-kubernetes-sumologic
-[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.35-beta.0/pkg/exporter/sumologicexporter/README.md#sumo-logic-exporter
+[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.50-beta.0/pkg/exporter/sumologicexporter/README.md#sumo-logic-exporter
 
 ### fluent-plugin-kubernetes-metadata-filter
 
@@ -190,9 +190,9 @@ Sanitized pod name is name portion of the pod. Please consider following example
 | `cache_ttl`                                                | N/A                                                                                                   |
 
 [fluent_plugin_k8s_metadata]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-kubernetes-metadata-filter#configuration
-[k8sprocessor]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.35-beta.0/pkg/processor/k8sprocessor
-[k8sprocessor_field_extract]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/processor/k8sprocessor#field-extract-config
-[kubeconfig_auth_type]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.36.0/internal/k8sconfig/config.go#L53-L60
+[k8sprocessor]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.50-beta.0/pkg/processor/k8sprocessor
+[k8sprocessor_field_extract]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/processor/k8sprocessor#field-extract-config
+[kubeconfig_auth_type]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.44.0/internal/k8sconfig/config.go#L53-L60
 
 ### fluent-plugin-enhance-k8s-metadata
 
@@ -209,7 +209,7 @@ Sanitized pod name is name portion of the pod. Please consider following example
 | `data_type`                                                        | N/A                                                                                     |
 
 [fluent_plugin_enhance_k8s_metadata]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-enhance-k8s-metadata#configuration
-[pod_association]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.35-beta.0/pkg/processor/k8sprocessor/doc.go#L17-L46
+[pod_association]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.0.50-beta.0/pkg/processor/k8sprocessor/doc.go#L17-L46
 
 ### fluent-plugin-events
 
@@ -274,7 +274,7 @@ Events are not supported by `Opentelemetry Collector`
 | [sumologic.collectorName][readme]                                       | `metadata.metrics.config.processors.source.collector`                                                                                                       |
 | [sumologic.clusterName][readme]                                         | `metadata.metrics.config.processors.source.collector`                                                                                                       |
 
-[filter_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.36.0/processor/filterprocessor#filter-processor
+[filter_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.44.0/processor/filterprocessor#filter-processor
 [readme]: ../helm/sumologic/README.md
 [persistent_queue]: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#persistent-queue
 [file_storage_extension]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
@@ -356,9 +356,9 @@ Events are not supported by `Opentelemetry Collector`
 | [fluentd.logs.containers.extraFilterPluginConf][readme]              | [metadata.logs.config][readme]; mind that configuration is going to be merged unless you use `null`                                                                                                             |
 | [fluentd.logs.containers.extraOutputPluginConf][readme]              | [metadata.logs.config][readme]; mind that configuration is going to be merged unless you use `null`                                                                                                             |
 
-[filter_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.36.0/processor/filterprocessor#filter-processor
+[filter_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.44.0/processor/filterprocessor#filter-processor
 [readme]: ../helm/sumologic/README.md
-[source_containers]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/processor/sourceprocessor#container-level-pod-annotations
+[source_containers]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/processor/sourceprocessor#container-level-pod-annotations
 [persistent_queue]: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#persistent-queue
 [file_storage_extension]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
 
