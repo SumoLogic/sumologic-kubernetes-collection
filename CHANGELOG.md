@@ -9,15 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- feat: add otelcol's liveness and readiness probes configuration [#2105]
+- feat: add otelcol's liveness and readiness probes configuration [#2105][#2105]
 
 ### Changed
 
-- chore: bump sumo ot distro to 0.0.50-beta.0 [#2127]
+- chore: bump sumo ot distro to 0.0.50-beta.0 [#2127][#2127]
 
 ### Fixed
 
-- fix: make metadata StatefulSets scale above 0.5 average CPU usage [#2114]
+- fix: make metadata StatefulSets scale above 0.5 average CPU usage [#2114][#2114]
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.1...main
 [#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
@@ -53,8 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: upgrade Fluentd to 1.14.4-sumo-1 [#2057][#2057]
 - chore: update the Telegraf image to 1.21.2 [#2036][#2036]
 - chore(deps): bump Sumo OT distro to 0.0.48-beta.0 [#2056][#2056]
-- chore: update Tailing Sidecar to 0.3.2 [#2073]
-- chore: bump setup image to 3.2.2 [#2083]
+- chore: update Tailing Sidecar to 0.3.2 [#2073][#2073]
+- chore: bump setup image to 3.2.2 [#2083][#2083]
 
 ### Fixed
 
