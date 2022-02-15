@@ -14,8 +14,17 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/logsgenerator"
 )
 
-// Generate logsCount logs using a Deployment
-func GenerateLogsWithDeployment(
+type logsGeneratorImplType uint
+
+const (
+	LogsGeneratorDeployment = iota
+	LogsGeneratorDaemonSet
+)
+
+// Generate logsCount logs using the designated implementation type:
+// either deployment or a daemonset.
+func GenerateLogs(
+	implType logsGeneratorImplType,
 	logsCount uint,
 	logsGeneratorName string,
 	logsGeneratorNamespace string,
@@ -25,20 +34,43 @@ func GenerateLogsWithDeployment(
 		client := envConf.Client()
 		generatorOptions := *logsgenerator.NewDefaultGeneratorOptions()
 		generatorOptions.TotalLogs = logsCount
-		deployment := logsgenerator.GetLogsGeneratorDeployment(
-			logsGeneratorNamespace,
-			logsGeneratorName,
-			logsGeneratorImage,
-			generatorOptions,
-		)
 
-		// create the namespace
-		namespace := corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: logsGeneratorNamespace}}
-		require.NoError(t, client.Resources().Create(ctx, &namespace))
+		var namespace corev1.Namespace
+		err := client.Resources().Get(ctx, logsGeneratorNamespace, "", &namespace)
+		if err != nil {
+			// create the namespace
+			namespace := corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: logsGeneratorNamespace}}
+			require.NoError(t, client.Resources().Create(ctx, &namespace))
+		}
 
-		// create the deployment
-		err := client.Resources(logsGeneratorNamespace).Create(ctx, &deployment)
-		require.NoError(t, err)
+		switch implType {
+		case LogsGeneratorDeployment:
+			deployment := logsgenerator.GetLogsGeneratorDeployment(
+				logsGeneratorNamespace,
+				logsGeneratorName,
+				logsGeneratorImage,
+				generatorOptions,
+			)
+
+			// create the deployment
+			err := client.Resources(logsGeneratorNamespace).Create(ctx, &deployment)
+			require.NoError(t, err)
+
+		case LogsGeneratorDaemonSet:
+			daemonset := logsgenerator.GetLogsGeneratorDaemonSet(
+				logsGeneratorNamespace,
+				logsGeneratorName,
+				logsGeneratorImage,
+				generatorOptions,
+			)
+
+			// create the daemonset
+			err := client.Resources(logsGeneratorNamespace).Create(ctx, &daemonset)
+			require.NoError(t, err)
+
+		default:
+			t.Fatalf("Unknown log generator deployment model: %v", implType)
+		}
 
 		return ctx
 	}

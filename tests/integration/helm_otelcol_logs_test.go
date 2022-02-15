@@ -98,7 +98,8 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 		).
 		Feature()
 	featLogs := features.New("logs").
-		Setup(stepfuncs.GenerateLogsWithDeployment(
+		Setup(stepfuncs.GenerateLogs(
+			stepfuncs.LogsGeneratorDeployment,
 			logsGeneratorCount,
 			internal.LogsGeneratorName,
 			internal.LogsGeneratorNamespace,
