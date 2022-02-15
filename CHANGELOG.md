@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat: add otelcol's liveness and readiness probes configuration [#2105][#2105]
+- docs: add fluentd buffers vs DPM calculations info for metrics [#2128][#2128]
 
 ### Changed
 
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
 [#2114]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2114
 [#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
+[#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
 
 ## [v2.5.1]
 

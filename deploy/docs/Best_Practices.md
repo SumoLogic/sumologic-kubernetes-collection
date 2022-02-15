@@ -255,6 +255,47 @@ See the following links to official Fluentd buffer documentation:
 - https://docs.fluentd.org/configuration/buffer-section
 - https://docs.fluentd.org/buffer/file
 
+### Fluentd buffer size for metrics
+
+Should you have any connectivity problems, depending on the buffer size your setup will
+be able to survive for a given amount of time without a data loss, delivering the data
+later when everything is operational again.
+
+To calculate this time you need to know how much data you send. For the calculations below
+we made an assumption that a single metric data point is around 1 kilobyte in size, including
+metadata. This assumption is based on the average data we ingest. By default, for file based
+buffering we use gzip compression which gives us around 3:1 compress ratio.
+
+That results in `1 DPM` (Data Points per Minute) using around `333 bytes of buffer`. That is
+`333 kilobytes for 1 thousand DPM` and `333 megabytes for 1 million DPM`. In other words - storing
+a million data points will use a 333 megabytes of buffer every minute.
+
+This buffer size can be spread between multiple Fluentd instances. To have the best results you
+should use the metrics load balancing which can be enabled by using the following setting:
+`sumologic.metrics.remoteWriteProxy.enabled=true`. It enables the remote write proxy where nginx
+is being used to forward data from Prometheus to Fluentds. We strongly recommend using this
+setting as in case of uneven load your buffer storage is as big as single Fluentd instance buffer.
+Unfortunately even with `remoteWriteProxy` enabled you might experience uneven load. Because of
+that we also `recommend to make your buffers twice the calculated size`.
+
+The formula to calculate the buffering time:
+
+```
+minutes = (PV size in bytes * Fluentd instances) / (DPM * 333 bytes)
+```
+
+Example 1:  
+My cluster sends 10 thousand DPM to Sumo. I'm using default 10 gb of buffer size. I'm also using
+3 Fluentd instances. That gives me 30 gb of buffers in total (3 * 10 gb). I'm using 3.33 mb per
+minute. My setup should be able to hold data for 9000 minutes, that is 150 hours or 6.25 days.
+We recommend treating this as 4500 minutes, that is 75 hours or 3.12 days of buffer.
+
+Example 2:  
+My cluster sends 1 million DPM to Sumo. I'm using 20 gb of buffer size. I'm using 20 Fluentd
+instances. I have 400 gb of buffers in total (20 * 20 gb). I'm using 333 mb of buffer every minute.
+My setup should be able to hold data for around 1200 minutes, that is 20 hours. We recommend treating
+this as 600 minutes, that is 10 hours of buffer.
+
 ## Excluding Logs From Specific Components
 
 You can exclude specific logs from specific components from being sent to Sumo Logic
