@@ -19,7 +19,6 @@ spec:
           at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)
           at com.myproject.module.MyProject.anotherMethod(MyProject.java:14)
           at com.myproject.module.MyProject.someMethod(MyProject.java:10)"
-        echo "    at com.myproject.module.MyProject.verylongLine(MyProject.java:100000) ${LONG_STRING} end of the 2nd long line"
         echo "    at com.myproject.module.MyProject.main(MyProject.java:6)
       2022-02-08T20:53:31.624+0000 another line..."
         sleep 5

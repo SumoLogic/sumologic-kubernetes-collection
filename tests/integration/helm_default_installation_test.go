@@ -276,7 +276,8 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 		Feature()
 
 	featLogs := features.New("logs").
-		Setup(stepfuncs.GenerateLogsWithDeployment(
+		Setup(stepfuncs.GenerateLogs(
+			stepfuncs.LogsGeneratorDeployment,
 			logsGeneratorCount,
 			internal.LogsGeneratorName,
 			internal.LogsGeneratorNamespace,

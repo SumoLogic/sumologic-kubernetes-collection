@@ -209,24 +209,25 @@ sumologic:
       ## Set metadata provider service (either fluentd or otelcol).
       ## Otelcol is experimental and may behave in unexpected way.
       provider: fluentd
-      ## Enable a load balancing proxy for Prometheus remote writes.
-      # Prometheus remote write uses a single persistent HTTP connection per target,
-      # which interacts poorly with TCP load balancing with iptables that K8s Services do.
-      # Use a real HTTP load balancer for this instead.
-      # This is an advanced feature, enable only if you're experiencing performance
-      # issues with metrics metadata enrichment.
+
+    ### Enable a load balancing proxy for Prometheus remote writes.
+    ## Prometheus remote write uses a single persistent HTTP connection per target,
+    ## which interacts poorly with TCP load balancing with iptables that K8s Services do.
+    ## Use a real HTTP load balancer for this instead.
+    ## This is an advanced feature, enable only if you're experiencing performance
+    ## issues with metrics metadata enrichment.
     remoteWriteProxy:
       enabled: false
       config:
-        # Increase this if you've increased samples_per_send in Prometheus to prevent nginx
-        # from spilling proxied request bodies to disk
+        ## Increase this if you've increased samples_per_send in Prometheus to prevent nginx
+        ## from spilling proxied request bodies to disk
         clientBodyBufferSize: "64k"
-        # This feature autodetects how much CPU is assigned to the nginx instance and sets
-        # the right amount of workers based on that. Disable to use the default of 8 workers.
+        ## This feature autodetects how much CPU is assigned to the nginx instance and sets
+        ## the right amount of workers based on that. Disable to use the default of 8 workers.
         workerCountAutotune: true
       replicaCount: 3
       image:
-        # TODO: Serve this image from the sumologic public ECR
+        ## TODO: Serve this image from the sumologic public ECR
         repository: public.ecr.aws/nginx/nginx
         tag: 1.21-alpine
         pullPolicy: IfNotPresent
@@ -423,6 +424,8 @@ fluentd:
           cpu: 1000m
         requests:
           memory: 768Mi
+          ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
+          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practises.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -458,7 +461,7 @@ fluentd:
       enabled: false
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+      targetCPUUtilizationPercentage: 100
       # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
@@ -712,6 +715,8 @@ fluentd:
           cpu: 1000m
         requests:
           memory: 768Mi
+          ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
+          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practises.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -747,7 +752,7 @@ fluentd:
       enabled: false
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+      targetCPUUtilizationPercentage: 100
       # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
@@ -940,6 +945,7 @@ fluent-bit:
   #   - name: "image-pull-secret"
   image:
     repository: public.ecr.aws/sumologic/fluent-bit
+    tag: 1.6.10-sumo-1
     pullPolicy: IfNotPresent
 
   ## Resource limits for fluent-bit
@@ -3421,7 +3427,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.0.48-beta.0
+    tag: 0.0.50-beta.0
     pullPolicy: IfNotPresent
 
   securityContext:
@@ -3473,14 +3479,24 @@ metadata:
               paths = [
                 "/prometheus.metrics",
                 "/prometheus.metrics.apiserver",
+                "/prometheus.metrics.applications.activemq",
                 "/prometheus.metrics.applications.apache",
+                "/prometheus.metrics.applications.cassandra",
+                "/prometheus.metrics.applications.elasticsearch",
+                "/prometheus.metrics.applications.haproxy",
                 "/prometheus.metrics.applications.jmx",
                 "/prometheus.metrics.applications.kafka",
+                "/prometheus.metrics.applications.memcached",
+                "/prometheus.metrics.applications.mongodb",
                 "/prometheus.metrics.applications.mysql",
                 "/prometheus.metrics.applications.nginx",
                 "/prometheus.metrics.applications.nginx-ingress",
                 "/prometheus.metrics.applications.postgresql",
+                "/prometheus.metrics.applications.rabbitmq",
                 "/prometheus.metrics.applications.redis",
+                "/prometheus.metrics.applications.sqlserver",
+                "/prometheus.metrics.applications.tomcat",
+                "/prometheus.metrics.applications.varnish",
                 "/prometheus.metrics.container",
                 "/prometheus.metrics.controller-manager",
                 "/prometheus.metrics.control-plane.coredns",
@@ -3518,6 +3534,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3527,6 +3544,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3536,6 +3554,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3545,6 +3564,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3554,6 +3574,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3563,6 +3584,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3572,6 +3594,7 @@ metadata:
           endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
           sending_queue:
             enabled: true
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3784,6 +3807,14 @@ metadata:
       containers:
         otelcol:
           securityContext: {}
+          livenessProbe:
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
 
       ## Extra Environment Values - allows yaml definitions
       # extraEnvVars:
@@ -3809,7 +3840,7 @@ metadata:
       enabled: false
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+      targetCPUUtilizationPercentage: 100
       # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
@@ -4159,6 +4190,14 @@ metadata:
       containers:
         otelcol:
           securityContext: {}
+          livenessProbe:
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
 
       ## Extra Environment Values - allows yaml definitions
       # extraEnvVars:
@@ -4184,7 +4223,7 @@ metadata:
       enabled: false
       minReplicas: 3
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
+      targetCPUUtilizationPercentage: 100
       # targetMemoryUtilizationPercentage: 50
 
     ## Option to specify PodDisrutionBudgets
@@ -4208,7 +4247,7 @@ otellogs:
   ## Configure image for Opentelemetry Collector
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.0.48-beta.0
+    tag: 0.0.50-beta.0
     pullPolicy: IfNotPresent
 
   logLevel: info

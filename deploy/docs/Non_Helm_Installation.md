@@ -74,15 +74,15 @@ However, instead of using Helm to install the Chart, the tool will output the re
 
 The installation requires two parameters:
 
-- __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-- __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+- **sumologic.accessId** - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
+- **sumologic.accessKey** - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 If you are installing the collection in a cluster that requires proxying outbound requests,
 please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
 
 The following parameter is optional, but we recommend setting it.
 
-- __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
+- **sumologic.clusterName** - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 First you will generate the YAML to apply to your cluster.  The following command contains the minimum parameters that can generate the YAML to setup Sumo Logic's Kubernetes collection. This command will generate the YAML and pipe it a file called `sumologic.yaml`. Please note that `--namespace` is required

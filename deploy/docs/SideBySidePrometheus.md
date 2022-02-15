@@ -45,20 +45,20 @@ Sumo Logic Apps for Kubernetes and Explore require you to add the following [fie
 
 The Helm chart installation requires two parameter overrides:
 
-- __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-- __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+- **sumologic.accessId** - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
+- **sumologic.accessKey** - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
 
 The following parameter is optional, but we recommend setting it.
 
-- __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+- **sumologic.clusterName** - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
 If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
 
 Since we are installing with an existing Prometheus Operator we must also define the following values.
 
-- __prometheus-operator.prometheusOperator.enabled=false__ - Two operators cannot run in the same cluster at the same time, so this disables ours but preserves the existing.
-- __prometheus-operator.prometheus-node-exporter.service.port=9200__ - Since node exporter uses a `NodePort` we have to change the port.
-- __prometheus-operator.prometheus-node-exporter.service.targetPort=9200__ - Since node exporter uses a `NodePort` we have to change the port.
+- **prometheus-operator.prometheusOperator.enabled=false** - Two operators cannot run in the same cluster at the same time, so this disables ours but preserves the existing.
+- **prometheus-operator.prometheus-node-exporter.service.port=9200** - Since node exporter uses a `NodePort` we have to change the port.
+- **prometheus-operator.prometheus-node-exporter.service.targetPort=9200** - Since node exporter uses a `NodePort` we have to change the port.
 
 To install the chart, first add the `sumologic` private repo:
 

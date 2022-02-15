@@ -40,7 +40,7 @@ data:
       <store>
         @type sumologic
         @id sumologic.endpoint.events
-        sumo_client "k8s_2.4.0"
+        sumo_client "k8s_%CURRENT_CHART_VERSION%"
         endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE']}"
         data_type logs
         disable_cookies true

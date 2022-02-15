@@ -1,7 +1,7 @@
 apiVersion: v2
 name: sumologic
-version: 2.4.0
-appVersion: 2.4.0
+version: 2.5.0
+appVersion: 2.5.0
 description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
 type: application
 keywords:
@@ -33,6 +33,6 @@ dependencies:
     repository: https://helm.influxdata.com/
     condition: telegraf-operator.enabled
   - name: tailing-sidecar-operator
-    version: 0.3.1
+    version: 0.3.2
     repository: https://sumologic.github.io/tailing-sidecar
     condition: tailing-sidecar-operator.enabled

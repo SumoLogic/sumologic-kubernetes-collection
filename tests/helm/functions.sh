@@ -115,6 +115,9 @@ function perform_test {
   test_start "${test_name}"
   if ! generate_file "${template_name}"; then 
     test_failed "${test_name}"
+    # Set all tests as failed
+    # This file has been created in run.sh
+    echo "false" > "${TEST_SUCCESS_FILE}"
     return
   fi
 

@@ -71,18 +71,28 @@ jobs:
       - name: Run markdown-table-formatter
         run: CMD=./node_modules/.bin/markdown-table-formatter make markdown-table-formatter-check
 
+  milestone:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Check if milestone is set
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const pr = context.payload.pull_request;
+          if (pr.milestone) {
+            core.info(`This pull request has a milestone set: ${pr.milestone.title}`);
+          } else {
+            core.setFailed("A maintainer needs to set the milestone for this pull request.");
+          }
+
   test:
     runs-on: ubuntu-20.04
     env:
       YQ_VERSION: 3.4.1
     needs:
-      - markdownlint
       - shellcheck
       - yamllint
       - helmlint
-      - md-links-lint
-      - markdown-link-check
-      - markdown-table-formatter-check
     steps:
       - uses: actions/checkout@v2
       - name: yq

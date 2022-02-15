@@ -9,6 +9,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- feat: add otelcol's liveness and readiness probes configuration [#2105][#2105]
+- docs: add fluentd buffers vs DPM calculations info for metrics [#2128][#2128]
+
+### Changed
+
+- chore: bump sumo ot distro to 0.0.50-beta.0 [#2127][#2127]
+- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-1`,
+  it is Fluent Bit 1.6.10 with updated dependencies,
+  image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2131][#2131]
+
+### Fixed
+
+- fix: make metadata StatefulSets scale above 0.5 average CPU usage [#2114][#2114]
+
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.1...main
+[#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
+[#2114]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2114
+[#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
+[#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
+[#2131]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2131
+
+## [v2.5.1]
+
+### Released 2022-02-07
+
+### Fixed
+
+- fix: invalid checksum source for remote write proxy deployment [#2091][#2091]
+
+[#2091]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2091
+[v2.5.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.5.1
+
+## [v2.5.0]
+
+### Released 2022-02-07
+
+### Added
+
 - feat: add proxy for Prometheus remote write [#2065][#2065]
 - feat: add CRI support to experimental otelcol log collector[#2017][#2017]
 - docs(readme): add support for AKS 1.22 [#2075][#2075]
@@ -21,7 +59,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: upgrade Fluentd to 1.14.4-sumo-1 [#2057][#2057]
 - chore: update the Telegraf image to 1.21.2 [#2036][#2036]
 - chore(deps): bump Sumo OT distro to 0.0.48-beta.0 [#2056][#2056]
-- chore: bump setup image to 3.2.2 [#2083]
+- chore: update Tailing Sidecar to 0.3.2 [#2073][#2073]
+- chore: bump setup image to 3.2.2 [#2083][#2083]
 
 ### Fixed
 
@@ -40,7 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2084]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2084
 [#2065]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2065
 [#2085]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2085
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...main
+[#2073]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2073
+[v2.5.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.5.0
 
 ## [v2.4.1][v2_4_1]
 
