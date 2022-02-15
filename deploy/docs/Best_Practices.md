@@ -825,3 +825,69 @@ metadata:
       - name: KUBERNETES_SERVICE_PORT
         value: '12345'
 ```
+
+## OpenTelemetry queueing and batching
+
+OpenTelemetry comes with several parameters related to queue management.
+
+For [batch processor][batch_processor]:
+
+- `send_batch_size` defines the number of items (logs, metrics, traces) in one batch before it's sent further down the pipeline.
+- `timeout` defines time after which the batch is sent regardless of the size (can be lower than `send_batch_size`).
+- `send_batch_max_size` is an upper limit of the batch size.
+
+_We could say that `send_batch_size` is a soft limit and `send_batch_max_size` is a hard limit of the batch size._
+
+For [sumologic exporter][sumologic_exporter]:
+
+- `max_request_body_size` defines maximum size of requests to sumologic before compression.
+- `timeout` defines connection timeout. It is recommended to adjust this value in relation to `max_request_body_size`.
+
+- `sending_queue.num_consumers` is the number of consumers that dequeue batches. It translates to maximum number of parallel connections to the sumologic backend.
+- `sending_queue.queue_size` is capacity of the queue in terms of batches (batches can vary between `1` and `send_batch_max_size`)
+
+**As effective value of `sending_queue.queue_size` depends on current traffic,**
+**there is no way to figure out optimal PVC size in relation to `sending_queue.queue_size`.**
+**Due to that, we recommend to set `sending_queue.queue_size` to high value in order to use maximum resources of PVC.**
+
+**The above in connection with PVC monitoring can lead to constant alerts (eg. [KubePersistentVolumeFillingUp][filling_up_alert]),**
+**because once filled in PVC never reduces its fill.**
+
+[batch_processor]: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.36.0/processor/batchprocessor#batch-processor
+[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.35-beta.0/pkg/exporter/sumologicexporter#sumo-logic-exporter
+[filling_up_alert]: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumefillingup/
+
+### Compaction
+
+The OpenTelemetry Collector doesn't have a compaction mechanism.
+Local storage can only grow - it can reuse disk space that has already been allocated, but not free it.
+This leads to a situation where the database file can grow a lot (due to a spike in data traffic)
+but after some time only small piece of the file will be used for data storage (until next spike).
+
+### Examples
+
+Here are some useful examples and calculations for queue and batch parameters.
+
+For the calculations below we made an assumption that a single metric data point is around 1 kilobyte in size, including metadata.
+This assumption is based on the average data we ingest.
+Persistent storage doesn't compress data so we assume that single metric data point takes 1 kilobyte on disk as well.
+
+`number_of_instances` represents number of `sumologic-otelcol-metrics` instances.
+
+#### Outage with huge metrics spike
+
+Let's consider a huge metrics spike in your network while connection to the Sumologic is down.
+Huge load means that batch processor is going to push batches due to `send_batch_max_size` instead of `timeout`.
+The reliability of the system can be calculated using the following formulas:
+
+- If limited by queue_size: `number_of_instances*send_batch_max_size*sending_queue.queue_size/load_in_DPM` minutes.
+- If limited by PVC size: `number_of_instances*PVC_size/(1KB*load_in_DPM)` minutes.
+
+#### Outage with low DPM load
+
+Let's consider a low but constant load in your network while connection to the Sumologic is down.
+Low load means that batch processor is going to push batches due to `timeout` instead of `send_batch_max_size`.
+The reliability of the system can be calculated using the following formulas:
+
+- If limited by queue_size: `number_of_instances*timeout[min]*sending_queue.queue_size/load_in_DPM` minutes.
+- If limited by PVC size: `number_of_instances*PVC_size/(1KB*load_in_DPM)` minutes.
