@@ -25,6 +25,11 @@
 - [Get logs not available on stdout](#get-logs-not-available-on-stdout)
 - [Adding custom fields](#adding-custom-fields)
 - [Using custom Kubernetes API server address](#using-custom-kubernetes-api-server-address)
+- [OpenTelemetry queueing and batching](#opentelemetry-queueing-and-batching)
+  - [Compaction](#compaction)
+  - [Examples](#examples)
+  - [Outage with huge metrics spike](#outage-with-huge-metrics-spike)
+  - [Outage with low DPM load](#outage-with-low-dpm-load)
 
 ## Multiline Log Support
 
