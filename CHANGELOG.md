@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - chore: bump sumo ot distro to 0.0.50-beta.0 [#2127][#2127]
+- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-1`,
+  it is Fluent Bit 1.6.10 with updated dependencies,
+  image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2131][#2131]
 
 ### Fixed
 
@@ -25,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2114]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2114
 [#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
 [#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
+[#2131]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2131
 
 ## [v2.5.1]
 
