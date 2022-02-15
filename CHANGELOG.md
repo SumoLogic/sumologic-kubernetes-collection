@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- chore: bump sumo ot distro to 0.0.50-beta.0 [#2127]
+
 ### Fixed
 
 - fix: make metadata StatefulSets scale above 0.5 average CPU usage [#2114]
@@ -20,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.1...main
 [#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
 [#2114]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2114
+[#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
 
 ## [v2.5.1]
 
