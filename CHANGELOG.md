@@ -15,20 +15,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - chore: bump sumo ot distro to 0.0.50-beta.0 [#2127][#2127]
+
+### Fixed
+
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.2...main
+[#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
+[#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
+[#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
+
+## [v2.5.2]
+
+### Released 2022-02-17
+
+### Changed
+
 - chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-1`,
   it is Fluent Bit 1.6.10 with updated dependencies,
   image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2131][#2131]
 
 ### Fixed
 
-- fix: make metadata StatefulSets scale above 0.5 average CPU usage [#2114][#2114]
+- fix: make metadata StatefulSets scale above 0.5 average CPU usage [#2114]
+- fix(metrics): add missing telegraf (otelcol) endpoints [#2100]
 
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.1...main
-[#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
 [#2114]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2114
-[#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
-[#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
+[#2100]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2100
 [#2131]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2131
+[v2.5.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.5.2
 
 ## [v2.5.1]
 
