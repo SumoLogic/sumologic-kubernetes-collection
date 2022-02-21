@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat: add otelcol's liveness and readiness probes configuration [#2105][#2105]
 - docs: add fluentd buffers vs DPM calculations info for metrics [#2128][#2128]
+- feat: added remote write configs for squidproxy [#2143][#2143]
 
 ### Changed
 
