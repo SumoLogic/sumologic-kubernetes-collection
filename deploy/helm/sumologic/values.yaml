@@ -3077,6 +3077,48 @@ kube-prometheus-stack:
               regex: (?:activemq_(topic_.*|queue_.*|.*_QueueSize|broker_(AverageMessageSize|CurrentConnectionsCount|MemoryLimit|StoreLimit|TempLimit|TotalConnectionsCount|TotalConsumerCount|TotalDequeueCount|TotalEnqueueCount|TotalMessageCount|TotalProducerCount|UptimeMillis)|jvm_memory_(HeapMemoryUsage_max|HeapMemoryUsage_used|NonHeapMemoryUsage_used)|jvm_runtime_Uptime|OperatingSystem_(FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize)))
               sourceLabels: [__name__]
 
+        ## SquidProxy Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://wiki.squid-cache.org/Features/Snmp
+        ## squid_cacheIpEntries
+        ## squid_cacheIpRequests
+        ## squid_cacheIpHits
+        ## squid_cacheFqdnEntries
+        ## squid_cacheFqdnRequests
+        ## squid_cacheFqdnMisses
+        ## squid_cacheFqdnNegativeHits
+        ## squid_cacheDnsRequests
+        ## squid_cacheDnsReplies
+        ## squid_cacheDnsSvcTime5
+        ## squid_cacheSysPageFaults
+        ## squid_cacheSysNumReads
+        ## squid_cacheCurrentFileDescrCnt
+        ## squid_cacheCurrentUnusedFDescrCnt
+        ## squid_cacheCurrentResFileDescrCnt
+        ## squid_cacheServerRequests
+        ## squid_cacheServerInKb
+        ## squid_cacheServerOutKb
+        ## squid_cacheHttpAllSvcTime5
+        ## squid_cacheHttpErrors
+        ## squid_cacheHttpInKb
+        ## squid_cacheHttpOutKb
+        ## squid_cacheHttpAllSvcTime1
+        ## squid_cacheMemMaxSize
+        ## squid_cacheMemUsage
+        ## squid_cacheNumObjCount
+        ## squid_cacheCpuTime
+        ## squid_cacheMaxResSize
+        ## squid_cacheProtoClientHttpRequests
+        ## squid_cacheClients
+        ## squid_uptime
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.squidproxy
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:squid_(uptime|cache(Ip.*|Fqdn.*|Dns.*|Sys.*|Current.*|Server.*|Http.*|Mem.*|NumObjCount|CpuTime|MaxResSize|ProtoClientHttpRequests|Clients)))
+              sourceLabels: [__name__]
+
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
