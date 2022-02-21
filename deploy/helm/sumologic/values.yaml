@@ -3115,7 +3115,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:squid_(uptime|cache(Ip.*|Fqdn.*|Dns.*|Sys.*|Current.*|Server.*|Http.*|Mem.*|NumObjCount|CpuTime|MaxResSize|ProtoClientHttpRequests|Clients)))
+              regex: (?:squid_(uptime|cache(Ip(Entries|Requests|Hits)|Fqdn(Entries|Requests|Misses|NegativeHits)|Dns(Requests|Replies|SvcTime5)|Sys(PageFaults|NumReads)|Current(FileDescrCnt|UnusedFDescrCnt|ResFileDescrCnt)|Server(Requests|InKb|OutKb)|Http(AllSvcTime5|Errors|InKb|OutKb|AllSvcTime1)|Mem(MaxSize|Usage)|NumObjCount|CpuTime|MaxResSize|ProtoClientHttpRequests|Clients)))
               sourceLabels: [__name__]
 
 
