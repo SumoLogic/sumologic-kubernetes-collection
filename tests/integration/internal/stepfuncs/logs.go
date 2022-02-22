@@ -87,7 +87,7 @@ func GenerateMultilineLogsWithPod(
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		client := envConf.Client()
 
-		deployment := multilinelogsgenerator.GetMultilineLogsPod(
+		pod := multilinelogsgenerator.GetMultilineLogsPod(
 			logsGeneratorNamespace,
 			logsGeneratorName,
 			singlelineLogsBeginningCount,
@@ -100,8 +100,9 @@ func GenerateMultilineLogsWithPod(
 		namespace := corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: logsGeneratorNamespace}}
 		require.NoError(t, client.Resources().Create(ctx, &namespace))
 
-		// create the deployment
-		client.Resources(logsGeneratorNamespace).Create(ctx, &deployment)
+		// create the Pod
+		err := client.Resources(logsGeneratorNamespace).Create(ctx, &pod)
+		require.NoError(t, err)
 
 		return ctx
 	}

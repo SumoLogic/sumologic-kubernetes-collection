@@ -25,10 +25,10 @@ func Test_Helm_FluentBit_Containerd_Multiline_Logs(t *testing.T) {
 		tickDuration                       = 3 * time.Second
 		waitDuration                       = 3 * time.Minute
 		singlelineLogRecordsBeginning      = 2
-		singlelineLogRecordsEnd            = 3
+		singlelineLogRecordsEnd            = 1
 		multilineLogRecords                = 1
 		logRecords                         = singlelineLogRecordsBeginning + singlelineLogRecordsEnd + multilineLogRecords
-		logLoops                           = 500 // number of loops in which logs are generated
+		logLoops                           = 100 // number of loops in which logs are generated
 		multilineLogCount             uint = logRecords * logLoops
 	)
 
@@ -115,7 +115,14 @@ func Test_Helm_FluentBit_Containerd_Multiline_Logs(t *testing.T) {
 			waitDuration,
 			tickDuration,
 		)).
-		Teardown(stepfuncs.KubectlDeleteFOpt(internal.MultilineLogsPodYamlPath, internal.MultilineLogsNamespace)). //TODO: change this
+		Teardown(
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				opts := *ctxopts.KubectlOptions(ctx)
+				opts.Namespace = internal.MultilineLogsNamespace
+				k8s.RunKubectl(t, &opts, "delete", "pod", internal.MultilineLogsPodName)
+				return ctx
+			}).
+		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.MultilineLogsNamespace)).
 		Feature()
 
 	testenv.Test(t, featInstall, featMultilineLogs)

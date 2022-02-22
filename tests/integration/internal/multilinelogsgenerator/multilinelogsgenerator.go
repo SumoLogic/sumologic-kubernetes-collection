@@ -2,7 +2,6 @@ package multilinelogsgenerator
 
 import (
 	"fmt"
-	"math/rand"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
@@ -10,52 +9,37 @@ import (
 )
 
 const (
-	bashScriptTemplate    = "%s sleep 3600"
-	image                 = "busybox"
-	randomStringLength    = 30000
+	cmdGenRandomString    = "LONG_STRING=\"$(cat /dev/urandom | tr -dc ''a-z0-9'' | head -c 30000)\";"
+	shScriptTemplate      = cmdGenRandomString + "%s sleep 3600"
+	image                 = "bash:4.4"
 	timestampFormat       = "Jan 2 15:04:05"
-	singleLineLogTemplate = "echo '%s single line log No. %d';"
-	multiLineLogTemplate  = `echo '%s Exception in thread "main" java.lang.RuntimeException: Something has gone wrong, aborting! %s end of the 1st long line
-	at com.myproject.module.MyProject.badMethod(MyProject.java:22)
-	at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)
-	at com.myproject.module.MyProject.anotherMethod(MyProject.java:14)
-	at com.myproject.module.MyProject.someMethod(MyProject.java:10)";
-	at com.myproject.module.MyProject.verylongLine(MyProject.java:100000) %s end of the 2nd long line";
-	at com.myproject.module.MyProject.main(MyProject.java:6)';
+	singleLineLogTemplate = "echo -e '%s single line log No. %d';"
+	multiLineLogTemplate  = `echo -e '%s Exception in thread "main" java.lang.RuntimeException: Something has gone wrong, aborting! ${LONG_STRING} end of the 1st long line';
+	echo -e '    at com.myproject.module.MyProject.badMethod(MyProject.java:22)';
+	echo -e '    at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)';
+	echo -e '    at com.myproject.module.MyProject.anotherMethod(MyProject.java:14)';
+	echo -e '    at com.myproject.module.MyProject.someMethod(MyProject.java:10)';
+	echo -e '    at com.myproject.module.MyProject.verylongLine(MyProject.java:100000) ${LONG_STRING} end of the 2nd long line';
+	echo -e '    at com.myproject.module.MyProject.main(MyProject.java:6)';
 `
 )
 
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
 func generateSingleLineLogRecords(count int) string {
-	log := ""
+	logs := ""
 	for i := 0; i <= count; i++ {
 		timestamp := time.Now().Format(timestampFormat)
-		log += fmt.Sprintf(singleLineLogTemplate, timestamp, i)
+		logs += fmt.Sprintf(singleLineLogTemplate, timestamp, i)
 	}
-	return log
-}
-
-func generateRandomString(length int) string {
-	b := make([]rune, length)
-	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
-	}
-	return string(b)
+	return logs
 }
 
 func generateMultiLineLogRecords(count int) string {
-	log := ""
+	logs := ""
 	for i := 0; i <= count; i++ {
 		timestamp := time.Now().Format(timestampFormat)
-		randomString := generateRandomString(30000)
-		log += fmt.Sprintf(multiLineLogTemplate, timestamp, randomString, randomString)
+		logs += fmt.Sprintf(multiLineLogTemplate, timestamp)
 	}
-	return log
+	return logs
 }
 
 // generateLogs generates logs in loop,
@@ -89,13 +73,14 @@ func GetMultilineLogsPod(
 	}
 
 	logs := generateLogs(singlelineLogsBeginningCount, singlelineLogsEndCount, multilineLogsCount, logLoopsCount)
-	bashCmd := fmt.Sprintf(bashScriptTemplate, logs)
+	args := fmt.Sprintf(shScriptTemplate, logs)
 	podSpec := corev1.PodSpec{
 		Containers: []corev1.Container{
 			{
 				Name:  name,
 				Image: image,
-				Args:  []string{"/bin/sh", "-c", bashCmd},
+				//Command: []string{"/bin/sh", "-c", "--"},
+				Args: []string{args},
 			},
 		},
 	}
