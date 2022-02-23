@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - chore: bump sumo ot distro to 0.0.50-beta.0 [#2127][#2127]
+- feat(metrics): drop container label for non-container kube state metrics [#2144][#2144]
 
 ### Fixed
 
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
 [#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
 [#2134]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2134
+[#2144]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2144
 
 ## [v2.5.2]
 
