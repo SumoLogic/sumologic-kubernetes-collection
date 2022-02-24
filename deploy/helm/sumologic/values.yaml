@@ -4629,6 +4629,11 @@ otellogs:
         ## Time duration after which a batch will be sent regardless of size
         timeout: 1s
   daemonset:
+    nodeSelector: {}
+    tolerations:
+      - effect: NoSchedule
+        operator: Exists
+    affinity: {}
     ## Set securityContext for containers running in pods in log collector daemonset
     securityContext:
     ## In order to reliably read logs from mounted node logging paths, we need to run as root
