@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(metrics): drop container label for non-container kube state metrics [#2144][#2144]
 - feat(fluent-bit): drop all capabilities for container [#2151][#2151]
 - feat: allow to collect logs from /var/log/pods and add instruction how to do it [#2153][#2153]
+- feat(otellogs): update configuration according to the newest version [#2145][#2145]
 
 ### Fixed
 
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2134]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2134
 [#2143]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2143
 [#2144]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2144
+[#2145]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2145
 [#2151]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2151
 [#2153]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2153
 
