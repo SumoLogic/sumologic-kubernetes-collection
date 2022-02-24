@@ -4522,7 +4522,7 @@ otellogs:
             type: recombine
             output: extract-metadata-from-filepath
             combine_field: log
-            is_first_entry: $$body.log matches "^[^\\s]"
+            is_first_entry: $$body.log matches "^\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*"
 
           ## extract-metadata-from-filepath extracts data from the `file.path` Attribute into the Body, removing the `file.path` attribute.
           ## Input Attributes:
