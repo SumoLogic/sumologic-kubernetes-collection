@@ -11,11 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat: add otelcol's liveness and readiness probes configuration [#2105][#2105]
 - docs: add fluentd buffers vs DPM calculations info for metrics [#2128][#2128]
+- feat(otelcol/metrics): adjust metric otelcol configuration [#2134][#2134]
 - feat: added remote write configs for squidproxy [#2143][#2143]
 
 ### Changed
 
 - chore: bump sumo ot distro to 0.0.50-beta.0 [#2127][#2127]
+- feat(metrics): drop container label for non-container kube state metrics [#2144][#2144]
 
 ### Fixed
 
@@ -23,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
 [#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
 [#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
+[#2134]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2134
+[#2143]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2143
+[#2144]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2144
 
 ## [v2.5.2]
 

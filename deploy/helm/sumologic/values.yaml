@@ -1862,8 +1862,18 @@ kube-prometheus-stack:
               regex: (pod|service)
               replacement: service_discovery_${1}
             - action: labeldrop
-              regex: (pod|service)
+              regex: (pod|service|container)
         ## kube pod state metrics
+        ## kube_pod_status_phase
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: kube-state-metrics;(?:kube_pod_status_phase)
+              sourceLabels: [job, __name__]
+            - action: labeldrop
+              regex: container
+        ## kube container state metrics
         ## kube_pod_container_info
         ## kube_pod_container_resource_limits
         ## kube_pod_container_resource_requests
@@ -1871,12 +1881,11 @@ kube-prometheus-stack:
         ## kube_pod_container_status_restarts_total
         ## kube_pod_container_status_terminated_reason
         ## kube_pod_container_status_waiting_reason
-        ## kube_pod_status_phase
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: kube-state-metrics;(?:kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)
+              regex: kube-state-metrics;(?:kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total)
               sourceLabels: [job, __name__]
         ## controller manager metrics
         ## https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
@@ -3568,6 +3577,13 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            ## setting queue_size a high number, so we always use maximum space of the storage
+            ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3578,6 +3594,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3588,6 +3609,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3598,6 +3624,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3608,6 +3639,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3618,6 +3654,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3628,6 +3669,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3638,6 +3684,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3761,7 +3812,7 @@ metadata:
         ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
         batch:
           ## Number of spans after which a batch will be sent regardless of time
-          send_batch_size: 4096
+          send_batch_size: 16_384
           ## Time duration after which a batch will be sent regardless of size
           timeout: 30s
         ## Configuration for Kubernetes Processor
