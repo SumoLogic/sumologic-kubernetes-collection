@@ -4510,7 +4510,7 @@ otellogs:
             output: merge-multiline-logs
             combine_field: log
             combine_with: ""
-            is_last_entry: "$body.logtag == 'F'"
+            is_last_entry: $$body.logtag == "F"
             overwrite_with: newest
 
           ## merge-multiline-logs merges incoming log records into multiline logs.
