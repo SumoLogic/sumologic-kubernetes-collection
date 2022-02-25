@@ -23,6 +23,9 @@ spec:
         release: "RELEASE-NAME"
         heritage: "Helm"
     spec:
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
       securityContext:
         fsGroup: 0
         runAsGroup: 0
