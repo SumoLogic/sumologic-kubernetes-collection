@@ -4464,8 +4464,8 @@ otellogs:
           ## Parse CRI-O format
           - id: parser-crio
             type: regex_parser
-            regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$'
             output: merge-cri-logs
+            regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$'
             timestamp:
               parse_from: time
               layout_type: gotime
@@ -4473,8 +4473,8 @@ otellogs:
           ## Parse CRI-Containerd format
           - id: parser-containerd
             type: regex_parser
-            regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$'
             output: merge-cri-logs
+            regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$'
             timestamp:
               parse_from: time
               layout: '%Y-%m-%dT%H:%M:%S.%LZ'
@@ -4487,6 +4487,7 @@ otellogs:
           ## Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
           - id: parser-docker
             type: json_parser
+            output: merge-docker-logs
             timestamp:
               parse_from: time
               layout: '%Y-%m-%dT%H:%M:%S.%LZ'
@@ -4495,7 +4496,7 @@ otellogs:
           ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
           ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
           ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
-          - id: merge-split-lines
+          - id: merge-docker-logs
             type: recombine
             output: merge-multiline-logs
             combine_field: log
@@ -4543,6 +4544,7 @@ otellogs:
           ## }
           - id: extract-metadata-from-filepath
             type: regex_parser
+            output: copy-attributes
             regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$'
             parse_from: $$attributes["file.path"]
 
@@ -4575,6 +4577,7 @@ otellogs:
           ## - stream: "stdout"
           - id: copy-attributes
             type: metadata
+            output: clean-up-log-body
             attributes:
               stream: 'EXPR($.stream)'
               k8s.container.name: 'EXPR($.container_name)'
