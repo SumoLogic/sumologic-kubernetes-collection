@@ -3153,6 +3153,47 @@ kube-prometheus-stack:
               regex: (?:couchbase_(node_.*|bucket_(ep_.*|vb_.*|delete_.*|cmd.*|bytes_.*|item_count|curr_connections|ops_per_sec|disk_write_queue|mem_.*|cas_hits|ops|curr_items|cpu_utilization_rate|swap_used|disk_used|rest_requests|hibernated_waked|xdc_ops)))
               sourceLabels: [__name__]
 
+        ## SquidProxy Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://wiki.squid-cache.org/Features/Snmp
+        ## squid_cacheIpEntries
+        ## squid_cacheIpRequests
+        ## squid_cacheIpHits
+        ## squid_cacheFqdnEntries
+        ## squid_cacheFqdnRequests
+        ## squid_cacheFqdnMisses
+        ## squid_cacheFqdnNegativeHits
+        ## squid_cacheDnsRequests
+        ## squid_cacheDnsReplies
+        ## squid_cacheDnsSvcTime5
+        ## squid_cacheSysPageFaults
+        ## squid_cacheSysNumReads
+        ## squid_cacheCurrentFileDescrCnt
+        ## squid_cacheCurrentUnusedFDescrCnt
+        ## squid_cacheCurrentResFileDescrCnt
+        ## squid_cacheServerRequests
+        ## squid_cacheServerInKb
+        ## squid_cacheServerOutKb
+        ## squid_cacheHttpAllSvcTime5
+        ## squid_cacheHttpErrors
+        ## squid_cacheHttpInKb
+        ## squid_cacheHttpOutKb
+        ## squid_cacheHttpAllSvcTime1
+        ## squid_cacheMemMaxSize
+        ## squid_cacheMemUsage
+        ## squid_cacheNumObjCount
+        ## squid_cacheCpuTime
+        ## squid_cacheMaxResSize
+        ## squid_cacheProtoClientHttpRequests
+        ## squid_cacheClients
+        ## squid_uptime
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.squidproxy
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:squid_(uptime|cache(Ip(Entries|Requests|Hits)|Fqdn(Entries|Requests|Misses|NegativeHits)|Dns(Requests|Replies|SvcTime5)|Sys(PageFaults|NumReads)|Current(FileDescrCnt|UnusedFDescrCnt|ResFileDescrCnt)|Server(Requests|InKb|OutKb)|Http(AllSvcTime5|Errors|InKb|OutKb|AllSvcTime1)|Mem(MaxSize|Usage)|NumObjCount|CpuTime|MaxResSize|ProtoClientHttpRequests|Clients)))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
@@ -3572,6 +3613,7 @@ metadata:
                 "/prometheus.metrics.applications.rabbitmq",
                 "/prometheus.metrics.applications.redis",
                 "/prometheus.metrics.applications.sqlserver",
+                "/prometheus.metrics.applications.squidproxy",
                 "/prometheus.metrics.applications.tomcat",
                 "/prometheus.metrics.applications.varnish",
                 "/prometheus.metrics.container",
