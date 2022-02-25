@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3.0.0
       - name: Install markdown-table-formatter
         run: npm install markdown-table-formatter --save
       - name: Run markdown-table-formatter
@@ -135,8 +135,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.17.7'
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           working-directory: ./tests/integration/
           # Optional: golangci-lint command line arguments.
@@ -156,7 +159,7 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.17.3'
+          go-version: '1.17.7'
       - uses: engineerd/setup-kind@v0.5.0
         with:
           version: v0.11.1
