@@ -9,15 +9,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- feat: add otelcol's liveness and readiness probes configuration [#2105]
-- feat: added remote write configs for couchbase [#2113]
+- feat: add otelcol's liveness and readiness probes configuration [#2105][#2105]
+- docs: add fluentd buffers vs DPM calculations info for metrics [#2128][#2128]
+- feat(otelcol/metrics): adjust metric otelcol configuration [#2134][#2134]
+- feat: added remote write configs for couchbase [#2113][#2113]
 
 ### Changed
 
+- chore: bump sumo ot distro to 0.0.50-beta.0 [#2127][#2127]
+- feat(metrics): drop container label for non-container kube state metrics [#2144][#2144]
+
 ### Fixed
 
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.1...main
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.2...main
 [#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
+[#2113]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2113
+[#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
+[#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
+[#2134]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2134
+[#2144]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2144
+
+## [v2.5.2]
+
+### Released 2022-02-17
+
+### Changed
+
+- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-1`,
+  it is Fluent Bit 1.6.10 with updated dependencies,
+  image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2131][#2131]
+
+### Fixed
+
+- fix: make metadata StatefulSets scale above 0.5 average CPU usage [#2114]
+- fix(metrics): add missing telegraf (otelcol) endpoints [#2100]
+
+[#2114]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2114
+[#2100]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2100
+[#2131]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2131
+[v2.5.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.5.2
 
 ## [v2.5.1]
 
@@ -48,8 +78,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: upgrade Fluentd to 1.14.4-sumo-1 [#2057][#2057]
 - chore: update the Telegraf image to 1.21.2 [#2036][#2036]
 - chore(deps): bump Sumo OT distro to 0.0.48-beta.0 [#2056][#2056]
-- chore: update Tailing Sidecar to 0.3.2 [#2073]
-- chore: bump setup image to 3.2.2 [#2083]
+- chore: update Tailing Sidecar to 0.3.2 [#2073][#2073]
+- chore: bump setup image to 3.2.2 [#2083][#2083]
 
 ### Fixed
 

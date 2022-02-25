@@ -77,3 +77,13 @@ fluentd:
     tag: ${TAG}
     pullPolicy: IfNotPresent
 ```
+
+## Upgrading while rehosting images
+
+New versions of the Helm chart can include updating the default container image versions. When using
+a custom container registry, we strongly recommend updating the version to be in-line with the defaults.
+The [changelog][changelog] and [release_notes][release notes] will always mention these kinds of updates
+and can safely be used as a guiding tool when upgrading.
+
+[changelog]: ../../CHANGELOG.md
+[release_notes]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases

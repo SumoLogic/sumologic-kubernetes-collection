@@ -110,6 +110,52 @@ func GetLogsGeneratorDeployment(
 	}
 }
 
+func GetLogsGeneratorDaemonSet(
+	namespace string,
+	name string,
+	image string,
+	options LogsGeneratorOptions,
+) appsv1.DaemonSet {
+	appLabels := map[string]string{
+		"app": name,
+	}
+	metadata := metav1.ObjectMeta{
+		Name:      name,
+		Namespace: namespace,
+		Labels:    appLabels,
+	}
+
+	// There's no way to tell the log generator to keep running after it's done generating logs.
+	// This is annoying if we want to run it in a Deployment and not have it be restarted after exiting
+	// so we sleep after it exits.
+	generatorArgs := optionsToArgumentList(options)
+	logsGeneratorCommand := fmt.Sprintf("logs-generator %s", strings.Join(generatorArgs, " "))
+	logsGeneratorAndSleepCommand := fmt.Sprintf("%s; sleep %f", logsGeneratorCommand, deploymentSleepTime.Seconds())
+
+	podTemplateSpec := corev1.PodTemplateSpec{
+		ObjectMeta: metadata,
+		Spec: corev1.PodSpec{
+			Containers: []corev1.Container{
+				{
+					Name:    name,
+					Image:   image,
+					Command: []string{"/bin/bash", "-c", "--"},
+					Args:    []string{logsGeneratorAndSleepCommand},
+				},
+			},
+		},
+	}
+	return appsv1.DaemonSet{
+		ObjectMeta: metadata,
+		Spec: appsv1.DaemonSetSpec{
+			Template: podTemplateSpec,
+			Selector: &metav1.LabelSelector{
+				MatchLabels: appLabels,
+			},
+		},
+	}
+}
+
 func optionsToArgumentList(options LogsGeneratorOptions) []string {
 	// Note: this could be made cleaner with reflection and struct field tags, but we don't
 	// really need the complexity, and this logic is unlikely to change a lot

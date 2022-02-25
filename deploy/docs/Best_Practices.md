@@ -25,10 +25,15 @@
 - [Get logs not available on stdout](#get-logs-not-available-on-stdout)
 - [Adding custom fields](#adding-custom-fields)
 - [Using custom Kubernetes API server address](#using-custom-kubernetes-api-server-address)
+- [OpenTelemetry queueing and batching](#opentelemetry-queueing-and-batching)
+  - [Compaction](#compaction)
+  - [Examples](#examples)
+  - [Outage with huge metrics spike](#outage-with-huge-metrics-spike)
+  - [Outage with low DPM load](#outage-with-low-dpm-load)
 
 ## Multiline Log Support
 
-By default, we use a regex that matches the first line of multiline logs
+For logs in Docker format by default, we use a regex that matches the first line of multiline logs
 that start with dates in the following format: `2019-11-17 07:14:12`.
 
 If your logs have a different date format you can provide a custom regex to detect
@@ -65,6 +70,8 @@ Docker_Mode_Parser new_multi_line_parser
 ```
 
 The regex used for needs to have at least one named capture group.
+
+For detailed information about parsing container logs please see [here](ContainerLogs.md).
 
 ### MySQL slow logs example
 
@@ -195,6 +202,18 @@ To enable autoscaling for Fluentd:
         enabled: true
   ```
 
+### CPU resources warning
+
+When enabling the Fluentd Autoscaling please make sure to set Fluentd's `resources.requests.cpu` properly.
+Because of Fluentd's single threaded nature it rarely consumes more than `1000m` CPU (1 CPU core).
+
+For example setting `resources.requests.cpu=2000m` and the `autoscaling.targetCPUUtilizationPercentage=50` means
+that autoscaling will increase the number of application pods only if average CPU usage across all application pods
+in statefulset or daemonset is more than `1000m`. This combined with Fluentd's usage of around `1000m` at most will
+result in autoscaling not working properly.
+
+**For this reason we suggest to set the Fluentd's `resources.requests.cpu=1000m` or less when using autoscaling.**
+
 ## Fluentd File-Based Buffer
 
 Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less
@@ -240,6 +259,47 @@ See the following links to official Fluentd buffer documentation:
 
 - https://docs.fluentd.org/configuration/buffer-section
 - https://docs.fluentd.org/buffer/file
+
+### Fluentd buffer size for metrics
+
+Should you have any connectivity problems, depending on the buffer size your setup will
+be able to survive for a given amount of time without a data loss, delivering the data
+later when everything is operational again.
+
+To calculate this time you need to know how much data you send. For the calculations below
+we made an assumption that a single metric data point is around 1 kilobyte in size, including
+metadata. This assumption is based on the average data we ingest. By default, for file based
+buffering we use gzip compression which gives us around 3:1 compress ratio.
+
+That results in `1 DPM` (Data Points per Minute) using around `333 bytes of buffer`. That is
+`333 kilobytes for 1 thousand DPM` and `333 megabytes for 1 million DPM`. In other words - storing
+a million data points will use a 333 megabytes of buffer every minute.
+
+This buffer size can be spread between multiple Fluentd instances. To have the best results you
+should use the metrics load balancing which can be enabled by using the following setting:
+`sumologic.metrics.remoteWriteProxy.enabled=true`. It enables the remote write proxy where nginx
+is being used to forward data from Prometheus to Fluentds. We strongly recommend using this
+setting as in case of uneven load your buffer storage is as big as single Fluentd instance buffer.
+Unfortunately even with `remoteWriteProxy` enabled you might experience uneven load. Because of
+that we also `recommend to make your buffers twice the calculated size`.
+
+The formula to calculate the buffering time:
+
+```
+minutes = (PV size in bytes * Fluentd instances) / (DPM * 333 bytes)
+```
+
+Example 1:  
+My cluster sends 10 thousand DPM to Sumo. I'm using default 10 gb of buffer size. I'm also using
+3 Fluentd instances. That gives me 30 gb of buffers in total (3 * 10 gb). I'm using 3.33 mb per
+minute. My setup should be able to hold data for 9000 minutes, that is 150 hours or 6.25 days.
+We recommend treating this as 4500 minutes, that is 75 hours or 3.12 days of buffer.
+
+Example 2:  
+My cluster sends 1 million DPM to Sumo. I'm using 20 gb of buffer size. I'm using 20 Fluentd
+instances. I have 400 gb of buffers in total (20 * 20 gb). I'm using 333 mb of buffer every minute.
+My setup should be able to hold data for around 1200 minutes, that is 20 hours. We recommend treating
+this as 600 minutes, that is 10 hours of buffer.
 
 ## Excluding Logs From Specific Components
 
@@ -770,3 +830,69 @@ metadata:
       - name: KUBERNETES_SERVICE_PORT
         value: '12345'
 ```
+
+## OpenTelemetry queueing and batching
+
+OpenTelemetry comes with several parameters related to queue management.
+
+For [batch processor][batch_processor]:
+
+- `send_batch_size` defines the number of items (logs, metrics, traces) in one batch before it's sent further down the pipeline.
+- `timeout` defines time after which the batch is sent regardless of the size (can be lower than `send_batch_size`).
+- `send_batch_max_size` is an upper limit of the batch size.
+
+_We could say that `send_batch_size` is a soft limit and `send_batch_max_size` is a hard limit of the batch size._
+
+For [sumologic exporter][sumologic_exporter]:
+
+- `max_request_body_size` defines maximum size of requests to sumologic before compression.
+- `timeout` defines connection timeout. It is recommended to adjust this value in relation to `max_request_body_size`.
+
+- `sending_queue.num_consumers` is the number of consumers that dequeue batches. It translates to maximum number of parallel connections to the sumologic backend.
+- `sending_queue.queue_size` is capacity of the queue in terms of batches (batches can vary between `1` and `send_batch_max_size`)
+
+**As effective value of `sending_queue.queue_size` depends on current traffic,**
+**there is no way to figure out optimal PVC size in relation to `sending_queue.queue_size`.**
+**Due to that, we recommend to set `sending_queue.queue_size` to high value in order to use maximum resources of PVC.**
+
+**The above in connection with PVC monitoring can lead to constant alerts (eg. [KubePersistentVolumeFillingUp][filling_up_alert]),**
+**because once filled in PVC never reduces its fill.**
+
+[batch_processor]: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.44.0/processor/batchprocessor#batch-processor
+[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/exporter/sumologicexporter#sumo-logic-exporter
+[filling_up_alert]: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumefillingup/
+
+### Compaction
+
+The OpenTelemetry Collector doesn't have a compaction mechanism.
+Local storage can only grow - it can reuse disk space that has already been allocated, but not free it.
+This leads to a situation where the database file can grow a lot (due to a spike in data traffic)
+but after some time only small piece of the file will be used for data storage (until next spike).
+
+### Examples
+
+Here are some useful examples and calculations for queue and batch parameters.
+
+For the calculations below we made an assumption that a single metric data point is around 1 kilobyte in size, including metadata.
+This assumption is based on the average data we ingest.
+Persistent storage doesn't compress data so we assume that single metric data point takes 1 kilobyte on disk as well.
+
+`number_of_instances` represents number of `sumologic-otelcol-metrics` instances.
+
+#### Outage with huge metrics spike
+
+Let's consider a huge metrics spike in your network while connection to the Sumologic is down.
+Huge load means that batch processor is going to push batches due to `send_batch_max_size` instead of `timeout`.
+The reliability of the system can be calculated using the following formulas:
+
+- If limited by queue_size: `number_of_instances*send_batch_max_size*sending_queue.queue_size/load_in_DPM` minutes.
+- If limited by PVC size: `number_of_instances*PVC_size/(1KB*load_in_DPM)` minutes.
+
+#### Outage with low DPM load
+
+Let's consider a low but constant load in your network while connection to the Sumologic is down.
+Low load means that batch processor is going to push batches due to `timeout` instead of `send_batch_max_size`.
+The reliability of the system can be calculated using the following formulas:
+
+- If limited by queue_size: `number_of_instances*timeout[min]*sending_queue.queue_size/load_in_DPM` minutes.
+- If limited by PVC size: `number_of_instances*PVC_size/(1KB*load_in_DPM)` minutes.
