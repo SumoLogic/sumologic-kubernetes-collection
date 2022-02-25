@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add otelcol's liveness and readiness probes configuration [#2105][#2105]
 - docs: add fluentd buffers vs DPM calculations info for metrics [#2128][#2128]
 - feat(otelcol/metrics): adjust metric otelcol configuration [#2134][#2134]
+- feat: added remote write configs for couchbase [#2113][#2113]
 
 ### Changed
 
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.2...main
 [#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
+[#2113]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2113
 [#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
 [#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
 [#2134]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2134
