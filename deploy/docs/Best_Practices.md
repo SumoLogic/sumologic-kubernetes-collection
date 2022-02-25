@@ -9,6 +9,7 @@
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
 - [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
 - [Excluding Metrics](#excluding-metrics)
+- [Excluding Dimensions](#excluding-dimensions)
 - [Add a local file to fluent-bit configuration](#add-a-local-file-to-fluent-bit-configuration)
 - [Filtering Prometheus Metrics by Namespace](#filtering-prometheus-metrics-by-namespace)
 - [Modify the Log Level for Falco](#modify-the-log-level-for-falco)
@@ -382,6 +383,57 @@ fluentd:
           </exclude>
       </filter>
 ```
+
+## Excluding Dimensions
+
+You can also exclude dimensions in Fluentd using [record_transformer plugin][record_transformer plugin].
+For example to filter out `pod_labels_operator.prometheus.io/name` and `cluster` dimensions,
+you can use the following configuration:
+
+```yaml
+fluentd:
+  metrics:
+    extraFilterPluginConf: |-
+      <filter **>
+        @type record_transformer
+        remove_keys $['pod_labels']['operator.prometheus.io/name'],$.cluster
+      </filter>
+```
+
+Example metric structure which is an input for `extraFilterPluginConf` is presented in the following snippet:
+
+```json
+{
+  "@metric": "container_memory_working_set_bytes",
+  "cluster": "my-cluster",
+  "container": "thanos-sidecar",
+  "endpoint": "https-metrics",
+  "image": "public.ecr.aws/sumologic/thanos:v0.23.1",
+  "instance": "10.0.2.15:10250",
+  "job": "kubelet",
+  "metrics_path": "/metrics/cadvisor",
+  "namespace": "sumologic",
+  "node": "sumologic-kubernetes-collection",
+  "pod": "prometheus-collection-kube-prometheus-prometheus-0",
+  "prometheus": "sumologic/collection-kube-prometheus-prometheus",
+  "prometheus_replica": "prometheus-collection-kube-prometheus-prometheus-0",
+  "@timestamp": 1645772362877,
+  "@value": 21032960,
+  "prometheus_service": "collection-kube-prometheus-kubelet",
+  "pod_labels": {
+    "app": "prometheus",
+    "controller-revision-hash": "prometheus-collection-kube-prometheus-prometheus-5f68598c76",
+    "operator.prometheus.io/name": "collection-kube-prometheus-prometheus",
+    "operator.prometheus.io/shard": "0",
+    "prometheus": "collection-kube-prometheus-prometheus",
+    "statefulset.kubernetes.io/pod-name": "prometheus-collection-kube-prometheus-prometheus-0"
+  },
+  "service": "collection-kube-prometheus-prometheus_prometheus-operated",
+  "statefulset": "prometheus-collection-kube-prometheus-prometheus"
+}
+```
+
+[record_transformer plugin]: https://docs.fluentd.org/filter/record_transformer
 
 ## Add a local file to fluent-bit configuration
 
