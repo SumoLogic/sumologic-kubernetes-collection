@@ -974,8 +974,11 @@ fluent-bit:
   ## Add custom pod annotations to fluent-bit daemonset pods
   podAnnotations: {}
 
+  securityContext:
+    capabilities:
+      drop:
+      - ALL
   ## Set securityContext of fluent-bit daemonset containers as privileged for running in Openshift
-  # securityContext:
   #   privileged: true
 
   env:
