@@ -142,7 +142,7 @@ fluent-bit:
 
     # Filter out receiver-mock logs to prevent snowball effect
     # NOTE: kubernetes filter is copied as is in default values.yaml of fluen-bit's chart:
-    # https://github.com/fluent/helm-charts/blob/fluent-bit-0.12.1/charts/fluent-bit/values.yaml#L187-L195
+    # https://github.com/fluent/helm-charts/blob/fluent-bit-0.14.1/charts/fluent-bit/values.yaml#L192-L200
     filters: |
       [FILTER]
           Name                 kubernetes
