@@ -4515,10 +4515,10 @@ otellogs:
           ## Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
           ## Input Body (JSON): { "log": "  third line\n", "stream": "stdout" }
           ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n  second line\n  third line\n", "stream": "stdout" }
-          ## - id: merge-multiline-logs
-          ##   type: recombine
-          ##   combine_field: log
-          ##   is_first_entry: $$body.log matches "^[^\\s]"
+          # - id: merge-multiline-logs
+          #   type: recombine
+          #   combine_field: log
+          #   is_first_entry: $$body.log matches "^[^\\s]"
 
           ## extract-metadata-from-filepath extracts data from the `file.path` Attribute into the Body, removing the `file.path` attribute.
           ## Input Attributes:
