@@ -130,6 +130,7 @@ data:
       node_metrics_source                         = "node-exporter-metrics"
       scheduler_metrics_source                    = "kube-scheduler-metrics"
       state_metrics_source                        = "kube-state-metrics"
+      default_traces_source                       = "traces"
     }
   main.tf: |
     terraform {
@@ -214,6 +215,12 @@ data:
         name         = local.state_metrics_source
         collector_id = sumologic_collector.collector.id
     }
+    
+    resource "sumologic_http_source" "default_traces_source" {
+        name         = local.default_traces_source
+        collector_id = sumologic_collector.collector.id
+        content_type = "OtlpHttpProto"
+    }
   
     resource "kubernetes_secret" "sumologic_collection_secret" {
       metadata {
@@ -232,6 +239,7 @@ data:
         endpoint-metrics-node-exporter            = sumologic_http_source.node_metrics_source.url
         endpoint-metrics-kube-scheduler           = sumologic_http_source.scheduler_metrics_source.url
         endpoint-metrics-kube-state               = sumologic_http_source.state_metrics_source.url
+        endpoint-traces                           = sumologic_http_source.default_traces_source.url
       }
   
       type = "Opaque"
@@ -343,6 +351,7 @@ data:
     terraform import sumologic_http_source.node_metrics_source "${COLLECTOR_NAME}/node-exporter-metrics"
     terraform import sumologic_http_source.scheduler_metrics_source "${COLLECTOR_NAME}/kube-scheduler-metrics"
     terraform import sumologic_http_source.state_metrics_source "${COLLECTOR_NAME}/kube-state-metrics"
+    terraform import sumologic_http_source.default_traces_source "${COLLECTOR_NAME}/traces"
     fi
   
     # Kubernetes Secret
