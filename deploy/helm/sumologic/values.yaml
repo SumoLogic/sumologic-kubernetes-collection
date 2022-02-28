@@ -559,6 +559,8 @@ fluentd:
         clientKey: ""
         ## Path to a file containing the bearer token to use for authentication
         bearerTokenFile: ""
+        ## regex to match containers tag to `pod_name`, `namespace`, `container_name` and `docker_id`
+        tagToMetadataRegexp: '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
 
       ## To use additional filter plugins
       extraFilterPluginConf: |-
