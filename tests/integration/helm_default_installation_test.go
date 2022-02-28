@@ -40,7 +40,7 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				k8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
 				secret := k8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
-				require.Len(t, secret.Data, 10)
+				require.Len(t, secret.Data, 11)
 				return ctx
 			}).
 		Assess("fluentd logs statefulset is ready",
