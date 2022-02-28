@@ -4500,10 +4500,10 @@ otellogs:
           ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
           ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
           ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
-          ## - id: merge-split-lines
-          ##   type: recombine
-          ##   combine_field: log
-          ##   is_last_entry: $$body.log matches "\n$"
+          # - id: merge-split-lines
+          #   type: recombine
+          #   combine_field: log
+          #   is_last_entry: $$body.log matches "\n$"
 
           ## This operator is currently disabled due to the following issues:
           ## - Additional newlines being added between the merged logs:
