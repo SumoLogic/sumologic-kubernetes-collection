@@ -4,6 +4,7 @@
   - [MySQL slow logs example](#mysql-slow-logs-example)
 - [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
   - [Multiline Support](#multiline-support)
+- [Collecting logs from /var/log/pods][#collecting-logs-from--var-log-pods]
 - [Choosing Fluentd Base Image](#choosing-fluentd-base-image)
 - [Fluentd Autoscaling](#fluentd-autoscaling)
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
@@ -111,6 +112,75 @@ to the `Docker_Mode_Parser` parameter in the `Input plugin` configuration of flu
 ```
 Docker_Mode_Parser multi_line
 ```
+
+## Collecting logs from /var/log/pods
+
+In order to collect logs from `/var/log/pods`,
+please copy full `fluent-bit.config.inputs` section from [values.yaml](../helm/sumologic/values.yaml)
+and change `Path` to `/var/log/pods/*/*/*.log`.
+
+In addition, Fluentd and/or OpenTelemetry confuguration should be changed as well.
+
+Please take a look at the following examples which contains all of required changes:
+
+```yaml
+fluent-bit:
+  config:
+    inputs: |
+      [INPUT]
+          Name                tail
+          Path                /var/log/pods/*/*/*.log
+          Parser              containerd
+          Tag                 containers.*
+          Refresh_Interval    1
+          Rotate_Wait         60
+          Mem_Buf_Limit       5MB
+          Skip_Long_Lines     On
+          DB                  /tail-db/tail-containers-pods-state-sumo.db
+          DB.Sync             Normal
+      # ... Rest of fluent-bit configuration comes here
+
+## Fluentd change
+fluentd:
+  logs:
+    containers:
+      k8sMetadataFilter:
+        ## uses docker_id as alias for uid as it's being used in plugin's code directly
+        tagToMetadataRegexp: .+?\.pods\.(?<namespace>[^_]+)_(?<pod_name>[^_]+)_(?<docker_id>(?<uid>[a-f0-9\-]{36}))\.(?<container_name>[^\._]+)\.(?<run_id>\d+)\.log$
+
+
+## OpenTelemetry change
+metadata:
+  logs:
+    config:
+      processors:
+        attributes/containers:
+          actions:
+            - action: extract
+              key: fluent.tag
+              pattern: ^containers\.var\.log\.pods\.(?P<k8s_namespace>[^_]+)_(?P<k8s_pod_name>[^_]+)_(?P<k8s_uid>[a-f0-9\-]{36})\.(?P<k8s_container_name>[^\._]+)\.(?P<k8s_run_id>\d+)\.log$
+            - action: insert
+              key: k8s.pod.uid
+              from_attribute: k8s_uid
+            - action: delete
+              key: k8s_run_id
+            - action: insert
+              key: k8s.pod.name
+              from_attribute: k8s_pod_name
+            - action: delete
+              key: k8s_pod_name
+            - action: insert
+              key: k8s.namespace.name
+              from_attribute: k8s_namespace
+            - action: delete
+              key: k8s_namespace
+            - action: insert
+              key: k8s.container.name
+              from_attribute: k8s_container_name
+            - action: delete
+              key: k8s_container_name
+```
+
 
 ## Choosing Fluentd Base Image
 
