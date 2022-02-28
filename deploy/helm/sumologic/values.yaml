@@ -560,6 +560,9 @@ fluentd:
         ## Path to a file containing the bearer token to use for authentication
         bearerTokenFile: ""
         ## regex to match containers tag to `pod_name`, `namespace`, `container_name` and `docker_id`
+        ## all four fields are required by kubernetes_metadata_filter
+        ## rel: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/1faef196b92ee7d4ab42dd9243996bbedfa5f0b2/fluent-plugin-kubernetes-metadata-filter/lib/fluent/plugin/filter_kubernetes_metadata.rb#L322-L325
+        ## rel: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/1faef196b92ee7d4ab42dd9243996bbedfa5f0b2/fluent-plugin-kubernetes-metadata-filter#configuration
         tagToMetadataRegexp: '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
 
       ## To use additional filter plugins
