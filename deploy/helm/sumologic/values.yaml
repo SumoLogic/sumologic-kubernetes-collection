@@ -4619,9 +4619,9 @@ otellogs:
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
         ## Number of spans after which a batch will be sent regardless of time
-        ## This is set to the same value as in the metadata enricher
+        ## This is set to the 10240, to avoid loosing logs on the start of the collector
         ## TODO: Figure out what the optimal values should be for different configurations
-        send_batch_size: 256
+        send_batch_size: 10_240
         ## Time duration after which a batch will be sent regardless of size
         timeout: 1s
   daemonset:
