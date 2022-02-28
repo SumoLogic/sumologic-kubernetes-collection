@@ -119,7 +119,7 @@ In order to collect logs from `/var/log/pods`,
 please copy full `fluent-bit.config.inputs` section from [values.yaml](../helm/sumologic/values.yaml)
 and change `Path` to `/var/log/pods/*/*/*.log`.
 
-In addition, Fluentd and/or OpenTelemetry confuguration should be changed as well.
+In addition, Fluentd and/or OpenTelemetry configuration should be changed as well.
 
 Please take a look at the following examples which contains all of required changes:
 
