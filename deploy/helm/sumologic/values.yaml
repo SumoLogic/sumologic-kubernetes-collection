@@ -977,7 +977,7 @@ fluent-bit:
   securityContext:
     capabilities:
       drop:
-      - ALL
+        - ALL
   ## Set securityContext of fluent-bit daemonset containers as privileged for running in Openshift
   #   privileged: true
 
