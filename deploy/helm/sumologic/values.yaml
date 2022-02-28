@@ -252,9 +252,9 @@ sumologic:
         failureThreshold: 3
 
   ### Traces configuration
-  ## Set the enabled flag to true to enable traces ingestion.
+  ## Set the enabled flag to false to disable traces ingestion.
   traces:
-    enabled: false
+    enabled: true
     ## How many spans per request should be send to receiver
     spans_per_request: 100
 
