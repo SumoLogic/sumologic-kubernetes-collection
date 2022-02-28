@@ -177,7 +177,7 @@ sumologic:
           name: traces
           config-name: endpoint-traces
           properties:
-            content_type: Zipkin
+            content_type: OtlpHttpProto
 
   ### Logs configuration
   ## Set the enabled flag to false for disabling logs ingestion altogether.
