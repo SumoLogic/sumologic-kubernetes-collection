@@ -148,7 +148,6 @@ fluentd:
         ## uses docker_id as alias for uid as it's being used in plugin's code directly
         tagToMetadataRegexp: .+?\.pods\.(?<namespace>[^_]+)_(?<pod_name>[^_]+)_(?<docker_id>(?<uid>[a-f0-9\-]{36}))\.(?<container_name>[^\._]+)\.(?<run_id>\d+)\.log$
 
-
 ## OpenTelemetry change
 metadata:
   logs:
@@ -180,7 +179,6 @@ metadata:
             - action: delete
               key: k8s_container_name
 ```
-
 
 ## Choosing Fluentd Base Image
 
