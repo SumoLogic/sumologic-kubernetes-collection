@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(fluent-bit): drop all capabilities for container [#2151][#2151]
 - feat: allow to collect logs from /var/log/pods and add instruction how to do it [#2153][#2153] [#2156][#2156]
 - feat(otellogs): support tolerations, nodeSelector and affinity for daemonset [#2158][#2158]
+- feat(otellogs): add multipart merge configuration for docker and cri [#2162][#2162]
+- chore(otellogs): increase send_batch_size to 10240 [#2161][#2161]
 - chore(fluent-bit): update to 0.14.1 [#2155][#2155]
 
 ### Fixed
@@ -39,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2155]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2155
 [#2156]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2156
 [#2158]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2158
+[#2161]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2161
+[#2162]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2162
 
 ## [v2.5.2]
 

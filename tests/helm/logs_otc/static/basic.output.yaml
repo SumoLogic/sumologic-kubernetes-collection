@@ -22,7 +22,7 @@ data:
       health_check: {}
     processors:
       batch:
-        send_batch_size: 256
+        send_batch_size: 10240
         timeout: 1s
     receivers:
       filelog/containers:
@@ -41,7 +41,7 @@ data:
             output: parser-containerd
           type: router
         - id: parser-crio
-          output: extract-metadata-from-filepath
+          output: merge-cri-lines
           regex: ^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$
           timestamp:
             layout: "2006-01-02T15:04:05.000000000-07:00"
@@ -49,18 +49,30 @@ data:
             parse_from: time
           type: regex_parser
         - id: parser-containerd
-          output: extract-metadata-from-filepath
+          output: merge-cri-lines
           regex: ^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$
           timestamp:
             layout: '%Y-%m-%dT%H:%M:%S.%LZ'
             parse_from: time
           type: regex_parser
         - id: parser-docker
-          output: extract-metadata-from-filepath
+          output: merge-docker-lines
           timestamp:
             layout: '%Y-%m-%dT%H:%M:%S.%LZ'
             parse_from: time
           type: json_parser
+        - combine_field: log
+          id: merge-docker-lines
+          is_last_entry: $$body.log matches "\n$"
+          output: extract-metadata-from-filepath
+          type: recombine
+        - combine_field: log
+          combine_with: ""
+          id: merge-cri-lines
+          is_last_entry: $$body.logtag == "F"
+          output: extract-metadata-from-filepath
+          overwrite_with: newest
+          type: recombine
         - id: extract-metadata-from-filepath
           parse_from: $$attributes["file.path"]
           regex: ^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$
