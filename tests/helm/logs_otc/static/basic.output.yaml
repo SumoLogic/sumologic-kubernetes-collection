@@ -22,7 +22,7 @@ data:
       health_check: {}
     processors:
       batch:
-        send_batch_size: 256
+        send_batch_size: 10240
         timeout: 1s
     receivers:
       filelog/containers:
