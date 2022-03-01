@@ -4653,6 +4653,9 @@ otellogs:
       otelcol:
         securityContext: {}
 
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
 
 ## Configure telegraf-operator
 ## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
