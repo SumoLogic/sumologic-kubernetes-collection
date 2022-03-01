@@ -162,6 +162,8 @@ metadata:
               key: k8s.pod.uid
               from_attribute: k8s_uid
             - action: delete
+              key: k8s_uid
+            - action: delete
               key: k8s_run_id
             - action: insert
               key: k8s.pod.name

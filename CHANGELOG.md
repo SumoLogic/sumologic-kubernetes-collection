@@ -20,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: bump sumo ot distro to 0.0.50-beta.0 [#2127][#2127]
 - feat(metrics): drop container label for non-container kube state metrics [#2144][#2144]
 - feat(fluent-bit): drop all capabilities for container [#2151][#2151]
-- feat: allow to collect logs from /var/log/pods and add instruction how to do it [#2153][#2153]
+- feat: allow to collect logs from /var/log/pods and add instruction how to do it [#2153][#2153] [#2156][#2156]
+- feat(otellogs): support tolerations, nodeSelector and affinity for daemonset [#2158][#2158]
 - chore(fluent-bit): update to 0.14.1 [#2155][#2155]
 
 ### Fixed
@@ -36,6 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2151]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2151
 [#2153]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2153
 [#2155]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2155
+[#2156]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2156
+[#2158]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2158
 
 ## [v2.5.2]
 

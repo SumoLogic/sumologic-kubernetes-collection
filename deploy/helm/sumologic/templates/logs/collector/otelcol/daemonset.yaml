@@ -30,6 +30,18 @@ spec:
 {{ toYaml .Values.otellogs.daemonset.podLabels | indent 8 }}
 {{- end }}
     spec:
+{{- if .Values.otellogs.daemonset.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.otellogs.daemonset.nodeSelector | indent 8 }}
+{{- end }}
+{{- if or .Values.otellogs.daemonset.affinity }}
+      affinity:
+{{ toYaml .Values.otellogs.daemonset.affinity | indent 8 }}
+{{- end }}
+{{- if .Values.otellogs.daemonset.tolerations }}
+      tolerations:
+{{ toYaml .Values.otellogs.daemonset.tolerations | indent 8 }}
+{{- end }}
       securityContext:
         {{- toYaml .Values.otellogs.daemonset.securityContext | nindent 8 }}
       {{- if .Values.otellogs.daemonset.priorityClassName }}
