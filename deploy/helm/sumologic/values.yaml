@@ -384,10 +384,10 @@ fluentd:
     ## will be a random value between 45 minutes and 1 hour 15 minutes, different for each pod. This helps spread
     ## the load on API server that the cache refresh induces. Setting this to 0 disables cache refresh variation.
     cacheRefreshVariation: "900"
-    # Option to control the delay with which cache refresh calls hit the api server.
-    # For example, if 0 then all metadata enrichment happen immediately. Setting this to a non-zero values ensures the
-    # traffic to api server is much distributed.
-    # Disclaimer: Not recommended for use, if your api server read latency is > 1s
+    ## Option to control the delay with which cache refresh calls hit the api server.
+    ## For example, if 0 then all metadata enrichment happen immediately. Setting this to a non-zero values ensures the
+    ## traffic to api server is much distributed.
+    ## Disclaimer: Not recommended for use, if your api server read latency is > 1s
     cacheRefreshApiserverRequestDelay: "0"
     ## Option to give plugin specific log level
     pluginLogLevel: "error"
@@ -440,16 +440,16 @@ fluentd:
         fluentd:
           securityContext: {}
 
-      # This supports either a structured array or a templatable string
+      ## This supports either a structured array or a templatable string
       initContainers: []
 
-      # Array mode
+      ## Array mode
       # initContainers:
       #   - name: do-something
       #     image: bitnami/kubectl:1.22
       #     command: ['kubectl', 'version']
 
-      # String mode
+      ## String mode
       # initContainers: |-
       #   - name: do-something
       #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
@@ -736,16 +736,16 @@ fluentd:
         fluentd:
           securityContext: {}
 
-      # This supports either a structured array or a templatable string
+      ## This supports either a structured array or a templatable string
       initContainers: []
 
-      # Array mode
+      ## Array mode
       # initContainers:
       #   - name: do-something
       #     image: bitnami/kubectl:1.22
       #     command: ['kubectl', 'version']
 
-      # String mode
+      ## String mode
       # initContainers: |-
       #   - name: do-something
       #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
@@ -877,16 +877,16 @@ fluentd:
         fluentd:
           securityContext: {}
 
-      # This supports either a structured array or a templatable string
+      ## This supports either a structured array or a templatable string
       initContainers: []
 
-      # Array mode
+      ## Array mode
       # initContainers:
       #   - name: do-something
       #     image: bitnami/kubectl:1.22
       #     command: ['kubectl', 'version']
 
-      # String mode
+      ## String mode
       # initContainers: |-
       #   - name: do-something
       #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
@@ -3773,7 +3773,7 @@ metadata:
         ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/metricstransformprocessor
         metricstransform:
           transforms:
-            # rename all prometheus_remote_write_$name metrics to $name
+            ## rename all prometheus_remote_write_$name metrics to $name
             include: ^prometheus_remote_write_(.*)$$
             match_type: regexp
             action: update
@@ -4482,10 +4482,10 @@ otellogs:
           ## Parse docker-shim format
           ## parser-docker interprets the input string as JSON and moves the `time` field from the JSON to Timestamp field in the OTLP log
           ## record.
-          # Input Body (string): '{"log":"2001-02-03 04:05:06 first line\n","stream":"stdout","time":"2021-11-25T09:59:13.23887954Z"}'
-          # Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
-          # Input Timestamp: _empty_
-          # Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
+          ## Input Body (string): '{"log":"2001-02-03 04:05:06 first line\n","stream":"stdout","time":"2021-11-25T09:59:13.23887954Z"}'
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
+          ## Input Timestamp: _empty_
+          ## Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
           - id: parser-docker
             type: json_parser
             output: extract-metadata-from-filepath
@@ -4495,11 +4495,11 @@ otellogs:
 
           ## This operator is currently disabled as it adds additional newlines
           ## https://github.com/open-telemetry/opentelemetry-log-collection/issues/314
-          #
+          ##
           ## merge-split-lines stitches back together log lines split by Docker logging driver.
-          # Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
-          # Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
-          # Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
           # - id: merge-split-lines
           #   type: recombine
           #   combine_field: log
@@ -4511,64 +4511,64 @@ otellogs:
           ## - No flushing: https://github.com/open-telemetry/opentelemetry-log-collection/issues/306
           #
           ## merge-multiline-logs merges incoming log records into multiline logs.
-          # Input Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
-          # Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
-          # Input Body (JSON): { "log": "  third line\n", "stream": "stdout" }
-          # Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n  second line\n  third line\n", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "  third line\n", "stream": "stdout" }
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n  second line\n  third line\n", "stream": "stdout" }
           # - id: merge-multiline-logs
           #   type: recombine
           #   combine_field: log
           #   is_first_entry: $$body.log matches "^[^\\s]"
 
-          # extract-metadata-from-filepath extracts data from the `file.path` Attribute into the Body, removing the `file.path` attribute.
-          # Input Attributes:
-          # - file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
-          # Output Attributes: _none_
-          # Input Body (JSON): {
-          #   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-          #   "stream": "stdout"
-          # }
-          # Output Body (JSON): {
-          #   "container_name": "loggercontainer",
-          #   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-          #   "namespace": "default",
-          #   "pod_name": "logger-multiline-4nvg4",
-          #   "run_id": "0",
-          #   "stream": "stdout",
-          #   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # }
+          ## extract-metadata-from-filepath extracts data from the `file.path` Attribute into the Body, removing the `file.path` attribute.
+          ## Input Attributes:
+          ## - file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
+          ## Output Attributes: _none_
+          ## Input Body (JSON): {
+          ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+          ##   "stream": "stdout"
+          ## }
+          ## Output Body (JSON): {
+          ##   "container_name": "loggercontainer",
+          ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+          ##   "namespace": "default",
+          ##   "pod_name": "logger-multiline-4nvg4",
+          ##   "run_id": "0",
+          ##   "stream": "stdout",
+          ##   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## }
           - id: extract-metadata-from-filepath
             type: regex_parser
             regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$'
             parse_from: $$attributes["file.path"]
 
-          # copy-attributes copies attributes from Body to Attributes.
-          # Input Body (JSON): {
-          #   "container_name": "loggercontainer",
-          #   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-          #   "namespace": "default",
-          #   "pod_name": "logger-multiline-4nvg4",
-          #   "run_id": "0",
-          #   "stream": "stdout",
-          #   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # }
-          # Output Body (JSON): {
-          #   "container_name": "loggercontainer",
-          #   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-          #   "namespace": "default",
-          #   "pod_name": "logger-multiline-4nvg4",
-          #   "run_id": "0",
-          #   "stream": "stdout",
-          #   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # }
-          # Input Attributes: _none_
-          # Output Attributes:
-          # - k8s.container.name: "loggercontainer"
-          # - k8s.namespace.name: "default"
-          # - k8s.pod.name: "logger-multiline-4nvg4"
-          # - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # - run_id: "0"
-          # - stream: "stdout"
+          ## copy-attributes copies attributes from Body to Attributes.
+          ## Input Body (JSON): {
+          ##   "container_name": "loggercontainer",
+          ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+          ##   "namespace": "default",
+          ##   "pod_name": "logger-multiline-4nvg4",
+          ##   "run_id": "0",
+          ##   "stream": "stdout",
+          ##   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## }
+          ## Output Body (JSON): {
+          ##   "container_name": "loggercontainer",
+          ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+          ##   "namespace": "default",
+          ##   "pod_name": "logger-multiline-4nvg4",
+          ##   "run_id": "0",
+          ##   "stream": "stdout",
+          ##   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## }
+          ## Input Attributes: _none_
+          ## Output Attributes:
+          ## - k8s.container.name: "loggercontainer"
+          ## - k8s.namespace.name: "default"
+          ## - k8s.pod.name: "logger-multiline-4nvg4"
+          ## - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## - run_id: "0"
+          ## - stream: "stdout"
           - id: copy-attributes
             type: metadata
             attributes:
@@ -4579,33 +4579,33 @@ otellogs:
               run_id: 'EXPR($.run_id)'
               k8s.pod.uid: 'EXPR($.uid)'
 
-          # clean-up-log-body takes the values of the `log` field in the JSON Body and puts the value as the sole string value of Body.
-          #
-          # Input Body (JSON): {
-          #   "container_name": "",
-          #   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-          #   "namespace": "default",
-          #   "pod_name": "logger-multiline-4nvg4",
-          #   "run_id": "0",
-          #   "stream": "stdout",
-          #   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # }
-          # Output Body (string): "2001-02-03 04:05:06 loggerlog 1 first line\n"
-          #
-          # Input Attributes:
-          # - k8s.container.name: "loggercontainer"
-          # - k8s.namespace.name: "default"
-          # - k8s.pod.name: "logger-multiline-4nvg4"
-          # - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # - run_id: "0"
-          # - stream: "stdout"
-          # Output Attributes:
-          # - k8s.container.name: "loggercontainer"
-          # - k8s.namespace.name: "default"
-          # - k8s.pod.name: "logger-multiline-4nvg4"
-          # - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # - run_id: "0"
-          # - stream: "stdout"
+          ## clean-up-log-body takes the values of the `log` field in the JSON Body and puts the value as the sole string value of Body.
+          ##
+          ## Input Body (JSON): {
+          ##   "container_name": "",
+          ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+          ##   "namespace": "default",
+          ##   "pod_name": "logger-multiline-4nvg4",
+          ##   "run_id": "0",
+          ##   "stream": "stdout",
+          ##   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## }
+          ## Output Body (string): "2001-02-03 04:05:06 loggerlog 1 first line\n"
+          ##
+          ## Input Attributes:
+          ## - k8s.container.name: "loggercontainer"
+          ## - k8s.namespace.name: "default"
+          ## - k8s.pod.name: "logger-multiline-4nvg4"
+          ## - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## - run_id: "0"
+          ## - stream: "stdout"
+          ## Output Attributes:
+          ## - k8s.container.name: "loggercontainer"
+          ## - k8s.namespace.name: "default"
+          ## - k8s.pod.name: "logger-multiline-4nvg4"
+          ## - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## - run_id: "0"
+          ## - stream: "stdout"
           - id: clean-up-log-body
             type: restructure
             ops:
