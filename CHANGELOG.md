@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- fix: increase OTC liveness timeout and period [#2165][#2165]
 - chore: bump sumo ot distro to 0.0.50-beta.0 [#2127][#2127]
 - feat(metrics): drop container label for non-container kube state metrics [#2144][#2144]
 - feat(fluent-bit): drop all capabilities for container [#2151][#2151]
@@ -43,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2158]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2158
 [#2161]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2161
 [#2162]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2162
+[#2165]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2165
 
 ## [v2.5.2]
 

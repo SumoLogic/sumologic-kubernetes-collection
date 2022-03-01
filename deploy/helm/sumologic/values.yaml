@@ -3977,8 +3977,8 @@ metadata:
         otelcol:
           securityContext: {}
           livenessProbe:
-            periodSeconds: 10
-            timeoutSeconds: 3
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             periodSeconds: 10
@@ -4360,8 +4360,8 @@ metadata:
         otelcol:
           securityContext: {}
           livenessProbe:
-            periodSeconds: 10
-            timeoutSeconds: 3
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             periodSeconds: 10
