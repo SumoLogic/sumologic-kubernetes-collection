@@ -11,7 +11,7 @@ jobs:
   push-helm-chart:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Push dev helm chart
         run: make push-helm-chart
 
@@ -23,7 +23,7 @@ jobs:
       kind_images: ${{ steps.set_kind_images.outputs.kind_images }}
       test_names: ${{ steps.set_test_names.outputs.test_names }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: set_kind_images
         name: Set kind images
         working-directory: ./tests/integration/
@@ -50,7 +50,7 @@ jobs:
         kind_image: ${{ fromJSON(needs.setup-integration-tests.outputs.kind_images) }}
         test_name: ${{ fromJSON(needs.setup-integration-tests.outputs.test_names) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup go
         uses: actions/setup-go@v2
         with:
