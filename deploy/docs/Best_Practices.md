@@ -4,7 +4,7 @@
   - [MySQL slow logs example](#mysql-slow-logs-example)
 - [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
   - [Multiline Support](#multiline-support)
-- [Collecting logs from /var/log/pods][#collecting-logs-from--var-log-pods]
+- [Collecting logs from /var/log/pods](#collecting-logs-from-varlogpods)
 - [Choosing Fluentd Base Image](#choosing-fluentd-base-image)
 - [Fluentd Autoscaling](#fluentd-autoscaling)
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)

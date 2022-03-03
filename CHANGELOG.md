@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+- feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
+
+### Fixed
+
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
+[#2170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2170
+
+## [v2.6.0][v2.6.0]
+
+### Released 2022-03-03
+
+### Added
+
 - feat: add otelcol's liveness and readiness probes configuration [#2105][#2105]
 - docs: add fluentd buffers vs DPM calculations info for metrics [#2128][#2128]
 - feat(otelcol/metrics): adjust metric otelcol configuration [#2134][#2134]
@@ -26,11 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(otellogs): add multipart merge configuration for docker and cri [#2162][#2162]
 - chore(otellogs): increase send_batch_size to 10240 [#2161][#2161]
 - chore(fluent-bit): update to 0.14.1 [#2155][#2155]
-- feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
 
 ### Fixed
 
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.2...main
 [#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
 [#2113]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2113
 [#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
@@ -46,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2161]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2161
 [#2162]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2162
 [#2165]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2165
-[#2170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2170
+[v2.6.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.6.0
 
 ## [v2.5.2]
 
