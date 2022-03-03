@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+
 - feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
 
 ### Fixed
