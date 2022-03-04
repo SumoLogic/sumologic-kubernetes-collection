@@ -167,6 +167,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.events" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.opentelemetry.operator" -}}
+{{- template "sumologic.fullname" . }}-ot-operator
+{{- end -}}
+
+{{- define "sumologic.labels.app.opentelemetry.operator.instrumentation" -}}
+{{- template "sumologic.labels.app.opentelemetry.operator" . }}-instrumentation
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcol" -}}
 {{- template "sumologic.fullname" . }}-otelcol
 {{- end -}}
@@ -451,6 +459,14 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.events" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.opentelemetry.operator" -}}
+{{ template "sumologic.fullname" . }}-ot-operator
+{{- end -}}
+
+{{- define "sumologic.metadata.name.opentelemetry.operator.instrumentation" -}}
+{{ template "sumologic.metadata.name.opentelemetry.operator" . }}-instrumentation
+{{- end -}}
+
 {{- define "sumologic.metadata.name.otelcol" -}}
 {{ template "sumologic.fullname" . }}-otelcol
 {{- end -}}
@@ -598,6 +614,17 @@ sumologic.com/scrape: "true"
 {{- define "sumologic.labels.scrape.traces" -}}
 {{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.traces" . }}
+{{- end -}}
+
+{{/*
+Create endpoint based on OTC Tracing deployment type
+*/}}
+{{- define "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" -}}
+{{- if .Values.otelagent.enabled -}}
+{{ printf "%s.%s" ( include "sumologic.metadata.name.otelagent.service" . ) .Release.Namespace }}
+{{- else -}}
+{{ printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
+{{- end -}}
 {{- end -}}
 
 {{/*
