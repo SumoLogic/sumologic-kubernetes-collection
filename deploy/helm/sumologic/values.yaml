@@ -3643,6 +3643,7 @@ metadata:
         file_storage:
           directory: /var/lib/storage/otc
           timeout: 10s
+        pprof: {}
       exporters:
         ## Configuration for Sumo Logic Exporter
         ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
@@ -3926,6 +3927,7 @@ metadata:
         extensions:
           - health_check
           - file_storage
+          - pprof
         pipelines:
           metrics:
             receivers:
@@ -4041,6 +4043,7 @@ metadata:
         file_storage:
           directory: /var/lib/storage/otc
           timeout: 10s
+        pprof: {}
       exporters:
         sumologic/containers:
           log_format: json
@@ -4275,7 +4278,7 @@ metadata:
         extensions:
           - health_check
           - file_storage
-          # - sumologic
+          - pprof
         pipelines:
           logs/fluent/containers:
             receivers:
@@ -4430,6 +4433,7 @@ otellogs:
       file_storage:
         directory: /var/lib/storage/otc
         timeout: 10s
+      pprof: {}
     service:
       telemetry:
         logs:
@@ -4437,6 +4441,7 @@ otellogs:
       extensions:
         - health_check
         - file_storage
+        - pprof
       pipelines:
         logs/containers:
           receivers:

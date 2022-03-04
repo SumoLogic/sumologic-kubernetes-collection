@@ -84,6 +84,10 @@ spec:
               fieldPath: metadata.namespace
         securityContext: 
           {{- toYaml .Values.otellogs.daemonset.containers.otelcol.securityContext | nindent 10 }}
+        ports:
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
         image: busybox
