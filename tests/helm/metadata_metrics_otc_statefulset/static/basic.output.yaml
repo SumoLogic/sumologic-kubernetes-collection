@@ -83,6 +83,9 @@ spec:
         - name: metrics
           containerPort: 8888
           protocol: TCP
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
         livenessProbe:
           httpGet:
             path: /

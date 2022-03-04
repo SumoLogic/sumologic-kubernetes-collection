@@ -49,6 +49,7 @@ data:
         directory: /var/lib/storage/otc
         timeout: 10s
       health_check: {}
+      pprof: {}
     processors:
       attributes/containers:
         actions:
@@ -227,6 +228,7 @@ data:
       extensions:
       - health_check
       - file_storage
+      - pprof
       pipelines:
         logs/fluent/containers:
           exporters:

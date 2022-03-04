@@ -20,6 +20,7 @@ data:
         directory: /var/lib/storage/otc
         timeout: 10s
       health_check: {}
+      pprof: {}
     processors:
       batch:
         send_batch_size: 10240
@@ -97,6 +98,7 @@ data:
       extensions:
       - health_check
       - file_storage
+      - pprof
       pipelines:
         logs/containers:
           exporters:
