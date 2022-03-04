@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat: add pprof extension for otelcol [#2173][#2173]
 - feat: selectively disable cache for metadata enrichment calls [#2190][#2190]
+- feat(opentelemetry-operator): add opentelemetry-operator for tracing [#2172][#2172]
 
 ### Changed
 
@@ -31,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2190]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2190
 [#2196]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2196
 [#2197]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2197
+[#2172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2172
 
 ## [v2.6.0][v2.6.0]
 
