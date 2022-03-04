@@ -1,0 +1,48 @@
+{{ $enabled := index .Values "opentelemetry-operator" "enabled" }}
+{{- if eq $enabled true }}
+{{- $ctx := . -}}
+{{- range $ns := ( index .Values "opentelemetry-operator" "watchNamespace" ) }}
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  namespace: {{ $ns }}
+  name: {{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation" $ctx }}
+  labels:
+    app: {{ template "sumologic.labels.app.opentelemetry.operator.instrumentation" $ctx }}
+    {{- include "sumologic.labels.common" $ctx | nindent 4 }}
+    annotations:
+      "helm.sh/hook": post-install
+spec:
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+    - xray
+  resource:
+    addK8sUIDAttributes: false
+  sampler:
+    type: always_on
+  env:
+    - name: OTEL_APPLICATION_NAMESPACE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: application=$(OTEL_APPLICATION_NAMESPACE_NAME)
+  python:
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:55681
+  nodejs:
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4317
+  java:
+    env:
+      - name: OTEL_EXPORTER_OTLP_PROTOCOL
+        value: http/protobuf
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:55681
+{{- end -}}
+{{- end -}}
