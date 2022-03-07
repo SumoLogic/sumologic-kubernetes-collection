@@ -12,11 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
+- chore(deps): bump prometheus node exporter tag to 2.3.1 [#2177][#2177]
 
 ### Fixed
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
 [#2170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2170
+[#2177]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2177
 
 ## [v2.6.0][v2.6.0]
 
