@@ -1,0 +1,4 @@
+{{ $enabled := index .Values "opentelemetry-operator" "admissionWebhooks" "certManager" "enabled" }}
+{{- if eq $enabled false }}
+{{ ( include "opentelemetry-operator.non_certmanager" . ) }}
+{{- end }}
