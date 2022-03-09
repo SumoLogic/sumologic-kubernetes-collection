@@ -1289,3 +1289,104 @@ Example Usage:
 {{ toYaml (get (get .Values .Provider) "serviceLabels") }}
 {{- end }}
 {{- end -}}
+
+{{- define "opentelemetry-operator.webhook.service.name" -}}
+opentelemetry-operator-webhook-service
+{{- end -}}
+
+{{- define "opentelemetry-operator.controller.manager.service.cert.name" -}}
+opentelemetry-operator-controller-manager-service-cert
+{{- end -}}
+
+{{/*
+Generate certificates for opentelemetry-operator webhook
+*/}}
+{{- define "opentelemetry-operator.non_certmanager" -}}
+{{- $altNames := list ( printf "%s.%s" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) ( printf "%s.%s.svc" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) ( printf "%s.%s.svc.cluster.local" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) -}}
+{{- $ca := genCA ( include "opentelemetry-operator.webhook.service.name" . ) 365 -}}
+{{- $cert := genSignedCert ( include "opentelemetry-operator.webhook.service.name" . ) nil $altNames 365 $ca -}}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ include "opentelemetry-operator.controller.manager.service.cert.name" . }}
+  labels:
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  tls.crt: {{ $cert.Cert | b64enc }}
+  tls.key: {{ $cert.Key | b64enc }}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: {{ printf "%s/%s" .Release.Namespace ( include "opentelemetry-operator.controller.manager.service.cert.name" . ) }}
+  labels:
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+    app.kubernetes.io/name: opentelemetry-operator
+  name: opentelemetry-operator-mutating-webhook-configuration
+webhooks:
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: {{ include "opentelemetry-operator.webhook.service.name" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate-opentelemetry-io-v1alpha1-instrumentation
+      caBundle: {{ $ca.Cert | b64enc }}
+    failurePolicy: Fail
+    name: minstrumentation.kb.io
+    rules:
+    - apiGroups:
+        - opentelemetry.io
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - instrumentations
+    sideEffects: None
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: {{ include "opentelemetry-operator.webhook.service.name" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate-opentelemetry-io-v1alpha1-opentelemetrycollector
+      caBundle: {{ $ca.Cert | b64enc }}
+    failurePolicy: Fail
+    name: mopentelemetrycollector.kb.io
+    rules:
+      - apiGroups:
+          - opentelemetry.io
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - opentelemetrycollectors
+    sideEffects: None
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: {{ include "opentelemetry-operator.webhook.service.name" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate-v1-pod
+      caBundle: {{ $ca.Cert | b64enc }}
+    failurePolicy: Fail
+    name: mpod.kb.io
+    rules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - pods
+    sideEffects: None
+{{- end -}}
