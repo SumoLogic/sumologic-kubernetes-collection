@@ -1,6 +1,11 @@
-{{ $enabled := index .Values "opentelemetry-operator" "enabled" }}
-{{- if eq $enabled true }}
+{{ $operatorEnabled := index .Values "opentelemetry-operator" "enabled" }}
+{{ $tracesEnabled := .Values.sumologic.traces.enabled }}
+{{- if and $operatorEnabled $tracesEnabled }}
 {{- $ctx := . -}}
+{{ $watchNamespace := index .Values "opentelemetry-operator" "manager" "env" }}
+{{- if eq ( get $watchNamespace "WATCH_NAMESPACE" ) "" }}
+{{ fail "It is mandatory to set value for \"opentelemetry-operator.manager.env.WATCH_NAMESPACE\" when opentelemetry-operator is enabled. Value is comma separated namespaces e.g. \"ns1\\,ns2\"" }}
+{{ else }}
 {{- range $ns := splitList "," ( index .Values "opentelemetry-operator" "manager" "env" "WATCH_NAMESPACE" ) }}
 ---
 apiVersion: opentelemetry.io/v1alpha1
@@ -44,5 +49,6 @@ spec:
         value: http/protobuf
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
+{{- end -}}
 {{- end -}}
 {{- end -}}
