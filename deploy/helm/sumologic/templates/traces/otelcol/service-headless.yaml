@@ -2,12 +2,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "sumologic.metadata.name.otelcol.service" . }}
+  name: {{ template "sumologic.metadata.name.otelcol.service-headless" . }}
   labels:
-    app: {{ template "sumologic.labels.app.otelcol.service" . }}
+    app: {{ template "sumologic.labels.app.otelcol.service-headless" . }}
     {{- include "sumologic.labels.scrape.traces" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
+  # Otel DNS load balancing requires collector service to be headless
+  # in order to skip k8s load balancing and instead populate DNS records.
+  clusterIP: None
   selector:
     app: {{ template "sumologic.labels.app.otelcol.pod" . }}
   ports:
@@ -35,10 +38,8 @@ spec:
     port: 55678
   - name: otlp-grpc # Default endpoint for OTLP gRPC receiver.
     port: 4317
-  - name: otlp-http # Default endpoint for OTLP HTTP receiver.
-    port: 4318
   - name: otlp-grpc-old # Old endpoint for OTLP gRPC receiver.
     port: 55680
-  - name: otlp-http-old # Default endpoint for OTLP HTTP receiver.
+  - name: otlp-http # Default endpoint for OTLP HTTP receiver.
     port: 55681
 {{- end }}

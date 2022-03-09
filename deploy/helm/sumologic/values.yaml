@@ -4407,6 +4407,122 @@ metadata:
       ## To use maxUnavailable, set minAvailable to null and uncomment the below:
       # maxUnavailable: 1
 
+## Configure optional OpenTelemetry Collector in Agent mode
+otelgateway:
+  enabled: false
+  deployment:
+    nodeSelector: {}
+    tolerations: []
+    resources:
+      limits:
+        memory: 2Gi
+        cpu: 1000m
+      requests:
+        memory: 196Mi
+        cpu: 50m
+    ## Add custom labels only to otelagent daemonset.
+    podLabels: {}
+    ## Add custom annotations only to otelagent daemonset.
+    podAnnotations: {}
+    image:
+      repository: "public.ecr.aws/sumologic/opentelemetry-collector"
+      tag: "0.38.1-sumo"
+      pullPolicy: IfNotPresent
+
+    ## Extra Environment Values - allows yaml definitions
+    # extraEnvVars:
+    #   - name: VALUE_FROM_SECRET
+    #     valueFrom:
+    #       secretKeyRef:
+    #         name: secret_name
+    #         key: secret_key
+
+    # extraVolumes:
+    #   - name: es-certs
+    #     secret:
+    #       defaultMode: 420
+    #       secretName: es-certs
+    # extraVolumeMounts:
+    #   - name: es-certs
+    #     mountPath: /certs
+    #     readOnly: true
+
+  config:
+    receivers:
+      jaeger:
+        protocols:
+          thrift_compact:
+            endpoint: "0.0.0.0:6831"
+          thrift_binary:
+            endpoint: "0.0.0.0:6832"
+          grpc:
+            endpoint: "0.0.0.0:14250"
+          thrift_http:
+            endpoint: "0.0.0.0:14268"
+      opencensus:
+        endpoint: "0.0.0.0:55678"
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+          http:
+            endpoint: "0.0.0.0:55681"
+      zipkin:
+        endpoint: "0.0.0.0:9411"
+    processors:
+      ## The memory_limiter processor is used to prevent out of memory situations on the collector.
+      memory_limiter:
+        ## check_interval is the time between measurements of memory usage for the
+        ## purposes of avoiding going over the limits. Defaults to zero, so no
+        ## checks will be performed. Values below 1 second are not recommended since
+        ## it can result in unnecessary CPU consumption.
+        check_interval: 5s
+
+        ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
+        ## Note that typically the total memory usage of process will be about 50MiB higher
+        ## than this value.
+        limit_mib: 1900
+
+      ## The batch processor accepts spans and places them into batches grouped by node and resource
+      batch:
+        ## Number of spans after which a batch will be sent regardless of time
+        send_batch_size: 256
+        ## Time duration after which a batch will be sent regardless of size
+        timeout: 5s
+    extensions:
+      health_check: {}
+      memory_ballast:
+        ## Memory Ballast size should be max 1/3 to 1/2 of memory.
+        size_mib: 250
+    exporters:
+      loadbalancing:
+        protocol:
+          otlp:
+            timeout: 10s
+            tls:
+              insecure: true
+        resolver:
+          dns:
+            hostname: "exporters.loadbalancing.endpoint.replace"
+            port: 4317
+      otlp:
+        endpoint: "exporters.otlp.endpoint.replace:4317"
+        tls:
+          ## This disables TLS when communicating with the gateway (within the same cluster)
+          insecure: true
+    service:
+      extensions: [health_check, memory_ballast]
+      pipelines:
+        traces:
+          receivers: [jaeger, opencensus, otlp, zipkin]
+          processors: [memory_limiter, batch]
+          exporters: [loadbalancing]
+        # TODO (jmroz) metrics needed in gateway?
+        metrics:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [otlp]
+
 ## Configure log collection with Otelcol
 ## This is currently highly experimental and not recommended unless you really know what you're doing.
 ## In particular, this configuration currently only covers container logs, and only supports docker-shim.

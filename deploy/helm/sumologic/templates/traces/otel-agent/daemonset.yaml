@@ -51,12 +51,6 @@ spec:
       {{- if .Values.otelagent.daemonset.priorityClassName }}
       priorityClassName: {{ .Values.otelagent.daemonset.priorityClassName | quote }}
       {{- end }}
-      # Otel agent quits if the load balancing backend (collector/samples) is
-      # not ready during first connect attempt. Restart policy `Always` guarantees that
-      # the agent will have a chance to retry when collector is ready.
-      {{- if eq .Values.sumologic.traces.loadBalancing true }}
-      restartPolicy: Always
-      {{- end }}
       containers:
       - name: otelcontrib-agent
         image: {{ .Values.otelagent.daemonset.image.repository }}:{{ .Values.otelagent.daemonset.image.tag }}

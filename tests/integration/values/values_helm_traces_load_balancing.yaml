@@ -25,8 +25,6 @@ otelagent:
   enabled: true
   config:
     exporters:
-      logging:
-        loglevel: debug
       loadbalancing:
         protocol:
           otlp:
@@ -41,16 +39,11 @@ otelagent:
       extensions: [health_check, memory_ballast]
       pipelines:
         traces:
-          exporters: [loadbalancing, logging]
+          exporters: [loadbalancing]
     
 
 otelcol:
   enabled: true
-  config:
-    exporters:
-      logging:
-        loglevel: debug
-    service:
-      pipelines:
-        traces:
-          exporters: [logging]
+
+otelgateway:
+  enabled: true
