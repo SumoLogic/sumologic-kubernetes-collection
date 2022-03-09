@@ -1,8 +1,14 @@
 {{- $yamlFile := toYaml $.Values.otelagent.config }}
 
+
+{{- if eq .Values.sumologic.traces.loadBalancing true }}
+{{- $otelgwService := include "sumologic.metadata.name.otelgateway.service" . }}
+{{- $gatewayAddress := printf "%s.%s" $otelgwService .Release.Namespace }}
+{{- $yamlFile = replace "exporters.otlp.endpoint.replace" $gatewayAddress $yamlFile }}
+{{- else }}
 {{- $otelcolService := include "sumologic.metadata.name.otelcol.service" . }}
 {{- $collectorAddress := printf "%s.%s" $otelcolService .Release.Namespace }}
-
-{{- $yamlFile := replace "exporters.otlp.endpoint.replace" $collectorAddress $yamlFile }}
+{{- $yamlFile = replace "exporters.otlp.endpoint.replace" $collectorAddress $yamlFile }}
+{{- end }}
 
 {{ tpl ($yamlFile | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}

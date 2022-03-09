@@ -179,6 +179,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.otelcol" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.otelcol.service-headless" -}}
+{{- template "sumologic.labels.app.otelcol.service" . }}-headless
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcol.configmap" -}}
 {{- template "sumologic.labels.app.metrics" . }}
 {{- end -}}
@@ -210,6 +214,39 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "sumologic.labels.app.otelagent.component" -}}
 {{- template "sumologic.labels.app.otelagent" . }}-component
 {{- end -}}
+
+
+
+
+
+{{- define "sumologic.labels.app.otelgateway" -}}
+{{- template "sumologic.fullname" . }}-otelgateway
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.pod" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.service" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.configmap" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.deployment" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.component" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}-component
+{{- end -}}
+
+
+
+
+
 
 {{- define "sumologic.labels.app.remoteWriteProxy" -}}
 {{- template "sumologic.fullname" . }}-remote-write-proxy
@@ -459,6 +496,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.otelcol" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.otelcol.service-headless" -}}
+{{ template "sumologic.metadata.name.otelcol.service" . }}-headless
+{{- end -}}
+
 {{- define "sumologic.metadata.name.otelcol.configmap" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}
 {{- end -}}
@@ -481,6 +522,23 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.otelagent.daemonset" -}}
 {{ template "sumologic.metadata.name.otelagent" . }}
+{{- end -}}
+
+
+{{- define "sumologic.metadata.name.otelgateway" -}}
+{{ template "sumologic.fullname" . }}-otelgateway
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway.service" -}}
+{{ template "sumologic.metadata.name.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway.configmap" -}}
+{{ template "sumologic.metadata.name.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway.deployment" -}}
+{{ template "sumologic.metadata.name.otelgateway" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.remoteWriteProxy" -}}

@@ -54,6 +54,32 @@ func Test_Helm_Traces_Load_Balancing(t *testing.T) {
 			)
 			return ctx
 		}).
+		Assess("otelgateway deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
+			releaseName := ctxopts.HelmRelease(ctx)
+			labelSelector := fmt.Sprintf("app=%s-sumologic-otelgateway", releaseName)
+			ds := appsv1.DeploymentList{}
+
+			require.NoError(t,
+				wait.For(
+					conditions.New(res).
+						ResourceListN(&ds, 1,
+							resources.WithLabelSelector(labelSelector),
+						),
+					wait.WithTimeout(waitDuration),
+					wait.WithInterval(tickDuration),
+				),
+			)
+			require.NoError(t,
+				wait.For(
+					conditions.New(res).
+						DeploymentConditionMatch(&ds.Items[0], appsv1.DeploymentAvailable, corev1.ConditionTrue),
+					wait.WithTimeout(waitDuration),
+					wait.WithInterval(tickDuration),
+				),
+			)
+			return ctx
+		}).
 		Assess("otelagent daemonset is ready",
 			stepfuncs.WaitUntilDaemonSetIsReady(
 				waitDuration,

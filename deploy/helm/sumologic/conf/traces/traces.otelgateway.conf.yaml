@@ -1,0 +1,12 @@
+{{- $yamlFile := toYaml $.Values.otelgateway.config }}
+
+{{- $otelcolService := include "sumologic.metadata.name.otelcol.service" . }}
+{{- $collectorAddress := printf "%s.%s" $otelcolService .Release.Namespace }}
+{{- $yamlFile = replace "exporters.otlp.endpoint.replace" $collectorAddress $yamlFile }}
+
+{{- $otelcolHeadlessService := include "sumologic.metadata.name.otelcol.service-headless" . }}
+{{- $otelcolHeadlessServiceAddress := printf "%s.%s" $otelcolHeadlessService .Release.Namespace }}
+{{- $yamlFile = replace "exporters.loadbalancing.endpoint.replace" $otelcolHeadlessServiceAddress $yamlFile }}
+
+
+{{ tpl ($yamlFile | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}
