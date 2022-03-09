@@ -17,8 +17,12 @@ This directory contains `sumologic-kubernetes-collection` integration tests util
   - [Creating `kind` cluster](#creating-kind-cluster)
   - [Reusing a preexisting cluster](#reusing-a-preexisting-cluster)
 - [Runtime options](#runtime-options)
-- [Running specified tests](#running-specified-tests)
+- [Filtering tests](#filtering-tests)
+  - [Running specific tests](#running-specific-tests)
+  - [Running specific features/assessments](#running-specific-featuresassessments)
 - [K8s node images matrix](#k8s-node-images-matrix)
+- [Known limitations/issues](#known-limitationsissues)
+  - [Maximum size of arguments for processes](#maximum-size-of-arguments-for-processes)
 
 ---
 
@@ -159,3 +163,27 @@ Node images (k8s versions) on which tests are being run are defined in
 Where `.default` sets what is being used by default and `.supported` indicates on which
 images the tests should pass - CI configuration will ensure that tests are being on
 each of those image versions.
+
+## Known limitations/issues
+
+### Maximum size of arguments for processes
+
+Maximum size of arguments for processes is limited by:
+
+- `ARG_MAX` - maximum length of arguments
+- `MAX_ARG_STRLEN` - maximum size for one argument
+
+__Note__: `ARG_MAX` and `MAX_ARG_STRLEN` vary on different systems.
+
+Because of limited size of arguments it is not possible to prepare Pod with very long list of arguments which is generated in the code, e.g.
+Pod with very long list of `echo` commands that have very long string passed as an argument.
+
+When process receives too long list of arguments following error occurs:
+
+```
+2022-02-22T13:57:55.662403778Z stderr F standard_init_linux.go:228: exec user process caused: argument list too long
+```
+
+To learn more about `ARG_MAX` and `MAX_ARG_STRLEN` please read [ARG_MAX, maximum length of arguments for a new process][ARG_MAX_ARTICLE]
+
+[ARG_MAX_ARTICLE]: https://www.in-ulm.de/~mascheck/various/argmax/#maximum_number

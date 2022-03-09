@@ -26,7 +26,6 @@ spec:
   - name: metrics # Default endpoint for querying metrics.
     port: 8888
   {{- end }}
-  {{- end }}
   - name: zipkin # Default endpoint for Zipkin receiver.
     port: 9411
   - name: jaeger-grpc  # Default endpoint for Jaeger gRPC
@@ -39,7 +38,7 @@ spec:
     port: 55678
   - name: otlp-grpc # Default endpoint for OTLP gRPC receiver.
     port: 4317
-    - name: otlp-http # Default endpoint for OTLP HTTP receiver.
+  - name: otlp-http # Default endpoint for OTLP HTTP receiver.
     port: 4318
   - name: otlp-grpc-old # Old endpoint for OTLP gRPC receiver.
     port: 55680

@@ -1,7 +1,7 @@
 apiVersion: v2
 name: sumologic
-version: 2.5.0
-appVersion: 2.5.0
+version: 2.6.0
+appVersion: 2.6.0
 description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
 type: application
 keywords:
@@ -13,7 +13,7 @@ sources:
   - https://github.com/SumoLogic/sumologic-kubernetes-collection
 dependencies:
   - name: fluent-bit
-    version: 0.12.1
+    version: 0.14.1
     repository: https://fluent.github.io/helm-charts
     condition: fluent-bit.enabled,sumologic.logs.enabled
   - name: kube-prometheus-stack

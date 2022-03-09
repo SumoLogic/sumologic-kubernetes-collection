@@ -9,26 +9,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- feat: add otelcol's liveness and readiness probes configuration [#2105][#2105]
-- docs: add fluentd buffers vs DPM calculations info for metrics [#2128][#2128]
+- feat: add pprof extension for otelcol [#2173][#2173]
 
 ### Changed
 
+- feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
+- chore(deps): bump prometheus node exporter tag to 2.3.1 [#2177][#2177]
+
+### Fixed
+
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
+[#2170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2170
+[#2177]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2177
+[#2173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2173
+
+## [v2.6.0][v2.6.0]
+
+### Released 2022-03-03
+
+### Added
+
+- feat: add otelcol's liveness and readiness probes configuration [#2105][#2105]
+- docs: add fluentd buffers vs DPM calculations info for metrics [#2128][#2128]
+- feat(otelcol/metrics): adjust metric otelcol configuration [#2134][#2134]
+- feat: added remote write configs for couchbase [#2113][#2113]
+- feat: added remote write configs for squidproxy [#2143][#2143]
+
+### Changed
+
+- fix: increase OTC liveness timeout and period [#2165][#2165]
 - chore: bump sumo ot distro to 0.0.50-beta.0 [#2127][#2127]
+- feat(metrics): drop container label for non-container kube state metrics [#2144][#2144]
+- feat(fluent-bit): drop all capabilities for container [#2151][#2151]
+- feat: allow to collect logs from /var/log/pods and add instruction how to do it [#2153][#2153] [#2156][#2156]
+- feat(otellogs): support tolerations, nodeSelector and affinity for daemonset [#2158][#2158]
+- feat(otellogs): add multipart merge configuration for docker and cri [#2162][#2162]
+- chore(otellogs): increase send_batch_size to 10240 [#2161][#2161]
+- chore(fluent-bit): update to 0.14.1 [#2155][#2155]
+
+### Fixed
+
+[#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
+[#2113]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2113
+[#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
+[#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
+[#2134]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2134
+[#2143]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2143
+[#2144]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2144
+[#2151]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2151
+[#2153]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2153
+[#2155]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2155
+[#2156]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2156
+[#2158]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2158
+[#2161]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2161
+[#2162]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2162
+[#2165]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2165
+[v2.6.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.6.0
+
+## [v2.5.2]
+
+### Released 2022-02-17
+
+### Changed
+
 - chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-1`,
   it is Fluent Bit 1.6.10 with updated dependencies,
   image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2131][#2131]
 
 ### Fixed
 
-- fix: make metadata StatefulSets scale above 0.5 average CPU usage [#2114][#2114]
+- fix: make metadata StatefulSets scale above 0.5 average CPU usage [#2114]
+- fix(metrics): add missing telegraf (otelcol) endpoints [#2100]
 
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.1...main
-[#2105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2105
 [#2114]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2114
-[#2127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2127
-[#2128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2128
+[#2100]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2100
 [#2131]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2131
+[v2.5.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.5.2
 
 ## [v2.5.1]
 

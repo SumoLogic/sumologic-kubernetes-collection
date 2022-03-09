@@ -184,7 +184,7 @@ You can `port-forward` to a pod exposing `/metrics` endpoint and verify it is ex
 kubectl port-forward collection-sumologic-xxxxxxxxx-xxxxx 8080:24231
 ```
 
-Then, in your browser, go to `localhost:8080/metrics`. You should see Prometheus metrics exposed.
+Then, in your browser, go to `http://localhost:8080/metrics`. You should see Prometheus metrics exposed.
 
 ### Check the Prometheus UI
 
@@ -198,7 +198,13 @@ Then, in your browser, go to `localhost:8080`. You should be in the Prometheus U
 
 From here you can start typing the expected name of a metric to see if Prometheus auto-completes the entry.
 
-If you can't find the expected metrics, you can check if Prometheus is successfully scraping the `/metrics` endpoints. In the top menu, navigate to section `Status > Targets`. Check if any targets are down or have errors.
+If you can't find the expected metrics, ensure that prometheus configuration is correct and up to date.
+In the top menu, navigate to section `Status > Configuration` or go to the `http://localhost:8080/config`.
+Review the configuration.
+
+Next, you can check if Prometheus is successfully scraping the `/metrics` endpoints.
+In the top menu, navigate to section `Status > Targets` or go to the `http://localhost:8080/targets`.
+Check if any targets are down or have errors.
 
 ### Check Prometheus Remote Storage
 

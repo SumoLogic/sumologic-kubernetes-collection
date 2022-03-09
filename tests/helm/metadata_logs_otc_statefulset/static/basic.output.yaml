@@ -86,13 +86,16 @@ spec:
         - name: otlphttp
           containerPort: 4318
           protocol: TCP
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
         livenessProbe:
           httpGet:
             path: /
             port: 13133 # Health Check extension default port.
           failureThreshold: 3
-          periodSeconds: 10
-          timeoutSeconds: 3
+          periodSeconds: 15
+          timeoutSeconds: 10
         readinessProbe:
           httpGet:
             path: /

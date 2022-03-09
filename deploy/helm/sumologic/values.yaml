@@ -384,10 +384,10 @@ fluentd:
     ## will be a random value between 45 minutes and 1 hour 15 minutes, different for each pod. This helps spread
     ## the load on API server that the cache refresh induces. Setting this to 0 disables cache refresh variation.
     cacheRefreshVariation: "900"
-    # Option to control the delay with which cache refresh calls hit the api server.
-    # For example, if 0 then all metadata enrichment happen immediately. Setting this to a non-zero values ensures the
-    # traffic to api server is much distributed.
-    # Disclaimer: Not recommended for use, if your api server read latency is > 1s
+    ## Option to control the delay with which cache refresh calls hit the api server.
+    ## For example, if 0 then all metadata enrichment happen immediately. Setting this to a non-zero values ensures the
+    ## traffic to api server is much distributed.
+    ## Disclaimer: Not recommended for use, if your api server read latency is > 1s
     cacheRefreshApiserverRequestDelay: "0"
     ## Option to give plugin specific log level
     pluginLogLevel: "error"
@@ -440,16 +440,16 @@ fluentd:
         fluentd:
           securityContext: {}
 
-      # This supports either a structured array or a templatable string
+      ## This supports either a structured array or a templatable string
       initContainers: []
 
-      # Array mode
+      ## Array mode
       # initContainers:
       #   - name: do-something
       #     image: bitnami/kubectl:1.22
       #     command: ['kubectl', 'version']
 
-      # String mode
+      ## String mode
       # initContainers: |-
       #   - name: do-something
       #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
@@ -538,11 +538,11 @@ fluentd:
       ## Defines whether container-level pod annotations are enabled.
       ## Setting this to `true` might slightly affect Fluentd performance.
       ## See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.1-sumo-2/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
+      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.4-sumo-1/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
       perContainerAnnotationsEnabled: false
       ## Defines the list of prefixes of container-level pod annotations.
       ## See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.1-sumo-2/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
+      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.4-sumo-1/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
       perContainerAnnotationPrefixes: []
 
       ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
@@ -559,6 +559,11 @@ fluentd:
         clientKey: ""
         ## Path to a file containing the bearer token to use for authentication
         bearerTokenFile: ""
+        ## Regex to match containers tag to `pod_name`, `namespace`, `container_name` and `docker_id`. All of them are obligatory
+        ## See below links for reference:
+        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.14.4-sumo-1/fluent-plugin-kubernetes-metadata-filter/lib/fluent/plugin/filter_kubernetes_metadata.rb#L322-L325
+        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.4-sumo-1/fluent-plugin-kubernetes-metadata-filter#configuration
+        tagToMetadataRegexp: '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
 
       ## To use additional filter plugins
       extraFilterPluginConf: |-
@@ -731,16 +736,16 @@ fluentd:
         fluentd:
           securityContext: {}
 
-      # This supports either a structured array or a templatable string
+      ## This supports either a structured array or a templatable string
       initContainers: []
 
-      # Array mode
+      ## Array mode
       # initContainers:
       #   - name: do-something
       #     image: bitnami/kubectl:1.22
       #     command: ['kubectl', 'version']
 
-      # String mode
+      ## String mode
       # initContainers: |-
       #   - name: do-something
       #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
@@ -872,16 +877,16 @@ fluentd:
         fluentd:
           securityContext: {}
 
-      # This supports either a structured array or a templatable string
+      ## This supports either a structured array or a templatable string
       initContainers: []
 
-      # Array mode
+      ## Array mode
       # initContainers:
       #   - name: do-something
       #     image: bitnami/kubectl:1.22
       #     command: ['kubectl', 'version']
 
-      # String mode
+      ## String mode
       # initContainers: |-
       #   - name: do-something
       #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
@@ -974,8 +979,11 @@ fluent-bit:
   ## Add custom pod annotations to fluent-bit daemonset pods
   podAnnotations: {}
 
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
   ## Set securityContext of fluent-bit daemonset containers as privileged for running in Openshift
-  # securityContext:
   #   privileged: true
 
   env:
@@ -1616,6 +1624,8 @@ kube-prometheus-stack:
       #   memory: 32Mi
   ## Resource limits for prometheus node exporter
   prometheus-node-exporter:
+    image:
+      tag: v1.3.1
     ## Additional labels for pods in the DaemonSet
     podLabels: {}
     ## Additional annotations for pods in the DaemonSet
@@ -1862,8 +1872,18 @@ kube-prometheus-stack:
               regex: (pod|service)
               replacement: service_discovery_${1}
             - action: labeldrop
-              regex: (pod|service)
+              regex: (pod|service|container)
         ## kube pod state metrics
+        ## kube_pod_status_phase
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: kube-state-metrics;(?:kube_pod_status_phase)
+              sourceLabels: [job, __name__]
+            - action: labeldrop
+              regex: container
+        ## kube container state metrics
         ## kube_pod_container_info
         ## kube_pod_container_resource_limits
         ## kube_pod_container_resource_requests
@@ -1871,12 +1891,11 @@ kube-prometheus-stack:
         ## kube_pod_container_status_restarts_total
         ## kube_pod_container_status_terminated_reason
         ## kube_pod_container_status_waiting_reason
-        ## kube_pod_status_phase
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: kube-state-metrics;(?:kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase)
+              regex: kube-state-metrics;(?:kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total)
               sourceLabels: [job, __name__]
         ## controller manager metrics
         ## https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
@@ -3077,6 +3096,114 @@ kube-prometheus-stack:
               regex: (?:activemq_(topic_.*|queue_.*|.*_QueueSize|broker_(AverageMessageSize|CurrentConnectionsCount|MemoryLimit|StoreLimit|TempLimit|TotalConnectionsCount|TotalConsumerCount|TotalDequeueCount|TotalEnqueueCount|TotalMessageCount|TotalProducerCount|UptimeMillis)|jvm_memory_(HeapMemoryUsage_max|HeapMemoryUsage_used|NonHeapMemoryUsage_used)|jvm_runtime_Uptime|OperatingSystem_(FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize)))
               sourceLabels: [__name__]
 
+        ## Couchbase Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/couchbase
+        ## couchbase_node_memory_free
+        ## couchbase_node_memory_total
+        ## couchbase_bucket_item_count
+        ## couchbase_bucket_curr_connections
+        ## couchbase_bucket_ops_per_sec
+        ## couchbase_bucket_ep_num_value_ejects
+        ## couchbase_bucket_disk_write_queue
+        ## couchbase_bucket_ep_oom_errors
+        ## couchbase_bucket_delete_misses
+        ## couchbase_bucket_delete_hits
+        ## couchbase_bucket_bytes_read
+        ## couchbase_bucket_bytes_written
+        ## couchbase_bucket_cmd_get
+        ## couchbase_bucket_cmd_set
+        ## couchbase_bucket_cas_hits
+        ## couchbase_bucket_ops
+        ## couchbase_bucket_curr_items
+        ## couchbase_bucket_mem_actual_free
+        ## couchbase_bucket_cpu_utilization_rate
+        ## couchbase_bucket_swap_used
+        ## couchbase_bucket_disk_used
+        ## couchbase_bucket_rest_requests
+        ## couchbase_bucket_hibernated_waked
+        ## couchbase_bucket_mem_used
+        ## couchbase_bucket_xdc_ops
+        ## couchbase_bucket_ep_mem_low_wat
+        ## couchbase_bucket_ep_mem_high_wat
+        ## couchbase_bucket_ep_ops_update
+        ## couchbase_bucket_ep_tmp_oom_errors
+        ## couchbase_bucket_ep_dcp_replica_count
+        ## couchbase_bucket_ep_dcp_replica_producer_count
+        ## couchbase_bucket_ep_dcp_xdcr_producer_count
+        ## couchbase_bucket_ep_dcp_replica_items_remaining
+        ## couchbase_bucket_ep_dcp_xdcr_items_remaining
+        ## couchbase_bucket_ep_dcp_replica_items_sent
+        ## couchbase_bucket_ep_dcp_xdcr_items_sent
+        ## couchbase_bucket_ep_dcp_replica_total_bytes
+        ## couchbase_bucket_ep_dcp_xdcr_total_bytes
+        ## couchbase_bucket_ep_num_ops_get_meta
+        ## couchbase_bucket_ep_num_ops_set_meta
+        ## couchbase_bucket_ep_num_ops_del_meta
+        ## couchbase_bucket_ep_dcp_xdcr_count
+        ## couchbase_bucket_ep_resident_items_rate
+        ## couchbase_bucket_vb_active_queue_size
+        ## couchbase_bucket_vb_replica_queue_size
+        ## couchbase_bucket_vb_pending_queue_size
+        ## couchbase_bucket_vb_active_queue_fill
+        ## couchbase_bucket_vb_replica_queue_fill
+        ## couchbase_bucket_vb_pending_queue_fill
+        ## couchbase_bucket_vb_avg_active_queue_age
+        ## couchbase_bucket_vb_avg_replica_queue_age
+        ## couchbase_bucket_vb_avg_pending_queue_age
+        ## couchbase_bucket_vb_active_num
+        ## couchbase_bucket_vb_replica_num
+        ## couchbase_bucket_vb_pending_num
+        ## couchbase_bucket_vb_pending_curr_items
+        ## couchbase_bucket_vb_active_resident_items_ratio
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.couchbase
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:couchbase_(node_.*|bucket_(ep_.*|vb_.*|delete_.*|cmd.*|bytes_.*|item_count|curr_connections|ops_per_sec|disk_write_queue|mem_.*|cas_hits|ops|curr_items|cpu_utilization_rate|swap_used|disk_used|rest_requests|hibernated_waked|xdc_ops)))
+              sourceLabels: [__name__]
+
+        ## SquidProxy Telegraf Metrics
+        ## List of Metrics are on following github page:
+        ## https://wiki.squid-cache.org/Features/Snmp
+        ## squid_cacheIpEntries
+        ## squid_cacheIpRequests
+        ## squid_cacheIpHits
+        ## squid_cacheFqdnEntries
+        ## squid_cacheFqdnRequests
+        ## squid_cacheFqdnMisses
+        ## squid_cacheFqdnNegativeHits
+        ## squid_cacheDnsRequests
+        ## squid_cacheDnsReplies
+        ## squid_cacheDnsSvcTime5
+        ## squid_cacheSysPageFaults
+        ## squid_cacheSysNumReads
+        ## squid_cacheCurrentFileDescrCnt
+        ## squid_cacheCurrentUnusedFDescrCnt
+        ## squid_cacheCurrentResFileDescrCnt
+        ## squid_cacheServerRequests
+        ## squid_cacheServerInKb
+        ## squid_cacheServerOutKb
+        ## squid_cacheHttpAllSvcTime5
+        ## squid_cacheHttpErrors
+        ## squid_cacheHttpInKb
+        ## squid_cacheHttpOutKb
+        ## squid_cacheHttpAllSvcTime1
+        ## squid_cacheMemMaxSize
+        ## squid_cacheMemUsage
+        ## squid_cacheNumObjCount
+        ## squid_cacheCpuTime
+        ## squid_cacheMaxResSize
+        ## squid_cacheProtoClientHttpRequests
+        ## squid_cacheClients
+        ## squid_uptime
+        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.applications.squidproxy
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: (?:squid_(uptime|cache(Ip(Entries|Requests|Hits)|Fqdn(Entries|Requests|Misses|NegativeHits)|Dns(Requests|Replies|SvcTime5)|Sys(PageFaults|NumReads)|Current(FileDescrCnt|UnusedFDescrCnt|ResFileDescrCnt)|Server(Requests|InKb|OutKb)|Http(AllSvcTime5|Errors|InKb|OutKb|AllSvcTime1)|Mem(MaxSize|Usage)|NumObjCount|CpuTime|MaxResSize|ProtoClientHttpRequests|Clients)))
+              sourceLabels: [__name__]
+
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
   enabled: false
@@ -3482,6 +3609,7 @@ metadata:
                 "/prometheus.metrics.applications.activemq",
                 "/prometheus.metrics.applications.apache",
                 "/prometheus.metrics.applications.cassandra",
+                "/prometheus.metrics.applications.couchbase",
                 "/prometheus.metrics.applications.elasticsearch",
                 "/prometheus.metrics.applications.haproxy",
                 "/prometheus.metrics.applications.jmx",
@@ -3495,6 +3623,7 @@ metadata:
                 "/prometheus.metrics.applications.rabbitmq",
                 "/prometheus.metrics.applications.redis",
                 "/prometheus.metrics.applications.sqlserver",
+                "/prometheus.metrics.applications.squidproxy",
                 "/prometheus.metrics.applications.tomcat",
                 "/prometheus.metrics.applications.varnish",
                 "/prometheus.metrics.container",
@@ -3514,6 +3643,7 @@ metadata:
         file_storage:
           directory: /var/lib/storage/otc
           timeout: 10s
+        pprof: {}
       exporters:
         ## Configuration for Sumo Logic Exporter
         ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
@@ -3525,6 +3655,13 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            ## setting queue_size a high number, so we always use maximum space of the storage
+            ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3535,6 +3672,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3545,6 +3687,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3555,6 +3702,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3565,6 +3717,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3575,6 +3732,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3585,6 +3747,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3595,6 +3762,11 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 50_000
+          max_request_body_size: 16_777_216  # 16 MB before compression
+          ## set timeout to 30s due to big requests
+          timeout: 30s
           metadata_attributes:
             - k8s.*
             - pod_labels_.*
@@ -3604,7 +3776,7 @@ metadata:
         ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/metricstransformprocessor
         metricstransform:
           transforms:
-            # rename all prometheus_remote_write_$name metrics to $name
+            ## rename all prometheus_remote_write_$name metrics to $name
             include: ^prometheus_remote_write_(.*)$$
             match_type: regexp
             action: update
@@ -3718,7 +3890,7 @@ metadata:
         ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
         batch:
           ## Number of spans after which a batch will be sent regardless of time
-          send_batch_size: 4096
+          send_batch_size: 16_384
           ## Time duration after which a batch will be sent regardless of size
           timeout: 30s
         ## Configuration for Kubernetes Processor
@@ -3755,6 +3927,7 @@ metadata:
         extensions:
           - health_check
           - file_storage
+          - pprof
         pipelines:
           metrics:
             receivers:
@@ -3808,8 +3981,8 @@ metadata:
         otelcol:
           securityContext: {}
           livenessProbe:
-            periodSeconds: 10
-            timeoutSeconds: 3
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             periodSeconds: 10
@@ -3870,6 +4043,7 @@ metadata:
         file_storage:
           directory: /var/lib/storage/otc
           timeout: 10s
+        pprof: {}
       exporters:
         sumologic/containers:
           log_format: json
@@ -4104,7 +4278,7 @@ metadata:
         extensions:
           - health_check
           - file_storage
-          # - sumologic
+          - pprof
         pipelines:
           logs/fluent/containers:
             receivers:
@@ -4191,8 +4365,8 @@ metadata:
         otelcol:
           securityContext: {}
           livenessProbe:
-            periodSeconds: 10
-            timeoutSeconds: 3
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             periodSeconds: 10
@@ -4375,6 +4549,7 @@ otellogs:
       file_storage:
         directory: /var/lib/storage/otc
         timeout: 10s
+      pprof: {}
     service:
       telemetry:
         logs:
@@ -4382,6 +4557,7 @@ otellogs:
       extensions:
         - health_check
         - file_storage
+        - pprof
       pipelines:
         logs/containers:
           receivers:
@@ -4413,7 +4589,7 @@ otellogs:
           - id: parser-crio
             type: regex_parser
             regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$'
-            output: extract-metadata-from-filepath
+            output: merge-cri-lines
             timestamp:
               parse_from: time
               layout_type: gotime
@@ -4422,100 +4598,108 @@ otellogs:
           - id: parser-containerd
             type: regex_parser
             regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$'
-            output: extract-metadata-from-filepath
+            output: merge-cri-lines
             timestamp:
               parse_from: time
               layout: '%Y-%m-%dT%H:%M:%S.%LZ'
           ## Parse docker-shim format
           ## parser-docker interprets the input string as JSON and moves the `time` field from the JSON to Timestamp field in the OTLP log
           ## record.
-          # Input Body (string): '{"log":"2001-02-03 04:05:06 first line\n","stream":"stdout","time":"2021-11-25T09:59:13.23887954Z"}'
-          # Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
-          # Input Timestamp: _empty_
-          # Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
+          ## Input Body (string): '{"log":"2001-02-03 04:05:06 first line\n","stream":"stdout","time":"2021-11-25T09:59:13.23887954Z"}'
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
+          ## Input Timestamp: _empty_
+          ## Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
           - id: parser-docker
             type: json_parser
-            output: extract-metadata-from-filepath
+            output: merge-docker-lines
             timestamp:
               parse_from: time
               layout: '%Y-%m-%dT%H:%M:%S.%LZ'
 
-          ## This operator is currently disabled as it adds additional newlines
-          ## https://github.com/open-telemetry/opentelemetry-log-collection/issues/314
-          #
-          ## merge-split-lines stitches back together log lines split by Docker logging driver.
-          # Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
-          # Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
-          # Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
-          # - id: merge-split-lines
-          #   type: recombine
-          #   combine_field: log
-          #   is_last_entry: $$body.log matches "\n$"
+          ## merge-docker-lines stitches back together log lines split by Docker logging driver.
+          ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
+          - id: merge-docker-lines
+            type: recombine
+            output: extract-metadata-from-filepath
+            combine_field: log
+            is_last_entry: $$body.log matches "\n$"
 
-          ## This operator is currently disabled due to the following issues:
-          ## - Additional newlines being added between the merged logs:
-          ## https://github.com/open-telemetry/opentelemetry-log-collection/issues/314
-          ## - No flushing: https://github.com/open-telemetry/opentelemetry-log-collection/issues/306
-          #
+          ## merge-cri-lines stitches back together log lines split by CRI logging drivers.
+          ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "logtag": "P" }
+          ## Input Body (JSON): { "log": "ne that was split by the logging driver", "logtag": "F" }
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
+          - id: merge-cri-lines
+            type: recombine
+            output: extract-metadata-from-filepath
+            combine_field: log
+            combine_with: ""
+            is_last_entry: $$body.logtag == "F"
+            overwrite_with: newest
+
+          ## This operator is currently disabled because it combines logs before any entry has been matched:
+          ## https://github.com/open-telemetry/opentelemetry-log-collection/pull/416
+          ##
           ## merge-multiline-logs merges incoming log records into multiline logs.
-          # Input Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
-          # Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
-          # Input Body (JSON): { "log": "  third line\n", "stream": "stdout" }
-          # Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n  second line\n  third line\n", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "  third line\n", "stream": "stdout" }
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n  second line\n  third line\n", "stream": "stdout" }
           # - id: merge-multiline-logs
           #   type: recombine
           #   combine_field: log
           #   is_first_entry: $$body.log matches "^[^\\s]"
 
-          # extract-metadata-from-filepath extracts data from the `file.path` Attribute into the Body, removing the `file.path` attribute.
-          # Input Attributes:
-          # - file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
-          # Output Attributes: _none_
-          # Input Body (JSON): {
-          #   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-          #   "stream": "stdout"
-          # }
-          # Output Body (JSON): {
-          #   "container_name": "loggercontainer",
-          #   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-          #   "namespace": "default",
-          #   "pod_name": "logger-multiline-4nvg4",
-          #   "run_id": "0",
-          #   "stream": "stdout",
-          #   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # }
+          ## extract-metadata-from-filepath extracts data from the `file.path` Attribute into the Body, removing the `file.path` attribute.
+          ## Input Attributes:
+          ## - file.path: '/var/log/pods/default_logger-multiline-4nvg4_aed49747-b541-4a07-8663-f7e1febc47d5/loggercontainer/0.log'
+          ## Output Attributes: _none_
+          ## Input Body (JSON): {
+          ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+          ##   "stream": "stdout"
+          ## }
+          ## Output Body (JSON): {
+          ##   "container_name": "loggercontainer",
+          ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+          ##   "namespace": "default",
+          ##   "pod_name": "logger-multiline-4nvg4",
+          ##   "run_id": "0",
+          ##   "stream": "stdout",
+          ##   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## }
           - id: extract-metadata-from-filepath
             type: regex_parser
             regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$'
             parse_from: $$attributes["file.path"]
 
-          # copy-attributes copies attributes from Body to Attributes.
-          # Input Body (JSON): {
-          #   "container_name": "loggercontainer",
-          #   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-          #   "namespace": "default",
-          #   "pod_name": "logger-multiline-4nvg4",
-          #   "run_id": "0",
-          #   "stream": "stdout",
-          #   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # }
-          # Output Body (JSON): {
-          #   "container_name": "loggercontainer",
-          #   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-          #   "namespace": "default",
-          #   "pod_name": "logger-multiline-4nvg4",
-          #   "run_id": "0",
-          #   "stream": "stdout",
-          #   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # }
-          # Input Attributes: _none_
-          # Output Attributes:
-          # - k8s.container.name: "loggercontainer"
-          # - k8s.namespace.name: "default"
-          # - k8s.pod.name: "logger-multiline-4nvg4"
-          # - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # - run_id: "0"
-          # - stream: "stdout"
+          ## copy-attributes copies attributes from Body to Attributes.
+          ## Input Body (JSON): {
+          ##   "container_name": "loggercontainer",
+          ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+          ##   "namespace": "default",
+          ##   "pod_name": "logger-multiline-4nvg4",
+          ##   "run_id": "0",
+          ##   "stream": "stdout",
+          ##   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## }
+          ## Output Body (JSON): {
+          ##   "container_name": "loggercontainer",
+          ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+          ##   "namespace": "default",
+          ##   "pod_name": "logger-multiline-4nvg4",
+          ##   "run_id": "0",
+          ##   "stream": "stdout",
+          ##   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## }
+          ## Input Attributes: _none_
+          ## Output Attributes:
+          ## - k8s.container.name: "loggercontainer"
+          ## - k8s.namespace.name: "default"
+          ## - k8s.pod.name: "logger-multiline-4nvg4"
+          ## - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## - run_id: "0"
+          ## - stream: "stdout"
           - id: copy-attributes
             type: metadata
             attributes:
@@ -4526,33 +4710,33 @@ otellogs:
               run_id: 'EXPR($.run_id)'
               k8s.pod.uid: 'EXPR($.uid)'
 
-          # clean-up-log-body takes the values of the `log` field in the JSON Body and puts the value as the sole string value of Body.
-          #
-          # Input Body (JSON): {
-          #   "container_name": "",
-          #   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
-          #   "namespace": "default",
-          #   "pod_name": "logger-multiline-4nvg4",
-          #   "run_id": "0",
-          #   "stream": "stdout",
-          #   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # }
-          # Output Body (string): "2001-02-03 04:05:06 loggerlog 1 first line\n"
-          #
-          # Input Attributes:
-          # - k8s.container.name: "loggercontainer"
-          # - k8s.namespace.name: "default"
-          # - k8s.pod.name: "logger-multiline-4nvg4"
-          # - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # - run_id: "0"
-          # - stream: "stdout"
-          # Output Attributes:
-          # - k8s.container.name: "loggercontainer"
-          # - k8s.namespace.name: "default"
-          # - k8s.pod.name: "logger-multiline-4nvg4"
-          # - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
-          # - run_id: "0"
-          # - stream: "stdout"
+          ## clean-up-log-body takes the values of the `log` field in the JSON Body and puts the value as the sole string value of Body.
+          ##
+          ## Input Body (JSON): {
+          ##   "container_name": "",
+          ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
+          ##   "namespace": "default",
+          ##   "pod_name": "logger-multiline-4nvg4",
+          ##   "run_id": "0",
+          ##   "stream": "stdout",
+          ##   "uid": "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## }
+          ## Output Body (string): "2001-02-03 04:05:06 loggerlog 1 first line\n"
+          ##
+          ## Input Attributes:
+          ## - k8s.container.name: "loggercontainer"
+          ## - k8s.namespace.name: "default"
+          ## - k8s.pod.name: "logger-multiline-4nvg4"
+          ## - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## - run_id: "0"
+          ## - stream: "stdout"
+          ## Output Attributes:
+          ## - k8s.container.name: "loggercontainer"
+          ## - k8s.namespace.name: "default"
+          ## - k8s.pod.name: "logger-multiline-4nvg4"
+          ## - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
+          ## - run_id: "0"
+          ## - stream: "stdout"
           - id: clean-up-log-body
             type: restructure
             ops:
@@ -4566,9 +4750,9 @@ otellogs:
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
         ## Number of spans after which a batch will be sent regardless of time
-        ## This is set to the same value as in the metadata enricher
+        ## This is set to the 10240, to avoid loosing logs on the start of the collector
         ## TODO: Figure out what the optimal values should be for different configurations
-        send_batch_size: 256
+        send_batch_size: 10_240
         ## Time duration after which a batch will be sent regardless of size
         timeout: 1s
   daemonset:
@@ -4600,6 +4784,9 @@ otellogs:
       otelcol:
         securityContext: {}
 
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
 
 ## Configure telegraf-operator
 ## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml

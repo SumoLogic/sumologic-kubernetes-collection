@@ -67,7 +67,7 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 
 | Name | Version |
 |------|---------|
-| K8s  | 1.17+   |
+| K8s  | 1.18+   |
 | Helm | 3.4+    |
 
 ## Support Matrix
@@ -88,7 +88,9 @@ The following matrix displays the tested package versions for our Helm chart.
 
 | Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit                          | Falco  | Metrics Server | Telegraf Operator | Tailing Sidecar Operator |
 |:----------------------|:------------------------------------------|:--------|:------------------------------------|:-------|:---------------|:------------------|:-------------------------|
-| 2.4.0 - Latest        | 12.10.0                                   | 1.12.2  | 0.12.1                              | 1.16.2 | 5.8.4          | 1.3.3             | 0.3.1                    |
+| 2.6.0 - latest        | 12.10.0                                   | 1.14.4  | 0.14.1                              | 1.16.2 | 5.8.4          | 1.3.3             | 0.3.2                    |
+| 2.5.0 - 2.5.2         | 12.10.0                                   | 1.14.4  | 0.12.1                              | 1.16.2 | 5.8.4          | 1.3.3             | 0.3.2                    |
+| 2.4.0 - 2.4.1         | 12.10.0                                   | 1.12.2  | 0.12.1                              | 1.16.2 | 5.8.4          | 1.3.3             | 0.3.1                    |
 | 2.3.0 - 2.3.2         | 12.10.0                                   | 1.12.2  | 0.12.1                              | 1.16.2 | 5.8.4          | 1.3.3             | 0.3.1                    |
 | 2.2.0                 | 12.10.0                                   | 1.12.2  | 0.12.1                              | 1.7.10 | 5.8.4          | 1.2.0             | 0.3.1                    |
 | 2.1.6                 | 12.3.0                                    | 1.12.2  | 0.12.1                              | 1.7.10 | 5.8.4          | 1.2.0             | 0.3.0                    |
