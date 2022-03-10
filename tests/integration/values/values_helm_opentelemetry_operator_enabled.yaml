@@ -6,7 +6,7 @@ opentelemetry-operator:
   enabled: true
   manager:
     env:
-      WATCH_NAMESPACE: "ns1,ns2"
+      WATCH_NAMESPACE: "ot-operator1,ot-operator2"
 
 # Prevent snowball effect by filtering out receiver mock logs
 fluent-bit:

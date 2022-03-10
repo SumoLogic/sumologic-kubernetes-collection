@@ -64,8 +64,8 @@ func ConfigureTestEnv(testenv env.Environment) {
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
 		stepfuncs.KubectlApplyFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
 		// Needed for OpenTelemetry Operator test
-		stepfuncs.KubectlCreateNamespaceOpt("ns1"),
-		stepfuncs.KubectlCreateNamespaceOpt("ns2"),
+		stepfuncs.KubectlCreateNamespaceOpt("ot-operator1"),
+		stepfuncs.KubectlCreateNamespaceOpt("ot-operator2"),
 		// Create Test Namespace
 		stepfuncs.KubectlCreateNamespaceTestOpt(),
 		// SetHelmOptionsTestOpt picks a values file from `values` directory
