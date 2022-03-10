@@ -59,7 +59,7 @@ func TestMain(m *testing.M) {
 
 func ConfigureTestEnv(testenv env.Environment) {
 	const receiverMockNamespace = "receiver-mock"
-	
+
 	// Helm chart installation extra arguments list
 	helmExtraArgs := []string{"--wait"}
 

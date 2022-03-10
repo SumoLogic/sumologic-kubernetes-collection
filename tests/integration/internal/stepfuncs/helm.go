@@ -121,7 +121,7 @@ func SetHelmOptionsOpt(valuesFilePath string, extraArgs map[string][]string) fea
 		return ctxopts.WithHelmOptions(ctx, &helm.Options{
 			KubectlOptions: kubectlOptions,
 			ValuesFiles:    []string{yamlFilePathCommon, valuesFilePath},
-			ExtraArgs: 		extraArgs,
+			ExtraArgs:      extraArgs,
 		})
 	}
 }
@@ -135,7 +135,7 @@ func SetHelmOptionsTestOpt(extraArgs []string) features.Func {
 		valuesFilePath := path.Join("values", strings.ValueFileFromT(t))
 		extraArgs := map[string][]string{
 			"install": extraArgs,
-		} 
+		}
 		return SetHelmOptionsOpt(valuesFilePath, extraArgs)(ctx, t, envConf)
 	}
 }
