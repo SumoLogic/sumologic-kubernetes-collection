@@ -93,7 +93,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		}).
 		Feature()
 
-    featOpenTelemetryOperator := features.New("opentelemetry-operator").
+	featOpenTelemetryOperator := features.New("opentelemetry-operator").
 		// TODO: Rewrite into similar step func as WaitUntilStatefulSetIsReady but for deployments
 		Assess("opentelemetry-operator deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
