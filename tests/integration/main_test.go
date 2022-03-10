@@ -59,11 +59,15 @@ func TestMain(m *testing.M) {
 
 func ConfigureTestEnv(testenv env.Environment) {
 	const receiverMockNamespace = "receiver-mock"
+	
+	// Helm chart installation extra arguments list
+	helmExtraArgs := []string{"--wait"}
 
 	// Before
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
 		stepfuncs.KubectlApplyFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
 		// Needed for OpenTelemetry Operator test
+		// TODO: Create namespaces only for specific tests
 		stepfuncs.KubectlCreateNamespaceOpt("ot-operator1"),
 		stepfuncs.KubectlCreateNamespaceOpt("ot-operator2"),
 		// Create Test Namespace
@@ -77,7 +81,7 @@ func ConfigureTestEnv(testenv env.Environment) {
 		// The reason for this is to limit the amount of boilerplate in tests
 		// themselves but we cannot attach/map the values.yaml to the test itself
 		// so we do this mapping instead.
-		stepfuncs.SetHelmOptionsTestOpt(),
+		stepfuncs.SetHelmOptionsTestOpt(helmExtraArgs),
 		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
 		stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath),
 	) {
