@@ -1376,7 +1376,7 @@ webhooks:
         namespace: {{ .Release.Namespace }}
         path: /mutate-v1-pod
       caBundle: {{ $ca.Cert | b64enc }}
-    failurePolicy: Fail
+    failurePolicy: Ignore
     name: mpod.kb.io
     rules:
       - apiGroups:
