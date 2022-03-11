@@ -168,7 +168,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.opentelemetry.operator" -}}
-{{- template "sumologic.fullname" . }}-ot-operator
+{{- template "sumologic.fullname" . }}-opentelemetry-operator
 {{- end -}}
 
 {{- define "sumologic.labels.app.opentelemetry.operator.instrumentation" -}}
@@ -460,7 +460,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.opentelemetry.operator" -}}
-{{ template "sumologic.fullname" . }}-ot-operator
+{{ template "sumologic.fullname" . }}-opentelemetry-operator
 {{- end -}}
 
 {{- define "sumologic.metadata.name.opentelemetry.operator.instrumentation" -}}
