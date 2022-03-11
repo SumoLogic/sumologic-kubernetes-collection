@@ -60,16 +60,20 @@ func TestMain(m *testing.M) {
 func ConfigureTestEnv(testenv env.Environment) {
 	const receiverMockNamespace = "receiver-mock"
 
+	// List of the namespaces must match values/values_helm_opentelemetry_operator_enabled.yaml
+	// opentelemetry-operator.manager.env.WATCH_NAMESPACE value
+	var openTelemetryOperatorNamespaces = [...]string{"ot-operator1", "ot-operator2"}
+
 	// Helm chart installation extra arguments list
-	helmExtraArgs := []string{"--wait"}
+	helmExtraArgs := []string{"--wait", "--debug"}
 
 	// Before
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
 		stepfuncs.KubectlApplyFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
 		// Needed for OpenTelemetry Operator test
 		// TODO: Create namespaces only for specific tests
-		stepfuncs.KubectlCreateNamespaceOpt("ot-operator1"),
-		stepfuncs.KubectlCreateNamespaceOpt("ot-operator2"),
+		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[1]),
 		// Create Test Namespace
 		stepfuncs.KubectlCreateNamespaceTestOpt(),
 		// SetHelmOptionsTestOpt picks a values file from `values` directory
@@ -92,6 +96,8 @@ func ConfigureTestEnv(testenv env.Environment) {
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
 		stepfuncs.PrintClusterStateOpt(),
 		stepfuncs.HelmDeleteTestOpt(),
+		stepfuncs.KubectlDeleteNamespaceOpt(openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlDeleteNamespaceOpt(openTelemetryOperatorNamespaces[1]),
 		stepfuncs.KubectlDeleteNamespaceTestOpt(),
 		stepfuncs.KubectlDeleteFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
 	) {
