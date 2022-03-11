@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	otoperatorappsv1 "github.com/open-telemetry/opentelemetry-operator/apis/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/e2e-framework/klient/k8s"
@@ -114,6 +115,42 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 				wait.For(
 					conditions.New(res).
 						DeploymentConditionMatch(&ds.Items[0], appsv1.DeploymentAvailable, corev1.ConditionTrue),
+					wait.WithTimeout(waitDuration),
+					wait.WithInterval(tickDuration),
+				),
+			)
+			return ctx
+		}).
+		Assess("instrumentation-cr in ot-operator1 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			res := envConf.Client().Resources(ctxopts.Namespace(ctxopts.WithNamespace(ctx, "ot-operator1")))
+			releaseName := ctxopts.HelmRelease(ctx)
+			labelSelector := fmt.Sprintf("app=%s-sumologic-opentelemetry-operator-instrumentation", releaseName)
+			instrs := otoperatorappsv1.InstrumentationList{}
+
+			require.NoError(t,
+				wait.For(
+					conditions.New(res).
+						ResourceListN(&instrs, 1,
+							resources.WithLabelSelector(labelSelector),
+						),
+					wait.WithTimeout(waitDuration),
+					wait.WithInterval(tickDuration),
+				),
+			)
+			return ctx
+		}).
+		Assess("instrumentation-cr in ot-operator2 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			res := envConf.Client().Resources(ctxopts.Namespace(ctxopts.WithNamespace(ctx, "ot-operator2")))
+			releaseName := ctxopts.HelmRelease(ctx)
+			labelSelector := fmt.Sprintf("app=%s-sumologic-ot-operator-instrumentation", releaseName)
+			instrs := otoperatorappsv1.InstrumentationList{}
+
+			require.NoError(t,
+				wait.For(
+					conditions.New(res).
+						ResourceListN(&instrs, 1,
+							resources.WithLabelSelector(labelSelector),
+						),
 					wait.WithTimeout(waitDuration),
 					wait.WithInterval(tickDuration),
 				),
