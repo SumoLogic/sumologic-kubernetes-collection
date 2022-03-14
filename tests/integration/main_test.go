@@ -65,7 +65,7 @@ func ConfigureTestEnv(testenv env.Environment) {
 	var openTelemetryOperatorNamespaces = [...]string{"ot-operator1", "ot-operator2"}
 
 	// Helm chart installation extra arguments list
-	helmExtraArgs := []string{"--wait", "--debug"}
+	helmExtraArgs := []string{"--wait"}
 
 	// Before
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
