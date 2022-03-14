@@ -19,9 +19,9 @@ fluent-bit:
 
 # Request less resources so that this fits on Github actions runners environment
 fluentd:
-  logs:
-    statefulset:
-      replicaCount: 1
+  events:
+    enabled: false
   metrics:
-    statefulset:
-      replicaCount: 1
+    enabled: false
+  logs:
+    enabled: false
