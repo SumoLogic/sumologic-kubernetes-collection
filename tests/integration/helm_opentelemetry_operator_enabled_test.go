@@ -9,6 +9,7 @@ import (
 	otoperatorappsv1 "github.com/open-telemetry/opentelemetry-operator/apis/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/e2e-framework/klient/k8s"
 	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
 	"sigs.k8s.io/e2e-framework/klient/wait"
@@ -27,6 +28,12 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		tickDuration = time.Second
 		waitDuration = time.Minute * 2
 	)
+
+	// It is required to add v1alpha1 OT Operator Scheme to K8s Scheme
+	// https://github.com/open-telemetry/opentelemetry-operator/issues/772
+	if err := otoperatorappsv1.AddToScheme(scheme.Scheme); err != nil {
+		assert.Fail(t, "failed to register scheme: %v", err)
+	}
 
 	featTraces := features.New("traces").
 		// TODO: Rewrite into similar step func as WaitUntilStatefulSetIsReady but for deployments
@@ -122,7 +129,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 			return ctx
 		}).
 		Assess("instrumentation-cr in ot-operator1 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-			res := envConf.Client().Resources(ctxopts.Namespace(ctxopts.WithNamespace(ctx, "ot-operator1")))
+			res := envConf.Client().Resources("ot-operator1")
 			releaseName := ctxopts.HelmRelease(ctx)
 			labelSelector := fmt.Sprintf("app=%s-sumologic-opentelemetry-operator-instrumentation", releaseName)
 			instrs := otoperatorappsv1.InstrumentationList{}
@@ -140,9 +147,9 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 			return ctx
 		}).
 		Assess("instrumentation-cr in ot-operator2 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-			res := envConf.Client().Resources(ctxopts.Namespace(ctxopts.WithNamespace(ctx, "ot-operator2")))
+			res := envConf.Client().Resources("ot-operator2")
 			releaseName := ctxopts.HelmRelease(ctx)
-			labelSelector := fmt.Sprintf("app=%s-sumologic-ot-operator-instrumentation", releaseName)
+			labelSelector := fmt.Sprintf("app=%s-sumologic-opentelemetry-operator-instrumentation", releaseName)
 			instrs := otoperatorappsv1.InstrumentationList{}
 
 			require.NoError(t,
