@@ -2,6 +2,8 @@ sumologic:
   traces:
     enabled: true
     loadBalancing: true
+  metrics:
+    enabled: true
 
 # Prevent snowball effect by filtering out receiver mock logs
 fluent-bit:
@@ -23,23 +25,23 @@ fluentd:
 
 otelagent:
   enabled: true
-  config:
-    exporters:
-      loadbalancing:
-        protocol:
-          otlp:
-            timeout: 10s
-            tls:
-              insecure: true
-        resolver:
-          dns:
-            hostname: "exporters.otlp.endpoint.replace"
-            port: 4317
-    service:
-      extensions: [health_check, memory_ballast]
-      pipelines:
-        traces:
-          exporters: [loadbalancing]
+  # config:
+  #   exporters:
+  #     loadbalancing:
+  #       protocol:
+  #         otlp:
+  #           timeout: 10s
+  #           tls:
+  #             insecure: true
+  #       resolver:
+  #         dns:
+  #           hostname: "exporters.otlp.endpoint.replace"
+  #           port: 4317
+  #   service:
+  #     extensions: [health_check, memory_ballast]
+  #     pipelines:
+  #       traces:
+  #         exporters: [loadbalancing]
     
 
 otelcol:

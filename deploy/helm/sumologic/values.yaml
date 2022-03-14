@@ -3298,7 +3298,7 @@ otelagent:
         size_mib: 250
     exporters:
       otlp:
-        endpoint: "exporters.otlp.endpoint.replace:4317"
+        endpoint: '{{ (printf "%s:4317" (include "traces.otelagent.exporter.endpoint" .)) }}'
         tls:
           ## This disables TLS when communicating with the gateway (within the same cluster)
           insecure: true
@@ -4503,10 +4503,10 @@ otelgateway:
               insecure: true
         resolver:
           dns:
-            hostname: "exporters.loadbalancing.endpoint.replace"
+            hostname: '{{ include "traces.otelgateway.exporter.loadbalancing.endpoint" . }}'
             port: 4317
       otlp:
-        endpoint: "exporters.otlp.endpoint.replace:4317"
+        endpoint: '{{ (printf "%s:4317" (include "traces.otelgateway.exporter.endpoint" .)) }}'
         tls:
           ## This disables TLS when communicating with the gateway (within the same cluster)
           insecure: true
@@ -4517,7 +4517,6 @@ otelgateway:
           receivers: [jaeger, opencensus, otlp, zipkin]
           processors: [memory_limiter, batch]
           exporters: [loadbalancing]
-        # TODO (jmroz) metrics needed in gateway?
         metrics:
           receivers: [otlp]
           processors: [memory_limiter, batch]
