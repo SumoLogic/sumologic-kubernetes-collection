@@ -1,0 +1,90 @@
+---
+# Source: sumologic/templates/opentelemetry-operator/instrumentation-cr.yaml
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  namespace: ot-operator1
+  name: RELEASE-NAME-sumologic-opentelemetry-operator-instrumentation
+  labels:
+    app: RELEASE-NAME-sumologic-opentelemetry-operator-instrumentation
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+  annotations:
+    "helm.sh/hook": "post-install"
+spec:
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+    - xray
+  resource:
+    addK8sUIDAttributes: false
+  sampler:
+    type: always_on
+  env:
+    - name: OTEL_APPLICATION_NAMESPACE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: application=$(OTEL_APPLICATION_NAMESPACE_NAME)
+  python:
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://RELEASE-NAME-sumologic-otelcol.sumologic:4318
+  nodejs:
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://RELEASE-NAME-sumologic-otelcol.sumologic:4317
+  java:
+    env:
+      - name: OTEL_EXPORTER_OTLP_PROTOCOL
+        value: http/protobuf
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://RELEASE-NAME-sumologic-otelcol.sumologic:4318
+---
+# Source: sumologic/templates/opentelemetry-operator/instrumentation-cr.yaml
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  namespace: ot-operator2
+  name: RELEASE-NAME-sumologic-opentelemetry-operator-instrumentation
+  labels:
+    app: RELEASE-NAME-sumologic-opentelemetry-operator-instrumentation
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+  annotations:
+    "helm.sh/hook": "post-install"
+spec:
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+    - xray
+  resource:
+    addK8sUIDAttributes: false
+  sampler:
+    type: always_on
+  env:
+    - name: OTEL_APPLICATION_NAMESPACE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: application=$(OTEL_APPLICATION_NAMESPACE_NAME)
+  python:
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://RELEASE-NAME-sumologic-otelcol.sumologic:4318
+  nodejs:
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://RELEASE-NAME-sumologic-otelcol.sumologic:4317
+  java:
+    env:
+      - name: OTEL_EXPORTER_OTLP_PROTOCOL
+        value: http/protobuf
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://RELEASE-NAME-sumologic-otelcol.sumologic:4318
