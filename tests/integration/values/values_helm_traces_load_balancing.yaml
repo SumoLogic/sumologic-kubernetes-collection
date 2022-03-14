@@ -2,24 +2,10 @@ sumologic:
   traces:
     enabled: true
     loadBalancing: true
-
-# Prevent snowball effect by filtering out receiver mock logs
-fluent-bit:
-  config:
-    filters: |
-      [FILTER]
-          Name    grep
-          Match   containers.var.log.containers.receiver-mock*
-          Exclude log .*
-
-# Request less resources so that this fits on Github actions runners environment
-fluentd:
-  logs:
-    statefulset:
-      replicaCount: 1
   metrics:
-    statefulset:
-      replicaCount: 1
+    enabled: false
+  logs:
+    enabled: false
 
 otelagent:
   enabled: true

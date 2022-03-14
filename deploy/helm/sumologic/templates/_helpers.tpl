@@ -215,10 +215,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.otelagent" . }}-component
 {{- end -}}
 
-
-
-
-
 {{- define "sumologic.labels.app.otelgateway" -}}
 {{- template "sumologic.fullname" . }}-otelgateway
 {{- end -}}
@@ -242,11 +238,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "sumologic.labels.app.otelgateway.component" -}}
 {{- template "sumologic.labels.app.otelgateway" . }}-component
 {{- end -}}
-
-
-
-
-
 
 {{- define "sumologic.labels.app.remoteWriteProxy" -}}
 {{- template "sumologic.fullname" . }}-remote-write-proxy
@@ -523,7 +514,6 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- define "sumologic.metadata.name.otelagent.daemonset" -}}
 {{ template "sumologic.metadata.name.otelagent" . }}
 {{- end -}}
-
 
 {{- define "sumologic.metadata.name.otelgateway" -}}
 {{ template "sumologic.fullname" . }}-otelgateway
@@ -1319,4 +1309,20 @@ Example Usage:
 {{- if (get (get .Values .Provider) "serviceLabels") }}
 {{ toYaml (get (get .Values .Provider) "serviceLabels") }}
 {{- end }}
+{{- end -}}
+
+{{- define "traces.otelagent.exporter.endpoint" -}}
+{{- if eq .Values.sumologic.traces.loadBalancing true }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelgateway.service" . ) .Release.Namespace }}
+{{- else }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
+{{- end }}
+{{- end -}}
+
+{{- define "traces.otelgateway.exporter.endpoint" -}}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
+{{- end -}}
+
+{{- define "traces.otelgateway.exporter.loadbalancing.endpoint" -}}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-headless" . ) .Release.Namespace }}
 {{- end -}}
