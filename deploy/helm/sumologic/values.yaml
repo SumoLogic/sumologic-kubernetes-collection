@@ -4429,16 +4429,12 @@ otelgateway:
       tag: 0.0.50-beta.0
       pullPolicy: IfNotPresent
     livenessProbe:
-      initialDelaySeconds: 30
-      periodSeconds: 10
-      timeoutSeconds: 5
-      successThreshold: 1
-      failureThreshold: 6
+      periodSeconds: 15
+      timeoutSeconds: 10
+      failureThreshold: 3
     readinessProbe:
-      initialDelaySeconds: 5
-      periodSeconds: 5
+      periodSeconds: 10
       timeoutSeconds: 3
-      successThreshold: 1
       failureThreshold: 3
 
     ## Extra Environment Values - allows yaml definitions
