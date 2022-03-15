@@ -76,10 +76,9 @@ You can add any of the Fluentd filter plugins in the `extraFilterPluginConf` sec
 
 **Note:** This is specific to the container logs pipeline only and will not work for other logs.
 
-The below example uses the `grep` filter to match any record that satisfies the following conditions:
+The below example uses the `grep` filter to match any record that satisfies the following condition:
 
-- The value of the "message" field contains "cool"
-- The value of the "message" field does NOT contain "uncool"
+- log comes from the `my-namespace` namespace
 
 ```yaml
 fluentd:
@@ -89,13 +88,9 @@ fluentd:
         <filter containers.**>
           @type grep
           <regexp>
-            key message
-            pattern /cool/
+            key $.kubernetes.namespace_name
+            pattern /my-namespace/
           </regexp>
-          <exclude>
-            key message
-            pattern /uncool/
-          </exclude>
         </filter>
 ```
 
