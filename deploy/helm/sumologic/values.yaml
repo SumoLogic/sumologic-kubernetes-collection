@@ -4425,8 +4425,8 @@ otelgateway:
     ## Add custom annotations only to otelagent daemonset.
     podAnnotations: {}
     image:
-      repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.38.1-sumo"
+      repository: public.ecr.aws/sumologic/sumologic-otel-collector
+      tag: 0.0.50-beta.0
       pullPolicy: IfNotPresent
     livenessProbe:
       initialDelaySeconds: 30
