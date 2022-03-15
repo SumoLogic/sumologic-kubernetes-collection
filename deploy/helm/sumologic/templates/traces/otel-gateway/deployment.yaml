@@ -59,8 +59,7 @@ spec:
       - name: otelcontrib-gateway
         image: {{ .Values.otelgateway.deployment.image.repository }}:{{ .Values.otelgateway.deployment.image.tag }}
         imagePullPolicy: {{ .Values.otelgateway.deployment.image.pullPolicy }}
-        command:
-          - "/otelcontribcol"
+        args:
           - "--config=/conf/traces.otelgateway.conf.yaml"
         env:
         - name: GOGC
