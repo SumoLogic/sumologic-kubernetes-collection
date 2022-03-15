@@ -4428,6 +4428,18 @@ otelgateway:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
       tag: "0.38.1-sumo"
       pullPolicy: IfNotPresent
+    livenessProbe:
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      successThreshold: 1
+      failureThreshold: 6
+    readinessProbe:
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      successThreshold: 1
+      failureThreshold: 3
 
     ## Extra Environment Values - allows yaml definitions
     # extraEnvVars:
