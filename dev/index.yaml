@@ -389,6 +389,49 @@ entries:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.6.0-rc.0-2-gdbed74a74d.tgz
     version: 2.6.0-rc.0-2-gdbed74a74d
   - apiVersion: v2
+    appVersion: 2.6.0-rc.0-15-gad8b060c16
+    created: "2022-03-15T15:37:44.939443998Z"
+    dependencies:
+    - condition: fluent-bit.enabled,sumologic.logs.enabled
+      name: fluent-bit
+      repository: https://fluent.github.io/helm-charts
+      version: 0.14.1
+    - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 12.10.0
+    - condition: falco.enabled
+      name: falco
+      repository: https://falcosecurity.github.io/charts
+      version: 1.16.2
+    - condition: metrics-server.enabled
+      name: metrics-server
+      repository: https://charts.bitnami.com/bitnami
+      version: 5.8.4
+    - condition: telegraf-operator.enabled
+      name: telegraf-operator
+      repository: https://helm.influxdata.com/
+      version: 1.3.3
+    - condition: tailing-sidecar-operator.enabled
+      name: tailing-sidecar-operator
+      repository: https://sumologic.github.io/tailing-sidecar
+      version: 0.3.2
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
+    digest: 726612fe835d6440a0cf3a1b38fab238988ecaf7baf6f8739f9f710d2af63bb3
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    type: application
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.6.0-rc.0-15-gad8b060c16.tgz
+    version: 2.6.0-rc.0-15-gad8b060c16
+  - apiVersion: v2
     appVersion: 2.6.0-rc.0-14-g92ffc6ff7c
     created: "2022-03-15T13:48:10.98089897Z"
     dependencies:
@@ -42681,4 +42724,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-0.15.22-alpha-12-g4127801.tgz
     version: 0.15.22-alpha-12-g4127801
-generated: "2022-03-15T13:48:10.939282984Z"
+generated: "2022-03-15T15:37:44.887581463Z"
