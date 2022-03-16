@@ -389,6 +389,8 @@ fluentd:
     ## traffic to api server is much distributed.
     ## Disclaimer: Not recommended for use, if your api server read latency is > 1s
     cacheRefreshApiserverRequestDelay: "0"
+    ## Option to disable metadata cache refresh
+    cacheRefreshExcludePodRegex: ""
     ## Option to give plugin specific log level
     pluginLogLevel: "error"
     ## Option to specify K8s API versions

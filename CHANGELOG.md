@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat: add pprof extension for otelcol [#2173][#2173]
+- feat: selectively disable cache for metadata enrichment calls [#2190][#2190]
 
 ### Changed
 
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2177]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2177
 [#2173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2173
 [#2182]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2182
+[#2190]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2190
 [#2196]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2196
 [#2197]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2197
 
