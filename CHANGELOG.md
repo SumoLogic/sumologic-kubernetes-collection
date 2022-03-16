@@ -11,12 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat: add pprof extension for otelcol [#2173][#2173]
 - feat(tracing): traces loadbalancing gateway [#2137][#2137]
+- feat: selectively disable cache for metadata enrichment calls [#2190][#2190]
 
 ### Changed
 
 - feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
 - chore(deps): bump prometheus node exporter tag to 2.3.1 [#2177][#2177]
 - feat(tracing): otelagent will use loadbalancing gateway if sumologic.loadbalancing is set to true
+- chore: upgrade Fluentd to 1.14.5-sumo-1 [#2196][#2196]
+- chore: upgrade Falco Helm Chart to 1.17.4 [#2197][#2197]
 
 ### Fixed
 
@@ -27,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2177]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2177
 [#2173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2173
 [#2182]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2182
+[#2190]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2190
+[#2196]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2196
+[#2197]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2197
 
 ## [v2.6.0][v2.6.0]
 
@@ -225,8 +231,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(helm): add fluentd init containers [#1928][#1928]
 - Add support for GKE 1.21 [#1907][#1907]
 - feat: add affinity to fluentd events statefulset [#1895][#1895]
-- feat(helm): add PodDisruptionBudget api version helm chart helpers [#1865][#1865] [#1943][#1943]
 - feat: add option to disable `service` enrichment [#1936][#1936]
+- feat(helm): add PodDisruptionBudget api version helm chart helpers [#1865][#1865] [#1943][#1943]
 
 ### Changed
 
