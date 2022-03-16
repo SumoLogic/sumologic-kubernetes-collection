@@ -175,6 +175,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: bump Thanos image to our build of v0.23.1 [#1973][#1973]
 - Introduced option to add cache refresh delay for metadata enrichment calls [#1974][#1974]
 - chore(deps): bump Sumo OT distro to 0.0.47-beta.0 [#2035][#2035]
+- Introduced option to add selectively disable cache for metadata enrichment calls [#2036][#2036]
 
 ### Fixed
 
