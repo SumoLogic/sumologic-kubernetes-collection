@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
 - chore(deps): bump prometheus node exporter tag to 2.3.1 [#2177][#2177]
 - chore: upgrade Fluentd to 1.14.5-sumo-1 [#2196][#2196]
+- chore: upgrade Falco Helm Chart to 1.17.4 [#2197][#2197]
 
 ### Fixed
 
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2173
 [#2182]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2182
 [#2196]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2196
+[#2197]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2197
 
 ## [v2.6.0][v2.6.0]
 
