@@ -258,7 +258,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [v2_3_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
 [v0.38.1-cfp]: https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
-[v0.38.1-cfp-help]: https://help.sumologic.com/Traces/Getting_Started_with_Transaction_Tracing/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F
+[v0.38.1-cfp-help]: https://help.sumologic.com/Traces/03Advanced_Configuration/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F
 [#1907]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1907
 [#1906]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1906
 [#1895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1895
