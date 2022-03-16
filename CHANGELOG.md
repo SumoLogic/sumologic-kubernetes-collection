@@ -10,11 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat: add pprof extension for otelcol [#2173][#2173]
+- feat(tracing): traces loadbalancing gateway [#2137][#2137]
 
 ### Changed
 
 - feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
 - chore(deps): bump prometheus node exporter tag to 2.3.1 [#2177][#2177]
+- feat(tracing): otelagent will use loadbalancing gateway if sumologic.loadbalancing is set to true
 
 ### Fixed
 

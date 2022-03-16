@@ -4408,6 +4408,7 @@ metadata:
       # maxUnavailable: 1
 
 ## Configure optional OpenTelemetry Gateway in Agent mode
+## ref: docs/opentelemetry_collector.md#load-balancing-using-the-gateway
 otelgateway:
   enabled: false
   deployment:

@@ -1311,6 +1311,13 @@ Example Usage:
 {{- end }}
 {{- end -}}
 
+{{/*
+Endpoint used by otelagent exporter.
+
+Example Usage:
+{{- $otelcolService := include "traces.otelagent.exporter.endpoint" . }}
+
+*/}}
 {{- define "traces.otelagent.exporter.endpoint" -}}
 {{- if eq .Values.sumologic.traces.loadBalancing true }}
 {{- printf "%s.%s" ( include "sumologic.metadata.name.otelgateway.service" . ) .Release.Namespace }}
@@ -1319,10 +1326,22 @@ Example Usage:
 {{- end }}
 {{- end -}}
 
+{{/*
+Endpoint used by otelgateway otlp exporter.
+
+Example Usage:
+'{{ include "traces.otelgateway.exporter.loadbalancing.endpoint" . }}'
+*/}}
 {{- define "traces.otelgateway.exporter.endpoint" -}}
 {{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
 {{- end -}}
 
+{{/*
+Endpoint used by otelgateway loadbalancing exporter.
+
+Example Usage:
+{{- if eq (include "service.labels" dict("Provider" "fluentd" "Values" .Values)) "true" }}
+*/}}
 {{- define "traces.otelgateway.exporter.loadbalancing.endpoint" -}}
 {{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-headless" . ) .Release.Namespace }}
 {{- end -}}
