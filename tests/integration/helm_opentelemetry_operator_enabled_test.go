@@ -32,7 +32,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 	// It is required to add v1alpha1 OT Operator Scheme to K8s Scheme
 	// https://github.com/open-telemetry/opentelemetry-operator/issues/772
 	if err := otoperatorappsv1.AddToScheme(scheme.Scheme); err != nil {
-		assert.Fail(t, "failed to register scheme: %v", err)
+		require.Fail(t, "failed to register scheme: %v", err)
 	}
 
 	featTraces := features.New("traces").
