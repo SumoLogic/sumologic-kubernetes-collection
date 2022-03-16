@@ -1,1 +1,4 @@
-{{ tpl (toYaml .Values.otelagent.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}
+{{- $yamlFile := toYaml $.Values.otelagent.config }}
+{{- $otelcolService := include "traces.otelagent.exporter.endpoint" . }}
+{{- $yamlFile = replace "exporters.otlp.endpoint.replace" $otelcolService $yamlFile }}
+{{ tpl ($yamlFile | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}

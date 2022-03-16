@@ -3298,7 +3298,7 @@ otelagent:
         size_mib: 250
     exporters:
       otlp:
-        endpoint: '{{ (printf "%s:4317" (include "traces.otelagent.exporter.endpoint" .)) }}'
+        endpoint: 'exporters.otlp.endpoint.replace:4317'
         tls:
           ## This disables TLS when communicating with the gateway (within the same cluster)
           insecure: true
