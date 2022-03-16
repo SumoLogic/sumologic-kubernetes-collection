@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat: add pprof extension for otelcol [#2173][#2173]
-- Introduced option to add selectively disable cache for metadata enrichment calls [#2190][#2190]
+- feat: selectively disable cache for metadata enrichment calls [#2190][#2190]
 
 ### Changed
 
