@@ -1300,6 +1300,14 @@ opentelemetry-operator-controller-manager-service-cert
 
 {{/*
 Generate certificates for opentelemetry-operator webhook
+
+Example usage:
+{{ $certManagerEnabled := index .Values "opentelemetry-operator" "admissionWebhooks" "certManager" "enabled" }}
+{{ $operatorEnabled := index .Values "opentelemetry-operator" "enabled" }}
+{{- if eq ( not $certManagerEnabled ) $operatorEnabled }}
+{{ ( include "opentelemetry-operator.non_certmanager" . ) }}
+{{- end }}
+
 */}}
 {{- define "opentelemetry-operator.non_certmanager" -}}
 {{- $altNames := list ( printf "%s.%s" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) ( printf "%s.%s.svc" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) ( printf "%s.%s.svc.cluster.local" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) -}}
