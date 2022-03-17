@@ -452,9 +452,7 @@ Sample config:
 sumologic:
   traces:
     enabled: true
-    loadBalancing: true
-  metrics:
-    enabled: false
+
   otelagent:
     enabled: true
 

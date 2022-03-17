@@ -1319,7 +1319,7 @@ Example Usage:
 
 */}}
 {{- define "traces.otelagent.exporter.endpoint" -}}
-{{- if eq .Values.sumologic.traces.loadBalancing true }}
+{{- if (eq .Values.otelgateway.enabled true) }}
 {{- printf "%s.%s" ( include "sumologic.metadata.name.otelgateway.service" . ) .Release.Namespace }}
 {{- else }}
 {{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
