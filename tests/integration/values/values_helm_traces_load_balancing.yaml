@@ -4,6 +4,8 @@ sumologic:
     loadBalancing: true
   metrics:
     enabled: false
+  logs:
+    enabled: false
 
 otelagent:
   enabled: true
