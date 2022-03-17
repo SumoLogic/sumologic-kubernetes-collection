@@ -230,8 +230,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(helm): add fluentd init containers [#1928][#1928]
 - Add support for GKE 1.21 [#1907][#1907]
 - feat: add affinity to fluentd events statefulset [#1895][#1895]
-- feat: add option to disable `service` enrichment [#1936][#1936]
 - feat(helm): add PodDisruptionBudget api version helm chart helpers [#1865][#1865] [#1943][#1943]
+- feat: add option to disable `service` enrichment [#1936][#1936]
 
 ### Changed
 

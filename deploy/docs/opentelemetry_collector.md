@@ -15,7 +15,6 @@ We offer it as drop-in replacement for Fluentd in our collection.
 - [Traces](#traces)
   - [Load balancing using the gateway](#load-balancing-using-the-gateway)
 
-
 ## Metrics
 
 We are using Opentelemetry Collector like Fluentd to enrich metadata and to filter data.
@@ -444,7 +443,8 @@ kubectl delete pvc --namespace ${NAMESPACE} --selector app=${RELEASE_NAME}-sumol
 Open Telemetry supports Trace ID aware load balancing. An example use case for load balancing is scaling a cascading_filter that requires spans with same Trace ID to be send to the same collector instance.
 
 Sumologic kubernetes collection supports three layer architecture - with an agent, gateway and a collector - in order to perform Trace ID aware load balancing.
-Agent, if load balancing is configured, sends traces to the gateway. Gateway is configured with a load balancing exporter pointing to the collector headless service. Gateway may also be exposed outside cluster, allowing to load balance traces originating from outside kubernetes cluster.
+
+Agent, if the gateway is enabled, sends traces to the gateway. Gateway is configured with a load balancing exporter pointing to the collector headless service. Gateway may also be exposed outside cluster, allowing to load balance traces originating from outside kubernetes cluster.
 
 Sample config:
 
@@ -456,13 +456,11 @@ sumologic:
   otelagent:
     enabled: true
 
-  otelcol:
-    enabled: true
-
   otelgateway:
     enabled: true
 ```
 
 Refs:
+
 - [Trace ID aware load balancing](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/loadbalancingexporter/README.md)
-- [Using cascading_filter](https://help.sumologic.com/Traces/03Advanced_Configuration/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F) 
+- [Using cascading_filter](https://help.sumologic.com/Traces/03Advanced_Configuration/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F)
