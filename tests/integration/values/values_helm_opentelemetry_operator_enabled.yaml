@@ -8,15 +8,6 @@ opentelemetry-operator:
     env:
       WATCH_NAMESPACE: "ot-operator1,ot-operator2"
 
-# Prevent snowball effect by filtering out receiver mock logs
-fluent-bit:
-  config:
-    filters: |
-      [FILTER]
-          Name    grep
-          Match   containers.var.log.containers.receiver-mock*
-          Exclude log .*
-
 # Request less resources so that this fits on Github actions runners environment
 fluentd:
   events:

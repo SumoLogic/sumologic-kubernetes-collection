@@ -64,9 +64,6 @@ func ConfigureTestEnv(testenv env.Environment) {
 	// opentelemetry-operator.manager.env.WATCH_NAMESPACE value
 	var openTelemetryOperatorNamespaces = [...]string{"ot-operator1", "ot-operator2"}
 
-	// Helm chart installation extra arguments list
-	helmExtraArgs := []string{"--wait"}
-
 	// Before
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
 		stepfuncs.KubectlApplyFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
@@ -85,7 +82,7 @@ func ConfigureTestEnv(testenv env.Environment) {
 		// The reason for this is to limit the amount of boilerplate in tests
 		// themselves but we cannot attach/map the values.yaml to the test itself
 		// so we do this mapping instead.
-		stepfuncs.SetHelmOptionsTestOpt(helmExtraArgs),
+		stepfuncs.SetHelmOptionsTestOpt([]string{"--wait"}),
 		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
 		stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath),
 	) {

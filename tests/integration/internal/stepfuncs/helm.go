@@ -108,7 +108,7 @@ func HelmDeleteTestOpt() features.Func {
 // By default the default cluster namespace will be used. If you'd like to specify the namespace
 // use SetKubectlNamespaceOpt.
 //
-func SetHelmOptionsOpt(valuesFilePath string, extraArgs map[string][]string) features.Func {
+func SetHelmOptionsOpt(valuesFilePath string, extraInstallationArgs map[string][]string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		kubectlOptions := ctxopts.KubectlOptions(ctx)
 		require.NotNil(t, kubectlOptions)
@@ -121,7 +121,7 @@ func SetHelmOptionsOpt(valuesFilePath string, extraArgs map[string][]string) fea
 		return ctxopts.WithHelmOptions(ctx, &helm.Options{
 			KubectlOptions: kubectlOptions,
 			ValuesFiles:    []string{yamlFilePathCommon, valuesFilePath},
-			ExtraArgs:      extraArgs,
+			ExtraArgs:      extraInstallationArgs,
 		})
 	}
 }
@@ -130,11 +130,11 @@ func SetHelmOptionsOpt(valuesFilePath string, extraArgs map[string][]string) fea
 // `values` directory and concatenating that with a name name generated from a test name.
 //
 // The details of values file name generation can be found in `strings.ValueFileFromT()`.
-func SetHelmOptionsTestOpt(extraArgs []string) features.Func {
+func SetHelmOptionsTestOpt(extraInstallationArgs []string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		valuesFilePath := path.Join("values", strings.ValueFileFromT(t))
 		extraArgs := map[string][]string{
-			"install": extraArgs,
+			"install": extraInstallationArgs,
 		}
 		return SetHelmOptionsOpt(valuesFilePath, extraArgs)(ctx, t, envConf)
 	}
