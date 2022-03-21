@@ -251,6 +251,18 @@ sumologic:
         successThreshold: 1
         failureThreshold: 3
 
+      securityContext: {}
+      nodeSelector: {}
+      tolerations: []
+      affinity: {}
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+
+      ## Add custom labels only to metrics sts pods
+      podLabels: {}
+      ## Add custom annotations only to metrics sts pods
+      podAnnotations: {}
+
   ### Traces configuration
   ## Set the enabled flag to true to enable traces ingestion.
   traces:
