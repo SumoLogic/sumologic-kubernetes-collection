@@ -3990,6 +3990,9 @@ metadata:
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 3
+          startupProbe:
+            periodSeconds: 3
+            failureThreshold: 60
 
       ## Extra Environment Values - allows yaml definitions
       # extraEnvVars:
@@ -4374,6 +4377,9 @@ metadata:
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 3
+          startupProbe:
+            periodSeconds: 3
+            failureThreshold: 60
 
       ## Extra Environment Values - allows yaml definitions
       # extraEnvVars:
