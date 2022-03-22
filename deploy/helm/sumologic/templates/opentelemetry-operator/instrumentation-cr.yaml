@@ -37,8 +37,8 @@ spec:
       value: application=$(OTEL_APPLICATION_NAMESPACE_NAME)
   python:
     env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318/v1/traces
   nodejs:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
