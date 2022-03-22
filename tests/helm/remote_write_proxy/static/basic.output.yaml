@@ -24,6 +24,8 @@ spec:
         release: "RELEASE-NAME"
         heritage: "Helm"
     spec:
+      securityContext:
+        {}
       containers:
       - name: nginx
         image: public.ecr.aws/nginx/nginx:1.21-alpine
