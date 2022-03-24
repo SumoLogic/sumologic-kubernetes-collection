@@ -1330,7 +1330,7 @@ Example Usage:
 Endpoint used by otelgateway otlp exporter.
 
 Example Usage:
-'{{ include "traces.otelgateway.exporter.loadbalancing.endpoint" . }}'
+'{{ include "traces.otelgateway.exporter.endpoint." . }}'
 */}}
 {{- define "traces.otelgateway.exporter.endpoint" -}}
 {{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
@@ -1340,7 +1340,7 @@ Example Usage:
 Endpoint used by otelgateway loadbalancing exporter.
 
 Example Usage:
-{{- if eq (include "service.labels" dict("Provider" "fluentd" "Values" .Values)) "true" }}
+'{{ include "traces.otelgateway.exporter.loadbalancing.endpoint" . }}'
 */}}
 {{- define "traces.otelgateway.exporter.loadbalancing.endpoint" -}}
 {{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-headless" . ) .Release.Namespace }}
