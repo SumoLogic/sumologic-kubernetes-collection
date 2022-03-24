@@ -440,9 +440,9 @@ kubectl delete pvc --namespace ${NAMESPACE} --selector app=${RELEASE_NAME}-sumol
 
 ### Load balancing using the gateway
 
-Open Telemetry supports Trace ID aware load balancing. An example use case for load balancing is scaling a cascading_filter that requires spans with same Trace ID to be send to the same collector instance.
+Open Telemetry supports Trace ID aware load balancing. An example use case for load balancing is scaling `cascading_filter` that requires spans with same Trace ID to be send to the same collector instance.
 
-Sumologic kubernetes collection supports three layer architecture - with an agent, gateway and a collector - in order to perform Trace ID aware load balancing.
+Sumo Logic kubernetes collection supports three layer architecture - with an agent, gateway and a collector - in order to perform Trace ID aware load balancing.
 
 Agent, if the gateway is enabled, sends traces to the gateway. Gateway is configured with a load balancing exporter pointing to the collector headless service. Gateway may also be exposed outside cluster, allowing to load balance traces originating from outside kubernetes cluster.
 
