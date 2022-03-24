@@ -4440,9 +4440,9 @@ otelgateway:
       timeoutSeconds: 3
       failureThreshold: 3
     startupProbe:
-      periodSeconds: 10
+      periodSeconds: 5
       timeoutSeconds: 3
-      failureThreshold: 30
+      failureThreshold: 60
 
     ## Extra Environment Values - allows yaml definitions
     # extraEnvVars:
