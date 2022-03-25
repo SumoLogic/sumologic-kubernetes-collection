@@ -89,6 +89,10 @@ spec:
               topologyKey: "kubernetes.io/hostname"
 {{- end }}
 {{- end }}
+{{- if .Values.fluentd.metrics.statefulset.topologySpreadConstraints }}
+      topologySpreadConstraints:
+{{ toYaml .Values.fluentd.metrics.statefulset.topologySpreadConstraints | indent 6 }}
+{{- end }}
       volumes:
       - name: config-volume
         configMap:
