@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: selectively disable cache for metadata enrichment calls [#2190][#2190]
 - feat(otelcol): introduce default initialDelaySeconds [#2200][#2200]
 - feat(otelcol): add startupProbe config option [#2201][#2201]
+- feat: add topologySpreadContraints config option to logs and metrics metadata providers [#2211][#2211]
 
 ### Changed
 
@@ -35,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2197]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2197
 [#2200]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2200
 [#2201]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2201
+[#2211]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2211
 
 ## [v2.6.0][v2.6.0]
 
