@@ -1,0 +1,68 @@
+sumologic:
+  metrics:
+    remoteWriteProxy:
+      enabled: true
+      config:
+        ## Increase this if you've increased samples_per_send in Prometheus to prevent nginx
+        ## from spilling proxied request bodies to disk
+        clientBodyBufferSize: "32k"
+        ## This feature autodetects how much CPU is assigned to the nginx instance and sets
+        ## the right amount of workers based on that. Disable to use the default of 8 workers.
+        workerCountAutotune: false
+      replicaCount: 4
+      image:
+        repository: public.ecr.aws/nginx/nginx-custom
+        tag: 0.0-alpine
+        pullPolicy: Always
+      resources:
+        limits:
+          cpu: 400m
+          memory: 1024Mi
+        requests:
+          cpu: 300m
+          memory: 512Mi
+      livenessProbe:
+        initialDelaySeconds: 60
+        periodSeconds: 20
+        timeoutSeconds: 10
+        successThreshold: 2
+        failureThreshold: 10
+      readinessProbe:
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 6
+        successThreshold: 2
+        failureThreshold: 6
+
+      securityContext:
+        allowPrivilegeEscalation: false
+      nodeSelector:
+        disktype: ssd
+      tolerations:
+        - key: "key1"
+          operator: "Equal"
+          value: "value1"
+          effect: "NoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/e2e-az-name
+                operator: In
+                values:
+                - e2e-az1
+                - e2e-az2
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: another-node-label-key
+                operator: In
+                values:
+                - another-node-label-value
+      priorityClassName: high-priority
+      podLabels:
+        my-label: rwp
+      podAnnotations:
+        my-annotation: rwp

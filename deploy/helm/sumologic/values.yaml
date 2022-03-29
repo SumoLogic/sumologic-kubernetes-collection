@@ -251,6 +251,18 @@ sumologic:
         successThreshold: 1
         failureThreshold: 3
 
+      securityContext: {}
+      nodeSelector: {}
+      tolerations: []
+      affinity: {}
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+
+      ## Add custom labels only to metrics sts pods
+      podLabels: {}
+      ## Add custom annotations only to metrics sts pods
+      podAnnotations: {}
+
   ### Traces configuration
   ## Set the enabled flag to true to enable traces ingestion.
   traces:
@@ -414,6 +426,7 @@ fluentd:
     statefulset:
       nodeSelector: {}
       tolerations: []
+      topologySpreadConstraints: []
       affinity: {}
       ## Acceptable values for podAntiAffinity:
       ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
@@ -710,6 +723,7 @@ fluentd:
     statefulset:
       nodeSelector: {}
       tolerations: []
+      topologySpreadConstraints: []
       affinity: {}
       ## Acceptable values for podAntiAffinity:
       ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
@@ -3957,6 +3971,7 @@ metadata:
     statefulset:
       nodeSelector: {}
       tolerations: []
+      topologySpreadConstraints: []
       affinity: {}
       ## Acceptable values for podAntiAffinity:
       ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
@@ -3983,13 +3998,18 @@ metadata:
         otelcol:
           securityContext: {}
           livenessProbe:
+            initialDelaySeconds: 15
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
+            initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 3
+          startupProbe:
+            periodSeconds: 3
+            failureThreshold: 60
 
       ## Extra Environment Values - allows yaml definitions
       # extraEnvVars:
@@ -4341,6 +4361,7 @@ metadata:
     statefulset:
       nodeSelector: {}
       tolerations: []
+      topologySpreadConstraints: []
       affinity: {}
       ## Acceptable values for podAntiAffinity:
       ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
@@ -4367,13 +4388,18 @@ metadata:
         otelcol:
           securityContext: {}
           livenessProbe:
+            initialDelaySeconds: 15
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
+            initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 3
+          startupProbe:
+            periodSeconds: 3
+            failureThreshold: 60
 
       ## Extra Environment Values - allows yaml definitions
       # extraEnvVars:
