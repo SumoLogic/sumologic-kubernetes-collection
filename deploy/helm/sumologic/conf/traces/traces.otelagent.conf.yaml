@@ -1,8 +1,4 @@
 {{- $yamlFile := toYaml $.Values.otelagent.config }}
-
-{{- $otelcolService := include "sumologic.metadata.name.otelcol.service" . }}
-{{- $collectorAddress := printf "%s.%s" $otelcolService .Release.Namespace }}
-
-{{- $yamlFile := replace "exporters.otlp.endpoint.replace" $collectorAddress $yamlFile }}
-
+{{- $otelcolService := include "traces.otelagent.exporter.endpoint" . }}
+{{- $yamlFile = replace "exporters.otlp.endpoint.replace" $otelcolService $yamlFile }}
 {{ tpl ($yamlFile | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}

@@ -55,8 +55,7 @@ spec:
       - name: otelcontrib-agent
         image: {{ .Values.otelagent.daemonset.image.repository }}:{{ .Values.otelagent.daemonset.image.tag }}
         imagePullPolicy: {{ .Values.otelagent.daemonset.image.pullPolicy }}
-        command:
-          - "/otelcontribcol"
+        args:
           - "--config=/conf/traces.otelagent.conf.yaml"
         env:
         - name: GOGC

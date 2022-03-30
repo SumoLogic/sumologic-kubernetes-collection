@@ -1,0 +1,11 @@
+{{- if and (eq .Values.sumologic.traces.enabled true) (eq .Values.otelgateway.enabled true) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.otelgateway.configmap" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.otelgateway.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  {{- (tpl (.Files.Glob "conf/traces/traces.otelgateway.conf.yaml").AsConfig .) | nindent 2 }}
+{{- end }}

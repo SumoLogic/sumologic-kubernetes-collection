@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat: add pprof extension for otelcol [#2173][#2173]
+- feat(tracing): traces load balancing gateway [#2137][#2137]
 - feat: selectively disable cache for metadata enrichment calls [#2190][#2190]
 - feat(otelcol): introduce default initialDelaySeconds [#2200][#2200]
 - feat(otelcol): add startupProbe config option [#2201][#2201]
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(helm): always create default metrics source if traces are enabled [#2182][#2182]
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
+[#2137]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2137
 [#2170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2170
 [#2177]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2177
 [#2173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2173

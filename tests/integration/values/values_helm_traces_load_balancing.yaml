@@ -1,0 +1,13 @@
+sumologic:
+  traces:
+    enabled: true
+  metrics:
+    enabled: false
+  logs:
+    enabled: false
+
+otelagent:
+  enabled: true
+
+otelgateway:
+  enabled: true
