@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(helm): always create default metrics source if traces are enabled [#2182][#2182]
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
+[#2137]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2137
 [#2170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2170
 [#2177]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2177
 [#2173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2173
