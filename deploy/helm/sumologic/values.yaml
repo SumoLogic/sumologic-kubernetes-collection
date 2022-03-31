@@ -3897,10 +3897,8 @@ metadata:
           ## it can result in unnecessary CPU consumption.
           check_interval: 5s
 
-          ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
-          ## Note that typically the total memory usage of process will be about 50MiB higher
-          ## than this value.
-          limit_mib: 1900
+          ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+          limit_percentage: 75
         ## Configuration for Batch Processor
         ## The batch processor accepts spans and places them into batches grouped by node and resource
         ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
@@ -4118,10 +4116,8 @@ metadata:
           ## it can result in unnecessary CPU consumption.
           check_interval: 5s
 
-          ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
-          ## Note that typically the total memory usage of process will be about 50MiB higher
-          ## than this value.
-          limit_mib: 1900
+          ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+          limit_percentage: 75
         ## The batch processor accepts spans and places them into batches grouped by node and resource
         batch:
           ## Number of spans after which a batch will be sent regardless of time
@@ -4519,10 +4515,8 @@ otelgateway:
         ## it can result in unnecessary CPU consumption.
         check_interval: 5s
 
-        ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
-        ## Note that typically the total memory usage of process will be about 50MiB higher
-        ## than this value.
-        limit_mib: 1900
+        ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+        limit_percentage: 75
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
