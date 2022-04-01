@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore(deps): bump prometheus node exporter tag to 2.3.1 [#2177][#2177]
 - chore: upgrade Fluentd to 1.14.5-sumo-1 [#2196][#2196]
 - chore: upgrade Falco Helm Chart to 1.17.4 [#2197][#2197]
-- chore: bump sumo ot distro to 0.0.50-beta.0 [#2213][#2213]
+- chore: bump sumo ot distro to 0.0.58-beta.0 [#2213][#2213]
 
 ### Fixed
 
