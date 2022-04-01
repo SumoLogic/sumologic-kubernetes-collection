@@ -37,7 +37,8 @@ data:
         timeout: 5s
       memory_limiter:
         check_interval: 5s
-        limit_mib: 1900
+        limit_percentage: 75
+        spike_limit_percentage: 20
     receivers:
       jaeger:
         protocols:

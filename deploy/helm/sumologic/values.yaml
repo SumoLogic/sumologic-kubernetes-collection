@@ -3570,7 +3570,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.0.50-beta.0
+    tag: 0.0.58-beta.0
     pullPolicy: IfNotPresent
 
   securityContext:
@@ -3897,10 +3897,11 @@ metadata:
           ## it can result in unnecessary CPU consumption.
           check_interval: 5s
 
-          ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
-          ## Note that typically the total memory usage of process will be about 50MiB higher
-          ## than this value.
-          limit_mib: 1900
+          ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+          limit_percentage: 75
+          ## Spike limit (calculated from available memory). Must be less than limit_percentage.
+          spike_limit_percentage: 20
+
         ## Configuration for Batch Processor
         ## The batch processor accepts spans and places them into batches grouped by node and resource
         ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
@@ -4118,10 +4119,11 @@ metadata:
           ## it can result in unnecessary CPU consumption.
           check_interval: 5s
 
-          ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
-          ## Note that typically the total memory usage of process will be about 50MiB higher
-          ## than this value.
-          limit_mib: 1900
+          ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+          limit_percentage: 75
+          ## Spike limit (calculated from available memory). Must be less than limit_percentage.
+          spike_limit_percentage: 20
+
         ## The batch processor accepts spans and places them into batches grouped by node and resource
         batch:
           ## Number of spans after which a batch will be sent regardless of time
@@ -4455,7 +4457,7 @@ otelgateway:
     podAnnotations: {}
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.0.50-beta.0
+      tag: 0.0.58-beta.0
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15
@@ -4519,10 +4521,10 @@ otelgateway:
         ## it can result in unnecessary CPU consumption.
         check_interval: 5s
 
-        ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
-        ## Note that typically the total memory usage of process will be about 50MiB higher
-        ## than this value.
-        limit_mib: 1900
+        ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+        limit_percentage: 75
+        ## Spike limit (calculated from available memory). Must be less than limit_percentage.
+        spike_limit_percentage: 20
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
@@ -4577,7 +4579,7 @@ otellogs:
   ## Configure image for Opentelemetry Collector
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.0.50-beta.0
+    tag: 0.0.58-beta.0
     pullPolicy: IfNotPresent
 
   logLevel: info

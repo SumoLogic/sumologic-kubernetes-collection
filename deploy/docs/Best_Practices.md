@@ -980,8 +980,8 @@ For [sumologic exporter][sumologic_exporter]:
 **The above in connection with PVC monitoring can lead to constant alerts (eg. [KubePersistentVolumeFillingUp][filling_up_alert]),**
 **because once filled in PVC never reduces its fill.**
 
-[batch_processor]: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.44.0/processor/batchprocessor#batch-processor
-[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/exporter/sumologicexporter#sumo-logic-exporter
+[batch_processor]: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.47.0/processor/batchprocessor#batch-processor
+[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.58-beta.0/pkg/exporter/sumologicexporter#sumo-logic-exporter
 [filling_up_alert]: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumefillingup/
 
 ### Compaction
