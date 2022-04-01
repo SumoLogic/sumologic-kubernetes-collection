@@ -3899,6 +3899,9 @@ metadata:
 
           ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
           limit_percentage: 75
+          ## Spike limit (calculated from available memory). Must be less than limit_percentage.
+          spike_limit_percentage: 20
+
         ## Configuration for Batch Processor
         ## The batch processor accepts spans and places them into batches grouped by node and resource
         ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
@@ -4118,6 +4121,9 @@ metadata:
 
           ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
           limit_percentage: 75
+          ## Spike limit (calculated from available memory). Must be less than limit_percentage.
+          spike_limit_percentage: 20
+
         ## The batch processor accepts spans and places them into batches grouped by node and resource
         batch:
           ## Number of spans after which a batch will be sent regardless of time
@@ -4517,6 +4523,8 @@ otelgateway:
 
         ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
         limit_percentage: 75
+        ## Spike limit (calculated from available memory). Must be less than limit_percentage.
+        spike_limit_percentage: 20
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
