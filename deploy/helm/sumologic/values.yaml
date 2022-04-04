@@ -4664,7 +4664,7 @@ otellogs:
           ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
           - id: merge-docker-lines
             type: recombine
-            output: extract-metadata-from-filepath
+            output: merge-multiline-logs
             combine_field: log
             is_last_entry: $$body.log matches "\n$"
 
@@ -4674,24 +4674,22 @@ otellogs:
           ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
           - id: merge-cri-lines
             type: recombine
-            output: extract-metadata-from-filepath
+            output: merge-multiline-logs
             combine_field: log
             combine_with: ""
             is_last_entry: $$body.logtag == "F"
             overwrite_with: newest
 
-          ## This operator is currently disabled because it combines logs before any entry has been matched:
-          ## https://github.com/open-telemetry/opentelemetry-log-collection/pull/416
-          ##
           ## merge-multiline-logs merges incoming log records into multiline logs.
           ## Input Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
           ## Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
           ## Input Body (JSON): { "log": "  third line\n", "stream": "stdout" }
           ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n  second line\n  third line\n", "stream": "stdout" }
-          # - id: merge-multiline-logs
-          #   type: recombine
-          #   combine_field: log
-          #   is_first_entry: $$body.log matches "^[^\\s]"
+          - id: merge-multiline-logs
+            output: extract-metadata-from-filepath
+            type: recombine
+            combine_field: log
+            is_first_entry: $$body.log matches "^\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*"
 
           ## extract-metadata-from-filepath extracts data from the `file.path` Attribute into the Body, removing the `file.path` attribute.
           ## Input Attributes:

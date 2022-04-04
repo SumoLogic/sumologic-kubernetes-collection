@@ -65,14 +65,19 @@ data:
         - combine_field: log
           id: merge-docker-lines
           is_last_entry: $$body.log matches "\n$"
-          output: extract-metadata-from-filepath
+          output: merge-multiline-logs
           type: recombine
         - combine_field: log
           combine_with: ""
           id: merge-cri-lines
           is_last_entry: $$body.logtag == "F"
-          output: extract-metadata-from-filepath
+          output: merge-multiline-logs
           overwrite_with: newest
+          type: recombine
+        - combine_field: log
+          id: merge-multiline-logs
+          is_first_entry: $$body.log matches "^\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*"
+          output: extract-metadata-from-filepath
           type: recombine
         - id: extract-metadata-from-filepath
           parse_from: $$attributes["file.path"]
