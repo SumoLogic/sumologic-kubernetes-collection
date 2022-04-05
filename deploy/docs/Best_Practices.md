@@ -1,5 +1,6 @@
 # Advanced Configuration / Best Practices
 
+- [Overriding chart resource names with `fullnameOverride`](#overriding-chart-resource-names-with-fullnameoverride)
 - [Multiline Log Support](#multiline-log-support)
   - [MySQL slow logs example](#mysql-slow-logs-example)
 - [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
@@ -32,6 +33,61 @@
   - [Examples](#examples)
   - [Outage with huge metrics spike](#outage-with-huge-metrics-spike)
   - [Outage with low DPM load](#outage-with-low-dpm-load)
+
+## Overriding chart resource names with `fullnameOverride`
+
+Here's an example of using the `fullnameOverride` properties of this chart and its subcharts
+to override the created resource names.
+
+```yaml
+fullnameOverride: sl
+
+fluent-bit:
+  fullnameOverride: fb
+
+kube-prometheus-stack:
+  fullnameOverride: kps
+
+  kube-state-metrics:
+    fullnameOverride: ksm
+
+  prometheus-node-exporter:
+    fullnameOverride: pne
+```
+
+After installing the chart, the resources in the cluster will have names similar to the following:
+
+```console
+$ kubectl -n <namespace> get pods
+NAME                                                 READY   STATUS        RESTARTS   AGE
+fb-95sxf                                             1/1     Running       0          91s
+kps-operator-6c8999bdfb-b4pks                        1/1     Running       0          91s
+ksm-5dbd694cbd-mk4bd                                 1/1     Running       0          91s
+pne-r64tk                                            1/1     Running       0          91s
+prometheus-kps-prometheus-0                          3/3     Running       1          79s
+sl-fluentd-events-0                                  1/1     Running       0          91s
+sl-fluentd-logs-0                                    1/1     Running       0          91s
+sl-fluentd-logs-1                                    1/1     Running       0          90s
+sl-fluentd-logs-2                                    1/1     Running       0          90s
+sl-fluentd-metrics-0                                 1/1     Running       0          90s
+sl-fluentd-metrics-1                                 1/1     Running       0          90s
+sl-fluentd-metrics-2                                 1/1     Running       0          90s
+```
+
+⚠️ **Note:** When changing the `fullnameOverride` property for an already installed chart with the `helm upgrade` command,
+you need to restart the Fluent Bit and Prometheus pods
+for the changed names of the Fluentd or Otelcol pods to be picked up:
+
+```sh
+helm -n <namespace> upgrade <release_name> sumologic/sumologic --values changed-fullnameoverride.yaml
+kubectl -n <namespace> rollout restart daemonset <fluent_bit_daemonset_name>
+kubectl -n <namespace> rollout restart statefulset <prometheus_statefulset_name>
+```
+
+As you can see from the example, every subchart has its own `fullnameOverride` property
+that needs to be set separately to change the names of the resources created by that subchart.
+
+See the chart's [README](../helm/sumologic/README.md) for all the available `fullnameOverride` properties.
 
 ## Multiline Log Support
 

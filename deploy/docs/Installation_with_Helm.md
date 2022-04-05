@@ -132,6 +132,9 @@ helm upgrade --install my-release sumologic/sumologic \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
+If you want to override the names of the resources created by the chart,
+see [Overriding chart resource names with `fullnameOverride`](./Best_Practices.md#overriding-chart-resource-names-with-fullnameoverride).
+
 ### Authenticating with container registry
 
 Sumo Logic container images used for collection are currently hosted on
