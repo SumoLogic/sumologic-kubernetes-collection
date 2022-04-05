@@ -258,7 +258,6 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 						// hence with longer time range the time series about a particular metric
 						// that we receive diverge into n, where n is the number of metrics
 						// enrichment pods.
-						"http_listener_v2_path":        "/prometheus.metrics.container",
 						"image":                        "",
 						"instance":                     "",
 						"job":                          "kubelet",
