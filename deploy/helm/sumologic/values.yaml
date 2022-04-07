@@ -185,7 +185,6 @@ sumologic:
     enabled: true
     metadata:
       ## Set provider service (either fluentd or otelcol).
-      ## Otelcol is experimental and may behave in unexpected way.
       provider: fluentd
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
@@ -207,7 +206,6 @@ sumologic:
     enabled: true
     metadata:
       ## Set metadata provider service (either fluentd or otelcol).
-      ## Otelcol is experimental and may behave in unexpected way.
       provider: fluentd
 
     ### Enable a load balancing proxy for Prometheus remote writes.
