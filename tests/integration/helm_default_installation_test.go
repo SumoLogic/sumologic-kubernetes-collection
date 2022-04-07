@@ -32,6 +32,7 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 		tickDuration            = 3 * time.Second
 		waitDuration            = 5 * time.Minute
 		logsGeneratorCount uint = 1000
+		expectedEventCount uint = 100
 	)
 	expectedMetrics := internal.DefaultExpectedMetrics
 
@@ -356,5 +357,20 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace)).
 		Feature()
 
-	testenv.Test(t, featInstall, featMetrics, featLogs)
+	featEvents := features.New("events").
+		Assess("events present", stepfuncs.WaitUntilExpectedLogsPresent(
+			expectedEventCount,
+			map[string]string{
+				"_sourceName":     "events",
+				"_sourceCategory": fmt.Sprintf("%s/events", internal.ClusterName),
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Feature()
+
+	testenv.Test(t, featInstall, featMetrics, featLogs, featEvents)
 }
