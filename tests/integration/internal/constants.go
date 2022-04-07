@@ -15,6 +15,10 @@ const (
 
 	YamlPathReceiverMock = "yamls/receiver-mock.yaml"
 
+	// default cluster name in Helm chart Config
+	// TODO: read this from values.yaml used for the test directly
+	ClusterName = "kubernetes"
+
 	ReceiverMockServicePort = 3000
 	ReceiverMockServiceName = "receiver-mock"
 	ReceiverMockNamespace   = "receiver-mock"
