@@ -3570,7 +3570,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.0.58-beta.0
+    tag: 0.47.0-sumo-0
     pullPolicy: IfNotPresent
 
   securityContext:
@@ -4465,7 +4465,7 @@ otelgateway:
     podAnnotations: {}
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.0.58-beta.0
+      tag: 0.47.0-sumo-0
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15
@@ -4587,7 +4587,7 @@ otellogs:
   ## Configure image for Opentelemetry Collector
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.0.58-beta.0
+    tag: 0.47.0-sumo-0
     pullPolicy: IfNotPresent
 
   logLevel: info
