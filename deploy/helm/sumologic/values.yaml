@@ -171,7 +171,6 @@ sumologic:
         default:
           name: events
           config-name: endpoint-events
-          category: true
       traces:
         default:
           name: traces
@@ -909,8 +908,10 @@ fluentd:
     ## Override output section for events. Leave empty for the default output section
     overrideOutputConf: |-
 
+    ## Source name for the Events source. Default: "events"
+    sourceName: "events"
     ## Source category for the Events source. Default: "{clusterName}/events"
-    sourceCategory: ""
+    # sourceCategory: "kubernetes/events"
     ## Override Kubernetes resource types you want to get events for from different Kubernetes
     ## API versions. The key represents the name of the resource type and the value represents
     ## the API version.

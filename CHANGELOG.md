@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix: set source name and category in the FluentD output for events [#2222][#2222]
 - docs: FluentD buffer size configuration [#2232][#2232]
 
 [#2232]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2232
+[#2222]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2222
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
 
 ## [v2.7.0][v2.7.0]
