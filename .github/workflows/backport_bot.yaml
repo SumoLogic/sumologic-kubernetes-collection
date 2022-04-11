@@ -20,6 +20,6 @@ jobs:
           # repository: owner/repo
 
       - name: Backport
-        uses: tibdex/backport@v1
+        uses: tibdex/backport@v2
         with:
           github_token: ${{ steps.generate_token.outputs.token }}
