@@ -271,7 +271,7 @@ sumologic:
 fluentd:
   image:
     repository: public.ecr.aws/sumologic/kubernetes-fluentd
-    tag: 1.14.5-sumo-1
+    tag: 1.14.6-sumo-1
     pullPolicy: IfNotPresent
 
   ## Specifies whether a PodSecurityPolicy should be created
@@ -551,11 +551,11 @@ fluentd:
       ## Defines whether container-level pod annotations are enabled.
       ## Setting this to `true` might slightly affect Fluentd performance.
       ## See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.5-sumo-1/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
+      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.6-sumo-1/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
       perContainerAnnotationsEnabled: false
       ## Defines the list of prefixes of container-level pod annotations.
       ## See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.5-sumo-1/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
+      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.6-sumo-1/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
       perContainerAnnotationPrefixes: []
 
       ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
@@ -574,8 +574,8 @@ fluentd:
         bearerTokenFile: ""
         ## Regex to match containers tag to `pod_name`, `namespace`, `container_name` and `docker_id`. All of them are obligatory
         ## See below links for reference:
-        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.14.5-sumo-1/fluent-plugin-kubernetes-metadata-filter/lib/fluent/plugin/filter_kubernetes_metadata.rb#L322-L325
-        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.5-sumo-1/fluent-plugin-kubernetes-metadata-filter#configuration
+        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.14.6-sumo-1/fluent-plugin-kubernetes-metadata-filter/lib/fluent/plugin/filter_kubernetes_metadata.rb#L322-L325
+        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.6-sumo-1/fluent-plugin-kubernetes-metadata-filter#configuration
         tagToMetadataRegexp: '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
 
       ## To use additional filter plugins
