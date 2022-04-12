@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3.1.0
+      - uses: actions/setup-node@v3.1.1
       - name: Install markdown-table-formatter
         run: npm install markdown-table-formatter --save
       - name: Run markdown-table-formatter
