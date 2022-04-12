@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
 - chore(deps): bump prometheus node exporter tag to 2.3.1 [#2177][#2177]
-- chore: upgrade Fluentd to 1.14.5-sumo-1 [#2196][#2196]
+- chore: upgrade Fluentd to 1.14.6-sumo-1 [#2230][#2230]
 - chore: upgrade Falco Helm Chart to 1.17.4 [#2197][#2197]
 - chore: bump sumo ot distro to 0.47.0-sumo-0 [#2220][#2220]
 - feat: remove the experimental flag for otelcol as a metadata provider [#2221](#2221)
@@ -36,13 +36,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2173
 [#2182]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2182
 [#2190]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2190
-[#2196]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2196
 [#2197]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2197
 [#2200]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2200
 [#2201]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2201
 [#2211]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2211
 [#2220]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2220
 [#2221]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2221
+[#2230]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2230
 
 ## [v2.6.0][v2.6.0]
 
