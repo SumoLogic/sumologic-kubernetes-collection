@@ -393,6 +393,27 @@ Should you have any connectivity problems, depending on the buffer size your set
 be able to survive for a given amount of time without a data loss, delivering the data
 later when everything is operational again.
 
+The FluentD buffer size is controlled by two major parameters - the size of the persistent volume
+in Kubernetes, and the maximum size of the buffer on disk. Both need to be adjusted if you want
+to buffer more (or less) data.
+
+For example:
+
+```yaml
+fluentd:
+  ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
+  persistence:
+    ## After changing this value please follow steps described in:
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/FluentdPersistence.md
+    enabled: true
+    size: 20Gi
+  buffer:
+    totalLimitSize: "20G"
+```
+
+The `fluentd.buffer` section contains other settings for FluentD buffering. Only change those if you know
+what you're doing and have studied the relevant documentation carefully.
+
 To calculate this time you need to know how much data you send. For the calculations below
 we made an assumption that a single metric data point is around 1 kilobyte in size, including
 metadata. This assumption is based on the average data we ingest. By default, for file based
