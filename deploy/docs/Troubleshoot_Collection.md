@@ -72,7 +72,31 @@ kubectl config set-context $(kubectl config current-context) --namespace=sumolog
 
 ## Gathering logs
 
-First check if your pods are in a healthy state. Run
+If you cannot see logs in Sumo that you expect to be there, here are the things to check.
+
+### Check log throttling
+
+Check if [log throttling][log_throttling] is happening.
+
+If it is, there will be messages like `HTTP ERROR 429 You have temporarily exceeded your Sumo Logic quota` in Fluentd or Otelcol logs.
+
+[log_throttling]: https://help.sumologic.com/Manage/Ingestion-and-Volume/01Log_Ingestion#log-throttling
+
+### Check ingest budget limits
+
+Check if an [ingest budget][ingest_budgets] limit is hit.
+
+If it is, there will be `budget.exceeded` messages from Sumo in Fluentd or Otelcol logs, similar to the following:
+
+```console
+2022-04-12 13:47:17 +0000 [warn]: #0 There was an issue sending data: id: KMZJI-FCDPN-4KHKD, code: budget.exceeded, status: 200, message: Message(s) in the request dropped due to exceeded budget.
+```
+
+[ingest_budgets]: https://help.sumologic.com/Manage/Ingestion-and-Volume/Ingest_Budgets
+
+### Check if collection pods are in a healthy state
+
+Run:
 
 ```
 kubectl get pods
