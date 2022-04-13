@@ -36,6 +36,9 @@
   - [Examples](#examples)
   - [Outage with huge metrics spike](#outage-with-huge-metrics-spike)
   - [Outage with low DPM load](#outage-with-low-dpm-load)
+- [Assigning Pod to particular Node](#assigning-pod-to-particular-node)
+  - [Using NodeSelectors](#using-nodeselectors)
+    - [Binding pods to linux nodes](#binding-pods-to-linux-nodes)
 
 ## Overriding chart resource names with `fullnameOverride`
 
@@ -1264,3 +1267,51 @@ The reliability of the system can be calculated using the following formulas:
 
 - If limited by queue_size: `number_of_instances*timeout[min]*sending_queue.queue_size/load_in_DPM` minutes.
 - If limited by PVC size: `number_of_instances*PVC_size/(1KB*load_in_DPM)` minutes.
+
+## Assigning Pod to particular Node
+
+### Using NodeSelectors
+
+Kubernetes offers a feature of assigning specific pod to node. Such kind of control is sometimes useful,
+whenever you want to ensure that pod will end up on specific node according your requirements like operating system
+or connected devices.
+
+#### Binding pods to linux nodes
+
+Using this feature we can bind them to linux nodes.
+In order to do that `nodeSelector` has to be used. By default node selectors can be set for below pods:
+
+| component               | key                                                                            |
+|-------------------------|--------------------------------------------------------------------------------|
+| `fluent-bit`            | `fluent-bit.nodeSelector.kubernetes.io/os`                                     |
+| `fluentd`               | `fluentd.events.statefulset.nodeSelector.kubernetes.io/os`                     |
+| `fluentd`               | `fluentd.logs.statefulset.nodeSelector.kubernetes.io/os`                       |
+| `fluentd`               | `fluentd.metrics.statefulset.nodeSelector.kubernetes.io/os`                    |
+| `sumologic`             | `sumologic.setup.job.nodeSelector.kubernetes.io/os`                            |
+| `kube-prometheus-stack` | `kube-prometheus-stack.prometheus-node-exporter.nodeSelector.kubernetes.io/os` |
+| `kube-state-metrics`    | `kube-state-metrics.nodeSelector.kubernetes.io/os`                             |
+| `prometheus`            | `prometheus.prometheusSpec.nodeSelector.kubernetes.io/os`                      |
+| `otelagent`             | `otelagent.daemonset.nodeSelector.kubernetes.io/os`                            |
+| `otelcol`               | `otelcol.deployment.nodeSelector.kubernetes.io/os`                             |
+| `otelgateway`           | `otelgateway.deployment.nodeSelector.kubernetes.io/os`                         |
+| `otellogs`              | `otellogs.daemonset.nodeSelector.kubernetes.io/os`                             |
+| `metadata`              | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`                   |
+| `metadata`              | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`                      |
+
+Node selector can be changed via additional parameter to helm upgrade command, below example for fluent-bit node selector:
+
+```bash
+helm upgrade --install my-release sumologic/sumologic \
+  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+  --set fluent-bit.nodeSelector."kubernetes\.io/os"=linux 
+```
+
+or by modyfing above settings in values.yaml
+
+```yaml
+fluent-bit:
+  nodeSelector:
+    kubernetes.io/os: linux
+```

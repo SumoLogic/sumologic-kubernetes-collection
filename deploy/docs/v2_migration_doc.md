@@ -51,8 +51,8 @@ as well as the exact steps for migration.
   - `kube-prometheus-stack` dependency has been updated from `v9.x` to `v12.y`
     which causes the following configuration options to need migrating:
 
-    | Old Config | New Config |
-    |:---:|:--:|
+    |                     Old Config                      |                   New Config                   |
+    |:---------------------------------------------------:|:----------------------------------------------:|
     | `kube-prometheus-stack.prometheusOperator.tlsProxy` | `kube-prometheus-stack.prometheusOperator.tls` |
 
   - `prometheus-config-reloader` has been removed from the list of containers
