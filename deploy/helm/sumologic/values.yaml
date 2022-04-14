@@ -1739,6 +1739,16 @@ kube-prometheus-stack:
           matchLabels:
             sumologic.com/app: otelcol
             sumologic.com/scrape: "true"
+      - name: collection-sumologic-prometheus
+        endpoints:
+          - port: web
+            path: /metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            operated-prometheus: "true"
     prometheusSpec:
       ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
       ## NOTE changing the scrape interval to be >1m can result in metrics
@@ -3218,6 +3228,9 @@ kube-prometheus-stack:
             - action: keep
               regex: (?:squid_(uptime|cache(Ip(Entries|Requests|Hits)|Fqdn(Entries|Requests|Misses|NegativeHits)|Dns(Requests|Replies|SvcTime5)|Sys(PageFaults|NumReads)|Current(FileDescrCnt|UnusedFDescrCnt|ResFileDescrCnt)|Server(Requests|InKb|OutKb)|Http(AllSvcTime5|Errors|InKb|OutKb|AllSvcTime1)|Mem(MaxSize|Usage)|NumObjCount|CpuTime|MaxResSize|ProtoClientHttpRequests|Clients)))
               sourceLabels: [__name__]
+
+      serviceMonitor:
+        selfMonitor: false
 
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelagent:
