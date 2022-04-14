@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- fix: use custom ServiceMonitor for Prometheus' own metrics [#2238]
+
 ### Fixed
 
 - fix: set source name and category in the FluentD output for events [#2222][#2222]
@@ -18,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [#2232]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2232
 [#2222]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2222
+[#2238]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2238
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
 
 ## [v2.7.0][v2.7.0]
