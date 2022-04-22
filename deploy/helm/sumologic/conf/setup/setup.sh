@@ -18,7 +18,7 @@ fi
 function fix_sumo_base_url() {
   local BASE_URL=$SUMOLOGIC_BASE_URL
 
-  if [[ ! "$BASE_URL" =~ ^https:\/\/.*sumologic\.com\/api\/.*$ ]]; then
+  if [[ "${BASE_URL}" =~ ^\s*$ ]]; then
     BASE_URL="https://api.sumologic.com/api/"
   fi
 
@@ -28,12 +28,12 @@ function fix_sumo_base_url() {
           | grep -Fi location )"
 
   if [[ ! $OPTIONAL_REDIRECTION =~ ^\s*$ ]]; then
-    BASE_URL=$( echo $OPTIONAL_REDIRECTION | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|us2)?\.sumologic\.com\/api\/).*/\1/' )
+    BASE_URL=$( echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|us2)?\.sumologic\.com\/api\/).*/\1/' )
   fi
 
   BASE_URL=${BASE_URL%v1*}
 
-  echo $BASE_URL
+  echo "${BASE_URL}"
 }
 
 export SUMOLOGIC_BASE_URL=$(fix_sumo_base_url)
