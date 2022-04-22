@@ -15,8 +15,28 @@ if [[ ${DEBUG_MODE,,} == ${DEBUG_MODE_ENABLED_FLAG} ]]; then
     done
 fi
 
-# Fix URL to remove "v1" or "v1/"
-export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
+function fix_sumo_base_url() {
+  local BASE_URL=$SUMOLOGIC_BASE_URL
+
+  if [[ ! "$BASE_URL" =~ ^https:\/\/.*sumologic\.com\/api\/.*$ ]]; then
+    BASE_URL="https://api.sumologic.com/api/"
+  fi
+
+  OPTIONAL_REDIRECTION="$(curl -XGET -s -o /dev/null -D - \
+          -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+          "${BASE_URL}"v1/collectors \
+          | grep -Fi location )"
+
+  if [[ ! $OPTIONAL_REDIRECTION =~ ^\s*$ ]]; then
+    BASE_URL=$( echo $OPTIONAL_REDIRECTION | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|us2)?\.sumologic\.com\/api\/).*/\1/' )
+  fi
+
+  BASE_URL=${BASE_URL%v1*}
+
+  echo $BASE_URL
+}
+
+export SUMOLOGIC_BASE_URL=$(fix_sumo_base_url)
 # Support proxy for Terraform
 export HTTP_PROXY=${HTTP_PROXY:=""}
 export HTTPS_PROXY=${HTTPS_PROXY:=""}
