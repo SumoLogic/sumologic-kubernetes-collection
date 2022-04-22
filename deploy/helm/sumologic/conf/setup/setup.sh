@@ -5,7 +5,7 @@ readonly DEBUG_MODE_ENABLED_FLAG="true"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
-if [[ ${DEBUG_MODE,,} == ${DEBUG_MODE_ENABLED_FLAG} ]]; then
+if [[ ${DEBUG_MODE,,} == "${DEBUG_MODE_ENABLED_FLAG}" ]]; then
     echo "Entering the debug mode with continuous sleep. No setup will be performed."
     echo "Please exec into the setup container and run the setup.sh by hand or set the sumologic.setup.debug=false and reinstall."
 
@@ -36,7 +36,8 @@ function fix_sumo_base_url() {
   echo "${BASE_URL}"
 }
 
-export SUMOLOGIC_BASE_URL=$(fix_sumo_base_url)
+SUMOLOGIC_BASE_URL=$(fix_sumo_base_url)
+export SUMOLOGIC_BASE_URL
 # Support proxy for Terraform
 export HTTP_PROXY=${HTTP_PROXY:=""}
 export HTTPS_PROXY=${HTTPS_PROXY:=""}
@@ -44,9 +45,10 @@ export NO_PROXY=${NO_PROXY:=""}
 
 function get_remaining_fields() {
     local RESPONSE
-    readonly RESPONSE="$(curl -XGET -s \
+    RESPONSE="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
         "${SUMOLOGIC_BASE_URL}"v1/fields/quota)"
+    readonly RESPONSE
 
     echo "${RESPONSE}"
 }
@@ -55,7 +57,8 @@ function get_remaining_fields() {
 # would be created for the collection
 function should_create_fields() {
     local RESPONSE
-    readonly RESPONSE=$(get_remaining_fields)
+    RESPONSE=$(get_remaining_fields)
+    readonly RESPONSE
 
     if ! jq -e <<< "${RESPONSE}" ; then
         printf "Failed requesting fields API:\n%s\n" "${RESPONSE}"
@@ -68,7 +71,8 @@ function should_create_fields() {
     fi
 
     local REMAINING
-    readonly REMAINING=$(jq -e '.remaining' <<< "${RESPONSE}")
+    REMAINING=$(jq -e '.remaining' <<< "${RESPONSE}")
+    readonly REMAINING
     if [[ $(( REMAINING - {{ len .Values.sumologic.logs.fields }} )) -ge 10 ]] ; then
         return 0
     else
@@ -86,9 +90,10 @@ terraform init -input=false -get=false || terraform init -input=false -upgrade
 # Sumo Logic fields
 if should_create_fields ; then
     readonly CREATE_FIELDS=1
-    readonly FIELDS_RESPONSE="$(curl -XGET -s \
+    FIELDS_RESPONSE="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
         "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
+    readonly FIELDS_RESPONSE
 
     declare -ra FIELDS=({{ include "helm-toolkit.utils.joinListWithSpaces" .Values.sumologic.logs.fields }})
     for FIELD in "${FIELDS[@]}" ; do
