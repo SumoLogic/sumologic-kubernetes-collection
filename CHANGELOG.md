@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fix: set source name and category in the FluentD output for events [#2222][#2222]
+- fix: proper handling of empty `sumologic.endpoint` in the setup script
 - docs: FluentD buffer size configuration [#2232][#2232]
 
 [#2232]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2232
