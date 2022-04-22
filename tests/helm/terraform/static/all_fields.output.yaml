@@ -288,7 +288,7 @@ data:
   
     # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
     # so that we don't have to deal with True vs true vs TRUE
-    if [[ ${DEBUG_MODE,,} == ${DEBUG_MODE_ENABLED_FLAG} ]]; then
+    if [[ ${DEBUG_MODE,,} == "${DEBUG_MODE_ENABLED_FLAG}" ]]; then
         echo "Entering the debug mode with continuous sleep. No setup will be performed."
         echo "Please exec into the setup container and run the setup.sh by hand or set the sumologic.setup.debug=false and reinstall."
   
@@ -298,8 +298,29 @@ data:
         done
     fi
   
-    # Fix URL to remove "v1" or "v1/"
-    export SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL%v1*}
+    function fix_sumo_base_url() {
+      local BASE_URL=$SUMOLOGIC_BASE_URL
+  
+      if [[ "${BASE_URL}" =~ ^\s*$ ]]; then
+        BASE_URL="https://api.sumologic.com/api/"
+      fi
+  
+      OPTIONAL_REDIRECTION="$(curl -XGET -s -o /dev/null -D - \
+              -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+              "${BASE_URL}"v1/collectors \
+              | grep -Fi location )"
+  
+      if [[ ! $OPTIONAL_REDIRECTION =~ ^\s*$ ]]; then
+        BASE_URL=$( echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|us2)?\.sumologic\.com\/api\/).*/\1/' )
+      fi
+  
+      BASE_URL=${BASE_URL%v1*}
+  
+      echo "${BASE_URL}"
+    }
+  
+    SUMOLOGIC_BASE_URL=$(fix_sumo_base_url)
+    export SUMOLOGIC_BASE_URL
     # Support proxy for Terraform
     export HTTP_PROXY=${HTTP_PROXY:=""}
     export HTTPS_PROXY=${HTTPS_PROXY:=""}
@@ -307,9 +328,10 @@ data:
   
     function get_remaining_fields() {
         local RESPONSE
-        readonly RESPONSE="$(curl -XGET -s \
+        RESPONSE="$(curl -XGET -s \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}"v1/fields/quota)"
+        readonly RESPONSE
   
         echo "${RESPONSE}"
     }
@@ -318,7 +340,8 @@ data:
     # would be created for the collection
     function should_create_fields() {
         local RESPONSE
-        readonly RESPONSE=$(get_remaining_fields)
+        RESPONSE=$(get_remaining_fields)
+        readonly RESPONSE
   
         if ! jq -e <<< "${RESPONSE}" ; then
             printf "Failed requesting fields API:\n%s\n" "${RESPONSE}"
@@ -331,7 +354,8 @@ data:
         fi
   
         local REMAINING
-        readonly REMAINING=$(jq -e '.remaining' <<< "${RESPONSE}")
+        REMAINING=$(jq -e '.remaining' <<< "${RESPONSE}")
+        readonly REMAINING
         if [[ $(( REMAINING - 8 )) -ge 10 ]] ; then
             return 0
         else
@@ -349,9 +373,10 @@ data:
     # Sumo Logic fields
     if should_create_fields ; then
         readonly CREATE_FIELDS=1
-        readonly FIELDS_RESPONSE="$(curl -XGET -s \
+        FIELDS_RESPONSE="$(curl -XGET -s \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
             "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
+        readonly FIELDS_RESPONSE
   
         declare -ra FIELDS=("cluster" "container" "deployment" "host" "namespace" "node" "pod" "service")
         for FIELD in "${FIELDS[@]}" ; do
