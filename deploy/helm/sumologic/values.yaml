@@ -789,6 +789,9 @@ fluentd:
     outputConf: |-
       @include metrics.output.conf
 
+    ## Additional config parameters for sumologic output plugin
+    extraOutputConf: |-
+
     ## Override output section for metrics. Leave empty for the default output section
     overrideOutputConf: |-
 
