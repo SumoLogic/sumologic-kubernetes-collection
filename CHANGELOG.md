@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - fix: use custom ServiceMonitor for Prometheus' own metrics [#2238]
+- chore(deps): upgrade fluentd to 1.14.6-sumo-2 [#2245][#2245]
 
 ### Fixed
 
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2232]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2232
 [#2222]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2222
 [#2238]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2238
+[#2245]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2245
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
 
 ## [v2.7.0][v2.7.0]
@@ -40,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
 - chore(deps): bump prometheus node exporter tag to 2.3.1 [#2177][#2177]
-- chore: upgrade Fluentd to 1.14.6-sumo-2 [#2230][#2230]
+- chore: upgrade Fluentd to 1.14.6-sumo-1 [#2230][#2230]
 - chore: upgrade Falco Helm Chart to 1.17.4 [#2197][#2197]
 - chore: bump sumo ot distro to 0.47.0-sumo-0 [#2220][#2220]
 - feat: remove the experimental flag for otelcol as a metadata provider [#2221](#2221)
