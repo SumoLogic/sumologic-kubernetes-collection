@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - fix: use custom ServiceMonitor for Prometheus' own metrics [#2238]
+- chore(deps): upgrade fluentd to 1.14.6-sumo-2 [#2245][#2245]
 
 ### Fixed
 
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2222]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2222
 [#2238]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2238
 [#2244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2244
+[#2245]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2245
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
 
 ## [v2.7.0][v2.7.0]
