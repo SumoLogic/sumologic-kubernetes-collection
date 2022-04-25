@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- feat(fluentd): expose extra configuration for fluentd output plugin [#2244][#2244]
+
 ### Changed
 
 - fix: use custom ServiceMonitor for Prometheus' own metrics [#2238]
@@ -21,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2232]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2232
 [#2222]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2222
 [#2238]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2238
+[#2244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2244
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
 
 ## [v2.7.0][v2.7.0]
