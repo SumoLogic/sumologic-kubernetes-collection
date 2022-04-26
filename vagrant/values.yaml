@@ -35,6 +35,13 @@ sumologic:
   accessKey: dummy
   endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
   cleanupEnabled: false
+  logs:
+    metadata:
+      provider: otelcol
+  metrics:
+    metadata:
+      provider: otelcol
+
 
 telegraf-operator:
   enabled: true
