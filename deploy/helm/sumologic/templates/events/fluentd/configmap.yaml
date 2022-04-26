@@ -1,4 +1,4 @@
-{{- if eq .Values.fluentd.events.enabled true }}
+{{- if eq (include "events.fluentd.enabled" .) "true" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,6 +9,6 @@ metadata:
 data:
   fluent.conf: |-
     @include events.conf
-  {{- (tpl (.Files.Glob "conf/events/*.conf").AsConfig .) | nindent 2 }}
+  {{- (tpl (.Files.Glob "conf/events/fluentd/*.conf").AsConfig .) | nindent 2 }}
   {{- (tpl (.Files.Glob "conf/fluentd/buffer.output.conf").AsConfig .) | nindent 2 }}
 {{- end }}

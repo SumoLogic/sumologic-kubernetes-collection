@@ -1,4 +1,4 @@
-{{- if eq .Values.fluentd.events.enabled true }}
+{{- if eq (include "events.fluentd.enabled" .) "true" }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
