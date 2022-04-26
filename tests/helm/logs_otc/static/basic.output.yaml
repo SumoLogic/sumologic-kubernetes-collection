@@ -34,65 +34,91 @@ data:
         operators:
         - id: get-format
           routes:
-          - expr: $$body matches "^\\{"
+          - expr: body matches "^\\{"
             output: parser-docker
-          - expr: $$body matches "^[^ Z]+ "
+          - expr: body matches "^[^ Z]+ "
             output: parser-crio
-          - expr: $$body matches "^[^ Z]+Z"
+          - expr: body matches "^[^ Z]+Z"
             output: parser-containerd
           type: router
         - id: parser-crio
           output: merge-cri-lines
-          regex: ^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$
+          parse_to: body
+          regex: ^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$
           timestamp:
             layout: "2006-01-02T15:04:05.000000000-07:00"
             layout_type: gotime
-            parse_from: time
+            parse_from: body.time
           type: regex_parser
         - id: parser-containerd
           output: merge-cri-lines
-          regex: ^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) (?P<log>.*)$
+          parse_to: body
+          regex: ^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$
           timestamp:
             layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-            parse_from: time
+            parse_from: body.time
           type: regex_parser
         - id: parser-docker
           output: merge-docker-lines
+          parse_to: body
           timestamp:
             layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-            parse_from: time
+            parse_from: body.time
           type: json_parser
-        - combine_field: log
+        - combine_field: body.log
+          combine_with: ""
           id: merge-docker-lines
-          is_last_entry: $$body.log matches "\n$"
-          output: extract-metadata-from-filepath
+          is_last_entry: body.log matches "\n$"
+          output: merge-multiline-logs
+          source_identifier: attributes["log.file.path"]
           type: recombine
-        - combine_field: log
+        - combine_field: body.log
           combine_with: ""
           id: merge-cri-lines
-          is_last_entry: $$body.logtag == "F"
-          output: extract-metadata-from-filepath
+          is_last_entry: body.logtag == "F"
+          output: merge-multiline-logs
           overwrite_with: newest
+          source_identifier: attributes["log.file.path"]
+          type: recombine
+        - combine_field: body.log
+          combine_with: ""
+          id: merge-multiline-logs
+          is_first_entry: body.log matches "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*"
+          output: extract-metadata-from-filepath
+          source_identifier: attributes["log.file.path"]
           type: recombine
         - id: extract-metadata-from-filepath
-          parse_from: $$attributes["file.path"]
+          parse_from: attributes["log.file.path"]
           regex: ^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$
           type: regex_parser
-        - attributes:
-            k8s.container.name: EXPR($.container_name)
-            k8s.namespace.name: EXPR($.namespace)
-            k8s.pod.name: EXPR($.pod_name)
-            k8s.pod.uid: EXPR($.uid)
-            run_id: EXPR($.run_id)
-            stream: EXPR($.stream)
-          id: copy-attributes
-          type: metadata
-        - id: clean-up-log-body
-          ops:
-          - move:
-              from: log
-              to: $
-          type: restructure
+        - from: body.stream
+          id: move-attributes
+          to: attributes["stream"]
+          type: move
+        - from: attributes.container_name
+          to: attributes["k8s.container.name"]
+          type: move
+        - from: attributes.namespace
+          to: attributes["k8s.namespace.name"]
+          type: move
+        - from: attributes.pod_name
+          to: attributes["k8s.pod.name"]
+          type: move
+        - from: attributes.run_id
+          to: attributes["run_id"]
+          type: move
+        - from: attributes.uid
+          to: attributes["k8s.pod.uid"]
+          type: move
+        - field: attributes["fluent.tag"]
+          type: add
+          value: EXPR("containers." + attributes["k8s.container.name"])
+        - from: attributes["log.file.path"]
+          to: body["log.file.path"]
+          type: move
+        - from: body.log
+          to: body
+          type: move
         start_at: beginning
     service:
       extensions:

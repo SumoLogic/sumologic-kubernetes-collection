@@ -30,7 +30,7 @@ spec:
       containers:
       - args:
         - --config=/etc/otelcol/config.yaml
-        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.47.0-sumo-0
+        image: otel/opentelemetry-collector-contrib:0.49.0
         imagePullPolicy: IfNotPresent
         name: otelcol
         livenessProbe:
