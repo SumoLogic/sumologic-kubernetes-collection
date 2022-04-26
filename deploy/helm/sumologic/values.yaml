@@ -4606,7 +4606,7 @@ otellogs:
   ## Configure image for Opentelemetry Collector
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: v0.49.0-sumo-0
+    tag: 0.49.0-sumo-0
     pullPolicy: IfNotPresent
 
   logLevel: info
