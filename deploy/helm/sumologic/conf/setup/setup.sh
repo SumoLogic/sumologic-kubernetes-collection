@@ -16,7 +16,8 @@ if [[ ${DEBUG_MODE,,} == "${DEBUG_MODE_ENABLED_FLAG}" ]]; then
 fi
 
 function fix_sumo_base_url() {
-  local BASE_URL=$SUMOLOGIC_BASE_URL
+  BASE_URL=${SUMOLOGIC_BASE_URL}
+  local BASE_URL
 
   if [[ "${BASE_URL}" =~ ^\s*$ ]]; then
     BASE_URL="https://api.sumologic.com/api/"
