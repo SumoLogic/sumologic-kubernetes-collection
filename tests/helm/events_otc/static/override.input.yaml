@@ -1,0 +1,12 @@
+otelevents:
+  enabled: true
+  config:
+    override:
+      exporters:
+        sumologic:
+          sending_queue:
+            persistent_storage_enabled: false
+
+fluentd:
+  events:
+    enabled: false
