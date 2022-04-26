@@ -243,7 +243,7 @@ data:
   
     # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
     # so that we don't have to deal with True vs true vs TRUE
-    if [[ ${DEBUG_MODE,,} == ${DEBUG_MODE_ENABLED_FLAG} ]]; then
+    if [[ ${DEBUG_MODE,,} == "${DEBUG_MODE_ENABLED_FLAG}" ]]; then
         echo "Entering the debug mode with continuous sleep. No setup will be performed."
         echo "Please exec into the setup container and run the setup.sh by hand or set the sumologic.setup.debug=false and reinstall."
   
@@ -332,6 +332,7 @@ data:
     # Sumo Logic Collector and HTTP sources
     # Only import sources when collector exists.
     if terraform import sumologic_collector.collector "${COLLECTOR_NAME}"; then
+    true  # prevent to render empty if; then
     terraform import sumologic_http_source.default_events_source "${COLLECTOR_NAME}/events"
     terraform import sumologic_http_source.default_logs_source "${COLLECTOR_NAME}/logs"
     terraform import sumologic_http_source.apiserver_metrics_source "${COLLECTOR_NAME}/apiserver-metrics"
