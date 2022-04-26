@@ -14,6 +14,25 @@ fluentd:
   events:
     enabled: false
 
+metadata:
+  logs:
+    config:
+      service:
+        pipelines:
+          logs/otlp/containers:
+            receivers:
+              - otlp
+            processors:
+              - memory_limiter
+              - groupbyattrs/containers
+              - k8s_tagger
+              - source/containers
+              - resource/containers_copy_node_to_host
+              - batch
+            exporters:
+              - sumologic/containers
+
+
 otellogs:
   enabled: true
   config:

@@ -4342,22 +4342,24 @@ metadata:
               - batch
             exporters:
               - sumologic/containers
+          ## Uncomment this only if you're enabling the Otelcol Log Collector via otellogs.enabled
+          ## This is commented due to k8s_tagger memory footprint
           ## This is the same pipeline like for logs/fluent/containers with the following modifications:
           ## - filter/include_fluent_tag_containers and attributes/remove_fluent_tag are being removed
           ##   as only containers log are being provided to otlp receiver
           ## - attributes/containers functionality is being replaced by otellogs operators
-          logs/otlp/containers:
-            receivers:
-              - otlp
-            processors:
-              - memory_limiter
-              - groupbyattrs/containers
-              - k8s_tagger
-              - source/containers
-              - resource/containers_copy_node_to_host
-              - batch
-            exporters:
-              - sumologic/containers
+          # logs/otlp/containers:
+          #   receivers:
+          #     - otlp
+          #   processors:
+          #     - memory_limiter
+          #     - groupbyattrs/containers
+          #     - k8s_tagger
+          #     - source/containers
+          #     - resource/containers_copy_node_to_host
+          #     - batch
+          #   exporters:
+          #     - sumologic/containers
           logs/fluent/systemd:
             receivers:
               - fluentforward
