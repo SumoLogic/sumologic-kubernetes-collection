@@ -1,19 +1,26 @@
 #!/bin/bash
 
+SUMOLOGIC_ACCESSID=${SUMOLOGIC_ACCESSID:=""}
+readonly SUMOLOGIC_ACCESSID
+SUMOLOGIC_ACCESSKEY=${SUMOLOGIC_ACCESSKEY:=""}
+readonly SUMOLOGIC_ACCESSKEY
+SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL:=""}
+readonly SUMOLOGIC_BASE_URL
+
 MONITORS_FOLDER_NAME="Kubernetes"
 MONITORS_DISABLED="{{- .Values.sumologic.setup.monitors.disabled }}"
 
 # verify if the k8s monitors folder already exists
 MONITORS_RESPONSE="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
-        "${SUMOLOGIC_BASE_URL}"v1/monitors/search?query=type:folder%20${MONITORS_FOLDER_NAME} | jq '.[]' )"
+        "${SUMOLOGIC_BASE_URL}"v1/monitors/search?query=type:folder%20"${MONITORS_FOLDER_NAME}" | jq '.[]' )"
 readonly MONITORS_RESPONSE
 MONITORS_ROOT_ID="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
         "${SUMOLOGIC_BASE_URL}"v1/monitors/root | jq -r '.id' )"
 readonly MONITORS_ROOT_ID
 
-MONITORS_FOLDER_ID="$( echo $MONITORS_RESPONSE | \
+MONITORS_FOLDER_ID="$( echo "${MONITORS_RESPONSE}" | \
         jq -r "select(.item.name == \"${MONITORS_FOLDER_NAME}\") | select(.item.parentId == \"${MONITORS_ROOT_ID}\") | .item.id" )"
 readonly MONITORS_FOLDER_ID
 
@@ -27,8 +34,8 @@ if [[ -z "${MONITORS_FOLDER_ID}" ]]; then
 
   # extract environment from SUMOLOGIC_BASE_URL
   # see: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-by-Deployment-and-Firewall-Security
-  SUMOLOGIC_ENV=$( echo $SUMOLOGIC_BASE_URL | sed -E 's/https:\/\/.*(au|ca|de|eu|fed|in|jp|us2)\.sumologic\.com.*/\1/' )
-  if [[ "$SUMOLOGIC_BASE_URL" == "$SUMOLOGIC_ENV" ]] ; then
+  SUMOLOGIC_ENV=$( echo "${SUMOLOGIC_BASE_URL}" | sed -E 's/https:\/\/.*(au|ca|de|eu|fed|in|jp|us2)\.sumologic\.com.*/\1/' )
+  if [[ "${SUMOLOGIC_BASE_URL}" == "${SUMOLOGIC_ENV}" ]] ; then
     SUMOLOGIC_ENV="us1"
   fi
 
