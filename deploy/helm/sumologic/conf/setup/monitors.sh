@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MONITORS_FOLDER_NAME="Kubernetes"
-MONITORS_DISABLED="{{- .Values.sumologic.setup.monitors.monitoringDisabled }}"
+MONITORS_DISABLED="{{- .Values.sumologic.setup.monitors.disabled }}"
 
 # verify if the k8s monitors folder already exists
 MONITORS_RESPONSE="$(curl -XGET -s \
