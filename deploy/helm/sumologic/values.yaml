@@ -4713,8 +4713,6 @@ otellogs:
             is_last_entry: body.logtag == "F"
             overwrite_with: newest
 
-          ## https://github.com/open-telemetry/opentelemetry-log-collection/pull/416
-          ##
           ## merge-multiline-logs merges incoming log records into multiline logs.
           ## Input Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
           ## Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
