@@ -4713,7 +4713,6 @@ otellogs:
             is_last_entry: body.logtag == "F"
             overwrite_with: newest
 
-          ## This operator is currently disabled because it combines logs before any entry has been matched:
           ## https://github.com/open-telemetry/opentelemetry-log-collection/pull/416
           ##
           ## merge-multiline-logs merges incoming log records into multiline logs.
