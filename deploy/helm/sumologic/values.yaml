@@ -4688,10 +4688,10 @@ otellogs:
               parse_from: body.time
               layout: '%Y-%m-%dT%H:%M:%S.%LZ'
 
-          # ## merge-docker-lines stitches back together log lines split by Docker logging driver.
-          # ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
-          # ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
-          # ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n","stream":"stdout"}
+          ## merge-docker-lines stitches back together log lines split by Docker logging driver.
+          ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n","stream":"stdout"}
           - id: merge-docker-lines
             type: recombine
             source_identifier: attributes["log.file.path"]
