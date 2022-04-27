@@ -5,7 +5,7 @@ readonly DEBUG_MODE_ENABLED_FLAG="true"
 
 # Let's compare the variables ignoring the case with help of ${VARIABLE,,} which makes the string lowercased
 # so that we don't have to deal with True vs true vs TRUE
-if [[ ${DEBUG_MODE,,} == ${DEBUG_MODE_ENABLED_FLAG} ]]; then
+if [[ ${DEBUG_MODE,,} == "${DEBUG_MODE_ENABLED_FLAG}" ]]; then
     echo "Entering the debug mode with continuous sleep. No setup will be performed."
     echo "Please exec into the setup container and run the setup.sh by hand or set the sumologic.setup.debug=false and reinstall."
 
@@ -94,6 +94,7 @@ readonly COLLECTOR_NAME="{{ template "terraform.collector.name" . }}"
 # Sumo Logic Collector and HTTP sources
 # Only import sources when collector exists.
 if terraform import sumologic_collector.collector "${COLLECTOR_NAME}"; then
+true  # prevent to render empty if; then
 {{- $ctx := .Values -}}
 {{- range $type, $sources := .Values.sumologic.collector.sources }}
 {{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
