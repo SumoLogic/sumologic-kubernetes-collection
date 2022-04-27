@@ -148,7 +148,7 @@ data:
     #!/bin/bash
   
     MONITORS_FOLDER_NAME="Kubernetes"
-    MONITORS_DISABLED="true"
+    MONITORS_DISABLED="false"
   
     # verify if the k8s monitors folder already exists
     MONITORS_RESPONSE="$(curl -XGET -s \
@@ -179,6 +179,10 @@ data:
         SUMOLOGIC_ENV="us1"
       fi
   
+      NOTIFICATIONS_RECIPIENTS='["test@test.lh","email@locahost.lh"]'
+      NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{ TriggerType }} on {{ Name }}\",message_body=\"Triggered {{ TriggerType }} Alert on {{ Name }}: {{ QueryURL }}\""
+      NOTIFICATIONS_SETTINGS="recipients=${NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
+  
       TF_LOG_PROVIDER=DEBUG terraform apply \
           -auto-approve \
           -var="access_id=${SUMOLOGIC_ACCESSID}" \
@@ -186,6 +190,9 @@ data:
           -var="environment=${SUMOLOGIC_ENV}" \
           -var="folder=${MONITORS_FOLDER_NAME}" \
           -var="monitors_disabled=${MONITORS_DISABLED}" \
+          -var="email_notifications_critical=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Critical\", \"ResolvedCritical\"]}]" \
+          -var="email_notifications_warning=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Warning\", \"ResolvedWarning\"]}]" \
+          -var="email_notifications_missingdata=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"MissingData\", \"ResolvedMissingData\"]}]" \
           || { echo "Error during applying Terraform monitors."; exit 1; }
     else
       echo "The monitors were already installed in ${MONITORS_FOLDER_NAME}."
@@ -426,9 +433,7 @@ data:
         || { echo "Error during applying Terraform changes"; exit 1; }
   
     # Setup Sumo Logic monitors if enabled
-    echo "Installation of the Sumo Logic monitors is disabled."
-    echo "You can install them manually later with:"
-    echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
+    bash /etc/terraform/monitors.sh
   
     # Cleanup env variables
     export SUMOLOGIC_BASE_URL=
