@@ -404,6 +404,7 @@ data:
     # Sumo Logic Collector and HTTP sources
     # Only import sources when collector exists.
     if terraform import sumologic_collector.collector "${COLLECTOR_NAME}"; then
+    true  # prevent to render empty if; then
     terraform import sumologic_http_source.default_events_source "${COLLECTOR_NAME}/events"
     terraform import sumologic_http_source.default_logs_source "${COLLECTOR_NAME}/logs"
     terraform import sumologic_http_source.apiserver_metrics_source "${COLLECTOR_NAME}/apiserver-metrics"
