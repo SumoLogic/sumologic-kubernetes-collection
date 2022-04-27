@@ -122,6 +122,16 @@ sumologic:
     ## uncomment for the debug mode (disables the automatic run of the setup.sh script)
     # debug: true
 
+    monitors:
+      ## If enabled, a pre-install hook will create k8s monitors in Sumo Logic
+      setupEnabled: true
+
+      ## If true, the installed monitors will be disabled by default
+      monitoringDisabled: false
+
+      ## A list of emails to send notifications from monitors
+      notificationEmails: []
+
   collector:
     ## Configuration of additional collector fields
     ## https://help.sumologic.com/Manage/Fields#http-source-fields

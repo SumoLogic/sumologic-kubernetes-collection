@@ -120,6 +120,16 @@ data:
     }
   locals.tf: |
     locals {
+      default_events_source                       = "events"
+      default_logs_source                         = "logs"
+      apiserver_metrics_source                    = "apiserver-metrics"
+      control_plane_metrics_source                = "control-plane-metrics"
+      controller_metrics_source                   = "kube-controller-manager-metrics"
+      default_metrics_source                      = "(default-metrics)"
+      kubelet_metrics_source                      = "kubelet-metrics"
+      node_metrics_source                         = "node-exporter-metrics"
+      scheduler_metrics_source                    = "kube-scheduler-metrics"
+      state_metrics_source                        = "kube-state-metrics"
     }
   main.tf: |
     terraform {
@@ -138,7 +148,7 @@ data:
     #!/bin/bash
   
     MONITORS_FOLDER_NAME="Kubernetes"
-    MONITORS_DISABLED="false"
+    MONITORS_DISABLED="true"
   
     # verify if the k8s monitors folder already exists
     MONITORS_RESPONSE="$(curl -XGET -s \
@@ -199,6 +209,56 @@ data:
           cluster = var.cluster_name
         }
     }
+    
+    resource "sumologic_http_source" "default_events_source" {
+        name         = local.default_events_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "default_logs_source" {
+        name         = local.default_logs_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "apiserver_metrics_source" {
+        name         = local.apiserver_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "control_plane_metrics_source" {
+        name         = local.control_plane_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "controller_metrics_source" {
+        name         = local.controller_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "default_metrics_source" {
+        name         = local.default_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "kubelet_metrics_source" {
+        name         = local.kubelet_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "node_metrics_source" {
+        name         = local.node_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "scheduler_metrics_source" {
+        name         = local.scheduler_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
+    resource "sumologic_http_source" "state_metrics_source" {
+        name         = local.state_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
   
     resource "kubernetes_secret" "sumologic_collection_secret" {
       metadata {
@@ -207,6 +267,16 @@ data:
       }
   
       data = {
+        endpoint-events                           = sumologic_http_source.default_events_source.url
+        endpoint-logs                             = sumologic_http_source.default_logs_source.url
+        endpoint-metrics-apiserver                = sumologic_http_source.apiserver_metrics_source.url
+        endpoint-control_plane_metrics_source     = sumologic_http_source.control_plane_metrics_source.url
+        endpoint-metrics-kube-controller-manager  = sumologic_http_source.controller_metrics_source.url
+        endpoint-metrics                          = sumologic_http_source.default_metrics_source.url
+        endpoint-metrics-kubelet                  = sumologic_http_source.kubelet_metrics_source.url
+        endpoint-metrics-node-exporter            = sumologic_http_source.node_metrics_source.url
+        endpoint-metrics-kube-scheduler           = sumologic_http_source.scheduler_metrics_source.url
+        endpoint-metrics-kube-state               = sumologic_http_source.state_metrics_source.url
       }
   
       type = "Opaque"
@@ -230,8 +300,7 @@ data:
     fi
   
     function fix_sumo_base_url() {
-      local BASE_URL
-      BASE_URL=${SUMOLOGIC_BASE_URL}
+      local BASE_URL=$SUMOLOGIC_BASE_URL
   
       if [[ "${BASE_URL}" =~ ^\s*$ ]]; then
         BASE_URL="https://api.sumologic.com/api/"
@@ -242,7 +311,7 @@ data:
               "${BASE_URL}"v1/collectors \
               | grep -Fi location )"
   
-      if [[ ! ${OPTIONAL_REDIRECTION} =~ ^\s*$ ]]; then
+      if [[ ! $OPTIONAL_REDIRECTION =~ ^\s*$ ]]; then
         BASE_URL=$( echo "${OPTIONAL_REDIRECTION}" | sed -E 's/.*: (https:\/\/.*(au|ca|de|eu|fed|in|jp|us2)?\.sumologic\.com\/api\/).*/\1/' )
       fi
   
@@ -334,7 +403,16 @@ data:
     # Sumo Logic Collector and HTTP sources
     # Only import sources when collector exists.
     if terraform import sumologic_collector.collector "${COLLECTOR_NAME}"; then
-    true  # prevent to render empty if; then
+    terraform import sumologic_http_source.default_events_source "${COLLECTOR_NAME}/events"
+    terraform import sumologic_http_source.default_logs_source "${COLLECTOR_NAME}/logs"
+    terraform import sumologic_http_source.apiserver_metrics_source "${COLLECTOR_NAME}/apiserver-metrics"
+    terraform import sumologic_http_source.control_plane_metrics_source "${COLLECTOR_NAME}/control-plane-metrics"
+    terraform import sumologic_http_source.controller_metrics_source "${COLLECTOR_NAME}/kube-controller-manager-metrics"
+    terraform import sumologic_http_source.default_metrics_source "${COLLECTOR_NAME}/(default-metrics)"
+    terraform import sumologic_http_source.kubelet_metrics_source "${COLLECTOR_NAME}/kubelet-metrics"
+    terraform import sumologic_http_source.node_metrics_source "${COLLECTOR_NAME}/node-exporter-metrics"
+    terraform import sumologic_http_source.scheduler_metrics_source "${COLLECTOR_NAME}/kube-scheduler-metrics"
+    terraform import sumologic_http_source.state_metrics_source "${COLLECTOR_NAME}/kube-state-metrics"
     fi
   
     # Kubernetes Secret
@@ -347,7 +425,9 @@ data:
         || { echo "Error during applying Terraform changes"; exit 1; }
   
     # Setup Sumo Logic monitors if enabled
-    bash /etc/terraform/monitors.sh
+    echo "Installation of the Sumo Logic monitors is disabled."
+    echo "You can install them manually later with:"
+    echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
   
     # Cleanup env variables
     export SUMOLOGIC_BASE_URL=
