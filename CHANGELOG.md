@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: set source name and category in the FluentD output for events [#2222][#2222]
 - fix: proper handling of empty `sumologic.endpoint` in the setup script [#2240][#2240]
 - docs: FluentD buffer size configuration [#2232][#2232]
+- fix: switch to ECR for the busybox image [#2255][#2255]
 
 [#2232]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2232
 [#2240]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2240
@@ -34,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2245]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2245
 [#2246]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2246
 [#2254]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2254
+[#2255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2255
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
 
 ## [v2.7.0][v2.7.0]
