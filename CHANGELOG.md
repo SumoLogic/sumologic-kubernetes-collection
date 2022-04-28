@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix: use custom ServiceMonitor for Prometheus' own metrics [#2238]
 - chore(deps): upgrade fluentd to 1.14.6-sumo-2 [#2245][#2245]
-- feat(otellogs): upgrade to 0.49.0 [#2246][#2246]
+- feat(otellogs): upgrade to 0.49.0-sumo-0 [#2246][#2246]
 
 ### Fixed
 
