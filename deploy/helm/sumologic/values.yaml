@@ -3689,7 +3689,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/apiserver:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
@@ -3701,7 +3700,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/control_plane:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
@@ -3713,7 +3711,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/controller:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
@@ -3725,7 +3722,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/kubelet:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
@@ -3737,7 +3733,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/node:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
@@ -3749,7 +3744,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/scheduler:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
@@ -3761,7 +3755,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/state:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
@@ -3773,7 +3766,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          routing_atttribute_to_drop: http_listener_v2_path
       processors:
         ## Configuration for Metrics Transform Processor
         ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/metricstransformprocessor
@@ -3834,6 +3826,7 @@ metadata:
           ## NOTE: add a feature to routingprocessor to drop the routing
           ## attribute to prevent it being sent to the exporters.
           from_attribute: http_listener_v2_path
+          drop_resource_routing_attribute: true
           attribute_source: resource
           default_exporters:
             - sumologic/default
