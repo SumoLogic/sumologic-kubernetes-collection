@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-2`,
   it is Fluent Bit 1.6.10 with updated dependencies,
   image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2254][#2254]
+- feat(metadata/otc): upgrade to v0.49.0-sumo-0 [#2251][#2251]
 
 ### Fixed
 
@@ -36,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2246]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2246
 [#2254]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2254
 [#2255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2255
+[#2251]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2251
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
 
 ## [v2.7.0][v2.7.0]
