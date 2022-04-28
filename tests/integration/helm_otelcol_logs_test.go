@@ -29,6 +29,9 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 		tickDuration            = 3 * time.Second
 		waitDuration            = 3 * time.Minute
 		logsGeneratorCount uint = 1000
+		logRecords              = 4   //	number of log records in single loop, see: tests/integration/yamls/pod_multiline_long_lines.yaml
+		logLoops                = 500 // number of loops in which logs are generated, see: tests/integration/yamls/pod_multiline_long_lines.yaml
+		multilineLogCount  uint = logRecords * logLoops
 	)
 
 	featInstall := features.New("installation").
@@ -149,5 +152,22 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace)).
 		Feature()
 
-	testenv.Test(t, featInstall, featLogs)
+	featMultilineLogs := features.New("multiline logs").
+		Setup(stepfuncs.KubectlApplyFOpt(internal.MultilineLogsGenerator, internal.MultilineLogsNamespace)).
+		Assess("multiline logs present", stepfuncs.WaitUntilExpectedLogsPresent(
+			multilineLogCount,
+			map[string]string{
+				"namespace":          internal.MultilineLogsNamespace,
+				"pod_labels_example": internal.MultilineLogsPodName,
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Teardown(stepfuncs.KubectlDeleteFOpt(internal.MultilineLogsGenerator, internal.MultilineLogsNamespace)).
+		Feature()
+
+	testenv.Test(t, featInstall, featLogs, featMultilineLogs)
 }

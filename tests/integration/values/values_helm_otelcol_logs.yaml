@@ -24,7 +24,6 @@ metadata:
               - otlp
             processors:
               - memory_limiter
-              - attributes/containers
               - groupbyattrs/containers
               - k8s_tagger
               - source/containers
