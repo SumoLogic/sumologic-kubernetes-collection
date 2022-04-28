@@ -4871,7 +4871,7 @@ falco:
   extraInitContainers:
     ## Add initContainer to wait until kernel-devel is installed on host
     - name: init-falco
-      image: busybox
+      image: public.ecr.aws/docker/library/busybox
       command:
         - 'sh'
         - '-c'
