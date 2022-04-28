@@ -214,9 +214,6 @@ metadata:
             - action: extract
               key: fluent.tag
               pattern: ^containers\.var\.log\.pods\.(?P<k8s_namespace>[^_]+)_(?P<k8s_pod_name>[^_]+)_(?P<k8s_uid>[a-f0-9\-]{36})\.(?P<k8s_container_name>[^\._]+)\.(?P<k8s_run_id>\d+)\.log$
-            - action: insert
-              key: k8s.pod.uid
-              from_attribute: k8s_uid
             - action: delete
               key: k8s_uid
             - action: delete
@@ -1058,7 +1055,7 @@ For [sumologic exporter][sumologic_exporter]:
 **because once filled in PVC never reduces its fill.**
 
 [batch_processor]: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.47.0/processor/batchprocessor#batch-processor
-[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.47.0-sumo-0/pkg/exporter/sumologicexporter#sumo-logic-exporter
+[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.49.0-sumo-0/pkg/exporter/sumologicexporter#sumo-logic-exporter
 [filling_up_alert]: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumefillingup/
 
 ### Compaction

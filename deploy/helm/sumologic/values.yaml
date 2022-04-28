@@ -3543,10 +3543,6 @@ otelcol:
         source_name: "exporters.sumologic.source_name.replace"
         ## Desired host name. Useful if you want to override the source host configured for the source.
         source_host: "%{host.name}"
-        ## List of regexes for attributes which should be send as metadata
-        metadata_attributes:
-          - k8s.*
-          - host.name
         ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
         timeout: 5s
         retry_on_failure:
@@ -3585,7 +3581,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.47.0-sumo-0
+    tag: 0.49.0-sumo-0
     pullPolicy: IfNotPresent
 
   securityContext:
@@ -3693,10 +3689,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
           routing_atttribute_to_drop: http_listener_v2_path
         sumologic/apiserver:
           metric_format: prometheus
@@ -3709,10 +3701,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
           routing_atttribute_to_drop: http_listener_v2_path
         sumologic/control_plane:
           metric_format: prometheus
@@ -3725,10 +3713,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
           routing_atttribute_to_drop: http_listener_v2_path
         sumologic/controller:
           metric_format: prometheus
@@ -3741,10 +3725,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
           routing_atttribute_to_drop: http_listener_v2_path
         sumologic/kubelet:
           metric_format: prometheus
@@ -3757,10 +3737,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
           routing_atttribute_to_drop: http_listener_v2_path
         sumologic/node:
           metric_format: prometheus
@@ -3773,10 +3749,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
           routing_atttribute_to_drop: http_listener_v2_path
         sumologic/scheduler:
           metric_format: prometheus
@@ -3789,10 +3761,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
           routing_atttribute_to_drop: http_listener_v2_path
         sumologic/state:
           metric_format: prometheus
@@ -3805,10 +3773,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
           routing_atttribute_to_drop: http_listener_v2_path
       processors:
         ## Configuration for Metrics Transform Processor
@@ -4105,12 +4069,6 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-          metadata_attributes:
-            ## Attributes to be send as fields
-            - _collector
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
         sumologic/systemd:
           log_format: json
           json_logs:
@@ -4125,8 +4083,6 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-          metadata_attributes:
-            - _collector
 
       processors:
         ## Common processors
@@ -4198,6 +4154,7 @@ metadata:
             - k8s.container.name
             - k8s.namespace.name
             - k8s.pod.name
+            - _collector
         k8s_tagger:
           ## Has to be false to enrich metadata
           passthrough: false
@@ -4279,11 +4236,8 @@ metadata:
                   value: kubelet.service
         groupbyattrs/systemd:
           keys:
-            - _SYSTEMD_UNIT
-            - _HOSTNAME
-            - SYSLOG_FACILITY
-            - PRIORITY
             - _sourceName
+            - _collector
         source/systemd:
           collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
           source_host: "%{_HOSTNAME}"
@@ -4484,7 +4438,7 @@ otelgateway:
     podAnnotations: {}
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.47.0-sumo-0
+      tag: 0.49.0-sumo-0
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15

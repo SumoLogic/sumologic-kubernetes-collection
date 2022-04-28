@@ -19,11 +19,6 @@ data:
           add_timestamp: true
           timestamp_key: timestamp
         log_format: json
-        metadata_attributes:
-        - _collector
-        - k8s.*
-        - pod_labels_.*
-        - namespace_labels_.*
         sending_queue:
           enabled: true
           persistent_storage_enabled: true
@@ -36,8 +31,6 @@ data:
           add_timestamp: true
           timestamp_key: timestamp
         log_format: json
-        metadata_attributes:
-        - _collector
         sending_queue:
           enabled: true
           persistent_storage_enabled: true
@@ -129,13 +122,11 @@ data:
         - k8s.container.name
         - k8s.namespace.name
         - k8s.pod.name
+        - _collector
       groupbyattrs/systemd:
         keys:
-        - _SYSTEMD_UNIT
-        - _HOSTNAME
-        - SYSLOG_FACILITY
-        - PRIORITY
         - _sourceName
+        - _collector
       k8s_tagger:
         extract:
           annotations:
