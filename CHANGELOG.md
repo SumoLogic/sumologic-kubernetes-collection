@@ -10,8 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fix: switch to ECR for the busybox image [#2255][#2255]
+- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-2`,
+  it is Fluent Bit 1.6.10 with updated dependencies,
+  image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2260][#2260]
 
 [#2255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2255
+[#2260]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2260
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
 
 ## [v2.7.0][v2.7.0]
