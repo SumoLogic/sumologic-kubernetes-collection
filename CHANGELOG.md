@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: use custom ServiceMonitor for Prometheus' own metrics [#2238]
 - chore(deps): upgrade fluentd to 1.14.6-sumo-2 [#2245][#2245]
 - feat(otellogs): upgrade to 0.49.0-sumo-0 [#2246][#2246]
+- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-2`,
+  it is Fluent Bit 1.6.10 with updated dependencies,
+  image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2254][#2254]
 
 ### Fixed
 
@@ -32,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2245]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2245
 [#2246]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2246
 [#2250]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2250
+[#2254]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2254
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
 
 ## [v2.7.0][v2.7.0]
