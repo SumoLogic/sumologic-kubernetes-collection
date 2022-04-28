@@ -126,8 +126,8 @@ sumologic:
       ## If enabled, a pre-install hook will create k8s monitors in Sumo Logic
       enabled: true
 
-      ## If true, the installed monitors will be disabled by default
-      disabled: false
+      ## The installed monitors default status: enabled/disabled
+      monitorStatus: enabled
 
       ## A list of emails to send notifications from monitors
       notificationEmails: []

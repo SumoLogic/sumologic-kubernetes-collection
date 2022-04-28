@@ -8,7 +8,11 @@ SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL:=""}
 readonly SUMOLOGIC_BASE_URL
 
 MONITORS_FOLDER_NAME="Kubernetes"
-MONITORS_DISABLED="{{- .Values.sumologic.setup.monitors.disabled }}"
+{{- if eq .Values.sumologic.setup.monitors.monitorStatus "enabled" }}
+MONITORS_DISABLED="false"
+{{- else }}
+MONITORS_DISABLED="true"
+{{- end}}
 
 # verify if the k8s monitors folder already exists
 MONITORS_RESPONSE="$(curl -XGET -s \
