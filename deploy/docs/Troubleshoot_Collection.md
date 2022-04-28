@@ -5,6 +5,10 @@
 - [`helm install` hanging](#helm-install-hanging)
 - [Namespace configuration](#namespace-configuration)
 - [Gathering logs](#gathering-logs)
+  - [Check log throttling](#check-log-throttling)
+  - [Check ingest budget limits](#check-ingest-budget-limits)
+  - [Check Fluentd autoscaling](#check-fluentd-autoscaling)
+  - [Check if collection pods are in a healthy state](#check-if-collection-pods-are-in-a-healthy-state)
   - [Fluentd Logs](#fluentd-logs)
   - [Prometheus Logs](#prometheus-logs)
   - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
@@ -12,6 +16,7 @@
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+  - [Check Fluentd autoscaling](#check-fluentd-autoscaling-1)
   - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics)
 - [Common Issues](#common-issues)
   - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
@@ -93,6 +98,18 @@ If it is, there will be `budget.exceeded` messages from Sumo in Fluentd or Otelc
 ```
 
 [ingest_budgets]: https://help.sumologic.com/Manage/Ingestion-and-Volume/Ingest_Budgets
+
+### Check Fluentd autoscaling
+
+Check if Fluentd autoscaling is enabled, for details please see [Fluentd Autoscaling][fluend_autoscaling] documentation.
+
+Some known indicators that autoscaling for Fluentd must be enabled:
+
+- High CPU usage for Fluentd Pods (above `500m`), resource consumption can be checked using `kubectl top pod -n <NAMESPACE>`
+
+- Following message in Fluentd logs: `failed to write data into buffer by buffer overflow action=:drop_oldest_chunk`
+
+[fluend_autoscaling]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-autoscaling
 
 ### Check if collection pods are in a healthy state
 
@@ -237,6 +254,18 @@ We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus
 You can follow [Deploy Fluentd](#prometheus-logs) to verify there are no errors during remote write.
 
 You can also check `prometheus_remote_storage_.*` metrics to look for success/failure attempts.
+
+### Check Fluentd autoscaling
+
+Check if Fluentd autoscaling is enabled, for details please see [Fluentd Autoscaling][fluend_autoscaling] documentation.
+
+Some known indicators that autoscaling for Fluentd must be enabled:
+
+- High CPU usage for Fluentd Pods (above `500m`), resource consumption can be checked using `kubectl top pod -n <NAMESPACE>`
+
+- Following message in Fluentd logs: `failed to write data into buffer by buffer overflow action=:drop_oldest_chunk`
+
+[fluend_autoscaling]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-autoscaling
 
 ### Check FluentBit and Fluentd output metrics
 
