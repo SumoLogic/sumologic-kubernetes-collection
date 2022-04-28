@@ -143,7 +143,7 @@ TF_LOG_PROVIDER=DEBUG terraform apply \
     || { echo "Error during applying Terraform changes"; exit 1; }
 
 # Setup Sumo Logic monitors if enabled
-{{- if .Values.sumologic.setup.monitors.setupEnabled }}
+{{- if .Values.sumologic.setup.monitors.enabled }}
 bash /etc/terraform/monitors.sh
 {{- else }}
 echo "Installation of the Sumo Logic monitors is disabled."

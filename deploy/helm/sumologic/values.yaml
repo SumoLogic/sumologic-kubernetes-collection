@@ -124,7 +124,7 @@ sumologic:
 
     monitors:
       ## If enabled, a pre-install hook will create k8s monitors in Sumo Logic
-      setupEnabled: true
+      enabled: true
 
       ## If true, the installed monitors will be disabled by default
       disabled: false
