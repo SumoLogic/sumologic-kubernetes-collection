@@ -51,16 +51,16 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 {{- end -}}
 
-{{- define "sumologic.logs.collector.name" -}}
-{{- template "sumologic.fullname" . }}-otelcol-logs-collector
+{{- define "sumologic.metadata.name.logs.collector.configmap" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
-{{- define "sumologic.logs.collector.name.configmap" -}}
-{{- template "sumologic.logs.collector.name" . }}
+{{- define "sumologic.metadata.name.logs.collector.serviceaccount" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
-{{- define "sumologic.logs.collector.name.serviceaccount" -}}
-{{- template "sumologic.logs.collector.name" . }}
+{{- define "sumologic.metadata.name.logs.collector.daemonset" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
 {{- define "sumologic.logs.collector.name.daemonset" -}}
@@ -597,6 +597,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.cleanup.roles.serviceaccount" -}}
 {{ template "sumologic.metadata.name.cleanup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.collector" -}}
+{{- template "sumologic.fullname" . }}-otelcol-logs-collector
 {{- end -}}
 
 {{- define "sumologic.labels.logs" -}}
