@@ -7,8 +7,9 @@ We offer it as drop-in replacement for Fluentd in our collection.
 
 - [Metrics](#metrics)
   - [Metrics Configuration](#metrics-configuration)
-- [Logs metadata](#logs)
+- [Logs Metadata](#logs-metadata)
   - [Logs Configuration](#logs-configuration)
+- [Scraping Containers Logs](#scraping-containers-logs)
 - [Persistence](#persistence)
   - [Enabling persistence](#enabling-persistence)
   - [Disabling persistence](#disabling-persistence)
@@ -40,7 +41,7 @@ All Opentelemetry Collector configuration for metrics is located in
 If you want to modify it, please see [Sumologic Opentelemetry Collector configuration][configuration]
 for more information.
 
-## Logs metadata
+## Logs Metadata
 
 We are using Opentelemetry Collector like Fluentd to enrich metadata and to filter data.
 
@@ -68,7 +69,7 @@ for more information.
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/Configuration.md
 [values]: ../helm/sumologic/values.yaml
 
-## Scraping Logs
+## Scraping Containers Logs
 
 We are using Opentelemetry Collector like Fluent Bit to scrape container logs.
 
