@@ -7,8 +7,9 @@ We offer it as drop-in replacement for Fluentd in our collection.
 
 - [Metrics](#metrics)
   - [Metrics Configuration](#metrics-configuration)
-- [Logs](#logs)
+- [Logs Metadata](#logs-metadata)
   - [Logs Configuration](#logs-configuration)
+- [Scraping Containers Logs](#scraping-containers-logs)
 - [Persistence](#persistence)
   - [Enabling persistence](#enabling-persistence)
   - [Disabling persistence](#disabling-persistence)
@@ -40,7 +41,7 @@ All Opentelemetry Collector configuration for metrics is located in
 If you want to modify it, please see [Sumologic Opentelemetry Collector configuration][configuration]
 for more information.
 
-## Logs
+## Logs Metadata
 
 We are using Opentelemetry Collector like Fluentd to enrich metadata and to filter data.
 
@@ -67,6 +68,135 @@ for more information.
 
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/Configuration.md
 [values]: ../helm/sumologic/values.yaml
+
+## Scraping Containers Logs
+
+We are using Opentelemetry Collector like Fluent Bit to scrape container logs.
+
+**Note:** Opentelemetry Collector does not support systemd logs yet.
+
+In order to use Opentelemetry Collector to scrape container logs, please use the following configuration:
+
+```yaml
+## Opentelemetry as log collector is not compatible with Fluentd
+sumologic:
+  logs:
+    metadata:
+      provider: otelcol
+
+## Enable processing logs from Opentelemetry as log collector
+metadata:
+  logs:
+    config:
+      service:
+        pipelines:
+          logs/otlp/containers:
+            receivers:
+              - otlp
+            processors:
+              - memory_limiter
+              - groupbyattrs/containers
+              - k8s_tagger
+              - source/containers
+              - resource/containers_copy_node_to_host
+              - batch
+            exporters:
+              - sumologic/containers
+
+## Enable Opentelemetry as log collector
+otellogs:
+  enabled: true
+
+## Stop collecting container logs by fluent-bit configuration
+fluent-bit:
+  config:
+    inputs: |
+      # [INPUT]
+      #     Name                tail
+      #     Path                /var/log/containers/*.log
+      #     Docker_Mode         On
+      #     Docker_Mode_Parser  multi_line
+      #     Tag                 containers.*
+      #     Refresh_Interval    1
+      #     Rotate_Wait         60
+      #     Mem_Buf_Limit       5MB
+      #     Skip_Long_Lines     On
+      #     DB                  /tail-db/tail-containers-state-sumo.db
+      #     DB.Sync             Normal
+      [INPUT]
+          Name            systemd
+          Tag             host.*
+          DB              /tail-db/systemd-state-sumo.db
+          Systemd_Filter  _SYSTEMD_UNIT=addon-config.service
+          Systemd_Filter  _SYSTEMD_UNIT=addon-run.service
+          Systemd_Filter  _SYSTEMD_UNIT=cfn-etcd-environment.service
+          Systemd_Filter  _SYSTEMD_UNIT=cfn-signal.service
+          Systemd_Filter  _SYSTEMD_UNIT=clean-ca-certificates.service
+          Systemd_Filter  _SYSTEMD_UNIT=containerd.service
+          Systemd_Filter  _SYSTEMD_UNIT=coreos-metadata.service
+          Systemd_Filter  _SYSTEMD_UNIT=coreos-setup-environment.service
+          Systemd_Filter  _SYSTEMD_UNIT=coreos-tmpfiles.service
+          Systemd_Filter  _SYSTEMD_UNIT=dbus.service
+          Systemd_Filter  _SYSTEMD_UNIT=docker.service
+          Systemd_Filter  _SYSTEMD_UNIT=efs.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd-member.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd2.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd3.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-check.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-reconfigure.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-save.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-update-status.service
+          Systemd_Filter  _SYSTEMD_UNIT=flanneld.service
+          Systemd_Filter  _SYSTEMD_UNIT=format-etcd2-volume.service
+          Systemd_Filter  _SYSTEMD_UNIT=kube-node-taint-and-uncordon.service
+          Systemd_Filter  _SYSTEMD_UNIT=kubelet.service
+          Systemd_Filter  _SYSTEMD_UNIT=ldconfig.service
+          Systemd_Filter  _SYSTEMD_UNIT=locksmithd.service
+          Systemd_Filter  _SYSTEMD_UNIT=logrotate.service
+          Systemd_Filter  _SYSTEMD_UNIT=lvm2-monitor.service
+          Systemd_Filter  _SYSTEMD_UNIT=mdmon.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-idmapd.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-mountd.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-server.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-utils.service
+          Systemd_Filter  _SYSTEMD_UNIT=node-problem-detector.service
+          Systemd_Filter  _SYSTEMD_UNIT=ntp.service
+          Systemd_Filter  _SYSTEMD_UNIT=oem-cloudinit.service
+          Systemd_Filter  _SYSTEMD_UNIT=rkt-gc.service
+          Systemd_Filter  _SYSTEMD_UNIT=rkt-metadata.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpc-idmapd.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpc-mountd.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpc-statd.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpcbind.service
+          Systemd_Filter  _SYSTEMD_UNIT=set-aws-environment.service
+          Systemd_Filter  _SYSTEMD_UNIT=system-cloudinit.service
+          Systemd_Filter  _SYSTEMD_UNIT=systemd-timesyncd.service
+          Systemd_Filter  _SYSTEMD_UNIT=update-ca-certificates.service
+          Systemd_Filter  _SYSTEMD_UNIT=user-cloudinit.service
+          Systemd_Filter  _SYSTEMD_UNIT=var-lib-etcd2.service
+          Max_Entries     1000
+          Read_From_Tail  true
+```
+
+**WARNING:** Applying above configuration is related to increased ingest for rolling out time:
+
+- Fluent Bit is still pushing containers logs until it completes rolling out
+- Opentelemetry is pushing non-rotated logs during first run (this causes duplication of old logs)
+
+In order to mitigate that, we recommend to manually increase number of [Opentelemetry Collector metadata pods](#logs-metadata)
+(at least double) for update time. Please consider the following snippet:
+
+```yaml
+metadata:
+  logs:
+    # for autoscaling
+    autoscaling:
+      minReplicas: x  # x should be double of your actual number of pods
+    # without autoscaling
+    statefulset:
+      replicaCount: x  # x should be double of your actual number of pods
+```
 
 ## Persistence
 
