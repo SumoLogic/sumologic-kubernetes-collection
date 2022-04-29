@@ -12,7 +12,7 @@ locals {
     If traces are enabled and metrics are disabled, create default metrics source anyway
     */}}
     {{- if hasKey $sources "default" }}
-  {{ template "terraform.sources.local" (dict "Name" (include "terraform.sources.name" (dict "Name" "default" "Type" $type)) "Value" ( dig "default" "name" "(default-metrics)" $sources )) }}
+  {{ template "terraform.sources.local" (dict "Name" (include "terraform.sources.name" (dict "Name" "default" "Type" $type)) "Value" ( dict "default" "name" "(default-metrics)" $sources )) }}
     {{- end }}
   {{- end }}
 {{- end }}
