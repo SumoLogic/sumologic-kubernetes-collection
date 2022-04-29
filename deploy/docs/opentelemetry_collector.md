@@ -184,7 +184,19 @@ fluent-bit:
 - Fluent Bit is still pushing containers logs until it completes rolling out
 - Opentelemetry is pushing non-rotated logs during first run (this causes duplication of old logs)
 
-In order to mitigate that, we recommend to manually increase number of metadata pods (at least double) for update time.
+In order to mitigate that, we recommend to manually increase number of [Opentelemetry Collector metadata pods](#logs-metadata)
+(at least double) for update time. Please consider the following snippet:
+
+```yaml
+metadata:
+  logs:
+    # for autoscaling
+    autoscaling:
+      minReplicas: x  # x should be double of your actual number of pods
+    # without autoscaling
+    statefulset:
+      replicaCount: x  # x should be double of your actual number of pods
+```
 
 ## Persistence
 
