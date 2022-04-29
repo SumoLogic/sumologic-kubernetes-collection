@@ -50,6 +50,9 @@ spec:
       containers:
       - args:
         - --config=/etc/otelcol/config.yaml
+        {{- if eq .Values.otelcol.metrics.enabled false }}
+        - --metrics-level=none
+        {{- end }}
         image: {{ .Values.otellogs.image.repository }}:{{ .Values.otellogs.image.tag }}
         imagePullPolicy: {{ .Values.otellogs.image.pullPolicy }}
         name: otelcol
@@ -88,6 +91,11 @@ spec:
         - name: pprof
           containerPort: 1777
           protocol: TCP
+        {{- if eq .Values.otelcol.metrics.enabled true }}
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
+        {{- end }}
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
         image: busybox

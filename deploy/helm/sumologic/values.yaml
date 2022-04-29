@@ -1730,6 +1730,18 @@ kube-prometheus-stack:
           matchLabels:
             app.kubernetes.io/name: fluent-bit
             sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-logs-collector
+        additionalLabels:
+          sumologic.com/app: otelcol-logs-collector
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol-logs-collector
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-otelcol
         additionalLabels:
           sumologic.com/app: otelcol
@@ -4602,6 +4614,13 @@ otellogs:
   ## In order to enable this feature, a configuration block under metadata.logs.config.service.pipelines.logs/otlp/containers
   ## needs to be uncommented
   enabled: false
+
+  ## Metrics from Collector
+  metrics:
+    enabled: true
+
+  ## Add custom labels to otelcol svc
+  serviceLabels: {}
 
   ## Configure image for Opentelemetry Collector
   image:

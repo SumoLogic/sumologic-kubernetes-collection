@@ -63,8 +63,8 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
-{{- define "sumologic.logs.collector.name.daemonset" -}}
-{{- template "sumologic.logs.collector.name" . }}
+{{- define "sumologic.metadata.name.logs.collector.service" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector" -}}
@@ -84,6 +84,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector.pod" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.service" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
 {{- end -}}
 
@@ -628,6 +632,11 @@ sumologic.com/app: otelcol
 sumologic.com/component: traces
 {{- end -}}
 
+{{- define "sumologic.labels.logs.collector" -}}
+sumologic.com/app: otelcol-logs-collector
+sumologic.com/component: logs
+{{- end -}}
+
 {{- define "sumologic.label.scrape" -}}
 sumologic.com/scrape: "true"
 {{- end -}}
@@ -650,6 +659,11 @@ sumologic.com/scrape: "true"
 {{- define "sumologic.labels.scrape.traces" -}}
 {{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.traces" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.logs.collector" -}}
+{{ template "sumologic.label.scrape" . }}
+{{ template "sumologic.labels.logs.collector" . }}
 {{- end -}}
 
 {{/*
