@@ -4168,6 +4168,9 @@ metadata:
               - replicaSetName
               - serviceName
               - statefulSetName
+            annotations:
+              - tag_name: "pod_annotations_%s"
+                key: "*"
             namespace_labels:
               - tag_name: "namespace_labels_%s"
                 key: "*"
@@ -4230,56 +4233,56 @@ metadata:
               match_type: regexp
               record_attributes:
                 - key: SYSLOG_FACILITY
-                  value: '{{ .Values.fluentd.logs.systemd.excludeFacilityRegex | quote }}'
+                  value: '{{ .Values.fluentd.logs.systemd.excludeFacilityRegex | default "$^" | quote }}'
         filter/exclude_systemd_hostname:
           logs:
             exclude:
               match_type: regexp
               record_attributes:
                 - key: _HOSTNAME
-                  value: '{{ .Values.fluentd.logs.systemd.excludeHostRegex | quote }}'
+                  value: '{{ .Values.fluentd.logs.systemd.excludeHostRegex | default "$^" | quote }}'
         filter/exclude_systemd_priority:
           logs:
             exclude:
               match_type: regexp
               record_attributes:
                 - key: PRIORITY
-                  value: '{{ .Values.fluentd.logs.systemd.excludePriorityRegex | quote }}'
+                  value: '{{ .Values.fluentd.logs.systemd.excludePriorityRegex | default "$^" | quote }}'
         filter/exclude_systemd_unit:
           logs:
             exclude:
               match_type: regexp
               record_attributes:
                 - key: _SYSTEMD_UNIT
-                  value: '{{ .Values.fluentd.logs.systemd.excludeUnitRegex | quote }}'
+                  value: '{{ .Values.fluentd.logs.systemd.excludeUnitRegex | default "$^" | quote }}'
         filter/exclude_kubelet_syslog:
           logs:
             exclude:
               match_type: regexp
               record_attributes:
                 - key: SYSLOG_FACILITY
-                  value: '{{ .Values.fluentd.logs.kubelet.excludeFacilityRegex | quote }}'
+                  value: '{{ .Values.fluentd.logs.kubelet.excludeFacilityRegex | default "$^" | quote }}'
         filter/exclude_kubelet_hostname:
           logs:
             exclude:
               match_type: regexp
               record_attributes:
                 - key: _HOSTNAME
-                  value: '{{ .Values.fluentd.logs.kubelet.excludeHostRegex | quote }}'
+                  value: '{{ .Values.fluentd.logs.kubelet.excludeHostRegex | default "$^" | quote }}'
         filter/exclude_kubelet_priority:
           logs:
             exclude:
               match_type: regexp
               record_attributes:
                 - key: PRIORITY
-                  value: '{{ .Values.fluentd.logs.kubelet.excludePriorityRegex | quote }}'
+                  value: '{{ .Values.fluentd.logs.kubelet.excludePriorityRegex | default "$^" | quote }}'
         filter/exclude_kubelet_unit:
           logs:
             exclude:
               match_type: regexp
               record_attributes:
                 - key: _SYSTEMD_UNIT
-                  value: '{{ .Values.fluentd.logs.kubelet.excludeUnitRegex | quote }}'
+                  value: '{{ .Values.fluentd.logs.kubelet.excludeUnitRegex | default "$^" | quote }}'
 
         groupbyattrs/systemd:
           keys:

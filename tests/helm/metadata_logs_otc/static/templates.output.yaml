@@ -185,6 +185,9 @@ data:
         - _collector
       k8s_tagger:
         extract:
+          annotations:
+          - key: '*'
+            tag_name: pod_annotations_%s
           delimiter: _
           labels:
           - key: '*'
