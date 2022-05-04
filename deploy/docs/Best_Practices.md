@@ -1104,7 +1104,7 @@ to work with our collection.
 **NOTE** Some metrics were changed in newer version of kube-prometheus-stack:
 
 - `prometheus_remote_storage_succeeded_samples_total` replaced with `prometheus_remote_storage_samples_total`
-- `prometheus_remote_storage_failed_samples_total` replaced with `prometheus_remote_storage_samples_failed_total` 
+- `prometheus_remote_storage_failed_samples_total` replaced with `prometheus_remote_storage_samples_failed_total`
 - `prometheus_remote_storage_retried_samples_total` replaced with `prometheus_remote_storage_samples_retried_total`
 - `prometheus_remote_storage_dropped_samples_total` replaced with `prometheus_remote_storage_samples_dropped_total`
 - `prometheus_remote_storage_pending_samples` replaced with `prometheus_remote_storage_samples_pending`
