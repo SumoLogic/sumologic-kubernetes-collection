@@ -125,6 +125,7 @@ data:
       apiserver_metrics_source                    = "apiserver-metrics"
       control_plane_metrics_source                = "control-plane-metrics"
       controller_metrics_source                   = "kube-controller-manager-metrics"
+      default_metrics_source                      = "(default-metrics)"
       kubelet_metrics_source                      = "kubelet-metrics"
       node_metrics_source                         = "node-exporter-metrics"
       scheduler_metrics_source                    = "kube-scheduler-metrics"
@@ -154,7 +155,7 @@ data:
     readonly SUMOLOGIC_BASE_URL
   
     MONITORS_FOLDER_NAME="Kubernetes"
-    MONITORS_DISABLED="false"
+    MONITORS_DISABLED="true"
   
     # verify if the k8s monitors folder already exists
     MONITORS_RESPONSE="$(curl -XGET -s \
@@ -241,6 +242,11 @@ data:
         collector_id = sumologic_collector.collector.id
     }
     
+    resource "sumologic_http_source" "default_metrics_source" {
+        name         = local.default_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
     resource "sumologic_http_source" "kubelet_metrics_source" {
         name         = local.kubelet_metrics_source
         collector_id = sumologic_collector.collector.id
@@ -273,6 +279,7 @@ data:
         endpoint-metrics-apiserver                = sumologic_http_source.apiserver_metrics_source.url
         endpoint-control_plane_metrics_source     = sumologic_http_source.control_plane_metrics_source.url
         endpoint-metrics-kube-controller-manager  = sumologic_http_source.controller_metrics_source.url
+        endpoint-metrics                          = sumologic_http_source.default_metrics_source.url
         endpoint-metrics-kubelet                  = sumologic_http_source.kubelet_metrics_source.url
         endpoint-metrics-node-exporter            = sumologic_http_source.node_metrics_source.url
         endpoint-metrics-kube-scheduler           = sumologic_http_source.scheduler_metrics_source.url
@@ -410,6 +417,7 @@ data:
     terraform import sumologic_http_source.apiserver_metrics_source "${COLLECTOR_NAME}/apiserver-metrics"
     terraform import sumologic_http_source.control_plane_metrics_source "${COLLECTOR_NAME}/control-plane-metrics"
     terraform import sumologic_http_source.controller_metrics_source "${COLLECTOR_NAME}/kube-controller-manager-metrics"
+    terraform import sumologic_http_source.default_metrics_source "${COLLECTOR_NAME}/(default-metrics)"
     terraform import sumologic_http_source.kubelet_metrics_source "${COLLECTOR_NAME}/kubelet-metrics"
     terraform import sumologic_http_source.node_metrics_source "${COLLECTOR_NAME}/node-exporter-metrics"
     terraform import sumologic_http_source.scheduler_metrics_source "${COLLECTOR_NAME}/kube-scheduler-metrics"
@@ -426,7 +434,9 @@ data:
         || { echo "Error during applying Terraform changes"; exit 1; }
   
     # Setup Sumo Logic monitors if enabled
-    bash /etc/terraform/monitors.sh
+    echo "Installation of the Sumo Logic monitors is disabled."
+    echo "You can install them manually later with:"
+    echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
   
     # Cleanup env variables
     export SUMOLOGIC_BASE_URL=

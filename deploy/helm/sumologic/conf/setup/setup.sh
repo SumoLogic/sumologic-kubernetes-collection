@@ -142,6 +142,15 @@ TF_LOG_PROVIDER=DEBUG terraform apply \
     -var="create_fields=${CREATE_FIELDS}" \
     || { echo "Error during applying Terraform changes"; exit 1; }
 
+# Setup Sumo Logic monitors if enabled
+{{- if .Values.sumologic.setup.monitors.enabled }}
+bash /etc/terraform/monitors.sh
+{{- else }}
+echo "Installation of the Sumo Logic monitors is disabled."
+echo "You can install them manually later with:"
+echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
+{{- end }}
+
 # Cleanup env variables
 export SUMOLOGIC_BASE_URL=
 export SUMOLOGIC_ACCESSKEY=

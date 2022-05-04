@@ -125,6 +125,7 @@ data:
       apiserver_metrics_source                    = "apiserver-metrics"
       control_plane_metrics_source                = "control-plane-metrics"
       controller_metrics_source                   = "kube-controller-manager-metrics"
+      default_metrics_source                      = "(default-metrics)"
       kubelet_metrics_source                      = "kubelet-metrics"
       node_metrics_source                         = "node-exporter-metrics"
       scheduler_metrics_source                    = "kube-scheduler-metrics"
@@ -185,6 +186,10 @@ data:
         SUMOLOGIC_ENV="us1"
       fi
   
+      NOTIFICATIONS_RECIPIENTS='["test@test.lh","email@locahost.lh"]'
+      NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{ TriggerType }} on {{ Name }}\",message_body=\"Triggered {{ TriggerType }} Alert on {{ Name }}: {{ QueryURL }}\""
+      NOTIFICATIONS_SETTINGS="recipients=${NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
+  
       TF_LOG_PROVIDER=DEBUG terraform apply \
           -auto-approve \
           -var="access_id=${SUMOLOGIC_ACCESSID}" \
@@ -192,6 +197,9 @@ data:
           -var="environment=${SUMOLOGIC_ENV}" \
           -var="folder=${MONITORS_FOLDER_NAME}" \
           -var="monitors_disabled=${MONITORS_DISABLED}" \
+          -var="email_notifications_critical=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Critical\", \"ResolvedCritical\"]}]" \
+          -var="email_notifications_warning=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Warning\", \"ResolvedWarning\"]}]" \
+          -var="email_notifications_missingdata=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"MissingData\", \"ResolvedMissingData\"]}]" \
           || { echo "Error during applying Terraform monitors."; exit 1; }
     else
       echo "The monitors were already installed in ${MONITORS_FOLDER_NAME}."
@@ -241,6 +249,11 @@ data:
         collector_id = sumologic_collector.collector.id
     }
     
+    resource "sumologic_http_source" "default_metrics_source" {
+        name         = local.default_metrics_source
+        collector_id = sumologic_collector.collector.id
+    }
+    
     resource "sumologic_http_source" "kubelet_metrics_source" {
         name         = local.kubelet_metrics_source
         collector_id = sumologic_collector.collector.id
@@ -273,6 +286,7 @@ data:
         endpoint-metrics-apiserver                = sumologic_http_source.apiserver_metrics_source.url
         endpoint-control_plane_metrics_source     = sumologic_http_source.control_plane_metrics_source.url
         endpoint-metrics-kube-controller-manager  = sumologic_http_source.controller_metrics_source.url
+        endpoint-metrics                          = sumologic_http_source.default_metrics_source.url
         endpoint-metrics-kubelet                  = sumologic_http_source.kubelet_metrics_source.url
         endpoint-metrics-node-exporter            = sumologic_http_source.node_metrics_source.url
         endpoint-metrics-kube-scheduler           = sumologic_http_source.scheduler_metrics_source.url
@@ -410,6 +424,7 @@ data:
     terraform import sumologic_http_source.apiserver_metrics_source "${COLLECTOR_NAME}/apiserver-metrics"
     terraform import sumologic_http_source.control_plane_metrics_source "${COLLECTOR_NAME}/control-plane-metrics"
     terraform import sumologic_http_source.controller_metrics_source "${COLLECTOR_NAME}/kube-controller-manager-metrics"
+    terraform import sumologic_http_source.default_metrics_source "${COLLECTOR_NAME}/(default-metrics)"
     terraform import sumologic_http_source.kubelet_metrics_source "${COLLECTOR_NAME}/kubelet-metrics"
     terraform import sumologic_http_source.node_metrics_source "${COLLECTOR_NAME}/node-exporter-metrics"
     terraform import sumologic_http_source.scheduler_metrics_source "${COLLECTOR_NAME}/kube-scheduler-metrics"
