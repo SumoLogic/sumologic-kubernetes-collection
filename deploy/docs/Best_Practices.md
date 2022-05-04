@@ -1080,18 +1080,7 @@ to work with our collection.
          tag: v1.3.1
      ```
 
-1. [Upgrade Kube Prometheus Stack][kube-prometheus-stack]
-
-   ```bash
-   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-   helm repo update
-
-   helm install kube-prometheus prometheus-community/kube-prometheus-stack \
-     --namespace sumologic \
-     --create-namespace \
-     --version 34.10.0 \
-     -f values.yaml
-   ```
+   - add your custom prometheus configuration
 
 1. [Upgrade sumologic chart](./Installation_with_Helm.md#upgrading-sumo-logic-collection) without `kube-prometheus-stack`
    by adding the following configuration to your [values.yaml](../../examples/kube_prometheus_stack/values.yaml):
@@ -1099,6 +1088,31 @@ to work with our collection.
    ```yaml
    kube-prometheus-stack:
      enabled: false
+   ```
+
+1. [Install CRD for Kube Prometheus Stack][kube-prometheus-stack-crd]:
+
+   ```bash
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+   ```
+
+1. [Install Kube Prometheus Stack][kube-prometheus-stack] in the same namespace which collection has been installed:
+
+   ```bash
+   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+   helm repo update
+
+   helm install kube-prometheus prometheus-community/kube-prometheus-stack \
+     --namespace <NAMESPACE> \
+     --version 34.10.0 \
+     -f values-prometheus.yaml
    ```
 
 **NOTE** Some metrics were changed in newer version of kube-prometheus-stack:
@@ -1111,9 +1125,10 @@ to work with our collection.
 - `prometheus_remote_storage_sent_bytes_total` was removed and replaced with `prometheus_remote_storage_bytes_total`
   and `prometheus_remote_storage_metadata_bytes_total`
 
-[kube-prometheus-stack]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#upgrading-chart
+[kube-prometheus-stack]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#install-helm-chart
 [values-prometheus.yaml]: ../../examples/kube_prometheus_stack/values-prometheus.yaml
 [values.yaml]: ../helm/sumologic/values.yaml
+[kube-prometheus-stack-crd]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#from-33x-to-34x
 
 ## OpenTelemetry queueing and batching
 
