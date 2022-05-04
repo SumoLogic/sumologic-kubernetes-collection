@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.1...release-v2.7
 
-## [2.7.1]
+## [v2.7.1]
 
 ### Released 2022-04-29
 
@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [#2255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2255
 [#2260]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2260
-[2.7.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.0...v2.7.1
+[v2.7.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.7.1
 
 ## [v2.7.0][v2.7.0]
 
