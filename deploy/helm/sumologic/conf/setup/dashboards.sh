@@ -108,4 +108,3 @@ else
   echo "You can (re)install them manually with:"
   echo "https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App%2C_Alerts%2C_and_view_the_Dashboards#install-the-app"
 fi
-
