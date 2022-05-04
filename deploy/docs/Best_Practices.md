@@ -543,7 +543,7 @@ fluentd:
   logs:
     containers:
       extraFilterPluginConf: |-
-          # Filter all test-container containers
+          # Apply to all test-container containers
           <filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>
             @type record_transformer
             enable_ruby
