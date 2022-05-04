@@ -566,12 +566,12 @@ An example log before entering the `extraFilterPluginConf` section is presented 
 {
   "stream": "stdout",
   "logtag": "F",
-  "log": "log... ",
+  "log": "Password: 123456",
   "docker": {
     "container_id": "a1acfd70-c8d1-456b-95dd-515f1256906f"
   },
   "kubernetes": {
-    "container_name": "example-container-multiline-logs-long-lines",
+    "container_name": "test-container",
     "namespace_name": "multiline-logs-generator",
     "pod_name": "multiline-logs-generator",
     "pod_id": "a1acfd70-c8d1-456b-95dd-515f1256906f",
