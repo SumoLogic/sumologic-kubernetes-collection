@@ -28,7 +28,13 @@ fails please refer to the following to create them manually:
 https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/2b3ca63/deploy/docs/Installation_with_Helm.md#prerequisite
 
 {{- if not (.Values.sumologic.setup.monitors.enabled) }}
-echo "Installation of the Sumo Logic monitors is disabled."
-echo "You can install them with:"
-echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
+Installation of the Sumo Logic monitors is disabled.
+You can install them with:
+https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes
+{{- end }}
+
+{{- if not (.Values.sumologic.setup.dashboards.enabled) }}
+Installation of the Sumo Logic dashboards is disabled.
+You can install them manually later with:
+https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App%2C_Alerts%2C_and_view_the_Dashboards#install-the-app
 {{- end }}
