@@ -151,6 +151,15 @@ echo "You can install them manually later with:"
 echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
 {{- end }}
 
+# Setup Sumo Logic dashboards if enabled
+{{- if .Values.sumologic.setup.dashboards.enabled }}
+bash /etc/terraform/dashboards.sh
+{{- else }}
+echo "Installation of the Sumo Logic dashboards is disabled."
+echo "You can install them manually later with:"
+echo "https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App%2C_Alerts%2C_and_view_the_Dashboards#install-the-app"
+{{- end }}
+
 # Cleanup env variables
 export SUMOLOGIC_BASE_URL=
 export SUMOLOGIC_ACCESSKEY=
