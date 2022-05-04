@@ -6,10 +6,12 @@
 - [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
   - [Multiline Support](#multiline-support)
 - [Collecting logs from /var/log/pods](#collecting-logs-from-varlogpods)
+  - [Fluentd tag for /var/log/pods and /var/log/containers](#fluentd-tag-for-varlogpods-and-varlogcontainers)
 - [Choosing Fluentd Base Image](#choosing-fluentd-base-image)
 - [Fluentd Autoscaling](#fluentd-autoscaling)
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
 - [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
+- [Modifying logs in Fluentd](#modifying-logs-in-fluentd)
 - [Excluding Metrics](#excluding-metrics)
 - [Excluding Dimensions](#excluding-dimensions)
 - [Add a local file to fluent-bit configuration](#add-a-local-file-to-fluent-bit-configuration)
@@ -237,6 +239,24 @@ metadata:
             - action: delete
               key: k8s_container_name
 ```
+
+### Fluentd tag for /var/log/pods and /var/log/containers
+
+[Fluentd tag][fluent_routing] value depends on directory from which logs are scraped:
+
+- `/var/log/pods` is resolved to `containers.var.log.pods.<namespace>_<pod>_<container_id>.<container>.<run_id>.log`
+- `/var/log/containers` is resolved to `containers.var.log.containers.<pod>_<namespace>_<container>-<container_id>.log`
+
+e.g. if you want to use additional [filter][fluentd_filter] for container `test-container`,
+you need to use the following Fluentd [filter][fluentd_filter] directive header:
+
+- `<filter containers.var.log.pods.*_*_*.test-container.*.log>` for `/var/log/pods`
+- `<filter containers.var.log.containers.*_*_test-container-*.log>` for `/var/log/containers`
+- `<filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>`
+  to support both `/var/log/pods` and `/var/log/containers`
+
+[fluentd_filter]: https://docs.fluentd.org/filter
+[fluent_routing]: https://docs.fluentd.org/configuration/config-file#interlude-routing
 
 ## Choosing Fluentd Base Image
 
@@ -510,6 +530,65 @@ You can find more information on the `grep` filter plugin in the
 [fluentd documentation](https://docs.fluentd.org/filter/grep).
 Refer to our [documentation](v1_conf_examples.md) for other examples of how you can
 customize the fluentd pipeline.
+
+## Modifying logs in Fluentd
+
+You can redact log messages in order to e.g. prevent sending sensitive data like passwords.
+
+In order to do that [record_transformer filter][record_transformer] can be used.
+Please consider the following configuration:
+
+```yaml
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |-
+          # Apply to all test-container containers
+          <filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>
+            @type record_transformer
+            enable_ruby
+            <record>
+              # Replace `Password: <pass>` with `Password: ***`
+              log ${record["log"].gsub(/Password: (.*)/, 'Password: ***')}
+              # Replace kubernetes['namespace_name'] with 'REDACTED'
+              # if namespace_name exists in record['kubernetes'], then change value of it and then return modified record['kubernetes'] to assign as kubernetes
+              kubernetes = ${if record['kubernetes'].has_key?('namespace_name'); record['kubernetes']['namespace_name'] = "REDACTED"; end; record['kubernetes']}
+            </record>
+          </filter>
+```
+
+It is going to replace all `Password: <pass>` occurence in logs with `Password: ***` and replace namespace to `REDACTED`
+for [all containers](#difference-between-varlogpods-and-varlogcontainers) named `test-container`.
+
+An example log before entering the `extraFilterPluginConf` section is presented below:
+
+```json
+{
+  "stream": "stdout",
+  "logtag": "F",
+  "log": "Password: 123456",
+  "docker": {
+    "container_id": "a1acfd70-c8d1-456b-95dd-515f1256906f"
+  },
+  "kubernetes": {
+    "container_name": "test-container",
+    "namespace_name": "multiline-logs-generator",
+    "pod_name": "multiline-logs-generator",
+    "pod_id": "a1acfd70-c8d1-456b-95dd-515f1256906f",
+    "host": "sumologic-kubernetes-collection",
+    "labels": {
+      "example": "multiline-logs-generator"
+    },
+    "master_url": "https://10.152.183.1:443/api",
+    "namespace_id": "3e6d679e-f9f4-4333-966c-a8354457f8f4",
+    "namespace_labels": {
+      "kubernetes.io/metadata.name": "multiline-logs-generator"
+    }
+  }
+}
+```
+
+[record_transformer]: https://docs.fluentd.org/filter/record_transformer
 
 ## Excluding Metrics
 
