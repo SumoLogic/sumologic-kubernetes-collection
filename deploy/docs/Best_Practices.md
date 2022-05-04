@@ -242,7 +242,7 @@ metadata:
 
 ### Difference between /var/log/pods and /var/log/containers
 
-The only but important difference is generated `fluent.tag` value:
+The only, but important difference is the generated `fluent.tag` value:
 
 - `/var/log/pods` is resolved to `containers.var.log.pods.<namespace>_<pod>_<container_id>.<container>.<run_id>.log`
 - `/var/log/containers` is resolved to `containers.var.log.containers.<pod>_<namespace>_<container>-<container_id>.log`
