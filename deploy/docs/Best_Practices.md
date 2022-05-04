@@ -28,6 +28,7 @@
 - [Get logs not available on stdout](#get-logs-not-available-on-stdout)
 - [Adding custom fields](#adding-custom-fields)
 - [Using custom Kubernetes API server address](#using-custom-kubernetes-api-server-address)
+- [Using newer Kube Prometheus Stack](#using-newer-kube-prometheus-stack)
 - [OpenTelemetry queueing and batching](#opentelemetry-queueing-and-batching)
   - [Compaction](#compaction)
   - [Examples](#examples)
@@ -1029,6 +1030,90 @@ metadata:
       - name: KUBERNETES_SERVICE_PORT
         value: '12345'
 ```
+
+## Using newer Kube Prometheus Stack
+
+Due to breaking changes, we do not support the latest Kube Prometheus Stack.
+We are aware that it can be a major issue, so this section describes how to install Kube Prometheus Stack in version `34.10.0`
+to work with our collection.
+
+1. Prepare [values-prometheus.yaml] with Kube Prometheus Stack configuration:
+
+   - copy content of `kube-prometheus-stack` from [values.yaml]
+   - add the following configuration:
+
+     ```yaml
+     prometheus:
+       prometheusSpec:
+         initContainers:
+           - name: "init-config-reloader"
+             env:
+               - name: FLUENTD_METRICS_SVC
+                 valueFrom:
+                   configMapKeyRef:
+                     name: sumologic-configmap
+                     key: fluentdMetrics
+               - name: NAMESPACE
+                 valueFrom:
+                   configMapKeyRef:
+                     name: sumologic-configmap
+                     key: fluentdNamespace
+     ```
+  
+   - remove the following configuration:
+
+     ```yaml
+     prometheus:
+       prometheusSpec:
+         thanos:
+           ## Use our own image until Thanos upstream adds arm64 docker images
+           ## to their registry.
+           baseImage: public.ecr.aws/sumologic/thanos
+           version: v0.23.1
+     kube-state-metrics:
+       ## Use the GCR repo, it's more recent and has ARM images starting from 1.9.8
+       image:
+         repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
+         tag: v1.9.8
+     prometheus-node-exporter:
+       image:
+         tag: v1.3.1
+     ```
+
+1. [Upgrade Kube Prometheus Stack][kube-prometheus-stack]
+
+   ```bash
+   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+   helm repo update
+
+   helm install kube-prometheus prometheus-community/kube-prometheus-stack \
+     --namespace sumologic \
+     --create-namespace \
+     --version 34.10.0 \
+     -f values.yaml
+   ```
+
+1. [Upgrade sumologic chart](./Installation_with_Helm.md#upgrading-sumo-logic-collection) without `kube-prometheus-stack`
+   by adding the following configuration to your [values.yaml](../../examples/kube_prometheus_stack/values.yaml):
+
+   ```yaml
+   kube-prometheus-stack:
+     enabled: false
+   ```
+
+**NOTE** Some metrics were changed in newer version of kube-prometheus-stack:
+
+- `prometheus_remote_storage_succeeded_samples_total` replaced with `prometheus_remote_storage_samples_total`
+- `prometheus_remote_storage_failed_samples_total` replaced with `prometheus_remote_storage_samples_failed_total` 
+- `prometheus_remote_storage_retried_samples_total` replaced with `prometheus_remote_storage_samples_retried_total`
+- `prometheus_remote_storage_dropped_samples_total` replaced with `prometheus_remote_storage_samples_dropped_total`
+- `prometheus_remote_storage_pending_samples` replaced with `prometheus_remote_storage_samples_pending`
+- `prometheus_remote_storage_sent_bytes_total` was removed and replaced with `prometheus_remote_storage_bytes_total`
+  and `prometheus_remote_storage_metadata_bytes_total`
+
+[kube-prometheus-stack]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#upgrading-chart
+[values-prometheus.yaml]: ../../examples/kube_prometheus_stack/values-prometheus.yaml
+[values.yaml]: ../helm/sumologic/values.yaml
 
 ## OpenTelemetry queueing and batching
 
