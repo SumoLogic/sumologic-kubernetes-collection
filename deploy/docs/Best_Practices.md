@@ -1055,7 +1055,7 @@ For [sumologic exporter][sumologic_exporter]:
 **because once filled in PVC never reduces its fill.**
 
 [batch_processor]: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.47.0/processor/batchprocessor#batch-processor
-[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.49.0-sumo-0/pkg/exporter/sumologicexporter#sumo-logic-exporter
+[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.50.0-sumo-0/pkg/exporter/sumologicexporter#sumo-logic-exporter
 [filling_up_alert]: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumefillingup/
 
 ### Compaction
