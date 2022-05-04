@@ -185,7 +185,7 @@ data:
       if [[ "${SUMOLOGIC_BASE_URL}" == "${SUMOLOGIC_ENV}" ]] ; then
         SUMOLOGIC_ENV="us1"
       fi
-      NOTIFICATIONS_RECIPIENTS='["test@test.lh","email@locahost.lh"]'
+      NOTIFICATIONS_RECIPIENTS='["email@locahost.lh"]'
       NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{ TriggerType }} on {{ Name }}\",message_body=\"Triggered {{ TriggerType }} Alert on {{ Name }}: {{ QueryURL }}\""
       NOTIFICATIONS_SETTINGS="recipients=${NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
   
