@@ -222,6 +222,10 @@ data:
         - action: upsert
           from_attribute: k8s.node.name
           key: k8s.pod.hostname
+      resource/drop_annotations:
+        attributes:
+        - action: delete
+          pattern: ^pod_annotations_.*
       source/containers:
         annotation_prefix: pod_annotations_
         collector: "kubernetes"
@@ -278,6 +282,7 @@ data:
           - groupbyattrs/containers
           - k8s_tagger
           - source/containers
+          - resource/drop_annotations
           - attributes/remove_fluent_tag
           - resource/containers_copy_node_to_host
           - batch

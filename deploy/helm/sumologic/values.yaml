@@ -4141,6 +4141,10 @@ metadata:
             - action: upsert
               key: k8s.pod.hostname
               from_attribute: k8s.node.name
+        resource/drop_annotations:
+          attributes:
+            - pattern: ^pod_annotations_.*
+              action: delete
         groupbyattrs/containers:
           keys:
             - k8s.container.id
@@ -4331,6 +4335,7 @@ metadata:
               - groupbyattrs/containers
               - k8s_tagger
               - source/containers
+              - resource/drop_annotations
               - attributes/remove_fluent_tag
               - resource/containers_copy_node_to_host
               - batch
@@ -4350,6 +4355,7 @@ metadata:
           #     - groupbyattrs/containers
           #     - k8s_tagger
           #     - source/containers
+          #     - resource/drop_annotations
           #     - resource/containers_copy_node_to_host
           #     - batch
           #   exporters:
