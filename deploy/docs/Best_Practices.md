@@ -6,7 +6,7 @@
 - [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
   - [Multiline Support](#multiline-support)
 - [Collecting logs from /var/log/pods](#collecting-logs-from-varlogpods)
-  - [Difference between /var/log/pods and /var/log/containers](#difference-between-varlogpods-and-varlogcontainers)
+  - [Fluentd tag for /var/log/pods and /var/log/containers](#fluentd-tag-for-varlogpods-and-varlogcontainers)
 - [Choosing Fluentd Base Image](#choosing-fluentd-base-image)
 - [Fluentd Autoscaling](#fluentd-autoscaling)
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
@@ -240,9 +240,9 @@ metadata:
               key: k8s_container_name
 ```
 
-### Difference between /var/log/pods and /var/log/containers
+### Fluentd tag for /var/log/pods and /var/log/containers
 
-The only, but important difference is the generated `fluent.tag` value:
+[Fluentd tag][fluent_routing] value depends on directory from which logs are scraped:
 
 - `/var/log/pods` is resolved to `containers.var.log.pods.<namespace>_<pod>_<container_id>.<container>.<run_id>.log`
 - `/var/log/containers` is resolved to `containers.var.log.containers.<pod>_<namespace>_<container>-<container_id>.log`
@@ -256,6 +256,7 @@ you need to use the following Fluentd [filter][fluentd_filter] directive header:
   to support both `/var/log/pods` and `/var/log/containers`
 
 [fluentd_filter]: https://docs.fluentd.org/filter
+[fluent_routing]: https://docs.fluentd.org/configuration/config-file#interlude-routing
 
 ## Choosing Fluentd Base Image
 
@@ -542,6 +543,7 @@ fluentd:
   logs:
     containers:
       extraFilterPluginConf: |-
+          # Filter all test-container containers
           <filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>
             @type record_transformer
             enable_ruby
