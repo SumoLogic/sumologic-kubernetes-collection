@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ template "sumologic.logs.collector.name.daemonset" . }}
+  name: {{ template "sumologic.metadata.name.logs.collector.daemonset" . }}
   labels:
     app: {{ template "sumologic.labels.app.logs.collector.daemonset" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
@@ -50,6 +50,9 @@ spec:
       containers:
       - args:
         - --config=/etc/otelcol/config.yaml
+        {{- if eq .Values.otelcol.metrics.enabled false }}
+        - --metrics-level=none
+        {{- end }}
         image: {{ .Values.otellogs.image.repository }}:{{ .Values.otellogs.image.tag }}
         imagePullPolicy: {{ .Values.otellogs.image.pullPolicy }}
         name: otelcol
@@ -88,6 +91,11 @@ spec:
         - name: pprof
           containerPort: 1777
           protocol: TCP
+        {{- if eq .Values.otelcol.metrics.enabled true }}
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
+        {{- end }}
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
         image: public.ecr.aws/docker/library/busybox
@@ -107,7 +115,7 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
-          name: {{ template "sumologic.logs.collector.name.configmap" . }}
+          name: {{ template "sumologic.metadata.name.logs.collector.configmap" . }}
         name: otelcol-config
       - hostPath:
           path: /var/log/pods
@@ -121,5 +129,5 @@ spec:
           path: /var/lib/otc
           type: DirectoryOrCreate
         name: file-storage
-      serviceAccountName: {{ template "sumologic.logs.collector.name.serviceaccount" . }}
+      serviceAccountName: {{ template "sumologic.metadata.name.logs.collector.serviceaccount" . }}
 {{- end }}

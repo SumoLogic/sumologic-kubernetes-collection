@@ -68,6 +68,9 @@ spec:
         - name: pprof
           containerPort: 1777
           protocol: TCP
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
         image: public.ecr.aws/docker/library/busybox
