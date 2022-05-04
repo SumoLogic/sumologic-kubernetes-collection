@@ -556,7 +556,7 @@ fluentd:
 ```
 
 It is going to replace all `Password: <pass>` occurence in logs with `Password: ***` and replace namespace to `REDACTED`
-for [all containers](#difference-between-varlogpods-and-varlogcontainers) named `multiline-logs-generator`.
+for [all containers](#difference-between-varlogpods-and-varlogcontainers) named `test-container`.
 
 An example log before entering the `extraFilterPluginConf` section is presented below:
 
