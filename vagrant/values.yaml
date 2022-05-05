@@ -186,9 +186,6 @@ metadata:
             - action: extract
               key: fluent.tag
               pattern: ^containers\.var\.log\.pods\.(?P<k8s_namespace>[^_]+)_(?P<k8s_pod_name>[^_]+)_(?P<k8s_uid>[a-f0-9\-]{36})\.(?P<k8s_container_name>[^\._]+)\.(?P<k8s_run_id>\d+)\.log$
-            - action: insert
-              key: k8s.pod.uid
-              from_attribute: k8s_uid
             - action: delete
               key: k8s_uid
             - action: delete

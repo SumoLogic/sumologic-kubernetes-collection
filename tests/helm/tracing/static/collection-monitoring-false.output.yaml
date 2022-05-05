@@ -20,9 +20,6 @@ data:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
         log_format: text
         max_request_body_size: 1048576
-        metadata_attributes:
-        - k8s.*
-        - host.name
         metric_format: prometheus
         retry_on_failure:
           enabled: true

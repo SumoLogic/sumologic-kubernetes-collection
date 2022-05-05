@@ -3569,10 +3569,6 @@ otelcol:
         source_name: "exporters.sumologic.source_name.replace"
         ## Desired host name. Useful if you want to override the source host configured for the source.
         source_host: "%{host.name}"
-        ## List of regexes for attributes which should be send as metadata
-        metadata_attributes:
-          - k8s.*
-          - host.name
         ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
         timeout: 5s
         retry_on_failure:
@@ -3611,7 +3607,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.47.0-sumo-0
+    tag: 0.50.0-sumo-0
     pullPolicy: IfNotPresent
 
   securityContext:
@@ -3719,11 +3715,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/apiserver:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
@@ -3735,11 +3726,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/control_plane:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
@@ -3751,11 +3737,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/controller:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
@@ -3767,11 +3748,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/kubelet:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
@@ -3783,11 +3759,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/node:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
@@ -3799,11 +3770,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/scheduler:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
@@ -3815,11 +3781,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
-          routing_atttribute_to_drop: http_listener_v2_path
         sumologic/state:
           metric_format: prometheus
           endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
@@ -3831,11 +3792,6 @@ metadata:
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
           timeout: 30s
-          metadata_attributes:
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
-          routing_atttribute_to_drop: http_listener_v2_path
       processors:
         ## Configuration for Metrics Transform Processor
         ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/metricstransformprocessor
@@ -3896,6 +3852,7 @@ metadata:
           ## NOTE: add a feature to routingprocessor to drop the routing
           ## attribute to prevent it being sent to the exporters.
           from_attribute: http_listener_v2_path
+          drop_resource_routing_attribute: true
           attribute_source: resource
           default_exporters:
             - sumologic/default
@@ -4131,12 +4088,6 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-          metadata_attributes:
-            ## Attributes to be send as fields
-            - _collector
-            - k8s.*
-            - pod_labels_.*
-            - namespace_labels_.*
         sumologic/systemd:
           log_format: json
           json_logs:
@@ -4151,8 +4102,6 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-          metadata_attributes:
-            - _collector
 
       processors:
         ## Common processors
@@ -4218,12 +4167,17 @@ metadata:
             - action: upsert
               key: k8s.pod.hostname
               from_attribute: k8s.node.name
+        resource/drop_annotations:
+          attributes:
+            - pattern: ^pod_annotations_.*
+              action: delete
         groupbyattrs/containers:
           keys:
             - k8s.container.id
             - k8s.container.name
             - k8s.namespace.name
             - k8s.pod.name
+            - _collector
         k8s_tagger:
           ## Has to be false to enrich metadata
           passthrough: false
@@ -4303,13 +4257,67 @@ metadata:
               record_attributes:
                 - key: _SYSTEMD_UNIT
                   value: kubelet.service
+        filter/exclude_systemd_syslog:
+          logs:
+            exclude:
+              match_type: regexp
+              record_attributes:
+                - key: SYSLOG_FACILITY
+                  value: '{{ .Values.fluentd.logs.systemd.excludeFacilityRegex | default "$^" | quote }}'
+        filter/exclude_systemd_hostname:
+          logs:
+            exclude:
+              match_type: regexp
+              record_attributes:
+                - key: _HOSTNAME
+                  value: '{{ .Values.fluentd.logs.systemd.excludeHostRegex | default "$^" | quote }}'
+        filter/exclude_systemd_priority:
+          logs:
+            exclude:
+              match_type: regexp
+              record_attributes:
+                - key: PRIORITY
+                  value: '{{ .Values.fluentd.logs.systemd.excludePriorityRegex | default "$^" | quote }}'
+        filter/exclude_systemd_unit:
+          logs:
+            exclude:
+              match_type: regexp
+              record_attributes:
+                - key: _SYSTEMD_UNIT
+                  value: '{{ .Values.fluentd.logs.systemd.excludeUnitRegex | default "$^" | quote }}'
+        filter/exclude_kubelet_syslog:
+          logs:
+            exclude:
+              match_type: regexp
+              record_attributes:
+                - key: SYSLOG_FACILITY
+                  value: '{{ .Values.fluentd.logs.kubelet.excludeFacilityRegex | default "$^" | quote }}'
+        filter/exclude_kubelet_hostname:
+          logs:
+            exclude:
+              match_type: regexp
+              record_attributes:
+                - key: _HOSTNAME
+                  value: '{{ .Values.fluentd.logs.kubelet.excludeHostRegex | default "$^" | quote }}'
+        filter/exclude_kubelet_priority:
+          logs:
+            exclude:
+              match_type: regexp
+              record_attributes:
+                - key: PRIORITY
+                  value: '{{ .Values.fluentd.logs.kubelet.excludePriorityRegex | default "$^" | quote }}'
+        filter/exclude_kubelet_unit:
+          logs:
+            exclude:
+              match_type: regexp
+              record_attributes:
+                - key: _SYSTEMD_UNIT
+                  value: '{{ .Values.fluentd.logs.kubelet.excludeUnitRegex | default "$^" | quote }}'
+
         groupbyattrs/systemd:
           keys:
-            - _SYSTEMD_UNIT
-            - _HOSTNAME
-            - SYSLOG_FACILITY
-            - PRIORITY
             - _sourceName
+            - _collector
         source/systemd:
           collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
           source_host: "%{_HOSTNAME}"
@@ -4317,11 +4325,6 @@ metadata:
           source_category: '{{ .Values.fluentd.logs.systemd.sourceCategory | quote }}'
           source_category_prefix: '{{ .Values.fluentd.logs.systemd.sourceCategoryPrefix | quote }}'
           source_category_replace_dash: '{{ .Values.fluentd.logs.systemd.sourceCategoryReplaceDash | quote }}'
-          exclude:
-            SYSLOG_FACILITY: '{{ .Values.fluentd.logs.systemd.excludeFacilityRegex | quote }}'
-            _HOSTNAME: '{{ .Values.fluentd.logs.systemd.excludeHostRegex | quote }}'
-            PRIORITY: '{{ .Values.fluentd.logs.systemd.excludePriorityRegex | quote }}'
-            _SYSTEMD_UNIT: '{{ .Values.fluentd.logs.systemd.excludeUnitRegex | quote }}'
 
         ## kubelet related processors
         filter/include_kubelet:
@@ -4338,11 +4341,6 @@ metadata:
           source_category: '{{ .Values.fluentd.logs.kubelet.sourceCategory | quote }}'
           source_category_prefix: '{{ .Values.fluentd.logs.kubelet.sourceCategoryPrefix | quote }}'
           source_category_replace_dash: '{{ .Values.fluentd.logs.kubelet.sourceCategoryReplaceDash | quote }}'
-          exclude:
-            SYSLOG_FACILITY: '{{ .Values.fluentd.logs.kubelet.excludeFacilityRegex | quote }}'
-            _HOSTNAME: '{{ .Values.fluentd.logs.kubelet.excludeHostRegex | quote }}'
-            PRIORITY: '{{ .Values.fluentd.logs.kubelet.excludePriorityRegex | quote }}'
-            _SYSTEMD_UNIT: '{{ .Values.fluentd.logs.kubelet.excludeUnitRegex | quote }}'
 
       service:
         telemetry:
@@ -4363,6 +4361,7 @@ metadata:
               - groupbyattrs/containers
               - k8s_tagger
               - source/containers
+              - resource/drop_annotations
               - attributes/remove_fluent_tag
               - resource/containers_copy_node_to_host
               - batch
@@ -4382,6 +4381,7 @@ metadata:
           #     - groupbyattrs/containers
           #     - k8s_tagger
           #     - source/containers
+          #     - resource/drop_annotations
           #     - resource/containers_copy_node_to_host
           #     - batch
           #   exporters:
@@ -4394,6 +4394,10 @@ metadata:
               - filter/include_fluent_tag_host
               - filter/include_systemd
               - filter/exclude_kubelet
+              - filter/exclude_systemd_syslog
+              - filter/exclude_systemd_hostname
+              - filter/exclude_systemd_priority
+              - filter/exclude_systemd_unit
               - groupbyattrs/systemd
               - source/systemd
               - attributes/remove_fluent_tag
@@ -4407,6 +4411,10 @@ metadata:
               - memory_limiter
               - filter/include_fluent_tag_host
               - filter/include_kubelet
+              - filter/exclude_kubelet_syslog
+              - filter/exclude_kubelet_hostname
+              - filter/exclude_kubelet_priority
+              - filter/exclude_kubelet_unit
               - groupbyattrs/systemd
               - source/kubelet
               - attributes/remove_fluent_tag
@@ -4510,7 +4518,7 @@ otelgateway:
     podAnnotations: {}
     image:
       repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.47.0-sumo-0
+      tag: 0.50.0-sumo-0
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15
