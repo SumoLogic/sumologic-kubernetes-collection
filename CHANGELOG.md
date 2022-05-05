@@ -18,9 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: use custom ServiceMonitor for Prometheus' own metrics [#2238]
 - chore(deps): upgrade fluentd to 1.14.6-sumo-2 [#2245][#2245]
 - feat(otellogs): upgrade to 0.49.0-sumo-0 [#2246][#2246]
-- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-2`,
-  it is Fluent Bit 1.6.10 with updated dependencies,
-  image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2254][#2254]
 - feat(metadata/otc): upgrade to v0.50.0-sumo-0 [#2251][#2251]
 
 ### Fixed
@@ -28,7 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: set source name and category in the FluentD output for events [#2222][#2222]
 - fix: proper handling of empty `sumologic.endpoint` in the setup script [#2240][#2240]
 - docs: FluentD buffer size configuration [#2232][#2232]
-- fix: switch to ECR for the busybox image [#2255][#2255]
 
 [#2232]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2232
 [#2240]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2240
@@ -38,11 +34,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2245]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2245
 [#2246]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2246
 [#2250]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2250
-[#2254]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2254
-[#2255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2255
 [#2251]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2251
 [#2268]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2268
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.1...main
+
+## [v2.7.1]
+
+### Released 2022-04-29
+
+### Fixed
+
+- fix: switch to ECR for the busybox image [#2255][#2255]
+- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-2`,
+  it is Fluent Bit 1.6.10 with updated dependencies,
+  image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2260][#2260]
+
+[#2255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2255
+[#2260]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2260
+[v2.7.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.7.1
 
 ## [v2.7.0][v2.7.0]
 
