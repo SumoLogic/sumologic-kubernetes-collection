@@ -1139,13 +1139,6 @@ to work with our collection.
    - remove the following configuration:
 
      ```yaml
-     prometheus:
-       prometheusSpec:
-         thanos:
-           ## Use our own image until Thanos upstream adds arm64 docker images
-           ## to their registry.
-           baseImage: public.ecr.aws/sumologic/thanos
-           version: v0.23.1
      kube-state-metrics:
        ## Use the GCR repo, it's more recent and has ARM images starting from 1.9.8
        image:
