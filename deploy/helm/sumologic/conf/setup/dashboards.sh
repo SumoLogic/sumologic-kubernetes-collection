@@ -127,7 +127,7 @@ if [[ -z "${K8S_FOLDER_ID}" ]]; then
 
     if [ "${PERMS_ERRORS}" != "null" ]; then
       echo "Setting permissions for the installed content failed."
-      echo $PERMS_ERRORS
+      echo "${PERMS_ERRORS}"
     fi
 
     echo "Installation of the K8s Dashboards succeeded."
