@@ -71,6 +71,7 @@ data:
     SUMOLOGIC_BASE_URL=${SUMOLOGIC_BASE_URL:=""}
     readonly SUMOLOGIC_BASE_URL
   
+    INTEGRATIONS_FOLDER_NAME="Sumo Logic Integrations"
     K8S_FOLDER_NAME="Kubernetes"
     K8S_APP_UUID="162ceac7-166a-4475-8427-65e170ae9837"
   
@@ -110,9 +111,32 @@ data:
       ADMIN_FOLDER_CHILDREN="$( echo "${ADMIN_FOLDER}" | jq '.children[]')"
       readonly ADMIN_FOLDER_CHILDREN
   
+      local ADMIN_FOLDER_ID
       ADMIN_FOLDER_ID="$( echo "${ADMIN_FOLDER}" | jq '.id' | tr -d '"')"
+      readonly ADMIN_FOLDER_ID
   
-      K8S_FOLDER_ID="$( echo "${ADMIN_FOLDER_CHILDREN}" | \
+      INTEGRATIONS_FOLDER_ID="$( echo "${ADMIN_FOLDER_CHILDREN}" | \
+                jq -r "select(.name == \"${INTEGRATIONS_FOLDER_NAME}\") | .id" )"
+  
+      if [[ -z "${INTEGRATIONS_FOLDER_ID}" ]]; then
+        INTEGRATIONS_FOLDER_ID="$(curl -XPOST -s \
+                -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+                -H "isAdminMode: true" \
+                -H "Content-Type: application/json" \
+                -d "{\"name\":\"${INTEGRATIONS_FOLDER_NAME}\",\"parentId\":\"${ADMIN_FOLDER_ID}\",\"description\":\"Content provided by the Sumo Logic integrations.\"}" \
+                "${SUMOLOGIC_BASE_URL}"v2/content/folders | \
+                jq -r " .id" )"
+      fi
+  
+      local INTEGRATIONS_FOLDER_CHILDREN
+      INTEGRATIONS_FOLDER_CHILDREN="$(curl -XGET -s \
+                -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
+                -H "isAdminMode: true" \
+                "${SUMOLOGIC_BASE_URL}"v2/content/folders/"${INTEGRATIONS_FOLDER_ID}" | \
+                jq '.children[]')"
+      readonly INTEGRATIONS_FOLDER_CHILDREN
+  
+      K8S_FOLDER_ID="$( echo "${INTEGRATIONS_FOLDER_CHILDREN}" | \
                 jq -r "select(.name == \"${K8S_FOLDER_NAME}\") | .id" )"
     }
   
@@ -123,7 +147,7 @@ data:
              -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
              -H "isAdminMode: true" \
              -H "Content-Type: application/json" \
-             -d "{\"name\":\"${K8S_FOLDER_NAME}\",\"destinationFolderId\":\"${ADMIN_FOLDER_ID}\",\"description\":\"Kubernetes dashboards provided by Sumo Logic.\"}" \
+             -d "{\"name\":\"${K8S_FOLDER_NAME}\",\"destinationFolderId\":\"${INTEGRATIONS_FOLDER_ID}\",\"description\":\"Kubernetes dashboards provided by Sumo Logic.\"}" \
              "${SUMOLOGIC_BASE_URL}"v1/apps/"${K8S_APP_UUID}"/install )"
       readonly APP_INSTALL_JOB_RESPONSE
   
@@ -157,12 +181,18 @@ data:
                 "${SUMOLOGIC_BASE_URL}"v1/account/contract | jq '.orgId' | tr -d '"' )"
         readonly ORG_ID
   
-        curl -XPUT -s \
+        PERMS_ERRORS=$( curl -XPUT -s \
           -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
           -H "isAdminMode: true" \
           -H "Content-Type: application/json" \
           -d "{\"contentPermissionAssignments\": [{\"permissionName\": \"View\",\"sourceType\": \"org\",\"sourceId\": \"${ORG_ID}\",\"contentId\": \"${K8S_FOLDER_ID}\"}],\"notifyRecipients\":false,\"notificationMessage\":\"\"}" \
-          "${SUMOLOGIC_BASE_URL}"v2/content/"${K8S_FOLDER_ID}"/permissions/add
+          "${SUMOLOGIC_BASE_URL}"v2/content/"${K8S_FOLDER_ID}"/permissions/add | jq '.errors' )
+        readonly PERMS_ERRORS
+  
+        if [ "${PERMS_ERRORS}" != "null" ]; then
+          echo "Setting permissions for the installed content failed."
+          echo $PERMS_ERRORS
+        fi
   
         echo "Installation of the K8s Dashboards succeeded."
       fi
