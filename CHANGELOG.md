@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore(deps): upgrade fluentd to 1.14.6-sumo-2 [#2245][#2245]
 - feat(otellogs): upgrade to 0.49.0-sumo-0 [#2246][#2246]
 - feat(metadata/otc): upgrade to v0.50.0-sumo-0 [#2251][#2251]
+- chore: update Thanos to v0.25.2 [#2272][#2272]
 
 ### Fixed
 
@@ -34,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2246]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2246
 [#2250]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2250
 [#2251]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2251
+[#2272]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2272
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.1...main
 
 ## [v2.7.1]
