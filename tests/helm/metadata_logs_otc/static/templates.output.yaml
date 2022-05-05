@@ -19,11 +19,6 @@ data:
           add_timestamp: true
           timestamp_key: timestamp
         log_format: json
-        metadata_attributes:
-        - _collector
-        - k8s.*
-        - pod_labels_.*
-        - namespace_labels_.*
         sending_queue:
           enabled: true
           persistent_storage_enabled: true
@@ -36,8 +31,6 @@ data:
           add_timestamp: true
           timestamp_key: timestamp
         log_format: json
-        metadata_attributes:
-        - _collector
         sending_queue:
           enabled: true
           persistent_storage_enabled: true
@@ -95,6 +88,62 @@ data:
             record_attributes:
             - key: _SYSTEMD_UNIT
               value: kubelet.service
+      filter/exclude_kubelet_hostname:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: _HOSTNAME
+              value: "my_kubelet_excludeHostRegex"
+      filter/exclude_kubelet_priority:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: PRIORITY
+              value: "my_kubelet_excludePriorityRegex"
+      filter/exclude_kubelet_syslog:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: SYSLOG_FACILITY
+              value: "my_kubelet_excludeFacilityRegex"
+      filter/exclude_kubelet_unit:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: _SYSTEMD_UNIT
+              value: "my_kubelet_excludeUnitRegex"
+      filter/exclude_systemd_hostname:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: _HOSTNAME
+              value: "my_systemd_excludeHostRegex"
+      filter/exclude_systemd_priority:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: PRIORITY
+              value: "my_systemd_excludePriorityRegex"
+      filter/exclude_systemd_syslog:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: SYSLOG_FACILITY
+              value: "my_systemd_excludeFacilityRegex"
+      filter/exclude_systemd_unit:
+        logs:
+          exclude:
+            match_type: regexp
+            record_attributes:
+            - key: _SYSTEMD_UNIT
+              value: "my_systemd_excludeUnitRegex"
       filter/include_fluent_tag_containers:
         logs:
           include:
@@ -129,13 +178,11 @@ data:
         - k8s.container.name
         - k8s.namespace.name
         - k8s.pod.name
+        - _collector
       groupbyattrs/systemd:
         keys:
-        - _SYSTEMD_UNIT
-        - _HOSTNAME
-        - SYSLOG_FACILITY
-        - PRIORITY
         - _sourceName
+        - _collector
       k8s_tagger:
         extract:
           annotations:
@@ -175,6 +222,10 @@ data:
         - action: upsert
           from_attribute: k8s.node.name
           key: k8s.pod.hostname
+      resource/drop_annotations:
+        attributes:
+        - action: delete
+          pattern: ^pod_annotations_.*
       source/containers:
         annotation_prefix: pod_annotations_
         collector: "my_collectorName"
@@ -196,11 +247,6 @@ data:
         source_name: '%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}'
       source/kubelet:
         collector: "my_collectorName"
-        exclude:
-          _HOSTNAME: "my_kubelet_excludeHostRegex"
-          _SYSTEMD_UNIT: "my_kubelet_excludeUnitRegex"
-          PRIORITY: "my_kubelet_excludePriorityRegex"
-          SYSLOG_FACILITY: "my_kubelet_excludeFacilityRegex"
         source_category: "kubelet"
         source_category_prefix: "my_kubelet_sourceCategoryPrefix"
         source_category_replace_dash: "my_kubelet_sourceCategoryReplaceDash"
@@ -208,11 +254,6 @@ data:
         source_name: "k8s_kubelet"
       source/systemd:
         collector: "my_collectorName"
-        exclude:
-          _HOSTNAME: "my_systemd_excludeHostRegex"
-          _SYSTEMD_UNIT: "my_systemd_excludeUnitRegex"
-          PRIORITY: "my_systemd_excludePriorityRegex"
-          SYSLOG_FACILITY: "my_systemd_excludeFacilityRegex"
         source_category: "system"
         source_category_prefix: "my_systemd_sourceCategoryPrefix"
         source_category_replace_dash: "my_systemd_sourceCategoryReplaceDash"
@@ -241,6 +282,7 @@ data:
           - groupbyattrs/containers
           - k8s_tagger
           - source/containers
+          - resource/drop_annotations
           - attributes/remove_fluent_tag
           - resource/containers_copy_node_to_host
           - batch
@@ -253,6 +295,10 @@ data:
           - memory_limiter
           - filter/include_fluent_tag_host
           - filter/include_kubelet
+          - filter/exclude_kubelet_syslog
+          - filter/exclude_kubelet_hostname
+          - filter/exclude_kubelet_priority
+          - filter/exclude_kubelet_unit
           - groupbyattrs/systemd
           - source/kubelet
           - attributes/remove_fluent_tag
@@ -267,6 +313,10 @@ data:
           - filter/include_fluent_tag_host
           - filter/include_systemd
           - filter/exclude_kubelet
+          - filter/exclude_systemd_syslog
+          - filter/exclude_systemd_hostname
+          - filter/exclude_systemd_priority
+          - filter/exclude_systemd_unit
           - groupbyattrs/systemd
           - source/systemd
           - attributes/remove_fluent_tag
