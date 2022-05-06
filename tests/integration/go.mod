@@ -3,7 +3,7 @@ module github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration
 go 1.17
 
 require (
-	github.com/gruntwork-io/terratest v0.40.7
+	github.com/gruntwork-io/terratest v0.40.8
 	github.com/stretchr/testify v1.7.1
 	k8s.io/api v0.23.0
 	k8s.io/apimachinery v0.23.0
@@ -24,7 +24,7 @@ require (
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/go-cmp v0.5.6 // indirect
+	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/googleapis/gnostic v0.5.5 // indirect
