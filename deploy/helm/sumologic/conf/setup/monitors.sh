@@ -70,7 +70,7 @@ if [[ -z "${MONITORS_FOLDER_ID}" ]]; then
 {{- else }}
   NOTIFICATIONS_RECIPIENTS='[{{- .Values.sumologic.setup.monitors.notificationEmails | toRawJson }}]'
 {{- end }}
-  NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{ printf `{{ TriggerType }}` }} on {{ printf `{{ Name }}` }}\",message_body=\"Triggered {{ printf `{{ TriggerType }}` }} Alert on {{ printf `{{ Name }}` }}: {{ printf `{{ QueryURL }}` }}\""
+  NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{ printf `{{TriggerType}}` }} on {{ printf `{{Name}}` }}\",message_body=\"Triggered {{ printf `{{TriggerType}}` }} alert on {{ printf `{{Name}}` }}: {{ printf `{{QueryURL}}` }}\""
   NOTIFICATIONS_SETTINGS="recipients=${NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
 {{- end }}
 

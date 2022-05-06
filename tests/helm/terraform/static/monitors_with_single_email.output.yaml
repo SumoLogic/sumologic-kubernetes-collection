@@ -207,7 +207,7 @@ data:
         SUMOLOGIC_ENV="us1"
       fi
       NOTIFICATIONS_RECIPIENTS='["email@locahost.lh"]'
-      NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{ TriggerType }} on {{ Name }}\",message_body=\"Triggered {{ TriggerType }} Alert on {{ Name }}: {{ QueryURL }}\""
+      NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{TriggerType}} on {{Name}}\",message_body=\"Triggered {{TriggerType}} alert on {{Name}}: {{QueryURL}}\""
       NOTIFICATIONS_SETTINGS="recipients=${NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
   
       TF_LOG_PROVIDER=DEBUG terraform apply \
