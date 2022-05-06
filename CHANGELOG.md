@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat(fluentd): expose extra configuration for fluentd output plugin [#2244][#2244]
-- feat(monitors): the Sumo Logic monitors installation as part of the setup job [#2250][#2250]
+- feat(monitors): the Sumo Logic monitors installation as part of the setup job [#2250][#2250], [#2274][#2274]
 
 ### Changed
 
@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2246]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2246
 [#2250]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2250
 [#2251]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2251
+[#2274]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2274
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.1...main
 
 ## [v2.7.1]
