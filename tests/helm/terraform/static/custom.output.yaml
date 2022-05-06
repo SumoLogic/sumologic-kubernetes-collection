@@ -154,9 +154,11 @@ data:
     readonly MONITORS_ROOT_ID
   
     # verify if the integrations folder already exists
-    INTEGRATIONS_RESPONSE="$(curl -XGET -s \
+    INTEGRATIONS_RESPONSE="$(curl -XGET -s -G \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
-            "${SUMOLOGIC_BASE_URL}"v1/monitors/search?query=type:folder%20"${INTEGRATIONS_FOLDER_NAME}" | jq '.[]' )"
+            "${SUMOLOGIC_BASE_URL}"v1/monitors/search \
+            --data-urlencode "query=type:folder ${INTEGRATIONS_FOLDER_NAME}" | \
+            jq '.[]' )"
     readonly INTEGRATIONS_RESPONSE
   
     INTEGRATIONS_FOLDER_ID="$( echo "${INTEGRATIONS_RESPONSE}" | \
@@ -173,9 +175,11 @@ data:
     fi
   
     # verify if the k8s monitors folder already exists
-    MONITORS_RESPONSE="$(curl -XGET -s \
+    MONITORS_RESPONSE="$(curl -XGET -s -G \
             -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
-            "${SUMOLOGIC_BASE_URL}"v1/monitors/search?query=type:folder%20"${MONITORS_FOLDER_NAME}" | jq '.[]' )"
+            "${SUMOLOGIC_BASE_URL}"v1/monitors/search \
+            --data-urlencode "query=type:folder ${MONITORS_FOLDER_NAME}" | \
+            jq '.[]' )"
     readonly MONITORS_RESPONSE
   
     MONITORS_FOLDER_ID="$( echo "${MONITORS_RESPONSE}" | \
