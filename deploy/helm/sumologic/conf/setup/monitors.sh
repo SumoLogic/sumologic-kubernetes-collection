@@ -93,7 +93,7 @@ if [[ -z "${MONITORS_FOLDER_ID}" ]]; then
 {{- end }}
       || { echo "Error during applying Terraform monitors."; exit 1; }
 else
-  echo "The monitors were already installed in ${MONITORS_FOLDER_NAME}."
+  echo "The monitors have been already installed in ${MONITORS_FOLDER_NAME}."
   echo "You can (re)install them manually with:"
   echo "https://github.com/SumoLogic/terraform-sumologic-sumo-logic-monitor/tree/main/monitor_packages/kubernetes"
 fi

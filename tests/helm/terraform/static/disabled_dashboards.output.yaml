@@ -350,9 +350,6 @@ data:
       if [[ "${SUMOLOGIC_BASE_URL}" == "${SUMOLOGIC_ENV}" ]] ; then
         SUMOLOGIC_ENV="us1"
       fi
-      NOTIFICATIONS_RECIPIENTS='["email@locahost.lh"]'
-      NOTIFICATIONS_CONTENT="subject=\"Monitor Alert: {{TriggerType}} on {{Name}}\",message_body=\"Triggered {{TriggerType}} alert on {{Name}}: {{QueryURL}}\""
-      NOTIFICATIONS_SETTINGS="recipients=${NOTIFICATIONS_RECIPIENTS},connection_type=\"Email\",time_zone=\"UTC\""
   
       TF_LOG_PROVIDER=DEBUG terraform apply \
           -auto-approve \
@@ -362,9 +359,6 @@ data:
           -var="folder=${MONITORS_FOLDER_NAME}" \
           -var="folder_parent_id=${INTEGRATIONS_FOLDER_ID}" \
           -var="monitors_disabled=${MONITORS_DISABLED}" \
-          -var="email_notifications_critical=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Critical\", \"ResolvedCritical\"]}]" \
-          -var="email_notifications_warning=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"Warning\", \"ResolvedWarning\"]}]" \
-          -var="email_notifications_missingdata=[{${NOTIFICATIONS_SETTINGS},${NOTIFICATIONS_CONTENT},run_for_trigger_types=[\"MissingData\", \"ResolvedMissingData\"]}]" \
           || { echo "Error during applying Terraform monitors."; exit 1; }
     else
       echo "The monitors have been already installed in ${MONITORS_FOLDER_NAME}."
@@ -609,7 +603,9 @@ data:
     bash /etc/terraform/monitors.sh
   
     # Setup Sumo Logic dashboards if enabled
-    bash /etc/terraform/dashboards.sh
+    echo "Installation of the Sumo Logic dashboards is disabled."
+    echo "You can install them manually later with:"
+    echo "https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App%2C_Alerts%2C_and_view_the_Dashboards#install-the-app"
   
     # Cleanup env variables
     export SUMOLOGIC_BASE_URL=

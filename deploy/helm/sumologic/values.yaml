@@ -132,6 +132,10 @@ sumologic:
       ## A list of emails to send notifications from monitors
       notificationEmails: []
 
+    dashboards:
+      ## If enabled, a pre-install hook will install k8s dashboards in Sumo Logic
+      enabled: true
+
   collector:
     ## Configuration of additional collector fields
     ## https://help.sumologic.com/Manage/Fields#http-source-fields
