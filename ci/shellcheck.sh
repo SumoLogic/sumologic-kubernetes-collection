@@ -24,6 +24,13 @@ find . -path '*tests/helm/terraform/static/*.output.yaml' -type 'f' -print |
         yq r "${file}" "data[monitors.sh]" | shellcheck --enable all --external-sources --exclude SC2155 -
     done
 
+find . -path '*tests/helm/terraform/static/*.output.yaml' -type 'f' -print |
+    while read -r file; do
+        # Run tests in their own context
+        echo "Checking ${file} with shellcheck"
+        yq r "${file}" "data[dashboards.sh]" | shellcheck --enable all --external-sources --exclude SC2155 -
+    done
+
 find . -path '*tests/helm/terraform_custom/static/*.output.yaml' ! -path "./tests/helm/terraform_custom/static/empty.output.yaml" -type 'f' -print |
     while read -r file; do
         # Run tests in their own context
