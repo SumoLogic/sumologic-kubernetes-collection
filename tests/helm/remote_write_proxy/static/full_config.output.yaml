@@ -24,6 +24,8 @@ spec:
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
+        
+        cluster: sumo-demo
         my-label: rwp
     spec:
       nodeSelector:
