@@ -1,4 +1,6 @@
 sumologic:
+  podLabels:
+    cluster: sumo-demo
   metrics:
     remoteWriteProxy:
       enabled: true

@@ -36,17 +36,17 @@ spec:
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}
 {{- if .Values.otelgateway.deployment.podLabels }}
-{{ toYaml .Values.otelgateway.deployment.podLabels | indent 6 }}
+{{ toYaml .Values.otelgateway.deployment.podLabels | indent 8 }}
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       {{- if .Values.otelgateway.deployment.nodeSelector }}
       nodeSelector:
-        {{ toYaml .Values.otelgateway.deployment.nodeSelector | indent 8 }}
+{{ toYaml .Values.otelgateway.deployment.nodeSelector | indent 8 }}
       {{- end }}
       {{- if .Values.otelgateway.deployment.tolerations }}
       tolerations:
-        {{ toYaml .Values.otelgateway.deployment.tolerations | indent 8 }}
+{{ toYaml .Values.otelgateway.deployment.tolerations | indent 8 }}
       {{- end }}
       {{- if .Values.otelgateway.deployment.priorityClassName }}
       priorityClassName: {{ .Values.otelgateway.deployment.priorityClassName | quote }}
