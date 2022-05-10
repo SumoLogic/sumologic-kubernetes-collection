@@ -25,7 +25,7 @@ spec:
         app: {{ template "sumologic.labels.app.remoteWriteProxy.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
         {{- if .Values.sumologic.podLabels }}
-        {{ toYaml .Values.sumologic.podLabels | indent 8 }}
+        {{ toYaml .Values.sumologic.podLabels | nindent 8 }}
         {{- end }}
 {{- if .Values.sumologic.metrics.remoteWriteProxy.podLabels }}
 {{ toYaml .Values.sumologic.metrics.remoteWriteProxy.podLabels | indent 8 }}
