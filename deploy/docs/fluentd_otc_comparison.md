@@ -45,11 +45,11 @@
 
 Additional behavior:
 
-| Description                                                                                                    | Opentelemetry Collector                                                                                                                                   |
-|----------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [record[_sumo_metadata][source_name]][source_name_precedence] taking precedence over `source_name`             | Can be achieved by separate pipelines                                                                                                                     |
-| [record[_sumo_metadata][source_host]][source_host_precedence] taking precedence over `source_host`             | Can be achieved by separate pipelines                                                                                                                     |
-| [record[_sumo_metadata][source_category]][source_category_precedence] taking precedence over `source_category` | Can be achieved by separate pipelines                                                                                                                     |
+| Description                                                                                                    | Opentelemetry Collector                                                               |
+|----------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| [record[_sumo_metadata][source_name]][source_name_precedence] taking precedence over `source_name`             | Can be achieved by separate pipelines                                                 |
+| [record[_sumo_metadata][source_host]][source_host_precedence] taking precedence over `source_host`             | Can be achieved by separate pipelines                                                 |
+| [record[_sumo_metadata][source_category]][source_category_precedence] taking precedence over `source_category` | Can be achieved by separate pipelines                                                 |
 | [record[_sumo_metadata][fields]][fields_base] being base for fields                                            | Can be achieved using [resource processor][resource_processor] and separate pipelines |
 
 [fields_base]: https://github.com/SumoLogic/fluentd-output-sumologic/blob/1.7.2/lib/fluent/plugin/out_sumologic.rb#L284-L285
