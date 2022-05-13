@@ -614,3 +614,36 @@ We have a couple of possible solutions for this issue:
 [v2_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
 [storage_class]: https://kubernetes.io/docs/concepts/storage/storage-classes/
 [security_context]: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+
+### Duplicated logs
+
+We observed than under certain conditions, it's possible for FluentD to duplicate logs:
+
+- there are several requests made of one chunk
+- one of those requests is failing, resulting in the whole batch being retried
+
+In order to mitigate this, please use [fluentd-output-sumologic] with `use_internal_retry` option.
+See the following example:
+
+```yaml
+fluentd:
+  logs:
+    output:
+      extraConf: |-
+        use_internal_retry true
+        retry_min_interval 5s
+        retry_max_interval 10m
+        retry_timeout 72h
+        retry_max_times 0
+        max_request_size 16m
+  metrics:
+    extraOutputConf: |-
+      use_internal_retry true
+      retry_min_interval 5s
+      retry_max_interval 10m
+      retry_timeout 72h
+      retry_max_times 0
+      max_request_size 16m
+```
+
+[fluentd-output-sumologic]: https://github.com/SumoLogic/fluentd-output-sumologic
