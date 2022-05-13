@@ -617,13 +617,13 @@ We have a couple of possible solutions for this issue:
 
 ### Duplicated logs
 
-We observed than under some conditions logs duplication using fluentd can happen:
+We observed than under certain conditions, it's possible for FluentD to duplicate logs:
 
 - there are several requests made of one chunk
-- one of those request is failing resulting in marking all batch as failed
+- one of those requests is failing, resulting in the whole batch being retried
 
-In order to mitigate that, please use [fluentd-output-sumologic] with `use_internal_retry` option.
-Please consider the following example:
+In order to mitigate this, please use [fluentd-output-sumologic] with `use_internal_retry` option.
+See the following example:
 
 ```yaml
 fluentd:
