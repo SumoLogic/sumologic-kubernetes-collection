@@ -856,6 +856,7 @@ fluentd:
     enabled: true
 
     statefulset:
+      replicaCount: 1
       nodeSelector: {}
       tolerations: []
       affinity: {}
