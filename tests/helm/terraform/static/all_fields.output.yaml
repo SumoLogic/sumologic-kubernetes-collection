@@ -380,7 +380,6 @@ data:
     resource "sumologic_collector" "collector" {
         name  = var.collector_name
         fields  = {
-          cluster = var.cluster_name
         }
     }
     
@@ -660,11 +659,6 @@ data:
   
     bash /etc/terraform/custom.sh
   variables.tf: |
-    variable "cluster_name" {
-      type  = string
-      default = "kubernetes"
-    }
-  
     variable "collector_name" {
       type  = string
       default = "kubernetes"

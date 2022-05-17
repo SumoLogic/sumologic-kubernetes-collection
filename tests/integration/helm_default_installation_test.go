@@ -240,6 +240,7 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 					labels := sample.Labels
 					expectedLabels := receivermock.Labels{
 						"_origin":   "kubernetes",
+						"cluster":   "kubernetes",
 						"container": "receiver-mock",
 						// TODO: figure out why is this flaky and sometimes it's not there
 						// https://github.com/SumoLogic/sumologic-kubernetes-collection/runs/4508796836?check_suite_focus=true
@@ -299,6 +300,7 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 		Assess("expected container log metadata is present", stepfuncs.WaitUntilExpectedLogsPresent(
 			logsGeneratorCount,
 			map[string]string{
+				"cluster":         "kubernetes",
 				"namespace":       internal.LogsGeneratorName,
 				"pod_labels_app":  internal.LogsGeneratorName,
 				"container":       internal.LogsGeneratorName,
@@ -324,6 +326,7 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 		Assess("logs from node systemd present", stepfuncs.WaitUntilExpectedLogsPresent(
 			10, // we don't really control this, just want to check if the logs show up
 			map[string]string{
+				"cluster":         "kubernetes",
 				"_sourceName":     "",
 				"_sourceCategory": "kubernetes/system",
 				"_sourceHost":     "",
@@ -337,6 +340,7 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 		Assess("logs from kubelet present", stepfuncs.WaitUntilExpectedLogsPresent(
 			1, // we don't really control this, just want to check if the logs show up
 			map[string]string{
+				"cluster":         "kubernetes",
 				"_sourceName":     "k8s_kubelet",
 				"_sourceCategory": "kubernetes/kubelet",
 				"_sourceHost":     "",
@@ -363,6 +367,7 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 			map[string]string{
 				"_sourceName":     "events",
 				"_sourceCategory": fmt.Sprintf("%s/events", internal.ClusterName),
+				"cluster":         "kubernetes",
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,

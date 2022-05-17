@@ -249,6 +249,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 					sample := metricsSamples[0]
 					labels := sample.Labels
 					expectedLabels := receivermock.Labels{
+						"cluster":    "kubernetes",
 						"_origin":    "kubernetes",
 						"container":  "receiver-mock",
 						"deployment": "receiver-mock",
@@ -328,6 +329,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 		Assess("expected container log metadata is present for log generator deployment", stepfuncs.WaitUntilExpectedLogsPresent(
 			logsGeneratorCount,
 			map[string]string{
+				"cluster":          "kubernetes",
 				"_collector":       "kubernetes",
 				"namespace":        internal.LogsGeneratorName,
 				"pod_labels_app":   internal.LogsGeneratorName,
@@ -377,6 +379,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 		Assess("logs from node systemd present", stepfuncs.WaitUntilExpectedLogsPresent(
 			10, // we don't really control this, just want to check if the logs show up
 			map[string]string{
+				"cluster":         "kubernetes",
 				"_sourceName":     "",
 				"_sourceCategory": "kubernetes/system",
 				"_sourceHost":     "",
@@ -390,6 +393,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 		Assess("logs from kubelet present", stepfuncs.WaitUntilExpectedLogsPresent(
 			1, // we don't really control this, just want to check if the logs show up
 			map[string]string{
+				"cluster":         "kubernetes",
 				"_sourceName":     "k8s_kubelet",
 				"_sourceCategory": "kubernetes/kubelet",
 				"_sourceHost":     "",
