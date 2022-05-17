@@ -3278,7 +3278,7 @@ otelagent:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.38.1-sumo"
+      tag: "0.38.2-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3391,7 +3391,7 @@ otelcol:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.38.1-sumo"
+      tag: "0.38.2-sumo"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
