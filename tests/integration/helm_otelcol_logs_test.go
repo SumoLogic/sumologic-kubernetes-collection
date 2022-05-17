@@ -124,6 +124,7 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 			logsGeneratorCount,
 			map[string]string{
 				"_collector":       "kubernetes",
+				"cluster":          "kubernetes",
 				"namespace":        internal.LogsGeneratorName,
 				"pod_labels_app":   internal.LogsGeneratorName,
 				"container":        internal.LogsGeneratorName,

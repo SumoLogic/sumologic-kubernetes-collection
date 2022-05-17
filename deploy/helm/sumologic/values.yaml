@@ -3453,7 +3453,6 @@ otelcol:
             ## extract the following well-known metadata fields
             - containerId
             - containerName
-            - clusterName
             - daemonSetName
             - deploymentName
             - hostName
@@ -3839,6 +3838,9 @@ metadata:
             - key: _origin  # add "_origin" metadata to metrics to keep the same format as for metrics from Fluentd
               value: kubernetes
               action: upsert
+            - key: cluster
+              value: '{{ .Values.sumologic.clusterName | quote }}'
+              action: upsert
         resource/remove_k8s_pod_pod_name:
           attributes:
             - action: delete
@@ -3923,7 +3925,6 @@ metadata:
           extract:
             metadata:
               ## extract the following well-known metadata fields
-              - clusterName
               - daemonSetName
               - deploymentName
               - nodeName
@@ -4169,6 +4170,11 @@ metadata:
           attributes:
             - pattern: ^pod_annotations_.*
               action: delete
+        resource/add_cluster:
+          attributes:
+            - key: cluster
+              value: '{{ .Values.sumologic.clusterName | quote }}'
+              action: upsert
         groupbyattrs/containers:
           keys:
             - k8s.container.id
@@ -4185,7 +4191,6 @@ metadata:
               ## extract the following well-known metadata fields
               - containerId
               - containerName
-              - clusterName
               - daemonSetName
               - deploymentName
               - hostName
@@ -4358,6 +4363,7 @@ metadata:
               - attributes/containers
               - groupbyattrs/containers
               - k8s_tagger
+              - resource/add_cluster
               - source/containers
               - resource/drop_annotations
               - attributes/remove_fluent_tag
@@ -4378,6 +4384,7 @@ metadata:
           #     - memory_limiter
           #     - groupbyattrs/containers
           #     - k8s_tagger
+          #     - resource/add_cluster
           #     - source/containers
           #     - resource/drop_annotations
           #     - resource/containers_copy_node_to_host
@@ -4397,6 +4404,7 @@ metadata:
               - filter/exclude_systemd_priority
               - filter/exclude_systemd_unit
               - groupbyattrs/systemd
+              - resource/add_cluster
               - source/systemd
               - attributes/remove_fluent_tag
               - batch
@@ -4414,6 +4422,7 @@ metadata:
               - filter/exclude_kubelet_priority
               - filter/exclude_kubelet_unit
               - groupbyattrs/systemd
+              - resource/add_cluster
               - source/kubelet
               - attributes/remove_fluent_tag
               - batch

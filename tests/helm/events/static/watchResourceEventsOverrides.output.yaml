@@ -29,6 +29,13 @@ data:
     <match fluentd.**>
       @type null
     </match>
+    # Set `cluster` metadata field
+    <filter **>
+      @type record_modifier
+      <record>
+        _sumo_metadata ${ {:fields => "cluster=kubernetes"} }
+      </record>
+    </filter>
     # expose the Fluentd metrics to Prometheus
     <source>
       @type prometheus

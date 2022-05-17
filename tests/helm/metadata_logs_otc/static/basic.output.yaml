@@ -195,7 +195,6 @@ data:
           metadata:
           - containerId
           - containerName
-          - clusterName
           - daemonSetName
           - deploymentName
           - hostName
@@ -217,6 +216,11 @@ data:
         check_interval: 5s
         limit_percentage: 75
         spike_limit_percentage: 20
+      resource/add_cluster:
+        attributes:
+        - action: upsert
+          key: cluster
+          value: "kubernetes"
       resource/containers_copy_node_to_host:
         attributes:
         - action: upsert
@@ -281,6 +285,7 @@ data:
           - attributes/containers
           - groupbyattrs/containers
           - k8s_tagger
+          - resource/add_cluster
           - source/containers
           - resource/drop_annotations
           - attributes/remove_fluent_tag
@@ -300,6 +305,7 @@ data:
           - filter/exclude_kubelet_priority
           - filter/exclude_kubelet_unit
           - groupbyattrs/systemd
+          - resource/add_cluster
           - source/kubelet
           - attributes/remove_fluent_tag
           - batch
@@ -318,6 +324,7 @@ data:
           - filter/exclude_systemd_priority
           - filter/exclude_systemd_unit
           - groupbyattrs/systemd
+          - resource/add_cluster
           - source/systemd
           - attributes/remove_fluent_tag
           - batch
