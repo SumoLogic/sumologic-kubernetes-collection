@@ -7,24 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][Unreleased]
 
-### Unreleased
-
-### Added
-
-- docs(readme): add support for AKS 1.22 [#2076][#2076]
-- docs(readme): add support for KOPS 1.22 [#2081][#2081]
-
 ### Changed
 
+- chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
+
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...release-v2.4
-[#2076]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2076
-[#2081]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2081
+[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 
 ## [v2.4.1][v2_4_1]
 
 ### Released 2022-02-02
-
-### Added
 
 ### Changed
 
