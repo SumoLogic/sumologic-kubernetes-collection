@@ -41,6 +41,13 @@ spec:
           httpGet:
             path: /
             port: 13133 # Health Check extension default port.
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 32Mi
         volumeMounts:
         - mountPath: /etc/otelcol
           name: otelcol-config
