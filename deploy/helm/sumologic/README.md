@@ -11,7 +11,7 @@ To see all available configuration for our sub-charts, please refer to their doc
   override a property not listed below.
 * [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator#opentelemetry-operator-helm-chart) - 
   All OpenTelemetry Operator properties should be prefixed with `opentelemetry-operator` in our values.yaml to 
-  override a property lister below.
+  override a property listed below.
 
 The following table lists the configurable parameters of the Sumo Logic chart and their default values.
 
