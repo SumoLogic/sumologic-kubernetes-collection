@@ -3474,22 +3474,21 @@ otelcol:
               key: "*"
       ## Source processor adds Sumo Logic related metadata
       source:
+        annotation_prefix: "k8s.pod.annotation."
         collector: "processors.source.collector.replace"
-        source_name: "processors.source.name.replace"
+        exclude:
+          k8s.container.name: "processors.source.exclude_container_regex.replace"
+          k8s.host.name: "processors.source.exclude_host_regex.replace"
+          k8s.namespace.name: "processors.source.exclude_namespace_regex.replace"
+          k8s.pod.name: "processors.source.exclude_pod_regex.replace"
+        pod_key: "k8s.pod.name"
+        pod_name_key: "k8s.pod.pod_name"
+        pod_template_hash_key: "k8s.pod.label.pod-template-hash"
         source_category: "processors.source.category.replace"
         source_category_prefix: "processors.source.category_prefix.replace"
         source_category_replace_dash: "processors.source.category_replace_dash.replace"
-        exclude_namespace_regex: "processors.source.exclude_namespace_regex.replace"
-        exclude_pod_regex: "processors.source.exclude_pod_regex.replace"
-        exclude_container_regex: "processors.source.exclude_container_regex.replace"
-        exclude_host_regex: "processors.source.exclude_host_regex.replace"
-        annotation_prefix: "k8s.pod.annotation."
-        pod_template_hash_key: "k8s.pod.label.pod-template-hash"
-        pod_name_key: "k8s.pod.pod_name"
-        namespace_key: "k8s.namespace.name"
-        pod_key: "k8s.pod.name"
-        container_key: "k8s.container.name"
-        source_host_key: "k8s.pod.hostname"
+        source_host: "%{k8s.pod.hostname}"
+        source_name: "processors.source.name.replace"
 
       ## Resource processor sets the associted cluster attribute
       resource:
