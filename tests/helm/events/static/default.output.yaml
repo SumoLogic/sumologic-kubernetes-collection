@@ -21,6 +21,13 @@ data:
     <match fluentd.**>
       @type null
     </match>
+    # Set `cluster` metadata field
+    <filter **>
+      @type record_modifier
+      <record>
+        _sumo_metadata ${ {:fields => "cluster=kubernetes"} }
+      </record>
+    </filter>
     # expose the Fluentd metrics to Prometheus
     <source>
       @type prometheus
@@ -42,6 +49,8 @@ data:
         @id sumologic.endpoint.events
         sumo_client "k8s_%CURRENT_CHART_VERSION%"
         endpoint "#{ENV['SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE']}"
+        source_name events
+        source_category kubernetes/events
         data_type logs
         disable_cookies true
         verify_ssl "true"

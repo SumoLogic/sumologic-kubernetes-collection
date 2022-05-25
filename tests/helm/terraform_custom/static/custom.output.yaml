@@ -28,7 +28,9 @@ data:
       state_metrics_source                        = "kube-state-metrics"
     }
   custom_setup.sh: |-
-    terraform import sumologic_collector.collector "$COLLECTOR_NAME"
+    #!/bin/sh
+    export COLLECTOR_NAME="${COLLECTOR_NAME}"
+    terraform import sumologic_collector.collector "${COLLECTOR_NAME}"
     terraform import sumologic_http_source.default_events_source "${COLLECTOR_NAME}/events"
     terraform import sumologic_http_source.default_logs_source "${COLLECTOR_NAME}/logs"
     terraform import sumologic_http_source.apiserver_metrics_source "${COLLECTOR_NAME}/apiserver-metrics"

@@ -51,20 +51,20 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 {{- end -}}
 
-{{- define "sumologic.logs.collector.name" -}}
-{{- template "sumologic.fullname" . }}-otelcol-logs-collector
+{{- define "sumologic.metadata.name.logs.collector.configmap" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
-{{- define "sumologic.logs.collector.name.configmap" -}}
-{{- template "sumologic.logs.collector.name" . }}
+{{- define "sumologic.metadata.name.logs.collector.serviceaccount" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
-{{- define "sumologic.logs.collector.name.serviceaccount" -}}
-{{- template "sumologic.logs.collector.name" . }}
+{{- define "sumologic.metadata.name.logs.collector.daemonset" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
-{{- define "sumologic.logs.collector.name.daemonset" -}}
-{{- template "sumologic.logs.collector.name" . }}
+{{- define "sumologic.metadata.name.logs.collector.service" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector" -}}
@@ -84,6 +84,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector.pod" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.service" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
 {{- end -}}
 
@@ -187,6 +191,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.otelcol" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.otelcol.service-headless" -}}
+{{- template "sumologic.labels.app.otelcol.service" . }}-headless
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcol.configmap" -}}
 {{- template "sumologic.labels.app.metrics" . }}
 {{- end -}}
@@ -217,6 +225,30 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "sumologic.labels.app.otelagent.component" -}}
 {{- template "sumologic.labels.app.otelagent" . }}-component
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway" -}}
+{{- template "sumologic.fullname" . }}-otelgateway
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.pod" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.service" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.configmap" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.deployment" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.component" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}-component
 {{- end -}}
 
 {{- define "sumologic.labels.app.remoteWriteProxy" -}}
@@ -475,6 +507,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.otelcol" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.otelcol.service-headless" -}}
+{{ template "sumologic.metadata.name.otelcol.service" . }}-headless
+{{- end -}}
+
 {{- define "sumologic.metadata.name.otelcol.configmap" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}
 {{- end -}}
@@ -497,6 +533,22 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.otelagent.daemonset" -}}
 {{ template "sumologic.metadata.name.otelagent" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway" -}}
+{{ template "sumologic.fullname" . }}-otelgateway
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway.service" -}}
+{{ template "sumologic.metadata.name.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway.configmap" -}}
+{{ template "sumologic.metadata.name.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway.deployment" -}}
+{{ template "sumologic.metadata.name.otelgateway" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.remoteWriteProxy" -}}
@@ -567,6 +619,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.cleanup" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.collector" -}}
+{{- template "sumologic.fullname" . }}-otelcol-logs-collector
+{{- end -}}
+
 {{- define "sumologic.labels.logs" -}}
 sumologic.com/app: fluentd-logs
 sumologic.com/component: logs
@@ -592,6 +648,11 @@ sumologic.com/app: otelcol
 sumologic.com/component: traces
 {{- end -}}
 
+{{- define "sumologic.labels.logs.collector" -}}
+sumologic.com/app: otelcol-logs-collector
+sumologic.com/component: logs
+{{- end -}}
+
 {{- define "sumologic.label.scrape" -}}
 sumologic.com/scrape: "true"
 {{- end -}}
@@ -614,6 +675,11 @@ sumologic.com/scrape: "true"
 {{- define "sumologic.labels.scrape.traces" -}}
 {{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.traces" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.logs.collector" -}}
+{{ template "sumologic.label.scrape" . }}
+{{ template "sumologic.labels.logs.collector" . }}
 {{- end -}}
 
 {{/*
@@ -882,9 +948,6 @@ Example usage:
 resource "sumologic_http_source" "{{ .Name }}" {
     name         = local.{{ .Name }}
     collector_id = sumologic_collector.collector.id
-    {{- if $source.category }}
-    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.default_events_source}\"" }}{{- end}}
-    {{- end }}
     {{- if $source.properties }}
     {{- range $fkey, $fvalue := $source.properties }}
     {{- include "terraform.generate-object" (dict "Name" $fkey "Value" $fvalue "KeyLength" (include "terraform.max-key-length" $source.properties) "Indent" 2) -}}
@@ -1288,6 +1351,41 @@ Example Usage:
 {{- if (get (get .Values .Provider) "serviceLabels") }}
 {{ toYaml (get (get .Values .Provider) "serviceLabels") }}
 {{- end }}
+{{- end -}}
+
+{{/*
+Endpoint used by otelagent exporter.
+
+Example Usage:
+{{- $otelcolService := include "traces.otelagent.exporter.endpoint" . }}
+
+*/}}
+{{- define "traces.otelagent.exporter.endpoint" -}}
+{{- if (eq .Values.otelgateway.enabled true) }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelgateway.service" . ) .Release.Namespace }}
+{{- else }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Endpoint used by otelgateway otlp exporter.
+
+Example Usage:
+'{{ include "traces.otelgateway.exporter.endpoint." . }}'
+*/}}
+{{- define "traces.otelgateway.exporter.endpoint" -}}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
+{{- end -}}
+
+{{/*
+Endpoint used by otelgateway loadbalancing exporter.
+
+Example Usage:
+'{{ include "traces.otelgateway.exporter.loadbalancing.endpoint" . }}'
+*/}}
+{{- define "traces.otelgateway.exporter.loadbalancing.endpoint" -}}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-headless" . ) .Release.Namespace }}
 {{- end -}}
 
 {{- define "opentelemetry-operator.webhook.service.name" -}}

@@ -36,17 +36,17 @@ spec:
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}
 {{- if .Values.otelagent.daemonset.podLabels }}
-{{ toYaml .Values.otelagent.daemonset.podLabels | indent 6 }}
+{{ toYaml .Values.otelagent.daemonset.podLabels | indent 8 }}
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       {{- if .Values.otelagent.daemonset.nodeSelector }}
       nodeSelector:
-        {{ toYaml .Values.otelagent.daemonset.nodeSelector | indent 8 }}
+{{ toYaml .Values.otelagent.daemonset.nodeSelector | indent 8 }}
       {{- end }}
       {{- if .Values.otelagent.daemonset.tolerations }}
       tolerations:
-        {{ toYaml .Values.otelagent.daemonset.tolerations | indent 8 }}
+{{ toYaml .Values.otelagent.daemonset.tolerations | indent 8 }}
       {{- end }}
       {{- if .Values.otelagent.daemonset.priorityClassName }}
       priorityClassName: {{ .Values.otelagent.daemonset.priorityClassName | quote }}
@@ -55,8 +55,7 @@ spec:
       - name: otelcontrib-agent
         image: {{ .Values.otelagent.daemonset.image.repository }}:{{ .Values.otelagent.daemonset.image.tag }}
         imagePullPolicy: {{ .Values.otelagent.daemonset.image.pullPolicy }}
-        command:
-          - "/otelcontribcol"
+        args:
           - "--config=/conf/traces.otelagent.conf.yaml"
         env:
         - name: GOGC

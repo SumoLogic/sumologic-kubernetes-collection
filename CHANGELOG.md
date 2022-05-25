@@ -5,40 +5,123 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## Unreleased
+
+### Added
+
+- feat(opentelemetry-operator): add opentelemetry-operator for tracing [#2172][#2172]
+
+### Changed
+
+- chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
+
+### Fixed
+
+- fix: set cluster field in metadata pipelines [#2284][#2284]
+- fix(otellogs): set resources on Otelcol logs collector daemonset [#2291]
+
+[#2284]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2284
+[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
+[#2291]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2291
+[#2172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2172
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...main
+
+## [v2.8.0]
+
+### Released 2022-05-10
+
+### Added
+
+- feat(fluentd): expose extra configuration for fluentd output plugin [#2244][#2244]
+- feat(monitors): the Sumo Logic monitors installation as part of the setup job [#2250][#2250], [#2274][#2274]
+- feat(dashboards): the Sumo Logic dashboards installation as part of the setup job [#2268][#2268]
+
+### Changed
+
+- fix: use custom ServiceMonitor for Prometheus' own metrics [#2238]
+- chore(deps): upgrade fluentd to 1.14.6-sumo-2 [#2245][#2245]
+- feat(otellogs): upgrade to 0.49.0-sumo-0 [#2246][#2246]
+- feat(metadata/otc): upgrade to v0.50.0-sumo-0 [#2251][#2251]
+- chore: update Thanos to v0.25.2 [#2272][#2272]
+
+### Fixed
+
+- fix: set source name and category in the FluentD output for events [#2222][#2222]
+- fix: proper handling of empty `sumologic.endpoint` in the setup script [#2240][#2240]
+- docs: FluentD buffer size configuration [#2232][#2232]
+- fix(templates): fix templates indentation [#2276][#2276]
+
+[#2232]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2232
+[#2240]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2240
+[#2222]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2222
+[#2238]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2238
+[#2244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2244
+[#2245]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2245
+[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
+[#2246]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2246
+[#2250]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2250
+[#2251]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2251
+[#2268]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2268
+[#2272]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2272
+[#2274]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2274
+[#2276]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2276
+[v2.8.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.1...v2.8.0
+
+## [v2.7.1]
+
+### Released 2022-04-29
+
+### Fixed
+
+- fix: switch to ECR for the busybox image [#2255][#2255]
+- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-2`,
+  it is Fluent Bit 1.6.10 with updated dependencies,
+  image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2260][#2260]
+
+[#2255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2255
+[#2260]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2260
+[v2.7.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.7.1
+
+## [v2.7.0][v2.7.0]
+
+### Released 2022-04-11
 
 ### Added
 
 - feat: add pprof extension for otelcol [#2173][#2173]
+- feat(tracing): traces load balancing gateway [#2137][#2137]
 - feat: selectively disable cache for metadata enrichment calls [#2190][#2190]
 - feat(otelcol): introduce default initialDelaySeconds [#2200][#2200]
 - feat(otelcol): add startupProbe config option [#2201][#2201]
 - feat: add topologySpreadContraints config option to logs and metrics metadata providers [#2211][#2211]
-- feat(opentelemetry-operator): add opentelemetry-operator for tracing [#2172][#2172]
 
 ### Changed
 
 - feat(tracing): change otlp http receiver default port to 4318 [#2170][#2170]
 - chore(deps): bump prometheus node exporter tag to 2.3.1 [#2177][#2177]
-- chore: upgrade Fluentd to 1.14.5-sumo-1 [#2196][#2196]
+- chore: upgrade Fluentd to 1.14.6-sumo-1 [#2230][#2230]
 - chore: upgrade Falco Helm Chart to 1.17.4 [#2197][#2197]
+- chore: bump sumo ot distro to 0.47.0-sumo-0 [#2220][#2220]
+- feat: remove the experimental flag for otelcol as a metadata provider [#2221](#2221)
 
 ### Fixed
 
 - fix(helm): always create default metrics source if traces are enabled [#2182][#2182]
 
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...main
+[#2137]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2137
 [#2170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2170
 [#2177]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2177
 [#2173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2173
 [#2182]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2182
 [#2190]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2190
-[#2196]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2196
 [#2197]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2197
 [#2200]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2200
 [#2201]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2201
 [#2211]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2211
-[#2172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2172
+[#2220]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2220
+[#2221]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2221
+[#2230]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2230
+[v2.7.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.7.0
 
 ## [v2.6.0][v2.6.0]
 

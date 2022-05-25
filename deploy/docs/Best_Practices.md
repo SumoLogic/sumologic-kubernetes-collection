@@ -1,14 +1,17 @@
 # Advanced Configuration / Best Practices
 
+- [Overriding chart resource names with `fullnameOverride`](#overriding-chart-resource-names-with-fullnameoverride)
 - [Multiline Log Support](#multiline-log-support)
   - [MySQL slow logs example](#mysql-slow-logs-example)
 - [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
   - [Multiline Support](#multiline-support)
 - [Collecting logs from /var/log/pods](#collecting-logs-from-varlogpods)
+  - [Fluentd tag for /var/log/pods and /var/log/containers](#fluentd-tag-for-varlogpods-and-varlogcontainers)
 - [Choosing Fluentd Base Image](#choosing-fluentd-base-image)
 - [Fluentd Autoscaling](#fluentd-autoscaling)
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
 - [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
+- [Modifying logs in Fluentd](#modifying-logs-in-fluentd)
 - [Excluding Metrics](#excluding-metrics)
 - [Excluding Dimensions](#excluding-dimensions)
 - [Add a local file to fluent-bit configuration](#add-a-local-file-to-fluent-bit-configuration)
@@ -27,11 +30,70 @@
 - [Get logs not available on stdout](#get-logs-not-available-on-stdout)
 - [Adding custom fields](#adding-custom-fields)
 - [Using custom Kubernetes API server address](#using-custom-kubernetes-api-server-address)
+- [Using newer Kube Prometheus Stack](#using-newer-kube-prometheus-stack)
 - [OpenTelemetry queueing and batching](#opentelemetry-queueing-and-batching)
   - [Compaction](#compaction)
   - [Examples](#examples)
   - [Outage with huge metrics spike](#outage-with-huge-metrics-spike)
   - [Outage with low DPM load](#outage-with-low-dpm-load)
+- [Assigning Pod to particular Node](#assigning-pod-to-particular-node)
+  - [Using NodeSelectors](#using-nodeselectors)
+    - [Binding pods to linux nodes](#binding-pods-to-linux-nodes)
+
+## Overriding chart resource names with `fullnameOverride`
+
+Here's an example of using the `fullnameOverride` properties of this chart and its subcharts
+to override the created resource names.
+
+```yaml
+fullnameOverride: sl
+
+fluent-bit:
+  fullnameOverride: fb
+
+kube-prometheus-stack:
+  fullnameOverride: kps
+
+  kube-state-metrics:
+    fullnameOverride: ksm
+
+  prometheus-node-exporter:
+    fullnameOverride: pne
+```
+
+After installing the chart, the resources in the cluster will have names similar to the following:
+
+```console
+$ kubectl -n <namespace> get pods
+NAME                                                 READY   STATUS        RESTARTS   AGE
+fb-95sxf                                             1/1     Running       0          91s
+kps-operator-6c8999bdfb-b4pks                        1/1     Running       0          91s
+ksm-5dbd694cbd-mk4bd                                 1/1     Running       0          91s
+pne-r64tk                                            1/1     Running       0          91s
+prometheus-kps-prometheus-0                          3/3     Running       1          79s
+sl-fluentd-events-0                                  1/1     Running       0          91s
+sl-fluentd-logs-0                                    1/1     Running       0          91s
+sl-fluentd-logs-1                                    1/1     Running       0          90s
+sl-fluentd-logs-2                                    1/1     Running       0          90s
+sl-fluentd-metrics-0                                 1/1     Running       0          90s
+sl-fluentd-metrics-1                                 1/1     Running       0          90s
+sl-fluentd-metrics-2                                 1/1     Running       0          90s
+```
+
+⚠️ **Note:** When changing the `fullnameOverride` property for an already installed chart with the `helm upgrade` command,
+you need to restart the Fluent Bit and Prometheus pods
+for the changed names of the Fluentd or Otelcol pods to be picked up:
+
+```sh
+helm -n <namespace> upgrade <release_name> sumologic/sumologic --values changed-fullnameoverride.yaml
+kubectl -n <namespace> rollout restart daemonset <fluent_bit_daemonset_name>
+kubectl -n <namespace> rollout restart statefulset <prometheus_statefulset_name>
+```
+
+As you can see from the example, every subchart has its own `fullnameOverride` property
+that needs to be set separately to change the names of the resources created by that subchart.
+
+See the chart's [README](../helm/sumologic/README.md) for all the available `fullnameOverride` properties.
 
 ## Multiline Log Support
 
@@ -158,9 +220,6 @@ metadata:
             - action: extract
               key: fluent.tag
               pattern: ^containers\.var\.log\.pods\.(?P<k8s_namespace>[^_]+)_(?P<k8s_pod_name>[^_]+)_(?P<k8s_uid>[a-f0-9\-]{36})\.(?P<k8s_container_name>[^\._]+)\.(?P<k8s_run_id>\d+)\.log$
-            - action: insert
-              key: k8s.pod.uid
-              from_attribute: k8s_uid
             - action: delete
               key: k8s_uid
             - action: delete
@@ -181,6 +240,24 @@ metadata:
             - action: delete
               key: k8s_container_name
 ```
+
+### Fluentd tag for /var/log/pods and /var/log/containers
+
+[Fluentd tag][fluent_routing] value depends on directory from which logs are scraped:
+
+- `/var/log/pods` is resolved to `containers.var.log.pods.<namespace>_<pod>_<container_id>.<container>.<run_id>.log`
+- `/var/log/containers` is resolved to `containers.var.log.containers.<pod>_<namespace>_<container>-<container_id>.log`
+
+e.g. if you want to use additional [filter][fluentd_filter] for container `test-container`,
+you need to use the following Fluentd [filter][fluentd_filter] directive header:
+
+- `<filter containers.var.log.pods.*_*_*.test-container.*.log>` for `/var/log/pods`
+- `<filter containers.var.log.containers.*_*_test-container-*.log>` for `/var/log/containers`
+- `<filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>`
+  to support both `/var/log/pods` and `/var/log/containers`
+
+[fluentd_filter]: https://docs.fluentd.org/filter
+[fluent_routing]: https://docs.fluentd.org/configuration/config-file#interlude-routing
 
 ## Choosing Fluentd Base Image
 
@@ -337,6 +414,27 @@ Should you have any connectivity problems, depending on the buffer size your set
 be able to survive for a given amount of time without a data loss, delivering the data
 later when everything is operational again.
 
+The FluentD buffer size is controlled by two major parameters - the size of the persistent volume
+in Kubernetes, and the maximum size of the buffer on disk. Both need to be adjusted if you want
+to buffer more (or less) data.
+
+For example:
+
+```yaml
+fluentd:
+  ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
+  persistence:
+    ## After changing this value please follow steps described in:
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/FluentdPersistence.md
+    enabled: true
+    size: 20Gi
+  buffer:
+    totalLimitSize: "20G"
+```
+
+The `fluentd.buffer` section contains other settings for FluentD buffering. Only change those if you know
+what you're doing and have studied the relevant documentation carefully.
+
 To calculate this time you need to know how much data you send. For the calculations below
 we made an assumption that a single metric data point is around 1 kilobyte in size, including
 metadata. This assumption is based on the average data we ingest. By default, for file based
@@ -433,6 +531,65 @@ You can find more information on the `grep` filter plugin in the
 [fluentd documentation](https://docs.fluentd.org/filter/grep).
 Refer to our [documentation](v1_conf_examples.md) for other examples of how you can
 customize the fluentd pipeline.
+
+## Modifying logs in Fluentd
+
+You can redact log messages in order to e.g. prevent sending sensitive data like passwords.
+
+In order to do that [record_transformer filter][record_transformer] can be used.
+Please consider the following configuration:
+
+```yaml
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |-
+          # Apply to all test-container containers
+          <filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>
+            @type record_transformer
+            enable_ruby
+            <record>
+              # Replace `Password: <pass>` with `Password: ***`
+              log ${record["log"].gsub(/Password: (.*)/, 'Password: ***')}
+              # Replace kubernetes['namespace_name'] with 'REDACTED'
+              # if namespace_name exists in record['kubernetes'], then change value of it and then return modified record['kubernetes'] to assign as kubernetes
+              kubernetes = ${if record['kubernetes'].has_key?('namespace_name'); record['kubernetes']['namespace_name'] = "REDACTED"; end; record['kubernetes']}
+            </record>
+          </filter>
+```
+
+It is going to replace all `Password: <pass>` occurence in logs with `Password: ***` and replace namespace to `REDACTED`
+for [all containers](#difference-between-varlogpods-and-varlogcontainers) named `test-container`.
+
+An example log before entering the `extraFilterPluginConf` section is presented below:
+
+```json
+{
+  "stream": "stdout",
+  "logtag": "F",
+  "log": "Password: 123456",
+  "docker": {
+    "container_id": "a1acfd70-c8d1-456b-95dd-515f1256906f"
+  },
+  "kubernetes": {
+    "container_name": "test-container",
+    "namespace_name": "multiline-logs-generator",
+    "pod_name": "multiline-logs-generator",
+    "pod_id": "a1acfd70-c8d1-456b-95dd-515f1256906f",
+    "host": "sumologic-kubernetes-collection",
+    "labels": {
+      "example": "multiline-logs-generator"
+    },
+    "master_url": "https://10.152.183.1:443/api",
+    "namespace_id": "3e6d679e-f9f4-4333-966c-a8354457f8f4",
+    "namespace_labels": {
+      "kubernetes.io/metadata.name": "multiline-logs-generator"
+    }
+  }
+}
+```
+
+[record_transformer]: https://docs.fluentd.org/filter/record_transformer
 
 ## Excluding Metrics
 
@@ -953,6 +1110,98 @@ metadata:
         value: '12345'
 ```
 
+## Using newer Kube Prometheus Stack
+
+Due to breaking changes, we do not support the latest Kube Prometheus Stack.
+We are aware that it can be a major issue, so this section describes how to install Kube Prometheus Stack in version `34.10.0`
+to work with our collection.
+
+1. Prepare [values-prometheus.yaml] with Kube Prometheus Stack configuration:
+
+   - copy content of `kube-prometheus-stack` from [values.yaml]
+   - add the following configuration:
+
+     ```yaml
+     prometheus:
+       prometheusSpec:
+         initContainers:
+           - name: "init-config-reloader"
+             env:
+               - name: FLUENTD_METRICS_SVC
+                 valueFrom:
+                   configMapKeyRef:
+                     name: sumologic-configmap
+                     key: fluentdMetrics
+               - name: NAMESPACE
+                 valueFrom:
+                   configMapKeyRef:
+                     name: sumologic-configmap
+                     key: fluentdNamespace
+     ```
+  
+   - remove the following configuration:
+
+     ```yaml
+     kube-state-metrics:
+       ## Use the GCR repo, it's more recent and has ARM images starting from 1.9.8
+       image:
+         repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
+         tag: v1.9.8
+     prometheus-node-exporter:
+       image:
+         tag: v1.3.1
+     ```
+
+   - add your custom prometheus configuration
+
+1. [Upgrade sumologic chart](./Installation_with_Helm.md#upgrading-sumo-logic-collection) without `kube-prometheus-stack`
+   by adding the following configuration to your [values.yaml](../../examples/kube_prometheus_stack/values.yaml):
+
+   ```yaml
+   kube-prometheus-stack:
+     enabled: false
+   ```
+
+1. [Install CRD for Kube Prometheus Stack][kube-prometheus-stack-crd]:
+
+   ```bash
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.55.0/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+   ```
+
+1. [Install Kube Prometheus Stack][kube-prometheus-stack] in the same namespace which collection has been installed:
+
+   ```bash
+   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+   helm repo update
+
+   helm install kube-prometheus prometheus-community/kube-prometheus-stack \
+     --namespace <NAMESPACE> \
+     --version 34.10.0 \
+     -f values-prometheus.yaml
+   ```
+
+**NOTE** Some metrics were changed in newer version of kube-prometheus-stack:
+
+- `prometheus_remote_storage_succeeded_samples_total` replaced with `prometheus_remote_storage_samples_total`
+- `prometheus_remote_storage_failed_samples_total` replaced with `prometheus_remote_storage_samples_failed_total`
+- `prometheus_remote_storage_retried_samples_total` replaced with `prometheus_remote_storage_samples_retried_total`
+- `prometheus_remote_storage_dropped_samples_total` replaced with `prometheus_remote_storage_samples_dropped_total`
+- `prometheus_remote_storage_pending_samples` replaced with `prometheus_remote_storage_samples_pending`
+- `prometheus_remote_storage_sent_bytes_total` was removed and replaced with `prometheus_remote_storage_bytes_total`
+  and `prometheus_remote_storage_metadata_bytes_total`
+
+[kube-prometheus-stack]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#install-helm-chart
+[values-prometheus.yaml]: ../../examples/kube_prometheus_stack/values-prometheus.yaml
+[values.yaml]: ../helm/sumologic/values.yaml
+[kube-prometheus-stack-crd]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#from-33x-to-34x
+
 ## OpenTelemetry queueing and batching
 
 OpenTelemetry comes with several parameters related to queue management.
@@ -980,8 +1229,8 @@ For [sumologic exporter][sumologic_exporter]:
 **The above in connection with PVC monitoring can lead to constant alerts (eg. [KubePersistentVolumeFillingUp][filling_up_alert]),**
 **because once filled in PVC never reduces its fill.**
 
-[batch_processor]: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.44.0/processor/batchprocessor#batch-processor
-[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.0.50-beta.0/pkg/exporter/sumologicexporter#sumo-logic-exporter
+[batch_processor]: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.47.0/processor/batchprocessor#batch-processor
+[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.50.0-sumo-0/pkg/exporter/sumologicexporter#sumo-logic-exporter
 [filling_up_alert]: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumefillingup/
 
 ### Compaction
@@ -1018,3 +1267,51 @@ The reliability of the system can be calculated using the following formulas:
 
 - If limited by queue_size: `number_of_instances*timeout[min]*sending_queue.queue_size/load_in_DPM` minutes.
 - If limited by PVC size: `number_of_instances*PVC_size/(1KB*load_in_DPM)` minutes.
+
+## Assigning Pod to particular Node
+
+### Using NodeSelectors
+
+Kubernetes offers a feature of assigning specific pod to node. Such kind of control is sometimes useful,
+whenever you want to ensure that pod will end up on specific node according your requirements like operating system
+or connected devices.
+
+#### Binding pods to linux nodes
+
+Using this feature we can bind them to linux nodes.
+In order to do that `nodeSelector` has to be used. By default node selectors can be set for below pods:
+
+| component               | key                                                                            |
+|-------------------------|--------------------------------------------------------------------------------|
+| `fluent-bit`            | `fluent-bit.nodeSelector.kubernetes.io/os`                                     |
+| `fluentd`               | `fluentd.events.statefulset.nodeSelector.kubernetes.io/os`                     |
+| `fluentd`               | `fluentd.logs.statefulset.nodeSelector.kubernetes.io/os`                       |
+| `fluentd`               | `fluentd.metrics.statefulset.nodeSelector.kubernetes.io/os`                    |
+| `sumologic`             | `sumologic.setup.job.nodeSelector.kubernetes.io/os`                            |
+| `kube-prometheus-stack` | `kube-prometheus-stack.prometheus-node-exporter.nodeSelector.kubernetes.io/os` |
+| `kube-state-metrics`    | `kube-state-metrics.nodeSelector.kubernetes.io/os`                             |
+| `prometheus`            | `prometheus.prometheusSpec.nodeSelector.kubernetes.io/os`                      |
+| `otelagent`             | `otelagent.daemonset.nodeSelector.kubernetes.io/os`                            |
+| `otelcol`               | `otelcol.deployment.nodeSelector.kubernetes.io/os`                             |
+| `otelgateway`           | `otelgateway.deployment.nodeSelector.kubernetes.io/os`                         |
+| `otellogs`              | `otellogs.daemonset.nodeSelector.kubernetes.io/os`                             |
+| `metadata`              | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`                   |
+| `metadata`              | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`                      |
+
+Node selector can be changed via additional parameter to helm upgrade command, below example for fluent-bit node selector:
+
+```bash
+helm upgrade --install my-release sumologic/sumologic \
+  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
+  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+  --set fluent-bit.nodeSelector."kubernetes\.io/os"=linux 
+```
+
+or by modyfing above settings in values.yaml
+
+```yaml
+fluent-bit:
+  nodeSelector:
+    kubernetes.io/os: linux
+```

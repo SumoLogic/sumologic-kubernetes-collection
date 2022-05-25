@@ -18,12 +18,19 @@ jobs:
 
   shellcheck:
     runs-on: ubuntu-20.04
+    env:
+      YQ_VERSION: 3.4.1
     steps:
       - uses: actions/checkout@v3
       - name: install shellcheck
         run: |
             curl --retry 10 --retry-max-time 120 --retry-delay 5 -Lo- https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz | tar -xJf -
             sudo cp shellcheck-v0.7.1/shellcheck /usr/local/bin && rm -rf shellcheck-v0.7.1
+      - name: install yq
+        run: |
+            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/yq https://github.com/mikefarah/yq/releases/download/${{ env.YQ_VERSION }}/yq_linux_amd64
+            chmod +x /tmp/yq
+            sudo mv /tmp/yq /usr/local/bin/yq
       - name: shellcheck
         run: make shellcheck
 
@@ -65,7 +72,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3.0.0
+      - uses: actions/setup-node@v3.2.0
       - name: Install markdown-table-formatter
         run: npm install markdown-table-formatter --save
       - name: Run markdown-table-formatter
@@ -135,7 +142,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
           go-version: '1.17.7'
       - name: golangci-lint
@@ -157,7 +164,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: '1.17.7'
       - uses: engineerd/setup-kind@v0.5.0

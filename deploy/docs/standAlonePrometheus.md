@@ -43,7 +43,7 @@ If you are installing the collection in a cluster that requires proxying outboun
 
 The following parameter is optional, but we recommend setting it.
 
-- __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+- __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`. Whitespaces in the cluster name will be replaced with dashes.
 
 To install the chart, first add the `sumologic` private repo:
 

@@ -90,6 +90,7 @@ The following parameter is optional, but we recommend setting it.
 
 - __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+  Whitespaces in the cluster name will be replaced with dashes.
 
 To install the chart, first add the `sumologic` private repo:
 
@@ -131,6 +132,9 @@ helm upgrade --install my-release sumologic/sumologic \
   --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
+
+If you want to override the names of the resources created by the chart,
+see [Overriding chart resource names with `fullnameOverride`](./Best_Practices.md#overriding-chart-resource-names-with-fullnameoverride).
 
 ### Authenticating with container registry
 
