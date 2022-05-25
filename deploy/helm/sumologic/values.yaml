@@ -3319,7 +3319,7 @@ otelagent:
             endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
-      otlp/old:
+      otlp/deprecated:
         protocols:
           http:
             endpoint: "0.0.0.0:55681"
@@ -3365,11 +3365,11 @@ otelagent:
       extensions: [health_check, memory_ballast]
       pipelines:
         traces:
-          receivers: [jaeger, opencensus, otlp, otlp/old, zipkin]
+          receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
           processors: [memory_limiter, k8s_tagger, batch]
           exporters: [otlp]
         metrics:
-          receivers: [otlp, otlp/old]
+          receivers: [otlp, otlp/deprecated]
           processors: [memory_limiter, k8s_tagger, batch]
           exporters: [otlp]
 
@@ -3442,7 +3442,7 @@ otelcol:
             endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
-      otlp/old:
+      otlp/deprecated:
         protocols:
           http:
             endpoint: "0.0.0.0:55681"
@@ -3594,11 +3594,11 @@ otelcol:
       extensions: [health_check, memory_ballast]
       pipelines:
         traces:
-          receivers: [jaeger, opencensus, otlp, otlp/old, zipkin]
+          receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
           processors: [memory_limiter, k8s_tagger, source, resource, cascading_filter, batch]
           exporters: [otlphttp]
         metrics:
-          receivers: [otlp, otlp/old]
+          receivers: [otlp, otlp/deprecated]
           processors: [memory_limiter, k8s_tagger, resourcedetection, resource, batch]
           exporters: [sumologic]
 
@@ -4580,7 +4580,7 @@ otelgateway:
             endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
-      otlp/old:
+      otlp/deprecated:
         protocols:
           http:
             endpoint: "0.0.0.0:55681"
@@ -4631,11 +4631,11 @@ otelgateway:
       extensions: [health_check, memory_ballast]
       pipelines:
         traces:
-          receivers: [jaeger, opencensus, otlp, otlp/old, zipkin]
+          receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
           processors: [memory_limiter, batch]
           exporters: [loadbalancing]
         metrics:
-          receivers: [otlp, otlp/old]
+          receivers: [otlp, otlp/deprecated]
           processors: [memory_limiter, batch]
           exporters: [otlp]
 

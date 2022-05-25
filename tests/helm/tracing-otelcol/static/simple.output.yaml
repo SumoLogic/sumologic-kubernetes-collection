@@ -119,7 +119,7 @@ data:
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
-      otlp/old:
+      otlp/deprecated:
         protocols:
           http:
             endpoint: 0.0.0.0:55681
@@ -141,7 +141,7 @@ data:
           - batch
           receivers:
           - otlp
-          - otlp/old
+          - otlp/deprecated
         traces:
           exporters:
           - otlphttp
@@ -156,5 +156,5 @@ data:
           - jaeger
           - opencensus
           - otlp
-          - otlp/old
+          - otlp/deprecated
           - zipkin
