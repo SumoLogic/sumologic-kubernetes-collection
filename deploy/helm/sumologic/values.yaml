@@ -3277,8 +3277,8 @@ otelagent:
     ## Add custom annotations only to otelagent daemonset.
     podAnnotations: {}
     image:
-      repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.38.1-sumo"
+      repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
+      tag: "0.51.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3390,8 +3390,8 @@ otelcol:
     ## Add custom annotations only to otelcol deployment.
     podAnnotations: {}
     image:
-      repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.38.1-sumo"
+      repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
+      tag: "0.51.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -4524,8 +4524,8 @@ otelgateway:
     ## Add custom annotations only to otelagent daemonset.
     podAnnotations: {}
     image:
-      repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.50.0-sumo-0
+      repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
+      tag: "0.51.0-sumo-0"
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15
