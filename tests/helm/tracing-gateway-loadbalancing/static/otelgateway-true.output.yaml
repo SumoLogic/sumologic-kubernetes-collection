@@ -58,6 +58,10 @@ data:
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
+      otlp/old:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:55681
       zipkin:
         endpoint: 0.0.0.0:9411
     service:
@@ -73,6 +77,7 @@ data:
           - batch
           receivers:
           - otlp
+          - otlp/old
         traces:
           exporters:
           - loadbalancing
@@ -83,4 +88,5 @@ data:
           - jaeger
           - opencensus
           - otlp
+          - otlp/old
           - zipkin

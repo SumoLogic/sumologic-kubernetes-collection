@@ -34,8 +34,6 @@ data:
         source_host: '%{host.name}'
         source_name: "%{namespace}.%{pod}.%{container}"
         timeout: 5s
-      zipkin:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
     extensions:
       health_check: {}
       memory_ballast:
@@ -89,19 +87,18 @@ data:
       source:
         annotation_prefix: k8s.pod.annotation.
         collector: "kubernetes"
-        container_key: k8s.container.name
-        exclude_container_regex: "[123+]bar$|xyz"
-        exclude_host_regex: "hhh123"
-        exclude_namespace_regex: "kube\\s+"
-        exclude_pod_regex: "^foo.*"
-        namespace_key: k8s.namespace.name
+        exclude:
+          k8s.container.name: "[123+]bar$|xyz"
+          k8s.host.name: "hhh123"
+          k8s.namespace.name: "kube\\s+"
+          k8s.pod.name: "^foo.*"
         pod_key: k8s.pod.name
         pod_name_key: k8s.pod.pod_name
         pod_template_hash_key: k8s.pod.label.pod-template-hash
         source_category: "%{namespace}/%{pod_name}"
         source_category_prefix: "kubernetes/"
         source_category_replace_dash: "/"
-        source_host_key: k8s.pod.hostname
+        source_host: '%{k8s.pod.hostname}'
         source_name: "%{namespace}.%{pod}.%{container}"
     receivers:
       jaeger:
@@ -122,6 +119,10 @@ data:
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
+      otlp/old:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:55681
       zipkin:
         endpoint: 0.0.0.0:9411
     service:
@@ -140,6 +141,7 @@ data:
           - batch
           receivers:
           - otlp
+          - otlp/old
         traces:
           exporters:
           - otlphttp
@@ -154,4 +156,5 @@ data:
           - jaeger
           - opencensus
           - otlp
+          - otlp/old
           - zipkin
