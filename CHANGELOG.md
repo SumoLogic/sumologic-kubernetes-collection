@@ -5,14 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v2.5.3][v2.5.3]
 
 ### Changed
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
 
 [#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.2...release-v2.5
+[v2.5.3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.5.3
 
 ## [v2.5.2]
 
