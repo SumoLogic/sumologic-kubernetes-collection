@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: remove support for EKS with Kubernetes 1.18 [#2312][#2312]
 - chore: remove support for Kops with Kubernetes 1.18 [#2313][#2313]
 - chore: add support for GKE with Kubernetes 1.22 [#2314][#2314]
+- chore: remove support for AKS with Kubernetes 1.19 & 1.20 [#2315][#2315]
 
 ### Fixed
 
@@ -34,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2314]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2314
 [#2316]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2316
 [#2318]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2318
+[#2315]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2315
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...main
 
 ## [v2.8.0]
