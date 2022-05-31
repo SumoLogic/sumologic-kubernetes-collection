@@ -5,10 +5,10 @@ enriching them with deployment, pod, and service level metadata; and sending the
 See our [documentation guide](https://help.sumologic.com/Solutions/Kubernetes_Solution)
 for details on our Kubernetes Solution.
 
-- [Documentation versions](#documentation-versions)
 - [Solution overview](#solution-overview)
 - [Minimum Requirements](#minimum-requirements)
 - [Support Matrix](#support-matrix)
+  - [ARM support](#arm-support)
 
 Documentation for other versions can be found in the [main README file](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/README.md#documentation).
 
@@ -76,7 +76,7 @@ The following table displays the tested Kubernetes and Helm versions.
 
 | Name          | Version                                  |
 |---------------|------------------------------------------|
-| K8s with EKS  | 1.18<br/>1.19<br/>1.20<br/>1.21          |
+| K8s with EKS  | 1.19<br/>1.20<br/>1.21                   |
 | K8s with Kops | 1.18<br/>1.19<br/>1.20<br/>1.21<br/>1.22 |
 | K8s with GKE  | 1.20<br/>1.21                            |
 | K8s with AKS  | 1.19<br/>1.20<br/>1.21<br/>1.22          |
