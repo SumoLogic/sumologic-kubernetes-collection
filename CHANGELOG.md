@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
 - chore(tracing): switch from otc fork to otel distro [#2299][#2299]
+- chore: remove support for EKS with Kuberentes 1.18 [#2312][#2312]
 
 ### Fixed
 
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 [#2291]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2291
 [#2299]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2299
+[#2312]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2312
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...main
 
 ## [v2.8.0]
