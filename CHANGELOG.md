@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- feat(metrics): add imagePullSecrets to remote-write-proxy [#2316]
+
 ### Changed
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
@@ -27,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2312]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2312
 [#2313]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2313
 [#2314]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2314
+[#2316]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2316
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...main
 
 ## [v2.8.0]

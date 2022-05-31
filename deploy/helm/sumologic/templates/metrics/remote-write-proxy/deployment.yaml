@@ -31,6 +31,10 @@ spec:
 {{ toYaml .Values.sumologic.metrics.remoteWriteProxy.podLabels | indent 8 }}
 {{- end }}
     spec:
+{{- if .Values.sumologic.pullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.sumologic.pullSecrets | indent 8 }}
+{{- end }}
 {{- if .Values.sumologic.metrics.remoteWriteProxy.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.sumologic.metrics.remoteWriteProxy.nodeSelector | indent 8 }}

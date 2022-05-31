@@ -1,4 +1,6 @@
 sumologic:
+  pullSecrets:
+  - name: sumo-pull
   podLabels:
     cluster: sumo-demo
   metrics:
