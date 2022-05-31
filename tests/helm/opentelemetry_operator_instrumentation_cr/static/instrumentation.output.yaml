@@ -84,7 +84,7 @@ spec:
         value: http://RELEASE-NAME-sumologic-otelcol.sumologic:4317
   java:
     env:
-      - name: OTEL_EXPORTER_OTLP_PROTOCOL
+      - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
         value: http/protobuf
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://RELEASE-NAME-sumologic-otelcol.sumologic:4318
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://RELEASE-NAME-sumologic-otelcol.sumologic:4318/v1/traces
