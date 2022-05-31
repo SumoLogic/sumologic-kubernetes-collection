@@ -28,6 +28,8 @@ spec:
         cluster: sumo-demo
         my-label: rwp
     spec:
+      imagePullSecrets:
+        - name: sumo-pull
       nodeSelector:
         disktype: ssd
       affinity:
