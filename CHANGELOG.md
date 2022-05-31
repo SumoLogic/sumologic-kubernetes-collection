@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
+- chore(tracing): switch from otc fork to otel distro [#2299][#2299]
 
 ### Fixed
 
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2284]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2284
 [#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 [#2291]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2291
+[#2299]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2299
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...main
 
 ## [v2.8.0]
