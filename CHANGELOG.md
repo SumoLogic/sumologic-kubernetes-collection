@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat(metrics): add imagePullSecrets to remote-write-proxy [#2316]
+- feat(otellogs): set fingerprint_size to 17k to include timestamp for docker driver [#2325]
 
 ### Changed
 
@@ -38,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2318]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2318
 [#2315]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2315
 [#2321]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2321
+[#2325]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2325
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...main
 
 ## [v2.8.0]
