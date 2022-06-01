@@ -6,6 +6,9 @@ Perform the following steps in order to release new verions of helm chart.
 
    - update [changelog][changelog]
    - update [chart][chart]
+   - update [README.md][documentation]
+     - add link to minor version, if created
+     - set "supported until" date for previous minor version to 6 months after today
    - update [deploy/README.md][deploy_matrix] (support matrix)
 
 1. Branch out `release-v${TAG}` and add the following changes:
@@ -27,3 +30,4 @@ Perform the following steps in order to release new verions of helm chart.
 [changelog]: ../../CHANGELOG.md#unreleased
 [chart]: ../helm/sumologic/Chart.yaml
 [releases]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases
+[documentation]: ../../README.md#documentation
