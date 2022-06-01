@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix: set cluster field in metadata pipelines [#2284][#2284]
 - fix(otellogs): set resources on Otelcol logs collector daemonset [#2291]
+- fix(events): fix setting source category [#2318]
 
 [#2284]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2284
 [#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2313]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2313
 [#2314]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2314
 [#2316]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2316
+[#2318]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2318
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...main
 
 ## [v2.8.0]
