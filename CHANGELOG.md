@@ -20,8 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: add support for GKE with Kubernetes 1.22 [#2314][#2314]
 - chore: remove support for AKS with Kubernetes 1.19 & 1.20 [#2315][#2315]
 - chore: add support for EKS with Kuberentes 1.22 [#2321][#2321]
-- chore: update tested helm version to 3.8.2 [#2317][#2317]
-- chore: update tested kubectl version to 1.23.6 [#2317][#2317]
+- docs: update tested helm version to 3.8.2 [#2317][#2317]
+- docs: update tested kubectl version to 1.23.6 [#2317][#2317]
+- chore: change minimum required version of helm to 3.5+ [#2317][#2317]
 
 ### Fixed
 
