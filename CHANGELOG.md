@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs: update tested helm version to 3.8.2 [#2317][#2317]
 - docs: update tested kubectl version to 1.23.6 [#2317][#2317]
 - chore: change minimum required version of helm to 3.5+ [#2317][#2317]
+- chore: add support for AKS with Kuberentes 1.23 [#2324][#2324]
 
 ### Fixed
 
@@ -42,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2315]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2315
 [#2321]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2321
 [#2317]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2317
+[#2324]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2324
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...main
 
 ## [v2.8.0]
