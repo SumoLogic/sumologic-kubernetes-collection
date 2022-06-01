@@ -82,7 +82,7 @@ The following table displays the tested Kubernetes and Helm versions.
 | K8s with AKS  | 1.21<br/>1.22                   |
 | OpenShift     | 4.6<br/>4.7<br/>4.8             |
 | Helm          | 3.8.2 (Linux)                   |
-| kubectl       | 1.16.0                          |
+| kubectl       | 1.23.6                          |
 
 The following matrix displays the tested package versions for our Helm chart.
 
