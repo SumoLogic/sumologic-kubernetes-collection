@@ -9,15 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Released 2022-06-01
 
-This release changes the OpenTelemetry Collector binary used for traces collection ([#2299]).
-This change affects you only if you have enabled traces with `sumologic.traces.enabled: true`
-AND you have customized the configuration in the `otelcol.config.processors.source` property.
-If you have modified these properties, make sure to compare the [new configuration][source_processor_new_config]
-with the [old configuration][source_processor_old_config] and apply corresponding changes to your config.
-
-[source_processor_old_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.8.1/deploy/helm/sumologic/values.yaml#L3477-L3493
-[source_processor_new_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.9.0/deploy/helm/sumologic/values.yaml#L3484-L3499
-
 ### Added
 
 - feat(metrics): add imagePullSecrets to remote-write-proxy [#2316]
