@@ -4694,6 +4694,9 @@ otellogs:
         include:
           - /var/log/pods/*/*/*.log
         start_at: beginning
+        ## sets fingerprint_size to 17kb in order to match the longest possible docker line (which by default is 16kb)
+        ## we want to include timestamp, which is at the end of the line
+        fingerprint_size: 17408
         include_file_path: true
         include_file_name: false
         operators:
