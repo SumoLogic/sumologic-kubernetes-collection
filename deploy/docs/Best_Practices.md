@@ -12,6 +12,7 @@
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
 - [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
 - [Modifying logs in Fluentd](#modifying-logs-in-fluentd)
+- [Split Big Chunks in Fluentd](#split-big-chunks-in-fluentd)
 - [Excluding Metrics](#excluding-metrics)
 - [Excluding Dimensions](#excluding-dimensions)
 - [Add a local file to fluent-bit configuration](#add-a-local-file-to-fluent-bit-configuration)
@@ -429,11 +430,17 @@ fluentd:
     enabled: true
     size: 20Gi
   buffer:
+    ## totalLimitSize should be multiplication of `chunkLimitSize`, `queueChunkLimitSize` and number of filePath (maximum of `logs`, `metrics`, `traces`, `events`)
     totalLimitSize: "20G"
 ```
 
-The `fluentd.buffer` section contains other settings for FluentD buffering. Only change those if you know
-what you're doing and have studied the relevant documentation carefully.
+The `fluentd.buffer` section contains other settings for FluentD buffering.
+Please study relevant documentation for `chunkLimitSize` and `queueChunkLimitSize`:
+
+- https://docs.fluentd.org/configuration/buffer-section
+- https://docs.fluentd.org/buffer/file
+
+For bigger chunks, we recommend to use [split and retry mechanism](#split-big-chunks-in-fluentd) included into sumologic output plugin.
 
 To calculate this time you need to know how much data you send. For the calculations below
 we made an assumption that a single metric data point is around 1 kilobyte in size, including
@@ -590,6 +597,46 @@ An example log before entering the `extraFilterPluginConf` section is presented 
 ```
 
 [record_transformer]: https://docs.fluentd.org/filter/record_transformer
+
+## Split Big Chunks in Fluentd
+
+In order to support big chunks we have added split and retry mechanism into out output plugin.
+It is recommended to use it in order to process big chunks.
+It also fixes [logs duplication](./Troubleshoot_Collection.md#duplicated-logs).
+Please consider the following configuration in order to use it:
+
+```yaml
+fluentd:
+  logs:
+    output:
+      extraConf: |-
+        ## use plugin's retry mechanisms, which uses exponential algorithm
+        use_internal_retry true
+        ## sets minimum retry interval to 5s
+        retry_min_interval 5s
+        ## sets maximum retry interval to 10m
+        retry_max_interval 10m
+        ## timeout after 72h
+        retry_timeout 72h
+        ## do not limit number of requests
+        retry_max_times 0
+        ## set maximum request size to 16m to avoid timeouts
+        max_request_size 16m
+  metrics:
+    extraOutputConf: |-
+      ## use plugin's retry mechanisms, which uses exponential algorithm
+      use_internal_retry true
+      ## sets minimum retry interval to 5s
+      retry_min_interval 5s
+      ## sets maximum retry interval to 10m
+      retry_max_interval 10m
+      ## timeout after 72h
+      retry_timeout 72h
+      ## do not limit number of requests
+      retry_max_times 0
+      # Set maximum request size to 16m to avoid timeouts
+      max_request_size 16m
+```
 
 ## Excluding Metrics
 

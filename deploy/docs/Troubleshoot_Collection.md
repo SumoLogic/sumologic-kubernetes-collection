@@ -623,27 +623,6 @@ We observed than under certain conditions, it's possible for FluentD to duplicat
 - one of those requests is failing, resulting in the whole batch being retried
 
 In order to mitigate this, please use [fluentd-output-sumologic] with `use_internal_retry` option.
-See the following example:
-
-```yaml
-fluentd:
-  logs:
-    output:
-      extraConf: |-
-        use_internal_retry true
-        retry_min_interval 5s
-        retry_max_interval 10m
-        retry_timeout 72h
-        retry_max_times 0
-        max_request_size 16m
-  metrics:
-    extraOutputConf: |-
-      use_internal_retry true
-      retry_min_interval 5s
-      retry_max_interval 10m
-      retry_timeout 72h
-      retry_max_times 0
-      max_request_size 16m
-```
+Please follow [Split Big Chunks in Fluentd](./Best_Practices.md#split-big-chunks-in-fluentd)
 
 [fluentd-output-sumologic]: https://github.com/SumoLogic/fluentd-output-sumologic
