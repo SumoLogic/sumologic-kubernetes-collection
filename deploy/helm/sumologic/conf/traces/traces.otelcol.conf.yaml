@@ -1,13 +1,13 @@
 {{- $yamlFile := toYaml $.Values.otelcol.config }}
 {{- $_collector := .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
-{{- $sourceName := .Values.fluentd.logs.containers.sourceName | quote }}
-{{- $sourceCategory := .Values.fluentd.logs.containers.sourceCategory | quote }}
-{{- $sourceCategoryPrefix := .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}
-{{- $sourceCategoryReplaceDash := .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}
+{{- $sourceName := .Values.otelcol.source_metadata.sourceName | quote }}
+{{- $sourceCategory := .Values.otelcol.source_metadata.sourceCategory | quote }}
+{{- $sourceCategoryPrefix := .Values.otelcol.source_metadata.sourceCategoryPrefix | quote }}
+{{- $sourceCategoryReplaceDash := .Values.otelcol.source_metadata.sourceCategoryReplaceDash | quote }}
 {{- $excludeNamespaceRegex := include "fluentd.excludeNamespaces" . }}
-{{- $excludePodRegex := .Values.fluentd.logs.containers.excludePodRegex | quote }}
-{{- $excludeContainerRegex := .Values.fluentd.logs.containers.excludeContainerRegex | quote }}
-{{- $excludeHostRegex := .Values.fluentd.logs.containers.excludeHostRegex | quote }}
+{{- $excludePodRegex := .Values.otelcol.source_metadata.excludePodRegex | quote }}
+{{- $excludeContainerRegex := .Values.otelcol.source_metadata.excludeContainerRegex | quote }}
+{{- $excludeHostRegex := .Values.otelcol.source_metadata.excludeHostRegex | quote }}
 {{- $clusterName := include "sumologic.clusterNameReplaceSpaceWithDash" . }}
 
 {{- $yamlFile := replace "processors.source.collector.replace" $_collector $yamlFile }}

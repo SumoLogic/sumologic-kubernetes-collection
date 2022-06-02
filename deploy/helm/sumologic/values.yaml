@@ -3375,6 +3375,29 @@ otelagent:
 
 ## Configure otelcol
 otelcol:
+  ## Set the _sourceName metadata field in Sumo Logic.
+  source_metadata:
+    sourceName: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
+    ## Set the _sourceCategory metadata field in Sumo Logic.
+    sourceCategory: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+    ## Set the prefix, for _sourceCategory metadata.
+    sourceCategoryPrefix: "kubernetes/"
+    ## Used to replace - with another character.
+    sourceCategoryReplaceDash: "/"
+
+    ## A regular expression for containers.
+    ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeContainerRegex: ""
+    ## A regular expression for hosts.
+    ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeHostRegex: ""
+    ## A regular expression for namespaces.
+    ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeNamespaceRegex: ""
+    ## A regular expression for pods.
+    ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludePodRegex: ""
+
   deployment:
     nodeSelector: {}
     tolerations: []
