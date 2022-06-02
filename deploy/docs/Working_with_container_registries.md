@@ -46,6 +46,7 @@ Full list of `values.yaml` keys for all the images that are used, can be found b
 | setup job             | `sumologic.setup.job.pullSecrets`               |
 | fluentd               | `sumologic.pullSecrets`                         |
 | Sumo Logic OT distro  | `sumologic.pullSecrets`                         |
+| remote-write-proxy    | `sumologic.pullSecrets`                         |
 | kube-prometheus-stack | `kube-prometheus-stack.global.imagePullSecrets` |
 | metrics-server        | `metrics-server.image.pullSecrets`              |
 | telegraf-operator     | `telegraf-operator.imagePullSecrets`            |

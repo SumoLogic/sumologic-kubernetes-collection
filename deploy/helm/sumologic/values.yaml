@@ -995,8 +995,10 @@ fluent-bit:
     #   memory: 8Mi
 
   ## Uncomment the flag below to not install fluent-bit helm chart as a dependency along with this helm chart.
-  ## Comment it out if you wish to have the fluent-bit dependency installed.
-  ## Setting the flag to true instead of commenting out will break other functionality.
+  ## Do not use this flag to disable logs collection.
+  ## Instead, set the `sumologic.logs.enabled: false` flag to disable logs collection.
+  ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.logs.enabled: false`,
+  ## as this will make Fluent Bit try to write to an non-existent logs enrichment service.
   # enabled: false
 
   ## Configuration for fluent-bit service
@@ -1161,8 +1163,11 @@ kube-prometheus-stack:
 
   ## Uncomment the flag below to not install kube-prometheus-stack helm chart
   ## as a dependency along with this helm chart.
-  ## Comment it out if you wish to have the prometheus-operator dependency installed.
-  ## Setting the flag to true instead of commenting out will break other functionality.
+  ## This is needed e.g. if you want to use a different version of kube-prometheus-stack -
+  ## see /deploy/docs/Best_Practices.md#using-newer-kube-prometheus-stack.
+  ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
+  ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.metrics.enabled: false`,
+  ## as this will make Prometheus try to write to an non-existent metrics enrichment service.
   # enabled: false
 
   # global:

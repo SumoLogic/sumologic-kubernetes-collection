@@ -5,10 +5,10 @@ enriching them with deployment, pod, and service level metadata; and sending the
 See our [documentation guide](https://help.sumologic.com/Solutions/Kubernetes_Solution)
 for details on our Kubernetes Solution.
 
-- [Documentation versions](#documentation-versions)
 - [Solution overview](#solution-overview)
 - [Minimum Requirements](#minimum-requirements)
 - [Support Matrix](#support-matrix)
+  - [ARM support](#arm-support)
 
 Documentation for other versions can be found in the [main README file](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/README.md#documentation).
 
@@ -68,21 +68,21 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 | Name | Version |
 |------|---------|
 | K8s  | 1.18+   |
-| Helm | 3.4+    |
+| Helm | 3.5+    |
 
 ## Support Matrix
 
 The following table displays the tested Kubernetes and Helm versions.
 
-| Name          | Version                                  |
-|---------------|------------------------------------------|
-| K8s with EKS  | 1.18<br/>1.19<br/>1.20<br/>1.21          |
-| K8s with Kops | 1.18<br/>1.19<br/>1.20<br/>1.21<br/>1.22 |
-| K8s with GKE  | 1.20<br/>1.21                            |
-| K8s with AKS  | 1.19<br/>1.20<br/>1.21<br/>1.22          |
-| OpenShift     | 4.6<br/>4.7<br/>4.8                      |
-| Helm          | 3.5.4 (Linux)                            |
-| kubectl       | 1.16.0                                   |
+| Name          | Version                         |
+|---------------|---------------------------------|
+| K8s with EKS  | 1.19<br/>1.20<br/>1.21<br/>1.22 |
+| K8s with Kops | 1.19<br/>1.20<br/>1.21<br/>1.22 |
+| K8s with GKE  | 1.20<br/>1.21<br/>1.22          |
+| K8s with AKS  | 1.21<br/>1.22<br/>1.23          |
+| OpenShift     | 4.6<br/>4.7<br/>4.8             |
+| Helm          | 3.8.2 (Linux)                   |
+| kubectl       | 1.23.6                          |
 
 The following matrix displays the tested package versions for our Helm chart.
 
