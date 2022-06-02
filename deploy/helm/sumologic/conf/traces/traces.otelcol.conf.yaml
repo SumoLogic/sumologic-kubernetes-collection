@@ -4,7 +4,7 @@
 {{- $sourceCategory := .Values.otelcol.source_metadata.sourceCategory | quote }}
 {{- $sourceCategoryPrefix := .Values.otelcol.source_metadata.sourceCategoryPrefix | quote }}
 {{- $sourceCategoryReplaceDash := .Values.otelcol.source_metadata.sourceCategoryReplaceDash | quote }}
-{{- $excludeNamespaceRegex := include "fluentd.excludeNamespaces" . }}
+{{- $excludeNamespaceRegex := .Values.otelcol.source_metadata.excludeNamespaceRegex | quote }}
 {{- $excludePodRegex := .Values.otelcol.source_metadata.excludePodRegex | quote }}
 {{- $excludeContainerRegex := .Values.otelcol.source_metadata.excludeContainerRegex | quote }}
 {{- $excludeHostRegex := .Values.otelcol.source_metadata.excludeHostRegex | quote }}

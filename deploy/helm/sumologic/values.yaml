@@ -3598,7 +3598,7 @@ otelcol:
         ## Desired source name. Useful if you want to override the source name configured for the source.
         source_name: "exporters.sumologic.source_name.replace"
         ## Desired host name. Useful if you want to override the source host configured for the source.
-        source_host: "%{host.name}"
+        source_host: "%{k8s.pod.hostname}"
         ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
         timeout: 5s
         retry_on_failure:
@@ -3627,7 +3627,7 @@ otelcol:
           exporters: [otlphttp]
         metrics:
           receivers: [otlp, otlp/deprecated]
-          processors: [memory_limiter, k8s_tagger, resourcedetection, resource, batch]
+          processors: [memory_limiter, k8s_tagger, resourcedetection, source, resource, batch]
           exporters: [sumologic]
 
 metadata:
