@@ -2,7 +2,6 @@ sumologic:
   collectionMonitoring: false
   traces:
     enabled: true
-fluentd:
-  logs:
-    containers:
+otelcol:
+  source_metadata:
       excludeNamespaceRegex: "foo"

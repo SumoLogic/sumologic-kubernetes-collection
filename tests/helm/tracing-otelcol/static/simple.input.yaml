@@ -1,6 +1,5 @@
-fluentd:
-  logs:
-    containers:
+otelcol:
+  source_metadata:
       excludeNamespaceRegex: "kube\\s+"
       excludePodRegex: "^foo.*"
       excludeContainerRegex: "[123+]bar$|xyz"
