@@ -5,14 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v2.9.1]
+
+### Released 2022-06-02
 
 ### Changed
 
-- chore: update metrics-server to 5.11.9 [#2335][#2335]
+- chore: update metrics-server to 5.11.9 [#2336][#2336]
 
-[#2335]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2335
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.9.0...main
+[#2336]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2336
+[v2.9.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.9.0...v2.9.1
 
 ## [v2.9.0]
 
