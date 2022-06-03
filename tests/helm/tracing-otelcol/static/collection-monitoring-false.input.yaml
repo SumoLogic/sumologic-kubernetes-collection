@@ -3,5 +3,5 @@ sumologic:
   traces:
     enabled: true
 otelcol:
-  source_metadata:
+  sourceMetadata:
       excludeNamespaceRegex: "foo"

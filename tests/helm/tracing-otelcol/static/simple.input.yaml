@@ -1,5 +1,5 @@
 otelcol:
-  source_metadata:
+  sourceMetadata:
       excludeNamespaceRegex: "kube\\s+"
       excludePodRegex: "^foo.*"
       excludeContainerRegex: "[123+]bar$|xyz"
