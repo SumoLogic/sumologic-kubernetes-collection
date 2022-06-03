@@ -3,6 +3,7 @@
 <!-- TOC -->
 
 - [`helm install` hanging](#helm-install-hanging)
+- [Installation fails with error `function "dig" not defined`](#installation-fails-with-error-function-dig-not-defined)
 - [Namespace configuration](#namespace-configuration)
 - [Gathering logs](#gathering-logs)
   - [Check log throttling](#check-log-throttling)
@@ -33,6 +34,7 @@
   - [Gzip compression errors](#gzip-compression-errors)
   - [Error from Prometheus `init-config-reloader` container: `expand environment variables: found reference to unset environment variable "NAMESPACE"`](#error-from-prometheus-init-config-reloader-container-expand-environment-variables-found-reference-to-unset-environment-variable-namespace)
   - [`/fluentd/buffer` permissions issue](#fluentdbuffer-permissions-issue)
+  - [Duplicated logs](#duplicated-logs)
 
 <!-- /TOC -->
 
@@ -62,6 +64,13 @@ kubectl delete secret sumologic -n sumologic
 ```
 
 `helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries, rerun the `helm install` command.
+
+## Installation fails with error `function "dig" not defined`
+
+You need to use a more recent version of Helm. See [Minimum Requirements](./../README.md#minimum-requirements).
+
+If you are using ArgoCD or another tool that uses Helm under the hood,
+make sure that tool uses the required version of Helm.
 
 ## Namespace configuration
 
