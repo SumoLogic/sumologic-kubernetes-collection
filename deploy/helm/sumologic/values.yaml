@@ -3423,7 +3423,7 @@ otelcol:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.51.0-sumo-0"
+      tag: "0.52.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
