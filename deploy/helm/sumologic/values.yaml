@@ -3282,8 +3282,8 @@ otelagent:
     ## Add custom annotations only to otelagent daemonset.
     podAnnotations: {}
     image:
-      repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.38.1-sumo"
+      repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
+      tag: "0.52.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3324,6 +3324,10 @@ otelagent:
             endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
+      otlp/deprecated:
+        protocols:
+          http:
+            endpoint: "0.0.0.0:55681"
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
@@ -3366,16 +3370,39 @@ otelagent:
       extensions: [health_check, memory_ballast]
       pipelines:
         traces:
-          receivers: [jaeger, opencensus, otlp, zipkin]
+          receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
           processors: [memory_limiter, k8s_tagger, batch]
           exporters: [otlp]
         metrics:
-          receivers: [otlp]
+          receivers: [otlp, otlp/deprecated]
           processors: [memory_limiter, k8s_tagger, batch]
           exporters: [otlp]
 
 ## Configure otelcol
 otelcol:
+  sourceMetadata:
+    ## Set the _sourceName metadata field in Sumo Logic.
+    sourceName: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
+    ## Set the _sourceCategory metadata field in Sumo Logic.
+    sourceCategory: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+    ## Set the prefix, for _sourceCategory metadata.
+    sourceCategoryPrefix: "kubernetes/"
+    ## Used to replace - with another character.
+    sourceCategoryReplaceDash: "/"
+
+    ## A regular expression for containers.
+    ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeContainerRegex: ""
+    ## A regular expression for hosts.
+    ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeHostRegex: ""
+    ## A regular expression for namespaces.
+    ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeNamespaceRegex: ""
+    ## A regular expression for pods.
+    ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludePodRegex: ""
+
   deployment:
     nodeSelector: {}
     tolerations: []
@@ -3395,8 +3422,8 @@ otelcol:
     ## Add custom annotations only to otelcol deployment.
     podAnnotations: {}
     image:
-      repository: "public.ecr.aws/sumologic/opentelemetry-collector"
-      tag: "0.38.1-sumo"
+      repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
+      tag: "0.52.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3443,6 +3470,10 @@ otelcol:
             endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
+      otlp/deprecated:
+        protocols:
+          http:
+            endpoint: "0.0.0.0:55681"
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
@@ -3479,22 +3510,21 @@ otelcol:
               key: "*"
       ## Source processor adds Sumo Logic related metadata
       source:
+        annotation_prefix: "k8s.pod.annotation."
         collector: "processors.source.collector.replace"
-        source_name: "processors.source.name.replace"
+        exclude:
+          k8s.container.name: "processors.source.exclude_container_regex.replace"
+          k8s.host.name: "processors.source.exclude_host_regex.replace"
+          k8s.namespace.name: "processors.source.exclude_namespace_regex.replace"
+          k8s.pod.name: "processors.source.exclude_pod_regex.replace"
+        pod_key: "k8s.pod.name"
+        pod_name_key: "k8s.pod.pod_name"
+        pod_template_hash_key: "k8s.pod.label.pod-template-hash"
         source_category: "processors.source.category.replace"
         source_category_prefix: "processors.source.category_prefix.replace"
         source_category_replace_dash: "processors.source.category_replace_dash.replace"
-        exclude_namespace_regex: "processors.source.exclude_namespace_regex.replace"
-        exclude_pod_regex: "processors.source.exclude_pod_regex.replace"
-        exclude_container_regex: "processors.source.exclude_container_regex.replace"
-        exclude_host_regex: "processors.source.exclude_host_regex.replace"
-        annotation_prefix: "k8s.pod.annotation."
-        pod_template_hash_key: "k8s.pod.label.pod-template-hash"
-        pod_name_key: "k8s.pod.pod_name"
-        namespace_key: "k8s.namespace.name"
-        pod_key: "k8s.pod.name"
-        container_key: "k8s.container.name"
-        source_host_key: "k8s.pod.hostname"
+        source_host: "%{k8s.pod.hostname}"
+        source_name: "processors.source.name.replace"
 
       ## Resource processor sets the associted cluster attribute
       resource:
@@ -3542,8 +3572,6 @@ otelcol:
         ## Memory Ballast size should be max 1/3 to 1/2 of memory.
         size_mib: 683
     exporters:
-      zipkin:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
       ## Following generates verbose logs with span content, useful to verify what
       ## metadata is being tagged. To enable, uncomment and add "logging" to exporters below.
       ## There are two levels that could be used: `debug` and `info` with the former
@@ -3570,7 +3598,7 @@ otelcol:
         ## Desired source name. Useful if you want to override the source name configured for the source.
         source_name: "exporters.sumologic.source_name.replace"
         ## Desired host name. Useful if you want to override the source host configured for the source.
-        source_host: "%{host.name}"
+        source_host: "%{k8s.pod.hostname}"
         ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
         timeout: 5s
         retry_on_failure:
@@ -3594,15 +3622,12 @@ otelcol:
       extensions: [health_check, memory_ballast]
       pipelines:
         traces:
-          receivers: [jaeger, opencensus, otlp, zipkin]
+          receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
           processors: [memory_limiter, k8s_tagger, source, resource, cascading_filter, batch]
-          ## To enable zipkin exporter comment out following line
           exporters: [otlphttp]
-          ## and uncomment next one
-          # exporters: [zipkin]
         metrics:
-          receivers: [otlp]
-          processors: [memory_limiter, k8s_tagger, resourcedetection, resource, batch]
+          receivers: [otlp, otlp/deprecated]
+          processors: [memory_limiter, k8s_tagger, resourcedetection, source, resource, batch]
           exporters: [sumologic]
 
 metadata:
@@ -4529,8 +4554,8 @@ otelgateway:
     ## Add custom annotations only to otelagent daemonset.
     podAnnotations: {}
     image:
-      repository: public.ecr.aws/sumologic/sumologic-otel-collector
-      tag: 0.50.0-sumo-0
+      repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
+      tag: "0.52.0-sumo-0"
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15
@@ -4583,6 +4608,10 @@ otelgateway:
             endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
+      otlp/deprecated:
+        protocols:
+          http:
+            endpoint: "0.0.0.0:55681"
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
@@ -4630,11 +4659,11 @@ otelgateway:
       extensions: [health_check, memory_ballast]
       pipelines:
         traces:
-          receivers: [jaeger, opencensus, otlp, zipkin]
+          receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
           processors: [memory_limiter, batch]
           exporters: [loadbalancing]
         metrics:
-          receivers: [otlp]
+          receivers: [otlp, otlp/deprecated]
           processors: [memory_limiter, batch]
           exporters: [otlp]
 

@@ -30,12 +30,10 @@ data:
           enabled: false
           num_consumers: 10
           queue_size: 5000
-        source_category: "%{namespace}/%{pod_name}"
-        source_host: '%{host.name}'
-        source_name: "%{namespace}.%{pod}.%{container}"
+        source_category: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+        source_host: '%{k8s.pod.hostname}'
+        source_name: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
         timeout: 5s
-      zipkin:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
     extensions:
       health_check: {}
       memory_ballast:
@@ -89,20 +87,19 @@ data:
       source:
         annotation_prefix: k8s.pod.annotation.
         collector: "kubernetes"
-        container_key: k8s.container.name
-        exclude_container_regex: "[123+]bar$|xyz"
-        exclude_host_regex: "hhh123"
-        exclude_namespace_regex: "kube\\s+"
-        exclude_pod_regex: "^foo.*"
-        namespace_key: k8s.namespace.name
+        exclude:
+          k8s.container.name: "[123+]bar$|xyz"
+          k8s.host.name: "hhh123"
+          k8s.namespace.name: "kube\\s+"
+          k8s.pod.name: "^foo.*"
         pod_key: k8s.pod.name
         pod_name_key: k8s.pod.pod_name
         pod_template_hash_key: k8s.pod.label.pod-template-hash
-        source_category: "%{namespace}/%{pod_name}"
+        source_category: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
         source_category_prefix: "kubernetes/"
         source_category_replace_dash: "/"
-        source_host_key: k8s.pod.hostname
-        source_name: "%{namespace}.%{pod}.%{container}"
+        source_host: '%{k8s.pod.hostname}'
+        source_name: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
     receivers:
       jaeger:
         protocols:
@@ -122,6 +119,10 @@ data:
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
+      otlp/deprecated:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:55681
       zipkin:
         endpoint: 0.0.0.0:9411
     service:
@@ -136,10 +137,12 @@ data:
           - memory_limiter
           - k8s_tagger
           - resourcedetection
+          - source
           - resource
           - batch
           receivers:
           - otlp
+          - otlp/deprecated
         traces:
           exporters:
           - otlphttp
@@ -154,4 +157,5 @@ data:
           - jaeger
           - opencensus
           - otlp
+          - otlp/deprecated
           - zipkin
