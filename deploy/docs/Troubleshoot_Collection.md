@@ -3,6 +3,7 @@
 <!-- TOC -->
 
 - [`helm install` hanging](#helm-install-hanging)
+- [Installation fails with error `function "dig" not defined`](#installation-fails-with-error-function-dig-not-defined)
 - [Namespace configuration](#namespace-configuration)
 - [Gathering logs](#gathering-logs)
   - [Check log throttling](#check-log-throttling)
@@ -33,6 +34,7 @@
   - [Gzip compression errors](#gzip-compression-errors)
   - [Error from Prometheus `init-config-reloader` container: `expand environment variables: found reference to unset environment variable "NAMESPACE"`](#error-from-prometheus-init-config-reloader-container-expand-environment-variables-found-reference-to-unset-environment-variable-namespace)
   - [`/fluentd/buffer` permissions issue](#fluentdbuffer-permissions-issue)
+  - [Duplicated logs](#duplicated-logs)
 
 <!-- /TOC -->
 
@@ -62,6 +64,13 @@ kubectl delete secret sumologic -n sumologic
 ```
 
 `helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries, rerun the `helm install` command.
+
+## Installation fails with error `function "dig" not defined`
+
+You need to use a more recent version of Helm. See [Minimum Requirements](./../README.md#minimum-requirements).
+
+If you are using ArgoCD or another tool that uses Helm under the hood,
+make sure that tool uses the required version of Helm.
 
 ## Namespace configuration
 
@@ -623,27 +632,6 @@ We observed than under certain conditions, it's possible for FluentD to duplicat
 - one of those requests is failing, resulting in the whole batch being retried
 
 In order to mitigate this, please use [fluentd-output-sumologic] with `use_internal_retry` option.
-See the following example:
-
-```yaml
-fluentd:
-  logs:
-    output:
-      extraConf: |-
-        use_internal_retry true
-        retry_min_interval 5s
-        retry_max_interval 10m
-        retry_timeout 72h
-        retry_max_times 0
-        max_request_size 16m
-  metrics:
-    extraOutputConf: |-
-      use_internal_retry true
-      retry_min_interval 5s
-      retry_max_interval 10m
-      retry_timeout 72h
-      retry_max_times 0
-      max_request_size 16m
-```
+Please follow [Split Big Chunks in Fluentd](./Best_Practices.md#split-big-chunks-in-fluentd)
 
 [fluentd-output-sumologic]: https://github.com/SumoLogic/fluentd-output-sumologic

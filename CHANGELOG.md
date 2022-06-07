@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [Unreleased]
+
+This release changes the OpenTelemetry Collector binary used for traces collection ([#2334]).
+This change affects you only if you have enabled traces with `sumologic.traces.enabled: true`
+AND you have customized the configuration in the `otelcol.config.processors.source` property.
+If you have modified these properties, make sure to compare the [new configuration][source_processor_new_config]
+with the [old configuration][source_processor_old_config] and apply corresponding changes to your config.
+
+[source_processor_old_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.9.1/deploy/helm/sumologic/values.yaml#L3476-L3492
+[source_processor_new_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/values.yaml#L3507-L3522
 
 ### Added
 
@@ -13,22 +22,88 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- chore(traces): switch OTC fork to OTel Distro [#2334][#2334]
+
+[#2334]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2334
+[#2172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2172
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.9.1...main
+
+## [v2.9.1]
+
+### Released 2022-06-02
+
+### Changed
+
+- chore: update metrics-server to 5.11.9 [#2336][#2336]
+
+[#2336]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2336
+[v2.9.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.9.0...v2.9.1
+
+## [v2.9.0]
+
+### Released 2022-06-01
+
+### Added
+
+- feat(metrics): add imagePullSecrets to remote-write-proxy [#2316]
+
+### Changed
+
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
-- chore(tracing): switch from otc fork to otel distro [#2299][#2299]
-- chore: remove support for EKS with Kuberentes 1.18 [#2312][#2312]
+- chore: remove support for EKS with Kubernetes 1.18 [#2312][#2312]
+- chore: remove support for Kops with Kubernetes 1.18 [#2313][#2313]
+- chore: add support for GKE with Kubernetes 1.22 [#2314][#2314]
+- chore: remove support for AKS with Kubernetes 1.19 & 1.20 [#2315][#2315]
+- chore: add support for EKS with Kuberentes 1.22 [#2321][#2321]
+- docs: update tested helm version to 3.8.2 [#2317][#2317]
+- docs: update tested kubectl version to 1.23.6 [#2317][#2317]
+- chore: change minimum required version of helm to 3.5+ [#2317][#2317]
+- chore: add support for AKS with Kuberentes 1.23 [#2324][#2324]
 
 ### Fixed
 
 - fix: set cluster field in metadata pipelines [#2284][#2284]
 - fix(otellogs): set resources on Otelcol logs collector daemonset [#2291]
+- fix(events): fix setting source category [#2318]
 
 [#2284]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2284
 [#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 [#2291]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2291
-[#2172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2172
-[#2299]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2299
 [#2312]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2312
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...main
+[#2313]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2313
+[#2314]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2314
+[#2316]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2316
+[#2318]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2318
+[#2315]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2315
+[#2321]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2321
+[#2317]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2317
+[#2324]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2324
+[v2.9.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.1...v2.9.0
+
+## [v2.8.2][v2.8.2]
+
+### Released 2022-06-02
+
+### Changed
+
+- chore: update metrics-server to 5.11.9 [#2339][#2339]
+
+[#2339]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2339
+[v2.8.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.1...v2.8.2
+
+## [v2.8.1][v2.8.1]
+
+### Changed
+
+- chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
+
+### Fixed
+
+- fix(otellogs): set resources on Otelcol logs collector daemonset [#2291]
+
+[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
+[#2291]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2291
+[v2.8.1]:  https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...v2.8.1
 
 ## [v2.8.0]
 
@@ -70,6 +145,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2274]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2274
 [#2276]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2276
 [v2.8.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.1...v2.8.0
+
+## [v2.7.3][v2.7.3]
+
+### Released 2022-06-02
+
+### Changed
+
+- chore: update metrics-server to 5.11.9 [#2340][#2340]
+
+[#2340]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2340
+[v2.7.3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.2...v2.7.3
+
+## [v2.7.2][v2.7.2]
+
+### Changed
+
+- chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
+
+[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
+[v2.7.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.1...v2.7.2
 
 ## [v2.7.1]
 
@@ -127,6 +222,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2230]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2230
 [v2.7.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.7.0
 
+## [v2.6.2][v2.6.2]
+
+### Released 2022-06-02
+
+### Changed
+
+- chore: update metrics-server to 5.11.9 [#2342][#2342]
+
+[#2342]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2342
+[v2.6.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.1...v2.6.2
+
+## [v2.6.1][v2.6.1]
+
+### Changed
+
+- chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
+
+[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
+[v2.6.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...v2.6.1
+
 ## [v2.6.0][v2.6.0]
 
 ### Released 2022-03-03
@@ -169,6 +284,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2162]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2162
 [#2165]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2165
 [v2.6.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.6.0
+
+## [v2.5.4][v2.5.4]
+
+### Released 2022-06-02
+
+### Changed
+
+- chore: update metrics-server to 5.11.9 [#2343][#2343]
+
+[#2343]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2343
+[v2.5.4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.3...v2.5.4
+
+## [v2.5.3][v2.5.3]
+
+### Changed
+
+- chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
+
+[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
+[v2.5.3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.2...v2.5.3
 
 ## [v2.5.2]
 
@@ -242,6 +377,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2073]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2073
 [v2.5.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.5.0
 
+## [v2.4.3][v2.4.3]
+
+### Released 2022-06-02
+
+### Changed
+
+- chore: update metrics-server to 5.11.9 [#2344][#2344]
+
+[#2344]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2344
+[v2.4.3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.2...v2.4.3
+
+## [v2.4.2][v2_4_2]
+
+### Changed
+
+- chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
+
+[v2_4_2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...v2.4.2
+[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
+
 ## [v2.4.1][v2_4_1]
 
 ### Released 2022-02-02
@@ -295,6 +450,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2035]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2035
 [#2024]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2024
 [#2033]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2024
+
+## [v2.3.4][v2.3.4]
+
+### Released 2022-06-02
+
+### Changed
+
+- chore: update metrics-server to 5.11.9 [#2345][#2345]
+
+[#2345]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2345
+[v2.3.4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.3...v2.3.4
+
+## [v2.3.3][v2_3_3]
+
+### Changed
+
+- chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
+
+[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
+[v2_3_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.2...v2.3.3
 
 ## [v2.3.2][v2_3_2]
 
@@ -367,6 +542,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#1928]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1928
 [#1936]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1936
 [#1943]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1943
+
+## [v2.2.2][v2.2.2] - 2022-06-02
+
+### Changed
+
+- chore: update metrics-server to 5.11.9 [#2346][#2346]
+
+[#2346]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2346
+[v2.2.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.2.1...v2.2.2
+
+## [v2.2.1][v2_2_1] - 2021-05-26
+
+### Changed
+
+- chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
+
+[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
+[v2_2_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.2.0...v2.2.1
 
 ## [v2.2.0][v2_2_0] - 2021-11-17
 

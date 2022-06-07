@@ -995,8 +995,10 @@ fluent-bit:
     #   memory: 8Mi
 
   ## Uncomment the flag below to not install fluent-bit helm chart as a dependency along with this helm chart.
-  ## Comment it out if you wish to have the fluent-bit dependency installed.
-  ## Setting the flag to true instead of commenting out will break other functionality.
+  ## Do not use this flag to disable logs collection.
+  ## Instead, set the `sumologic.logs.enabled: false` flag to disable logs collection.
+  ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.logs.enabled: false`,
+  ## as this will make Fluent Bit try to write to an non-existent logs enrichment service.
   # enabled: false
 
   ## Configuration for fluent-bit service
@@ -1161,8 +1163,11 @@ kube-prometheus-stack:
 
   ## Uncomment the flag below to not install kube-prometheus-stack helm chart
   ## as a dependency along with this helm chart.
-  ## Comment it out if you wish to have the prometheus-operator dependency installed.
-  ## Setting the flag to true instead of commenting out will break other functionality.
+  ## This is needed e.g. if you want to use a different version of kube-prometheus-stack -
+  ## see /deploy/docs/Best_Practices.md#using-newer-kube-prometheus-stack.
+  ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
+  ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.metrics.enabled: false`,
+  ## as this will make Prometheus try to write to an non-existent metrics enrichment service.
   # enabled: false
 
   # global:
@@ -3278,7 +3283,7 @@ otelagent:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.51.0-sumo-0"
+      tag: "0.52.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3375,6 +3380,29 @@ otelagent:
 
 ## Configure otelcol
 otelcol:
+  sourceMetadata:
+    ## Set the _sourceName metadata field in Sumo Logic.
+    sourceName: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
+    ## Set the _sourceCategory metadata field in Sumo Logic.
+    sourceCategory: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+    ## Set the prefix, for _sourceCategory metadata.
+    sourceCategoryPrefix: "kubernetes/"
+    ## Used to replace - with another character.
+    sourceCategoryReplaceDash: "/"
+
+    ## A regular expression for containers.
+    ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeContainerRegex: ""
+    ## A regular expression for hosts.
+    ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeHostRegex: ""
+    ## A regular expression for namespaces.
+    ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeNamespaceRegex: ""
+    ## A regular expression for pods.
+    ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludePodRegex: ""
+
   deployment:
     nodeSelector: {}
     tolerations: []
@@ -3395,7 +3423,7 @@ otelcol:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.51.0-sumo-0"
+      tag: "0.52.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3570,7 +3598,7 @@ otelcol:
         ## Desired source name. Useful if you want to override the source name configured for the source.
         source_name: "exporters.sumologic.source_name.replace"
         ## Desired host name. Useful if you want to override the source host configured for the source.
-        source_host: "%{host.name}"
+        source_host: "%{k8s.pod.hostname}"
         ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
         timeout: 5s
         retry_on_failure:
@@ -3599,7 +3627,7 @@ otelcol:
           exporters: [otlphttp]
         metrics:
           receivers: [otlp, otlp/deprecated]
-          processors: [memory_limiter, k8s_tagger, resourcedetection, resource, batch]
+          processors: [memory_limiter, k8s_tagger, resourcedetection, source, resource, batch]
           exporters: [sumologic]
 
 metadata:
@@ -4527,7 +4555,7 @@ otelgateway:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.51.0-sumo-0"
+      tag: "0.52.0-sumo-0"
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15

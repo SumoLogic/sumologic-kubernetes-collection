@@ -12,6 +12,7 @@
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
 - [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
 - [Modifying logs in Fluentd](#modifying-logs-in-fluentd)
+- [Split Big Chunks in Fluentd](#split-big-chunks-in-fluentd)
 - [Excluding Metrics](#excluding-metrics)
 - [Excluding Dimensions](#excluding-dimensions)
 - [Add a local file to fluent-bit configuration](#add-a-local-file-to-fluent-bit-configuration)
@@ -151,6 +152,84 @@ fluent-bit:
           Name        multi_line
           Format      regex
           Regex       (?<log>^{"log":"(\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*|#\sTime:\s+.*))
+```
+
+### Disable multiline detection
+
+To disable multiline detection, remove the `Docker_Mode_Parser  multi_line` setting from Fluent Bit's configuration
+in `fluent-bit.config.inputs` property.
+
+Note that to remove this line, the whole value of the `fluent-bit.config.inputs` property must be copied into your custom `values.yaml` file with that single line removed:
+
+```yaml
+fluent-bit:
+  config:
+    inputs: |
+      [INPUT]
+          Name                tail
+          Path                /var/log/containers/*.log
+          Docker_Mode         On
+          Tag                 containers.*
+          Refresh_Interval    1
+          Rotate_Wait         60
+          Mem_Buf_Limit       5MB
+          Skip_Long_Lines     On
+          DB                  /tail-db/tail-containers-state-sumo.db
+          DB.Sync             Normal
+      [INPUT]
+          Name            systemd
+          Tag             host.*
+          DB              /tail-db/systemd-state-sumo.db
+          Systemd_Filter  _SYSTEMD_UNIT=addon-config.service
+          Systemd_Filter  _SYSTEMD_UNIT=addon-run.service
+          Systemd_Filter  _SYSTEMD_UNIT=cfn-etcd-environment.service
+          Systemd_Filter  _SYSTEMD_UNIT=cfn-signal.service
+          Systemd_Filter  _SYSTEMD_UNIT=clean-ca-certificates.service
+          Systemd_Filter  _SYSTEMD_UNIT=containerd.service
+          Systemd_Filter  _SYSTEMD_UNIT=coreos-metadata.service
+          Systemd_Filter  _SYSTEMD_UNIT=coreos-setup-environment.service
+          Systemd_Filter  _SYSTEMD_UNIT=coreos-tmpfiles.service
+          Systemd_Filter  _SYSTEMD_UNIT=dbus.service
+          Systemd_Filter  _SYSTEMD_UNIT=docker.service
+          Systemd_Filter  _SYSTEMD_UNIT=efs.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd-member.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd2.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcd3.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-check.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-reconfigure.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-save.service
+          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-update-status.service
+          Systemd_Filter  _SYSTEMD_UNIT=flanneld.service
+          Systemd_Filter  _SYSTEMD_UNIT=format-etcd2-volume.service
+          Systemd_Filter  _SYSTEMD_UNIT=kube-node-taint-and-uncordon.service
+          Systemd_Filter  _SYSTEMD_UNIT=kubelet.service
+          Systemd_Filter  _SYSTEMD_UNIT=ldconfig.service
+          Systemd_Filter  _SYSTEMD_UNIT=locksmithd.service
+          Systemd_Filter  _SYSTEMD_UNIT=logrotate.service
+          Systemd_Filter  _SYSTEMD_UNIT=lvm2-monitor.service
+          Systemd_Filter  _SYSTEMD_UNIT=mdmon.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-idmapd.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-mountd.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-server.service
+          Systemd_Filter  _SYSTEMD_UNIT=nfs-utils.service
+          Systemd_Filter  _SYSTEMD_UNIT=node-problem-detector.service
+          Systemd_Filter  _SYSTEMD_UNIT=ntp.service
+          Systemd_Filter  _SYSTEMD_UNIT=oem-cloudinit.service
+          Systemd_Filter  _SYSTEMD_UNIT=rkt-gc.service
+          Systemd_Filter  _SYSTEMD_UNIT=rkt-metadata.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpc-idmapd.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpc-mountd.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpc-statd.service
+          Systemd_Filter  _SYSTEMD_UNIT=rpcbind.service
+          Systemd_Filter  _SYSTEMD_UNIT=set-aws-environment.service
+          Systemd_Filter  _SYSTEMD_UNIT=system-cloudinit.service
+          Systemd_Filter  _SYSTEMD_UNIT=systemd-timesyncd.service
+          Systemd_Filter  _SYSTEMD_UNIT=update-ca-certificates.service
+          Systemd_Filter  _SYSTEMD_UNIT=user-cloudinit.service
+          Systemd_Filter  _SYSTEMD_UNIT=var-lib-etcd2.service
+          Max_Entries     1000
+          Read_From_Tail  true
 ```
 
 ## Collecting Log Lines Over 16KB (with multiline support)
@@ -429,11 +508,17 @@ fluentd:
     enabled: true
     size: 20Gi
   buffer:
+    ## totalLimitSize should be multiplication of `chunkLimitSize`, `queueChunkLimitSize` and number of filePath (maximum of `logs`, `metrics`, `traces`, `events`)
     totalLimitSize: "20G"
 ```
 
-The `fluentd.buffer` section contains other settings for FluentD buffering. Only change those if you know
-what you're doing and have studied the relevant documentation carefully.
+The `fluentd.buffer` section contains other settings for FluentD buffering.
+Please study relevant documentation for `chunkLimitSize` and `queueChunkLimitSize`:
+
+- https://docs.fluentd.org/configuration/buffer-section
+- https://docs.fluentd.org/buffer/file
+
+For bigger chunks, we recommend to use [split and retry mechanism](#split-big-chunks-in-fluentd) included into sumologic output plugin.
 
 To calculate this time you need to know how much data you send. For the calculations below
 we made an assumption that a single metric data point is around 1 kilobyte in size, including
@@ -590,6 +675,46 @@ An example log before entering the `extraFilterPluginConf` section is presented 
 ```
 
 [record_transformer]: https://docs.fluentd.org/filter/record_transformer
+
+## Split Big Chunks in Fluentd
+
+In order to support big chunks we have added split and retry mechanism into out output plugin.
+It is recommended to use it in order to process big chunks.
+It also fixes [logs duplication](./Troubleshoot_Collection.md#duplicated-logs).
+Please consider the following configuration in order to use it:
+
+```yaml
+fluentd:
+  logs:
+    output:
+      extraConf: |-
+        ## use plugin's retry mechanisms, which uses exponential algorithm
+        use_internal_retry true
+        ## sets minimum retry interval to 5s
+        retry_min_interval 5s
+        ## sets maximum retry interval to 10m
+        retry_max_interval 10m
+        ## timeout after 72h
+        retry_timeout 72h
+        ## do not limit number of requests
+        retry_max_times 0
+        ## set maximum request size to 16m to avoid timeouts
+        max_request_size 16m
+  metrics:
+    extraOutputConf: |-
+      ## use plugin's retry mechanisms, which uses exponential algorithm
+      use_internal_retry true
+      ## sets minimum retry interval to 5s
+      retry_min_interval 5s
+      ## sets maximum retry interval to 10m
+      retry_max_interval 10m
+      ## timeout after 72h
+      retry_timeout 72h
+      ## do not limit number of requests
+      retry_max_times 0
+      # Set maximum request size to 16m to avoid timeouts
+      max_request_size 16m
+```
 
 ## Excluding Metrics
 
