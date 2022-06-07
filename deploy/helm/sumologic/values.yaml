@@ -4452,6 +4452,7 @@ metadata:
           logs/fluent/systemd:
             receivers:
               - fluentforward
+              - otlp
             processors:
               - memory_limiter
               - filter/include_fluent_tag_host
@@ -4472,6 +4473,7 @@ metadata:
           logs/fluent/kubelet:
             receivers:
               - fluentforward
+              - otlp
             processors:
               - memory_limiter
               - filter/include_fluent_tag_host
@@ -4849,6 +4851,14 @@ otellogs:
             - batch
           exporters:
             - otlphttp
+        logs/systemd:
+          receivers:
+            - journald
+          processors:
+            - logstransform/systemd
+            - batch
+          exporters:
+            - otlphttp
     receivers:
       filelog/containers:
         include:
@@ -5014,6 +5024,59 @@ otellogs:
           - type: move
             from: body.log
             to: body
+      journald:
+        directory: /var/log/journal
+        ## This is not a full equivalent of fluent-bit filtering as fluent-bit filters by `_SYSTEMD_UNIT`
+        ## Here is filtering by `UNIT`
+        units:
+          - addon-config.service
+          - addon-run.service
+          - cfn-etcd-environment.service
+          - cfn-signal.service
+          - clean-ca-certificates.service
+          - containerd.service
+          - coreos-metadata.service
+          - coreos-setup-environment.service
+          - coreos-tmpfiles.service
+          - dbus.service
+          - docker.service
+          - efs.service
+          - etcd-member.service
+          - etcd.service
+          - etcd2.service
+          - etcd3.service
+          - etcdadm-check.service
+          - etcdadm-reconfigure.service
+          - etcdadm-save.service
+          - etcdadm-update-status.service
+          - flanneld.service
+          - format-etcd2-volume.service
+          - kube-node-taint-and-uncordon.service
+          - kubelet.service
+          - ldconfig.service
+          - locksmithd.service
+          - logrotate.service
+          - lvm2-monitor.service
+          - mdmon.service
+          - nfs-idmapd.service
+          - nfs-mountd.service
+          - nfs-server.service
+          - nfs-utils.service
+          - node-problem-detector.service
+          - ntp.service
+          - oem-cloudinit.service
+          - rkt-gc.service
+          - rkt-metadata.service
+          - rpc-idmapd.service
+          - rpc-mountd.service
+          - rpc-statd.service
+          - rpcbind.service
+          - set-aws-environment.service
+          - system-cloudinit.service
+          - systemd-timesyncd.service
+          - update-ca-certificates.service
+          - user-cloudinit.service
+          - var-lib-etcd2.service
     exporters:
       otlphttp:
         endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local:4318
@@ -5026,6 +5089,26 @@ otellogs:
         send_batch_size: 10_240
         ## Time duration after which a batch will be sent regardless of size
         timeout: 1s
+      ## copy _SYSTEMD_UNIT, SYSLOG_FACILITY, _HOSTNAME and PRIORITY from body to attributes
+      ## so they can be used by metadata processors same way like for fluentd
+      ## build fluent.tag attribute as `host.{_SYSTEMD_UNIT}`
+      logstransform/systemd:
+        operators:
+          - type: copy
+            from: body._SYSTEMD_UNIT
+            to: attributes._SYSTEMD_UNIT
+          - type: copy
+            from: body.SYSLOG_FACILITY
+            to: attributes.SYSLOG_FACILITY
+          - type: copy
+            from: body._HOSTNAME
+            to: attributes._HOSTNAME
+          - type: copy
+            from: body.PRIORITY
+            to: attributes.PRIORITY
+          - type: add
+            field: attributes["fluent.tag"]
+            value: EXPR("host." + attributes["_SYSTEMD_UNIT"])
   daemonset:
     ## Set securityContext for containers running in pods in log collector daemonset
     securityContext:
