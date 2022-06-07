@@ -16,11 +16,16 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 [source_processor_old_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.9.1/deploy/helm/sumologic/values.yaml#L3476-L3492
 [source_processor_new_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/values.yaml#L3507-L3522
 
+### Added
+
+- feat(opentelemetry-operator): add opentelemetry-operator for tracing [#2172][#2172]
+
 ### Changed
 
 - chore(traces): switch OTC fork to OTel Distro [#2334][#2334]
 
 [#2334]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2334
+[#2172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2172
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.9.1...main
 
 ## [v2.9.1]

@@ -171,6 +171,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.events" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.opentelemetry.operator" -}}
+{{- template "sumologic.fullname" . }}-opentelemetry-operator
+{{- end -}}
+
+{{- define "sumologic.labels.app.opentelemetry.operator.instrumentation" -}}
+{{- template "sumologic.labels.app.opentelemetry.operator" . }}-instrumentation
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcol" -}}
 {{- template "sumologic.fullname" . }}-otelcol
 {{- end -}}
@@ -483,6 +491,14 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.events" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.opentelemetry.operator" -}}
+{{ template "sumologic.fullname" . }}-opentelemetry-operator
+{{- end -}}
+
+{{- define "sumologic.metadata.name.opentelemetry.operator.instrumentation" -}}
+{{ template "sumologic.metadata.name.opentelemetry.operator" . }}-instrumentation
+{{- end -}}
+
 {{- define "sumologic.metadata.name.otelcol" -}}
 {{ template "sumologic.fullname" . }}-otelcol
 {{- end -}}
@@ -664,6 +680,17 @@ sumologic.com/scrape: "true"
 {{- define "sumologic.labels.scrape.logs.collector" -}}
 {{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.logs.collector" . }}
+{{- end -}}
+
+{{/*
+Create endpoint based on OTC Tracing deployment type
+*/}}
+{{- define "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" -}}
+{{- if .Values.otelagent.enabled -}}
+{{ printf "%s.%s" ( include "sumologic.metadata.name.otelagent.service" . ) .Release.Namespace }}
+{{- else -}}
+{{ printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -1359,4 +1386,113 @@ Example Usage:
 */}}
 {{- define "traces.otelgateway.exporter.loadbalancing.endpoint" -}}
 {{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-headless" . ) .Release.Namespace }}
+{{- end -}}
+
+{{- define "opentelemetry-operator.webhook.service.name" -}}
+opentelemetry-operator-webhook-service
+{{- end -}}
+
+{{- define "opentelemetry-operator.controller.manager.service.cert.name" -}}
+opentelemetry-operator-controller-manager-service-cert
+{{- end -}}
+
+{{/*
+Generate certificates for opentelemetry-operator webhook
+
+Example usage:
+{{ $certManagerEnabled := index .Values "opentelemetry-operator" "admissionWebhooks" "certManager" "enabled" }}
+{{ $operatorEnabled := index .Values "opentelemetry-operator" "enabled" }}
+{{- if eq ( not $certManagerEnabled ) $operatorEnabled }}
+{{ ( include "opentelemetry-operator.non_certmanager" . ) }}
+{{- end }}
+
+*/}}
+{{- define "opentelemetry-operator.non_certmanager" -}}
+{{- $altNames := list ( printf "%s.%s" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) ( printf "%s.%s.svc" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) ( printf "%s.%s.svc.cluster.local" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) -}}
+{{- $ca := genCA ( include "opentelemetry-operator.webhook.service.name" . ) 365 -}}
+{{- $cert := genSignedCert ( include "opentelemetry-operator.webhook.service.name" . ) nil $altNames 365 $ca -}}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ include "opentelemetry-operator.controller.manager.service.cert.name" . }}
+  labels:
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  tls.crt: {{ $cert.Cert | b64enc }}
+  tls.key: {{ $cert.Key | b64enc }}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: {{ printf "%s/%s" .Release.Namespace ( include "opentelemetry-operator.controller.manager.service.cert.name" . ) }}
+  labels:
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+    app.kubernetes.io/name: opentelemetry-operator
+  name: opentelemetry-operator-mutating-webhook-configuration
+webhooks:
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: {{ include "opentelemetry-operator.webhook.service.name" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate-opentelemetry-io-v1alpha1-instrumentation
+      caBundle: {{ $ca.Cert | b64enc }}
+    failurePolicy: Fail
+    name: minstrumentation.kb.io
+    rules:
+    - apiGroups:
+        - opentelemetry.io
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - instrumentations
+    sideEffects: None
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: {{ include "opentelemetry-operator.webhook.service.name" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate-opentelemetry-io-v1alpha1-opentelemetrycollector
+      caBundle: {{ $ca.Cert | b64enc }}
+    failurePolicy: Fail
+    name: mopentelemetrycollector.kb.io
+    rules:
+      - apiGroups:
+          - opentelemetry.io
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - opentelemetrycollectors
+    sideEffects: None
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: {{ include "opentelemetry-operator.webhook.service.name" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate-v1-pod
+      caBundle: {{ $ca.Cert | b64enc }}
+    failurePolicy: Ignore
+    name: mpod.kb.io
+    rules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - pods
+    sideEffects: None
 {{- end -}}
