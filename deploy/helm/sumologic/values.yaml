@@ -4397,7 +4397,7 @@ metadata:
         source/kubelet:
           collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
           source_host: "%{_sourceHost}"
-          source_name: '{{ .Values.fluentd.logs.kubelet.sourceName | quote }}'
+          source_name: "%{_sourceName}"
           source_category: '{{ .Values.fluentd.logs.kubelet.sourceCategory | quote }}'
           source_category_prefix: '{{ .Values.fluentd.logs.kubelet.sourceCategoryPrefix | quote }}'
           source_category_replace_dash: '{{ .Values.fluentd.logs.kubelet.sourceCategoryReplaceDash | quote }}'
