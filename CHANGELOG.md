@@ -23,9 +23,11 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 ### Changed
 
 - chore(traces): switch OTC fork to OTel Distro [#2334][#2334]
+- chore: add support for Kops 1.23 [#2361][#2361]
 
 [#2334]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2334
 [#2172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2172
+[#2361]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2361
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.9.1...main
 
 ## [v2.9.1]
