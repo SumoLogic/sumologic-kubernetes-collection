@@ -36,17 +36,17 @@ spec:
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}
 {{- if .Values.otelcol.deployment.podLabels }}
-{{ toYaml .Values.otelcol.deployment.podLabels | indent 6 }}
+{{ toYaml .Values.otelcol.deployment.podLabels | indent 8 }}
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       {{- if .Values.otelcol.deployment.nodeSelector }}
       nodeSelector:
-        {{ toYaml .Values.otelcol.deployment.nodeSelector | indent 8 }}
+{{ toYaml .Values.otelcol.deployment.nodeSelector | indent 8 }}
       {{- end }}
       {{- if .Values.otelcol.deployment.tolerations }}
       tolerations:
-        {{ toYaml .Values.otelcol.deployment.tolerations | indent 8 }}
+{{ toYaml .Values.otelcol.deployment.tolerations | indent 8 }}
       {{- end }}
       {{- if .Values.otelcol.deployment.priorityClassName }}
       priorityClassName: {{ .Values.otelcol.deployment.priorityClassName | quote }}
@@ -55,18 +55,17 @@ spec:
       - name: otelcontrib-collector
         image: {{ .Values.otelcol.deployment.image.repository }}:{{ .Values.otelcol.deployment.image.tag }}
         imagePullPolicy: {{ .Values.otelcol.deployment.image.pullPolicy }}
-        command:
-          - /otelcontribcol
+        args:
           - --config=/conf/traces.otelcol.conf.yaml
           {{- if eq .Values.otelcol.metrics.enabled false }}
           - --metrics-level=none
           {{- end }}
-          - {{ printf "--mem-ballast-size-mib=%s" .Values.otelcol.deployment.memBallastSizeMib }}
         env:
         - name: GOGC
           value: "80"
 {{- $ctx := .Values -}}
-{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") }}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") -}}
+{{ include "kubernetes.sources.env" (dict "Context" $ctx "Type" "metrics" "Name" "default" ) | nindent 8 }}
 {{- if .Values.otelcol.deployment.extraEnvVars }}
 {{- toYaml .Values.otelcol.deployment.extraEnvVars | nindent 8 }}
 {{- end }}
@@ -85,8 +84,9 @@ spec:
         - containerPort: 14268 # Default endpoint for Jaeger HTTP receiver.
         - containerPort: 55678 # Default endpoint for Opencensus receiver.
         - containerPort: 4317  # Default endpoint for OTLP gRPC receiver.
+        - containerPort: 4318  # Default endpoint for OTLP HTTP receiver.
         - containerPort: 55680 # Old endpoint for OTLP gRPC receiver.
-        - containerPort: 55681 # Default endpoint for OTLP HTTP receiver.
+        - containerPort: 55681 # Default endpoint for OTLP HTTP receiver. (deprecated)
         volumeMounts:
         - name: otel-collector-config-vol
           mountPath: /conf

@@ -9,18 +9,29 @@ test:
 push-helm-chart:
 	./ci/push-helm-chart.sh
 
-markdownlint: mdl
-
-mdl:
-	mdl --style .markdownlint/style.rb \
+markdownlint:
+	markdownlint --config .markdownlint.jsonc \
 		deploy/docs \
 		CHANGELOG.md
 
-helm-dependency-update:
+.PHONY: helm-version
+helm-version:
+	helm version
+
+.PHONY: helm-dependency-update
+helm-dependency-update: helm-version
 	helm dependency update deploy/helm/sumologic
 
-helm-lint:
-	helm lint --strict \
+.PHONY: helm-lint
+helm-lint: helm-version
+# TODO: we should add back the --strict flag but because we have made the PodDisruptionBudget
+# API version dependent on cluster capabilities and because helm lint does not accept
+# an --api-versions flag like helm template does we cannot make this configurable.
+#
+# Perhaps we could at some point run this against a cluster with particular k8s version?
+#
+# https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1943
+	helm lint \
 		--set sumologic.accessId=X \
 		--set sumologic.accessKey=X \
 		deploy/helm/sumologic/
@@ -45,3 +56,16 @@ markdown-table-formatter-check:
 
 markdown-table-formatter-format:
 	./ci/markdown_table_formatter.sh --format
+
+# Vagrant commands
+vup:
+	vagrant up
+
+vssh:
+	vagrant ssh -c 'cd /sumologic; exec "$$SHELL"'
+
+vhalt:
+	vagrant halt
+
+vdestroy:
+	vagrant destroy -f

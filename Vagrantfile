@@ -12,7 +12,9 @@ Vagrant.configure('2') do |config|
   config.disksize.size = '50GB'
   config.vm.box_check_update = false
   config.vm.host_name = 'sumologic-kubernetes-collection'
-  config.vm.network :private_network, ip: "192.168.78.66"
+  # Vbox 6.1.28+ restricts host-only adapters to 192.168.56.0/21
+  # See: https://www.virtualbox.org/manual/ch06.html#network_hostonly
+  config.vm.network :private_network, ip: "192.168.56.2"
 
   config.vm.provider 'virtualbox' do |vb|
     vb.gui = false

@@ -5,3 +5,7 @@ documentation:
 # Add 'ci' label to any change in .github/ directory
 ci:
 - any: ['.github/**/*']
+
+# Add 'integration-tests' label to any change in tests/integration/ directory
+integration-tests:
+- any: ['tests/integration/**']

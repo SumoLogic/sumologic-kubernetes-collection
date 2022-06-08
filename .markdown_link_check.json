@@ -7,5 +7,13 @@
       "pattern": "^/",
       "replacement": "{{BASEURL}}/"
     }
+  ],
+  "ignorePatterns": [
+    {
+      "pattern": "^https://mikefarah.gitbook.io/yq"
+    },
+    {
+      "pattern": "^https://help.sumologic.com/Traces/03Advanced_Configuration/What_if_I.*"
+    }
   ]
 }

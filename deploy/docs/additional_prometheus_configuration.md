@@ -12,12 +12,12 @@ using `docker`/`kubectl` and [sumologic-kubernetes-tools](https://github.com/sum
  kubectl run tools \
   -it --quiet --rm \
   --restart=Never -n sumologic \
-  --image sumologic/kubernetes-tools:2.2.3 \
+  --image sumologic/kubernetes-tools:2.9.0 \
   -- template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 
  # or using docker
  docker run -it --rm \
-  sumologic/kubernetes-tools:2.2.3 \
+  sumologic/kubernetes-tools:2.9.0 \
   template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 ```
 
@@ -190,7 +190,7 @@ annotations:
   prometheus.io/path: "/metrics" # Path which metrics should be scraped from
 ```
 
-**Note: This solution works only to scrape metrics from one container within the pod**
+> **Note: This solution works only to scrape metrics from one container within the pod**
 
 ### Create a new HTTP source in Sumo Logic
 

@@ -7,8 +7,8 @@ metadata:
     app: {{ template "sumologic.labels.app.metrics.service" . }}
     {{- include "sumologic.labels.scrape.metrics" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
-{{- if .Values.otelcol.serviceLabels }}
-{{ toYaml .Values.otelcol.serviceLabels | indent 4 }}
+{{- if .Values.metadata.serviceLabels }}
+{{ toYaml .Values.metadata.serviceLabels | indent 4 }}
 {{- end }}
 spec:
   selector:
@@ -17,10 +17,6 @@ spec:
   - name: prom-write
     port: 9888
     targetPort: 9888
-    protocol: TCP
-  - name: metrics
-    port: 24231
-    targetPort: 24231
     protocol: TCP
   - name: otelcol-metrics
     port: 8888

@@ -1,0 +1,86 @@
+{{- if .Values.sumologic.metrics.remoteWriteProxy.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "sumologic.metadata.name.remoteWriteProxy.deployment" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.remoteWriteProxy.deployment" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.labels.app.remoteWriteProxy.pod" . }}
+  replicas: {{ .Values.sumologic.metrics.remoteWriteProxy.replicaCount }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/metrics/remote-write-proxy/configmap.yaml") . | sha256sum }}
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.podAnnotations }}
+{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+        app: {{ template "sumologic.labels.app.remoteWriteProxy.pod" . }}
+        {{- include "sumologic.labels.common" . | nindent 8 }}
+        {{- if .Values.sumologic.podLabels }}
+        {{ toYaml .Values.sumologic.podLabels | nindent 8 }}
+        {{- end }}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.podLabels }}
+{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.podLabels | indent 8 }}
+{{- end }}
+    spec:
+{{- if .Values.sumologic.pullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.sumologic.pullSecrets | indent 8 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.nodeSelector | indent 8 }}
+{{- end }}
+{{- if or .Values.sumologic.metrics.remoteWriteProxy.affinity }}
+      affinity:
+{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.affinity | indent 8 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.tolerations }}
+      tolerations:
+{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.tolerations | indent 8 }}
+{{- end }}
+      securityContext:
+        {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.securityContext | nindent 8 }}
+      {{- if .Values.sumologic.metrics.remoteWriteProxy.priorityClassName }}
+      priorityClassName: {{ .Values.sumologic.metrics.remoteWriteProxy.priorityClassName | quote }}
+      {{- end }}
+      containers:
+      - name: nginx
+        image: {{ .Values.sumologic.metrics.remoteWriteProxy.image.repository }}:{{ .Values.sumologic.metrics.remoteWriteProxy.image.tag }}
+        imagePullPolicy: {{ .Values.sumologic.metrics.remoteWriteProxy.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+        resources:
+          {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.resources | nindent 10 }}
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.livenessProbe | nindent 10 }}
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.readinessProbe | nindent 10 }}
+        {{- if .Values.sumologic.metrics.remoteWriteProxy.config.workerCountAutotune }}
+        env:
+        # this setting makes the entrypoint automatically set the number of worker processes based
+        # on cpu limit data, by using the cgroups API
+        - name: NGINX_ENTRYPOINT_WORKER_PROCESSES_AUTOTUNE
+          value: "1"
+        {{- end }}
+        volumeMounts:
+          - name: config
+            mountPath: /etc/nginx/conf.d/remote-write-proxy.conf
+            subPath: remote-write-proxy.conf
+      volumes:
+        - name: config
+          configMap:
+            name: {{ template "sumologic.metadata.name.remoteWriteProxy.configmap" . }}
+{{- end }}

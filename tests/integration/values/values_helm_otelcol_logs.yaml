@@ -1,0 +1,57 @@
+sumologic:
+  logs:
+    metadata:
+      provider: otelcol
+
+  metrics:
+    enabled: false
+
+# We're using otelcol instead
+fluent-bit:
+  enabled: false
+
+fluentd:
+  events:
+    enabled: false
+
+metadata:
+  logs:
+    config:
+      service:
+        pipelines:
+          logs/otlp/containers:
+            receivers:
+              - otlp
+            processors:
+              - memory_limiter
+              - groupbyattrs/containers
+              - k8s_tagger
+              - resource/add_cluster
+              - source/containers
+              - resource/containers_copy_node_to_host
+              - batch
+            exporters:
+              - sumologic/containers
+
+
+otellogs:
+  enabled: true
+  config:
+    service:
+      pipelines:
+        logs/containers:
+          receivers:
+            - filelog/containers
+          exporters:
+            - otlphttp
+          processors:
+            - filter/exclude_receiver_mock_container
+    processors:
+      # Filter out receiver-mock logs to prevent snowball effect
+      filter/exclude_receiver_mock_container:
+        logs:
+          exclude:
+            match_type: strict
+            record_attributes:
+              - key: k8s.container.name
+                value: receiver-mock

@@ -10,30 +10,34 @@ jobs:
   markdownlint:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: '2.6'
+      - uses: actions/checkout@v3
       - name: install markdownlint
-        run: gem install mdl
+        run: npm install -g markdownlint-cli
       - name: markdownlint check
         run: make markdownlint
 
   shellcheck:
     runs-on: ubuntu-20.04
+    env:
+      YQ_VERSION: 3.4.1
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: install shellcheck
         run: |
             curl --retry 10 --retry-max-time 120 --retry-delay 5 -Lo- https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz | tar -xJf -
             sudo cp shellcheck-v0.7.1/shellcheck /usr/local/bin && rm -rf shellcheck-v0.7.1
+      - name: install yq
+        run: |
+            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/yq https://github.com/mikefarah/yq/releases/download/${{ env.YQ_VERSION }}/yq_linux_amd64
+            chmod +x /tmp/yq
+            sudo mv /tmp/yq /usr/local/bin/yq
       - name: shellcheck
         run: make shellcheck
 
   yamllint:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: install yamllint
         run: pip install yamllint
       - name: yamllint
@@ -42,7 +46,7 @@ jobs:
   helmlint:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Lint helm chart
         run: |
           make helm-dependency-update
@@ -51,7 +55,7 @@ jobs:
   markdown-link-check:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           config-file: '.markdown_link_check.json'
@@ -59,7 +63,7 @@ jobs:
   md-links-lint:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Lint markdown links
         run: |
           make markdown-links-lint
@@ -67,8 +71,8 @@ jobs:
   markdown-table-formatter-check:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3.3.0
       - name: Install markdown-table-formatter
         run: npm install markdown-table-formatter --save
       - name: Run markdown-table-formatter
@@ -76,20 +80,94 @@ jobs:
 
   test:
     runs-on: ubuntu-20.04
+    env:
+      YQ_VERSION: 3.4.1
     needs:
-      - markdownlint
       - shellcheck
       - yamllint
       - helmlint
-      - md-links-lint
-      - markdown-link-check
-      - markdown-table-formatter-check
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: yq
         run: |
-            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/yq https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64
+            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/yq https://github.com/mikefarah/yq/releases/download/${{ env.YQ_VERSION }}/yq_linux_amd64
             chmod +x /tmp/yq
             sudo mv /tmp/yq /usr/local/bin/yq
       - name: test
         run: make test
+
+  ##############################################################################
+  # Integration tests
+  ##############################################################################
+
+  setup-integration-tests:
+    runs-on: ubuntu-20.04
+    outputs:
+      kind_images: ${{ steps.set_kind_images.outputs.kind_images }}
+      test_names: ${{ steps.set_test_names.outputs.test_names }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: set_kind_images
+        name: Set kind images
+        working-directory: ./tests/integration/
+        run: |
+          echo "::set-output name=kind_images::$(jq -cM '.supported' kind_images.json)"
+      - name: Print kind images
+        run: echo "Kind images ${{ steps.set_kind_images.outputs.kind_images }}"
+      - id: set_test_names
+        name: Set test names
+        working-directory: ./tests/integration/
+        # grep magic described in https://unix.stackexchange.com/a/13472
+        run: |
+          echo "::set-output name=test_names::$(grep -shoP "(?<=^func )(Test[a-zA-z_0-9]+)(?=\(t \*testing.T\) {)" * | jq -R . | jq -cs .)"
+      - name: Print test names
+        run: echo "Test names ${{ steps.set_test_names.outputs.test_names }}"
+
+  lint-integration-tests:
+    name: Lint integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.17.7'
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          working-directory: ./tests/integration/
+          # Optional: golangci-lint command line arguments.
+          args: --timeout=10m --verbose
+
+  integration-tests:
+    runs-on: ubuntu-20.04
+    name: IT - ${{ matrix.test_name }} - ${{ matrix.kind_image }}
+    needs:
+      - setup-integration-tests
+    strategy:
+      matrix:
+        kind_image: ${{ fromJSON(needs.setup-integration-tests.outputs.kind_images) }}
+        test_name: ${{ fromJSON(needs.setup-integration-tests.outputs.test_names) }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.17.7'
+      - uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: v0.12.0
+          # Cluster will be created by the tests themselves so no need to create it here.
+          skipClusterCreation: "true"
+      # As described in
+      # https://github.com/mvdan/github-actions-golang#how-do-i-set-up-caching-between-builds
+      - uses: actions/cache@v3
+        with:
+          path: |
+            /home/runner/go/pkg/mod
+            /home/runner/.cache/go-build
+          key: ${{ runner.os }}-go-integration-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-integration-
+      - name: Run integration test - ${{ matrix.test_name }}
+        working-directory: ./tests/integration/
+        run: make test TEST_NAME=${{matrix.test_name}} KIND_NODE_IMAGE=${{matrix.kind_image}}

@@ -1,0 +1,6 @@
+fluentd:
+  events:
+    enabled: true
+    watchResourceEventsOverrides:
+      pods: "v2"
+      events: "events.k8s.io/v3"

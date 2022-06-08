@@ -3,8 +3,13 @@
 <!-- TOC -->
 
 - [`helm install` hanging](#helm-install-hanging)
+- [Installation fails with error `function "dig" not defined`](#installation-fails-with-error-function-dig-not-defined)
 - [Namespace configuration](#namespace-configuration)
 - [Gathering logs](#gathering-logs)
+  - [Check log throttling](#check-log-throttling)
+  - [Check ingest budget limits](#check-ingest-budget-limits)
+  - [Check Fluentd autoscaling](#check-fluentd-autoscaling)
+  - [Check if collection pods are in a healthy state](#check-if-collection-pods-are-in-a-healthy-state)
   - [Fluentd Logs](#fluentd-logs)
   - [Prometheus Logs](#prometheus-logs)
   - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
@@ -12,6 +17,7 @@
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+  - [Check Fluentd autoscaling](#check-fluentd-autoscaling-1)
   - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics)
 - [Common Issues](#common-issues)
   - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
@@ -26,6 +32,9 @@
   - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
   - [Falco and OpenShift](#falco-and-openshift)
   - [Gzip compression errors](#gzip-compression-errors)
+  - [Error from Prometheus `init-config-reloader` container: `expand environment variables: found reference to unset environment variable "NAMESPACE"`](#error-from-prometheus-init-config-reloader-container-expand-environment-variables-found-reference-to-unset-environment-variable-namespace)
+  - [`/fluentd/buffer` permissions issue](#fluentdbuffer-permissions-issue)
+  - [Duplicated logs](#duplicated-logs)
 
 <!-- /TOC -->
 
@@ -56,6 +65,13 @@ kubectl delete secret sumologic -n sumologic
 
 `helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries, rerun the `helm install` command.
 
+## Installation fails with error `function "dig" not defined`
+
+You need to use a more recent version of Helm. See [Minimum Requirements](./../README.md#minimum-requirements).
+
+If you are using ArgoCD or another tool that uses Helm under the hood,
+make sure that tool uses the required version of Helm.
+
 ## Namespace configuration
 
 The following `kubectl` commands assume you are in the correct namespace `sumologic`. By default, these commands will use the namespace `default`.
@@ -70,7 +86,43 @@ kubectl config set-context $(kubectl config current-context) --namespace=sumolog
 
 ## Gathering logs
 
-First check if your pods are in a healthy state. Run
+If you cannot see logs in Sumo that you expect to be there, here are the things to check.
+
+### Check log throttling
+
+Check if [log throttling][log_throttling] is happening.
+
+If it is, there will be messages like `HTTP ERROR 429 You have temporarily exceeded your Sumo Logic quota` in Fluentd or Otelcol logs.
+
+[log_throttling]: https://help.sumologic.com/Manage/Ingestion-and-Volume/01Log_Ingestion#log-throttling
+
+### Check ingest budget limits
+
+Check if an [ingest budget][ingest_budgets] limit is hit.
+
+If it is, there will be `budget.exceeded` messages from Sumo in Fluentd or Otelcol logs, similar to the following:
+
+```console
+2022-04-12 13:47:17 +0000 [warn]: #0 There was an issue sending data: id: KMZJI-FCDPN-4KHKD, code: budget.exceeded, status: 200, message: Message(s) in the request dropped due to exceeded budget.
+```
+
+[ingest_budgets]: https://help.sumologic.com/Manage/Ingestion-and-Volume/Ingest_Budgets
+
+### Check Fluentd autoscaling
+
+Check if Fluentd autoscaling is enabled, for details please see [Fluentd Autoscaling][fluend_autoscaling] documentation.
+
+Some known indicators that autoscaling for Fluentd must be enabled:
+
+- High CPU usage for Fluentd Pods (above `500m`), resource consumption can be checked using `kubectl top pod -n <NAMESPACE>`
+
+- Following message in Fluentd logs: `failed to write data into buffer by buffer overflow action=:drop_oldest_chunk`
+
+[fluend_autoscaling]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-autoscaling
+
+### Check if collection pods are in a healthy state
+
+Run:
 
 ```
 kubectl get pods
@@ -182,7 +234,7 @@ You can `port-forward` to a pod exposing `/metrics` endpoint and verify it is ex
 kubectl port-forward collection-sumologic-xxxxxxxxx-xxxxx 8080:24231
 ```
 
-Then, in your browser, go to `localhost:8080/metrics`. You should see Prometheus metrics exposed.
+Then, in your browser, go to `http://localhost:8080/metrics`. You should see Prometheus metrics exposed.
 
 ### Check the Prometheus UI
 
@@ -196,7 +248,13 @@ Then, in your browser, go to `localhost:8080`. You should be in the Prometheus U
 
 From here you can start typing the expected name of a metric to see if Prometheus auto-completes the entry.
 
-If you can't find the expected metrics, you can check if Prometheus is successfully scraping the `/metrics` endpoints. In the top menu, navigate to section `Status > Targets`. Check if any targets are down or have errors.
+If you can't find the expected metrics, ensure that prometheus configuration is correct and up to date.
+In the top menu, navigate to section `Status > Configuration` or go to the `http://localhost:8080/config`.
+Review the configuration.
+
+Next, you can check if Prometheus is successfully scraping the `/metrics` endpoints.
+In the top menu, navigate to section `Status > Targets` or go to the `http://localhost:8080/targets`.
+Check if any targets are down or have errors.
 
 ### Check Prometheus Remote Storage
 
@@ -205,6 +263,18 @@ We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus
 You can follow [Deploy Fluentd](#prometheus-logs) to verify there are no errors during remote write.
 
 You can also check `prometheus_remote_storage_.*` metrics to look for success/failure attempts.
+
+### Check Fluentd autoscaling
+
+Check if Fluentd autoscaling is enabled, for details please see [Fluentd Autoscaling][fluend_autoscaling] documentation.
+
+Some known indicators that autoscaling for Fluentd must be enabled:
+
+- High CPU usage for Fluentd Pods (above `500m`), resource consumption can be checked using `kubectl top pod -n <NAMESPACE>`
+
+- Following message in Fluentd logs: `failed to write data into buffer by buffer overflow action=:drop_oldest_chunk`
+
+[fluend_autoscaling]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-autoscaling
 
 ### Check FluentBit and Fluentd output metrics
 
@@ -427,3 +497,141 @@ done
 
 The duplicated pod deletion command is there to make sure the pod is not stuck in `Pending` state
 with event `persistentvolumeclaim "buffer-sumologic-fluentd-logs-1" not found`.
+
+### Error from Prometheus `init-config-reloader` container: `expand environment variables: found reference to unset environment variable "NAMESPACE"`
+
+If the Prometheus pod (that is the pod named `prometheus-<helm-release-name>-kube-prometheus-stack-prometheus-0`)
+goes into `Init:Error` or `Init:CrashLoopBackOff` state, check the status of its init containers:
+
+```sh
+kubectl -n <NAMESPACE> describe pod prometheus-<RELEASE>-kube-prometheus-stack-prometheus-0 | grep -A30 'Init Containers:'
+```
+
+Check if you see the following in the output:
+
+```console
+Init Containers:
+  init-config-reloader:
+    # ...
+    State:       Waiting
+      Reason:    CrashLoopBackOff
+    Last State:  Terminated
+      Reason:    Error
+      Message:   level=info ts=2021-12-10T07:36:25.578058224Z caller=main.go:148 msg="Starting prometheus-config-reloader" version="(version=0.49.0, branch=master, revision=2388bfa55)"
+level=info ts=2021-12-10T07:36:25.578252574Z caller=main.go:149 build_context="(go=go1.16.5, user=paulfantom, date=20210706-17:43:41)"
+expand environment variables: found reference to unset environment variable "NAMESPACE"
+      # ...
+```
+
+If you can see the message `expand environment variables: found reference to unset environment variable "NAMESPACE"`,
+than this is a sign that the Prometheus Operator version running in your cluster is much newer than supported by our chart.
+
+To make our collection work with this newer version of Prometheus Operator, add the following code to your `values.yaml` file
+and upgrade collection using `helm upgrade` command.
+
+```yaml
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      initContainers:
+        - name: "init-config-reloader"
+          env:
+            - name: FLUENTD_METRICS_SVC
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdMetrics
+            - name: NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdNamespace
+```
+
+### `/fluentd/buffer` permissions issue
+
+When you encounter the following (or a similar) error message in fluentd logs:
+
+```
+2021-11-23 07:05:56 +0000 [error]: #0 unexpected error error_class=Errno::EACCES error="Permission denied @ dir_s_mkdir - /fluentd/buffer/logs"
+```
+
+this means that most likely the volume that has been provisioned as PersistentVolume
+for your fluentd has incorrect ownership and/or permissions set.
+
+You can verify that this is the case with the following `kubectl` command:
+
+```
+$ kubectl exec -it -n <NAMESPACE> <RELEASE_NAME>-<NAMESPACE>-fluentd-logs-0 \
+  --container fluentd -- ls -ld /fluentd/buffer
+drwx------ 6 root root 4096 Dec 17 16:01 /fluentd/buffer
+```
+
+In the above snippet you can observe that `/fluentd/buffer/` is owned by `root`, and
+only that user can access it.
+
+There are many possible reasons for this behaviour, this can depend on the
+cloud provider that you use and the StorageClasses that are available/set in your cluster.
+
+We have a couple of possible solutions for this issue:
+
+1. Use an init container that will `chown` the buffer directory. Init containers for
+   fluentd are available since collection chart version [`v2.3.0`][v2_3] and can
+   be utilized in the following manner:
+
+  ```yaml
+  fluentd:
+    logs:
+      enabled: true
+      statefulset:
+        initContainers:
+        - name: chown
+          image: busybox:latest
+          # Please note that the user that our fluentd instances run as has an ID of 999
+          # and a primary group 999
+          # rel: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/b8b51/Dockerfile#L113
+          command: ['chown', '-R', '999:999', '/fluentd/buffer']
+          volumeMounts:
+          - name: buffer
+            mountPath: "/fluentd/buffer"
+  ```
+
+1. Use a [security context][security_context] that will make your fluentd run as
+   a different user.
+   Mark that below snippet will run fluentd as `root` which in security constrained
+   environments might not be desired.
+
+  ```yaml
+  fluentd:
+    logs:
+      enabled: true
+      statefulset:
+        containers:
+          fluentd:
+            securityContext:
+              runAsUser: 0
+  ```
+
+1. Use a different [storage class][storage_class]:
+
+  ```
+  fluentd:
+    persistence:
+      storageClass: managed-csi
+  ```
+
+[v2_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
+[storage_class]: https://kubernetes.io/docs/concepts/storage/storage-classes/
+[security_context]: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+
+### Duplicated logs
+
+We observed than under certain conditions, it's possible for FluentD to duplicate logs:
+
+- there are several requests made of one chunk
+- one of those requests is failing, resulting in the whole batch being retried
+
+In order to mitigate this, please use [fluentd-output-sumologic] with `use_internal_retry` option.
+Please follow [Split Big Chunks in Fluentd](./Best_Practices.md#split-big-chunks-in-fluentd)
+
+[fluentd-output-sumologic]: https://github.com/SumoLogic/fluentd-output-sumologic

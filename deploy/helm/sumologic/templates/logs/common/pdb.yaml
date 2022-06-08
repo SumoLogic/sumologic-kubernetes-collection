@@ -1,6 +1,6 @@
 {{- if eq (include "logs.otelcol.enabled" .) "true" }}
-{{- if .Values.logs.metadata.podDisruptionBudget -}}
-apiVersion: policy/v1beta1
+{{- if .Values.metadata.logs.podDisruptionBudget -}}
+apiVersion: {{ include "apiVersion.podDisruptionBudget" . }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "sumologic.metadata.name.logs.pdb" . }}
@@ -8,6 +8,6 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.logs.statefulset" . }}
-{{ toYaml .Values.logs.metadata.podDisruptionBudget | indent 2 }}
+{{ toYaml .Values.metadata.logs.podDisruptionBudget | indent 2 }}
 {{- end -}}
 {{- end -}}

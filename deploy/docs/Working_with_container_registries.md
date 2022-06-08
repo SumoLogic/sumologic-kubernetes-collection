@@ -37,6 +37,22 @@ refer to [Creating a Secret with a Docker config at kubernetes.io][k8s-docker-se
 [k8s-docker-secret]: https://kubernetes.io/docs/concepts/containers/images/#creating-a-secret-with-a-docker-config
 [aws-ecr-pricing]: https://aws.amazon.com/ecr/pricing/
 
+## Using pull secrets with `sumologic-kubernetes-collection` helm chart
+
+Full list of `values.yaml` keys for all the images that are used, can be found below:
+
+| Image                 | `value.yaml` key                                |
+|-----------------------|-------------------------------------------------|
+| setup job             | `sumologic.setup.job.pullSecrets`               |
+| fluentd               | `sumologic.pullSecrets`                         |
+| Sumo Logic OT distro  | `sumologic.pullSecrets`                         |
+| remote-write-proxy    | `sumologic.pullSecrets`                         |
+| kube-prometheus-stack | `kube-prometheus-stack.global.imagePullSecrets` |
+| metrics-server        | `metrics-server.image.pullSecrets`              |
+| telegraf-operator     | `telegraf-operator.imagePullSecrets`            |
+| fluent-bit            | `fluent-bit.imagePullSecrets`                   |
+| falco                 | `falco.image.pullSecrets`                       |
+
 ## Hosting Sumo Logic images
 
 Another approach to work around Amazon Public ECR limits is to host Sumo Logic
@@ -62,3 +78,13 @@ fluentd:
     tag: ${TAG}
     pullPolicy: IfNotPresent
 ```
+
+## Upgrading while rehosting images
+
+New versions of the Helm chart can include updating the default container image versions. When using
+a custom container registry, we strongly recommend updating the version to be in-line with the defaults.
+The [changelog][changelog] and [release_notes][release notes] will always mention these kinds of updates
+and can safely be used as a guiding tool when upgrading.
+
+[changelog]: ../../CHANGELOG.md
+[release_notes]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases

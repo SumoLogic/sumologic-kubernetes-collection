@@ -10,9 +10,24 @@ fluentd.proxyUri
 
 You should set these properties to the URL for your proxy environment.
 
-# Troubleshooting
+## TLS interception via a transparent proxy
 
-## Error: timed out waiting for the condition
+If the proxy in question is transparent and does TLS interception with a custom root CA, installation becomes
+a bit more complex. Installation involves the setup job using the Sumologic API in order to create
+some necessary resources, like collectors and fields. This will fail if the Sumologic API TLS certificate
+cannot be verified.
+
+There are two ways of dealing with this:
+
+- Disabling the setup job and creating the necessary resources manually: [see here][manual]
+- Injecting the custom root CA into the setup image: [see here][rebuilding]
+
+[rebuilding]: ./Security_Best_Practices.md#adding-a-custom-root-ca-certificate-by-rebuilding-container-images
+[manual]: ./Installation_with_Helm.md#prerequisite
+
+## Troubleshooting
+
+### Error: timed out waiting for the condition
 
 If `helm upgrade --install` hangs, it usually means the pre-install setup job is failing and is in a retry loop.
 Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm upgrade --install` command.

@@ -43,7 +43,7 @@ If you are installing the collection in a cluster that requires proxying outboun
 
 The following parameter is optional, but we recommend setting it.
 
-- __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+- __sumologic.clusterName__ - An identifier for your Kubernetes cluster. This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`. Whitespaces in the cluster name will be replaced with dashes.
 
 To install the chart, first add the `sumologic` private repo:
 
@@ -60,7 +60,7 @@ The below command also disables the `kube-prometheus-stack` sub-chart since we w
 helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.enabled=false
 ```
 
-> **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
+> __Note__: If the release exists, it will be upgraded, otherwise it will be installed.
 
 If you wish to install the chart in a different existing namespace you can do the following:
 
@@ -101,12 +101,12 @@ First, generate the Prometheus Operator `prometheus-overrides.yaml` by running
  kubectl run tool \
   -it --quiet --rm \
   --restart=Never -n sumologic \
-  --image sumologic/kubernetes-tools:2.2.3 \
+  --image sumologic/kubernetes-tools:2.9.0 \
   -- template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 
  # or using Docker
  docker run -it --rm \
-  sumologic/kubernetes-tools:2.2.3 \
+  sumologic/kubernetes-tools:2.9.0 \
   template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 ```
 
@@ -159,7 +159,7 @@ If you do not see data in Sumo Logic, you can review our
 
 All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md).
 We recommend creating a new `values.yaml` for each Kubernetes cluster you wish
-to install collection on and **setting only the properties you wish to override**.
+to install collection on and __setting only the properties you wish to override__.
 Once you have customized you can use the following commands to install or upgrade.
 Remember to define the properties in our [requirements section](#requirements)
 in the `values.yaml` as well or pass them in via `--set`
@@ -168,11 +168,11 @@ in the `values.yaml` as well or pass them in via `--set`
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
 ```
 
-> **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
+> __Tip__: To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
 
 ## Upgrading Sumo Logic Collection
 
-**Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).**
+__Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).__
 
 To upgrade our Helm chart to a newer version, you must first run update your local Helm repo.
 
@@ -216,7 +216,7 @@ To uninstall/delete the Helm chart:
 helm delete my-release
 ```
 
-> **Helm3 Tip**: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.ease.
+> __Helm3 Tip__: In Helm3 the default behavior is to purge history. Use --keep-history to preserve it while deleting the release.ease.
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 

@@ -90,6 +90,7 @@ The following parameter is optional, but we recommend setting it.
 
 - __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+  Whitespaces in the cluster name will be replaced with dashes.
 
 To install the chart, first add the `sumologic` private repo:
 
@@ -109,7 +110,7 @@ helm upgrade --install my-release sumologic/sumologic \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
 
-> **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
+> __Note__: If the release exists, it will be upgraded, otherwise it will be installed.
 
 If you wish to install the chart in a different existing namespace you can do the following:
 
@@ -131,6 +132,9 @@ helm upgrade --install my-release sumologic/sumologic \
   --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>"
 ```
+
+If you want to override the names of the resources created by the chart,
+see [Overriding chart resource names with `fullnameOverride`](./Best_Practices.md#overriding-chart-resource-names-with-fullnameoverride).
 
 ### Authenticating with container registry
 
@@ -170,10 +174,10 @@ helm upgrade --install my-release sumologic/sumologic \
   --set fluent-bit.securityContext.privileged=true \
   --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
   --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
-  --set kube-prometheus-stack.prometheusOperator.namespaces.additional=[my-namespace]
+  --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace}
 ```
 
-**Notice:** Prometheus Operator is deployed by default on OpenShift platform,
+__Notice:__ Prometheus Operator is deployed by default on OpenShift platform,
 you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
 `kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in values.yaml or
 exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
@@ -203,7 +207,7 @@ First find the pod name in the namespace where the Helm chart was deployed. The 
 kubectl get pods
 ```
 
-> **Tip**: If the pod does not exist, it is possible it has been evicted.
+> __Tip__: If the pod does not exist, it is possible it has been evicted.
 > Re-run the `helm upgrade --install` to recreate it and while that command is running,
 > use another shell to get the name of the pod.
 
@@ -233,14 +237,14 @@ You can find more information in our [troubleshooting documentation](Troubleshoo
 
 All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md).
 We recommend creating a new `values.yaml` for each Kubernetes cluster you wish
-to install collection on and **setting only the properties you wish to override**.
+to install collection on and __setting only the properties you wish to override__.
 Once you have customized you can use the following commands to install or upgrade.
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
 ```
 
-> **Tip**: To filter or add custom metrics to Prometheus,
+> __Tip__: To filter or add custom metrics to Prometheus,
 > [please refer to this document](additional_prometheus_configuration.md)
 
 ## Upgrading Sumo Logic Collection
@@ -289,7 +293,7 @@ To uninstall/delete the Helm chart:
 helm delete my-release
 ```
 
-> **Helm3 Tip**: In Helm3 the default behavior is to purge history.
+> __Helm3 Tip__: In Helm3 the default behavior is to purge history.
 > Use --keep-history to preserve it while deleting the release.
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -306,3 +310,24 @@ kubectl delete secret sumologic
 ```
 
 and the associated hosted collector can be deleted in the Sumo Logic UI.
+
+### Removing the kubelet Service
+
+The Helm chart uses the Prometheus Operator to manage Prometheus instances.
+This operator creates a Service for scraping metrics exposed by the kubelet (subject to configuration in the
+`kube-prometheus-stack.prometheusOperator.kubeletService` key in `values.yaml`), which isn't removed by the chart
+uninstall process.
+This Service is largely harmless, but can cause issues if a different release of the chart is installed, resulting in
+duplicated metrics from the kubelet.
+See [this issue](https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/1101) and the corresponding
+[upstream issue](https://github.com/prometheus-community/helm-charts/issues/1523) for a more detailed explanation.
+
+To remove this service after uninstalling the chart, run:
+
+```bash
+kubectl delete svc <release_name>-kube-prometheus-kubelet -n kube-system
+```
+
+Please keep in mind that if you've changed any configuration values related to this service (they reside under the
+`kube-prometheus-stack.prometheusOperator.kubeletService` key in `values.yaml`), you should substitute those values in
+the command provided above.

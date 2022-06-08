@@ -1,0 +1,9 @@
+// https://code.visualstudio.com/docs/editor/userdefinedsnippets
+{
+	"Link to pull request": {
+		"scope": "markdown",
+		"prefix": ["PR"],
+		"body": ["[#${1:123}]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/${1}"],
+		"description": "Link to GitHub pull request",
+	}
+}

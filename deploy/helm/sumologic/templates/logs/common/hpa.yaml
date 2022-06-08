@@ -1,4 +1,4 @@
-{{- if and (eq (include "logs.otelcol.enabled" .) "true") (.Values.logs.metadata.autoscaling.enabled) }}
+{{- if and (eq (include "logs.otelcol.enabled" .) "true") (.Values.metadata.logs.autoscaling.enabled) }}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -11,21 +11,21 @@ spec:
     apiVersion: apps/v1
     kind: StatefulSet
     name: {{ template "sumologic.metadata.name.logs.statefulset" . }}
-  minReplicas: {{ .Values.logs.metadata.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.logs.metadata.autoscaling.maxReplicas }}
+  minReplicas: {{ .Values.metadata.logs.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.metadata.logs.autoscaling.maxReplicas }}
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: {{ .Values.logs.metadata.autoscaling.targetCPUUtilizationPercentage }}
-{{- if .Values.logs.metadata.autoscaling.targetMemoryUtilizationPercentage }}
+        averageUtilization: {{ .Values.metadata.logs.autoscaling.targetCPUUtilizationPercentage }}
+{{- if .Values.metadata.logs.autoscaling.targetMemoryUtilizationPercentage }}
   - type: Resource
     resource:
       name: memory
       target:
         type: Utilization
-        averageUtilization: {{ .Values.logs.metadata.autoscaling.targetMemoryUtilizationPercentage }}
+        averageUtilization: {{ .Values.metadata.logs.autoscaling.targetMemoryUtilizationPercentage }}
 {{- end -}}
 {{- end -}}

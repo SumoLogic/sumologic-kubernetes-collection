@@ -1,16 +1,13 @@
 {{- $yamlFile := toYaml $.Values.otelcol.config }}
 {{- $_collector := .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
-{{- $sourceName := .Values.fluentd.logs.containers.sourceName | quote }}
-{{- $sourceCategory := .Values.fluentd.logs.containers.sourceCategory | quote }}
-{{- $sourceCategoryPrefix := .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}
-{{- $sourceCategoryReplaceDash := .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}
-{{- $excludeNamespaceRegex := .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
-{{ if eq .Values.sumologic.collectionMonitoring false }}
-  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
-{{- end }}
-{{- $excludePodRegex := .Values.fluentd.logs.containers.excludePodRegex | quote }}
-{{- $excludeContainerRegex := .Values.fluentd.logs.containers.excludeContainerRegex | quote }}
-{{- $excludeHostRegex := .Values.fluentd.logs.containers.excludeHostRegex | quote }}
+{{- $sourceName := .Values.otelcol.sourceMetadata.sourceName | quote }}
+{{- $sourceCategory := .Values.otelcol.sourceMetadata.sourceCategory | quote }}
+{{- $sourceCategoryPrefix := .Values.otelcol.sourceMetadata.sourceCategoryPrefix | quote }}
+{{- $sourceCategoryReplaceDash := .Values.otelcol.sourceMetadata.sourceCategoryReplaceDash | quote }}
+{{- $excludeNamespaceRegex := .Values.otelcol.sourceMetadata.excludeNamespaceRegex | quote }}
+{{- $excludePodRegex := .Values.otelcol.sourceMetadata.excludePodRegex | quote }}
+{{- $excludeContainerRegex := .Values.otelcol.sourceMetadata.excludeContainerRegex | quote }}
+{{- $excludeHostRegex := .Values.otelcol.sourceMetadata.excludeHostRegex | quote }}
 {{- $clusterName := include "sumologic.clusterNameReplaceSpaceWithDash" . }}
 
 {{- $yamlFile := replace "processors.source.collector.replace" $_collector $yamlFile }}
@@ -23,5 +20,7 @@
 {{- $yamlFile := replace "processors.source.exclude_container_regex.replace" $excludeContainerRegex $yamlFile }}
 {{- $yamlFile := replace "processors.source.exclude_host_regex.replace" $excludeHostRegex $yamlFile }}
 {{- $yamlFile := replace "processors.resource.cluster.replace" $clusterName $yamlFile }}
+{{- $yamlFile := replace "exporters.sumologic.source_name.replace" $sourceName $yamlFile }}
+{{- $yamlFile := replace "exporters.sumologic.source_category.replace" $sourceCategory $yamlFile }}
 
 {{- tpl ($yamlFile | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}

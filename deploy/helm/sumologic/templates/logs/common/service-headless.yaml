@@ -6,14 +6,18 @@ metadata:
   labels:
     app: {{ template "sumologic.labels.app.logs.service-headless" . }}
     {{- include "sumologic.labels.logs" . | nindent 4 }}
-{{- if .Values.otelcol.serviceLabels }}
-{{ toYaml .Values.otelcol.serviceLabels | indent 4 }}
+{{- if .Values.metadata.serviceLabels }}
+{{ toYaml .Values.metadata.serviceLabels | indent 4 }}
 {{- end }}
 spec:
   selector:
     app: {{ template "sumologic.labels.app.logs.pod" . }}
   clusterIP: None
   ports:
+  - name: otlphttp
+    port: 4318
+    targetPort: 4318
+    protocol: TCP
   {{- if .Values.sumologic.traces.enabled }}
   - name: zipkin-write
     port: 9411

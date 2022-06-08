@@ -89,6 +89,10 @@ spec:
               topologyKey: "kubernetes.io/hostname"
 {{- end }}
 {{- end }}
+{{- if .Values.fluentd.logs.statefulset.topologySpreadConstraints }}
+      topologySpreadConstraints:
+{{ toYaml .Values.fluentd.logs.statefulset.topologySpreadConstraints | indent 6 }}
+{{- end }}
       volumes:
       - name: config-volume
         configMap:
@@ -101,6 +105,14 @@ spec:
       {{- if .Values.fluentd.logs.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.fluentd.logs.statefulset.priorityClassName | quote }}
       {{- end }}
+{{- with .Values.fluentd.logs.statefulset.initContainers }}
+      initContainers:
+      {{- if kindIs "string" . }}
+        {{- tpl . $ | nindent 8 }}
+      {{- else }}
+        {{-  toYaml . | nindent 8 }}
+      {{- end -}}
+{{- end }}
       containers:
       - name: fluentd
         image: {{ .Values.fluentd.image.repository }}:{{ .Values.fluentd.image.tag }}
@@ -143,17 +155,19 @@ spec:
 {{- if .Values.fluentd.logs.extraVolumeMounts }}
 {{ toYaml .Values.fluentd.logs.extraVolumeMounts | indent 8 }}
 {{- end }}
+{{- if or .Values.sumologic.collector.sources .Values.fluentd.logs.extraEnvVars }}
         env:
 {{- $ctx := .Values -}}
-{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs")}}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs") -}}
 {{- if .Values.sumologic.traces.enabled }}
-{{ include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces")}}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") -}}
 {{- end }}
         {{- if .Values.fluentd.logs.extraEnvVars }}
 {{ toYaml .Values.fluentd.logs.extraEnvVars | nindent 8 }}
         {{- end }}
         - name: ADDITIONAL_PLUGINS
           value: {{ join " " .Values.fluentd.additionalPlugins | quote }}
+{{- end }}
 {{- if .Values.fluentd.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:

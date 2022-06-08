@@ -51,6 +51,46 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.collector.configmap" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.collector.serviceaccount" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.collector.daemonset" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.collector.service" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector" -}}
+{{- template "sumologic.fullname" . }}-otelcol-logs-collector
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.configmap" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.serviceaccount" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.daemonset" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.pod" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.service" -}}
+{{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs.pod" -}}
 {{- template "sumologic.labels.app.logs" . }}
 {{- end -}}
@@ -131,6 +171,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.events" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.opentelemetry.operator" -}}
+{{- template "sumologic.fullname" . }}-opentelemetry-operator
+{{- end -}}
+
+{{- define "sumologic.labels.app.opentelemetry.operator.instrumentation" -}}
+{{- template "sumologic.labels.app.opentelemetry.operator" . }}-instrumentation
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcol" -}}
 {{- template "sumologic.fullname" . }}-otelcol
 {{- end -}}
@@ -141,6 +189,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 
 {{- define "sumologic.labels.app.otelcol.service" -}}
 {{- template "sumologic.labels.app.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelcol.service-headless" -}}
+{{- template "sumologic.labels.app.otelcol.service" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.labels.app.otelcol.configmap" -}}
@@ -175,6 +227,49 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.otelagent" . }}-component
 {{- end -}}
 
+{{- define "sumologic.labels.app.otelgateway" -}}
+{{- template "sumologic.fullname" . }}-otelgateway
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.pod" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.service" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.configmap" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.deployment" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.otelgateway.component" -}}
+{{- template "sumologic.labels.app.otelgateway" . }}-component
+{{- end -}}
+
+{{- define "sumologic.labels.app.remoteWriteProxy" -}}
+{{- template "sumologic.fullname" . }}-remote-write-proxy
+{{- end -}}
+
+{{- define "sumologic.labels.app.remoteWriteProxy.configmap" -}}
+{{- template "sumologic.labels.app.remoteWriteProxy" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.remoteWriteProxy.deployment" -}}
+{{- template "sumologic.labels.app.remoteWriteProxy" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.remoteWriteProxy.pod" -}}
+{{- template "sumologic.labels.app.remoteWriteProxy" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.remoteWriteProxy.service" -}}
+{{- template "sumologic.labels.app.remoteWriteProxy" . }}
+{{- end -}}
 
 {{- define "sumologic.labels.app.setup" -}}
 {{- template "sumologic.labels.app" . }}
@@ -344,6 +439,14 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 {{- end -}}
 
+{{- define "sumologic.metrics.metadata.endpoint" -}}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.enabled -}}
+{{ template "sumologic.metadata.name.remoteWriteProxy.service" . }}
+{{- else -}}
+{{ template "sumologic.metadata.name.metrics.service" . }}
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.metrics.service" -}}
 {{ template "sumologic.metadata.name.fluentd" . }}-metrics
 {{- end -}}
@@ -388,12 +491,24 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.events" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.opentelemetry.operator" -}}
+{{ template "sumologic.fullname" . }}-opentelemetry-operator
+{{- end -}}
+
+{{- define "sumologic.metadata.name.opentelemetry.operator.instrumentation" -}}
+{{ template "sumologic.metadata.name.opentelemetry.operator" . }}-instrumentation
+{{- end -}}
+
 {{- define "sumologic.metadata.name.otelcol" -}}
 {{ template "sumologic.fullname" . }}-otelcol
 {{- end -}}
 
 {{- define "sumologic.metadata.name.otelcol.service" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol.service-headless" -}}
+{{ template "sumologic.metadata.name.otelcol.service" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.metadata.name.otelcol.configmap" -}}
@@ -418,6 +533,38 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.otelagent.daemonset" -}}
 {{ template "sumologic.metadata.name.otelagent" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway" -}}
+{{ template "sumologic.fullname" . }}-otelgateway
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway.service" -}}
+{{ template "sumologic.metadata.name.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway.configmap" -}}
+{{ template "sumologic.metadata.name.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelgateway.deployment" -}}
+{{ template "sumologic.metadata.name.otelgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.remoteWriteProxy" -}}
+{{ template "sumologic.fullname" . }}-remote-write-proxy
+{{- end -}}
+
+{{- define "sumologic.metadata.name.remoteWriteProxy.configmap" -}}
+{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.remoteWriteProxy.deployment" -}}
+{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.remoteWriteProxy.service" -}}
+{{ template "sumologic.metadata.name.remoteWriteProxy" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.setup" -}}
@@ -472,6 +619,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.cleanup" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.collector" -}}
+{{- template "sumologic.fullname" . }}-otelcol-logs-collector
+{{- end -}}
+
 {{- define "sumologic.labels.logs" -}}
 sumologic.com/app: fluentd-logs
 sumologic.com/component: logs
@@ -479,6 +630,11 @@ sumologic.com/component: logs
 
 {{- define "sumologic.labels.metrics" -}}
 sumologic.com/app: fluentd-metrics
+sumologic.com/component: metrics
+{{- end -}}
+
+{{- define "sumologic.labels.metrics.remoteWriteProxy" -}}
+sumologic.com/app: metrics-remote-write-proxy
 sumologic.com/component: metrics
 {{- end -}}
 
@@ -490,6 +646,11 @@ sumologic.com/component: events
 {{- define "sumologic.labels.traces" -}}
 sumologic.com/app: otelcol
 sumologic.com/component: traces
+{{- end -}}
+
+{{- define "sumologic.labels.logs.collector" -}}
+sumologic.com/app: otelcol-logs-collector
+sumologic.com/component: logs
 {{- end -}}
 
 {{- define "sumologic.label.scrape" -}}
@@ -514,6 +675,22 @@ sumologic.com/scrape: "true"
 {{- define "sumologic.labels.scrape.traces" -}}
 {{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.traces" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.scrape.logs.collector" -}}
+{{ template "sumologic.label.scrape" . }}
+{{ template "sumologic.labels.logs.collector" . }}
+{{- end -}}
+
+{{/*
+Create endpoint based on OTC Tracing deployment type
+*/}}
+{{- define "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" -}}
+{{- if .Values.otelagent.enabled -}}
+{{ printf "%s.%s" ( include "sumologic.metadata.name.otelagent.service" . ) .Release.Namespace }}
+{{- else -}}
+{{ printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -771,9 +948,6 @@ Example usage:
 resource "sumologic_http_source" "{{ .Name }}" {
     name         = local.{{ .Name }}
     collector_id = sumologic_collector.collector.id
-    {{- if $source.category }}
-    category     = {{ if $ctx.fluentd.events.sourceCategory }}{{ $ctx.fluentd.events.sourceCategory | quote }}{{- else}}{{ "\"${var.cluster_name}/${local.default_events_source}\"" }}{{- end}}
-    {{- end }}
     {{- if $source.properties }}
     {{- range $fkey, $fvalue := $source.properties }}
     {{- include "terraform.generate-object" (dict "Name" $fkey "Value" $fvalue "KeyLength" (include "terraform.max-key-length" $source.properties) "Indent" 2) -}}
@@ -965,14 +1139,29 @@ Example:
 {{- define "kubernetes.sources.envs" -}}
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
-{{- range $key, $source := (index .Context.sumologic.collector.sources $type) }}
-        - name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) }}
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: {{ template "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key) }}
+{{- range $name, $source := (index .Context.sumologic.collector.sources $type) -}}
+{{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" $type  "Name" $name ) | nindent 8 -}}
 {{- end }}
 {{- end -}}
+
+{{/*
+Generate fluentd envs for given source type:
+
+Example:
+
+{{ include "kubernetes.sources.env" (dict "Context" .Values "Type" "metrics" "Name" $name ) }}
+*/}}
+{{- define "kubernetes.sources.env" -}}
+{{- $ctx := .Context -}}
+{{- $type := .Type -}}
+{{- $name := .Name -}}
+- name: {{ template "terraform.sources.endpoint" (include "terraform.sources.name" (dict "Name" $name "Type" $type)) }}
+  valueFrom:
+    secretKeyRef:
+      name: sumologic
+      key: {{ template "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $name) }}
+{{- end -}}
+
 
 {{/*
 Generate a space separated list of quoted values:
@@ -1036,7 +1225,11 @@ Example:
 {{- define "fluentd.excludeNamespaces" -}}
 {{- $excludeNamespaceRegex := .Values.fluentd.logs.containers.excludeNamespaceRegex | quote -}}
 {{- if eq .Values.sumologic.collectionMonitoring false -}}
-  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote }}
+  {{- if .Values.fluentd.logs.containers.excludeNamespaceRegex -}}
+  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote -}}
+  {{- else -}}
+  {{- $excludeNamespaceRegex = printf "%s" .Release.Namespace | quote -}}
+  {{- end -}}
 {{- end -}}
 {{ print $excludeNamespaceRegex }}
 {{- end -}}
@@ -1069,7 +1262,7 @@ Example Usage:
 {{- define "metrics.otelcol.enabled" -}}
 {{- $enabled := false -}}
 {{- if eq .Values.sumologic.metrics.enabled true -}}
-{{- if and (eq .Values.sumologic.metrics.metadata.provider "otelcol") (eq .Values.otelcol.metadata.metrics.enabled true) -}}
+{{- if and (eq .Values.sumologic.metrics.metadata.provider "otelcol") (eq .Values.metadata.metrics.enabled true) -}}
 {{- $enabled = true -}}
 {{- end -}}
 {{- end -}}
@@ -1122,7 +1315,7 @@ Example Usage:
 {{- define "logs.otelcol.enabled" -}}
 {{- $enabled := false -}}
 {{- if eq .Values.sumologic.logs.enabled true -}}
-{{- if and (eq .Values.sumologic.logs.metadata.provider "otelcol") (eq .Values.otelcol.metadata.logs.enabled true) -}}
+{{- if and (eq .Values.sumologic.logs.metadata.provider "otelcol") (eq .Values.metadata.logs.enabled true) -}}
 {{- $enabled = true -}}
 {{- end -}}
 {{- end -}}
@@ -1158,4 +1351,148 @@ Example Usage:
 {{- if (get (get .Values .Provider) "serviceLabels") }}
 {{ toYaml (get (get .Values .Provider) "serviceLabels") }}
 {{- end }}
+{{- end -}}
+
+{{/*
+Endpoint used by otelagent exporter.
+
+Example Usage:
+{{- $otelcolService := include "traces.otelagent.exporter.endpoint" . }}
+
+*/}}
+{{- define "traces.otelagent.exporter.endpoint" -}}
+{{- if (eq .Values.otelgateway.enabled true) }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelgateway.service" . ) .Release.Namespace }}
+{{- else }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Endpoint used by otelgateway otlp exporter.
+
+Example Usage:
+'{{ include "traces.otelgateway.exporter.endpoint." . }}'
+*/}}
+{{- define "traces.otelgateway.exporter.endpoint" -}}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
+{{- end -}}
+
+{{/*
+Endpoint used by otelgateway loadbalancing exporter.
+
+Example Usage:
+'{{ include "traces.otelgateway.exporter.loadbalancing.endpoint" . }}'
+*/}}
+{{- define "traces.otelgateway.exporter.loadbalancing.endpoint" -}}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-headless" . ) .Release.Namespace }}
+{{- end -}}
+
+{{- define "opentelemetry-operator.webhook.service.name" -}}
+opentelemetry-operator-webhook-service
+{{- end -}}
+
+{{- define "opentelemetry-operator.controller.manager.service.cert.name" -}}
+opentelemetry-operator-controller-manager-service-cert
+{{- end -}}
+
+{{/*
+Generate certificates for opentelemetry-operator webhook
+
+Example usage:
+{{ $certManagerEnabled := index .Values "opentelemetry-operator" "admissionWebhooks" "certManager" "enabled" }}
+{{ $operatorEnabled := index .Values "opentelemetry-operator" "enabled" }}
+{{- if eq ( not $certManagerEnabled ) $operatorEnabled }}
+{{ ( include "opentelemetry-operator.non_certmanager" . ) }}
+{{- end }}
+
+*/}}
+{{- define "opentelemetry-operator.non_certmanager" -}}
+{{- $altNames := list ( printf "%s.%s" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) ( printf "%s.%s.svc" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) ( printf "%s.%s.svc.cluster.local" (include "opentelemetry-operator.webhook.service.name" .) .Release.Namespace ) -}}
+{{- $ca := genCA ( include "opentelemetry-operator.webhook.service.name" . ) 365 -}}
+{{- $cert := genSignedCert ( include "opentelemetry-operator.webhook.service.name" . ) nil $altNames 365 $ca -}}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ include "opentelemetry-operator.controller.manager.service.cert.name" . }}
+  labels:
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  tls.crt: {{ $cert.Cert | b64enc }}
+  tls.key: {{ $cert.Key | b64enc }}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: {{ printf "%s/%s" .Release.Namespace ( include "opentelemetry-operator.controller.manager.service.cert.name" . ) }}
+  labels:
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+    app.kubernetes.io/name: opentelemetry-operator
+  name: opentelemetry-operator-mutating-webhook-configuration
+webhooks:
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: {{ include "opentelemetry-operator.webhook.service.name" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate-opentelemetry-io-v1alpha1-instrumentation
+      caBundle: {{ $ca.Cert | b64enc }}
+    failurePolicy: Fail
+    name: minstrumentation.kb.io
+    rules:
+    - apiGroups:
+        - opentelemetry.io
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - instrumentations
+    sideEffects: None
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: {{ include "opentelemetry-operator.webhook.service.name" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate-opentelemetry-io-v1alpha1-opentelemetrycollector
+      caBundle: {{ $ca.Cert | b64enc }}
+    failurePolicy: Fail
+    name: mopentelemetrycollector.kb.io
+    rules:
+      - apiGroups:
+          - opentelemetry.io
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - opentelemetrycollectors
+    sideEffects: None
+  - admissionReviewVersions:
+      - v1
+    clientConfig:
+      service:
+        name: {{ include "opentelemetry-operator.webhook.service.name" . }}
+        namespace: {{ .Release.Namespace }}
+        path: /mutate-v1-pod
+      caBundle: {{ $ca.Cert | b64enc }}
+    failurePolicy: Ignore
+    name: mpod.kb.io
+    rules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - pods
+    sideEffects: None
 {{- end -}}

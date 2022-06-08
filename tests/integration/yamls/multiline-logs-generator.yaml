@@ -1,0 +1,53 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: multiline-logs-generator
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: multiline-logs-generator
+  namespace: multiline-logs-generator
+data:
+  multiline-generator.sh: |
+    #!/usr/bin/env sh
+
+    for i in $(seq 500)
+    do
+      LONG_STRING="$(cat /dev/urandom | tr -dc ''a-z0-9'' | head -c 30000)";
+      echo "Dec 13 09:41:08 1st single line..."
+      echo "Dec 13 09:41:08 2nd single line..."
+      echo "Dec 14 06:41:08 Exception in thread "main" java.lang.RuntimeException: Something has gone wrong, aborting! ${LONG_STRING} end of the 1st long line
+        at com.myproject.module.MyProject.badMethod(MyProject.java:22)
+        at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)
+        at com.myproject.module.MyProject.anotherMethod(MyProject.java:14)
+        at com.myproject.module.MyProject.someMethod(MyProject.java:10)
+        at com.myproject.module.MyProject.verylongLine(MyProject.java:100000) ${LONG_STRING} end of the 2nd long line
+        at com.myproject.module.MyProject.main(MyProject.java:6)"
+      echo "Dec 15 09:41:08 another line in loop ${i}"
+    done
+    sleep 3600
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multiline-logs-generator
+  namespace: multiline-logs-generator
+  labels:
+    example: multiline-logs-generator
+spec:
+  containers:
+  - name: example-container-multiline-logs-long-lines
+    image: public.ecr.aws/docker/library/busybox
+    args:
+    - /bin/sh
+    - /multiline-logs-generator/multiline-generator.sh
+    volumeMounts:
+    - name: multiline-logs-generator
+      mountPath: /multiline-logs-generator
+  volumes:
+    - name: multiline-logs-generator
+      configMap:
+        name: multiline-logs-generator
+        defaultMode: 0744

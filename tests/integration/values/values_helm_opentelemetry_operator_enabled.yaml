@@ -1,0 +1,18 @@
+sumologic:
+  traces:
+    enabled: true
+
+opentelemetry-operator:
+  enabled: true
+  manager:
+    env:
+      WATCH_NAMESPACE: "ot-operator1,ot-operator2"
+
+# Request less resources so that this fits on Github actions runners environment
+fluentd:
+  events:
+    enabled: false
+  metrics:
+    enabled: false
+  logs:
+    enabled: false
