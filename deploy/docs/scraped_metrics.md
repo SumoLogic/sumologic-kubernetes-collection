@@ -170,6 +170,10 @@ The following table contains information about metrics scraped by Sumo Logic's P
 | `kube_pod_container_status_waiting_reason`               | kube-state-metrics | yes       |
 | `kube_pod_status_phase`                                  | kube-state-metrics | yes       |
 | `kube_pod_info`                                          | kube-state-metrics | no        |
+| `kube_service_info`                                      | kube-state-metrics | yes       |
+| `kube_service_spec_external_ip`                          | kube-state-metrics | yes       |
+| `kube_service_spec_type`                                 | kube-state-metrics | yes       |
+| `kube_service_status_load_balancer_ingress`              | kube-state-metrics | yes       |
 | `node_cpu_seconds_total`                                 | node-exporter      | yes       |
 | `node_load1`                                             | node-exporter      | yes       |
 | `node_load5`                                             | node-exporter      | yes       |
