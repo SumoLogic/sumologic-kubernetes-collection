@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- feat(metrics): add service metrics [#2367]
 - fix(metrics): remove outdated API calls [#2372]
 
+[#2367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2367
 [#2372]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2372
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.10.0...main
 
