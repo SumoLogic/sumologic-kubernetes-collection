@@ -69,11 +69,14 @@ data:
           key: k8s.container.name
         - action: delete
           key: k8s_container_name
-      attributes/extract_systemd_source_name_from_fluent_tag:
+      attributes/extract_systemd_source_fields:
         actions:
         - action: extract
           key: fluent.tag
           pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+        - action: insert
+          from_attribute: _HOSTNAME
+          key: _sourceHost
       attributes/remove_fluent_tag:
         actions:
         - action: delete
@@ -144,6 +147,13 @@ data:
             record_attributes:
             - key: _SYSTEMD_UNIT
               value: "$^"
+      filter/include_containers:
+        logs:
+          include:
+            match_type: regexp
+            record_attributes:
+            - key: k8s.container.name
+              value: .+
       filter/include_fluent_tag_containers:
         logs:
           include:
@@ -182,6 +192,7 @@ data:
       groupbyattrs/systemd:
         keys:
         - _sourceName
+        - _sourceHost
         - _collector
       k8s_tagger:
         extract:
@@ -254,14 +265,14 @@ data:
         source_category: "kubelet"
         source_category_prefix: "kubernetes/"
         source_category_replace_dash: "/"
-        source_host: '%{_HOSTNAME}'
+        source_host: '%{_sourceHost}'
         source_name: "k8s_kubelet"
       source/systemd:
         collector: "kubernetes"
         source_category: "system"
         source_category_prefix: "kubernetes/"
         source_category_replace_dash: "/"
-        source_host: '%{_HOSTNAME}'
+        source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
     receivers:
       fluentforward:
@@ -304,10 +315,11 @@ data:
           - filter/exclude_kubelet_hostname
           - filter/exclude_kubelet_priority
           - filter/exclude_kubelet_unit
+          - attributes/extract_systemd_source_fields
+          - attributes/remove_fluent_tag
           - groupbyattrs/systemd
           - resource/add_cluster
           - source/kubelet
-          - attributes/remove_fluent_tag
           - batch
           receivers:
           - fluentforward
@@ -323,10 +335,11 @@ data:
           - filter/exclude_systemd_hostname
           - filter/exclude_systemd_priority
           - filter/exclude_systemd_unit
+          - attributes/extract_systemd_source_fields
+          - attributes/remove_fluent_tag
           - groupbyattrs/systemd
           - resource/add_cluster
           - source/systemd
-          - attributes/remove_fluent_tag
           - batch
           receivers:
           - fluentforward
