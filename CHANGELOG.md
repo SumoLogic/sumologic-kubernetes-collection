@@ -20,6 +20,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - feat(opentelemetry-operator): add opentelemetry-operator for tracing [#2172][#2172]
 - feat(notes): add information about tracing receiver endpoints [#2209][#2209]
+- chore(documentation): add information about opentelemetry-operator [#2368][#2368]
 
 ### Changed
 
@@ -32,6 +33,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 [#2361]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2361
 [#2363]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2363
 [#2209]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2209
+[#2368]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2368
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.9.1...main
 
 ## [v2.9.1]
