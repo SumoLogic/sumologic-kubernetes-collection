@@ -31,6 +31,7 @@ Documentation links:
   - Open Telemetry `beta`
     - [Open Telemetry with `sumologic-kubernetes-collection`](./docs/opentelemetry_collector.md)
     - [Comparison of Fluentd and Opentelemetry Collector functionality](./docs/fluentd_otc_comparison.md)
+    - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/Beta/Kubernetes_Tracing_Auto_Instrumentation)
 
 - Upgrades
   - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
