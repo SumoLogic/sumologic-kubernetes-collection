@@ -2,7 +2,6 @@ resource "sumologic_collector" "collector" {
     name  = var.collector_name
     fields  = {
       {{- $fields := .Values.sumologic.collector.fields }}
-      {{ include "terraform.generate-key" (dict "Name" "cluster" "Value" "var.cluster_name" "SkipEscaping" true "KeyLength" (include "terraform.max-key-length" $fields)) }}
       {{- range $name, $value := $fields }}
       {{ include "terraform.generate-key" (dict "Name" $name "Value" $value "KeyLength" (include "terraform.max-key-length" $fields)) }}
       {{- end}}

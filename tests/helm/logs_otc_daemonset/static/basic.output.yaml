@@ -30,7 +30,7 @@ spec:
       containers:
       - args:
         - --config=/etc/otelcol/config.yaml
-        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.0.50-beta.0
+        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.49.0-sumo-0
         imagePullPolicy: IfNotPresent
         name: otelcol
         livenessProbe:
@@ -41,6 +41,13 @@ spec:
           httpGet:
             path: /
             port: 13133 # Health Check extension default port.
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 32Mi
         volumeMounts:
         - mountPath: /etc/otelcol
           name: otelcol-config
@@ -68,9 +75,12 @@ spec:
         - name: pprof
           containerPort: 1777
           protocol: TCP
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
-        image: busybox
+        image: public.ecr.aws/docker/library/busybox
         command:
         - "sh"
         - "-c"

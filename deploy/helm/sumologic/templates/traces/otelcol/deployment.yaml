@@ -36,17 +36,17 @@ spec:
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}
 {{- if .Values.otelcol.deployment.podLabels }}
-{{ toYaml .Values.otelcol.deployment.podLabels | indent 6 }}
+{{ toYaml .Values.otelcol.deployment.podLabels | indent 8 }}
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       {{- if .Values.otelcol.deployment.nodeSelector }}
       nodeSelector:
-        {{ toYaml .Values.otelcol.deployment.nodeSelector | indent 8 }}
+{{ toYaml .Values.otelcol.deployment.nodeSelector | indent 8 }}
       {{- end }}
       {{- if .Values.otelcol.deployment.tolerations }}
       tolerations:
-        {{ toYaml .Values.otelcol.deployment.tolerations | indent 8 }}
+{{ toYaml .Values.otelcol.deployment.tolerations | indent 8 }}
       {{- end }}
       {{- if .Values.otelcol.deployment.priorityClassName }}
       priorityClassName: {{ .Values.otelcol.deployment.priorityClassName | quote }}
@@ -55,8 +55,7 @@ spec:
       - name: otelcontrib-collector
         image: {{ .Values.otelcol.deployment.image.repository }}:{{ .Values.otelcol.deployment.image.tag }}
         imagePullPolicy: {{ .Values.otelcol.deployment.image.pullPolicy }}
-        command:
-          - /otelcontribcol
+        args:
           - --config=/conf/traces.otelcol.conf.yaml
           {{- if eq .Values.otelcol.metrics.enabled false }}
           - --metrics-level=none

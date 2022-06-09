@@ -18,13 +18,40 @@ spec:
 {{- if .Values.sumologic.podAnnotations }}
 {{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.podAnnotations }}
+{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.podAnnotations | indent 8 }}
+{{- end }}
       labels:
         app: {{ template "sumologic.labels.app.remoteWriteProxy.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
         {{- if .Values.sumologic.podLabels }}
-        {{ toYaml .Values.sumologic.podLabels | indent 8 }}
+        {{ toYaml .Values.sumologic.podLabels | nindent 8 }}
         {{- end }}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.podLabels }}
+{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.podLabels | indent 8 }}
+{{- end }}
     spec:
+{{- if .Values.sumologic.pullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.sumologic.pullSecrets | indent 8 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.nodeSelector | indent 8 }}
+{{- end }}
+{{- if or .Values.sumologic.metrics.remoteWriteProxy.affinity }}
+      affinity:
+{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.affinity | indent 8 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.tolerations }}
+      tolerations:
+{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.tolerations | indent 8 }}
+{{- end }}
+      securityContext:
+        {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.securityContext | nindent 8 }}
+      {{- if .Values.sumologic.metrics.remoteWriteProxy.priorityClassName }}
+      priorityClassName: {{ .Values.sumologic.metrics.remoteWriteProxy.priorityClassName | quote }}
+      {{- end }}
       containers:
       - name: nginx
         image: {{ .Values.sumologic.metrics.remoteWriteProxy.image.repository }}:{{ .Values.sumologic.metrics.remoteWriteProxy.image.tag }}

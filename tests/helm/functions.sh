@@ -102,6 +102,19 @@ function clear_config_checksum() {
   sed 's#\(checksum/config: \)\(.*\)$#\1\"%CONFIG_CHECKSUM%\"#g' "${tmpfile}" > "${file}"
 }
 
+# Out OpenTelemetry Operator templates have certificates added which requires us to
+# change this every time anything in the tls.yaml changes.
+# In order to avoid that let's just replace those with hardcoded placeholders.
+function clear_certificates_checksum() {
+  local file="${1}"
+  local tmpfile="$(mktemp)"
+
+  mv "${file}" "${tmpfile}"
+  sed 's#\(caBundle: \)\(.*\)$#\1\"%CA_TLS_CERTIFICATE%\"#g;
+  s#\(tls\.crt: \)\(.*\)$#\1\"%TLS_CERTIFICATE%\"#g;
+  s#\(tls\.key: \)\(.*\)$#\1\"%TLS_CERTIFICATE%\"#g' "${tmpfile}" > "${file}"
+}
+
 # Run test
 function perform_test {
   local input_file="${1}"
@@ -122,6 +135,7 @@ function perform_test {
   fi
 
   clear_config_checksum "${TEST_OUT}"
+  clear_certificates_checksum "${TEST_OUT}"
 
   test_output=$(diff -c "${TEST_TMP_PATH}/${output_file}" "${TEST_OUT}" | cat -te)
   rm "${TEST_OUT}"

@@ -3,8 +3,13 @@
 <!-- TOC -->
 
 - [`helm install` hanging](#helm-install-hanging)
+- [Installation fails with error `function "dig" not defined`](#installation-fails-with-error-function-dig-not-defined)
 - [Namespace configuration](#namespace-configuration)
 - [Gathering logs](#gathering-logs)
+  - [Check log throttling](#check-log-throttling)
+  - [Check ingest budget limits](#check-ingest-budget-limits)
+  - [Check Fluentd autoscaling](#check-fluentd-autoscaling)
+  - [Check if collection pods are in a healthy state](#check-if-collection-pods-are-in-a-healthy-state)
   - [Fluentd Logs](#fluentd-logs)
   - [Prometheus Logs](#prometheus-logs)
   - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
@@ -12,6 +17,7 @@
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+  - [Check Fluentd autoscaling](#check-fluentd-autoscaling-1)
   - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics)
 - [Common Issues](#common-issues)
   - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
@@ -28,6 +34,7 @@
   - [Gzip compression errors](#gzip-compression-errors)
   - [Error from Prometheus `init-config-reloader` container: `expand environment variables: found reference to unset environment variable "NAMESPACE"`](#error-from-prometheus-init-config-reloader-container-expand-environment-variables-found-reference-to-unset-environment-variable-namespace)
   - [`/fluentd/buffer` permissions issue](#fluentdbuffer-permissions-issue)
+  - [Duplicated logs](#duplicated-logs)
 
 <!-- /TOC -->
 
@@ -58,6 +65,13 @@ kubectl delete secret sumologic -n sumologic
 
 `helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries, rerun the `helm install` command.
 
+## Installation fails with error `function "dig" not defined`
+
+You need to use a more recent version of Helm. See [Minimum Requirements](./../README.md#minimum-requirements).
+
+If you are using ArgoCD or another tool that uses Helm under the hood,
+make sure that tool uses the required version of Helm.
+
 ## Namespace configuration
 
 The following `kubectl` commands assume you are in the correct namespace `sumologic`. By default, these commands will use the namespace `default`.
@@ -72,7 +86,43 @@ kubectl config set-context $(kubectl config current-context) --namespace=sumolog
 
 ## Gathering logs
 
-First check if your pods are in a healthy state. Run
+If you cannot see logs in Sumo that you expect to be there, here are the things to check.
+
+### Check log throttling
+
+Check if [log throttling][log_throttling] is happening.
+
+If it is, there will be messages like `HTTP ERROR 429 You have temporarily exceeded your Sumo Logic quota` in Fluentd or Otelcol logs.
+
+[log_throttling]: https://help.sumologic.com/Manage/Ingestion-and-Volume/01Log_Ingestion#log-throttling
+
+### Check ingest budget limits
+
+Check if an [ingest budget][ingest_budgets] limit is hit.
+
+If it is, there will be `budget.exceeded` messages from Sumo in Fluentd or Otelcol logs, similar to the following:
+
+```console
+2022-04-12 13:47:17 +0000 [warn]: #0 There was an issue sending data: id: KMZJI-FCDPN-4KHKD, code: budget.exceeded, status: 200, message: Message(s) in the request dropped due to exceeded budget.
+```
+
+[ingest_budgets]: https://help.sumologic.com/Manage/Ingestion-and-Volume/Ingest_Budgets
+
+### Check Fluentd autoscaling
+
+Check if Fluentd autoscaling is enabled, for details please see [Fluentd Autoscaling][fluend_autoscaling] documentation.
+
+Some known indicators that autoscaling for Fluentd must be enabled:
+
+- High CPU usage for Fluentd Pods (above `500m`), resource consumption can be checked using `kubectl top pod -n <NAMESPACE>`
+
+- Following message in Fluentd logs: `failed to write data into buffer by buffer overflow action=:drop_oldest_chunk`
+
+[fluend_autoscaling]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-autoscaling
+
+### Check if collection pods are in a healthy state
+
+Run:
 
 ```
 kubectl get pods
@@ -213,6 +263,18 @@ We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus
 You can follow [Deploy Fluentd](#prometheus-logs) to verify there are no errors during remote write.
 
 You can also check `prometheus_remote_storage_.*` metrics to look for success/failure attempts.
+
+### Check Fluentd autoscaling
+
+Check if Fluentd autoscaling is enabled, for details please see [Fluentd Autoscaling][fluend_autoscaling] documentation.
+
+Some known indicators that autoscaling for Fluentd must be enabled:
+
+- High CPU usage for Fluentd Pods (above `500m`), resource consumption can be checked using `kubectl top pod -n <NAMESPACE>`
+
+- Following message in Fluentd logs: `failed to write data into buffer by buffer overflow action=:drop_oldest_chunk`
+
+[fluend_autoscaling]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-autoscaling
 
 ### Check FluentBit and Fluentd output metrics
 
@@ -561,3 +623,15 @@ We have a couple of possible solutions for this issue:
 [v2_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
 [storage_class]: https://kubernetes.io/docs/concepts/storage/storage-classes/
 [security_context]: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+
+### Duplicated logs
+
+We observed than under certain conditions, it's possible for FluentD to duplicate logs:
+
+- there are several requests made of one chunk
+- one of those requests is failing, resulting in the whole batch being retried
+
+In order to mitigate this, please use [fluentd-output-sumologic] with `use_internal_retry` option.
+Please follow [Split Big Chunks in Fluentd](./Best_Practices.md#split-big-chunks-in-fluentd)
+
+[fluentd-output-sumologic]: https://github.com/SumoLogic/fluentd-output-sumologic

@@ -60,9 +60,18 @@ func TestMain(m *testing.M) {
 func ConfigureTestEnv(testenv env.Environment) {
 	const receiverMockNamespace = "receiver-mock"
 
+	// List of the namespaces must match values/values_helm_opentelemetry_operator_enabled.yaml
+	// opentelemetry-operator.manager.env.WATCH_NAMESPACE value
+	var openTelemetryOperatorNamespaces = [...]string{"ot-operator1", "ot-operator2"}
+
 	// Before
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
 		stepfuncs.KubectlApplyFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
+		// Needed for OpenTelemetry Operator test
+		// TODO: Create namespaces only for specific tests
+		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[1]),
+		// Create Test Namespace
 		stepfuncs.KubectlCreateNamespaceTestOpt(),
 		// SetHelmOptionsTestOpt picks a values file from `values` directory
 		// based on the test name ( the details of name generation can be found
@@ -73,7 +82,7 @@ func ConfigureTestEnv(testenv env.Environment) {
 		// The reason for this is to limit the amount of boilerplate in tests
 		// themselves but we cannot attach/map the values.yaml to the test itself
 		// so we do this mapping instead.
-		stepfuncs.SetHelmOptionsTestOpt(),
+		stepfuncs.SetHelmOptionsTestOpt([]string{"--wait"}),
 		stepfuncs.HelmDependencyUpdateOpt(internal.HelmSumoLogicChartAbsPath),
 		stepfuncs.HelmInstallTestOpt(internal.HelmSumoLogicChartAbsPath),
 	) {
@@ -84,6 +93,8 @@ func ConfigureTestEnv(testenv env.Environment) {
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
 		stepfuncs.PrintClusterStateOpt(),
 		stepfuncs.HelmDeleteTestOpt(),
+		stepfuncs.KubectlDeleteNamespaceOpt(openTelemetryOperatorNamespaces[0]),
+		stepfuncs.KubectlDeleteNamespaceOpt(openTelemetryOperatorNamespaces[1]),
 		stepfuncs.KubectlDeleteNamespaceTestOpt(),
 		stepfuncs.KubectlDeleteFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
 	) {

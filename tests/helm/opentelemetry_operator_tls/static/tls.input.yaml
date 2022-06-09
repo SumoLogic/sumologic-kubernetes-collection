@@ -8,3 +8,8 @@ fluentd:
 sumologic:
   traces:
     enabled: true
+opentelemetry-operator:
+  enabled: true
+  manager:
+    env:
+      WATCH_NAMESPACE: "ot-operator1"
