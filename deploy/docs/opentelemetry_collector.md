@@ -594,3 +594,12 @@ Refs:
 
 - [Trace ID aware load balancing](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/loadbalancingexporter/README.md)
 - [Using cascading_filter](https://help.sumologic.com/Traces/03Advanced_Configuration/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F)
+
+### Auto-instrumentation by OpenTelemetry-Operator in Kubernetes
+
+Thanks to [OpenTelemetry-Operator] it is possible to auto-instrument application inside pod by addition of single annotation. Solution supports multiple containers instrumentation for Java, NodeJS and Python. 
+
+Please follow the guide [Kubernetes Tracing Auto Instrumentation]
+
+[OpenTelemetry-Operator]: https://github.com/open-telemetry/opentelemetry-operator#opentelemetry-auto-instrumentation-injection
+[Kubernetes Tracing Auto Instrumentation]: https://help.sumologic.com/Beta/Kubernetes_Tracing_Auto_Instrumentation
