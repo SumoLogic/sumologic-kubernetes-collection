@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v2.10.0]
+
+### Released 2022-06-09
 
 This release changes the OpenTelemetry Collector binary used for traces collection ([#2334]).
 This change affects you only if you have enabled traces with `sumologic.traces.enabled: true`
@@ -14,7 +16,7 @@ If you have modified these properties, make sure to compare the [new configurati
 with the [old configuration][source_processor_old_config] and apply corresponding changes to your config.
 
 [source_processor_old_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.9.1/deploy/helm/sumologic/values.yaml#L3476-L3492
-[source_processor_new_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/values.yaml#L3507-L3522
+[source_processor_new_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.10.0/deploy/helm/sumologic/values.yaml#L3507-L3522
 
 ### Added
 
@@ -32,7 +34,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 [#2361]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2361
 [#2363]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2363
 [#2209]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2209
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.9.1...main
+[v2.10.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.9.1...v2.10.0
 
 ## [v2.9.1]
 
