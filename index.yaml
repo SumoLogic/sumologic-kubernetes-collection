@@ -2,6 +2,53 @@ apiVersion: v1
 entries:
   sumologic:
   - apiVersion: v2
+    appVersion: 2.10.0
+    created: "2022-06-09T10:06:58.2465599Z"
+    dependencies:
+    - condition: fluent-bit.enabled,sumologic.logs.enabled
+      name: fluent-bit
+      repository: https://fluent.github.io/helm-charts
+      version: 0.14.1
+    - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 12.10.0
+    - condition: falco.enabled
+      name: falco
+      repository: https://falcosecurity.github.io/charts
+      version: 1.17.4
+    - condition: metrics-server.enabled
+      name: metrics-server
+      repository: https://charts.bitnami.com/bitnami
+      version: 5.11.9
+    - condition: telegraf-operator.enabled
+      name: telegraf-operator
+      repository: https://helm.influxdata.com/
+      version: 1.3.3
+    - condition: tailing-sidecar-operator.enabled
+      name: tailing-sidecar-operator
+      repository: https://sumologic.github.io/tailing-sidecar
+      version: 0.3.2
+    - condition: opentelemetry-operator.enabled
+      name: opentelemetry-operator
+      repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+      version: 0.7.0
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
+    digest: 63327d5e469d957de6f2a35eff81307081f7531a0b17901ab6addc255afc4561
+    home: https://github.com/SumoLogic/sumologic-kubernetes-collection
+    icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
+    keywords:
+    - monitoring
+    - logging
+    name: sumologic
+    sources:
+    - https://github.com/SumoLogic/sumologic-kubernetes-collection
+    type: application
+    urls:
+    - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-2.10.0.tgz
+    version: 2.10.0
+  - apiVersion: v2
     appVersion: 2.9.1
     created: "2022-06-02T13:17:53.639885266Z"
     dependencies:
@@ -29,7 +76,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: af2eef9b93365dab3fc0d310d3420ec78b3dde18deae5dbc62c7d83ed0908c1c
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -71,7 +119,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 836a1d1113f03ae5e5ec7b3dbb6523c48c9e6defa77e4eec6399d9314d1adccb
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -113,7 +162,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 19e99407933de70deae3ad383c9b02c5d50e9703bd77e5462c63845b7ff3e0e5
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -155,7 +205,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: b5ad943229d8b8e27675885f6c8681b362d2025266ac016bdc158713b66dcd41
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -197,7 +248,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: f063b1c4484a1b37ced637dd8033f76185cafa121cbc8f7c26a112a4407274b5
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -239,7 +291,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: a58e48b997f4fd2c93def2999fcb4fe9791136f4d25e34478faecfb4cf85df7b
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -281,7 +334,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: e2944181982d1c3d8627b65e41f83ad569690dfc8b8c185cd0e8f601269bfddb
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -323,7 +377,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 3bf43e1eba27709457c30a051a52e365c154280e91c25197b110ef28567a3752
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -365,7 +420,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: b0f80e05238164728806ef4aab04d889bb2b8e23fd80d3b41507e070aaeb4dc0
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -407,7 +463,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 117e61d15fe9a56edecb2b5901092a735587bf51dc446799495e0b099b1c26e0
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -449,7 +506,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: c6fd578a4944499841136f583454cd5175ec500f305a263f51555060d00458d8
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -491,7 +549,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: ac00d4d48e3c0673eb1a5a2afa349a6ebb797a5e590878a776d6c89434d2facd
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -533,7 +592,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: a108356b9e800c87aa0b5e47bfa999fbe83730a943481794b43b5885e89666f4
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -575,7 +635,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 8300b974a2d7035c6a132fff6420cf24040684678a173333493998797acf6beb
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -617,7 +678,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 5ba3b36d07631d129ae62f428e071069fc17fbb18bd39a46c400fe0f1d044fc8
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -659,7 +721,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: b376a4256f1ffbdceac1f60023b8c651218453ad2f198baa79041f709e0f6a65
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -701,7 +764,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: d2325c9edba95ee12510db3da43c55d2751ce4f447c187c1be80c2da41d3b1f3
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -743,7 +807,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 9d99ec3269316b7aae0e0529232a31c7e8ddb9bf8baabb0bf51cf293d2500bf0
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -785,7 +850,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: a7ccd56ae25c7d030c5f34363c6aa8fcf4c29450b23742552c440e7aa1692864
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -827,7 +893,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.2
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 61849f334be89110973cf8bfc72d3a67f4747db4eb3d4afa899cd427bad2a665
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -869,7 +936,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 4cb84f85b4bbac6664a1d40a9355139a179b63e66cdd2f76ee4694059414fd49
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -911,7 +979,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: e4a59ebf88fdbde1bcb184c888bb6d690f1a402bf8ddd6fbdd66dcb6c487307b
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -953,7 +1022,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 903ffe3337bf687c861846488bcd84a5e3fbb5847a5f48f689cd0335e7f207b3
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -995,7 +1065,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 7a9b42c66f0da34f8b093cb34f37777bab4534601bb5e3436108ed89600521cb
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1037,7 +1108,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: fa7b79a95b25ba73e99eaff2bbda4bbdfa03299e5821165f6aa4ab540b056073
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1079,7 +1151,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 562a638869394bca77d16ef7aaba364d8ca14f965a0e160533c96675cdaf2acf
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1121,7 +1194,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 7b54bc8c9226222fc2ccbb0dc9665fe96ef8adfe71fb83e5b07f7f536f7fac60
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1163,7 +1237,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 3269d9baeca34b56c7a89bf70a473d5e85896456df44b4d46ad4bb40c2d846db
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1205,7 +1280,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 32861d28ba069c6def1ea60989051d5e1631ef9c69ebf373b6ef910140c101d5
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1247,7 +1323,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: a776f13d4b5433a44c4c7ff10e477c2c4699e7473989491393b2c748887cd10e
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1289,7 +1366,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 9718a099f5a525e54d3b6494ac3de8db14e420caa43b2bd879131d693ca74404
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1331,7 +1409,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 724e7ea31a2a95ea79c920e1e404d6496e5bc2b05b498f669dcafbe50c2e488e
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1373,7 +1452,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 5ce64b76c93ea02d6af250dc5fd50f4cab9803f568288319ca1dc4a71ccb855c
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1415,7 +1495,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: c1442b83be2a4614b6bd7e3cd16661fee2f4d6c7fff07c556dac491b45d46cd8
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1457,7 +1538,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 5b5cc44da6d14bc23dc3b028d00e3f22d51b777843ea74c579c1ed58e0cc5214
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1499,7 +1581,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: a246aab98d077e3ca67713ba67b0d7af4ac5e9e99d94dc513c7441a625079a16
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1541,7 +1624,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 8966992a99e980e24188783cfcc2ec41cb2957f7c891f61a4e14bbe02e66cc13
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1583,7 +1667,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 85b4b02daf325563f49e4dd15ecf32db929dc7d26e1baf781f21f25f5d2fcce6
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1625,7 +1710,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: b74c859b8fca9219b5109af749b962b95f3119cf55d11b269f6393d524726d1c
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1667,7 +1753,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: c2753ca0006899bfc2288db21844667a98951f1387ebeca739b8303684f3e81b
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1709,7 +1796,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 67b84575f225b209c0dc669d5276ed8d050c85f10a4bb0733f2769444048d7ca
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1751,7 +1839,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: efb3b0d76a864f2a53a0bd93dea71706849170c428de87c879cc039fe6f4b35e
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1793,7 +1882,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: f4661f85a6f9ef7efea211c0d11f5600f6c15c293705c44a03132a817069f4fe
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1835,7 +1925,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 0f4b4efca503e29acbfbd29f73df6da54f3455423095c21f062fe14fdb567d00
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1877,7 +1968,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 47fbeec5d94d7f5ac0702881ac5750a5e2fccca921af1df16659394fe78e13a6
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1919,7 +2011,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 458ed9d30e6a7a124d868b77376a2d3f1b07bd154ef4bd9828429a594838ae7f
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -1961,7 +2054,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: ba2e1670b79d3d2fda952b627a3f6b84ccae215796f47bb24680c87dc09a59a7
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2003,7 +2097,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 699ee72b6eb70982034ba1455158e64eaaf9620acf33e1af6da9c8030145feca
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2045,7 +2140,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 20fc5d1e38f61174f3bbf149272c9359c38776dccc98bf9e0c6863541b987cd8
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2087,7 +2183,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 653ae983b356c5e60a2836842649c53930f9afebf5ecd32310f148c6bc3485b6
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2129,7 +2226,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: a6ebef85064126ac8bdaf8a1ec668e10782a651c51c6b37f86a929631c2f0429
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2171,7 +2269,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 3532d665705626927887a614d3cbc67742e2414746c8b4a8d946f0dd40449caf
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2213,7 +2312,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.1
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 97c526f5c9dd8900385ded5d23668a48485ed5735bf71b1a4cc58cd208df456a
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2255,7 +2355,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.0
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: b632d332f4a5c5503d6cde44cf9466a07430e0648d6e9adce859bc1f55de5410
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2297,7 +2398,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.0
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: f57cb8a9fb786e072fc4ba28ad917787f7c2ee874df1c339d34bbdf3d50fbe63
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2339,7 +2441,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.0
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 437dd9ad229666c3c77f8f500bd33320c353d84dab79b76a4b333842f6c2fb1a
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2381,7 +2484,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.0
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 0dd6088918e3ff82495c6990fd4e35d5b51b048244f44b46245e88e466e76a04
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2423,7 +2527,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.0
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: b66035473189759b964022dd607b489f50926ff20ca6d964925948951543090d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2465,7 +2570,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.0
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 13aafd55502a59b236fc31221a79cb948a49eeda820dfa81ba11afe32f4acf02
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2507,7 +2613,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.0
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: bda82be856ee95dbd6349bb605443599b90d26d9e0e9f6fd46c56394d4b42ffb
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2549,7 +2656,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.3.0
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: ed47d2cb2f1b6c131fcb2cc00c9b94bc4424ec26e6b53ede116970c371a912ec
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2591,7 +2699,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.2.0
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 8204ddb26081e9d1411aab52853bc6d31ca28516703514d4c3d383870ad1b940
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2633,7 +2742,8 @@ entries:
       name: tailing-sidecar-operator
       repository: https://sumologic.github.io/tailing-sidecar
       version: 0.2.0
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 2665e165a2d618c58e86bb5584b32964c113b014a619b8e53ee87245b91f2440
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2671,7 +2781,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: b5520d70708424b1ed7ead1ab6978c7a6bee12a5742a7d538f98c361cc3be50d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2709,7 +2820,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: f8f02b3b36f5f69c8d5da38b63a71ba33bf4506d987937554e154a80805962fb
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2747,7 +2859,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: c79dcfa727a717c7062ee7af9aa22392a3cd1c596280834960d2262da8209975
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2785,7 +2898,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: bb9ae6505d8cd8f68833a3c98ecef709333699cf1db0d1aa88406311a7027d0b
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2823,7 +2937,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 89f5ea634b18b9cf2f14fea10785355e534d97d2402c92dcc76a0d453e29b93e
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2861,7 +2976,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 2abea03893bfce3ab6c252c71e5f9231db890ec64c0d47c4667d8a45b8817760
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2899,7 +3015,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 926fd428692658f20f24706206b81fac8f7f549b5f2c12414fc08a8ba037d8ba
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2937,7 +3054,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 4739966299d8e3631e99bedb48e7ba0496fd92e5be08232f703668a11fb73dfe
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -2975,7 +3093,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: d1fea55370c652cca8c7bcff1b3c3594c40bf213e984f61010f97b3c8ec4b860
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3013,7 +3132,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 249013f8c8bcafc26268f09613bb344149a6d52384680828bee7b8d7791afe77
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3051,7 +3171,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 2b30f461ace2e4ac520279c532f36261331e9971c7e1f5c70d5f9cfda4d6d541
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3089,7 +3210,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: dd2ebcc13118f482fd14d4fa047606d1ee912e37b5f8b6e8a83c836861f69c94
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3127,7 +3249,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 49151635e1a054e64ea27cfcfaf4fab24b16a6231f85b15768fa8450f2423996
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3165,7 +3288,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: f5b6ef81feb3a0e2af95dfa7c5d81727b3e38d848d93461c307328f6e8ab0b3d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3203,7 +3327,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: a444403d9440b3f357eca05648c6e6363be8e0570e1f735f7c0d92114d8cdc81
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3241,7 +3366,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: a137ed6eca2d1c85a96c5bd40bd5bf33af0df09965707468cb799eeaa76d4492
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3279,7 +3405,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: ad1271402f30f9430f1994418d8678f911c14b71705f1fc2393dd9fb4d6058b1
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3317,7 +3444,8 @@ entries:
       name: telegraf-operator
       repository: https://helm.influxdata.com/
       version: 1.1.5
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 569bce82923343467eb60de34b32ff693ffdb3542b3647834d4b502542c6a941
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3356,7 +3484,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 551510ad5ae4b3c8536e72c1358fc158b7569982ba0626904457557d2a0f0317
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3394,7 +3523,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: cd3377d9b05c179542472b82157a3756a8222e6bbee3cc052da5fea178785b74
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3432,7 +3562,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 5c05df7791493faa113786c6284ea6ce7fb069840fd2c961b712df1d9733010e
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3470,7 +3601,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 2254b775ca248f625b507da287fd7984af5a99e7e7398f3904c1728392e3c177
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3508,7 +3640,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 46eb3f422b71e6fc74e46ad2038c892694e443e91664561a2f238161a7cdadde
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3546,7 +3679,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 8ab8c45e00303087e35ee238db6eb814300dc445de24d7bdd10d00e38ac5498d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3584,7 +3718,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 51052ffe2d0a6af0e6c51631cd65f50efc35a2cdc8ce87d7744f5077a2d3111f
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3622,7 +3757,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 8f6538dd9f2854a8a49a4e7ec3af89d821a700a964476d6a7296847f0a12d69b
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3660,7 +3796,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 3cbd8d3eece7e24e1ce1a0dd882973f9cba3419c1c9994279354dfb9e74cd18c
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3698,7 +3835,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 7c9daa3bc15fe8802745098e4222704ca441cd7022fcf5a4289225f3af56e976
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3736,7 +3874,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 597f855fda3f02926dda9a67972d0f280cfde2dc42f1eb9ed1acb07942409987
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3774,7 +3913,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: c53a5e518b4f6e9541f710e1b1b3f8e89cd7f0f301902505030f0af73004f3a2
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3812,7 +3952,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: 5135dcc37931ee539143e5c083273a3fc04d2d5ad0e40bcdbcd8efb06db015b6
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3850,7 +3991,8 @@ entries:
       name: telegraf-operator
       repository: https://sumologic.github.io/influxdata-helm-charts
       version: 1.1.6
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: d2d8738ac2f7415ad1d6f32dd6156cdc2355e37f011a7206a90a411e72e5db2d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3866,7 +4008,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.2
     created: "2020-11-12T15:13:11.927504406Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: e480407635465f22e27f6810587556f1f3e840087b3b6570e8078caf03de191d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -3882,7 +4025,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.2-rc.1
     created: "2020-11-10T14:09:04.76510668Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: c3edb9d91180c5c18b99f3d285563fd70415f7b9642ecb6a1e6e4dea5f2a1589
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -3898,7 +4042,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.2-rc.0
     created: "2020-11-10T12:56:40.220368685Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 0783d8fc81081c0b91bbf30fecc1668f150ba8b8646dd145a4c8466b69103e52
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -3914,7 +4059,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.2-6-ge7bf2a9d
     created: "2020-11-25T16:04:17.836866652Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: a4b457ffa26c9811cd2a5656ce3f4d34db857ccfee6dc468a91c82480099eb4a
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3930,7 +4076,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.2-5-g8708146f
     created: "2020-11-24T14:44:02.094475647Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics, traces and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics, traces and
+      events into Sumo Logic.
     digest: e9e81cb555b8f241c4eebbf1f2855ab711e339b4ac66e495be2be89783337b13
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3946,7 +4093,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.2-4-ge413c4dd
     created: "2020-11-24T14:31:12.5136568Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: d0151f63ffae3befd13372ecc2fd473444e2db3019fdacca25b9b912674a171e
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3962,7 +4110,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.2-3-ge32cd9fc
     created: "2020-11-24T14:25:45.078031216Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: f0e2a9727bf15237ceedec1f6164b3a1660278ccb03915329db3e0385c63f580
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/images/sumo_logic_logo.png
@@ -3978,7 +4127,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.2-2-g4640f2d1
     created: "2020-11-23T12:12:30.566551891Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: f6ad8d6df8862981c3442522ab03763a2b4595f76e888a6d0485f4d81f4e835c
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -3994,7 +4144,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.1
     created: "2020-10-26T17:10:41Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: e852e8a11cc9414b5afafc56d18417d9cc37ce1e032a7a151eb71fd3d0767000
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4010,7 +4161,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.1-rc.0
     created: "2020-10-23T15:55:56.165517295Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: a991a02a44d69254e1d8965b0dd61261e893f4ab6f5ab4482e9bed99c5864c1e
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4026,7 +4178,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.0
     created: "2020-10-06T09:33:16Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 4c9b0238adda2a073a8aafb09b3558cb668d15157ab11dc71fcedec3235e16c3
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4042,7 +4195,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.0-beta.2
     created: "2020-10-02T22:28:13Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 02b5f1d988069d806452746eb8377ada7a80905e463fda99449f9c8314b119d0
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4058,7 +4212,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.0-beta.1
     created: "2020-09-30T17:30:46Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 58b0f42440b2aed414ad772fccff1ffa8607fb89a5aa5d4c5183fcd7eb8cdce2
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4074,7 +4229,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.3.0-beta.0
     created: "2020-09-29T12:23:36Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 8d2f7a0373eec10eafeef2aab97568e4054afeb32cc9235fe27ef91b0bcfad22
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4090,7 +4246,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.2.3
     created: "2020-09-21T11:00:49Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: eabd38e97438a190bfa61797109d6625b727f9edcbb799c5037e1e51e905dc5b
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4106,7 +4263,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.2.2
     created: "2020-09-11T08:51:21Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: e22bf581eb32d3c37223f9e48a8f0988c28cc61d185e56949990356679265957
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4122,7 +4280,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.2.2-rc.0
     created: "2020-09-03T11:38:43Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: d0cccb5d81c1a49682b815d8578e136ef7dcf9b3349974f98f556bd45cd79d78
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4138,7 +4297,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.2.1
     created: "2020-08-31T17:13:57Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 8502b460cefe754e2b8c40984618cb1523c20d9adad63769d955eaffbc1771dd
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4154,7 +4314,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.2.0
     created: "2020-08-28T15:17:23Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 3ef96696c7d1cd70c9a5cb704c7e1e003406cbb74d923e33b27c4097d40d6f39
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4170,7 +4331,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.2.0-beta.2
     created: "2020-08-26T12:54:58Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 48d257698a121f200da27bd86c337c1af67be0343ab0fbe5cc2b1a43f868a068
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4186,7 +4348,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.2.0-beta.1
     created: "2020-08-18T16:09:38Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: e323b8051af4499df3249b615d0fbc6b9f4c9ba9c779a6c93708b932053b930d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4202,7 +4365,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.2.0-beta.0
     created: "2020-08-13T23:25:52Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 6704a1d5f6edddf1729e45ac642ccd3f494a828b87fb8397dbf3a0f32a90f0e8
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4218,7 +4382,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.1.0
     created: "2020-07-30T16:44:15Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 78f89e88164c93b8df5f6f170a25f7249e1f4eedc11168a5e5664f093813f4a8
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4234,7 +4399,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.1.0-rc.1
     created: "2020-07-29T14:42:54Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 7264d7443342ef25a62671599661497f4cf4c729dfb1580ed21d6326ab90db25
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4250,7 +4416,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.1.0-rc.0
     created: "2020-07-10T15:51:36Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 0b3ec035a1279d2a1a5d03b9ecd3173c2d493611c2e483bcd4a34371144acebb
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4266,7 +4433,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.1.0-beta.2
     created: "2020-06-16T15:46:57Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 5212989f1a5d892caf0433b92537b1f29c6a8fdf7e9bf0ae22abb0f74257784f
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4282,7 +4450,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.1.0-beta.1
     created: "2020-06-10T15:54:26Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 7a577a60af6e63603ade2099e386564fdb44bf92a061efda9da49ed87e729ecd
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4298,7 +4467,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.1.0-beta.0
     created: "2020-06-10T08:58:51Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 5e4dbd4a891d56f78e69339c939ae17cf701be6a1be89256513956ef578d37f5
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4314,7 +4484,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.0.0
     created: "2020-05-21T07:52:49Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 950921140ae0c4b6e1d3e97acdac5d621268aefc1392059708a63eaa3d7cef9a
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4330,7 +4501,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.0.0-rc.3
     created: "2020-05-20T19:30:44Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: f5ecfb7b0bb013303ced6bf94cd7ce14bd57e3e0a4747ff7bf717966ca990154
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4346,7 +4518,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.0.0-rc.2
     created: "2020-05-14T17:54:31Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: a2fe1d32f7c25c3979fc7c81d6fa8213635a7fb19092c88db124c595f20bf9e9
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4362,7 +4535,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.0.0-rc.1
     created: "2020-05-13T18:21:54Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: e9f6d288b85786740da8e64712d3c2fd46444e5e8cb1b916bdbbd7f044aebdf3
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4378,7 +4552,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.0.0-rc.0
     created: "2020-05-05T14:50:58Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: a241f9213608285391afcc0655293d10c0bf55425e37b523d39ce99f9026426d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4394,7 +4569,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.0.0-beta.2
     created: "2020-04-08T06:40:50Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 1bf65785d97326692482f172f036271e736766e1a0163d407750bb816ca001e2
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4410,7 +4586,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.0.0-beta.1
     created: "2020-04-03T16:07:41Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: fab0e286cb15dd9e3266411c716e257d5b368244b0f894e6dd7b4dec7d54055d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4426,7 +4603,8 @@ entries:
   - apiVersion: v1
     appVersion: 1.0.0-beta.0
     created: "2020-03-27T10:07:53Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 1d904b87f2e05a80e92ec0619ab543014a4d25505b3e4720c7a9f05f649a0bbc
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4442,7 +4620,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.17.4
     created: "2020-05-20T18:56:15Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 0b1819db47a967d773f899efc5671e5b7100204974742c5ce267791359c218b4
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4458,7 +4637,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.17.3
     created: "2020-05-13T07:40:18Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 08038a377c49dfe490b7f7f0caf2dfec3b6e93507991d36a607a2ea8fee8e7c5
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4474,7 +4654,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.17.2
     created: "2020-05-05T17:06:32Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 5559bbf03ae2db50a2e145bd20a6734543adf239e7919de527bd3898f1a835c5
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4490,7 +4671,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.17.1
     created: "2020-03-31T11:56:45Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: ce24df4409672ed7650b5b2b044c7340dd992c9f29a5a7c9bd8b88c0ba861b4a
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4506,7 +4688,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.17.1-rc.0
     created: "2020-03-30T18:56:32Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: eb9ade1c24b71c29a16b3cfa6fbf26c0ed4107c26723ac66db3032ff2edebe55
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4522,7 +4705,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.17.0
     created: "2020-03-17T14:04:50Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: f1139faa82cb575ef09ad2d5e493d768e3e7b4e5f449aa2a161b2f9996acb78b
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4538,7 +4722,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.17.0-beta.0
     created: "2020-03-17T08:19:42Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: ceea63797f6da39a83ca6d51b9fbac8ebf8705b95767f323fe875bd48e4a917e
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4554,7 +4739,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.17.0-alpha.0
     created: "2020-03-16T17:58:46Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 6f2abdaf3401095ed41e24647a2e83541e7e3e6a99a6e231bbecd2281a967691
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4570,7 +4756,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.16.0
     created: "2020-03-12T12:10:43Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 78e1e3ec0370c989f72a221bb76b8f0355f57155b664764058c2edbec76be093
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4586,7 +4773,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.16.0-rc.1
     created: "2020-03-11T18:37:13Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 25e8cf2ff5976b34a6624eaefc78e3f2b851c9bd1782276c49b343027acbce66
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4602,7 +4790,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.16.0-rc.0
     created: "2020-03-10T18:03:17Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: af09af5f33f52a6f39f4dbe81084dc0b6d8cee0deea1e6ea64993de2c99e5299
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4618,7 +4807,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.16.0-beta.3
     created: "2020-03-09T16:18:13Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 55052c2c68f47c46c90a58d7ab3a5af859c2ae827161d7e6756528df8bd00d2d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4634,7 +4824,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.16.0-beta.2
     created: "2020-03-10T16:04:44Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 32ff17d48afee48b96cd7c291acb33f73b4ec03e2b01f5f6195253270e343ab1
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4650,7 +4841,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.16.0-beta.1
     created: "2020-03-10T12:48:39Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 096344b59460b7b86035d60aeaa6018bf354c94cef505ce8490cae2832c2c721
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4666,7 +4858,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.16.0-beta.0
     created: "2020-03-10T12:48:39Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: b7e775a89af12bd2ec70fbac8b9cdd45eab16b987a47c826952743b6886186df
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4682,7 +4875,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.15.0
     created: "2020-02-21T21:27:19Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 2939d982033689e5571c0407530f5de6a49eb92bff7d22f3045873155b9b57ff
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4698,7 +4892,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.14.0
     created: "2020-02-12T23:20:29Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: a911a4fb8c02cff87c224ef8fd5dddecc7984670ce3ae8e433f4de395142bf9d
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4714,7 +4909,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.13.0
     created: "2020-01-15T21:15:48Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 4f8b9880c1a13aa554480f0f9744e48a02beb09da8552f60da5e6a372b581273
     home: https://github.com/SumoLogic/sumologic-kubernetes-collection
     icon: https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/master/images/sumo_logic_logo.png
@@ -4730,7 +4926,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.12.0
     created: "2019-12-02T21:27:44Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 7f4311b4e61c931824d1a888b93d962bcc2f462993ad82f5acd80558853d7dd8
     name: sumologic
     urls:
@@ -4739,7 +4936,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.11.0
     created: "2019-11-13T21:47:16Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: f8913bdd827f6c6252225f6c8ba7ac7458ec0d254e81c726512e1197a7aee70f
     name: sumologic
     urls:
@@ -4748,7 +4946,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.10.0
     created: "2019-10-29T20:18:49Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 98d17bd14bd407105705e710700715e56da607b78073b2b674e40980f7600568
     name: sumologic
     urls:
@@ -4757,7 +4956,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.9.0
     created: "2019-10-10T20:06:43Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 539ed695221ec466acdb658b4d028fc94a831dc235f848419c609c3dce505650
     name: sumologic
     urls:
@@ -4766,7 +4966,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.8.0
     created: "2019-09-26T18:44:52Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 3022ea4d75ed31ca20381fa01324f0766d6658e13e84cf97d2e89431deddafbe
     name: sumologic
     urls:
@@ -4775,7 +4976,8 @@ entries:
   - apiVersion: v1
     appVersion: 0.7.0
     created: "2019-09-24T17:21:27Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 6fc14a6d7c2bc42b6139e7673ee8f3d4750aded5fa1511c64959086779c31a7b
     name: sumologic
     urls:
@@ -4784,10 +4986,11 @@ entries:
   - apiVersion: v1
     appVersion: 0.6.0
     created: "2019-09-13T18:53:27Z"
-    description: A Helm chart for collecting Kubernetes logs, metrics and events into Sumo Logic.
+    description: A Helm chart for collecting Kubernetes logs, metrics and events into
+      Sumo Logic.
     digest: 8a537e17322d07c559c71f96bd74634f7c18a0963b982fd3e73c9f43adc1896f
     name: sumologic
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/sumologic-0.6.0.tgz
     version: 0.6.0
-generated: "2022-06-02T15:20:28.227548062Z"
+generated: "2022-06-09T10:06:58.181741246Z"
