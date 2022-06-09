@@ -20,7 +20,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - feat(opentelemetry-operator): add opentelemetry-operator for tracing [#2172][#2172]
 - feat(notes): add information about tracing receiver endpoints [#2209][#2209]
-- chore(documentation): add information about opentelemetry-operator [#2368][#2368]
 
 ### Changed
 
