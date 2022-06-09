@@ -10,6 +10,7 @@ metadata:
 spec:
   selector:
     app: {{ template "sumologic.labels.app.otelcol.pod" . }}
+  # In case of changes related to open ports for otelcol please update NOTES.TXT
   ports:
   - name: jaeger-sampling # Default endpoint for Jaeger Sampling (if enabled)
     port: 5778
