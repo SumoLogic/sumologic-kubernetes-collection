@@ -32,7 +32,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 [#2361]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2361
 [#2363]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2363
 [#2209]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2209
-[#2368]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2368
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.9.1...main
 
 ## [v2.9.1]
