@@ -1648,6 +1648,12 @@ kube-prometheus-stack:
     image:
       repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
       tag: v1.9.8
+    # Do not collect metrics for CertificateSigningRequest or Ingress resources.
+    # This is because the v1 version of kube-state-metrics uses API versions
+    # that are removed in Kubernetes v1.22.
+    collectors:
+      certificatesigningrequests: false
+      ingresses: false
     ## Custom labels to apply to service, deployment and pods
     customLabels: {}
     ## Additional annotations for pods in the DaemonSet
