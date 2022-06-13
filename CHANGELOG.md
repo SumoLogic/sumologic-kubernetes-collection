@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat(metrics): add service metrics [#2367]
 - fix(metrics): remove outdated API calls [#2372]
+- fix(ot-operator): shorter labels values [#2374]
 
 [#2367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2367
 [#2372]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2372
+[#2374]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2374
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.10.0...main
 
 ## [v2.10.0]
