@@ -995,8 +995,10 @@ fluent-bit:
     #   memory: 8Mi
 
   ## Uncomment the flag below to not install fluent-bit helm chart as a dependency along with this helm chart.
-  ## Comment it out if you wish to have the fluent-bit dependency installed.
-  ## Setting the flag to true instead of commenting out will break other functionality.
+  ## Do not use this flag to disable logs collection.
+  ## Instead, set the `sumologic.logs.enabled: false` flag to disable logs collection.
+  ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.logs.enabled: false`,
+  ## as this will make Fluent Bit try to write to an non-existent logs enrichment service.
   # enabled: false
 
   ## Configuration for fluent-bit service
@@ -1161,8 +1163,11 @@ kube-prometheus-stack:
 
   ## Uncomment the flag below to not install kube-prometheus-stack helm chart
   ## as a dependency along with this helm chart.
-  ## Comment it out if you wish to have the prometheus-operator dependency installed.
-  ## Setting the flag to true instead of commenting out will break other functionality.
+  ## This is needed e.g. if you want to use a different version of kube-prometheus-stack -
+  ## see /deploy/docs/Best_Practices.md#using-newer-kube-prometheus-stack.
+  ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
+  ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.metrics.enabled: false`,
+  ## as this will make Prometheus try to write to an non-existent metrics enrichment service.
   # enabled: false
 
   # global:
@@ -1373,7 +1378,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
-      ## see docs/scrape_metrics.md
+      ## see docs/scraped_metrics.md
       ## apiserver_request_count
       ## apiserver_request_total
       ## apiserver_request_duration_seconds_count
@@ -1396,7 +1401,7 @@ kube-prometheus-stack:
       probes: false
       ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
       resource: false
-      ## see docs/scrape_metrics.md
+      ## see docs/scraped_metrics.md
       ## kubelet metrics:
       ## kubelet_docker_operations_errors
       ## kubelet_docker_operations_errors_total
@@ -1420,7 +1425,7 @@ kube-prometheus-stack:
           sourceLabels: [__name__]
         - action: labeldrop
           regex: id
-      ## see docs/scrape_metrics.md
+      ## see docs/scraped_metrics.md
       ## cadvisor container metrics
       ## container_cpu_usage_seconds_total
       ## container_fs_limit_bytes
@@ -1447,7 +1452,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
-      ## see docs/scrape_metrics.md
+      ## see docs/scraped_metrics.md
       ## controller manager metrics
       ## https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
       ## e.g.
@@ -1462,7 +1467,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
-      ## see docs/scrape_metrics.md
+      ## see docs/scraped_metrics.md
       ## coredns:
       ## coredns_cache_size
       ## coredns_cache_entries
@@ -1487,7 +1492,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
-      ## see docs/scrape_metrics.md
+      ## see docs/scraped_metrics.md
       ## etcd_request_cache_get_duration_seconds_count
       ## etcd_request_cache_get_duration_seconds_sum
       ## etcd_request_cache_add_duration_seconds_count
@@ -1527,7 +1532,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
-      ## see docs/scrape_metrics.md
+      ## see docs/scraped_metrics.md
       ## scheduler metrics_latency_microseconds
       ## scheduler_e2e_scheduling_duration_seconds_bucket
       ## scheduler_e2e_scheduling_duration_seconds_count
@@ -1549,7 +1554,7 @@ kube-prometheus-stack:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
-      ## see docs/scrape_metrics.md
+      ## see docs/scraped_metrics.md
       ## kube_daemonset_status_current_number_scheduled
       ## kube_daemonset_status_desired_number_scheduled
       ## kube_daemonset_status_number_misscheduled
@@ -1580,15 +1585,19 @@ kube-prometheus-stack:
       ## kube_pod_container_status_waiting_reason
       ## kube_pod_status_phase
       ## kube_pod_info
+      ## kube_service_info
+      ## kube_service_spec_external_ip
+      ## kube_service_spec_type
+      ## kube_service_status_load_balancer_ingress
       metricRelabelings:
         - action: keep
-          regex: (?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_(condition|(current|desired)_replicas)|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase|kube_pod_info)
+          regex: (?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_(condition|(current|desired)_replicas)|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase|kube_pod_info|kube_service_info|kube_service_spec_external_ip|kube_service_spec_type|kube_service_status_load_balancer_ingress)
           sourceLabels: [ __name__]
   nodeExporter:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
-      ## see docs/scrape_metrics.md
+      ## see docs/scraped_metrics.md
       ## node exporter metrics
       ## node_cpu_seconds_total
       ## node_load1
@@ -1643,6 +1652,12 @@ kube-prometheus-stack:
     image:
       repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
       tag: v1.9.8
+    # Do not collect metrics for CertificateSigningRequest or Ingress resources.
+    # This is because the v1 version of kube-state-metrics uses API versions
+    # that are removed in Kubernetes v1.22.
+    collectors:
+      certificatesigningrequests: false
+      ingresses: false
     ## Custom labels to apply to service, deployment and pods
     customLabels: {}
     ## Additional annotations for pods in the DaemonSet
@@ -1914,11 +1929,15 @@ kube-prometheus-stack:
         ## kube_hpa_status_condition
         ## kube_hpa_status_current_replicas
         ## kube_hpa_status_desired_replicas
+        ## kube_service_info
+        ## kube_service_spec_external_ip
+        ## kube_service_spec_type
+        ## kube_service_status_load_balancer_ingress
         - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.state
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_(condition|(current|desired)_replicas))
+              regex: kube-state-metrics;(?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_(condition|(current|desired)_replicas)|kube_service_info|kube_service_spec_external_ip|kube_service_spec_type|kube_service_status_load_balancer_ingress)
               sourceLabels: [job, __name__]
             - action: labelmap
               regex: (pod|service)
@@ -3278,7 +3297,7 @@ otelagent:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.51.0-sumo-0"
+      tag: "0.52.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3375,6 +3394,29 @@ otelagent:
 
 ## Configure otelcol
 otelcol:
+  sourceMetadata:
+    ## Set the _sourceName metadata field in Sumo Logic.
+    sourceName: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
+    ## Set the _sourceCategory metadata field in Sumo Logic.
+    sourceCategory: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+    ## Set the prefix, for _sourceCategory metadata.
+    sourceCategoryPrefix: "kubernetes/"
+    ## Used to replace - with another character.
+    sourceCategoryReplaceDash: "/"
+
+    ## A regular expression for containers.
+    ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeContainerRegex: ""
+    ## A regular expression for hosts.
+    ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeHostRegex: ""
+    ## A regular expression for namespaces.
+    ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeNamespaceRegex: ""
+    ## A regular expression for pods.
+    ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludePodRegex: ""
+
   deployment:
     nodeSelector: {}
     tolerations: []
@@ -3395,7 +3437,7 @@ otelcol:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.51.0-sumo-0"
+      tag: "0.52.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3570,7 +3612,7 @@ otelcol:
         ## Desired source name. Useful if you want to override the source name configured for the source.
         source_name: "exporters.sumologic.source_name.replace"
         ## Desired host name. Useful if you want to override the source host configured for the source.
-        source_host: "%{host.name}"
+        source_host: "%{k8s.pod.hostname}"
         ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
         timeout: 5s
         retry_on_failure:
@@ -3599,7 +3641,7 @@ otelcol:
           exporters: [otlphttp]
         metrics:
           receivers: [otlp, otlp/deprecated]
-          processors: [memory_limiter, k8s_tagger, resourcedetection, resource, batch]
+          processors: [memory_limiter, k8s_tagger, resourcedetection, source, resource, batch]
           exporters: [sumologic]
 
 metadata:
@@ -4138,6 +4180,13 @@ metadata:
               record_attributes:
                 - key: fluent.tag
                   value: containers\..+
+        filter/include_containers:
+          logs:
+            include:
+              match_type: regexp
+              record_attributes:
+                - key: k8s.container.name
+                  value: .+
         attributes/containers:
           actions:
             - action: extract
@@ -4243,11 +4292,14 @@ metadata:
               record_attributes:
                 - key: fluent.tag
                   value: host\..+
-        attributes/extract_systemd_source_name_from_fluent_tag:
+        attributes/extract_systemd_source_fields:
           actions:
             - action: extract
               key: fluent.tag
               pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+            - action: insert
+              from_attribute: _HOSTNAME
+              key: _sourceHost
         filter/include_systemd:
           logs:
             include:
@@ -4322,11 +4374,12 @@ metadata:
         groupbyattrs/systemd:
           keys:
             - _sourceName
+            - _sourceHost
             - _collector
         source/systemd:
           collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
-          source_host: "%{_HOSTNAME}"
-          source_name: '%{_sourceName}'
+          source_host: "%{_sourceHost}"
+          source_name: "%{_sourceName}"
           source_category: '{{ .Values.fluentd.logs.systemd.sourceCategory | quote }}'
           source_category_prefix: '{{ .Values.fluentd.logs.systemd.sourceCategoryPrefix | quote }}'
           source_category_replace_dash: '{{ .Values.fluentd.logs.systemd.sourceCategoryReplaceDash | quote }}'
@@ -4341,7 +4394,7 @@ metadata:
                   value: kubelet.service
         source/kubelet:
           collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
-          source_host: "%{_HOSTNAME}"
+          source_host: "%{_sourceHost}"
           source_name: '{{ .Values.fluentd.logs.kubelet.sourceName | quote }}'
           source_category: '{{ .Values.fluentd.logs.kubelet.sourceCategory | quote }}'
           source_category_prefix: '{{ .Values.fluentd.logs.kubelet.sourceCategoryPrefix | quote }}'
@@ -4384,6 +4437,7 @@ metadata:
           #     - otlp
           #   processors:
           #     - memory_limiter
+          #     - filter/include_containers
           #     - groupbyattrs/containers
           #     - k8s_tagger
           #     - resource/add_cluster
@@ -4405,10 +4459,11 @@ metadata:
               - filter/exclude_systemd_hostname
               - filter/exclude_systemd_priority
               - filter/exclude_systemd_unit
+              - attributes/extract_systemd_source_fields
+              - attributes/remove_fluent_tag
               - groupbyattrs/systemd
               - resource/add_cluster
               - source/systemd
-              - attributes/remove_fluent_tag
               - batch
             exporters:
               - sumologic/systemd
@@ -4423,10 +4478,11 @@ metadata:
               - filter/exclude_kubelet_hostname
               - filter/exclude_kubelet_priority
               - filter/exclude_kubelet_unit
+              - attributes/extract_systemd_source_fields
+              - attributes/remove_fluent_tag
               - groupbyattrs/systemd
               - resource/add_cluster
               - source/kubelet
-              - attributes/remove_fluent_tag
               - batch
             exporters:
               - sumologic/systemd
@@ -4527,7 +4583,7 @@ otelgateway:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.51.0-sumo-0"
+      tag: "0.52.0-sumo-0"
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15
@@ -4996,3 +5052,19 @@ falco:
 ## ref: https://github.com/SumoLogic/tailing-sidecar/blob/main/helm/tailing-sidecar-operator/values.yaml
 tailing-sidecar-operator:
   enabled: false
+
+## Configure OpenTelemetry Operator - Tracing
+## ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
+opentelemetry-operator:
+  enabled: false
+
+  admissionWebhooks:
+    failurePolicy: Fail
+    enabled: false
+
+    certManager:
+      enabled: false
+      issuerRef: {}
+
+  manager:
+    env:

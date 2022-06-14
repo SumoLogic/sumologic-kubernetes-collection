@@ -11,10 +11,6 @@ Perform the following steps in order to release new verions of helm chart.
      - set "supported until" date for previous minor version to 6 months after today
    - update [deploy/README.md][deploy_matrix] (support matrix)
 
-1. Branch out `release-v${TAG}` and add the following changes:
-
-   - update [deploy/README.md][deploy_title] (`for unreleased version` in title)
-
 1. Create and push new tag:
 
    ```bash
@@ -22,6 +18,10 @@ Perform the following steps in order to release new verions of helm chart.
    git tag -sm "v${TAG}" "v${TAG}"
    git push origin "v${TAG}"
    ```
+
+1. Branch out `release-v${TAG}` and add the following changes:
+
+   - update [deploy/README.md][deploy_title] (`for unreleased version` in title)
 
 1. Update description for [new release][releases]
 

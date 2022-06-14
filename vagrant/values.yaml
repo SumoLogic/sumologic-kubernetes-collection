@@ -249,38 +249,34 @@ metadata:
             exporters:
               - sumologic/containers
           logs/fluent/systemd:
-            receivers:
-              - fluentforward
             processors:
               - memory_limiter
               - filter/include_fluent_tag_host
-
-              # Vagrant specific
-              - filter/exclude_fluent_tag_receiver_mock_container
-
               - filter/include_systemd
               - filter/exclude_systemd_snap_kubelite
-              - attributes/extract_systemd_source_name_from_fluent_tag
-              - groupbyattrs/systemd
-              - source/systemd
+              - filter/exclude_kubelet
+              - filter/exclude_systemd_syslog
+              - filter/exclude_systemd_hostname
+              - filter/exclude_systemd_priority
+              - filter/exclude_systemd_unit
+              - attributes/extract_systemd_source_fields
               - attributes/remove_fluent_tag
+              - groupbyattrs/systemd
+              - resource/add_cluster
+              - source/systemd
               - batch
-            exporters:
-              - sumologic/systemd
           logs/fluent/kubelet:
-            receivers:
-              - fluentforward
             processors:
               - memory_limiter
               - filter/include_fluent_tag_host
-
-              # Vagrant specific
-              - filter/exclude_fluent_tag_receiver_mock_container
-
               - filter/include_systemd_snap_kubelite
-              - groupbyattrs/systemd
-              - source/kubelet
+              - filter/exclude_kubelet_syslog
+              - filter/exclude_kubelet_hostname
+              - filter/exclude_kubelet_priority
+              - filter/exclude_kubelet_unit
+              - attributes/extract_systemd_source_fields
               - attributes/remove_fluent_tag
+              - groupbyattrs/systemd
+              - resource/add_cluster
+              - source/kubelet
               - batch
-            exporters:
-              - sumologic/systemd

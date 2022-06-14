@@ -30,9 +30,9 @@ data:
           enabled: false
           num_consumers: 10
           queue_size: 5000
-        source_category: "%{namespace}/%{pod_name}"
-        source_host: '%{host.name}'
-        source_name: "%{namespace}.%{pod}.%{container}"
+        source_category: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+        source_host: '%{k8s.pod.hostname}'
+        source_name: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
         timeout: 5s
     extensions:
       health_check: {}
@@ -90,16 +90,16 @@ data:
         exclude:
           k8s.container.name: ""
           k8s.host.name: ""
-          k8s.namespace.name: "sumologic|foo"
+          k8s.namespace.name: "foo"
           k8s.pod.name: ""
         pod_key: k8s.pod.name
         pod_name_key: k8s.pod.pod_name
         pod_template_hash_key: k8s.pod.label.pod-template-hash
-        source_category: "%{namespace}/%{pod_name}"
+        source_category: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
         source_category_prefix: "kubernetes/"
         source_category_replace_dash: "/"
         source_host: '%{k8s.pod.hostname}'
-        source_name: "%{namespace}.%{pod}.%{container}"
+        source_name: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
     receivers:
       jaeger:
         protocols:
@@ -137,6 +137,7 @@ data:
           - memory_limiter
           - k8s_tagger
           - resourcedetection
+          - source
           - resource
           - batch
           receivers:
