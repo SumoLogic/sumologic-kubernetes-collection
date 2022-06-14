@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: update fluent-bit chart to 0.20.2 [#2375]
 - chore: update falco chart to 1.18.6 [#2376]
 - chore: update telegraf-operator chart to 1.3.7 [#2377]
+- feat: update otellogs to 0.52.0-sumo-0 [#2338][#2338]
 
 [#2367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2367
 [#2372]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2372
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2375]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2375
 [#2376]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2376
 [#2377]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2377
+[#2338]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2338
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.10.0...main
 
 ## [v2.10.0]
