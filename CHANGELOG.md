@@ -14,10 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - fix(metrics): remove outdated API calls [#2372]
+- fix(ot-operator): shorter labels values [#2374]
 - chore: update fluent-bit chart to 0.20.2 [#2375]
 
 [#2367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2367
 [#2372]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2372
+[#2374]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2374
 [#2375]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2375
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.10.0...main
 
