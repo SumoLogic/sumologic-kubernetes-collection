@@ -131,7 +131,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		Assess("instrumentation-cr in ot-operator1 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			res := envConf.Client().Resources("ot-operator1")
 			releaseName := ctxopts.HelmRelease(ctx)
-			labelSelector := fmt.Sprintf("app=%s-sumologic-opentelemetry-operator-instrumentation", releaseName)
+			labelSelector := fmt.Sprintf("app=%s-sumologic-ot-operator-instr", releaseName)
 			instrs := otoperatorappsv1.InstrumentationList{}
 
 			require.NoError(t,
@@ -149,7 +149,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		Assess("instrumentation-cr in ot-operator2 namespace is created", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			res := envConf.Client().Resources("ot-operator2")
 			releaseName := ctxopts.HelmRelease(ctx)
-			labelSelector := fmt.Sprintf("app=%s-sumologic-opentelemetry-operator-instrumentation", releaseName)
+			labelSelector := fmt.Sprintf("app=%s-sumologic-ot-operator-instr", releaseName)
 			instrs := otoperatorappsv1.InstrumentationList{}
 
 			require.NoError(t,
