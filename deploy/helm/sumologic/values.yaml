@@ -3348,7 +3348,34 @@ otelagent:
       ## Tags spans with K8S metadata, basing on the context IP
       k8s_tagger:
         ## When true, only IP is assigned and passed (so it could be tagged on another collector)
-        passthrough: true
+        passthrough: false
+        ## When true, additional fields, such as serviceName are being also extracted
+        owner_lookup_enabled: true
+        ## Extracted fields and assigned names
+        extract:
+          metadata:
+            ## extract the following well-known metadata fields
+            - containerId
+            - containerName
+            - daemonSetName
+            - deploymentName
+            - hostName
+            - namespace
+            - nodeName
+            - podId
+            - podName
+            - replicaSetName
+            - serviceName
+            - statefulSetName
+          annotations:
+            - tag_name: "k8s.pod.annotation.%s"
+              key: "*"
+          namespace_labels:
+            - tag_name: "k8s.namespace.label.%s"
+              key: "*"
+          labels:
+            - tag_name: "k8s.pod.label.%s"
+              key: "*"
 
       ## The memory_limiter processor is used to prevent out of memory situations on the collector.
       memory_limiter:
@@ -3491,37 +3518,6 @@ otelcol:
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
-      ## Tags spans with K8S metadata, basing on the context IP
-      k8s_tagger:
-        ## When true, only IP is assigned and passed (so it could be tagged on another collector)
-        passthrough: false
-        ## When true, additional fields, such as serviceName are being also extracted
-        owner_lookup_enabled: true
-        ## Extracted fields and assigned names
-        extract:
-          metadata:
-            ## extract the following well-known metadata fields
-            - containerId
-            - containerName
-            - daemonSetName
-            - deploymentName
-            - hostName
-            - namespace
-            - nodeName
-            - podId
-            - podName
-            - replicaSetName
-            - serviceName
-            - statefulSetName
-          annotations:
-            - tag_name: "k8s.pod.annotation.%s"
-              key: "*"
-          namespace_labels:
-            - tag_name: "k8s.namespace.label.%s"
-              key: "*"
-          labels:
-            - tag_name: "k8s.pod.label.%s"
-              key: "*"
       ## Source processor adds Sumo Logic related metadata
       source:
         annotation_prefix: "k8s.pod.annotation."
@@ -3637,11 +3633,11 @@ otelcol:
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
-          processors: [memory_limiter, k8s_tagger, source, resource, cascading_filter, batch]
+          processors: [memory_limiter, source, resource, cascading_filter, batch]
           exporters: [otlphttp]
         metrics:
           receivers: [otlp, otlp/deprecated]
-          processors: [memory_limiter, k8s_tagger, resourcedetection, source, resource, batch]
+          processors: [memory_limiter, resourcedetection, source, resource, batch]
           exporters: [sumologic]
 
 metadata:
