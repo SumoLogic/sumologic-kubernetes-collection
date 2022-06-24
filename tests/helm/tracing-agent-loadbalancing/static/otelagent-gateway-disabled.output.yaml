@@ -26,7 +26,31 @@ data:
         send_batch_size: 256
         timeout: 5s
       k8s_tagger:
-        passthrough: true
+        extract:
+          annotations:
+          - key: '*'
+            tag_name: k8s.pod.annotation.%s
+          labels:
+          - key: '*'
+            tag_name: k8s.pod.label.%s
+          metadata:
+          - containerId
+          - containerName
+          - daemonSetName
+          - deploymentName
+          - hostName
+          - namespace
+          - nodeName
+          - podId
+          - podName
+          - replicaSetName
+          - serviceName
+          - statefulSetName
+          namespace_labels:
+          - key: '*'
+            tag_name: k8s.namespace.label.%s
+        owner_lookup_enabled: true
+        passthrough: false
       memory_limiter:
         check_interval: 5s
         limit_mib: 1900
