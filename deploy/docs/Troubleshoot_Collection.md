@@ -35,6 +35,8 @@
   - [Error from Prometheus `init-config-reloader` container: `expand environment variables: found reference to unset environment variable "NAMESPACE"`](#error-from-prometheus-init-config-reloader-container-expand-environment-variables-found-reference-to-unset-environment-variable-namespace)
   - [`/fluentd/buffer` permissions issue](#fluentdbuffer-permissions-issue)
   - [Duplicated logs](#duplicated-logs)
+  - [Multiline log detection doesn't work as expected](#multiline-log-detection-doesnt-work-as-expected)
+    - [Using text format](#using-text-format)
 
 <!-- /TOC -->
 
@@ -635,3 +637,57 @@ In order to mitigate this, please use [fluentd-output-sumologic] with `use_inter
 Please follow [Split Big Chunks in Fluentd](./Best_Practices.md#split-big-chunks-in-fluentd)
 
 [fluentd-output-sumologic]: https://github.com/SumoLogic/fluentd-output-sumologic
+
+### Multiline log detection doesn't work as expected
+
+In order to detect multiline logs, we relay on regexes. By default we use the following regex to detect multiline:
+
+- `\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*`
+
+  Which matches the following example logs:
+
+  ```text
+  [2022-06-28 00:00:00 ...
+  [2022-06-28T00:00:00 ...
+  2022-06-28 00:00:00 ...
+  2022-06-28T00:00:00 ...
+  ```
+
+This regex should cover most of the cases, but as log formats are not unified, it doesn't cover all multiline logs.
+
+Consider the following examples:
+
+- Text format is used for sending data to sumo
+
+#### Using text format
+
+##### Problem
+
+If you changed log format to `text`, you need to know that multiline detection performed on the collection side is not respected anymore.
+As we are sending logs as a wall of plain text, there is no way to inform Sumo Logic, which line belongs to which log.
+In such scenario, multiline detection is performed on Sumo Logic side. By default it uses [Infer Boundaries][infer-boundaries].
+You can review the source configuration in [HTTP Source Settings][http-source].
+
+**Note**: Your source name is going to be taken from `sumologic.collectorName` or `sumologic.clusterName` (`kubernetes` by default).
+
+##### Resolution
+
+In order to change multiline detection to [Boundary Regex][boundary-regex], for example to `\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*`,
+add the following configuration to your `values.yaml`:
+
+```yaml
+sumologic:
+  collector:
+    sources:
+      logs:
+        default:
+          properties:
+            manual_prefix_regexp: \\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*
+            use_autoline_matching: false
+```
+
+**Note**: Double escape of `\` is needed, because value of `manual_prefix_regexp` is passed to terraform script.
+
+[infer-boundaries]: https://help.sumologic.com/03Send-Data/Sources/04Reference-Information-for-Sources/Collecting-Multiline-Logs#infer-boundaries
+[http-source]: https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source
+[boundary-regex]: https://help.sumologic.com/03Send-Data/Sources/04Reference-Information-for-Sources/Collecting-Multiline-Logs#boundary-regex
