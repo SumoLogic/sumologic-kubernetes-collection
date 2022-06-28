@@ -13,6 +13,7 @@
   - [Fluentd Logs](#fluentd-logs)
   - [Prometheus Logs](#prometheus-logs)
   - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
+  - [Send data to Fluent Bit stdout](#send-data-to-fluent-bit-stdout)
 - [Gathering metrics](#gathering-metrics)
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
@@ -221,6 +222,26 @@ fluentd:
 ```
 
 You should see data being sent to Fluentd logs, which you can get using the commands [above](#fluentd-logs).
+
+### Send data to Fluent Bit stdout
+
+In order to see what exactly the Fluent Bit reads, you can write data to Fluent Bit logs.
+To do this, use the following configuration:
+
+```yaml
+fluent-bit:
+  config:
+    filters: |
+      # Prevent fluent-bit and fluentd logs from further processing
+      [FILTER]:
+          Name grep
+          Match *fluent*
+          Exclude log ^
+      # Print logs
+      [FILTER]
+          Name stdout
+          Match *
+```
 
 ## Gathering metrics
 
