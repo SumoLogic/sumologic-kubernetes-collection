@@ -4148,7 +4148,7 @@ metadata:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
         ## This is the same like sumologic/systemd with additional `flatten_body` parameter
-        sumologic/otlp_systemd:
+        sumologic/systemd_flatten:
           log_format: json
           json_logs:
             add_timestamp: true
@@ -4486,7 +4486,7 @@ metadata:
           #     - source/systemd
           #     - batch
           #   exporters:
-          #     - sumologic/otlp_systemd
+          #     - sumologic/systemd_flatten
           # ## This is the same pipeline like logs/fluent/kubelet
           # ## except is uses otlp receiver and flatten body in exporter
           # logs/otlp/kubelet:
@@ -4507,7 +4507,7 @@ metadata:
           #     - source/kubelet
           #     - batch
           #   exporters:
-          #     - sumologic/otlp_systemd
+          #     - sumologic/systemd_flatten
           logs/fluent/systemd:
             receivers:
               - fluentforward

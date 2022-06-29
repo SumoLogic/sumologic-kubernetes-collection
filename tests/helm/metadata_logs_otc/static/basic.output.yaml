@@ -25,7 +25,7 @@ data:
         source_category: '%{_sourceCategory}'
         source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
-      sumologic/otlp_systemd:
+      sumologic/systemd_flatten:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         json_logs:
           add_timestamp: true
