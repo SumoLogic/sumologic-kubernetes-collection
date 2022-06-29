@@ -4147,7 +4147,7 @@ metadata:
           ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
           sending_queue:
             enabled: true
-            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'\
+            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
 
       processors:
         ## Common processors
