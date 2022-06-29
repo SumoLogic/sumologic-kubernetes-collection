@@ -248,7 +248,7 @@ metadata:
               - batch
             exporters:
               - sumologic/containers
-          logs/fluent/systemd:
+          logs/systemd:
             processors:
               - memory_limiter
               - filter/include_fluent_tag_host
@@ -265,7 +265,7 @@ metadata:
               - resource/add_cluster
               - source/systemd
               - batch
-          logs/fluent/kubelet:
+          logs/kubelet:
             processors:
               - memory_limiter
               - filter/include_fluent_tag_host
