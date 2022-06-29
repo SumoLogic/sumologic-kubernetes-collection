@@ -29,7 +29,7 @@ data:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         json_logs:
           add_timestamp: true
-          flatten: true
+          flatten_body: true
           timestamp_key: timestamp
         log_format: json
         sending_queue:
@@ -324,6 +324,7 @@ data:
           - batch
           receivers:
           - fluentforward
+          - otlp
         logs/systemd:
           exporters:
           - sumologic/systemd
@@ -344,6 +345,7 @@ data:
           - batch
           receivers:
           - fluentforward
+          - otlp
       telemetry:
         logs:
           level: info
