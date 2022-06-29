@@ -279,7 +279,7 @@ data:
         source_category_prefix: "my_kubelet_sourceCategoryPrefix"
         source_category_replace_dash: "my_kubelet_sourceCategoryReplaceDash"
         source_host: '%{_sourceHost}'
-        source_name: '%{_sourceName}'
+        source_name: "k8s_kubelet"
       source/systemd:
         collector: "my_collectorName"
         source_category: "system"

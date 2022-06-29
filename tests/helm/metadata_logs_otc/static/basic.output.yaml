@@ -279,7 +279,7 @@ data:
         source_category_prefix: "kubernetes/"
         source_category_replace_dash: "/"
         source_host: '%{_sourceHost}'
-        source_name: '%{_sourceName}'
+        source_name: "k8s_kubelet"
       source/systemd:
         collector: "kubernetes"
         source_category: "system"
