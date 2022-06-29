@@ -25,11 +25,10 @@ data:
         source_category: '%{_sourceCategory}'
         source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
-      sumologic/systemd_flatten:
+      sumologic/systemd:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         json_logs:
           add_timestamp: true
-          flatten_body: true
           timestamp_key: timestamp
         log_format: json
         sending_queue:
@@ -38,10 +37,11 @@ data:
         source_category: '%{_sourceCategory}'
         source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
-      sumologic/systemd:
+      sumologic/systemd_flatten:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         json_logs:
           add_timestamp: true
+          flatten_body: true
           timestamp_key: timestamp
         log_format: json
         sending_queue:
