@@ -373,7 +373,6 @@ data:
         cluster_ca_certificate    = file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
         extrapolation             = "${file("/var/run/secrets/kubernetes.io/serviceaccount/token")}/${test}"
         host                      = "https://kubernetes.default.svc"
-      
         token                     = file("/var/run/secrets/kubernetes.io/serviceaccount/token")
     }
   resources.tf: |
