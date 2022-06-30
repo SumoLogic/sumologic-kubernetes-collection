@@ -866,7 +866,8 @@ falco:
 You can use [Kubernetes annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/)
 to override some metadata and settings per pod.
 
-- `sumologic.com/format` overrides the value of the `fluentd.logs.output.logFormat` property
+- `sumologic.com/format` overrides the value of the `fluentd.logs.output.logFormat` property.
+  Using `text` can break multiline detection. Check out [Troubleshooting Collection](./Troubleshoot_Collection.md#using-text-format)
 - `sumologic.com/sourceCategory` overrides the value of the `fluentd.logs.containers.sourceCategory` property
 - `sumologic.com/sourceCategoryPrefix` overrides the value of the `fluentd.logs.containers.sourceCategoryPrefix` property
 - `sumologic.com/sourceCategoryReplaceDash` overrides the value of the `fluentd.logs.containers.sourceCategoryReplaceDash`
