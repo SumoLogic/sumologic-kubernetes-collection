@@ -280,7 +280,7 @@ data:
         }
         kubernetes = {
           source  = "hashicorp/kubernetes"
-          version = "~> 1.13"
+          version = "~> 2.4"
         }
       }
     }
@@ -373,7 +373,6 @@ data:
         cluster_ca_certificate    = file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")
         extrapolation             = "${file("/var/run/secrets/kubernetes.io/serviceaccount/token")}/${test}"
         host                      = "https://kubernetes.default.svc"
-        load_config_file          = "false"
         token                     = file("/var/run/secrets/kubernetes.io/serviceaccount/token")
     }
   resources.tf: |

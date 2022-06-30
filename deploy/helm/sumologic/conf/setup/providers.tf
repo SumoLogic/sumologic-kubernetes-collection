@@ -19,7 +19,7 @@ provider "kubernetes" {
     }
     {{ end }}
   }
-  {{- else -}}
+  {{- else if not (eq $key "load_config_file") -}}
   {{ printf "  %-25s" $key }} = {{ include "terraform.print_value" $value }}
   {{- end }}
 {{- end }}
