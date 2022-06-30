@@ -682,11 +682,18 @@ sumologic:
       logs:
         default:
           properties:
-            manual_prefix_regexp: \\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*
+            ## Disable automatic multiline detection on collector side
             use_autoline_matching: false
+            ## Set the following multiline detection regexes on collector side:
+            ## - \{".* - in order to match json lines
+            ## - \[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*
+            ## Note: `\` is translated to `\\` and `"` to `\"` as we pass to terraform script
+            manual_prefix_regexp: (\\{\".*|\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*)
 ```
 
-**Note**: Double escape of `\` is needed, because value of `manual_prefix_regexp` is passed to terraform script.
+**Note**: Double escape of `\` is needed, as well as escaping `"`, because value of `manual_prefix_regexp` is passed to terraform script.
+
+**Note**: If you use `json` format along with `text` format, you need to add regex for `json` as well (`\\{\".*`)
 
 [infer-boundaries]: https://help.sumologic.com/03Send-Data/Sources/04Reference-Information-for-Sources/Collecting-Multiline-Logs#infer-boundaries
 [http-source]: https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source
