@@ -1,5 +1,6 @@
-otelcol:
-  sourceMetadata:
+fluentd:
+  logs:
+    containers:
       excludeNamespaceRegex: "kube\\s+"
       excludePodRegex: "^foo.*"
       excludeContainerRegex: "[123+]bar$|xyz"
@@ -7,3 +8,8 @@ otelcol:
 sumologic:
   traces:
     enabled: true
+opentelemetry-operator:
+  enabled: true
+  manager:
+    env:
+      WATCH_NAMESPACE: "ot-operator1,ot-operator2"

@@ -3,6 +3,7 @@
 <!-- TOC -->
 
 - [`helm install` hanging](#helm-install-hanging)
+- [Installation fails with error `function "dig" not defined`](#installation-fails-with-error-function-dig-not-defined)
 - [Namespace configuration](#namespace-configuration)
 - [Gathering logs](#gathering-logs)
   - [Check log throttling](#check-log-throttling)
@@ -12,6 +13,7 @@
   - [Fluentd Logs](#fluentd-logs)
   - [Prometheus Logs](#prometheus-logs)
   - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
+  - [Send data to Fluent Bit stdout](#send-data-to-fluent-bit-stdout)
 - [Gathering metrics](#gathering-metrics)
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
@@ -33,6 +35,7 @@
   - [Gzip compression errors](#gzip-compression-errors)
   - [Error from Prometheus `init-config-reloader` container: `expand environment variables: found reference to unset environment variable "NAMESPACE"`](#error-from-prometheus-init-config-reloader-container-expand-environment-variables-found-reference-to-unset-environment-variable-namespace)
   - [`/fluentd/buffer` permissions issue](#fluentdbuffer-permissions-issue)
+  - [Duplicated logs](#duplicated-logs)
 
 <!-- /TOC -->
 
@@ -62,6 +65,13 @@ kubectl delete secret sumologic -n sumologic
 ```
 
 `helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries, rerun the `helm install` command.
+
+## Installation fails with error `function "dig" not defined`
+
+You need to use a more recent version of Helm. See [Minimum Requirements](./../README.md#minimum-requirements).
+
+If you are using ArgoCD or another tool that uses Helm under the hood,
+make sure that tool uses the required version of Helm.
 
 ## Namespace configuration
 
@@ -188,32 +198,50 @@ Where `collection` is the `helm` release name.
 
 ### Send data to Fluentd stdout instead of to Sumo
 
-To help reduce the points of possible failure, we can write data to Fluentd logs rather than sending to Sumo directly using the Sumo Logic output plugin. To do this, change the following lines in the `fluentd-sumologic.yaml` file under the relevant `.conf` section:
+To help reduce the points of possible failure, we can write data to Fluentd logs rather than sending to Sumo directly using the Sumo Logic output plugin.
+To do this, use the following configuration:
 
-```
-<match TAG_YOU_ARE_DEBUGGING>
-  @type sumologic
-  endpoint "#{ENV['SUMO_ENDPOINT']}"
-  ...
-</match>
-```
-
-to
-
-```
-<match TAG_YOU_ARE_DEBUGGING>
-  @type stdout
-</match>
-```
-
-Then redeploy your `fluentd` deployment:
-
-```sh
-kubectl scale deployment/collection-sumologic --replicas=0
-kubectl scale deployment/collection-sumologic --replicas=3
+```yaml
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |-
+        # Prevent fluentd from processing they own logs
+        <match **fluentd**>
+          @type null
+        </match>
+        # Print all container logs before any filter applied
+        <filter **>
+          @type stdout
+        </filter>
+      extraOutputPluginConf: |-
+        # Print all container logs just before sending them to Sumo
+        <filter **>
+          @type stdout
+        </filter>
 ```
 
 You should see data being sent to Fluentd logs, which you can get using the commands [above](#fluentd-logs).
+
+### Send data to Fluent Bit stdout
+
+In order to see what exactly the Fluent Bit reads, you can write data to Fluent Bit logs.
+To do this, use the following configuration:
+
+```yaml
+fluent-bit:
+  config:
+    filters: |
+      # Prevent fluent-bit and fluentd logs from further processing
+      [FILTER]:
+          Name grep
+          Match *fluent*
+          Exclude log ^
+      # Print logs
+      [FILTER]
+          Name stdout
+          Match *
+```
 
 ## Gathering metrics
 

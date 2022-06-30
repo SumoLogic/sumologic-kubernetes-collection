@@ -214,7 +214,7 @@ kubeApiServer:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
     interval:
-    ## see docs/scrape_metrics.md
+    ## see docs/scraped_metrics.md
     ## apiserver_request_count
     ## apiserver_request_total
     ## apiserver_request_duration_seconds_count
@@ -237,7 +237,7 @@ kubelet:
     probes: false
     ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
     resource: false
-    ## see docs/scrape_metrics.md
+    ## see docs/scraped_metrics.md
     ## kubelet metrics:
     ## kubelet_docker_operations_errors
     ## kubelet_docker_operations_errors_total
@@ -261,7 +261,7 @@ kubelet:
         sourceLabels: [__name__]
       - action: labeldrop
         regex: id
-    ## see docs/scrape_metrics.md
+    ## see docs/scraped_metrics.md
     ## cadvisor container metrics
     ## container_cpu_usage_seconds_total
     ## container_fs_limit_bytes
@@ -288,7 +288,7 @@ kubeControllerManager:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
     interval:
-    ## see docs/scrape_metrics.md
+    ## see docs/scraped_metrics.md
     ## controller manager metrics
     ## https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
     ## e.g.
@@ -303,7 +303,7 @@ coreDns:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
     interval:
-    ## see docs/scrape_metrics.md
+    ## see docs/scraped_metrics.md
     ## coredns:
     ## coredns_cache_size
     ## coredns_cache_entries
@@ -328,7 +328,7 @@ kubeEtcd:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
     interval:
-    ## see docs/scrape_metrics.md
+    ## see docs/scraped_metrics.md
     ## etcd_request_cache_get_duration_seconds_count
     ## etcd_request_cache_get_duration_seconds_sum
     ## etcd_request_cache_add_duration_seconds_count
@@ -368,7 +368,7 @@ kubeScheduler:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
     interval:
-    ## see docs/scrape_metrics.md
+    ## see docs/scraped_metrics.md
     ## scheduler metrics_latency_microseconds
     ## scheduler_e2e_scheduling_duration_seconds_bucket
     ## scheduler_e2e_scheduling_duration_seconds_count
@@ -390,7 +390,7 @@ kubeStateMetrics:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
     interval:
-    ## see docs/scrape_metrics.md
+    ## see docs/scraped_metrics.md
     ## kube_daemonset_status_current_number_scheduled
     ## kube_daemonset_status_desired_number_scheduled
     ## kube_daemonset_status_number_misscheduled
@@ -429,7 +429,7 @@ nodeExporter:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
     interval:
-    ## see docs/scrape_metrics.md
+    ## see docs/scraped_metrics.md
     ## node exporter metrics
     ## node_cpu_seconds_total
     ## node_load1

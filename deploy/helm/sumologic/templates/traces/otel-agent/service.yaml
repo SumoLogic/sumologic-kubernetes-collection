@@ -11,6 +11,7 @@ spec:
   selector:
     app: {{ template "sumologic.labels.app.otelagent.pod" . }}
     component: {{ template "sumologic.labels.app.otelagent.component" . }}
+  # In case of changes related to open ports for otelagent please update NOTES.TXT
   ports:
   - name: jaeger-sampling # Default endpoint for Jaeger Sampling (if enabled)
     port: 5778
