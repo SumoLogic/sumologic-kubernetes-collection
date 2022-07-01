@@ -27,6 +27,7 @@ data:
         timeout: 1s
     receivers:
       filelog/containers:
+        fingerprint_size: 17408
         include:
         - /var/log/pods/*/*/*.log
         include_file_name: false
