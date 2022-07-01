@@ -56,7 +56,6 @@ sumologic:
     # config_context_auth_info:
     # config_context_cluster:
     token: "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}"
-    load_config_file: false
     # exec:
     #   api_version:
     #   command:
@@ -514,6 +513,8 @@ fluentd:
     output:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: for logs metadata, fields is required.
+      ## NOTE: Multiline log detection works differently for `text` format. See below link for full reference:
+      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Troubleshoot_Collection.md#using-text-format
       logFormat: fields
       ## Option to control adding timestamp to logs.
       addTimestamp: true

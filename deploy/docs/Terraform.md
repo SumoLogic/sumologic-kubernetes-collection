@@ -34,7 +34,6 @@ sumologic:
     # config_context_auth_info:
     # config_context_cluster:
     token: "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}"
-    load_config_file: false
     # exec:
     #   api_version:
     #   command:
