@@ -1,0 +1,15 @@
+rules:
+  default: false
+  custom:
+  - seriesQuery: 'kube_pod_info{namespace!="",pod!=""}'
+    name:
+      matches: "kube_pod_info"
+      as: "pod_info"
+    resources:
+      overrides:
+        namespace: {resource: "namespace"}
+        pod: {resource: "pod"}
+    metricsQuery: 'sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)'
+
+prometheus:
+  url: http://collection-kube-prometheus-prometheus.sumologic.svc
