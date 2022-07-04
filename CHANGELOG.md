@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+This release changes the OpenTelemetry Collector `Traces` service endpoint `CHART_NAME-sumologic-otelcol.NAMESPACE` to 
+`deprecated`. Service will still work and point to `CHART_NAME-sumologic-otelagent.NAMESPACE`. This change affects 
+you only if you have enabled traces with `sumologic.traces.enabled: true`.
+
 ### Added
 
 - feat(metrics): add service metrics [#2367]
