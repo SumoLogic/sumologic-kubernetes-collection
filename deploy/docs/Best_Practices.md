@@ -40,6 +40,7 @@
 - [Assigning Pod to particular Node](#assigning-pod-to-particular-node)
   - [Using NodeSelectors](#using-nodeselectors)
     - [Binding pods to linux nodes](#binding-pods-to-linux-nodes)
+- [Disable Thanos](#disable-thanos)
 
 ## Overriding chart resource names with `fullnameOverride`
 
@@ -1440,4 +1441,16 @@ or by modyfing above settings in values.yaml
 fluent-bit:
   nodeSelector:
     kubernetes.io/os: linux
+```
+
+## Disable Thanos
+
+Thanos is not used by the Sumo Logic Collection, but it is enabled for backward compatibility.
+To disable it, please use the following configuration:
+
+```yaml
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      thanos: null
 ```
