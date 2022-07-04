@@ -1,0 +1,64 @@
+fluentd:
+  events:
+    enabled: false
+
+otelevents:
+  enabled: true
+  statefulset:
+    nodeSelector:
+      sumologic.com/kind: worker
+    tolerations:
+      - key: "worker"
+        operator: "Equal"
+        value: worker
+        effect: "NoSchedule"
+    affinity: {}
+    ## Acceptable values for podAntiAffinity:
+    ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
+    ## hard: specifies rules that must be met for a pod to be scheduled onto a node
+    podAntiAffinity: "hard"
+    replicaCount: 4
+    resources:
+      limits:
+        memory: 2Gi
+        cpu: 2000m
+      requests:
+        memory: 777Mi
+        cpu: 100m
+    ## Option to define priorityClassName to assign a priority class to pods.
+    priorityClassName: 'prio'
+
+    ## Add custom labels only to logs sts pods
+    podLabels:
+      someLabel: someValue
+    ## Add custom annotations only to logs sts pods
+    podAnnotations:
+      someAnnotation: someValue
+
+    ## Set securityContext for containers running in pods in logs statefulset.
+    containers:
+      otelcol:
+        securityContext: {}
+
+    ## Extra Environment Values - allows yaml definitions
+    extraEnvVars:
+      - name: VALUE_FROM_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: secret_name
+            key: secret_key
+
+    extraVolumes:
+      - name: es-certs
+        secret:
+          defaultMode: 420
+          secretName: es-certs
+    extraVolumeMounts:
+      - name: es-certs
+        mountPath: /certs
+        readOnly: true
+
+  ## Option to specify PodDisrutionBudgets
+  ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+  podDisruptionBudget:
+    minAvailable: 1
