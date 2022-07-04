@@ -1,0 +1,21 @@
+sumologic:
+  podAnnotations:
+    sumoAnnotation: sumoValue
+  podLabels:
+    sumoLabel: sumoValue
+
+fluentd:
+  events:
+    enabled: false
+
+otelevents:
+  enabled: true
+  statefulset:
+    ## Add custom labels only to logs sts pods
+    podLabels:
+      statefulsetLabel: statefulsetValue
+    ## Add custom annotations only to logs sts pods
+    podAnnotations:
+      statefulsetAnnotation: statefulsetValue
+
+

@@ -1,0 +1,15 @@
+{{- if eq (include "events.otelcol.enabled" .) "true" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.events.configmap" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.events.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  {{- $baseConfig := (tpl (.Files.Get "conf/events/otelcol/config.yaml") .) | fromYaml -}}
+  {{- $overrideConfig := .Values.otelevents.config.override -}}
+  {{- $finalConfig := mergeOverwrite $baseConfig $overrideConfig }}
+  config.yaml: |
+  {{- $finalConfig | toYaml | nindent 4 }}
+{{- end }}

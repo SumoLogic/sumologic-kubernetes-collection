@@ -4692,6 +4692,113 @@ otelgateway:
           processors: [memory_limiter, batch]
           exporters: [otlp]
 
+otelevents:
+  enabled: false
+
+  ## Configure persistence for Opentelemetry Collector
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    ## Add custom labels to otelcol event statefulset PVC
+    pvcLabels: {}
+
+  ## Configure image for Opentelemetry Collector
+  image:
+    repository: public.ecr.aws/sumologic/sumologic-otel-collector
+    tag: 0.54.0-sumo-0
+    pullPolicy: IfNotPresent
+
+  logLevel: info
+
+  ## Customize the Opentelemetry Collector configuration beyond the exposed options
+  config:
+    ## Directly override the OT configuration. The value of this key should be a dictionary, that will
+    ## be directly merged with the generated configuration, overriding existing values.
+    ## For example:
+    # override:
+    #   processors:
+    #     batch:
+    #       send_batch_size: 512
+    ## will change the batch size of the pipeline.
+    ##
+    ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
+    ## of this chart. It involves implementation details that may change even in minor versions.
+    ## Use with caution, and consider opening an issue, so your customization can be added in a safer way.
+    override: {}
+
+  statefulset:
+    nodeSelector: {}
+    tolerations: []
+    topologySpreadConstraints: []
+    affinity: {}
+    ## Acceptable values for podAntiAffinity:
+    ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
+    ## hard: specifies rules that must be met for a pod to be scheduled onto a node
+    podAntiAffinity: "soft"
+    resources:
+      limits:
+        memory: 2Gi
+        cpu: 2000m
+      requests:
+        memory: 500Mi
+        cpu: 200m
+    ## Option to define priorityClassName to assign a priority class to pods.
+    priorityClassName:
+
+    ## Add custom labels only to events sts pods
+    podLabels: {}
+    ## Add custom annotations only to events sts pods
+    podAnnotations: {}
+
+    securityContext:
+      ## ToDo: Verify following comment
+      ## The group ID of all processes in the statefulset containers. By default this needs to be otelcol(999).
+      fsGroup: 999
+
+    ## Set securityContext for containers running in pods in events statefulset.
+    containers:
+      otelcol:
+        securityContext: {}
+        livenessProbe:
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        startupProbe:
+          periodSeconds: 3
+          failureThreshold: 60
+
+    ## Extra Environment Values - allows yaml definitions
+    # extraEnvVars:
+    #   - name: VALUE_FROM_SECRET
+    #     valueFrom:
+    #       secretKeyRef:
+    #         name: secret_name
+    #         key: secret_key
+
+    # extraVolumes:
+    #   - name: es-certs
+    #     secret:
+    #       defaultMode: 420
+    #       secretName: es-certs
+    # extraVolumeMounts:
+    #   - name: es-certs
+    #     mountPath: /certs
+    #     readOnly: true
+
+  ## Option to specify PodDisrutionBudgets
+  ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+  podDisruptionBudget:
+    minAvailable: 2
+  ## To use maxUnavailable, set minAvailable to null and uncomment the below:
+  #   maxUnavailable: 1
+
 ## Configure log collection with Otelcol
 ## This is currently highly experimental and not recommended unless you really know what you're doing.
 ## In particular, this configuration currently only covers container logs, and only supports docker-shim.

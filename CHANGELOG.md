@@ -14,6 +14,7 @@ This change affects you only if you have enabled traces with `sumologic.traces.e
 ### Added
 
 - feat(metrics): add service metrics [#2367]
+- feat(events): add experimental OT event collection [#2379]
 
 ### Changed
 
@@ -38,6 +39,7 @@ This change affects you only if you have enabled traces with `sumologic.traces.e
 [#2397]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2397
 [#2325]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2325
 [#2390]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2390
+[#2379]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2379
 [#2405]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2405
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.10.0...main
 

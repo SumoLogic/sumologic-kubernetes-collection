@@ -258,3 +258,15 @@ apply-logs-generator:
 
 remove-logs-generator:
 	kubectl delete -f ${k8s_path}/logs-generator.yaml --ignore-not-found=true
+
+## Prometheus adapter can be used to expose custom metrics for HPA
+## This is just an example deployment
+## See https://github.com/kubernetes-sigs/prometheus-adapter for more informations
+apply-prometheus-adapter:
+	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	helm repo update
+	helm upgrade adapter \
+		--namespace prometheus-adapter \
+		--create-namespace \
+		--install prometheus-community/prometheus-adapter \
+		-f "${k8s_path}/prometheus-adapter.yaml"
