@@ -3298,7 +3298,7 @@ otelagent:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.52.0-sumo-0"
+      tag: "0.54.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3465,7 +3465,7 @@ otelcol:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.52.0-sumo-0"
+      tag: "0.54.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -4580,7 +4580,7 @@ otelgateway:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.52.0-sumo-0"
+      tag: "0.54.0-sumo-0"
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15
@@ -4819,8 +4819,8 @@ otellogs:
 
   ## Configure image for Opentelemetry Collector
   image:
-    repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.52.0-sumo-0
+    repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
+    tag: "0.54.0-sumo-0"
     pullPolicy: IfNotPresent
 
   logLevel: info

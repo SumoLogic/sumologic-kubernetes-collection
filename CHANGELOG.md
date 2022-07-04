@@ -27,6 +27,7 @@ This change affects you only if you have enabled traces with `sumologic.traces.e
 - chore: upgrade kubernetes terraform provider to 2.4 [#2397]
 - feat(otellogs): set fingerprint_size to 17k to include timestamp for docker driver [#2325]
 - chore(tracing): move k8s_tagger to otelagent [#2390]
+- chore(otel-collector): update to latest release 0.54.0 [#2405]
 
 [#2367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2367
 [#2372]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2372
@@ -39,6 +40,7 @@ This change affects you only if you have enabled traces with `sumologic.traces.e
 [#2325]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2325
 [#2390]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2390
 [#2379]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2379
+[#2405]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2405
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.10.0...main
 
 ## [v2.10.0]
