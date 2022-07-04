@@ -1,15 +1,16 @@
+# Service will point to otelagent as deprecated and in v3 release removed.
 {{- if eq .Values.sumologic.traces.enabled true }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "sumologic.metadata.name.otelcol.service" . }}
   labels:
-    app: {{ template "sumologic.labels.app.otelcol.service" . }}
+    app: {{ template "sumologic.labels.app.otelagent.service" . }}
     {{- include "sumologic.labels.scrape.traces" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
-    app: {{ template "sumologic.labels.app.otelcol.pod" . }}
+    app: {{ template "sumologic.labels.app.otelagent.pod" . }}
   # In case of changes related to open ports for otelcol please update NOTES.TXT
   ports:
   - name: jaeger-sampling # Default endpoint for Jaeger Sampling (if enabled)
