@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: update otellogs to 0.52.0-sumo-0 [#2338][#2338]
 - chore: upgrade kubernetes terraform provider to 2.4 [#2397]
 - feat(otellogs): set fingerprint_size to 17k to include timestamp for docker driver [#2325]
+- chore(otel-collector): bump to latest release 0.54.0 [#2405]
 
 [#2367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2367
 [#2372]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2372
@@ -31,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2338]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2338
 [#2397]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2397
 [#2325]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2325
+[#2405]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2405
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.10.0...main
 
 ## [v2.10.0]
