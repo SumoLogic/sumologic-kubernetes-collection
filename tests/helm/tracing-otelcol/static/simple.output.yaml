@@ -45,32 +45,6 @@ data:
         timeout: 5s
       cascading_filter:
         num_traces: 200000
-      k8s_tagger:
-        extract:
-          annotations:
-          - key: '*'
-            tag_name: k8s.pod.annotation.%s
-          labels:
-          - key: '*'
-            tag_name: k8s.pod.label.%s
-          metadata:
-          - containerId
-          - containerName
-          - daemonSetName
-          - deploymentName
-          - hostName
-          - namespace
-          - nodeName
-          - podId
-          - podName
-          - replicaSetName
-          - serviceName
-          - statefulSetName
-          namespace_labels:
-          - key: '*'
-            tag_name: k8s.namespace.label.%s
-        owner_lookup_enabled: true
-        passthrough: false
       memory_limiter:
         check_interval: 5s
         limit_mib: 1900
@@ -135,7 +109,6 @@ data:
           - sumologic
           processors:
           - memory_limiter
-          - k8s_tagger
           - resourcedetection
           - source
           - resource
@@ -148,7 +121,6 @@ data:
           - otlphttp
           processors:
           - memory_limiter
-          - k8s_tagger
           - source
           - resource
           - cascading_filter
