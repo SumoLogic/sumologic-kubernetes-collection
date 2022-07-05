@@ -1,5 +1,4 @@
 otelevents:
-  enabled: true
   config:
     override:
       exporters:
@@ -7,6 +6,6 @@ otelevents:
           sending_queue:
             persistent_storage_enabled: false
 
-fluentd:
+sumologic:
   events:
-    enabled: false
+    provider: otelcol

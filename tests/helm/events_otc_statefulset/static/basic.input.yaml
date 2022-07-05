@@ -1,9 +1,4 @@
-fluentd:
-  events:
-    enabled: false
-
 otelevents:
-  enabled: true
   statefulset:
     nodeSelector:
       sumologic.com/kind: worker
@@ -58,7 +53,6 @@ otelevents:
         mountPath: /certs
         readOnly: true
 
-  ## Option to specify PodDisrutionBudgets
-  ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
-  podDisruptionBudget:
-    minAvailable: 1
+sumologic:
+  events:
+    provider: otelcol

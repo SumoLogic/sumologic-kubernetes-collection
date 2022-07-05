@@ -1,15 +1,12 @@
 sumologic:
+  events:
+    provider: otelcol
   podAnnotations:
     sumoAnnotation: sumoValue
   podLabels:
     sumoLabel: sumoValue
 
-fluentd:
-  events:
-    enabled: false
-
 otelevents:
-  enabled: true
   statefulset:
     ## Add custom labels only to logs sts pods
     podLabels:
