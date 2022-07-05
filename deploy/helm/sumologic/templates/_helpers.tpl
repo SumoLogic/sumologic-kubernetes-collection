@@ -1350,7 +1350,7 @@ Example Usage:
 {{/*
 Check if any events provider is enabled
 Example Usage:
-{{- if eq (include "metrics.enabled" .) "true" }}
+{{- if eq (include "events.enabled" .) "true" }}
 
 */}}
 {{- define "events.enabled" -}}
@@ -1368,22 +1368,43 @@ Example Usage:
 {{/*
 Check if otelcol events provider is enabled
 Example Usage:
-{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+{{- if eq (include "events.otelcol.enabled" .) "true" }}
 
 */}}
 {{- define "events.otelcol.enabled" -}}
-{{- eq .Values.otelevents.enabled true -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.events.provider "otelcol" -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- if hasKey .Values.sumologic.events "enabled" -}}
+{{- if eq .Values.sumologic.events.enabled false -}}
+{{- $enabled = false -}}
+{{- end -}}
+{{- end -}}
+{{ $enabled }}
 {{- end -}}
 
 
 {{/*
 Check if fluentd events provider is enabled
 Example Usage:
-{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
+{{- if eq (include "events.fluentd.enabled" .) "true" }}
 
 */}}
 {{- define "events.fluentd.enabled" -}}
-{{- eq .Values.fluentd.events.enabled true -}}
+{{- $enabled := false -}}
+{{- if eq .Values.sumologic.events.provider "fluentd" -}}
+{{- $enabled = true -}}
+{{- end -}}
+{{- if hasKey .Values.sumologic.events "enabled" -}}
+{{- if eq .Values.sumologic.events.enabled false -}}
+{{- $enabled = false -}}
+{{- end -}}
+{{- end -}}
+{{- if eq .Values.fluentd.events.enabled false -}}
+{{- $enabled = false -}}
+{{- end -}}
+{{ $enabled }}
 {{- end -}}
 
 {{/*
