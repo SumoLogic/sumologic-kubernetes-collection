@@ -10,7 +10,7 @@ resource "sumologic_collector" "collector" {
 
 {{- $ctx := .Values }}
 {{- range $type, $sources := .Values.sumologic.collector.sources }}
-  {{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
+  {{- if eq (include "terraform.sources.component_enabled" (dict "Values" $ctx "Type" $type)) "true" }}
     {{- range $key, $source := $sources }}
       {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
 {{ include "terraform.sources.resource" (dict "Name" (include "terraform.sources.name" (dict "Name" $key "Type" $type)) "Source" $source "Context" $ctx) | nindent 2 }}
@@ -35,7 +35,7 @@ resource "kubernetes_secret" "sumologic_collection_secret" {
   data = {
     {{- $ctx := .Values }}
     {{- range $type, $sources := .Values.sumologic.collector.sources }}
-      {{- if eq (include "terraform.sources.component_enabled" (dict "Context" $ctx "Type" $type)) "true" }}
+      {{- if eq (include "terraform.sources.component_enabled" (dict "Values" $ctx "Type" $type)) "true" }}
         {{- range $key, $source := $sources }}
           {{- if eq (include "terraform.sources.to_create" (dict "Context" $ctx "Type" $type "Name" $key)) "true" }}
     {{ include "terraform.sources.data" (dict "Endpoint" (include "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $key)) "Name" (include "terraform.sources.name" (dict "Name" $key "Type" $type))) }}

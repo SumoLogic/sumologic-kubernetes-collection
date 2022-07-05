@@ -1102,17 +1102,20 @@ Example Usage:
 Check if component (source/events/logs/traces etc.) is enabled or not
 
 Example Usage:
-{{- if eq (include "terraform.sources.component_enabled" (dict "Context" .Values "Type" "metrics")) "true" }}
+{{- if eq (include "terraform.sources.component_enabled" (dict "Values" .Values "Type" "metrics")) "true" }}
 
 */}}
 {{- define "terraform.sources.component_enabled" -}}
 {{- $type := .Type -}}
-{{- $ctx := .Context -}}
+{{- $ctx := .Values -}}
 {{- $value := true -}}
 {{- if hasKey $ctx.sumologic $type -}}
 {{- if not (index $ctx.sumologic $type "enabled") -}}
 {{- $value = false -}}
 {{- end -}}
+{{- end -}}
+{{- if eq $type "events" -}}
+{{ $value = include "events.enabled" . }}
 {{- end -}}
 {{ $value }}
 {{- end -}}
