@@ -1,6 +1,3 @@
-otelevents:
-  enabled: true
-
-fluentd:
+sumologic:
   events:
-    enabled: false
+    provider: otelcol

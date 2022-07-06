@@ -28,6 +28,7 @@ Documentation links:
   - [Authenticating with container registry](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
     - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](./docs/Working_with_container_registries.md#authenticating-with-container-registry)
   - [Container log parsing (Docker, CRI-O, containerd)](./docs/ContainerLogs.md)
+  - [Collecting Kubernetes events](./docs/collecting-kubernetes-events.md)
   - Open Telemetry `beta`
     - [Open Telemetry with `sumologic-kubernetes-collection`](./docs/opentelemetry_collector.md)
     - [Comparison of Fluentd and Opentelemetry Collector functionality](./docs/fluentd_otc_comparison.md)

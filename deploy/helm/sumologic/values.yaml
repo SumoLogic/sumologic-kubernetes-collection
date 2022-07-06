@@ -191,6 +191,10 @@ sumologic:
           properties:
             content_type: Zipkin
 
+  ### Configuration for collection of Kubernetes events
+  events:
+    provider: fluentd
+
   ### Logs configuration
   ## Set the enabled flag to false for disabling logs ingestion altogether.
   logs:
@@ -882,6 +886,7 @@ fluentd:
 
   events:
     ## If enabled, collect K8s events
+    ## Deprecated, use `sumologic.events.enabled` instead
     enabled: true
 
     statefulset:
@@ -4692,8 +4697,10 @@ otelgateway:
           processors: [memory_limiter, batch]
           exporters: [otlp]
 
+## Configuration of the OpenTelemetry Collector that collects Kubernetes events.
+## It is used when the `sumologic.events.provider` is set to `otelcol`.
+## See https://github.com/SumoLogic/sumologic-kubernetes-collection/deploy/docs/collecting-kubernetes-events.md.
 otelevents:
-  enabled: false
 
   ## Configure persistence for Opentelemetry Collector
   persistence:
@@ -4791,13 +4798,6 @@ otelevents:
     #   - name: es-certs
     #     mountPath: /certs
     #     readOnly: true
-
-  ## Option to specify PodDisrutionBudgets
-  ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
-  podDisruptionBudget:
-    minAvailable: 2
-  ## To use maxUnavailable, set minAvailable to null and uncomment the below:
-  #   maxUnavailable: 1
 
 ## Configure log collection with Otelcol
 ## This is currently highly experimental and not recommended unless you really know what you're doing.

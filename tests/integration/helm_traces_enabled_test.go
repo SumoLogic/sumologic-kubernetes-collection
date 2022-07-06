@@ -31,12 +31,12 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 	)
 
 	featInstall := features.New("installation").
-		Assess("sumologic secret is created",
+		Assess("sumologic secret is created with endpoints",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
 				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
 				// Apart from 10 default entries it also has 1 for traces
-				require.Len(t, secret.Data, 11)
+				require.Len(t, secret.Data, 11, "Secret has incorrect number of endpoints")
 				return ctx
 			}).
 		Assess("fluentd logs statefulset is ready",

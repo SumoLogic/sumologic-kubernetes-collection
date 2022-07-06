@@ -30,11 +30,11 @@ func Test_Helm_FluentBit_Containerd_Multiline_Logs(t *testing.T) {
 	)
 
 	featInstall := features.New("installation").
-		Assess("sumologic secret is created",
+		Assess("sumologic secret is created with endpoints",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				k8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
 				secret := k8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
-				require.Len(t, secret.Data, 10)
+				require.Len(t, secret.Data, 10, "Secret has incorrect number of endpoints")
 				return ctx
 			}).
 		Assess("fluentd logs statefulset is ready",
