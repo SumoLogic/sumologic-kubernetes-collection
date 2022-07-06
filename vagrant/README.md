@@ -123,7 +123,7 @@ sumo-make istio-certs istio-enable
 # upgrade sumologic
 sumo-make upgrade
 # patch sumologic
-sumo-make istio-patch-receiver-mock istio-patch-sumologic restart-pods
+sumo-make istio-patch restart-pods
 ```
 
 **NOTE**: In order to prevent overriding the patches, please use `sumo-make helm-upgrade` instead of `sumo-make upgrade`
