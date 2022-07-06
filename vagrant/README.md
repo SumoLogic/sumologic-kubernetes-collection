@@ -112,3 +112,121 @@ or
 ```bash
 /sumologic/vagrant/Makefile test-receiver-mock-metrics
 ```
+
+## Istio
+
+In order to setup istio, please use the following commands:
+
+```bash
+# prepare istio
+sumo-make istio-certs istio-enable
+# upgrade sumologic
+sumo-make upgrade
+# patch sumologic
+sumo-make istio-patch-receiver-mock istio-patch-sumologic restart-pods
+```
+
+**NOTE**: In order to prevent overriding the patches, please use `sumo-make helm-upgrade` instead of `sumo-make upgrade`
+
+### Adjust kube-prometheus-stack configuration
+
+In order to tell kube-prometheus-stack how to scrape metrics, please add the following modifications:
+
+```yaml
+kube-prometheus-stack:
+  kube-state-metrics:
+    podAnnotations:
+      # fix readiness and liveness probes
+      sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      # fix scraping metrics
+      traffic.sidecar.istio.io/excludeInboundPorts: "8080"
+  grafana:
+    podAnnotations:
+      # fix readiness and liveness probes
+      sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      # fix scraping metrics
+      traffic.sidecar.istio.io/excludeInboundPorts: "3000"
+  prometheusOperator:
+    podAnnotations:
+      # fix scraping metrics
+      traffic.sidecar.istio.io/excludeInboundPorts: "8080"
+  prometheus:
+    prometheusSpec:
+      podMetadata:
+        annotations:
+          traffic.sidecar.istio.io/includeInboundPorts: ""   # do not intercept any inbound ports
+          traffic.sidecar.istio.io/includeOutboundIPRanges: ""  # do not intercept any outbound traffic
+          proxy.istio.io/config: |  # configure an env variable `OUTPUT_CERTS` to write certificates to the given folder
+            proxyMetadata:
+              OUTPUT_CERTS: /etc/istio-output-certs
+          sidecar.istio.io/userVolumeMount: '[{"name": "istio-certs", "mountPath": "/etc/istio-output-certs"}]' # mount the shared volume at sidecar proxy
+      volumes:
+        - emptyDir:
+            medium: Memory
+          name: istio-certs
+      volumeMounts:
+        - mountPath: /etc/prom-certs/
+          name: istio-certs
+    # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+    additionalServiceMonitors:
+      - ...
+        endpoints:
+          - ...
+            # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+            scheme: https
+            tlsConfig:
+              caFile: /etc/prom-certs/root-cert.pem
+              certFile: /etc/prom-certs/cert-chain.pem
+              keyFile: /etc/prom-certs/key.pem
+              insecureSkipVerify: true
+```
+
+### Receiver-mock
+
+Patch for receiver-mock contains two significant changes:
+
+- additional volume `/etc/prom-certs` which allows to mock prometheus behaviour:
+
+  ```bash
+  curl -k --key /etc/prom-certs/key.pem --cert /etc/prom-certs/cert-chain.pem https://10.1.126.170:24231/metrics
+  ```
+
+- additional service port `3002`, which is not managed by istio, but points to the standard 3000 port.
+  This change is required for setup job to work correctly outside of istio
+
+### Setup job
+
+Setup job disables istio sidecar, as it finish before sidecar is ready which leads to fail.
+This is done by the following configuration:
+
+```yaml
+sumologic:
+  setup:
+    job:
+      podAnnotations:
+        # Disable istio sidecar for setup job
+        sidecar.istio.io/inject: "false"
+  # Use non-istio rport of receiver-mock
+  endpoint: http://receiver-mock.receiver-mock:3002/terraform/api/
+```
+
+### Fluent-bit
+
+The following change is required in order to fix fluent-bit's readiness and liveness probes:
+
+```
+fluent-bit:
+  podAnnotations:
+    sidecar.istio.io/rewriteAppHTTPProbers: "true"
+```
+
+### Issues
+
+- taking fluentd metrics from receiver-mocks ends with empty reply
+  
+  ```text
+  bash-5.1# curl -k --key /etc/prom-certs/key.pem --cert /etc/prom-certs/cert-chain.pem https://10.1.126.170:24231/metrics
+  curl: (52) Empty reply from server
+  ```
+
+  metrics are scraped by prometheus properly
