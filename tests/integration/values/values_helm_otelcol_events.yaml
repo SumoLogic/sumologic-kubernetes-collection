@@ -1,16 +1,12 @@
 sumologic:
+  events:
+    provider: otelcol
   logs:
     enabled: false
   metrics:
     enabled: false
 
-# We're using otelcol instead
-fluentd:
-  events:
-    enabled: false
-
 otelevents:
-  enabled: true
   config:
     override:
       receivers:
