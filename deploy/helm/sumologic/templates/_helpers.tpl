@@ -148,7 +148,11 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.events" -}}
-{{- template "sumologic.labels.app.fluentd" . }}-events
+{{- if eq (include "events.fluentd.enabled" .) "true"  -}}
+{{ template "sumologic.labels.app.fluentd" . }}-events
+{{- else if eq (include "events.otelcol.enabled" .) "true" -}}
+{{ template "sumologic.labels.app.otelcol" . }}-events
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.labels.app.events.pod" -}}
@@ -472,7 +476,11 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events" -}}
+{{- if eq (include "events.fluentd.enabled" .) "true" -}}
 {{ template "sumologic.metadata.name.fluentd" . }}-events
+{{- else if eq (include "events.otelcol.enabled" .) "true" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}-events
+{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events.service" -}}
@@ -1339,6 +1347,44 @@ Example Usage:
 {{ $enabled }}
 {{- end -}}
 
+{{/*
+Check if any events provider is enabled
+Example Usage:
+{{- if eq (include "metrics.enabled" .) "true" }}
+
+*/}}
+{{- define "events.enabled" -}}
+{{- $enabled := false -}}
+{{- if eq (include "events.otelcol.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{- if eq (include "events.fluentd.enabled" .) "true" }}
+{{- $enabled = true -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+
+{{/*
+Check if otelcol events provider is enabled
+Example Usage:
+{{- if eq (include "metrics.otelcol.enabled" .) "true" }}
+
+*/}}
+{{- define "events.otelcol.enabled" -}}
+{{- eq .Values.otelevents.enabled true -}}
+{{- end -}}
+
+
+{{/*
+Check if fluentd events provider is enabled
+Example Usage:
+{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
+
+*/}}
+{{- define "events.fluentd.enabled" -}}
+{{- eq .Values.fluentd.events.enabled true -}}
+{{- end -}}
 
 {{/*
 Add service labels

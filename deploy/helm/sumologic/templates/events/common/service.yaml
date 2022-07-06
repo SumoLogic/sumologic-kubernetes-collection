@@ -1,4 +1,4 @@
-{{- if eq .Values.fluentd.events.enabled true }}
+{{- if eq (include "events.enabled" .) "true" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -17,5 +17,9 @@ spec:
   - name: metrics
     port: 24231
     targetPort: 24231
+    protocol: TCP
+  - name: otelcol-metrics
+    port: 8888
+    targetPort: 8888
     protocol: TCP
 {{- end }}

@@ -1,0 +1,17 @@
+otelevents:
+  enabled: true
+  persistence: 
+    enabled: false
+  logLevel: debug
+
+sumologic:
+  clusterName: testCluster
+  collectorName: testCollector
+
+fluentd:
+  events:
+    enabled: false
+    sourceName: testSourceName
+    sourceCategory: testSourceCategory
+
+

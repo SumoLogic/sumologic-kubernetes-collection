@@ -1,0 +1,71 @@
+---
+# Source: sumologic/templates/events/otelcol/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-events
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-events
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  config.yaml: |
+    exporters:
+      sumologic:
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE}
+        json_logs:
+          add_timestamp: true
+          timestamp_key: timestamp
+        log_format: json
+        sending_queue:
+          enabled: true
+          persistent_storage_enabled: true
+        source_category: '%{_sourceCategory}'
+        source_name: '%{_sourceName}'
+    extensions:
+      file_storage:
+        directory: /var/lib/storage/otc
+        timeout: 10s
+      health_check: {}
+      pprof: {}
+    processors:
+      batch:
+        send_batch_max_size: 2048
+        send_batch_size: 1024
+        timeout: 1s
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 70
+        spike_limit_percentage: 20
+      resource/add_cluster:
+        attributes:
+        - action: upsert
+          key: cluster
+          value: kubernetes
+      source:
+        collector: kubernetes
+        source_category: kubernetes/events
+        source_category_prefix: ""
+        source_name: events
+    receivers:
+      raw_k8s_events: {}
+    service:
+      extensions:
+      - health_check
+      - file_storage
+      - pprof
+      pipelines:
+        logs/events:
+          exporters:
+          - sumologic
+          processors:
+          - memory_limiter
+          - resource/add_cluster
+          - source
+          - batch
+          receivers:
+          - raw_k8s_events
+      telemetry:
+        logs:
+          level: info
