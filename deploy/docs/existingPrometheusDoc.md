@@ -11,6 +11,9 @@ If you are running multiple Prometheus replicas, please follow our
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Merge Prometheus Configuration](#merge-prometheus-configuration)
 - [Troubleshooting](#troubleshooting)
+  - [UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "prometheusrulemutate.monitoring.coreos.com"](#upgrade-failed-failed-to-create-resource-internal-error-occurred-failed-calling-webhook-prometheusrulemutatemonitoringcoreoscom)
+  - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
+  - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
 - [Customizing Installation](#customizing-installation)
 - [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
 - [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
@@ -103,8 +106,47 @@ helm upgrade \
   --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
   --set kube-prometheus-stack.prometheusOperator.enabled=false \
+  --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
+  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
   --set sumologic.scc.create=true \
   --set fluent-bit.securityContext.privileged=true
+```
+
+**Note**: If you are installing the helm chart in Openshift 4.9 you need to configuration for Prometheus init container in following form:
+
+```yaml
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      initContainers:
+        - name: "init-config-reloader"
+          env:
+            - name: FLUENTD_METRICS_SVC
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdMetrics
+            - name: NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdNamespace
+
+```
+
+Example command which can be used deploy in OpenShift 4.9 (`values.yaml` must contain above configuration for init container):
+
+```bash
+helm upgrade \
+  --install my-release sumologic/sumologic \
+  --namespace=my-namespace \
+  --set sumologic.accessId=<SUMO_ACCESS_ID> \
+  --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+  --set kube-prometheus-stack.prometheusOperator.enabled=false \
+  --set sumologic.scc.create=true \
+  --set fluent-bit.securityContext.privileged=true \
+  -f values.yaml
 ```
 
 ## Update Existing Kube Prometheus Stack Helm Chart

@@ -1,6 +1,7 @@
 # How to install our Prometheus side by side with your existing Prometheus
 
-When installing our Helm Chart it is possible to have more than one Prometheus server running in the same cluster. However, do note that you cannot have more than one Prometheus Operator running in the same cluster. This document will take you through the steps to set up Sumo Logic collection when you have an existing Prometheus Operator you wish to keep intact.
+When installing our Helm Chart it is possible to have more than one Prometheus server running in the same cluster.  
+This document will take you through the steps to set up Sumo Logic collection when you have an existing Prometheus Operator you wish to keep intact.
 
 **Note**: Make sure your `Prometheus Operator` and/or `Prometheus Operator Chart` are compatible with the version used by the Collection
 
@@ -8,14 +9,17 @@ When installing our Helm Chart it is possible to have more than one Prometheus s
 
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
 
-- [Requirements](#requirements)
-- [Prerequisite](#prerequisite)
-- [Installation Steps](#installation-steps)
-- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
-- [Troubleshooting Installation](#troubleshooting-installation)
-- [Customizing Installation](#customizing-installation)
-- [Upgrade Sumo Logic Collection](#upgrading-sumo-logic-collection)
-- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
+- [Installation with Helm](#installation-with-helm)
+  - [Requirements](#requirements)
+  - [Prerequisite](#prerequisite)
+  - [Installation Steps](#installation-steps)
+  - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
+  - [Troubleshooting Installation](#troubleshooting-installation)
+    - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
+    - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
+  - [Customizing Installation](#customizing-installation)
+  - [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
+  - [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
 ### Requirements
 
@@ -56,7 +60,7 @@ If you are installing the collection in a cluster that requires proxying outboun
 
 Since we are installing with an existing Prometheus Operator we must also define the following values.
 
-- **prometheus-operator.prometheusOperator.enabled=false** - Two operators cannot run in the same cluster at the same time, so this disables ours but preserves the existing.
+- **prometheus-operator.prometheusOperator.enabled=false** - disables ours Prometheus Operator but preserves the existing.
 - **prometheus-operator.prometheus-node-exporter.service.port=9200** - Since node exporter uses a `NodePort` we have to change the port.
 - **prometheus-operator.prometheus-node-exporter.service.targetPort=9200** - Since node exporter uses a `NodePort` we have to change the port.
 
@@ -74,7 +78,13 @@ Node that because this is installing our chart in a cluster where an existing pr
 operator is running, we need to disable our operator and update the node exporter ports.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.prometheusOperator.enabled=false --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
+helm upgrade --install my-release sumologic/sumologic \
+    --set sumologic.accessId=<SUMO_ACCESS_ID> \
+    --set sumologic.accessKey=<SUMO_ACCESS_KEY>  \
+    --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+    --set kube-prometheus-stack.prometheusOperator.enabled=false \
+    --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
+    --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
 ```
 
 > **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
@@ -82,7 +92,13 @@ helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<
 If you wish to install the chart in a different existing namespace you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.prometheusOperator.enabled=false --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
+helm upgrade --install my-release sumologic/sumologic \
+    --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> \
+    --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+    --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+    --set kube-prometheus-stack.prometheusOperator.enabled=false \
+    --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
+    --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
 ```
 
 If the namespace does not exist, you can add the `--create-namespace` flag.
@@ -109,9 +125,46 @@ helm upgrade --install my-release sumologic/sumologic \
     --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
     --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
     --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
-    --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace} \
+    --set kube-prometheus-stack.prometheusOperator.enabled=false \
     --set sumologic.scc.create=true \
     --set fluent-bit.securityContext.privileged=true
+```
+
+**Note**: If you are installing the helm chart in Openshift 4.9 you need to configuration for Prometheus init container in following form:
+
+```yaml
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      initContainers:
+        - name: "init-config-reloader"
+          env:
+            - name: FLUENTD_METRICS_SVC
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdMetrics
+            - name: NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdNamespace
+
+```
+
+Example command which can be used deploy in OpenShift 4.9 (`values.yaml` must contain above configuration for init container):
+
+```bash
+helm upgrade \
+  --install my-release sumologic/sumologic \
+  --namespace=my-namespace \
+  --set sumologic.accessId=<SUMO_ACCESS_ID> \
+  --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+  --set kube-prometheus-stack.prometheusOperator.enabled=false \
+  --set sumologic.scc.create=true \
+  --set fluent-bit.securityContext.privileged=true \
+  -f values.yaml
 ```
 
 ### Viewing Data In Sumo Logic
