@@ -275,6 +275,10 @@ data:
         source_category_replace_dash: "my_systemd_sourceCategoryReplaceDash"
         source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
+      transform/remove_attributes:
+        logs:
+          queries:
+          - limit(attributes, 0)
     receivers:
       fluentforward:
         endpoint: 0.0.0.0:24321
@@ -305,7 +309,7 @@ data:
           - batch
           receivers:
           - fluentforward
-        logs/kubelet:
+        logs/fluent/kubelet:
           exporters:
           - sumologic/systemd
           processors:
@@ -324,8 +328,7 @@ data:
           - batch
           receivers:
           - fluentforward
-          - otlp
-        logs/systemd:
+        logs/fluent/systemd:
           exporters:
           - sumologic/systemd
           processors:
@@ -345,6 +348,46 @@ data:
           - batch
           receivers:
           - fluentforward
+        logs/otlp/kubelet:
+          exporters:
+          - sumologic/systemd
+          processors:
+          - memory_limiter
+          - filter/include_fluent_tag_host
+          - filter/include_kubelet
+          - filter/exclude_kubelet_syslog
+          - filter/exclude_kubelet_hostname
+          - filter/exclude_kubelet_priority
+          - filter/exclude_kubelet_unit
+          - attributes/extract_systemd_source_fields
+          - attributes/remove_fluent_tag
+          - groupbyattrs/systemd
+          - resource/add_cluster
+          - source/kubelet
+          - transform/remove_attributes
+          - batch
+          receivers:
+          - otlp
+        logs/otlp/systemd:
+          exporters:
+          - sumologic/systemd
+          processors:
+          - memory_limiter
+          - filter/include_fluent_tag_host
+          - filter/include_systemd
+          - filter/exclude_kubelet
+          - filter/exclude_systemd_syslog
+          - filter/exclude_systemd_hostname
+          - filter/exclude_systemd_priority
+          - filter/exclude_systemd_unit
+          - attributes/extract_systemd_source_fields
+          - attributes/remove_fluent_tag
+          - groupbyattrs/systemd
+          - resource/add_cluster
+          - source/systemd
+          - transform/remove_attributes
+          - batch
+          receivers:
           - otlp
       telemetry:
         logs:
