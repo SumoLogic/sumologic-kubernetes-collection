@@ -4497,7 +4497,7 @@ metadata:
               - batch
             exporters:
               - sumologic/systemd
-          ## This is the same pipeline like logs/fluent/systemd with the following changes:
+          ## This is the same pipeline like logs/fluent/systemd, but with the following changes:
           ## - otlp receiver instead of fluentforward
           ## - added transform/remove_attributes processor
           logs/otlp/systemd:
@@ -4521,7 +4521,7 @@ metadata:
               - batch
             exporters:
               - sumologic/systemd
-          ## This is the same pipeline like logs/fluent/kubelet with the following changes:
+          ## This is the same pipeline like logs/fluent/kubelet, but with the following changes:
           ## - otlp receiver instead of fluentforward
           ## - added transform/remove_attributes processor
           logs/otlp/kubelet:
