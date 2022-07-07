@@ -8,14 +8,17 @@ When installing our Helm Chart it is possible to have more than one Prometheus s
 
 Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
 
-- [Requirements](#requirements)
-- [Prerequisite](#prerequisite)
-- [Installation Steps](#installation-steps)
-- [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
-- [Troubleshooting Installation](#troubleshooting-installation)
-- [Customizing Installation](#customizing-installation)
-- [Upgrade Sumo Logic Collection](#upgrading-sumo-logic-collection)
-- [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
+- [Installation with Helm](#installation-with-helm)
+  - [Requirements](#requirements)
+  - [Prerequisite](#prerequisite)
+  - [Installation Steps](#installation-steps)
+  - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
+  - [Troubleshooting Installation](#troubleshooting-installation)
+    - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
+    - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
+  - [Customizing Installation](#customizing-installation)
+  - [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
+  - [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
 ### Requirements
 
@@ -74,7 +77,13 @@ Node that because this is installing our chart in a cluster where an existing pr
 operator is running, we need to disable our operator and update the node exporter ports.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.prometheusOperator.enabled=false --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
+helm upgrade --install my-release sumologic/sumologic \
+     --set sumologic.accessId=<SUMO_ACCESS_ID> \
+     --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+     --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+     --set kube-prometheus-stack.prometheusOperator.enabled=false \
+     --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
+     --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
 ```
 
 > **Note**: If the release exists, it will be upgraded, otherwise it will be installed.
@@ -82,7 +91,13 @@ helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<
 If you wish to install the chart in a different existing namespace you can do the following:
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.prometheusOperator.enabled=false --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
+helm upgrade --install my-release sumologic/sumologic \
+    --namespace=my-namespace --set sumologic.accessId=<SUMO_ACCESS_ID> \
+    --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+    --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+    --set kube-prometheus-stack.prometheusOperator.enabled=false \
+    --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
+    --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200
 ```
 
 If the namespace does not exist, you can add the `--create-namespace` flag.

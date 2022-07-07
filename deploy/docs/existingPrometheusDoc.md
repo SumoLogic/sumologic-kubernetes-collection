@@ -11,6 +11,9 @@ If you are running multiple Prometheus replicas, please follow our
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Merge Prometheus Configuration](#merge-prometheus-configuration)
 - [Troubleshooting](#troubleshooting)
+  - [UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "prometheusrulemutate.monitoring.coreos.com"](#upgrade-failed-failed-to-create-resource-internal-error-occurred-failed-calling-webhook-prometheusrulemutatemonitoringcoreoscom)
+  - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
+  - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
 - [Customizing Installation](#customizing-installation)
 - [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
 - [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
@@ -74,7 +77,11 @@ The below command also disables the `kube-prometheus-stack` sub-chart since
 we will be modifying the existing prometheus operator install.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.enabled=false
+helm upgrade --install my-release sumologic/sumologic \
+  --set sumologic.accessId=<SUMO_ACCESS_ID> \
+  --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+  --set kube-prometheus-stack.enabled=false
 ```
 
 > __Note__: If the release exists, it will be upgraded, otherwise it will be installed.
