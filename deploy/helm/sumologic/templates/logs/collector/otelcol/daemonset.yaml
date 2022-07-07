@@ -45,7 +45,7 @@ spec:
       securityContext:
         {{- toYaml .Values.otellogs.daemonset.securityContext | nindent 8 }}
       {{- if .Values.otellogs.daemonset.priorityClassName }}
-      priorityClassName: {{ .Values.metadata.logs.daemonset.priorityClassName | quote }}
+      priorityClassName: {{ .Values.otellogs.daemonset.priorityClassName | quote }}
       {{- end }}
       containers:
       - args:
@@ -77,6 +77,9 @@ spec:
           readOnly: true
         - mountPath: {{ .Values.otellogs.config.extensions.file_storage.directory }}
           name: file-storage
+{{- if .Values.otellogs.daemonset.extraVolumeMounts }}
+{{ toYaml .Values.otellogs.daemonset.extraVolumeMounts | indent 8 }}
+{{- end }}
         env:
         - name: LOGS_METADATA_SVC
           valueFrom:
@@ -87,6 +90,9 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+{{- if .Values.otellogs.daemonset.extraEnvVars }}
+{{ toYaml .Values.otellogs.daemonset.extraEnvVars | nindent 8 }}
+{{- end }}
         securityContext: 
           {{- toYaml .Values.otellogs.daemonset.containers.otelcol.securityContext | nindent 10 }}
         ports:
@@ -131,5 +137,8 @@ spec:
           path: /var/lib/otc
           type: DirectoryOrCreate
         name: file-storage
+{{- if .Values.otellogs.daemonset.extraVolumes }}
+{{ toYaml .Values.otellogs.daemonset.extraVolumes | indent 6 }}
+{{- end }}
       serviceAccountName: {{ template "sumologic.metadata.name.logs.collector.serviceaccount" . }}
 {{- end }}
