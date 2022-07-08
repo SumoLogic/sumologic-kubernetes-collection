@@ -109,7 +109,7 @@ helm upgrade \
   --set sumologic.accessId=<SUMO_ACCESS_ID> \
   --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
   --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
-  --set kube-prometheus-stack.prometheusOperator.enabled=false \
+  --set kube-prometheus-stack.enabled=false \
   --set sumologic.scc.create=true \
   --set fluent-bit.securityContext.privileged=true
 ```
