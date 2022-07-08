@@ -129,6 +129,43 @@ helm upgrade --install my-release sumologic/sumologic \
     --set fluent-bit.securityContext.privileged=true
 ```
 
+**Note**: If you are installing the helm chart in Openshift 4.9 you need to configuration for Prometheus init container in following form:
+
+```yaml
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      initContainers:
+        - name: "init-config-reloader"
+          env:
+            - name: FLUENTD_METRICS_SVC
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdMetrics
+            - name: NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdNamespace
+```
+
+Example command which can be used to deploy in OpenShift 4.9 (`values.yaml` must contain above configuration for init container):
+
+```bash
+helm upgrade --install my-release sumologic/sumologic \
+    --namespace=my-namespace \
+    --set sumologic.accessId=<SUMO_ACCESS_ID> \
+    --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
+    --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
+    --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
+    --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
+    --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace} \
+    --set sumologic.scc.create=true \
+    --set fluent-bit.securityContext.privileged=true \
+    -f values.yaml
+```
+
 ### Viewing Data In Sumo Logic
 
 Once you have completed installation, you can
