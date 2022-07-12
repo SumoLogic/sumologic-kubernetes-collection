@@ -34,14 +34,6 @@ metadata:
               - batch
             exporters:
               - sumologic/containers
-          ## disable fluent pipelines
-          logs/fluent/containers: null
-          logs/systemd:
-            receivers:
-              - otlp
-          logs/kubelet:
-            receivers:
-              - otlp
 
 otellogs:
   enabled: true
