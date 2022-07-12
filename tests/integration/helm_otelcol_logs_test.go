@@ -143,6 +143,34 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 			waitDuration,
 			tickDuration,
 		)).
+		Assess("logs from node systemd present", stepfuncs.WaitUntilExpectedLogsPresent(
+			10, // we don't really control this, just want to check if the logs show up
+			map[string]string{
+				"cluster":         "kubernetes",
+				"_sourceName":     "",
+				"_sourceCategory": "kubernetes/system",
+				"_sourceHost":     "",
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("logs from kubelet present", stepfuncs.WaitUntilExpectedLogsPresent(
+			1, // we don't really control this, just want to check if the logs show up
+			map[string]string{
+				"cluster":         "kubernetes",
+				"_sourceName":     "k8s_kubelet",
+				"_sourceCategory": "kubernetes/kubelet",
+				"_sourceHost":     "",
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
 		Teardown(
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				opts := *ctxopts.KubectlOptions(ctx)

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat(otellogs): add additional volumes and env configs [#2410]
+- feat(otellogs/systemd): add support for systemd logs to otellogs [#2364]
 
 ### Changed
 
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [#2410]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2410
 [#2422]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2422
+[#2364]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2364
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.11.0...main
 
 ## [v2.11.0]

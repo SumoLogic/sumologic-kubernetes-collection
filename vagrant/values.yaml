@@ -280,3 +280,37 @@ metadata:
               - resource/add_cluster
               - source/kubelet
               - batch
+          logs/otlp/systemd:
+            processors:
+              - memory_limiter
+              - filter/include_fluent_tag_host
+              - filter/include_systemd
+              - filter/exclude_systemd_snap_kubelite
+              - filter/exclude_kubelet
+              - filter/exclude_systemd_syslog
+              - filter/exclude_systemd_hostname
+              - filter/exclude_systemd_priority
+              - filter/exclude_systemd_unit
+              - attributes/extract_systemd_source_fields
+              - attributes/remove_fluent_tag
+              - groupbyattrs/systemd
+              - resource/add_cluster
+              - source/systemd
+              - transform/remove_attributes
+              - batch
+          logs/otlp/kubelet:
+            processors:
+              - memory_limiter
+              - filter/include_fluent_tag_host
+              - filter/include_systemd_snap_kubelite
+              - filter/exclude_kubelet_syslog
+              - filter/exclude_kubelet_hostname
+              - filter/exclude_kubelet_priority
+              - filter/exclude_kubelet_unit
+              - attributes/extract_systemd_source_fields
+              - attributes/remove_fluent_tag
+              - groupbyattrs/systemd
+              - resource/add_cluster
+              - source/kubelet
+              - transform/remove_attributes
+              - batch
