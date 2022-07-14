@@ -24,6 +24,16 @@ const (
 	envNameHelmNoDependencyUpdate = "HELM_NO_DEPENDENCY_UPDATE"
 )
 
+// HelmVersion returns a features.Func that will run helm version
+func HelmVersionOpt() features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		_, err := helm.RunHelmCommandAndGetOutputE(t, ctxopts.HelmOptions(ctx), "version")
+		require.NoError(t, err)
+
+		return ctx
+	}
+}
+
 // HelmDependencyUpdateOpt returns a features.Func that will run helm dependency update using
 // the provided path as an argument.
 //

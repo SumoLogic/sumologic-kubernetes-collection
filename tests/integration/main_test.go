@@ -73,6 +73,8 @@ func ConfigureTestEnv(testenv env.Environment) {
 		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[1]),
 		// Create Test Namespace
 		stepfuncs.KubectlCreateNamespaceTestOpt(),
+		stepfuncs.SetHelmOptionsTestOpt([]string{}),
+		stepfuncs.HelmVersionOpt(),
 		// SetHelmOptionsTestOpt picks a values file from `values` directory
 		// based on the test name ( the details of name generation can be found
 		// in `strings.ValueFileFromT()`.)
