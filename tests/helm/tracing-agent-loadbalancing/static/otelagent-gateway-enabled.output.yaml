@@ -21,6 +21,7 @@ data:
       health_check: {}
       memory_ballast:
         size_mib: 250
+      pprof: {}
     processors:
       batch:
         send_batch_size: 256
@@ -83,6 +84,7 @@ data:
       extensions:
       - health_check
       - memory_ballast
+      - pprof
       pipelines:
         metrics:
           exporters:
