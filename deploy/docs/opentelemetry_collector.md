@@ -7,9 +7,11 @@ We offer it as drop-in replacement for Fluentd in our collection.
 
 - [Metrics](#metrics)
   - [Metrics Configuration](#metrics-configuration)
-- [Logs Metadata](#logs-metadata)
+- [Logs](#logs)
   - [Logs Configuration](#logs-configuration)
-- [Scraping Containers Logs](#scraping-containers-logs)
+  - [Multiline Log Parsing](#multiline-log-parsing)
+  - [Container Logs](#container-logs)
+  - [SystemD Logs](#systemd-logs)
 - [Persistence](#persistence)
   - [Enabling persistence](#enabling-persistence)
     - [Enabling Opentelemetry Collector persistence by recreating StatefulSet](#enabling-opentelemetry-collector-persistence-by-recreating-statefulset)
@@ -47,11 +49,27 @@ All Opentelemetry Collector configuration for metrics is located in
 If you want to modify it, please see [Sumologic Opentelemetry Collector configuration][configuration]
 for more information.
 
-## Logs Metadata
+## Logs
 
-We are using Opentelemetry Collector like Fluentd to enrich metadata and to filter data.
+Opentelemetry Collector can be used for both log collection and metadata enrichment. For these roles,
+it replaces respectively Fluent-Bit and FluentD.
 
-To enable Opentelemetry Collector for logs, please use the following configuration:
+For log collection, it can be enabled by setting:
+
+```yaml
+sumologic:
+  logs:
+    collector:
+      otelcol:
+        enabled: true
+
+fluent-bit:
+  enabled: false
+```
+
+> **NOTE** Fluent-Bit must be disabled for Opentelemetry Collector to be enabled, they are mutually exclusive.
+
+For metadata enrichment, it can be enabled by setting:
 
 ```yaml
 sumologic:
@@ -60,148 +78,71 @@ sumologic:
       provider: otelcol
 ```
 
-As we are providing drop-in replacement, most of the configuration from
-[`values.yaml`][values] should work
-the same way for Opentelemetry Collector like for Fluentd.
+If you haven't modified the FluentD or Fluent-Bit configuration, this should be a drop-in replacement with no
+further changes required.
 
 ### Logs Configuration
 
-All Opentelemetry Collector configuration for logs is located in
-[`values.yaml`][values] as `metadata.logs.config`.
+High level Opentelemetry Collector configuration for logs is located in
+[`values.yaml`][values] under the `sumologic.logs` key.
 
-If you want to modify it, please see [Sumologic Opentelemetry Collector configuration][configuration]
-for more information.
+Configuration specific to the log collector DaemonSet can be found under the `otellogs` key.
+
+Finally, configuration specific to the metadata enrichment StatefulSet can be found under the `metadata.logs` key.
+
+In both of the aforementioned cases, the raw configuration can be overridden - this is done respectively by using
+the `otellogs.config.override` and `metadata.logs.config` sections. Only use these if your use case isn't covered
+by the high-level settings. See [Sumologic Opentelemetry Collector configuration][configuration]
+for more information
 
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/Configuration.md
 [values]: ../helm/sumologic/values.yaml
 
-## Scraping Containers Logs
+### Multiline log parsing
 
-We are using Opentelemetry Collector like Fluent Bit to scrape container logs.
-
-**Note:** Opentelemetry Collector does not support systemd logs yet.
-
-In order to use Opentelemetry Collector to scrape container logs, please use the following configuration:
+Multiline log parsing for OpenTelemetry Collector can be configured using the `sumologic.logs.multiline` section in [values.yaml][values].
 
 ```yaml
-## Opentelemetry as log collector is not compatible with Fluentd
 sumologic:
   logs:
-    metadata:
-      provider: otelcol
-
-## Enable processing logs from Opentelemetry as log collector
-metadata:
-  logs:
-    config:
-      service:
-        pipelines:
-          logs/otlp/containers:
-            receivers:
-              - otlp
-            processors:
-              - memory_limiter
-              - groupbyattrs/containers
-              - k8s_tagger
-              - source/containers
-              - resource/containers_copy_node_to_host
-              - batch
-            exporters:
-              - sumologic/containers
-
-## Enable Opentelemetry as log collector
-otellogs:
-  enabled: true
-
-## Stop collecting container logs by fluent-bit configuration
-fluent-bit:
-  config:
-    inputs: |
-      # [INPUT]
-      #     Name                tail
-      #     Path                /var/log/containers/*.log
-      #     Docker_Mode         On
-      #     Docker_Mode_Parser  multi_line
-      #     Tag                 containers.*
-      #     Refresh_Interval    1
-      #     Rotate_Wait         60
-      #     Mem_Buf_Limit       5MB
-      #     Skip_Long_Lines     On
-      #     DB                  /tail-db/tail-containers-state-sumo.db
-      #     DB.Sync             Normal
-      [INPUT]
-          Name            systemd
-          Tag             host.*
-          DB              /tail-db/systemd-state-sumo.db
-          Systemd_Filter  _SYSTEMD_UNIT=addon-config.service
-          Systemd_Filter  _SYSTEMD_UNIT=addon-run.service
-          Systemd_Filter  _SYSTEMD_UNIT=cfn-etcd-environment.service
-          Systemd_Filter  _SYSTEMD_UNIT=cfn-signal.service
-          Systemd_Filter  _SYSTEMD_UNIT=clean-ca-certificates.service
-          Systemd_Filter  _SYSTEMD_UNIT=containerd.service
-          Systemd_Filter  _SYSTEMD_UNIT=coreos-metadata.service
-          Systemd_Filter  _SYSTEMD_UNIT=coreos-setup-environment.service
-          Systemd_Filter  _SYSTEMD_UNIT=coreos-tmpfiles.service
-          Systemd_Filter  _SYSTEMD_UNIT=dbus.service
-          Systemd_Filter  _SYSTEMD_UNIT=docker.service
-          Systemd_Filter  _SYSTEMD_UNIT=efs.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd-member.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd2.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd3.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-check.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-reconfigure.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-save.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-update-status.service
-          Systemd_Filter  _SYSTEMD_UNIT=flanneld.service
-          Systemd_Filter  _SYSTEMD_UNIT=format-etcd2-volume.service
-          Systemd_Filter  _SYSTEMD_UNIT=kube-node-taint-and-uncordon.service
-          Systemd_Filter  _SYSTEMD_UNIT=kubelet.service
-          Systemd_Filter  _SYSTEMD_UNIT=ldconfig.service
-          Systemd_Filter  _SYSTEMD_UNIT=locksmithd.service
-          Systemd_Filter  _SYSTEMD_UNIT=logrotate.service
-          Systemd_Filter  _SYSTEMD_UNIT=lvm2-monitor.service
-          Systemd_Filter  _SYSTEMD_UNIT=mdmon.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-idmapd.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-mountd.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-server.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-utils.service
-          Systemd_Filter  _SYSTEMD_UNIT=node-problem-detector.service
-          Systemd_Filter  _SYSTEMD_UNIT=ntp.service
-          Systemd_Filter  _SYSTEMD_UNIT=oem-cloudinit.service
-          Systemd_Filter  _SYSTEMD_UNIT=rkt-gc.service
-          Systemd_Filter  _SYSTEMD_UNIT=rkt-metadata.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpc-idmapd.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpc-mountd.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpc-statd.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpcbind.service
-          Systemd_Filter  _SYSTEMD_UNIT=set-aws-environment.service
-          Systemd_Filter  _SYSTEMD_UNIT=system-cloudinit.service
-          Systemd_Filter  _SYSTEMD_UNIT=systemd-timesyncd.service
-          Systemd_Filter  _SYSTEMD_UNIT=update-ca-certificates.service
-          Systemd_Filter  _SYSTEMD_UNIT=user-cloudinit.service
-          Systemd_Filter  _SYSTEMD_UNIT=var-lib-etcd2.service
-          Max_Entries     1000
-          Read_From_Tail  true
+    multiline:
+      enabled: true
+      first_line_regex: "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*"
 ```
 
-**WARNING:** Applying above configuration is related to increased ingest for rolling out time:
+where `first_line_regex` is a regular expression used to detect the first line of a multiline log.
 
-- Fluent Bit is still pushing containers logs until it completes rolling out
-- Opentelemetry is pushing non-rotated logs during first run (this causes duplication of old logs)
+### Container Logs
 
-In order to mitigate that, we recommend to manually increase number of [Opentelemetry Collector metadata pods](#logs-metadata)
-(at least double) for update time. Please consider the following snippet:
+Container logs are collected by default. This can be disabled by setting:
 
 ```yaml
-metadata:
+sumologic:
   logs:
-    # for autoscaling
-    autoscaling:
-      minReplicas: x  # x should be double of your actual number of pods
-    # without autoscaling
-    statefulset:
-      replicaCount: x  # x should be double of your actual number of pods
+    container:
+      enabled: false
+```
+
+### SystemD Logs
+
+Systemd logs are collected by default. This can be disabled by setting:
+
+```yaml
+sumologic:
+  logs:
+    systemd:
+      enabled: false
+```
+
+It's also possible to change which SystemD units we want to collect logs from. For example, the below
+configuration only gets logs from the Docker service:
+
+```yaml
+sumologic:
+  logs:
+    systemd:
+      units:
+        - docker.service
 ```
 
 ## Persistence

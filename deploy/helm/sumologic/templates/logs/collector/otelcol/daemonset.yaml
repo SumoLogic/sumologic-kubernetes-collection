@@ -1,4 +1,4 @@
-{{- if .Values.otellogs.enabled }}
+{{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -77,7 +77,7 @@ spec:
         - mountPath: /var/lib/docker/containers
           name: varlibdockercontainers
           readOnly: true
-        - mountPath: {{ .Values.otellogs.config.extensions.file_storage.directory }}
+        - mountPath: /var/lib/storage/otc
           name: file-storage
         - mountPath: /var/log/journal
           name: varlogjournal
@@ -118,9 +118,9 @@ spec:
         - |
           chown -R \
             {{ .Values.otellogs.daemonset.securityContext.fsGroup }}:{{ .Values.otellogs.daemonset.securityContext.fsGroup }} \
-            {{ .Values.otellogs.config.extensions.file_storage.directory }}
+            /var/lib/storage/otc
         volumeMounts:
-        - mountPath: {{ .Values.otellogs.config.extensions.file_storage.directory }}
+        - mountPath: /var/lib/storage/otc
           name: file-storage
       volumes:
       - configMap:

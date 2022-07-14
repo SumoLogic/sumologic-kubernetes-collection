@@ -1,5 +1,13 @@
+sumologic:
+  logs:
+    collector:
+      otelcol:
+        enabled: true
+
+fluent-bit:
+  enabled: false
+
 otellogs:
-  enabled: true
   daemonset:
     ## Set securityContext for containers running in pods in log collector daemonset
     securityContext:

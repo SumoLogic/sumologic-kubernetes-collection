@@ -2,6 +2,8 @@ sumologic:
   logs:
     metadata:
       provider: otelcol
+    collector:
+      enabled: true
 
   metrics:
     enabled: false
@@ -36,29 +38,14 @@ metadata:
               - sumologic/containers
 
 otellogs:
-  enabled: true
   config:
-    service:
-      pipelines:
-        logs/containers:
-          receivers:
-            - filelog/containers
-          exporters:
-            - otlphttp
-          processors:
-            - filter/exclude_receiver_mock_container
-    processors:
-      # Filter out receiver-mock logs to prevent snowball effect
-      filter/exclude_receiver_mock_container:
-        logs:
+    override:
+      receivers:
+        journald:
+          directory: /run/log/journal
+        filelog/containers:
           exclude:
-            match_type: strict
-            record_attributes:
-              - key: k8s.container.name
-                value: receiver-mock
-    receivers:
-      journald:
-        directory: /run/log/journal
+            - /var/log/pods/receiver-mock_*/*/*.log
   daemonset:
     extraVolumeMounts:
       - mountPath: /run/log/journal
