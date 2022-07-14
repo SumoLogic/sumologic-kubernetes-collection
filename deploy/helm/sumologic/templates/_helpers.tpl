@@ -1317,7 +1317,7 @@ Example Usage:
 {{- end -}}
 
 {{/*
-Check if any logs provider is enabled
+Check if any logs metadata provider is enabled
 
 Example Usage:
 {{- if eq (include "logs.enabled" .) "true" }}
@@ -1336,7 +1336,7 @@ Example Usage:
 
 
 {{/*
-Check if otelcol logs provider is enabled
+Check if otelcol logs metadata provider is enabled
 
 Example Usage:
 {{- if eq (include "logs.otelcol.enabled" .) "true" }}
@@ -1353,7 +1353,7 @@ Example Usage:
 {{- end -}}
 
 {{/*
-Check if fluentd logs provider is enabled
+Check if fluentd logs metadata provider is enabled
 
 Example Usage:
 {{- if eq (include "logs.fluentd.enabled" .) "true" }}
@@ -1365,6 +1365,27 @@ Example Usage:
 {{- if and (eq .Values.sumologic.logs.metadata.provider "fluentd") (eq .Values.fluentd.logs.enabled true) -}}
 {{- $enabled = true -}}
 {{- end -}}
+{{- end -}}
+{{ $enabled }}
+{{- end -}}
+
+{{/*
+Check if otelcol logs collector is enabled.
+It's enabled if both logs in general and the collector specifically are enabled.
+If both the collector and Fluent-Bit are enabled, we error.
+
+Example Usage:
+{{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
+
+*/}}
+{{- define "logs.collector.otelcol.enabled" -}}
+{{- $enabled := and (eq (include "logs.enabled" .) "true") (eq .Values.sumologic.logs.collector.otelcol.enabled true) -}}
+{{- $fluentBitEnabled := index .Values "fluent-bit" "enabled" -}}
+{{- if kindIs "invalid" $fluentBitEnabled -}}
+{{- $fluentBitEnabled = true -}}
+{{- end -}}
+{{- if and $enabled $fluentBitEnabled -}}
+{{- fail "Fluent-Bit and Otel log collector can't be enabled at the same time. Set either `fluent-bit.enabled` or `sumologic.logs.collector.otelcol.enabled` to false" -}}
 {{- end -}}
 {{ $enabled }}
 {{- end -}}

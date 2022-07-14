@@ -1,0 +1,19 @@
+sumologic:
+  logs:
+    collector:
+      otelcol:
+        enabled: true
+    multiline:
+      enabled: false
+    systemd:
+      enabled: true
+    container:
+      enabled: false
+
+fluent-bit:
+  enabled: false
+
+otellogs:
+  logLevel: debug
+
+
