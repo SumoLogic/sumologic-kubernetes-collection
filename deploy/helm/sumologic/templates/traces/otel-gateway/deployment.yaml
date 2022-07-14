@@ -9,6 +9,7 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   minReadySeconds: 5
+  replicas: {{ .Values.otelgateway.deployment.replicas }}
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.otelgateway.pod" . }}
