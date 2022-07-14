@@ -46,6 +46,8 @@ spec:
         {{- toYaml .Values.otellogs.daemonset.securityContext | nindent 8 }}
       {{- if .Values.otellogs.daemonset.priorityClassName }}
       priorityClassName: {{ .Values.otellogs.daemonset.priorityClassName | quote }}
+      {{- else }}
+      priorityClassName: {{ include "sumologic.metadata.name.priorityclass" . | quote }}
       {{- end }}
       containers:
       - args:
