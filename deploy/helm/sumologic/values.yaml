@@ -3407,6 +3407,7 @@ otelagent:
       memory_ballast:
         ## Memory Ballast size should be max 1/3 to 1/2 of memory.
         size_mib: 250
+      pprof: {}
     exporters:
       otlp:
         endpoint: 'exporters.otlp.endpoint.replace:4317'
@@ -3414,7 +3415,7 @@ otelagent:
           ## This disables TLS when communicating with the gateway (within the same cluster)
           insecure: true
     service:
-      extensions: [health_check, memory_ballast]
+      extensions: [health_check, memory_ballast, pprof]
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
@@ -3587,6 +3588,7 @@ otelcol:
       memory_ballast:
         ## Memory Ballast size should be max 1/3 to 1/2 of memory.
         size_mib: 683
+      pprof: {}
     exporters:
       ## Following generates verbose logs with span content, useful to verify what
       ## metadata is being tagged. To enable, uncomment and add "logging" to exporters below.
@@ -3635,7 +3637,7 @@ otelcol:
           ## requests_per_second is the average number of requests per seconds.
           queue_size: 5000
     service:
-      extensions: [health_check, memory_ballast]
+      extensions: [health_check, memory_ballast, pprof]
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
@@ -4726,6 +4728,7 @@ otelgateway:
       memory_ballast:
         ## Memory Ballast size should be max 1/3 to 1/2 of memory.
         size_mib: 250
+      pprof: {}
     exporters:
       loadbalancing:
         protocol:
@@ -4743,7 +4746,7 @@ otelgateway:
           ## This disables TLS when communicating with the gateway (within the same cluster)
           insecure: true
     service:
-      extensions: [health_check, memory_ballast]
+      extensions: [health_check, memory_ballast, pprof]
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
