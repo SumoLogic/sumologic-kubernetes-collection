@@ -27,6 +27,7 @@ spec:
         fsGroup: 0
         runAsGroup: 0
         runAsUser: 0
+      priorityClassName: "RELEASE-NAME-sumologic-priorityclass"
       containers:
       - args:
         - --config=/etc/otelcol/config.yaml
