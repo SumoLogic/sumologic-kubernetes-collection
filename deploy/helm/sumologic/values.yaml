@@ -4626,6 +4626,7 @@ metadata:
 otelgateway:
   enabled: true
   deployment:
+    replicas: 1
     nodeSelector: {}
     tolerations: []
     resources:
