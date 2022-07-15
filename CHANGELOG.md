@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v2.12.0]
+
+### Released 2022-07-15
 
 ### Added
 
@@ -16,8 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-[#2422]: feat(metadata): upgrade otelcol to v0.54.0-sumo-0 [#2422]
-[#2428]: feat(setup): add tolerations and affinity to setup job [#2428]
+- feat(metadata): upgrade otelcol to v0.54.0-sumo-0 [#2422]
+- feat(setup): add tolerations and affinity to setup job [#2428]
 
 [#2410]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2410
 [#2422]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2422
@@ -25,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2364]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2364
 [#2433]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2433
 [#2434]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2434
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.11.0...main
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.11.0...v2.12.0
 
 ## [v2.11.0]
 
