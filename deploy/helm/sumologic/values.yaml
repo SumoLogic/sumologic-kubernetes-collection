@@ -5211,6 +5211,7 @@ otellogs:
         memory: 32Mi
         cpu: 100m
     ## Option to define priorityClassName to assign a priority class to pods.
+    ## If not set then temaplates/priorityclass.yaml is used.
     priorityClassName:
 
     ## Set securityContext for containers running in pods in log collector daemonset
