@@ -50,6 +50,8 @@ spec:
       {{- end }}
       {{- if .Values.otelagent.daemonset.priorityClassName }}
       priorityClassName: {{ .Values.otelagent.daemonset.priorityClassName | quote }}
+      {{- else }}
+      priorityClassName: {{ include "sumologic.metadata.name.priorityclass" . | quote }}
       {{- end }}
       containers:
       - name: otelcontrib-agent

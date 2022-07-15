@@ -690,6 +690,10 @@ sumologic.com/scrape: "true"
 {{ template "sumologic.labels.logs.collector" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.priorityclass" -}}
+{{ template "sumologic.fullname" . }}-priorityclass
+{{- end -}}
+
 {{/*
 Create endpoint based on OTC Tracing deployment type
 */}}
