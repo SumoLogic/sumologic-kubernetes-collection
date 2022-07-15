@@ -3311,6 +3311,9 @@ otelagent:
       requests:
         memory: 196Mi
         cpu: 50m
+    ## Option to define priorityClassName to assign a priority class to pods.
+    ## If not set then temaplates/priorityclass.yaml is used.
+    priorityClassName:
     ## Add custom labels only to otelagent daemonset.
     podLabels: {}
     ## Add custom annotations only to otelagent daemonset.
