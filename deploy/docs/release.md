@@ -15,6 +15,8 @@ Perform the following steps in order to release new verions of helm chart.
 
    ```bash
    export TAG=x.y.z
+   git checkout main
+   git pull
    git tag -sm "v${TAG}" "v${TAG}"
    git push origin "v${TAG}"
    ```
@@ -24,19 +26,17 @@ Perform the following steps in order to release new verions of helm chart.
    - branch out:
 
      ```bash
-     git checkout main
-     git pull
-     git checkout -b `release-v${TAG%.*}`
+     git checkout -b "release-v${TAG%.*}"
      ```
 
    - update [deploy/README.md][deploy_title] (`for unreleased version` in title)
    - push branch:
 
    ```bash
-   git push origin `release-v${TAG%.*}`
+   git push -u origin "release-v${TAG%.*}"
    ```
 
-1. Update description for [new release][releases]
+1. Create [new release][releases]
 
 [deploy_title]: ../README.md#deployment-guide-for-unreleased-version
 [deploy_matrix]: ../README.md#support-matrix
