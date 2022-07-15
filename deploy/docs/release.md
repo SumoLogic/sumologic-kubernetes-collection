@@ -19,9 +19,22 @@ Perform the following steps in order to release new verions of helm chart.
    git push origin "v${TAG}"
    ```
 
-1. Branch out `release-v${TAG}` and add the following changes:
+1. Prepare release branch:
+
+   - branch out:
+
+     ```bash
+     git checkout main
+     git pull
+     git checkout -b `release-v${TAG%.*}`
+     ```
 
    - update [deploy/README.md][deploy_title] (`for unreleased version` in title)
+   - push branch:
+
+   ```bash
+   git push origin `release-v${TAG%.*}`
+   ```
 
 1. Update description for [new release][releases]
 

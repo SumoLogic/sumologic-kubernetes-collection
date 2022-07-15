@@ -24,7 +24,7 @@ spec:
         statefulsetAnnotation: statefulsetValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-events
-        chart: "sumologic-2.11.0"
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
         sumoLabel: sumoValue
