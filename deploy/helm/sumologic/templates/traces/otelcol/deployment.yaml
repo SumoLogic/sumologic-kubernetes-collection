@@ -72,6 +72,9 @@ spec:
         resources:
           {{- toYaml .Values.otelcol.deployment.resources | nindent 10 }}
         ports:
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
         - containerPort: 5778  # Default endpoint for Jaeger Sampling.
         - containerPort: 6831  # Default endpoint for Jaeger Thrift Compact receiver.
           protocol: UDP

@@ -12,15 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(otellogs): add additional volumes and env configs [#2410]
 - feat(otellogs/systemd): add support for systemd logs to otellogs [#2364]
 - feat(priorityclass): add priority class for logs and traces daemonsets [#2433]
+- feat(tracing): add pprof extension to the collectors [#2434]
 
 ### Changed
 
 [#2422]: feat(metadata): upgrade otelcol to v0.54.0-sumo-0 [#2422]
+[#2428]: feat(setup): add tolerations and affinity to setup job [#2428]
 
 [#2410]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2410
 [#2422]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2422
+[#2428]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2428
 [#2364]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2364
 [#2433]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2433
+[#2434]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2434
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.11.0...main
 
 ## [v2.11.0]
