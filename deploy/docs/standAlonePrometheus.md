@@ -2,12 +2,13 @@
 
 __NOTE__: The Sumo Logic Kubernetes collection process does not support collecting metrics from scaling Prometheus replicas. If you are running multiple Prometheus replicas, please follow our [Side-by-Side](SideBySidePrometheus.md) instructions.
 
+- [Requirements](#requirements)
 - [Prerequisite](#prerequisite)
 - [Install Sumo Logic Helm Chart](#install-sumo-logic-helm-chart)
 - [Update Existing Prometheus](#update-existing-prometheus)
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Customizing Installation](#customizing-installation)
-- [Upgrade Sumo Logic Collection](#upgrading-sumo-logic-collection)
+- [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
 - [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
 
 This document will walk you through how to set up Sumo Logic Kubernetes collection
@@ -16,6 +17,17 @@ In these steps, you will modify your installed Prometheus to add in the
 minimum configuration that Sumo Logic needs.
 If you are using the Prometheus Operator, please refer to our guide on installing
 with an existing [Prometheus Operator](./existingPrometheusDoc.md).
+
+## Requirements
+
+If you don’t already have a Sumo account, you can create one by clicking the Free Trial button on https://www.sumologic.com/.
+
+The following are required to setup Sumo Logic's Kubernetes collection.
+
+- An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys) with [Manage Collectors](https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management) capability.
+- Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
+
+To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
 
 ## Prerequisite
 
