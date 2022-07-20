@@ -295,8 +295,6 @@ Some known indicators that autoscaling for Fluentd must be enabled:
 
 - Following message in Fluentd logs: `failed to write data into buffer by buffer overflow action=:drop_oldest_chunk`
 
-[fluend_autoscaling]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-autoscaling
-
 ### Check FluentBit and Fluentd output metrics
 
 By default, we collect input/output plugin metrics for FluentBit, and output metrics for Fluentd that you can use to verify collection:
