@@ -3,13 +3,16 @@
 - [Overriding chart resource names with `fullnameOverride`](#overriding-chart-resource-names-with-fullnameoverride)
 - [Multiline Log Support](#multiline-log-support)
   - [MySQL slow logs example](#mysql-slow-logs-example)
+  - [Disable multiline detection](#disable-multiline-detection)
 - [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
   - [Multiline Support](#multiline-support)
 - [Collecting logs from /var/log/pods](#collecting-logs-from-varlogpods)
   - [Fluentd tag for /var/log/pods and /var/log/containers](#fluentd-tag-for-varlogpods-and-varlogcontainers)
 - [Choosing Fluentd Base Image](#choosing-fluentd-base-image)
 - [Fluentd Autoscaling](#fluentd-autoscaling)
+  - [CPU resources warning](#cpu-resources-warning)
 - [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
+  - [Fluentd buffer size for metrics](#fluentd-buffer-size-for-metrics)
 - [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
 - [Modifying logs in Fluentd](#modifying-logs-in-fluentd)
 - [Split Big Chunks in Fluentd](#split-big-chunks-in-fluentd)
@@ -20,13 +23,14 @@
 - [Modify the Log Level for Falco](#modify-the-log-level-for-falco)
 - [Overriding metadata using annotations](#overriding-metadata-using-annotations)
   - [Overriding source category with pod annotations](#overriding-source-category-with-pod-annotations)
-- [Excluding data using annotations](#excluding-data-using-annotations)
-  - [Including subsets of excluded data](#including-subsets-of-excluded-data)
+  - [Excluding data using annotations](#excluding-data-using-annotations)
+    - [Including subsets of excluded data](#including-subsets-of-excluded-data)
 - [Templating Kubernetes metadata](#templating-kubernetes-metadata)
   - [Missing labels](#missing-labels)
 - [Configure Ignore_Older Config for Fluentbit](#configure-ignore_older-config-for-fluentbit)
 - [Disable logs, metrics, or falco](#disable-logs-metrics-or-falco)
 - [Load Balancing Prometheus traffic between Fluentds](#load-balancing-prometheus-traffic-between-fluentds)
+  - [Using a load balancing proxy for Prometheus remote write](#using-a-load-balancing-proxy-for-prometheus-remote-write)
 - [Changing scrape interval for Prometheus](#changing-scrape-interval-for-prometheus)
 - [Get logs not available on stdout](#get-logs-not-available-on-stdout)
 - [Adding custom fields](#adding-custom-fields)
@@ -35,8 +39,8 @@
 - [OpenTelemetry queueing and batching](#opentelemetry-queueing-and-batching)
   - [Compaction](#compaction)
   - [Examples](#examples)
-  - [Outage with huge metrics spike](#outage-with-huge-metrics-spike)
-  - [Outage with low DPM load](#outage-with-low-dpm-load)
+    - [Outage with huge metrics spike](#outage-with-huge-metrics-spike)
+    - [Outage with low DPM load](#outage-with-low-dpm-load)
 - [Assigning Pod to particular Node](#assigning-pod-to-particular-node)
   - [Using NodeSelectors](#using-nodeselectors)
     - [Binding pods to linux nodes](#binding-pods-to-linux-nodes)
@@ -645,7 +649,7 @@ fluentd:
 ```
 
 It is going to replace all `Password: <pass>` occurence in logs with `Password: ***` and replace namespace to `REDACTED`
-for [all containers](#difference-between-varlogpods-and-varlogcontainers) named `test-container`.
+for [all containers](#fluentd-tag-for-varlogpods-and-varlogcontainers) named `test-container`.
 
 An example log before entering the `extraFilterPluginConf` section is presented below:
 
