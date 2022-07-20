@@ -720,7 +720,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 [#1779]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1779
 [#1780]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1780
 [#1804]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1804
-[#1829]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1829
 [#1833]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1833
 [#1852]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1852
 [#1857]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1857
