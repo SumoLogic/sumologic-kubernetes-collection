@@ -161,7 +161,6 @@ Sanitized pod name is name portion of the pod. Please consider following example
 [kube_deployment]: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
 [kube_statefulset]: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset
 [otelcol_annotations]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.50.0-sumo-0/pkg/processor/sourceprocessor#pod-annotations
-[otelcol_annotations_exclude]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.12.2-sumo-4/fluent-plugin-kubernetes-sumologic/lib/fluent/plugin/filter_kubernetes_sumologic.rb#L171-L183
 [otelcol_source_templates]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.50.0-sumo-0/pkg/exporter/sumologicexporter#source-templates
 [otelcol_undefined]: https://github.com/SumoLogic/sumologic-otel-collector/blob/v0.50.0-sumo-0/pkg/processor/sourceprocessor/attribute_filler.go#L113-L123
 [source_containers]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.50.0-sumo-0/pkg/processor/sourceprocessor#container-level-pod-annotations
