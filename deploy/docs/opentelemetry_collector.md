@@ -222,7 +222,6 @@ it is required to recreate or delete existing Opentelemetry Collector StatefulSe
 as it is not possible to add/remove `volumeClaimTemplate` for StatefulSet.
 
 [persistent_queue]: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#persistent-queue
-[values]: ../helm/sumologic/values.yaml
 
 ### Enabling persistence
 
@@ -270,9 +269,6 @@ recreate Opentelemetry Collector StatefulSet or create temporary instance of Ope
 remove earlier created.
 
 **_Notice:_** Below steps does not need to be done when Opentelemetry Collector is deployed the first time.
-
-[persistent_queue]: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#persistent-queue
-[values]: ../helm/sumologic/values.yaml
 
 #### Enabling Opentelemetry Collector persistence by recreating StatefulSet
 
@@ -447,7 +443,6 @@ remove earlier created.
 **_Notice:_** Below steps does not need to be done when Opentelemetry Collector is deployed the first time.
 
 [file_storage_extension]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
-[values]: ../helm/sumologic/values.yaml
 
 #### Disabling Opentelemetry Collector persistence by recreating StatefulSet
 

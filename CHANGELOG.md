@@ -174,8 +174,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - fix(otellogs): set resources on Otelcol logs collector daemonset [#2291]
 
-[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
-[#2291]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2291
 [v2.8.1]:  https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...v2.8.1
 
 ## [v2.8.0]
@@ -209,7 +207,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 [#2238]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2238
 [#2244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2244
 [#2245]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2245
-[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 [#2246]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2246
 [#2250]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2250
 [#2251]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2251
@@ -236,7 +233,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
 
-[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 [v2.7.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.1...v2.7.2
 
 ## [v2.7.1]
@@ -274,7 +270,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - chore: upgrade Fluentd to 1.14.6-sumo-1 [#2230][#2230]
 - chore: upgrade Falco Helm Chart to 1.17.4 [#2197][#2197]
 - chore: bump sumo ot distro to 0.47.0-sumo-0 [#2220][#2220]
-- feat: remove the experimental flag for otelcol as a metadata provider [#2221](#2221)
+- feat: remove the experimental flag for otelcol as a metadata provider [#2221][#2221]
 
 ### Fixed
 
@@ -312,7 +308,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
 
-[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 [v2.6.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.6.0...v2.6.1
 
 ## [v2.6.0][v2.6.0]
@@ -375,7 +370,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
 
-[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 [v2.5.3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.2...v2.5.3
 
 ## [v2.5.2]
@@ -468,7 +462,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
 
 [v2_4_2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.4.1...v2.4.2
-[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 
 ## [v2.4.1][v2_4_1]
 
@@ -541,7 +534,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
 
-[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 [v2_3_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.2...v2.3.3
 
 ## [v2.3.2][v2_3_2]
@@ -631,7 +623,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
 
-[#2287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2287
 [v2_2_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.2.0...v2.2.1
 
 ## [v2.2.0][v2_2_0] - 2021-11-17
