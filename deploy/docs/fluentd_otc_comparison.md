@@ -78,7 +78,6 @@ In order to receive prometheus data and for their initial processing [telegrafre
 It should cover [fluent_plugin_protobuf][fluent_plugin_protobuf] functionality and more.
 
 [fluent_plugin_protobuf]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-protobuf
-[telegrafreceiver]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.50.0-sumo-0/pkg/receiver/telegrafreceiver
 
 ### fluent-plugin-prometheus-format
 
@@ -98,7 +97,6 @@ It should cover [fluent_plugin_protobuf][fluent_plugin_protobuf] functionality a
 [prom_form_relabel]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-prometheus-format#relabel-hash-optional
 [prom_form_strict_excl]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-prometheus-format#strict_exclusions-bool-optional
 [prom_form_strict_incl]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.12.2-sumo-4/fluent-plugin-prometheus-format#strict_inclusions-bool-optional
-[resource_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.47.0/processor/resourceprocessor#resource-processor
 
 ### fluent-plugin-kubernetes-sumologic
 
@@ -274,7 +272,6 @@ Events are not supported by `Opentelemetry Collector`
 | [sumologic.collectorName][readme]                                       | `metadata.metrics.config.processors.source.collector`                                                                                                       |
 | [sumologic.clusterName][readme]                                         | `metadata.metrics.config.processors.source.collector`                                                                                                       |
 
-[filter_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.47.0/processor/filterprocessor#filter-processor
 [readme]: ../helm/sumologic/README.md
 [persistent_queue]: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#persistent-queue
 [file_storage_extension]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
@@ -355,12 +352,6 @@ Events are not supported by `Opentelemetry Collector`
 | [fluentd.logs.containers.k8sMetadataFilter.bearerTokenFile][readme]  | [metadata.logs.config.processors.k8s_tagger.auth_type](#fluent-plugin-kubernetes-metadata-filter)                                                                                                               |
 | [fluentd.logs.containers.extraFilterPluginConf][readme]              | [metadata.logs.config][readme]; mind that configuration is going to be merged unless you use `null`                                                                                                             |
 | [fluentd.logs.containers.extraOutputPluginConf][readme]              | [metadata.logs.config][readme]; mind that configuration is going to be merged unless you use `null`                                                                                                             |
-
-[filter_processor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.47.0/processor/filterprocessor#filter-processor
-[readme]: ../helm/sumologic/README.md
-[source_containers]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.50.0-sumo-0/pkg/processor/sourceprocessor#container-level-pod-annotations
-[persistent_queue]: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#persistent-queue
-[file_storage_extension]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
 
 ### Other
 
