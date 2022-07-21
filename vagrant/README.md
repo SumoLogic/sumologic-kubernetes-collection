@@ -118,7 +118,9 @@ or
 In order to setup istio, please use the following commands:
 
 ```bash
-# prepare istio
+# clone istio repository
+sumo-make istio-clone
+# generate istio certs and enable it in mirok8s
 sumo-make istio-certs istio-enable
 # upgrade sumologic
 sumo-make upgrade
@@ -126,9 +128,24 @@ sumo-make upgrade
 sumo-make istio-patch restart-pods
 ```
 
-**NOTE**: In order to prevent overriding the patches, please use `sumo-make helm-upgrade` instead of `sumo-make upgrade`
+**NOTE**: In order to prevent overriding patches, please use `sumo-make helm-upgrade` instead of `sumo-make upgrade`
 
-### Adjust kube-prometheus-stack configuration
+### Configuration
+
+Prepare sumologic configuration (in `vagrant/values.local.yaml`):
+
+- [Adjust kube-prometheus-stack configuration](#adjust-kube-prometheus-stack-configuration)
+- [Adjust receiver-mock configuration](#adjust-receiver-mock-configuration)
+- [Adjust setup job configuration](#adjust-setup-job-configuration)
+- [Adjust fluent-bit configuration](#adjust-fluent-bit-configuration)
+
+And then upgrade the collection with the following command:
+
+```
+sumo-make helm-upgrade
+```
+
+#### Adjust kube-prometheus-stack configuration
 
 In order to tell kube-prometheus-stack how to scrape metrics, please add the following modifications:
 
@@ -181,7 +198,7 @@ kube-prometheus-stack:
               insecureSkipVerify: true
 ```
 
-### Receiver-mock
+#### Adjust receiver-mock configuration
 
 Patch for receiver-mock contains two significant changes:
 
@@ -194,7 +211,7 @@ Patch for receiver-mock contains two significant changes:
 - additional service port `3002`, which is not managed by istio, but points to the standard 3000 port.
   This change is required for setup job to work correctly outside of istio
 
-### Setup job
+#### Adjust setup job configuration
 
 Setup job disables istio sidecar, as it finish before sidecar is ready which leads to fail.
 This is done by the following configuration:
@@ -210,7 +227,7 @@ sumologic:
   endpoint: http://receiver-mock.receiver-mock:3002/terraform/api/
 ```
 
-### Fluent-bit
+#### Adjust fluent-bit configuration
 
 The following change is required in order to fix fluent-bit's readiness and liveness probes:
 
@@ -220,13 +237,12 @@ fluent-bit:
     sidecar.istio.io/rewriteAppHTTPProbers: "true"
 ```
 
-### Issues
+### Tips and tricks
 
-- taking fluentd metrics from receiver-mocks ends with empty reply
-  
-  ```text
-  bash-5.1# curl -k --key /etc/prom-certs/key.pem --cert /etc/prom-certs/cert-chain.pem https://10.1.126.170:24231/metrics
-  curl: (52) Empty reply from server
+- In order to manually take fluentd metrics using receiver-mock, use the following command from receiver-mock container:
+
+  ```bash
+  export IP_ADDRESS=<fluentd metrics ip>
+  export PORT=<Fluentd metrics port>
+  curl --http1.1 -k --key /etc/prom-certs/key.pem --cert /etc/prom-certs/cert-chain.pem  https://${IP_ADDRESS}:${PORT}/metrics
   ```
-
-  metrics are scraped by prometheus properly

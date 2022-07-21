@@ -272,15 +272,18 @@ apply-prometheus-adapter:
 		-f "${k8s_path}/prometheus-adapter.yaml"
 
 ## Istio
-istio-certs:
-	if [ ! -d "/home/vagrant/istio" ] ; then git clone git clone https://github.com/istio/istio.git /home/vagrant/istio; fi
+istio-clone:
+	rm -rf /home/vagrant/istio
+	if [ ! -d "/home/vagrant/istio" ] ; then git clone https://github.com/istio/istio.git /home/vagrant/istio; fi
 
+istio-certs:
 	# https://istio.io/latest/docs/tasks/security/cert-management/plugin-ca-cert/#plug-in-certificates-and-key-into-the-cluster
 	mkdir -p /home/vagrant/istio/certs
 	cd /home/vagrant/istio/certs && \
 		make -f ../tools/certs/Makefile.selfsigned.mk root-ca && \
 		make -f ../tools/certs/Makefile.selfsigned.mk microk8s-cluster-cacerts && \
-		kubectl create namespace istio-system && \
+		(kubectl create namespace istio-system || true) && \
+		kubectl delete secret cacerts -n istio-system --ignore-not-found=true && \
 		kubectl create secret generic cacerts -n istio-system \
 		--from-file=microk8s-cluster/ca-cert.pem \
 		--from-file=microk8s-cluster/ca-key.pem \
