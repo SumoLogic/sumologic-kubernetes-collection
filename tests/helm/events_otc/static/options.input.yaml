@@ -1,11 +1,4 @@
-fluentd:
-  events:
-    sourceName: testSourceName
-    sourceCategory: testSourceCategory
-
 otelevents:
-  persistence: 
-    enabled: false
   logLevel: debug
 
 sumologic:
@@ -13,5 +6,9 @@ sumologic:
   collectorName: testCollector
   events:
     provider: otelcol
+    sourceName: testSourceName
+    sourceCategory: testSourceCategory
+    persistence: 
+      enabled: false
 
 

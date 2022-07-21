@@ -2,9 +2,9 @@ receivers:
   raw_k8s_events: {}
 extensions:
   health_check: {}
-{{- if .Values.otelevents.persistence.enabled }}
+{{- if .Values.sumologic.events.persistence.enabled }}
   file_storage:
-    directory: /var/lib/storage/otc
+    directory: {{ .Values.sumologic.events.persistence.persistentVolume.path }}
     timeout: 10s
 {{- end }}
   pprof: {}
@@ -19,7 +19,7 @@ exporters:
     source_category: "%{_sourceCategory}"
     sending_queue:
       enabled: true
-      persistent_storage_enabled: {{ .Values.otelevents.persistence.enabled }}
+      persistent_storage_enabled: {{ .Values.sumologic.events.persistence.enabled }}
 processors:
   memory_limiter:
     check_interval: 1s
@@ -36,8 +36,8 @@ processors:
         action: upsert
   source:
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
-    source_name: {{ .Values.fluentd.events.sourceName | quote}}
-    source_category: {{ .Values.fluentd.events.sourceCategory | default (printf "%s/%s"  (include "sumologic.clusterNameReplaceSpaceWithDash" .) (.Values.fluentd.events.sourceName )) | quote}}
+    source_name: {{ .Values.sumologic.events.sourceName | quote}}
+    source_category: {{ .Values.sumologic.events.sourceCategory | default (printf "%s/%s"  (include "sumologic.clusterNameReplaceSpaceWithDash" .) (.Values.fluentd.events.sourceName )) | quote}}
     source_category_prefix: ""
   sumologic_schema:
     add_cloud_namespace: false
@@ -48,7 +48,7 @@ service:
       level: {{ .Values.otelevents.logLevel }}
   extensions:
     - health_check
-{{- if .Values.otelevents.persistence.enabled }}
+{{- if .Values.sumologic.events.persistence.enabled }}
     - file_storage
 {{- end }}
     - pprof

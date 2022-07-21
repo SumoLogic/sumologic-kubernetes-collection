@@ -101,7 +101,7 @@ spec:
           mountPath: /etc/otel/config.yaml
           subPath: config.yaml
         - name: file-storage
-          mountPath: /var/lib/storage/otc
+          mountPath: /var/lib/storage/events
         env:
         - name: SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE
           valueFrom:

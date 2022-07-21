@@ -25,7 +25,7 @@ data:
         source_name: '%{_sourceName}'
     extensions:
       file_storage:
-        directory: /var/lib/storage/otc
+        directory: /var/lib/storage/events
         timeout: 10s
       health_check: {}
       pprof: {}

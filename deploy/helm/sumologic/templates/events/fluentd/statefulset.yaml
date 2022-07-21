@@ -84,10 +84,10 @@ spec:
         volumeMounts:
         - name: config-volume
           mountPath: /fluentd/etc/
-{{- if .Values.fluentd.persistence.enabled }}
+{{- if .Values.sumologic.events.persistence.enabled }}
         - name: buffer
-          mountPath: "/fluentd/buffer"
-{{- end}}
+          mountPath: {{ .Values.sumologic.events.persistence.persistentVolume.path | quote }}
+{{- end }}
 {{- if .Values.fluentd.events.extraVolumeMounts }}
 {{ toYaml .Values.fluentd.events.extraVolumeMounts | indent 8 }}
 {{- end }}
@@ -110,19 +110,19 @@ spec:
 {{- if .Values.fluentd.events.extraEnvVars }}
 {{ toYaml .Values.fluentd.events.extraEnvVars | nindent 8 }}
 {{- end }}
-{{- if .Values.fluentd.persistence.enabled }}
+{{- if .Values.sumologic.events.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: buffer
-{{- if .Values.fluentd.pvcLabels }}
+{{- if .Values.sumologic.events.persistence.persistentVolume.pvcLabels }}
       labels:
-{{ toYaml .Values.fluentd.pvcLabels | indent 8 }}
+{{ toYaml .Values.sumologic.events.persistence.persistentVolume.pvcLabels | indent 8 }}
 {{- end }}
     spec:
-      accessModes: [{{ .Values.fluentd.persistence.accessMode }}]
-      storageClassName: {{ .Values.fluentd.persistence.storageClass }}
+      accessModes: [{{ .Values.sumologic.events.persistence.persistentVolume.accessMode }}]
+      storageClassName: {{ .Values.sumologic.events.persistence.persistentVolume.storageClass }}
       resources:
         requests:
-          storage: {{ .Values.fluentd.persistence.size }}
+          storage: {{ .Values.sumologic.events.persistence.size }}
 {{- end }}
 {{- end }}
