@@ -49,4 +49,5 @@ volumes:
 - secret
 - configMap
 - persistentVolumeClaim
+- projected
 {{- end }}
