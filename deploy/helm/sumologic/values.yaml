@@ -210,6 +210,25 @@ sumologic:
   events:
     provider: fluentd
 
+    ## Source name for the Events source. Default: "events"
+    sourceName: "events"
+
+    ## Source category for the Events source. Default: "" which is resolved to "{clusterName}/events"
+    # sourceCategory: "kubernetes/events"
+
+    persistence:
+      enabled: true
+      size: 10Gi
+
+      ## Configuration for the Persistent Volume and Persistent Volume Claim
+      ## where the storage is kept
+      persistentVolume:
+        path: /var/lib/storage/events
+        accessMode: ReadWriteOnce
+        ## Add custom labels to otelcol event statefulset PVC
+        pvcLabels: {}
+        # storageClass:
+
   ### Logs configuration
   ## Set the enabled flag to false for disabling logs ingestion altogether.
   logs:
@@ -414,7 +433,6 @@ fluentd:
         node: /fluentd/buffer/metrics.node
         control-plane: /fluentd/buffer/metrics.control_plane
         default: /fluentd/buffer/metrics.default
-      events: /fluentd/buffer/events
       traces: /fluentd/buffer/traces
 
     ## Additional config for buffer settings
@@ -921,10 +939,6 @@ fluentd:
         weight: 100
 
   events:
-    ## If enabled, collect K8s events
-    ## Deprecated, use `sumologic.events.enabled` instead
-    enabled: true
-
     statefulset:
       nodeSelector: {}
       tolerations: []
@@ -971,12 +985,6 @@ fluentd:
     sourceName: "events"
     ## Source category for the Events source. Default: "{clusterName}/events"
     # sourceCategory: "kubernetes/events"
-    ## Override Kubernetes resource types you want to get events for from different Kubernetes
-    ## API versions. The key represents the name of the resource type and the value represents
-    ## the API version.
-    # watchResourceEventsOverrides:
-    #   pods: "v1"
-    #   events: "events.k8s.io/v1beta1"
 
     ## Extra Environment Values - allows yaml definitions
     # extraEnvVars:
@@ -4817,15 +4825,6 @@ otelgateway:
 ## It is used when the `sumologic.events.provider` is set to `otelcol`.
 ## See https://github.com/SumoLogic/sumologic-kubernetes-collection/deploy/docs/collecting-kubernetes-events.md.
 otelevents:
-
-  ## Configure persistence for Opentelemetry Collector
-  persistence:
-    enabled: true
-    accessMode: ReadWriteOnce
-    size: 10Gi
-    ## Add custom labels to otelcol event statefulset PVC
-    pvcLabels: {}
-
   ## Configure image for Opentelemetry Collector
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector

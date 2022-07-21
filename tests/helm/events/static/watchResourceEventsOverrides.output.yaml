@@ -67,7 +67,7 @@ data:
         compress_encoding "gzip"
         <buffer>
           @type file
-          path /fluentd/buffer/events
+          path /var/lib/storage/events
           @include buffer.output.conf
         </buffer>
       </store>

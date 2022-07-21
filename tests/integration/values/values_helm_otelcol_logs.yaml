@@ -9,13 +9,12 @@ sumologic:
   metrics:
     enabled: false
 
+  events:
+    enabled: false
+
 # We're using otelcol instead
 fluent-bit:
   enabled: false
-
-fluentd:
-  events:
-    enabled: false
 
 metadata:
   logs:

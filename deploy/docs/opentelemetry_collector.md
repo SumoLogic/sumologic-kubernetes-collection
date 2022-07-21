@@ -160,7 +160,7 @@ sumologic:
       otelcol:
         enabled: true
       allowSideBySide: true
-  
+
 fluent-bit:
   enabled: true
 ```
@@ -570,16 +570,8 @@ sumologic:
     provider: otelcol
 ```
 
-Currently the OT configuration directly uses the following Fluentd configuration values:
-
-- `fluentd.events.sourceCategory` to specify the [source category][source_category] for the event logs
-- `fluentd.events.sourceName` to specify the [source name][source_name] for the event logs
-
 For configurations that don't modify `sumologic.fluentd.events.overrideOutputConf`, this should be enough. See the configuration
-options under `otelevents` in [values.yaml](../helm/sumologic/values.yaml).
-
-[source_category]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions#source-categories
-[source_name]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions#source-name
+options under `otelevents` in [values.yaml](../helm/sumologic/values.yaml) for OT-specific configuration..
 
 ### Customizing OpenTelemetry Collector configuration
 
