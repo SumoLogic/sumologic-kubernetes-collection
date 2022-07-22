@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v2.13.0]
+
+### Released 2022-07-25
+
+### Added
+
+- chore: add OpenShift 4.9 to supported platforms [#2441]
+- feat(openshift): add projected volumes to SecurityContextConstraints [#2443]
+- chore: add OpenShift 4.10 to supported platforms [#2449]
+
+[#2441]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2441
+[#2443]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2443
+[#2449]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2449
+[v2.13.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.12.0...v2.13.0
+
 ## [v2.12.0]
 
 ### Released 2022-07-15
@@ -15,9 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(otellogs/systemd): add support for systemd logs to otellogs [#2364]
 - feat(priorityclass): add priority class for logs and traces daemonsets [#2433]
 - feat(tracing): add pprof extension to the collectors [#2434]
-- chore: add OpenShift 4.9 to supported platforms [#2441]
-- feat(openshift): add projected volumes to SecurityContextConstraints [#2443]
-- chore: add OpenShift 4.10 to supported platforms [#2449]
 
 ### Changed
 
@@ -30,9 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2364]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2364
 [#2433]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2433
 [#2434]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2434
-[#2441]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2441
-[#2443]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2443
-[#2449]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2449
 [v2.12.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.11.0...v2.12.0
 
 ## [v2.11.0]
