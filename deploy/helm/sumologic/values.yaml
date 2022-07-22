@@ -1695,10 +1695,12 @@ kube-prometheus-stack:
     image:
       repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
       tag: v2.3.0
-    # Do not collect metrics for CertificateSigningRequest or Ingress resources.
-    # This is because the v1 version of kube-state-metrics uses API versions
-    # that are removed in Kubernetes v1.22.
-    # rel: https://github.com/prometheus-community/helm-charts/blob/kube-state-metrics-4.13.0/charts/kube-state-metrics/values.yaml#L174-L204
+    ## Do not collect metrics for CertificateSigningRequest or Ingress resources.
+    ## This is because the v1 version of kube-state-metrics uses API versions
+    ## that are removed in Kubernetes v1.22.
+    ##
+    ## See the following configuration for full list of collectors:
+    ## https://github.com/prometheus-community/helm-charts/blob/kube-state-metrics-4.13.0/charts/kube-state-metrics/values.yaml#L174-L204
     collectors:
       # - certificatesigningrequests
       - configmaps
