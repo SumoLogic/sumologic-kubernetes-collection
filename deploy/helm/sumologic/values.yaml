@@ -188,6 +188,11 @@ sumologic:
         default:
           name: logs
           config-name: endpoint-logs
+        default-otlp:
+          name: logs-otlp
+          config-name: endpoint-logs-otlp
+          properties:
+            content_type: Otlp
 
           ## Properties can be used to extend default settings, such as processing rules, fields etc
           # properties:
@@ -4174,11 +4179,8 @@ metadata:
         pprof: {}
       exporters:
         sumologic/containers:
-          log_format: json
-          json_logs:
-            add_timestamp: true
-            timestamp_key: timestamp
-          endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+          log_format: otlp
+          endpoint: "${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}/v1/logs"
           source_name: "%{_sourceName}"
           source_category: "%{_sourceCategory}"
           source_host: "%{_sourceHost}"
@@ -4190,15 +4192,8 @@ metadata:
             num_consumers: 10
             queue_size: 10_000
         sumologic/systemd:
-          log_format: json
-          json_logs:
-            add_timestamp: true
-            timestamp_key: timestamp
-            ## use flatten_body, but OTLP won't require any flattening
-            ## fluent based logs will be all send as record attributes
-            ## otellogs based logs will be all send as body attributes
-            flatten_body: true
-          endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+          log_format: otlp
+          endpoint: "${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}/v1/logs"
           source_name: "%{_sourceName}"
           source_category: "%{_sourceCategory}"
           source_host: "%{_sourceHost}"

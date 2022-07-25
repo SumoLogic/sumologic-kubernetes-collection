@@ -280,6 +280,25 @@ metadata:
               - resource/add_cluster
               - source/kubelet
               - batch
+          logs/otlp/containers:
+            receivers:
+              - otlp
+            processors:
+              - memory_limiter
+              - filter/include_containers
+              
+              # Vagrant specific
+              - filter/exclude_fluent_tag_receiver_mock_container
+              
+              - groupbyattrs/containers
+              - k8s_tagger
+              - resource/add_cluster
+              - source/containers
+              - resource/drop_annotations
+              - resource/containers_copy_node_to_host
+              - batch
+            exporters:
+              - sumologic/containers
           logs/otlp/systemd:
             processors:
               - memory_limiter

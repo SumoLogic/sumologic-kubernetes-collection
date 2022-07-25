@@ -14,11 +14,8 @@ data:
     
     exporters:
       sumologic/containers:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        json_logs:
-          add_timestamp: true
-          timestamp_key: timestamp
-        log_format: json
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}/v1/logs
+        log_format: otlp
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -28,12 +25,8 @@ data:
         source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
       sumologic/systemd:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        json_logs:
-          add_timestamp: true
-          flatten_body: true
-          timestamp_key: timestamp
-        log_format: json
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}/v1/logs
+        log_format: otlp
         sending_queue:
           enabled: true
           num_consumers: 10
