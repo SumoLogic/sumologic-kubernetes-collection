@@ -164,6 +164,11 @@ sumologic:
         default:
           name: (default-metrics)
           config-name: endpoint-metrics
+        default-otlp:
+          name: default-metrics-otlp
+          config-name: endpoint-metrics-otlp
+          properties:
+            content_type: Otlp
         apiserver:
           name: apiserver-metrics
           config-name: endpoint-metrics-apiserver
@@ -3800,8 +3805,7 @@ metadata:
         ## Configuration for Sumo Logic Exporter
         ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
         sumologic/default:
-          metric_format: prometheus
-          endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+          endpoint: "${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}/v1/metrics"
           ## Configuration for sending queue
           ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
           sending_queue:
@@ -3810,83 +3814,6 @@ metadata:
             num_consumers: 10
             ## setting queue_size a high number, so we always use maximum space of the storage
             ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
-            queue_size: 10_000
-          max_request_body_size: 16_777_216  # 16 MB before compression
-          ## set timeout to 30s due to big requests
-          timeout: 30s
-        sumologic/apiserver:
-          metric_format: prometheus
-          endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
-          sending_queue:
-            enabled: true
-            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-            num_consumers: 10
-            queue_size: 10_000
-          max_request_body_size: 16_777_216  # 16 MB before compression
-          ## set timeout to 30s due to big requests
-          timeout: 30s
-        sumologic/control_plane:
-          metric_format: prometheus
-          endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
-          sending_queue:
-            enabled: true
-            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-            num_consumers: 10
-            queue_size: 10_000
-          max_request_body_size: 16_777_216  # 16 MB before compression
-          ## set timeout to 30s due to big requests
-          timeout: 30s
-        sumologic/controller:
-          metric_format: prometheus
-          endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
-          sending_queue:
-            enabled: true
-            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-            num_consumers: 10
-            queue_size: 10_000
-          max_request_body_size: 16_777_216  # 16 MB before compression
-          ## set timeout to 30s due to big requests
-          timeout: 30s
-        sumologic/kubelet:
-          metric_format: prometheus
-          endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
-          sending_queue:
-            enabled: true
-            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-            num_consumers: 10
-            queue_size: 10_000
-          max_request_body_size: 16_777_216  # 16 MB before compression
-          ## set timeout to 30s due to big requests
-          timeout: 30s
-        sumologic/node:
-          metric_format: prometheus
-          endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
-          sending_queue:
-            enabled: true
-            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-            num_consumers: 10
-            queue_size: 10_000
-          max_request_body_size: 16_777_216  # 16 MB before compression
-          ## set timeout to 30s due to big requests
-          timeout: 30s
-        sumologic/scheduler:
-          metric_format: prometheus
-          endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
-          sending_queue:
-            enabled: true
-            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-            num_consumers: 10
-            queue_size: 10_000
-          max_request_body_size: 16_777_216  # 16 MB before compression
-          ## set timeout to 30s due to big requests
-          timeout: 30s
-        sumologic/state:
-          metric_format: prometheus
-          endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
-          sending_queue:
-            enabled: true
-            persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
-            num_consumers: 10
             queue_size: 10_000
           max_request_body_size: 16_777_216  # 16 MB before compression
           ## set timeout to 30s due to big requests
@@ -3947,54 +3874,6 @@ metadata:
           attributes:
             - action: delete
               key: k8s.pod.pod_name
-        ## NOTE: below listed rules could be simplified if routingprocessor
-        ## supports regex matching. At this point we could group route entries
-        ## going to the same set of exporters.
-        routing:
-          ## NOTE: add a feature to routingprocessor to drop the routing
-          ## attribute to prevent it being sent to the exporters.
-          from_attribute: http_listener_v2_path
-          drop_resource_routing_attribute: true
-          attribute_source: resource
-          default_exporters:
-            - sumologic/default
-          table:
-            ## apiserver metrics
-            - value: /prometheus.metrics.apiserver
-              exporters:
-                - sumologic/apiserver
-            ## container metrics
-            - value: /prometheus.metrics.container
-              exporters:
-                - sumologic/kubelet
-            ## control-plane metrics
-            - value: /prometheus.metrics.control-plane.coredns
-              exporters:
-                - sumologic/control_plane
-            - value: /prometheus.metrics.control-plane.kube-etcd
-              exporters:
-                - sumologic/control_plane
-            ## controller metrics
-            - value: /prometheus.metrics.controller-manager
-              exporters:
-                - sumologic/controller
-            ## kubelet metrics
-            - value: /prometheus.metrics.kubelet
-              exporters:
-                - sumologic/kubelet
-            ## node metrics
-            - value: /prometheus.metrics.node
-              exporters:
-                - sumologic/node
-            ## scheduler metrics
-            - value: /prometheus.metrics.scheduler
-              exporters:
-                - sumologic/scheduler
-            ## state metrics
-            - value: /prometheus.metrics.state
-              exporters:
-                - sumologic/state
-
         ## Configuration for Memory Limiter Processor
         ## The memory_limiter processor is used to prevent out of memory situations on the collector.
         ## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
@@ -4069,16 +3948,8 @@ metadata:
               - resource/delete_source_metadata
               - sumologic_schema
               - batch
-              - routing
             exporters:
               - sumologic/default
-              - sumologic/apiserver
-              - sumologic/control_plane
-              - sumologic/controller
-              - sumologic/kubelet
-              - sumologic/node
-              - sumologic/scheduler
-              - sumologic/state
 
     statefulset:
       nodeSelector: {}
@@ -4945,7 +4816,118 @@ otellogs:
   logLevel: info
 
   config:
-    override: {}
+    extensions:
+      health_check: {}
+      ## Configuration for File Storage extension
+      ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
+      file_storage:
+        directory: /var/lib/storage/otc
+        timeout: 10s
+      pprof: {}
+    service:
+      telemetry:
+        logs:
+          level: '{{ .Values.otellogs.logLevel }}'
+      extensions:
+        - health_check
+        - file_storage
+        - pprof
+      pipelines:
+        logs/containers:
+          receivers:
+            - filelog/containers
+          processors:
+            - batch
+          exporters:
+            - otlphttp
+        logs/systemd:
+          receivers:
+            - journald
+          processors:
+            - logstransform/systemd
+            - batch
+          exporters:
+            - otlphttp
+    receivers:
+      filelog/containers:
+        include:
+          - /var/log/pods/*/*/*.log
+        start_at: beginning
+        ## sets fingerprint_size to 17kb in order to match the longest possible docker line (which by default is 16kb)
+        ## we want to include timestamp, which is at the end of the line
+        fingerprint_size: 17408
+        include_file_path: true
+        include_file_name: false
+        operators:
+          ## Detect the container runtime log format
+          ## Can be: docker-shim, CRI-O and containerd
+          - id: get-format
+            type: router
+            routes:
+              - output: parser-docker
+                expr: 'body matches "^\\{"'
+              - output: parser-crio
+                expr: 'body matches "^[^ Z]+ "'
+              - output: parser-containerd
+                expr: 'body matches "^[^ Z]+Z"'
+          ## Parse CRI-O format
+          - id: parser-crio
+            type: regex_parser
+            regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$'
+            output: merge-cri-lines
+            parse_to: body
+            timestamp:
+              parse_from: body.time
+              layout_type: gotime
+              layout: '2006-01-02T15:04:05.000000000-07:00'
+          ## Parse CRI-Containerd format
+          - id: parser-containerd
+            type: regex_parser
+            regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$'
+            output: merge-cri-lines
+            parse_to: body
+            timestamp:
+              parse_from: body.time
+              layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          ## Parse docker-shim format
+          ## parser-docker interprets the input string as JSON and moves the `time` field from the JSON to Timestamp field in the OTLP log
+          ## record.
+          ## Input Body (string): '{"log":"2001-02-03 04:05:06 first line\n","stream":"stdout","time":"2021-11-25T09:59:13.23887954Z"}'
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
+          ## Input Timestamp: _empty_
+          ## Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
+          - id: parser-docker
+            type: json_parser
+            parse_to: body
+            output: merge-docker-lines
+            timestamp:
+              parse_from: body.time
+              layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+
+          ## merge-docker-lines stitches back together log lines split by Docker logging driver.
+          ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
+          ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n","stream":"stdout"}
+          - id: merge-docker-lines
+            type: recombine
+            source_identifier: attributes["log.file.path"]
+            output: merge-multiline-logs
+            combine_field: body.log
+            combine_with: ""
+            is_last_entry: body.log matches "\n$"
+
+          ## merge-cri-lines stitches back together log lines split by CRI logging drivers.
+          ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "logtag": "P" }
+          ## Input Body (JSON): { "log": "ne that was split by the logging driver", "logtag": "F" }
+          ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
+          - id: merge-cri-lines
+            type: recombine
+            source_identifier: attributes["log.file.path"]
+            output: merge-multiline-logs
+            combine_field: body.log
+            combine_with: ""
+            is_last_entry: body.logtag == "F"
+            overwrite_with: newest
 
   daemonset:
     ## Set securityContext for containers running in pods in log collector daemonset
