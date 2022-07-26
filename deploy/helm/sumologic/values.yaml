@@ -221,6 +221,11 @@ sumologic:
           config-name: endpoint-traces
           properties:
             content_type: Zipkin
+        default-otlp:
+          name: traces-otlp
+          config-name: endpoint-traces-otlp
+          properties:
+            content_type: Otlp
 
   ### Configuration for collection of Kubernetes events
   events:
@@ -3651,7 +3656,7 @@ otelcol:
       # logging:
       #   loglevel: debug
       otlphttp:
-        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+        traces_endpoint: "${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}/v1/traces"
         compression: gzip
       sumologic:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
