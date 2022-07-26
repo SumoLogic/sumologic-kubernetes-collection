@@ -204,6 +204,12 @@ sumologic:
         default:
           name: events
           config-name: endpoint-events
+        default-otlp:
+          name: events-otlp
+          config-name: endpoint-events-otlp
+          properties:
+            content_type: Otlp
+
       traces:
         default:
           name: traces

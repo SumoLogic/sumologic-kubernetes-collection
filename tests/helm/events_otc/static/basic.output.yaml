@@ -13,11 +13,8 @@ data:
   config.yaml: |
     exporters:
       sumologic:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE}
-        json_logs:
-          add_timestamp: true
-          timestamp_key: timestamp
-        log_format: json
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}/v1/logs
+        log_format: otlp
         sending_queue:
           enabled: true
           persistent_storage_enabled: true
