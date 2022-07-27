@@ -3309,8 +3309,8 @@ otelagent:
         memory: 2Gi
         cpu: 1000m
       requests:
-        memory: 196Mi
-        cpu: 50m
+        memory: 1Gi
+        cpu: 500m
     ## Option to define priorityClassName to assign a priority class to pods.
     ## If not set then temaplates/priorityclass.yaml is used.
     priorityClassName:
