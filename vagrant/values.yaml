@@ -286,10 +286,10 @@ metadata:
             processors:
               - memory_limiter
               - filter/include_containers
-              
+
               # Vagrant specific
               - filter/exclude_fluent_tag_receiver_mock_container
-              
+
               - groupbyattrs/containers
               - k8s_tagger
               - resource/add_cluster

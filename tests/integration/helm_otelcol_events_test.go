@@ -24,7 +24,7 @@ func Test_Helm_Otelcol_Events(t *testing.T) {
 		tickDuration                     = 3 * time.Second
 		waitDuration                     = 5 * time.Minute
 		expectedEventCount          uint = 70 // number determined experimentally
-		expectedSecretEndpointCount int  = 1
+		expectedSecretEndpointCount int  = 2
 	)
 
 	featInstall := features.New("installation").

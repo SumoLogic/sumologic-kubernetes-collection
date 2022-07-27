@@ -42,7 +42,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
 				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
-				require.Len(t, secret.Data, 10, "Secret has incorrect number of endpoints")
+				require.Len(t, secret.Data, 13, "Secret has incorrect number of endpoints")
 				return ctx
 			}).
 		Assess("otelcol logs statefulset is ready",
