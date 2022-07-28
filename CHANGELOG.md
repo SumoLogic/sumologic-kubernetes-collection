@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- feat: update fluentd to 1.14.6-sumo-4 [#2454]
+- feat: update fluentd to 1.14.6-sumo-5 [#2454]
 
 [#2454]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2454
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.13.0...main
