@@ -3426,22 +3426,19 @@ otelagent:
         size_mib: 250
       pprof: {}
     exporters:
-      otlp:
-        endpoint: 'exporters.otlp.endpoint.replace:4317'
-        tls:
-          ## This disables TLS when communicating with the gateway (within the same cluster)
-          insecure: true
+      otlphttp:
+        endpoint: 'http://exporters.otlp.endpoint.replace:4318'
     service:
       extensions: [health_check, memory_ballast, pprof]
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
           processors: [memory_limiter, k8s_tagger, batch]
-          exporters: [otlp]
+          exporters: [otlphttp]
         metrics:
           receivers: [otlp, otlp/deprecated]
           processors: [memory_limiter, k8s_tagger, batch]
-          exporters: [otlp]
+          exporters: [otlphttp]
 
 ## Configure otelcol
 otelcol:
