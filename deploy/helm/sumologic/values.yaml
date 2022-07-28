@@ -1791,7 +1791,7 @@ kube-prometheus-stack:
           matchLabels:
             sumologic.com/app: otelcol-logs-collector
             sumologic.com/scrape: "true"
-      - name: collection-sumologic-otelcol
+      - name: collection-sumologic-otelcol-traces
         additionalLabels:
           sumologic.com/app: otelcol
         endpoints:
@@ -1801,7 +1801,7 @@ kube-prometheus-stack:
             - $(NAMESPACE)
         selector:
           matchLabels:
-            sumologic.com/app: otelcol
+            sumologic.com/component: traces
             sumologic.com/scrape: "true"
       - name: collection-sumologic-prometheus
         endpoints:
