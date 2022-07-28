@@ -6,7 +6,6 @@ metadata:
   name: {{ template "sumologic.metadata.name.otelcol.service" . }}
   labels:
     app: {{ template "sumologic.labels.app.otelagent.service" . }}
-    {{- include "sumologic.labels.scrape.traces" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
