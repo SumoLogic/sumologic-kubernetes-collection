@@ -199,6 +199,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.otelcol.service" . }}-headless
 {{- end -}}
 
+{{- define "sumologic.labels.app.otelcol.service-metrics" -}}
+{{- template "sumologic.labels.app.otelcol.service" . }}-instr-metrics
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcol.configmap" -}}
 {{- template "sumologic.labels.app.metrics" . }}
 {{- end -}}
@@ -517,6 +521,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.otelcol.service-headless" -}}
 {{ template "sumologic.metadata.name.otelcol.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.metadata.name.otelcol.service-metrics" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}-instr-metrics
 {{- end -}}
 
 {{- define "sumologic.metadata.name.otelcol.configmap" -}}

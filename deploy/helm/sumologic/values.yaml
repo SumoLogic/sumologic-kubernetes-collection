@@ -3426,19 +3426,21 @@ otelagent:
         size_mib: 250
       pprof: {}
     exporters:
-      otlphttp:
-        endpoint: 'http://exporters.otlp.endpoint.replace:4318'
+      otlphttp/traces:
+        endpoint: 'http://exporters.otlptraces.endpoint.replace:4318'
+      otlphttp/metrics:
+        endpoint: 'http://exporters.otlpmetrics.endpoint.replace:4318'
     service:
       extensions: [health_check, memory_ballast, pprof]
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
           processors: [memory_limiter, k8s_tagger, batch]
-          exporters: [otlphttp]
+          exporters: [otlphttp/traces]
         metrics:
           receivers: [otlp, otlp/deprecated]
           processors: [memory_limiter, k8s_tagger, batch]
-          exporters: [otlphttp]
+          exporters: [otlphttp/metrics]
 
 ## Configure otelcol
 otelcol:
