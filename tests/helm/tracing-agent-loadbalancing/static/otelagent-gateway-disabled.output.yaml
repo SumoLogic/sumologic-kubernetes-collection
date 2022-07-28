@@ -13,7 +13,9 @@ data:
   traces.otelagent.conf.yaml: |
     
     exporters:
-      otlphttp:
+      otlphttp/metrics:
+        endpoint: http://RELEASE-NAME-sumologic-otelcol-instr-metrics.sumologic:4318
+      otlphttp/traces:
         endpoint: http://RELEASE-NAME-sumologic-otelcol.sumologic:4318
     extensions:
       health_check: {}
@@ -86,7 +88,7 @@ data:
       pipelines:
         metrics:
           exporters:
-          - otlphttp
+          - otlphttp/metrics
           processors:
           - memory_limiter
           - k8s_tagger
@@ -96,7 +98,7 @@ data:
           - otlp/deprecated
         traces:
           exporters:
-          - otlphttp
+          - otlphttp/traces
           processors:
           - memory_limiter
           - k8s_tagger
