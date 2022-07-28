@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- feat: update fluentd to 1.14.6-sumo-5 [#2454]
 - fix(tracing): loadbalancing improvements, fix metrics collection [#2457]
 
-[#2457]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2457
+[#2454]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2454
+[#2457]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2457
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.13.0...main
 
 ## [v2.13.0]
