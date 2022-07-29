@@ -206,7 +206,7 @@ or [open a new Explore tab] in Sumo Logic.
 If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
 
 [sumo-k8s-app-dashboards]: https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards
-[open a new Explore tab]: https://help.sumologic.com/Observability_Solution/Kubernetes_Solution/Navigate_your_Kubernetes_environment
+[open a new Explore tab]: https://help.sumologic.com/Observability_Solution/Kubernetes_Solution/02Monitoring_Using_Kubernetes
 
 ## Troubleshooting Installation
 

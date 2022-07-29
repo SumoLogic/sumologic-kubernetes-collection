@@ -199,6 +199,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.otelcol.service" . }}-headless
 {{- end -}}
 
+{{- define "sumologic.labels.app.otelcol.service-metrics" -}}
+{{- template "sumologic.labels.app.otelcol.service" . }}-instr-metrics
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcol.configmap" -}}
 {{- template "sumologic.labels.app.metrics" . }}
 {{- end -}}
@@ -519,6 +523,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.otelcol.service" . }}-headless
 {{- end -}}
 
+{{- define "sumologic.metadata.name.otelcol.service-metrics" -}}
+{{ template "sumologic.metadata.name.otelcol" . }}-instr-metrics
+{{- end -}}
+
 {{- define "sumologic.metadata.name.otelcol.configmap" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}
 {{- end -}}
@@ -651,8 +659,7 @@ sumologic.com/app: fluentd-events
 sumologic.com/component: events
 {{- end -}}
 
-{{- define "sumologic.labels.traces" -}}
-sumologic.com/app: otelcol
+{{- define "sumologic.labels.traces.component" -}}
 sumologic.com/component: traces
 {{- end -}}
 
@@ -682,7 +689,7 @@ sumologic.com/scrape: "true"
 
 {{- define "sumologic.labels.scrape.traces" -}}
 {{ template "sumologic.label.scrape" . }}
-{{ template "sumologic.labels.traces" . }}
+{{ template "sumologic.labels.traces.component" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.scrape.logs.collector" -}}

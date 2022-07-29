@@ -1,0 +1,23 @@
+# Service will point to otelcol, used for OTLP metrics transport.
+{{- if eq .Values.sumologic.traces.enabled true }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.metadata.name.otelcol.service-metrics" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.otelcol.service-metrics" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ template "sumologic.labels.app.otelcol.pod" . }}
+  # In case of changes related to open ports for otelcol please update NOTES.TXT
+  ports:
+  {{- if eq .Values.otelcol.metrics.enabled true }}
+  - name: metrics # Default endpoint for querying metrics.
+    port: 8888
+  {{- end }}
+  - name: otlp-grpc # Default endpoint for OTLP gRPC receiver.
+    port: 4317
+  - name: otlp-http # Default endpoint for OTLP HTTP receiver.
+    port: 4318
+{{- end }}
