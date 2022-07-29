@@ -1,0 +1,210 @@
+fluent-bit:
+  podAnnotations:
+    # fixes radiness and liveness probes
+    sidecar.istio.io/rewriteAppHTTPProbers: "true"
+kube-prometheus-stack:
+  kube-state-metrics:
+    podAnnotations:
+      # fixes radiness and liveness probes
+      sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      # fix scraping metrics by prometheus
+      traffic.sidecar.istio.io/excludeInboundPorts: "8080"
+  grafana:
+    podAnnotations:
+      # fixes radiness and liveness probes
+      sidecar.istio.io/rewriteAppHTTPProbers: "true"
+      # fix scraping metrics by prometheus
+      traffic.sidecar.istio.io/excludeInboundPorts: "3000"
+  prometheusOperator:
+    podAnnotations:
+      # fix scraping metrics by prometheus
+      traffic.sidecar.istio.io/excludeInboundPorts: "8080"
+  prometheus:
+    prometheusSpec:
+      podMetadata:
+        annotations:
+          traffic.sidecar.istio.io/includeOutboundIPRanges: ""  # do not intercept any outbound traffic
+          proxy.istio.io/config: |  # configure an env variable `OUTPUT_CERTS` to write certificates to the given folder
+            proxyMetadata:
+              OUTPUT_CERTS: /etc/istio-output-certs
+          sidecar.istio.io/userVolumeMount: '[{"name": "istio-certs", "mountPath": "/etc/istio-output-certs"}]' # mount the shared volume at sidecar proxy
+      volumes:
+        - emptyDir:
+            medium: Memory
+          name: istio-certs
+      volumeMounts:
+        - mountPath: /etc/prom-certs/
+          name: istio-certs
+    # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+    additionalServiceMonitors:
+      - name: collection-sumologic-fluentd-logs
+        additionalLabels:
+          sumologic.com/app: fluentd-logs
+        endpoints:
+          - port: metrics
+            # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+            scheme: https
+            tlsConfig:
+              caFile: /etc/prom-certs/root-cert.pem
+              certFile: /etc/prom-certs/cert-chain.pem
+              keyFile: /etc/prom-certs/key.pem
+              insecureSkipVerify: true
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-logs
+        additionalLabels:
+          sumologic.com/app: otelcol-logs
+        endpoints:
+          - port: otelcol-metrics
+            # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+            scheme: https
+            tlsConfig:
+              caFile: /etc/prom-certs/root-cert.pem
+              certFile: /etc/prom-certs/cert-chain.pem
+              keyFile: /etc/prom-certs/key.pem
+              insecureSkipVerify: true
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-fluentd-metrics
+        additionalLabels:
+          sumologic.com/app: fluentd-metrics
+        endpoints:
+          - port: metrics
+            # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+            scheme: https
+            tlsConfig:
+              caFile: /etc/prom-certs/root-cert.pem
+              certFile: /etc/prom-certs/cert-chain.pem
+              keyFile: /etc/prom-certs/key.pem
+              insecureSkipVerify: true
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-metrics
+        additionalLabels:
+          sumologic.com/app: otelcol-metrics
+        endpoints:
+          - port: otelcol-metrics
+            # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+            scheme: https
+            tlsConfig:
+              caFile: /etc/prom-certs/root-cert.pem
+              certFile: /etc/prom-certs/cert-chain.pem
+              keyFile: /etc/prom-certs/key.pem
+              insecureSkipVerify: true
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-fluentd-events
+        additionalLabels:
+          sumologic.com/app: fluentd-events
+        endpoints:
+          - port: metrics
+            # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+            scheme: https
+            tlsConfig:
+              caFile: /etc/prom-certs/root-cert.pem
+              certFile: /etc/prom-certs/cert-chain.pem
+              keyFile: /etc/prom-certs/key.pem
+              insecureSkipVerify: true
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-events
+            sumologic.com/scrape: "true"
+      - name: collection-fluent-bit
+        additionalLabels:
+          sumologic.com/app: collection-fluent-bit
+        endpoints:
+          - port: http
+            path: /api/v1/metrics/prometheus
+            # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+            scheme: https
+            tlsConfig:
+              caFile: /etc/prom-certs/root-cert.pem
+              certFile: /etc/prom-certs/cert-chain.pem
+              keyFile: /etc/prom-certs/key.pem
+              insecureSkipVerify: true
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            app.kubernetes.io/name: fluent-bit
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-logs-collector
+        additionalLabels:
+          sumologic.com/app: otelcol-logs-collector
+        endpoints:
+          - port: metrics
+            # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+            scheme: https
+            tlsConfig:
+              caFile: /etc/prom-certs/root-cert.pem
+              certFile: /etc/prom-certs/cert-chain.pem
+              keyFile: /etc/prom-certs/key.pem
+              insecureSkipVerify: true
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol-logs-collector
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol
+        additionalLabels:
+          sumologic.com/app: otelcol
+        endpoints:
+          - port: metrics
+            # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+            scheme: https
+            tlsConfig:
+              caFile: /etc/prom-certs/root-cert.pem
+              certFile: /etc/prom-certs/cert-chain.pem
+              keyFile: /etc/prom-certs/key.pem
+              insecureSkipVerify: true
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-prometheus
+        endpoints:
+          - port: web
+            path: /metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            operated-prometheus: "true"
+sumologic:
+  setup:
+    job:
+      podAnnotations:
+        # disable istio for setup job as it ends with error
+        sidecar.istio.io/inject: "false"
+  # connect to receiver-mock outside of istio
+  endpoint: http://receiver-mock.receiver-mock:3002/terraform/api/
