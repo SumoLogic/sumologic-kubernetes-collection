@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Released 2022-07-29
 
-This release changes the OpenTelemetry Collector `Traces` [exporters configuration](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.13.0/deploy/helm/sumologic/values.yaml#L3428) 
+This release changes the OpenTelemetry Collector `Traces` [exporters configuration](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.14.0/deploy/helm/sumologic/values.yaml#L3428) 
 for `otelagent` component. Collecting metrics and logs from OpenTelemetry Collector `Traces` is added.
 This change affects you only if you have enabled traces with `sumologic.traces.enabled: true`.
 
