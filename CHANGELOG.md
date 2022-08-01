@@ -5,14 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v2.14.1]
+
+### Released 2022-08-01
 
 ### Changed
 
 - chore: update Tailing Sidecar Operator subchart to 0.3.3 [#2460]
 
 [#2460]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2460
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.14.0...main
+[v2.14.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.14.0...v2.14.1
 
 ## [v2.14.0]
 
