@@ -61,16 +61,10 @@ spec:
           mountPath: /etc/terraform
         - name: custom
           mountPath: /customer-scripts
-        {{- if .Values.sumologic.envFromSecret }}
         envFrom:
         - secretRef:
-            name: {{ .Values.sumologic.envFromSecret }}
-        {{ else }}
+            name: {{ .Values.sumologic.envFromSecret | default (include "sumologic.metadata.name.setup.secret" .)}}
         env:
-        - name: SUMOLOGIC_ACCESSID
-          value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
-        - name: SUMOLOGIC_ACCESSKEY
-          value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
         - name: SUMOLOGIC_BASE_URL
           value: {{ .Values.sumologic.endpoint }}
         - name: HTTP_PROXY
@@ -83,7 +77,6 @@ spec:
         - name: DEBUG_MODE
           value: "true"
 {{- end }}
-        {{ end }}
       securityContext:
         runAsUser: 999
 {{- end }}
