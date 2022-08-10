@@ -3,7 +3,7 @@
 Opentelemetry Collector is a software to receive, process and export logs, metrics and traces.
 We offer it as drop-in replacement for Fluentd in our collection.
 
-**This feature is currently in beta and is not recommended for production environments.**
+> :warning: **This feature is currently in beta and its configuration can change. It is nonetheless production-ready and will become the default in the next major version.**
 
 - [Metrics](#metrics)
   - [Metrics Configuration](#metrics-configuration)
