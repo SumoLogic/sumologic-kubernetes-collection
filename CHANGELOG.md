@@ -11,7 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat: store Sumo credentials for the setup Job in a Secret [#2466]
 
+### Changed
+
+- chore: upgrade sumologic terraform provider to 2.18 [#2399]
+
 [#2466]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2466
+[#2399]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2399
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.14.1...main
 
 ## [v2.14.1]
