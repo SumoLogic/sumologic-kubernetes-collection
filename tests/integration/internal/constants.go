@@ -25,7 +25,7 @@ const (
 
 	LogsGeneratorNamespace = "logs-generator"
 	LogsGeneratorName      = "logs-generator"
-	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.9.0"
+	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.12.0"
 
 	MultilineLogsNamespace = "multiline-logs-generator"
 	MultilineLogsPodName   = "multiline-logs-generator"

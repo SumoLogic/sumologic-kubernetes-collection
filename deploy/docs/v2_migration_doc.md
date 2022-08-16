@@ -352,7 +352,7 @@ to convert their existing `values.yaml` file into one that is compatible with th
     cat current_values.yaml | \
       docker run \
         --rm \
-        -i sumologic/kubernetes-tools:2.9.0 upgrade-2.0 | \
+        -i sumologic/kubernetes-tools:2.12.0 upgrade-2.0 | \
       tee new_values.yaml
     ```
 
@@ -367,7 +367,7 @@ to convert their existing `values.yaml` file into one that is compatible with th
         --quiet \
         --rm \
         --restart=Never \
-        --image sumologic/kubernetes-tools:2.9.0 -- upgrade-2.0 | \
+        --image sumologic/kubernetes-tools:2.12.0 -- upgrade-2.0 | \
       tee new_values.yaml
     ```
 
