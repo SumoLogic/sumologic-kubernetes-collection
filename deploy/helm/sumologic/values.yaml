@@ -3979,7 +3979,7 @@ metadata:
           ## Number of spans after which a batch will be sent regardless of time
           send_batch_size: 1_024
           ## Time duration after which a batch will be sent regardless of size
-          timeout: 30s
+          timeout: 1s
         ## Configuration for Kubernetes Processor
         ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
         k8s_tagger:
@@ -4151,6 +4151,8 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 10_000
         sumologic/systemd:
           log_format: json
           json_logs:
@@ -4169,6 +4171,8 @@ metadata:
           sending_queue:
             enabled: true
             persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+            num_consumers: 10
+            queue_size: 10_000
 
       processors:
         ## Common processors
@@ -4192,9 +4196,9 @@ metadata:
         ## The batch processor accepts spans and places them into batches grouped by node and resource
         batch:
           ## Number of spans after which a batch will be sent regardless of time
-          send_batch_size: 256
+          send_batch_size: 1_024
           ## Time duration after which a batch will be sent regardless of size
-          timeout: 5s
+          timeout: 1s
 
         ## Containers related processors
         filter/include_fluent_tag_containers:
