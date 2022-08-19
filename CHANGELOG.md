@@ -15,12 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - chore: upgrade sumologic terraform provider to 2.18 [#2399]
 - chore: update kubernetes-tools to 2.12.0 [#2472]
-- feat(otelcol/metrics): adjust metric otelcol configuration [#2474]
+- feat(otelcol/metrics/logs): adjust metric otelcol configuration [#2474], [#2479]
 
 [#2466]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2466
 [#2399]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2399
 [#2472]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2472
 [#2474]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2474
+[#2479]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2479
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.14.1...main
 
 ## [v2.14.1]

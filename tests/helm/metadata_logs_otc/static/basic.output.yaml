@@ -21,7 +21,9 @@ data:
         log_format: json
         sending_queue:
           enabled: true
+          num_consumers: 10
           persistent_storage_enabled: true
+          queue_size: 10000
         source_category: '%{_sourceCategory}'
         source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
@@ -34,7 +36,9 @@ data:
         log_format: json
         sending_queue:
           enabled: true
+          num_consumers: 10
           persistent_storage_enabled: true
+          queue_size: 10000
         source_category: '%{_sourceCategory}'
         source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
@@ -83,8 +87,8 @@ data:
         - action: delete
           key: fluent.tag
       batch:
-        send_batch_size: 256
-        timeout: 5s
+        send_batch_size: 1024
+        timeout: 1s
       filter/exclude_kubelet:
         logs:
           exclude:
