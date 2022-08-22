@@ -22,8 +22,8 @@ There are two ways of dealing with this:
 - Disabling the setup job and creating the necessary resources manually: [see here][manual]
 - Injecting the custom root CA into the setup image: [see here][rebuilding]
 
-[rebuilding]: ./Security_Best_Practices.md#adding-a-custom-root-ca-certificate-by-rebuilding-container-images
-[manual]: ./Installation_with_Helm.md#prerequisite
+[rebuilding]: ./security-best-practices.md#adding-a-custom-root-ca-certificate-by-rebuilding-container-images
+[manual]: ./installation-with-helm.md#prerequisite
 
 ## Troubleshooting
 

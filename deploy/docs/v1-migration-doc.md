@@ -104,7 +104,7 @@ Some use-cases include :
 - adding Fluentd filter plugins (ex: fluentd throttle plugin), or
 - adding Fluentd output plugins (ex: forward to both Sumo and S3)
 
-You can look for example configurations [here](../docs/v1_conf_examples.md)
+You can look for example configurations [here](v1-conf-examples.md)
 
 The Fluentd `deployments` have been changed to `statefulsets` to support the use of persistent volumes.
 This will allow better buffering behavior.

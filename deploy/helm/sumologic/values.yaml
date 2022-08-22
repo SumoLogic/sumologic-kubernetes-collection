@@ -506,7 +506,7 @@ fluentd:
         requests:
           memory: 768Mi
           ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#cpu-resources-warning
+          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/best-practices.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -807,7 +807,7 @@ fluentd:
         requests:
           memory: 768Mi
           ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#cpu-resources-warning
+          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/best-practices.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -1215,7 +1215,7 @@ kube-prometheus-stack:
   ## Uncomment the flag below to not install kube-prometheus-stack helm chart
   ## as a dependency along with this helm chart.
   ## This is needed e.g. if you want to use a different version of kube-prometheus-stack -
-  ## see /deploy/docs/Best_Practices.md#using-newer-kube-prometheus-stack.
+  ## see /deploy/docs/best-practices.md#using-newer-kube-prometheus-stack.
   ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
   ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.metrics.enabled: false`,
   ## as this will make Prometheus try to write to an non-existent metrics enrichment service.

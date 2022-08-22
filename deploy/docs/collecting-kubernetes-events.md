@@ -121,6 +121,6 @@ sumologic:
 [event_v1_core]: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#event-v1-core
 [event_events_k8s_io]: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#event-v1-events-k8s-io
 [values_yaml]: ../helm/sumologic/values.yaml
-[otelcol_config]: ./opentelemetry_collector.md#kubernetes-events
-[source_category]: https://help.sumologic.com/03Send-Data/Sources/04Reference-Information-for-Sources/Metadata-Naming-Conventions#Source_Categories
-[source_name]: https://help.sumologic.com/03Send-Data/Sources/04Reference-Information-for-Sources/Metadata-Naming-Conventions#Source_Name
+[otelcol_config]: ./opentelemetry-collector.md#kubernetes-events
+[source_category]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions/#Source_Categories
+[source_name]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions/#Source_Name

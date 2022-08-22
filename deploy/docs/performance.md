@@ -1,6 +1,6 @@
 # Performance
 
-For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](./Best_Practices.md#Fluentd-Autoscaling),
+For larger or more volatile loads, we recommend [enabling Fluentd autoscaling](best-practices.md#Fluentd-Autoscaling),
 as this will allow Fluentd to automatically scale to support your data volume.
 However, the following recommendations and corresponding examples will help you get an idea of the resources
 required to run collection on your cluster.

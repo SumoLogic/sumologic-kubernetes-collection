@@ -28,7 +28,7 @@ The following are required to set up Sumo Logic's Kubernetes collection.
 - Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
 
 To get an idea of the resources this chart will require to run on your cluster,
-you can reference our [performance doc](./Performance.md).
+you can reference our [performance doc](performance.md).
 
 ### Kubernetes version
 
@@ -74,9 +74,9 @@ This is a one time setup per Sumo Logic account.
 These steps require that no Prometheus exists.
 If you already have Prometheus installed select from the following options:
 
-- [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
-- [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md)
-- [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md)
+- [How to install our Chart side by side with your existing Prometheus Operator](side-by-side-prometheus.md)
+- [How to install if you have an existing Prometheus Operator you want to update](existing-prometheus-doc.md)
+- [How to install if you have standalone Prometheus (not using Prometheus Operator)](standalone-prometheus.md)
 
 The Helm chart installation requires two parameter overrides:
 
@@ -84,7 +84,7 @@ The Helm chart installation requires two parameter overrides:
 - __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/docs/manage/security/access-keys/).
 
 If you are installing the collection in a cluster that requires proxying outbound requests,
-please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
+please see the following [additional properties](installing-behind-proxy.md) you will need to set.
 
 The following parameter is optional, but we recommend setting it.
 
@@ -137,7 +137,7 @@ helm upgrade --install my-release sumologic/sumologic \
 ```
 
 If you want to override the names of the resources created by the chart,
-see [Overriding chart resource names with `fullnameOverride`](./Best_Practices.md#overriding-chart-resource-names-with-fullnameoverride).
+see [Overriding chart resource names with `fullnameOverride`](best-practices.md#overriding-chart-resource-names-with-fullnameoverride).
 
 ### Authenticating with container registry
 
@@ -148,13 +148,13 @@ To find a comprehensive information on this please refer to
 [Amazon Elastic Container Registry pricing][aws-ecr-pricing].
 
 Please refer to
-[our instructions](/deploy/docs/Working_with_container_registries.md#authenticating-with-container-registry)
+[our instructions](/deploy/docs/working-with-container-registries.md#authenticating-with-container-registry)
 on how to provide credentials in order to authenticate with Docker Hub.
 
 An alternative would be to host Sumo Logic container images in one's container
 registries.
 To do so please refer to the following
-[instructions](/deploy/docs/Working_with_container_registries.md#hosting-sumo-logic-images)
+[instructions](/deploy/docs/working-with-container-registries.md#hosting-sumo-logic-images)
 
 [aws-public-ecr-docs]: https://aws.amazon.com/blogs/aws/amazon-ecr-public-a-new-public-container-registry/
 [aws-ecr-pricing]: https://aws.amazon.com/ecr/pricing/
@@ -233,7 +233,7 @@ Once you have completed installation, you can
 [install the Kubernetes App and view the dashboards][sumo-k8s-app-dashboards]
 or [open a new Explore tab] in Sumo Logic.
 If you do not see data in Sumo Logic, you can review our
-[troubleshooting guide](./Troubleshoot_Collection.md).
+[troubleshooting guide](troubleshoot-collection.md).
 
 [sumo-k8s-app-dashboards]: https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app
 [open a new Explore tab]: https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore
@@ -275,7 +275,7 @@ The installation process creates new [HTTP endpoints](https://help.sumologic.com
 in your Sumo Logic account, that are used to send data to Sumo.
 This error occurs if the endpoints had already been created by an earlier run of the installation process.
 
-You can find more information in our [troubleshooting documentation](Troubleshoot_Collection.md).
+You can find more information in our [troubleshooting documentation](troubleshoot-collection.md).
 
 ## Customizing Installation
 
@@ -289,7 +289,7 @@ helm upgrade --install my-release sumologic/sumologic -f `user-values.yaml`
 ```
 
 > __Tip__: To filter or add custom metrics to Prometheus,
-> [please refer to this document](additional_prometheus_configuration.md)
+> [please refer to this document](additional-prometheus-configuration.md)
 
 ## Upgrading Sumo Logic Collection
 

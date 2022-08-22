@@ -142,7 +142,7 @@ Docker_Mode_Parser new_multi_line_parser
 
 The regex used for needs to have at least one named capture group.
 
-For detailed information about parsing container logs please see [here](ContainerLogs.md).
+For detailed information about parsing container logs please see [here](container-logs.md).
 
 ### MySQL slow logs example
 
@@ -464,7 +464,7 @@ fluentd:
     enabled: true
 ```
 
-After changing Fluentd persistence setting (enable or disable) follow steps described in [Fluentd Persistence](FluentdPersistence.md).
+After changing Fluentd persistence setting (enable or disable) follow steps described in [Fluentd Persistence](fluentd-persistence.md).
 
 Additional buffering and flushing parameters can be added in the `extraConf`,
 in the `fluentd` buffer section.
@@ -620,7 +620,7 @@ fluentd:
 
 You can find more information on the `grep` filter plugin in the
 [fluentd documentation](https://docs.fluentd.org/filter/grep).
-Refer to our [documentation](v1_conf_examples.md) for other examples of how you can
+Refer to our [documentation](v1-conf-examples.md) for other examples of how you can
 customize the fluentd pipeline.
 
 ## Modifying logs in Fluentd
@@ -686,7 +686,7 @@ An example log before entering the `extraFilterPluginConf` section is presented 
 
 In order to support big chunks we have added split and retry mechanism into out output plugin.
 It is recommended to use it in order to process big chunks.
-It also fixes [logs duplication](./Troubleshoot_Collection.md#duplicated-logs).
+It also fixes [logs duplication](troubleshoot-collection.md#duplicated-logs).
 Please consider the following configuration in order to use it:
 
 ```yaml
@@ -724,7 +724,7 @@ fluentd:
 
 ## Excluding Metrics
 
-You can filter out metrics directly in promethus using [this documentation](additional_prometheus_configuration.md#filter-metrics).
+You can filter out metrics directly in promethus using [this documentation](additional-prometheus-configuration.md#filter-metrics).
 
 You can also exclude metrics by any tag in Fluentd.
 For example to filter out metrics from `sumologic` namespace, you can use following configuration:
@@ -873,7 +873,7 @@ You can use [Kubernetes annotations](https://kubernetes.io/docs/concepts/overvie
 to override some metadata and settings per pod.
 
 - `sumologic.com/format` overrides the value of the `fluentd.logs.output.logFormat` property.
-  Using `text` can break multiline detection. Check out [Troubleshooting Collection](./Troubleshoot_Collection.md#using-text-format)
+  Using `text` can break multiline detection. Check out [Troubleshooting Collection](troubleshoot-collection.md#using-text-format)
 - `sumologic.com/sourceCategory` overrides the value of the `fluentd.logs.containers.sourceCategory` property
 - `sumologic.com/sourceCategoryPrefix` overrides the value of the `fluentd.logs.containers.sourceCategoryPrefix` property
 - `sumologic.com/sourceCategoryReplaceDash` overrides the value of the `fluentd.logs.containers.sourceCategoryReplaceDash`
@@ -1286,7 +1286,7 @@ to work with our collection.
 
    - add your custom prometheus configuration
 
-1. [Upgrade sumologic chart](./Installation_with_Helm.md#upgrading-sumo-logic-collection) without `kube-prometheus-stack`
+1. [Upgrade sumologic chart](./installation-with-helm.md#upgrading-sumo-logic-collection) without `kube-prometheus-stack`
    by adding the following configuration to your `user-values.yaml`:
 
    ```yaml

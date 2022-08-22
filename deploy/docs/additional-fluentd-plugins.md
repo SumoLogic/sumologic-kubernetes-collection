@@ -19,7 +19,7 @@ fluentd:
 Use the [Sumo Logic Fluentd](https://gallery.ecr.aws/sumologic/kubernetes-fluentd) image as the base image.
 
 __Note:__ To choose between Debian-based and Alpine-based image,
-see [Choosing Fluentd base image](./Best_Practices.md#choosing-fluentd-base-image).
+see [Choosing Fluentd base image](best-practices.md#choosing-fluentd-base-image).
 
 To create a Debian-based image:
 

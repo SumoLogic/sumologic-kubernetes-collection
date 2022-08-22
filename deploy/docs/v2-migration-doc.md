@@ -309,7 +309,7 @@ or preserve existing setting and modify default setting for Fluentd persistence 
 
 **In order to enable persistence in existing collection** please follow one
 of persistence enabling procedures described in
-[Enabling Fluentd Persistence guide](FluentdPersistence.md#enabling-fluentd-persistence)
+[Enabling Fluentd Persistence guide](fluentd-persistence.md#enabling-fluentd-persistence)
 before upgrade.
 
 If Fluentd persistence is disabled and it is desired to preserve this setting,

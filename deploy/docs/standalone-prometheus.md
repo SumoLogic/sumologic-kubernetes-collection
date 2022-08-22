@@ -1,6 +1,6 @@
 # How to install if you have standalone Prometheus
 
-__NOTE__: The Sumo Logic Kubernetes collection process does not support collecting metrics from scaling Prometheus replicas. If you are running multiple Prometheus replicas, please follow our [Side-by-Side](SideBySidePrometheus.md) instructions.
+__NOTE__: The Sumo Logic Kubernetes collection process does not support collecting metrics from scaling Prometheus replicas. If you are running multiple Prometheus replicas, please follow our [Side-by-Side](side-by-side-prometheus.md) instructions.
 
 - [Requirements](#requirements)
 - [Prerequisite](#prerequisite)
@@ -16,7 +16,7 @@ when you already have Prometheus running, not using the Prometheus Operator.
 In these steps, you will modify your installed Prometheus to add in the
 minimum configuration that Sumo Logic needs.
 If you are using the Prometheus Operator, please refer to our guide on installing
-with an existing [Prometheus Operator](./existingPrometheusDoc.md).
+with an existing [Prometheus Operator](existing-prometheus-doc.md).
 
 ## Requirements
 
@@ -27,7 +27,7 @@ The following are required to setup Sumo Logic's Kubernetes collection.
 - An [Access ID and Access Key](https://help.sumologic.com/docs/manage/security/access-keys/) with [Manage Collectors](https://help.sumologic.com/docs/manage/users-roles/roles/role-capabilities#data-management) capability.
 - Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
 
-To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
+To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](performance.md).
 
 ## Prerequisite
 
@@ -49,9 +49,9 @@ The Helm chart installation requires two parameter overrides:
 - __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/docs/manage/security/access-keys/).
 - __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/docs/manage/security/access-keys/).
 
-To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
+To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](performance.md).
 
-If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
+If you are installing the collection in a cluster that requires proxying outbound requests, please see the following [additional properties](installing-behind-proxy.md) you will need to set.
 
 The following parameter is optional, but we recommend setting it.
 
@@ -195,7 +195,7 @@ Finally, delete the existing Prometheus pod so that Kubernetes will respawn it w
 kubectl delete pods <prometheus_pod_name>
 ```
 
-__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
+__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional-prometheus-configuration.md)
 
 ## Viewing Data In Sumo Logic
 
@@ -203,7 +203,7 @@ Once you have completed installation, you can
 [install the Kubernetes App and view the dashboards][sumo-k8s-app-dashboards]
 or [open a new Explore tab] in Sumo Logic.
 If you do not see data in Sumo Logic, you can review our
-[troubleshooting guide](./Troubleshoot_Collection.md).
+[troubleshooting guide](troubleshoot-collection.md).
 
 [sumo-k8s-app-dashboards]: https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app
 [open a new Explore tab]: https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore
@@ -221,11 +221,11 @@ in the `user-values.yaml` as well
 helm upgrade --install my-release sumologic/sumologic -f user-values.yaml
 ```
 
-> __Tip__: To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
+> __Tip__: To filter or add custom metrics to Prometheus, [please refer to this document](additional-prometheus-configuration.md)
 
 ## Upgrading Sumo Logic Collection
 
-__Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1_migration_doc.md).__
+__Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1-migration-doc.md).__
 
 To upgrade our Helm chart to a newer version, you must first run update your local Helm repo.
 

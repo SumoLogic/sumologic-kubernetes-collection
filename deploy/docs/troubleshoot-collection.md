@@ -359,7 +359,7 @@ you have an unhealthy node. Killing the node should resolve this issue.
 
 ### Fluentd Pod stuck in `Pending` state after recreation
 
-If you are seeing a Fluentd Pod stuck in the `Pending` state, using the [file based buffering](./Best_Practices.md#fluentd-file-based-buffer)
+If you are seeing a Fluentd Pod stuck in the `Pending` state, using the [file based buffering](best-practices.md#fluentd-file-based-buffer)
 (default since v2.0) and seeing logs like
 
 ```
@@ -494,7 +494,7 @@ If you observe the following errors from Fluentd pods:
 2021-01-18 15:47:23 +0000 [warn]: #0 [sumologic.endpoint.logs.gc] failed to flush the buffer. retry_time=3 next_retry_seconds=2021-01-18 15:47:27 +0000 chunk="5b92e97a5ee3cbd7e59859644d9686e3" error_class=Zlib::GzipFile::Error error="not in gzip format"
 ```
 
-Please see [migration topic on that](./v2_migration_doc.md#gzip-compression-errors).
+Please see [migration topic on that](v2-migration-doc.md#gzip-compression-errors).
 
 If the problem still occurs, please disable gzip compression for buffer.
 Add following configuration to your `user-values.yaml` and upgrade collection:
@@ -657,7 +657,7 @@ We observed than under certain conditions, it's possible for FluentD to duplicat
 - one of those requests is failing, resulting in the whole batch being retried
 
 In order to mitigate this, please use [fluentd-output-sumologic] with `use_internal_retry` option.
-Please follow [Split Big Chunks in Fluentd](./Best_Practices.md#split-big-chunks-in-fluentd)
+Please follow [Split Big Chunks in Fluentd](best-practices.md#split-big-chunks-in-fluentd)
 
 [fluentd-output-sumologic]: https://github.com/SumoLogic/fluentd-output-sumologic
 

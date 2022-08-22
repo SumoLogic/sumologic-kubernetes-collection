@@ -37,7 +37,7 @@ The following are required to setup Sumo Logic's Kubernetes collection.
 [Manage Collectors]: https://help.sumologic.com/docs/manage/users-roles/roles/role-capabilities#data-management
 
 To get an idea of the resources this chart will require to run on your cluster,
-you can reference our [performance doc](./Performance.md).
+you can reference our [performance doc](performance.md).
 
 ## Prerequisite
 
@@ -61,9 +61,9 @@ This is a one time setup per Sumo Logic account.
 These steps require that no Prometheus exists.
 If you already have Prometheus installed select from the following options:
 
-- [How to install our Chart side by side with your existing Prometheus Operator](./SideBySidePrometheus.md)
-- [How to install if you have an existing Prometheus Operator you want to update](./existingPrometheusDoc.md)
-- [How to install if you have standalone Prometheus (not using Prometheus Operator)](./standAlonePrometheus.md)
+- [How to install our Chart side by side with your existing Prometheus Operator](side-by-side-prometheus.md)
+- [How to install if you have an existing Prometheus Operator you want to update](existing-prometheus-doc.md)
+- [How to install if you have standalone Prometheus (not using Prometheus Operator)](standalone-prometheus.md)
 
 In this method of installation, you will use our
 [templating tool](https://github.com/SumoLogic/sumologic-kubernetes-tools#k8s-template-generator)
@@ -78,7 +78,7 @@ The installation requires two parameters:
 - **sumologic.accessKey** - Sumo [Access key](https://help.sumologic.com/docs/manage/security/access-keys/).
 
 If you are installing the collection in a cluster that requires proxying outbound requests,
-please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
+please see the following [additional properties](installing-behind-proxy.md) you will need to set.
 
 The following parameter is optional, but we recommend setting it.
 
@@ -161,13 +161,13 @@ on [Docker Hub](https://hub.docker.com/) which
 [requires authentication in order to provide higher quota for image pulls][docker-rate-limit].
 
 Please refer to
-[our instructions](/deploy/docs/Working_with_container_registries.md#authenticating-with-container-registry)
+[our instructions](/deploy/docs/working-with-container-registries.md#authenticating-with-container-registry)
 on how to provide credentials in order to authenticate Docker Hub.
 
 An alternative would be to host Sumo Logic container images in one's container
 registries.
 To do so please refer to the following
-[instructions](/deploy/docs/Working_with_container_registries.md#hosting-sumo-logic-images)
+[instructions](/deploy/docs/working-with-container-registries.md#hosting-sumo-logic-images)
 
 [docker-rate-limit]: https://www.docker.com/increase-rate-limits
 
@@ -256,7 +256,7 @@ in order to generate scc.
 Once you have completed installation, you can
 [install the Kubernetes App and view the dashboards][sumo-k8s-app-dashboards] or
 or [open a new Explore tab] in Sumo Logic.
-If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
+If you do not see data in Sumo Logic, you can review our [troubleshooting guide](troubleshoot-collection.md).
 
 [sumo-k8s-app-dashboards]: https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app
 [open a new Explore tab]: https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore
@@ -293,7 +293,7 @@ that are used to send data to Sumo.
 This error occurs if the endpoints had already been created by an earlier run
 of the installation process.
 
-You can find more information in our [troubleshooting documentation](Troubleshoot_Collection.md).
+You can find more information in our [troubleshooting documentation](troubleshoot-collection.md).
 
 [HTTP endpoints]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source
 
@@ -317,12 +317,12 @@ cat user-values.yaml | \
       | tee sumologic.yaml
 ```
 
-> **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
+> **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional-prometheus-configuration.md)
 
 ## Upgrading Sumo Logic Collection
 
 **Note, if you are upgrading to version 1.x of our collection from a version before 1.x,
-please see our [migration guide](v1_migration_doc.md).**
+please see our [migration guide](v1-migration-doc.md).**
 
 To upgrade you can simply re-generate the YAML when a new version
 of the Kubernetes collection is available.
