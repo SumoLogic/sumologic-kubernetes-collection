@@ -20,7 +20,7 @@ You can generate mixin configuration using `kubectl` or `docker`:
 
 The defaults assume you're deploying Sumo Logic collection via Helm and using few customizations.
 When deploying collection, disable the built-in Prometheus
-Operator either by editing `values.yml`:
+Operator by editing `values.yml`:
 
 ```yaml
 kube-prometheus-stack:
