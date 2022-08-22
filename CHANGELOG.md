@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- feat: enable remote write proxy by default [#2483]
+
+[#2483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2483
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.15.0...main
 
 ## [v2.15.0]

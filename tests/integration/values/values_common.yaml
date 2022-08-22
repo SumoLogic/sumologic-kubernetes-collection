@@ -11,6 +11,13 @@ sumologic:
   accessKey: "dummy"
   endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
 
+  metrics:
+    remoteWriteProxy:
+      resources:
+        requests:
+          cpu: 5m
+          memory: 16Mi
+
 # Request less resources so that this fits on Github actions runners environment
 kube-prometheus-stack:
   prometheus:
