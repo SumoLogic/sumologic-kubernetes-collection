@@ -98,16 +98,25 @@ To install the chart, first add the `sumologic` private repo:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Next you can run `helm upgrade --install` to install our chart.
-An example command with the minimum parameters is provided below.
-The following command will install the Sumo Logic chart with the release name
-`my-release` in the namespace your `kubectl` context is currently set to.
+Next you can prepare `values.yaml` with configuration.
+An example file with the minimum confiuration is provided below.
+It disables the `kube-prometheus-stack` sub-chart since
+we will be modifying the existing prometheus operator install.
+
+```yaml
+sumologic:
+  accessId: ${SUMO_ACCESS_ID}
+  accessKey: ${SUMO_ACCESS_KEY}
+  clusterName: ${MY_CLUSTER_NAME}
+```
+
+Now you can run `helm upgrade --install` to install our chart.
+The following command will install the Sumo Logic chart with the release name `my-release`
+in the namespace your `kubectl` context is currently set to.
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
-  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
-  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
-  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
+  -f values.yaml
 ```
 
 > __Note__: If the release exists, it will be upgraded, otherwise it will be installed.
@@ -117,9 +126,7 @@ If you wish to install the chart in a different existing namespace you can do th
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
   --namespace=my-namespace \
-  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
-  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
-  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
+  -f values.yaml
 ```
 
 If the namespace does not exist, you can add the `--create-namespace` flag.
@@ -128,9 +135,7 @@ If the namespace does not exist, you can add the `--create-namespace` flag.
 helm upgrade --install my-release sumologic/sumologic \
   --namespace=my-namespace \
   --create-namespace \
-  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
-  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
-  --set sumologic.clusterName="<MY_CLUSTER_NAME>"
+  -f values.yaml
 ```
 
 If you want to override the names of the resources created by the chart,
@@ -162,19 +167,54 @@ The daemonset/statefulset fails to create the pods in Openshift environment due 
 the request of elevated privileges, like HostPath mounts, privileged: true, etc.
 
 If you wish to install the chart in the Openshift Platform, it requires a SCC resource
-which is only created in Openshift (detected via API capabilities in the chart), you can do the following:
+which is only created in Openshift (detected via API capabilities in the chart),
+you can add the following configuration to `values.yaml`:
+
+```yaml
+sumologic:
+  scc:
+    create: true
+fluent-bit:
+  securityContext:
+    privileged: true
+kube-prometheus-stack:
+  prometheus-node-exporter:
+    service:
+      port: 9200
+      targetPort: 9200
+  prometheusOperator:
+    namespaces:
+      additional:
+        - my-namespace
+```
+
+so, it will look like the following:
+
+```yaml
+sumologic:
+  accessId: ${SUMO_ACCESS_ID}
+  accessKey: ${SUMO_ACCESS_KEY}
+  clusterName: ${MY_CLUSTER_NAME}
+  scc:
+    create: true
+fluent-bit:
+  securityContext:
+    privileged: true
+kube-prometheus-stack:
+  prometheus-node-exporter:
+    service:
+      port: 9200
+      targetPort: 9200
+  prometheusOperator:
+    namespaces:
+      additional:
+        - my-namespace
+```
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
   --namespace=my-namespace \
-  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
-  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
-  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
-  --set sumologic.scc.create=true \
-  --set fluent-bit.securityContext.privileged=true \
-  --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
-  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
-  --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace}
+  -f values.yaml
 ```
 
 __Notice:__ Prometheus Operator is deployed by default on OpenShift platform,
@@ -268,9 +308,8 @@ If you wish to upgrade to a specific version, you can use the `--version` flag.
 helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=2.0.0
 ```
 
-If you no longer have your `values.yaml` from the first installation or do not remember
-the options you added via `--set` you can run the following to see the values
-for the currently installed helm chart.
+__Note__ If you no longer have your `values.yaml` from the first installation
+or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart.
 For example, if the release is called `my-release` you can run the following.
 
 ```bash
