@@ -267,7 +267,7 @@ sumologic:
     ## This is an advanced feature, enable only if you're experiencing performance
     ## issues with metrics metadata enrichment.
     remoteWriteProxy:
-      enabled: false
+      enabled: true
       config:
         ## Increase this if you've increased samples_per_send in Prometheus to prevent nginx
         ## from spilling proxied request bodies to disk
@@ -286,7 +286,7 @@ sumologic:
           cpu: 1000m
           memory: 256Mi
         requests:
-          cpu: 200m
+          cpu: 100m
           memory: 128Mi
       livenessProbe:
         initialDelaySeconds: 30
