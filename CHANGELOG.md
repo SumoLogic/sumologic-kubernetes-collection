@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat: store Sumo credentials for the setup Job in a Secret [#2466]
+- feat: enable compaction for OT storage [#2486]
 
 ### Changed
 
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2472]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2472
 [#2474]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2474
 [#2479]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2479
+[#2486]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2486
 [#2485]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2485
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.14.1...main
 
