@@ -100,8 +100,6 @@ helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collect
 
 Next you can prepare `values.yaml` with configuration.
 An example file with the minimum confiuration is provided below.
-It disables the `kube-prometheus-stack` sub-chart since
-we will be modifying the existing prometheus operator install.
 
 ```yaml
 sumologic:
