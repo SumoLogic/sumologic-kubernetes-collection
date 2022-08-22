@@ -306,7 +306,7 @@ If you wish to upgrade to a specific version, you can use the `--version` flag.
 helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=2.0.0
 ```
 
-__Note__ If you no longer have your `values.yaml` from the first installation
+__Note:__ If you no longer have your `values.yaml` from the first installation
 or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart.
 For example, if the release is called `my-release` you can run the following.
 
