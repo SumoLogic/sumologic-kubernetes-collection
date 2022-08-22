@@ -1317,6 +1317,17 @@ Example Usage:
 {{- end -}}
 
 {{/*
+Check if remote write proxy is enabled.
+Example Usage:
+{{- if eq (include "metrics.remoteWriteProxy.enabled" .) "true" }}
+
+*/}}
+{{- define "metrics.remoteWriteProxy.enabled" -}}
+{{ and (eq (include "metrics.enabled" .) "true") (eq .Values.sumologic.metrics.remoteWriteProxy.enabled true) }}
+{{- end -}}
+
+
+{{/*
 Check if any logs metadata provider is enabled
 
 Example Usage:
