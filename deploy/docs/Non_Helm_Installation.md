@@ -85,19 +85,28 @@ The following parameter is optional, but we recommend setting it.
 - **sumologic.clusterName** - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
-First you will generate the YAML to apply to your cluster.  The following command contains the minimum parameters that can generate the YAML to setup Sumo Logic's Kubernetes collection. This command will generate the YAML and pipe it a file called `sumologic.yaml`. Please note that `--namespace` is required
+Create `values.yaml` with the configuration. For example, the minimal one will look like the following:
+
+```yaml
+sumologic:
+  accessId: ${ACCESS_ID}
+  accessKey: ${ACCESS_KEY}
+  clusterName: ${CLUSTER_NAME}
+```
+
+Now you will need to generate the YAML to apply to your cluster.
+This command will generate the YAML using `values.yaml` and pipe it a file called `sumologic.yaml`.
+Please note that `--namespace` is required
 
 ```bash
-kubectl run tools \
-  -i --quiet --rm \
-  --restart=Never \
-  --image sumologic/kubernetes-tools:2.12.0 -- \
-  template \
-  --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_ID>' \
-  --set sumologic.accessKey='<ACCESS_KEY>' \
-  --set sumologic.clusterName='<CLUSTER_NAME>' \
-  | tee sumologic.yaml
+cat values.yaml | \
+  kubectl run tools \
+    -i --quiet --rm \
+    --restart=Never \
+    --image sumologic/kubernetes-tools:2.12.0 -- \
+    template \
+      --name-template 'collection' \
+      | tee sumologic.yaml
 ```
 
 Next, you will need to apply the required CRD's for `kube-prometheus-stack`.
@@ -125,17 +134,15 @@ If you wish to install the YAML in a different namespace, you can add the `--nam
 The following will render the YAML and install in the `my-namespace` namespace.
 
 ```bash
-kubectl run tools \
-  -i --quiet --rm \
-  --restart=Never \
-  --image sumologic/kubernetes-tools:2.12.0 -- \
-  template \
-  --namespace 'my-namespace' \
-  --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_ID>' \
-  --set sumologic.accessKey='<ACCESS_KEY>' \
-  --set sumologic.clusterName='<CLUSTER_NAME>' \
-  | tee sumologic.yaml
+cat values.yaml | \
+  kubectl run tools \
+    -i --quiet --rm \
+    --restart=Never \
+    --image sumologic/kubernetes-tools:2.12.0 -- \
+    template \
+      --namespace 'my-namespace' \
+      --name-template 'collection' \
+      | tee sumologic.yaml
 ```
 
 Finally, you can run `kubectl apply` on the file containing the rendered YAML
@@ -170,26 +177,62 @@ The daemonset/statefulset fails to create the pods in Openshift environment
 due to the request of elevated privileges, like HostPath mounts, privileged: true, etc.
 
 If you wish to install the chart in the Openshift Platform, it requires a SCC resource
-which is only created in Openshift (detected via API capabilities in the chart),
-you can do the following:
+which is only created in Openshift (detected via API capabilities in the chart).
+In order to enable it, please add the following to `values.yaml`:
+
+```yaml
+sumologic:
+  scc:
+    create: true
+fluent-bit:
+  securityContext:
+    privileged: true
+kube-prometheus-stack:
+  prometheus-node-exporter:
+    service:
+      port: 9200
+      targetPort: 9200
+  prometheusOperator:
+    namespaces:
+      additional:
+        - my-namespace
+```
+
+so it will look like the following:
+
+```yaml
+sumologic:
+  accessId: ${ACCESS_ID}
+  accessKey: ${ACCESS_KEY}
+  clusterName: ${CLUSTER_NAME}
+  scc:
+    create: true
+fluent-bit:
+  securityContext:
+    privileged: true
+kube-prometheus-stack:
+  prometheus-node-exporter:
+    service:
+      port: 9200
+      targetPort: 9200
+  prometheusOperator:
+    namespaces:
+      additional:
+        - my-namespace
+```
+
+and you can do the following:
 
 ```bash
-kubectl run tools \
-  -i --quiet --rm \
-  --restart=Never \
-  --image sumologic/kubernetes-tools:2.12.0 -- \
-  template \
-  --namespace 'my-namespace' \
-  --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_ID>' \
-  --set sumologic.accessKey='<ACCESS_KEY>' \
-  --set sumologic.clusterName='<CLUSTER_NAME>' \
-  --set sumologic.scc.create=true \
-  --set fluent-bit.securityContext.privileged=true \
-  --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
-  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
-  --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace} \
-  | tee sumologic.yaml
+cat values.yaml | \
+  kubectl run tools \
+    -i --quiet --rm \
+    --restart=Never \
+    --image sumologic/kubernetes-tools:2.12.0 -- \
+    template \
+      --namespace 'my-namespace' \
+      --name-template 'collection' \
+      | tee sumologic.yaml
 ```
 
 **Notice:** Prometheus Operator is deployed by default on OpenShift platform,
@@ -254,7 +297,7 @@ Once you have customized the file you can generate the YAML.
 The content of the `values.yaml` can be fed into the template generator as shown below.
 
 ```bash
-cat sumo-values.yaml | \
+cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
@@ -276,31 +319,15 @@ of the Kubernetes collection is available.
 You can use the same commands used to create the YAML in the first place.
 
 ```bash
-kubectl run tools \
-  -i --quiet --rm \
-  --restart=Never \
-  --image sumologic/kubernetes-tools:2.12.0 -- \
-  template \
-  --namespace 'my-namespace' \
-  --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_ID>' \
-  --set sumologic.accessKey='<ACCESS_KEY>' \
-  --set sumologic.clusterName='<CLUSTER_NAME>' \
-  | tee sumologic.yaml
-```
-
-If you have made customizations and installed with a `values.yaml`, you can do
-the same thing command as you did before to generate the YAML.
-
-```bash
-cat sumo-values.yaml | \
-     kubectl run tools \
-       -i --quiet --rm \
-       --restart=Never \
-       --image sumologic/kubernetes-tools:2.12.0 -- \
-       template \
-         --name-template 'collection' \
-         | tee sumologic.yaml
+cat values.yaml | \
+  kubectl run tools \
+    -i --quiet --rm \
+    --restart=Never \
+    --image sumologic/kubernetes-tools:2.12.0 -- \
+    template \
+      --namespace 'my-namespace' \
+      --name-template 'collection' \
+      | tee sumologic.yaml
 ```
 
 If you wish to upgrade to a specific version, you can pass the `--version` flag

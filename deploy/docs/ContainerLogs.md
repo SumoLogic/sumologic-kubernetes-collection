@@ -354,9 +354,7 @@ helm upgrade collection sumologic/sumologic \
         --install \
         --namespace sumologic \
         --version "<VERSION>" \
-        --set sumologic.accessId="<SUMO_ACCESS_ID>" \
-        --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
-        --set sumologic.clusterName="<CLUSTER_NAME>" \
+        -f values.yaml
         -f values_containerd.yaml
 ```
 
@@ -514,9 +512,7 @@ helm upgrade collection sumologic/sumologic \
         --install \
         --namespace sumologic \
         --version "<VERSION>" \
-        --set sumologic.accessId="<SUMO_ACCESS_ID>" \
-        --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
-        --set sumologic.clusterName="<CLUSTER_NAME>" \
+        -f values.yaml
         -f values_containerd_new_parser.yaml
 ```
 

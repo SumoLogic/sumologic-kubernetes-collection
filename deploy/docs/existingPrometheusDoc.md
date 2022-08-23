@@ -81,19 +81,27 @@ To install the chart, first add the `sumologic` private repo:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Next you can run `helm upgrade --install` to install our chart.
-An example command with the minimum parameters is provided below.
+Next you can prepare `values.yaml` with configuration.
+An example file with the minimum confiuration is provided below.
+It disables the `kube-prometheus-stack` sub-chart since
+we will be modifying the existing prometheus operator install.
+
+```yaml
+sumologic:
+  accessId: ${SUMO_ACCESS_ID}
+  accessKey: ${SUMO_ACCESS_KEY}
+  clusterName: ${MY_CLUSTER_NAME}
+kube-prometheus-stack:
+  enabled: false
+```
+
+Now you can run `helm upgrade --install` to install our chart.
 The following command will install the Sumo Logic chart with the release name `my-release`
 in the namespace your `kubectl` context is currently set to.
-The below command also disables the `kube-prometheus-stack` sub-chart since
-we will be modifying the existing prometheus operator install.
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
-  --set sumologic.accessId=<SUMO_ACCESS_ID> \
-  --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
-  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
-  --set kube-prometheus-stack.enabled=false
+  -f values.yaml
 ```
 
 > __Note__: If the release exists, it will be upgraded, otherwise it will be installed.
@@ -104,26 +112,45 @@ If the namespace does not exist, you can add the `--create-namespace` flag.
 helm upgrade \
   --install my-release sumologic/sumologic \
   --namespace=my-namespace \
-  --set sumologic.accessId=<SUMO_ACCESS_ID> \
-  --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
-  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
-  --set kube-prometheus-stack.enabled=false \
+  -f values.yaml \
   --create-namespace
 ```
 
 If you are installing the helm chart in Openshift platform, ensure that operator is listening for `my-namespace`
-and you can do the following:
+by adding the following configuration to `values.yaml`:
+
+```yaml
+sumologic:
+  scc:
+    create: true
+fluent-bit:
+  securityContext:
+    privileged: true
+```
+
+so, it should looks like the following way:
+
+```yaml
+sumologic:
+  accessId: ${SUMO_ACCESS_ID}
+  accessKey: ${SUMO_ACCESS_KEY}
+  clusterName: ${MY_CLUSTER_NAME}
+  scc:
+    create: true
+kube-prometheus-stack:
+  enabled: false
+fluent-bit:
+  securityContext:
+    privileged: true
+```
+
+and then upgrade it to apply configuration:
 
 ```bash
 helm upgrade \
   --install my-release sumologic/sumologic \
   --namespace=my-namespace \
-  --set sumologic.accessId=<SUMO_ACCESS_ID> \
-  --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
-  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
-  --set kube-prometheus-stack.enabled=false \
-  --set sumologic.scc.create=true \
-  --set fluent-bit.securityContext.privileged=true
+  -f values.yaml
 ```
 
 ## Update Existing Kube Prometheus Stack Helm Chart
@@ -271,7 +298,7 @@ We recommend creating a new `values.yaml` for each Kubernetes cluster you wish
 to install collection on and __setting only the properties you wish to override__.
 Once you have customized you can use the following commands to install or upgrade.
 Remember to define the properties in our [requirements section](#requirements)
-in the `values.yaml` as well or pass them in via `--set`
+in the `values.yaml` as well
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
@@ -302,7 +329,9 @@ If you wish to upgrade to a specific version, you can use the `--version` flag.
 helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=1.0.0
 ```
 
-If you no longer have your `values.yaml` from the first installation or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart. For example, if the release is called `my-release` you can run the following.
+__Note:__ If you no longer have your `values.yaml` from the first installation
+or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart.
+For example, if the release is called `my-release` you can run the following.
 
 ```bash
 helm get values my-release

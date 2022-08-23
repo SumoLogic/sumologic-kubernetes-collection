@@ -1429,17 +1429,7 @@ In order to do that `nodeSelector` has to be used. By default node selectors can
 | `metadata`              | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`                   |
 | `metadata`              | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`                      |
 
-Node selector can be changed via additional parameter to helm upgrade command, below example for fluent-bit node selector:
-
-```bash
-helm upgrade --install my-release sumologic/sumologic \
-  --set sumologic.accessId="<SUMO_ACCESS_ID>" \
-  --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
-  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
-  --set fluent-bit.nodeSelector."kubernetes\.io/os"=linux 
-```
-
-or by modyfing above settings in values.yaml
+Node selector can be changed via additional parameter in `values.yaml`, see an example for Fluent-Bit below:
 
 ```yaml
 fluent-bit:

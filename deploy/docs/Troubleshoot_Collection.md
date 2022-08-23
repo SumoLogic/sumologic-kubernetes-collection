@@ -175,10 +175,15 @@ To enable debug or trace logs from a specific Fluentd plugin, add the following 
 </match>
 ```
 
-To enable debug or trace logs using the Helm chart, you can override the value `fluentd.logLevel`:
+To enable debug or trace logs using the Helm chart, you can override the value `fluentd.logLevel` in `values.yaml`:
+
+```yaml
+fluentd:
+  logLevel: debug
+```
 
 ```sh
-helm upgrade collection sumologic/sumologic --reuse-values --set fluentd.logLevel="debug"
+helm upgrade collection sumologic/sumologic -f values.yaml
 ```
 
 For configuration changes to take effect in Fluentd, you can redeploy the pods by scaling to zero and back to the desired deployment size:
