@@ -11,6 +11,7 @@ import (
 	"sigs.k8s.io/e2e-framework/klient"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
+	"sigs.k8s.io/e2e-framework/pkg/envfuncs"
 	"sigs.k8s.io/e2e-framework/support/kind"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -52,6 +53,7 @@ func TestMain(m *testing.M) {
 		testenv.BeforeEachTest(CreateKindCluster())
 		ConfigureTestEnv(testenv)
 		testenv.AfterEachTest(DestroyKindCluster())
+		testenv.Finish(DestroyActiveKindClusters)
 	}
 
 	os.Exit(testenv.Run(m))
@@ -102,6 +104,16 @@ func ConfigureTestEnv(testenv env.Environment) {
 	) {
 		testenv.AfterEachTest(f)
 	}
+
+	// Teardown
+	// TODO: Uninstall the Helm Chart here as well
+	testenv.Finish(envfuncs.DeleteNamespace(openTelemetryOperatorNamespaces[0]))
+	testenv.Finish(envfuncs.DeleteNamespace(openTelemetryOperatorNamespaces[1]))
+	testenv.Finish(envfuncs.DeleteNamespace(receiverMockNamespace))
+	testenv.Finish(func(ctx context.Context, envConf *envconf.Config) (context.Context, error) {
+		namespace := ctxopts.Namespace(ctx)
+		return envfuncs.DeleteNamespace(namespace)(ctx, envConf)
+	})
 }
 
 // InjectKubectlOptionsFromKubeconfig injects kubectl options to the context that will be propagated in tests.
@@ -147,27 +159,53 @@ func CreateKindCluster() func(context.Context, *envconf.Config, *testing.T) (con
 		cfg.WithClient(cl)
 
 		// store entire cluster value in ctx for future access using the cluster name
-		return context.WithValue(ctx, kindContextKey(clusterName), k), nil
+		newContext := context.WithValue(ctx, kindContextKey(clusterName), k)
+
+		// and save the cluster name in the list of active clusters
+		newContext = ctxopts.WithCluster(newContext, clusterName)
+
+		// store entire cluster value in ctx for future access using the cluster name
+		return newContext, nil
 	}
 }
 
 func DestroyKindCluster() func(context.Context, *envconf.Config, *testing.T) (context.Context, error) {
 	return func(ctx context.Context, cfg *envconf.Config, t *testing.T) (context.Context, error) {
 		clusterName := strings.NameFromT(t)
-		clusterVal := ctx.Value(kindContextKey(clusterName))
-		if clusterVal == nil {
-			return ctx, fmt.Errorf("destroy kind cluster func: context cluster is nil")
-		}
-
-		cluster, ok := clusterVal.(*kind.Cluster)
-		if !ok {
-			return ctx, fmt.Errorf("destroy kind cluster func: unexpected type for cluster value")
-		}
-
-		if err := cluster.Destroy(); err != nil {
-			return ctx, fmt.Errorf("destroy kind cluster: %w", err)
-		}
-
-		return ctx, nil
+		return DestroyKindClusterByName(ctx, clusterName)
 	}
+}
+
+func DestroyKindClusterByName(ctx context.Context, clusterName string) (context.Context, error) {
+	clusterVal := ctx.Value(kindContextKey(clusterName))
+	if clusterVal == nil {
+		return ctx, fmt.Errorf("destroy kind cluster func: context cluster is nil")
+	}
+
+	cluster, ok := clusterVal.(*kind.Cluster)
+	if !ok {
+		return ctx, fmt.Errorf("destroy kind cluster func: unexpected type for cluster value")
+	}
+
+	if err := cluster.Destroy(); err != nil {
+		return ctx, fmt.Errorf("destroy kind cluster: %w", err)
+	}
+
+	// remove the cluster name from the list of active clusters
+	newContext := ctxopts.WithoutCluster(ctx, clusterName)
+
+	return newContext, nil
+}
+
+func DestroyActiveKindClusters(ctx context.Context, _ *envconf.Config) (context.Context, error) {
+	var err error
+	clusters := ctxopts.Clusters(ctx)
+	newContext := ctx
+	for _, clusterName := range clusters {
+		newContext, err = DestroyKindClusterByName(newContext, clusterName)
+		if err != nil {
+			return newContext, err
+		}
+	}
+	return newContext, err
 }

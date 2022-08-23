@@ -21,7 +21,6 @@ import (
 // NOTE:
 // By default the default cluster namespace will be used. If you'd like to specify the namespace
 // use SetKubectlNamespaceOpt.
-//
 func PrintClusterStateOpt(force ...bool) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		if (len(force) == 1 && force[0]) || t.Failed() {

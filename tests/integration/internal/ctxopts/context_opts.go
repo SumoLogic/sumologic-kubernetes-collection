@@ -14,6 +14,7 @@ const (
 	ctxKeyNameHelmOptions    ctxKey = "helmoptions"
 	ctxKeyNameHelmRelease    ctxKey = "helmrelease"
 	ctxKeyNameNamespace      ctxKey = "namespace"
+	ctxKeyNameKindClusters   ctxKey = "kindClusters"
 )
 
 func WithKubectlOptions(ctx context.Context, kubectlOptions *k8s.KubectlOptions) context.Context {
@@ -50,4 +51,35 @@ func WithHelmRelease(ctx context.Context, namespace string) context.Context {
 func HelmRelease(ctx context.Context) string {
 	v := ctx.Value(ctxKeyNameHelmRelease)
 	return v.(string)
+}
+
+func Clusters(ctx context.Context) []string {
+	v := ctx.Value(ctxKeyNameKindClusters)
+	if v == nil {
+		return []string{}
+	}
+	return v.([]string)
+}
+
+func WithCluster(ctx context.Context, clusterName string) context.Context {
+	clusters := Clusters(ctx)
+	clusters = append(clusters, clusterName)
+	return context.WithValue(ctx, ctxKeyNameKindClusters, clusters)
+}
+
+func WithoutCluster(ctx context.Context, clusterName string) context.Context {
+	clusters := Clusters(ctx)
+	index := -1
+	for i, cluster := range clusters {
+		if cluster == clusterName {
+			index = i
+		}
+	}
+	if index == -1 {
+		return ctx
+	}
+
+	clusters[index] = clusters[len(clusters)-1]
+	clusters = clusters[:len(clusters)-1]
+	return context.WithValue(ctx, ctxKeyNameKindClusters, clusters)
 }
