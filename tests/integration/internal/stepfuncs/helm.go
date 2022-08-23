@@ -61,7 +61,6 @@ func HelmDependencyUpdateOpt(path string) features.Func {
 // NOTE:
 // By default the default cluster namespace will be used. If you'd like to specify the namespace
 // use SetKubectlNamespaceOpt.
-//
 func HelmInstallOpt(path string, releaseName string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		ctx = ctxopts.WithHelmRelease(ctx, releaseName)
@@ -94,7 +93,6 @@ func HelmInstallTestOpt(path string) features.Func {
 // NOTE:
 // By default the default cluster namespace will be used. If you'd like to specify the namespace
 // use SetKubectlNamespaceOpt.
-//
 func HelmDeleteOpt(release string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		helm.Delete(t, ctxopts.HelmOptions(ctx), release, true)
@@ -117,7 +115,6 @@ func HelmDeleteTestOpt() features.Func {
 // NOTE:
 // By default the default cluster namespace will be used. If you'd like to specify the namespace
 // use SetKubectlNamespaceOpt.
-//
 func SetHelmOptionsOpt(valuesFilePath string, extraInstallationArgs map[string][]string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		kubectlOptions := ctxopts.KubectlOptions(ctx)
