@@ -96,7 +96,7 @@ sumologic:
     job:
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 3.3.0
+        tag: 3.4.0
         pullPolicy: IfNotPresent
       ## Optionally specify an array of pullSecrets.
       ## They will be added to serviceaccount that is used for Sumo Logic's
@@ -3758,6 +3758,11 @@ metadata:
         file_storage:
           directory: /var/lib/storage/otc
           timeout: 10s
+          compaction:
+            on_start: true
+            on_rebound: true
+            # Can't be /tmp yet, see https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/13449
+            directory: /var/lib/storage/otc
         pprof: {}
       exporters:
         ## Configuration for Sumo Logic Exporter
@@ -4140,6 +4145,11 @@ metadata:
         file_storage:
           directory: /var/lib/storage/otc
           timeout: 10s
+          compaction:
+            on_start: true
+            on_rebound: true
+            # Can't be /tmp yet, see https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/13449
+            directory: /var/lib/storage/otc
         pprof: {}
       exporters:
         sumologic/containers:
@@ -4922,6 +4932,11 @@ otellogs:
       file_storage:
         directory: /var/lib/storage/otc
         timeout: 10s
+        compaction:
+          on_start: true
+          on_rebound: true
+          # Can't be /tmp yet, see https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/13449
+          directory: /var/lib/storage/otc
       pprof: {}
     service:
       telemetry:

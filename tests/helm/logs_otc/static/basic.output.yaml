@@ -17,6 +17,10 @@ data:
         endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local:4318
     extensions:
       file_storage:
+        compaction:
+          directory: /var/lib/storage/otc
+          on_rebound: true
+          on_start: true
         directory: /var/lib/storage/otc
         timeout: 10s
       health_check: {}
