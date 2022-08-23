@@ -1429,7 +1429,7 @@ In order to do that `nodeSelector` has to be used. By default node selectors can
 | `metadata`              | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`                   |
 | `metadata`              | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`                      |
 
-Node selector can be changed via additional parameter in `values.yaml`, below example for fluent-bit node selector:
+Node selector can be changed via additional parameter in `values.yaml`, see an example for Fluent-Bit below:
 
 ```yaml
 fluent-bit:
