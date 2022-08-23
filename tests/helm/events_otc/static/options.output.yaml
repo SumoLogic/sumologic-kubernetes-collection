@@ -45,6 +45,8 @@ data:
         source_category: testSourceCategory
         source_category_prefix: ""
         source_name: testSourceName
+      sumologic_schema:
+        add_cloud_namespace: false
     receivers:
       raw_k8s_events: {}
     service:
@@ -59,6 +61,7 @@ data:
           - memory_limiter
           - resource/add_cluster
           - source
+          - sumologic_schema
           - batch
           receivers:
           - raw_k8s_events

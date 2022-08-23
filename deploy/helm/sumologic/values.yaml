@@ -69,6 +69,7 @@ sumologic:
   ## Optionally specify an array of pullSecrets.
   ## They will be added to serviceaccount that is used for Sumo Logic's
   ## deployments and statefulsets.
+
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ##
@@ -3668,7 +3669,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.54.0-sumo-0
+    tag: 0.56.0-sumo-0
     pullPolicy: IfNotPresent
 
   securityContext:
@@ -3972,6 +3973,9 @@ metadata:
           ## Spike limit (calculated from available memory). Must be less than limit_percentage.
           spike_limit_percentage: 20
 
+        sumologic_schema:
+          add_cloud_namespace: false
+
         ## Configuration for Batch Processor
         ## The batch processor accepts spans and places them into batches grouped by node and resource
         ## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
@@ -4026,6 +4030,7 @@ metadata:
               - source
               - resource/remove_k8s_pod_pod_name
               - resource/delete_source_metadata
+              - sumologic_schema
               - batch
               - routing
             exporters:
@@ -4433,6 +4438,9 @@ metadata:
           source_category_prefix: '{{ .Values.fluentd.logs.kubelet.sourceCategoryPrefix | quote }}'
           source_category_replace_dash: '{{ .Values.fluentd.logs.kubelet.sourceCategoryReplaceDash | quote }}'
 
+        sumologic_schema:
+          add_cloud_namespace: false
+
       service:
         telemetry:
           logs:
@@ -4456,6 +4464,7 @@ metadata:
               - resource/drop_annotations
               - attributes/remove_fluent_tag
               - resource/containers_copy_node_to_host
+              - sumologic_schema
               - batch
             exporters:
               - sumologic/containers
@@ -4477,6 +4486,7 @@ metadata:
           #     - source/containers
           #     - resource/drop_annotations
           #     - resource/containers_copy_node_to_host
+          #     - sumologic_schema
           #     - batch
           #   exporters:
           #     - sumologic/containers
@@ -4793,7 +4803,7 @@ otelevents:
   ## Configure image for Opentelemetry Collector
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.54.0-sumo-0
+    tag: 0.56.0-sumo-0
     pullPolicy: IfNotPresent
 
   logLevel: info
