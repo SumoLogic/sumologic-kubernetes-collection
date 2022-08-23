@@ -95,7 +95,6 @@ sumologic:
 ```
 
 Now you will need to generate the YAML to apply to your cluster.
-The following command contains the minimum parameters that can generate the YAML to setup Sumo Logic's Kubernetes collection.
 This command will generate the YAML using `values.yaml` and pipe it a file called `sumologic.yaml`.
 Please note that `--namespace` is required
 
