@@ -283,6 +283,8 @@ data:
         source_category_replace_dash: "/"
         source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
+      sumologic_schema:
+        add_cloud_namespace: false
       transform/remove_attributes:
         logs:
           queries:
@@ -314,6 +316,7 @@ data:
           - resource/drop_annotations
           - attributes/remove_fluent_tag
           - resource/containers_copy_node_to_host
+          - sumologic_schema
           - batch
           receivers:
           - fluentforward

@@ -39,6 +39,8 @@ processors:
     source_name: {{ .Values.fluentd.events.sourceName | quote}}
     source_category: {{ .Values.fluentd.events.sourceCategory | default (printf "%s/%s"  (include "sumologic.clusterNameReplaceSpaceWithDash" .) (.Values.fluentd.events.sourceName )) | quote}}
     source_category_prefix: ""
+  sumologic_schema:
+    add_cloud_namespace: false
 
 service:
   telemetry:
@@ -58,6 +60,7 @@ service:
         - memory_limiter
         - resource/add_cluster
         - source
+        - sumologic_schema
         - batch
       exporters:
         - sumologic
