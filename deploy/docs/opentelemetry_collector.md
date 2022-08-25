@@ -1,6 +1,6 @@
-# Opentelemetry Collector
+# OpenTelemetry Collector
 
-Opentelemetry Collector is a software to receive, process and export logs, metrics and traces.
+OpenTelemetry Collector is a software to receive, process and export logs, metrics and traces.
 We offer it as drop-in replacement for Fluentd in our collection.
 
 > :warning: **This feature is currently in beta and its configuration can change. It is nonetheless production-ready and will become the default in the next major version.**
@@ -14,11 +14,11 @@ We offer it as drop-in replacement for Fluentd in our collection.
   - [SystemD Logs](#systemd-logs)
 - [Persistence](#persistence)
   - [Enabling persistence](#enabling-persistence)
-    - [Enabling Opentelemetry Collector persistence by recreating StatefulSet](#enabling-opentelemetry-collector-persistence-by-recreating-statefulset)
-    - [Enabling Opentelemetry Collector persistence by creating temporary instances and removing earlier created](#enabling-opentelemetry-collector-persistence-by-creating-temporary-instances-and-removing-earlier-created)
+    - [Enabling OpenTelemetry Collector persistence by recreating StatefulSet](#enabling-opentelemetry-collector-persistence-by-recreating-statefulset)
+    - [Enabling OpenTelemetry Collector persistence by creating temporary instances and removing earlier created](#enabling-opentelemetry-collector-persistence-by-creating-temporary-instances-and-removing-earlier-created)
   - [Disabling persistence](#disabling-persistence)
-    - [Disabling Opentelemetry Collector persistence by recreating StatefulSet](#disabling-opentelemetry-collector-persistence-by-recreating-statefulset)
-    - [Disabling Opentelemetry Collector persistence by creating temporary instances nd removing earlier created](#disabling-opentelemetry-collector-persistence-by-creating-temporary-instances-nd-removing-earlier-created)
+    - [Disabling OpenTelemetry Collector persistence by recreating StatefulSet](#disabling-opentelemetry-collector-persistence-by-recreating-statefulset)
+    - [Disabling OpenTelemetry Collector persistence by creating temporary instances nd removing earlier created](#disabling-opentelemetry-collector-persistence-by-creating-temporary-instances-nd-removing-earlier-created)
 - [Traces](#traces)
   - [Load balancing using the gateway](#load-balancing-using-the-gateway)
 - [Kubernetes Events](#kubernetes-events)
@@ -26,9 +26,9 @@ We offer it as drop-in replacement for Fluentd in our collection.
 
 ## Metrics
 
-We are using Opentelemetry Collector like Fluentd to enrich metadata and to filter data.
+We are using OpenTelemetry Collector like Fluentd to enrich metadata and to filter data.
 
-To enable Opentelemetry Collector for metrics, please use the following configuration:
+To enable OpenTelemetry Collector for metrics, please use the following configuration:
 
 ```yaml
 sumologic:
@@ -39,20 +39,20 @@ sumologic:
 
 As we are providing drop-in replacement, most of the configuration from
 [`values.yaml`][values] should work
-the same way for Opentelemetry Collector like for Fluentd.
+the same way for OpenTelemetry Collector like for Fluentd.
 
 ### Metrics Configuration
 
-All Opentelemetry Collector configuration for metrics is located in
+All OpenTelemetry Collector configuration for metrics is located in
 [`values.yaml`][values] as `metadata.metrics.config`.
 
-If you want to modify it, please see [Sumologic Opentelemetry Collector configuration][configuration]
+If you want to modify it, please see [Sumologic OpenTelemetry Collector configuration][configuration]
 for more information.
 
 ## Logs
 
-Opentelemetry Collector can be used for both log collection and metadata enrichment. For these roles,
-it replaces respectively Fluent-Bit and FluentD.
+OpenTelemetry Collector can be used for both log collection and metadata enrichment. For these roles,
+it replaces respectively Fluent Bit and Fluentd.
 
 For log collection, it can be enabled by setting:
 
@@ -67,7 +67,7 @@ fluent-bit:
   enabled: false
 ```
 
-> **NOTE** Fluent-Bit must be disabled for Opentelemetry Collector to be enabled, they are mutually exclusive.
+> **NOTE** Fluent Bit must be disabled for OpenTelemetry Collector to be enabled, they are mutually exclusive.
 
 For metadata enrichment, it can be enabled by setting:
 
@@ -78,12 +78,12 @@ sumologic:
       provider: otelcol
 ```
 
-If you haven't modified the FluentD or Fluent-Bit configuration, this should be a drop-in replacement with no
+If you haven't modified the Fluentd or Fluent Bit configuration, this should be a drop-in replacement with no
 further changes required.
 
 ### Logs Configuration
 
-High level Opentelemetry Collector configuration for logs is located in
+High level OpenTelemetry Collector configuration for logs is located in
 [`values.yaml`][values] under the `sumologic.logs` key.
 
 Configuration specific to the log collector DaemonSet can be found under the `otellogs` key.
@@ -92,7 +92,7 @@ Finally, configuration specific to the metadata enrichment StatefulSet can be fo
 
 In both of the aforementioned cases, the raw configuration can be overridden - this is done respectively by using
 the `otellogs.config.override` and `metadata.logs.config` sections. Only use these if your use case isn't covered
-by the high-level settings. See [Sumologic Opentelemetry Collector configuration][configuration]
+by the high-level settings. See [Sumologic OpenTelemetry Collector configuration][configuration]
 for more information
 
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/Configuration.md
@@ -107,7 +107,7 @@ sumologic:
   logs:
     multiline:
       enabled: true
-      first_line_regex: "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*"
+      first_line_regex: "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
 ```
 
 where `first_line_regex` is a regular expression used to detect the first line of a multiline log.
@@ -147,7 +147,7 @@ sumologic:
 
 ## Persistence
 
-The persistence for Opentelemetry Collector can be configured in [`values.yaml`][values] by making changes under the `metadata.persistence`:
+The persistence for OpenTelemetry Collector can be configured in [`values.yaml`][values] by making changes under the `metadata.persistence`:
 
 ```yaml
 metadata:
@@ -158,15 +158,15 @@ metadata:
 along with changes in configuration under `metadata.metrics.config` and `metadata.logs.config`
 according to [Persistent Queue][persistent_queue] documentation.
 
-When Opentelemetry Collector persistence is to be changed (enabled or disabled)
-it is required to recreate or delete existing Opentelemetry Collector StatefulSets,
+When OpenTelemetry Collector persistence is to be changed (enabled or disabled)
+it is required to recreate or delete existing OpenTelemetry Collector StatefulSets,
 as it is not possible to add/remove `volumeClaimTemplate` for StatefulSet.
 
 [persistent_queue]: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#persistent-queue
 
 ### Enabling persistence
 
-To enable persistence for Opentelemetry Collector set following configuration in [`values.yaml`][values]:
+To enable persistence for OpenTelemetry Collector set following configuration in [`values.yaml`][values]:
 
 ```yaml
 metadata:
@@ -174,7 +174,7 @@ metadata:
     enabled: true
 ```
 
-Verify that Opentelemetry Collector configuration in [`values.yaml`][values] contains following sections
+Verify that OpenTelemetry Collector configuration in [`values.yaml`][values] contains following sections
 under `metadata.metrics.config` and `metadata.logs.config`:
 
 ```yaml
@@ -204,21 +204,21 @@ exporters:
       persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
 ```
 
-When Opentelemetry Collector persistence is to be changed (persistence is disabled in existing Sumo Logic collection and
+When OpenTelemetry Collector persistence is to be changed (persistence is disabled in existing Sumo Logic collection and
 there is a need to enable persistence) please continue with steps described below and either
-recreate Opentelemetry Collector StatefulSet or create temporary instance of Opentelemetry Collector StatefulSet and
+recreate OpenTelemetry Collector StatefulSet or create temporary instance of OpenTelemetry Collector StatefulSet and
 remove earlier created.
 
-**_Notice:_** Below steps does not need to be done when Opentelemetry Collector is deployed the first time.
+**_Notice:_** Below steps does not need to be done when OpenTelemetry Collector is deployed the first time.
 
-#### Enabling Opentelemetry Collector persistence by recreating StatefulSet
+#### Enabling OpenTelemetry Collector persistence by recreating StatefulSet
 
 In a heavy used clusters with high load of logs and metrics it might be possible that
-recreating Opentelemetry Collector StatefulSets with new `volumeClaimTemplate` may cause logs and metrics
+recreating OpenTelemetry Collector StatefulSets with new `volumeClaimTemplate` may cause logs and metrics
 being unavailable for the time of recreation. It usually shouldn't take more than several seconds.
 
-To recreate Opentelemetry Collector StatefulSets with new `volumeClaimTemplate` one can run
-the following commands for all Opentelemetry Collector StatefulSets.
+To recreate OpenTelemetry Collector StatefulSets with new `volumeClaimTemplate` one can run
+the following commands for all OpenTelemetry Collector StatefulSets.
 
 Remember to adjust `volumeClaimTemplate` (`VOLUME_CLAIM_TEMPLATE` variable in command below)
 which will be added to `volumeClaimTemplates` in StatefulSet `spec` according to your needs,
@@ -287,15 +287,15 @@ one might expect a warning similar to this one:
 Warning: resource statefulsets/collection-sumologic-otelcol-metrics is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
 ```
 
-Upgrade collection with  Opentelemetry Collector persistence enabled, e.g.
+Upgrade collection with  OpenTelemetry Collector persistence enabled, e.g.
 
 ```bash
 helm upgrade <RELEASE-NAME> sumologic/sumologic --version=<VERSION> -f <VALUES>
 ```
 
-#### Enabling Opentelemetry Collector persistence by creating temporary instances and removing earlier created
+#### Enabling OpenTelemetry Collector persistence by creating temporary instances and removing earlier created
 
-To create a temporary instances of Opentelemetry Collector StatefulSets and avoid a loss of logs or metrics one can run the following commands.
+To create a temporary instances of OpenTelemetry Collector StatefulSets and avoid a loss of logs or metrics one can run the following commands.
 
 Remember to replace the `NAMESPACE` and `RELEASE_NAME`, variables with proper values.
 
@@ -325,7 +325,7 @@ yq w - "spec.selector.matchLabels[heritage]" "tmp" | \
 kubectl create --filename -
 ```
 
-Delete old instances of Opentelemetry Collector StatefulSets:
+Delete old instances of OpenTelemetry Collector StatefulSets:
 
 ```bash
 NAMESPACE=sumologic && \
@@ -337,13 +337,13 @@ kubectl delete statefulset --namespace ${NAMESPACE} ${RELEASE_NAME}-sumologic-ot
 kubectl delete statefulset --namespace ${NAMESPACE} ${RELEASE_NAME}-sumologic-otelcol-metrics
 ```
 
-Upgrade collection with  Opentelemetry Collector persistence enabled, e.g.
+Upgrade collection with  OpenTelemetry Collector persistence enabled, e.g.
 
 ```bash
 helm upgrade <RELEASE-NAME> sumologic/sumologic --version=<VERSION> -f <VALUES>
 ```
 
-**_Notice:_** After the Helm chart upgrade is done, in order to remove temporary Opentelemetry Collector
+**_Notice:_** After the Helm chart upgrade is done, in order to remove temporary OpenTelemetry Collector
 StatefulSets run the following command:
 
 ```bash
@@ -359,7 +359,7 @@ kubectl delete statefulset \
 
 ### Disabling persistence
 
-To disable persistence for Opentelemetry Collector set following configuration in [`values.yaml`][values]:
+To disable persistence for OpenTelemetry Collector set following configuration in [`values.yaml`][values]:
 
 ```yaml
 metadata:
@@ -376,23 +376,23 @@ and disable [File Storage][file_storage_extension] extension in[`values.yaml`][v
       # - file_storage
 ```
 
-When Opentelemetry Collector persistence is to be changed (persistence is enabled in existing Sumo Logic collection and
+When OpenTelemetry Collector persistence is to be changed (persistence is enabled in existing Sumo Logic collection and
 there is a need to disabled persistence) please continue with steps described below and either
-recreate Opentelemetry Collector StatefulSet or create temporary instance of Opentelemetry Collector StatefulSet and
+recreate OpenTelemetry Collector StatefulSet or create temporary instance of OpenTelemetry Collector StatefulSet and
 remove earlier created.
 
-**_Notice:_** Below steps does not need to be done when Opentelemetry Collector is deployed the first time.
+**_Notice:_** Below steps does not need to be done when OpenTelemetry Collector is deployed the first time.
 
 [file_storage_extension]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
 
-#### Disabling Opentelemetry Collector persistence by recreating StatefulSet
+#### Disabling OpenTelemetry Collector persistence by recreating StatefulSet
 
 In a heavy used clusters with high load of logs and metrics it might be possible that
-recreating Opentelemetry Collector StatefulSets with new `volumeClaimTemplate` may cause logs and metrics
+recreating OpenTelemetry Collector StatefulSets with new `volumeClaimTemplate` may cause logs and metrics
 being unavailable for the time of recreation. It usually shouldn't take more than several seconds.
 
-To recreate Opentelemetry Collector StatefulSets with new `volumeClaimTemplate` one can run
-the following commands for all Opentelemetry Collector StatefulSets.
+To recreate OpenTelemetry Collector StatefulSets with new `volumeClaimTemplate` one can run
+the following commands for all OpenTelemetry Collector StatefulSets.
 
 Remember to adjust `volumeClaimTemplate` (`VOLUME_CLAIM_TEMPLATE` variable in command below)
 which will be added to `volumeClaimTemplates` in StatefulSet `spec` according to your needs,
@@ -429,15 +429,15 @@ one might expect a warning similar to this one:
 Warning: resource statefulsets/collection-sumologic-otelcol-metrics is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
 ```
 
-Upgrade collection with  Opentelemetry Collector persistence disabled, e.g.
+Upgrade collection with  OpenTelemetry Collector persistence disabled, e.g.
 
 ```bash
 helm upgrade <RELEASE-NAME> sumologic/sumologic --version=<VERSION> -f <VALUES>
 ```
 
-#### Disabling Opentelemetry Collector persistence by creating temporary instances nd removing earlier created
+#### Disabling OpenTelemetry Collector persistence by creating temporary instances nd removing earlier created
 
-To create a temporary instances of Opentelemetry Collector StatefulSets and avoid a loss of logs or metrics one can run the following commands.
+To create a temporary instances of OpenTelemetry Collector StatefulSets and avoid a loss of logs or metrics one can run the following commands.
 
 Remember to replace the `NAMESPACE` and `RELEASE_NAME` variables with proper values.
 
@@ -467,7 +467,7 @@ yq w - "spec.selector.matchLabels[heritage]" "tmp" | \
 kubectl create --filename -
 ```
 
-Delete old instances of Opentelemetry Collector StatefulSets:
+Delete old instances of OpenTelemetry Collector StatefulSets:
 
 ```bash
 NAMESPACE=sumologic && \
@@ -479,14 +479,14 @@ kubectl delete statefulset --namespace ${NAMESPACE} ${RELEASE_NAME}-sumologic-ot
 kubectl delete statefulset --namespace ${NAMESPACE} ${RELEASE_NAME}-sumologic-otelcol-metrics
 ```
 
-Upgrade collection with  Opentelemetry Collector persistence disabled, e.g.
+Upgrade collection with  OpenTelemetry Collector persistence disabled, e.g.
 
 ```bash
 helm upgrade <RELEASE-NAME> sumologic/sumologic --version=<VERSION> -f <VALUES>
 ```
 
-**_Notice:_** After the Helm chart upgrade is done, it is needed to remove temporary Opentelemetry Collector StatefulSets
-and remaining `PersistentVolumeClaims` which are no longer used by Opentelemetry Collector StatefulSets.
+**_Notice:_** After the Helm chart upgrade is done, it is needed to remove temporary OpenTelemetry Collector StatefulSets
+and remaining `PersistentVolumeClaims` which are no longer used by OpenTelemetry Collector StatefulSets.
 
 ```bash
 NAMESPACE=sumologic && \
