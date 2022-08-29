@@ -53,10 +53,7 @@ func NewClientWithK8sTunnel(
 
 // GetMetricCounts returns the number of times each metric was received by receiver-mock
 func (client *ReceiverMockClient) GetMetricCounts(t *testing.T) (MetricCounts, error) {
-	path, err := url.Parse("metrics-list")
-	if err != nil {
-		t.Fatal(err)
-	}
+	path := parseUrl(t, "metrics-list")
 	url := client.baseUrl.ResolveReference(path)
 
 	statusCode, body := http_helper.HttpGet(
@@ -134,11 +131,7 @@ type LogsCountResponse struct {
 // the provided metadata filter.
 // Note that in the filter semantics, empty strings match any value
 func (client *ReceiverMockClient) GetLogsCount(t *testing.T, metadataFilters MetadataFilters) (uint, error) {
-	// TODO: move this path parsing outside of this function
-	path, err := url.Parse("logs/count")
-	if err != nil {
-		t.Fatal(err)
-	}
+	path := parseUrl(t, "logs/count")
 
 	queryParams := url.Values{}
 	for key, value := range metadataFilters {
@@ -191,4 +184,13 @@ func parseMetricList(rawMetricsValues string) (map[string]int, error) {
 		metricNameToCount[metricName] = metricCount
 	}
 	return metricNameToCount, nil
+}
+
+func parseUrl(t *testing.T, target string) *url.URL {
+	path, err := url.Parse(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return path
 }
