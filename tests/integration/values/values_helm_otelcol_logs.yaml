@@ -3,7 +3,8 @@ sumologic:
     metadata:
       provider: otelcol
     collector:
-      enabled: true
+      otelcol:
+        enabled: true
 
   metrics:
     enabled: false

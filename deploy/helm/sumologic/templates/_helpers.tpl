@@ -1384,7 +1384,8 @@ Example Usage:
 {{- if kindIs "invalid" $fluentBitEnabled -}}
 {{- $fluentBitEnabled = true -}}
 {{- end -}}
-{{- if and $enabled $fluentBitEnabled -}}
+{{- $sideBySideAllowed := .Values.sumologic.logs.collector.allowSideBySide -}}
+{{- if and $enabled $fluentBitEnabled (not $sideBySideAllowed) -}}
 {{- fail "Fluent-Bit and Otel log collector can't be enabled at the same time. Set either `fluent-bit.enabled` or `sumologic.logs.collector.otelcol.enabled` to false" -}}
 {{- end -}}
 {{ $enabled }}

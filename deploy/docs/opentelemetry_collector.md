@@ -67,7 +67,7 @@ fluent-bit:
   enabled: false
 ```
 
-> **NOTE** Fluent Bit must be disabled for OpenTelemetry Collector to be enabled, they are mutually exclusive.
+> **NOTE** Normally, Fluent Bit must be disabled for OpenTelemetry Collector to be enabled. This restriction can be lifted, see [here](#running-otelcol-and-fluent-bit-side-by-side).
 
 For metadata enrichment, it can be enabled by setting:
 
@@ -144,6 +144,28 @@ sumologic:
       units:
         - docker.service
 ```
+
+### Running otelcol and Fluent Bit side by side
+
+Normally, enabling both Otelcol and Fluent-Bit for log collection will fail with an error. The reason for this is that doing so naively results
+in each log line being delivered twice to Sumo Logic, incurring twice the cost without any benefit. However, there are reasons to do this; for example
+it makes for a smoother and less risky migration. Advanced users may also want to pin the different collectors to different Node groups.
+
+Because of this, we've included a way to allow running otelcol and Fluent Bit side by side. The minimal configuration enabling this is:
+
+```yaml
+sumologic:
+  logs:
+    collector:
+      otelcol:
+        enabled: true
+      allowSideBySide: true
+  
+fluent-bit:
+  enabled: true
+```
+
+> **WARNING** Without further modifications to Otelcol and Fluent Bit configuration, this will cause each log line to be ingested twice, potentially doubling the cost of logs ingestion.
 
 ## Persistence
 
