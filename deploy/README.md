@@ -76,7 +76,7 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 
 The following table displays the tested Kubernetes and Helm versions.
 
-| Name          | Version                                           |
+| Name          | Version                                  |
 |---------------|------------------------------------------|
 | K8s with EKS  | 1.19<br/>1.20<br/>1.21<br/>1.22<br/>1.23 |
 | K8s with Kops | 1.20<br/>1.21<br/>1.22<br/>1.23<br/>1.24 |
