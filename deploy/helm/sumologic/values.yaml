@@ -4517,3 +4517,43 @@ opentelemetry-operator:
 
   manager:
     env:
+
+pvcCleaner:
+  metrics:
+    enabled: false
+  logs:
+    enabled: false
+
+  job:
+    image:
+      repository: public.ecr.aws/sumologic/kubernetes-tools
+      tag: 2.15.0
+      pullPolicy: IfNotPresent
+
+    resources:
+      limits:
+        memory: 256Mi
+        cpu: 2000m
+      requests:
+        memory: 64Mi
+        cpu: 100m
+
+    nodeSelector: {}
+    ## Add custom labels
+
+    ## Node tolerations for server scheduling to nodes with taints
+    ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+    ##
+    tolerations: []
+
+    ## Affinity and anti-affinity
+    ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+    ##
+    affinity: {}
+
+    podLabels: {}
+    ## Add custom annotations
+    podAnnotations: {}
+
+    ## Schedule for cronJobs
+    schedule: "*/15 * * * *"
