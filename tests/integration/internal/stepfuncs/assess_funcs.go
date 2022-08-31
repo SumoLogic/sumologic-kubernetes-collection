@@ -3,6 +3,7 @@ package stepfuncs
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -383,6 +384,29 @@ func WaitUntilDeploymentIsReady(
 				wait.WithInterval(tickDuration),
 			),
 		)
+
+		return ctx
+	}
+}
+
+func WaitForPvcCount(appName string, count int, waitDuration time.Duration, tickDuration time.Duration) features.Func {
+	return func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+		kubectlOptions := ctxopts.KubectlOptions(ctx)
+
+		assert.Eventually(t, func() bool {
+			output, err := terrak8s.RunKubectlAndGetOutputE(t, kubectlOptions, "get", "pvc", "--selector", fmt.Sprintf("app=%s-%s", ctxopts.HelmRelease(ctx), appName))
+
+			require.NoError(t, err)
+
+			lines := strings.Split(output, "\n")
+			if len(lines) > 0 && strings.HasPrefix(lines[0], "NAME") {
+				// Fetched string has also the initial line with column names
+				return len(lines)-1 == count
+			} else {
+				return false
+			}
+
+		}, waitDuration, tickDuration)
 
 		return ctx
 	}

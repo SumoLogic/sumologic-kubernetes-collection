@@ -1,0 +1,137 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: RELEASE-NAME-sumologic-pvc-cleaner-logs
+  namespace: sumologic
+  labels:
+    app: pvc-cleaner-logs
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: RELEASE-NAME-sumologic-pvc-cleaner-logs
+          labels:
+            app: pvc-cleaner-logs
+            chart: "sumologic-%CURRENT_CHART_VERSION%"
+            release: "RELEASE-NAME"
+            heritage: "Helm"
+            some: label
+            someSumo: label
+          annotations:
+            some: annotation
+            someSumo: annotation
+        spec:
+          nodeSelector:
+            my: node
+          tolerations:
+            - key: null
+              operator: Exists
+              effect: "NoSchedule"
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - RELEASE-NAME-sumologic-fluentd-logs
+                    - RELEASE-NAME-sumologic-fluentd-metrics
+                  - key: app
+                    operator: In
+                    values:
+                    - prometheus-operator-prometheus
+                topologyKey: "kubernetes.io/hostname"
+          containers:
+          - name: pvc-cleaner
+            image: private.ecr.aws/sumologic/kubernetes-tools:x.y.z
+            command:
+             - "pvc-cleaner"
+             - "sumologic"
+             - "app=RELEASE-NAME-sumologic-otelcol-logs"
+             - "RELEASE-NAME-sumologic-otelcol-logs"
+            imagePullPolicy: Always
+            resources:
+              limits:
+                memory: 1025Mi
+                cpu: 31m
+              requests:
+                memory: 63Mi
+                cpu: 12m
+          restartPolicy: Never
+          serviceAccountName: RELEASE-NAME-sumologic-pvc-cleaner
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: RELEASE-NAME-sumologic-pvc-cleaner-metrics
+  namespace: sumologic
+  labels:
+    app: pvc-cleaner-metrics
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: RELEASE-NAME-sumologic-pvc-cleaner-metrics
+          labels:
+            app: pvc-cleaner-metrics
+            chart: "sumologic-%CURRENT_CHART_VERSION%"
+            release: "RELEASE-NAME"
+            heritage: "Helm"
+            some: label
+            someSumo: label
+          annotations:
+            some: annotation
+            someSumo: annotation
+        spec:
+          nodeSelector:
+            my: node
+          tolerations:
+            - key: null
+              operator: Exists
+              effect: "NoSchedule"
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - RELEASE-NAME-sumologic-fluentd-logs
+                    - RELEASE-NAME-sumologic-fluentd-metrics
+                  - key: app
+                    operator: In
+                    values:
+                    - prometheus-operator-prometheus
+                topologyKey: "kubernetes.io/hostname"
+          containers:
+          - name: pvc-cleaner
+            image: private.ecr.aws/sumologic/kubernetes-tools:x.y.z
+            command:
+             - "pvc-cleaner"
+             - "sumologic"
+             - "app=RELEASE-NAME-sumologic-otelcol-metrics"
+             - "RELEASE-NAME-sumologic-otelcol-metrics"
+            imagePullPolicy: Always
+            resources:
+              limits:
+                memory: 1025Mi
+                cpu: 31m
+              requests:
+                memory: 63Mi
+                cpu: 12m
+          restartPolicy: Never
+          serviceAccountName: RELEASE-NAME-sumologic-pvc-cleaner

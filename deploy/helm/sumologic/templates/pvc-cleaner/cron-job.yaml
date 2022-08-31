@@ -1,0 +1,121 @@
+{{- if eq .Values.pvcCleaner.logs.enabled true }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "sumologic.metadata.name.pvcCleaner.logs" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "sumologic.labels.app.pvcCleaner.logs" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.pvcCleaner.job.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: {{ template "sumologic.metadata.name.pvcCleaner.logs" . }}
+          labels:
+            app: {{ template "sumologic.labels.app.pvcCleaner.logs" . }}
+{{- include "sumologic.labels.common" . | nindent 12 }}
+{{- with .Values.sumologic.podLabels }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.podLabels }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+          annotations:
+{{- with .Values.sumologic.podAnnotations }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.podAnnotations }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+        spec:
+          nodeSelector:
+{{- with .Values.pvcCleaner.job.nodeSelector }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.tolerations }}
+          tolerations:
+{{ toYaml . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.affinity }}
+          affinity:
+{{ toYaml . | indent 12 }}
+{{- end }}
+          containers:
+          - name: pvc-cleaner
+            image: {{ .Values.pvcCleaner.job.image.repository }}:{{ .Values.pvcCleaner.job.image.tag }}
+            command:
+             - "pvc-cleaner"
+             - "{{ .Release.Namespace }}"
+             - "app={{ template "sumologic.labels.app.logs.statefulset" . }}"
+             - "{{ template "sumologic.metadata.name.logs.hpa" . }}"
+            imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
+            resources:
+              {{- toYaml .Values.pvcCleaner.job.resources | nindent 14 }}
+          restartPolicy: Never
+          serviceAccountName: {{ template "sumologic.metadata.name.pvcCleaner.roles.serviceaccount" . }}
+{{- end }}
+
+---
+
+{{- if eq .Values.pvcCleaner.metrics.enabled true }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "sumologic.metadata.name.pvcCleaner.metrics" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "sumologic.labels.app.pvcCleaner.metrics" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.pvcCleaner.job.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: {{ template "sumologic.metadata.name.pvcCleaner.metrics" . }}
+          labels:
+            app: {{ template "sumologic.labels.app.pvcCleaner.metrics" . }}
+{{- include "sumologic.labels.common" . | nindent 12 }}
+{{- with .Values.sumologic.podLabels }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.podLabels }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+          annotations:
+{{- with .Values.sumologic.podAnnotations }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.podAnnotations }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+        spec:
+          nodeSelector:
+{{- with .Values.pvcCleaner.job.nodeSelector }}
+{{ toYaml . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.tolerations }}
+          tolerations:
+{{ toYaml . | indent 12 }}
+{{- end }}
+{{- with .Values.pvcCleaner.job.affinity }}
+          affinity:
+{{ toYaml . | indent 12 }}
+{{- end }}
+          containers:
+          - name: pvc-cleaner
+            image: {{ .Values.pvcCleaner.job.image.repository }}:{{ .Values.pvcCleaner.job.image.tag }}
+            command:
+             - "pvc-cleaner"
+             - "{{ .Release.Namespace }}"
+             - "app={{ template "sumologic.labels.app.metrics.statefulset" . }}"
+             - "{{ template "sumologic.metadata.name.metrics.hpa" . }}"
+            imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
+            resources:
+              {{- toYaml .Values.pvcCleaner.job.resources | nindent 14 }}
+          restartPolicy: Never
+          serviceAccountName: {{ template "sumologic.metadata.name.pvcCleaner.roles.serviceaccount" . }}
+{{- end }}

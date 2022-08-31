@@ -733,6 +733,39 @@ sumologic.com/scrape: "true"
 {{ template "sumologic.fullname" . }}-otelagent
 {{- end -}}
 
+{{- define "sumologic.metadata.name.pvcCleaner" -}}
+{{- template "sumologic.fullname" . }}-pvc-cleaner
+{{- end -}}
+
+{{- define "sumologic.metadata.name.pvcCleaner.logs" -}}
+{{- template "sumologic.metadata.name.pvcCleaner" . }}-logs
+{{- end -}}
+
+{{- define "sumologic.metadata.name.pvcCleaner.metrics" -}}
+{{- template "sumologic.metadata.name.pvcCleaner" . }}-metrics
+{{- end -}}
+
+{{- define "sumologic.labels.app.pvcCleaner" -}}
+pvc-cleaner
+{{- end -}}
+
+{{- define "sumologic.labels.app.pvcCleaner.logs" -}}
+{{- template "sumologic.labels.app.pvcCleaner" . }}-logs
+{{- end -}}
+
+{{- define "sumologic.labels.app.pvcCleaner.metrics" -}}
+{{- template "sumologic.labels.app.pvcCleaner" . }}-metrics
+{{- end -}}
+
+{{- define "sumologic.metadata.name.pvcCleaner.roles.serviceaccount" -}}
+{{- template "sumologic.fullname" . }}-pvc-cleaner
+{{- end -}}
+
+{{- define "sumologic.labels.app.pvcCleaner.roles.serviceaccount" -}}
+{{- template "sumologic.fullname" . }}-pvc-cleaner
+{{- end -}}
+
+
 {{/*
 Create endpoint based on OTC Tracing deployment type
 */}}
