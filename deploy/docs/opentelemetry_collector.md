@@ -67,9 +67,27 @@ fluent-bit:
   enabled: false
 ```
 
+> **NOTE** Above configuration is not enough to forward logs to backend, additional pipeline in values.yaml needs to be uncommented,
+
+```yaml
+metadata:
+  logs:
+    config:
+      service:
+        pipelines:
+          ## Uncomment this only if you're enabling the Otelcol Log Collector via otellogs.enabled
+          ## This is commented due to k8s_tagger memory footprint
+          ## This is the same pipeline like for logs/fluent/containers with the following modifications:
+          ## - filter/include_fluent_tag_containers and attributes/remove_fluent_tag are being removed
+          ##   as only containers log are being provided to otlp receiver
+          ## - attributes/containers functionality is being replaced by otellogs operators
+          logs/otlp/containers:            
+```
+
 > **NOTE** Normally, Fluent Bit must be disabled for OpenTelemetry Collector to be enabled. This restriction can be lifted, see [here](#running-otelcol-and-fluent-bit-side-by-side).
 
 For metadata enrichment, it can be enabled by setting:
+> **NOTE** Without this settings, logs will not be forwarded
 
 ```yaml
 sumologic:

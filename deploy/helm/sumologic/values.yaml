@@ -3464,7 +3464,7 @@ otelagent:
           processors: [memory_limiter, k8s_tagger, batch]
           exporters: [otlphttp/metrics]
 
-## Configure otelcol
+## Configure otelcol for tracing
 otelcol:
   sourceMetadata:
     ## Set the _sourceName metadata field in Sumo Logic.
