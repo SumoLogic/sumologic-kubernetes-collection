@@ -24,7 +24,7 @@ test:
 
 .PHONY: gomod-tidy
 gomod-tidy:
-	go mod tidy -compat=1.17
+	go mod tidy -compat=1.18
 
 LINT=golangci-lint
 GOLANGCI_LINT_VERSION ?= v1.49.0
