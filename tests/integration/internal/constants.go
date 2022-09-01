@@ -2,8 +2,8 @@ package internal
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 )
 
@@ -213,7 +213,7 @@ func InitializeConstants() error {
 		return err
 	}
 
-	b, err := ioutil.ReadFile(_kindImagesJSONPath)
+	b, err := os.ReadFile(_kindImagesJSONPath)
 	if err != nil {
 		return err
 	}
