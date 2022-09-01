@@ -106,7 +106,7 @@ ln -s /sumologic/vagrant/scripts/sumo-make.sh /usr/local/bin/sumo-make
 ln -s /sumologic/vagrant/scripts/sumo-make-completion.sh /etc/bash_completion.d/sumo-make
 
 # Install Go
-GO_VERSION=1.17
+GO_VERSION=1.18
 curl -LJ "https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o go.linux-amd64.tar.gz \
     && rm -rf /usr/local/go \
     && tar -C /usr/local -xzf go.linux-amd64.tar.gz \
