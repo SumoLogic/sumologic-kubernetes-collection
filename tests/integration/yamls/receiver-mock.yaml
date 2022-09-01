@@ -36,6 +36,7 @@ spec:
             - --print-metrics
             - --store-logs
             - --store-metrics
+            - --print-spans
           resources: {}
           securityContext:
             capabilities:

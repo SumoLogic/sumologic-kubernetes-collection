@@ -27,6 +27,10 @@ const (
 	LogsGeneratorName      = "logs-generator"
 	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.13.0"
 
+	TracesGeneratorNamespace = "customer-trace-tester"
+	TracesGeneratorName      = "customer-trace-tester"
+	TracesGeneratorImage     = "sumologic/kubernetes-tools:2.13.0"
+
 	MultilineLogsNamespace = "multiline-logs-generator"
 	MultilineLogsPodName   = "multiline-logs-generator"
 	MultilineLogsGenerator = "yamls/multiline-logs-generator.yaml"

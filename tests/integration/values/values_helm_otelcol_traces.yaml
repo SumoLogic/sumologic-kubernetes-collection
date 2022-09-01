@@ -1,0 +1,23 @@
+sumologic:
+  logs:
+    enabled: false
+
+  metrics:
+    enabled: false
+
+  traces:
+    enabled: true
+
+fluent-bit:
+  enabled: false
+
+fluentd:
+  events:
+    enabled: false
+
+otelcol:
+  config:
+  # TODO: Set a pipeline for traces
+    exporters:
+      otlphttp:
+        traces_endpoint: http://receiver-mock.receiver-mock:3000/receiver/v1/traces
