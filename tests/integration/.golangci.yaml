@@ -12,7 +12,7 @@ linters-settings:
     suggest-new: true
 
   unused:
-    go: "1.17"
+    go: "1.18"
 
   lll:
     # max line length, lines longer will be reported. Default is 120.
@@ -29,7 +29,6 @@ linters:
     - gosimple
   enable:
     - gofmt
-    - deadcode
     - unused
     - errcheck
     - goimports
