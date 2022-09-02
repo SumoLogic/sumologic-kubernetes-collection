@@ -39,6 +39,108 @@ func WaitUntilPodsAvailable(listOptions metav1.ListOptions, count int, wait time
 	}
 }
 
+func WaitUntilExpectedSpansPresent(
+	expectedSpansCount uint,
+	expectedSpansMetadata map[string]string,
+	receiverMockNamespace string,
+	receiverMockServiceName string,
+	receiverMockServicePort int,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		kubectlOpts := *ctxopts.KubectlOptions(ctx)
+		kubectlOpts.Namespace = receiverMockNamespace
+		terrak8s.WaitUntilServiceAvailable(t, &kubectlOpts, receiverMockServiceName, int(waitDuration), tickDuration)
+
+		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		defer closeTunnelFunc()
+
+		assert.Eventually(t, func() bool {
+			spansCount, err := client.GetSpansCount(t, expectedSpansMetadata)
+			if err != nil {
+				log.ErrorS(err, "failed getting spans counts from receiver-mock")
+				return false
+			}
+			if spansCount < expectedSpansCount {
+				log.InfoS(
+					"received spans, less than expected",
+					"received", spansCount,
+					"expected", expectedSpansCount,
+				)
+				return false
+			}
+			log.InfoS(
+				"received enough spans",
+				"received", spansCount,
+				"expected", expectedSpansCount,
+				"metadata", expectedSpansMetadata,
+			)
+			return true
+		}, waitDuration, tickDuration)
+		return ctx
+	}
+}
+
+func WaitUntilExpectedTracesPresent(
+	expectedTracesCount uint,
+	expectedSpansPerTraceCount uint,
+	expectedTracesMetadata map[string]string,
+	receiverMockNamespace string,
+	receiverMockServiceName string,
+	receiverMockServicePort int,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		kubectlOpts := *ctxopts.KubectlOptions(ctx)
+		kubectlOpts.Namespace = receiverMockNamespace
+		terrak8s.WaitUntilServiceAvailable(t, &kubectlOpts, receiverMockServiceName, int(waitDuration), tickDuration)
+
+		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		defer closeTunnelFunc()
+
+		assert.Eventually(t, func() bool {
+			tracesLengths, err := client.GetTracesCounts(t, expectedTracesMetadata)
+			tracesCount := uint(len(tracesLengths))
+			if err != nil {
+				log.ErrorS(err, "failed getting trace counts from receiver-mock")
+				return false
+			}
+
+			if tracesCount < expectedTracesCount {
+				log.InfoS(
+					"received traces, less than expected",
+					"received", tracesCount,
+					"expected", expectedTracesCount,
+				)
+				return false
+			}
+
+			for i := 0; i < len(tracesLengths); i++ {
+				if tracesLengths[i] < expectedSpansPerTraceCount {
+					log.InfoS(
+						"received enough traces, but less spans than expected",
+						"received numbers of spans in traces", tracesLengths,
+						"expected", expectedSpansPerTraceCount,
+					)
+					return false
+				}
+			}
+
+			log.InfoS(
+				"received enough traces and spans",
+				"received", tracesCount,
+				"expected", expectedTracesCount,
+				"expected spans per trace", expectedSpansPerTraceCount,
+				"metadata", expectedTracesMetadata,
+			)
+			return true
+		}, waitDuration, tickDuration)
+		return ctx
+	}
+}
+
 // WaitUntilExpectedMetricsPresent returns a features.Func that can be used in `Assess` calls.
 // It will wait until all the provided metrics are returned by receiver-mock's HTTP API on
 // the provided Service and port, until it succeeds or waitDuration passes.

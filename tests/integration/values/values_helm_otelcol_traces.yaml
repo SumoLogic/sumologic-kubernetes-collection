@@ -17,7 +17,7 @@ fluentd:
 
 otelcol:
   config:
-  # TODO: Set a pipeline for traces
+  # Default otlp pipeline from values.yaml is used.    
     exporters:
       otlphttp:
         traces_endpoint: http://receiver-mock.receiver-mock:3000/receiver/v1/traces
