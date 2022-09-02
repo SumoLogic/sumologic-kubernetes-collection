@@ -12,8 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(logs): prevent Fluent Bit from doing metadata enrichment [#2512]
 - chore(kube-prometheus-stack): update kube-prometheus-stack chart to 39.11.0 [#2446]
 
-### Added
-
 ### Changed
 
 - feat: enable remote write proxy by default [#2483]

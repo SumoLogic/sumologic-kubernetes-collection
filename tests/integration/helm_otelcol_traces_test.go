@@ -26,7 +26,7 @@ func Test_Helm_Otelcol_Traces(t *testing.T) {
 	const (
 		tickDuration           = 3 * time.Second
 		waitDuration           = 3 * time.Minute
-		tracesPerExporter uint = 10 // number of traces generated
+		tracesPerExporter uint = 10 // number of traces generated per exporter
 		spansPerTrace     uint = 5
 	)
 	featInstall := features.New("traces").
@@ -109,14 +109,108 @@ func Test_Helm_Otelcol_Traces(t *testing.T) {
 			internal.TracesGeneratorNamespace,
 			internal.TracesGeneratorImage,
 		)).
-		Assess("wait for traces", func(c context.Context, _ *testing.T, _ *envconf.Config) context.Context {
-			time.Sleep(120 * time.Second)
-			return c
-		}).
+		Assess("wait for otlp http traces", stepfuncs.WaitUntilExpectedTracesPresent(
+			tracesPerExporter,
+			spansPerTrace,
+			map[string]string{
+				"__name__":            "root-span-otlpHttp",
+				"service.name":        "customer-trace-test-service",
+				"_collector":          "kubernetes",
+				"k8s.cluster.name":    "kubernetes",
+				"k8s.container.name":  internal.TracesGeneratorName,
+				"k8s.deployment.name": internal.TracesGeneratorName,
+				"k8s.namespace.name":  internal.TracesGeneratorNamespace,
+				"k8s.pod.pod_name":    internal.TracesGeneratorName,
+				"k8s.pod.label.app":   internal.TracesGeneratorName,
+				// "_sourceCategory":    "kubernetes/customer/trace/tester/customer/trace/tester",
+				"_sourceName": fmt.Sprintf("%s.%s.%s", internal.TracesGeneratorNamespace, internal.TracesGeneratorName, internal.TracesGeneratorName),
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("wait for otlp grpc traces", stepfuncs.WaitUntilExpectedTracesPresent(
+			tracesPerExporter,
+			spansPerTrace,
+			map[string]string{
+				"__name__":            "root-span-otlpGrpc",
+				"service.name":        "customer-trace-test-service",
+				"_collector":          "kubernetes",
+				"k8s.cluster.name":    "kubernetes",
+				"k8s.container.name":  internal.TracesGeneratorName,
+				"k8s.deployment.name": internal.TracesGeneratorName,
+				"k8s.namespace.name":  internal.TracesGeneratorNamespace,
+				"k8s.pod.pod_name":    internal.TracesGeneratorName,
+				"k8s.pod.label.app":   internal.TracesGeneratorName,
+				// "_sourceCategory":    "kubernetes/customer/trace/tester/customer/trace/tester",
+				"_sourceName": fmt.Sprintf("%s.%s.%s", internal.TracesGeneratorNamespace, internal.TracesGeneratorName, internal.TracesGeneratorName),
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("wait for zipkin traces", stepfuncs.WaitUntilExpectedTracesPresent(
+			tracesPerExporter,
+			spansPerTrace,
+			map[string]string{
+				"__name__":            "root-span-zipkin",
+				"service.name":        "customer-trace-test-service",
+				"_collector":          "kubernetes",
+				"k8s.cluster.name":    "kubernetes",
+				"k8s.container.name":  internal.TracesGeneratorName,
+				"k8s.deployment.name": internal.TracesGeneratorName,
+				"k8s.namespace.name":  internal.TracesGeneratorNamespace,
+				"k8s.pod.pod_name":    internal.TracesGeneratorName,
+				"k8s.pod.label.app":   internal.TracesGeneratorName,
+				// "_sourceCategory":    "kubernetes/customer/trace/tester/customer/trace/tester",
+				"_sourceName": fmt.Sprintf("%s.%s.%s", internal.TracesGeneratorNamespace, internal.TracesGeneratorName, internal.TracesGeneratorName),
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("wait for jaeger thrift http traces", stepfuncs.WaitUntilExpectedTracesPresent(
+			tracesPerExporter,
+			spansPerTrace,
+			map[string]string{
+				"__name__":            "root-span-jaegerThriftHttp",
+				"service.name":        "customer-trace-test-service",
+				"_collector":          "kubernetes",
+				"k8s.cluster.name":    "kubernetes",
+				"k8s.container.name":  internal.TracesGeneratorName,
+				"k8s.deployment.name": internal.TracesGeneratorName,
+				"k8s.namespace.name":  internal.TracesGeneratorNamespace,
+				"k8s.pod.pod_name":    internal.TracesGeneratorName,
+				"k8s.pod.label.app":   internal.TracesGeneratorName,
+				// "_sourceCategory":    "kubernetes/customer/trace/tester/customer/trace/tester",
+				"_sourceName":       fmt.Sprintf("%s.%s.%s", internal.TracesGeneratorNamespace, internal.TracesGeneratorName, internal.TracesGeneratorName),
+				"otel.library.name": "jaegerThriftHttp",
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("wait for all spans", stepfuncs.WaitUntilExpectedSpansPresent(
+			4*tracesPerExporter*spansPerTrace, // there are 4 exporters
+			map[string]string{},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
 		Teardown(func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			opts := *ctxopts.KubectlOptions(ctx)
 			opts.Namespace = internal.TracesGeneratorNamespace
-			terrak8s.RunKubectl(t, &opts, "delete", "daemonset", internal.TracesGeneratorName)
+			terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.TracesGeneratorName)
 			return ctx
 		}).
 		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.TracesGeneratorNamespace)).

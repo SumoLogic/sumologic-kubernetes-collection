@@ -19,6 +19,9 @@ import (
 // Mapping of metric names to the number of times the metric was observed
 type MetricCounts map[string]int
 
+type SpanId string
+type TraceId string
+
 // A HTTP client for the receiver-mock API
 type ReceiverMockClient struct {
 	baseUrl   url.URL
@@ -159,6 +162,79 @@ func (client *ReceiverMockClient) GetLogsCount(t *testing.T, metadataFilters Met
 		t.Fatal(err)
 	}
 	return response.Count, nil
+}
+
+type Span struct {
+	Name         string  `json:"name,omitempty"`
+	Id           SpanId  `json:"id,omitempty"`
+	TraceId      TraceId `json:"trace_id,omitempty"`
+	ParentSpanId SpanId  `json:"parent_span_id,omitempty"`
+	Labels       Labels  `json:"attributes,omitempty"`
+}
+
+func (client *ReceiverMockClient) GetSpansCount(t *testing.T, metadataFilters MetadataFilters) (uint, error) {
+	path := parseUrl(t, "spans-list")
+
+	queryParams := url.Values{}
+	for key, value := range metadataFilters {
+		queryParams.Set(key, value)
+	}
+
+	url := client.baseUrl.ResolveReference(path)
+	url.RawQuery = queryParams.Encode()
+
+	resp, err := http.Get(url.String())
+	if err != nil {
+		return 0, fmt.Errorf("failed fetching %s, err: %w", url, err)
+	}
+
+	if resp.StatusCode != 200 {
+		return 0, fmt.Errorf(
+			"received status code %d in response to receiver request at %q",
+			resp.StatusCode, url,
+		)
+	}
+
+	var spans []Span
+	if err := json.NewDecoder(resp.Body).Decode(&spans); err != nil {
+		return 0, err
+	}
+	return uint(len(spans)), nil
+}
+
+func (client *ReceiverMockClient) GetTracesCounts(t *testing.T, metadataFilters MetadataFilters) ([]uint, error) {
+	path := parseUrl(t, "traces-list")
+
+	queryParams := url.Values{}
+	for key, value := range metadataFilters {
+		queryParams.Set(key, value)
+	}
+
+	url := client.baseUrl.ResolveReference(path)
+	url.RawQuery = queryParams.Encode()
+
+	resp, err := http.Get(url.String())
+	if err != nil {
+		return []uint{}, fmt.Errorf("failed fetching %s, err: %w", url, err)
+	}
+
+	if resp.StatusCode != 200 {
+		return []uint{}, fmt.Errorf(
+			"received status code %d in response to receiver request at %q",
+			resp.StatusCode, url,
+		)
+	}
+
+	var traces [][]Span
+	if err := json.NewDecoder(resp.Body).Decode(&traces); err != nil {
+		return []uint{}, err
+	}
+
+	var tracesLengths = make([]uint, len(traces))
+	for i := 0; i < len(tracesLengths); i++ {
+		tracesLengths[i] = uint(len(traces[i]))
+	}
+	return tracesLengths, nil
 }
 
 // parse metrics list returned by /metrics-list
