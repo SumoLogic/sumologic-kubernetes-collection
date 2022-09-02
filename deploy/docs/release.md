@@ -1,5 +1,7 @@
 # Releasing guide
 
+> **Note** For release v2 see [v2 releasing guide][release_v2]
+
 Perform the following steps in order to release new verions of helm chart.
 
 1. Prepare and merge PR with the following changes:
@@ -44,3 +46,4 @@ Perform the following steps in order to release new verions of helm chart.
 [chart]: ../helm/sumologic/Chart.yaml
 [releases]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases
 [documentation]: ../../README.md#documentation
+[release_v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/release.md
