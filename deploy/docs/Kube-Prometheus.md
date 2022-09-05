@@ -70,7 +70,7 @@ local kp =
       clusterName: 'CLUSTER NAME HERE',
 
       // This should be the FQDN of the fluentd collection service.
-      sumologicCollectorSvc: 'http://collection-sumologic.sumologic.svc.cluster.local:9888/',
+      sumologicCollectorSvc: 'http://collection-sumologic.sumologic.svc.cluster.local.:9888/',
     },
   };
 
