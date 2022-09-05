@@ -264,7 +264,7 @@ receivers:
 {{- end }}
 exporters:
   otlphttp:
-    endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local:4318
+    endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
 processors:
   batch:
     send_batch_size: 1000
