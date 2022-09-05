@@ -93,7 +93,7 @@ sumologic.setup.serviceAccount.annotations.\"helm.sh/hook-weight\"
 # git diff v1.0.0 v0.17.1 deploy/helm/sumologic/values.yaml | \
 # grep -E '(regex|url)\:' | \
 # grep -E "^(\-|\+)\s+ (regex|url)\:" | \
-# sed 's|-        url: http://$(CHART).$(NAMESPACE).svc.cluster.local.:9888||' | \
+# sed 's|-        url: http://$(CHART).$(NAMESPACE).svc.cluster.local:9888||' | \
 # sed 's/$/\\n/'
 #
 # minus means 1.0.0 regex
