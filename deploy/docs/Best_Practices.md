@@ -838,7 +838,7 @@ while still collecting up metrics for all other namespaces:
 
 ```yaml
      # up metrics
-     - url: http://collection-sumologic.sumologic.svc.cluster.local:9888/prometheus.metrics
+     - url: http://collection-sumologic.sumologic.svc.cluster.local.:9888/prometheus.metrics
        writeRelabelConfigs:
        - action: keep
          regex: up

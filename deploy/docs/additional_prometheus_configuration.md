@@ -38,7 +38,7 @@ kube-prometheus-stack:  # For values.yaml
         # ...
         remoteWrite:
           # ...
-          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.<some_label>
+          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<some_label>
             writeRelabelConfigs:
             - action: keep
               regex: <metric1>|<metric2>|...
@@ -280,7 +280,7 @@ kube-prometheus-stack:  # For values.yaml
         # ...
         remoteWrite:
           # ...
-          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
+          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.YOUR_TAG
             writeRelabelConfigs:
             - action: keep
               regex: <YOUR_CUSTOM_MATCHER>
@@ -298,7 +298,7 @@ kube-prometheus-stack:  # For values.yaml
         # ...
         remoteWrite:
           # ...
-          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
+          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.YOUR_TAG
             writeRelabelConfigs:
             - action: keep
               regex: 'example-metrics'
