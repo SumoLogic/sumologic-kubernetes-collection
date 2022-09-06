@@ -5107,7 +5107,7 @@ tailing-sidecar-operator:
 ## ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
 opentelemetry-operator:
   enabled: false
-
+  createDefaultInstrumentation: true
   admissionWebhooks:
     failurePolicy: Fail
     enabled: false
