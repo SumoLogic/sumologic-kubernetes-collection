@@ -15,9 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - feat: enable remote write proxy by default [#2483]
 - feat: add dot suffix to internal dns addresses [#2502]
+- feat: make creation of default Instrumentation object for opentelemetry operator configurable [#2506]
 
 [#2483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2483
 [#2502]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2502
+[#2506]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2506
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.15.0...main
 
 ## [v2.15.0]

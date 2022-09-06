@@ -1,6 +1,7 @@
 {{ $operatorEnabled := index .Values "opentelemetry-operator" "enabled" }}
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
-{{- if and $operatorEnabled $tracesEnabled }}
+{{ $createDefaultInstrumentation := index .Values "opentelemetry-operator" "createDefaultInstrumentation" }}
+{{- if and $operatorEnabled $tracesEnabled $createDefaultInstrumentation }}
 {{- $ctx := . -}}
 {{ $watchNamespace := index .Values "opentelemetry-operator" "manager" "env" }}
 {{- if eq ( get $watchNamespace "WATCH_NAMESPACE" ) "" }}
