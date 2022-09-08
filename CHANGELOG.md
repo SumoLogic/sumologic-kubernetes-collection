@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased [Unreleased]
+
+### Fixed
+
+- fix(openshift): fix remote write proxy - use unprivileged NGINX [#2510][#2510]
+
+[#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
+
 ## [v2.17.0]
 
 ### Released 2022-09-15
