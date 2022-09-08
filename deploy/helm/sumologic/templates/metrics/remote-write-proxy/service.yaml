@@ -10,7 +10,7 @@ spec:
   ports:
     - name: http
       port: 9888
-      targetPort: 80
+      targetPort: {{ .Values.sumologic.metrics.remoteWriteProxy.config.port }}
   selector:
     app: {{ template "sumologic.labels.app.remoteWriteProxy.pod" . }}
 {{- end }}
