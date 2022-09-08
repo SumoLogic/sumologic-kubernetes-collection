@@ -275,10 +275,11 @@ sumologic:
         ## This feature autodetects how much CPU is assigned to the nginx instance and sets
         ## the right amount of workers based on that. Disable to use the default of 8 workers.
         workerCountAutotune: true
+        ## Nginx listen port
+        port: 8080
       replicaCount: 3
       image:
-        ## TODO: Serve this image from the sumologic public ECR
-        repository: public.ecr.aws/nginx/nginx
+        repository: public.ecr.aws/sumologic/nginx-unprivileged
         tag: 1.21-alpine
         pullPolicy: IfNotPresent
       resources:
