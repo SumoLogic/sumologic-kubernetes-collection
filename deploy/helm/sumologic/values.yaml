@@ -1874,6 +1874,19 @@ kube-prometheus-stack:
                 configMapKeyRef:
                   name: sumologic-configmap
                   key: fluentdNamespace
+      containers:
+        - name: "config-reloader"
+          env:
+            - name: FLUENTD_METRICS_SVC
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdMetrics
+            - name: NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdNamespace
 
       ## Enable WAL compression to reduce Prometheus memory consumption
       walCompression: true
