@@ -580,6 +580,8 @@ fluentd:
       ## Override output section for container logs. Leave empty for the default output section
       overrideOutputConf: |-
 
+      ## Set the _sourceHost metadata field in Sumo Logic.
+      sourceHost: ""
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "%{namespace}.%{pod}.%{container}"
       ## Set the _sourceCategory metadata field in Sumo Logic.
