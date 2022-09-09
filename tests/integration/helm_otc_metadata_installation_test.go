@@ -171,7 +171,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 		Assess("prometheus pod is available",
 			stepfuncs.WaitUntilPodsAvailable(
 				v1.ListOptions{
-					LabelSelector: "app=prometheus",
+					LabelSelector: "app.kubernetes.io/name=prometheus",
 				},
 				1,
 				waitDuration,
