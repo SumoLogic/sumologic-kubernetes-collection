@@ -24,7 +24,7 @@ In this document we detail the changes as well as the exact steps for migration.
 
 - `helm3`
 - `kubectl`
-- `yq` in version: `3.4.0` <= `x` < `4.0.0`
+- `jq`
 
 ### Manual steps
 
@@ -60,8 +60,8 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
   kubectl get deployment \
     --namespace="${NAMESPACE}" \
     --selector 'app.kubernetes.io/name=kube-state-metrics' \
-    -o yaml | \
-  yq w - 'items[*].spec.selector.matchLabels[app.kubernetes.io/instance]' "${HELM_RELEASE_NAME}" | \
+    -o json | \
+  jq ". | .items[].spec.selector.matchLabels[\"app.kubernetes.io/instance\"] |= \"${HELM_RELEASE_NAME}\"" | \
   kubectl apply \
     --namespace="${NAMESPACE}" \
     --force \
