@@ -2,7 +2,9 @@
 
 - [Changes](#changes)
 - [How to upgrade](#how-to-upgrade)
-  - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
+  - [Requirements](#requirements)
+  - [Manual steps](#manual-steps)
+    - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
 
 Based on the feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
@@ -18,10 +20,18 @@ In this document we detail the changes as well as the exact steps for migration.
 
 ## How to upgrade
 
+### Requirements
+
+- `helm3`
+- `kubectl`
+- `yq` in version: `3.4.0` <= `x` < `4.0.0`
+
+### Manual steps
+
 1. Perform required manual steps:
     - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
 
-### Upgrade kube-prometheus-stack
+#### Upgrade kube-prometheus-stack
 
 Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
 
