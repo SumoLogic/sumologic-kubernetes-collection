@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- fix(logs): prevent Fluent Bit from doing metadata enrichment [#2512]
+
 ### Added
 
 ### Changed
@@ -20,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2483
 [#2502]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2502
 [#2506]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2506
+[#2512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2512
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.15.0...main
 
 ## [v2.15.0]
