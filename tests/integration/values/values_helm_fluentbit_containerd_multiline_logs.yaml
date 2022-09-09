@@ -72,7 +72,7 @@ fluent-bit:
     inputs: |
       [INPUT]
           Name                tail
-          Path                /var/log/containers/multiline-logs-generator*.log
+          Path                /var/log/pods/*_multiline-logs-generator*/*/*.log
           Read_from_head      true
           Multiline           On
           Parser_Firstline    containerd_multiline_pattern

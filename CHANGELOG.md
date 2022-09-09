@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- feat: migrating to /var/log/pods path [#2475]
+
 ### Changed
 
 - feat: enable remote write proxy by default [#2483]
@@ -23,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2502]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2502
 [#2506]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2506
 [#2512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2512
+[#2475]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2475
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.15.0...main
 
 ## [v2.15.0]

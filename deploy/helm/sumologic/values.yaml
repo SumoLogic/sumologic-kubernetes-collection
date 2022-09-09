@@ -632,8 +632,7 @@ fluentd:
         ## See below links for reference:
         ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.14.6-sumo-5/fluent-plugin-kubernetes-metadata-filter/lib/fluent/plugin/filter_kubernetes_metadata.rb#L322-L325
         ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.6-sumo-5/fluent-plugin-kubernetes-metadata-filter#configuration
-        tagToMetadataRegexp: '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
-
+        tagToMetadataRegexp: .+?\.pods\.(?<namespace>[^_]+)_(?<pod_name>[^_]+)_(?<docker_id>(?<uid>[a-f0-9\-]{36}))\.(?<container_name>[^\._]+)\.(?<run_id>\d+)\.log$
       ## To use additional filter plugins
       extraFilterPluginConf: |-
 
@@ -1106,7 +1105,7 @@ fluent-bit:
     inputs: |
       [INPUT]
           Name                tail
-          Path                /var/log/containers/*.log
+          Path                /var/log/pods/*/*/*.log
           Docker_Mode         On
           Docker_Mode_Parser  multi_line
           Tag                 containers.*
@@ -4258,7 +4257,7 @@ metadata:
           actions:
             - action: extract
               key: fluent.tag
-              pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
+              pattern: ^containers\.var\.log\.pods\.(?P<k8s_namespace>[^_]+)_(?P<k8s_pod_name>[^_]+)_(?P<k8s_uid>[a-f0-9\-]{36})\.(?P<k8s_container_name>[^\._]+)\.(?P<k8s_run_id>\d+)\.log$
             - action: insert
               key: k8s.container.id
               from_attribute: container_id
