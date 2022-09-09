@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - fix(logs): prevent Fluent Bit from doing metadata enrichment [#2512]
+- chore(kube-prometheus-stack): update kube-prometheus-stack chart to 39.11.0 [#2446]
 
 ### Added
 
@@ -18,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: enable remote write proxy by default [#2483]
 - feat: add dot suffix to internal dns addresses [#2502]
 - feat: make creation of default Instrumentation object for opentelemetry operator configurable [#2506]
-- chore(kube-prometheus-stack): update kube-prometheus-stac chart to 39.11.0 [#2446]
 
 [#2483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2483
 [#2502]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2502
