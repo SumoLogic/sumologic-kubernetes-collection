@@ -1848,18 +1848,6 @@ kube-prometheus-stack:
         requests:
           cpu: 500m
           memory: 1Gi
-      thanos:
-        # set this to a version with a ARM Docker image
-        version: v0.25.2
-        ## Defines the resource requirements for the Thanos sidecar
-        ## Setting those as there are no default values in the upstream chart
-        resources:
-          limits:
-            cpu: 10m
-            memory: 32Mi
-          requests:
-            cpu: 1m
-            memory: 8Mi
       initContainers:
         - name: "init-config-reloader"
           env:
