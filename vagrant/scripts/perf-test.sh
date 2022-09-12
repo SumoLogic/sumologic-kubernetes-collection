@@ -30,7 +30,7 @@ readonly DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 readonly AVALANCHE_YAML_PATH="${DIR}/../k8s/avalanche.yaml"
 readonly RECEIVER_MOCK_PODS="$(kubectl get pod -n receiver-mock --no-headers -lapp=receiver-mock --output custom-columns=NAME:.metadata.name)"
 readonly RECEIVER_MOCK_POD="$(kubectl get pod -n receiver-mock --no-headers -lapp=receiver-mock -o=jsonpath='{.items[0].metadata.name}')"
-readonly PROMETHEUS_API_QUERY_URL="collection-prometheus-oper-prometheus.sumologic.svc.cluster.local:9090/api/v1/query"
+readonly PROMETHEUS_API_QUERY_URL="collection-prometheus-oper-prometheus.sumologic.svc.cluster.local.:9090/api/v1/query"
 
 function is_avalanche_running() {
     local out
