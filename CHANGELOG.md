@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Breaking Changes
+
+### Added
+
+### Changed
+
+- feat: add dot suffix to internal dns addresses [#2504]
+- chore(tailing-sidecar-operator): upgrade to 0.3.4 [#2519]
+
+[#2504]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2504
+[#2519]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2519
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.15.0...main
+
 ## [v2.15.0]
 
 ### Released 2022-09-02

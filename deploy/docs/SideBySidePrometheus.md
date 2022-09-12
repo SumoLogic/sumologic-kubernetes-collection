@@ -174,6 +174,9 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
   fluent-bit:
     securityContext:
       privileged: true
+  tailing-sidecar-operator:
+    scc:
+      create: true
   ```
 
   so it will look the following way:
@@ -197,6 +200,9 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
   fluent-bit:
     securityContext:
       privileged: true
+  tailing-sidecar-operator:
+    scc:
+      create: true
   ```
 
   and then run the following command:
@@ -225,6 +231,9 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
   fluent-bit:
     securityContext:
       privileged: true
+  tailing-sidecar-operator:
+    scc:
+      create: true
   ```
 
   so it will look like the following way:
@@ -246,6 +255,9 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
   fluent-bit:
     securityContext:
       privileged: true
+  tailing-sidecar-operator:
+    scc:
+      create: true
   ```
 
   and then run the following command:
