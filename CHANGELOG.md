@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add dot suffix to internal dns addresses [#2502]
 - feat: make creation of default Instrumentation object for opentelemetry operator configurable [#2506]
 - chore: update kubernetes-tools to 2.13.0 [#2515]
+- chore(tailing-sidecar-operator): upgrade to 0.3.4 [#2518]
 
 ### Fixed
 
@@ -30,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2512
 [#2515]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2515
 [#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
+[#2518]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2518
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.15.0...main
 
 ## [v2.15.0]
