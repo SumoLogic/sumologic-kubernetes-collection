@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - fix(logs): prevent Fluent Bit from doing metadata enrichment [#2512]
+- chore(kube-prometheus-stack): update kube-prometheus-stack chart to 39.11.0 [#2446]
 
 ### Added
 
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2502]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2502
 [#2506]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2506
 [#2512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2512
+[#2446]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2446
 [#2515]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2515
 [#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
 [#2518]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2518

@@ -1694,16 +1694,6 @@ kube-prometheus-stack:
       enabled: false
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
-    ## Use the GCR repo, it's more recent and has ARM images starting from 1.9.8
-    image:
-      repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
-      tag: v1.9.8
-    # Do not collect metrics for CertificateSigningRequest or Ingress resources.
-    # This is because the v1 version of kube-state-metrics uses API versions
-    # that are removed in Kubernetes v1.22.
-    collectors:
-      certificatesigningrequests: false
-      ingresses: false
     ## Custom labels to apply to service, deployment and pods
     customLabels: {}
     ## Additional annotations for pods in the DaemonSet
@@ -1870,6 +1860,19 @@ kube-prometheus-stack:
           requests:
             cpu: 1m
             memory: 8Mi
+      initContainers:
+        - name: "init-config-reloader"
+          env:
+            - name: FLUENTD_METRICS_SVC
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdMetrics
+            - name: NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: fluentdNamespace
       containers:
         - name: "config-reloader"
           env:

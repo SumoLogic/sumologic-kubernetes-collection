@@ -161,7 +161,7 @@ func Test_Helm_Default_FluentD_Metadata(t *testing.T) {
 		Assess("prometheus pods are available",
 			stepfuncs.WaitUntilPodsAvailable(
 				v1.ListOptions{
-					LabelSelector: "app=prometheus",
+					LabelSelector: "app.kubernetes.io/name=prometheus",
 				},
 				1,
 				waitDuration,

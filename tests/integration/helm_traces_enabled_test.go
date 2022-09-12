@@ -156,7 +156,7 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 		Assess("prometheus pods are available",
 			stepfuncs.WaitUntilPodsAvailable(
 				metav1.ListOptions{
-					LabelSelector: "app=prometheus",
+					LabelSelector: "app.kubernetes.io/name=prometheus",
 				},
 				1,
 				waitDuration,

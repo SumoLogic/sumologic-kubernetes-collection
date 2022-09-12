@@ -332,7 +332,7 @@ is not running.
 One can verify that by using the following command:
 
 ```
-$ kubectl get pod -n <NAMESPACE> -l app=prometheus
+$ kubectl get pod -n <NAMESPACE> -l app.kubernetes.io/name=prometheus
 NAME                                 READY   STATUS    RESTARTS   AGE
 prometheus-<NAMESPACE>-prometheus-0  2/2     Running   1          4d20h
 ```
