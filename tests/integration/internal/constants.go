@@ -64,7 +64,9 @@ var (
 		"kube_pod_container_resource_requests",
 		"kube_pod_container_resource_limits",
 		"kube_pod_container_status_ready",
-		"kube_pod_container_status_terminated_reason",
+		// No container is being terminated,
+		// so metric is not being generated
+		// "kube_pod_container_status_terminated_reason",
 		"kube_pod_container_status_restarts_total",
 		"kube_pod_status_phase",
 	}
