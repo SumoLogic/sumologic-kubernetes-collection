@@ -13,7 +13,7 @@ data:
   config.yaml: |
     exporters:
       otlphttp:
-        endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local:4318
+        endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
     extensions:
       file_storage:
         compaction:

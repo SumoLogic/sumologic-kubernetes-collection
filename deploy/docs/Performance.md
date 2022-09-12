@@ -28,7 +28,7 @@ required to run collection on your cluster.
       remote write section under `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite`:
 
     ```yaml
-    - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.node
+    - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.node
       writeRelabelConfigs:
       - action: keep
         regex: node-exporter;(?:node_load1|node_load5|node_load15|node_cpu_seconds_total)
