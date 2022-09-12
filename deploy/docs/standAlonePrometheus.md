@@ -113,6 +113,9 @@ sumologic:
 fluent-bit:
   securityContext:
     privileged: true
+tailing-sidecar-operator:
+  scc:
+    create: true
 ```
 
 so it will look the following way:
@@ -129,6 +132,9 @@ kube-prometheus-stack:
 fluent-bit:
   securityContext:
     privileged: true
+tailing-sidecar-operator:
+  scc:
+    create: true
 ```
 
 and then run the following:

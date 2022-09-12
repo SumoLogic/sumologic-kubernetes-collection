@@ -5103,6 +5103,10 @@ falco:
 tailing-sidecar-operator:
   enabled: false
 
+  ## creation of Security Context Constraints in Openshift
+  scc:
+    create: false
+
 ## Configure OpenTelemetry Operator - Tracing
 ## ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
 opentelemetry-operator:

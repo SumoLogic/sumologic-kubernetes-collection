@@ -196,6 +196,9 @@ kube-prometheus-stack:
     namespaces:
       additional:
         - my-namespace
+tailing-sidecar-operator:
+  scc:
+    create: true
 ```
 
 so it will look like the following:
@@ -219,6 +222,9 @@ kube-prometheus-stack:
     namespaces:
       additional:
         - my-namespace
+tailing-sidecar-operator:
+  scc:
+    create: true
 ```
 
 and you can do the following:
