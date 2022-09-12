@@ -113,6 +113,9 @@ sumologic:
 fluent-bit:
   securityContext:
     privileged: true
+tailing-sidecar-operator:
+  scc:
+    create: true
 ```
 
 so it will look the following way:
@@ -129,6 +132,9 @@ kube-prometheus-stack:
 fluent-bit:
   securityContext:
     privileged: true
+tailing-sidecar-operator:
+  scc:
+    create: true
 ```
 
 and then run the following:
@@ -148,12 +154,12 @@ First, generate the Prometheus Operator `prometheus-overrides.yaml` by running
  kubectl run tool \
   -it --quiet --rm \
   --restart=Never -n sumologic \
-  --image sumologic/kubernetes-tools:2.12.0 \
+  --image sumologic/kubernetes-tools:2.13.0 \
   -- template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 
  # or using Docker
  docker run -it --rm \
-  sumologic/kubernetes-tools:2.12.0 \
+  sumologic/kubernetes-tools:2.13.0 \
   template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 ```
 

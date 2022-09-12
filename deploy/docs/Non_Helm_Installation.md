@@ -103,7 +103,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.12.0 -- \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
     template \
       --name-template 'collection' \
       | tee sumologic.yaml
@@ -138,7 +138,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.12.0 -- \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
     template \
       --namespace 'my-namespace' \
       --name-template 'collection' \
@@ -196,6 +196,9 @@ kube-prometheus-stack:
     namespaces:
       additional:
         - my-namespace
+tailing-sidecar-operator:
+  scc:
+    create: true
 ```
 
 so it will look like the following:
@@ -219,6 +222,9 @@ kube-prometheus-stack:
     namespaces:
       additional:
         - my-namespace
+tailing-sidecar-operator:
+  scc:
+    create: true
 ```
 
 and you can do the following:
@@ -228,7 +234,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.12.0 -- \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
     template \
       --namespace 'my-namespace' \
       --name-template 'collection' \
@@ -301,7 +307,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.12.0 -- \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
     template \
       --name-template 'collection' \
       | tee sumologic.yaml
@@ -323,7 +329,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.12.0 -- \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
     template \
       --namespace 'my-namespace' \
       --name-template 'collection' \
@@ -339,7 +345,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.12.0 -- \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
     template \
       --name-template 'collection' \
       --version=1.0.0
