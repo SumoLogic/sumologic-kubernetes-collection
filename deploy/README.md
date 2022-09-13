@@ -1,4 +1,4 @@
-# Deployment Guide for unreleased version
+# Deployment Guide for 2.16.0 version
 
 This page has instructions for collecting Kubernetes logs, metrics, and events;
 enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
@@ -90,7 +90,8 @@ The following matrix displays the tested package versions for our Helm chart.
 
 | Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit                          | Falco  | Metrics Server | Telegraf Operator | Tailing Sidecar Operator | OpenTelemetry Operator |
 |:----------------------|:------------------------------------------|:--------|:------------------------------------|:-------|:---------------|:------------------|:-------------------------|:-----------------------|
-| 2.14.1 - latest       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.3                    | 0.7.0                  |
+| 2.16.0 - latest       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.4                    | 0.7.0                  |
+| 2.14.1 - 2.15.0       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.3                    | 0.7.0                  |
 | 2.11.0 - 2.14.0       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.2                    | 0.7.0                  |
 | 2.10.0                | 12.10.0                                   | 1.14.6  | 0.14.1                              | 1.17.4 | 5.11.9         | 1.3.3             | 0.3.2                    | 0.7.0                  |
 | 2.9.0 - 2.9.1         | 12.10.0                                   | 1.14.6  | 0.14.1                              | 1.17.4 | 5.11.9         | 1.3.3             | 0.3.2                    | -                      |
