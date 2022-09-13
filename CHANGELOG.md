@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Breaking Changes
+
+### Added
+
 ### Changed
 
 - feat: add dot suffix to internal dns addresses [#2504]
+- chore(tailing-sidecar-operator): upgrade to 0.3.4 [#2519]
 
 [#2504]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2504
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.15.0...main
+[#2519]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2519
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.15.0...release-v2
 
 ## [v2.15.0]
 

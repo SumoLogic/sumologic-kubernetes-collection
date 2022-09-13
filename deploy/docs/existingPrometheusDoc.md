@@ -123,6 +123,9 @@ by adding the following configuration to `values.yaml`:
 sumologic:
   scc:
     create: true
+tailing-sidecar-operator:
+  scc:
+    create: true
 fluent-bit:
   securityContext:
     privileged: true
@@ -135,6 +138,9 @@ sumologic:
   accessId: ${SUMO_ACCESS_ID}
   accessKey: ${SUMO_ACCESS_KEY}
   clusterName: ${MY_CLUSTER_NAME}
+  scc:
+    create: true
+tailing-sidecar-operator:
   scc:
     create: true
 kube-prometheus-stack:
