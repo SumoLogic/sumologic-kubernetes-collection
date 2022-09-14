@@ -234,6 +234,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
+    --api-versions=security.openshift.io/v1 \
     --image sumologic/kubernetes-tools:2.12.0 -- \
     template \
       --namespace 'my-namespace' \
@@ -246,6 +247,9 @@ you may either limit scope for Prometheus Operator installed with Sumo Logic Kub
 `kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in values.yaml or
 exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
 using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
+
+**Notice:** Generating templates for openshift require `--api-versions=security.openshift.io/v1`
+in order to generate scc.
 
 ## Viewing Data In Sumo Logic
 
