@@ -234,6 +234,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
+    --api-versions=security.openshift.io/v1 \
     --image sumologic/kubernetes-tools:2.13.0 -- \
     template \
       --namespace 'my-namespace' \
