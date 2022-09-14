@@ -248,6 +248,9 @@ you may either limit scope for Prometheus Operator installed with Sumo Logic Kub
 exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
 using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
 
+**Notice:** Generating templates for openshift require `--api-versions=security.openshift.io/v1`
+in order to generate scc.
+
 ## Viewing Data In Sumo Logic
 
 Once you have completed installation, you can
