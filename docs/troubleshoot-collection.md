@@ -12,6 +12,7 @@
   - [Prometheus Logs](#prometheus-logs)
 - [Gathering metrics](#gathering-metrics)
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
+  - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
 - [Common Issues](#common-issues)
@@ -148,6 +149,41 @@ kubectl port-forward collection-sumologic-xxxxxxxxx-xxxxx 8080:24231
 ```
 
 Then, in your browser, go to `http://localhost:8080/metrics`. You should see Prometheus metrics exposed.
+
+#### Check the `/metrics` endpoint for Kubernetes services
+
+For kubernetes services you can use the following way:
+
+1. Create `sumologic-debug` pod
+
+   ```bash
+   cat << EOF | kubectl apply -f -
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: sumologic-debug
+     namespace: <namespace you want to create pod in (e.g. sumologic)>
+   spec:
+     containers:
+     - args:
+       - receiver-mock
+       image: sumologic/kubernetes-tools:2.9.0
+       imagePullPolicy: IfNotPresent
+       name: debug
+     serviceAccountName: <service account name used by prometheus (e.g. collection-kube-prometheus-prometheus)>
+   EOF
+   ```
+
+2. Go into the container:
+
+   ```bash
+   kubectl exec -it sumologic-debug -n <namespace> bash
+
+3. Talk with API directly like prometheus does, e.g.
+
+   ```bash
+   curl https://10.0.2.15:10250/metrics/cadvisor --insecure --cacert /var/run/secrets kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+   ```
 
 ### Check the Prometheus UI
 
