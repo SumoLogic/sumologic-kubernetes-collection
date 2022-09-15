@@ -30,7 +30,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2515]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2515
 [#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
 [#2526]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2526
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.16.0...main
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
+
+## [v2.17.0]
+
+### Released 2022-09-15
+
+### Changed
+
+- feat(metadata): upgrade otelcol to v0.57.2-sumo-1 [#2527]
+
+[#2527]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2527
+[v2.17.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.16.0...v2.17.0
 
 ## [v2.16.0]
 
