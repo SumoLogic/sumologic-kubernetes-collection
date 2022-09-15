@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v2.17.0]
 
+### Released 2022-09-15
+
 ### Changed
 
 - feat(metadata): upgrade otelcol to v0.57.2-sumo-1 [#2527]
