@@ -45,6 +45,7 @@
   - [Using NodeSelectors](#using-nodeselectors)
     - [Binding pods to linux nodes](#binding-pods-to-linux-nodes)
 - [Disable Thanos](#disable-thanos)
+- [Parsing log content as json](#parsing-log-content-as-json)
 
 ## Overriding chart resource names with `fullnameOverride`
 
@@ -1447,4 +1448,21 @@ kube-prometheus-stack:
   prometheus:
     prometheusSpec:
       thanos: null
+```
+
+## Parsing log content as json
+
+In order to parse and store log content as json following configuration has to be applied:
+
+```yaml
+fluentd:
+  logs:
+    containers:
+      extraOutputPluginConf: |-
+        <filter **>
+          @type record_modifier
+          <record>
+            _sumo_metadata ${record["_sumo_metadata"][:log_format] = 'json_merge'; record["_sumo_metadata"]}
+          </record>
+        </filter>
 ```
