@@ -280,7 +280,7 @@ sumologic:
       replicaCount: 3
       image:
         repository: public.ecr.aws/sumologic/nginx-unprivileged
-        tag: 1.21-alpine
+        tag: 1.23-alpine
         pullPolicy: IfNotPresent
       resources:
         limits:
