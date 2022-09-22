@@ -9,6 +9,7 @@ for details on our Kubernetes Solution.
 - [Minimum Requirements](#minimum-requirements)
 - [Support Matrix](#support-matrix)
   - [ARM support](#arm-support)
+  - [Falco support](#falco-support)
 
 Documentation for other versions can be found in the [main README file](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/README.md#documentation).
 
@@ -133,3 +134,7 @@ The only exception to the above is Falco, which currently lacks official ARM Doc
 
 [falco]: https://github.com/falcosecurity/falco/issues/1589
 [issues]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues
+
+### Falco support
+
+Falco is embedded in this Helm Chart for user convenience only - Sumo Logic does not provide production support for it.
