@@ -5017,7 +5017,8 @@ telegraf-operator:
           metric_version = 2
   # imagePullSecrets: []
 
-## Configure falco
+## Configure Falco
+## Please note that Falco is embedded in this Helm Chart for user convenience only - Sumo Logic does not provide production support for it
 ## This is an experimental configuration and shouldn't be used in production environment
 ## https://github.com/falcosecurity/charts/tree/master/falco
 falco:
