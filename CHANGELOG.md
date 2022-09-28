@@ -12,10 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(logs): prevent Fluent Bit from doing metadata enrichment [#2512]
 - chore(kube-prometheus-stack): update kube-prometheus-stack chart to 39.11.0 [#2446]
 
-### Added
-
 ### Changed
 
+- chore: upgrade nginx to 1.23 [#2544]
 - feat: enable remote write proxy by default [#2483]
 - chore: update kubernetes-tools to 2.13.0 [#2515]
 - feat(metadata): upgrade otelcol to v0.57.2-sumo-1 [#2526]
@@ -23,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - fix(openshift): fix remote write proxy - use unprivileged NGINX [#2510][#2510]
+- fix: default.metrics source is not imported when metrics are disabled and traces are enabled
 
 [#2483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2483
 [#2512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2512
@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2515]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2515
 [#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
 [#2526]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2526
+[#2544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2544
+[#2547]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2547
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 
 ## [v2.17.0]
