@@ -2,7 +2,7 @@
 
 This page has instructions for collecting Kubernetes logs, metrics, and events;
 enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
-See our [documentation guide](https://help.sumologic.com/Solutions/Kubernetes_Solution)
+See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/)
 for details on our Kubernetes Solution.
 
 - [Solution overview](#solution-overview)
@@ -33,7 +33,7 @@ Documentation links:
   - Open Telemetry `beta`
     - [Open Telemetry with `sumologic-kubernetes-collection`](./docs/opentelemetry_collector.md)
     - [Comparison of Fluentd and Opentelemetry Collector functionality](./docs/fluentd_otc_comparison.md)
-    - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/Beta/Kubernetes_Tracing_Auto_Instrumentation)
+    - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
 
 - Upgrades
   - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)

@@ -290,4 +290,4 @@ Follow the below steps to deploy new resources.
 After successful migration please make sure to [reinstall your Kubernetes App]
 to the latest version.
 
-[reinstall your Kubernetes App]: https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards
+[reinstall your Kubernetes App]: https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app
