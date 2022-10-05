@@ -280,7 +280,7 @@ sumologic:
       replicaCount: 3
       image:
         repository: public.ecr.aws/sumologic/nginx-unprivileged
-        tag: 1.21-alpine
+        tag: 1.23-alpine
         pullPolicy: IfNotPresent
       resources:
         limits:
@@ -5024,7 +5024,8 @@ telegraf-operator:
           metric_version = 2
   # imagePullSecrets: []
 
-## Configure falco
+## Configure Falco
+## Please note that Falco is embedded in this Helm Chart for user convenience only - Sumo Logic does not provide production support for it
 ## This is an experimental configuration and shouldn't be used in production environment
 ## https://github.com/falcosecurity/charts/tree/master/falco
 falco:

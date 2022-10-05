@@ -34,8 +34,10 @@ spec:
             - --print-headers
             - --print-logs
             - --print-metrics
+            - --store-traces
             - --store-logs
             - --store-metrics
+            - --print-spans
           resources: {}
           securityContext:
             capabilities:
