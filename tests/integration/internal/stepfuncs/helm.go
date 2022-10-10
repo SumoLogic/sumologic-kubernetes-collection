@@ -7,9 +7,13 @@ import (
 	"path"
 	"testing"
 
+	k8s_internal "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/k8s"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	log "k8s.io/klog/v2"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
@@ -67,11 +71,37 @@ func HelmInstallOpt(path string, releaseName string) features.Func {
 
 		err := helm.InstallE(t, ctxopts.HelmOptions(ctx), path, releaseName)
 		if err != nil {
+			kubectlOptions := ctxopts.KubectlOptions(ctx)
+
 			// Print setup job logs if installation failed.
-			k8s.RunKubectl(t, ctxopts.KubectlOptions(ctx),
+			k8s.RunKubectl(t, kubectlOptions,
 				"logs", fmt.Sprintf("-ljob-name=%s-sumologic-setup", releaseName),
 			)
 
+			// Print the status of all Pods
+			kubectlOptions.Namespace = ""
+			k8s.RunKubectl(t, kubectlOptions,
+				"get", "pods", "--all-namespaces",
+			)
+
+			// Get the non-running Pods, we need to do this separately because describe doesn't allow filtering by field
+			// There's also no filtering over readiness, so we need to iterate over the list ourselves
+			pods := k8s.ListPods(t, kubectlOptions, metav1.ListOptions{})
+			notReadyPods := []corev1.Pod{}
+			for _, pod := range pods {
+				if !k8s_internal.IsPodReady(&pod) {
+					notReadyPods = append(notReadyPods, pod)
+				}
+			}
+
+			// Describe and print logs for Pods which aren't running
+			for _, pod := range notReadyPods {
+				kubectlOptions.Namespace = pod.Namespace
+				log.InfoS("Describing Pod", "pod name", pod.Name)
+				k8s.RunKubectl(t, kubectlOptions, "describe", "pod", pod.Name)
+				log.InfoS("Printing logs for Pod", "pod name", pod.Name)
+				k8s.RunKubectl(t, kubectlOptions, "logs", pod.Name)
+			}
 			require.NoError(t, err)
 		}
 
