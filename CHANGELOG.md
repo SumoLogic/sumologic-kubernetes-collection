@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased [Unreleased]
 
+### Changed
+
+- chore: upgrade nginx to 1.23.1 [#2544] [#2554]
+
 ### Fixed
 
 - fix(openshift): fix remote write proxy - use unprivileged NGINX [#2510][#2510]
 
 [#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
+[#2544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2544
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 
 ## [v2.17.0]
