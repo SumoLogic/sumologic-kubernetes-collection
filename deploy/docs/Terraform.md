@@ -84,7 +84,7 @@ using `sumologic.collector.sources.<events,logs,metrics,traces>.<source ref name
 
 #### Processing Rules
 
-You can add [Processing Rules](https://help.sumologic.com/Manage/Collection/Processing-Rules) to an HTTP source via values.yaml.
+You can add [Processing Rules](https://help.sumologic.com/docs/send-data/collection/processing-rules) to an HTTP source via values.yaml.
 Below is an example of an exclude rule to filter `DEBUG` log messages.
 All logs from Kubernetes (Systemd, container, and custom logs) will have this filter applied.
 
@@ -110,7 +110,7 @@ sumologic:
 
 #### Fields
 
-The configuration snippet below configures two [fields](https://help.sumologic.com/Manage/Fields),
+The configuration snippet below configures two [fields](https://help.sumologic.com/docs/manage/fields/),
 (`node` and `deployment`) for the default logs source:
 
 ```yaml

@@ -29,12 +29,12 @@ the Free Trial button on https://www.sumologic.com/.
 
 The following are required to setup Sumo Logic's Kubernetes collection.
 
-- An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys)
+- An [Access ID and Access Key](https://help.sumologic.com/docs/manage/security/access-keys/)
   with [Manage Collectors] capability.
 - Please review our [minimum requirements](../README.md#minimum-requirements)
   and [support matrix](../README.md#support-matrix)
 
-[Manage Collectors]: https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management
+[Manage Collectors]: https://help.sumologic.com/docs/manage/users-roles/roles/role-capabilities#data-management
 
 To get an idea of the resources this chart will require to run on your cluster,
 you can reference our [performance doc](./Performance.md).
@@ -42,7 +42,7 @@ you can reference our [performance doc](./Performance.md).
 ## Prerequisite
 
 Sumo Logic Apps for Kubernetes and Explore require you to add the following
-[fields](https://help.sumologic.com/Manage/Fields#Manage_fields) in the Sumo Logic UI
+[fields](https://help.sumologic.com/docs/manage/fields/#manage-fields) in the Sumo Logic UI
 to your Fields table schema.
 This is to ensure your logs are tagged with relevant metadata.
 This is a one time setup per Sumo Logic account.
@@ -74,8 +74,8 @@ However, instead of using Helm to install the Chart, the tool will output the re
 
 The installation requires two parameters:
 
-- **sumologic.accessId** - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-- **sumologic.accessKey** - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+- **sumologic.accessId** - Sumo [Access ID](https://help.sumologic.com/docs/manage/security/access-keys/).
+- **sumologic.accessKey** - Sumo [Access key](https://help.sumologic.com/docs/manage/security/access-keys/).
 
 If you are installing the collection in a cluster that requires proxying outbound requests,
 please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
@@ -254,8 +254,8 @@ Once you have completed installation, you can
 or [open a new Explore tab] in Sumo Logic.
 If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
 
-[sumo-k8s-app-dashboards]: https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards
-[open a new Explore tab]: https://help.sumologic.com/Observability_Solution/Kubernetes_Solution/02Monitoring_Using_Kubernetes
+[sumo-k8s-app-dashboards]: https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app
+[open a new Explore tab]: https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore
 
 ## Troubleshooting Installation
 
@@ -291,7 +291,7 @@ of the installation process.
 
 You can find more information in our [troubleshooting documentation](Troubleshoot_Collection.md).
 
-[HTTP endpoints]: https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source
+[HTTP endpoints]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source
 
 ## Customizing Installation
 
