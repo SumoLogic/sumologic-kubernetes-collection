@@ -194,7 +194,7 @@ annotations:
 
 ### Create a new HTTP source in Sumo Logic
 
-To avoid [blacklisting](https://help.sumologic.com/Metrics/Understand_and_Manage_Metric_Volume/Blacklisted_Metrics_Sources) metrics should be distributed across multiple HTTP sources. You can create a new HTTP source using `values.yaml`:
+To avoid being [disabled](https://help.sumologic.com/docs/metrics/manage-metric-volume/disabled-metrics-sources), metrics should be distributed across multiple HTTP sources. You can create a new HTTP source using `values.yaml`:
 
 ```yaml
 sumologic:

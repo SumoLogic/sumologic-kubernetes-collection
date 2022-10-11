@@ -97,7 +97,7 @@ Check if [log throttling][log_throttling] is happening.
 
 If it is, there will be messages like `HTTP ERROR 429 You have temporarily exceeded your Sumo Logic quota` in Fluentd or Otelcol logs.
 
-[log_throttling]: https://help.sumologic.com/Manage/Ingestion-and-Volume/01Log_Ingestion#log-throttling
+[log_throttling]: https://help.sumologic.com/docs/manage/ingestion-volume/log-ingestion#log-throttling
 
 ### Check ingest budget limits
 
@@ -109,7 +109,7 @@ If it is, there will be `budget.exceeded` messages from Sumo in Fluentd or Otelc
 2022-04-12 13:47:17 +0000 [warn]: #0 There was an issue sending data: id: KMZJI-FCDPN-4KHKD, code: budget.exceeded, status: 200, message: Message(s) in the request dropped due to exceeded budget.
 ```
 
-[ingest_budgets]: https://help.sumologic.com/Manage/Ingestion-and-Volume/Ingest_Budgets
+[ingest_budgets]: https://help.sumologic.com/docs/manage/ingestion-volume/ingest-budgets
 
 ### Check Fluentd autoscaling
 
@@ -344,7 +344,7 @@ issues:
 kubectl logs -n <NAMESPACE> -l app=kube-prometheus-stack-operator
 ```
 
-[explore]: https://help.sumologic.com/Visualizations-and-Alerts/Explore
+[explore]: https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore
 
 ### Pod stuck in `ContainerCreating` state
 
@@ -717,6 +717,6 @@ sumologic:
 
 **Note**: If you use `json` format along with `text` format, you need to add regex for `json` as well (`\\{\".*`)
 
-[infer-boundaries]: https://help.sumologic.com/03Send-Data/Sources/04Reference-Information-for-Sources/Collecting-Multiline-Logs#infer-boundaries
-[http-source]: https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source
-[boundary-regex]: https://help.sumologic.com/03Send-Data/Sources/04Reference-Information-for-Sources/Collecting-Multiline-Logs#boundary-regex
+[infer-boundaries]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#infer-boundaries
+[http-source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source
+[boundary-regex]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#boundary-regex
