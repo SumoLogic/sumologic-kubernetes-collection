@@ -183,6 +183,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.opentelemetry.operator" . }}-instr
 {{- end -}}
 
+{{- define "sumologic.labels.app.opentelemetry.operator.instrumentation.configmap" -}}
+{{- template "sumologic.labels.app.opentelemetry.operator.instrumentation" . }}-cm
+{{- end -}}
+
+{{- define "sumologic.labels.app.opentelemetry.operator.instrumentation.job" -}}
+{{- template "sumologic.labels.app.opentelemetry.operator.instrumentation" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcol" -}}
 {{- template "sumologic.fullname" . }}-otelcol
 {{- end -}}
@@ -513,6 +521,14 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.opentelemetry.operator.instrumentation" -}}
 {{ template "sumologic.metadata.name.opentelemetry.operator" . }}-instr
+{{- end -}}
+
+{{- define "sumologic.metadata.name.opentelemetry.operator.instrumentation.configmap" -}}
+{{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation" . }}-cm
+{{- end -}}
+
+{{- define "sumologic.metadata.name.opentelemetry.operator.instrumentation.job" -}}
+{{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.otelcol" -}}
@@ -1510,10 +1526,68 @@ Example Usage:
 {{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-headless" . ) .Release.Namespace }}
 {{- end -}}
 
-{{- define "opentelemetry-operator.webhook.service.name" -}}
-opentelemetry-operator-webhook-service
+{{- define "opentelemetry-operator.controller.manager.metrics.service.url" -}}
+http://opentelemetry-operator-controller-manager-metrics-service.{{ .Release.Namespace }}:8080/metrics
 {{- end -}}
 
-{{- define "opentelemetry-operator.controller.manager.service.cert.name" -}}
-opentelemetry-operator-controller-manager-service-cert
+{{/*
+Generate Instrumentation Custom Resource for specified namespaces.
+*/}}
+
+{{- define "opentelemetry-operator.instrumentation.custom.resource" -}}
+{{- $ctx := . -}}
+{{ $watchNamespace := index .Values "opentelemetry-operator" "manager" "env" }}
+{{- if eq ( get $watchNamespace "WATCH_NAMESPACE" ) "" }}
+{{ fail "It is mandatory to set value for \"opentelemetry-operator.manager.env.WATCH_NAMESPACE\" when opentelemetry-operator is enabled. Value is comma separated namespaces e.g. \"ns1\\,ns2\"" }}
+{{ else }}
+{{- range $ns := splitList "," ( index .Values "opentelemetry-operator" "manager" "env" "WATCH_NAMESPACE" ) }}
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  namespace: {{ $ns }}
+  name: {{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation" $ctx }}
+  labels:
+    app: {{ template "sumologic.labels.app.opentelemetry.operator.instrumentation" $ctx }}
+    {{- include "sumologic.labels.common" $ctx | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "post-install,post-upgrade"
+spec:
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+    - xray
+  resource:
+    addK8sUIDAttributes: false
+  sampler:
+    type: always_on
+  env:
+    - name: OTEL_APPLICATION_NAMESPACE_NAME
+      value: {{ $ns }}
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: application={{ $ns }}
+  python:
+    # Force to use older image because of LOGS exporting issue
+    # https://github.com/open-telemetry/opentelemetry-python/issues/2594
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.28b1
+    env:
+      - name: OTEL_TRACES_EXPORTER
+        value: otlp_proto_http
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318/v1/traces
+  nodejs:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.27.0
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4317
+  java:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.16.0
+    env:
+      - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
+        value: http/protobuf
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318/v1/traces
+{{- end -}}
+{{- end -}}
 {{- end -}}
