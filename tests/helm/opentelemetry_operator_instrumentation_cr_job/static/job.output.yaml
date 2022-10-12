@@ -1,0 +1,62 @@
+---
+# Source: sumologic/templates/opentelemetry-operator/job-instrumentation-cr.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: RELEASE-NAME-sumologic-ot-operator-instr
+  labels:
+    app: RELEASE-NAME-sumologic-ot-operator-instr
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  template:
+    spec:
+      serviceAccountName: RELEASE-NAME-sumologic
+      containers:
+      - name: instrumentation-cr-applier
+        image: sumologic/kubernetes-tools
+        volumeMounts:
+          - name: instrumentation-cr-configmap
+            mountPath: /tmp/instrumentation-cr.yaml
+            subPath: instrumentation
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            max_wait=60
+            sleep_interval=5
+            counter=0
+            ready=false
+            while [[ ready != "false" ]]
+            do
+              is_ready=$(curl -s -o /dev/null -m 3 -L -w ''%{http_code}'' http://opentelemetry-operator-controller-manager-metrics-service.sumologic:8080/metrics)
+
+              if [[ is_ready -eq "200" ]]
+              then
+                ready=true
+                break
+              else
+                echo "Waiting for opentelemetry-operator-controller-manager..."
+                sleep $sleep_interval
+                counter=$(($counter + $sleep_interval))
+              fi
+
+              if [[ "$counter" -gt "$max_wait" ]]
+              then
+                echo "Couldn't reach opentelemetry-operator-controller-manager"
+                echo "Instrumentation resources not applied!"
+                break
+              fi
+            done
+
+            if [[ $ready == true ]]
+            then
+              echo "Applying Instrumentation resources"
+              kubectl apply -f /tmp/instrumentation-cr.yaml
+            fi
+      volumes:
+        - name: instrumentation-cr-configmap
+          configMap:
+            name: RELEASE-NAME-sumologic-ot-operator-instr-cm
+      restartPolicy: OnFailure
+  backoffLimit: 5
