@@ -5118,7 +5118,7 @@ opentelemetry-operator:
   createDefaultInstrumentation: true
   admissionWebhooks:
     failurePolicy: Fail
-    enabled: false
+    enabled: true
 
     certManager:
       enabled: false
