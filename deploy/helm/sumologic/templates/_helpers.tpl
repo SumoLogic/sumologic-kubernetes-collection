@@ -1567,6 +1567,21 @@ spec:
       value: {{ $ns }}
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: application={{ $ns }}
+  dotnet:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.3.1-beta.1
+    env:
+      - name: OTEL_PROPAGATORS
+        value: tracecontext,baggage
+      - name: OTEL_METRICS_EXPORTER
+        value: none
+      - name: OTEL_LOGS_EXPORTER
+        value: none
+      - name: OTEL_TRACES_EXPORTER
+        value: otlp
+      - name: OTEL_EXPORTER_OTLP_PROTOCOL
+        value: http/protobuf
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
   python:
     # Force to use older image because of LOGS exporting issue
     # https://github.com/open-telemetry/opentelemetry-python/issues/2594
@@ -1584,10 +1599,14 @@ spec:
   java:
     image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.16.0
     env:
-      - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
+      - name: OTEL_METRICS_EXPORTER
+        value: none
+      - name: OTEL_TRACES_EXPORTER
+        value: otlp
+      - name: OTEL_EXPORTER_OTLP_PROTOCOL
         value: http/protobuf
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318/v1/traces
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
 {{- end -}}
 {{- end -}}
 {{- end -}}
