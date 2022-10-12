@@ -4,6 +4,8 @@
 
 Prometheus configuration is located in `values.yaml` under `kube-prometheus-stack` key for helm installation.
 
+__Note__: It is best practice to add custom configuration to a user-supplied values file and then use it like so (```helm install -f my_values.yaml -n sumologic```)
+
 If the `kube-prometheus-stack` has been installed directly, a `prometheus-overrides.yaml` should be generated
 using `docker`/`kubectl` and [sumologic-kubernetes-tools](https://github.com/sumologic/sumologic-kubernetes-tools#template-dependency-configuration):
 
@@ -30,14 +32,10 @@ The configuration contains a section like the following for each of the Kubernet
 If you would like to collect other metrics that are not listed in configuration, you can add a new section to the file.
 
 ```yaml
-kube-prometheus-stack:  # For values.yaml
-    # ...
+kube-prometheus-stack:  # Add to a user-supplied values.yaml
     prometheus:
-      # ...
       prometheusSpec:
-        # ...
-        remoteWrite:
-          # ...
+        additionalRemoteWrite:
           - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<some_label>
             writeRelabelConfigs:
             - action: keep
@@ -160,12 +158,9 @@ Once you have created this yaml file, go ahead and run `kubectl create -f name_o
 If you want to keep all your changes inside configuration instead of serviceMonitors, you can add your changes to `prometheus.additionalServiceMonitors` section. For given serviceMonitor configuration it should looks like snippet below:
 
 ```yaml
-kube-prometheus-stack:  # For values.yaml
-  # ...
+kube-prometheus-stack:  # Add to user-supplied my_values.yaml
   prometheus:
-    # ...
     additionalServiceMonitors:
-      # ...
       - name: my-metrics
         additionalLabels:
           app: my-metrics
@@ -190,7 +185,7 @@ annotations:
   prometheus.io/path: "/metrics" # Path which metrics should be scraped from
 ```
 
-> **Note: This solution works only to scrape metrics from one container within the pod**
+> __Note: This solution works only to scrape metrics from one container within the pod__
 
 ### Create a new HTTP source in Sumo Logic
 
@@ -198,13 +193,9 @@ To avoid being [disabled](https://help.sumologic.com/docs/metrics/manage-metric-
 
 ```yaml
 sumologic:
-  # ...
   collector:
-    # ...
     sources:
-      # ...
       metrics:
-        # ...
         my_source:
           name: my-source-name
 ```
@@ -212,7 +203,7 @@ sumologic:
 This will create a new HTTP source with the name `my-source-name` in your Sumo Logic account.
 All sources are created on the same Collector.
 
-**This configuration doesn't modify or remove HTTP sources from your account.
+__This configuration doesn't modify or remove HTTP sources from your account.__
 If you rename a source in `values.yaml`, the new source will be added to your Sumo Logic account**
 
 ### Update Fluentd configuration
@@ -272,14 +263,10 @@ Make sure you include the same tag you created in your Fluentd configmap in the 
 Here is an example addition to the configuration file that will forward metrics to Sumo:
 
 ```yaml
-kube-prometheus-stack:  # For values.yaml
-    # ...
+kube-prometheus-stack:  # Add to a user-supplied values.yaml
     prometheus:
-      # ...
       prometheusSpec:
-        # ...
-        remoteWrite:
-          # ...
+        additionalRemoteWrite:
           - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.YOUR_TAG
             writeRelabelConfigs:
             - action: keep
@@ -290,14 +277,10 @@ kube-prometheus-stack:  # For values.yaml
 According to our example, below config could be useful:
 
 ```yaml
-kube-prometheus-stack:  # For values.yaml
-    # ...
+kube-prometheus-stack:  # Add to a user-supplied values.yaml
     prometheus:
-      # ...
       prometheusSpec:
-        # ...
-        remoteWrite:
-          # ...
+        additionalRemoteWrite:
           - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.YOUR_TAG
             writeRelabelConfigs:
             - action: keep
