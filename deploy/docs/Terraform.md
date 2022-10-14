@@ -63,7 +63,7 @@ sumologic:
                     # Sets source category to "${var.cluster_name}/${local.default_events_source}" if true
                     # To overwrite category, please use `sumologic.collector.sources[].properties.category`
           properties: # Additional Terraform properties like fields or content_type
-                      # ref: https://www.terraform.io/docs/providers/sumologic/r/collector.html
+                      # ref: https://registry.terraform.io/providers/SumoLogic/sumologic/latest/docs/resources/http_source#argument-reference
 ```
 
 ### Usage
@@ -79,7 +79,7 @@ Examples:
 
 ### Properties
 
-You can set all of the source [properties](https://www.terraform.io/docs/providers/sumologic/r/http_source.html#argument-reference)
+You can set all of the source [properties](https://registry.terraform.io/providers/SumoLogic/sumologic/latest/docs/resources/http_source#argument-reference)
 using `sumologic.collector.sources.<events,logs,metrics,traces>.<source ref name>.properties`.
 
 #### Processing Rules
