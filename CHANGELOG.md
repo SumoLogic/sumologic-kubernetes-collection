@@ -891,3 +891,2727 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 [v2_1_5]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.1.5
 [#1693]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1693
+
+## [v2.1.4][v2_1_4] - 2021-07-12
+
+### Changed
+
+- feat: add nginx plus to prometheus remote write (#1656) [#1685]
+- Prepare v2.1.4 [#1686]
+
+[v2_1_4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.1.4
+[#1685]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1685
+[#1686]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1686
+
+## [v2.1.3][v2_1_3] - 2021-07-12
+
+### Changed
+
+- [Backport release-v2.1] fix: fix fluent-bit's imageSecrets comment [#1649]
+- [Backport release-v2.1] docs: replace information about DockerHub with information about Amazon Public ECR [#1667]
+- [Backport release-v2.1] doc: add links for different documentation versions to doc starting page [#1671]
+- [Backport release-v2.1] docs: add container log parsing doc to main readme [#1676]
+- [Backport release-v2.1] chore: upgrade Tailing Sidecar Operator to v0.3.1 [#1682]
+- Prepare v2.1.3-rc.0 [#1683]
+- Prepare v2.1.3 [#1684]
+
+[v2_1_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.1.3
+[#1649]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1649
+[#1667]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1667
+[#1671]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1671
+[#1676]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1676
+[#1682]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1682
+[#1683]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1683
+[#1684]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1684
+
+## [v2.1.2][v2_1_2] - 2021-06-02
+
+### Changed
+
+- [Backport release-v2.1] docs: add instruction how to disable gzip compression [#1589]
+- [Backport release-v2.1] fix documentation for gzip compression issue [#1594]
+- [Backport release-v2.1] Allow backport job to run on PR coming from forks [#1601]
+- [Backport release-v2.1] docs: add mysql multiline logs example and instruction how to change scrape interval for metrics [#1606]
+- Labeling statefulset pvcs (#1597) [#1602]
+- [Backport release-v2.1] docs: add section about getting logs not available on stdout [#1609]
+- [Backport release-v2.1] Add application_rules.yaml to falco.rulesFile [#1617]
+- SUMO-165923 Updating the versions of kubernetes clusters (#1610) [#1619]
+- Add pullSecrets to setup job (#1616) [#1621]
+- [Backport release-v2.1] docs: add instruction how to filter metrics in Fluentd [#1627]
+- [Backport release-v2.1] Fix additionalLabels in collection-fluent-bit [#1630]
+- docs: remove alpha releases docs (#1626) - backport release-v2.1 [#1628]
+- [Backport release-v2.1] docs: remove deprecated --export flag from 'kubectl get' call [#1641]
+- Prepare v2.1.2-rc.1 [#1642]
+- Prepare v2.1.2 [#1643]
+
+[v2_1_2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.1.2
+[#1589]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1589
+[#1594]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1594
+[#1601]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1601
+[#1606]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1606
+[#1602]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1602
+[#1609]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1609
+[#1617]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1617
+[#1619]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1619
+[#1621]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1621
+[#1627]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1627
+[#1630]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1630
+[#1628]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1628
+[#1641]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1641
+[#1642]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1642
+[#1643]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1643
+
+## [v1.3.8][v1_3_8] - 2021-04-29
+
+### Changed
+
+- update terraform to 0.13.7 [#1592]
+
+[v1_3_8]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.3.8
+[#1592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1592
+
+## [v1.3.7][v1_3_7] - 2021-04-22
+
+### Changed
+
+- Update support matrix for v1.3.6 [#1462]
+- Specify 1.3 release when installing with helm [#1504]
+- fix: Fix duplicated service names in metrics metadata [#1570]
+- release: Prepare v1.3.7-rc.0 [#1575]
+- release: Prepare v1.3.7 [#1584]
+
+[v1_3_7]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.3.7
+[#1462]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1462
+[#1504]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1504
+[#1570]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1570
+[#1575]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1575
+[#1584]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1584
+
+## [v2.1.1][v2_1_1] - 2021-04-19
+
+### Changed
+
+- fix: Remove Helm warning for tolerations [#1536]
+- Upgrade metrics server subchart to 5.8.2 [#1538]
+- chore: Upgrade Fluentd from 1.12.1-sumo-0 to 1.12.1-sumo-1 [#1539]
+- Add troubleshooting section for the stuck PVCs [#1541]
+- Add chart properties for per-container annotations [#1540]
+- chore: Upgrade Fluent Bit and Metrics Server subcharts [#1543]
+- chore: upgrade metrics server to 5.8.4 [#1545]
+- Prepare v2.1.1-rc.0 [#1546]
+- [Backport release-v2.1] doc: add v2.1 info into main readme [#1559]
+- [Backport release-v2.1] chore: Upgrade Fluentd from v1.12.1-sumo-2 to v1.12.2-sumo-0 [#1568]
+- [Backport release-v2.1] Downgrade fluent-bit to 1.6.10 [#1564]
+- Prepare v2.1.1-rc.1 [#1572]
+- Prepare v2.1.1 [#1578]
+
+[v2_1_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.1.1
+[#1536]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1536
+[#1538]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1538
+[#1539]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1539
+[#1541]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1541
+[#1540]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1540
+[#1543]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1543
+[#1545]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1545
+[#1546]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1546
+[#1559]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1559
+[#1568]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1568
+[#1564]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1564
+[#1572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1572
+[#1578]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1578
+
+## [v2.0.6][v2_0_6] - 2021-03-31
+
+### Changed
+
+- [Backport release-v2.0] Add troubleshooting section about not running Prometheus pod [#1517]
+- [Backport release-v2.0] Check API errors when getting fields quota in setup job [#1525]
+- [Backport release-v2.0] Use only 10 SHA characters for dev builds instead of 40 [#1527]
+- Release 2.0 document installation of specific version [#1529]
+- Prepare v2.0.6 [#1537]
+
+[v2_0_6]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.0.6
+[#1517]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1517
+[#1525]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1525
+[#1527]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1527
+[#1529]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1529
+[#1537]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1537
+
+## [v2.1.0][v2_1_0] - 2021-03-30
+
+### Changed
+
+- Don't build setup image [#1348]
+- Add helm lint to CI [#1349]
+- Bump fluentd image to 1.12.0 [#1351]
+- Add gzip troubleshooting to v2 upgrade doc [#1350]
+- Bump sumologic terraform provider to 2.6 and relax kubernetes provider version constraints [#1353]
+- Add configuration for VS Code's Markdownlint extension [#1352]
+- Add support for Falco on OpenShift 4.6 [#1354]
+- Fix information about falco on GKE [#1360]
+- Fix ECR image repository name after migration for agent [#1363]
+- Make VS Code's Markdownlint behave more like CI's Markdownlint [#1362]
+- Fix links to Prometheus and FluenBit deploy instuctions [#1372]
+- Use 40 SHA chars in dev helm chart versions [#1374]
+- Fix link to Fluentd output configuration [#1379]
+- Bump setup job's main.tf to work with terraform 0.13 [#1385]
+- Bump setup image to 2.0.1 [#1387]
+- docs: Fix typos [#1389]
+- Add extensibility points in values.yaml for Fluentd plugins for logs [#1359]
+- docs: Update documentation about authenticating with container registries [#1396]
+- docs: Fix docs for annotations [#1395]
+- Bump fluentd from 1.12.0-sumo-0-rc.0 to 1.12.0-sumo-1-rc.0 [#1400]
+- Upgrade fluent-bit to 1.6.10 [#1406]
+- Add deprecation date to the v1.3 release [#1403]
+- Add additional Prometheus configuration doc link into main readme [#1407]
+- Switch to OTC v0.19.2-sumo [#1394]
+- Enable otlphttp exporter in tracing collection [#1415]
+- doc: reword message into log [#1426]
+- Upgrade Fluentd from 1.12.0-sumo-1.rc0 to rc.1 [#1427]
+- Remove traces from Terraform docs mentioned twice [#1419]
+- Upgrade otelagent version from 0.16.2-sumo to 0.19.2-sumo [#1430]
+- Upgrade Fluentd to 1.12.0-sumo-1 [#1433]
+- Add performance troubleshooting (fluent-bit mem buf limit) [#1428]
+- Add logs-keeper to vagrant [#1421]
+- Revert "Add logs-keeper to vagrant" [#1437]
+- Allow setting securityContext per container in fluentd statefulsets [#1439]
+- docs: update sources in additional prometheus metrics [#1440]
+- Use the ECR repository for dependencies: Fluent Bit, Telegraf and Falco [#1442]
+- The v2 migration script fix - migrate Fluent Bit image key instead of deleting it [#1444]
+- Add information about Vagrant environment [#1450]
+- Add information for CRI-O and containerd log parsing [#1441]
+- Fix #1453, remove build-setup from Makefile and README [#1454]
+- Add logs-keeper to vagrant [#1438]
+- docs: update additional metrics due to fluentd errors [#1458]
+- Update support matrix [#1463]
+- Use backport app [#1465]
+- Revert "Use backport app" [#1466]
+- Change backport bot token [#1471]
+- Make pdb definitions and usage consistent [#1469]
+- Fix v2.0.0 migration script not migrating remoteTimeout [#1467]
+- Backport bot use github app [#1476]
+- Bump metrics-server to 5.5.0 [#1474]
+- Refine requirements for sumologic-terraform-provider to ~> 2.8.0 [#1479]
+- Bump setup image to 3.0.0 [#1481]
+- Add linter for markdown links [#1483]
+- Exclude `replicas` from Fluentd statefulsets when autoscaled [#1484]
+- vagrant: add k9s to the Vagrant box [#1486]
+- vagrant: add script to get kubeconfig for vagrant cluster [#1487]
+- vagrant: get-kubeconfig: add verbose for moving old config [#1488]
+- Fix prometheus pod name in troubleshooting doc [#1491]
+- Upgrade Fluentd image to 1.12.0-sumo-2 [#1493]
+- events: add overrideOutputConf property [#1497]
+- Fix match fluent.** deprecation warning [#1498]
+- feat: Add source category prefix annotation [#1501]
+- Refactor helm installation docs [#1505]
+- fluent-bit: disable keepalive [#1495]
+- Add Tailing Sidecar Operator as Helm Chart dependency [#1507]
+- Bump fluentd image to 1.12.0-sumo-4 [#1510]
+- Bump fluentd image to v1.12.1-sumo-0-rc.1 [#1516]
+- Prepare v2.1.0-rc.0 [#1514]
+- Add troubleshooting section about not running Prometheus pod [#1509]
+- feature: Add a debug mode to the setup job [#1519]
+- fix: Fix Fluentd image name [#1520]
+- Prepare v2.1.0-rc.1 [#1521]
+- Check API errors when getting fields quota in setup job [#1524]
+- Use only 10 SHA characters for dev builds instead of 40 [#1526]
+- Upgrade subcharts [#1530]
+- Upgrade subcharts [#1531]
+- Bump OTC, add compression, use OTLPHTTP exporter [#1490]
+- Prepare v2.1.0-rc.2 [#1532]
+- Upgrade Fluentd to 1.12.1-sumo-0 [#1533]
+- Prepare v2.1.0 [#1535]
+
+[v2_1_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.1.0
+[#1348]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1348
+[#1349]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1349
+[#1351]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1351
+[#1350]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1350
+[#1353]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1353
+[#1352]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1352
+[#1354]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1354
+[#1360]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1360
+[#1363]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1363
+[#1362]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1362
+[#1372]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1372
+[#1374]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1374
+[#1379]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1379
+[#1385]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1385
+[#1387]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1387
+[#1389]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1389
+[#1359]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1359
+[#1396]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1396
+[#1395]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1395
+[#1400]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1400
+[#1406]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1406
+[#1403]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1403
+[#1407]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1407
+[#1394]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1394
+[#1415]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1415
+[#1426]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1426
+[#1427]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1427
+[#1419]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1419
+[#1430]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1430
+[#1433]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1433
+[#1428]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1428
+[#1421]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1421
+[#1437]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1437
+[#1439]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1439
+[#1440]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1440
+[#1442]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1442
+[#1444]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1444
+[#1450]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1450
+[#1441]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1441
+[#1454]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1454
+[#1438]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1438
+[#1458]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1458
+[#1463]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1463
+[#1465]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1465
+[#1466]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1466
+[#1471]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1471
+[#1469]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1469
+[#1467]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1467
+[#1476]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1476
+[#1474]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1474
+[#1479]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1479
+[#1481]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1481
+[#1483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1483
+[#1484]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1484
+[#1486]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1486
+[#1487]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1487
+[#1488]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1488
+[#1491]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1491
+[#1493]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1493
+[#1497]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1497
+[#1498]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1498
+[#1501]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1501
+[#1505]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1505
+[#1495]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1495
+[#1507]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1507
+[#1510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1510
+[#1516]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1516
+[#1514]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1514
+[#1509]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1509
+[#1519]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1519
+[#1520]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1520
+[#1521]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1521
+[#1524]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1524
+[#1526]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1526
+[#1530]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1530
+[#1531]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1531
+[#1490]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1490
+[#1532]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1532
+[#1533]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1533
+[#1535]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1535
+
+## [v2.0.5][v2_0_5] - 2021-03-23
+
+### Changed
+
+- [Backport release-v2.0] Refactor helm installation docs [#1506]
+- Upgrade Fluentd image to 1.12.0-sumo-2.1 [#1511]
+- Prepare v2.0.5-rc.0 [#1512]
+- Prepare v2.0.5 [#1513]
+
+[v2_0_5]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.0.5
+[#1506]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1506
+[#1511]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1511
+[#1512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1512
+[#1513]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1513
+
+## [v2.0.4][v2_0_4] - 2021-03-19
+
+### Changed
+
+- [Backport release-v2.0] docs: update additional metrics due to fluentd errors [#1460]
+- [Backport release-v2.0] Update support matrix [#1464]
+- [Backport release-v2.0] Change backport bot token [#1472]
+- [Backport release-v2.0] Make pdb definitions and usage consistent [#1473]
+- [Backport release-v2.0] Backport bot use github app [#1477]
+- [Backport release-v2.0] Fix v2.0.0 migration script not migrating remoteTimeout [#1475]
+- [Backport release-v2.0] Exclude `replicas` from Fluentd statefulsets when autoscaled [#1485]
+- prepare-v2.0.4-rc.0 [#1489]
+- [Backport release-v2.0] Fix prometheus pod name in troubleshooting doc [#1492]
+- [Backport release-v2.0] Upgrade Fluentd image to 1.12.0-sumo-2 [#1494]
+- Prepare v2.0.4-rc.1 [#1499]
+- Prepare v2.0.4 [#1500]
+
+[v2_0_4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.0.4
+[#1460]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1460
+[#1464]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1464
+[#1472]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1472
+[#1473]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1473
+[#1477]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1477
+[#1475]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1475
+[#1485]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1485
+[#1489]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1489
+[#1492]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1492
+[#1494]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1494
+[#1499]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1499
+[#1500]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1500
+
+## [v2.0.3][v2_0_3] - 2021-02-23
+
+### Changed
+
+- [Backport release-v2.0] Allow setting securityContext per container in Fluentd statefulsets [#1443]
+- [Backport release-v2.0] docs: update sources in additional prometheus metrics [#1445]
+- [Backport release-v2.0] Use the ECR repository for dependencies: Fluent Bit, Telegraf and Falco [#1446]
+- [Backport release-v2.0] The v2 migration script fix - migrate Fluent Bit image key instead of deleting it [#1447]
+- Prepare v2.0.3-rc.0 [#1448]
+- [Backport #1441] Add information for Docker, CRI-O, containerd log parsing [#1451]
+- Prepare v2.0.3-rc.1 [#1452]
+- [Backport release-v2.0] Fix #1453, remove build-setup from Makefile and README [#1455]
+- Prepare v2.0.3 [#1457]
+
+[v2_0_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.0.3
+[#1443]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1443
+[#1445]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1445
+[#1446]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1446
+[#1447]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1447
+[#1448]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1448
+[#1451]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1451
+[#1452]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1452
+[#1455]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1455
+[#1457]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1457
+
+## [v2.0.2][v2_0_2] - 2021-02-16
+
+### Changed
+
+- Update links in configuration files, values.yaml and its parts [#1375]
+- [Backport release-v2.0] Use 40 SHA chars in dev helm chart versions [#1377]
+- [Backport release-v2.0] Fix links to Prometheus and FluenBit deploy instuctions [#1373]
+- [Backport release-v2.0] Fix link to Fluentd output configuration [#1384]
+- [Backport release-v2.0] docs: Update documentation about authenticating with container registries [#1397]
+- [Backport release-v2.0] docs: Fix docs for annotations [#1399]
+- Upgrade fluent-bit to 1.6.10 [#1405]
+- [Backport release-v2.0] Add additional Prometheus configuration doc link into main readme [#1410]
+- [Backport release-v2.0] Add deprecation date to the v1.3 release [#1408]
+- Switch to OTC v0.19.2-sumo [#1413]
+- [Backport release-v2.0] Remove traces from Terraform docs mentioned twice [#1429]
+- [Backport release-v2.0] Upgrade otelagent version from 0.16.2-sumo to 0.19.2-sumo [#1431]
+- [Backport release-v2.0] Enable otlphttp exporter in tracing collection [#1425]
+- Upgrade Fluentd to 1.12.0-sumo-1 [#1434]
+- Prepare v2.0.2-rc.0 [#1435]
+- Prepare v2.0.2 [#1436]
+
+[v2_0_2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.0.2
+[#1375]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1375
+[#1377]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1377
+[#1373]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1373
+[#1384]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1384
+[#1397]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1397
+[#1399]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1399
+[#1405]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1405
+[#1410]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1410
+[#1408]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1408
+[#1413]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1413
+[#1429]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1429
+[#1431]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1431
+[#1425]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1425
+[#1434]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1434
+[#1435]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1435
+[#1436]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1436
+
+## [v1.3.6][v1_3_6] - 2021-02-11
+
+### Changed
+
+- Add priorityClassName to events statefulset (#1006 backport) [#1009]
+- Bump telegraf-operator to 1.1.6 (official 1.1.5 with helm2 support)(#1008 Backport) [#1010]
+- add step for overriding node-exporter port in OpenShift [#990]
+- Override Fluent Bit image to 1.6.0 for Helm chart version 1.3 [#1019]
+- Otc v0.12 on v1.3 [#1013]
+- Prepare v1.3.1-rc.0 [#1036]
+- Prepare v1.3.1 [#1041]
+- Use new Helm stable repo URL for Fluent Bit [#1079]
+- Prepare v1.3.2-rc.0 [#1080]
+- Use new Helm stable repo URL for metrics-server [#1081]
+- Prepare v1.3.2-rc.1 [#1082]
+- Add OTLP HTTP port to the OpenTelemetry Collector [#1088]
+- Prepare v1.3.2 [#1085]
+- Adds Kubernetes App update info after successful migration (backport of #856) [#1098]
+- Fix for chart documentation spelling of Fluent Bit and Kube Prometheus Stack [#1144]
+- Migrate the default git branch from master to main [#1156]
+- Backport CODEOWNERS from the main branch [#1155]
+- Add tracing to the helm chart description (backport of #1153) [#1154]
+- Drop kubelet/systemd logs if they are disabled [#1166]
+- Migrate off of the Docker Hub images into GitHub packages [#1168]
+- Backport CI migration to Github actions [#1192]
+- Prepare v1.3.3-rc.0 [#1209]
+- Backport CI fix [#1210]
+- Add pushing images to ghcr.io for release builds [#1217]
+- Add travis for overrides [#1221]
+- Replace ghcr.io with public AWS ECR [#1223]
+- Prepare v1.3.3-rc.1 [#1224]
+- Backport Bundle kubernetes_metadata plugin with fix for Fluentd pod restarts [#1193]
+- Prepare v1.3.4-rc.0 [#1249]
+- Unblock 1.3 CI [#1250]
+- Use sumologic alias for ECR [#1241]
+- Prepare v1.3.4 [#1251]
+- Bump Helm 2 from 2.16.11 to 2.17.0 in CI [#1262]
+- Prevent access to uninitialized variable [#1261]
+- Add changes required for OpenShift support [#1267]
+- Use minimal scc permissions [#1272]
+- Do not attach empty 'node' metadata [#1268]
+- Add ECR push to 1.3 branch [#1275]
+- Prepare v1.3.5-rc.0 [#1276]
+- Upgrade Falco dependency to 1.5.7 [#1278]
+- Prepare v1.3.5 [#1279]
+- Upgrade Fluentd from 1.11.1 to 1.11.5 [#1284]
+- Fix upgrade-script for logs migrations for v1.0 [#1296]
+- Add prom oper compatibility note to docs [#1321]
+- Update supported k8s versions for the v1.3: add AKS and EKS 1.18, rem… [#1324]
+- Upgrade the subcharts versions [#1331]
+- Fix #1322, update information about changing Fluentd persistence [#1330]
+- Add OpenShift 3.11 support info [#1366]
+- [Backport of #1354] Add support for falco on OpenShift with missing kernel-devel package [#1369]
+- Change links to configuration files in values.yaml [#1380]
+- [Manual backport] Fix links to Prometheus and FluenBit deploy instuctions [#1381]
+- Upgrade terraform sumologic provider in release v1.3 [#1378]
+- [Manual backport] Fix link to Fluentd output configuration [#1383]
+- Use 40 SHA chars in dev helm chart versions on release-1.3 branch [#1376]
+- [Backport] Fix information about falco on GKE [#1386]
+- Make connections to k8s API server persistent [#1390]
+- docs: Fix docs for annotations [#1401]
+- Prepare v1.3.6-rc.0 [#1402]
+- Bump fluent-bit to 1.6.10 [#1404]
+- Add deprecation date to the v1.3 release [#1409]
+- Prepare v1.3.6-rc.1 [#1411]
+- Prepare v1.3.6 [#1416]
+
+[v1_3_6]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.3.6
+
+[#1296]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1296
+[#1321]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1321
+[#1324]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1324
+[#1331]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1331
+[#1330]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1330
+[#1366]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1366
+[#1369]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1369
+[#1380]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1380
+[#1381]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1381
+[#1378]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1378
+[#1383]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1383
+[#1376]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1376
+[#1386]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1386
+[#1390]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1390
+[#1401]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1401
+[#1402]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1402
+[#1404]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1404
+[#1409]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1409
+[#1411]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1411
+[#1416]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1416
+
+## [v2.0.1][v2_0_1] - 2021-01-22
+
+### Changed
+
+- Add new prometheus CRDs to vagrant makefile when removing them from cluster [#1335]
+- Add missing migration doc link [#1338]
+- Pin setup image to alpine:3.12 [#1339]
+- Add backport bot workflow [#1341]
+- Fix fluent-bit extraVolumes and extraVolumeMounts migration for v2 [#1342]
+- Make bot the author of backport commits [#1344]
+- Update v2 doc links to release-v2.0 [#1345]
+- [Backport release-v2.0] Bump kubernetes-tools to 2.3.1 in v2 migration doc [#1347]
+- [Backport release-v2.0] Add gzip troubleshooting to v2 upgrade doc [#1357]
+- [Backport release-v2.0] Add support for falco on OpenShift 4.6 [#1358]
+- [Backport release-v2.0] Fix information about falco on GKE [#1361]
+- [Backport release-v2.0] Fix ECR image repository name after migration for agent [#1364]
+- Don't build setup image [#1367]
+
+[v2_0_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.0.1
+[#1335]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1335
+[#1338]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1338
+[#1339]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1339
+[#1341]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1341
+[#1342]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1342
+[#1344]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1344
+[#1345]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1345
+[#1347]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1347
+[#1357]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1357
+[#1358]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1358
+[#1361]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1361
+[#1364]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1364
+[#1367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1367
+
+## [v2.0.0][v2_0_0] - 2021-01-14
+
+### Changed
+
+- Add scc for setup job [#993]
+- Add check for vagrant disksize plugin in Vagrantfile [#996]
+- Allow HostsPorts for openshift (required for  node-exporter) [#997]
+- Extract unit tests from build.sh and run as separate build stage [#974]
+- Fix link in best practices doc [#999]
+- Upgrade fluent-plugin-kubernetes_metadata_filter from 2.4.1 to 2.5.2 [#998]
+- Add known k8s api callers to vagrant values.yaml and upgrade falco chart to 1.5.0 [#1003]
+- exclude fluentd warning message [#1004]
+- Add priorityClassName to events statefulset [#1006]
+- Bump fluentd and enable gzip compression by default [#1001]
+- Bump telegraf-operator to 1.1.6 (official 1.1.5 + helm2 support) [#1008]
+- Add information how to setup metrics-server in kops clusters [#1011]
+- Bump sumologic-terraform-provider to 2.3.0 [#1014]
+- Bump sumologic-terraform-provider to 2.3.3 [#1018]
+- Doc Fix [#1021]
+- move metrics server chart repo [#890]
+- Fix vagrant values.yaml and add limits for prometheus [#1024]
+- fix typo in helm installation command [#1028]
+- Add custom terraform and bash script to the setup [#1020]
+- Add possibility to disable metrics coming from OTC [#994]
+- Always create custom setup configmap [#1032]
+- Add jq and kubelet webhook authorization to vagrant [#1026]
+- Add perf test script using avalanche [#1025]
+- Override Fluent Bit image to fluent/fluent-bit:1.6.0 [#1017]
+- Change default Fluent Bit config: use Docker_Mode [#1035]
+- Bump Vagrant VM to Ubuntu 20.04 [#1031]
+- Enable FluentD file persistence by default [#1033]
+- Upgrade OpenTelemetry Collector to v0.12 [#1012]
+- Rename OTC setting metrics_enabled into metrics.enabled [#1037]
+- Add persistentVolumeClaim to scc [#1039]
+- add comment for using maxUnavailable parameter in pdb [#1042]
+- CI: add retries to curl, update image and install helm from tar.gz [#1040]
+- Add condition when creating metrics pdb [#1047]
+- Update README [#1043]
+- Add metrics pdb template [#1048]
+- Add extraEnvVars to the otelcol [#1050]
+- Add extraVolumeMounts and extraVolumes to the otelcol [#1051]
+- Add cleanup to travis [#1056]
+- Update falco rules in vagrant [#1058]
+- Add checksum/config annotations for fluentd and otelcol [#1053]
+- Use helm from kubernetes-tools [#1054]
+- Add falco rules based on images [#1059]
+- Drop helm2 support [#1060]
+- Enable compression in fluentd output plugin by default [#1062]
+- CI bugfix: use relative path for the helm sync dir [#1063]
+- Add curl and jq to docker image [#1065]
+- Bump terraform providers [#1070]
+- Update helm installation docs [#1072]
+- Create fields automatically in setup job [#1064]
+- Check if docker daemon is running before running tests [#1075]
+- Add fluentd.metrics.overrideOutputConf [#1057]
+- Remove overrides files, stop generating them and remove kubernetes directory [#1052]
+- Use new stable repo URL in [#1073]
+- Remove files (fixup #1052 rebase) [#1078]
+- Set Prometheus data retention to 1 day (#793) [#1083]
+- Add OTLP HTTP port [#1086]
+- Bump sumologic/kubernetes-tools to 2.0.0 [#1087]
+- Changes in documentation [#1084]
+- Update autoscaling/v1 to autoscaling/v2beta2 [#1071]
+- Adds Kubernetes App update info after successful migration [#856]
+- Markdown docs cleanup [#1094]
+- Add clean up job to delete collector when collection is uninstalled [#1092]
+- Docs fix [#1103]
+- Allow specifying pullSecrets [#1104]
+- Exit from setup job in case of fail [#1106]
+- Update docs regarding pullSecrets [#1109]
+- Update Non_Helm_Installation.md [#1107]
+- Docs cleanup - capitalize proper names like Kubernetes or Terraform [#1111]
+- Add documentation for dev helm charts [#1110]
+- Upgrade Prometheus chart to 12.0.2 and rename prometheus-operator to kube-prometheus-stack [#1089]
+- Migrate to new Fluent Bit helm chart [#1102]
+- Update Falco to 1.5.4 [#1115]
+- v1 migration docs refactor [#1113]
+- Refactor best practices doc [#1112]
+- Add markdownlint to travis and enable trailing spaces check [#1114]
+- Add pushing of dev helm charts into dev directory [#1117]
+- Add forwarding kubelet_running containers and pods metrics [#1118]
+- Revert "Add pushing of dev helm charts into dev directory" [#1120]
+- Push dev charts into dev directory [#1122]
+- Add missing space in helm merge command [#1125]
+- Switch back to docker_mode [#1133]
+- Add github CODEOWNERS [#1129]
+- Only import sources when collector exists [#1137]
+- Bump metrics-server to 5.0.2 [#1140]
+- Add explicit list of active maintainers to CODEOWNERS [#1138]
+- Fix for chart documentation spelling of Fluent Bit and Kube Prometheu… [#1143]
+- v2 migration script [#1121]
+- Bundle terraform providers in kubernetes-fluentd image [#1145]
+- Document how to use own registry for hosting Sumo images [#1142]
+- Drop kubelet/systemd logs if they are disabled [#1128]
+- Migrate image to fluentd.image and sumologic.setup.job.image [#1148]
+- Migrate otelcol image name to otelcol image repository [#1149]
+- Fix fluentd systemd logs dropping (typo) [#1150]
+- Migrate the default git branch from master to main [#1152]
+- Add tracing to the helm chart description [#1153]
+- Update docs from prometheus-operator to kube-prometheus-stack [#1151]
+- Use official repo for telegraf-operator [#1147]
+- Bump chart API version to v2 [#1159]
+- Add targets to test logs and metrics from receiver-mock [#1162]
+- Add cleanup docs [#1171]
+- Fix prometheus-operator service names in troubleshooting docs [#1170]
+- reword: docker registry -> container registry [#1161]
+- Clean up collector keys in values.yaml [#1160]
+- Use Github Actions for CI [#1181]
+- Bundle kubernetes_metadata plugin with fix for Fluentd pod restarts [#1183]
+- Update issue templates - bug report [#1163]
+- Update issue template for feature request [#1164]
+- Update issue templates - question [#1165]
+- Clean makefile and update vagrant due to new ruby package [#1184]
+- Change ServiceMonitor for fluent-bit - port and matchLabels [#1188]
+- Fix expose-prometheus target in Makefile [#1189]
+- Add Github Actions build and push actions [#1186]
+- Add more rules to markdownlint [#1177]
+- Add yamllint to CI [#1173]
+- Run checks on release branches on Github Actions [#1191]
+- Improve vagrant's Makefile [#1194]
+- Migrate off of the legacy pre-1.14 recording rules [#1030]
+- Add a new label for scraping metrics [#1190]
+- Add v2 migrations steps [#1172]
+- Fix CI not pushing helm charts [#1197]
+- Fix pushing helm charts [#1198]
+- OpenTelemetry Agent support [#1027]
+- Set prometheus remoteTimeout to 5s [#1199]
+- Update coredns metrics due to 1.7.0 release [#1200]
+- Bump fluentd image to v1.11.5 [#1204]
+- Bump receiver-mock image in vagrant to kubernetes-tools:2.1.0 [#1205]
+- Upgrade Kube Prometheus Stack to 12.3.0 [#1207]
+- Upgrade Fluent Bit to 0.7.10 and Falco to 1.5.5 [#1206]
+- Prevent "undefined local variable or method" error from enhance_k8s_metadata Fluent plugin [#1212]
+- Update missing kube scheduler and controller manager metrics doc [#1218]
+- Update scheduler metrics [#1219]
+- Upgrade script v2 - fluentd.persistence migration [#1213]
+- Remove unused Travis config and badge [#1215]
+- kubernetes-setup Dockerfile [#1226]
+- Upgrade Fluent Bit to 0.7.12 and Kube Prometheus Stack to 12.7.0 [#1228]
+- Upgrade Fluent Bit to 0.7.13 [#1230]
+- Move from Docker Hub to ECR Public [#1232]
+- Add release job for kubernetes-setup image [#1233]
+- Refactor CI to use separate jobs for setup and fluentd images [#1234]
+- Prepare v2.0.0-beta.0 [#1231]
+- Use separate setup job image in Vagrant [#1235]
+- Remove leftovers from building Fluentd image [#1236]
+- Use sumologic alias for ECR [#1237]
+- Upgrade Kube Prometheus Stack to 12.8.0 and Falco to 1.5.6 [#1238]
+- Upgrade v2 script prometheus migration [#1216]
+- Check minimal k8s version before installation [#1240]
+- Bump kubernetes-tools to 2.1.0 [#1244]
+- Upgrade Falco to 1.5.7 [#1246]
+- Explicitly log that setup.sh is missing when using custom setup scripts [#1247]
+- Migration script v2 set remoteWrite remoteTimeout to 5s [#1243]
+- Document change in fluentd persistence in 2.0 [#1252]
+- Don't install aws cli when already available in gh env with ecr-public command [#1254]
+- Bump kubernetes-tools to 2.2.0 [#1257]
+- Add migration logic to v2 upgrade script for prometheus remote write regexes [#1256]
+- Don't support yq version 4.0 and above in migration script v2 [#1260]
+- Fix typo in README [#1263]
+- Update docs to contain information about setup job creating fields [#1266]
+- Document kubernetes version check when installing with helm [#1265]
+- Update sumologic/kubernetes-fluentd image to 2.0.0-beta.1 [#1270]
+- Remove fluent-bit rawConfig mentions after upgrading to new fluent-bit chart [#1264]
+- Update v2 migration doc [#1273]
+- Add steps required for fluent-bit to upgrade [#1242]
+- Use minimal scc permissions [#1274]
+- Upgrade Kube Prometheus Stack to 12.8.1 [#1269]
+- Remove ci/build.sh from pull request template [#1253]
+- Fix upgrade v2 script image rename [#1277]
+- Upgrade v2 script - metrics server [#1282]
+- Bump kube-prometheus-stack to 12.9.2 [#1281]
+- Bump kube-prometheus-stack to 12.10.4 [#1285]
+- Upgrade Fluentd image to 1.11.5-sumo-0 [#1286]
+- Upgrade Sumologic Kubernetes Tool version to 2.2.3 [#1283]
+- Prepare v2.0.0-rc.0 [#1287]
+- Extract FLUENTD_METRICS_SVC from the CHART variable [#1288]
+- Prepare v2.0.0-rc.1 [#1290]
+- Upgrade Kube Prometheus Stack to 12.10.6 [#1291]
+- Add output yaml flag to helm get values [#1292]
+- Update v2 migration docs about base upgrade version [#1293]
+- Fix upgrade-script for logs migrations for v1.0 [#1297]
+- Add v2 migration logic for fluent-bit section [#1299]
+- Upgrade OTC to 0.16.0-sumo [#1259]
+- Use RELEASE-NAME placeholder in upgrade command [#1298]
+- Migrate prometheus pre 1.14 rules only when prometheus-operator.kubeTargetVersionOverride is set to 1.13.0-0 [#1301]
+- Migrate prometheus-config-reloader only when overwritten in values.yaml [#1302]
+- Add v2 migration for fluent bit configs [#1304]
+- Add v2 migration logic for prometheus retention [#1303]
+- Rename CHART variable into FLUENTD_LOGS_SVC [#1289]
+- Prepare v2.0.0-rc.2 [#1305]
+- Add information about warning when resource managed by helm is modified [#1300]
+- Add missing node:node_memory_bytes_available:sum prometheus recording rule [#1306]
+- Bump kube-prometheus-stack to 12.11.3 [#1307]
+- Bump OTC to 0.16.2-sumo [#1311]
+- Update v2 migration script logs [#1308]
+- Update prometheus CRDs update instructions for 2.0 migration [#1310]
+- kube-scheduler and kube-controller-manager listen on all interfaces in vagrant [#1312]
+- Add if conditions to fluentd configuration templates [#1314]
+- Update v2 migration script - quote empty values [#1315]
+- v2 migration script - change wording when unexpected fluent-bit section encountered [#1317]
+- Don't add empty lines to Fluent-bit config [#1318]
+- Add prom oper compatibility note to side by side doc [#1320]
+- Add migration instruction for non-helm users [#1309]
+- Add note on upgrading external Prometheus operator [#1316]
+- Update information about changing Fluentd persistence [#1294]
+- v2 migration script - add fluent bit multiline migration [#1325]
+- Update v2 migration docs with migration script in container usage [#1326]
+- v2 migration docs touch up [#1327]
+- Downgrade Kube Prometheus Stack to 12.3.0 and 0.43.2 CRD version for be… [#1329]
+- Fix docs for standalone Prometheus [#1328]
+- Prepare v2.0.0-rc.3 [#1332]
+- Update documentation for the v2.0.0 release [#1323]
+- Rename cleanUpEnabled to cleanupEnabled [#1336]
+- Fix secret cleanup [#1337]
+- Prepare 2.0.0 [#1334]
+
+[v2_0_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.0.0
+[#993]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/993
+[#996]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/996
+[#997]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/997
+[#974]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/974
+[#999]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/999
+[#998]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/998
+[#1003]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1003
+[#1004]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1004
+[#1006]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1006
+[#1001]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1001
+[#1008]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1008
+[#1011]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1011
+[#1014]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1014
+[#1018]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1018
+[#1021]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1021
+[#890]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/890
+[#1024]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1024
+[#1028]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1028
+[#1020]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1020
+[#994]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/994
+[#1032]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1032
+[#1026]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1026
+[#1025]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1025
+[#1017]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1017
+[#1035]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1035
+[#1031]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1031
+[#1033]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1033
+[#1012]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1012
+[#1037]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1037
+[#1039]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1039
+[#1042]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1042
+[#1040]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1040
+[#1047]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1047
+[#1043]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1043
+[#1048]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1048
+[#1050]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1050
+[#1051]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1051
+[#1056]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1056
+[#1058]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1058
+[#1053]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1053
+[#1054]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1054
+[#1059]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1059
+[#1060]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1060
+[#1062]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1062
+[#1063]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1063
+[#1065]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1065
+[#1070]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1070
+[#1072]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1072
+[#1064]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1064
+[#1075]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1075
+[#1057]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1057
+[#1052]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1052
+[#1073]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1073
+[#1078]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1078
+[#1083]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1083
+[#1086]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1086
+[#1087]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1087
+[#1084]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1084
+[#1071]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1071
+[#856]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/856
+[#1094]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1094
+[#1092]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1092
+[#1103]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1103
+[#1104]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1104
+[#1106]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1106
+[#1109]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1109
+[#1107]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1107
+[#1111]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1111
+[#1110]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1110
+[#1089]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1089
+[#1102]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1102
+[#1115]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1115
+[#1113]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1113
+[#1112]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1112
+[#1114]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1114
+[#1117]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1117
+[#1118]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1118
+[#1120]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1120
+[#1122]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1122
+[#1125]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1125
+[#1133]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1133
+[#1129]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1129
+[#1137]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1137
+[#1140]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1140
+[#1138]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1138
+[#1143]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1143
+[#1121]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1121
+[#1145]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1145
+[#1142]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1142
+[#1128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1128
+[#1148]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1148
+[#1149]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1149
+[#1150]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1150
+[#1152]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1152
+[#1153]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1153
+[#1151]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1151
+[#1147]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1147
+[#1159]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1159
+[#1162]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1162
+[#1171]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1171
+[#1170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1170
+[#1161]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1161
+[#1160]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1160
+[#1181]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1181
+[#1183]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1183
+[#1163]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1163
+[#1164]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1164
+[#1165]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1165
+[#1184]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1184
+[#1188]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1188
+[#1189]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1189
+[#1186]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1186
+[#1177]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1177
+[#1173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1173
+[#1191]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1191
+[#1194]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1194
+[#1030]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1030
+[#1190]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1190
+[#1172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1172
+[#1197]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1197
+[#1198]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1198
+[#1027]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1027
+[#1199]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1199
+[#1200]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1200
+[#1204]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1204
+[#1205]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1205
+[#1207]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1207
+[#1206]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1206
+[#1212]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1212
+[#1218]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1218
+[#1219]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1219
+[#1213]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1213
+[#1215]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1215
+[#1226]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1226
+[#1228]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1228
+[#1230]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1230
+[#1232]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1232
+[#1233]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1233
+[#1234]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1234
+[#1231]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1231
+[#1235]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1235
+[#1236]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1236
+[#1237]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1237
+[#1238]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1238
+[#1216]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1216
+[#1240]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1240
+[#1244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1244
+[#1246]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1246
+[#1247]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1247
+[#1243]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1243
+[#1252]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1252
+[#1254]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1254
+[#1257]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1257
+[#1256]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1256
+[#1260]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1260
+[#1263]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1263
+[#1266]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1266
+[#1265]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1265
+[#1270]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1270
+[#1264]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1264
+[#1273]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1273
+[#1242]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1242
+[#1274]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1274
+[#1269]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1269
+[#1253]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1253
+[#1277]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1277
+[#1282]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1282
+[#1281]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1281
+[#1285]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1285
+[#1286]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1286
+[#1283]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1283
+[#1287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1287
+[#1288]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1288
+[#1290]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1290
+[#1291]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1291
+[#1292]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1292
+[#1293]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1293
+[#1297]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1297
+[#1299]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1299
+[#1259]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1259
+[#1298]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1298
+[#1301]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1301
+[#1302]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1302
+[#1304]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1304
+[#1303]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1303
+[#1289]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1289
+[#1305]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1305
+[#1300]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1300
+[#1306]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1306
+[#1307]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1307
+[#1311]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1311
+[#1308]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1308
+[#1310]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1310
+[#1312]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1312
+[#1314]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1314
+[#1315]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1315
+[#1317]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1317
+[#1318]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1318
+[#1320]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1320
+[#1309]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1309
+[#1316]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1316
+[#1294]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1294
+[#1325]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1325
+[#1326]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1326
+[#1327]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1327
+[#1329]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1329
+[#1328]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1328
+[#1332]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1332
+[#1323]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1323
+[#1336]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1336
+[#1337]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1337
+[#1334]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1334
+
+## [v1.3.5][v1_3_5] - 2020-12-30
+
+### Changed
+
+- Bump Helm 2 from 2.16.11 to 2.17.0 in CI [#1262]
+- Prevent access to uninitialized variable [#1261]
+- Add changes required for OpenShift support [#1267]
+- Use minimal scc permissions [#1272]
+- Do not attach empty 'node' metadata [#1268]
+- Add ECR push to 1.3 branch [#1275]
+- Prepare v1.3.5-rc.0 [#1276]
+- Upgrade Falco dependency to 1.5.7 [#1278]
+- Prepare v1.3.5 [#1279]
+
+[v1_3_5]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.3.5
+[#1262]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1262
+[#1261]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1261
+[#1267]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1267
+[#1272]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1272
+[#1268]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1268
+[#1275]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1275
+[#1276]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1276
+[#1278]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1278
+[#1279]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1279
+
+## [v1.3.4][v1_3_4] - 2020-12-16
+
+### Changed
+
+- Backport Bundle kubernetes_metadata plugin with fix for Fluentd pod restarts [#1193]
+- Prepare v1.3.4-rc.0 [#1249]
+- Unblock 1.3 CI [#1250]
+- Use sumologic alias for ECR [#1241]
+- Prepare v1.3.4 [#1251]
+
+[v1_3_4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.3.4
+[#1193]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1193
+[#1249]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1249
+[#1250]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1250
+[#1241]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1241
+[#1251]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1251
+
+## [v1.3.3][v1_3_3] - 2020-12-04
+
+### Changed
+
+- Adds Kubernetes App update info after successful migration (backport of #856) [#1098]
+- Fix for chart documentation spelling of Fluent Bit and Kube Prometheus Stack [#1144]
+- Migrate the default git branch from master to main [#1156]
+- Backport CODEOWNERS from the main branch [#1155]
+- Add tracing to the helm chart description (backport of #1153) [#1154]
+- Drop kubelet/systemd logs if they are disabled [#1166]
+- Migrate off of the Docker Hub images into GitHub packages [#1168]
+- Backport CI migration to Github actions [#1192]
+- Prepare v1.3.3-rc.0 [#1209]
+- Backport CI fix [#1210]
+- Add pushing images to ghcr.io for release builds [#1217]
+- Add travis for overrides [#1221]
+- Replace ghcr.io with public AWS ECR [#1223]
+- Prepare v1.3.3-rc.1 [#1224]
+
+[v1_3_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.3.3
+[#1098]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1098
+[#1144]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1144
+[#1156]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1156
+[#1155]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1155
+[#1154]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1154
+[#1166]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1166
+[#1168]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1168
+[#1192]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1192
+[#1209]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1209
+[#1210]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1210
+[#1217]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1217
+[#1221]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1221
+[#1223]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1223
+[#1224]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1224
+
+## [v1.3.2][v1_3_2] - 2020-11-12
+
+### Changed
+
+- Use new Helm stable repo URL for Fluent Bit [#1079]
+- Prepare v1.3.2-rc.0 [#1080]
+- Use new Helm stable repo URL for metrics-server [#1081]
+- Prepare v1.3.2-rc.1 [#1082]
+- Add OTLP HTTP port to the OpenTelemetry Collector [#1088]
+- Prepare v1.3.2 [#1085]
+
+[v1_3_2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.3.2
+[#1079]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1079
+[#1080]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1080
+[#1081]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1081
+[#1082]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1082
+[#1088]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1088
+[#1085]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1085
+
+## [v1.3.1][v1_3_1] - 2020-10-27
+
+### Changed
+
+- Remove unsupported AKS 1.15 and GKE 1.14 from the docs [#984]
+- Add tracing and OpenTelemetry to the overview image on the repo home page [#988]
+- Fix: do not change timestamps for already existing helm charts [#992]
+- Add priorityClassName to events statefulset (#1006 backport) [#1009]
+- Bump telegraf-operator to 1.1.6 (official 1.1.5 with helm2 support)(#1008 Backport) [#1010]
+- add step for overriding node-exporter port in OpenShift [#990]
+- Override Fluent Bit image to 1.6.0 for Helm chart version 1.3 [#1019]
+- Otc v0.12 on v1.3 [#1013]
+- Prepare v1.3.1-rc.0 [#1036]
+- Prepare v1.3.1 [#1041]
+
+[v1_3_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.3.1
+[#984]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/984
+[#988]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/988
+[#992]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/992
+[#1009]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1009
+[#1010]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1010
+[#990]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/990
+[#1019]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1019
+[#1013]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1013
+[#1036]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1036
+[#1041]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1041
+
+## [v1.3.0][v1_3_0] - 2020-10-06
+
+### Changed
+
+- Don't scrape from headless services [#895]
+- attach node metadata to metrics when not present [#854]
+- add pdb for fluentd logs and metrics [#781]
+- add nodeSelector for setup job [#783]
+- add container_cpu_cfs_throttled_seconds_total metric [#886]
+- capture hpa metrics [#884]
+- Add priority class to fluentd sts [#784]
+- Don't mount and don't define pos volumes for fluentd [#903]
+- Scrap metrics from pods basing on annotations [#852]
+- define resources for thanos sidecar [#874]
+- Update Falco helm chart to 1.3.0 [#909]
+- add source category for default logs pipeline [#780]
+- change prometheus-operator repo [#908]
+- add alias for kube-prometheus-stack helm chart [#910]
+- Support all securityContext resources [#889]
+- Add build target to the vagrant's Makefile [#913]
+- Add HTTP protocol for OTLP receiver [#915]
+- Add EKS 1.17 support information to the docs [#916]
+- Rename sumologic to sumo-make and add bash completion [#902]
+- Add simple permissive shellcheck for ci/build.sh script [#911]
+- Add telegraf operator helm chart to the requirements [#893]
+- Fix grafana installation in vagrant [#922]
+- Fix CI on master: always provide the branch name to checkout [#923]
+- Do not proxy kubernetes internal traffic [#920]
+- Fix kubeclient v4.9.1 usage with group apis [#927]
+- Add nginx to the vagrant environment [#924]
+- Point to correction section in Fields doc for pre-req step [#930]
+- support openshift [#925]
+- add resource limits to setup job pod [#782]
+- add performance doc [#900]
+- Increase cache refresh interval to 1 hour [#912]
+- Increase memory limits for thanos-sidecar to 32Mi to prevent restarts [#936]
+- Add proxy options to the README.md [#940]
+- Fix handling api versions in fluent-plugin-enhance-k8s-metadata [#942]
+- Add shellcheck to vagrant [#943]
+- Openshift docs [#937]
+- add psp templates to the helm chart [#933]
+- Install shellcheck with apt in vagrant [#945]
+- Add redis to the vagrant environment [#921]
+- Extract bundle fluentd plugins function [#946]
+- refactor: local variables in bundle_fluentd_plugins function in ci/bu… [#947]
+- Increase Vagrant disk size from 10 GB to 50 GB [#948]
+- Improve vagrant tests [#944]
+- Refactor build Dockerfile [#949]
+- Add jmx application to the vagrant [#926]
+- Forward redis metrics to the sumologic [#951]
+- add crio parser to fluent-bit [#950]
+- change prometheus-operator docs to kube-prometheus-stack [#939]
+- Introduce cache refresh variation [#952]
+- Fix tmp file path in tests [#957]
+- Bump requirements versions: Fluent Bit, Prometheus, Falco, Metrics Se… [#958]
+- update dependent helm chart matrix [#955]
+- Use local changes when building and running locally [#953]
+- Add list of jmx metrics [#954]
+- add resource limits for prometheus container [#959]
+- Prepare v1.3.0-beta.0 [#961]
+- Extract script for getting the dashboard token [#962]
+- refactor: use custom template names for scc and psp metadata and labels [#963]
+- rename hpa metrics [#965]
+- Doc: use variable for prometheus operator chart name [#964]
+- change cpu limits format [#966]
+- Include OpenTelemetry Collector logs by default [#960]
+- bugfix: setup job is faster when it's given more CPU [#968]
+- revert prom-operator version bump [#969]
+- Prepare v1.3.0-beta.1 [#967]
+- Update info about adoptopenjdk-openj9 missing metrics [#970]
+- Cleanup white chars from v1.2.0 [#972]
+- fix: remove adding new resources limits and requests from 1.3 [#971]
+- Revert to using helm stable for Prometheus Operator chart [#975]
+- Revert the FluentD image version to 1.2.3 [#976]
+- Revert "Revert the FluentD image version to 1.2.3" [#977]
+- add back all resource limits and turn off kubelet resource scraping [#978]
+- Revert "Revert to using helm stable for Prometheus Operator chart" [#979]
+- prep v1.3.0-beta2 [#980]
+- Add flags related to Telegraf Operator to the chart's README [#983]
+- Include description of otelcol Helm chart params [#981]
+- Prepare v1.3.0 [#982]
+
+[v1_3_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.3.0
+[#895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/895
+[#854]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/854
+[#781]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/781
+[#783]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/783
+[#886]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/886
+[#884]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/884
+[#784]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/784
+[#903]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/903
+[#852]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/852
+[#874]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/874
+[#909]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/909
+[#780]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/780
+[#908]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/908
+[#910]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/910
+[#889]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/889
+[#913]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/913
+[#915]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/915
+[#916]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/916
+[#902]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/902
+[#911]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/911
+[#893]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/893
+[#922]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/922
+[#923]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/923
+[#920]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/920
+[#927]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/927
+[#924]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/924
+[#930]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/930
+[#925]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/925
+[#782]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/782
+[#900]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/900
+[#912]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/912
+[#936]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/936
+[#940]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/940
+[#942]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/942
+[#943]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/943
+[#937]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/937
+[#933]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/933
+[#945]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/945
+[#921]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/921
+[#946]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/946
+[#947]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/947
+[#948]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/948
+[#944]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/944
+[#949]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/949
+[#926]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/926
+[#951]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/951
+[#950]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/950
+[#939]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/939
+[#952]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/952
+[#957]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/957
+[#958]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/958
+[#955]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/955
+[#953]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/953
+[#954]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/954
+[#959]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/959
+[#961]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/961
+[#962]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/962
+[#963]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/963
+[#965]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/965
+[#964]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/964
+[#966]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/966
+[#960]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/960
+[#968]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/968
+[#969]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/969
+[#967]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/967
+[#970]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/970
+[#972]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/972
+[#971]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/971
+[#975]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/975
+[#976]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/976
+[#977]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/977
+[#978]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/978
+[#979]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/979
+[#980]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/980
+[#983]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/983
+[#981]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/981
+[#982]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/982
+
+## [v1.2.3][v1_2_3] - 2020-09-21
+
+### Changed
+
+- v1.2 backport - add EKS 1.17 support information to the docs [#917]
+- Backport #920 - do not proxy kubernetes internal traffic [#928]
+- Prepare v1.2.3 [#931]
+
+[v1_2_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.2.3
+[#917]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/917
+[#928]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/928
+[#931]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/931
+
+## [v1.2.2][v1_2_2] - 2020-09-11
+
+### Changed
+
+- Update file buffer documentation [#873]
+- Provide FluentD file persistence setting key in the chart notes [#876]
+- remove helm upgrade doc [#877]
+- Add steps for disabling logs, metrics, or falco [#875]
+- Drop container=pod label when scraping container network metrics [#879]
+- Relabel pod and service dimensions for non-pod metrics [#878]
+- Retry creating kubeclients in FluentD when error [#855]
+- Fix prometheus configuration [#883]
+- Prepare v1.2.2-rc.0 [#881]
+- Add troubleshooting section in Vagrant README [#888]
+- Add Tests into Travis CI [#887]
+- Use non-hardcoded current chart version in CI tests [#901]
+- Prepare v1.2.2 [#897]
+
+[v1_2_2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.2.2
+[#873]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/873
+[#876]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/876
+[#877]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/877
+[#875]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/875
+[#879]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/879
+[#878]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/878
+[#855]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/855
+[#883]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/883
+[#881]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/881
+[#888]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/888
+[#887]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/887
+[#901]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/901
+[#897]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/897
+
+## [v1.2.1][v1_2_1] - 2020-08-31
+
+### Changed
+
+- Update README.md [#866]
+- Use fixed kubeclient version 4.9.0 for fluent-plugin-enhance-k8s-meta… [#870]
+- Revert removal of traces config [#868]
+- Add info to best practices doc about docker mode multiline in fluent-bit [#867]
+- Prepare v1.2.1 [#872]
+
+[v1_2_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.2.1
+[#866]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/866
+[#870]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/870
+[#868]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/868
+[#867]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/867
+[#872]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/872
+
+## [v1.2.0][v1_2_0] - 2020-08-28
+
+### Changed
+
+- doc update misses [#812]
+- Updates to fluentd base image [#817]
+- Enable file persistence by default [#816]
+- Use Otelcol 0.6.1 and corresponding configuration [#808]
+- add custom labels to fluentd sts and setup job pods [#819]
+- Add docs on creating processing rules with setup job. [#820]
+- Improve non-helm upgrade docs [#821]
+- Fixing a typo in additional Prometheus configuration [#792]
+- Add customLabels for kube-state-metrics [#824]
+- Allow custom pod annotations in helm chart [#822]
+- prepare v.1.2.0-beta.0 [#828]
+- expose extra conf for fluentd in_forward [#832]
+- Add ignore_older documentation [#831]
+- Prepare v1.2.0-beta.1 [#834]
+- fix podLabels [#838]
+- update autoscaling section in docs [#839]
+- Add makefile to vagrant to install collection, receiver-mock, grafana and supports avalanche [#815]
+- Fix incorrectly indented podAnnotations [#843]
+- Fixing the indentation of the processing rule example [#835]
+- Unify comments in values.yaml - make them start with two hash characters [#836]
+- Last fixes for values.yaml [#844]
+- Fix broken setup job helm.sh annotations [#847]
+- Clarify docs for custom logs conf [#842]
+- add symlink to HelmChartConfiguration.md [#845]
+- fix minor typos in HelmChartConfiguration.md [#846]
+- Allow custom pod annotations for kube-state and prometheus [#848]
+- Set text compress as default option for FluentD file buffer [#850]
+- Prepare v1.2.0-beta.2 [#853]
+- Use variables in documentation for additional prometheus metrics [#851]
+- disable fluentd persistence by default [#858]
+- Update helm chart configuration doc with podLabels and podAnnotations changes [#857]
+- Move Helm chart README from docs into the chart repo; add README syml… [#861]
+- Fix for link in the Prometheus doc [#863]
+- Bump documentation version to 1.2 [#864]
+- Prepare v1.2.0 [#865]
+
+[v1_2_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.2.0
+[#812]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/812
+[#817]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/817
+[#816]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/816
+[#808]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/808
+[#819]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/819
+[#820]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/820
+[#821]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/821
+[#792]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/792
+[#824]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/824
+[#822]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/822
+[#828]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/828
+[#832]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/832
+[#831]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/831
+[#834]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/834
+[#838]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/838
+[#839]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/839
+[#815]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/815
+[#843]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/843
+[#835]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/835
+[#836]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/836
+[#844]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/844
+[#847]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/847
+[#842]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/842
+[#845]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/845
+[#846]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/846
+[#848]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/848
+[#850]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/850
+[#853]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/853
+[#851]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/851
+[#858]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/858
+[#857]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/857
+[#861]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/861
+[#863]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/863
+[#864]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/864
+[#865]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/865
+
+## [v1.1.0][v1_1_0] - 2020-07-30
+
+### Changed
+
+- Add troubleshooting section to upgrade doc. [#673]
+- Add troubleshooting section to upgrade doc. (#673) [#674]
+- ingest retry succeeded logs and expose param in values file  [#671]
+- Update falco helm chart [#670]
+- Update fluent-bit helm chart [#669]
+- Update metrics server helm chart [#668]
+- Update prometheus operator helm chart [#667]
+- Add dynamic generation of terraform kubernetes object  [#675]
+- List metrics forwarded to the sumologic [#629]
+- Set `Ignore_Older` to `24h` by default to prevent older logs from being ingested on install. [#664]
+- Expose Scrape Intervals in values.yaml to make it easier to adjust. [#665]
+- Ensure clusterName has no spaces to prevent issue with Explore rendering. [#679]
+- Generate labels and names using helm templates [#685]
+- add collectionMonitoring logic [#682]
+- expose extraEnvVars, extraVolumes, extraVolumeMounts [#681]
+- Use env for prometheus metrics namespace [#690]
+- Fix labels for headless services [#689]
+- Switch helm chart from helm/stable to falcosecurity/charts. [#695]
+- Support installation behind proxy [#692]
+- optional metrics resources [#683]
+- Expose http sources for metrics in values.yaml [#672]
+- Change default retry_timeout to 1h [#700]
+- Filter list of control-plane app metrics [#697]
+- Fix Travis build due to default shallow git clone [#702]
+- Fix terraform import and additional fields [#704]
+- Handle Collector name with spaces [#706]
+- fix indentation [#707]
+- expose the k8s api version and groups as params [#565]
+- Dynamic generation of terraform properties [#705]
+- Fix terraform tests [#716]
+- add db for systemd [#713]
+- Bump terraform providers [#714]
+- Otelcol config update with batch size and source processor [#715]
+- Add generator for logs, events and traces sources [#708]
+- enable wal compression by default [#719]
+- Add missing metrics to fluentd [#718]
+- Split sumo-k8s.tf on multiple terraform files [#721]
+- Fix potential tf race confition [#722]
+- Prepare v1.1.0-beta.0 [#726]
+- Add terraform documentation [#723]
+- set correct source host for systemd logs [#725]
+- Prepare v1.1.0-beta.1 [#727]
+- Update documentation for additional sources [#699]
+- Fix helm chart requirements conditions [#731]
+- Use sumologic.com as prefix for internal labels [#734]
+- Prepare v1.1.0-beta.2 [#735]
+- Port missing docs from old repo [#733]
+- Remove unused grafana.enabled key [#739]
+- Update docs to show how to filter messages by content. [#736]
+- Bump k8s in vagrant to 1.18 [#743]
+- increase fluentd evets sts resource limits [#744]
+- Severity1 fix 741 [#745]
+- Add Terraform variables section to terraform documentation [#748]
+- Add extra volumes for events [#756]
+- Fix indents on FluentDs extraEnvVars and extraVolumes [#757]
+- Fill cluster name property for traces [#754]
+- Vagrant box update: use newest helm 2 and 3 versions and drop the mic… [#760]
+- Fix comment for the prometheus-operator.enabled key [#762]
+- fix: HPA for FluentDs [#763]
+- update non-helm migration steps to only what is needed [#767]
+- Bump supported k8s versions [#737]
+- Update used charts versions in the documentation [#770]
+- Use retry_max_interval instead of retry_timeout for fluentd buffer [#768]
+- Prepare v1.1.0-rc.0 [#773]
+- Use SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE env [#778]
+- Add information about building the endpoint variable names [#771]
+- Update ref to falco in values.yaml [#777]
+- Bump supported AKS versions [#794]
+- Remove the unused sumologic.traces.endpoint key (clean up otelcol conf after the #778 merge) [#779]
+- Metrics fix: replace the scheduler_binding_latency_microseconds with … [#795]
+- Update values.yaml [#799]
+- Prepare v1.1.0-rc.1 [#802]
+- Update values.yaml [#804]
+- Doc Updates [#686]
+- Add doc for installation behind a proxy. [#790]
+- Use the kubernetes-tools 1.0 release version in docs [#809]
+- Prepare v1.1.0 [#805]
+
+[v1_1_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.1.0
+[#673]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/673
+[#674]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/674
+[#671]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/671
+[#670]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/670
+[#669]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/669
+[#668]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/668
+[#667]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/667
+[#675]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/675
+[#629]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/629
+[#664]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/664
+[#665]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/665
+[#679]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/679
+[#685]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/685
+[#682]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/682
+[#681]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/681
+[#690]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/690
+[#689]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/689
+[#695]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/695
+[#692]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/692
+[#683]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/683
+[#672]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/672
+[#700]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/700
+[#697]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/697
+[#702]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/702
+[#704]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/704
+[#706]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/706
+[#707]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/707
+[#565]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/565
+[#705]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/705
+[#716]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/716
+[#713]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/713
+[#714]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/714
+[#715]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/715
+[#708]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/708
+[#719]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/719
+[#718]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/718
+[#721]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/721
+[#722]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/722
+[#726]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/726
+[#723]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/723
+[#725]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/725
+[#727]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/727
+[#699]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/699
+[#731]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/731
+[#734]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/734
+[#735]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/735
+[#733]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/733
+[#739]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/739
+[#736]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/736
+[#743]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/743
+[#744]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/744
+[#745]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/745
+[#748]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/748
+[#756]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/756
+[#757]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/757
+[#754]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/754
+[#760]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/760
+[#762]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/762
+[#763]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/763
+[#767]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/767
+[#737]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/737
+[#770]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/770
+[#768]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/768
+[#773]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/773
+[#778]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/778
+[#771]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/771
+[#777]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/777
+[#794]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/794
+[#779]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/779
+[#795]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/795
+[#799]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/799
+[#802]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/802
+[#804]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/804
+[#686]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/686
+[#790]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/790
+[#809]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/809
+[#805]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/805
+
+## [v1.0.0][v1_0_0] - 2020-05-21
+
+### Changed
+
+- Revert "revert all 1.0.0 changes" [#509]
+- Removed references to out of date helm chart versions which are no lo… [#512]
+- disable falco by default [#465]
+- [1.0.0] change default DB path for fluentbit [#450]
+- [1.0.0] filter metrics [#466]
+- [1.0.0] add fluentd to name of both logs and events fluentd statefulsets [#454]
+- add sed command to replace cluster name for non-helm users [#517]
+- Point documentation to the release branches rather than tags (make up… [#513]
+- Use short release version names for documentation [#528]
+- Added how to modify the log level for Falco [#522]
+- Put more detail for installing with standalone Prometheus [#525]
+- Update additional metrics instruction [#504]
+- Prepare for 1.0.0-beta.0 build [#532]
+- Add vagrant configuration for testing purposes [#418]
+- Add helm RBAC error and solution [#527]
+- Added another example for filtering metrics [#529]
+- Reformatted CLI examples to more easily readable [#534]
+- Allow for release branches PRs builds [#541]
+- Allow dev builds on release branches [#543]
+- Remove reference to setting cluster in Prometheus [#538]
+- Allow to install plugins in docker image [#542]
+- Explain confusing Terraform Errors [#537]
+- add steps for additional buffer & flush parameters [#533]
+- add quotes when specifying events sourceCategory [#549]
+- change tag to release branch [#547]
+- Set namepace and cluster name when deploying fluentd [#553]
+- [1.0.0] Upgrade script to convert values.yaml to 1.0.0 [#555]
+- Add fluentd to service name to fix urls [#548]
+- [1.0.0] expose override raw conf for container log pipeline [#556]
+- add plugin specific log level for metadata and output plugins [#559]
+- Prepare v1.0.0-beta.1 [#558]
+- remove sourceHost from values.yaml [#546]
+- Update OtelCol and clean up tags [#560]
+- vagrant: Bump k8s to 1.15 [#563]
+- Fix buffers according to 1.0.0 [#568]
+- Bump Falco chart to 1.1.6 [#567]
+- Prepare 1.0.0-beta.2 [#572]
+- Fix HPA for fluentd after changing it into statefulset [#576]
+- Add Zipkin write port to the Fluentd's headless service [#575]
+- Adjust fluentd names and app labels [#573]
+- Update Non_Helm_Installation.md [#582]
+- ToC fo Best Practices [#580]
+- fix(Update_with_helm): Added helm repo update note [#578]
+- Add note on how to handle Prometheus replicas. [#579]
+- Fix filtering metrics for old kubernetes versions [#586]
+- expose fluentd output section for logs [#585]
+- K8S diagnostics image with debugging tools [#584]
+- Expose resource config for prometheus node-exporter and kube state metrics. [#593]
+- Include serviceaccount in the usage description [#590]
+- Small fixes due to 0.17 to 1.0 upgrade testing [#592]
+- Bump sumologic fluentd output plugin and override sumo_client with helm version [#597]
+- split logs + metrics Fluentd sts [#588]
+- Do not pass histogram metrics to the fluentd [#595]
+- Fix fluentd url for tracing [#604]
+- Update Non_Helm_Installation.md [#602]
+- Update upgrade script to fix prometheus config [#605]
+- Prepare 1.0.0-rc.0 [#609]
+- Update Non_Helm_Installation.md [#607]
+- Upgrade script fixes [#613]
+- Trace stress-testing generator [#606]
+- Use Otelcol v0.3 and send spans directly [#611]
+- 1.0.0 upgrade script upgrade [#617]
+- Adjust events naming to the new fluentd- schema [#615]
+- Fix the unbound variable 1 error in the upgrade script [#624]
+- Prepare v1.0.0-rc.2 [#626]
+- Update previous version in upgrade script [#628]
+- v1 fluentd config examples [#625]
+- add migration doc - final [#630]
+- Upgrade docs fixes after review for #630 [#632]
+- Re-cast to string for particular keys [#635]
+- Add rollback section to helm installation [#636]
+- Provide default, commented out limits and resources for Prometheus - … [#637]
+- Add upgrade doc link to the upgrade script [#638]
+- Fixes for 1.0 upgrade [#641]
+- Add --force flag for pv [#649]
+- remove -o flag [#651]
+- Upgrade script grep sed bash fixes [#647]
+- add baseImage for thanos [#650]
+- Replace grep in favor of sed for upgrade script tests [#654]
+- Remove tools [#658]
+- [fix] broken doc link [#657]
+- [fix] FluentD's overrideOuputConf needs some indenting [#659]
+- Update migration doc due to 0.17.4 release [#662]
+- Prepare v1.0.0-rc.3 [#666]
+- Add upgrade doc link to the main docs page [#661]
+- Docs update before the 1.0 release [#660]
+- Prepare the v1.0.0 release [#656]
+
+[v1_0_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v1.0.0
+[#509]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/509
+[#512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/512
+[#465]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/465
+[#450]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/450
+[#466]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/466
+[#454]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/454
+[#517]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/517
+[#513]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/513
+[#528]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/528
+[#522]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/522
+[#525]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/525
+[#504]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/504
+[#532]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/532
+[#418]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/418
+[#527]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/527
+[#529]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/529
+[#534]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/534
+[#541]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/541
+[#543]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/543
+[#538]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/538
+[#542]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/542
+[#537]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/537
+[#533]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/533
+[#549]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/549
+[#547]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/547
+[#553]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/553
+[#555]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/555
+[#548]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/548
+[#556]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/556
+[#559]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/559
+[#558]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/558
+[#546]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/546
+[#560]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/560
+[#563]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/563
+[#568]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/568
+[#567]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/567
+[#572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/572
+[#576]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/576
+[#575]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/575
+[#573]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/573
+[#582]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/582
+[#580]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/580
+[#578]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/578
+[#579]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/579
+[#586]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/586
+[#585]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/585
+[#584]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/584
+[#593]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/593
+[#590]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/590
+[#592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/592
+[#597]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/597
+[#588]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/588
+[#595]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/595
+[#604]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/604
+[#602]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/602
+[#605]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/605
+[#609]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/609
+[#607]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/607
+[#613]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/613
+[#606]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/606
+[#611]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/611
+[#617]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/617
+[#615]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/615
+[#624]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/624
+[#626]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/626
+[#628]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/628
+[#625]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/625
+[#630]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/630
+[#632]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/632
+[#635]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/635
+[#636]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/636
+[#637]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/637
+[#638]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/638
+[#641]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/641
+[#649]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/649
+[#651]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/651
+[#647]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/647
+[#650]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/650
+[#654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/654
+[#658]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/658
+[#657]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/657
+[#659]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/659
+[#662]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/662
+[#666]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/666
+[#661]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/661
+[#660]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/660
+[#656]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/656
+
+## [v0.17.4][v0_17_4] - 2020-05-20
+
+### Changed
+
+- add baseImage for thanos [#655]
+- Prepare v0.17.4 [#623]
+
+[v0_17_4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.17.4
+[#655]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/655
+[#623]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/623
+
+## [v0.17.3][v0_17_3] - 2020-05-13
+
+### Changed
+
+- Do not set tracing URL if it is not available [#612]
+- Revert "Do not set tracing URL if it is not available" [#614]
+- Backport 'add quotes when specifying events sourceCategory' (#549) [#619]
+- Prepare v0.17.3 [#622]
+
+[v0_17_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.17.3
+[#612]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/612
+[#614]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/614
+[#619]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/619
+[#622]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/622
+
+## [v0.17.2][v0_17_2] - 2020-05-06
+
+### Changed
+
+- Allow dev builds on release branches [#544]
+- backport docs [#545]
+- change tag to release branch [#551]
+- Added endpoint into helm CLI until the bug fix [#564]
+- Clean up tag names [#562]
+- Use Otelcol v0.3 and send spans directly [#600]
+- Prepare v0.17.2 [#610]
+
+[v0_17_2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.17.2
+[#544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/544
+[#545]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/545
+[#551]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/551
+[#564]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/564
+[#562]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/562
+[#600]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/600
+[#610]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/610
+
+## [v0.17.1][v0_17_1] - 2020-03-31
+
+### Changed
+
+- Include otelcol metrics [#503]
+- Use Helm 2 docs and not the latest [#505]
+- Bump otelcol to newer version [#510]
+- Update Troubleshoot_Collection.md [#507]
+- Update Upgrading_with_Helm.md [#508]
+- Update Installation_with_Helm.md [#506]
+- change docs for existing prometheus operator to remove sed command [#511]
+- Release v0.17 backports [#515]
+- release-v0.17 - change GH documentation links from tag to the release branch [#519]
+- add sed command to replace cluster name for non-helm users [#524]
+- Hostname and _sourceHost fix for v0.17 [#530]
+- Revert the _sourceHost changes [#535]
+- Prepare version v0.17.1-rc.0 [#531]
+- Use short release version names for documentation [#540]
+- Prepare v0.17.1 [#539]
+
+[v0_17_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.17.1
+[#503]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/503
+[#505]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/505
+[#510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/510
+[#507]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/507
+[#508]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/508
+[#506]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/506
+[#511]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/511
+[#515]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/515
+[#519]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/519
+[#524]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/524
+[#530]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/530
+[#535]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/535
+[#531]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/531
+[#540]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/540
+[#539]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/539
+
+## [v0.17.0][v0_17_0] - 2020-03-17
+
+### Changed
+
+- Move spans per request to configuration for zipkin plugin [#493]
+- Revert "Remove some non-tracing changes from v0.16 - merge them later… [#494]
+- Fix markdown for additional_prometheus_configuration [#498]
+- Add missing source_category_replace_dash to systemd conf. [#483]
+- change the dynamic namespace env variable to be fluentd namespace [#471]
+- Update the support matrix [#500]
+- Remove white characters from the line ends [#501]
+- Expose otelcol UDP enpoints too [#499]
+- Bump version to 0.17.0 [#502]
+
+[v0_17_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.17.0
+[#493]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/493
+[#494]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/494
+[#498]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/498
+[#483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/483
+[#471]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/471
+[#500]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/500
+[#501]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/501
+[#499]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/499
+[#502]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/502
+
+## [v0.16.0][v0_16_0] - 2020-03-12
+
+### Changed
+
+- Allow PR reverts in CI build script [#440]
+- Update docs for prometheus dynamic remote write urls [#444]
+- Update standAlonePrometheus.md [#449]
+- Update existingPrometheusDoc.md [#447]
+- [1.0.0] Bump fluentd image version to fix fluentd buffer bug [#426]
+- [1.0.0] Revert "Revert "[breaking change] Add pre-upgrade hook for setup"" [#446]
+- [1.0.0] Expose Fluentd config without ENV vars - take 3 [#428]
+- [1.0.0] Persistence volume [#429]
+- [1.0.0] Revert "Revert 116 metrics with filter" [#451]
+- Use endpoint for tracing from values.yaml [#452]
+- Strip empty fields from sending [#455]
+- [1.0.0] move the statefulsets and deployment configs under root level keys [#453]
+- Refactor otelcolDeployment into deployment as it's under the otelcol … [#456]
+- Add more attributes extracted for traces [#438]
+- Fix typo in tag name [#459]
+- downgrade falco helm chart to 1.1.0 [#457]
+- Prevent fluentd from handling records containing its own logs. [#460]
+- Update Installation_with_Helm.md [#462]
+- Bump otelcol and remove unused tags [#468]
+- Improve zipkin plugins [#469]
+- Support tracing in filter plugin [#463]
+- Semver ci adjustments [#467]
+- Expose setting resource constraints for helm dependencies [#464]
+- Clarify params in values.yaml [#472]
+- revert all 1.0.0 changes [#473]
+- Make Otelcol listen on 0.0.0.0 rather than localhost [#474]
+- Remove letter v from tags for developmend builds [#477]
+- Allow for alpha and beta builds on Travis [#478]
+- Fix gem prerelease builds for dev and pre-release [#479]
+- Do not drop record in filter if it's 'broken' [#480]
+- Set new release 0.16.0 [#481]
+- ci kick: enclose  in {} [#475]
+- add doc changes for v0.16.0 [#482]
+- Bump version in the docs to v0.16.0 [#487]
+- Set the 0.16.0-rc.1 image for the future rc.1 release tests [#489]
+- [WIP] Use memory_limiter and better batch settings [#488]
+- Revert "Bump version in the docs to v0.16.0" [#490]
+- Prerelease docs and version bump [#491]
+
+[v0_16_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.16.0
+[#440]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/440
+[#444]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/444
+[#449]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/449
+[#447]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/447
+[#426]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/426
+[#446]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/446
+[#428]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/428
+[#429]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/429
+[#451]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/451
+[#452]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/452
+[#455]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/455
+[#453]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/453
+[#456]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/456
+[#438]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/438
+[#459]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/459
+[#457]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/457
+[#460]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/460
+[#462]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/462
+[#468]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/468
+[#469]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/469
+[#463]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/463
+[#467]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/467
+[#464]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/464
+[#472]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/472
+[#473]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/473
+[#474]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/474
+[#477]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/477
+[#478]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/478
+[#479]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/479
+[#480]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/480
+[#481]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/481
+[#475]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/475
+[#482]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/482
+[#487]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/487
+[#489]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/489
+[#488]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/488
+[#490]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/490
+[#491]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/491
+
+## [v0.15.0][v0_15_0] - 2020-02-21
+
+### Changed
+
+- uncomment libsonnet from CI [#419]
+- use yq in build script to generate overrides yamls [#421]
+- Update Troubleshooting docs for Helm [#406]
+- Support new 1.16 metrics with filter to exclude deprecated metrics [#401]
+- add error handling on JSON parsing for the multiline fix [#423]
+- remove cluster label from prometheus config in values.yaml [#422]
+- Update configuration for helm [#417]
+- add check for multiline in the multiline record transformer [#427]
+- Revert 116 metrics with filter [#432]
+- Zipkin plugins [#411]
+- Adds the opentelemetry collector [#424]
+- Fix fluentd zipkin json parsing [#433]
+- CI script refactor: for subshells use $() consistently instead of bac… [#430]
+- Support custom release and namespace [#431]
+- Update Helm requirement to 2.12+ [#378]
+- add clarifying doc for helm upgrades [#437]
+- add affinity config in fluentd deployment [#436]
+- Cut release 0.15.0 [#441]
+
+[v0_15_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.15.0
+[#419]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/419
+[#421]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/421
+[#406]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/406
+[#401]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/401
+[#423]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/423
+[#422]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/422
+[#417]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/417
+[#427]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/427
+[#432]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/432
+[#411]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/411
+[#424]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/424
+[#433]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/433
+[#430]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/430
+[#431]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/431
+[#378]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/378
+[#437]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/437
+[#436]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/436
+[#441]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/441
+
+## [v0.14.0][v0_14_0] - 2020-02-12
+
+### Changed
+
+- readme changes for v0.13.0 [#366]
+- Add best practices/Advanced config doc for v.0.13.0 [#367]
+- use proper heading format [#371]
+- Prometheus fix for k8s 1.16  [#370]
+- fix typo in prometheus metrics regex [#373]
+- freno-helm3 [#369]
+- Modify regexes to match both deprecated and new metrics in 1.16 [#372]
+- Bump falco helm chart dep to 1.1.1 [#376]
+- Add support for data persistence [#351]
+- Modify the default multiline regex to be more flexible [#380]
+- expose cache params for enhance_k8s_metadata plugin [#379]
+- Remove sumologic.endpoint from installation commands. [#381]
+- Add back and expose source category for events source [#377]
+- fix discrepancy in metadata cache ENV name [#382]
+- Convert more absolute URLs to Relative URLs in Docs [#385]
+- Add missing double quotes [#383]
+- Update Installation_with_Helm.md [#384]
+- Update README.md [#375]
+- Rename statefulset configs to avoid breaking change [#387]
+- Change podManagementPolicy to Parallel for statefulsets [#388]
+- Add async cache and expose refresh interval in values.yaml [#386]
+- change buffer params [#392]
+- Use versioned URLs for docs [#389]
+- Revert "Modify regexes to match both deprecated and new metrics in 1.16" [#391]
+- Revert PV and statefulset related changes [#390]
+- Change cache refresh interval to 30 min [#394]
+- change dependency matrix [#395]
+- Add ebpf enable to helm_installation for GKE [#393]
+- Increase the default number of output threads to  8 [#396]
+- fix support matrix [#397]
+- Clarify Prometheus side-by-side docs [#405]
+- add documentation for docker_mode [#404]
+- add generic fluentd pipeline to catch all logs [#403]
+- comment out libsonnet stuff [#410]
+- Add common configuration and troubleshooting tasks [#408]
+- filter fluentd container logs [#402]
+- Fix typo in container logs pipeline [#413]
+- Cut release 0.14.0 [#415]
+
+[v0_14_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.14.0
+[#366]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/366
+[#367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/367
+[#371]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/371
+[#370]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/370
+[#373]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/373
+[#369]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/369
+[#372]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/372
+[#376]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/376
+[#351]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/351
+[#380]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/380
+[#379]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/379
+[#381]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/381
+[#377]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/377
+[#382]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/382
+[#385]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/385
+[#383]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/383
+[#384]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/384
+[#375]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/375
+[#387]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/387
+[#388]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/388
+[#386]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/386
+[#392]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/392
+[#389]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/389
+[#391]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/391
+[#390]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/390
+[#394]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/394
+[#395]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/395
+[#393]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/393
+[#396]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/396
+[#397]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/397
+[#405]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/405
+[#404]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/404
+[#403]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/403
+[#410]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/410
+[#408]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/408
+[#402]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/402
+[#413]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/413
+[#415]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/415
+
+## [v0.13.0][v0_13_0] - 2020-01-15
+
+### Changed
+
+- Include buffer.output.conf for events configmap [#327]
+- README changes for 0.12.0 release [#328]
+- update prometheus version to 8.2.0 for non-helm docs [#331]
+- Fix ambiguity in helm install command [#336]
+- Add Sumo Logic icon, home, sources to Helm Chart yaml [#340]
+- Add HorizontalPodAutoscaler for fluentd [#339]
+- Clean Prometheus container metrics [#345]
+- 1.14+-fixes-support [#344]
+- [breaking change] Add pre-upgrade hook for setup [#335]
+- Fix README typo [#346]
+- Update promethues pod name in doc [#347]
+- Improve fluentd liveness probe [#343]
+- Update helm installation instructions in Non_Helm_Installation.md  [#348]
+- Change default fluentd log level to ERROR [#350]
+- Clarify usage of envFromSecret to specify env variables needed [#353]
+- revert readiness probe for events deployment [#355]
+- fix missing aggregate container metrics [#354]
+- Revert "[breaking change] Add pre-upgrade hook for setup" [#357]
+- disable metrics-server dependency by default [#358]
+- Change events deployment readiness probe [#360]
+- Remove source categories from source creation in terraform script [#349]
+- Bump fluentd image version to fix fluentd buffer bug [#356]
+- Revert "Bump fluentd image version to fix fluentd buffer bug" [#361]
+- Clean up unused files [#362]
+- Re-add tiller-rbac.yaml [#364]
+- SUMO-124885 attach logs metadata as fields for all log formats [#359]
+- cut release 0.13.0 [#365]
+
+[v0_13_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.13.0
+[#327]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/327
+[#328]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/328
+[#331]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/331
+[#336]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/336
+[#340]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/340
+[#339]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/339
+[#345]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/345
+[#344]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/344
+[#335]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/335
+[#346]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/346
+[#347]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/347
+[#343]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/343
+[#348]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/348
+[#350]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/350
+[#353]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/353
+[#355]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/355
+[#354]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/354
+[#357]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/357
+[#358]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/358
+[#360]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/360
+[#349]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/349
+[#356]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/356
+[#361]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/361
+[#362]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/362
+[#364]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/364
+[#359]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/359
+[#365]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/365
+
+## [v0.12.0][v0_12_0] - 2019-12-02
+
+### Changed
+
+- Missed indentation in this file [#292]
+- Add log lines; Force CI yaml generation [#294]
+- Improve Docs [#298]
+- #293 facilitate gitops better through sourced secrets in setup Chart [#295]
+- Bump Chart Versions [#299]
+- fix missing secret ref [#300]
+- Update helm installation/upgrade notes on collector name [#303]
+- Use fully-qualified name for fluent-bit DNS resolution [#304]
+- Customizable annotations for setup resources [#302]
+- Fix alpha helm chart installation [#307]
+- Add Jsonnet mixin for deploying alongside kube-prometheus [#283]
+- Add Alpha Release Guide to Docs [#308]
+- Autoupdate kube-prometheus mixin [#309]
+- Pin Travis CI Snap Helm version to 2.16 [#312]
+- Fix libsonnet generation [#315]
+- Update non-helm installation docs [#318]
+- Fix Multiline support for kubernetes collection [#313]
+- Add note about version flag for helm upgrade [#320]
+- Increase fluent-bit flush interval to lessen DNS load [#319]
+- Use empty endpoint URL by default for redirection [#321]
+- Add a note for helm 3 support [#323]
+- cleanup fluentd sumologic filter plugin [#310]
+- Update the instructions for FluentD configuration changes [#324]
+- fix filter plugin error with kubernetes_meta_reduce [#325]
+- FluentD file buffer [#322]
+- Cut release 0.12.0 [#326]
+
+[v0_12_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.12.0
+[#292]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/292
+[#294]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/294
+[#298]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/298
+[#295]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/295
+[#299]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/299
+[#300]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/300
+[#303]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/303
+[#304]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/304
+[#302]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/302
+[#307]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/307
+[#283]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/283
+[#308]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/308
+[#309]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/309
+[#312]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/312
+[#315]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/315
+[#318]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/318
+[#313]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/313
+[#320]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/320
+[#319]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/319
+[#321]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/321
+[#323]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/323
+[#310]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/310
+[#324]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/324
+[#325]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/325
+[#322]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/322
+[#326]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/326
+
+## [v0.11.0][v0_11_0] - 2019-11-13
+
+### Changed
+
+- Update README with v0.10.0 release [#259]
+- Update Travis CI to support PR push [#262]
+- using include statement vs template for better yaml support [#264]
+- Fix helper template variables [#267]
+- Update setup.sh to use Terraform [#249]
+- Start pushing alpha helm chart releases with every alpha build [#269]
+- Add helm repo update [#270]
+- Fix helm package to also update dependencies [#271]
+- Fix git ignore for helm [#272]
+- ClusterName override in Base [#273]
+- Create Installation_with_Helm.md [#237]
+- Create Non_Helm_Installation.md [#238]
+- Create Additional_Fluentd_Plugins.md [#240]
+- Create Migration_Steps.md [#241]
+- Create Troubleshoot_Collection.md [#242]
+- Create existingPrometheusDoc.md [#243]
+- Create standAlonePrometheus.md [#244]
+- Create SideBySidePrometheus.md [#245]
+- Add empty setup job yaml in preparation for yaml generation [#279]
+- clean up deploy readme [#277]
+- Fix links to other readme files [#276]
+- Generate setup job yaml from helm template [#280]
+- Add setup as pre-upgrade hook [#281]
+- Bump Dockerfile Sumo TF provider to 2.0.0 [#282]
+- Add help doc link for API endpoint [#285]
+- Update SUMO_ENDPOINT refs to SUMO_API_ENDPOINT [#286]
+- Create Upgrading_with_Helm.md [#284]
+- Revert pre-upgrade hook for now for further testing [#288]
+- Cut release 0.11.0 [#287]
+- Update README for v0.11.0 release [#289]
+- Also build version branches [#290]
+- Fix branch/tag regex validation [#291]
+
+[v0_11_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.11.0
+[#259]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/259
+[#262]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/262
+[#264]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/264
+[#267]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/267
+[#249]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/249
+[#269]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/269
+[#270]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/270
+[#271]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/271
+[#272]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/272
+[#273]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/273
+[#237]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/237
+[#238]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/238
+[#240]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/240
+[#241]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/241
+[#242]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/242
+[#243]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/243
+[#244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/244
+[#245]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/245
+[#279]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/279
+[#277]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/277
+[#276]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/276
+[#280]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/280
+[#281]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/281
+[#282]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/282
+[#285]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/285
+[#286]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/286
+[#284]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/284
+[#288]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/288
+[#287]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/287
+[#289]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/289
+[#290]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/290
+[#291]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/291
+
+## [v0.10.0][v0_10_0] - 2019-10-29
+
+### Changed
+
+- README changes for 0.9.0 release [#231]
+- Migration docs [#233]
+- Scaling Fluentd [#235]
+- Bump version of Fluentd Output plugin to support fields [#247]
+- Update steps for installing side Prometheus [#236]
+- Dockerfile changes for Terraform support [#248]
+- optimize remote write settings [#250]
+- Re-add wget dependency for setup.sh script [#251]
+- bump output plugin version to 1.6.1 [#252]
+- Fix grafana from starting via Helm deployment [#253]
+- Fix etcd_request_cache_(get|add)_latencies_summary to wildcard match [#254]
+- Add NodeSelector and Tolerations to both deployments [#256]
+- Cut release 0.10.0 [#258]
+
+[v0_10_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.10.0
+[#231]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/231
+[#233]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/233
+[#235]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/235
+[#247]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/247
+[#236]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/236
+[#248]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/248
+[#250]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/250
+[#251]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/251
+[#252]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/252
+[#253]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/253
+[#254]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/254
+[#256]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/256
+[#258]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/258
+
+## [v0.9.0][v0_9_0] - 2019-10-10
+
+### Changed
+
+- update overview image in main readme to include Falco [#208]
+- Pin gem dependency versions; Fix metadata version string [#221]
+- Update README [#222]
+- Fix fluentd log level parameter [#225]
+- Add instructions on deploying second prometheus in the same cluster [#224]
+- Bump falco chart version to 1.0.8 for EKS fix [#226]
+- check exact secret name in setup script [#227]
+- Update README.md [#228]
+- Bump fluent-plugin-prometheus version to fix breaking change from prometheus-client [#229]
+- Cut release 0.9.0 [#230]
+
+[v0_9_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.9.0
+[#208]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/208
+[#221]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/221
+[#222]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/222
+[#225]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/225
+[#224]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/224
+[#226]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/226
+[#227]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/227
+[#228]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/228
+[#229]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/229
+[#230]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/230
+
+## [v0.8.0][v0_8_0] - 2019-09-26
+
+### Changed
+
+- Update docs for 0.7.0 [#214]
+- Fix CI Yaml validation for subsequent commits [#216]
+- Skip generated yaml check for TRAVIS_TAG builds [#217]
+- Fix Container Metrics Routing [#218]
+- Cut 0.8.0 [#220]
+
+[v0_8_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.8.0
+[#214]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/214
+[#216]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/216
+[#217]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/217
+[#218]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/218
+[#220]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/220
+
+## [v0.7.0][v0_7_0] - 2019-09-24
+
+### Changed
+
+- Update docs for release 0.6.0 [#194]
+- Add necessary fields list to README [#191]
+- Update instruction for cluster name [#195]
+- accesskey should be accessKey [#196]
+- Update README [#200]
+- Add setup job troubleshooting steps [#199]
+- docs(README.md, deploy/README.md): Updated the README.mds to have cle… [#198]
+- Add prerequisite on endpoint and access key [#201]
+- Fix curl command in README [#209]
+- Add flag to disable events collection in helm [#205]
+- feat(deployment.yaml): Updated to expose the EXCLUDE NAMESPACE and ot… [#206]
+- Cut 0.7.0 [#213]
+
+[v0_7_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.7.0
+[#194]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/194
+[#191]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/191
+[#195]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/195
+[#196]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/196
+[#200]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/200
+[#199]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/199
+[#198]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/198
+[#201]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/201
+[#209]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/209
+[#205]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/205
+[#206]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/206
+[#213]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/213
+
+## [v0.6.0][v0_6_0] - 2019-09-13
+
+### Changed
+
+- Cut 0.5.0 release [#192]
+- Cut 0.6.0 [#193]
+
+[v0_6_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.6.0
+[#192]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/192
+[#193]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/193
+
+## [v0.5.0][v0_5_0] - 2019-09-13
+
+### Changed
+
+- SUMO-117711: Prevent Grafana from deploying with Helm collection chart [#177]
+- Pin patch version of helm dependencies [#178]
+- Add sed for prometheus namespaceSelector [#179]
+- Pre-install hook for helm [#176]
+- RBAC for pre-install hook [#181]
+- Simplify Metrics FluentD Pipeline [#180]
+- Update README with HELM steps [#183]
+- Update README HelpDoc link [#184]
+- Assign weight to pre-install hooks [#185]
+- Delete helm READEME [#186]
+- Update README [#187]
+- fix setup curl command url [#188]
+- Add cluster name override instructions [#189]
+
+[v0_5_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.5.0
+[#177]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/177
+[#178]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/178
+[#179]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/179
+[#176]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/176
+[#181]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/181
+[#180]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/180
+[#183]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/183
+[#184]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/184
+[#185]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/185
+[#186]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/186
+[#187]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/187
+[#188]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/188
+[#189]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/189
+
+## [v0.4.0][v0_4_0] - 2019-09-03
+
+### Changed
+
+- Remove symlinks to legacy helm override files [#154]
+- SUMO-117653: Change docker image pull policy to IfNotPresent [#165]
+- fix labels, disable Fluent-Bit Helm Chart serviceMonitor, use Prometheus Operator additionalServiceMonitors to work around expectation that Prometheus Operator is already installed. [#159]
+- Git ignore Helm chart deps [#166]
+- Migrate kubernetes_sumologic filter plugin [#167]
+- SUMO-117261: Skip using TRAVIS_COMMIT_RANGE for yaml detection [#168]
+- Update helm readme [#173]
+- Fix Helm template naming in yaml files [#174]
+- Cut 0.4.0 [#175]
+
+[v0_4_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.4.0
+[#154]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/154
+[#165]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/165
+[#159]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/159
+[#166]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/166
+[#167]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/167
+[#168]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/168
+[#173]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/173
+[#174]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/174
+[#175]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/175
+
+## [v0.3.0][v0_3_0] - 2019-08-29
+
+### Changed
+
+- Update README [#156]
+- Get rid of unstaged changes before switching to gh-pages branch [#155]
+- Drop labels with empty values [#157]
+- Cut 0.3.0 [#158]
+
+[v0_3_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.3.0
+[#156]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/156
+[#155]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/155
+[#157]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/157
+[#158]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/158
+
+## [v0.2.0][v0_2_0] - 2019-08-29
+
+### Changed
+
+- Bump yaml version to 0.1.0 [#134]
+- Note On Possible Remote Write Update Changes [#127]
+- Added Falco specific changes. [#102]
+- Sync helm chart yaml and fix service selector [#135]
+- Add check for required software before running script to prevent issu… [#136]
+- Move fluent-bit INPUT config to overrides yaml [#140]
+- Update README [#131]
+- Update readme [#138]
+- Generate yaml from helm chart on commits [#137]
+- Fix failing master builds [#143]
+- Update README.md [#145]
+- Only pass in our own yamls to helm template cmd [#148]
+- Automate helm chart release in setup.sh [#147]
+- SUMO-115354 Add dependencies with overridden values.yaml [#132]
+- Update doc with steps to extend fluentD image with custom plugins. [#141]
+- Update README TOC [#149]
+- Add falco as sumologic chart dependency [#150]
+- Create README.md for Helm [#151]
+- Fix labels for k8s health check metrics and use versioned overrides yaml files [#152]
+- Cut release 0.2.0 [#153]
+
+[v0_2_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.2.0
+[#134]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/134
+[#127]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/127
+[#102]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/102
+[#135]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/135
+[#136]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/136
+[#140]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/140
+[#131]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/131
+[#138]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/138
+[#137]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/137
+[#143]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/143
+[#145]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/145
+[#148]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/148
+[#147]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/147
+[#132]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/132
+[#141]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/141
+[#149]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/149
+[#150]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/150
+[#151]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/151
+[#152]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/152
+[#153]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/153
+
+## [v0.1.0][v0_1_0] - 2019-08-08
+
+### Changed
+
+- Fix ServiceMonitor docs for missing label and add note about using `--force` with `helm upgrade.` [#91]
+- Enhanced metadata for Logs [#73]
+- Draft root README [#92]
+- Fix remote storage regex prometheus override [#93]
+- Add Docker pulls badge to README [#94]
+- Don't build/push docker image with latest tag [#95]
+- Push alpha docker image on merge push CI [#96]
+- Parameterize buffer settings for Fluentd Logs/Metrics [#99]
+- Fix setup.sh bash script issues [#100]
+- add development disclaimer [#101]
+- Auto-tag alpha images in Git that we can generate full releases from [#103]
+- Use Github token to push tags [#104]
+- Skip pushing again for alpha tagged builds [#105]
+- Move Dockerfile env variables to yaml file to avoid drift [#107]
+- Use v1 (non-beta) API for ClusterRole, ClusterRoleBinding [#111]
+- SUMO-115364 Handle exceptions thrwon from kubeclient calls [#106]
+- enable fluent-bit metrics collection [#112]
+- Add monitoring for FluentD plugins [#108]
+- bump fluentd-kubernetes-sumologic v2.4.2 [#114]
+- Add param for alpha docker images [#113]
+- Improve troubleshooting section of deployment README [#117]
+- Tolerate any NoScheule taint regardless of key [#119]
+- Update README with events collection [#40]
+- Fix service monitor [#120]
+- k8s_collection_diagram [#122]
+- Bump versions of plugins used in Dockerfile [#121]
+- Add link to Helm docs on securing Helm. [#123]
+- Optionally deploy and download yaml in setup.sh [#124]
+- Switch to Debian fluentd Dockerfile [#125]
+- Helm Chart initial commit [#118]
+- SUMO-114676: Use multi-stage Docker build to reduce image size [#128]
+- Create pull_request_template.md [#130]
+
+[v0_1_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.1.0
+[#91]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/91
+[#73]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/73
+[#92]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/92
+[#93]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/93
+[#94]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/94
+[#95]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/95
+[#96]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/96
+[#99]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/99
+[#100]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/100
+[#101]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/101
+[#103]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/103
+[#104]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/104
+[#105]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/105
+[#107]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/107
+[#111]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/111
+[#106]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/106
+[#112]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/112
+[#108]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/108
+[#114]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/114
+[#113]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/113
+[#117]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/117
+[#119]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/119
+[#40]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/40
+[#120]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/120
+[#122]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/122
+[#121]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/121
+[#123]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/123
+[#124]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/124
+[#125]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/125
+[#118]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/118
+[#128]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/128
+[#130]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/130
+
+## [v0.0.0][v0_0_0] - 2019-07-25
+
+### Changed
+
+- Byi initial skeletons [#1]
+- add travis ci support [#2]
+- datapoint plugin [#3]
+- Byi carbonv2 plugin [#5]
+- protobuf parser plugin [#4]
+- Byi deploy metrics [#6]
+- rename `_sourceType` to `_origin` [#9]
+- space_as parameter [#7]
+- move _origin to meta tag [#10]
+- Byi helm yaml [#11]
+- select metrics [#12]
+- Split metrics to multiple http sources [#13]
+- Byi fix timeseries [#14]
+- Prometheus format filter plugin [#15]
+- Byi override yaml update [#16]
+- Upload image diagram for readme [#17]
+- Byi tweak remote write [#18]
+- rename from pod_name/container_name to pod/container [#19]
+- Use prometheus format for metrics [#20]
+- Byi setup script [#21]
+- Byi remove container eq pod [#22]
+- Byi more replicas [#23]
+- Collect additional metrics [#24]
+- refine deployment script [#25]
+- Include debugging steps in README [#26]
+- add stateful set metrics [#27]
+- script fixing [#28]
+- Update wording in deploy README file [#29]
+- plugin scaffold [#30]
+- add into docker image [#31]
+- implement enhance-k8s-metadata plugin with label reading [#33]
+- Added in the working_set_bytes metric [#36]
+- Collect logs with FluentBit and Fluentd [#34]
+- Events plugin [#35]
+- Update setup script for logs and events [#38]
+- Combine events yaml file with logs and metrics one [#39]
+- Increase the resource limits on CPU and memory for fluentd deployment [#43]
+- Byi oweners ref [#37]
+- ensure proper permissions for events... [#46]
+- fix-pod-name-including-filepath [#47]
+- Restarts Count for pods :) [#44]
+- Added a metric to track files on the nodes [#49]
+- CPU % extra metrics [#45]
+- Forwarding all Remote Write Metrics [#42]
+- Fix events plugin [#48]
+- Added packet dropping as a metric we pick up [#50]
+- Add configurable event type filter [#51]
+- Nik automation friendly [#52]
+- Fix README [#54]
+- Fix setup.sh [#55]
+- Fix missing metrics [#56]
+- Custom Metrics [#58]
+- Change the path example [#59]
+- Fix Travis Integration [#61]
+- Parameterize resource name to support watching other resources in events plugin [#62]
+- Add service metadata monitoring [#57]
+- enable logical default source category for all http sources [#66]
+- disable Alertmanager and Grafana by default. [#64]
+- Use fluentd helper function [#65]
+- SUMO-111064 Add unit test for events plugin [#63]
+- Update default label behaviour for metadata enhancement plugin [#60]
+- Fix order of assert_equal in test files [#67]
+- Use different label in events deployment [#69]
+- Attach service metadata [#68]
+- use v1.5.0 for output plugin [#70]
+- use-fields-log-format [#71]
+- Add overview image to main repo README [#72]
+- fix automatic setup script command in deploy README [#76]
+- Include namespace parameter in help usage [#78]
+- Make imagePullPolicy and latest tag explicit for now [#77]
+- Initialize @pods_to_services before timer_execute [#80]
+- Add "patch" configmaps capability for fluentd [#79]
+- Disable service metadata for now [#81]
+- SUMO-113170 Support different k8s api versions [#74]
+- Cleanup Dockerfile and remove Dockerfile-debian [#82]
+- Upgrade Dockerfile fluentd to v1.6.2 [#87]
+- Restructure Helm overrides directory [#88]
+- Strip alpha suffix from gem version to avoid prerelease behavior [#90]
+
+[v0_0_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.0.0
+[#1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1
+[#2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2
+[#3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3
+[#5]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/5
+[#4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/4
+[#6]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/6
+[#9]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/9
+[#7]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/7
+[#10]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/10
+[#11]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/11
+[#12]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/12
+[#13]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/13
+[#14]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/14
+[#15]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/15
+[#16]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/16
+[#17]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/17
+[#18]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/18
+[#19]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/19
+[#20]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/20
+[#21]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/21
+[#22]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/22
+[#23]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/23
+[#24]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/24
+[#25]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/25
+[#26]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/26
+[#27]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/27
+[#28]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/28
+[#29]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/29
+[#30]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/30
+[#31]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/31
+[#33]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/33
+[#36]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/36
+[#34]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/34
+[#35]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/35
+[#38]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/38
+[#39]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/39
+[#43]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/43
+[#37]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/37
+[#46]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/46
+[#47]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/47
+[#44]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/44
+[#49]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/49
+[#45]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/45
+[#42]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/42
+[#48]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/48
+[#50]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/50
+[#51]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/51
+[#52]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/52
+[#54]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/54
+[#55]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/55
+[#56]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/56
+[#58]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/58
+[#59]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/59
+[#61]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/61
+[#62]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/62
+[#57]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/57
+[#66]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/66
+[#64]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/64
+[#65]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/65
+[#63]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/63
+[#60]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/60
+[#67]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/67
+[#69]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/69
+[#68]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/68
+[#70]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/70
+[#71]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/71
+[#72]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/72
+[#76]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/76
+[#78]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/78
+[#77]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/77
+[#80]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/80
+[#79]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/79
+[#81]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/81
+[#74]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/74
+[#82]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/82
+[#87]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/87
+[#88]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/88
+[#90]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/90
