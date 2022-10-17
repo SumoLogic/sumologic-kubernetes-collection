@@ -10,6 +10,6 @@ metadata:
     app: {{ template "sumologic.labels.app.opentelemetry.operator.instrumentation.configmap" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
-  instrumentation: |
-  {{- include "opentelemetry-operator.instrumentation.custom.resource" . | nindent 4 }}
+  instrumentation.cr.yaml: |
+  {{- (tpl (.Files.Get "conf/opentelemetry-operator/instrumentation.cr.yaml") .) | nindent 4 }}
 {{- end }}

@@ -19,7 +19,7 @@ spec:
         volumeMounts:
           - name: instrumentation-cr-configmap
             mountPath: /tmp/instrumentation-cr.yaml
-            subPath: instrumentation
+            subPath: instrumentation.cr.yaml
         command: ["/bin/bash", "-c"]
         args:
           - |
