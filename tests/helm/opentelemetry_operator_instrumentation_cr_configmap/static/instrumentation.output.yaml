@@ -10,7 +10,7 @@ metadata:
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
-  instrumentation: |
+  instrumentation.cr.yaml: |
     
     ---
     apiVersion: opentelemetry.io/v1alpha1
@@ -23,8 +23,6 @@ data:
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
-      annotations:
-        "helm.sh/hook": "post-install,post-upgrade"
     spec:
       propagators:
         - tracecontext
@@ -91,8 +89,6 @@ data:
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
-      annotations:
-        "helm.sh/hook": "post-install,post-upgrade"
     spec:
       propagators:
         - tracecontext
