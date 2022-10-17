@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
+- fix(setup):allow credentials to not be set if setup is disabled [#2572]
 - fix(logs): prevent Fluent Bit from doing metadata enrichment [#2512]
 - chore(kube-prometheus-stack): update kube-prometheus-stack chart to 39.11.0 [#2446]
 
@@ -33,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2544
 [#2554]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2554
 [#2549]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2549
+[#2572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2572
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 
 ## [v2.17.0]
