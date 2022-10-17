@@ -109,7 +109,7 @@ that start with dates in the following format: `2019-11-17 07:14:12`.
 
 If your logs have a different date format you can provide a custom regex to detect
 the first line of multiline logs.
-See [collecting multiline logs](https://help.sumologic.com/?cid=49494) for details
+See [collecting multiline logs](https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs/) for details
 on configuring a boundary regex.
 
 New parsers can be defined under the `fluent-bit.config.customParsers` key in
@@ -1187,7 +1187,7 @@ where `<DEFINITION OF CUSTOM FIELDS>` has to be `key1=value1,key2=value2,...` fo
 
 **NOTE** Do not forget to [add field in Sumo Logic service][sumo_add_fields]
 
-[sumo_add_fields]: https://help.sumologic.com/Manage/Fields#add-field
+[sumo_add_fields]: https://help.sumologic.com/docs/manage/fields/#add-field
 
 Please consider the following configuration which adds `container_image` from kubernetes enrichment.
 

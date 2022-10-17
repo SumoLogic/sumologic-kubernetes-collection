@@ -14,10 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- chore: upgrade nginx to 1.23 [#2544]
+- chore: upgrade nginx to 1.23.1 [#2544] [#2554]
 - feat: enable remote write proxy by default [#2483]
 - chore: update kubernetes-tools to 2.13.0 [#2515]
 - feat(metadata): upgrade otelcol to v0.57.2-sumo-1 [#2526]
+- docs: update documentation around additionalRemoteWrite for kube-prometheus-stack [#2549]
 - chore(opentelemetry-operator): upgrade opentelemetry-operator subchart to 0.13.0 [#2561]
 
 ### Fixed
@@ -31,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
 [#2526]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2526
 [#2544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2544
+[#2549]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2549
 [#2561]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2561
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 
