@@ -1,9 +1,9 @@
 {{- $ctx := . -}}
-{{ $watchNamespace := index .Values "opentelemetry-operator" "manager" "env" }}
-{{- if eq ( get $watchNamespace "WATCH_NAMESPACE" ) "" }}
-{{ fail "It is mandatory to set value for \"opentelemetry-operator.manager.env.WATCH_NAMESPACE\" when opentelemetry-operator is enabled. Value is comma separated namespaces e.g. \"ns1\\,ns2\"" }}
+{{ $instrumentationNamespaces := index .Values "opentelemetry-operator" }}
+{{- if eq ( get $instrumentationNamespaces "instrumentationNamespaces" ) "" }}
+{{ fail "No value for \"opentelemetry-operator.instrumentationNamespaces\".Value is comma separated namespaces e.g. \"ns1\\,ns2\"" }}
 {{ else }}
-{{- range $ns := splitList "," ( index .Values "opentelemetry-operator" "manager" "env" "WATCH_NAMESPACE" ) }}
+{{- range $ns := splitList "," ( index .Values "opentelemetry-operator" "instrumentationNamespaces" ) }}
 ---
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
