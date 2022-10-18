@@ -3,6 +3,5 @@ sumologic:
     enabled: true
 opentelemetry-operator:
   enabled: true
-  manager:
-    env:
-      WATCH_NAMESPACE: "ot-operator1,ot-operator2"
+  createDefaultInstrumentation: true
+  instrumentationNamespaces: "ot-operator1,ot-operator2"
