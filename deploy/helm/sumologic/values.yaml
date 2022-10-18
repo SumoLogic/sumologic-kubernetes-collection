@@ -5115,7 +5115,11 @@ tailing-sidecar-operator:
 ## ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
 opentelemetry-operator:
   enabled: false
-  createDefaultInstrumentation: true
+
+  ## Specific for Tracing - Instrumentation resource creation
+  createDefaultInstrumentation: false
+  instrumentationNamespaces: ""
+
   admissionWebhooks:
     failurePolicy: Fail
     enabled: true
