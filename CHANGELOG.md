@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(metadata): upgrade otelcol to v0.57.2-sumo-1 [#2526]
 - docs: update documentation around additionalRemoteWrite for kube-prometheus-stack [#2549]
 - chore(opentelemetry-operator): upgrade opentelemetry-operator subchart to 0.13.0 [#2561]
+- chore: remove support for GKE 1.20 [#2578]
 
 ### Fixed
 
@@ -37,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2549]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2549
 [#2572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2572
 [#2561]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2561
+[#2578]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2578
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 
 ## [v2.17.0]
