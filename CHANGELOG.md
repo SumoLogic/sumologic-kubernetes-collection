@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - chore: upgrade nginx to 1.23.1 [#2544] [#2554]
+- chore: remove support for GKE 1.20 [#2579]
 
 ### Fixed
 
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
 [#2544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2544
+[#2579]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2579
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 
 ## [v2.17.0]
