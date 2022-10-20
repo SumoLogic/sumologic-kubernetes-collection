@@ -129,6 +129,13 @@ true  # prevent to render empty if; then
 terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" $key "Type" $type) }} "${COLLECTOR_NAME}/{{ $source.name }}"
 {{- end }}
 {{- end }}
+{{- else if and (eq $type "metrics") $ctx.sumologic.traces.enabled }}
+{{- /*
+If traces are enabled and metrics are disabled, create default metrics source anyway
+*/}}
+{{- if hasKey $sources "default" }}
+terraform import sumologic_http_source.{{ template "terraform.sources.name" (dict "Name" "default" "Type" $type) }} "${COLLECTOR_NAME}/{{ $sources.default.name }}"
+{{- end }}
 {{- end }}
 {{- end }}
 fi

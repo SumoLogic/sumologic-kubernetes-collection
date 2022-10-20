@@ -26,7 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fix(openshift): fix remote write proxy - use unprivileged NGINX [#2510][#2510]
+- fix(openshift): fix remote write proxy - use unprivileged NGINX [#2510], [#2510]
+- fix: default.metrics source is not imported when metrics are disabled and traces are enabled [#2547]
 
 [#2483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2483
 [#2512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2512
@@ -36,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
 [#2526]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2526
 [#2544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2544
+[#2547]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2547
 [#2554]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2554
 [#2549]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2549
 [#2572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2572
