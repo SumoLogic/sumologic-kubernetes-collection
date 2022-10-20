@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - chore: upgrade nginx to 1.23.1 [#2544] [#2554]
 - chore: remove support for GKE 1.20 [#2579]
+- chore(opentelemetry-operator): upgrade opentelemetry-operator subchart to 0.13.0 [#2577]
 
 ### Fixed
 
@@ -19,7 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
 [#2544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2544
 [#2579]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2579
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
+[#2577]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2577
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...release-v2
 
 ## [v2.17.0]
 
