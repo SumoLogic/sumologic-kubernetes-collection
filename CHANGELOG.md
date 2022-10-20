@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased [Unreleased]
+## [v2.18.0]
+
+### Released 2022-10-20
+
+This release updates Opentelemetry Operator and disables by default creation of `Instrumentation` resource.
+`opentelemetry-operator.manager.env.WATCH_NAMESPACE` has no longer effect on creation of `Instrumentation` resource.
+To create `Instrumentation` resource it is required to set `opentelemetry-operator.createDefaultInstrumentation` to `true` and
+`opentelemetry-operator.instrumentationNamespaces` to comma separated list of namespaces where `Instrumentation` resource will be created e.g. `"ns1\,ns2"`.
+This change affects you only if you have enabled opentelemetry-operator and traces with `opentelemetry-operator.enabled: true` and `sumologic.traces.enabled: true`.
 
 ### Changed
 
@@ -21,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2544
 [#2579]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2579
 [#2577]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2577
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...release-v2
+[v2.18.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...v2.18.0
 
 ## [v2.17.0]
 
