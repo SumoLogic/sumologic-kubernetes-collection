@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs: update documentation around additionalRemoteWrite for kube-prometheus-stack [#2549]
 - chore(opentelemetry-operator): upgrade opentelemetry-operator subchart to 0.13.0 [#2561]
 - chore: remove support for GKE 1.20 [#2578]
+- chore: remove support for sumologic-kubernetes-collection v2.6 [#2583]
 
 ### Fixed
 
@@ -43,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2572
 [#2561]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2561
 [#2578]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2578
+[#2583]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2583
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 
 ## [v2.17.0]
