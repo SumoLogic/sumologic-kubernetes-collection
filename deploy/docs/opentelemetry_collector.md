@@ -557,7 +557,7 @@ sumologic:
 Refs:
 
 - [Trace ID aware load balancing](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/loadbalancingexporter/README.md)
-- [Using cascading_filter](https://help.sumologic.com/Traces/03Advanced_Configuration/What_if_I_don't_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F)
+- [Using cascading_filter](https://help.sumologic.com/docs/apm/traces/advanced-configuration/filter-shape-tracing-data)
 
 ## Kubernetes Events
 
@@ -578,8 +578,8 @@ Currently the OT configuration directly uses the following Fluentd configuration
 For configurations that don't modify `sumologic.fluentd.events.overrideOutputConf`, this should be enough. See the configuration
 options under `otelevents` in [values.yaml](../helm/sumologic/values.yaml).
 
-[source_category]: https://help.sumologic.com/03Send-Data/Sources/04Reference-Information-for-Sources/Metadata-Naming-Conventions#Source_Categories
-[source_name]: https://help.sumologic.com/03Send-Data/Sources/04Reference-Information-for-Sources/Metadata-Naming-Conventions#Source_Name
+[source_category]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions#source-categories
+[source_name]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions#source-name
 
 ### Customizing OpenTelemetry Collector configuration
 

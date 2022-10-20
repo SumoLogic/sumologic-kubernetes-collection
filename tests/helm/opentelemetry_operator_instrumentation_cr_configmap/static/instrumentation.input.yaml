@@ -1,0 +1,7 @@
+sumologic:
+  traces:
+    enabled: true
+opentelemetry-operator:
+  enabled: true
+  createDefaultInstrumentation: true
+  instrumentationNamespaces: "ot-operator1,ot-operator2"

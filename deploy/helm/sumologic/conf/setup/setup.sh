@@ -112,7 +112,7 @@ else
     readonly CREATE_FIELDS=0
     echo "Couldn't automatically create fields"
     echo "You do not have enough field capacity to create the required fields automatically."
-    echo "Please refer to https://help.sumologic.com/Manage/Fields to manually create the fields after you have removed unused fields to free up capacity."
+    echo "Please refer to https://help.sumologic.com/docs/manage/fields/ to manually create the fields after you have removed unused fields to free up capacity."
 fi
 
 readonly COLLECTOR_NAME="{{ template "terraform.collector.name" . }}"
@@ -164,7 +164,7 @@ bash /etc/terraform/dashboards.sh
 {{- else }}
 echo "Installation of the Sumo Logic dashboards is disabled."
 echo "You can install them manually later with:"
-echo "https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App%2C_Alerts%2C_and_view_the_Dashboards#install-the-app"
+echo "https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
 {{- end }}
 
 # Cleanup env variables

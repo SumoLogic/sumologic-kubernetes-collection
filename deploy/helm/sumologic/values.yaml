@@ -25,7 +25,7 @@ sumologic:
   # accessKey: ""
 
   ## Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
-  ## ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
+  ## ref: https://help.sumologic.com/docs/api/getting-started#sumo-logic-endpoints-by-deployment-and-firewall-security
   endpoint: ""
 
   ## proxy urls
@@ -152,7 +152,7 @@ sumologic:
 
   collector:
     ## Configuration of additional collector fields
-    ## https://help.sumologic.com/Manage/Fields#http-source-fields
+    ## https://help.sumologic.com/docs/manage/fields/#http-source-fields
     fields: {}
 
     ## Configuration of http sources
@@ -241,7 +241,7 @@ sumologic:
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
     ## relevant metadata.
-    ## https://help.sumologic.com/Manage/Fields#Manage_fields
+    ## https://help.sumologic.com/docs/manage/fields/#manage-fields
     fields:
       - cluster
       - container
@@ -280,7 +280,7 @@ sumologic:
       replicaCount: 3
       image:
         repository: public.ecr.aws/sumologic/nginx-unprivileged
-        tag: 1.23-alpine
+        tag: 1.23.1-alpine
         pullPolicy: IfNotPresent
       resources:
         limits:
@@ -1848,18 +1848,6 @@ kube-prometheus-stack:
         requests:
           cpu: 500m
           memory: 1Gi
-      thanos:
-        # set this to a version with a ARM Docker image
-        version: v0.25.2
-        ## Defines the resource requirements for the Thanos sidecar
-        ## Setting those as there are no default values in the upstream chart
-        resources:
-          limits:
-            cpu: 10m
-            memory: 32Mi
-          requests:
-            cpu: 1m
-            memory: 8Mi
       initContainers:
         - name: "init-config-reloader"
           env:
@@ -2569,7 +2557,7 @@ kube-prometheus-stack:
 
         # Kafka Metrics
         # List of Metrics are on following dochub page:
-        # https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kafka/Kafka_Metrics
+        # https://help.sumologic.com/docs/integrations/containers-orchestration/kafka/#kafka-metrics
         # Metrics follow following format:
         # kafka_broker_*
         # kafka_controller_*
@@ -2632,7 +2620,7 @@ kube-prometheus-stack:
 
         ## PostgreSQL Telegraf Metrics
         ## List of Metrics are on following dochub page:
-        ## https://help.sumologic.com/07Sumo-Logic-Apps/12Databases/PostgreSQL/Metrics_for_the_Sumo_Logic_PostgreSQL_App
+        ## https://help.sumologic.com/docs/integrations/databases/postgresql/#postgresql-metrics
         ## Metrics follow following format:
         ## postgresql_blks_hit
         ## postgresql_blks_read
@@ -5115,10 +5103,14 @@ tailing-sidecar-operator:
 ## ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
 opentelemetry-operator:
   enabled: false
-  createDefaultInstrumentation: true
+
+  ## Specific for Tracing - Instrumentation resource creation
+  createDefaultInstrumentation: false
+  instrumentationNamespaces: ""
+
   admissionWebhooks:
     failurePolicy: Fail
-    enabled: false
+    enabled: true
 
     certManager:
       enabled: false
