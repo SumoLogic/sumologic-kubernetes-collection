@@ -5,14 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v2.18.1]
+
+### Released 2022-10-21
 
 ### Fixed
 
 - fix(setup):allow credentials to not be set if setup is disabled [#2572]
 
 [#2572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2572
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.0...main
+[v2.18.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.0...v2.18.1
 
 ## [v2.18.0]
 
