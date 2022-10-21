@@ -471,6 +471,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - feat(otellogs): add multipart merge configuration for docker and cri [#2162][#2162]
 - chore(otellogs): increase send_batch_size to 10240 [#2161][#2161]
 - chore(fluent-bit): update to 0.14.1 [#2155][#2155]
+- chore: remove support for OpenShift 4.6 and OpenShift 4.7 [#2586]
 
 ### Fixed
 
@@ -489,6 +490,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 [#2161]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2161
 [#2162]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2162
 [#2165]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2165
+[#2586]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2586
 [v2.6.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.6.0
 
 ## [v2.5.4][v2.5.4]
