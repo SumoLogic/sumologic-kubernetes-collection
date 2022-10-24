@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## Changed
+
+- chore: remove support for OpenShift 4.6 and OpenShift 4.7 [#2592]
+- chore: remove support for EKS 1.19 [#2592]
+- chore: remove support for kOps 1.20 [#2592]
+
+[#2592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2592
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.1...main
+
 ## [v2.18.1]
 
 ### Released 2022-10-21
@@ -13,13 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix(setup):allow credentials to not be set if setup is disabled [#2572]
 
-## Changed
-
-- chore: remove support for OpenShift 4.6 and OpenShift 4.7 [#2592]
-- chore: remove support for EKS 1.19 [#2592]
-
 [#2572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2572
-[#2592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2592
 [v2.18.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.0...v2.18.1
 
 ## [v2.18.0]
