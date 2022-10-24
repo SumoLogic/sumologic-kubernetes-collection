@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
--- chore: remove support for OpenShift 4.6 and OpenShift 4.7 [#2592]
+- chore: remove support for OpenShift 4.6 and OpenShift 4.7 [#2592]
+- chore: remove support for EKS 1.19 [#2592]
 
 [#2572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2572
 [#2592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2592
