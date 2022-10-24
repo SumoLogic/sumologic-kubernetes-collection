@@ -13,7 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix(setup):allow credentials to not be set if setup is disabled [#2572]
 
+## Changed
+
+-- chore: remove support for OpenShift 4.6 and OpenShift 4.7 [#2592]
+
 [#2572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2572
+[#2592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2592
 [v2.18.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.0...v2.18.1
 
 ## [v2.18.0]
