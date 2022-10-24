@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore(opentelemetry-operator): upgrade opentelemetry-operator subchart to 0.13.0 [#2561]
 - chore: remove support for GKE 1.20 [#2578]
 - chore: remove support for EKS 1.19 [#2587]
+- chore: remove support for kOps 1.20 [#2591]
 
 ### Fixed
 
@@ -45,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2561]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2561
 [#2578]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2578
 [#2587]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2587
+[#2591]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2591
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 
 ## [v2.17.0]
