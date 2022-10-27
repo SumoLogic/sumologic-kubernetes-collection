@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(logs): prevent Fluent Bit from doing metadata enrichment [#2512]
 - chore(kube-prometheus-stack): update kube-prometheus-stack chart to 39.11.0 [#2446]
 - feat(metrics)!: disable Thanos by default [#2514]
+- chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2595]
 
 ### Changed
 
@@ -47,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2578]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2578
 [#2587]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2587
 [#2591]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2591
+[#2595]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2595
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 
 ## [v2.17.0]
