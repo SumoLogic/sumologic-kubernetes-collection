@@ -12,8 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: remove support for OpenShift 4.6 and OpenShift 4.7 [#2592]
 - chore: remove support for EKS 1.19 [#2592]
 - chore: remove support for kOps 1.20 [#2592]
+- chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2596]
 
 [#2592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2592
+[#2596]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2596
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.1...main
 
 ## [v2.18.1]
