@@ -7,13 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+  If you use custom configuration for Telegraf Operator Helm Chart with cert-manager enabled (`telegraf-operator.certManager.enable=true`) please note that
+  in this release Telegraf Operator Helm Chart is changed to 1.3.10 which uses the cert-manager apiVersion `cert-manager.io/v1`,
+  previous apiVersion `cert-manager.io/v1alpha2` was deprecated in cert-manager [1.4][cert-manager-1.4]
+  and removed in cert-manager [1.6][cert-manager-1.6],
+  for differences between Telegraf Operator Helm Chart 1.3.5 and Telegraf Operator Helm Chart 1.3.10 please see [this][telegraf_operator_comapare_1.3.5_and_1.3.10].
+
 ### Breaking Changes
 
 - fix(setup):allow credentials to not be set if setup is disabled [#2572]
 - fix(logs): prevent Fluent Bit from doing metadata enrichment [#2512]
 - chore(kube-prometheus-stack): update kube-prometheus-stack chart to 39.11.0 [#2446]
 - feat(metrics)!: disable Thanos by default [#2514]
-- chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2595]
 
 ### Changed
 
@@ -26,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: remove support for GKE 1.20 [#2578]
 - chore: remove support for EKS 1.19 [#2587]
 - chore: remove support for kOps 1.20 [#2591]
+- chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2595]
+- chore(telegraf-operator): update Telegraf Operator Helm Chart to 1.3.10 [#2597]
 
 ### Fixed
 
@@ -49,7 +56,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2587]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2587
 [#2591]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2591
 [#2595]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2595
+[#2597]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2597
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
+[telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
+[cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
+[cert-manager-1.6]: https://github.com/cert-manager/cert-manager/releases/tag/v1.6.0
 
 ## [v2.17.0]
 
