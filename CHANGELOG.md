@@ -7,16 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+If you use custom configuration for Telegraf Operator Helm Chart with cert-manager enabled (`telegraf-operator.certManager.enable=true`) please note that
+in this release Telegraf Operator Helm Chart is changed to 1.3.10 which uses the cert-manager apiVersion `cert-manager.io/v1`,
+previous apiVersion `cert-manager.io/v1alpha2` was deprecated in cert-manager [1.4][cert-manager-1.4]
+and removed in cert-manager [1.6][cert-manager-1.6],
+for differences between Telegraf Operator Helm Chart 1.3.5 and Telegraf Operator Helm Chart 1.3.10 please see [this][telegraf_operator_comapare_1.3.5_and_1.3.10].
+
 ## Changed
 
 - chore: remove support for OpenShift 4.6 and OpenShift 4.7 [#2592]
 - chore: remove support for EKS 1.19 [#2592]
 - chore: remove support for kOps 1.20 [#2592]
 - chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2596]
+- chore(telegraf-operator): update Telegraf Operator Helm Chart to 1.3.10 [#2598]
 
 [#2592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2592
 [#2596]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2596
+[#2598]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2598
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.1...main
+[telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
+[cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
+[cert-manager-1.6]: https://github.com/cert-manager/cert-manager/releases/tag/v1.6.0
 
 ## [v2.18.1]
 
