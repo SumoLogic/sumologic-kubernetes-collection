@@ -19,7 +19,7 @@ terraform import sumologic_collector.collector {{ template "terraform.collector.
 # shellcheck disable=SC1083
 terraform import kubernetes_secret.sumologic_collection_secret {{ template "terraform.secret.fullname" . }}
 
-terraform destroy -auto-approve .
+terraform destroy -auto-approve
 
 # Cleanup env variables
 export SUMOLOGIC_BASE_URL=
