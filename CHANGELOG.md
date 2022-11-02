@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: remove support for kOps 1.20 [#2591]
 - chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2595]
 - chore(telegraf-operator): update Telegraf Operator Helm Chart to 1.3.10 [#2597]
+- feat(chart): restrict permissions for setup and cleanup jobs [#2599]
 
 ### Fixed
 
@@ -58,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2591]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2591
 [#2595]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2595
 [#2597]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2597
+[#2599]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2599
 [#2600]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2600
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10

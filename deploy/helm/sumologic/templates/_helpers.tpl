@@ -303,11 +303,11 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.setup.roles.clusterrole" -}}
+{{- define "sumologic.labels.app.setup.roles.role" -}}
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.setup.roles.clusterrolebinding" -}}
+{{- define "sumologic.labels.app.setup.roles.rolebinding" -}}
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
 
@@ -339,11 +339,11 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.cleanup" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.cleanup.roles.clusterrole" -}}
+{{- define "sumologic.labels.app.cleanup.roles.role" -}}
 {{- template "sumologic.labels.app.cleanup" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.cleanup.roles.clusterrolebinding" -}}
+{{- define "sumologic.labels.app.cleanup.roles.rolebinding" -}}
 {{- template "sumologic.labels.app.cleanup" . }}
 {{- end -}}
 
@@ -619,11 +619,11 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.setup" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.setup.roles.clusterrole" -}}
+{{- define "sumologic.metadata.name.setup.roles.role" -}}
 {{ template "sumologic.metadata.name.setup" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.setup.roles.clusterrolebinding" -}}
+{{- define "sumologic.metadata.name.setup.roles.rolebinding" -}}
 {{ template "sumologic.metadata.name.setup" . }}
 {{- end -}}
 
@@ -647,11 +647,11 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.metadata.name.cleanup" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.cleanup.roles.clusterrole" -}}
+{{- define "sumologic.metadata.name.cleanup.roles.role" -}}
 {{ template "sumologic.metadata.name.cleanup" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.cleanup.roles.clusterrolebinding" -}}
+{{- define "sumologic.metadata.name.cleanup.roles.rolebinding" -}}
 {{ template "sumologic.metadata.name.cleanup" . }}
 {{- end -}}
 
