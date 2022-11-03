@@ -2,7 +2,7 @@
 
 ## [Helm Chart v2][v2]
 
-This version focuses on incorporating OpenTelemetry Collector as alternatives for the following elements:
+This version focuses on incorporating OpenTelemetry Collector as alternative for the following elements:
 
 - logs collection
 - events collection
