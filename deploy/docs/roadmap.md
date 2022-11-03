@@ -14,7 +14,7 @@ In this version Opentelemetry is going to be default choice for the following el
 
 - logs collection
 - events collection
-- metadata enrichment for logs and metrics
+- metadata enrichment for logs, events and metrics
 
 We are going to deprecate Fluent Bit and Fluentd.
 
