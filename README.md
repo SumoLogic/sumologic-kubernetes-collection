@@ -35,6 +35,10 @@ Sumo Logic Helm Chart Version
 | [v1.3](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v1.3/deploy/README.md)   | deprecated / unsupported                |
 | [v0.17](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v0.17/deploy/README.md) | deprecated / unsupported                |
 
+## Roadmap
+
+Please refer to [roadmap](./deploy/docs/roadmap.md) document.
+
 ## License
 
 This project is released under the [Apache 2.0 License](./LICENSE).
