@@ -4,9 +4,6 @@ fluentd:
     tag: 1.11.5-sumo-0
     pullPolicy: IfNotPresent
 
-  ## Specifies whether a PodSecurityPolicy should be created
-  podSecurityPolicy:
-    create: false
   additionalPlugins: []
 
   ## Sets the fluentd log level. The default log level, if not specified, is info.

@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(logs): prevent Fluent Bit from doing metadata enrichment [#2512]
 - chore(kube-prometheus-stack): update kube-prometheus-stack chart to 39.11.0 [#2446]
 - feat(metrics)!: disable Thanos by default [#2514]
+- fix(fluentd): Removing PodSecurityPolicy for fluentd [#2605]
 
 ### Changed
 
@@ -61,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2597]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2597
 [#2599]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2599
 [#2600]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2600
+[#2605]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2605
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
