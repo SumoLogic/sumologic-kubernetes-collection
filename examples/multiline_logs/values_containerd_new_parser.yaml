@@ -87,7 +87,7 @@ fluent-bit:
       [OUTPUT]
           Name          forward
           Match         *
-          Host          ${FLUENTD_LOGS_SVC}.${NAMESPACE}.svc.cluster.local.
+          Host          ${METADATA_LOGS_SVC}.${NAMESPACE}.svc.cluster.local.
           Port          24321
           Retry_Limit   False
           tls           off

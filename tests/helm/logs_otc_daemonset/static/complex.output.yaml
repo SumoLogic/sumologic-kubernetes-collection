@@ -80,7 +80,7 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: sumologic-configmap
-              key: fluentdLogs
+              key: metadataLogs
         - name: NAMESPACE
           valueFrom:
             fieldRef:
