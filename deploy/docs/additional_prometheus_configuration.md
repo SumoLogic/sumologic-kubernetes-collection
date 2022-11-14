@@ -317,3 +317,85 @@ invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]s
 ```
 
 If all goes well, you should now have your custom metrics piping into Sumo Logic.
+
+## Additional Prometheus instance
+
+When there is a need to collect huge amount of metrics then single Prometheus Pod may not be enough.
+One of the solutions that can be used is creating additional Prometheus instance for capturing only selected metrics.
+
+Metrics can be assigned to different Prometheus instances by giving them separate sets of ServiceMonitors to handle.
+In the Prometheus resource, the settings responsible for this are:
+
+```yaml
+  serviceMonitorNamespaceSelector:
+  serviceMonitorSelector:
+```
+
+Figuring out what ServiceMonitors exist in your cluster, the metrics each of them selects, and their data volume, are beyond the scope of this document.
+
+To create additional Prometheus instance `Prometheus` resource must be created in the Kubernetes cluster, e.g.
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    additional-prometheus: "true"
+  name: additional-prometheus
+  namespace: <SUMOLOGIC-COLLECTION-NAMESPACE>
+spec:
+  containers:
+  - env:
+    - name: FLUENTD_METRICS_SVC
+      valueFrom:
+        configMapKeyRef:
+          key: fluentdMetrics
+          name: sumologic-configmap
+    - name: NAMESPACE
+      valueFrom:
+        configMapKeyRef:
+          key: fluentdNamespace
+          name: sumologic-configmap
+    name: config-reloader
+  enableAdminAPI: false
+  image: quay.io/prometheus/prometheus:v2.22.1
+  listenLocal: false
+  logFormat: logfmt
+  logLevel: info
+  paused: false
+  portName: web
+  remoteWrite:
+  <REMOTE-WRITE-CONFIGURATION>
+  replicas: 1
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 8Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  retention: 1d
+  routePrefix: /
+  scrapeInterval: 30s
+  securityContext:
+    fsGroup: 2000
+    runAsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector:
+    matchLabels:
+      <SERVICE-MONITOR-LABELS>
+  version: v2.22.1
+  walCompression: true
+```
+
+More information about `Prometheus` can be found in [this][prometheus-spec] documentation,
+the most crucial parts are marked in above example:
+
+- `<SUMOLOGIC-COLLECTION-NAMESPACE>` - indicates namespace in which Sumo Logic Kubernetes Collection Helm Chart is deployed
+- `<REMOTE-WRITE-CONFIGURATION>` - indicates remote write configuration, for details please see [this][remote-write-spec], this part defines which metrics are sent to Sumo Logic
+- `<SERVICE-MONITOR-LABELS>` - indicates labels which are set for ServiceMonitors which are used to configure the additional instance of Prometheus, this part allows for capturing only limited set of metrics by the additional Prometheus.
+
+[prometheus-spec]: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.Prometheus
+[remote-write-spec]: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.RemoteWriteSpec
