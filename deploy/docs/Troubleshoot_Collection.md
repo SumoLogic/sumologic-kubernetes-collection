@@ -38,6 +38,7 @@
   - [Duplicated logs](#duplicated-logs)
   - [Multiline log detection doesn't work as expected](#multiline-log-detection-doesnt-work-as-expected)
     - [Using text format](#using-text-format)
+  - [Out of memory (OOM) failures for Prometheus Pod](#out-of-memory-oom-failures-for-prometheus-pod)
 
 <!-- /TOC -->
 
@@ -720,3 +721,9 @@ sumologic:
 [infer-boundaries]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#infer-boundaries
 [http-source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source
 [boundary-regex]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#boundary-regex
+
+### Out of memory (OOM) failures for Prometheus Pod
+
+If you observe that Prometheus Pod needs more and more resources (out of memory failures - OOM killed Prometheus) and you are not able to increase
+them then you may need to configure additional instance of Prometheus due to huge amount of collected metrics in the cluster,
+for details please see [this](../docs/additional_prometheus_configuration.md#additional-prometheus-instance) documentation.
