@@ -1240,19 +1240,6 @@ Example:
 {{- print $annotations_match }}
 {{- end -}}
 
-
-{{/*
-Return k8s.cluster.name for opentelemetry collector
-
-Example:
-
-{{ include "otelcol.k8s.cluster.name" . }}
-*/}}
-{{- define "otelcol.k8s.cluster.name" -}}
-{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
-{{- end -}}
-
-
 {{/*
 Returns list of namespaces to exclude
 
