@@ -3452,9 +3452,9 @@ otelagent:
       pprof: {}
     exporters:
       otlphttp/traces:
-        endpoint: 'http://exporters.otlptraces.endpoint.replace:4318'
+        endpoint: 'http://{{ include "traces.otelagent.exporter.endpoint" . }}:4318'
       otlphttp/metrics:
-        endpoint: 'http://exporters.otlpmetrics.endpoint.replace:4318'
+        endpoint: 'http://{{ printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-metrics" . ) .Release.Namespace }}:4318'
     service:
       extensions: [health_check, memory_ballast, pprof]
       pipelines:
@@ -3569,26 +3569,26 @@ otelcol:
       ## Source processor adds Sumo Logic related metadata
       source:
         annotation_prefix: "k8s.pod.annotation."
-        collector: "processors.source.collector.replace"
+        collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
         exclude:
-          k8s.container.name: "processors.source.exclude_container_regex.replace"
-          k8s.host.name: "processors.source.exclude_host_regex.replace"
-          k8s.namespace.name: "processors.source.exclude_namespace_regex.replace"
-          k8s.pod.name: "processors.source.exclude_pod_regex.replace"
+          k8s.container.name: '{{ .Values.otelcol.sourceMetadata.excludeContainerRegex  | quote }}'
+          k8s.host.name: '{{ .Values.otelcol.sourceMetadata.excludeHostRegex | quote }}'
+          k8s.namespace.name: '{{ .Values.otelcol.sourceMetadata.excludeNamespaceRegex | quote }}'
+          k8s.pod.name: '{{  .Values.otelcol.sourceMetadata.excludePodRegex| quote }}'
         pod_key: "k8s.pod.name"
         pod_name_key: "k8s.pod.pod_name"
         pod_template_hash_key: "k8s.pod.label.pod-template-hash"
-        source_category: "processors.source.category.replace"
-        source_category_prefix: "processors.source.category_prefix.replace"
-        source_category_replace_dash: "processors.source.category_replace_dash.replace"
+        source_category: '{{ .Values.otelcol.sourceMetadata.sourceCategory | quote }}'
+        source_category_prefix: '{{ .Values.otelcol.sourceMetadata.sourceCategoryPrefix | quote }}'
+        source_category_replace_dash: '{{ .Values.otelcol.sourceMetadata.sourceCategoryReplaceDash | quote }}'
         source_host: "%{k8s.pod.hostname}"
-        source_name: "processors.source.name.replace"
+        source_name: '{{ .Values.otelcol.sourceMetadata.sourceName | quote }}'
 
       ## Resource processor sets the associted cluster attribute
       resource:
         attributes:
           - key: k8s.cluster.name
-            value: "processors.resource.cluster.replace"
+            value: '{{ include "sumologic.clusterNameReplaceSpaceWithDash" . }}'
             action: upsert
 
       ## The memory_limiter processor is used to prevent out of memory situations on the collector.
@@ -3653,9 +3653,9 @@ otelcol:
         ## carbon2 and graphite are going to be supported soon.
         metric_format: prometheus
         ## Desired source category. Useful if you want to override the source category configured for the source.
-        source_category: "exporters.sumologic.source_category.replace"
+        source_category: '{{ .Values.otelcol.sourceMetadata.sourceCategory| quote }}'
         ## Desired source name. Useful if you want to override the source name configured for the source.
-        source_name: "exporters.sumologic.source_name.replace"
+        source_name: '{{ .Values.otelcol.sourceMetadata.sourceName | quote }}'
         ## Desired host name. Useful if you want to override the source host configured for the source.
         source_host: "%{k8s.pod.hostname}"
         ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
