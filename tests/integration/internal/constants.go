@@ -2,8 +2,8 @@ package internal
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 )
 
@@ -15,13 +15,25 @@ const (
 
 	YamlPathReceiverMock = "yamls/receiver-mock.yaml"
 
+	// default cluster name in Helm chart Config
+	// TODO: read this from values.yaml used for the test directly
+	ClusterName = "kubernetes"
+
 	ReceiverMockServicePort = 3000
 	ReceiverMockServiceName = "receiver-mock"
 	ReceiverMockNamespace   = "receiver-mock"
 
 	LogsGeneratorNamespace = "logs-generator"
 	LogsGeneratorName      = "logs-generator"
-	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.9.0"
+	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.13.0"
+
+	TracesGeneratorNamespace = "customer-trace-tester"
+	TracesGeneratorName      = "customer-trace-tester"
+	TracesGeneratorImage     = "sumologic/kubernetes-tools:2.13.0"
+
+	MultilineLogsNamespace = "multiline-logs-generator"
+	MultilineLogsPodName   = "multiline-logs-generator"
+	MultilineLogsGenerator = "yamls/multiline-logs-generator.yaml"
 )
 
 // metrics we expect the receiver to get
@@ -56,7 +68,9 @@ var (
 		"kube_pod_container_resource_requests",
 		"kube_pod_container_resource_limits",
 		"kube_pod_container_status_ready",
-		"kube_pod_container_status_terminated_reason",
+		// No container is being terminated,
+		// so metric is not being generated
+		// "kube_pod_container_status_terminated_reason",
 		"kube_pod_container_status_restarts_total",
 		"kube_pod_status_phase",
 	}
@@ -205,7 +219,7 @@ func InitializeConstants() error {
 		return err
 	}
 
-	b, err := ioutil.ReadFile(_kindImagesJSONPath)
+	b, err := os.ReadFile(_kindImagesJSONPath)
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,11 @@
+otelevents:
+  config:
+    override:
+      exporters:
+        sumologic:
+          sending_queue:
+            persistent_storage_enabled: false
+
+sumologic:
+  events:
+    provider: otelcol

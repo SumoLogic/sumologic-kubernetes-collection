@@ -29,12 +29,12 @@ the Free Trial button on https://www.sumologic.com/.
 
 The following are required to setup Sumo Logic's Kubernetes collection.
 
-- An [Access ID and Access Key](https://help.sumologic.com/Manage/Security/Access-Keys)
+- An [Access ID and Access Key](https://help.sumologic.com/docs/manage/security/access-keys/)
   with [Manage Collectors] capability.
 - Please review our [minimum requirements](../README.md#minimum-requirements)
   and [support matrix](../README.md#support-matrix)
 
-[Manage Collectors]: https://help.sumologic.com/Manage/Users-and-Roles/Manage-Roles/05-Role-Capabilities#data-management
+[Manage Collectors]: https://help.sumologic.com/docs/manage/users-roles/roles/role-capabilities#data-management
 
 To get an idea of the resources this chart will require to run on your cluster,
 you can reference our [performance doc](./Performance.md).
@@ -42,7 +42,7 @@ you can reference our [performance doc](./Performance.md).
 ## Prerequisite
 
 Sumo Logic Apps for Kubernetes and Explore require you to add the following
-[fields](https://help.sumologic.com/Manage/Fields#Manage_fields) in the Sumo Logic UI
+[fields](https://help.sumologic.com/docs/manage/fields/#manage-fields) in the Sumo Logic UI
 to your Fields table schema.
 This is to ensure your logs are tagged with relevant metadata.
 This is a one time setup per Sumo Logic account.
@@ -74,8 +74,8 @@ However, instead of using Helm to install the Chart, the tool will output the re
 
 The installation requires two parameters:
 
-- **sumologic.accessId** - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-- **sumologic.accessKey** - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+- **sumologic.accessId** - Sumo [Access ID](https://help.sumologic.com/docs/manage/security/access-keys/).
+- **sumologic.accessKey** - Sumo [Access key](https://help.sumologic.com/docs/manage/security/access-keys/).
 
 If you are installing the collection in a cluster that requires proxying outbound requests,
 please see the following [additional properties](./Installing_Behind_Proxy.md) you will need to set.
@@ -85,33 +85,42 @@ The following parameter is optional, but we recommend setting it.
 - **sumologic.clusterName** - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
-First you will generate the YAML to apply to your cluster.  The following command contains the minimum parameters that can generate the YAML to setup Sumo Logic's Kubernetes collection. This command will generate the YAML and pipe it a file called `sumologic.yaml`. Please note that `--namespace` is required
+Create `values.yaml` with the configuration. For example, the minimal one will look like the following:
+
+```yaml
+sumologic:
+  accessId: ${ACCESS_ID}
+  accessKey: ${ACCESS_KEY}
+  clusterName: ${CLUSTER_NAME}
+```
+
+Now you will need to generate the YAML to apply to your cluster.
+This command will generate the YAML using `values.yaml` and pipe it a file called `sumologic.yaml`.
+Please note that `--namespace` is required
 
 ```bash
-kubectl run tools \
-  -i --quiet --rm \
-  --restart=Never \
-  --image sumologic/kubernetes-tools:2.9.0 -- \
-  template \
-  --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_ID>' \
-  --set sumologic.accessKey='<ACCESS_KEY>' \
-  --set sumologic.clusterName='<CLUSTER_NAME>' \
-  | tee sumologic.yaml
+cat values.yaml | \
+  kubectl run tools \
+    -i --quiet --rm \
+    --restart=Never \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
+    template \
+      --name-template 'collection' \
+      | tee sumologic.yaml
 ```
 
 Next, you will need to apply the required CRD's for `kube-prometheus-stack`.
 This is required before applying the generated YAML.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.43.2/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.43.2/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.43.2/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.43.2/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.43.2/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.43.2/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.43.2/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.43.2/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.58.0/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.58.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.58.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.58.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.58.0/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.58.0/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.58.0/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.58.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
 ```
 
 Finally, you can run `kubectl apply` on the file containing the rendered YAML
@@ -125,17 +134,15 @@ If you wish to install the YAML in a different namespace, you can add the `--nam
 The following will render the YAML and install in the `my-namespace` namespace.
 
 ```bash
-kubectl run tools \
-  -i --quiet --rm \
-  --restart=Never \
-  --image sumologic/kubernetes-tools:2.9.0 -- \
-  template \
-  --namespace 'my-namespace' \
-  --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_ID>' \
-  --set sumologic.accessKey='<ACCESS_KEY>' \
-  --set sumologic.clusterName='<CLUSTER_NAME>' \
-  | tee sumologic.yaml
+cat values.yaml | \
+  kubectl run tools \
+    -i --quiet --rm \
+    --restart=Never \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
+    template \
+      --namespace 'my-namespace' \
+      --name-template 'collection' \
+      | tee sumologic.yaml
 ```
 
 Finally, you can run `kubectl apply` on the file containing the rendered YAML
@@ -170,26 +177,69 @@ The daemonset/statefulset fails to create the pods in Openshift environment
 due to the request of elevated privileges, like HostPath mounts, privileged: true, etc.
 
 If you wish to install the chart in the Openshift Platform, it requires a SCC resource
-which is only created in Openshift (detected via API capabilities in the chart),
-you can do the following:
+which is only created in Openshift (detected via API capabilities in the chart).
+In order to enable it, please add the following to `values.yaml`:
+
+```yaml
+sumologic:
+  scc:
+    create: true
+fluent-bit:
+  securityContext:
+    privileged: true
+kube-prometheus-stack:
+  prometheus-node-exporter:
+    service:
+      port: 9200
+      targetPort: 9200
+  prometheusOperator:
+    namespaces:
+      additional:
+        - my-namespace
+tailing-sidecar-operator:
+  scc:
+    create: true
+```
+
+so it will look like the following:
+
+```yaml
+sumologic:
+  accessId: ${ACCESS_ID}
+  accessKey: ${ACCESS_KEY}
+  clusterName: ${CLUSTER_NAME}
+  scc:
+    create: true
+fluent-bit:
+  securityContext:
+    privileged: true
+kube-prometheus-stack:
+  prometheus-node-exporter:
+    service:
+      port: 9200
+      targetPort: 9200
+  prometheusOperator:
+    namespaces:
+      additional:
+        - my-namespace
+tailing-sidecar-operator:
+  scc:
+    create: true
+```
+
+and you can do the following:
 
 ```bash
-kubectl run tools \
-  -i --quiet --rm \
-  --restart=Never \
-  --image sumologic/kubernetes-tools:2.9.0 -- \
-  template \
-  --namespace 'my-namespace' \
-  --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_ID>' \
-  --set sumologic.accessKey='<ACCESS_KEY>' \
-  --set sumologic.clusterName='<CLUSTER_NAME>' \
-  --set sumologic.scc.create=true \
-  --set fluent-bit.securityContext.privileged=true \
-  --set kube-prometheus-stack.prometheus-node-exporter.service.port=9200 \
-  --set kube-prometheus-stack.prometheus-node-exporter.service.targetPort=9200 \
-  --set kube-prometheus-stack.prometheusOperator.namespaces.additional={my-namespace} \
-  | tee sumologic.yaml
+cat values.yaml | \
+  kubectl run tools \
+    -i --quiet --rm \
+    --restart=Never \
+    --api-versions=security.openshift.io/v1 \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
+    template \
+      --namespace 'my-namespace' \
+      --name-template 'collection' \
+      | tee sumologic.yaml
 ```
 
 **Notice:** Prometheus Operator is deployed by default on OpenShift platform,
@@ -198,6 +248,9 @@ you may either limit scope for Prometheus Operator installed with Sumo Logic Kub
 exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
 using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
 
+**Notice:** Generating templates for openshift require `--api-versions=security.openshift.io/v1`
+in order to generate scc.
+
 ## Viewing Data In Sumo Logic
 
 Once you have completed installation, you can
@@ -205,8 +258,8 @@ Once you have completed installation, you can
 or [open a new Explore tab] in Sumo Logic.
 If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
 
-[sumo-k8s-app-dashboards]: https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards
-[open a new Explore tab]: https://help.sumologic.com/Observability_Solution/Kubernetes_Solution/Navigate_your_Kubernetes_environment
+[sumo-k8s-app-dashboards]: https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app
+[open a new Explore tab]: https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore
 
 ## Troubleshooting Installation
 
@@ -242,7 +295,7 @@ of the installation process.
 
 You can find more information in our [troubleshooting documentation](Troubleshoot_Collection.md).
 
-[HTTP endpoints]: https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source
+[HTTP endpoints]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source
 
 ## Customizing Installation
 
@@ -254,11 +307,11 @@ Once you have customized the file you can generate the YAML.
 The content of the `values.yaml` can be fed into the template generator as shown below.
 
 ```bash
-cat sumo-values.yaml | \
+cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.9.0 -- \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
     template \
       --name-template 'collection' \
       | tee sumologic.yaml
@@ -276,31 +329,15 @@ of the Kubernetes collection is available.
 You can use the same commands used to create the YAML in the first place.
 
 ```bash
-kubectl run tools \
-  -i --quiet --rm \
-  --restart=Never \
-  --image sumologic/kubernetes-tools:2.9.0 -- \
-  template \
-  --namespace 'my-namespace' \
-  --name-template 'collection' \
-  --set sumologic.accessId='<ACCESS_ID>' \
-  --set sumologic.accessKey='<ACCESS_KEY>' \
-  --set sumologic.clusterName='<CLUSTER_NAME>' \
-  | tee sumologic.yaml
-```
-
-If you have made customizations and installed with a `values.yaml`, you can do
-the same thing command as you did before to generate the YAML.
-
-```bash
-cat sumo-values.yaml | \
-     kubectl run tools \
-       -i --quiet --rm \
-       --restart=Never \
-       --image sumologic/kubernetes-tools:2.9.0 -- \
-       template \
-         --name-template 'collection' \
-         | tee sumologic.yaml
+cat values.yaml | \
+  kubectl run tools \
+    -i --quiet --rm \
+    --restart=Never \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
+    template \
+      --namespace 'my-namespace' \
+      --name-template 'collection' \
+      | tee sumologic.yaml
 ```
 
 If you wish to upgrade to a specific version, you can pass the `--version` flag
@@ -312,7 +349,7 @@ cat values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
-    --image sumologic/kubernetes-tools:2.9.0 -- \
+    --image sumologic/kubernetes-tools:2.13.0 -- \
     template \
       --name-template 'collection' \
       --version=1.0.0

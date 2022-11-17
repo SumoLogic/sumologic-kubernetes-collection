@@ -1,0 +1,7 @@
+sumologic:
+  collectionMonitoring: false
+  traces:
+    enabled: true
+otelcol:
+  sourceMetadata:
+      excludeNamespaceRegex: "foo"

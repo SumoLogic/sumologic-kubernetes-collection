@@ -1,0 +1,18 @@
+sumologic:
+  events:
+    provider: otelcol
+  podAnnotations:
+    sumoAnnotation: sumoValue
+  podLabels:
+    sumoLabel: sumoValue
+
+otelevents:
+  statefulset:
+    ## Add custom labels only to logs sts pods
+    podLabels:
+      statefulsetLabel: statefulsetValue
+    ## Add custom annotations only to logs sts pods
+    podAnnotations:
+      statefulsetAnnotation: statefulsetValue
+
+

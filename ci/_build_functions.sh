@@ -12,7 +12,7 @@ function helm() {
   docker run --rm \
     -v "$(pwd):/chart" \
     -w /chart \
-    sumologic/kubernetes-tools:2.9.0 \
+    sumologic/kubernetes-tools:2.13.0 \
     helm "$@"
 }
 

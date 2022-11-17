@@ -258,3 +258,57 @@ apply-logs-generator:
 
 remove-logs-generator:
 	kubectl delete -f ${k8s_path}/logs-generator.yaml --ignore-not-found=true
+
+## Prometheus adapter can be used to expose custom metrics for HPA
+## This is just an example deployment
+## See https://github.com/kubernetes-sigs/prometheus-adapter for more informations
+apply-prometheus-adapter:
+	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	helm repo update
+	helm upgrade adapter \
+		--namespace prometheus-adapter \
+		--create-namespace \
+		--install prometheus-community/prometheus-adapter \
+		-f "${k8s_path}/prometheus-adapter.yaml"
+
+## Istio
+istio-clone:
+	rm -rf /home/vagrant/istio
+	if [ ! -d "/home/vagrant/istio" ] ; then git clone https://github.com/istio/istio.git /home/vagrant/istio; fi
+
+istio-certs:
+	# https://istio.io/latest/docs/tasks/security/cert-management/plugin-ca-cert/#plug-in-certificates-and-key-into-the-cluster
+	mkdir -p /home/vagrant/istio/certs
+	cd /home/vagrant/istio/certs && \
+		make -f ../tools/certs/Makefile.selfsigned.mk root-ca && \
+		make -f ../tools/certs/Makefile.selfsigned.mk microk8s-cluster-cacerts && \
+		(kubectl create namespace istio-system || true) && \
+		kubectl delete secret cacerts -n istio-system --ignore-not-found=true && \
+		kubectl create secret generic cacerts -n istio-system \
+		--from-file=microk8s-cluster/ca-cert.pem \
+		--from-file=microk8s-cluster/ca-key.pem \
+		--from-file=microk8s-cluster/root-cert.pem \
+		--from-file=microk8s-cluster/cert-chain.pem
+
+istio-enable:
+	microk8s.enable istio
+
+istio-patch: istio-patch-receiver-mock istio-patch-sumologic istio-patch-service-monitors
+
+istio-patch-receiver-mock:
+	kubectl label namespace receiver-mock istio-injection=enabled --overwrite
+	kubectl apply -n receiver-mock -f ${k8s_path}/istio-peer-authentication.yaml
+	kubectl apply -f ${k8s_path}/istio-receiver-mock.yaml
+
+istio-patch-sumologic:
+	kubectl label namespace sumologic istio-injection=enabled --overwrite
+	kubectl apply -n sumologic -f ${k8s_path}/istio-peer-authentication.yaml
+
+istio-patch-service-monitors:
+	kubectl apply -f ${k8s_path}/istio-service-monitors.yaml
+
+istio-disable:
+	microk8s.disable istio
+
+restart-pods:
+	kubectl -n sumologic delete pod --all --force --grace-period=0

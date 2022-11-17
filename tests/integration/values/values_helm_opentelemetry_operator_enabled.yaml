@@ -1,0 +1,25 @@
+sumologic:
+  traces:
+    enabled: true
+
+opentelemetry-operator:
+  enabled: true
+  createDefaultInstrumentation: true
+  instrumentationNamespaces: "ot-operator1,ot-operator2"
+
+otelgateway:
+  config:
+    processors:
+      memory_limiter:
+        # fix for vagrnt
+        # failt to create "memory_limiter" processor, in pipeline "traces": failed to get total memory, use fixed memory settings (limit_mib)
+        limit_mib: 8192
+
+# Request less resources so that this fits on Github actions runners environment
+fluentd:
+  events:
+    enabled: false
+  metrics:
+    enabled: false
+  logs:
+    enabled: false

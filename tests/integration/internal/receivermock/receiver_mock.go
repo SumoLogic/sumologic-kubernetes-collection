@@ -19,6 +19,9 @@ import (
 // Mapping of metric names to the number of times the metric was observed
 type MetricCounts map[string]int
 
+type SpanId string
+type TraceId string
+
 // A HTTP client for the receiver-mock API
 type ReceiverMockClient struct {
 	baseUrl   url.URL
@@ -53,10 +56,7 @@ func NewClientWithK8sTunnel(
 
 // GetMetricCounts returns the number of times each metric was received by receiver-mock
 func (client *ReceiverMockClient) GetMetricCounts(t *testing.T) (MetricCounts, error) {
-	path, err := url.Parse("metrics-list")
-	if err != nil {
-		t.Fatal(err)
-	}
+	path := parseUrl(t, "metrics-list")
 	url := client.baseUrl.ResolveReference(path)
 
 	statusCode, body := http_helper.HttpGet(
@@ -134,11 +134,7 @@ type LogsCountResponse struct {
 // the provided metadata filter.
 // Note that in the filter semantics, empty strings match any value
 func (client *ReceiverMockClient) GetLogsCount(t *testing.T, metadataFilters MetadataFilters) (uint, error) {
-	// TODO: move this path parsing outside of this function
-	path, err := url.Parse("logs/count")
-	if err != nil {
-		t.Fatal(err)
-	}
+	path := parseUrl(t, "logs/count")
 
 	queryParams := url.Values{}
 	for key, value := range metadataFilters {
@@ -168,6 +164,79 @@ func (client *ReceiverMockClient) GetLogsCount(t *testing.T, metadataFilters Met
 	return response.Count, nil
 }
 
+type Span struct {
+	Name         string  `json:"name,omitempty"`
+	Id           SpanId  `json:"id,omitempty"`
+	TraceId      TraceId `json:"trace_id,omitempty"`
+	ParentSpanId SpanId  `json:"parent_span_id,omitempty"`
+	Labels       Labels  `json:"attributes,omitempty"`
+}
+
+func (client *ReceiverMockClient) GetSpansCount(t *testing.T, metadataFilters MetadataFilters) (uint, error) {
+	path := parseUrl(t, "spans-list")
+
+	queryParams := url.Values{}
+	for key, value := range metadataFilters {
+		queryParams.Set(key, value)
+	}
+
+	url := client.baseUrl.ResolveReference(path)
+	url.RawQuery = queryParams.Encode()
+
+	resp, err := http.Get(url.String())
+	if err != nil {
+		return 0, fmt.Errorf("failed fetching %s, err: %w", url, err)
+	}
+
+	if resp.StatusCode != 200 {
+		return 0, fmt.Errorf(
+			"received status code %d in response to receiver request at %q",
+			resp.StatusCode, url,
+		)
+	}
+
+	var spans []Span
+	if err := json.NewDecoder(resp.Body).Decode(&spans); err != nil {
+		return 0, err
+	}
+	return uint(len(spans)), nil
+}
+
+func (client *ReceiverMockClient) GetTracesCounts(t *testing.T, metadataFilters MetadataFilters) ([]uint, error) {
+	path := parseUrl(t, "traces-list")
+
+	queryParams := url.Values{}
+	for key, value := range metadataFilters {
+		queryParams.Set(key, value)
+	}
+
+	url := client.baseUrl.ResolveReference(path)
+	url.RawQuery = queryParams.Encode()
+
+	resp, err := http.Get(url.String())
+	if err != nil {
+		return []uint{}, fmt.Errorf("failed fetching %s, err: %w", url, err)
+	}
+
+	if resp.StatusCode != 200 {
+		return []uint{}, fmt.Errorf(
+			"received status code %d in response to receiver request at %q",
+			resp.StatusCode, url,
+		)
+	}
+
+	var traces [][]Span
+	if err := json.NewDecoder(resp.Body).Decode(&traces); err != nil {
+		return []uint{}, err
+	}
+
+	var tracesLengths = make([]uint, len(traces))
+	for i := 0; i < len(tracesLengths); i++ {
+		tracesLengths[i] = uint(len(traces[i]))
+	}
+	return tracesLengths, nil
+}
+
 // parse metrics list returned by /metrics-list
 // https://github.com/SumoLogic/sumologic-kubernetes-tools/tree/main/src/rust/receiver-mock#statistics
 func parseMetricList(rawMetricsValues string) (map[string]int, error) {
@@ -191,4 +260,13 @@ func parseMetricList(rawMetricsValues string) (map[string]int, error) {
 		metricNameToCount[metricName] = metricCount
 	}
 	return metricNameToCount, nil
+}
+
+func parseUrl(t *testing.T, target string) *url.URL {
+	path, err := url.Parse(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return path
 }

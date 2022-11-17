@@ -1,0 +1,87 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: receiver-mock
+  namespace: receiver-mock
+  labels:
+    app: receiver-mock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: receiver-mock
+  template:
+    metadata:
+      labels:
+        service: receiver-mock
+        app: receiver-mock
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+        traffic.sidecar.istio.io/includeInboundPorts: "3002"   # do not intercept any inbound ports
+        traffic.sidecar.istio.io/includeOutboundIPRanges: ""  # do not intercept any outbound traffic
+        proxy.istio.io/config: |  # configure an env variable `OUTPUT_CERTS` to write certificates to the given folder
+          proxyMetadata:
+            OUTPUT_CERTS: /etc/istio-output-certs
+        sidecar.istio.io/userVolumeMount: '[{"name": "istio-certs", "mountPath": "/etc/istio-output-certs"}]' # mount the shared volume at sidecar proxy
+    spec:
+      containers:
+        - ports:
+            - containerPort: 3000
+            - containerPort: 3001
+          image: sumologic/kubernetes-tools:2.13.0
+          name: receiver-mock
+          args:
+            - receiver-mock
+            - --hostname=receiver-mock.receiver-mock
+            - --print-headers
+          resources: {}
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          volumeMounts:
+            - mountPath: /etc/prom-certs/
+              name: istio-certs
+      hostname: receiver-mock
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: istio-certs
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: receiver-mock
+  namespace: receiver-mock
+  labels:
+    app: receiver-mock
+spec:
+  ports:
+    # Receiver port
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+    # Debug receiver port (e.g. netcat)
+    - name: "3001"
+      port: 3001
+      targetPort: 3001
+    # Debug receiver port (e.g. netcat)
+    - name: "3002"
+      port: 3002
+      targetPort: 3000
+  selector:
+    service: receiver-mock
+status:
+  loadBalancer: {}

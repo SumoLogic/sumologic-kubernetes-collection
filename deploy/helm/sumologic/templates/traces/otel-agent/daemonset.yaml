@@ -36,27 +36,28 @@ spec:
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}
 {{- if .Values.otelagent.daemonset.podLabels }}
-{{ toYaml .Values.otelagent.daemonset.podLabels | indent 6 }}
+{{ toYaml .Values.otelagent.daemonset.podLabels | indent 8 }}
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       {{- if .Values.otelagent.daemonset.nodeSelector }}
       nodeSelector:
-        {{ toYaml .Values.otelagent.daemonset.nodeSelector | indent 8 }}
+{{ toYaml .Values.otelagent.daemonset.nodeSelector | indent 8 }}
       {{- end }}
       {{- if .Values.otelagent.daemonset.tolerations }}
       tolerations:
-        {{ toYaml .Values.otelagent.daemonset.tolerations | indent 8 }}
+{{ toYaml .Values.otelagent.daemonset.tolerations | indent 8 }}
       {{- end }}
       {{- if .Values.otelagent.daemonset.priorityClassName }}
       priorityClassName: {{ .Values.otelagent.daemonset.priorityClassName | quote }}
+      {{- else }}
+      priorityClassName: {{ include "sumologic.metadata.name.priorityclass" . | quote }}
       {{- end }}
       containers:
       - name: otelcontrib-agent
         image: {{ .Values.otelagent.daemonset.image.repository }}:{{ .Values.otelagent.daemonset.image.tag }}
         imagePullPolicy: {{ .Values.otelagent.daemonset.image.pullPolicy }}
-        command:
-          - "/otelcontribcol"
+        args:
           - "--config=/conf/traces.otelagent.conf.yaml"
         env:
         - name: GOGC
@@ -70,6 +71,9 @@ spec:
         resources:
           {{- toYaml .Values.otelagent.daemonset.resources | nindent 10 }}
         ports:
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
         - containerPort: 5778  # Default endpoint for Jaeger Sampling.
         - containerPort: 6831  # Default endpoint for Jaeger Thrift Compact receiver.
           protocol: UDP
@@ -82,8 +86,9 @@ spec:
         - containerPort: 14268 # Default endpoint for Jaeger HTTP receiver.
         - containerPort: 55678 # Default endpoint for Opencensus receiver.
         - containerPort: 4317  # Default endpoint for OTLP receiver.
-        - containerPort: 55680 # Old endpoint for OTLP receiver.
-        - containerPort: 55681 # Default endpoint for OTLP HTTP receiver.
+        - containerPort: 4318  # Default endpoint for OTLP HTTP receiver.
+        - containerPort: 55680 # Old endpoint for OTLP gRPC receiver.
+        - containerPort: 55681 # Default endpoint for OTLP HTTP receiver. (deprecated)
         volumeMounts:
         - name: otelagent-config-vol
           mountPath: /conf

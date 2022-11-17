@@ -3,17 +3,15 @@
 - [Helm Users](#helm-users)
   - [Changes](#changes)
   - [How to upgrade](#how-to-upgrade)
-    - [1. Upgrade to helm chart version v0.17.4](#1-upgrade-to-helm-chart-version-v0174)
-    - [2. Run upgrade script](#2-run-upgrade-script)
+    - [1. Upgrade to helm chart version `v0.17.4`](#1-upgrade-to-helm-chart-version-v0174)
+    - [2: Run upgrade script](#2-run-upgrade-script)
+  - [Troubleshooting Upgrade](#troubleshooting-upgrade)
   - [Rollback](#rollback)
 - [Non-Helm Users](#non-helm-users)
-  - [Changes](#breaking-changes)
-  - [How to upgrade](#how-to-upgrade-for-non-helm-users)
-    - [1. Tear down existing collection resources](#1-tear-down-existing-fluentd-prometheus-fluent-bit-resources)
-    - [2. Deploy New Resources](#2-deploy-fluentd-fluent-bit-and-prometheus-again-with-the-version-100-yaml)
-      - [2.1: Deploy Fluentd](#21-deploy-fluentd)
-      - [2.1: Deploy Prometheus](#22-deploy-prometheus)
-      - [2.1: Deploy Fluent Bit](#23-deploy-fluent-bit)
+  - [Breaking Changes](#breaking-changes)
+  - [How to upgrade for Non-helm Users](#how-to-upgrade-for-non-helm-users)
+    - [1. Tear down existing Fluentd, Prometheus, Fluent Bit and Falco resources](#1-tear-down-existing-fluentd-prometheus-fluent-bit-and-falco-resources)
+    - [2. Deploy Fluentd, Fluent Bit and Prometheus again with the version 1.0.0 yaml](#2-deploy-fluentd-fluent-bit-and-prometheus-again-with-the-version-100-yaml)
 - [Kubernetes App dashboard update](#kubernetes-app-dashboard-update)
 
 Based on the feedback from our users, we will be introducing several changes
@@ -43,38 +41,38 @@ the exact steps for migration.
     Fluentd specific configs, while configs for our dependency charts
     (`prometheus-operator`, `fluent-bit`, `metrics-server`, `falco`) have not changed.
 
-  | Old Config | New Config |
-  |:----------------------------------------:|:-----------------------------------------------------:|
-  | sumologic.eventCollectionEnabled | fluentd.events.enabled |
-  | sumologic.events.sourceCategory | fluentd.events.sourceCategory |
-  | sumologic.logFormat | fluentd.logs.output.logFormat |
-  | sumologic.flushInterval | fluentd.buffer.flushInterval |
-  | sumologic.numThreads | fluentd.buffer.numThreads |
-  | sumologic.chunkLimitSize | fluentd.buffer.chunkLimitSize |
-  | sumologic.queueChunkLimitSize | fluentd.buffer.queueChunkLimitSize |
-  | sumologic.totalLimitSize | fluentd.buffer.totalLimitSize |
-  | sumologic.sourceName | fluentd.logs.containers.sourceName |
-  | sumologic.sourceCategory | fluentd.logs.containers.sourceCategory |
-  | sumologic.sourceCategoryPrefix | fluentd.logs.containers.sourceCategoryPrefix |
-  | sumologic.sourceCategoryReplaceDash | fluentd.logs.containers.sourceCategoryReplaceDash |
-  | sumologic.addTimestamp | fluentd.logs.output.addTimestamp |
-  | sumologic.timestampKey | fluentd.logs.output.timestampKey |
-  | sumologic.verifySsl | fluentd.verifySsl |
-  | sumologic.excludeContainerRegex | fluentd.logs.containers.excludeContainerRegex |
-  | sumologic.excludeHostRegex | fluentd.logs.containers.excludeHostRegex |
-  | sumologic.excludeNamespaceRegex | fluentd.logs.containers.excludeNamespaceRegex |
-  | sumologic.excludePodRegex | fluentd.logs.containers.excludePodRegex |
-  | sumologic.fluentdLogLevel | fluentd.logLevel |
-  | sumologic.watchResourceEventsOverrides | fluentd.events.watchResourceEventsOverrides |
-  | sumologic.fluentd.buffer | fluentd.buffer.type |
-  | sumologic.fluentd.autoscaling.* | fluentd.logs.autoscaling.* , fluentd.metrics.autoscaling.* |
-  | sumologic.k8sMetadataFilter.watch | fluentd.logs.containers.k8sMetadataFilter.watch |
-  | sumologic.k8sMetadataFilter.verifySsl | fluentd.logs.containers.k8sMetadataFilter.verifySsl |
-  | sumologic.k8sMetadataFilter.cacheSize | fluentd.metadata.cacheSize |
-  | sumologic.k8sMetadataFilter.cacheTtl | fluentd.metadata.cacheTtl |
-  | sumologic.k8sMetadataFilter.cacheRefresh | fluentd.metadata.cacheRefresh |
-  | deployment.* | fluentd.logs.statefulset.* , fluentd.metrics.statefulset.*|
-  | eventsDeployment.* | fluentd.eventsStatefulset.* |
+  |                Old Config                |                         New Config                         |
+  |:----------------------------------------:|:----------------------------------------------------------:|
+  |     sumologic.eventCollectionEnabled     |                   fluentd.events.enabled                   |
+  |     sumologic.events.sourceCategory      |               fluentd.events.sourceCategory                |
+  |           sumologic.logFormat            |               fluentd.logs.output.logFormat                |
+  |         sumologic.flushInterval          |                fluentd.buffer.flushInterval                |
+  |           sumologic.numThreads           |                 fluentd.buffer.numThreads                  |
+  |         sumologic.chunkLimitSize         |               fluentd.buffer.chunkLimitSize                |
+  |      sumologic.queueChunkLimitSize       |             fluentd.buffer.queueChunkLimitSize             |
+  |         sumologic.totalLimitSize         |               fluentd.buffer.totalLimitSize                |
+  |           sumologic.sourceName           |             fluentd.logs.containers.sourceName             |
+  |         sumologic.sourceCategory         |           fluentd.logs.containers.sourceCategory           |
+  |      sumologic.sourceCategoryPrefix      |        fluentd.logs.containers.sourceCategoryPrefix        |
+  |   sumologic.sourceCategoryReplaceDash    |     fluentd.logs.containers.sourceCategoryReplaceDash      |
+  |          sumologic.addTimestamp          |              fluentd.logs.output.addTimestamp              |
+  |          sumologic.timestampKey          |              fluentd.logs.output.timestampKey              |
+  |           sumologic.verifySsl            |                     fluentd.verifySsl                      |
+  |     sumologic.excludeContainerRegex      |       fluentd.logs.containers.excludeContainerRegex        |
+  |        sumologic.excludeHostRegex        |          fluentd.logs.containers.excludeHostRegex          |
+  |     sumologic.excludeNamespaceRegex      |       fluentd.logs.containers.excludeNamespaceRegex        |
+  |        sumologic.excludePodRegex         |          fluentd.logs.containers.excludePodRegex           |
+  |        sumologic.fluentdLogLevel         |                      fluentd.logLevel                      |
+  |  sumologic.watchResourceEventsOverrides  |        fluentd.events.watchResourceEventsOverrides         |
+  |         sumologic.fluentd.buffer         |                    fluentd.buffer.type                     |
+  |     sumologic.fluentd.autoscaling.*      | fluentd.logs.autoscaling.* , fluentd.metrics.autoscaling.* |
+  |    sumologic.k8sMetadataFilter.watch     |      fluentd.logs.containers.k8sMetadataFilter.watch       |
+  |  sumologic.k8sMetadataFilter.verifySsl   |    fluentd.logs.containers.k8sMetadataFilter.verifySsl     |
+  |  sumologic.k8sMetadataFilter.cacheSize   |                 fluentd.metadata.cacheSize                 |
+  |   sumologic.k8sMetadataFilter.cacheTtl   |                 fluentd.metadata.cacheTtl                  |
+  | sumologic.k8sMetadataFilter.cacheRefresh |               fluentd.metadata.cacheRefresh                |
+  |               deployment.*               | fluentd.logs.statefulset.* , fluentd.metrics.statefulset.* |
+  |            eventsDeployment.*            |                fluentd.eventsStatefulset.*                 |
 
 - `sumologic.kubernetesMeta` and `sumologic.kubernetesMetaReduce` have been removed.
   The default log format (`fluentd.logs.output.logFormat`) is `fields`,
@@ -292,4 +290,4 @@ Follow the below steps to deploy new resources.
 After successful migration please make sure to [reinstall your Kubernetes App]
 to the latest version.
 
-[reinstall your Kubernetes App]: https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards
+[reinstall your Kubernetes App]: https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app

@@ -19,21 +19,22 @@ import (
 // Example:
 //
 // func WaitUntilStatefulSetIsReady(
-//   opts ...Option,
-// ) features.Func {
-//   return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-//     sts := appsv1.StatefulSet{
-//       ObjectMeta: v1.ObjectMeta{
-//         Namespace: ctxopts.Namespace(ctx),
-//       },
-//     }
-//     for _, opt := range opts {
-//       opt.Apply(ctx, &sts)
-//       ...
-//     }
-//   ...
-// }
 //
+//	opts ...Option,
+//
+//	) features.Func {
+//	  return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+//	    sts := appsv1.StatefulSet{
+//	      ObjectMeta: v1.ObjectMeta{
+//	        Namespace: ctxopts.Namespace(ctx),
+//	      },
+//	    }
+//	    for _, opt := range opts {
+//	      opt.Apply(ctx, &sts)
+//	      ...
+//	    }
+//	  ...
+//	}
 type Option interface {
 	Apply(ctx context.Context, obj k8s.Object)
 	GetListOption(ctx context.Context) resources.ListOption
@@ -112,13 +113,15 @@ func (lo labelsFOption) GetListOption(ctx context.Context) resources.ListOption 
 //
 // Example:
 // stepfuncs.WaitUntilStatefulSetIsReady(
-//   ...
-//   stepfuncs.WithLabelsF(
-//     stepfuncs.LabelFormatterKV{
-//       K: "app",
-//       V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
-//     },
-//   ),
+//
+//	...
+//	stepfuncs.WithLabelsF(
+//	  stepfuncs.LabelFormatterKV{
+//	    K: "app",
+//	    V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
+//	  },
+//	),
+//
 // ),
 //
 // The above snippet will use the helm release name (passed around in tests context)

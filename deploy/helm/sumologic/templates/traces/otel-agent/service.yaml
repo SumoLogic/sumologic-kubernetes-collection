@@ -5,12 +5,13 @@ metadata:
   name: {{ template "sumologic.metadata.name.otelagent.service" . }}
   labels:
     app: {{ template "sumologic.labels.app.otelagent.service" . }}
-    {{- include "sumologic.labels.traces" . | nindent 4 }}
+    {{- include "sumologic.labels.scrape.traces" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
     app: {{ template "sumologic.labels.app.otelagent.pod" . }}
     component: {{ template "sumologic.labels.app.otelagent.component" . }}
+  # In case of changes related to open ports for otelagent please update NOTES.TXT
   ports:
   - name: jaeger-sampling # Default endpoint for Jaeger Sampling (if enabled)
     port: 5778
@@ -34,8 +35,10 @@ spec:
     port: 55678
   - name: otlp-grpc # Default endpoint for OTLP gRPC receiver.
     port: 4317
+  - name: otlp-http # Default endpoint for OTLP HTTP receiver.
+    port: 4318
   - name: otlp-grpc-old # Old endpoint for OTLP gRPC receiver.
     port: 55680
-  - name: otlp-http # Default endpoint for OTLP HTTP receiver.
+  - name: otlp-http-old # Default endpoint for OTLP HTTP receiver.
     port: 55681
 {{- end }}

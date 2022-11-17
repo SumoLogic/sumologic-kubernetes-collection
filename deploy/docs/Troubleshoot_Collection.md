@@ -3,15 +3,22 @@
 <!-- TOC -->
 
 - [`helm install` hanging](#helm-install-hanging)
+- [Installation fails with error `function "dig" not defined`](#installation-fails-with-error-function-dig-not-defined)
 - [Namespace configuration](#namespace-configuration)
 - [Gathering logs](#gathering-logs)
+  - [Check log throttling](#check-log-throttling)
+  - [Check ingest budget limits](#check-ingest-budget-limits)
+  - [Check Fluentd autoscaling](#check-fluentd-autoscaling)
+  - [Check if collection pods are in a healthy state](#check-if-collection-pods-are-in-a-healthy-state)
   - [Fluentd Logs](#fluentd-logs)
   - [Prometheus Logs](#prometheus-logs)
   - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
+  - [Send data to Fluent Bit stdout](#send-data-to-fluent-bit-stdout)
 - [Gathering metrics](#gathering-metrics)
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+  - [Check Fluentd autoscaling](#check-fluentd-autoscaling-1)
   - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics)
 - [Common Issues](#common-issues)
   - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
@@ -28,6 +35,10 @@
   - [Gzip compression errors](#gzip-compression-errors)
   - [Error from Prometheus `init-config-reloader` container: `expand environment variables: found reference to unset environment variable "NAMESPACE"`](#error-from-prometheus-init-config-reloader-container-expand-environment-variables-found-reference-to-unset-environment-variable-namespace)
   - [`/fluentd/buffer` permissions issue](#fluentdbuffer-permissions-issue)
+  - [Duplicated logs](#duplicated-logs)
+  - [Multiline log detection doesn't work as expected](#multiline-log-detection-doesnt-work-as-expected)
+    - [Using text format](#using-text-format)
+  - [Out of memory (OOM) failures for Prometheus Pod](#out-of-memory-oom-failures-for-prometheus-pod)
 
 <!-- /TOC -->
 
@@ -58,6 +69,13 @@ kubectl delete secret sumologic -n sumologic
 
 `helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries, rerun the `helm install` command.
 
+## Installation fails with error `function "dig" not defined`
+
+You need to use a more recent version of Helm. See [Minimum Requirements](./../README.md#minimum-requirements).
+
+If you are using ArgoCD or another tool that uses Helm under the hood,
+make sure that tool uses the required version of Helm.
+
 ## Namespace configuration
 
 The following `kubectl` commands assume you are in the correct namespace `sumologic`. By default, these commands will use the namespace `default`.
@@ -72,7 +90,43 @@ kubectl config set-context $(kubectl config current-context) --namespace=sumolog
 
 ## Gathering logs
 
-First check if your pods are in a healthy state. Run
+If you cannot see logs in Sumo that you expect to be there, here are the things to check.
+
+### Check log throttling
+
+Check if [log throttling][log_throttling] is happening.
+
+If it is, there will be messages like `HTTP ERROR 429 You have temporarily exceeded your Sumo Logic quota` in Fluentd or Otelcol logs.
+
+[log_throttling]: https://help.sumologic.com/docs/manage/ingestion-volume/log-ingestion#log-throttling
+
+### Check ingest budget limits
+
+Check if an [ingest budget][ingest_budgets] limit is hit.
+
+If it is, there will be `budget.exceeded` messages from Sumo in Fluentd or Otelcol logs, similar to the following:
+
+```console
+2022-04-12 13:47:17 +0000 [warn]: #0 There was an issue sending data: id: KMZJI-FCDPN-4KHKD, code: budget.exceeded, status: 200, message: Message(s) in the request dropped due to exceeded budget.
+```
+
+[ingest_budgets]: https://help.sumologic.com/docs/manage/ingestion-volume/ingest-budgets
+
+### Check Fluentd autoscaling
+
+Check if Fluentd autoscaling is enabled, for details please see [Fluentd Autoscaling][fluend_autoscaling] documentation.
+
+Some known indicators that autoscaling for Fluentd must be enabled:
+
+- High CPU usage for Fluentd Pods (above `500m`), resource consumption can be checked using `kubectl top pod -n <NAMESPACE>`
+
+- Following message in Fluentd logs: `failed to write data into buffer by buffer overflow action=:drop_oldest_chunk`
+
+[fluend_autoscaling]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-autoscaling
+
+### Check if collection pods are in a healthy state
+
+Run:
 
 ```
 kubectl get pods
@@ -122,10 +176,15 @@ To enable debug or trace logs from a specific Fluentd plugin, add the following 
 </match>
 ```
 
-To enable debug or trace logs using the Helm chart, you can override the value `fluentd.logLevel`:
+To enable debug or trace logs using the Helm chart, you can override the value `fluentd.logLevel` in `values.yaml`:
+
+```yaml
+fluentd:
+  logLevel: debug
+```
 
 ```sh
-helm upgrade collection sumologic/sumologic --reuse-values --set fluentd.logLevel="debug"
+helm upgrade collection sumologic/sumologic -f values.yaml
 ```
 
 For configuration changes to take effect in Fluentd, you can redeploy the pods by scaling to zero and back to the desired deployment size:
@@ -147,32 +206,50 @@ Where `collection` is the `helm` release name.
 
 ### Send data to Fluentd stdout instead of to Sumo
 
-To help reduce the points of possible failure, we can write data to Fluentd logs rather than sending to Sumo directly using the Sumo Logic output plugin. To do this, change the following lines in the `fluentd-sumologic.yaml` file under the relevant `.conf` section:
+To help reduce the points of possible failure, we can write data to Fluentd logs rather than sending to Sumo directly using the Sumo Logic output plugin.
+To do this, use the following configuration:
 
-```
-<match TAG_YOU_ARE_DEBUGGING>
-  @type sumologic
-  endpoint "#{ENV['SUMO_ENDPOINT']}"
-  ...
-</match>
-```
-
-to
-
-```
-<match TAG_YOU_ARE_DEBUGGING>
-  @type stdout
-</match>
-```
-
-Then redeploy your `fluentd` deployment:
-
-```sh
-kubectl scale deployment/collection-sumologic --replicas=0
-kubectl scale deployment/collection-sumologic --replicas=3
+```yaml
+fluentd:
+  logs:
+    containers:
+      extraFilterPluginConf: |-
+        # Prevent fluentd from processing they own logs
+        <match **fluentd**>
+          @type null
+        </match>
+        # Print all container logs before any filter applied
+        <filter **>
+          @type stdout
+        </filter>
+      extraOutputPluginConf: |-
+        # Print all container logs just before sending them to Sumo
+        <filter **>
+          @type stdout
+        </filter>
 ```
 
 You should see data being sent to Fluentd logs, which you can get using the commands [above](#fluentd-logs).
+
+### Send data to Fluent Bit stdout
+
+In order to see what exactly the Fluent Bit reads, you can write data to Fluent Bit logs.
+To do this, use the following configuration:
+
+```yaml
+fluent-bit:
+  config:
+    filters: |
+      # Prevent fluent-bit and fluentd logs from further processing
+      [FILTER]:
+          Name grep
+          Match *fluent*
+          Exclude log ^
+      # Print logs
+      [FILTER]
+          Name stdout
+          Match *
+```
 
 ## Gathering metrics
 
@@ -184,7 +261,7 @@ You can `port-forward` to a pod exposing `/metrics` endpoint and verify it is ex
 kubectl port-forward collection-sumologic-xxxxxxxxx-xxxxx 8080:24231
 ```
 
-Then, in your browser, go to `localhost:8080/metrics`. You should see Prometheus metrics exposed.
+Then, in your browser, go to `http://localhost:8080/metrics`. You should see Prometheus metrics exposed.
 
 ### Check the Prometheus UI
 
@@ -198,7 +275,13 @@ Then, in your browser, go to `localhost:8080`. You should be in the Prometheus U
 
 From here you can start typing the expected name of a metric to see if Prometheus auto-completes the entry.
 
-If you can't find the expected metrics, you can check if Prometheus is successfully scraping the `/metrics` endpoints. In the top menu, navigate to section `Status > Targets`. Check if any targets are down or have errors.
+If you can't find the expected metrics, ensure that prometheus configuration is correct and up to date.
+In the top menu, navigate to section `Status > Configuration` or go to the `http://localhost:8080/config`.
+Review the configuration.
+
+Next, you can check if Prometheus is successfully scraping the `/metrics` endpoints.
+In the top menu, navigate to section `Status > Targets` or go to the `http://localhost:8080/targets`.
+Check if any targets are down or have errors.
 
 ### Check Prometheus Remote Storage
 
@@ -207,6 +290,16 @@ We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus
 You can follow [Deploy Fluentd](#prometheus-logs) to verify there are no errors during remote write.
 
 You can also check `prometheus_remote_storage_.*` metrics to look for success/failure attempts.
+
+### Check Fluentd autoscaling
+
+Check if Fluentd autoscaling is enabled, for details please see [Fluentd Autoscaling][fluend_autoscaling] documentation.
+
+Some known indicators that autoscaling for Fluentd must be enabled:
+
+- High CPU usage for Fluentd Pods (above `500m`), resource consumption can be checked using `kubectl top pod -n <NAMESPACE>`
+
+- Following message in Fluentd logs: `failed to write data into buffer by buffer overflow action=:drop_oldest_chunk`
 
 ### Check FluentBit and Fluentd output metrics
 
@@ -240,7 +333,7 @@ is not running.
 One can verify that by using the following command:
 
 ```
-$ kubectl get pod -n <NAMESPACE> -l app=prometheus
+$ kubectl get pod -n <NAMESPACE> -l app.kubernetes.io/name=prometheus
 NAME                                 READY   STATUS    RESTARTS   AGE
 prometheus-<NAMESPACE>-prometheus-0  2/2     Running   1          4d20h
 ```
@@ -252,7 +345,7 @@ issues:
 kubectl logs -n <NAMESPACE> -l app=kube-prometheus-stack-operator
 ```
 
-[explore]: https://help.sumologic.com/Visualizations-and-Alerts/Explore
+[explore]: https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore
 
 ### Pod stuck in `ContainerCreating` state
 
@@ -555,3 +648,82 @@ We have a couple of possible solutions for this issue:
 [v2_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
 [storage_class]: https://kubernetes.io/docs/concepts/storage/storage-classes/
 [security_context]: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+
+### Duplicated logs
+
+We observed than under certain conditions, it's possible for FluentD to duplicate logs:
+
+- there are several requests made of one chunk
+- one of those requests is failing, resulting in the whole batch being retried
+
+In order to mitigate this, please use [fluentd-output-sumologic] with `use_internal_retry` option.
+Please follow [Split Big Chunks in Fluentd](./Best_Practices.md#split-big-chunks-in-fluentd)
+
+[fluentd-output-sumologic]: https://github.com/SumoLogic/fluentd-output-sumologic
+
+### Multiline log detection doesn't work as expected
+
+In order to detect multiline logs, we relay on regexes. By default we use the following regex to detect multiline:
+
+- `\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*`
+
+  Which matches the following example logs:
+
+  ```text
+  [2022-06-28 00:00:00 ...
+  [2022-06-28T00:00:00 ...
+  2022-06-28 00:00:00 ...
+  2022-06-28T00:00:00 ...
+  ```
+
+This regex should cover most of the cases, but as log formats are not unified, it doesn't cover all multiline logs.
+
+Consider the following examples:
+
+- Text format is used for sending data to sumo
+
+#### Using text format
+
+##### Problem
+
+If you changed log format to `text`, you need to know that multiline detection performed on the collection side is not respected anymore.
+As we are sending logs as a wall of plain text, there is no way to inform Sumo Logic, which line belongs to which log.
+In such scenario, multiline detection is performed on Sumo Logic side. By default it uses [Infer Boundaries][infer-boundaries].
+You can review the source configuration in [HTTP Source Settings][http-source].
+
+**Note**: Your source name is going to be taken from `sumologic.collectorName` or `sumologic.clusterName` (`kubernetes` by default).
+
+##### Resolution
+
+In order to change multiline detection to [Boundary Regex][boundary-regex], for example to `\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*`,
+add the following configuration to your `values.yaml`:
+
+```yaml
+sumologic:
+  collector:
+    sources:
+      logs:
+        default:
+          properties:
+            ## Disable automatic multiline detection on collector side
+            use_autoline_matching: false
+            ## Set the following multiline detection regexes on collector side:
+            ## - \{".* - in order to match json lines
+            ## - \[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*
+            ## Note: `\` is translated to `\\` and `"` to `\"` as we pass to terraform script
+            manual_prefix_regexp: (\\{\".*|\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*)
+```
+
+**Note**: Double escape of `\` is needed, as well as escaping `"`, because value of `manual_prefix_regexp` is passed to terraform script.
+
+**Note**: If you use `json` format along with `text` format, you need to add regex for `json` as well (`\\{\".*`)
+
+[infer-boundaries]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#infer-boundaries
+[http-source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source
+[boundary-regex]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#boundary-regex
+
+### Out of memory (OOM) failures for Prometheus Pod
+
+If you observe that Prometheus Pod needs more and more resources (out of memory failures - OOM killed Prometheus) and you are not able to increase
+them then you may need to configure additional instance of Prometheus due to huge amount of collected metrics in the cluster,
+for details please see [this](../docs/additional_prometheus_configuration.md#additional-prometheus-instance) documentation.

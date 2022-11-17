@@ -9,7 +9,7 @@ apt-get --yes install apt-transport-https jq make npm yamllint
 
 echo "export EDITOR=vim" >> /home/vagrant/.bashrc
 
-snap install microk8s --classic --channel=1.21/stable
+snap install microk8s --classic --channel=1.22/stable
 microk8s.status --wait-ready
 ufw allow in on cbr0
 ufw allow out on cbr0
@@ -44,7 +44,7 @@ echo "sudo iptables -P FORWARD ACCEPT" >> /home/vagrant/.bashrc
 
 echo "export KUBECONFIG=/var/snap/microk8s/current/credentials/kubelet.config" >> /home/vagrant/.bashrc
 
-HELM_3_VERSION=v3.5.4
+HELM_3_VERSION=v3.8.2
 
 mkdir /opt/helm3
 curl "https://get.helm.sh/helm-${HELM_3_VERSION}-linux-amd64.tar.gz" | tar -xz -C /opt/helm3
@@ -106,7 +106,7 @@ ln -s /sumologic/vagrant/scripts/sumo-make.sh /usr/local/bin/sumo-make
 ln -s /sumologic/vagrant/scripts/sumo-make-completion.sh /etc/bash_completion.d/sumo-make
 
 # Install Go
-GO_VERSION=1.17
+GO_VERSION=1.18
 curl -LJ "https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o go.linux-amd64.tar.gz \
     && rm -rf /usr/local/go \
     && tar -C /usr/local -xzf go.linux-amd64.tar.gz \

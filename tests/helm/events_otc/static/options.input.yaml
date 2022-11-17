@@ -1,0 +1,14 @@
+otelevents:
+  logLevel: debug
+
+sumologic:
+  clusterName: testCluster
+  collectorName: testCollector
+  events:
+    provider: otelcol
+    sourceName: testSourceName
+    sourceCategory: testSourceCategory
+    persistence: 
+      enabled: false
+
+

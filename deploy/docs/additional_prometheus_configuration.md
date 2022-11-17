@@ -4,6 +4,8 @@
 
 Prometheus configuration is located in `values.yaml` under `kube-prometheus-stack` key for helm installation.
 
+__Note__: It is best practice to add custom configuration to a user-supplied values file and then use it like so (```helm install -f my_values.yaml -n sumologic```)
+
 If the `kube-prometheus-stack` has been installed directly, a `prometheus-overrides.yaml` should be generated
 using `docker`/`kubectl` and [sumologic-kubernetes-tools](https://github.com/sumologic/sumologic-kubernetes-tools#template-dependency-configuration):
 
@@ -12,12 +14,12 @@ using `docker`/`kubectl` and [sumologic-kubernetes-tools](https://github.com/sum
  kubectl run tools \
   -it --quiet --rm \
   --restart=Never -n sumologic \
-  --image sumologic/kubernetes-tools:2.9.0 \
+  --image sumologic/kubernetes-tools:2.13.0 \
   -- template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 
  # or using docker
  docker run -it --rm \
-  sumologic/kubernetes-tools:2.9.0 \
+  sumologic/kubernetes-tools:2.13.0 \
   template-dependency kube-prometheus-stack > prometheus-overrides.yaml
 ```
 
@@ -30,15 +32,11 @@ The configuration contains a section like the following for each of the Kubernet
 If you would like to collect other metrics that are not listed in configuration, you can add a new section to the file.
 
 ```yaml
-kube-prometheus-stack:  # For values.yaml
-    # ...
+kube-prometheus-stack:  # Add to a user-supplied values.yaml
     prometheus:
-      # ...
       prometheusSpec:
-        # ...
-        remoteWrite:
-          # ...
-          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.<some_label>
+        additionalRemoteWrite:
+          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<some_label>
             writeRelabelConfigs:
             - action: keep
               regex: <metric1>|<metric2>|...
@@ -160,12 +158,9 @@ Once you have created this yaml file, go ahead and run `kubectl create -f name_o
 If you want to keep all your changes inside configuration instead of serviceMonitors, you can add your changes to `prometheus.additionalServiceMonitors` section. For given serviceMonitor configuration it should looks like snippet below:
 
 ```yaml
-kube-prometheus-stack:  # For values.yaml
-  # ...
+kube-prometheus-stack:  # Add to user-supplied my_values.yaml
   prometheus:
-    # ...
     additionalServiceMonitors:
-      # ...
       - name: my-metrics
         additionalLabels:
           app: my-metrics
@@ -190,21 +185,17 @@ annotations:
   prometheus.io/path: "/metrics" # Path which metrics should be scraped from
 ```
 
-> **Note: This solution works only to scrape metrics from one container within the pod**
+> __Note: This solution works only to scrape metrics from one container within the pod__
 
 ### Create a new HTTP source in Sumo Logic
 
-To avoid [blacklisting](https://help.sumologic.com/Metrics/Understand_and_Manage_Metric_Volume/Blacklisted_Metrics_Sources) metrics should be distributed across multiple HTTP sources. You can create a new HTTP source using `values.yaml`:
+To avoid being [disabled](https://help.sumologic.com/docs/metrics/manage-metric-volume/disabled-metrics-sources), metrics should be distributed across multiple HTTP sources. You can create a new HTTP source using `values.yaml`:
 
 ```yaml
 sumologic:
-  # ...
   collector:
-    # ...
     sources:
-      # ...
       metrics:
-        # ...
         my_source:
           name: my-source-name
 ```
@@ -212,7 +203,7 @@ sumologic:
 This will create a new HTTP source with the name `my-source-name` in your Sumo Logic account.
 All sources are created on the same Collector.
 
-**This configuration doesn't modify or remove HTTP sources from your account.
+__This configuration doesn't modify or remove HTTP sources from your account.__
 If you rename a source in `values.yaml`, the new source will be added to your Sumo Logic account**
 
 ### Update Fluentd configuration
@@ -272,15 +263,11 @@ Make sure you include the same tag you created in your Fluentd configmap in the 
 Here is an example addition to the configuration file that will forward metrics to Sumo:
 
 ```yaml
-kube-prometheus-stack:  # For values.yaml
-    # ...
+kube-prometheus-stack:  # Add to a user-supplied values.yaml
     prometheus:
-      # ...
       prometheusSpec:
-        # ...
-        remoteWrite:
-          # ...
-          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
+        additionalRemoteWrite:
+          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.YOUR_TAG
             writeRelabelConfigs:
             - action: keep
               regex: <YOUR_CUSTOM_MATCHER>
@@ -290,15 +277,11 @@ kube-prometheus-stack:  # For values.yaml
 According to our example, below config could be useful:
 
 ```yaml
-kube-prometheus-stack:  # For values.yaml
-    # ...
+kube-prometheus-stack:  # Add to a user-supplied values.yaml
     prometheus:
-      # ...
       prometheusSpec:
-        # ...
-        remoteWrite:
-          # ...
-          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local:9888/prometheus.metrics.YOUR_TAG
+        additionalRemoteWrite:
+          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.YOUR_TAG
             writeRelabelConfigs:
             - action: keep
               regex: 'example-metrics'
@@ -317,3 +300,85 @@ invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]s
 ```
 
 If all goes well, you should now have your custom metrics piping into Sumo Logic.
+
+## Additional Prometheus instance
+
+When there is a need to collect huge amount of metrics then single Prometheus Pod may not be enough.
+One of the solutions that can be used is creating additional Prometheus instance for capturing only selected metrics.
+
+Metrics can be assigned to different Prometheus instances by giving them separate sets of ServiceMonitors to handle.
+In the Prometheus resource, the settings responsible for this are:
+
+```yaml
+  serviceMonitorNamespaceSelector:
+  serviceMonitorSelector:
+```
+
+Figuring out what ServiceMonitors exist in your cluster, the metrics each of them selects, and their data volume, are beyond the scope of this document.
+
+To create additional Prometheus instance `Prometheus` resource must be created in the Kubernetes cluster, e.g.
+
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    additional-prometheus: "true"
+  name: additional-prometheus
+  namespace: <SUMOLOGIC-COLLECTION-NAMESPACE>
+spec:
+  containers:
+  - env:
+    - name: FLUENTD_METRICS_SVC
+      valueFrom:
+        configMapKeyRef:
+          key: fluentdMetrics
+          name: sumologic-configmap
+    - name: NAMESPACE
+      valueFrom:
+        configMapKeyRef:
+          key: fluentdNamespace
+          name: sumologic-configmap
+    name: config-reloader
+  enableAdminAPI: false
+  image: quay.io/prometheus/prometheus:v2.22.1
+  listenLocal: false
+  logFormat: logfmt
+  logLevel: info
+  paused: false
+  portName: web
+  remoteWrite:
+  <REMOTE-WRITE-CONFIGURATION>
+  replicas: 1
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 8Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  retention: 1d
+  routePrefix: /
+  scrapeInterval: 30s
+  securityContext:
+    fsGroup: 2000
+    runAsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector:
+    matchLabels:
+      <SERVICE-MONITOR-LABELS>
+  version: v2.22.1
+  walCompression: true
+```
+
+More information about `Prometheus` can be found in [this][prometheus-spec] documentation,
+the most crucial parts are marked in above example:
+
+- `<SUMOLOGIC-COLLECTION-NAMESPACE>` - indicates namespace in which Sumo Logic Kubernetes Collection Helm Chart is deployed
+- `<REMOTE-WRITE-CONFIGURATION>` - indicates remote write configuration, for details please see [this][remote-write-spec], this part defines which metrics are sent to Sumo Logic
+- `<SERVICE-MONITOR-LABELS>` - indicates labels which are set for ServiceMonitors which are used to configure the additional instance of Prometheus, this part allows for capturing only limited set of metrics by the additional Prometheus.
+
+[prometheus-spec]: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.Prometheus
+[remote-write-spec]: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.RemoteWriteSpec

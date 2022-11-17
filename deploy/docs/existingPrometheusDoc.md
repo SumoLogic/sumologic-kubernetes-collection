@@ -5,12 +5,16 @@ metrics from scaling Prometheus replicas.
 If you are running multiple Prometheus replicas, please follow our
 [Side-by-Side](SideBySidePrometheus.md) instructions.
 
+- [Requirements](#requirements)
 - [Prerequisite](#prerequisite)
 - [Install Sumo Logic Helm Chart](#install-sumo-logic-helm-chart)
 - [Update Existing Kube Prometheus Stack Helm Chart](#update-existing-kube-prometheus-stack-helm-chart)
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Merge Prometheus Configuration](#merge-prometheus-configuration)
 - [Troubleshooting](#troubleshooting)
+  - [UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "prometheusrulemutate.monitoring.coreos.com"](#upgrade-failed-failed-to-create-resource-internal-error-occurred-failed-calling-webhook-prometheusrulemutatemonitoringcoreoscom)
+  - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
+  - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
 - [Customizing Installation](#customizing-installation)
 - [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
 - [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
@@ -24,10 +28,21 @@ If you do not wish to modify your Prometheus Operator and wish to run it side-by
 with our collection, please refer to our
 [How to install our Prometheus side by side with your existing Prometheus](./SideBySidePrometheus.md) documentation.
 
+## Requirements
+
+If you don’t already have a Sumo account, you can create one by clicking the Free Trial button on https://www.sumologic.com/.
+
+The following are required to setup Sumo Logic's Kubernetes collection.
+
+- An [Access ID and Access Key](https://help.sumologic.com/docs/manage/security/access-keys/) with [Manage Collectors](https://help.sumologic.com/docs/manage/users-roles/roles/role-capabilities#data-management) capability.
+- Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
+
+To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](./Performance.md).
+
 ## Prerequisite
 
 Sumo Logic Apps for Kubernetes and Explore require you to add the following
-[fields](https://help.sumologic.com/Manage/Fields#Manage_fields) in theSumo Logic UI
+[fields](https://help.sumologic.com/docs/manage/fields/#manage-fields) in theSumo Logic UI
 to your Fields table schema.
 This is to ensure your logs are tagged with relevant metadata.
 This is a one time setup per Sumo Logic account.
@@ -45,8 +60,8 @@ This is a one time setup per Sumo Logic account.
 
 The Helm chart installation requires two parameter overrides:
 
-- __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/Manage/Security/Access-Keys).
-- __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/Manage/Security/Access-Keys).
+- __sumologic.accessId__ - Sumo [Access ID](https://help.sumologic.com/docs/manage/security/access-keys/).
+- __sumologic.accessKey__ - Sumo [Access key](https://help.sumologic.com/docs/manage/security/access-keys/).
 
 To get an idea of the resources this chart will require to run on your cluster,
 you can reference our [performance doc](./Performance.md).
@@ -58,6 +73,7 @@ The following parameter is optional, but we recommend setting it.
 
 - __sumologic.clusterName__ - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+  Whitespaces in the cluster name will be replaced with dashes.
 
 To install the chart, first add the `sumologic` private repo:
 
@@ -65,15 +81,27 @@ To install the chart, first add the `sumologic` private repo:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Next you can run `helm upgrade --install` to install our chart.
-An example command with the minimum parameters is provided below.
-The following command will install the Sumo Logic chart with the release name `my-release`
-in the namespace your `kubectl` context is currently set to.
-The below command also disables the `kube-prometheus-stack` sub-chart since
+Next you can prepare `values.yaml` with configuration.
+An example file with the minimum confiuration is provided below.
+It disables the `kube-prometheus-stack` sub-chart since
 we will be modifying the existing prometheus operator install.
 
+```yaml
+sumologic:
+  accessId: ${SUMO_ACCESS_ID}
+  accessKey: ${SUMO_ACCESS_KEY}
+  clusterName: ${MY_CLUSTER_NAME}
+kube-prometheus-stack:
+  enabled: false
+```
+
+Now you can run `helm upgrade --install` to install our chart.
+The following command will install the Sumo Logic chart with the release name `my-release`
+in the namespace your `kubectl` context is currently set to.
+
 ```bash
-helm upgrade --install my-release sumologic/sumologic --set sumologic.accessId=<SUMO_ACCESS_ID> --set sumologic.accessKey=<SUMO_ACCESS_KEY>  --set sumologic.clusterName="<MY_CLUSTER_NAME>" --set kube-prometheus-stack.enabled=false
+helm upgrade --install my-release sumologic/sumologic \
+  -f values.yaml
 ```
 
 > __Note__: If the release exists, it will be upgraded, otherwise it will be installed.
@@ -84,26 +112,51 @@ If the namespace does not exist, you can add the `--create-namespace` flag.
 helm upgrade \
   --install my-release sumologic/sumologic \
   --namespace=my-namespace \
-  --set sumologic.accessId=<SUMO_ACCESS_ID> \
-  --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
-  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
-  --set kube-prometheus-stack.enabled=false \
+  -f values.yaml \
   --create-namespace
 ```
 
 If you are installing the helm chart in Openshift platform, ensure that operator is listening for `my-namespace`
-and you can do the following:
+by adding the following configuration to `values.yaml`:
+
+```yaml
+sumologic:
+  scc:
+    create: true
+tailing-sidecar-operator:
+  scc:
+    create: true
+fluent-bit:
+  securityContext:
+    privileged: true
+```
+
+so, it should looks like the following way:
+
+```yaml
+sumologic:
+  accessId: ${SUMO_ACCESS_ID}
+  accessKey: ${SUMO_ACCESS_KEY}
+  clusterName: ${MY_CLUSTER_NAME}
+  scc:
+    create: true
+tailing-sidecar-operator:
+  scc:
+    create: true
+kube-prometheus-stack:
+  enabled: false
+fluent-bit:
+  securityContext:
+    privileged: true
+```
+
+and then upgrade it to apply configuration:
 
 ```bash
 helm upgrade \
   --install my-release sumologic/sumologic \
   --namespace=my-namespace \
-  --set sumologic.accessId=<SUMO_ACCESS_ID> \
-  --set sumologic.accessKey=<SUMO_ACCESS_KEY> \
-  --set sumologic.clusterName="<MY_CLUSTER_NAME>" \
-  --set kube-prometheus-stack.prometheusOperator.enabled=false \
-  --set sumologic.scc.create=true \
-  --set fluent-bit.securityContext.privileged=true
+  -f values.yaml
 ```
 
 ## Update Existing Kube Prometheus Stack Helm Chart
@@ -170,8 +223,8 @@ Once you have completed installation, you can
 or [open a new Explore tab] in Sumo Logic.
 If you do not see data in Sumo Logic, you can review our [troubleshooting guide](./Troubleshoot_Collection.md).
 
-[sumo-k8s-app-dashboards]: https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kubernetes/Install_the_Kubernetes_App_and_view_the_Dashboards
-[open a new Explore tab]: https://help.sumologic.com/Observability_Solution/Kubernetes_Solution/Navigate_your_Kubernetes_environment
+[sumo-k8s-app-dashboards]: https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app
+[open a new Explore tab]: https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore
 
 ## Merge Prometheus Configuration
 
@@ -238,7 +291,7 @@ kubectl logs POD_NAME -f
 If you get `Error: collector with name 'sumologic' does not exist
 sumologic_http_source.default_metrics_source: Importing from ID`, you can safely ignore
 it and the installation should complete successfully.
-The installation process creates new [HTTP endpoints](https://help.sumologic.com/03Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source)
+The installation process creates new [HTTP endpoints](https://help.sumologic.com/docs/send-data/hosted-collectors/http-source)
 in your Sumo Logic account, that are used to send data to Sumo.
 This error occurs if the endpoints had already been created by an earlier run of the installation process.
 
@@ -251,7 +304,7 @@ We recommend creating a new `values.yaml` for each Kubernetes cluster you wish
 to install collection on and __setting only the properties you wish to override__.
 Once you have customized you can use the following commands to install or upgrade.
 Remember to define the properties in our [requirements section](#requirements)
-in the `values.yaml` as well or pass them in via `--set`
+in the `values.yaml` as well
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic -f values.yaml
@@ -282,7 +335,9 @@ If you wish to upgrade to a specific version, you can use the `--version` flag.
 helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=1.0.0
 ```
 
-If you no longer have your `values.yaml` from the first installation or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart. For example, if the release is called `my-release` you can run the following.
+__Note:__ If you no longer have your `values.yaml` from the first installation
+or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart.
+For example, if the release is called `my-release` you can run the following.
 
 ```bash
 helm get values my-release

@@ -1,8 +1,3 @@
-variable "cluster_name" {
-  type  = string
-  default = "{{ template "sumologic.clusterNameReplaceSpaceWithDash" . }}"
-}
-
 variable "collector_name" {
   type  = string
   {{- if .Values.sumologic.collectorName }}

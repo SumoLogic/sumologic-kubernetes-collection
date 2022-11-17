@@ -1,4 +1,4 @@
-{{- if .Values.sumologic.metrics.remoteWriteProxy.enabled }}
+{{- if eq (include "metrics.remoteWriteProxy.enabled" .) "true" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -10,7 +10,7 @@ spec:
   ports:
     - name: http
       port: 9888
-      targetPort: 80
+      targetPort: {{ .Values.sumologic.metrics.remoteWriteProxy.config.port }}
   selector:
     app: {{ template "sumologic.labels.app.remoteWriteProxy.pod" . }}
 {{- end }}

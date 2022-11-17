@@ -2,17 +2,19 @@ sumologic:
   logs:
     metadata:
       provider: otelcol
+    collector:
+      otelcol:
+        enabled: true
 
   metrics:
+    enabled: false
+
+  events:
     enabled: false
 
 # We're using otelcol instead
 fluent-bit:
   enabled: false
-
-fluentd:
-  events:
-    enabled: false
 
 metadata:
   logs:
@@ -24,34 +26,34 @@ metadata:
               - otlp
             processors:
               - memory_limiter
-              - attributes/containers
+              - filter/include_containers
               - groupbyattrs/containers
               - k8s_tagger
+              - resource/add_cluster
               - source/containers
+              - resource/drop_annotations
               - resource/containers_copy_node_to_host
               - batch
             exporters:
               - sumologic/containers
 
-
 otellogs:
-  enabled: true
   config:
-    service:
-      pipelines:
-        logs/containers:
-          receivers:
-            - filelog/containers
-          exporters:
-            - otlphttp
-          processors:
-            - filter/exclude_receiver_mock_container
-    processors:
-      # Filter out receiver-mock logs to prevent snowball effect
-      filter/exclude_receiver_mock_container:
-        logs:
+    override:
+      receivers:
+        journald:
+          directory: /run/log/journal
+        filelog/containers:
           exclude:
-            match_type: strict
-            record_attributes:
-              - key: k8s.container.name
-                value: receiver-mock
+            - /var/log/pods/receiver-mock_*/*/*.log
+  daemonset:
+    extraVolumeMounts:
+      - mountPath: /run/log/journal
+        name: run-log-journal
+    extraVolumes:
+      # kind doesn't enable journald persistence, and the journal resides at /run/log/journal
+      # instead of /var/log/journal
+      - hostPath:
+          path: /run/log/journal
+          type: DirectoryOrCreate
+        name: run-log-journal

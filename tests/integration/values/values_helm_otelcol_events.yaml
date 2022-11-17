@@ -1,0 +1,15 @@
+sumologic:
+  events:
+    provider: otelcol
+  logs:
+    enabled: false
+  metrics:
+    enabled: false
+
+otelevents:
+  config:
+    override:
+      receivers:
+        raw_k8s_events:
+        # we want to get all historical events for this test
+          max_event_age: 1h

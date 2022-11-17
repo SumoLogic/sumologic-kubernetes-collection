@@ -29,13 +29,9 @@ rules:
   resources:
     - configmaps
   verbs: ["create", "patch"]
-{{- if .Values.fluentd.podSecurityPolicy.create }}
-- apiGroups: ["policy"]
+{{- if index .Values "opentelemetry-operator" "enabled" }}
+- apiGroups: ["opentelemetry.io"]
   resources:
-  - podsecuritypolicies
-  resourceNames:
-  - {{ template "sumologic.metadata.name.events.statefulset" . }}
-  - {{ template "sumologic.metadata.name.metrics.statefulset" . }}
-  - {{ template "sumologic.metadata.name.logs.statefulset" . }}
-  verbs: ["use"]
+  - instrumentations
+  verbs: ["patch", "get", "create"]
 {{- end }}

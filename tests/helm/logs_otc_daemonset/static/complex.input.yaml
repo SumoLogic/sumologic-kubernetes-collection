@@ -1,0 +1,68 @@
+sumologic:
+  logs:
+    collector:
+      otelcol:
+        enabled: true
+
+fluent-bit:
+  enabled: false
+
+otellogs:
+  daemonset:
+    ## Set securityContext for containers running in pods in log collector daemonset
+    securityContext:
+    ## In order to reliably read logs from mounted node logging paths, we need to run as root
+      fsGroup: 0
+      runAsUser: 0
+      runAsGroup: 0
+
+    ## Add custom labels to all otelcol daemonset pods
+    podLabels:
+      someLabel: someValue
+
+    ## Add custom annotations to all otelcol daemonset pods
+    podAnnotations:
+      someAnnotation: someValue
+
+    resources:
+      limits:
+        memory: 1Gi
+        cpu: 1000m
+      requests:
+        memory: 32Mi
+        cpu: 100m
+
+    ## Option to define priorityClassName to assign a priority class to pods.
+    priorityClassName: 'prio'
+
+    ## Set securityContext for containers running in pods in log collector daemonset
+    containers:
+      otelcol:
+        securityContext: {}
+
+    nodeSelector:
+      sumologic.com/kind: worker
+
+    tolerations:
+      - key: "worker"
+        operator: "Equal"
+        value: worker
+        effect: "NoSchedule"
+    affinity: {}
+
+    extraEnvVars:
+      - name: VALUE_FROM_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: secret_name
+            key: secret_key
+
+    extraVolumes:
+      - name: es-certs
+        secret:
+          defaultMode: 420
+          secretName: es-certs
+    extraVolumeMounts:
+      - name: es-certs
+        mountPath: /certs
+        readOnly: true

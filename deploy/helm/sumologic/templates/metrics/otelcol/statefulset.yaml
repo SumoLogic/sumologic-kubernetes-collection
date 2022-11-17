@@ -89,6 +89,10 @@ spec:
               topologyKey: "kubernetes.io/hostname"
 {{- end }}
 {{- end }}
+{{- if .Values.metadata.metrics.statefulset.topologySpreadConstraints }}
+      topologySpreadConstraints:
+{{ toYaml .Values.metadata.metrics.statefulset.topologySpreadConstraints | indent 6 }}
+{{- end }}
       volumes:
       - name: config-volume
         configMap:
@@ -124,6 +128,9 @@ spec:
         - name: metrics
           containerPort: 8888
           protocol: TCP
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
         {{- end }}
         livenessProbe:
           httpGet:
@@ -135,6 +142,11 @@ spec:
             path: /
             port: 13133 # Health Check extension default port.
           {{- toYaml .Values.metadata.metrics.statefulset.containers.otelcol.readinessProbe | nindent 10 }}
+        startupProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          {{- toYaml .Values.metadata.metrics.statefulset.containers.otelcol.startupProbe | nindent 10 }}
         volumeMounts:
         - name: config-volume
           mountPath: /etc/otel/config.yaml

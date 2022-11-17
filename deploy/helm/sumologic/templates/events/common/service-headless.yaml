@@ -1,0 +1,25 @@
+{{- if eq (include "events.enabled" .) "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.metadata.name.events.service-headless" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.events.service-headless" . }}
+    {{- include "sumologic.labels.events" . | nindent 4 }}
+{{- if .Values.fluentd.serviceLabels }}
+{{ toYaml .Values.fluentd.serviceLabels | indent 4 }}
+{{- end }}
+spec:
+  selector:
+    app: {{ template "sumologic.labels.app.events.pod" . }}
+  clusterIP: None
+  ports:
+  - name: metrics
+    port: 24231
+    targetPort: 24231
+    protocol: TCP
+  - name: otelcol-metrics
+    port: 8888
+    targetPort: 8888
+    protocol: TCP
+{{- end }}

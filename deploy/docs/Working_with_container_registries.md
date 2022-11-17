@@ -46,6 +46,7 @@ Full list of `values.yaml` keys for all the images that are used, can be found b
 | setup job             | `sumologic.setup.job.pullSecrets`               |
 | fluentd               | `sumologic.pullSecrets`                         |
 | Sumo Logic OT distro  | `sumologic.pullSecrets`                         |
+| remote-write-proxy    | `sumologic.pullSecrets`                         |
 | kube-prometheus-stack | `kube-prometheus-stack.global.imagePullSecrets` |
 | metrics-server        | `metrics-server.image.pullSecrets`              |
 | telegraf-operator     | `telegraf-operator.imagePullSecrets`            |
@@ -82,7 +83,7 @@ fluentd:
 
 New versions of the Helm chart can include updating the default container image versions. When using
 a custom container registry, we strongly recommend updating the version to be in-line with the defaults.
-The [changelog][changelog] and [release_notes][release notes] will always mention these kinds of updates
+The [changelog][changelog] and [release notes][release_notes] will always mention these kinds of updates
 and can safely be used as a guiding tool when upgrading.
 
 [changelog]: ../../CHANGELOG.md

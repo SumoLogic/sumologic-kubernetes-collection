@@ -354,9 +354,7 @@ helm upgrade collection sumologic/sumologic \
         --install \
         --namespace sumologic \
         --version "<VERSION>" \
-        --set sumologic.accessId="<SUMO_ACCESS_ID>" \
-        --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
-        --set sumologic.clusterName="<CLUSTER_NAME>" \
+        -f values.yaml
         -f values_containerd.yaml
 ```
 
@@ -514,9 +512,7 @@ helm upgrade collection sumologic/sumologic \
         --install \
         --namespace sumologic \
         --version "<VERSION>" \
-        --set sumologic.accessId="<SUMO_ACCESS_ID>" \
-        --set sumologic.accessKey="<SUMO_ACCESS_KEY>" \
-        --set sumologic.clusterName="<CLUSTER_NAME>" \
+        -f values.yaml
         -f values_containerd_new_parser.yaml
 ```
 
@@ -544,4 +540,3 @@ time: "2022-02-11T09:34:42.345288915Z"
 [configurable-multiline-parsers]: https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/multiline-parsing#configurable-multiline-parsers
 [multiline-filter]: https://docs.fluentbit.io/manual/pipeline/filters/multiline-stacktrace
 [fluent-bit-multiline-issue]: https://github.com/fluent/fluent-bit/issues/4234
-[rubular]: https://rubular.com/

@@ -1,0 +1,123 @@
+{{- if and (eq .Values.sumologic.traces.enabled true) (eq .Values.otelgateway.enabled true) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "sumologic.metadata.name.otelgateway.deployment" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.otelgateway.pod" . }}
+    component: {{ template "sumologic.labels.app.otelgateway.component" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  minReadySeconds: 5
+  replicas: {{ .Values.otelgateway.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.labels.app.otelgateway.pod" . }}
+      component: {{ template "sumologic.labels.app.otelgateway.component" . }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 6 }}
+{{- end }}
+{{- if .Values.otelgateway.deployment.podLabels }}
+{{ toYaml .Values.otelgateway.deployment.podLabels | indent 6 }}
+{{- end }}
+  template:
+    metadata:
+      annotations:
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.otelgateway.deployment.podAnnotations }}
+{{ toYaml .Values.otelgateway.deployment.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+        app: {{ template "sumologic.labels.app.otelgateway.pod" . }}
+        component: {{ template "sumologic.labels.app.otelgateway.component" . }}
+        {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.otelgateway.deployment.podLabels }}
+{{ toYaml .Values.otelgateway.deployment.podLabels | indent 8 }}
+{{- end }}
+    spec:
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
+      {{- if .Values.otelgateway.deployment.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.otelgateway.deployment.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.otelgateway.deployment.tolerations }}
+      tolerations:
+{{ toYaml .Values.otelgateway.deployment.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.otelgateway.deployment.priorityClassName }}
+      priorityClassName: {{ .Values.otelgateway.deployment.priorityClassName | quote }}
+      {{- end }}
+      # Otel agent quits if the load balancing backend (collector/samples) is
+      # not ready during first connect attempt. Restart policy `Always` guarantees that
+      # the agent will have a chance to retry when collector is ready.
+      restartPolicy: Always
+      containers:
+      - name: otelcontrib-gateway
+        image: {{ .Values.otelgateway.deployment.image.repository }}:{{ .Values.otelgateway.deployment.image.tag }}
+        imagePullPolicy: {{ .Values.otelgateway.deployment.image.pullPolicy }}
+        args:
+          - "--config=/conf/traces.otelgateway.conf.yaml"
+        env:
+        - name: GOGC
+          value: "80"
+{{- $ctx := .Values -}}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") -}}
+{{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" "metrics" "Name" "default" ) | nindent 8 }}
+{{- if .Values.otelgateway.deployment.extraEnvVars }}
+{{- toYaml .Values.otelgateway.deployment.extraEnvVars | nindent 8 }}
+{{- end }}
+        resources:
+          {{- toYaml .Values.otelgateway.deployment.resources | nindent 10 }}
+        ports:
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
+        - containerPort: 5778  # Default endpoint for Jaeger Sampling.
+        - containerPort: 6831  # Default endpoint for Jaeger Thrift Compact receiver.
+          protocol: UDP
+        - containerPort: 6832  # Default endpoint for Jaeger Thrift Binary receiver.
+          protocol: UDP
+        - containerPort: 8888  # Default endpoint for querying metrics.
+        - containerPort: 9411  # Default endpoint for Zipkin receiver.
+        - containerPort: 14250 # Default endpoint for Jaeger gRPC receiver.
+        - containerPort: 14267 # Default endpoint for Jaeger TChannel receiver.
+        - containerPort: 14268 # Default endpoint for Jaeger HTTP receiver.
+        - containerPort: 55678 # Default endpoint for Opencensus receiver.
+        - containerPort: 4317  # Default endpoint for OTLP receiver.
+        - containerPort: 4318  # Default endpoint for OTLP HTTP receiver.
+        - containerPort: 55680 # Old endpoint for OTLP gRPC receiver.
+        - containerPort: 55681 # Default endpoint for OTLP HTTP receiver. (deprecated)
+        volumeMounts:
+        - name: otelgateway-config-vol
+          mountPath: /conf
+{{- if .Values.otelgateway.deployment.extraVolumeMounts }}
+{{- toYaml .Values.otelgateway.deployment.extraVolumeMounts | nindent 8 }}
+{{- end }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          {{- toYaml .Values.otelgateway.deployment.livenessProbe | nindent 10 }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          {{- toYaml .Values.otelgateway.deployment.readinessProbe | nindent 10 }}
+        startupProbe:
+          httpGet:
+            path: /
+            port: 13133
+          {{- toYaml .Values.otelgateway.deployment.startupProbe | nindent 10 }}
+      volumes:
+        - configMap:
+            name: {{ template "sumologic.metadata.name.otelgateway.configmap" . }}
+          name: otelgateway-config-vol
+{{- if .Values.otelgateway.deployment.extraVolumes }}
+{{- toYaml .Values.otelgateway.deployment.extraVolumes | nindent 8 }}
+{{- end }}
+{{- end }}

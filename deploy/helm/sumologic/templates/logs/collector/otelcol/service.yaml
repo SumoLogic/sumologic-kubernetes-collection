@@ -1,0 +1,23 @@
+{{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.metadata.name.logs.collector.service" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.logs.collector.service" . }}
+    {{- include "sumologic.labels.scrape.logs.collector" . | nindent 4 }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+{{- if .Values.otellogs.serviceLabels }}
+{{ toYaml .Values.otellogs.serviceLabels | indent 4 }}
+{{- end }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ template "sumologic.labels.app.logs.collector.pod" . }}
+  ports:
+  {{- if eq .Values.otellogs.metrics.enabled true }}
+  - name: metrics
+    port: 8888
+    targetPort: 8888
+    protocol: TCP
+  {{- end }}
+{{- end }}

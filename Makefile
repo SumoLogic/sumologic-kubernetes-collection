@@ -56,3 +56,16 @@ markdown-table-formatter-check:
 
 markdown-table-formatter-format:
 	./ci/markdown_table_formatter.sh --format
+
+# Vagrant commands
+vup:
+	vagrant up
+
+vssh:
+	vagrant ssh -c 'cd /sumologic; exec "$$SHELL"'
+
+vhalt:
+	vagrant halt
+
+vdestroy:
+	vagrant destroy -f

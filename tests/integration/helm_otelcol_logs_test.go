@@ -29,14 +29,17 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 		tickDuration            = 3 * time.Second
 		waitDuration            = 3 * time.Minute
 		logsGeneratorCount uint = 1000
+		logRecords              = 4   //	number of log records in single loop, see: tests/integration/yamls/pod_multiline_long_lines.yaml
+		logLoops                = 500 // number of loops in which logs are generated, see: tests/integration/yamls/pod_multiline_long_lines.yaml
+		multilineLogCount  uint = logRecords * logLoops
 	)
 
 	featInstall := features.New("installation").
-		Assess("sumologic secret is created",
+		Assess("sumologic secret is created with endpoints",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
 				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
-				require.Len(t, secret.Data, 3)
+				require.Len(t, secret.Data, 1, "Secret has incorrect number of endpoints. There should be only 1 endpoint, for logs.")
 				return ctx
 			}).
 		Assess("otelcol logs statefulset is ready",
@@ -121,6 +124,7 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 			logsGeneratorCount,
 			map[string]string{
 				"_collector":       "kubernetes",
+				"cluster":          "kubernetes",
 				"namespace":        internal.LogsGeneratorName,
 				"pod_labels_app":   internal.LogsGeneratorName,
 				"container":        internal.LogsGeneratorName,
@@ -139,6 +143,34 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 			waitDuration,
 			tickDuration,
 		)).
+		Assess("logs from node systemd present", stepfuncs.WaitUntilExpectedLogsPresent(
+			10, // we don't really control this, just want to check if the logs show up
+			map[string]string{
+				"cluster":         "kubernetes",
+				"_sourceName":     "",
+				"_sourceCategory": "kubernetes/system",
+				"_sourceHost":     "",
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Assess("logs from kubelet present", stepfuncs.WaitUntilExpectedLogsPresent(
+			1, // we don't really control this, just want to check if the logs show up
+			map[string]string{
+				"cluster":         "kubernetes",
+				"_sourceName":     "k8s_kubelet",
+				"_sourceCategory": "kubernetes/kubelet",
+				"_sourceHost":     "",
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
 		Teardown(
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				opts := *ctxopts.KubectlOptions(ctx)
@@ -149,5 +181,22 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace)).
 		Feature()
 
-	testenv.Test(t, featInstall, featLogs)
+	featMultilineLogs := features.New("multiline logs").
+		Setup(stepfuncs.KubectlApplyFOpt(internal.MultilineLogsGenerator, internal.MultilineLogsNamespace)).
+		Assess("multiline logs present", stepfuncs.WaitUntilExpectedLogsPresent(
+			multilineLogCount,
+			map[string]string{
+				"namespace":          internal.MultilineLogsNamespace,
+				"pod_labels_example": internal.MultilineLogsPodName,
+			},
+			internal.ReceiverMockNamespace,
+			internal.ReceiverMockServiceName,
+			internal.ReceiverMockServicePort,
+			waitDuration,
+			tickDuration,
+		)).
+		Teardown(stepfuncs.KubectlDeleteFOpt(internal.MultilineLogsGenerator, internal.MultilineLogsNamespace)).
+		Feature()
+
+	testenv.Test(t, featInstall, featLogs, featMultilineLogs)
 }

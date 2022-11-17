@@ -8,6 +8,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/retry"
 	"github.com/stretchr/testify/require"
+	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -75,4 +76,15 @@ func formatSelectors(listOptions v1.ListOptions) string {
 	return fmt.Sprintf("LabelSelector: %q, FieldSelector: %q",
 		listOptions.LabelSelector, listOptions.FieldSelector,
 	)
+}
+
+// Simplified version of https://github.com/kubernetes/kubernetes/blob/5835544ca568b757a8ecae5c153f317e5736700e/pkg/api/v1/pod/util.go#L294
+func IsPodReady(pod *corev1.Pod) bool {
+	conditions := pod.Status.Conditions
+	for i := range pod.Status.Conditions {
+		if conditions[i].Type == corev1.PodReady && conditions[i].Status == corev1.ConditionTrue {
+			return true
+		}
+	}
+	return false
 }

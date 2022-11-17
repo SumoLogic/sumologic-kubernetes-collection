@@ -9,18 +9,18 @@ You can generate mixin configuration using `kubectl` or `docker`:
  kubectl run tools \
   -it --quiet --rm \
   --restart=Never -n sumologic \
-  --image sumologic/kubernetes-tools:2.9.0 \
+  --image sumologic/kubernetes-tools:2.13.0 \
   -- template-prometheus-mixin > kube-prometheus-sumo-logic-mixin.libsonnet
 
  # or using docker
  docker run -it --rm \
-  sumologic/kubernetes-tools:2.9.0 \
+  sumologic/kubernetes-tools:2.13.0 \
   template-prometheus-mixin > kube-prometheus-sumo-logic-mixin.libsonnet
 ```
 
 The defaults assume you're deploying Sumo Logic collection via Helm and using few customizations.
 When deploying collection, disable the built-in Prometheus
-Operator either by using `--set kube-prometheus-stack.enabled=false` or editing `values.yml`:
+Operator by editing `values.yml`:
 
 ```yaml
 kube-prometheus-stack:
@@ -70,7 +70,7 @@ local kp =
       clusterName: 'CLUSTER NAME HERE',
 
       // This should be the FQDN of the fluentd collection service.
-      sumologicCollectorSvc: 'http://collection-sumologic.sumologic.svc.cluster.local:9888/',
+      sumologicCollectorSvc: 'http://collection-sumologic.sumologic.svc.cluster.local.:9888/',
     },
   };
 
