@@ -1,5 +1,15 @@
 # Helm template tests
 
+## Running the tests
+
+```sh
+make test
+```
+
+You need [yq v3](https://github.com/mikefarah/yq/releases/tag/3.4.1) installed to run these tests.
+
+## Adding new tests
+
 To add test for new template file, please create new directory with given structure:
 
 ```text
