@@ -1,1 +1,455 @@
-{{ tpl (toYaml .Values.metadata.logs.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}
+receivers:
+  fluentforward:
+    endpoint: 0.0.0.0:24321
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+extensions:
+  health_check: {}
+  ## Configuration for File Storage extension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
+  file_storage:
+    directory: /var/lib/storage/otc
+    timeout: 10s
+    compaction:
+      on_start: true
+      on_rebound: true
+      # Can't be /tmp yet, see https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/13449
+      directory: /var/lib/storage/otc
+  pprof: {}
+exporters:
+  sumologic/containers:
+    log_format: json
+    json_logs:
+      add_timestamp: true
+      timestamp_key: timestamp
+    endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+    source_name: "%{_sourceName}"
+    source_category: "%{_sourceCategory}"
+    source_host: "%{_sourceHost}"
+    ## Configuration for sending queue
+    ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
+    sending_queue:
+      enabled: true
+      persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+      num_consumers: 10
+      queue_size: 10_000
+  sumologic/systemd:
+    log_format: json
+    json_logs:
+      add_timestamp: true
+      timestamp_key: timestamp
+      ## use flatten_body, but OTLP won't require any flattening
+      ## fluent based logs will be all send as record attributes
+      ## otellogs based logs will be all send as body attributes
+      flatten_body: true
+    endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+    source_name: "%{_sourceName}"
+    source_category: "%{_sourceCategory}"
+    source_host: "%{_sourceHost}"
+    ## Configuration for sending queue
+    ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
+    sending_queue:
+      enabled: true
+      persistent_storage_enabled: '{{ .Values.metadata.persistence.enabled }}'
+      num_consumers: 10
+      queue_size: 10_000
+
+processors:
+  ## Common processors
+  attributes/remove_fluent_tag:
+    actions:
+      - action: delete
+        key: fluent.tag
+  ## The memory_limiter processor is used to prevent out of memory situations on the collector.
+  memory_limiter:
+    ## check_interval is the time between measurements of memory usage for the
+    ## purposes of avoiding going over the limits. Defaults to zero, so no
+    ## checks will be performed. Values below 1 second are not recommended since
+    ## it can result in unnecessary CPU consumption.
+    check_interval: 5s
+
+    ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+    limit_percentage: 75
+    ## Spike limit (calculated from available memory). Must be less than limit_percentage.
+    spike_limit_percentage: 20
+
+  ## The batch processor accepts spans and places them into batches grouped by node and resource
+  batch:
+    ## Number of spans after which a batch will be sent regardless of time
+    send_batch_size: 1_024
+    ## Time duration after which a batch will be sent regardless of size
+    timeout: 1s
+
+  ## Containers related processors
+  filter/include_fluent_tag_containers:
+    logs:
+      include:
+        match_type: regexp
+        record_attributes:
+          - key: fluent.tag
+            value: containers\..+
+  filter/include_containers:
+    logs:
+      include:
+        match_type: regexp
+        record_attributes:
+          - key: k8s.container.name
+            value: .+
+  attributes/containers:
+    actions:
+      - action: extract
+        key: fluent.tag
+        pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
+      - action: insert
+        key: k8s.container.id
+        from_attribute: container_id
+      - action: delete
+        key: container_id
+      - action: insert
+        key: k8s.pod.name
+        from_attribute: k8s_pod_name
+      - action: delete
+        key: k8s_pod_name
+      - action: insert
+        key: k8s.namespace.name
+        from_attribute: k8s_namespace
+      - action: delete
+        key: k8s_namespace
+      - action: insert
+        key: k8s.container.name
+        from_attribute: k8s_container_name
+      - action: delete
+        key: k8s_container_name
+  resource/containers_copy_node_to_host:
+    attributes:
+      - action: upsert
+        key: k8s.pod.hostname
+        from_attribute: k8s.node.name
+  resource/drop_annotations:
+    attributes:
+      - pattern: ^pod_annotations_.*
+        action: delete
+  resource/add_cluster:
+    attributes:
+      - key: cluster
+        value: '{{ .Values.sumologic.clusterName | quote }}'
+        action: upsert
+  groupbyattrs/containers:
+    keys:
+      - k8s.container.id
+      - k8s.container.name
+      - k8s.namespace.name
+      - k8s.pod.name
+      - _collector
+  k8s_tagger:
+    ## Has to be false to enrich metadata
+    passthrough: false
+    owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
+    extract:
+      metadata:
+        ## extract the following well-known metadata fields
+        - containerId
+        - containerName
+        - daemonSetName
+        - deploymentName
+        - hostName
+        - namespace
+        - nodeName
+        - podId
+        - podName
+        - replicaSetName
+        - serviceName
+        - statefulSetName
+      annotations:
+        - tag_name: "pod_annotations_%s"
+          key: "*"
+      namespace_labels:
+        - tag_name: "namespace_labels_%s"
+          key: "*"
+      labels:
+        - tag_name: "pod_labels_%s"
+          key: "*"
+      delimiter: "_"
+    pod_association:
+      - from: build_hostname
+  source/containers:
+    collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+    source_host: "%{k8s.pod.hostname}"
+    source_name: "%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}"
+    source_category: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+    source_category_prefix: '{{ .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}'
+    source_category_replace_dash: '{{ .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}'
+    exclude:
+      k8s.namespace.name: '{{ include "fluentd.excludeNamespaces" . }}'
+      k8s.pod.name: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
+      k8s.container.name: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
+      k8s.pod.hostname: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
+    annotation_prefix: "pod_annotations_"
+    pod_template_hash_key: "pod_labels_pod-template-hash"
+    pod_name_key: "k8s.pod.pod_name"
+    pod_key: "k8s.pod.name"
+    container_annotations:
+      enabled: '{{ .Values.fluentd.logs.containers.perContainerAnnotationsEnabled }}'
+      prefixes: '{{ toJson .Values.fluentd.logs.containers.perContainerAnnotationPrefixes }}'
+
+  ## Systemd related processors
+  filter/include_fluent_tag_host:
+    logs:
+      include:
+        match_type: regexp
+        record_attributes:
+          - key: fluent.tag
+            value: host\..+
+  attributes/extract_systemd_source_fields:
+    actions:
+      - action: extract
+        key: fluent.tag
+        pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+      - action: insert
+        from_attribute: _HOSTNAME
+        key: _sourceHost
+  filter/include_systemd:
+    logs:
+      include:
+        match_type: regexp
+        record_attributes:
+          - key: _SYSTEMD_UNIT
+            value: .+
+  filter/exclude_kubelet:
+    logs:
+      exclude:
+        match_type: strict
+        record_attributes:
+          - key: _SYSTEMD_UNIT
+            value: kubelet.service
+  filter/exclude_systemd_syslog:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: SYSLOG_FACILITY
+            value: '{{ .Values.fluentd.logs.systemd.excludeFacilityRegex | default "$^" | quote }}'
+  filter/exclude_systemd_hostname:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: _HOSTNAME
+            value: '{{ .Values.fluentd.logs.systemd.excludeHostRegex | default "$^" | quote }}'
+  filter/exclude_systemd_priority:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: PRIORITY
+            value: '{{ .Values.fluentd.logs.systemd.excludePriorityRegex | default "$^" | quote }}'
+  filter/exclude_systemd_unit:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: _SYSTEMD_UNIT
+            value: '{{ .Values.fluentd.logs.systemd.excludeUnitRegex | default "$^" | quote }}'
+  filter/exclude_kubelet_syslog:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: SYSLOG_FACILITY
+            value: '{{ .Values.fluentd.logs.kubelet.excludeFacilityRegex | default "$^" | quote }}'
+  filter/exclude_kubelet_hostname:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: _HOSTNAME
+            value: '{{ .Values.fluentd.logs.kubelet.excludeHostRegex | default "$^" | quote }}'
+  filter/exclude_kubelet_priority:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: PRIORITY
+            value: '{{ .Values.fluentd.logs.kubelet.excludePriorityRegex | default "$^" | quote }}'
+  filter/exclude_kubelet_unit:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: _SYSTEMD_UNIT
+            value: '{{ .Values.fluentd.logs.kubelet.excludeUnitRegex | default "$^" | quote }}'
+
+  groupbyattrs/systemd:
+    keys:
+      - _sourceName
+      - _sourceHost
+      - _collector
+  source/systemd:
+    collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+    source_host: "%{_sourceHost}"
+    source_name: "%{_sourceName}"
+    source_category: '{{ .Values.fluentd.logs.systemd.sourceCategory | quote }}'
+    source_category_prefix: '{{ .Values.fluentd.logs.systemd.sourceCategoryPrefix | quote }}'
+    source_category_replace_dash: '{{ .Values.fluentd.logs.systemd.sourceCategoryReplaceDash | quote }}'
+  ## Remove all attributes, so body won't by nested by SumoLogic receiver in case of using otlp format
+  transform/remove_attributes:
+    logs:
+      queries:
+        - limit(attributes, 0)
+
+  ## kubelet related processors
+  filter/include_kubelet:
+    logs:
+      include:
+        match_type: strict
+        record_attributes:
+          - key: _SYSTEMD_UNIT
+            value: kubelet.service
+  source/kubelet:
+    collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+    source_host: "%{_sourceHost}"
+    source_name: '{{ .Values.fluentd.logs.kubelet.sourceName | quote }}'
+    source_category: '{{ .Values.fluentd.logs.kubelet.sourceCategory | quote }}'
+    source_category_prefix: '{{ .Values.fluentd.logs.kubelet.sourceCategoryPrefix | quote }}'
+    source_category_replace_dash: '{{ .Values.fluentd.logs.kubelet.sourceCategoryReplaceDash | quote }}'
+
+  sumologic_schema:
+    add_cloud_namespace: false
+
+service:
+  telemetry:
+    logs:
+      level: '{{ .Values.metadata.logs.logLevel }}'
+  extensions:
+    - health_check
+    - file_storage
+    - pprof
+  pipelines:
+    logs/fluent/containers:
+      receivers:
+        - fluentforward
+      processors:
+        - memory_limiter
+        - filter/include_fluent_tag_containers
+        - attributes/containers
+        - groupbyattrs/containers
+        - k8s_tagger
+        - resource/add_cluster
+        - source/containers
+        - resource/drop_annotations
+        - attributes/remove_fluent_tag
+        - resource/containers_copy_node_to_host
+        - sumologic_schema
+        - batch
+      exporters:
+        - sumologic/containers
+    ## Uncomment this only if you're enabling the Otelcol Log Collector via otellogs.enabled
+    ## This is commented due to k8s_tagger memory footprint
+    ## This is the same pipeline like for logs/fluent/containers with the following modifications:
+    ## - filter/include_fluent_tag_containers and attributes/remove_fluent_tag are being removed
+    ##   as only containers log are being provided to otlp receiver
+    ## - attributes/containers functionality is being replaced by otellogs operators
+    # logs/otlp/containers:
+    #   receivers:
+    #     - otlp
+    #   processors:
+    #     - memory_limiter
+    #     - filter/include_containers
+    #     - groupbyattrs/containers
+    #     - k8s_tagger
+    #     - resource/add_cluster
+    #     - source/containers
+    #     - resource/drop_annotations
+    #     - resource/containers_copy_node_to_host
+    #     - sumologic_schema
+    #     - batch
+    #   exporters:
+    #     - sumologic/containers
+    logs/fluent/systemd:
+      receivers:
+        - fluentforward
+      processors:
+        - memory_limiter
+        - filter/include_fluent_tag_host
+        - filter/include_systemd
+        - filter/exclude_kubelet
+        - filter/exclude_systemd_syslog
+        - filter/exclude_systemd_hostname
+        - filter/exclude_systemd_priority
+        - filter/exclude_systemd_unit
+        - attributes/extract_systemd_source_fields
+        - attributes/remove_fluent_tag
+        - groupbyattrs/systemd
+        - resource/add_cluster
+        - source/systemd
+        - batch
+      exporters:
+        - sumologic/systemd
+    logs/fluent/kubelet:
+      receivers:
+        - fluentforward
+      processors:
+        - memory_limiter
+        - filter/include_fluent_tag_host
+        - filter/include_kubelet
+        - filter/exclude_kubelet_syslog
+        - filter/exclude_kubelet_hostname
+        - filter/exclude_kubelet_priority
+        - filter/exclude_kubelet_unit
+        - attributes/extract_systemd_source_fields
+        - attributes/remove_fluent_tag
+        - groupbyattrs/systemd
+        - resource/add_cluster
+        - source/kubelet
+        - batch
+      exporters:
+        - sumologic/systemd
+    ## This is the same pipeline like logs/fluent/systemd, but with the following changes:
+    ## - otlp receiver instead of fluentforward
+    ## - added transform/remove_attributes processor
+    logs/otlp/systemd:
+      receivers:
+        - otlp
+      processors:
+        - memory_limiter
+        - filter/include_fluent_tag_host
+        - filter/include_systemd
+        - filter/exclude_kubelet
+        - filter/exclude_systemd_syslog
+        - filter/exclude_systemd_hostname
+        - filter/exclude_systemd_priority
+        - filter/exclude_systemd_unit
+        - attributes/extract_systemd_source_fields
+        - attributes/remove_fluent_tag
+        - groupbyattrs/systemd
+        - resource/add_cluster
+        - source/systemd
+        - transform/remove_attributes
+        - batch
+      exporters:
+        - sumologic/systemd
+    ## This is the same pipeline like logs/fluent/kubelet, but with the following changes:
+    ## - otlp receiver instead of fluentforward
+    ## - added transform/remove_attributes processor
+    logs/otlp/kubelet:
+      receivers:
+        - otlp
+      processors:
+        - memory_limiter
+        - filter/include_fluent_tag_host
+        - filter/include_kubelet
+        - filter/exclude_kubelet_syslog
+        - filter/exclude_kubelet_hostname
+        - filter/exclude_kubelet_priority
+        - filter/exclude_kubelet_unit
+        - attributes/extract_systemd_source_fields
+        - attributes/remove_fluent_tag
+        - groupbyattrs/systemd
+        - resource/add_cluster
+        - source/kubelet
+        - transform/remove_attributes
+        - batch
+      exporters:
+        - sumologic/systemd
