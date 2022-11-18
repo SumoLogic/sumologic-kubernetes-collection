@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(metrics)!: disable Thanos by default [#2514]
 - fix(fluentd): Removing PodSecurityPolicy for fluentd [#2605]
 - feat!: refactor event collection configuration [#2444]
+- feat(logs)!: switch to Otelcol as logs metadata provider [#2618]
 
 ### Changed
 
@@ -67,6 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2605]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2605
 [#2611]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2611
 [#2444]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2444
+[#2618]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2618
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0

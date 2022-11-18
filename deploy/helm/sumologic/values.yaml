@@ -235,7 +235,7 @@ sumologic:
     enabled: true
     metadata:
       ## Set provider service (either fluentd or otelcol).
-      provider: fluentd
+      provider: otelcol
 
     collector:
       otelcol:
