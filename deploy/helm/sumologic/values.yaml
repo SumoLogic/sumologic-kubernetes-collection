@@ -235,7 +235,7 @@ sumologic:
     enabled: true
     metadata:
       ## Set provider service (either fluentd or otelcol).
-      provider: fluentd
+      provider: otelcol
 
     collector:
       otelcol:
@@ -1061,9 +1061,7 @@ fluent-bit:
   podLabels: {}
 
   ## Add custom pod annotations to fluent-bit daemonset pods
-  podAnnotations:
-    ## This annotation triggers a restart of the fluent-bit pod on upgrade to helm chart v3
-    sumologic.com/major-version: "3"
+  podAnnotations: {}
 
   securityContext:
     capabilities:

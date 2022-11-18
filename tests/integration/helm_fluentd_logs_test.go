@@ -3,17 +3,11 @@ package integration
 import (
 	"context"
 	"fmt"
-	"sort"
 	"testing"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	log "k8s.io/klog/v2"
-	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
-	"sigs.k8s.io/e2e-framework/klient/wait"
-	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
@@ -23,18 +17,16 @@ import (
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/receivermock"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
-func Test_Helm_Default_Otel_Metadata(t *testing.T) {
+func Test_Helm_Fluentd_Logs(t *testing.T) {
 	const (
 		tickDuration            = 3 * time.Second
 		waitDuration            = 5 * time.Minute
 		logsGeneratorCount uint = 1000
 		expectedEventCount uint = 100
 	)
-	expectedMetrics := internal.DefaultExpectedMetrics
 
 	featInstall := features.New("installation").
 		Assess("sumologic secret is created with endpoints",
@@ -44,22 +36,22 @@ func Test_Helm_Default_Otel_Metadata(t *testing.T) {
 				require.Len(t, secret.Data, 10, "Secret has incorrect number of endpoints")
 				return ctx
 			}).
-		Assess("otelcol logs statefulset is ready",
+		Assess("fluentd logs statefulset is ready",
 			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
 				),
 				stepfuncs.WithLabelsF(
 					stepfuncs.LabelFormatterKV{
 						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs"),
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
 					},
 				),
 			),
 		).
-		Assess("otelcol logs buffers PVCs are created",
+		Assess("fluentd logs buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				namespace := ctxopts.Namespace(ctx)
 				releaseName := ctxopts.HelmRelease(ctx)
@@ -72,7 +64,7 @@ func Test_Helm_Default_Otel_Metadata(t *testing.T) {
 				assert.Eventually(t, func() bool {
 					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
 						List(ctx, v1.ListOptions{
-							LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-logs", releaseName),
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName),
 						})
 					if !assert.NoError(t, err) {
 						return false
@@ -184,99 +176,6 @@ func Test_Helm_Default_Otel_Metadata(t *testing.T) {
 			}).
 		Feature()
 
-	featMetrics := features.New("metrics").
-		Assess("expected metrics are present",
-			stepfuncs.WaitUntilExpectedMetricsPresent(
-				expectedMetrics,
-				"receiver-mock",
-				"receiver-mock",
-				internal.ReceiverMockServicePort,
-				waitDuration,
-				tickDuration,
-			),
-		).
-		Assess("expected labels are present",
-			// TODO: refactor into a step func?
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				// Get the receiver mock pod as metrics source
-				res := envConf.Client().Resources(internal.ReceiverMockNamespace)
-				podList := corev1.PodList{}
-				require.NoError(t,
-					wait.For(
-						conditions.New(res).
-							ResourceListN(
-								&podList,
-								1,
-								resources.WithLabelSelector("app=receiver-mock"),
-							),
-						wait.WithTimeout(waitDuration),
-						wait.WithInterval(tickDuration),
-					),
-				)
-				rClient, tunnelCloseFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
-				defer tunnelCloseFunc()
-
-				assert.Eventually(t, func() bool {
-					filters := receivermock.MetadataFilters{
-						"__name__": "container_memory_working_set_bytes",
-						"pod":      podList.Items[0].Name,
-					}
-					metricsSamples, err := rClient.GetMetricsSamples(filters)
-					if err != nil {
-						log.ErrorS(err, "failed getting samples from receiver-mock")
-						return false
-					}
-
-					if len(metricsSamples) == 0 {
-						log.InfoS("got 0 metrics samples", "filters", filters)
-						return false
-					}
-
-					sort.Sort(receivermock.MetricsSamplesByTime(metricsSamples))
-					// For now let's take the newest metric sample only because it will have the most
-					// accurate labels and the most labels attached (for instance service/deployment
-					// labels might not be attached at the very first record).
-					sample := metricsSamples[0]
-					labels := sample.Labels
-					expectedLabels := receivermock.Labels{
-						"_origin":   "kubernetes",
-						"cluster":   "kubernetes",
-						"container": "receiver-mock",
-						// TODO: figure out why is this flaky and sometimes it's not there
-						// https://github.com/SumoLogic/sumologic-kubernetes-collection/runs/4508796836?check_suite_focus=true
-						// "deployment":                   "receiver-mock",
-						"endpoint":                     "https-metrics",
-						"image":                        "",
-						"instance":                     "",
-						"job":                          "kubelet",
-						"metrics_path":                 "/metrics/cadvisor",
-						"namespace":                    "receiver-mock",
-						"node":                         "",
-						"pod_labels_app":               "receiver-mock",
-						"pod_labels_pod-template-hash": "",
-						"pod_labels_service":           "receiver-mock",
-						"pod":                          podList.Items[0].Name,
-						"prometheus_replica":           "",
-						"prometheus_service":           "",
-						"prometheus":                   "",
-						// TODO: figure out why is this flaky and sometimes it's not there
-						// https://github.com/SumoLogic/sumologic-kubernetes-collection/runs/4508796836?check_suite_focus=true
-						// "replicaset":                   "",
-						"service": "receiver-mock",
-					}
-
-					log.V(0).InfoS("sample's labels", "labels", labels)
-					if !labels.MatchAll(expectedLabels) {
-						return false
-					}
-
-					return true
-				}, waitDuration, tickDuration)
-				return ctx
-			},
-		).
-		Feature()
-
 	featLogs := features.New("logs").
 		Setup(stepfuncs.GenerateLogs(
 			stepfuncs.LogsGeneratorDeployment,
@@ -300,18 +199,18 @@ func Test_Helm_Default_Otel_Metadata(t *testing.T) {
 		Assess("expected container log metadata is present", stepfuncs.WaitUntilExpectedLogsPresent(
 			logsGeneratorCount,
 			map[string]string{
-				"_collector":       "kubernetes",
-				"cluster":          "kubernetes",
-				"namespace":        internal.LogsGeneratorName,
-				"pod_labels_app":   internal.LogsGeneratorName,
-				"container":        internal.LogsGeneratorName,
-				"deployment":       internal.LogsGeneratorName,
-				"replicaset":       "",
-				"pod":              "",
-				"k8s.pod.id":       "",
-				"k8s.pod.pod_name": "",
-				// "k8s.container.id": "", // TODO: disable this for other tests, it's not reliable
+				"cluster":         "kubernetes",
+				"namespace":       internal.LogsGeneratorName,
+				"pod_labels_app":  internal.LogsGeneratorName,
+				"container":       internal.LogsGeneratorName,
+				"deployment":      internal.LogsGeneratorName,
+				"replicaset":      "",
+				"namespace_id":    "",
+				"pod":             "",
+				"pod_id":          "",
+				"container_id":    "",
 				"host":            "",
+				"master_url":      "",
 				"node":            "",
 				"_sourceName":     "",
 				"_sourceCategory": "",
@@ -377,5 +276,5 @@ func Test_Helm_Default_Otel_Metadata(t *testing.T) {
 		)).
 		Feature()
 
-	testenv.Test(t, featInstall, featMetrics, featLogs, featEvents)
+	testenv.Test(t, featInstall, featLogs, featEvents)
 }
