@@ -81,7 +81,7 @@ To install the chart, first add the `sumologic` private repo:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Next you can prepare `values.yaml` with configuration.
+Next you can prepare `user-values.yaml` with configuration.
 An example file with the minimum confiuration is provided below.
 It disables the `kube-prometheus-stack` sub-chart since
 we will be modifying the existing prometheus operator install.
@@ -101,7 +101,7 @@ in the namespace your `kubectl` context is currently set to.
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
-  -f values.yaml
+  -f user-values.yaml
 ```
 
 > __Note__: If the release exists, it will be upgraded, otherwise it will be installed.
@@ -112,12 +112,12 @@ If the namespace does not exist, you can add the `--create-namespace` flag.
 helm upgrade \
   --install my-release sumologic/sumologic \
   --namespace=my-namespace \
-  -f values.yaml \
+  -f user-values.yaml \
   --create-namespace
 ```
 
 If you are installing the helm chart in Openshift platform, ensure that operator is listening for `my-namespace`
-by adding the following configuration to `values.yaml`:
+by adding the following configuration to `user-values.yaml`:
 
 ```yaml
 sumologic:
@@ -156,7 +156,7 @@ and then upgrade it to apply configuration:
 helm upgrade \
   --install my-release sumologic/sumologic \
   --namespace=my-namespace \
-  -f values.yaml
+  -f user-values.yaml
 ```
 
 ## Update Existing Kube Prometheus Stack Helm Chart
@@ -236,17 +236,17 @@ Helm supports providing multiple configuration files, and priority will be given
 You can obtain your current prometheus configuration by running
 
 ```bash
-helm get values $PROMETHEUS_OPERATOR_CHART_NAME > current-values.yaml
+helm get values $PROMETHEUS_OPERATOR_CHART_NAME > current-user-values.yaml
 ```
 
-Any section of `current-values.yaml` that conflicts with sections of our
+Any section of `current-user-values.yaml` that conflicts with sections of our
 `prometheus-overrides.yaml` will have to be removed from the `prometheus-overrides.yaml` file
-and appended to `current-values.yaml` in relevant sections.
+and appended to `current-user-values.yaml` in relevant sections.
 For any config that doesn’t conflict, you can leave them in `prometheus-overrides.yaml`.
 Then run
 
 ```bash
-helm upgrade $PROMETHEUS_OPERATOR_CHART_NAME stable/kube-prometheus-stack -f current-values.yaml -f prometheus-overrides.yaml
+helm upgrade $PROMETHEUS_OPERATOR_CHART_NAME stable/kube-prometheus-stack -f current-user-values.yaml -f prometheus-overrides.yaml
 ```
 
 __NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional_prometheus_configuration.md)
@@ -300,14 +300,14 @@ You can find more information in our [troubleshooting documentation](Troubleshoo
 ## Customizing Installation
 
 All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md).
-We recommend creating a new `values.yaml` for each Kubernetes cluster you wish
+We recommend creating a new `user-values.yaml` for each Kubernetes cluster you wish
 to install collection on and __setting only the properties you wish to override__.
 Once you have customized you can use the following commands to install or upgrade.
 Remember to define the properties in our [requirements section](#requirements)
-in the `values.yaml` as well
+in the `user-values.yaml` as well
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic -f values.yaml
+helm upgrade --install my-release sumologic/sumologic -f user-values.yaml
 ```
 
 > __Tip__: To filter or add custom metrics to Prometheus,
@@ -326,16 +326,16 @@ helm repo update
 Next, you can run `helm upgrade --install` to upgrade to that version. The following upgrades the current version of `my-release` to the latest.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic -f values.yaml
+helm upgrade --install my-release sumologic/sumologic -f user-values.yaml
 ```
 
 If you wish to upgrade to a specific version, you can use the `--version` flag.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=1.0.0
+helm upgrade --install my-release sumologic/sumologic -f user-values.yaml --version=1.0.0
 ```
 
-__Note:__ If you no longer have your `values.yaml` from the first installation
+__Note:__ If you no longer have your `user-values.yaml` from the first installation
 or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart.
 For example, if the release is called `my-release` you can run the following.
 

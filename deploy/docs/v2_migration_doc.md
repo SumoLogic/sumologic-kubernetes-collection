@@ -314,7 +314,7 @@ before upgrade.
 
 If Fluentd persistence is disabled and it is desired to preserve this setting,
 modify defaults and disable persistence either by adding `--set fluentd.persistence.enabled=false`
-to `helm upgrade` command or in the `values.yaml` file under the `fluentd` key as follows:
+to `helm upgrade` command or in the `user-values.yaml` file under the `fluentd` key as follows:
 
 ```yaml
 fluentd:
@@ -325,14 +325,14 @@ fluentd:
 #### 5. Run upgrade script
 
 For Helm users, the only breaking changes are the renamed config parameters.
-For users who use a `values.yaml` file, we provide a script that users can run
-to convert their existing `values.yaml` file into one that is compatible with the major release.
+For users who use a `user-values.yaml` file, we provide a script that users can run
+to convert their existing `user-values.yaml` file into one that is compatible with the major release.
 
-- Get the existing values for the helm chart and store it as `current_values.yaml`
+- Get the existing values for the helm chart and store it as `current_user-values.yaml`
   with the below command:
 
   ```bash
-  helm get values --output yaml <RELEASE-NAME> > current_values.yaml
+  helm get values --output yaml <RELEASE-NAME> > current_user-values.yaml
   ```
 
 - Run the upgrade script. You can run it:
@@ -343,42 +343,42 @@ to convert their existing `values.yaml` file into one that is compatible with th
     ```bash
     curl -LJO https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/release-v2.0/deploy/helm/sumologic/upgrade-2.0.0.sh \
     && chmod +x upgrade-2.0.0.sh \
-    && ./upgrade-2.0.0.sh current_values.yaml
+    && ./upgrade-2.0.0.sh current_user-values.yaml
     ```
 
   - In a docker container:
 
     ```bash
-    cat current_values.yaml | \
+    cat current_user-values.yaml | \
       docker run \
         --rm \
         -i sumologic/kubernetes-tools:2.13.0 upgrade-2.0 | \
-      tee new_values.yaml
+      tee new_user-values.yaml
     ```
 
     Note that this will output both migration script logs and new values file but
-    only the values file contents will be put into `new_values.yaml` due to `tee`.
+    only the values file contents will be put into `new_user-values.yaml` due to `tee`.
 
   - In a container on your cluster:
 
     ```bash
-    cat current_values.yaml | \
+    cat current_user-values.yaml | \
       kubectl run kubernetes-tools -i \
         --quiet \
         --rm \
         --restart=Never \
         --image sumologic/kubernetes-tools:2.13.0 -- upgrade-2.0 | \
-      tee new_values.yaml
+      tee new_user-values.yaml
     ```
 
     Note that this will output both migration script logs and new values file but
-    only the values file contents will be put into `new_values.yaml` due to `tee`.
+    only the values file contents will be put into `new_user-values.yaml` due to `tee`.
 
-- At this point you should have `new_values.yaml` in your working directory which
+- At this point you should have `new_user-values.yaml` in your working directory which
   can be used for the upgrade:
 
   ```bash
-  helm upgrade <RELEASE-NAME> sumologic/sumologic --version=2.0.0 -f new_values.yaml
+  helm upgrade <RELEASE-NAME> sumologic/sumologic --version=2.0.0 -f new_user-values.yaml
   ```
 
 #### 6. Troubleshooting
@@ -418,7 +418,7 @@ with event `persistentvolumeclaim "buffer-sumologic-fluentd-logs-1" not found`.
 
 - From `v2.0.0` we recommend to use helm3 template as replacement for pre-generated
   kubernetes templates.
-  Because of that, all custom changes made to the templates should be moved to `values.yaml`.
+  Because of that, all custom changes made to the templates should be moved to `user-values.yaml`.
   This will simplify and improve experience for non-helm installation.
 
 ### How to upgrade for Non-helm Users

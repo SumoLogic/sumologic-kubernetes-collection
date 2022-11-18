@@ -98,7 +98,7 @@ To install the chart, first add the `sumologic` private repo:
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 
-Next you can prepare `values.yaml` with configuration.
+Next you can prepare `user-values.yaml` with configuration.
 An example file with the minimum configuration is provided below.
 
 ```yaml
@@ -114,7 +114,7 @@ in the namespace your `kubectl` context is currently set to.
 
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
-  -f values.yaml
+  -f user-values.yaml
 ```
 
 > __Note__: If the release exists, it will be upgraded, otherwise it will be installed.
@@ -124,7 +124,7 @@ If you wish to install the chart in a different existing namespace you can do th
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
   --namespace=my-namespace \
-  -f values.yaml
+  -f user-values.yaml
 ```
 
 If the namespace does not exist, you can add the `--create-namespace` flag.
@@ -133,7 +133,7 @@ If the namespace does not exist, you can add the `--create-namespace` flag.
 helm upgrade --install my-release sumologic/sumologic \
   --namespace=my-namespace \
   --create-namespace \
-  -f values.yaml
+  -f user-values.yaml
 ```
 
 If you want to override the names of the resources created by the chart,
@@ -166,7 +166,7 @@ the request of elevated privileges, like HostPath mounts, privileged: true, etc.
 
 If you wish to install the chart in the Openshift Platform, it requires a SCC resource
 which is only created in Openshift (detected via API capabilities in the chart),
-you can add the following configuration to `values.yaml`:
+you can add the following configuration to `user-values.yaml`:
 
 ```yaml
 sumologic:
@@ -218,14 +218,14 @@ tailing-sidecar-operator:
 ```bash
 helm upgrade --install my-release sumologic/sumologic \
   --namespace=my-namespace \
-  -f values.yaml
+  -f `user-values.yaml`
 ```
 
 __Notice:__ Prometheus Operator is deployed by default on OpenShift platform,
 you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
-`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in values.yaml or
+`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in `user-values.yaml` or
 exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
-using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
+using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in `user-values.yaml`.
 
 ## Viewing Data In Sumo Logic
 
@@ -280,12 +280,12 @@ You can find more information in our [troubleshooting documentation](Troubleshoo
 ## Customizing Installation
 
 All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md).
-We recommend creating a new `values.yaml` for each Kubernetes cluster you wish
+We recommend creating a new `user-values.yaml` for each Kubernetes cluster you wish
 to install collection on and __setting only the properties you wish to override__.
 Once you have customized you can use the following commands to install or upgrade.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic -f values.yaml
+helm upgrade --install my-release sumologic/sumologic -f `user-values.yaml`
 ```
 
 > __Tip__: To filter or add custom metrics to Prometheus,
@@ -303,16 +303,16 @@ Next, you can run `helm upgrade --install` to upgrade to that version.
 The following upgrades the current version of `my-release` to the latest.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic -f values.yaml
+helm upgrade --install my-release sumologic/sumologic -f `user-values.yaml`
 ```
 
 If you wish to upgrade to a specific version, you can use the `--version` flag.
 
 ```bash
-helm upgrade --install my-release sumologic/sumologic -f values.yaml --version=2.0.0
+helm upgrade --install my-release sumologic/sumologic -f `user-values.yaml` --version=2.0.0
 ```
 
-__Note:__ If you no longer have your `values.yaml` from the first installation
+__Note:__ If you no longer have your `user-values.yaml` from the first installation
 or do not remember the options you added via `--set` you can run the following to see the values for the currently installed helm chart.
 For example, if the release is called `my-release` you can run the following.
 
@@ -358,7 +358,7 @@ and the associated hosted collector can be deleted in the Sumo Logic UI.
 
 The Helm chart uses the Prometheus Operator to manage Prometheus instances.
 This operator creates a Service for scraping metrics exposed by the kubelet (subject to configuration in the
-`kube-prometheus-stack.prometheusOperator.kubeletService` key in `values.yaml`), which isn't removed by the chart
+`kube-prometheus-stack.prometheusOperator.kubeletService` key in `user-values.yaml`), which isn't removed by the chart
 uninstall process.
 This Service is largely harmless, but can cause issues if a different release of the chart is installed, resulting in
 duplicated metrics from the kubelet.
@@ -372,5 +372,5 @@ kubectl delete svc <release_name>-kube-prometheus-kubelet -n kube-system
 ```
 
 Please keep in mind that if you've changed any configuration values related to this service (they reside under the
-`kube-prometheus-stack.prometheusOperator.kubeletService` key in `values.yaml`), you should substitute those values in
+`kube-prometheus-stack.prometheusOperator.kubeletService` key in `user-values.yaml`), you should substitute those values in
 the command provided above.

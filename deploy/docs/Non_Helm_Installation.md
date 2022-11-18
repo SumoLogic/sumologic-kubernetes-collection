@@ -85,7 +85,7 @@ The following parameter is optional, but we recommend setting it.
 - **sumologic.clusterName** - An identifier for your Kubernetes cluster.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
 
-Create `values.yaml` with the configuration. For example, the minimal one will look like the following:
+Create `user-values.yaml` with the configuration. For example, the minimal one will look like the following:
 
 ```yaml
 sumologic:
@@ -95,11 +95,11 @@ sumologic:
 ```
 
 Now you will need to generate the YAML to apply to your cluster.
-This command will generate the YAML using `values.yaml` and pipe it a file called `sumologic.yaml`.
+This command will generate the YAML using `user-values.yaml` and pipe it a file called `sumologic.yaml`.
 Please note that `--namespace` is required
 
 ```bash
-cat values.yaml | \
+cat user-values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
@@ -134,7 +134,7 @@ If you wish to install the YAML in a different namespace, you can add the `--nam
 The following will render the YAML and install in the `my-namespace` namespace.
 
 ```bash
-cat values.yaml | \
+cat user-values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
@@ -178,7 +178,7 @@ due to the request of elevated privileges, like HostPath mounts, privileged: tru
 
 If you wish to install the chart in the Openshift Platform, it requires a SCC resource
 which is only created in Openshift (detected via API capabilities in the chart).
-In order to enable it, please add the following to `values.yaml`:
+In order to enable it, please add the following to `user-values.yaml`:
 
 ```yaml
 sumologic:
@@ -230,7 +230,7 @@ tailing-sidecar-operator:
 and you can do the following:
 
 ```bash
-cat values.yaml | \
+cat user-values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
@@ -244,9 +244,9 @@ cat values.yaml | \
 
 **Notice:** Prometheus Operator is deployed by default on OpenShift platform,
 you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
-`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in values.yaml or
+`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in `user-values.yaml` or
 exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
-using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
+using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in `user-values.yaml`.
 
 **Notice:** Generating templates for openshift require `--api-versions=security.openshift.io/v1`
 in order to generate scc.
@@ -301,13 +301,13 @@ You can find more information in our [troubleshooting documentation](Troubleshoo
 
 All default properties for the Helm chart can be found in our
 [documentation](../helm/sumologic/README.md).
-We recommend creating a new `values.yaml` for each Kubernetes cluster you wish
+We recommend creating a new `user-values.yaml` for each Kubernetes cluster you wish
 to install collection on and **setting only the properties you wish to override**.
 Once you have customized the file you can generate the YAML.
-The content of the `values.yaml` can be fed into the template generator as shown below.
+The content of the `user-values.yaml` can be fed into the template generator as shown below.
 
 ```bash
-cat values.yaml | \
+cat user-values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
@@ -329,7 +329,7 @@ of the Kubernetes collection is available.
 You can use the same commands used to create the YAML in the first place.
 
 ```bash
-cat values.yaml | \
+cat user-values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \
@@ -345,7 +345,7 @@ when generating the YAML.
 The following example would use version `1.0.0`.
 
 ```bash
-cat values.yaml | \
+cat user-values.yaml | \
   kubectl run tools \
     -i --quiet --rm \
     --restart=Never \

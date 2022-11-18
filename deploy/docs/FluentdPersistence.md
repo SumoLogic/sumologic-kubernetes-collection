@@ -3,7 +3,7 @@
 Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less
 reliable in-memory buffer by default.
 
-The buffer configuration can be set in the `values.yaml` file under the `fluentd`
+The buffer configuration can be set in the `user-values.yaml` file under the `fluentd`
 key as follows:
 
 ```yaml
@@ -20,7 +20,7 @@ as it is not possible to add/remove `volumeClaimTemplate` for StatefulSet.
 
 ## Enabling Fluentd persistence
 
-To enable the Fluentd persistence modify `values.yaml` file under the `fluentd` key as follows:
+To enable the Fluentd persistence modify `user-values.yaml` file under the `fluentd` key as follows:
 
 ```yaml
 fluentd:
@@ -219,7 +219,7 @@ Use one of following two strategies to prepare existing collection for enabling 
 
 ## Disabling Fluentd persistence
 
-To disable Fluentd persistence in existing collection modify `values.yaml` file under the `fluentd`
+To disable Fluentd persistence in existing collection modify `user-values.yaml` file under the `fluentd`
 key as follows:
 
 ```yaml

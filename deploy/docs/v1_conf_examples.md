@@ -1,7 +1,7 @@
 # Configuring Fluentd
 
 Until now, Helm users have not been able to modify their Fluentd configuration
-outside of the specific parameters that we exposed in the `values.yaml` file.
+outside of the specific parameters that we exposed in the `user-values.yaml` file.
 Now, we expose the ability to modify the Fluentd configuration as needed.
 
 Some use-cases include:
@@ -18,7 +18,7 @@ Some use-cases include:
 ```
 
 will **NOT** work if they are specified within one of the below mentioned plugin
-conf sections, since they are in the `values.yaml` file and are therefore
+conf sections, since they are in the `user-values.yaml` file and are therefore
 interpreted as literal strings.
 
 Below you can see a few examples of how this configuration can be set.
@@ -26,12 +26,12 @@ Below you can see a few examples of how this configuration can be set.
 ## Custom Log Pipelines
 
 Now we have exposed an `extraLogs` parameter inside the `logs.containers` section
-of the `values.yaml` where you can add the output plugin for the custom log pipeline.
+of the `user-values.yaml` where you can add the output plugin for the custom log pipeline.
 
 **NOTE:** This will only send the logs to Sumo if the logs are collected correctly
 at the FluentBit level with an input plugin.
 
-You can add a custom endpoint in `values.yaml`:
+You can add a custom endpoint in `user-values.yaml`:
 
 ```yaml
 sumologic:
@@ -113,7 +113,7 @@ fluentd:
             @type sumologic
             @id sumologic.endpoint.logs
             @include logs.output.conf
-            # Helm templating does not work in the `values.yaml` file so, you will *NOT* have an option to choose the file/memory buffer configs based on the fluentd.buffer.type value and will have to write them explicitly.
+            # Helm templating does not work in the `user-values.yaml` file so, you will *NOT* have an option to choose the file/memory buffer configs based on the fluentd.buffer.type value and will have to write them explicitly.
             <buffer>
               @type file
               path /fluentd/buffer/logs.containers
@@ -144,7 +144,7 @@ fluentd:
 ### Additional Buffer/Flush/Retry Config parameters for Sumologic Output Plugin
 
 The following config parameters are set by default and their values can be set
-by changing the respective config in `values.yaml`.
+by changing the respective config in `user-values.yaml`.
 
 ```bash
 compress {{ .Values.fluentd.buffer.compress | quote }}

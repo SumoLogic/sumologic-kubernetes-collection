@@ -4,7 +4,7 @@
 
 Prometheus configuration is located in `values.yaml` under `kube-prometheus-stack` key for helm installation.
 
-__Note__: It is best practice to add custom configuration to a user-supplied values file and then use it like so (```helm install -f my_values.yaml -n sumologic```)
+__Note__: It is best practice to add custom configuration to a user-supplied config file and then use it like so (```helm install -f user-values.yaml -n sumologic```)
 
 If the `kube-prometheus-stack` has been installed directly, a `prometheus-overrides.yaml` should be generated
 using `docker`/`kubectl` and [sumologic-kubernetes-tools](https://github.com/sumologic/sumologic-kubernetes-tools#template-dependency-configuration):
@@ -32,7 +32,7 @@ The configuration contains a section like the following for each of the Kubernet
 If you would like to collect other metrics that are not listed in configuration, you can add a new section to the file.
 
 ```yaml
-kube-prometheus-stack:  # Add to a user-supplied values.yaml
+kube-prometheus-stack:  # Add to a user-supplied user-values.yaml
     prometheus:
       prometheusSpec:
         additionalRemoteWrite:
@@ -158,7 +158,7 @@ Once you have created this yaml file, go ahead and run `kubectl create -f name_o
 If you want to keep all your changes inside configuration instead of serviceMonitors, you can add your changes to `prometheus.additionalServiceMonitors` section. For given serviceMonitor configuration it should looks like snippet below:
 
 ```yaml
-kube-prometheus-stack:  # Add to user-supplied my_values.yaml
+kube-prometheus-stack:  # Add to user-supplied user-values.yaml
   prometheus:
     additionalServiceMonitors:
       - name: my-metrics
@@ -189,7 +189,7 @@ annotations:
 
 ### Create a new HTTP source in Sumo Logic
 
-To avoid being [disabled](https://help.sumologic.com/docs/metrics/manage-metric-volume/disabled-metrics-sources), metrics should be distributed across multiple HTTP sources. You can create a new HTTP source using `values.yaml`:
+To avoid being [disabled](https://help.sumologic.com/docs/metrics/manage-metric-volume/disabled-metrics-sources), metrics should be distributed across multiple HTTP sources. You can create a new HTTP source using `user-values.yaml`:
 
 ```yaml
 sumologic:
@@ -204,12 +204,12 @@ This will create a new HTTP source with the name `my-source-name` in your Sumo L
 All sources are created on the same Collector.
 
 __This configuration doesn't modify or remove HTTP sources from your account.__
-If you rename a source in `values.yaml`, the new source will be added to your Sumo Logic account**
+If you rename a source in `user-values.yaml`, the new source will be added to your Sumo Logic account**
 
 ### Update Fluentd configuration
 
 Next, you will need to update the Fluentd configuration to ensure Fluentd routes your custom metrics to the HTTP source you created in the previous step.
-To do that, you should add an output to your values.yaml:
+To do that, you should add an output to your `user-values.yaml`:
 
 ```yaml
 
@@ -263,7 +263,7 @@ Make sure you include the same tag you created in your Fluentd configmap in the 
 Here is an example addition to the configuration file that will forward metrics to Sumo:
 
 ```yaml
-kube-prometheus-stack:  # Add to a user-supplied values.yaml
+kube-prometheus-stack:  # Add to a user-supplied user-values.yaml
     prometheus:
       prometheusSpec:
         additionalRemoteWrite:
@@ -277,7 +277,7 @@ kube-prometheus-stack:  # Add to a user-supplied values.yaml
 According to our example, below config could be useful:
 
 ```yaml
-kube-prometheus-stack:  # Add to a user-supplied values.yaml
+kube-prometheus-stack:  # Add to a user-supplied user-values.yaml
     prometheus:
       prometheusSpec:
         additionalRemoteWrite:
@@ -290,7 +290,7 @@ kube-prometheus-stack:  # Add to a user-supplied values.yaml
 
 Replace `YOUR_TAG` with a tag to identify these metrics. After adding this to the `yaml`, go ahead and upgrade your sumologic or prometheus operator installation, depending on method used:
 
-- `helm upgrade collection sumologic/sumologic --reuse-values -f <path to values.yaml>` to upgrade sumologic collection
+- `helm upgrade collection sumologic/sumologic --reuse-values -f <path to user-values.yaml>` to upgrade sumologic collection
 - `helm upgrade kube-prometheus-stack stable/kube-prometheus-stack --reuse-values -f <path to prometheus-overrides.yaml>` to upgrade your kube-prometheus-stack.
 
 Note: When executing the helm upgrade, to avoid the error below, you need to add the argument `--force`.

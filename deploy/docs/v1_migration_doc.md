@@ -24,7 +24,7 @@ the exact steps for migration.
 ### Changes
 
 - Falco installation disabled by Default.
-  If you want to enable Falco, modify the `enabled` flag for Falco in `values.yaml` as shown below:
+  If you want to enable Falco, modify the `enabled` flag for Falco in `user-values.yaml` as shown below:
 
   ```yaml
   falco:
@@ -36,7 +36,7 @@ the exact steps for migration.
   the bitcoin/crypto miner rule by default
 
 - Changes in Configuration Parameters
-  - The `values.yaml` file has had several configs moved and renamed to improve usability.
+  - The `user-values.yaml` file has had several configs moved and renamed to improve usability.
     Namely, we introduced a new fluentd section into which we moved all of the
     Fluentd specific configs, while configs for our dependency charts
     (`prometheus-operator`, `fluent-bit`, `metrics-server`, `falco`) have not changed.
@@ -81,7 +81,7 @@ the exact steps for migration.
 - `sumologic.addStream` and `sumologic.addTime` (default values were `true`) have been removed;
   the default behavior will remain the same.
   To preserve the behavior of `addStream = false` or `addTime = false`,
-  you can add the following config to the `values.yaml` file:
+  you can add the following config to the `user-values.yaml` file:
 
   ```yaml
   fluentd:
@@ -95,7 +95,7 @@ the exact steps for migration.
   ```
 
 Until now, Helm users have not been able to modify their Fluentd configuration
-outside of the specific parameters that we exposed in the `values.yaml` file.
+outside of the specific parameters that we exposed in the `user-values.yaml` file.
 Now, we expose the ability to modify the Fluentd configuration as needed.
 
 Some use-cases include :
@@ -136,14 +136,14 @@ helm upgrade collection sumologic/sumologic --reuse-values --version=0.17.4
 #### 2: Run upgrade script
 
 For Helm users, the only breaking changes are the renamed config parameters.
-For users who use a `values.yaml` file, we provide a script that users can run
-to convert their existing `values.yaml` file into one that is compatible with the major release.
+For users who use a `user-values.yaml` file, we provide a script that users can run
+to convert their existing `user-values.yaml` file into one that is compatible with the major release.
 
-- Get the existing values for the helm chart and store it as `current_values.yaml`
+- Get the existing values for the helm chart and store it as `current_user-values.yaml`
   with the below command:
 
   ```bash
-  helm get values <RELEASE-NAME> > current_values.yaml
+  helm get values <RELEASE-NAME> > current_user-values.yaml
   ```
 
 - Run `curl` the upgrade script as follows:
@@ -155,13 +155,13 @@ to convert their existing `values.yaml` file into one that is compatible with th
 - Run the upgrade script on the above file with the below command.
 
   ```bash
-  ./upgrade-1.0.0.sh current_values.yaml
+  ./upgrade-1.0.0.sh current_user-values.yaml
   ```
 
 - At this point, users can then run:
 
   ```bash
-  helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_values.yaml
+  helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_user-values.yaml
   ```
 
 ### Troubleshooting Upgrade
@@ -180,8 +180,8 @@ it likely means your OS is picking up an older version
 of `bash` even though you may have upgraded.
 Makes sure you are running a version of `bash` >= 4.4 by running `bash --version`.
 If the version of bash is correct, you can rerun the upgrade script by running
-`bash upgrade-1.0.0.sh current_values.yaml` and then rerun
-`helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_values.yaml` to resolve.
+`bash upgrade-1.0.0.sh current_user-values.yaml` and then rerun
+`helm upgrade collection sumologic/sumologic --version=1.0.0 -f new_user-values.yaml` to resolve.
 
 ### Rollback
 
