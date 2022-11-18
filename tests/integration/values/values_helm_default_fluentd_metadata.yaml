@@ -1,3 +1,10 @@
+sumologic:
+  logs:
+    metadata:
+      provider: fluentd
+  metrics:
+    metadata:
+      provider: fluentd
 # Prevent snowball effect by filtering out receiver mock logs
 fluent-bit:
   config:

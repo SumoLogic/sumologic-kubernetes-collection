@@ -1,4 +1,8 @@
 sumologic:
+  metrics:
+    remoteWriteProxy:
+      # Request less resources so that this fits on Github actions runners environment
+      replicaCount: 1
   traces:
     enabled: true
 
@@ -13,10 +17,13 @@ fluent-bit:
 
 # Request less resources so that this fits on Github actions runners environment
 fluentd:
-  logs:
+  metrics:
     statefulset:
       replicaCount: 1
-  metrics:
+
+# Request less resources so that this fits on Github actions runners environment
+metadata:
+  logs:
     statefulset:
       replicaCount: 1
 

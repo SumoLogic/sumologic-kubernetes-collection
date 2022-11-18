@@ -1,4 +1,11 @@
+# Disable events, logs, metrics to use less resources so that this fits on Github Actions runners environment
 sumologic:
+  events:
+    enabled: false
+  logs:
+    enabled: false
+  metrics:
+    enabled: false
   traces:
     enabled: true
 
@@ -14,12 +21,3 @@ otelgateway:
         # fix for vagrnt
         # failt to create "memory_limiter" processor, in pipeline "traces": failed to get total memory, use fixed memory settings (limit_mib)
         limit_mib: 8192
-
-# Request less resources so that this fits on Github actions runners environment
-fluentd:
-  events:
-    enabled: false
-  metrics:
-    enabled: false
-  logs:
-    enabled: false
