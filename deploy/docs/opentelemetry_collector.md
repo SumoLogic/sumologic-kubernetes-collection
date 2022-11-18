@@ -100,7 +100,7 @@ for more information
 
 ### Multiline log parsing
 
-Multiline log parsing for OpenTelemetry Collector can be configured using the `sumologic.logs.multiline` section in [values.yaml][values].
+Multiline log parsing for OpenTelemetry Collector can be configured using the `sumologic.logs.multiline` section in `user-values.yaml`.
 
 ```yaml
 sumologic:
@@ -169,7 +169,7 @@ fluent-bit:
 
 ## Persistence
 
-The persistence for OpenTelemetry Collector can be configured in [`values.yaml`][values] by making changes under the `metadata.persistence`:
+The persistence for OpenTelemetry Collector can be configured in `user-values.yaml` by making changes under the `metadata.persistence`:
 
 ```yaml
 metadata:
@@ -188,7 +188,7 @@ as it is not possible to add/remove `volumeClaimTemplate` for StatefulSet.
 
 ### Enabling persistence
 
-To enable persistence for OpenTelemetry Collector set following configuration in [`values.yaml`][values]:
+To enable persistence for OpenTelemetry Collector set following configuration in `user-values.yaml`:
 
 ```yaml
 metadata:
@@ -381,7 +381,7 @@ kubectl delete statefulset \
 
 ### Disabling persistence
 
-To disable persistence for OpenTelemetry Collector set following configuration in [`values.yaml`][values]:
+To disable persistence for OpenTelemetry Collector set following configuration in `user-values.yaml`:
 
 ```yaml
 metadata:

@@ -39,9 +39,9 @@ refer to [Creating a Secret with a Docker config at kubernetes.io][k8s-docker-se
 
 ## Using pull secrets with `sumologic-kubernetes-collection` helm chart
 
-Full list of `values.yaml` keys for all the images that are used, can be found below:
+Full list of `user-values.yaml` keys for all the images that are used, can be found below:
 
-| Image                 | `value.yaml` key                                |
+| Image                 | `user-values.yaml` key                               |
 |-----------------------|-------------------------------------------------|
 | setup job             | `sumologic.setup.job.pullSecrets`               |
 | fluentd               | `sumologic.pullSecrets`                         |
@@ -68,7 +68,7 @@ docker tag public.ecr.aws/sumologic/kubernetes-fluentd:${SUMO_IMAGE_VERSION} ${R
 docker push ${REGISTRY_REPO_URL}:${TAG}
 ```
 
-One can then use `${REGISTRY_REPO_URL}:${TAG}` in `values.yaml` as such:
+One can then use `${REGISTRY_REPO_URL}:${TAG}` in `user-values.yaml` as such:
 
 ```yaml
 fluentd:

@@ -1,6 +1,6 @@
 # Adding Additional Fluentd Plugins
 
-To add additional Fluentd plugins, you can modify `values.yaml`
+To add additional Fluentd plugins, you can modify `user-values.yaml`
 or create a new container image from our provided image.
 
 ## Configuration

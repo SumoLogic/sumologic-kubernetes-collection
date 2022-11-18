@@ -354,7 +354,7 @@ helm upgrade collection sumologic/sumologic \
         --install \
         --namespace sumologic \
         --version "<VERSION>" \
-        -f values.yaml
+        -f user-values.yaml
         -f values_containerd.yaml
 ```
 
@@ -481,7 +481,7 @@ fluent-bit:
 This filter process one Chunk at a time and is not suitable for sources that might send multiline messages in separated chunks.
 There is [open issue][fluent-bit-multiline-issue] to support that case directly in tail plugin.
 
-Example `values.yaml` with all settings described above is available in
+Example `user-values.yaml` with all settings described above is available in
 [/examples/multiline_logs/values_containerd_new_parser.yaml](/examples/multiline_logs/values_containerd_new_parser.yaml),
 you need to only adjust rules to your log format.
 
@@ -512,7 +512,7 @@ helm upgrade collection sumologic/sumologic \
         --install \
         --namespace sumologic \
         --version "<VERSION>" \
-        -f values.yaml
+        -f user-values.yaml
         -f values_containerd_new_parser.yaml
 ```
 

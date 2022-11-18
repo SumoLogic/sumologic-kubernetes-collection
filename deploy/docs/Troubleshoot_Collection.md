@@ -176,7 +176,7 @@ To enable debug or trace logs from a specific Fluentd plugin, add the following 
 </match>
 ```
 
-To enable debug or trace logs using the Helm chart, you can override the value `fluentd.logLevel` in `values.yaml`:
+To enable debug or trace logs using the Helm chart, you can override the value `fluentd.logLevel` in `user-values.yaml`:
 
 ```yaml
 fluentd:
@@ -184,7 +184,7 @@ fluentd:
 ```
 
 ```sh
-helm upgrade collection sumologic/sumologic -f values.yaml
+helm upgrade collection sumologic/sumologic -f user-values.yaml
 ```
 
 For configuration changes to take effect in Fluentd, you can redeploy the pods by scaling to zero and back to the desired deployment size:
@@ -405,7 +405,7 @@ kops rolling-update cluster --yes
 
 The goal is to set the flag `kubelet.serviceMonitor.https=false` when deploying the prometheus operator.
 
-Add the following lines to the `kube-prometheus-stack` section of your `values.yaml` file:
+Add the following lines to the `kube-prometheus-stack` section of your `user-values.yaml` file:
 
 ```
 kube-prometheus-stack:
@@ -418,7 +418,7 @@ kube-prometheus-stack:
 and upgrade the helm chart:
 
 ```
-helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VERSION> -f values.yaml
+helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VERSION> -f user-values.yaml
 ```
 
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
@@ -497,7 +497,7 @@ If you observe the following errors from Fluentd pods:
 Please see [migration topic on that](./v2_migration_doc.md#gzip-compression-errors).
 
 If the problem still occurs, please disable gzip compression for buffer.
-Add following configuration to your `values.yaml` and upgrade collection:
+Add following configuration to your `user-values.yaml` and upgrade collection:
 
 ```yaml
 fluentd:
@@ -551,7 +551,7 @@ expand environment variables: found reference to unset environment variable "NAM
 If you can see the message `expand environment variables: found reference to unset environment variable "NAMESPACE"`,
 than this is a sign that the Prometheus Operator version running in your cluster is much newer than supported by our chart.
 
-To make our collection work with this newer version of Prometheus Operator, add the following code to your `values.yaml` file
+To make our collection work with this newer version of Prometheus Operator, add the following code to your `user-values.yaml` file
 and upgrade collection using `helm upgrade` command.
 
 ```yaml
@@ -696,7 +696,7 @@ You can review the source configuration in [HTTP Source Settings][http-source].
 ##### Resolution
 
 In order to change multiline detection to [Boundary Regex][boundary-regex], for example to `\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*`,
-add the following configuration to your `values.yaml`:
+add the following configuration to your `user-values.yaml`:
 
 ```yaml
 sumologic:
