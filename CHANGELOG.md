@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore!: remove replacing values in configuration marked by 'replace' suffix [#2615]
 - feat(metrics): service name change and switching the metrics provider default to otelcol [#2627]
 - feat(logs)!: simplify metadata configuration [#2626]
+- feat(metrics)!: simplify metadata configuration [#2622]
 
 ### Changed
 
@@ -81,6 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2628]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2628
 [#2627]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2627
 [#2626]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2626
+[#2622]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2622
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
