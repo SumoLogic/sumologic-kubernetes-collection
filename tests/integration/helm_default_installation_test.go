@@ -27,7 +27,7 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
-func Test_Helm_Default_Otel_Metadata(t *testing.T) {
+func Test_Helm_FluentD_Metadata(t *testing.T) {
 	const (
 		tickDuration            = 3 * time.Second
 		waitDuration            = 5 * time.Minute
@@ -44,22 +44,22 @@ func Test_Helm_Default_Otel_Metadata(t *testing.T) {
 				require.Len(t, secret.Data, 10, "Secret has incorrect number of endpoints")
 				return ctx
 			}).
-		Assess("otelcol logs statefulset is ready",
+		Assess("fluentd logs statefulset is ready",
 			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
 				),
 				stepfuncs.WithLabelsF(
 					stepfuncs.LabelFormatterKV{
 						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs"),
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
 					},
 				),
 			),
 		).
-		Assess("otelcol logs buffers PVCs are created",
+		Assess("fluentd logs buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				namespace := ctxopts.Namespace(ctx)
 				releaseName := ctxopts.HelmRelease(ctx)
@@ -72,7 +72,7 @@ func Test_Helm_Default_Otel_Metadata(t *testing.T) {
 				assert.Eventually(t, func() bool {
 					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
 						List(ctx, v1.ListOptions{
-							LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-logs", releaseName),
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName),
 						})
 					if !assert.NoError(t, err) {
 						return false
@@ -300,18 +300,18 @@ func Test_Helm_Default_Otel_Metadata(t *testing.T) {
 		Assess("expected container log metadata is present", stepfuncs.WaitUntilExpectedLogsPresent(
 			logsGeneratorCount,
 			map[string]string{
-				"_collector":       "kubernetes",
-				"cluster":          "kubernetes",
-				"namespace":        internal.LogsGeneratorName,
-				"pod_labels_app":   internal.LogsGeneratorName,
-				"container":        internal.LogsGeneratorName,
-				"deployment":       internal.LogsGeneratorName,
-				"replicaset":       "",
-				"pod":              "",
-				"k8s.pod.id":       "",
-				"k8s.pod.pod_name": "",
-				// "k8s.container.id": "", // TODO: disable this for other tests, it's not reliable
+				"cluster":         "kubernetes",
+				"namespace":       internal.LogsGeneratorName,
+				"pod_labels_app":  internal.LogsGeneratorName,
+				"container":       internal.LogsGeneratorName,
+				"deployment":      internal.LogsGeneratorName,
+				"replicaset":      "",
+				"namespace_id":    "",
+				"pod":             "",
+				"pod_id":          "",
+				"container_id":    "",
 				"host":            "",
+				"master_url":      "",
 				"node":            "",
 				"_sourceName":     "",
 				"_sourceCategory": "",
