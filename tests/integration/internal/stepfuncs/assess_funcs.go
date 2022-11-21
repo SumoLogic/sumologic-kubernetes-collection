@@ -348,41 +348,41 @@ func WaitUntilDeploymentIsReady(
 	opts ...Option,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-			deps := appsv1.Deployment{
-				ObjectMeta: v1.ObjectMeta{
-					Namespace: ctxopts.Namespace(ctx),
-				},
-			}
-			
-			listOpts := []resources.ListOption{}
-			for _, opt := range opts {
-				opt.Apply(ctx, &deps)
-				listOpts = append(listOpts, opt.GetListOption(ctx))
-			}
-			
-			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
-			cond := conditions.
-				New(res).
-				ResourceListMatchN(&appsv1.DeploymentList{Items: []appsv1.Deployment{deps}},
-					1,
-					func(obj k8s.Object) bool {
-						dep := obj.(*appsv1.Deployment)
-						log.V(5).InfoS("Deployment", "status", dep.Status)
-						if dep.Status.UnavailableReplicas != 0 {
-							log.V(0).Infof("Deployment %q not yet fully ready", dep.Name)
-							return false
-						}
-						return true
-					},
-					listOpts...,
-				)
+		deps := appsv1.Deployment{
+			ObjectMeta: v1.ObjectMeta{
+				Namespace: ctxopts.Namespace(ctx),
+			},
+		}
 
-			require.NoError(t,
-				wait.For(cond,
-					wait.WithTimeout(waitDuration),
-					wait.WithInterval(tickDuration),
-				),
+		listOpts := []resources.ListOption{}
+		for _, opt := range opts {
+			opt.Apply(ctx, &deps)
+			listOpts = append(listOpts, opt.GetListOption(ctx))
+		}
+
+		res := envConf.Client().Resources(ctxopts.Namespace(ctx))
+		cond := conditions.
+			New(res).
+			ResourceListMatchN(&appsv1.DeploymentList{Items: []appsv1.Deployment{deps}},
+				1,
+				func(obj k8s.Object) bool {
+					dep := obj.(*appsv1.Deployment)
+					log.V(5).InfoS("Deployment", "status", dep.Status)
+					if dep.Status.UnavailableReplicas != 0 {
+						log.V(0).Infof("Deployment %q not yet fully ready", dep.Name)
+						return false
+					}
+					return true
+				},
+				listOpts...,
 			)
+
+		require.NoError(t,
+			wait.For(cond,
+				wait.WithTimeout(waitDuration),
+				wait.WithInterval(tickDuration),
+			),
+		)
 
 		return ctx
 	}
