@@ -27,7 +27,7 @@ Logs which can be helpful in investigating the issue.
 Direct command which you used to install/upgrade collection.
 
 **Configuration**
-Configuration used for Collection e.g. values.yaml for helm.
+Configuration used for Collection e.g. user-values.yaml for helm.
 
 **To Reproduce**
 Steps to reproduce the behavior.

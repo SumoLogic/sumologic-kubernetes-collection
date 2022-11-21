@@ -113,7 +113,7 @@ See [collecting multiline logs](https://help.sumologic.com/docs/send-data/refere
 on configuring a boundary regex.
 
 New parsers can be defined under the `fluent-bit.config.customParsers` key in
-`values.yaml` file as follows:
+`user-values.yaml` file as follows:
 
 ```yaml
 fluent-bit:
@@ -133,7 +133,7 @@ This way one can add a parser called `new_multi_line_parser` which matches lines
 that start with time of the format : `07:14:12`.
 
 To start using the newly defined parser, define it in `Docker_Mode_Parser` parameter
-in the `Input plugin` configuration of fluent-bit in `values.yaml` under
+in the `Input plugin` configuration of fluent-bit in `user-values.yaml` under
 `fluent-bit.config.inputs`:
 
 ```
@@ -165,7 +165,7 @@ fluent-bit:
 To disable multiline detection, remove the `Docker_Mode_Parser  multi_line` setting from Fluent Bit's configuration
 in `fluent-bit.config.inputs` property.
 
-Note that to remove this line, the whole value of the `fluent-bit.config.inputs` property must be copied into your custom `values.yaml` file with that single line removed:
+Note that to remove this line, the whole value of the `fluent-bit.config.inputs` property must be copied into your `user-values.yaml` file with that single line removed:
 
 ```yaml
 fluent-bit:
@@ -452,7 +452,7 @@ result in autoscaling not working properly.
 Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less
 reliable in-memory buffer.
 
-The buffer configuration can be set in the `values.yaml` file under the `fluentd`
+The buffer configuration can be set in the `user-values.yaml` file under the `fluentd`
 key as follows:
 
 ```yaml
@@ -481,11 +481,11 @@ fluentd:
 We have defined several file paths where the buffer chunks are stored.
 These can be observed under `fluentd.buffer.filePaths` key in `values.yaml`.
 
-Once the config has been modified in the `values.yaml` file you need to run
+Once the config has been modified in the `user-values.yaml` file you need to run
 the `helm upgrade` command to apply the changes.
 
 ```bash
-helm upgrade collection sumologic/sumologic --reuse-values -f values.yaml --force
+helm upgrade collection sumologic/sumologic --reuse-values -f user-values.yaml --force
 ```
 
 See the following links to official Fluentd buffer documentation:
@@ -564,7 +564,7 @@ this as 600 minutes, that is 10 hours of buffer.
 ## Excluding Logs From Specific Components
 
 You can exclude specific logs from specific components from being sent to Sumo Logic
-by specifying the following parameters either in the `values.yaml` file or the `helm install` command.
+by specifying the following parameters either in the `user-values.yaml` file or the `helm install` command.
 
 ```
 excludeContainerRegex
@@ -602,7 +602,7 @@ For example suppose you want to exclude the following log messages:
 .*client metadata from.*
 ```
 
-In your values.yaml, you can simply add the following to your `values.yaml`:
+You can simply add the following to your `user-values.yaml`:
 
 ```yaml
 fluentd:
@@ -800,7 +800,7 @@ you will need to ensure the logs get mounted to the host so fluent-bit can be
 configured to capture from the host.
 
 Example:
-In `values.yaml` in the `fluent-bit.config.input` section, you have to add
+In `user-values.yaml` in the `fluent-bit.config.input` section, you have to add
 a new `INPUT` specifying the file path (retaining the remaining part of `input`
 config), e.g.:
 
@@ -853,7 +853,7 @@ The section above should be added in each of the kube-state remote write blocks.
 
 ## Modify the Log Level for Falco
 
-To modify the default log level for Falco, edit the following section in the values.yaml file.
+To modify the default log level for Falco, edit the following section in the `user-values.yaml` file.
 Available log levels can be found in Falco's documentation here: https://falco.org/docs/configuration/.
 
 ```yaml
@@ -1074,7 +1074,7 @@ Ref: https://docs.fluentbit.io/manual/pipeline/inputs/tail
 ## Disable logs, metrics, or falco
 
 If you want to disable the collection of logs, metrics, or falco, make the below changes
-respectively in the `values.yaml` file and run the `helm upgrade` command.
+respectively in the `user-values.yaml` file and run the `helm upgrade` command.
 
 | parameter                   | value | function                   |
 |-----------------------------|-------|----------------------------|
@@ -1116,7 +1116,7 @@ the above mitigations may not be sufficient. It is possible to remedy the proble
 itself, but that can be complicated to set up and require manual intervention to scale.
 
 A simpler alternative is to put a HTTP load balancer between Prometheus and the metrics metadata Service.
-This can be enabled in `values.yaml` via the `sumologic.metrics.remoteWriteProxy.enabled` key.
+This can be enabled in `user-values.yaml` via the `sumologic.metrics.remoteWriteProxy.enabled` key.
 
 ## Changing scrape interval for Prometheus
 
@@ -1126,7 +1126,7 @@ are filled up with proper data.
 To change it, you can use following configuration:
 
 ```yaml
-kube-prometheus-stack:  # For values.yaml
+kube-prometheus-stack:  # For user-values.yaml
   prometheus:
     prometheusSpec:
       scrapeInterval: '1m'
@@ -1141,7 +1141,7 @@ mounted to sidecar container.
 
 Providing that the file with logs is accessible through volume, to enable tailing of logs using Tailing Sidecar Operator:
 
-- Enable Tailing Sidecar Operator by modifying `values.yaml`:
+- Enable Tailing Sidecar Operator by modifying `user-values.yaml`:
 
   ```yaml
   tailing-sidecar-operator:
@@ -1287,7 +1287,7 @@ to work with our collection.
    - add your custom prometheus configuration
 
 1. [Upgrade sumologic chart](./Installation_with_Helm.md#upgrading-sumo-logic-collection) without `kube-prometheus-stack`
-   by adding the following configuration to your [values.yaml](../../examples/kube_prometheus_stack/values.yaml):
+   by adding the following configuration to your `user-values.yaml`:
 
    ```yaml
    kube-prometheus-stack:
@@ -1430,7 +1430,7 @@ In order to do that `nodeSelector` has to be used. By default node selectors can
 | `metadata`              | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`                   |
 | `metadata`              | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`                      |
 
-Node selector can be changed via additional parameter in `values.yaml`, see an example for Fluent-Bit below:
+Node selector can be changed via additional parameter in `user-values.yaml`, see an example for Fluent-Bit below:
 
 ```yaml
 fluent-bit:

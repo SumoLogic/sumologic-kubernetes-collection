@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore(telegraf-operator): update Telegraf Operator Helm Chart to 1.3.10 [#2597]
 - feat(chart): restrict permissions for setup and cleanup jobs [#2599]
 - feat: add parameter to configure additional Prometheus remote writes [#2611]
+- docs: rename user-provided config from values.yaml to user-values.yaml [#2619]
 
 ### Fixed
 
@@ -70,8 +71,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2611]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2611
 [#2444]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2444
 [#2610]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2610
+[#2619]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2619
 [#2154]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2154
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.1...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
 [cert-manager-1.6]: https://github.com/cert-manager/cert-manager/releases/tag/v1.6.0
