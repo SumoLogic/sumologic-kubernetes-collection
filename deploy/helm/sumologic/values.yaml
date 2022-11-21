@@ -1071,11 +1071,11 @@ fluent-bit:
   #   privileged: true
 
   env:
-    - name: FLUENTD_LOGS_SVC
+    - name: METADATA_LOGS_SVC
       valueFrom:
         configMapKeyRef:
           name: sumologic-configmap
-          key: fluentdLogs
+          key: metadataLogs
     - name: NAMESPACE
       valueFrom:
         fieldRef:
@@ -1182,7 +1182,7 @@ fluent-bit:
       [OUTPUT]
           Name          forward
           Match         *
-          Host          ${FLUENTD_LOGS_SVC}.${NAMESPACE}.svc.cluster.local.
+          Host          ${METADATA_LOGS_SVC}.${NAMESPACE}.svc.cluster.local.
           Port          24321
           Retry_Limit   False
           tls           off

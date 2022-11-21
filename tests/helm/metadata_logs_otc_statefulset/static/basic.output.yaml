@@ -13,7 +13,7 @@ spec:
   selector:
     matchLabels:
       app: RELEASE-NAME-sumologic-otelcol-logs
-  serviceName: RELEASE-NAME-sumologic-fluentd-logs-headless
+  serviceName: RELEASE-NAME-sumologic-metadata-logs-headless
   podManagementPolicy: "Parallel"
   replicas: 4
   template:

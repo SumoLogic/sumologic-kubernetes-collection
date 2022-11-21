@@ -420,7 +420,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service" -}}
-{{ template "sumologic.metadata.name.fluentd" . }}-logs
+{{ template "sumologic.fullname" . }}-metadata-logs
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service-headless" -}}

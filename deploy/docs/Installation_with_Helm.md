@@ -99,7 +99,7 @@ helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collect
 ```
 
 Next you can prepare `values.yaml` with configuration.
-An example file with the minimum confiuration is provided below.
+An example file with the minimum configuration is provided below.
 
 ```yaml
 sumologic:
