@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(fluentd): Removing PodSecurityPolicy for fluentd [#2605]
 - feat!: refactor event collection configuration [#2444]
 - fix(logs): configure fluentbit to send data to metadata-logs [#2610]
+- feat: enable metrics and traces collection from instrumentation by default [#2154]
 
 ### Changed
 
@@ -69,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2611]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2611
 [#2444]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2444
 [#2610]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2610
+[#2154]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2154
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
