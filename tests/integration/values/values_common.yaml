@@ -24,7 +24,7 @@ kube-prometheus-stack:
     prometheusSpec:
       resources:
         requests:
-          cpu: 100m
+          cpu: 50m
           memory: 128Mi
   # kind exposes etcd metrics in http on a different port, and enables TLS for the default
   # port. This change is simpler than configuring TLS for the default port.
@@ -42,13 +42,13 @@ metadata:
     statefulset:
       resources:
         requests:
-          cpu: 100m
+          cpu: 50m
           memory: 128Mi
   metrics:
     statefulset:
       resources:
         requests:
-          cpu: 100m
+          cpu: 50m
           memory: 128Mi
 
 # Request less resources so that this fits on Github actions runners environment
@@ -58,19 +58,19 @@ fluentd:
       resources:
         requests:
           memory: 64Mi
-          cpu: 100m
+          cpu: 50m
   metrics:
     statefulset:
       resources:
         requests:
           memory: 64Mi
-          cpu: 100m
+          cpu: 50m
   events:
     statefulset:
       resources:
         requests:
           memory: 64Mi
-          cpu: 100m
+          cpu: 50m
   persistence:
     size: 100Mi
 
@@ -80,7 +80,7 @@ otelcol:
     replicas: 1
     resources:
       requests:
-        memory: 64Mi
+        memory: 32Mi
         cpu: 15m
 
 # Request less resources so that this fits on Github actions runners environment
@@ -89,7 +89,7 @@ otelgateway:
     replicas: 1
     resources:
       requests:
-        memory: 64Mi
+        memory: 32Mi
         cpu: 15m
 
 # Request less resources so that this fits on Github actions runners environment
@@ -98,5 +98,5 @@ otelagent:
   daemonset:
     resources:
       requests:
-        memory: 64Mi
+        memory: 32Mi
         cpu: 15m
