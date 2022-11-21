@@ -7,12 +7,7 @@ import (
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sigs.k8s.io/e2e-framework/klient/k8s"
-	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
-	"sigs.k8s.io/e2e-framework/klient/wait"
-	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
@@ -180,95 +175,47 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				require.EqualValues(t, 0, daemonsets[0].Status.NumberUnavailable)
 				return ctx
 			}).
-		// TODO: Rewrite into similar step func as WaitUntilStatefulSetIsReady but for deployments
-		Assess("otelcol deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
-			releaseName := ctxopts.HelmRelease(ctx)
-			labelSelector := fmt.Sprintf("app=%s-sumologic-otelcol", releaseName)
-			ds := appsv1.DeploymentList{}
-
-			require.NoError(t,
-				wait.For(
-					conditions.New(res).
-						ResourceListN(&ds, 1,
-							resources.WithLabelSelector(labelSelector),
-						),
-					wait.WithTimeout(waitDuration),
-					wait.WithInterval(tickDuration),
+		Assess("otelcol deployment is ready",
+			stepfuncs.WaitUntilDeploymentIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol"),
 				),
-			)
-			require.NoError(t,
-				wait.For(
-					conditions.New(res).
-						DeploymentConditionMatch(&ds.Items[0], appsv1.DeploymentAvailable, corev1.ConditionTrue),
-					wait.WithTimeout(waitDuration),
-					wait.WithInterval(tickDuration),
+				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
+					K: "app",
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol"),
+				},
 				),
-			)
-			return ctx
-		}).
-		// TODO: Rewrite into similar step func as WaitUntilStatefulSetIsReady but for daemonsets
-		Assess("otelagent daemonset is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
-			nl := corev1.NodeList{}
-			if !assert.NoError(t, res.List(ctx, &nl)) {
-				return ctx
-			}
-
-			releaseName := ctxopts.HelmRelease(ctx)
-			labelSelector := fmt.Sprintf("app=%s-sumologic-otelagent", releaseName)
-			ds := appsv1.DaemonSetList{}
-
-			require.NoError(t,
-				wait.For(
-					conditions.New(res).
-						ResourceListN(&ds, 1,
-							resources.WithLabelSelector(labelSelector),
-						),
-					wait.WithTimeout(waitDuration),
-					wait.WithInterval(tickDuration),
+			)).
+		Assess("otelagent daemonset is ready",
+			stepfuncs.WaitUntilDaemonSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelagent"),
 				),
-			)
-			require.NoError(t,
-				wait.For(
-					conditions.New(res).
-						ResourceMatch(&ds.Items[0], func(object k8s.Object) bool {
-							d := object.(*appsv1.DaemonSet)
-							return d.Status.NumberUnavailable == 0 &&
-								d.Status.NumberReady == int32(len(nl.Items))
-						}),
-					wait.WithTimeout(waitDuration),
-					wait.WithInterval(tickDuration),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelagent"),
+					},
 				),
-			)
-			return ctx
-		}).
-		Assess("otelgateway deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
-			releaseName := ctxopts.HelmRelease(ctx)
-			labelSelector := fmt.Sprintf("app=%s-sumologic-otelgateway", releaseName)
-			ds := appsv1.DeploymentList{}
-
-			require.NoError(t,
-				wait.For(
-					conditions.New(res).
-						ResourceListN(&ds, 1,
-							resources.WithLabelSelector(labelSelector),
-						),
-					wait.WithTimeout(waitDuration),
-					wait.WithInterval(tickDuration),
+			),
+		).
+		Assess("otelgateway deployment is ready",
+			stepfuncs.WaitUntilDeploymentIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelgateway"),
 				),
-			)
-			require.NoError(t,
-				wait.For(
-					conditions.New(res).
-						DeploymentConditionMatch(&ds.Items[0], appsv1.DeploymentAvailable, corev1.ConditionTrue),
-					wait.WithTimeout(waitDuration),
-					wait.WithInterval(tickDuration),
+				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
+					K: "app",
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-otelgateway"),
+				},
 				),
-			)
-			return ctx
-		}).
+			)).
 		Feature()
 
 	featTraces := features.New("traces").

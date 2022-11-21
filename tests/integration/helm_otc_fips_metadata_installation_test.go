@@ -42,7 +42,7 @@ func Test_Helm_Default_OT_FIPS_Metadata(t *testing.T) {
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
 				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
-				require.Len(t, secret.Data, 10)
+				require.Len(t, secret.Data, 11, "Secret has incorrect number of endpoints")
 				return ctx
 			}).
 		Assess("otelcol logs statefulset is ready",
@@ -192,6 +192,47 @@ func Test_Helm_Default_OT_FIPS_Metadata(t *testing.T) {
 				require.EqualValues(t, 0, daemonsets[0].Status.NumberUnavailable)
 				return ctx
 			}).
+		Assess("otelcol deployment is ready",
+			stepfuncs.WaitUntilDeploymentIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol"),
+				),
+				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
+					K: "app",
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol"),
+				},
+				),
+			)).
+		Assess("otelagent daemonset is ready",
+			stepfuncs.WaitUntilDaemonSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelagent"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelagent"),
+					},
+				),
+			),
+		).
+		Assess("otelgateway deployment is ready",
+			stepfuncs.WaitUntilDeploymentIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelgateway"),
+				),
+				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
+					K: "app",
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-otelgateway"),
+				},
+				),
+			)).
 		Feature()
 
 	featMetrics := features.New("metrics").
