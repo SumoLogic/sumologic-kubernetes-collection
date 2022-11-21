@@ -380,9 +380,9 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 			10, // we don't really control this, just want to check if the logs show up
 			map[string]string{
 				"cluster":         "kubernetes",
-				"_sourceName":     "",
+				"_sourceName":     "(?!undefined$).*",
 				"_sourceCategory": "kubernetes/system",
-				"_sourceHost":     "",
+				"_sourceHost":     "(?!undefined$).*",
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
@@ -396,7 +396,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				"cluster":         "kubernetes",
 				"_sourceName":     "k8s_kubelet",
 				"_sourceCategory": "kubernetes/kubelet",
-				"_sourceHost":     "",
+				"_sourceHost":     "(?!undefined$).*",
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
