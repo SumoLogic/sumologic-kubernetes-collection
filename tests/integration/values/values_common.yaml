@@ -81,7 +81,7 @@ otelcol:
     resources:
       requests:
         memory: 64Mi
-        cpu: 50m
+        cpu: 15m
 
 # Request less resources so that this fits on Github actions runners environment
 otelgateway:
@@ -90,7 +90,7 @@ otelgateway:
     resources:
       requests:
         memory: 64Mi
-        cpu: 50m
+        cpu: 15m
 
 # Request less resources so that this fits on Github actions runners environment
 otelagent:
@@ -99,4 +99,4 @@ otelagent:
     resources:
       requests:
         memory: 64Mi
-        cpu: 50m
+        cpu: 15m
