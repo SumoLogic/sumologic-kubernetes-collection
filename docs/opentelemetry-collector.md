@@ -90,10 +90,20 @@ Configuration specific to the log collector DaemonSet can be found under the `ot
 
 Finally, configuration specific to the metadata enrichment StatefulSet can be found under the `metadata.logs` key.
 
-In both of the aforementioned cases, the raw configuration can be overridden - this is done respectively by using
-the `otellogs.config.override` and `metadata.logs.config` sections. Only use these if your use case isn't covered
-by the high-level settings. See [Sumologic OpenTelemetry Collector configuration][configuration]
-for more information
+There are two ways of directly configuring OpenTelemetry Collector in either of these cases.
+These are both advanced features requiring a good understanding of this chart's architecture and
+OpenTelemetry Collector configuration.
+
+The `metadata.logs.config.merge` and `otellogs.config.merge` keys can be used to provide configuration that will be merged
+with the Helm Chart's default configuration. It should be noted that this field is not subject to
+normal backwards compatibility guarantees, the default configuration can change even in minor
+versions while preserving the same end-to-end behaviour. Use of this field is discouraged - ideally
+the necessary customizations should be able to be achieved without touching the otel configuration
+directly. Please open an issue if your use case requires the use of this field.
+
+The `metadata.metrics.config.override` and `otellogs.config.override` keys can be used to provide configuration that will be completely
+replace the default configuration. As above, care must be taken not to depend on implementation details
+that may change between minor releases of this Chart.
 
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/Configuration.md
 [values]: /deploy/helm/sumologic/values.yaml
