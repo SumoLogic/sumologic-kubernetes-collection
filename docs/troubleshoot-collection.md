@@ -122,7 +122,7 @@ Some known indicators that autoscaling for Fluentd must be enabled:
 
 - Following message in Fluentd logs: `failed to write data into buffer by buffer overflow action=:drop_oldest_chunk`
 
-[fluend_autoscaling]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#fluentd-autoscaling
+[fluend_autoscaling]: /docs/best-practices.md#fluentd-autoscaling
 
 ### Check if collection pods are in a healthy state
 
@@ -726,4 +726,4 @@ sumologic:
 
 If you observe that Prometheus Pod needs more and more resources (out of memory failures - OOM killed Prometheus) and you are not able to increase
 them then you may need to configure additional instance of Prometheus due to huge amount of collected metrics in the cluster,
-for details please see [this](../docs/additional_prometheus_configuration.md#additional-prometheus-instance) documentation.
+for details please see [this](/docs/additional-prometheus-configuration.md#additional-prometheus-instance) documentation.

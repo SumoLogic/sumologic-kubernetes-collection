@@ -295,7 +295,7 @@ This process is completely unrelated to multiline logs which are created by appl
 To avoid confusion, we refer to this feature as **multipart** logs, as opposed to **multiline**.
 
 [containerd-config]: https://github.com/containerd/containerd/blob/main/docs/cri/config.md
-[values]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/values.yaml
+[values]: /deploy/helm/sumologic/values.yaml
 
 ### Using old multiline parser
 

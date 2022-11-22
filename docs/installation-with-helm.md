@@ -148,13 +148,13 @@ To find a comprehensive information on this please refer to
 [Amazon Elastic Container Registry pricing][aws-ecr-pricing].
 
 Please refer to
-[our instructions](/deploy/docs/working-with-container-registries.md#authenticating-with-container-registry)
+[our instructions](/docs/working-with-container-registries.md#authenticating-with-container-registry)
 on how to provide credentials in order to authenticate with Docker Hub.
 
 An alternative would be to host Sumo Logic container images in one's container
 registries.
 To do so please refer to the following
-[instructions](/deploy/docs/working-with-container-registries.md#hosting-sumo-logic-images)
+[instructions](/docs/working-with-container-registries.md#hosting-sumo-logic-images)
 
 [aws-public-ecr-docs]: https://aws.amazon.com/blogs/aws/amazon-ecr-public-a-new-public-container-registry/
 [aws-ecr-pricing]: https://aws.amazon.com/ecr/pricing/

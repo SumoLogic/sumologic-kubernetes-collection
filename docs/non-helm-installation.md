@@ -161,13 +161,13 @@ on [Docker Hub](https://hub.docker.com/) which
 [requires authentication in order to provide higher quota for image pulls][docker-rate-limit].
 
 Please refer to
-[our instructions](/deploy/docs/working-with-container-registries.md#authenticating-with-container-registry)
+[our instructions](/docs/working-with-container-registries.md#authenticating-with-container-registry)
 on how to provide credentials in order to authenticate Docker Hub.
 
 An alternative would be to host Sumo Logic container images in one's container
 registries.
 To do so please refer to the following
-[instructions](/deploy/docs/working-with-container-registries.md#hosting-sumo-logic-images)
+[instructions](/docs/working-with-container-registries.md#hosting-sumo-logic-images)
 
 [docker-rate-limit]: https://www.docker.com/increase-rate-limits
 
