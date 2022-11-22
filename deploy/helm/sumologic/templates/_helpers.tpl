@@ -424,7 +424,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service-headless" -}}
-{{ template "sumologic.metadata.name.logs.service" . }}-headless
+{{ template "sumologic.metadata.name.logs" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.configmap" -}}
@@ -460,11 +460,11 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.service" -}}
-{{ template "sumologic.metadata.name.fluentd" . }}-metrics
+{{ template "sumologic.fullname" . }}-metadata-metrics
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.service-headless" -}}
-{{ template "sumologic.metadata.name.metrics.service" . }}-headless
+{{ template "sumologic.metadata.name.metrics" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.configmap" -}}

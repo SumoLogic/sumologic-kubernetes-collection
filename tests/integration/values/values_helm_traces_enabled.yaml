@@ -10,17 +10,14 @@ fluent-bit:
           Name    grep
           Match   containers.var.log.containers.receiver-mock*
           Exclude log .*
-
-# Request less resources so that this fits on Github actions runners environment
-fluentd:
+  
+otelcol:
   logs:
     statefulset:
       replicaCount: 1
   metrics:
     statefulset:
       replicaCount: 1
-
-otelcol:
   config:
   # Default otlp pipeline from values.yaml is used.    
     exporters:
