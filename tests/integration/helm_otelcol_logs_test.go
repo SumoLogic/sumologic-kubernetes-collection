@@ -24,7 +24,7 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
-func Test_Helm_Otelcol_Logs(t *testing.T) {
+func Test_Helm_Default_Otelcol_Logs(t *testing.T) {
 	const (
 		tickDuration            = 3 * time.Second
 		waitDuration            = 3 * time.Minute
