@@ -16,27 +16,6 @@ sumologic:
 fluent-bit:
   enabled: false
 
-metadata:
-  logs:
-    config:
-      service:
-        pipelines:
-          logs/otlp/containers:
-            receivers:
-              - otlp
-            processors:
-              - memory_limiter
-              - filter/include_containers
-              - groupbyattrs/containers
-              - k8s_tagger
-              - resource/add_cluster
-              - source/containers
-              - resource/drop_annotations
-              - resource/containers_copy_node_to_host
-              - batch
-            exporters:
-              - sumologic/containers
-
 otellogs:
   config:
     override:
@@ -57,4 +36,3 @@ otellogs:
           path: /run/log/journal
           type: DirectoryOrCreate
         name: run-log-journal
-        
