@@ -277,7 +277,7 @@ sumologic:
     enabled: true
     metadata:
       ## Set metadata provider service (either fluentd or otelcol).
-      provider: fluentd
+      provider: otelcol
 
     ### Enable a load balancing proxy for Prometheus remote writes.
     ## Prometheus remote write uses a single persistent HTTP connection per target,
@@ -1856,29 +1856,29 @@ kube-prometheus-stack:
       initContainers:
         - name: "init-config-reloader"
           env:
-            - name: FLUENTD_METRICS_SVC
+            - name: METADATA_METRICS_SVC
               valueFrom:
                 configMapKeyRef:
                   name: sumologic-configmap
-                  key: fluentdMetrics
+                  key: metadataMetrics
             - name: NAMESPACE
               valueFrom:
                 configMapKeyRef:
                   name: sumologic-configmap
-                  key: fluentdNamespace
+                  key: metadataNamespace
       containers:
         - name: "config-reloader"
           env:
-            - name: FLUENTD_METRICS_SVC
+            - name: METADATA_METRICS_SVC
               valueFrom:
                 configMapKeyRef:
                   name: sumologic-configmap
-                  key: fluentdMetrics
+                  key: metadataMetrics
             - name: NAMESPACE
               valueFrom:
                 configMapKeyRef:
                   name: sumologic-configmap
-                  key: fluentdNamespace
+                  key: metadataNamespace
 
       ## Enable WAL compression to reduce Prometheus memory consumption
       walCompression: true
@@ -1975,7 +1975,7 @@ kube-prometheus-stack:
         ## kube_service_spec_external_ip
         ## kube_service_spec_type
         ## kube_service_status_load_balancer_ingress
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.state
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.state
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -1988,7 +1988,7 @@ kube-prometheus-stack:
               regex: (pod|service|container)
         ## kube pod state metrics
         ## kube_pod_status_phase
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.state
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.state
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2004,7 +2004,7 @@ kube-prometheus-stack:
         ## kube_pod_container_status_restarts_total
         ## kube_pod_container_status_terminated_reason
         ## kube_pod_container_status_waiting_reason
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.state
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.state
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2016,7 +2016,7 @@ kube-prometheus-stack:
         ## cloudprovider_aws_api_request_duration_seconds_bucket
         ## cloudprovider_aws_api_request_duration_seconds_count
         ## cloudprovider_aws_api_request_duration_seconds_sum
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.controller-manager
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.controller-manager
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2035,7 +2035,7 @@ kube-prometheus-stack:
         ## scheduler_scheduling_algorithm_duration_seconds_bucket
         ## scheduler_scheduling_algorithm_duration_seconds_count
         ## scheduler_scheduling_algorithm_duration_seconds_sum
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.scheduler
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.scheduler
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2063,7 +2063,7 @@ kube-prometheus-stack:
         ## etcd_helper_cache_hit_total
         ## etcd_helper_cache_miss_count
         ## etcd_helper_cache_miss_total
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.apiserver
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.apiserver
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2086,7 +2086,7 @@ kube-prometheus-stack:
         ## kubelet_runtime_operations_latency_microseconds
         ## kubelet_runtime_operations_latency_microseconds_count
         ## kubelet_runtime_operations_latency_microseconds_sum
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.kubelet
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.kubelet
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2098,7 +2098,7 @@ kube-prometheus-stack:
         ## container_fs_usage_bytes
         ## container_memory_working_set_bytes
         ## container_cpu_cfs_throttled_seconds_total
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.container
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.container
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: labelmap
@@ -2113,7 +2113,7 @@ kube-prometheus-stack:
         ## cadvisor aggregate container metrics
         ## container_network_receive_bytes_total
         ## container_network_transmit_bytes_total
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.container
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.container
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2126,7 +2126,7 @@ kube-prometheus-stack:
         ## node_load1
         ## node_load5
         ## node_load15
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.node
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.node
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2168,7 +2168,7 @@ kube-prometheus-stack:
         ## node:node_net_utilisation:sum_irate
         ## node:node_num_cpu:sum
         ## node_namespace_pod:kube_pod_info:
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.operator.rule
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.operator.rule
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2231,7 +2231,7 @@ kube-prometheus-stack:
         ## prometheus_remote_storage_string_interner_zero_reference_releases_total
         ## prometheus_remote_storage_succeeded_samples_total
         ## up
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2254,7 +2254,7 @@ kube-prometheus-stack:
         ## process_cpu_seconds_total
         ## process_open_fds
         ## process_resident_memory_bytes
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.control-plane.coredns
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.control-plane.coredns
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2279,7 +2279,7 @@ kube-prometheus-stack:
         ## process_cpu_seconds_total
         ## process_open_fds
         ## process_resident_memory_bytes
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.control-plane.kube-etcd
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.control-plane.kube-etcd
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2355,7 +2355,7 @@ kube-prometheus-stack:
         ## nginx_ingress_nginxplus_upstream_server_response_time
         ## nginx_ingress_nginxplus_upstream_server_responses
         ## nginx_ingress_nginxplus_upstream_server_requests
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.nginx-ingress
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.nginx-ingress
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2448,7 +2448,7 @@ kube-prometheus-stack:
         ## nginx_plus_api_stream_upstream_peers_sent
         ## nginx_plus_api_stream_upstream_peers_unavail
 
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.nginx
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.nginx
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2485,7 +2485,7 @@ kube-prometheus-stack:
         ## redis_used_memory_overhead
         ## redis_used_memory_rss
         ## redis_used_memory_startup
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.redis
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.redis
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2553,7 +2553,7 @@ kube-prometheus-stack:
         ## java_lang_Threading_ThreadCount
         ## java_lang_Threading_ThreadCpuTime*
         ## java_lang_Threading_TotalStartedThreadCount
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.jmx
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.jmx
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2575,7 +2575,7 @@ kube-prometheus-stack:
         # kafka_topic_*
         # kafka_topics_*
         # kafka_zookeeper_*
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.kafka
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.kafka
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2616,7 +2616,7 @@ kube-prometheus-stack:
         ## mysql_perf_schema_index_io_waits_*
         ## mysql_perf_schema_read*
         ## mysql_perf_schema_write*
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.mysql
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.mysql
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2672,7 +2672,7 @@ kube-prometheus-stack:
         ## postgresql_toast_blks_hit
         ## postgresql_tidx_blks_read
         ## postgresql_tidx_blks_hit
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.postgresql
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.postgresql
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2715,7 +2715,7 @@ kube-prometheus-stack:
         ## apache_scboard_sending
         ## apache_scboard_starting
         ## apache_scboard_waiting
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.apache
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.apache
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2736,7 +2736,7 @@ kube-prometheus-stack:
         ## sqlserver_server_properties_server_memory
         ## sqlserver_volume_space_total_space_bytes
         ## sqlserver_volume_space_used_space_bytes
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.sqlserver
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.sqlserver
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2771,7 +2771,7 @@ kube-prometheus-stack:
         ## haproxy_weight
         ## haproxy_wredis
         ## haproxy_wretr
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.haproxy
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.haproxy
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2840,7 +2840,7 @@ kube-prometheus-stack:
         ## cassandra_ThreadPoolMetrics_request_Value
         ## cassandra_ThreadPoolMetrics_transport_Count
         ## cassandra_ThreadPoolMetrics_transport_Value
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.cassandra
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.cassandra
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2882,7 +2882,7 @@ kube-prometheus-stack:
         ## mongodb_uptime_ns
         ## mongodb_vsize_megabytes
         ## mongodb_wtcache_bytes_read_into
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.mongodb
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.mongodb
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2922,7 +2922,7 @@ kube-prometheus-stack:
         ## rabbitmq_queue_messages_publish_rate
         ## rabbitmq_queue_messages_unack
         ## rabbitmq_queue_slave_nodes
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.rabbitmq
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.rabbitmq
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -2967,7 +2967,7 @@ kube-prometheus-stack:
         ## tomcat_jvm_memorypool_processing_time
         ## tomcat_jvm_memorypool_request_count
         ## tomcat_jvm_memorypool_used
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.tomcat
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.tomcat
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -3040,7 +3040,7 @@ kube-prometheus-stack:
         ## varnish_threads_limited
         ## varnish_uptime
         ## varnish_vmods
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.varnish
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.varnish
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -3083,7 +3083,7 @@ kube-prometheus-stack:
         ## memcached_total_connections
         ## memcached_total_items
         ## memcached_uptime
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.memcached
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.memcached
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -3170,7 +3170,7 @@ kube-prometheus-stack:
         ## elasticsearch_thread_pool_search_queue
         ## elasticsearch_transport_rx_size_in_bytes
         ## elasticsearch_transport_tx_size_in_bytes
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.elasticsearch
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.elasticsearch
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -3202,7 +3202,7 @@ kube-prometheus-stack:
         ## activemq_OperatingSystem_FreePhysicalMemorySize
         ## activemq_OperatingSystem_SystemCpuLoad
         ## activemq_OperatingSystem_TotalPhysicalMemorySize
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.activemq
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.activemq
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -3269,7 +3269,7 @@ kube-prometheus-stack:
         ## couchbase_bucket_vb_pending_num
         ## couchbase_bucket_vb_pending_curr_items
         ## couchbase_bucket_vb_active_resident_items_ratio
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.couchbase
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.couchbase
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
@@ -3310,7 +3310,7 @@ kube-prometheus-stack:
         ## squid_cacheProtoClientHttpRequests
         ## squid_cacheClients
         ## squid_uptime
-        - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.squidproxy
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.squidproxy
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep

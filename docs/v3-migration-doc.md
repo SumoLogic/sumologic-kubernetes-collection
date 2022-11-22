@@ -33,6 +33,8 @@ In this document we detail the changes as well as the exact steps for migration.
 
 1. Perform required manual steps:
     - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
+2. Delete the following StatefulSets (otelcol):
+    - [Otelcol StatefulSets](#otelcol-statefulsets)
 
 #### Upgrade kube-prometheus-stack
 
@@ -97,3 +99,12 @@ Mechanism to replace special configuration values for traces marked by 'replace'
 - `exporters.sumologic.source_category.replace`
 
 Above special configuration values can be replaced either to direct values or be set as reference to other parameters form `values.yaml`.
+
+#### Otelcol StatefulSets
+
+If you're using `otelcol` as the logs/metrics metadata provider, please run one or both of the following commands to manually delete StatefulSets in helm chart v2 before upgrade:
+
+  ```
+  kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
+  kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
+  ```

@@ -4,5 +4,5 @@ metadata:
   name: sumologic-configmap
 data:
   metadataLogs: {{ template "sumologic.metadata.name.logs.service" . }}
-  fluentdMetrics: {{ template "sumologic.metrics.metadata.endpoint" . }}
-  fluentdNamespace: {{ .Release.Namespace }}
+  metadataMetrics: {{ template "sumologic.metrics.metadata.endpoint" . }}
+  metadataNamespace: {{ .Release.Namespace }}
