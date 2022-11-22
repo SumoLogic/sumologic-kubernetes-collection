@@ -204,7 +204,7 @@ sumologic:
           name: traces
           config-name: endpoint-traces
           properties:
-            content_type: OtlpHttpProto
+            content_type: Zipkin
 
   ### Configuration for collection of Kubernetes events
   events:
