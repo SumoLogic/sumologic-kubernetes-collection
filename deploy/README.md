@@ -18,17 +18,17 @@ Documentation for other versions can be found in the [main README file](https://
 Documentation links:
 
 - Installation
-  - [Installation with Helm](docs/installation-with-helm.md)
-  - [Non Helm Installation](docs/non-helm-installation.md)
+  - [Installation with Helm](/docs/installation-with-helm.md)
+  - [Non Helm Installation](/docs/non-helm-installation.md)
 
 - Configuration
-  - [Adding Additional FluentD Plugins](docs/additional-fluentd-plugins.md)
-  - [Additional Prometheus configuration](docs/additional-prometheus-configuration.md)
-  - [Advanced Configuration/Best Practices](docs/best-practices.md)
-  - [Advanced Configuration/Security best practices](docs/security-best-practices.md)
-  - [Authenticating with container registry](docs/working-with-container-registries.md#authenticating-with-container-registry)
-    - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](docs/working-with-container-registries.md#authenticating-with-container-registry)
-  - [Container log parsing (Docker, CRI-O, containerd)](docs/container-logs.md)
+  - [Adding Additional FluentD Plugins](/docs/additional-fluentd-plugins.md)
+  - [Additional Prometheus configuration](/docs/additional-prometheus-configuration.md)
+  - [Advanced Configuration/Best Practices](/docs/best-practices.md)
+  - [Advanced Configuration/Security best practices](/docs/security-best-practices.md)
+  - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
+    - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](/docs/working-with-container-registries.md#authenticating-with-container-registry)
+  - [Container log parsing (Docker, CRI-O, containerd)](/docs/container-logs.md)
   - [Collecting Kubernetes events](./docs/collecting-kubernetes-events.md)
   - Open Telemetry `beta`
     - [Open Telemetry with `sumologic-kubernetes-collection`](./docs/opentelemetry-collector.md)
@@ -36,14 +36,14 @@ Documentation links:
     - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
 
 - Upgrades
-  - [Upgrade from v0.17 to v1.0](docs/v1-migration-doc.md)
-  - [Upgrade from v1.3 to v2.0](docs/v2-migration-doc.md)
+  - [Upgrade from v0.17 to v1.0](/docs/v1-migration-doc.md)
+  - [Upgrade from v1.3 to v2.0](/docs/v2-migration-doc.md)
 
-- [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`](docs/migration-steps.md)
-- [Troubleshooting Collection](docs/troubleshoot-collection.md)
+- [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`](/docs/migration-steps.md)
+- [Troubleshooting Collection](/docs/troubleshoot-collection.md)
 - [Monitoring the Monitoring](./docs/monitoring-lag.md)
-- [Performance estimates for running collection chart](docs/performance.md)
-- [Dev Releases](docs/dev.md)
+- [Performance estimates for running collection chart](/docs/performance.md)
+- [Dev Releases](/docs/dev.md)
 
 ## Solution overview
 
