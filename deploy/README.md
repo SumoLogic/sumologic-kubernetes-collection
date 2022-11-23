@@ -29,10 +29,10 @@ Documentation links:
   - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
     - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](/docs/working-with-container-registries.md#authenticating-with-container-registry)
   - [Container log parsing (Docker, CRI-O, containerd)](/docs/container-logs.md)
-  - [Collecting Kubernetes events](./docs/collecting-kubernetes-events.md)
+  - [Collecting Kubernetes events](/docs/collecting-kubernetes-events.md)
   - Open Telemetry `beta`
-    - [Open Telemetry with `sumologic-kubernetes-collection`](./docs/opentelemetry-collector.md)
-    - [Comparison of Fluentd and Opentelemetry Collector functionality](./docs/fluentd-otc-comparison.md)
+    - [Open Telemetry with `sumologic-kubernetes-collection`](/docs/opentelemetry-collector.md)
+    - [Comparison of Fluentd and Opentelemetry Collector functionality](/docs/fluentd-otc-comparison.md)
     - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
 
 - Upgrades
@@ -41,7 +41,7 @@ Documentation links:
 
 - [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`](/docs/migration-steps.md)
 - [Troubleshooting Collection](/docs/troubleshoot-collection.md)
-- [Monitoring the Monitoring](./docs/monitoring-lag.md)
+- [Monitoring the Monitoring](/docs/monitoring-lag.md)
 - [Performance estimates for running collection chart](/docs/performance.md)
 - [Dev Releases](/docs/dev.md)
 
