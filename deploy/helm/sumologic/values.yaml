@@ -384,7 +384,7 @@ fluentd:
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
     ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/FluentdPersistence.md
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluentd-persistence.md
     enabled: true
 
     ## If defined, storageClassName: <storageClass>
@@ -506,7 +506,7 @@ fluentd:
         requests:
           memory: 768Mi
           ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#cpu-resources-warning
+          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/best-practices.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -570,7 +570,7 @@ fluentd:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: for logs metadata, fields is required.
       ## NOTE: Multiline log detection works differently for `text` format. See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Troubleshoot_Collection.md#using-text-format
+      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#using-text-format
       logFormat: fields
       ## Option to control adding timestamp to logs.
       addTimestamp: true
@@ -807,7 +807,7 @@ fluentd:
         requests:
           memory: 768Mi
           ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#cpu-resources-warning
+          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/best-practices.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -1108,7 +1108,7 @@ fluent-bit:
           HTTP_Listen  0.0.0.0
           HTTP_Port    2020
     ## https://docs.fluentbit.io/manual/pipeline/inputs
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/ContainerLogs.md
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/container-logs.md
     inputs: |
       [INPUT]
           Name                tail
@@ -1215,7 +1215,7 @@ kube-prometheus-stack:
   ## Uncomment the flag below to not install kube-prometheus-stack helm chart
   ## as a dependency along with this helm chart.
   ## This is needed e.g. if you want to use a different version of kube-prometheus-stack -
-  ## see /deploy/docs/Best_Practices.md#using-newer-kube-prometheus-stack.
+  ## see https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/best-practices.md#using-newer-kube-prometheus-stack.
   ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
   ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.metrics.enabled: false`,
   ## as this will make Prometheus try to write to an non-existent metrics enrichment service.
@@ -5046,7 +5046,7 @@ falco:
           readOnly: true
   ## Enable eBPF support for Falco instead of falco-probe kernel module.
   ## Set to true for GKE, for details see:
-  ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Troubleshoot_Collection.md#falco-and-google-kubernetes-engine-gke
+  ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#falco-and-google-kubernetes-engine-gke
   # ebpf:
   #   enabled: true
   falco:
