@@ -15,7 +15,7 @@ spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       containers:
       - name: instrumentation-cr-applier
-        image: sumologic/kubernetes-tools
+        image: sumologic/kubernetes-tools:2.13.0
         volumeMounts:
           - name: instrumentation-cr-configmap
             mountPath: /tmp/instrumentation-cr.yaml
