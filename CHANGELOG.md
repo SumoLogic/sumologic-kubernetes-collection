@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(fluentd): Removing PodSecurityPolicy for fluentd [#2605]
 - feat!: refactor event collection configuration [#2444]
 - fix(logs): configure fluentbit to send data to metadata-logs [#2610]
+- feat(logs): Changing the default logs metadata provider to otel [#2621]
+- chore!: remove replacing values in configuration marked by 'replace' suffix [#2615]
 
 ### Changed
 
@@ -72,6 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2444]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2444
 [#2610]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2610
 [#2619]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2619
+[#2621]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2621
+[#2615]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2615
 [#2628]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2628
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10

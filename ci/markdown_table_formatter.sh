@@ -10,8 +10,8 @@ if ! "${CMD}" --version ; then
 fi
 
 readonly FILES="deploy/README.md
-deploy/docs/Best_Practices.md
-deploy/docs/Performance.md
+docs/best-practices.md
+docs/performance.md
 deploy/helm/sumologic/README.md"
 
 

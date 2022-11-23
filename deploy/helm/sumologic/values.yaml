@@ -235,7 +235,7 @@ sumologic:
     enabled: true
     metadata:
       ## Set provider service (either fluentd or otelcol).
-      provider: fluentd
+      provider: otelcol
 
     collector:
       otelcol:
@@ -384,7 +384,7 @@ fluentd:
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
     ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/FluentdPersistence.md
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluentd-persistence.md
     enabled: true
 
     ## If defined, storageClassName: <storageClass>
@@ -506,7 +506,7 @@ fluentd:
         requests:
           memory: 768Mi
           ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#cpu-resources-warning
+          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/best-practices.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -570,7 +570,7 @@ fluentd:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: for logs metadata, fields is required.
       ## NOTE: Multiline log detection works differently for `text` format. See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Troubleshoot_Collection.md#using-text-format
+      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#using-text-format
       logFormat: fields
       ## Option to control adding timestamp to logs.
       addTimestamp: true
@@ -807,7 +807,7 @@ fluentd:
         requests:
           memory: 768Mi
           ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Best_Practices.md#cpu-resources-warning
+          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/best-practices.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -1108,7 +1108,7 @@ fluent-bit:
           HTTP_Listen  0.0.0.0
           HTTP_Port    2020
     ## https://docs.fluentbit.io/manual/pipeline/inputs
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/ContainerLogs.md
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/container-logs.md
     inputs: |
       [INPUT]
           Name                tail
@@ -1215,7 +1215,7 @@ kube-prometheus-stack:
   ## Uncomment the flag below to not install kube-prometheus-stack helm chart
   ## as a dependency along with this helm chart.
   ## This is needed e.g. if you want to use a different version of kube-prometheus-stack -
-  ## see /deploy/docs/Best_Practices.md#using-newer-kube-prometheus-stack.
+  ## see https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/best-practices.md#using-newer-kube-prometheus-stack.
   ## To disable metrics collection, set `sumologic.metrics.enabled: false` and leave this flag commented out or set it to `false`.
   ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.metrics.enabled: false`,
   ## as this will make Prometheus try to write to an non-existent metrics enrichment service.
@@ -3452,9 +3452,9 @@ otelagent:
       pprof: {}
     exporters:
       otlphttp/traces:
-        endpoint: 'http://exporters.otlptraces.endpoint.replace:4318'
+        endpoint: 'http://{{ include "traces.otelagent.exporter.endpoint" . }}:4318'
       otlphttp/metrics:
-        endpoint: 'http://exporters.otlpmetrics.endpoint.replace:4318'
+        endpoint: 'http://{{ printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-metrics" . ) .Release.Namespace }}:4318'
     service:
       extensions: [health_check, memory_ballast, pprof]
       pipelines:
@@ -3569,26 +3569,26 @@ otelcol:
       ## Source processor adds Sumo Logic related metadata
       source:
         annotation_prefix: "k8s.pod.annotation."
-        collector: "processors.source.collector.replace"
+        collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
         exclude:
-          k8s.container.name: "processors.source.exclude_container_regex.replace"
-          k8s.host.name: "processors.source.exclude_host_regex.replace"
-          k8s.namespace.name: "processors.source.exclude_namespace_regex.replace"
-          k8s.pod.name: "processors.source.exclude_pod_regex.replace"
+          k8s.container.name: '{{ .Values.otelcol.sourceMetadata.excludeContainerRegex  | quote }}'
+          k8s.host.name: '{{ .Values.otelcol.sourceMetadata.excludeHostRegex | quote }}'
+          k8s.namespace.name: '{{ .Values.otelcol.sourceMetadata.excludeNamespaceRegex | quote }}'
+          k8s.pod.name: '{{  .Values.otelcol.sourceMetadata.excludePodRegex| quote }}'
         pod_key: "k8s.pod.name"
         pod_name_key: "k8s.pod.pod_name"
         pod_template_hash_key: "k8s.pod.label.pod-template-hash"
-        source_category: "processors.source.category.replace"
-        source_category_prefix: "processors.source.category_prefix.replace"
-        source_category_replace_dash: "processors.source.category_replace_dash.replace"
+        source_category: '{{ .Values.otelcol.sourceMetadata.sourceCategory | quote }}'
+        source_category_prefix: '{{ .Values.otelcol.sourceMetadata.sourceCategoryPrefix | quote }}'
+        source_category_replace_dash: '{{ .Values.otelcol.sourceMetadata.sourceCategoryReplaceDash | quote }}'
         source_host: "%{k8s.pod.hostname}"
-        source_name: "processors.source.name.replace"
+        source_name: '{{ .Values.otelcol.sourceMetadata.sourceName | quote }}'
 
       ## Resource processor sets the associted cluster attribute
       resource:
         attributes:
           - key: k8s.cluster.name
-            value: "processors.resource.cluster.replace"
+            value: '{{ include "sumologic.clusterNameReplaceSpaceWithDash" . }}'
             action: upsert
 
       ## The memory_limiter processor is used to prevent out of memory situations on the collector.
@@ -3653,9 +3653,9 @@ otelcol:
         ## carbon2 and graphite are going to be supported soon.
         metric_format: prometheus
         ## Desired source category. Useful if you want to override the source category configured for the source.
-        source_category: "exporters.sumologic.source_category.replace"
+        source_category: '{{ .Values.otelcol.sourceMetadata.sourceCategory| quote }}'
         ## Desired source name. Useful if you want to override the source name configured for the source.
-        source_name: "exporters.sumologic.source_name.replace"
+        source_name: '{{ .Values.otelcol.sourceMetadata.sourceName | quote }}'
         ## Desired host name. Useful if you want to override the source host configured for the source.
         source_host: "%{k8s.pod.hostname}"
         ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
@@ -5046,7 +5046,7 @@ falco:
           readOnly: true
   ## Enable eBPF support for Falco instead of falco-probe kernel module.
   ## Set to true for GKE, for details see:
-  ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/docs/Troubleshoot_Collection.md#falco-and-google-kubernetes-engine-gke
+  ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#falco-and-google-kubernetes-engine-gke
   # ebpf:
   #   enabled: true
   falco:
