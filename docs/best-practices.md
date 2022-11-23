@@ -1330,7 +1330,7 @@ to work with our collection.
   and `prometheus_remote_storage_metadata_bytes_total`
 
 [kube-prometheus-stack]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#install-helm-chart
-[values-prometheus.yaml]: /deploy/helm/examples/kube_prometheus_stack/values-prometheus.yaml
+[values-prometheus.yaml]: /examples/kube_prometheus_stack/values-prometheus.yaml
 [values.yaml]: /deploy/helm/sumologic/values.yaml
 [kube-prometheus-stack-crd]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#from-33x-to-34x
 
