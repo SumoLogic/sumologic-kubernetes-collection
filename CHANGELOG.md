@@ -20,10 +20,12 @@ for differences between Telegraf Operator Helm Chart 1.3.5 and Telegraf Operator
 - chore: remove support for kOps 1.20 [#2592]
 - chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2596]
 - chore(telegraf-operator): update Telegraf Operator Helm Chart to 1.3.10 [#2598]
+- feat: update opentelemetry-operator chart and fix progagators list in instrumentation resource [#2630]
 
 [#2592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2592
 [#2596]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2596
 [#2598]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2598
+[#2630]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2630
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.1...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
