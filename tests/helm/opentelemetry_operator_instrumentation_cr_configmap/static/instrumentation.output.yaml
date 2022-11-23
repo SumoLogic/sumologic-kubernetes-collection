@@ -27,8 +27,6 @@ data:
       propagators:
         - tracecontext
         - baggage
-        - b3
-        - xray
       resource:
         addK8sUIDAttributes: false
       sampler:
@@ -39,10 +37,8 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator1
       dotnet:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.3.1-beta.1
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.4.0-beta.1
         env:
-          - name: OTEL_PROPAGATORS
-            value: tracecontext,baggage
           - name: OTEL_METRICS_EXPORTER
             value: none
           - name: OTEL_LOGS_EXPORTER
@@ -93,8 +89,6 @@ data:
       propagators:
         - tracecontext
         - baggage
-        - b3
-        - xray
       resource:
         addK8sUIDAttributes: false
       sampler:
@@ -105,10 +99,8 @@ data:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator2
       dotnet:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.3.1-beta.1
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.4.0-beta.1
         env:
-          - name: OTEL_PROPAGATORS
-            value: tracecontext,baggage
           - name: OTEL_METRICS_EXPORTER
             value: none
           - name: OTEL_LOGS_EXPORTER
