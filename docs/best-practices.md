@@ -100,7 +100,7 @@ kubectl -n <namespace> rollout restart statefulset <prometheus_statefulset_name>
 As you can see from the example, every subchart has its own `fullnameOverride` property
 that needs to be set separately to change the names of the resources created by that subchart.
 
-See the chart's [README](../helm/sumologic/README.md) for all the available `fullnameOverride` properties.
+See the chart's [README](/deploy/helm/sumologic/README.md) for all the available `fullnameOverride` properties.
 
 ## Multiline Log Support
 
@@ -263,7 +263,7 @@ Docker_Mode_Parser multi_line
 ## Collecting logs from /var/log/pods
 
 In order to collect logs from `/var/log/pods`,
-please copy full `fluent-bit.config.inputs` section from [values.yaml](../helm/sumologic/values.yaml)
+please copy full `fluent-bit.config.inputs` section from [values.yaml](/deploy/helm/sumologic/values.yaml)
 and change `Path` to `/var/log/pods/*/*/*.log`.
 
 In addition, Fluentd and/or OpenTelemetry configuration should be changed as well.
@@ -1330,8 +1330,8 @@ to work with our collection.
   and `prometheus_remote_storage_metadata_bytes_total`
 
 [kube-prometheus-stack]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#install-helm-chart
-[values-prometheus.yaml]: ../../examples/kube_prometheus_stack/values-prometheus.yaml
-[values.yaml]: ../helm/sumologic/values.yaml
+[values-prometheus.yaml]: /deploy/helm/examples/kube_prometheus_stack/values-prometheus.yaml
+[values.yaml]: /deploy/helm/sumologic/values.yaml
 [kube-prometheus-stack-crd]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#from-33x-to-34x
 
 ## OpenTelemetry queueing and batching

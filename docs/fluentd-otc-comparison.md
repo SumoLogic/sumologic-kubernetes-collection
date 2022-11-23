@@ -270,7 +270,7 @@ Events are not supported by `Opentelemetry Collector`
 | [sumologic.collectorName][readme]                                       | `metadata.metrics.config.processors.source.collector`                                                                                                       |
 | [sumologic.clusterName][readme]                                         | `metadata.metrics.config.processors.source.collector`                                                                                                       |
 
-[readme]: ../helm/sumologic/README.md
+[readme]: /deploy/helm/sumologic/README.md
 [persistent_queue]: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#persistent-queue
 [file_storage_extension]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
 

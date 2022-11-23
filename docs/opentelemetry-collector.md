@@ -96,7 +96,7 @@ by the high-level settings. See [Sumologic OpenTelemetry Collector configuration
 for more information
 
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/Configuration.md
-[values]: ../helm/sumologic/values.yaml
+[values]: /deploy/helm/sumologic/values.yaml
 
 ### Multiline log parsing
 
@@ -571,7 +571,7 @@ sumologic:
 ```
 
 For configurations that don't modify `sumologic.fluentd.events.overrideOutputConf`, this should be enough. See the configuration
-options under `otelevents` in [values.yaml](../helm/sumologic/values.yaml) for OT-specific configuration..
+options under `otelevents` in [values.yaml](/deploy/helm/sumologic/values.yaml) for OT-specific configuration..
 
 ### Customizing OpenTelemetry Collector configuration
 

@@ -21,7 +21,7 @@ required to run collection on your cluster.
    so we recommend allocating ample memory resources for the Prometheus pod
    if you wish to collect a high volume of metrics for a larger cluster.
 1. For clusters with 500 application pods or greater,
-   we found the following configuration changes in the [`values.yaml`](./../helm/sumologic/values.yaml)
+   we found the following configuration changes in the [`values.yaml`](/deploy/helm/sumologic/values.yaml)
    file to lead to a more stable experience:
     - Increase the FluentBit in_tail `Mem_Buf_Limit` from 5MB to 64MB
     - Set the `remote_timeout` to 1s (default 30s) for each item in the Prometheus

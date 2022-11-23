@@ -25,7 +25,7 @@ If you don’t already have a Sumo account, you can create one by clicking the F
 The following are required to setup Sumo Logic's Kubernetes collection.
 
 - An [Access ID and Access Key](https://help.sumologic.com/docs/manage/security/access-keys/) with [Manage Collectors](https://help.sumologic.com/docs/manage/users-roles/roles/role-capabilities#data-management) capability.
-- Please review our [minimum requirements](../README.md#minimum-requirements) and [support matrix](../README.md#support-matrix)
+- Please review our [minimum requirements](/deploy/README.md#minimum-requirements) and [support matrix](/deploy/README.md#support-matrix)
 
 To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](performance.md).
 
@@ -210,7 +210,7 @@ If you do not see data in Sumo Logic, you can review our
 
 ## Customizing Installation
 
-All default properties for the Helm chart can be found in our [documentation](../helm/sumologic/README.md).
+All default properties for the Helm chart can be found in our [documentation](/deploy/helm/sumologic/README.md).
 We recommend creating a new `user-values.yaml` for each Kubernetes cluster you wish
 to install collection on and __setting only the properties you wish to override__.
 Once you have customized you can use the following commands to install or upgrade.

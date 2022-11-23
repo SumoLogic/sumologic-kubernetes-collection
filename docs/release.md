@@ -42,10 +42,10 @@ Perform the following steps in order to release new verions of helm chart.
 
 1. Create [new release][releases]
 
-[deploy_title]: ../README.md#deployment-guide-for-unreleased-version
-[deploy_matrix]: ../README.md#support-matrix
-[changelog]: ../../CHANGELOG.md#unreleased
-[chart]: ../helm/sumologic/Chart.yaml
+[deploy_title]: /deploy/README.md#deployment-guide-for-unreleased-version
+[deploy_matrix]: /deploy/README.md#support-matrix
+[changelog]: /deploy/helm/CHANGELOG.md#unreleased
+[chart]: /deploy/helm/sumologic/Chart.yaml
 [releases]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases
-[documentation]: ../../README.md#documentation
+[documentation]: /deploy/helm/README.md#documentation
 [release_v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/release.md
