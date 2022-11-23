@@ -5104,15 +5104,21 @@ tailing-sidecar-operator:
   scc:
     create: false
 
-## Configure OpenTelemetry Operator - Tracing
+## Configure OpenTelemetry Operator - Instrumentation
 ## ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
 opentelemetry-operator:
   enabled: false
 
-  ## Specific for Tracing - Instrumentation resource creation
+  ## Specific for Sumo Logic chart - Instrumentation resource creation
+  instrumentationJobImage:
+    image:
+      repository: sumologic/kubernetes-tools
+      tag: 2.13.0
+
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""
 
+  ## Specific for OpenTelemetry Operator chart values
   admissionWebhooks:
     failurePolicy: Fail
     enabled: true
