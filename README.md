@@ -14,7 +14,8 @@ Sumo Logic Helm Chart Version
 
 | version                                                                                                   | status                                  |
 |-----------------------------------------------------------------------------------------------------------|-----------------------------------------|
-| [v2.18](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.18/deploy/README.md) | current / supported                     |
+| [v2.19](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.19/deploy/README.md) | current / supported                     |
+| [v2.18](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.18/deploy/README.md) | deprecated / supported until 2023-04-21 |
 | [v2.17](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.17/deploy/README.md) | deprecated / supported until 2023-03-15 |
 | [v2.16](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.16/deploy/README.md) | deprecated / supported until 2023-03-15 |
 | [v2.15](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.15/deploy/README.md) | deprecated / supported until 2023-03-13 |
