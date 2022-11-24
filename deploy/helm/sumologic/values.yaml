@@ -4067,7 +4067,7 @@ otelevents:
 
   ## Customize the Opentelemetry Collector configuration beyond the exposed options
   config:
-    ## Directly override the OT configuration. The value of this key should be a dictionary, that will
+    ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
     ## be directly merged with the generated configuration, overriding existing values.
     ## For example:
     # override:
@@ -4079,6 +4079,10 @@ otelevents:
     ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
     ## of this chart. It involves implementation details that may change even in minor versions.
     ## Use with caution, and consider opening an issue, so your customization can be added in a safer way.
+    merge: {}
+    ## Completely override existing config and replace it with the contents of this value.
+    ## The value of this key should be a dictionary, that will replace the normal configuration.
+    ## This is an advanced feature, use with caution, and review the generated configuration first.
     override: {}
 
   statefulset:
