@@ -6,19 +6,24 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+    container:
+      sourceHost: my_containers_sourceHost
+      sourceName: my_containers_sourceName
+      sourceCategory: my_containers_sourceCategory
+      sourceCategoryPrefix: my_containers_sourceCategoryPrefix
+      sourceCategoryReplaceDash: my_containers_sourceCategoryReplaceDash
+      excludeContainerRegex: my_containers_excludeContainerRegex
+      excludeHostRegex: my_containers_excludeHostRegex
+      excludeNamespaceRegex: my_containers_excludeNamespaceRegex
+      excludePodRegex: my_containers_excludePodRegex
+      perContainerAnnotationsEnabled: false
+      perContainerAnnotationPrefixes: []
 
 fluent-bit:
   enabled: false
 
 fluentd:
   logs:
-    containers:
-      sourceCategoryPrefix: my_containers_sourceCategoryPrefix
-      sourceCategoryReplaceDash: my_containers_sourceCategoryReplaceDash
-      excludePodRegex: my_containers_excludePodRegex
-      excludeContainerRegex: my_containers_excludeContainerRegex
-      excludeHostRegex: my_containers_excludeHostRegex
-      excludeNamespaceRegex: my_containers_excludeNamespaceRegex
     systemd:
       sourceCategoryPrefix: my_systemd_sourceCategoryPrefix
       sourceCategoryReplaceDash: my_systemd_sourceCategoryReplaceDash
