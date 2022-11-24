@@ -241,8 +241,8 @@ data:
       
       <filter host.kubelet.**>
         @type kubernetes_sumologic
-        source_category "kubelet"
-        source_name "k8s_kubelet"
+        source_category "my_kubelet_sourceCategory"
+        source_name "my_kubelet_sourceName"
         source_category_prefix "my_kubelet_sourceCategoryPrefix"
         source_category_replace_dash "my_kubelet_sourceCategoryReplaceDash"
         exclude_facility_regex "my_kubelet_excludeFacilityRegex"

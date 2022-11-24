@@ -270,11 +270,11 @@ data:
         source_name: my_containers_sourceName
       source/kubelet:
         collector: my_collectorName
-        source_category: kubelet
+        source_category: my_kubelet_sourceCategory
         source_category_prefix: my_kubelet_sourceCategoryPrefix
         source_category_replace_dash: my_kubelet_sourceCategoryReplaceDash
         source_host: '%{_sourceHost}'
-        source_name: k8s_kubelet
+        source_name: my_kubelet_sourceName
       source/systemd:
         collector: my_collectorName
         source_category: system

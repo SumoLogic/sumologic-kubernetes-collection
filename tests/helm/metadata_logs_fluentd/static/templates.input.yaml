@@ -16,6 +16,15 @@ sumologic:
       excludePodRegex: my_containers_excludePodRegex
       perContainerAnnotationsEnabled: false
       perContainerAnnotationPrefixes: []
+    kubelet:
+      sourceName: my_kubelet_sourceName
+      sourceCategory: my_kubelet_sourceCategory
+      sourceCategoryPrefix: my_kubelet_sourceCategoryPrefix
+      sourceCategoryReplaceDash: my_kubelet_sourceCategoryReplaceDash
+      excludeFacilityRegex: my_kubelet_excludeFacilityRegex
+      excludeHostRegex: my_kubelet_excludeHostRegex
+      excludePriorityRegex: my_kubelet_excludePriorityRegex
+      excludeUnitRegex: my_kubelet_excludeUnitRegex
 
 fluentd:
   logs:
@@ -26,10 +35,3 @@ fluentd:
       excludeHostRegex: my_systemd_excludeHostRegex
       excludePriorityRegex: my_systemd_excludePriorityRegex
       excludeUnitRegex: my_systemd_excludeUnitRegex
-    kubelet:
-      sourceCategoryPrefix: my_kubelet_sourceCategoryPrefix
-      sourceCategoryReplaceDash: my_kubelet_sourceCategoryReplaceDash
-      excludeFacilityRegex: my_kubelet_excludeFacilityRegex
-      excludeHostRegex: my_kubelet_excludeHostRegex
-      excludePriorityRegex: my_kubelet_excludePriorityRegex
-      excludeUnitRegex: my_kubelet_excludeUnitRegex

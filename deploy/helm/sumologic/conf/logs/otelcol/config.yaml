@@ -272,28 +272,28 @@ processors:
         match_type: regexp
         record_attributes:
           - key: SYSLOG_FACILITY
-            value: {{ .Values.fluentd.logs.kubelet.excludeFacilityRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.kubelet.excludeFacilityRegex | default "$^" | quote }}
   filter/exclude_kubelet_hostname:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: _HOSTNAME
-            value: {{ .Values.fluentd.logs.kubelet.excludeHostRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.kubelet.excludeHostRegex | default "$^" | quote }}
   filter/exclude_kubelet_priority:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: PRIORITY
-            value: {{ .Values.fluentd.logs.kubelet.excludePriorityRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.kubelet.excludePriorityRegex | default "$^" | quote }}
   filter/exclude_kubelet_unit:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: _SYSTEMD_UNIT
-            value: {{ .Values.fluentd.logs.kubelet.excludeUnitRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.kubelet.excludeUnitRegex | default "$^" | quote }}
 
   groupbyattrs/systemd:
     keys:
@@ -324,10 +324,10 @@ processors:
   source/kubelet:
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
     source_host: "%{_sourceHost}"
-    source_name: {{ .Values.fluentd.logs.kubelet.sourceName | quote }}
-    source_category: {{ .Values.fluentd.logs.kubelet.sourceCategory | quote }}
-    source_category_prefix: {{ .Values.fluentd.logs.kubelet.sourceCategoryPrefix | quote }}
-    source_category_replace_dash: {{ .Values.fluentd.logs.kubelet.sourceCategoryReplaceDash | quote }}
+    source_name: {{ .Values.sumologic.logs.kubelet.sourceName | quote }}
+    source_category: {{ .Values.sumologic.logs.kubelet.sourceCategory | quote }}
+    source_category_prefix: {{ .Values.sumologic.logs.kubelet.sourceCategoryPrefix | quote }}
+    source_category_replace_dash: {{ .Values.sumologic.logs.kubelet.sourceCategoryReplaceDash | quote }}
 {{ end }}
 
 service:
