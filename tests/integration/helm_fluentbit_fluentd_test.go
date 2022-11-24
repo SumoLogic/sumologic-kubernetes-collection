@@ -27,7 +27,7 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
-func Test_Helm_Fluentbit_Fluentd(t *testing.T) {
+func Test_Helm_FluentBit_Fluentd(t *testing.T) {
 	const (
 		tickDuration            = 3 * time.Second
 		waitDuration            = 5 * time.Minute
