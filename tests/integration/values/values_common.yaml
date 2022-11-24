@@ -86,6 +86,13 @@ otelcol:
         memory: 64Mi
         cpu: 100m
 
+otelevents:
+  statefulset:
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 100m
+
 # Request less resources so that this fits on Github actions runners environment
 otelagent:
   enabled: true

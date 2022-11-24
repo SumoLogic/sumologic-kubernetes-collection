@@ -1,4 +1,6 @@
 sumologic:
+  events:
+    provider: fluentd
   logs:
     collector:
       otelcol:
