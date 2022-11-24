@@ -1,0 +1,19 @@
+sumologic:
+  collectorName: my_collectorName
+  logs:
+    metadata:
+      provider: fluentd
+
+    container:
+      enabled: true
+      sourceHost: # in v2 this parameter is not set in values.yaml
+      sourceName: "%{namespace}.%{pod}.%{container}"
+      sourceCategory: "%{namespace}/%{pod_name}"
+      sourceCategoryPrefix: "kubernetes/"
+      sourceCategoryReplaceDash: "/"
+      excludeContainerRegex: ""
+      excludeHostRegex: ""
+      excludeNamespaceRegex: ""
+      excludePodRegex: ""
+      perContainerAnnotationsEnabled: false
+      perContainerAnnotationPrefixes: []

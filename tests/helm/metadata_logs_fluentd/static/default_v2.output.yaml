@@ -88,15 +88,15 @@ data:
     cache_ttl "7200"
     tag_to_kubernetes_name_regexp ".+?\\.containers\\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\\.log$"
   logs.kubernetes.sumologic.filter.conf: |
-    source_name "my_containers_sourceName"
-    source_host "my_containers_sourceHost"
+    source_name "%{namespace}.%{pod}.%{container}"
+    source_host 
     log_format "fields"
-    source_category "my_containers_sourceCategory"
-    source_category_prefix "my_containers_sourceCategoryPrefix"
-    source_category_replace_dash "my_containers_sourceCategoryReplaceDash"
-    exclude_pod_regex "my_containers_excludePodRegex"
-    exclude_container_regex "my_containers_excludeContainerRegex"
-    exclude_host_regex "my_containers_excludeHostRegex"
+    source_category "%{namespace}/%{pod_name}"
+    source_category_prefix "kubernetes/"
+    source_category_replace_dash "/"
+    exclude_pod_regex ""
+    exclude_container_regex ""
+    exclude_host_regex ""
     per_container_annotations_enabled false
     per_container_annotation_prefixes 
   logs.output.conf: |
@@ -163,7 +163,7 @@ data:
       <filter containers.**>
         @type kubernetes_sumologic
         @include logs.kubernetes.sumologic.filter.conf
-        exclude_namespace_regex "my_containers_excludeNamespaceRegex"
+        exclude_namespace_regex ""
       </filter>
       <filter **>
         @type record_modifier
@@ -243,12 +243,12 @@ data:
         @type kubernetes_sumologic
         source_category "kubelet"
         source_name "k8s_kubelet"
-        source_category_prefix "my_kubelet_sourceCategoryPrefix"
-        source_category_replace_dash "my_kubelet_sourceCategoryReplaceDash"
-        exclude_facility_regex "my_kubelet_excludeFacilityRegex"
-        exclude_host_regex "my_kubelet_excludeHostRegex"
-        exclude_priority_regex "my_kubelet_excludePriorityRegex"
-        exclude_unit_regex "my_kubelet_excludeUnitRegex"
+        source_category_prefix "kubernetes/"
+        source_category_replace_dash "/"
+        exclude_facility_regex ""
+        exclude_host_regex ""
+        exclude_priority_regex ""
+        exclude_unit_regex ""
       </filter>
       <filter **>
         @type record_modifier
@@ -284,12 +284,12 @@ data:
         @type kubernetes_sumologic
         source_name "k8s_systemd"
         source_category "system"
-        source_category_prefix "my_systemd_sourceCategoryPrefix"
-        source_category_replace_dash "my_systemd_sourceCategoryReplaceDash"
-        exclude_facility_regex "my_systemd_excludeFacilityRegex"
-        exclude_host_regex "my_systemd_excludeHostRegex"
-        exclude_priority_regex "my_systemd_excludePriorityRegex"
-        exclude_unit_regex "my_systemd_excludeUnitRegex"
+        source_category_prefix "kubernetes/"
+        source_category_replace_dash "/"
+        exclude_facility_regex ""
+        exclude_host_regex ""
+        exclude_priority_regex ""
+        exclude_unit_regex ""
       </filter>
       <filter host.**>
         @type record_modifier
