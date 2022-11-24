@@ -111,9 +111,6 @@ spec:
         imagePullPolicy: {{ .Values.metadata.image.pullPolicy }}
         args:
           - --config=/etc/otel/config.yaml
-          {{- if eq .Values.otelcol.metrics.enabled false }}
-          - --metrics-level=none
-          {{- end }}
         resources:
           {{- toYaml .Values.metadata.logs.statefulset.resources | nindent 10 }}
         {{- if .Values.metadata.logs.statefulset.containers.otelcol.securityContext }}
@@ -129,11 +126,9 @@ spec:
         - name: fluent-bit
           containerPort: 24321
           protocol: TCP
-        {{- if eq .Values.otelcol.metrics.enabled true }}
         - name: metrics
           containerPort: 8888
           protocol: TCP
-        {{- end }}
         - name: otlphttp
           containerPort: 4318
           protocol: TCP
