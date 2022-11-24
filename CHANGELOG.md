@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(logs): Changing the default logs metadata provider to otel [#2621]
 - chore!: remove replacing values in configuration marked by 'replace' suffix [#2615]
 - feat(metrics): service name change and switching the metrics provider default to otelcol [#2627]
-- feat!(logs): simplify metadata configuration [#2626]
+- feat(logs)!: simplify metadata configuration [#2626]
 
 ### Changed
 
