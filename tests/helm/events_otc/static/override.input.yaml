@@ -1,10 +1,7 @@
 otelevents:
   config:
     override:
-      exporters:
-        sumologic:
-          sending_queue:
-            persistent_storage_enabled: false
+      key: value
 
 sumologic:
   events:
