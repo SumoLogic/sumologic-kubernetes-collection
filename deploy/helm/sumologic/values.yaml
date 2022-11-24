@@ -208,7 +208,7 @@ sumologic:
 
   ### Configuration for collection of Kubernetes events
   events:
-    provider: fluentd
+    provider: otelcol
 
     ## Source name for the Events source. Default: "events"
     sourceName: "events"
