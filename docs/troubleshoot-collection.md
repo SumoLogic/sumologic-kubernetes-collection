@@ -71,7 +71,7 @@ kubectl delete secret sumologic -n sumologic
 
 ## Installation fails with error `function "dig" not defined`
 
-You need to use a more recent version of Helm. See [Minimum Requirements](/deploy/README.md#minimum-requirements).
+You need to use a more recent version of Helm. See [Minimum Requirements](/docs/README.md#minimum-requirements).
 
 If you are using ArgoCD or another tool that uses Helm under the hood,
 make sure that tool uses the required version of Helm.
