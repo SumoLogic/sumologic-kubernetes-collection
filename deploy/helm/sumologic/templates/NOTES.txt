@@ -23,32 +23,20 @@ We recommend turning this property on for production environments by setting met
 {{- end }}
 {{- end }}
 
-{{- if eq .Values.sumologic.traces.enabled true }}
+{{- if .Values.sumologic.traces.enabled }}
 
 Please see https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing to find out
 how to instrument your application and send traces.
 The list of endpoints in your Kubernetes cluster to which traces can be sent:
-{{- if eq .Values.otelagent.enabled false }}
-- OTLP/http: http://{{ template "sumologic.metadata.name.otelcol.service" . }}.{{ .Release.Namespace }}:4318
-- OTLP/gRPC: http://{{ template "sumologic.metadata.name.otelcol.service" . }}.{{ .Release.Namespace }}:4317
-- OTLP/http/deprecated: http://{{ template "sumologic.metadata.name.otelagent.service" . }}.{{ .Release.Namespace }}:55681
-- Zipkin: http://{{ template "sumologic.metadata.name.otelcol.service" . }}.{{ .Release.Namespace }}:9411/api/v2/spans
-- Jaeger/gRPC: http://{{ template "sumologic.metadata.name.otelcol.service" . }}.{{ .Release.Namespace }}:14250
-- Jaeger/Thrift/http: http://{{ template "sumologic.metadata.name.otelcol.service" . }}.{{ .Release.Namespace }}:14268
-- Jaeger/Thrift/compact: {{ template "sumologic.metadata.name.otelcol.service" . }}.{{ .Release.Namespace }}:6831
-- Jaeger/Thrift/binary: {{ template "sumologic.metadata.name.otelcol.service" . }}.{{ .Release.Namespace }}:6832
-- OpenCensus: http://{{ template "sumologic.metadata.name.otelcol.service" . }}.{{ .Release.Namespace }}:55678
-{{- else }}
-- OTLP/http: http://{{ template "sumologic.metadata.name.otelagent.service" . }}.{{ .Release.Namespace }}:4318
-- OTLP/gRPC: http://{{ template "sumologic.metadata.name.otelagent.service" . }}.{{ .Release.Namespace }}:4317
-- OTLP/http/deprecated: http://{{ template "sumologic.metadata.name.otelagent.service" . }}.{{ .Release.Namespace }}:55681
-- Zipkin: http://{{ template "sumologic.metadata.name.otelagent.service" . }}.{{ .Release.Namespace }}:9411/api/v2/spans
-- Jaeger/gRPC: http://{{ template "sumologic.metadata.name.otelagent.service" . }}.{{ .Release.Namespace }}:14250
-- Jaeger/Thrift/http: http://{{ template "sumologic.metadata.name.otelagent.service" . }}.{{ .Release.Namespace }}:14268
-- Jaeger/Thrift/compact: {{ template "sumologic.metadata.name.otelagent.service" . }}.{{ .Release.Namespace }}:6831
-- Jaeger/Thrift/binary: {{ template "sumologic.metadata.name.otelagent.service" . }}.{{ .Release.Namespace }}:6832
-- OpenCensus: http://{{ template "sumologic.metadata.name.otelagent.service" . }}.{{ .Release.Namespace }}:55678
-{{- end }}
+- OTLP/http: http://{{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}.{{ .Release.Namespace }}:4318
+- OTLP/gRPC: http://{{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}.{{ .Release.Namespace }}:4317
+- OTLP/http/deprecated: http://{{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}.{{ .Release.Namespace }}:55681
+- Zipkin: http://{{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}.{{ .Release.Namespace }}:9411/api/v2/spans
+- Jaeger/gRPC: http://{{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}.{{ .Release.Namespace }}:14250
+- Jaeger/Thrift/http: http://{{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}.{{ .Release.Namespace }}:14268
+- Jaeger/Thrift/compact: {{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}.{{ .Release.Namespace }}:6831
+- Jaeger/Thrift/binary: {{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}.{{ .Release.Namespace }}:6832
+- OpenCensus: http://{{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}.{{ .Release.Namespace }}:55678
 {{- end }}
 
 We've tried to automatically create fields. In an unlikely scenario that this

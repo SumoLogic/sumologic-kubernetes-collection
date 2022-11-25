@@ -195,76 +195,80 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}-otelcol
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelcol.pod" -}}
-{{- template "sumologic.labels.app.otelcol" . }}
+{{- define "sumologic.labels.app.tracessampler" -}}
+{{- template "sumologic.fullname" . }}-traces-sampler
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelcol.service" -}}
-{{- template "sumologic.labels.app.otelcol" . }}
+{{- define "sumologic.labels.app.tracessampler.pod" -}}
+{{- template "sumologic.labels.app.tracessampler" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelcol.service-headless" -}}
-{{- template "sumologic.labels.app.otelcol.service" . }}-headless
+{{- define "sumologic.labels.app.tracessampler.service" -}}
+{{- template "sumologic.labels.app.tracessampler" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelcol.service-metrics" -}}
-{{- template "sumologic.labels.app.otelcol.service" . }}-instr-metrics
+{{- define "sumologic.labels.app.tracessampler.service-headless" -}}
+{{- template "sumologic.labels.app.tracessampler.service" . }}-headless
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelcol.configmap" -}}
-{{- template "sumologic.labels.app.metrics" . }}
+{{- define "sumologic.labels.app.tracessampler.service-metrics" -}}
+{{- template "sumologic.labels.app.tracessampler.service" . }}-instr-metrics
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelcol.deployment" -}}
-{{- template "sumologic.labels.app.otelcol" . }}
+{{- define "sumologic.labels.app.tracessampler.configmap" -}}
+{{- template "sumologic.labels.app.tracessampler" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelagent" -}}
-{{- template "sumologic.fullname" . }}-otelagent
+{{- define "sumologic.labels.app.tracessampler.deployment" -}}
+{{- template "sumologic.labels.app.tracessampler" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelagent.pod" -}}
-{{- template "sumologic.labels.app.otelagent" . }}
+{{- define "sumologic.labels.app.otelcolinstrumentation" -}}
+{{- template "sumologic.fullname" . }}-otelcol-instrumentation
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelagent.service" -}}
-{{- template "sumologic.labels.app.otelagent" . }}
+{{- define "sumologic.labels.app.otelcolinstrumentation.pod" -}}
+{{- template "sumologic.labels.app.otelcolinstrumentation" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelagent.configmap" -}}
-{{- template "sumologic.labels.app.otelagent" . }}
+{{- define "sumologic.labels.app.otelcolinstrumentation.service" -}}
+{{- template "sumologic.labels.app.otelcolinstrumentation" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelagent.daemonset" -}}
-{{- template "sumologic.labels.app.otelagent" . }}
+{{- define "sumologic.labels.app.otelcolinstrumentation.configmap" -}}
+{{- template "sumologic.labels.app.otelcolinstrumentation" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelagent.component" -}}
-{{- template "sumologic.labels.app.otelagent" . }}-component
+{{- define "sumologic.labels.app.otelcolinstrumentation.statefulset" -}}
+{{- template "sumologic.labels.app.otelcolinstrumentation" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelgateway" -}}
-{{- template "sumologic.fullname" . }}-otelgateway
+{{- define "sumologic.labels.app.otelcolinstrumentation.component" -}}
+{{- template "sumologic.labels.app.otelcolinstrumentation" . }}-component
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelgateway.pod" -}}
-{{- template "sumologic.labels.app.otelgateway" . }}
+{{- define "sumologic.labels.app.tracesgateway" -}}
+{{- template "sumologic.fullname" . }}-traces-gateway
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelgateway.service" -}}
-{{- template "sumologic.labels.app.otelgateway" . }}
+{{- define "sumologic.labels.app.tracesgateway.pod" -}}
+{{- template "sumologic.labels.app.tracesgateway" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelgateway.configmap" -}}
-{{- template "sumologic.labels.app.otelgateway" . }}
+{{- define "sumologic.labels.app.tracesgateway.service" -}}
+{{- template "sumologic.labels.app.tracesgateway" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelgateway.deployment" -}}
-{{- template "sumologic.labels.app.otelgateway" . }}
+{{- define "sumologic.labels.app.tracesgateway.configmap" -}}
+{{- template "sumologic.labels.app.tracesgateway" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.otelgateway.component" -}}
-{{- template "sumologic.labels.app.otelgateway" . }}-component
+{{- define "sumologic.labels.app.tracesgateway.deployment" -}}
+{{- template "sumologic.labels.app.tracesgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.tracesgateway.component" -}}
+{{- template "sumologic.labels.app.tracesgateway" . }}-component
 {{- end -}}
 
 {{- define "sumologic.labels.app.remoteWriteProxy" -}}
@@ -527,56 +531,56 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{ template "sumologic.fullname" . }}-otelcol
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelcol.service" -}}
-{{ template "sumologic.metadata.name.otelcol" . }}
+{{- define "sumologic.metadata.name.tracessampler" -}}
+{{ template "sumologic.fullname" . }}-traces-sampler
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelcol.service-headless" -}}
-{{ template "sumologic.metadata.name.otelcol.service" . }}-headless
+{{- define "sumologic.metadata.name.tracessampler.service" -}}
+{{ template "sumologic.metadata.name.tracessampler" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelcol.service-metrics" -}}
-{{ template "sumologic.metadata.name.otelcol" . }}-instr-metrics
+{{- define "sumologic.metadata.name.tracessampler.service-headless" -}}
+{{ template "sumologic.metadata.name.tracessampler.service" . }}-headless
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelcol.configmap" -}}
-{{ template "sumologic.metadata.name.otelcol" . }}
+{{- define "sumologic.metadata.name.tracessampler.configmap" -}}
+{{ template "sumologic.metadata.name.tracessampler" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelcol.deployment" -}}
-{{ template "sumologic.metadata.name.otelcol" . }}
+{{- define "sumologic.metadata.name.tracessampler.deployment" -}}
+{{ template "sumologic.metadata.name.tracessampler" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelagent" -}}
-{{ template "sumologic.fullname" . }}-otelagent
+{{- define "sumologic.metadata.name.otelcolinstrumentation" -}}
+{{ template "sumologic.fullname" . }}-otelcol-instrumentation
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelagent.service" -}}
-{{ template "sumologic.metadata.name.otelagent" . }}
+{{- define "sumologic.metadata.name.otelcolinstrumentation.service" -}}
+{{ template "sumologic.metadata.name.otelcolinstrumentation" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelagent.configmap" -}}
-{{ template "sumologic.metadata.name.otelagent" . }}
+{{- define "sumologic.metadata.name.otelcolinstrumentation.configmap" -}}
+{{ template "sumologic.metadata.name.otelcolinstrumentation" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelagent.daemonset" -}}
-{{ template "sumologic.metadata.name.otelagent" . }}
+{{- define "sumologic.metadata.name.otelcolinstrumentation.statefulset" -}}
+{{ template "sumologic.metadata.name.otelcolinstrumentation" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelgateway" -}}
-{{ template "sumologic.fullname" . }}-otelgateway
+{{- define "sumologic.metadata.name.tracesgateway" -}}
+{{ template "sumologic.fullname" . }}-traces-gateway
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelgateway.service" -}}
-{{ template "sumologic.metadata.name.otelgateway" . }}
+{{- define "sumologic.metadata.name.tracesgateway.service" -}}
+{{ template "sumologic.metadata.name.tracesgateway" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelgateway.configmap" -}}
-{{ template "sumologic.metadata.name.otelgateway" . }}
+{{- define "sumologic.metadata.name.tracesgateway.configmap" -}}
+{{ template "sumologic.metadata.name.tracesgateway" . }}
 {{- end -}}
 
-{{- define "sumologic.metadata.name.otelgateway.deployment" -}}
-{{ template "sumologic.metadata.name.otelgateway" . }}
+{{- define "sumologic.metadata.name.tracesgateway.deployment" -}}
+{{ template "sumologic.metadata.name.tracesgateway" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.remoteWriteProxy" -}}
@@ -703,7 +707,7 @@ sumologic.com/scrape: "true"
 {{ template "sumologic.labels.events" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.scrape.traces" -}}
+{{- define "sumologic.labels.scrape.instrumentation" -}}
 {{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.traces.component" . }}
 {{- end -}}
@@ -717,15 +721,19 @@ sumologic.com/scrape: "true"
 {{ template "sumologic.fullname" . }}-priorityclass
 {{- end -}}
 
+{{- define "sumologic.metadata.name.instrumentation.deprecated.otelcol.service" -}}
+{{ template "sumologic.fullname" . }}-otelcol
+{{- end -}}
+
+{{- define "sumologic.metadata.name.instrumentation.deprecated.otelagent.service" -}}
+{{ template "sumologic.fullname" . }}-otelagent
+{{- end -}}
+
 {{/*
 Create endpoint based on OTC Tracing deployment type
 */}}
 {{- define "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" -}}
-{{- if .Values.otelagent.enabled -}}
-{{ printf "%s.%s" ( include "sumologic.metadata.name.otelagent.service" . ) .Release.Namespace }}
-{{- else -}}
-{{ printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
-{{- end -}}
+{{ printf "%s.%s" ( include "sumologic.metadata.name.otelcolinstrumentation.service" . ) .Release.Namespace }}
 {{- end -}}
 
 {{/*
@@ -1468,38 +1476,29 @@ Example Usage:
 {{- end -}}
 
 {{/*
-Endpoint used by otelagent exporter.
+Endpoint used by otelcol-instrumentation exporter.
 
 Example Usage:
-{{- $otelcolService := include "traces.otelagent.exporter.endpoint" . }}
+{{- $otelcolService := include "otelcolinstrumentation.exporter.endpoint" . }}
 
 */}}
-{{- define "traces.otelagent.exporter.endpoint" -}}
-{{- if (eq .Values.otelgateway.enabled true) }}
-{{- printf "%s.%s" ( include "sumologic.metadata.name.otelgateway.service" . ) .Release.Namespace }}
+{{- define "otelcolinstrumentation.exporter.endpoint" -}}
+{{ $tracesGatewayEnabled := .Values.tracesGateway.enabled }}
+{{- if (eq $tracesGatewayEnabled true) }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.tracesgateway.service" . ) .Release.Namespace }}
 {{- else }}
-{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.tracessampler.service" . ) .Release.Namespace }}
 {{- end }}
 {{- end -}}
 
 {{/*
-Endpoint used by otelgateway otlp exporter.
+Endpoint used by tracesgateway loadbalancing exporter.
 
 Example Usage:
-'{{ include "traces.otelgateway.exporter.endpoint." . }}'
+'{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'
 */}}
-{{- define "traces.otelgateway.exporter.endpoint" -}}
-{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service" . ) .Release.Namespace }}
-{{- end -}}
-
-{{/*
-Endpoint used by otelgateway loadbalancing exporter.
-
-Example Usage:
-'{{ include "traces.otelgateway.exporter.loadbalancing.endpoint" . }}'
-*/}}
-{{- define "traces.otelgateway.exporter.loadbalancing.endpoint" -}}
-{{- printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-headless" . ) .Release.Namespace }}
+{{- define "tracesgateway.exporter.loadbalancing.endpoint" -}}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.tracessampler.service-headless" . ) .Release.Namespace }}
 {{- end -}}
 
 {{- define "opentelemetry-operator.controller.manager.metrics.service.url" -}}
