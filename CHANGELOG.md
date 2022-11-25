@@ -30,6 +30,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(events)!: add config.merge option [#2643]
 - feat(terraform)!: expect load_config_file to be not set [#2648]
 - feat(otellogs)!: add config.merge option [#2652]
+- chore!: move parameters from `fluentd.logs.containers` to `sumologic.logs.container` [#2635]
+  - move `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
+  - move `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
+  - move `fluentd.logs.contianers.sourceCategory` to `sumologic.logs.container.sourceCategory`
+  - move `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
+  - move `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
+  - move `fluentd.logs.containers.excludeContainerRegex` to `sumologic.logs.container.excludeContainerRegex`
+  - move `fluentd.logs.containers.excludeHostRegex` to `sumologic.logs.container.excludeHostRegex`
+  - move `fluentd.logs.containers.excludeNamespaceRegex` to `sumologic.logs.container.excludeNamespaceRegex`
+  - move `fluentd.logs.containers.excludePodRegex` to `sumologic.logs.container.excludePodRegex`
+  - move `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
+  - move `fluentd.logs.containers.perContainerAnnotationsEnabled` to `sumologic.logs.container.perContainerAnnotationsEnabled`
+  - move `fluentd.logs.containers.perContainerAnnotationPrefixes` to `sumologic.logs.container.perContainerAnnotationPrefixes`
+- chore!: move parameters from `fluentd.logs.kubelet` to `sumologic.logs.kubelet` [#2635]
+  - move `fluentd.logs.kubelet.sourceName` to `sumologic.logs.kubelet.sourceName`
+  - move `fluentd.logs.kubelet.sourceCategory` to `sumologic.logs.kubelet.sourceCategory`
+  - move `fluentd.logs.kubelet.sourceCategoryPrefix` to `sumologic.logs.kubelet.sourceCategoryPrefix`
+  - move `fluentd.logs.kubelet.sourceCategoryReplaceDash` to `sumologic.logs.kubelet.sourceCategoryReplaceDash`
+  - move `fluentd.logs.kubelet.excludeFacilityRegex` to `sumologic.logs.kubelet.excludeFacilityRegex`
+  - move `fluentd.logs.kubelet.excludeHostRegex` to `sumologic.logs.kubelet.excludeHostRegex`
+  - move `fluentd.logs.kubelet.excludePriorityRegex` to `sumologic.logs.kubelet.excludePriorityRegex`
+  - move `fluentd.logs.kubelet.excludeUnitRegex` to `sumologic.logs.kubelet.excludeUnitRegex`
+- chore!: move parameters from `fluentd.logs.systemd` to `sumologic.logs.systemd` [#2635]
+  - move `fluentd.logs.systemd.sourceName` to `sumologic.logs.systemd.sourceName`
+  - move `fluentd.logs.systemd.sourceCategory` to `sumologic.logs.systemd.sourceCategory`
+  - move `fluentd.logs.systemd.sourceCategoryPrefix` to `sumologic.logs.systemd.sourceCategoryPrefix`
+  - move `fluentd.logs.systemd.sourceCategoryReplaceDash` to `sumologic.logs.systemd.sourceCategoryReplaceDash`
+  - move `fluentd.logs.systemd.excludeFacilityRegex` to `sumologic.logs.systemd.excludeFacilityRegex`
+  - move `fluentd.logs.systemd.excludeHostRegex` to `sumologic.logs.systemd.excludeHostRegex`
+  - move `fluentd.logs.systemd.excludePriorityRegex` to `sumologic.logs.systemd.excludePriorityRegex`
+  - move `fluentd.logs.systemd.excludeUnitRegex` to `sumologic.logs.systemd.excludeUnitRegex`
+- chore!: move parameters from `fluentd.logs.default` to `sumologic.logs.defaultFluentd` [#2635]
+  - move `fluentd.logs.default.sourceName` to `sumologic.logs.defaultFluentd.sourceName`
+  - move `fluentd.logs.default.sourceCategory` to `sumologic.logs.defaultFluentd.sourceCategory`
+  - move `fluentd.logs.default.sourceCategoryPrefix` to `sumologic.logs.defaultFluentd.sourceCategoryPrefix`
+  - move `fluentd.logs.default.sourceCategoryReplaceDash` to `sumologic.logs.defaultFluentd.sourceCategoryReplaceDash`
+  - move `fluentd.logs.default.excludeFacilityRegex` to `sumologic.logs.defaultFluentd.excludeFacilityRegex`
+  - move `fluentd.logs.default.excludeHostRegex` to `sumologic.logs.defaultFluentd.excludeHostRegex`
+  - move `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
+  - move `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
 
 ### Changed
 
@@ -92,6 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2649]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2649
 [#2654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2654
 [#2652]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2652
+[#2635]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2635
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0

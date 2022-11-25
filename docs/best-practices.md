@@ -873,11 +873,11 @@ to override some metadata and settings per pod.
 
 - `sumologic.com/format` overrides the value of the `fluentd.logs.output.logFormat` property.
   Using `text` can break multiline detection. Check out [Troubleshooting Collection](troubleshoot-collection.md#using-text-format)
-- `sumologic.com/sourceCategory` overrides the value of the `fluentd.logs.containers.sourceCategory` property
-- `sumologic.com/sourceCategoryPrefix` overrides the value of the `fluentd.logs.containers.sourceCategoryPrefix` property
-- `sumologic.com/sourceCategoryReplaceDash` overrides the value of the `fluentd.logs.containers.sourceCategoryReplaceDash`
+- `sumologic.com/sourceCategory` overrides the value of the `sumologic.logs.container.sourceCategory` property
+- `sumologic.com/sourceCategoryPrefix` overrides the value of the `sumologic.logs.container.sourceCategoryPrefix` property
+- `sumologic.com/sourceCategoryReplaceDash` overrides the value of the `sumologic.logs.container.sourceCategoryReplaceDash`
   property
-- `sumologic.com/sourceName` overrides the value of the `fluentd.logs.containers.sourceName` property
+- `sumologic.com/sourceName` overrides the value of the `sumologic.logs.container.sourceName` property
 
 For example:
 
