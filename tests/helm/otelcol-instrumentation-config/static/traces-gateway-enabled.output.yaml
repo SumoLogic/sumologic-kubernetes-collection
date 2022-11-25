@@ -1,21 +1,36 @@
 ---
-# Source: sumologic/templates/traces/otelcol/configmap.yaml
+# Source: sumologic/templates/instrumentation/otelcol-instrumentation/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: RELEASE-NAME-sumologic-otelcol
+  name: RELEASE-NAME-sumologic-otelcol-instrumentation
   labels:
-    app: RELEASE-NAME-sumologic-otelcol-metrics
+    app: RELEASE-NAME-sumologic-otelcol-instrumentation
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
-  traces.otelcol.conf.yaml: |
+  otelcol.instrumentation.conf.yaml: |
+    
     exporters:
-      otlphttp:
-        compression: gzip
-        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
-      sumologic:
+      otlphttp/traces:
+        endpoint: http://RELEASE-NAME-sumologic-traces-gateway.sumologic:4318
+      sumologic/logs:
+        compress_encoding: gzip
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+        log_format: json
+        max_request_body_size: 1048576
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_elapsed_time: 120s
+          max_interval: 30s
+        sending_queue:
+          enabled: false
+          num_consumers: 10
+          queue_size: 5000
+        timeout: 5s
+      sumologic/metrics:
         compress_encoding: gzip
         endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
         log_format: text
@@ -30,25 +45,46 @@ data:
           enabled: false
           num_consumers: 10
           queue_size: 5000
-        source_category: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
-        source_host: '%{k8s.pod.hostname}'
-        source_name: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
         timeout: 5s
     extensions:
       health_check: {}
       memory_ballast:
-        size_mib: 683
+        size_mib: 250
       pprof: {}
     processors:
       batch:
-        send_batch_max_size: 512
         send_batch_size: 256
         timeout: 5s
-      cascading_filter:
-        num_traces: 200000
+      k8s_tagger:
+        extract:
+          annotations:
+          - key: '*'
+            tag_name: k8s.pod.annotation.%s
+          labels:
+          - key: '*'
+            tag_name: k8s.pod.label.%s
+          metadata:
+          - containerId
+          - containerName
+          - daemonSetName
+          - deploymentName
+          - hostName
+          - namespace
+          - nodeName
+          - podId
+          - podName
+          - replicaSetName
+          - serviceName
+          - statefulSetName
+          namespace_labels:
+          - key: '*'
+            tag_name: k8s.namespace.label.%s
+        owner_lookup_enabled: true
+        passthrough: false
       memory_limiter:
         check_interval: 5s
-        limit_mib: 1900
+        limit_percentage: 75
+        spike_limit_percentage: 20
       resource:
         attributes:
         - action: upsert
@@ -63,10 +99,10 @@ data:
         annotation_prefix: k8s.pod.annotation.
         collector: "kubernetes"
         exclude:
-          k8s.container.name: ""
-          k8s.host.name: ""
-          k8s.namespace.name: "foo"
-          k8s.pod.name: ""
+          k8s.container.name: "[123+]bar$|xyz"
+          k8s.host.name: "hhh123"
+          k8s.namespace.name: "kube\\s+"
+          k8s.pod.name: "^foo.*"
         pod_key: k8s.pod.name
         pod_name_key: k8s.pod.pod_name
         pod_template_hash_key: k8s.pod.label.pod-template-hash
@@ -106,12 +142,24 @@ data:
       - memory_ballast
       - pprof
       pipelines:
-        metrics:
+        logs:
           exporters:
-          - sumologic
+          - sumologic/logs
           processors:
           - memory_limiter
-          - resourcedetection
+          - k8s_tagger
+          - source
+          - resource
+          - batch
+          receivers:
+          - otlp
+          - otlp/deprecated
+        metrics:
+          exporters:
+          - sumologic/metrics
+          processors:
+          - memory_limiter
+          - k8s_tagger
           - source
           - resource
           - batch
@@ -120,12 +168,12 @@ data:
           - otlp/deprecated
         traces:
           exporters:
-          - otlphttp
+          - otlphttp/traces
           processors:
           - memory_limiter
+          - k8s_tagger
           - source
           - resource
-          - cascading_filter
           - batch
           receivers:
           - jaeger
