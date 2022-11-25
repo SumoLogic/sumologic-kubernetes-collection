@@ -189,10 +189,6 @@ application-metrics-redis-bitnami-clean:
 	kubectl delete ns demo-redis-bitnami
 
 ## JMXExporter based JMX
-application-metrics-jmxexporter-docker-build:
-	docker build /sumologic/vagrant/k8s/application_metrics/jmx/jmxexporter/docker/ -t localhost:32000/jmxexporter/docker
-	docker push localhost:32000/jmxexporter/docker
-
 application-metrics-jmxexporter-docker-run:
 	kubectl create ns demo-jmxexporter-docker || true
 	kubectl -n demo-jmxexporter-docker apply -f ${k8s_path}/application_metrics/jmx/jmxexporter/docker/configmap.yaml
@@ -203,10 +199,6 @@ application-metrics-jmxexporter-docker-clean:
 
 ## Jolokia based JMX
 ### Jolokia as javagent
-application-metrics-jolokia-docker-build:
-	docker build /sumologic/vagrant/k8s/application_metrics/jmx/jolokia/docker/ -t localhost:32000/jolokia/docker
-	docker push localhost:32000/jolokia/docker
-
 application-metrics-jolokia-docker-run:
 	kubectl create ns demo-jolokia-docker || true
 	kubectl -n demo-jolokia-docker apply -f ${k8s_path}/application_metrics/jmx/jolokia/docker/statefulset.yaml
@@ -215,9 +207,6 @@ application-metrics-jolokia-docker-clean:
 	kubectl delete ns demo-jolokia-docker
 
 ### Jolokia as standalone application
-application-metrics-jolokia-agent-build:
-	docker build /sumologic/vagrant/k8s/application_metrics/jmx/jolokia/agent/ -t localhost:32000/jolokia/agent
-	docker push localhost:32000/jolokia/agent
 
 application-metrics-jolokia-agent-run:
 	kubectl create ns demo-jolokia-agent || true

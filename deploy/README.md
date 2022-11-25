@@ -2,7 +2,7 @@
 
 This page has instructions for collecting Kubernetes logs, metrics, and events;
 enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
-See our [documentation guide](https://help.sumologic.com/Solutions/Kubernetes_Solution)
+See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/)
 for details on our Kubernetes Solution.
 
 - [Solution overview](#solution-overview)
@@ -32,7 +32,7 @@ Documentation links:
   - Open Telemetry `beta`
     - [Open Telemetry with `sumologic-kubernetes-collection`](./docs/opentelemetry_collector.md)
     - [Comparison of Fluentd and Opentelemetry Collector functionality](./docs/fluentd_otc_comparison.md)
-    - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/Beta/Kubernetes_Tracing_Auto_Instrumentation)
+    - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
 
 - Upgrades
   - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
@@ -76,21 +76,23 @@ The diagram below illustrates the components of the Kubernetes collection soluti
 
 The following table displays the tested Kubernetes and Helm versions.
 
-| Name          | Version                                  |
-|---------------|------------------------------------------|
-| K8s with EKS  | 1.19<br/>1.20<br/>1.21<br/>1.22<br/>1.23 |
-| K8s with Kops | 1.20<br/>1.21<br/>1.22<br/>1.23<br/>1.24 |
-| K8s with GKE  | 1.20<br/>1.21<br/>1.22<br/>1.23          |
-| K8s with AKS  | 1.22<br/>1.23<br/>1.24                   |
-| OpenShift     | 4.6<br/>4.7<br/>4.8<br/>4.9<br/>4.10     |
-| Helm          | 3.8.2 (Linux)                            |
-| kubectl       | 1.23.6                                   |
+| Name          | Version                         |
+|---------------|---------------------------------|
+| K8s with EKS  | 1.20<br/>1.21<br/>1.22<br/>1.23 |
+| K8s with Kops | 1.21<br/>1.22<br/>1.23<br/>1.24 |
+| K8s with GKE  | 1.21<br/>1.22<br/>1.23          |
+| K8s with AKS  | 1.22<br/>1.23<br/>1.24          |
+| OpenShift     | 4.8<br/>4.9<br/>4.10            |
+| Helm          | 3.8.2 (Linux)                   |
+| kubectl       | 1.23.6                          |
 
 The following matrix displays the tested package versions for our Helm chart.
 
 | Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit                          | Falco  | Metrics Server | Telegraf Operator | Tailing Sidecar Operator | OpenTelemetry Operator |
 |:----------------------|:------------------------------------------|:--------|:------------------------------------|:-------|:---------------|:------------------|:-------------------------|:-----------------------|
-| 2.16.0 - latest       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.4                    | 0.7.0                  |
+| 2.19.0 - latest       | 12.10.0                                   | 1.14.6  | 0.20.9                              | 1.18.6 | 5.11.9         | 1.3.10            | 0.3.4                    | 0.18.3                 |
+| 2.18.0 - 2.18.1       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.4                    | 0.13.0                 |
+| 2.16.0 - 2.17.0       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.4                    | 0.7.0                  |
 | 2.14.1 - 2.15.0       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.3                    | 0.7.0                  |
 | 2.11.0 - 2.14.0       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.2                    | 0.7.0                  |
 | 2.10.0                | 12.10.0                                   | 1.14.6  | 0.14.1                              | 1.17.4 | 5.11.9         | 1.3.3             | 0.3.2                    | 0.7.0                  |

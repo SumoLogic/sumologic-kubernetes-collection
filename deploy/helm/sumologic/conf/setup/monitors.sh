@@ -62,7 +62,7 @@ if [[ -z "${MONITORS_FOLDER_ID}" ]]; then
   terraform init -input=false || terraform init -input=false -upgrade
 
   # extract environment from SUMOLOGIC_BASE_URL
-  # see: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-by-Deployment-and-Firewall-Security
+  # see: https://help.sumologic.com/docs/api/getting-started/#sumo-logic-endpoints-by-deployment-and-firewall-security
   SUMOLOGIC_ENV=$( echo "${SUMOLOGIC_BASE_URL}" | sed -E 's/https:\/\/.*(au|ca|de|eu|fed|in|jp|us2)\.sumologic\.com.*/\1/' )
   if [[ "${SUMOLOGIC_BASE_URL}" == "${SUMOLOGIC_ENV}" ]] ; then
     SUMOLOGIC_ENV="us1"

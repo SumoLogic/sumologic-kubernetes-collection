@@ -1,0 +1,15 @@
+{{ $operatorEnabled := index .Values "opentelemetry-operator" "enabled" }}
+{{ $tracesEnabled := .Values.sumologic.traces.enabled }}
+{{ $createDefaultInstrumentation := index .Values "opentelemetry-operator" "createDefaultInstrumentation" }}
+{{- if and $operatorEnabled $tracesEnabled $createDefaultInstrumentation }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation.configmap" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.opentelemetry.operator.instrumentation.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  instrumentation.cr.yaml: |
+  {{- (tpl (.Files.Get "conf/opentelemetry-operator/instrumentation.cr.yaml") .) | nindent 4 }}
+{{- end }}

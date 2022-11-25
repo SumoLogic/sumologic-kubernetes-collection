@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3.4.1
+      - uses: actions/setup-node@v3.5.0
       - name: Install markdown-table-formatter
         run: npm install markdown-table-formatter --save
       - name: Run markdown-table-formatter
@@ -157,7 +157,7 @@ jobs:
           go-version: '1.18'
       - uses: engineerd/setup-kind@v0.5.0
         with:
-          version: v0.12.0
+          version: v0.14.0
           # Cluster will be created by the tests themselves so no need to create it here.
           skipClusterCreation: "true"
       # As described in

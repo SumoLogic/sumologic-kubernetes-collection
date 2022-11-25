@@ -25,7 +25,7 @@ sumologic:
   # accessKey: ""
 
   ## Sumo API endpoint; Leave blank for automatic endpoint discovery and redirection
-  ## ref: https://help.sumologic.com/APIs/General-API-Information/Sumo-Logic-Endpoints-and-Firewall-Security
+  ## ref: https://help.sumologic.com/docs/api/getting-started#sumo-logic-endpoints-by-deployment-and-firewall-security
   endpoint: ""
 
   ## proxy urls
@@ -152,7 +152,7 @@ sumologic:
 
   collector:
     ## Configuration of additional collector fields
-    ## https://help.sumologic.com/Manage/Fields#http-source-fields
+    ## https://help.sumologic.com/docs/manage/fields/#http-source-fields
     fields: {}
 
     ## Configuration of http sources
@@ -241,7 +241,7 @@ sumologic:
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
     ## relevant metadata.
-    ## https://help.sumologic.com/Manage/Fields#Manage_fields
+    ## https://help.sumologic.com/docs/manage/fields/#manage-fields
     fields:
       - cluster
       - container
@@ -275,11 +275,12 @@ sumologic:
         ## This feature autodetects how much CPU is assigned to the nginx instance and sets
         ## the right amount of workers based on that. Disable to use the default of 8 workers.
         workerCountAutotune: true
+        ## Nginx listen port
+        port: 8080
       replicaCount: 3
       image:
-        ## TODO: Serve this image from the sumologic public ECR
-        repository: public.ecr.aws/nginx/nginx
-        tag: 1.21-alpine
+        repository: public.ecr.aws/sumologic/nginx-unprivileged
+        tag: 1.23.1-alpine
         pullPolicy: IfNotPresent
       resources:
         limits:
@@ -2562,7 +2563,7 @@ kube-prometheus-stack:
 
         # Kafka Metrics
         # List of Metrics are on following dochub page:
-        # https://help.sumologic.com/07Sumo-Logic-Apps/10Containers_and_Orchestration/Kafka/Kafka_Metrics
+        # https://help.sumologic.com/docs/integrations/containers-orchestration/kafka/#kafka-metrics
         # Metrics follow following format:
         # kafka_broker_*
         # kafka_controller_*
@@ -2625,7 +2626,7 @@ kube-prometheus-stack:
 
         ## PostgreSQL Telegraf Metrics
         ## List of Metrics are on following dochub page:
-        ## https://help.sumologic.com/07Sumo-Logic-Apps/12Databases/PostgreSQL/Metrics_for_the_Sumo_Logic_PostgreSQL_App
+        ## https://help.sumologic.com/docs/integrations/databases/postgresql/#postgresql-metrics
         ## Metrics follow following format:
         ## postgresql_blks_hit
         ## postgresql_blks_read
@@ -3690,7 +3691,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.56.0-sumo-0
+    tag: 0.57.2-sumo-1
     pullPolicy: IfNotPresent
 
   securityContext:
@@ -5103,14 +5104,24 @@ tailing-sidecar-operator:
   scc:
     create: false
 
-## Configure OpenTelemetry Operator - Tracing
+## Configure OpenTelemetry Operator - Instrumentation
 ## ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
 opentelemetry-operator:
   enabled: false
-  createDefaultInstrumentation: true
+
+  ## Specific for Sumo Logic chart - Instrumentation resource creation
+  instrumentationJobImage:
+    image:
+      repository: sumologic/kubernetes-tools
+      tag: 2.13.0
+
+  createDefaultInstrumentation: false
+  instrumentationNamespaces: ""
+
+  ## Specific for OpenTelemetry Operator chart values
   admissionWebhooks:
     failurePolicy: Fail
-    enabled: false
+    enabled: true
 
     certManager:
       enabled: false

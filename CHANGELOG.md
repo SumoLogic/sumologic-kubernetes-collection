@@ -5,6 +5,82 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v2.19.0]
+
+### Released 2022-11-24
+
+If you use custom configuration for Telegraf Operator Helm Chart with cert-manager enabled (`telegraf-operator.certManager.enable=true`) please note that
+in this release Telegraf Operator Helm Chart is changed to 1.3.10 which uses the cert-manager apiVersion `cert-manager.io/v1`,
+previous apiVersion `cert-manager.io/v1alpha2` was deprecated in cert-manager [1.4][cert-manager-1.4]
+and removed in cert-manager [1.6][cert-manager-1.6],
+for differences between Telegraf Operator Helm Chart 1.3.5 and Telegraf Operator Helm Chart 1.3.10 please see [this][telegraf_operator_comapare_1.3.5_and_1.3.10].
+
+## Changed
+
+- chore: remove support for OpenShift 4.6 and OpenShift 4.7 [#2592]
+- chore: remove support for EKS 1.19 [#2592]
+- chore: remove support for kOps 1.20 [#2592]
+- chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2596]
+- chore(telegraf-operator): update Telegraf Operator Helm Chart to 1.3.10 [#2598]
+- feat: update opentelemetry-operator chart and fix progagators list in instrumentation resource [#2630]
+
+[#2592]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2592
+[#2596]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2596
+[#2598]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2598
+[#2630]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2630
+[v2.19.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.1...v2.19.0
+[telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
+[cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
+[cert-manager-1.6]: https://github.com/cert-manager/cert-manager/releases/tag/v1.6.0
+
+## [v2.18.1]
+
+### Released 2022-10-21
+
+### Fixed
+
+- fix(setup):allow credentials to not be set if setup is disabled [#2572]
+
+[#2572]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2572
+[v2.18.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.0...v2.18.1
+
+## [v2.18.0]
+
+### Released 2022-10-20
+
+This release updates Opentelemetry Operator and disables by default creation of `Instrumentation` resource.
+`opentelemetry-operator.manager.env.WATCH_NAMESPACE` has no longer effect on creation of `Instrumentation` resource.
+To create `Instrumentation` resource it is required to set `opentelemetry-operator.createDefaultInstrumentation` to `true` and
+`opentelemetry-operator.instrumentationNamespaces` to comma separated list of namespaces where `Instrumentation` resource will be created e.g. `"ns1\,ns2"`.
+This change affects you only if you have enabled opentelemetry-operator and traces with `opentelemetry-operator.enabled: true` and `sumologic.traces.enabled: true`.
+
+### Changed
+
+- chore: upgrade nginx to 1.23.1 [#2544] [#2554]
+- chore: remove support for GKE 1.20 [#2579]
+- chore(opentelemetry-operator): upgrade opentelemetry-operator subchart to 0.13.0 [#2577]
+
+### Fixed
+
+- fix(openshift): fix remote write proxy - use unprivileged NGINX [#2510][#2510]
+
+[#2510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2510
+[#2544]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2544
+[#2579]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2579
+[#2577]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2577
+[v2.18.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...v2.18.0
+
+## [v2.17.0]
+
+### Released 2022-09-15
+
+### Changed
+
+- feat(metadata): upgrade otelcol to v0.57.2-sumo-1 [#2527]
+
+[#2527]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2527
+[v2.17.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.16.0...v2.17.0
+
 ## [v2.16.0]
 
 ### Released 2022-09-13
@@ -680,7 +756,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 [v2_3_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
 [v0.38.1-cfp]: https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
-[v0.38.1-cfp-help]: https://help.sumologic.com/Traces/03Advanced_Configuration/What_if_I_don%27t_want_to_send_all_the_tracing_data_to_Sumo_Logic%3F
+[v0.38.1-cfp-help]: https://help.sumologic.com/docs/apm/traces/advanced-configuration/filter-shape-tracing-data
 [#1907]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1907
 [#1906]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1906
 [#1895]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1895

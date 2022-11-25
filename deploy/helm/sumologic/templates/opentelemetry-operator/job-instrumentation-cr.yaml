@@ -1,0 +1,64 @@
+{{ $operatorEnabled := index .Values "opentelemetry-operator" "enabled" }}
+{{ $tracesEnabled := .Values.sumologic.traces.enabled }}
+{{ $createDefaultInstrumentation := index .Values "opentelemetry-operator" "createDefaultInstrumentation" }}
+{{- if and $operatorEnabled $tracesEnabled $createDefaultInstrumentation }}
+{{ $instrumentationJobImage := index .Values "opentelemetry-operator" "instrumentationJobImage" "image" }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation.job" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.opentelemetry.operator.instrumentation.job" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
+      containers:
+      - name: instrumentation-cr-applier
+        image: {{ $instrumentationJobImage.repository }}:{{ $instrumentationJobImage.tag }}
+        volumeMounts:
+          - name: instrumentation-cr-configmap
+            mountPath: /tmp/instrumentation-cr.yaml
+            subPath: instrumentation.cr.yaml
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            max_wait=60
+            sleep_interval=5
+            counter=0
+            ready=false
+            while [[ ready != "false" ]]
+            do
+              is_ready=$(curl -s -o /dev/null -m 3 -L -w ''%{http_code}'' {{ template "opentelemetry-operator.controller.manager.metrics.service.url" . }})
+
+              if [[ is_ready -eq "200" ]]
+              then
+                ready=true
+                break
+              else
+                echo "Waiting for opentelemetry-operator-controller-manager..."
+                sleep $sleep_interval
+                counter=$(($counter + $sleep_interval))
+              fi
+
+              if [[ "$counter" -gt "$max_wait" ]]
+              then
+                echo "Couldn't reach opentelemetry-operator-controller-manager"
+                echo "Instrumentation resources not applied!"
+                break
+              fi
+            done
+
+            if [[ $ready == true ]]
+            then
+              echo "Applying Instrumentation resources"
+              kubectl apply -f /tmp/instrumentation-cr.yaml
+            fi
+      volumes:
+        - name: instrumentation-cr-configmap
+          configMap:
+            name: {{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation.configmap" . }}
+      restartPolicy: OnFailure
+  backoffLimit: 5
+{{- end -}}
