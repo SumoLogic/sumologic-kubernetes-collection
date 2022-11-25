@@ -7,7 +7,7 @@ opentelemetry-operator:
   createDefaultInstrumentation: true
   instrumentationNamespaces: "ot-operator1,ot-operator2"
 
-otelgateway:
+tracesGateway:
   config:
     processors:
       memory_limiter:

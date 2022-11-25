@@ -84,7 +84,7 @@ func Test_Helm_Default_Otelcol_Logs(t *testing.T) {
 				)
 				return ctx
 			}).
-		Assess("otelcol daemonset is ready",
+		Assess("otelcol logs daemonset is ready",
 			stepfuncs.WaitUntilDaemonSetIsReady(
 				waitDuration,
 				tickDuration,

@@ -18,6 +18,8 @@ otelcol:
   metrics:
     statefulset:
       replicaCount: 1
+
+tracesSampler:
   config:
   # Default otlp pipeline from values.yaml is used.    
     exporters:

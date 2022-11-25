@@ -37,10 +37,10 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 
 	featTraces := features.New("traces").
 		// TODO: Rewrite into similar step func as WaitUntilStatefulSetIsReady but for deployments
-		Assess("otelcol deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		Assess("traces-sampler deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
 			releaseName := ctxopts.HelmRelease(ctx)
-			labelSelector := fmt.Sprintf("app=%s-sumologic-otelcol", releaseName)
+			labelSelector := fmt.Sprintf("app=%s-sumologic-traces-sampler", releaseName)
 			ds := appsv1.DeploymentList{}
 
 			require.NoError(t,
@@ -63,8 +63,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 			)
 			return ctx
 		}).
-		// TODO: Rewrite into similar step func as WaitUntilStatefulSetIsReady but for daemonsets
-		Assess("otelagent daemonset is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		Assess("otelcol-instrumentation statefulset is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			res := envConf.Client().Resources(ctxopts.Namespace(ctx))
 			nl := corev1.NodeList{}
 			if !assert.NoError(t, res.List(ctx, &nl)) {
@@ -72,8 +71,8 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 			}
 
 			releaseName := ctxopts.HelmRelease(ctx)
-			labelSelector := fmt.Sprintf("app=%s-sumologic-otelagent", releaseName)
-			ds := appsv1.DaemonSetList{}
+			labelSelector := fmt.Sprintf("app=%s-sumologic-otelcol-instrumentation", releaseName)
+			ds := appsv1.StatefulSetList{}
 
 			require.NoError(t,
 				wait.For(
@@ -89,9 +88,8 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 				wait.For(
 					conditions.New(res).
 						ResourceMatch(&ds.Items[0], func(object k8s.Object) bool {
-							d := object.(*appsv1.DaemonSet)
-							return d.Status.NumberUnavailable == 0 &&
-								d.Status.NumberReady == int32(len(nl.Items))
+							s := object.(*appsv1.StatefulSet)
+							return s.Status.Replicas == s.Status.ReadyReplicas
 						}),
 					wait.WithTimeout(waitDuration),
 					wait.WithInterval(tickDuration),
