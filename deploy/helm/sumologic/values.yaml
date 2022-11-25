@@ -3485,7 +3485,7 @@ otelcolInstrumentation:
 
       resourcedetection:
         detectors:
-        - system
+          - system
         override: false
         timeout: 10s
 
@@ -3738,7 +3738,6 @@ tracesSampler:
 otelcol:
   ## To enable collecting all logs, set to false
   logLevelFilter: false
-
 
 metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
