@@ -10,14 +10,6 @@ sumologic:
       sourceHost: # in v2 this parameter is not set in values.yaml
       sourceName: "%{namespace}.%{pod}.%{container}"
       sourceCategory: "%{namespace}/%{pod_name}"
-      sourceCategoryPrefix: "kubernetes/"
-      sourceCategoryReplaceDash: "/"
-      excludeContainerRegex: ""
-      excludeHostRegex: ""
-      excludeNamespaceRegex: ""
-      excludePodRegex: ""
-      perContainerAnnotationsEnabled: false
-      perContainerAnnotationPrefixes: []
 
     systemd:
       enabled: true
