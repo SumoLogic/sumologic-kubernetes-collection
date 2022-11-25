@@ -13,6 +13,8 @@ spec:
     app: {{ template "sumologic.labels.app.tracesgateway.pod" . }}
     component: {{ template "sumologic.labels.app.tracesgateway.component" . }}
   ports:
+  - name: pprof
+    port: 1777
   - name: metrics # Default endpoint for querying metrics.
     port: 8888
   - name: otlp-grpc # Default endpoint for OTLP gRPC receiver.
