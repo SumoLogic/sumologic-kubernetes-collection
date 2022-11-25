@@ -180,137 +180,138 @@ otellogs:
 metadata:
   logs:
     config:
-      processors:
-        attributes/containers:
-          actions:
-            - action: extract
-              key: fluent.tag
-              pattern: ^containers\.var\.log\.pods\.(?P<k8s_namespace>[^_]+)_(?P<k8s_pod_name>[^_]+)_(?P<k8s_uid>[a-f0-9\-]{36})\.(?P<k8s_container_name>[^\._]+)\.(?P<k8s_run_id>\d+)\.log$
-            - action: delete
-              key: k8s_uid
-            - action: delete
-              key: k8s_run_id
-            - action: insert
-              key: k8s.pod.name
-              from_attribute: k8s_pod_name
-            - action: delete
-              key: k8s_pod_name
-            - action: insert
-              key: k8s.namespace.name
-              from_attribute: k8s_namespace
-            - action: delete
-              key: k8s_namespace
-            - action: insert
-              key: k8s.container.name
-              from_attribute: k8s_container_name
-            - action: delete
-              key: k8s_container_name
-        # Filter out receiver-mock logs to prevent snowball effect
-        filter/exclude_fluent_tag_receiver_mock_container:
-          logs:
-            exclude:
-              match_type: regexp
-              record_attributes:
-                - key: fluent.tag
-                  value: containers\.var\.log\.pods\.receiver-mock.*
-        filter/exclude_systemd_snap_kubelite:
-          logs:
-            exclude:
-              match_type: strict
-              record_attributes:
-                - key: _SYSTEMD_UNIT
-                  value: snap.microk8s.daemon-kubelite.service
-        filter/include_systemd_snap_kubelite:
-          logs:
-            include:
-              match_type: strict
-              record_attributes:
-                - key: _SYSTEMD_UNIT
-                  value: snap.microk8s.daemon-kubelite.service
-      service:
-        pipelines:
-          logs/fluent/containers:
-            receivers:
-              - fluentforward
-            processors:
-              - memory_limiter
-              - filter/include_fluent_tag_containers
+      merge:
+        processors:
+          attributes/containers:
+            actions:
+              - action: extract
+                key: fluent.tag
+                pattern: ^containers\.var\.log\.pods\.(?P<k8s_namespace>[^_]+)_(?P<k8s_pod_name>[^_]+)_(?P<k8s_uid>[a-f0-9\-]{36})\.(?P<k8s_container_name>[^\._]+)\.(?P<k8s_run_id>\d+)\.log$
+              - action: delete
+                key: k8s_uid
+              - action: delete
+                key: k8s_run_id
+              - action: insert
+                key: k8s.pod.name
+                from_attribute: k8s_pod_name
+              - action: delete
+                key: k8s_pod_name
+              - action: insert
+                key: k8s.namespace.name
+                from_attribute: k8s_namespace
+              - action: delete
+                key: k8s_namespace
+              - action: insert
+                key: k8s.container.name
+                from_attribute: k8s_container_name
+              - action: delete
+                key: k8s_container_name
+          # Filter out receiver-mock logs to prevent snowball effect
+          filter/exclude_fluent_tag_receiver_mock_container:
+            logs:
+              exclude:
+                match_type: regexp
+                record_attributes:
+                  - key: fluent.tag
+                    value: containers\.var\.log\.pods\.receiver-mock.*
+          filter/exclude_systemd_snap_kubelite:
+            logs:
+              exclude:
+                match_type: strict
+                record_attributes:
+                  - key: _SYSTEMD_UNIT
+                    value: snap.microk8s.daemon-kubelite.service
+          filter/include_systemd_snap_kubelite:
+            logs:
+              include:
+                match_type: strict
+                record_attributes:
+                  - key: _SYSTEMD_UNIT
+                    value: snap.microk8s.daemon-kubelite.service
+        service:
+          pipelines:
+            logs/fluent/containers:
+              receivers:
+                - fluentforward
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_containers
 
-              # Vagrant specific
-              - filter/exclude_fluent_tag_receiver_mock_container
+                # Vagrant specific
+                - filter/exclude_fluent_tag_receiver_mock_container
 
-              - attributes/containers
-              - groupbyattrs/containers
-              - k8s_tagger
-              - source/containers
-              - attributes/remove_fluent_tag
-              - resource/containers_copy_node_to_host
-              - batch
-            exporters:
-              - sumologic/containers
-          logs/fluent/systemd:
-            processors:
-              - memory_limiter
-              - filter/include_fluent_tag_host
-              - filter/include_systemd
-              - filter/exclude_systemd_snap_kubelite
-              - filter/exclude_kubelet
-              - filter/exclude_systemd_syslog
-              - filter/exclude_systemd_hostname
-              - filter/exclude_systemd_priority
-              - filter/exclude_systemd_unit
-              - attributes/extract_systemd_source_fields
-              - attributes/remove_fluent_tag
-              - groupbyattrs/systemd
-              - resource/add_cluster
-              - source/systemd
-              - batch
-          logs/fluent/kubelet:
-            processors:
-              - memory_limiter
-              - filter/include_fluent_tag_host
-              - filter/include_systemd_snap_kubelite
-              - filter/exclude_kubelet_syslog
-              - filter/exclude_kubelet_hostname
-              - filter/exclude_kubelet_priority
-              - filter/exclude_kubelet_unit
-              - attributes/extract_systemd_source_fields
-              - attributes/remove_fluent_tag
-              - groupbyattrs/systemd
-              - resource/add_cluster
-              - source/kubelet
-              - batch
-          logs/otlp/systemd:
-            processors:
-              - memory_limiter
-              - filter/include_fluent_tag_host
-              - filter/include_systemd
-              - filter/exclude_systemd_snap_kubelite
-              - filter/exclude_kubelet
-              - filter/exclude_systemd_syslog
-              - filter/exclude_systemd_hostname
-              - filter/exclude_systemd_priority
-              - filter/exclude_systemd_unit
-              - attributes/extract_systemd_source_fields
-              - attributes/remove_fluent_tag
-              - groupbyattrs/systemd
-              - resource/add_cluster
-              - source/systemd
-              - transform/remove_attributes
-              - batch
-          logs/otlp/kubelet:
-            processors:
-              - memory_limiter
-              - filter/include_fluent_tag_host
-              - filter/include_systemd_snap_kubelite
-              - filter/exclude_kubelet_syslog
-              - filter/exclude_kubelet_hostname
-              - filter/exclude_kubelet_priority
-              - filter/exclude_kubelet_unit
-              - attributes/extract_systemd_source_fields
-              - attributes/remove_fluent_tag
-              - groupbyattrs/systemd
-              - resource/add_cluster
-              - source/kubelet
-              - transform/remove_attributes
-              - batch
+                - attributes/containers
+                - groupbyattrs/containers
+                - k8s_tagger
+                - source/containers
+                - attributes/remove_fluent_tag
+                - resource/containers_copy_node_to_host
+                - batch
+              exporters:
+                - sumologic/containers
+            logs/fluent/systemd:
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_host
+                - filter/include_systemd
+                - filter/exclude_systemd_snap_kubelite
+                - filter/exclude_kubelet
+                - filter/exclude_systemd_syslog
+                - filter/exclude_systemd_hostname
+                - filter/exclude_systemd_priority
+                - filter/exclude_systemd_unit
+                - attributes/extract_systemd_source_fields
+                - attributes/remove_fluent_tag
+                - groupbyattrs/systemd
+                - resource/add_cluster
+                - source/systemd
+                - batch
+            logs/fluent/kubelet:
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_host
+                - filter/include_systemd_snap_kubelite
+                - filter/exclude_kubelet_syslog
+                - filter/exclude_kubelet_hostname
+                - filter/exclude_kubelet_priority
+                - filter/exclude_kubelet_unit
+                - attributes/extract_systemd_source_fields
+                - attributes/remove_fluent_tag
+                - groupbyattrs/systemd
+                - resource/add_cluster
+                - source/kubelet
+                - batch
+            logs/otlp/systemd:
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_host
+                - filter/include_systemd
+                - filter/exclude_systemd_snap_kubelite
+                - filter/exclude_kubelet
+                - filter/exclude_systemd_syslog
+                - filter/exclude_systemd_hostname
+                - filter/exclude_systemd_priority
+                - filter/exclude_systemd_unit
+                - attributes/extract_systemd_source_fields
+                - attributes/remove_fluent_tag
+                - groupbyattrs/systemd
+                - resource/add_cluster
+                - source/systemd
+                - transform/remove_attributes
+                - batch
+            logs/otlp/kubelet:
+              processors:
+                - memory_limiter
+                - filter/include_fluent_tag_host
+                - filter/include_systemd_snap_kubelite
+                - filter/exclude_kubelet_syslog
+                - filter/exclude_kubelet_hostname
+                - filter/exclude_kubelet_priority
+                - filter/exclude_kubelet_unit
+                - attributes/extract_systemd_source_fields
+                - attributes/remove_fluent_tag
+                - groupbyattrs/systemd
+                - resource/add_cluster
+                - source/kubelet
+                - transform/remove_attributes
+                - batch

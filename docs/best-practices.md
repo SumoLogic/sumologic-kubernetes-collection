@@ -299,31 +299,32 @@ fluentd:
 metadata:
   logs:
     config:
-      processors:
-        attributes/containers:
-          actions:
-            - action: extract
-              key: fluent.tag
-              pattern: ^containers\.var\.log\.pods\.(?P<k8s_namespace>[^_]+)_(?P<k8s_pod_name>[^_]+)_(?P<k8s_uid>[a-f0-9\-]{36})\.(?P<k8s_container_name>[^\._]+)\.(?P<k8s_run_id>\d+)\.log$
-            - action: delete
-              key: k8s_uid
-            - action: delete
-              key: k8s_run_id
-            - action: insert
-              key: k8s.pod.name
-              from_attribute: k8s_pod_name
-            - action: delete
-              key: k8s_pod_name
-            - action: insert
-              key: k8s.namespace.name
-              from_attribute: k8s_namespace
-            - action: delete
-              key: k8s_namespace
-            - action: insert
-              key: k8s.container.name
-              from_attribute: k8s_container_name
-            - action: delete
-              key: k8s_container_name
+      merge:
+        processors:
+          attributes/containers:
+            actions:
+              - action: extract
+                key: fluent.tag
+                pattern: ^containers\.var\.log\.pods\.(?P<k8s_namespace>[^_]+)_(?P<k8s_pod_name>[^_]+)_(?P<k8s_uid>[a-f0-9\-]{36})\.(?P<k8s_container_name>[^\._]+)\.(?P<k8s_run_id>\d+)\.log$
+              - action: delete
+                key: k8s_uid
+              - action: delete
+                key: k8s_run_id
+              - action: insert
+                key: k8s.pod.name
+                from_attribute: k8s_pod_name
+              - action: delete
+                key: k8s_pod_name
+              - action: insert
+                key: k8s.namespace.name
+                from_attribute: k8s_namespace
+              - action: delete
+                key: k8s_namespace
+              - action: insert
+                key: k8s.container.name
+                from_attribute: k8s_container_name
+              - action: delete
+                key: k8s_container_name
 ```
 
 ### Fluentd tag for /var/log/pods and /var/log/containers
@@ -549,13 +550,13 @@ The formula to calculate the buffering time:
 minutes = (PV size in bytes * Fluentd instances) / (DPM * 333 bytes)
 ```
 
-Example 1:  
+Example 1:
 My cluster sends 10 thousand DPM to Sumo. I'm using default 10 gb of buffer size. I'm also using
 3 Fluentd instances. That gives me 30 gb of buffers in total (3 * 10 gb). I'm using 3.33 mb per
 minute. My setup should be able to hold data for 9000 minutes, that is 150 hours or 6.25 days.
 We recommend treating this as 4500 minutes, that is 75 hours or 3.12 days of buffer.
 
-Example 2:  
+Example 2:
 My cluster sends 1 million DPM to Sumo. I'm using 20 gb of buffer size. I'm using 20 Fluentd
 instances. I have 400 gb of buffers in total (20 * 20 gb). I'm using 333 mb of buffer every minute.
 My setup should be able to hold data for around 1200 minutes, that is 20 hours. We recommend treating
@@ -1270,7 +1271,7 @@ to work with our collection.
                      name: sumologic-configmap
                      key: fluentdNamespace
      ```
-  
+
    - remove the following configuration:
 
      ```yaml

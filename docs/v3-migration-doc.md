@@ -20,6 +20,16 @@ In this document we detail the changes as well as the exact steps for migration.
   Major feature related to that change is upgrading kube-state-metrics to v2
 
 - Removing mechanism to replace values in configuration for traces marked by 'replace' suffix
+- Moving direct configuration of OpenTelemetry Collector for log metadata
+
+  Removed explicit configuration for otelcol under `metadata.logs.config`.
+  Added option to merge configuration under `metadata.logs.config.merge`
+  or overwrite default configuration `metadata.logs.config.override`
+- Moving direct configuration of OpenTelemetry Collector for metrics metadata
+
+  Removed explicit configuration for otelcol under `metadata.metrics.config`.
+  Added option to merge configuration under `metadata.metrics.config.merge`
+  or overwrite default configuration `metadata.metrics.config.override`
 
 ## How to upgrade
 
