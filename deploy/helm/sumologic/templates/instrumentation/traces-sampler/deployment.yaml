@@ -54,7 +54,7 @@ spec:
       priorityClassName: {{ $tracesSampler.deployment.priorityClassName | quote }}
       {{- end }}
       containers:
-      - name: otelcontrib-collector
+      - name: otelcol
         image: {{ $tracesSampler.deployment.image.repository }}:{{ $tracesSampler.deployment.image.tag }}
         imagePullPolicy: {{ $tracesSampler.deployment.image.pullPolicy }}
         args:

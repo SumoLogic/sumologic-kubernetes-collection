@@ -25,6 +25,7 @@ spec:
   template:
     metadata:
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/instrumentation/traces-gateway/configmap.yaml") . | sha256sum }}
 {{- if .Values.sumologic.podAnnotations }}
 {{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
@@ -59,7 +60,7 @@ spec:
       # the agent will have a chance to retry when collector is ready.
       restartPolicy: Always
       containers:
-      - name: otelcontrib-gateway
+      - name: otelcol
         image: {{ $tracesGateway.deployment.image.repository }}:{{ $tracesGateway.deployment.image.tag }}
         imagePullPolicy: {{ $tracesGateway.deployment.image.pullPolicy }}
         args:

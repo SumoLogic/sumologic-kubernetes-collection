@@ -21,7 +21,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/metrics/otelcol/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/instrumentation/otelcol-instrumentation/configmap.yaml") . | sha256sum }}
 {{- if .Values.sumologic.podAnnotations }}
 {{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
@@ -107,7 +107,7 @@ spec:
       priorityClassName: {{ $otelcolInstrumentation.statefulset.priorityClassName | quote }}
       {{- end }}
       containers:
-      - name: otelcontrib-agent
+      - name: otelcol
         image: {{ $otelcolInstrumentation.statefulset.image.repository }}:{{ $otelcolInstrumentation.statefulset.image.tag }}
         imagePullPolicy: {{ $otelcolInstrumentation.statefulset.image.pullPolicy }}
         args:
