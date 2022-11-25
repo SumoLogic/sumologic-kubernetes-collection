@@ -277,11 +277,11 @@ data:
         source_name: my_kubelet_sourceName
       source/systemd:
         collector: my_collectorName
-        source_category: system
+        source_category: my_systemd_sourceCategory
         source_category_prefix: my_systemd_sourceCategoryPrefix
         source_category_replace_dash: my_systemd_sourceCategoryReplaceDash
         source_host: '%{_sourceHost}'
-        source_name: '%{_sourceName}'
+        source_name: my_systemd_sourceName
       sumologic_schema:
         add_cloud_namespace: false
       transform/remove_attributes:

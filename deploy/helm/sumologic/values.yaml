@@ -287,6 +287,28 @@ sumologic:
       # units:
       #   - docker.service
 
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "%{_sourceName}"
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "system"
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+      ## Used to replace - with another character.
+      sourceCategoryReplaceDash: "/"
+
+      ## A regular expression for facility.
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeFacilityRegex: ""
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeHostRegex: ""
+      ## A regular expression for priority.
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludePriorityRegex: ""
+      ## A regular expression for unit.
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeUnitRegex: ""
+
     kubelet:
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "k8s_kubelet"
@@ -707,28 +729,6 @@ fluentd:
 
       ## Override output section for systemd logs. Leave empty for the default output section.
       overrideOutputConf: |-
-
-      ## Set the _sourceName metadata field in Sumo Logic.
-      sourceName: "k8s_systemd"
-      ## Set the _sourceCategory metadata field in Sumo Logic.
-      sourceCategory: "system"
-      ## Set the prefix, for _sourceCategory metadata.
-      sourceCategoryPrefix: "kubernetes/"
-      ## Used to replace - with another character.
-      sourceCategoryReplaceDash: "/"
-
-      ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeFacilityRegex: ""
-      ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeHostRegex: ""
-      ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludePriorityRegex: ""
-      ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeUnitRegex: ""
 
     ## Default log configuration (catch-all)
     default:

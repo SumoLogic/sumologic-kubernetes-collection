@@ -28,12 +28,9 @@ sumologic:
       excludePriorityRegex: my_kubelet_excludePriorityRegex
       excludeUnitRegex: my_kubelet_excludeUnitRegex
 
-fluent-bit:
-  enabled: false
-
-fluentd:
-  logs:
     systemd:
+      sourceName: my_systemd_sourceName
+      sourceCategory:  my_systemd_sourceCategory
       sourceCategoryPrefix: my_systemd_sourceCategoryPrefix
       sourceCategoryReplaceDash: my_systemd_sourceCategoryReplaceDash
       excludeFacilityRegex: my_systemd_excludeFacilityRegex
@@ -41,3 +38,5 @@ fluentd:
       excludePriorityRegex: my_systemd_excludePriorityRegex
       excludeUnitRegex: my_systemd_excludeUnitRegex
 
+fluent-bit:
+  enabled: false
