@@ -282,8 +282,8 @@ data:
       
       <filter host.**>
         @type kubernetes_sumologic
-        source_name "k8s_systemd"
-        source_category "system"
+        source_name "my_systemd_sourceName"
+        source_category "my_systemd_sourceCategory"
         source_category_prefix "my_systemd_sourceCategoryPrefix"
         source_category_replace_dash "my_systemd_sourceCategoryReplaceDash"
         exclude_facility_regex "my_systemd_excludeFacilityRegex"

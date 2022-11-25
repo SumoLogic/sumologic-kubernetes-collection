@@ -244,28 +244,28 @@ processors:
         match_type: regexp
         record_attributes:
           - key: SYSLOG_FACILITY
-            value: {{ .Values.fluentd.logs.systemd.excludeFacilityRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.systemd.excludeFacilityRegex | default "$^" | quote }}
   filter/exclude_systemd_hostname:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: _HOSTNAME
-            value: {{ .Values.fluentd.logs.systemd.excludeHostRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.systemd.excludeHostRegex | default "$^" | quote }}
   filter/exclude_systemd_priority:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: PRIORITY
-            value: {{ .Values.fluentd.logs.systemd.excludePriorityRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.systemd.excludePriorityRegex | default "$^" | quote }}
   filter/exclude_systemd_unit:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: _SYSTEMD_UNIT
-            value: {{ .Values.fluentd.logs.systemd.excludeUnitRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.systemd.excludeUnitRegex | default "$^" | quote }}
   filter/exclude_kubelet_syslog:
     logs:
       exclude:
@@ -303,10 +303,10 @@ processors:
   source/systemd:
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
     source_host: "%{_sourceHost}"
-    source_name: "%{_sourceName}"
-    source_category: {{ .Values.fluentd.logs.systemd.sourceCategory | quote }}
-    source_category_prefix: {{ .Values.fluentd.logs.systemd.sourceCategoryPrefix | quote }}
-    source_category_replace_dash: {{ .Values.fluentd.logs.systemd.sourceCategoryReplaceDash | quote }}
+    source_name: {{ .Values.sumologic.logs.systemd.sourceName | quote }}
+    source_category: {{ .Values.sumologic.logs.systemd.sourceCategory | quote }}
+    source_category_prefix: {{ .Values.sumologic.logs.systemd.sourceCategoryPrefix | quote }}
+    source_category_replace_dash: {{ .Values.sumologic.logs.systemd.sourceCategoryReplaceDash | quote }}
   ## Remove all attributes, so body won't by nested by SumoLogic receiver in case of using otlp format
   transform/remove_attributes:
     logs:
