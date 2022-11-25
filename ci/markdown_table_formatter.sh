@@ -9,7 +9,7 @@ if ! "${CMD}" --version ; then
     exit 1
 fi
 
-readonly FILES="deploy/README.md
+readonly FILES="docs/README.md
 docs/best-practices.md
 docs/performance.md
 deploy/helm/sumologic/README.md"
