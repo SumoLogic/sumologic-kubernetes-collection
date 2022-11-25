@@ -3670,8 +3670,6 @@ tracesSampler:
     #     mountPath: /certs
     #     readOnly: true
 
-  ## To enable collecting all logs, set to false
-  logLevelFilter: false
   ## Metrics from Collector
   metrics:
     enabled: true
@@ -3736,6 +3734,11 @@ tracesSampler:
           receivers: [otlp]
           processors: [memory_limiter, cascading_filter, batch]
           exporters: [otlphttp]
+
+otelcol:
+  ## To enable collecting all logs, set to false
+  logLevelFilter: false
+
 
 metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
