@@ -3324,29 +3324,78 @@ kube-prometheus-stack:
         selfMonitor: false
 
 ## Configure optional OpenTelemetry Collector in Agent mode
-otelagent:
+otelcolInstrumentation:
   enabled: true
-  daemonset:
+  sourceMetadata:
+    ## Set the _sourceName metadata field in Sumo Logic.
+    sourceName: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
+    ## Set the _sourceCategory metadata field in Sumo Logic.
+    sourceCategory: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+    ## Set the prefix, for _sourceCategory metadata.
+    sourceCategoryPrefix: "kubernetes/"
+    ## Used to replace - with another character.
+    sourceCategoryReplaceDash: "/"
+
+    ## A regular expression for containers.
+    ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeContainerRegex: ""
+    ## A regular expression for hosts.
+    ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeHostRegex: ""
+    ## A regular expression for namespaces.
+    ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludeNamespaceRegex: ""
+    ## A regular expression for pods.
+    ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+    excludePodRegex: ""
+
+  statefulset:
     nodeSelector: {}
     tolerations: []
+    topologySpreadConstraints: []
+    affinity: {}
+    ## Acceptable values for podAntiAffinity:
+    ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
+    ## hard: specifies rules that must be met for a pod to be scheduled onto a node
+    podAntiAffinity: "soft"
+    replicaCount: 3
     resources:
       limits:
-        memory: 2Gi
-        cpu: 1000m
+        memory: 4Gi
+        cpu: 2000m
       requests:
-        memory: 1Gi
+        memory: 768Mi
         cpu: 500m
     ## Option to define priorityClassName to assign a priority class to pods.
-    ## If not set then temaplates/priorityclass.yaml is used.
     priorityClassName:
-    ## Add custom labels only to otelagent daemonset.
+
+    ## Add custom labels only to metrics sts pods
     podLabels: {}
-    ## Add custom annotations only to otelagent daemonset.
+    ## Add custom annotations only to metrics sts pods
     podAnnotations: {}
+
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
       tag: "0.54.0-sumo-0"
       pullPolicy: IfNotPresent
+
+    ## Set securityContext for containers running in pods in metrics statefulset.
+    containers:
+      otelcol:
+        securityContext: {}
+        livenessProbe:
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        startupProbe:
+          periodSeconds: 3
+          failureThreshold: 60
 
     ## Extra Environment Values - allows yaml definitions
     # extraEnvVars:
@@ -3365,6 +3414,22 @@ otelagent:
     #   - name: es-certs
     #     mountPath: /certs
     #     readOnly: true
+
+  ## Option to turn autoscaling on for metrics and specify params for HPA.
+  ## Autoscaling needs metrics-server to access cpu metrics.
+  autoscaling:
+    enabled: false
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 100
+    # targetMemoryUtilizationPercentage: 50
+
+  ## Option to specify PodDisrutionBudgets
+  ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
+  podDisruptionBudget:
+    minAvailable: 2
+  ## To use maxUnavailable, set minAvailable to null and uncomment the below:
+  #   maxUnavailable: 1
 
   config:
     receivers:
@@ -3393,6 +3458,37 @@ otelagent:
       zipkin:
         endpoint: "0.0.0.0:9411"
     processors:
+      ## Source processor adds Sumo Logic related metadata
+      source:
+        annotation_prefix: "k8s.pod.annotation."
+        collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
+        exclude:
+          k8s.container.name: '{{ .Values.otelcolInstrumentation.sourceMetadata.excludeContainerRegex  | quote }}'
+          k8s.host.name: '{{ .Values.otelcolInstrumentation.sourceMetadata.excludeHostRegex | quote }}'
+          k8s.namespace.name: '{{ .Values.otelcolInstrumentation.sourceMetadata.excludeNamespaceRegex | quote }}'
+          k8s.pod.name: '{{  .Values.otelcolInstrumentation.sourceMetadata.excludePodRegex| quote }}'
+        pod_key: "k8s.pod.name"
+        pod_name_key: "k8s.pod.pod_name"
+        pod_template_hash_key: "k8s.pod.label.pod-template-hash"
+        source_category: '{{ .Values.otelcolInstrumentation.sourceMetadata.sourceCategory | quote }}'
+        source_category_prefix: '{{ .Values.otelcolInstrumentation.sourceMetadata.sourceCategoryPrefix | quote }}'
+        source_category_replace_dash: '{{ .Values.otelcolInstrumentation.sourceMetadata.sourceCategoryReplaceDash | quote }}'
+        source_host: "%{k8s.pod.hostname}"
+        source_name: '{{ .Values.otelcolInstrumentation.sourceMetadata.sourceName | quote }}'
+
+      ## Resource processor sets the associted cluster attribute
+      resource:
+        attributes:
+          - key: k8s.cluster.name
+            value: '{{ include "sumologic.clusterNameReplaceSpaceWithDash" . }}'
+            action: upsert
+
+      resourcedetection:
+        detectors:
+        - system
+        override: false
+        timeout: 10s
+
       ## Tags spans with K8S metadata, basing on the context IP
       k8s_tagger:
         ## When true, only IP is assigned and passed (so it could be tagged on another collector)
@@ -3436,7 +3532,8 @@ otelagent:
         ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
         ## Note that typically the total memory usage of process will be about 50MiB higher
         ## than this value.
-        limit_mib: 1900
+        limit_percentage: 75
+        spike_limit_percentage: 20
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
       batch:
@@ -3451,55 +3548,95 @@ otelagent:
         size_mib: 250
       pprof: {}
     exporters:
+      sumologic/metrics:
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+        ## Compression encoding format, either empty string (""), gzip or deflate (default gzip).
+        ## Empty string means no compression
+        compress_encoding: gzip
+        ## Max HTTP request body size in bytes before compression (if applied). By default 1_048_576 (1MB) is used.
+        max_request_body_size: 1_048_576  # 1MB
+        ## Format to use when sending logs to Sumo. (default json) (possible values: json, text)
+        log_format: text
+        ## Format of the metrics to be sent (default is prometheus) (possible values: carbon2, prometheus)
+        ## carbon2 and graphite are going to be supported soon.
+        metric_format: prometheus
+        ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
+        timeout: 5s
+        retry_on_failure:
+          enabled: true
+          ## Time to wait after the first failure before retrying
+          initial_interval: 5s
+          ## Upper bound on backoff
+          max_interval: 30s
+          ## Maximum amount of time spent trying to send a batch
+          max_elapsed_time: 120s
+        sending_queue:
+          enabled: false
+          ## Number of consumers that dequeue batches
+          num_consumers: 10
+          ## Maximum number of batches kept in memory before data
+          ## User should calculate this as num_seconds * requests_per_second where:
+          ## num_seconds is the number of seconds to buffer in case of a backend outage
+          ## requests_per_second is the average number of requests per seconds.
+          queue_size: 5000
+      sumologic/logs:
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+        ## Compression encoding format, either empty string (""), gzip or deflate (default gzip).
+        ## Empty string means no compression
+        compress_encoding: gzip
+        ## Max HTTP request body size in bytes before compression (if applied). By default 1_048_576 (1MB) is used.
+        max_request_body_size: 1_048_576  # 1MB
+        ## Format to use when sending logs to Sumo. (default json) (possible values: json, text)
+        log_format: json
+        ## Format of the metrics to be sent (default is prometheus) (possible values: carbon2, prometheus)
+        ## carbon2 and graphite are going to be supported soon.
+        ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
+        timeout: 5s
+        retry_on_failure:
+          enabled: true
+          ## Time to wait after the first failure before retrying
+          initial_interval: 5s
+          ## Upper bound on backoff
+          max_interval: 30s
+          ## Maximum amount of time spent trying to send a batch
+          max_elapsed_time: 120s
+        sending_queue:
+          enabled: false
+          ## Number of consumers that dequeue batches
+          num_consumers: 10
+          ## Maximum number of batches kept in memory before data
+          ## User should calculate this as num_seconds * requests_per_second where:
+          ## num_seconds is the number of seconds to buffer in case of a backend outage
+          ## requests_per_second is the average number of requests per seconds.
+          queue_size: 5000
       otlphttp/traces:
-        endpoint: 'http://{{ include "traces.otelagent.exporter.endpoint" . }}:4318'
-      otlphttp/metrics:
-        endpoint: 'http://{{ printf "%s.%s" ( include "sumologic.metadata.name.otelcol.service-metrics" . ) .Release.Namespace }}:4318'
+        endpoint: 'http://{{ include "otelcolinstrumentation.exporter.endpoint" . }}:4318'
     service:
       extensions: [health_check, memory_ballast, pprof]
       pipelines:
         traces:
           receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
-          processors: [memory_limiter, k8s_tagger, batch]
+          processors: [memory_limiter, k8s_tagger, source, resource, batch]
           exporters: [otlphttp/traces]
         metrics:
           receivers: [otlp, otlp/deprecated]
-          processors: [memory_limiter, k8s_tagger, batch]
-          exporters: [otlphttp/metrics]
+          processors: [memory_limiter, k8s_tagger, source, resource, batch]
+          exporters: [sumologic/metrics]
+        logs:
+          receivers: [otlp, otlp/deprecated]
+          processors: [memory_limiter, k8s_tagger, source, resource, batch]
+          exporters: [sumologic/logs]
 
 ## Configure otelcol
-otelcol:
-  sourceMetadata:
-    ## Set the _sourceName metadata field in Sumo Logic.
-    sourceName: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
-    ## Set the _sourceCategory metadata field in Sumo Logic.
-    sourceCategory: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
-    ## Set the prefix, for _sourceCategory metadata.
-    sourceCategoryPrefix: "kubernetes/"
-    ## Used to replace - with another character.
-    sourceCategoryReplaceDash: "/"
-
-    ## A regular expression for containers.
-    ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
-    excludeContainerRegex: ""
-    ## A regular expression for hosts.
-    ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
-    excludeHostRegex: ""
-    ## A regular expression for namespaces.
-    ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
-    excludeNamespaceRegex: ""
-    ## A regular expression for pods.
-    ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
-    excludePodRegex: ""
-
+tracesSampler:
   deployment:
     nodeSelector: {}
     tolerations: []
     replicas: 1
     resources:
       limits:
-        memory: 2Gi
-        cpu: 1000m
+        memory: 4Gi
+        cpu: 2000m
       requests:
         memory: 384Mi
         cpu: 200m
@@ -3541,56 +3678,13 @@ otelcol:
   ## Collector configuration
   config:
     receivers:
-      jaeger:
-        protocols:
-          thrift_compact:
-            endpoint: "0.0.0.0:6831"
-          thrift_binary:
-            endpoint: "0.0.0.0:6832"
-          grpc:
-            endpoint: "0.0.0.0:14250"
-          thrift_http:
-            endpoint: "0.0.0.0:14268"
-      opencensus:
-        endpoint: "0.0.0.0:55678"
       otlp:
         protocols:
           grpc:
             endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
-      otlp/deprecated:
-        protocols:
-          http:
-            endpoint: "0.0.0.0:55681"
-      zipkin:
-        endpoint: "0.0.0.0:9411"
     processors:
-      ## Source processor adds Sumo Logic related metadata
-      source:
-        annotation_prefix: "k8s.pod.annotation."
-        collector: '{{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}'
-        exclude:
-          k8s.container.name: '{{ .Values.otelcol.sourceMetadata.excludeContainerRegex  | quote }}'
-          k8s.host.name: '{{ .Values.otelcol.sourceMetadata.excludeHostRegex | quote }}'
-          k8s.namespace.name: '{{ .Values.otelcol.sourceMetadata.excludeNamespaceRegex | quote }}'
-          k8s.pod.name: '{{  .Values.otelcol.sourceMetadata.excludePodRegex| quote }}'
-        pod_key: "k8s.pod.name"
-        pod_name_key: "k8s.pod.pod_name"
-        pod_template_hash_key: "k8s.pod.label.pod-template-hash"
-        source_category: '{{ .Values.otelcol.sourceMetadata.sourceCategory | quote }}'
-        source_category_prefix: '{{ .Values.otelcol.sourceMetadata.sourceCategoryPrefix | quote }}'
-        source_category_replace_dash: '{{ .Values.otelcol.sourceMetadata.sourceCategoryReplaceDash | quote }}'
-        source_host: "%{k8s.pod.hostname}"
-        source_name: '{{ .Values.otelcol.sourceMetadata.sourceName | quote }}'
-
-      ## Resource processor sets the associted cluster attribute
-      resource:
-        attributes:
-          - key: k8s.cluster.name
-            value: '{{ include "sumologic.clusterNameReplaceSpaceWithDash" . }}'
-            action: upsert
-
       ## The memory_limiter processor is used to prevent out of memory situations on the collector.
       memory_limiter:
         ## check_interval is the time between measurements of memory usage for the
@@ -3602,7 +3696,8 @@ otelcol:
         ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
         ## Note that typically the total memory usage of process will be about 50MiB higher
         ## than this value.
-        limit_mib: 1900
+        limit_percentage: 75
+        spike_limit_percentage: 20
 
       ## Smart cascading filtering rules with preset limits.
       cascading_filter:
@@ -3617,12 +3712,6 @@ otelcol:
         send_batch_max_size: 512
         ## Time duration after which a batch will be sent regardless of size
         timeout: 5s
-
-      ## Add System metadata - needed for Sumologic exporter source_host
-      resourcedetection:
-        detectors: [system]
-        timeout: 10s
-        override: false
 
     extensions:
       health_check: {}
@@ -3640,54 +3729,13 @@ otelcol:
       otlphttp:
         traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
         compression: gzip
-      sumologic:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
-        ## Compression encoding format, either empty string (""), gzip or deflate (default gzip).
-        ## Empty string means no compression
-        compress_encoding: gzip
-        ## Max HTTP request body size in bytes before compression (if applied). By default 1_048_576 (1MB) is used.
-        max_request_body_size: 1_048_576  # 1MB
-        ## Format to use when sending logs to Sumo. (default json) (possible values: json, text)
-        log_format: text
-        ## Format of the metrics to be sent (default is prometheus) (possible values: carbon2, prometheus)
-        ## carbon2 and graphite are going to be supported soon.
-        metric_format: prometheus
-        ## Desired source category. Useful if you want to override the source category configured for the source.
-        source_category: '{{ .Values.otelcol.sourceMetadata.sourceCategory| quote }}'
-        ## Desired source name. Useful if you want to override the source name configured for the source.
-        source_name: '{{ .Values.otelcol.sourceMetadata.sourceName | quote }}'
-        ## Desired host name. Useful if you want to override the source host configured for the source.
-        source_host: "%{k8s.pod.hostname}"
-        ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
-        timeout: 5s
-        retry_on_failure:
-          enabled: true
-          ## Time to wait after the first failure before retrying
-          initial_interval: 5s
-          ## Upper bound on backoff
-          max_interval: 30s
-          ## Maximum amount of time spent trying to send a batch
-          max_elapsed_time: 120s
-        sending_queue:
-          enabled: false
-          ## Number of consumers that dequeue batches
-          num_consumers: 10
-          ## Maximum number of batches kept in memory before data
-          ## User should calculate this as num_seconds * requests_per_second where:
-          ## num_seconds is the number of seconds to buffer in case of a backend outage
-          ## requests_per_second is the average number of requests per seconds.
-          queue_size: 5000
     service:
       extensions: [health_check, memory_ballast, pprof]
       pipelines:
         traces:
-          receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
-          processors: [memory_limiter, source, resource, cascading_filter, batch]
+          receivers: [otlp]
+          processors: [memory_limiter, cascading_filter, batch]
           exporters: [otlphttp]
-        metrics:
-          receivers: [otlp, otlp/deprecated]
-          processors: [memory_limiter, resourcedetection, source, resource, batch]
-          exporters: [sumologic]
 
 metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
@@ -4689,7 +4737,7 @@ metadata:
 
 ## Configure optional OpenTelemetry Gateway in Agent mode
 ## ref: docs/opentelemetry_collector.md#load-balancing-using-the-gateway
-otelgateway:
+tracesGateway:
   enabled: true
   deployment:
     replicas: 1
@@ -4702,9 +4750,9 @@ otelgateway:
       requests:
         memory: 196Mi
         cpu: 50m
-    ## Add custom labels only to otelagent daemonset.
+    ## Add custom labels only to tracesGateway deployment.
     podLabels: {}
-    ## Add custom annotations only to otelagent daemonset.
+    ## Add custom annotations only to tracesGateway deployment.
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
@@ -4743,30 +4791,12 @@ otelgateway:
 
   config:
     receivers:
-      jaeger:
-        protocols:
-          thrift_compact:
-            endpoint: "0.0.0.0:6831"
-          thrift_binary:
-            endpoint: "0.0.0.0:6832"
-          grpc:
-            endpoint: "0.0.0.0:14250"
-          thrift_http:
-            endpoint: "0.0.0.0:14268"
-      opencensus:
-        endpoint: "0.0.0.0:55678"
       otlp:
         protocols:
           grpc:
             endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
-      otlp/deprecated:
-        protocols:
-          http:
-            endpoint: "0.0.0.0:55681"
-      zipkin:
-        endpoint: "0.0.0.0:9411"
     processors:
       ## The memory_limiter processor is used to prevent out of memory situations on the collector.
       memory_limiter:
@@ -4802,24 +4832,16 @@ otelgateway:
               insecure: true
         resolver:
           dns:
-            hostname: '{{ include "traces.otelgateway.exporter.loadbalancing.endpoint" . }}'
+            hostname: '{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'
             port: 4317
-      otlp:
-        endpoint: '{{ (printf "%s:4317" (include "traces.otelgateway.exporter.endpoint" .)) }}'
-        tls:
-          ## This disables TLS when communicating with the gateway (within the same cluster)
-          insecure: true
     service:
       extensions: [health_check, memory_ballast, pprof]
       pipelines:
         traces:
-          receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
+          receivers: [otlp]
           processors: [memory_limiter, batch]
           exporters: [loadbalancing]
-        metrics:
-          receivers: [otlp, otlp/deprecated]
-          processors: [memory_limiter, batch]
-          exporters: [otlp]
+
 
 ## Configuration of the OpenTelemetry Collector that collects Kubernetes events.
 ## It is used when the `sumologic.events.provider` is set to `otelcol`.
