@@ -118,11 +118,6 @@ spec:
           {{- toYaml .Values.metadata.logs.statefulset.containers.otelcol.securityContext | nindent 10 }}
         {{- end }}
         ports:
-        {{- if .Values.sumologic.traces.enabled }}
-        - name: zipkin-write
-          containerPort: 9411
-          protocol: TCP
-        {{- end }}
         - name: fluent-bit
           containerPort: 24321
           protocol: TCP
