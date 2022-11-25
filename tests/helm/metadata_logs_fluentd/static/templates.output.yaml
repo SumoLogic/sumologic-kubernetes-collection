@@ -201,14 +201,14 @@ data:
       
     <filter **>
       @type kubernetes_sumologic
-      source_name "k8s_default"
-      source_category "default"
-      source_category_prefix "kubernetes/"
-      source_category_replace_dash "/"
-      exclude_facility_regex ""
-      exclude_host_regex ""
-      exclude_priority_regex ""
-      exclude_unit_regex ""
+      source_name "my_defaultFluentd_sourceName"
+      source_category "my_defaultFluentd_sourceCategory"
+      source_category_prefix "my_defaultFluentd_sourceCategoryPrefix"
+      source_category_replace_dash "my_defaultFluentd_sourceCategoryReplaceDash"
+      exclude_facility_regex "my_defaultFluentd_excludeFacilityRegex"
+      exclude_host_regex "my_defaultFluentd_excludeHostRegex"
+      exclude_priority_regex "my_defaultFluentd_excludePriorityRegex"
+      exclude_unit_regex "my_defaultFluentd_excludeUnitRegex"
     </filter>
     <filter **>
       @type record_modifier
