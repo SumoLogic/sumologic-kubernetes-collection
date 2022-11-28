@@ -176,6 +176,7 @@ jobs:
   
   integration-test-status:
     runs-on: ubuntu-20.04
+    if: ${{ always() }}
     needs:
       - integration-tests
     steps:
