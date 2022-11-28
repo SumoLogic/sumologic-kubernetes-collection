@@ -66,7 +66,7 @@ func Test_Helm_Default_OT_FIPS_Metadata(t *testing.T) {
 				pvcs := corev1.PersistentVolumeClaimList{}
 				cond := conditions.
 					New(res).
-					ResourceListMatchN(&pvcs, 3,
+					ResourceListMatchN(&pvcs, 1,
 						func(object k8s.Object) bool {
 							pvc := object.(*corev1.PersistentVolumeClaim)
 							if pvc.Status.Phase != corev1.ClaimBound {
@@ -108,7 +108,7 @@ func Test_Helm_Default_OT_FIPS_Metadata(t *testing.T) {
 				pvcs := corev1.PersistentVolumeClaimList{}
 				cond := conditions.
 					New(res).
-					ResourceListMatchN(&pvcs, 3,
+					ResourceListMatchN(&pvcs, 1,
 						func(object k8s.Object) bool {
 							pvc := object.(*corev1.PersistentVolumeClaim)
 							if pvc.Status.Phase != corev1.ClaimBound {
