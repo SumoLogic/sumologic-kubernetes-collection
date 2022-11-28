@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add parameter to configure additional Prometheus remote writes [#2611]
 - docs: rename user-provided config from values.yaml to user-values.yaml [#2619]
 - feat: update opentelemetry-operator chart and fix progagators list in instrumentation resource [#2628]
+- feat: drop migration script for v1 [#2654]
 
 ### Fixed
 
@@ -85,6 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2626]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2626
 [#2622]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2622
 [#2643]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2643
+[#2654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2654
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
