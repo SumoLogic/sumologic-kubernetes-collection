@@ -1712,8 +1712,6 @@ kube-prometheus-stack:
       #   memory: 32Mi
   ## Resource limits for prometheus node exporter
   prometheus-node-exporter:
-    image:
-      tag: v1.3.1
     ## Additional labels for pods in the DaemonSet
     podLabels: {}
     ## Additional annotations for pods in the DaemonSet
