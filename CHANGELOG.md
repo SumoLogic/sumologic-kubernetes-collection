@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: remove support for GKE 1.20 [#2578]
 - chore: remove support for EKS 1.19 [#2587]
 - chore: remove support for kOps 1.20 [#2591]
-- chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2595]
+- chore(fluent-bit): update Fluent Bit Helm Chart to 0.21.3 [#2650]
 - chore(telegraf-operator): update Telegraf Operator Helm Chart to 1.3.10 [#2597]
 - feat(chart): restrict permissions for setup and cleanup jobs [#2599]
 - feat: add parameter to configure additional Prometheus remote writes [#2611]
@@ -69,7 +69,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2578]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2578
 [#2587]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2587
 [#2591]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2591
-[#2595]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2595
 [#2597]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2597
 [#2599]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2599
 [#2600]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2600
