@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(openshift): fix remote write proxy - use unprivileged NGINX [#2510], [#2510]
 - fix: default.metrics source is not imported when metrics are disabled and traces are enabled [#2547]
 - fix(cleanup): fix cleanup job [#2600]
+- fix(setup): add permission to modify secrets [#2653]
 
 [#2483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2483
 [#2512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2512
@@ -85,6 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2626]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2626
 [#2622]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2622
 [#2643]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2643
+[#2653]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2653
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
