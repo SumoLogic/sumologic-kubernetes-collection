@@ -173,3 +173,16 @@ jobs:
       - name: Run integration test - ${{ matrix.test_name }}
         working-directory: ./tests/integration/
         run: make test TEST_NAME=${{matrix.test_name}} KIND_NODE_IMAGE=${{matrix.kind_image}}
+  
+  integration-test-status:
+    runs-on: ubuntu-20.04
+    if: ${{ always() }}
+    needs:
+      - integration-tests
+    steps:
+      - name: Tests passed
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Tests failed
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
