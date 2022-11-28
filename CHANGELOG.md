@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs: rename user-provided config from values.yaml to user-values.yaml [#2619]
 - feat: update opentelemetry-operator chart and fix progagators list in instrumentation resource [#2628]
 - feat: drop migration script for v1 [#2654]
+- feat: drop migration script for v2 [#2654]
 
 ### Fixed
 
