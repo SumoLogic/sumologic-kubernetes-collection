@@ -9,7 +9,7 @@ fluent-bit:
 
 otellogs:
   config:
-    override:
+    merge:
       receivers:
         journald:
           units:
