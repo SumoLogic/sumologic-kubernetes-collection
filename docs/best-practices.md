@@ -621,8 +621,6 @@ fluentd:
 
 You can find more information on the `grep` filter plugin in the
 [fluentd documentation](https://docs.fluentd.org/filter/grep).
-Refer to our [documentation](v1-conf-examples.md) for other examples of how you can
-customize the fluentd pipeline.
 
 ## Modifying logs in Fluentd
 
