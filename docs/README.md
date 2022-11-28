@@ -36,14 +36,17 @@ Documentation links:
     - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
 
 - Upgrades
-  - [Upgrade from v0.17 to v1.0](/docs/v1-migration-doc.md)
-  - [Upgrade from v1.3 to v2.0](/docs/v2-migration-doc.md)
+  - [Upgrade from v0.17 to v1.0][migration-doc-v1]
+  - [Upgrade from v1.3 to v2.0][migration-doc-v2]
 
 - [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`](/docs/migration-steps.md)
 - [Troubleshooting Collection](/docs/troubleshoot-collection.md)
 - [Monitoring the Monitoring](/docs/monitoring-lag.md)
 - [Performance estimates for running collection chart](/docs/performance.md)
 - [Dev Releases](/docs/dev.md)
+
+[migration-doc-v1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v1_migration_doc.md
+[migration-doc-v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2_migration_doc.md
 
 ## Solution overview
 
