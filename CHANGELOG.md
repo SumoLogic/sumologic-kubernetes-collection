@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(logs)!: simplify metadata configuration [#2626]
 - feat(metrics)!: simplify metadata configuration [#2622]
 - feat(events)!: add config.merge option [#2643]
+- feat(terraform)!: expect load_config_file to be not set [#2648]
 - feat(otellogs)!: add config.merge option [#2652]
 
 ### Changed
@@ -48,7 +49,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs: rename user-provided config from values.yaml to user-values.yaml [#2619]
 - feat: update opentelemetry-operator chart and fix progagators list in instrumentation resource [#2628]
 - feat: drop migration script for v1 [#2654]
-- feat: drop migration script for v2 [#2654]
 
 ### Fixed
 
@@ -88,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2626]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2626
 [#2622]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2622
 [#2643]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2643
+[#2648]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2648
 [#2654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2654
 [#2652]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2652
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
