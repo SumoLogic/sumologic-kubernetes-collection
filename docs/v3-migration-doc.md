@@ -89,6 +89,8 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
   Error: UPGRADE FAILED: cannot patch "collection-kube-state-metrics" with kind Deployment: Deployment.apps "collection-kube-state-metrics" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
   ```
 
+- In case of overriding `image.repository`, please follow the `kube-prometheus-stack` [migration doc][kube-prometheus-stack-image-migration] on that.
+
 ### Replace special configuration values marked by 'replace' suffix
 
 Mechanism to replace special configuration values for traces marked by 'replace' suffix was removed and following special values in configuration are no longer automatically replaced and they need to be changed:
@@ -118,3 +120,5 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
   ```
+
+[kube-prometheus-stack-image-migration]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-42.1.0/charts/kube-prometheus-stack#from-41x-to-42x
