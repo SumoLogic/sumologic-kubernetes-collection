@@ -1,6 +1,7 @@
 ## Fluent Bit configuration described in:
 ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/container-logs.md#using-old-multiline-parser
 fluent-bit:
+  enabled: true
   luaScripts:
     parse_logs.lua: |
       local function split(s, delimiter)
@@ -118,4 +119,10 @@ fluentd:
   logs:
     containers:
       multiline:
+        enabled: false
+
+sumologic:
+  logs:
+    collector:
+      otelcol:
         enabled: false

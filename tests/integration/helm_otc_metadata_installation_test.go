@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	log "k8s.io/klog/v2"
@@ -66,7 +65,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				pvcs := corev1.PersistentVolumeClaimList{}
 				cond := conditions.
 					New(res).
-					ResourceListMatchN(&pvcs, 3,
+					ResourceListMatchN(&pvcs, 1,
 						func(object k8s.Object) bool {
 							pvc := object.(*corev1.PersistentVolumeClaim)
 							if pvc.Status.Phase != corev1.ClaimBound {
@@ -108,7 +107,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				pvcs := corev1.PersistentVolumeClaimList{}
 				cond := conditions.
 					New(res).
-					ResourceListMatchN(&pvcs, 3,
+					ResourceListMatchN(&pvcs, 1,
 						func(object k8s.Object) bool {
 							pvc := object.(*corev1.PersistentVolumeClaim)
 							if pvc.Status.Phase != corev1.ClaimBound {
@@ -178,20 +177,21 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				tickDuration,
 			),
 		).
-		Assess("fluent-bit daemonset is running",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				var daemonsets []appsv1.DaemonSet
-				require.Eventually(t, func() bool {
-					daemonsets = terrak8s.ListDaemonSets(t, ctxopts.KubectlOptions(ctx), v1.ListOptions{
-						LabelSelector: "app.kubernetes.io/name=fluent-bit",
-					})
-
-					return len(daemonsets) == 1
-				}, waitDuration, tickDuration)
-
-				require.EqualValues(t, 0, daemonsets[0].Status.NumberUnavailable)
-				return ctx
-			}).
+		Assess("otelcol daemonset is ready",
+			stepfuncs.WaitUntilDaemonSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs-collector"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs-collector"),
+					},
+				),
+			),
+		).
 		Feature()
 
 	featMetrics := features.New("metrics").
@@ -339,7 +339,6 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				"pod":              "",
 				"k8s.pod.id":       "",
 				"k8s.pod.pod_name": "",
-				"k8s.container.id": "",
 				"host":             "",
 				"node":             "",
 				"_sourceName":      "",
@@ -363,7 +362,6 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				"pod":              "",
 				"k8s.pod.id":       "",
 				"k8s.pod.pod_name": "",
-				"k8s.container.id": "",
 				"host":             "",
 				"node":             "",
 				"_sourceName":      "",
