@@ -3652,6 +3652,8 @@ tracesSampler:
         spike_limit_percentage: 20
 
       ## Smart cascading filtering rules with preset limits.
+      ## Please see https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.57.2-sumo-1/pkg/processor/cascadingfilterprocessor
+      ## for details.
       cascading_filter:
         ## Max number of traces for which decisions are kept in memory
         num_traces: 200000
