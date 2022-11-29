@@ -4265,7 +4265,7 @@ falco:
   image:
     registry: public.ecr.aws
     repository: sumologic/falco
-    pullSecrets: []
+    # pullSecrets: []
 
   ## Enable eBPF support for Falco instead of falco-probe kernel module.
   ## Set to true for GKE, for details see:
