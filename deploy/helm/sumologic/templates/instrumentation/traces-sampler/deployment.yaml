@@ -59,9 +59,6 @@ spec:
         imagePullPolicy: {{ $tracesSampler.deployment.image.pullPolicy }}
         args:
           - --config=/conf/traces.sampler.conf.yaml
-          {{- if eq $tracesSampler.metrics.enabled false }}
-          - --metrics-level=none
-          {{- end }}
         env:
         - name: GOGC
           value: "80"

@@ -1,5 +1,6 @@
+{{ $tracesGatewayEnabled := .Values.tracesGateway.enabled }}
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
-{{- if $tracesEnabled }}
+{{- if and $tracesEnabled $tracesGatewayEnabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

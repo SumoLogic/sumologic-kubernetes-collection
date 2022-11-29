@@ -1,5 +1,6 @@
+{{ $tracesGatewayEnabled := .Values.tracesGateway.enabled }}
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
-{{- if eq $tracesEnabled true }}
+{{- if and $tracesEnabled $tracesGatewayEnabled }}
 apiVersion: v1
 kind: Service
 metadata:

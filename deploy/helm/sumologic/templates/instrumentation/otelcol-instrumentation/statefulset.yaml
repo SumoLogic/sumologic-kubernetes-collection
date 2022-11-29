@@ -1,6 +1,6 @@
 {{ $otelcolInstrumentation := .Values.otelcolInstrumentation }}
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
-{{- if $tracesEnabled }}
+{{- if and $tracesEnabled $otelcolInstrumentation.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

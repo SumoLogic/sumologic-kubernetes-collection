@@ -1,6 +1,7 @@
 # Service will point to otelcolInstrumentation.
+{{ $otelcolInstrumentationEnabled := .Values.otelcolInstrumentation.enabled }}
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
-{{- if $tracesEnabled }}
+{{- if and $tracesEnabled $otelcolInstrumentationEnabled }}
 apiVersion: v1
 kind: Service
 metadata:
