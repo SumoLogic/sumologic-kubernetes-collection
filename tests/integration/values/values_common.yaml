@@ -84,7 +84,16 @@ tracesSampler:
     resources:
       requests:
         memory: 64Mi
-        cpu: 100m
+        cpu: 10m
+
+# Request less resources so that this fits on Github actions runners environment
+tracesGateway:
+  deployment:
+    replicas: 1
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 10m
 
 # Request less resources so that this fits on Github actions runners environment
 otelcolInstrumentation:
@@ -94,4 +103,4 @@ otelcolInstrumentation:
     resources:
       requests:
         memory: 64Mi
-        cpu: 50m
+        cpu: 10m
