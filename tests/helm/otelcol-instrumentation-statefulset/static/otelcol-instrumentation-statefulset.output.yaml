@@ -112,8 +112,3 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-metrics
-        - name: SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-logs

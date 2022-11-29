@@ -4,7 +4,7 @@ sumologic:
   metrics:
     enabled: true
   logs:
-    enabled: true
+    enabled: false
 
 # Prevent snowball effect by filtering out receiver mock logs
 otellogs:

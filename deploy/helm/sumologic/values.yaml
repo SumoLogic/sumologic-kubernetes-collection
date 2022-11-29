@@ -3581,36 +3581,6 @@ otelcolInstrumentation:
           ## num_seconds is the number of seconds to buffer in case of a backend outage
           ## requests_per_second is the average number of requests per seconds.
           queue_size: 5000
-      sumologic/logs:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        ## Compression encoding format, either empty string (""), gzip or deflate (default gzip).
-        ## Empty string means no compression
-        compress_encoding: gzip
-        ## Max HTTP request body size in bytes before compression (if applied). By default 1_048_576 (1MB) is used.
-        max_request_body_size: 1_048_576  # 1MB
-        ## Format to use when sending logs to Sumo. (default json) (possible values: json, text)
-        log_format: json
-        ## Format of the metrics to be sent (default is prometheus) (possible values: carbon2, prometheus)
-        ## carbon2 and graphite are going to be supported soon.
-        ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
-        timeout: 5s
-        retry_on_failure:
-          enabled: true
-          ## Time to wait after the first failure before retrying
-          initial_interval: 5s
-          ## Upper bound on backoff
-          max_interval: 30s
-          ## Maximum amount of time spent trying to send a batch
-          max_elapsed_time: 120s
-        sending_queue:
-          enabled: false
-          ## Number of consumers that dequeue batches
-          num_consumers: 10
-          ## Maximum number of batches kept in memory before data
-          ## User should calculate this as num_seconds * requests_per_second where:
-          ## num_seconds is the number of seconds to buffer in case of a backend outage
-          ## requests_per_second is the average number of requests per seconds.
-          queue_size: 5000
       otlphttp/traces:
         endpoint: 'http://{{ include "otelcolinstrumentation.exporter.endpoint" . }}:4318'
     service:
@@ -3624,10 +3594,6 @@ otelcolInstrumentation:
           receivers: [otlp, otlp/deprecated]
           processors: [memory_limiter, k8s_tagger, source, resource, batch]
           exporters: [sumologic/metrics]
-        logs:
-          receivers: [otlp, otlp/deprecated]
-          processors: [memory_limiter, k8s_tagger, source, resource, batch]
-          exporters: [sumologic/logs]
 
 ## Configure traces-sampler
 tracesSampler:
