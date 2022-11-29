@@ -3,9 +3,9 @@ sumologic:
   events:
     enabled: false
   logs:
-    enabled: false
+    enabled: true
   metrics:
-    enabled: false
+    enabled: true
   traces:
     enabled: true
 
@@ -13,6 +13,17 @@ opentelemetry-operator:
   enabled: true
   createDefaultInstrumentation: true
   instrumentationNamespaces: "ot-operator1,ot-operator2"
+  manager:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+
+  kubeRBACProxy:
+    resources:
+      requests:
+        cpu: 5m
+        memory: 64Mi
 
 tracesGateway:
   config:
