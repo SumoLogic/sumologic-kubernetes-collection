@@ -78,6 +78,9 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
   - moved `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
 
+- Upgrading Metrics Server to `6.2.4`. In case of changing `metrics-server.*` configuration
+  please see [upgrading section of chart's documentation][metrics-server-upgrade].
+
 ## How to upgrade
 
 ### Requirements
@@ -165,3 +168,5 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
   ```
+
+[metrics-server-upgrade]: https://github.com/bitnami/charts/tree/5b09f7a7c0d9232f5752840b6c4e5cdc56d7f796/bitnami/metrics-server#to-600
