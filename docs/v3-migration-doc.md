@@ -32,6 +32,8 @@ In this document we detail the changes as well as the exact steps for migration.
   or overwrite default configuration `metadata.metrics.config.override`
 - Removing support for `sumologic.cluster.load_config_file`.
   Leaving this configuration will result in setup job failure.
+- Upgrading Falco helm chart to `v2.4.2` which changed their configuration:
+  Please validate and adjust your configuration to new version according to [Falco documentation]
 
 ## How to upgrade
 
@@ -120,3 +122,5 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
   ```
+
+[Falco documentation]: https://github.com/falcosecurity/charts/tree/falco-2.4.2/falco

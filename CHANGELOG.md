@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(events)!: add config.merge option [#2643]
 - feat(terraform)!: expect load_config_file to be not set [#2648]
 - feat(otellogs)!: add config.merge option [#2652]
+- chore!: upgrade falco to 2.4.2 [#2659]
 
 ### Changed
 
@@ -92,6 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2649]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2649
 [#2654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2654
 [#2652]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2652
+[#2659]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2659
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0

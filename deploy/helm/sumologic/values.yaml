@@ -4265,42 +4265,23 @@ falco:
   image:
     registry: public.ecr.aws
     repository: sumologic/falco
-    # pullSecrets: []
+    pullSecrets: []
 
-  ## Add kernel-devel package through MachineConfig, required to enable building of missing falco modules (only for OpenShift)
-  addKernelDevel: true
-  ## Add initContainers to Falco pod
-  extraInitContainers:
-    ## Add initContainer to wait until kernel-devel is installed on host
-    - name: init-falco
-      image: public.ecr.aws/docker/library/busybox
-      command:
-        - 'sh'
-        - '-c'
-        - |
-          while [ -f /host/etc/redhat-release ] && [ -z "$(ls /host/usr/src/kernels)" ] ; do
-          echo "waiting for kernel headers to be installed"
-          sleep 3
-          done
-      volumeMounts:
-        - mountPath: /host/usr
-          name: usr-fs
-          readOnly: true
-        - mountPath: /host/etc
-          name: etc-fs
-          readOnly: true
   ## Enable eBPF support for Falco instead of falco-probe kernel module.
   ## Set to true for GKE, for details see:
   ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#falco-and-google-kubernetes-engine-gke
   # ebpf:
   #   enabled: true
   falco:
-    jsonOutput: true
+    load_plugins:
+    - json
+    - k8saudit
+    json_output: true
     ## The location of the rules file(s). This can contain one or more paths to
     ## separate rules files.
     ## Explicitly add missing /etc/falco/rules.available/application_rules.yaml
     ## before https://github.com/falcosecurity/charts/issues/230 gets resolved.
-    rulesFile:
+    rules_file:
       - /etc/falco/falco_rules.yaml
       - /etc/falco/falco_rules.local.yaml
       - /etc/falco/k8s_audit_rules.yaml
