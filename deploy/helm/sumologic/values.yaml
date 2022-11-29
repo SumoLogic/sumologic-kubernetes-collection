@@ -3320,7 +3320,7 @@ kube-prometheus-stack:
       serviceMonitor:
         selfMonitor: false
 
-## Configure optional OpenTelemetry Collector in Agent mode
+## Configure otelcol-instrumentation - Sumo OTel Distro Collector
 otelcolInstrumentation:
   enabled: false
   sourceMetadata:
@@ -3376,7 +3376,7 @@ otelcolInstrumentation:
       tag: "0.57.2-sumo-1"
       pullPolicy: IfNotPresent
 
-    ## Set securityContext for containers running in pods in metrics statefulset.
+    ## Set securityContext for containers running in pods in otelcol-instrumentation statefulset.
     containers:
       otelcol:
         securityContext: {}
@@ -3412,7 +3412,7 @@ otelcolInstrumentation:
     #     mountPath: /certs
     #     readOnly: true
 
-  ## Option to turn autoscaling on for metrics and specify params for HPA.
+  ## Option to turn autoscaling on for otelcol-instrumentation and specify params for HPA.
   ## Autoscaling needs metrics-server to access cpu metrics.
   autoscaling:
     enabled: false
@@ -3529,10 +3529,12 @@ otelcolInstrumentation:
         ## it can result in unnecessary CPU consumption.
         check_interval: 5s
 
-        ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
+        ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
         ## Note that typically the total memory usage of process will be about 50MiB higher
         ## than this value.
         limit_percentage: 75
+
+        ## Maximum spike expected between the measurements of memory usage, in %.
         spike_limit_percentage: 20
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
@@ -3643,9 +3645,9 @@ tracesSampler:
     ## Option to define priorityClassName to assign a priority class to pods.
     priorityClassName:
 
-    ## Add custom labels only to otelcol deployment.
+    ## Add custom labels only to traces-sampler deployment.
     podLabels: {}
-    ## Add custom annotations only to otelcol deployment.
+    ## Add custom annotations only to traces-sampler deployment.
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
@@ -3691,10 +3693,12 @@ tracesSampler:
         ## it can result in unnecessary CPU consumption.
         check_interval: 5s
 
-        ## Maximum amount of memory, in MiB, targeted to be allocated by the process heap.
+        ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
         ## Note that typically the total memory usage of process will be about 50MiB higher
         ## than this value.
         limit_percentage: 75
+
+        ## Maximum spike expected between the measurements of memory usage, in %.
         spike_limit_percentage: 20
 
       ## Smart cascading filtering rules with preset limits.
@@ -3980,9 +3984,9 @@ tracesGateway:
       requests:
         memory: 196Mi
         cpu: 50m
-    ## Add custom labels only to tracesGateway deployment.
+    ## Add custom labels only to traces-gateway deployment.
     podLabels: {}
-    ## Add custom annotations only to tracesGateway deployment.
+    ## Add custom annotations only to traces-gateway deployment.
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
@@ -4040,8 +4044,11 @@ tracesGateway:
         check_interval: 5s
 
         ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+        ## Note that typically the total memory usage of process will be about 50MiB higher
+        ## than this value.
         limit_percentage: 75
-        ## Spike limit (calculated from available memory). Must be less than limit_percentage.
+
+        ## Maximum spike expected between the measurements of memory usage, in %.
         spike_limit_percentage: 20
 
       ## The batch processor accepts spans and places them into batches grouped by node and resource
