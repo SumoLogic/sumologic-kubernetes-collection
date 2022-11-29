@@ -3325,7 +3325,7 @@ kube-prometheus-stack:
 
 ## Configure optional OpenTelemetry Collector in Agent mode
 otelcolInstrumentation:
-  enabled: true
+  enabled: false
   sourceMetadata:
     ## Set the _sourceName metadata field in Sumo Logic.
     sourceName: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
@@ -3430,6 +3430,9 @@ otelcolInstrumentation:
     minAvailable: 2
   ## To use maxUnavailable, set minAvailable to null and uncomment the below:
   #   maxUnavailable: 1
+
+  ## To enable collecting all logs, set to false
+  logLevelFilter: false
 
   config:
     receivers:
@@ -3627,7 +3630,7 @@ otelcolInstrumentation:
           processors: [memory_limiter, k8s_tagger, source, resource, batch]
           exporters: [sumologic/logs]
 
-## Configure otelcol
+## Configure traces-sampler
 tracesSampler:
   deployment:
     nodeSelector: {}
@@ -3670,9 +3673,9 @@ tracesSampler:
     #     mountPath: /certs
     #     readOnly: true
 
-  ## Metrics from Collector
-  metrics:
-    enabled: true
+  ## To enable collecting all logs, set to false
+  logLevelFilter: false
+
   ## Collector configuration
   config:
     receivers:
@@ -3734,10 +3737,6 @@ tracesSampler:
           receivers: [otlp]
           processors: [memory_limiter, cascading_filter, batch]
           exporters: [otlphttp]
-
-otelcol:
-  ## To enable collecting all logs, set to false
-  logLevelFilter: false
 
 metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
@@ -3969,10 +3968,10 @@ metadata:
       ## To use maxUnavailable, set minAvailable to null and uncomment the below:
       # maxUnavailable: 1
 
-## Configure optional OpenTelemetry Gateway in Agent mode
+## Configure traces-gateway
 ## ref: docs/opentelemetry_collector.md#load-balancing-using-the-gateway
 tracesGateway:
-  enabled: true
+  enabled: false
   deployment:
     replicas: 1
     nodeSelector: {}
@@ -4022,6 +4021,9 @@ tracesGateway:
     #   - name: es-certs
     #     mountPath: /certs
     #     readOnly: true
+
+  ## To enable collecting all logs, set to false
+  logLevelFilter: false
 
   config:
     receivers:
