@@ -189,23 +189,23 @@ processors:
       - from: build_hostname
   source/containers:
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
-    source_host: "%{k8s.pod.hostname}"
-    source_name: "%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}"
-    source_category: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
-    source_category_prefix: {{ .Values.fluentd.logs.containers.sourceCategoryPrefix | quote }}
-    source_category_replace_dash: {{ .Values.fluentd.logs.containers.sourceCategoryReplaceDash | quote }}
+    source_host: {{ .Values.sumologic.logs.container.sourceHost | quote }}
+    source_name:  {{ .Values.sumologic.logs.container.sourceName | quote }}
+    source_category: {{ .Values.sumologic.logs.container.sourceCategory | quote }}
+    source_category_prefix: {{ .Values.sumologic.logs.container.sourceCategoryPrefix | quote }}
+    source_category_replace_dash: {{ .Values.sumologic.logs.container.sourceCategoryReplaceDash | quote }}
     exclude:
-      k8s.namespace.name: {{ include "fluentd.excludeNamespaces" . }}
-      k8s.pod.name: {{ .Values.fluentd.logs.containers.excludePodRegex | quote }}
-      k8s.container.name: {{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}
-      k8s.pod.hostname: {{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}
+      k8s.namespace.name: {{ include "logs.excludeNamespaces" . }}
+      k8s.pod.name: {{ .Values.sumologic.logs.container.excludePodRegex | quote }}
+      k8s.container.name: {{ .Values.sumologic.logs.container.excludeContainerRegex | quote }}
+      k8s.pod.hostname: {{ .Values.sumologic.logs.container.excludeHostRegex | quote }}
     annotation_prefix: "pod_annotations_"
     pod_template_hash_key: "pod_labels_pod-template-hash"
     pod_name_key: "k8s.pod.pod_name"
     pod_key: "k8s.pod.name"
     container_annotations:
-      enabled: {{ .Values.fluentd.logs.containers.perContainerAnnotationsEnabled }}
-      prefixes: {{ toJson .Values.fluentd.logs.containers.perContainerAnnotationPrefixes }}
+      enabled: {{ .Values.sumologic.logs.container.perContainerAnnotationsEnabled }}
+      prefixes: {{ toJson .Values.sumologic.logs.container.perContainerAnnotationPrefixes }}
 {{ end }}
 {{ if .Values.sumologic.logs.systemd.enabled }}
   ## Systemd related processors
@@ -244,56 +244,56 @@ processors:
         match_type: regexp
         record_attributes:
           - key: SYSLOG_FACILITY
-            value: {{ .Values.fluentd.logs.systemd.excludeFacilityRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.systemd.excludeFacilityRegex | default "$^" | quote }}
   filter/exclude_systemd_hostname:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: _HOSTNAME
-            value: {{ .Values.fluentd.logs.systemd.excludeHostRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.systemd.excludeHostRegex | default "$^" | quote }}
   filter/exclude_systemd_priority:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: PRIORITY
-            value: {{ .Values.fluentd.logs.systemd.excludePriorityRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.systemd.excludePriorityRegex | default "$^" | quote }}
   filter/exclude_systemd_unit:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: _SYSTEMD_UNIT
-            value: {{ .Values.fluentd.logs.systemd.excludeUnitRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.systemd.excludeUnitRegex | default "$^" | quote }}
   filter/exclude_kubelet_syslog:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: SYSLOG_FACILITY
-            value: {{ .Values.fluentd.logs.kubelet.excludeFacilityRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.kubelet.excludeFacilityRegex | default "$^" | quote }}
   filter/exclude_kubelet_hostname:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: _HOSTNAME
-            value: {{ .Values.fluentd.logs.kubelet.excludeHostRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.kubelet.excludeHostRegex | default "$^" | quote }}
   filter/exclude_kubelet_priority:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: PRIORITY
-            value: {{ .Values.fluentd.logs.kubelet.excludePriorityRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.kubelet.excludePriorityRegex | default "$^" | quote }}
   filter/exclude_kubelet_unit:
     logs:
       exclude:
         match_type: regexp
         record_attributes:
           - key: _SYSTEMD_UNIT
-            value: {{ .Values.fluentd.logs.kubelet.excludeUnitRegex | default "$^" | quote }}
+            value: {{ .Values.sumologic.logs.kubelet.excludeUnitRegex | default "$^" | quote }}
 
   groupbyattrs/systemd:
     keys:
@@ -303,10 +303,10 @@ processors:
   source/systemd:
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
     source_host: "%{_sourceHost}"
-    source_name: "%{_sourceName}"
-    source_category: {{ .Values.fluentd.logs.systemd.sourceCategory | quote }}
-    source_category_prefix: {{ .Values.fluentd.logs.systemd.sourceCategoryPrefix | quote }}
-    source_category_replace_dash: {{ .Values.fluentd.logs.systemd.sourceCategoryReplaceDash | quote }}
+    source_name: {{ .Values.sumologic.logs.systemd.sourceName | quote }}
+    source_category: {{ .Values.sumologic.logs.systemd.sourceCategory | quote }}
+    source_category_prefix: {{ .Values.sumologic.logs.systemd.sourceCategoryPrefix | quote }}
+    source_category_replace_dash: {{ .Values.sumologic.logs.systemd.sourceCategoryReplaceDash | quote }}
   ## Remove all attributes, so body won't by nested by SumoLogic receiver in case of using otlp format
   transform/remove_attributes:
     logs:
@@ -324,10 +324,10 @@ processors:
   source/kubelet:
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
     source_host: "%{_sourceHost}"
-    source_name: {{ .Values.fluentd.logs.kubelet.sourceName | quote }}
-    source_category: {{ .Values.fluentd.logs.kubelet.sourceCategory | quote }}
-    source_category_prefix: {{ .Values.fluentd.logs.kubelet.sourceCategoryPrefix | quote }}
-    source_category_replace_dash: {{ .Values.fluentd.logs.kubelet.sourceCategoryReplaceDash | quote }}
+    source_name: {{ .Values.sumologic.logs.kubelet.sourceName | quote }}
+    source_category: {{ .Values.sumologic.logs.kubelet.sourceCategory | quote }}
+    source_category_prefix: {{ .Values.sumologic.logs.kubelet.sourceCategoryPrefix | quote }}
+    source_category_replace_dash: {{ .Values.sumologic.logs.kubelet.sourceCategoryReplaceDash | quote }}
 {{ end }}
 
 service:

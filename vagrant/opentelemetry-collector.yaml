@@ -1,0 +1,85 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: prometheus
+  namespace: sumologic
+spec:
+  mode: statefulset
+  targetAllocator:
+    enabled: true
+    allocationStrategy: consistent-hashing
+    prometheusCR:
+      enabled: true
+    image: ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:0.64.1
+    serviceAccount: prometheus-collector
+  replicas: 3
+  config: |
+    receivers:
+      prometheus:
+        config:
+          target_allocator:
+            endpoint: http://prometheus-targetallocator
+            interval: 30s
+            collector_id: ${POD_NAME}
+          scrape_configs:
+            - job_name: 'otel-collector'
+              scrape_interval: 10s
+              static_configs:
+                - targets: [ '0.0.0.0:8888' ]
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      batch:
+        send_batch_size: 10000
+        timeout: 10s
+
+    exporters:
+      logging:
+
+    service:
+      pipelines:
+        metrics:
+          receivers: [prometheus]
+          processors: []
+          exporters: [logging]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name:  prometheus-collector
+  namespace: sumologic
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name:  prometheus-collector
+  namespace: sumologic
+rules:
+  - apiGroups:
+      - "*"
+    resources:
+      - "*"
+    verbs:
+      - "*"
+  - apiGroups:
+      - "monitoring.coreos.com"
+    resources:
+      - "*"
+    verbs:
+      - "*"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name:  prometheus-collector
+  namespace: sumologic
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: prometheus-collector
+    namespace: sumologic

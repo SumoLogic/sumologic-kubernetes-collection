@@ -2,10 +2,8 @@ sumologic:
   collectorName: my_collectorName
   logs:
     metadata:
-      provider: otelcol
-    collector:
-      otelcol:
-        enabled: true
+      provider: fluentd
+
     container:
       sourceHost: my_containers_sourceHost
       sourceName: my_containers_sourceName
@@ -38,5 +36,12 @@ sumologic:
       excludePriorityRegex: my_systemd_excludePriorityRegex
       excludeUnitRegex: my_systemd_excludeUnitRegex
 
-fluent-bit:
-  enabled: false
+    defaultFluentd:
+      sourceName: my_defaultFluentd_sourceName
+      sourceCategory:  my_defaultFluentd_sourceCategory
+      sourceCategoryPrefix: my_defaultFluentd_sourceCategoryPrefix
+      sourceCategoryReplaceDash: my_defaultFluentd_sourceCategoryReplaceDash
+      excludeFacilityRegex: my_defaultFluentd_excludeFacilityRegex
+      excludeHostRegex: my_defaultFluentd_excludeHostRegex
+      excludePriorityRegex: my_defaultFluentd_excludePriorityRegex
+      excludeUnitRegex: my_defaultFluentd_excludeUnitRegex

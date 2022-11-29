@@ -3,13 +3,13 @@ sumologic:
     enabled: true
 
 # Prevent snowball effect by filtering out receiver mock logs
-fluent-bit:
+otellogs:
   config:
-    filters: |
-      [FILTER]
-          Name    grep
-          Match   containers.var.log.containers.receiver-mock*
-          Exclude log .*
+    merge:
+      receivers:
+        filelog/containers:
+          exclude:
+            - /var/log/pods/receiver-mock_*/*/*.log
   
 otelcol:
   logs:

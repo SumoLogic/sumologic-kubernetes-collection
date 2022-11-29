@@ -1253,13 +1253,13 @@ Returns list of namespaces to exclude
 
 Example:
 
-{{ include "fluentd.excludeNamespaces" . }}
+{{ include "logs.excludeNamespaces" . }}
 */}}
-{{- define "fluentd.excludeNamespaces" -}}
-{{- $excludeNamespaceRegex := .Values.fluentd.logs.containers.excludeNamespaceRegex | quote -}}
+{{- define "logs.excludeNamespaces" -}}
+{{- $excludeNamespaceRegex := .Values.sumologic.logs.container.excludeNamespaceRegex | quote -}}
 {{- if eq .Values.sumologic.collectionMonitoring false -}}
-  {{- if .Values.fluentd.logs.containers.excludeNamespaceRegex -}}
-  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.fluentd.logs.containers.excludeNamespaceRegex | quote -}}
+  {{- if .Values.sumologic.logs.container.excludeNamespaceRegex -}}
+  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.sumologic.logs.container.excludeNamespaceRegex | quote -}}
   {{- else -}}
   {{- $excludeNamespaceRegex = printf "%s" .Release.Namespace | quote -}}
   {{- end -}}

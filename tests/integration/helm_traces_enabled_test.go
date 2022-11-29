@@ -76,7 +76,7 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 						return false
 					}
 
-					return err == nil && len(pvcs.Items) == 3
+					return err == nil && len(pvcs.Items) == 1
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
@@ -114,7 +114,7 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 						return false
 					}
 
-					return err == nil && len(pvcs.Items) == 3
+					return err == nil && len(pvcs.Items) == 1
 				}, waitDuration, tickDuration)
 				return ctx
 			}).

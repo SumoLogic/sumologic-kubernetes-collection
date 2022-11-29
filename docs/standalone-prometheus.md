@@ -225,8 +225,6 @@ helm upgrade --install my-release sumologic/sumologic -f user-values.yaml
 
 ## Upgrading Sumo Logic Collection
 
-__Note, if you are upgrading to version 1.x of our collection from a version before 1.x, please see our [migration guide](v1-migration-doc.md).__
-
 To upgrade our Helm chart to a newer version, you must first run update your local Helm repo.
 
 ```bash
