@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add parameter to configure additional Prometheus remote writes [#2611]
 - docs: rename user-provided config from values.yaml to user-values.yaml [#2619]
 - feat: update opentelemetry-operator chart and fix progagators list in instrumentation resource [#2628]
+- feat: upgrade node-exporter to v1.4.0 [#2649]
 - feat: drop migration script for v1 [#2654]
 
 ### Fixed
@@ -88,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2622]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2622
 [#2643]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2643
 [#2648]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2648
+[#2649]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2649
 [#2654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2654
 [#2652]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2652
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
