@@ -725,7 +725,7 @@ sumologic.com/scrape: "true"
 {{ template "sumologic.fullname" . }}-otelcol
 {{- end -}}
 
-{{- define "sumologic.metadata.name.instrumentation.deprecated.otelagent.service" -}}
+{{- define "sumologic.metadata.name.instrumentation.otelagent.service" -}}
 {{ template "sumologic.fullname" . }}-otelagent
 {{- end -}}
 
@@ -733,7 +733,7 @@ sumologic.com/scrape: "true"
 Create endpoint based on OTC Tracing deployment type
 */}}
 {{- define "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" -}}
-{{ printf "%s.%s" ( include "sumologic.metadata.name.otelcolinstrumentation.service" . ) .Release.Namespace }}
+{{ printf "%s.%s" ( include "sumologic.metadata.name.instrumentation.otelagent.service" . ) .Release.Namespace }}
 {{- end -}}
 
 {{/*

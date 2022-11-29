@@ -1,20 +1,18 @@
+# Service will point to otelcolInstrumentation.
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
 {{- if $tracesEnabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}
+  name: {{ template "sumologic.metadata.name.instrumentation.otelagent.service" . }}
   labels:
     app: {{ template "sumologic.labels.app.otelcolinstrumentation.service" . }}
-    {{- include "sumologic.labels.scrape.instrumentation" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
     app: {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
-  # In case of changes related to open ports for otelcolInstrumentation please update NOTES.TXT
+  # In case of changes related to open ports for otelcol please update NOTES.TXT
   ports:
-  - name: pprof
-    port: 1777
   - name: jaeger-sampling # Default endpoint for Jaeger Sampling (if enabled)
     port: 5778
   - name: jaeger-thrift-compact # Default endpoint for Jaeger Thrift Compact receiver.
@@ -39,6 +37,8 @@ spec:
     port: 4317
   - name: otlp-http # Default endpoint for OTLP HTTP receiver.
     port: 4318
+  - name: otlp-grpc-old # Old endpoint for OTLP gRPC receiver.
+    port: 55680
   - name: otlp-http-old # Default endpoint for OTLP HTTP receiver.
     port: 55681
 {{- end }}
