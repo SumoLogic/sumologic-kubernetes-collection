@@ -30,6 +30,8 @@ In this document we detail the changes as well as the exact steps for migration.
   Removed explicit configuration for otelcol under `metadata.metrics.config`.
   Added option to merge configuration under `metadata.metrics.config.merge`
   or overwrite default configuration `metadata.metrics.config.override`
+- Removing support for `sumologic.cluster.load_config_file`.
+  Leaving this configuration will result in setup job failure.
 
 ## How to upgrade
 

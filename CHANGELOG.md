@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(logs)!: simplify metadata configuration [#2626]
 - feat(metrics)!: simplify metadata configuration [#2622]
 - feat(events)!: add config.merge option [#2643]
+- feat(terraform)!: expect load_config_file to be not set [#2648]
+- feat(otellogs)!: add config.merge option [#2652]
 
 ### Changed
 
@@ -40,13 +42,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: remove support for GKE 1.20 [#2578]
 - chore: remove support for EKS 1.19 [#2587]
 - chore: remove support for kOps 1.20 [#2591]
-- chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2595]
+- chore(fluent-bit): update Fluent Bit Helm Chart to 0.21.3 [#2650]
 - chore(telegraf-operator): update Telegraf Operator Helm Chart to 1.3.10 [#2597]
 - feat(chart): restrict permissions for setup and cleanup jobs [#2599]
 - feat: add parameter to configure additional Prometheus remote writes [#2611]
 - docs: rename user-provided config from values.yaml to user-values.yaml [#2619]
 - feat: update opentelemetry-operator chart and fix progagators list in instrumentation resource [#2628]
 - feat: upgrade node-exporter to v1.4.0 [#2649]
+- feat: drop migration script for v1 [#2654]
 
 ### Fixed
 
@@ -70,7 +73,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2578]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2578
 [#2587]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2587
 [#2591]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2591
-[#2595]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2595
 [#2597]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2597
 [#2599]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2599
 [#2600]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2600
@@ -86,7 +88,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2626]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2626
 [#2622]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2622
 [#2643]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2643
+[#2648]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2648
 [#2649]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2649
+[#2654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2654
+[#2652]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2652
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0

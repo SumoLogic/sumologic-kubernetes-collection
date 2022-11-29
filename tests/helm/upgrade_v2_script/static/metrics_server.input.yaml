@@ -1,9 +1,0 @@
-## Configure metrics-server
-## ref: https://github.com/bitnami/charts/tree/master/bitnami/metrics-server/values.yaml
-metrics-server:
-  ## Set the enabled flag to true for enabling metrics-server.
-  ## This is required before enabling fluentd autoscaling unless you have an existing metrics-server in the cluster.
-  enabled: false
-  args:
-    - --kubelet-insecure-tls
-    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
