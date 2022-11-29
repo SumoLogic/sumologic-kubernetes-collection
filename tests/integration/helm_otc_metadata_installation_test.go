@@ -128,22 +128,22 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 				)
 				return ctx
 			}).
-		Assess("fluentd events statefulset is ready",
+		Assess("otelcol events statefulset is ready",
 			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-events"),
 				),
 				stepfuncs.WithLabelsF(
 					stepfuncs.LabelFormatterKV{
 						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-events"),
 					},
 				),
 			),
 		).
-		Assess("fluentd events buffers PVCs are created",
+		Assess("otelcol events buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				namespace := ctxopts.Namespace(ctx)
 				releaseName := ctxopts.HelmRelease(ctx)
@@ -157,7 +157,7 @@ func Test_Helm_Default_OT_Metadata(t *testing.T) {
 					pvcs, err := cl.CoreV1().
 						PersistentVolumeClaims(namespace).
 						List(ctx, v1.ListOptions{
-							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-events", releaseName),
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-events", releaseName),
 						})
 					if !assert.NoError(t, err) {
 						return false
