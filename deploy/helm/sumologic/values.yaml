@@ -4274,8 +4274,8 @@ falco:
   #   enabled: true
   falco:
     load_plugins:
-    - json
-    - k8saudit
+      - json
+      - k8saudit
     json_output: true
     ## The location of the rules file(s). This can contain one or more paths to
     ## separate rules files.
