@@ -4,7 +4,7 @@ sumologic:
   metrics:
     enabled: true
   logs:
-    enabled: false
+    enabled: true
 
 # Prevent snowball effect by filtering out receiver mock logs
 otellogs:
@@ -22,6 +22,12 @@ otelcol:
   metrics:
     statefulset:
       replicaCount: 1
+
+otelcolInstrumentation:
+  enabled: true
+
+tracesGateway:
+  enabled: true
 
 tracesSampler:
   config:

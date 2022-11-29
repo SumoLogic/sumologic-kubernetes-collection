@@ -25,7 +25,11 @@ opentelemetry-operator:
         cpu: 5m
         memory: 64Mi
 
+otelcolInstrumentation:
+  enabled: true
+
 tracesGateway:
+  enabled: true
   config:
     processors:
       memory_limiter:
