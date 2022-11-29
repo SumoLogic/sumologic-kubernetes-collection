@@ -85,6 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2626]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2626
 [#2622]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2622
 [#2643]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2643
+[#2446]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2446
 [#2651]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2651
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
