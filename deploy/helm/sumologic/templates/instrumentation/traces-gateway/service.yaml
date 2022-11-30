@@ -1,0 +1,25 @@
+{{ $tracesGatewayEnabled := .Values.tracesGateway.enabled }}
+{{ $tracesEnabled := .Values.sumologic.traces.enabled }}
+{{- if and $tracesEnabled $tracesGatewayEnabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.metadata.name.tracesgateway.service" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.tracesgateway.service" . }}
+    {{- include "sumologic.labels.scrape.instrumentation" . | nindent 4 }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ template "sumologic.labels.app.tracesgateway.pod" . }}
+    component: {{ template "sumologic.labels.app.tracesgateway.component" . }}
+  ports:
+  - name: pprof
+    port: 1777
+  - name: metrics # Default endpoint for querying metrics.
+    port: 8888
+  - name: otlp-grpc # Default endpoint for OTLP gRPC receiver.
+    port: 4317
+  - name: otlp-http # Default endpoint for OTLP HTTP receiver.
+    port: 4318
+{{- end }}

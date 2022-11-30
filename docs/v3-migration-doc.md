@@ -78,6 +78,11 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
   - moved `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
 
+- Upgrading Metrics Server to `6.2.4`. In case of changing `metrics-server.*` configuration
+  please see [upgrading section of chart's documentation][metrics-server-upgrade].
+
+- Upgrading Tailing Sidecar Operator helm chart to v0.5.5. There is no breaking change if using annotations only.
+
 ## How to upgrade
 
 ### Requirements
@@ -168,4 +173,17 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
   ```
 
+### Known issues
+
+#### Cannot delete pod if using Tailing Sidecar Operator
+
+If you are using Tailing Sidecar Operator and see the following error:
+
+```
+Error from server: admission webhook "tailing-sidecar.sumologic.com" denied the request: there is no content to decode
+```
+
+Please try to remove pod later.
+
+[metrics-server-upgrade]: https://github.com/bitnami/charts/tree/5b09f7a7c0d9232f5752840b6c4e5cdc56d7f796/bitnami/metrics-server#to-600
 [kube-prometheus-stack-image-migration]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-42.1.0/charts/kube-prometheus-stack#from-41x-to-42x

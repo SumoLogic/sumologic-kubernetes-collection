@@ -78,13 +78,13 @@ fluentd:
     size: 100Mi
 
 # Request less resources so that this fits on Github actions runners environment
-otelcol:
+tracesSampler:
   deployment:
     replicas: 1
     resources:
       requests:
         memory: 64Mi
-        cpu: 100m
+        cpu: 10m
 
 otelevents:
   statefulset:
@@ -94,10 +94,20 @@ otelevents:
         cpu: 100m
 
 # Request less resources so that this fits on Github actions runners environment
-otelagent:
-  enabled: true
-  daemonset:
+tracesGateway:
+  deployment:
+    replicas: 1
     resources:
       requests:
         memory: 64Mi
-        cpu: 50m
+        cpu: 10m
+
+# Request less resources so that this fits on Github actions runners environment
+otelcolInstrumentation:
+  enabled: true
+  statefulset:
+    replicaCount: 1
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 10m

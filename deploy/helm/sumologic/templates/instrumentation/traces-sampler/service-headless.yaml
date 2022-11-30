@@ -1,0 +1,27 @@
+{{ $tracesSampler := .Values.tracesSampler }}
+{{ $tracesEnabled := .Values.sumologic.traces.enabled }}
+{{- if eq $tracesEnabled true }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.metadata.name.tracessampler.service-headless" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.tracessampler.service-headless" . }}
+    {{- include "sumologic.labels.scrape.instrumentation" . | nindent 4 }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  # Otel DNS load balancing requires collector service to be headless
+  # in order to skip k8s load balancing and instead populate DNS records.
+  clusterIP: None
+  selector:
+    app: {{ template "sumologic.labels.app.tracessampler.pod" . }}
+  ports:
+  - name: pprof
+    port: 1777
+  - name: metrics # Default endpoint for querying metrics.
+    port: 8888
+  - name: otlp-grpc # Default endpoint for OTLP gRPC receiver.
+    port: 4317
+  - name: otlp-http # Default endpoint for OTLP HTTP receiver.
+    port: 4318
+{{- end }}

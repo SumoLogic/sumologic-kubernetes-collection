@@ -5,7 +5,7 @@ sumologic:
   logs:
     enabled: false
   metrics:
-    enabled: false
+    enabled: true
   traces:
     enabled: true
 
@@ -13,8 +13,23 @@ opentelemetry-operator:
   enabled: true
   createDefaultInstrumentation: true
   instrumentationNamespaces: "ot-operator1,ot-operator2"
+  manager:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
 
-otelgateway:
+  kubeRBACProxy:
+    resources:
+      requests:
+        cpu: 5m
+        memory: 64Mi
+
+otelcolInstrumentation:
+  enabled: true
+
+tracesGateway:
+  enabled: true
   config:
     processors:
       memory_limiter:
