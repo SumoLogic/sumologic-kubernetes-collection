@@ -72,7 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - move `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
 - feat(logs)!: switch from Fluent Bit to Otelcol as default logs collector [#2639]
 - feat(events)!: switch from Fluentd to Otelcol as default events collector [#2640]
-- feat: change instrumentation related k8s objects [#2647]
+- feat!: change instrumentation related k8s objects [#2647]
 
 ### Changed
 
