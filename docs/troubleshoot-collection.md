@@ -463,8 +463,8 @@ For more information see [Falco documentation](https://falco.org/docs/getting-st
 To install on `GKE`, use the provided override file to customize your configuration and uncomment the following lines in the `values.yaml` file referenced below:
 
 ```
-  #ebpf:
-  #  enabled: true
+  #driver:
+  #  kind: ebpf
 ```
 
 ### Falco and OpenShift
