@@ -33,6 +33,8 @@ In this document we detail the changes as well as the exact steps for migration.
   or overwrite default configuration `metadata.metrics.config.override`
 - Removing support for `sumologic.cluster.load_config_file`.
   Leaving this configuration will result in setup job failure.
+- Upgrading Falco helm chart to `v2.4.2` which changed their configuration:
+  Please validate and adjust your configuration to new version according to [Falco documentation]
 
 - Moving parameters from `fluentd.logs.containers` to `sumologic.logs.container`
   - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
@@ -183,4 +185,5 @@ Error from server: admission webhook "tailing-sidecar.sumologic.com" denied the 
 
 Please try to remove pod later.
 
+[Falco documentation]: https://github.com/falcosecurity/charts/tree/falco-2.4.2/falco
 [metrics-server-upgrade]: https://github.com/bitnami/charts/tree/5b09f7a7c0d9232f5752840b6c4e5cdc56d7f796/bitnami/metrics-server#to-600

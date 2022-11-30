@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(events)!: add config.merge option [#2643]
 - feat(terraform)!: expect load_config_file to be not set [#2648]
 - feat(otellogs)!: add config.merge option [#2652]
+- chore!: upgrade falco to 2.4.2 [#2659]
 - chore!: move parameters from `fluentd.logs.containers` to `sumologic.logs.container` [#2635]
   - move `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
   - move `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
@@ -144,6 +145,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2649]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2649
 [#2654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2654
 [#2652]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2652
+[#2659]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2659
 [#2635]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2635
 [#2660]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2660
 [#2661]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2661

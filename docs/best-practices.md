@@ -859,11 +859,9 @@ Available log levels can be found in Falco's documentation here: https://falco.o
 falco:
   ## Set the enabled flag to false to disable falco.
   enabled: true
-  #ebpf:
-  #  enabled: true
   falco:
-    jsonOutput: true
-    loglevel: debug
+    json_output: true
+    log_level: debug
 ```
 
 ## Overriding metadata using annotations
