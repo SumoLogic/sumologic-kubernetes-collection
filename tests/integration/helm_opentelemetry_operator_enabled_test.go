@@ -10,17 +10,16 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/scheme"
-	"sigs.k8s.io/e2e-framework/klient/k8s"
 	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
 	"sigs.k8s.io/e2e-framework/klient/wait"
 	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
 func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
@@ -36,20 +35,21 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 	}
 
 	featTraces := features.New("traces").
-		Assess("traces-sampler deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		Assess("traces-sampler deployment is ready",
 			stepfuncs.WaitUntilDeploymentIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				),
 				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
 					K: "app",
-					V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol"),
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				},
 				),
-		)).
-		Assess("otelcol-instrumentation statefulset is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			),
+		).
+		Assess("otelcol-instrumentation statefulset is ready",
 			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
@@ -64,19 +64,20 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 				),
 			),
 		).
-		Assess("traces-sampler deployment is ready",
+		Assess("traces-gateway deployment is ready",
 			stepfuncs.WaitUntilDeploymentIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
 				),
 				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
 					K: "app",
-					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
 				},
 				),
-			)).
+			),
+		).
 		Feature()
 
 	featOpenTelemetryOperator := features.New("opentelemetry-operator").

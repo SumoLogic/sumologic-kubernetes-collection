@@ -1,6 +1,4 @@
 sumologic:
-  traces:
-    enabled: true
   metrics:
     enabled: true
   logs:
@@ -22,12 +20,6 @@ otelcol:
   metrics:
     statefulset:
       replicaCount: 1
-
-otelcolInstrumentation:
-  enabled: true
-
-tracesGateway:
-  enabled: true
 
 tracesSampler:
   config:
