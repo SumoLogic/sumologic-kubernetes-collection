@@ -71,7 +71,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - move `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
   - move `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
 - chore!: upgrade metrics-server to v6.2.4 [#2660]
+- chore!: upgrade tailing-sidecar-operator to v0.5.5 [#2661]
 - feat(logs)!: switch from Fluent Bit to Otelcol as default logs collector [#2639]
+- feat(events)!: switch from Fluentd to Otelcol as default events collector [#2640]
 
 ### Changed
 
@@ -136,7 +138,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2652]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2652
 [#2635]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2635
 [#2660]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2660
+[#2661]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2661
 [#2639]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2639
+[#2640]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2640
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
