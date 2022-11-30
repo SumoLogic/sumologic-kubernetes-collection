@@ -82,7 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - move `otelcol.deployment.priorityClassName` to `tracesGateway.deployment.priorityClassName`
   - move `otelgateway.deployment.nodeSelector` to `tracesGateway.deployment.nodeSelector`
 - feat: enable metrics and traces collection from instrumentation by default [#2154]
-  - change prameter `sumologic.traces.enabled` default value from `false` to `true`
+  - change parameter `sumologic.traces.enabled` default value from `false` to `true`
 
 ### Changed
 
