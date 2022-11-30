@@ -113,7 +113,7 @@ versions while preserving the same end-to-end behaviour. Use of this field is di
 the necessary customizations should be able to be achieved without touching the otel configuration
 directly. Please open an issue if your use case requires the use of this field.
 
-The `metadata.metrics.config.override` and `otellogs.config.override` keys can be used to provide configuration that will be completely
+The `metadata.logs.config.override` and `otellogs.config.override` keys can be used to provide configuration that will be completely
 replace the default configuration. As above, care must be taken not to depend on implementation details
 that may change between minor releases of this Chart.
 

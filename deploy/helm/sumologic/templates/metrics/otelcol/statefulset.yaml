@@ -111,9 +111,6 @@ spec:
         imagePullPolicy: {{ .Values.metadata.image.pullPolicy }}
         args:
           - --config=/etc/otel/config.yaml
-          {{- if eq .Values.otelcol.metrics.enabled false }}
-          - --metrics-level=none
-          {{- end }}
         resources:
           {{- toYaml .Values.metadata.metrics.statefulset.resources | nindent 10 }}
         {{- if .Values.metadata.metrics.statefulset.containers.otelcol.securityContext }}
@@ -124,14 +121,12 @@ spec:
         - name: prom-write
           containerPort: 9888
           protocol: TCP
-        {{- if eq .Values.otelcol.metrics.enabled true }}
         - name: metrics
           containerPort: 8888
           protocol: TCP
         - name: pprof
           containerPort: 1777
           protocol: TCP
-        {{- end }}
         livenessProbe:
           httpGet:
             path: /

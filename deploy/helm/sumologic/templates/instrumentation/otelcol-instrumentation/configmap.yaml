@@ -1,0 +1,13 @@
+{{ $otelcolInstrumentationEnabled := .Values.otelcolInstrumentation.enabled }}
+{{ $tracesEnabled := .Values.sumologic.traces.enabled }}
+{{- if and $tracesEnabled $otelcolInstrumentationEnabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.otelcolinstrumentation.configmap" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.otelcolinstrumentation.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  {{- (tpl (.Files.Glob "conf/instrumentation/otelcol.instrumentation.conf.yaml").AsConfig .) | nindent 2 }}
+{{- end }}

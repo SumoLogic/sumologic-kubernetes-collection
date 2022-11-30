@@ -36,14 +36,17 @@ Documentation links:
     - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
 
 - Upgrades
-  - [Upgrade from v0.17 to v1.0](/docs/v1-migration-doc.md)
-  - [Upgrade from v1.3 to v2.0](/docs/v2-migration-doc.md)
+  - [Upgrade from v0.17 to v1.0][migration-doc-v1]
+  - [Upgrade from v1.3 to v2.0][migration-doc-v2]
 
 - [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`](/docs/migration-steps.md)
 - [Troubleshooting Collection](/docs/troubleshoot-collection.md)
 - [Monitoring the Monitoring](/docs/monitoring-lag.md)
 - [Performance estimates for running collection chart](/docs/performance.md)
 - [Dev Releases](/docs/dev.md)
+
+[migration-doc-v1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v1_migration_doc.md
+[migration-doc-v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2_migration_doc.md
 
 ## Solution overview
 
@@ -91,7 +94,7 @@ The following matrix displays the tested package versions for our Helm chart.
 
 | Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit                          | Falco  | Metrics Server | Telegraf Operator | Tailing Sidecar Operator | OpenTelemetry Operator |
 |:----------------------|:------------------------------------------|:--------|:------------------------------------|:-------|:---------------|:------------------|:-------------------------|:-----------------------|
-| latest                | 39.11.0                                   | 1.14.6  | 0.20.9                              | 1.18.6 | 5.11.9         | 1.3.10            | 0.3.4                    | 0.7.0                  |
+| latest                | 39.11.0                                   | 1.14.6  | 0.21.3                              | 1.18.6 | 5.11.9         | 1.3.10            | 0.3.4                    | 0.7.0                  |
 | 2.16.0                | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.4                    | 0.7.0                  |
 | 2.14.1 - 2.15.0       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.3                    | 0.7.0                  |
 | 2.11.0 - 2.14.0       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.2                    | 0.7.0                  |

@@ -13,19 +13,19 @@ sources:
   - https://github.com/SumoLogic/sumologic-kubernetes-collection
 dependencies:
   - name: fluent-bit
-    version: 0.20.9
+    version: 0.21.3
     repository: https://fluent.github.io/helm-charts
     condition: fluent-bit.enabled,sumologic.logs.enabled
   - name: kube-prometheus-stack
-    version: 39.11.0
+    version: 42.1.0
     repository: https://prometheus-community.github.io/helm-charts
     condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
   - name: falco
-    version: 1.18.6
+    version: 2.4.2
     repository: https://falcosecurity.github.io/charts
     condition: falco.enabled
   - name: metrics-server
-    version: 5.11.9
+    version: 6.2.4
     repository: https://charts.bitnami.com/bitnami
     condition: metrics-server.enabled
   - name: telegraf-operator
@@ -33,7 +33,7 @@ dependencies:
     repository: https://helm.influxdata.com/
     condition: telegraf-operator.enabled
   - name: tailing-sidecar-operator
-    version: 0.3.4
+    version: 0.5.5
     repository: https://sumologic.github.io/tailing-sidecar
     condition: tailing-sidecar-operator.enabled
   - name: opentelemetry-operator

@@ -18,12 +18,6 @@ spec:
     port: 4318
     targetPort: 4318
     protocol: TCP
-  {{- if .Values.sumologic.traces.enabled }}
-  - name: zipkin-write
-    port: 9411
-    targetPort: 9411
-    protocol: TCP
-  {{- end }}
   - name: fluent-bit
     port: 24321
     targetPort: 24321

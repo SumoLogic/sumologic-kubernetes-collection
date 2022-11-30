@@ -124,11 +124,6 @@ spec:
           {{- toYaml .Values.fluentd.logs.statefulset.containers.fluentd.securityContext | nindent 10 }}
         {{- end }}
         ports:
-        {{- if .Values.sumologic.traces.enabled }}
-        - name: zipkin-write
-          containerPort: 9411
-          protocol: TCP
-        {{- end }}
         - name: fluent-bit
           containerPort: 24321
           protocol: TCP
@@ -159,9 +154,6 @@ spec:
         env:
 {{- $ctx := .Values -}}
 {{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs") -}}
-{{- if .Values.sumologic.traces.enabled }}
-{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") -}}
-{{- end }}
         {{- if .Values.fluentd.logs.extraEnvVars }}
 {{ toYaml .Values.fluentd.logs.extraEnvVars | nindent 8 }}
         {{- end }}

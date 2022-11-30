@@ -1,15 +1,19 @@
 sumologic:
   traces:
     enabled: true
+  metrics:
+    enabled: true
+  logs:
+    enabled: true
 
 # Prevent snowball effect by filtering out receiver mock logs
-fluent-bit:
+otellogs:
   config:
-    filters: |
-      [FILTER]
-          Name    grep
-          Match   containers.var.log.containers.receiver-mock*
-          Exclude log .*
+    merge:
+      receivers:
+        filelog/containers:
+          exclude:
+            - /var/log/pods/receiver-mock_*/*/*.log
   
 otelcol:
   logs:
@@ -18,6 +22,14 @@ otelcol:
   metrics:
     statefulset:
       replicaCount: 1
+
+otelcolInstrumentation:
+  enabled: true
+
+tracesGateway:
+  enabled: true
+
+tracesSampler:
   config:
   # Default otlp pipeline from values.yaml is used.    
     exporters:

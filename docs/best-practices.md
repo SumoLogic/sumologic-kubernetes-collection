@@ -621,8 +621,6 @@ fluentd:
 
 You can find more information on the `grep` filter plugin in the
 [fluentd documentation](https://docs.fluentd.org/filter/grep).
-Refer to our [documentation](v1-conf-examples.md) for other examples of how you can
-customize the fluentd pipeline.
 
 ## Modifying logs in Fluentd
 
@@ -861,11 +859,9 @@ Available log levels can be found in Falco's documentation here: https://falco.o
 falco:
   ## Set the enabled flag to false to disable falco.
   enabled: true
-  #ebpf:
-  #  enabled: true
   falco:
-    jsonOutput: true
-    loglevel: debug
+    json_output: true
+    log_level: debug
 ```
 
 ## Overriding metadata using annotations
@@ -875,11 +871,11 @@ to override some metadata and settings per pod.
 
 - `sumologic.com/format` overrides the value of the `fluentd.logs.output.logFormat` property.
   Using `text` can break multiline detection. Check out [Troubleshooting Collection](troubleshoot-collection.md#using-text-format)
-- `sumologic.com/sourceCategory` overrides the value of the `fluentd.logs.containers.sourceCategory` property
-- `sumologic.com/sourceCategoryPrefix` overrides the value of the `fluentd.logs.containers.sourceCategoryPrefix` property
-- `sumologic.com/sourceCategoryReplaceDash` overrides the value of the `fluentd.logs.containers.sourceCategoryReplaceDash`
+- `sumologic.com/sourceCategory` overrides the value of the `sumologic.logs.container.sourceCategory` property
+- `sumologic.com/sourceCategoryPrefix` overrides the value of the `sumologic.logs.container.sourceCategoryPrefix` property
+- `sumologic.com/sourceCategoryReplaceDash` overrides the value of the `sumologic.logs.container.sourceCategoryReplaceDash`
   property
-- `sumologic.com/sourceName` overrides the value of the `fluentd.logs.containers.sourceName` property
+- `sumologic.com/sourceName` overrides the value of the `sumologic.logs.container.sourceName` property
 
 For example:
 

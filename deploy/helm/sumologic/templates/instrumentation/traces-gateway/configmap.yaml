@@ -1,0 +1,13 @@
+{{ $tracesGatewayEnabled := .Values.tracesGateway.enabled }}
+{{ $tracesEnabled := .Values.sumologic.traces.enabled }}
+{{- if and $tracesEnabled $tracesGatewayEnabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.tracesgateway.configmap" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.tracesgateway.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  {{- (tpl (.Files.Glob "conf/instrumentation/traces.gateway.conf.yaml").AsConfig .) | nindent 2 }}
+{{- end }}
