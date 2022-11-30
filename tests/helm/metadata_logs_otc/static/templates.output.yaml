@@ -263,25 +263,25 @@ data:
         pod_key: k8s.pod.name
         pod_name_key: k8s.pod.pod_name
         pod_template_hash_key: pod_labels_pod-template-hash
-        source_category: '%{k8s.namespace.name}/%{k8s.pod.pod_name}'
+        source_category: my_containers_sourceCategory
         source_category_prefix: my_containers_sourceCategoryPrefix
         source_category_replace_dash: my_containers_sourceCategoryReplaceDash
-        source_host: '%{k8s.pod.hostname}'
-        source_name: '%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}'
+        source_host: my_containers_sourceHost
+        source_name: my_containers_sourceName
       source/kubelet:
         collector: my_collectorName
-        source_category: kubelet
+        source_category: my_kubelet_sourceCategory
         source_category_prefix: my_kubelet_sourceCategoryPrefix
         source_category_replace_dash: my_kubelet_sourceCategoryReplaceDash
         source_host: '%{_sourceHost}'
-        source_name: k8s_kubelet
+        source_name: my_kubelet_sourceName
       source/systemd:
         collector: my_collectorName
-        source_category: system
+        source_category: my_systemd_sourceCategory
         source_category_prefix: my_systemd_sourceCategoryPrefix
         source_category_replace_dash: my_systemd_sourceCategoryReplaceDash
         source_host: '%{_sourceHost}'
-        source_name: '%{_sourceName}'
+        source_name: my_systemd_sourceName
       sumologic_schema:
         add_cloud_namespace: false
       transform/remove_attributes:

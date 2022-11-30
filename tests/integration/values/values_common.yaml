@@ -17,6 +17,7 @@ sumologic:
         requests:
           cpu: 5m
           memory: 16Mi
+      replicaCount: 1
 
 # Request less resources so that this fits on Github actions runners environment
 kube-prometheus-stack:
@@ -44,12 +45,14 @@ metadata:
         requests:
           cpu: 100m
           memory: 128Mi
+      replicaCount: 1
   metrics:
     statefulset:
       resources:
         requests:
           cpu: 100m
           memory: 128Mi
+      replicaCount: 1
 
 # Request less resources so that this fits on Github actions runners environment
 fluentd:
@@ -78,6 +81,13 @@ fluentd:
 otelcol:
   deployment:
     replicas: 1
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 100m
+
+otelevents:
+  statefulset:
     resources:
       requests:
         memory: 64Mi

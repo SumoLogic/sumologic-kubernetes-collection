@@ -208,7 +208,7 @@ sumologic:
 
   ### Configuration for collection of Kubernetes events
   events:
-    provider: fluentd
+    provider: otelcol
 
     ## Source name for the Events source. Default: "events"
     sourceName: "events"
@@ -239,7 +239,7 @@ sumologic:
 
     collector:
       otelcol:
-        enabled: false
+        enabled: true
 
       ## Allow running otel and Fluent-Bit side by side. This will result in duplicated
       ## logs being ingested. Only enabled this if you're **certain** it's what you want.
@@ -252,11 +252,109 @@ sumologic:
     container:
       enabled: true
 
+      ## Set the _sourceHost metadata field in Sumo Logic.
+      sourceHost: "%{k8s.pod.hostname}"
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}"
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+      ## Used to replace - with another character.
+      sourceCategoryReplaceDash: "/"
+
+      ## A regular expression for containers.
+      ## Matching containers will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludeContainerRegex: ""
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludeHostRegex: ""
+      ## A regular expression for namespaces.
+      ## Matching namespaces will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludeNamespaceRegex: ""
+      ## A regular expression for pods.
+      ## Matching pods will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludePodRegex: ""
+
+      ## Defines whether container-level pod annotations are enabled.
+      perContainerAnnotationsEnabled: false
+      ## Defines the list of prefixes of container-level pod annotations.
+      perContainerAnnotationPrefixes: []
+
     systemd:
       enabled: true
       # systemd units to collect logs from
       # units:
       #   - docker.service
+
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "%{_sourceName}"
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "system"
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+      ## Used to replace - with another character.
+      sourceCategoryReplaceDash: "/"
+
+      ## A regular expression for facility.
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludeFacilityRegex: ""
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludeHostRegex: ""
+      ## A regular expression for priority.
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludePriorityRegex: ""
+      ## A regular expression for unit.
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludeUnitRegex: ""
+
+    kubelet:
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "k8s_kubelet"
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "kubelet"
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+      ## Used to replace - with another character.
+      sourceCategoryReplaceDash: "/"
+
+      ## A regular expression for facility.
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludeFacilityRegex: ""
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludeHostRegex: ""
+      ## A regular expression for priority.
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludePriorityRegex: ""
+      ## A regular expression for unit.
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      excludeUnitRegex: ""
+
+    ## Only for Fluentd - default log configuration (catch-all)
+    defaultFluentd:
+      ## Set the _sourceName metadata field in Sumo Logic.
+      sourceName: "k8s_default"
+      ## Set the _sourceCategory metadata field in Sumo Logic.
+      sourceCategory: "default"
+      ## Set the prefix, for _sourceCategory metadata.
+      sourceCategoryPrefix: "kubernetes/"
+      ## Used to replace - with another character.
+      sourceCategoryReplaceDash: "/"
+
+      ## A regular expression for facility.
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeFacilityRegex: ""
+      ## A regular expression for hosts.
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeHostRegex: ""
+      ## A regular expression for priority.
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludePriorityRegex: ""
+      ## A regular expression for unit.
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
+      excludeUnitRegex: ""
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
     ## relevant metadata.
@@ -596,40 +694,6 @@ fluentd:
       ## Override output section for container logs. Leave empty for the default output section
       overrideOutputConf: |-
 
-      ## Set the _sourceHost metadata field in Sumo Logic.
-      sourceHost: ""
-      ## Set the _sourceName metadata field in Sumo Logic.
-      sourceName: "%{namespace}.%{pod}.%{container}"
-      ## Set the _sourceCategory metadata field in Sumo Logic.
-      sourceCategory: "%{namespace}/%{pod_name}"
-      ## Set the prefix, for _sourceCategory metadata.
-      sourceCategoryPrefix: "kubernetes/"
-      ## Used to replace - with another character.
-      sourceCategoryReplaceDash: "/"
-
-      ## A regular expression for containers.
-      ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeContainerRegex: ""
-      ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeHostRegex: ""
-      ## A regular expression for namespaces.
-      ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeNamespaceRegex: ""
-      ## A regular expression for pods.
-      ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludePodRegex: ""
-
-      ## Defines whether container-level pod annotations are enabled.
-      ## Setting this to `true` might slightly affect Fluentd performance.
-      ## See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.6-sumo-5/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
-      perContainerAnnotationsEnabled: false
-      ## Defines the list of prefixes of container-level pod annotations.
-      ## See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.6-sumo-5/fluent-plugin-kubernetes-sumologic#container-level-pod-annotations
-      perContainerAnnotationPrefixes: []
-
       ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
       k8sMetadataFilter:
         ## Option to control the enabling of metadata filter plugin watch.
@@ -675,28 +739,6 @@ fluentd:
       ## Override output section for kubelet logs. Leave empty for the default output section.
       overrideOutputConf: |-
 
-      ## Set the _sourceName metadata field in Sumo Logic.
-      sourceName: "k8s_kubelet"
-      ## Set the _sourceCategory metadata field in Sumo Logic.
-      sourceCategory: "kubelet"
-      ## Set the prefix, for _sourceCategory metadata.
-      sourceCategoryPrefix: "kubernetes/"
-      ## Used to replace - with another character.
-      sourceCategoryReplaceDash: "/"
-
-      ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeFacilityRegex: ""
-      ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeHostRegex: ""
-      ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludePriorityRegex: ""
-      ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeUnitRegex: ""
-
     ## Systemd log configuration
     systemd:
       enabled: true
@@ -712,28 +754,6 @@ fluentd:
       ## Override output section for systemd logs. Leave empty for the default output section.
       overrideOutputConf: |-
 
-      ## Set the _sourceName metadata field in Sumo Logic.
-      sourceName: "k8s_systemd"
-      ## Set the _sourceCategory metadata field in Sumo Logic.
-      sourceCategory: "system"
-      ## Set the prefix, for _sourceCategory metadata.
-      sourceCategoryPrefix: "kubernetes/"
-      ## Used to replace - with another character.
-      sourceCategoryReplaceDash: "/"
-
-      ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeFacilityRegex: ""
-      ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeHostRegex: ""
-      ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludePriorityRegex: ""
-      ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeUnitRegex: ""
-
     ## Default log configuration (catch-all)
     default:
       ## To use additional filter plugins
@@ -747,28 +767,6 @@ fluentd:
 
       ## Override output section for untagged logs. Leave empty for the default output section.
       overrideOutputConf: |-
-
-      ## Set the _sourceName metadata field in Sumo Logic.
-      sourceName: "k8s_default"
-      ## Set the _sourceCategory metadata field in Sumo Logic.
-      sourceCategory: "default"
-      ## Set the prefix, for _sourceCategory metadata.
-      sourceCategoryPrefix: "kubernetes/"
-      ## Used to replace - with another character.
-      sourceCategoryReplaceDash: "/"
-
-      ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeFacilityRegex: ""
-      ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeHostRegex: ""
-      ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludePriorityRegex: ""
-      ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeUnitRegex: ""
 
     ## Extra Environment Values - allows yaml definitions
     # extraEnvVars:
@@ -1027,6 +1025,7 @@ metrics-server:
 ## Configure fluent-bit
 ## ref: https://github.com/fluent/helm-charts/blob/master/charts/fluent-bit/values.yaml
 fluent-bit:
+  enabled: false
   ## If specified, use these secrets to access the image
   # imagePullSecrets:
   #   - name: "image-pull-secret"
@@ -1712,8 +1711,6 @@ kube-prometheus-stack:
       #   memory: 32Mi
   ## Resource limits for prometheus node exporter
   prometheus-node-exporter:
-    image:
-      tag: v1.3.1
     ## Additional labels for pods in the DaemonSet
     podLabels: {}
     ## Additional annotations for pods in the DaemonSet
@@ -4151,11 +4148,6 @@ otelevents:
     #     readOnly: true
 
 ## Configure log collection with Otelcol
-## This is currently highly experimental and not recommended unless you really know what you're doing.
-## In particular, this configuration currently only covers container logs, and only supports docker-shim.
-## Unlike the fluent-bit configuration, it also reads logs from /var/log/pods instead of /var/log/containers
-## which is consistent with CRI, but may possibly cause issues on older K8s versions.
-## This is an alpha feature, and may change in the near future.
 otellogs:
 
   ## Metrics from Collector
@@ -4174,6 +4166,22 @@ otellogs:
   logLevel: info
 
   config:
+    ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
+    ## be directly merged with the generated configuration, overriding existing values.
+    ## For example:
+    # override:
+    #   processors:
+    #     batch:
+    #       send_batch_size: 512
+    ## will change the batch size of the pipeline.
+    ##
+    ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
+    ## of this chart. It involves implementation details that may change even in minor versions.
+    ## Use with caution, and consider opening an issue, so your customization can be added in a safer way.
+    merge: {}
+    ## Completely override existing config and replace it with the contents of this value.
+    ## The value of this key should be a dictionary, that will replace the normal configuration.
+    ## This is an advanced feature, use with caution, and review the generated configuration first.
     override: {}
 
   daemonset:

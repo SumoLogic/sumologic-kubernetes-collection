@@ -1,0 +1,16 @@
+# This configuration contains configuration to set defualt Fluend configuration from Helm Chart v2
+sumologic:
+  collectorName: my_collectorName
+  logs:
+    metadata:
+      provider: fluentd
+
+    container:
+      enabled: true
+      sourceHost: # in v2 this parameter is not set in values.yaml
+      sourceName: "%{namespace}.%{pod}.%{container}"
+      sourceCategory: "%{namespace}/%{pod_name}"
+
+    systemd:
+      enabled: true
+      sourceName: "k8s_systemd"

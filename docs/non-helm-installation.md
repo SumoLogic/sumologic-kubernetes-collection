@@ -321,9 +321,6 @@ cat user-values.yaml | \
 
 ## Upgrading Sumo Logic Collection
 
-**Note, if you are upgrading to version 1.x of our collection from a version before 1.x,
-please see our [migration guide](v1-migration-doc.md).**
-
 To upgrade you can simply re-generate the YAML when a new version
 of the Kubernetes collection is available.
 You can use the same commands used to create the YAML in the first place.
