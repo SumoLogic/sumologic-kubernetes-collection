@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fix(setup):allow credentials to not be set if setup is disabled [#2572]
 - fix(logs): prevent Fluent Bit from doing metadata enrichment [#2512]
-- chore(kube-prometheus-stack): update kube-prometheus-stack chart to 42.1.0 [#2446][#2651]
+- chore(kube-prometheus-stack): update kube-prometheus-stack chart to 42.1.0 [#2446] [#2651]
 - feat(metrics)!: disable Thanos by default [#2514]
 - fix(fluentd): Removing PodSecurityPolicy for fluentd [#2605]
 - feat!: refactor event collection configuration [#2444]
