@@ -78,6 +78,9 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
   - moved `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
 
+- Upgrading Metrics Server to `6.2.4`. In case of changing `metrics-server.*` configuration
+  please see [upgrading section of chart's documentation][metrics-server-upgrade].
+
 - Upgrading Tailing Sidecar Operator helm chart to v0.5.5. There is no breaking change if using annotations only.
 
 ## How to upgrade
@@ -179,3 +182,5 @@ Error from server: admission webhook "tailing-sidecar.sumologic.com" denied the 
 ```
 
 Please try to remove pod later.
+
+[metrics-server-upgrade]: https://github.com/bitnami/charts/tree/5b09f7a7c0d9232f5752840b6c4e5cdc56d7f796/bitnami/metrics-server#to-600
