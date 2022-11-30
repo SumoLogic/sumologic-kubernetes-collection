@@ -494,9 +494,7 @@ If you observe the following errors from Fluentd pods:
 2021-01-18 15:47:23 +0000 [warn]: #0 [sumologic.endpoint.logs.gc] failed to flush the buffer. retry_time=3 next_retry_seconds=2021-01-18 15:47:27 +0000 chunk="5b92e97a5ee3cbd7e59859644d9686e3" error_class=Zlib::GzipFile::Error error="not in gzip format"
 ```
 
-Please see [migration topic on that](v2-migration-doc.md#gzip-compression-errors).
-
-If the problem still occurs, please disable gzip compression for buffer.
+Please disable gzip compression for buffer.
 Add following configuration to your `user-values.yaml` and upgrade collection:
 
 ```yaml

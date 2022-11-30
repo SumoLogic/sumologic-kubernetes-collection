@@ -1,0 +1,165 @@
+{{ $otelcolInstrumentation := .Values.otelcolInstrumentation }}
+{{ $tracesEnabled := .Values.sumologic.traces.enabled }}
+{{- if and $tracesEnabled $otelcolInstrumentation.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "sumologic.metadata.name.otelcolinstrumentation.statefulset" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
+    component: {{ template "sumologic.labels.app.otelcolinstrumentation.component" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
+  serviceName: {{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}
+  podManagementPolicy: "Parallel"
+  replicas: {{ $otelcolInstrumentation.statefulset.replicaCount }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/instrumentation/otelcol-instrumentation/configmap.yaml") . | sha256sum }}
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.metadata.podAnnotations }}
+{{ toYaml .Values.metadata.podAnnotations | indent 8 }}
+{{- end }}
+{{- if $otelcolInstrumentation.statefulset.podAnnotations }}
+{{ toYaml $otelcolInstrumentation.statefulset.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+        app: {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
+        {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.metadata.podLabels }}
+{{ toYaml .Values.metadata.podLabels | indent 8 }}
+{{- end }}
+{{- if $otelcolInstrumentation.statefulset.podLabels }}
+{{ toYaml $otelcolInstrumentation.statefulset.podLabels | indent 8 }}
+{{- end }}
+    spec:
+      serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
+{{- if $otelcolInstrumentation.statefulset.nodeSelector }}
+      nodeSelector:
+{{ toYaml $otelcolInstrumentation.statefulset.nodeSelector | indent 8 }}
+{{- end }}
+{{- if $otelcolInstrumentation.statefulset.tolerations }}
+      tolerations:
+{{ toYaml $otelcolInstrumentation.statefulset.tolerations | indent 8 }}
+{{- end }}
+{{- if or $otelcolInstrumentation.statefulset.affinity  $otelcolInstrumentation.statefulset.podAntiAffinity }}
+      affinity:
+{{- if $otelcolInstrumentation.statefulset.affinity }}
+{{ toYaml $otelcolInstrumentation.statefulset.affinity | indent 8 }}
+{{- end }}
+{{- if eq $otelcolInstrumentation.statefulset.podAntiAffinity "hard"}}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - {{ template "sumologic.labels.app.otelcolinstrumentation" . }}
+              - key: app
+                operator: In
+                values:
+                - prometheus-operator-prometheus
+            topologyKey: "kubernetes.io/hostname"
+{{else if eq $otelcolInstrumentation.statefulset.podAntiAffinity "soft"}}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
+                - key: app
+                  operator: In
+                  values:
+                  - prometheus-operator-prometheus
+              topologyKey: "kubernetes.io/hostname"
+{{- end }}
+{{- end }}
+{{- if $otelcolInstrumentation.statefulset.topologySpreadConstraints }}
+      topologySpreadConstraints:
+{{ toYaml $otelcolInstrumentation.statefulset.topologySpreadConstraints | indent 6 }}
+{{- end }}
+      volumes:
+        - configMap:
+            name: {{ template "sumologic.metadata.name.otelcolinstrumentation.configmap" . }}
+          name: otelcolinstrumentation-config-vol
+{{- if $otelcolInstrumentation.statefulset.extraVolumes }}
+{{ toYaml $otelcolInstrumentation.statefulset.extraVolumes | indent 6 }}
+{{- end }}
+      securityContext:
+        {{- toYaml .Values.metadata.securityContext | nindent 8 }}
+      {{- if $otelcolInstrumentation.statefulset.priorityClassName }}
+      priorityClassName: {{ $otelcolInstrumentation.statefulset.priorityClassName | quote }}
+      {{- end }}
+      containers:
+      - name: otelcol
+        image: {{ $otelcolInstrumentation.statefulset.image.repository }}:{{ $otelcolInstrumentation.statefulset.image.tag }}
+        imagePullPolicy: {{ $otelcolInstrumentation.statefulset.image.pullPolicy }}
+        args:
+          - "--config=/conf/otelcol.instrumentation.conf.yaml"
+        resources:
+          {{- toYaml $otelcolInstrumentation.statefulset.resources | nindent 10 }}
+        {{- if $otelcolInstrumentation.statefulset.containers.otelcol.securityContext }}
+        securityContext:
+          {{- toYaml $otelcolInstrumentation.statefulset.containers.otelcol.securityContext | nindent 10 }}
+        {{- end }}
+        ports:
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
+        - containerPort: 5778  # Default endpoint for Jaeger Sampling.
+        - containerPort: 6831  # Default endpoint for Jaeger Thrift Compact receiver.
+          protocol: UDP
+        - containerPort: 6832  # Default endpoint for Jaeger Thrift Binary receiver.
+          protocol: UDP
+        - containerPort: 8888  # Default endpoint for querying metrics.
+        - containerPort: 9411  # Default endpoint for Zipkin receiver.
+        - containerPort: 14250 # Default endpoint for Jaeger gRPC receiver.
+        - containerPort: 14267 # Default endpoint for Jaeger TChannel receiver.
+        - containerPort: 14268 # Default endpoint for Jaeger HTTP receiver.
+        - containerPort: 55678 # Default endpoint for Opencensus receiver.
+        - containerPort: 4317  # Default endpoint for OTLP receiver.
+        - containerPort: 4318  # Default endpoint for OTLP HTTP receiver.
+        - containerPort: 55681 # Default endpoint for OTLP HTTP receiver. (deprecated)
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          {{- toYaml $otelcolInstrumentation.statefulset.containers.otelcol.livenessProbe | nindent 10 }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          {{- toYaml $otelcolInstrumentation.statefulset.containers.otelcol.readinessProbe | nindent 10 }}
+        startupProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          {{- toYaml $otelcolInstrumentation.statefulset.containers.otelcol.startupProbe | nindent 10 }}
+        volumeMounts:
+        - name: otelcolinstrumentation-config-vol
+          mountPath: /conf
+
+{{- if $otelcolInstrumentation.statefulset.extraVolumeMounts }}
+{{ toYaml $otelcolInstrumentation.statefulset.extraVolumeMounts | indent 8 }}
+{{- end }}
+        env:
+{{- $ctx := .Values -}}
+{{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" "metrics" "Name" "default" ) | nindent 8 -}}
+{{- if $otelcolInstrumentation.statefulset.extraEnvVars }}
+{{- toYaml $otelcolInstrumentation.statefulset.extraEnvVars | nindent 8 }}
+{{- end }}
+{{- end }}

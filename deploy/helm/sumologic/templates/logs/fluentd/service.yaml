@@ -14,12 +14,6 @@ spec:
   selector:
     app: {{ template "sumologic.labels.app.logs.pod" . }}
   ports:
-  {{- if .Values.sumologic.traces.enabled }}
-  - name: zipkin-write
-    port: 9411
-    targetPort: 9411
-    protocol: TCP
-  {{- end }}
   - name: fluent-bit
     port: 24321
     targetPort: 24321
