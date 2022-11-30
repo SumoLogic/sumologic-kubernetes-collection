@@ -1,9 +1,4 @@
-sumologic:
-  traces:
-    enabled: true
-
 otelcolInstrumentation:
-  enabled: true
   sourceMetadata:
       excludeNamespaceRegex: "kube\\s+"
       excludePodRegex: "^foo.*"

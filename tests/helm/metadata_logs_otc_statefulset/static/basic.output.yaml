@@ -77,9 +77,6 @@ spec:
             cpu: 100m
             memory: 777Mi
         ports:
-        - name: zipkin-write
-          containerPort: 9411
-          protocol: TCP
         - name: fluent-bit
           containerPort: 24321
           protocol: TCP
