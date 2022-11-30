@@ -208,7 +208,7 @@ sumologic:
 
   ### Configuration for collection of Kubernetes events
   events:
-    provider: fluentd
+    provider: otelcol
 
     ## Source name for the Events source. Default: "events"
     sourceName: "events"
@@ -239,7 +239,7 @@ sumologic:
 
     collector:
       otelcol:
-        enabled: false
+        enabled: true
 
       ## Allow running otel and Fluent-Bit side by side. This will result in duplicated
       ## logs being ingested. Only enabled this if you're **certain** it's what you want.
@@ -1025,6 +1025,7 @@ metrics-server:
 ## Configure fluent-bit
 ## ref: https://github.com/fluent/helm-charts/blob/master/charts/fluent-bit/values.yaml
 fluent-bit:
+  enabled: false
   ## If specified, use these secrets to access the image
   # imagePullSecrets:
   #   - name: "image-pull-secret"

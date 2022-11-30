@@ -1,5 +1,10 @@
 sumologic:
+  events:
+    provider: fluentd
   logs:
+    collector:
+      otelcol:
+        enabled: false
     metadata:
       provider: fluentd
   metrics:
@@ -7,6 +12,7 @@ sumologic:
       provider: fluentd
 # Prevent snowball effect by filtering out receiver mock logs
 fluent-bit:
+  enabled: true
   config:
     filters: |
       [FILTER]
