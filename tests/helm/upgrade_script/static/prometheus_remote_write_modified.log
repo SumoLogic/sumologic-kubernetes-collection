@@ -1,8 +1,0 @@
-
-[INFO]    falco will be disabled. Change "falco.enabled" to "true" if you want to enable it
-[WARNING] Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[0].writeRelabelConfigs[0]' (/prometheus.metrics.state) detected, please migrate it manually
-[WARNING] Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[4].writeRelabelConfigs[0]' (/prometheus.metrics.kubelet) detected, please migrate it manually
-[WARNING] Changes of regex for 'prometheus-operator.prometheus.prometheusSpec.remoteWrite[5].writeRelabelConfigs[2]' (/prometheus.metrics.container) detected, please migrate it manually
-
-Thank you for upgrading to v1.0.0 of the Sumo Logic Kubernetes Collection Helm chart.
-A new yaml file has been generated for you. Please check the current directory for new_values.yaml.

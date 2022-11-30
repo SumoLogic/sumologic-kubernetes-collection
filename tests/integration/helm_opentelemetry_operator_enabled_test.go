@@ -10,16 +10,17 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/e2e-framework/klient/k8s"
 	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
 	"sigs.k8s.io/e2e-framework/klient/wait"
 	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
 func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
@@ -35,7 +36,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 	}
 
 	featTraces := features.New("traces").
-		Assess("otelcol deployment is ready",
+		Assess("traces-sampler deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			stepfuncs.WaitUntilDeploymentIsReady(
 				waitDuration,
 				tickDuration,
@@ -47,32 +48,32 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 					V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol"),
 				},
 				),
-			)).
-		Assess("otelagent daemonset is ready",
-			stepfuncs.WaitUntilDaemonSetIsReady(
+		)).
+		Assess("otelcol-instrumentation statefulset is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelagent"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
 				),
 				stepfuncs.WithLabelsF(
 					stepfuncs.LabelFormatterKV{
 						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelagent"),
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
 					},
 				),
 			),
 		).
-		Assess("otelgateway deployment is ready",
+		Assess("traces-sampler deployment is ready",
 			stepfuncs.WaitUntilDeploymentIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelgateway"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				),
 				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
 					K: "app",
-					V: stepfuncs.ReleaseFormatter("%s-sumologic-otelgateway"),
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				},
 				),
 			)).

@@ -10,7 +10,7 @@ sumologic:
 
 otelevents:
   config:
-    override:
+    merge:
       receivers:
         raw_k8s_events:
         # we want to get all historical events for this test

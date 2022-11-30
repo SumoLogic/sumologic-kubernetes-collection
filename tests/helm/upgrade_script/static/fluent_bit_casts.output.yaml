@@ -1,9 +1,0 @@
-fluent-bit:
-  backend:
-    type: forward
-    forward:
-      host: ${CHART}.${NAMESPACE}.svc.cluster.local.
-      port: 24321
-      tls: "off"
-      tls_verify: "on"
-      tls_debug: 1

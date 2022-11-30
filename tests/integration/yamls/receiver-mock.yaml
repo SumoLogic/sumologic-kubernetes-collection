@@ -26,7 +26,7 @@ spec:
         - ports:
             - containerPort: 3000
             - containerPort: 3001
-          image: sumologic/kubernetes-tools:2.13.0
+          image: sumologic/kubernetes-tools:2.14.0
           name: receiver-mock
           args:
             - receiver-mock

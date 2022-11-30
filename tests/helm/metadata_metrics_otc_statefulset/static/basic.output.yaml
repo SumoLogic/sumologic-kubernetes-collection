@@ -13,7 +13,7 @@ spec:
   selector:
     matchLabels:
       app: RELEASE-NAME-sumologic-otelcol-metrics
-  serviceName: RELEASE-NAME-sumologic-fluentd-metrics-headless
+  serviceName: RELEASE-NAME-sumologic-otelcol-metrics-headless
   podManagementPolicy: "Parallel"
   replicas: 4
   template:
@@ -44,7 +44,7 @@ spec:
               - key: app
                 operator: In
                 values:
-                - RELEASE-NAME-sumologic-fluentd-logs
+                - RELEASE-NAME-sumologic-otelcol-logs
                 - RELEASE-NAME-sumologic-otelcol-metrics
               - key: app
                 operator: In

@@ -17,6 +17,7 @@ sumologic:
         requests:
           cpu: 5m
           memory: 16Mi
+      replicaCount: 1
 
 # Request less resources so that this fits on Github actions runners environment
 kube-prometheus-stack:
@@ -24,7 +25,7 @@ kube-prometheus-stack:
     prometheusSpec:
       resources:
         requests:
-          cpu: 50m
+          cpu: 100m
           memory: 128Mi
   # kind exposes etcd metrics in http on a different port, and enables TLS for the default
   # port. This change is simpler than configuring TLS for the default port.
@@ -42,14 +43,16 @@ metadata:
     statefulset:
       resources:
         requests:
-          cpu: 50m
+          cpu: 100m
           memory: 128Mi
+      replicaCount: 1
   metrics:
     statefulset:
       resources:
         requests:
-          cpu: 50m
+          cpu: 100m
           memory: 128Mi
+      replicaCount: 1
 
 # Request less resources so that this fits on Github actions runners environment
 fluentd:
@@ -58,45 +61,53 @@ fluentd:
       resources:
         requests:
           memory: 64Mi
-          cpu: 50m
+          cpu: 100m
   metrics:
     statefulset:
       resources:
         requests:
           memory: 64Mi
-          cpu: 50m
+          cpu: 100m
   events:
     statefulset:
       resources:
         requests:
           memory: 64Mi
-          cpu: 50m
+          cpu: 100m
   persistence:
     size: 100Mi
 
 # Request less resources so that this fits on Github actions runners environment
-otelcol:
+tracesSampler:
   deployment:
     replicas: 1
     resources:
       requests:
-        memory: 32Mi
-        cpu: 15m
+        memory: 64Mi
+        cpu: 10m
+
+otelevents:
+  statefulset:
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 100m
 
 # Request less resources so that this fits on Github actions runners environment
-otelgateway:
+tracesGateway:
   deployment:
     replicas: 1
     resources:
       requests:
-        memory: 32Mi
-        cpu: 15m
+        memory: 64Mi
+        cpu: 10m
 
 # Request less resources so that this fits on Github actions runners environment
-otelagent:
+otelcolInstrumentation:
   enabled: true
-  daemonset:
+  statefulset:
+    replicaCount: 1
     resources:
       requests:
-        memory: 32Mi
-        cpu: 15m
+        memory: 64Mi
+        cpu: 10m

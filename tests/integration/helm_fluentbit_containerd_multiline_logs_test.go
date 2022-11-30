@@ -37,22 +37,22 @@ func Test_Helm_FluentBit_Containerd_Multiline_Logs(t *testing.T) {
 				require.Len(t, secret.Data, 11, "Secret has incorrect number of endpoints")
 				return ctx
 			}).
-		Assess("fluentd logs statefulset is ready",
+		Assess("otelcol logs statefulset is ready",
 			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs"),
 				),
 				stepfuncs.WithLabelsF(
 					stepfuncs.LabelFormatterKV{
 						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs"),
 					},
 				),
 			),
 		).
-		Assess("fluentd logs buffers PVCs are created",
+		Assess("otelcol logs buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				namespace := ctxopts.Namespace(ctx)
 				releaseName := ctxopts.HelmRelease(ctx)
@@ -65,13 +65,13 @@ func Test_Helm_FluentBit_Containerd_Multiline_Logs(t *testing.T) {
 				assert.Eventually(t, func() bool {
 					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
 						List(ctx, v1.ListOptions{
-							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName),
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-logs", releaseName),
 						})
 					if !assert.NoError(t, err) {
 						return false
 					}
 
-					return err == nil && len(pvcs.Items) == 3
+					return err == nil && len(pvcs.Items) == 1
 				}, waitDuration, tickDuration)
 				return ctx
 			}).

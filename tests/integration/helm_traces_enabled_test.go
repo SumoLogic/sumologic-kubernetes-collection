@@ -7,7 +7,12 @@ import (
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/e2e-framework/klient/k8s"
+	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
+	"sigs.k8s.io/e2e-framework/klient/wait"
+	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
@@ -37,22 +42,22 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				require.Len(t, secret.Data, 11, "Secret has incorrect number of endpoints")
 				return ctx
 			}).
-		Assess("fluentd logs statefulset is ready",
+		Assess("otelcol logs statefulset is ready",
 			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs"),
 				),
 				stepfuncs.WithLabelsF(
 					stepfuncs.LabelFormatterKV{
 						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs"),
 					},
 				),
 			),
 		).
-		Assess("fluentd logs buffers PVCs are created",
+		Assess("otelcol logs buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				namespace := ctxopts.Namespace(ctx)
 				releaseName := ctxopts.HelmRelease(ctx)
@@ -65,7 +70,7 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				assert.Eventually(t, func() bool {
 					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
 						List(ctx, metav1.ListOptions{
-							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName),
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-logs", releaseName),
 						})
 					if !assert.NoError(t, err) {
 						return false
@@ -75,22 +80,22 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("fluentd metrics statefulset is ready",
+		Assess("otelcol metrics statefulset is ready",
 			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-metrics"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-metrics"),
 				),
 				stepfuncs.WithLabelsF(
 					stepfuncs.LabelFormatterKV{
 						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-metrics"),
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-metrics"),
 					},
 				),
 			),
 		).
-		Assess("fluentd metrics buffers PVCs are created",
+		Assess("otelcol metrics buffers PVCs are created",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				namespace := ctxopts.Namespace(ctx)
 				releaseName := ctxopts.HelmRelease(ctx)
@@ -103,7 +108,7 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				assert.Eventually(t, func() bool {
 					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
 						List(ctx, metav1.ListOptions{
-							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-metrics", releaseName),
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-metrics", releaseName),
 						})
 					if !assert.NoError(t, err) {
 						return false
@@ -113,106 +118,44 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				}, waitDuration, tickDuration)
 				return ctx
 			}).
-		Assess("fluentd events statefulset is ready",
-			stepfuncs.WaitUntilStatefulSetIsReady(
-				waitDuration,
-				tickDuration,
-				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
-				),
-				stepfuncs.WithLabelsF(
-					stepfuncs.LabelFormatterKV{
-						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
-					},
-				),
-			),
-		).
-		Assess("fluentd events buffers PVCs are created",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				namespace := ctxopts.Namespace(ctx)
-				releaseName := ctxopts.HelmRelease(ctx)
-				kubectlOptions := ctxopts.KubectlOptions(ctx)
-
-				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
-				cl, err := terrak8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
-				require.NoError(t, err)
-
-				assert.Eventually(t, func() bool {
-					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
-						List(ctx, metav1.ListOptions{
-							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-events", releaseName),
-						})
-					if !assert.NoError(t, err) {
-						return false
-					}
-
-					return err == nil && len(pvcs.Items) == 1
-				}, waitDuration, tickDuration)
-				return ctx
-			}).
-		Assess("prometheus pods are available",
-			stepfuncs.WaitUntilPodsAvailable(
-				metav1.ListOptions{
-					LabelSelector: "app.kubernetes.io/name=prometheus",
-				},
-				1,
-				waitDuration,
-				tickDuration,
-			),
-		).
-		Assess("fluent-bit daemonset is running",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				var daemonsets []appsv1.DaemonSet
-				require.Eventually(t, func() bool {
-					daemonsets = terrak8s.ListDaemonSets(t, ctxopts.KubectlOptions(ctx), metav1.ListOptions{
-						LabelSelector: "app.kubernetes.io/name=fluent-bit",
-					})
-
-					return len(daemonsets) == 1
-				}, waitDuration, tickDuration)
-
-				require.EqualValues(t, 0, daemonsets[0].Status.NumberUnavailable)
-				return ctx
-			}).
-		Assess("otelcol deployment is ready",
+		Assess("traces-sampler deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			stepfuncs.WaitUntilDeploymentIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				),
 				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
 					K: "app",
-					V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol"),
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				},
 				),
 			)).
-		Assess("otelagent daemonset is ready",
-			stepfuncs.WaitUntilDaemonSetIsReady(
+		Assess("otelcol-instrumentation statefulset is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+			stepfuncs.WaitUntilStatefulSetIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelagent"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-otelcol-instrumentation"),
 				),
 				stepfuncs.WithLabelsF(
 					stepfuncs.LabelFormatterKV{
 						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelagent"),
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-otelcol-instrumentation"),
 					},
 				),
 			),
 		).
-		Assess("otelgateway deployment is ready",
+		Assess("traces-gateway deployment is ready", func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 			stepfuncs.WaitUntilDeploymentIsReady(
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelgateway"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
 				),
 				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
 					K: "app",
-					V: stepfuncs.ReleaseFormatter("%s-sumologic-otelgateway"),
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
 				},
 				),
 			)).

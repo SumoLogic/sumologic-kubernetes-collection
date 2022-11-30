@@ -61,8 +61,8 @@ func GetTracesGeneratorDeployment(
 	}
 
 	release := ctxopts.HelmRelease(ctx)
-	otelcolNamespace := ctxopts.Namespace(ctx)
-	colName := fmt.Sprintf("%s-sumologic-otelcol.%s", release, otelcolNamespace)
+	otelcolInstrumentationNamespace := ctxopts.Namespace(ctx)
+	colName := fmt.Sprintf("%s-sumologic-otelagent.%s", release, otelcolInstrumentationNamespace)
 
 	podTemplateSpec := corev1.PodTemplateSpec{
 		ObjectMeta: metadata,

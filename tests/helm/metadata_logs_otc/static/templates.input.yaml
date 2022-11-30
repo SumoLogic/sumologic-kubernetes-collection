@@ -3,27 +3,40 @@ sumologic:
   logs:
     metadata:
       provider: otelcol
-
-fluentd:
-  logs:
-    containers:
+    collector:
+      otelcol:
+        enabled: true
+    container:
+      sourceHost: my_containers_sourceHost
+      sourceName: my_containers_sourceName
+      sourceCategory: my_containers_sourceCategory
       sourceCategoryPrefix: my_containers_sourceCategoryPrefix
       sourceCategoryReplaceDash: my_containers_sourceCategoryReplaceDash
-      excludePodRegex: my_containers_excludePodRegex
       excludeContainerRegex: my_containers_excludeContainerRegex
       excludeHostRegex: my_containers_excludeHostRegex
       excludeNamespaceRegex: my_containers_excludeNamespaceRegex
-    systemd:
-      sourceCategoryPrefix: my_systemd_sourceCategoryPrefix
-      sourceCategoryReplaceDash: my_systemd_sourceCategoryReplaceDash
-      excludeFacilityRegex: my_systemd_excludeFacilityRegex
-      excludeHostRegex: my_systemd_excludeHostRegex
-      excludePriorityRegex: my_systemd_excludePriorityRegex
-      excludeUnitRegex: my_systemd_excludeUnitRegex
+      excludePodRegex: my_containers_excludePodRegex
+      perContainerAnnotationsEnabled: false
+      perContainerAnnotationPrefixes: []
     kubelet:
+      sourceName: my_kubelet_sourceName
+      sourceCategory: my_kubelet_sourceCategory
       sourceCategoryPrefix: my_kubelet_sourceCategoryPrefix
       sourceCategoryReplaceDash: my_kubelet_sourceCategoryReplaceDash
       excludeFacilityRegex: my_kubelet_excludeFacilityRegex
       excludeHostRegex: my_kubelet_excludeHostRegex
       excludePriorityRegex: my_kubelet_excludePriorityRegex
       excludeUnitRegex: my_kubelet_excludeUnitRegex
+
+    systemd:
+      sourceName: my_systemd_sourceName
+      sourceCategory:  my_systemd_sourceCategory
+      sourceCategoryPrefix: my_systemd_sourceCategoryPrefix
+      sourceCategoryReplaceDash: my_systemd_sourceCategoryReplaceDash
+      excludeFacilityRegex: my_systemd_excludeFacilityRegex
+      excludeHostRegex: my_systemd_excludeHostRegex
+      excludePriorityRegex: my_systemd_excludePriorityRegex
+      excludeUnitRegex: my_systemd_excludeUnitRegex
+
+fluent-bit:
+  enabled: false

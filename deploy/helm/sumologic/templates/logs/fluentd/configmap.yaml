@@ -9,9 +9,6 @@ metadata:
 data:
   fluent.conf: |-
 {{- .Values.fluentd.logs.rawConfig | nindent 4 }}
-{{- if .Values.sumologic.traces.enabled }}
-    @include traces.conf
-{{- end }}
 {{- (tpl (.Files.Glob "conf/fluentd/*.conf").AsConfig .) | nindent 2 }}
 {{- (tpl (.Files.Glob "conf/logs/fluentd/*.conf").AsConfig .) | nindent 2 }}
 {{- end }}

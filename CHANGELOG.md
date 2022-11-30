@@ -22,6 +22,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(fluentd): Removing PodSecurityPolicy for fluentd [#2605]
 - feat!: refactor event collection configuration [#2444]
 - fix(logs): configure fluentbit to send data to metadata-logs [#2610]
+- feat(logs): Changing the default logs metadata provider to otel [#2621]
+- chore!: remove replacing values in configuration marked by 'replace' suffix [#2615]
+- feat(metrics): service name change and switching the metrics provider default to otelcol [#2627]
+- feat(logs)!: simplify metadata configuration [#2626]
+- feat(metrics)!: simplify metadata configuration [#2622]
+- feat(events)!: add config.merge option [#2643]
+- feat(terraform)!: expect load_config_file to be not set [#2648]
+- feat(otellogs)!: add config.merge option [#2652]
+- chore!: move parameters from `fluentd.logs.containers` to `sumologic.logs.container` [#2635]
+  - move `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
+  - move `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
+  - move `fluentd.logs.contianers.sourceCategory` to `sumologic.logs.container.sourceCategory`
+  - move `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
+  - move `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
+  - move `fluentd.logs.containers.excludeContainerRegex` to `sumologic.logs.container.excludeContainerRegex`
+  - move `fluentd.logs.containers.excludeHostRegex` to `sumologic.logs.container.excludeHostRegex`
+  - move `fluentd.logs.containers.excludeNamespaceRegex` to `sumologic.logs.container.excludeNamespaceRegex`
+  - move `fluentd.logs.containers.excludePodRegex` to `sumologic.logs.container.excludePodRegex`
+  - move `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
+  - move `fluentd.logs.containers.perContainerAnnotationsEnabled` to `sumologic.logs.container.perContainerAnnotationsEnabled`
+  - move `fluentd.logs.containers.perContainerAnnotationPrefixes` to `sumologic.logs.container.perContainerAnnotationPrefixes`
+- chore!: move parameters from `fluentd.logs.kubelet` to `sumologic.logs.kubelet` [#2635]
+  - move `fluentd.logs.kubelet.sourceName` to `sumologic.logs.kubelet.sourceName`
+  - move `fluentd.logs.kubelet.sourceCategory` to `sumologic.logs.kubelet.sourceCategory`
+  - move `fluentd.logs.kubelet.sourceCategoryPrefix` to `sumologic.logs.kubelet.sourceCategoryPrefix`
+  - move `fluentd.logs.kubelet.sourceCategoryReplaceDash` to `sumologic.logs.kubelet.sourceCategoryReplaceDash`
+  - move `fluentd.logs.kubelet.excludeFacilityRegex` to `sumologic.logs.kubelet.excludeFacilityRegex`
+  - move `fluentd.logs.kubelet.excludeHostRegex` to `sumologic.logs.kubelet.excludeHostRegex`
+  - move `fluentd.logs.kubelet.excludePriorityRegex` to `sumologic.logs.kubelet.excludePriorityRegex`
+  - move `fluentd.logs.kubelet.excludeUnitRegex` to `sumologic.logs.kubelet.excludeUnitRegex`
+- chore!: move parameters from `fluentd.logs.systemd` to `sumologic.logs.systemd` [#2635]
+  - move `fluentd.logs.systemd.sourceName` to `sumologic.logs.systemd.sourceName`
+  - move `fluentd.logs.systemd.sourceCategory` to `sumologic.logs.systemd.sourceCategory`
+  - move `fluentd.logs.systemd.sourceCategoryPrefix` to `sumologic.logs.systemd.sourceCategoryPrefix`
+  - move `fluentd.logs.systemd.sourceCategoryReplaceDash` to `sumologic.logs.systemd.sourceCategoryReplaceDash`
+  - move `fluentd.logs.systemd.excludeFacilityRegex` to `sumologic.logs.systemd.excludeFacilityRegex`
+  - move `fluentd.logs.systemd.excludeHostRegex` to `sumologic.logs.systemd.excludeHostRegex`
+  - move `fluentd.logs.systemd.excludePriorityRegex` to `sumologic.logs.systemd.excludePriorityRegex`
+  - move `fluentd.logs.systemd.excludeUnitRegex` to `sumologic.logs.systemd.excludeUnitRegex`
+- chore!: move parameters from `fluentd.logs.default` to `sumologic.logs.defaultFluentd` [#2635]
+  - move `fluentd.logs.default.sourceName` to `sumologic.logs.defaultFluentd.sourceName`
+  - move `fluentd.logs.default.sourceCategory` to `sumologic.logs.defaultFluentd.sourceCategory`
+  - move `fluentd.logs.default.sourceCategoryPrefix` to `sumologic.logs.defaultFluentd.sourceCategoryPrefix`
+  - move `fluentd.logs.default.sourceCategoryReplaceDash` to `sumologic.logs.defaultFluentd.sourceCategoryReplaceDash`
+  - move `fluentd.logs.default.excludeFacilityRegex` to `sumologic.logs.defaultFluentd.excludeFacilityRegex`
+  - move `fluentd.logs.default.excludeHostRegex` to `sumologic.logs.defaultFluentd.excludeHostRegex`
+  - move `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
+  - move `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
+- chore!: upgrade tailing-sidecar-operator to v0.5.5 [#2661]
+- feat(logs)!: switch from Fluent Bit to Otelcol as default logs collector [#2639]
+- feat(events)!: switch from Fluentd to Otelcol as default events collector [#2640]
+- feat!: change instrumentation related k8s objects [#2647]
+  - move parameters from `otelagent.enabled` to `otelcolInstrumentation.enabled`
+  - move `otelagent.daemonset.nodeSelector` to `otelcolInstrumentation.statefulset.nodeSelector`
+  - move `otelagent.daemonset.priorityClassName` to `otelcolInstrumentation.statefulset.priorityClassName`
+  - move `otelcol.deployment.replicas` to `tracesGateway.deployment.replicas`
+  - move `otelcol.deployment.nodeSelector` to `tracesGateway.deployment.nodeSelector`
+  - move `otelcol.deployment.priorityClassName` to `tracesGateway.deployment.priorityClassName`
+  - move `otelgateway.deployment.nodeSelector` to `tracesGateway.deployment.nodeSelector`
 - feat: enable metrics and traces collection from instrumentation by default [#2154]
 
 ### Changed
@@ -35,11 +94,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: remove support for GKE 1.20 [#2578]
 - chore: remove support for EKS 1.19 [#2587]
 - chore: remove support for kOps 1.20 [#2591]
-- chore(fluent-bit): update Fluent Bit Helm Chart to 0.20.9 [#2595]
+- chore(fluent-bit): update Fluent Bit Helm Chart to 0.21.3 [#2650]
 - chore(telegraf-operator): update Telegraf Operator Helm Chart to 1.3.10 [#2597]
 - feat(chart): restrict permissions for setup and cleanup jobs [#2599]
 - feat: add parameter to configure additional Prometheus remote writes [#2611]
 - docs: rename user-provided config from values.yaml to user-values.yaml [#2619]
+- feat: update opentelemetry-operator chart and fix progagators list in instrumentation resource [#2628]
+- feat: upgrade node-exporter to v1.4.0 [#2649]
+- feat: drop migration script for v1 [#2654]
 
 ### Fixed
 
@@ -47,6 +109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: default.metrics source is not imported when metrics are disabled and traces are enabled [#2547]
 - fix(cleanup): fix cleanup job [#2600]
 
+[#2154]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2154
 [#2483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2483
 [#2512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2512
 [#2514]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2514
@@ -63,7 +126,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2578]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2578
 [#2587]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2587
 [#2591]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2591
-[#2595]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2595
 [#2597]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2597
 [#2599]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2599
 [#2600]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2600
@@ -72,8 +134,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2444]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2444
 [#2610]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2610
 [#2619]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2619
-[#2154]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2154
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.18.1...main
+[#2621]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2621
+[#2615]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2615
+[#2628]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2628
+[#2627]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2627
+[#2626]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2626
+[#2622]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2622
+[#2643]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2643
+[#2648]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2648
+[#2649]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2649
+[#2654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2654
+[#2652]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2652
+[#2635]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2635
+[#2661]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2661
+[#2639]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2639
+[#2640]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2640
+[#2647]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2647
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
 [cert-manager-1.6]: https://github.com/cert-manager/cert-manager/releases/tag/v1.6.0

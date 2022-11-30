@@ -24,7 +24,7 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
-func Test_Helm_Otelcol_Logs(t *testing.T) {
+func Test_Helm_Default_Otelcol_Logs(t *testing.T) {
 	const (
 		tickDuration            = 3 * time.Second
 		waitDuration            = 3 * time.Minute
@@ -63,7 +63,7 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 				pvcs := corev1.PersistentVolumeClaimList{}
 				cond := conditions.
 					New(res).
-					ResourceListMatchN(&pvcs, 3,
+					ResourceListMatchN(&pvcs, 1,
 						func(object k8s.Object) bool {
 							pvc := object.(*corev1.PersistentVolumeClaim)
 							if pvc.Status.Phase != corev1.ClaimBound {
@@ -84,7 +84,7 @@ func Test_Helm_Otelcol_Logs(t *testing.T) {
 				)
 				return ctx
 			}).
-		Assess("otelcol daemonset is ready",
+		Assess("otelcol logs daemonset is ready",
 			stepfuncs.WaitUntilDaemonSetIsReady(
 				waitDuration,
 				tickDuration,

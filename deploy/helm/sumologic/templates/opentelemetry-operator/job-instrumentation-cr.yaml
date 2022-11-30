@@ -2,6 +2,7 @@
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
 {{ $createDefaultInstrumentation := index .Values "opentelemetry-operator" "createDefaultInstrumentation" }}
 {{- if and $operatorEnabled $tracesEnabled $createDefaultInstrumentation }}
+{{ $instrumentationJobImage := index .Values "opentelemetry-operator" "instrumentationJobImage" "image" }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -15,7 +16,7 @@ spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       containers:
       - name: instrumentation-cr-applier
-        image: sumologic/kubernetes-tools
+        image: {{ $instrumentationJobImage.repository }}:{{ $instrumentationJobImage.tag }}
         volumeMounts:
           - name: instrumentation-cr-configmap
             mountPath: /tmp/instrumentation-cr.yaml

@@ -1,0 +1,10 @@
+sumologic:
+  logs:
+    metadata:
+      provider: otelcol
+    collector:
+      otelcol:
+        enabled: true
+
+fluent-bit:
+  enabled: false

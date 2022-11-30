@@ -11,7 +11,6 @@ metadata:
     heritage: "Helm"
 data:
   config.yaml: |
-    
     exporters:
       sumologic/containers:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
@@ -106,56 +105,56 @@ data:
             match_type: regexp
             record_attributes:
             - key: _HOSTNAME
-              value: "my_kubelet_excludeHostRegex"
+              value: my_kubelet_excludeHostRegex
       filter/exclude_kubelet_priority:
         logs:
           exclude:
             match_type: regexp
             record_attributes:
             - key: PRIORITY
-              value: "my_kubelet_excludePriorityRegex"
+              value: my_kubelet_excludePriorityRegex
       filter/exclude_kubelet_syslog:
         logs:
           exclude:
             match_type: regexp
             record_attributes:
             - key: SYSLOG_FACILITY
-              value: "my_kubelet_excludeFacilityRegex"
+              value: my_kubelet_excludeFacilityRegex
       filter/exclude_kubelet_unit:
         logs:
           exclude:
             match_type: regexp
             record_attributes:
             - key: _SYSTEMD_UNIT
-              value: "my_kubelet_excludeUnitRegex"
+              value: my_kubelet_excludeUnitRegex
       filter/exclude_systemd_hostname:
         logs:
           exclude:
             match_type: regexp
             record_attributes:
             - key: _HOSTNAME
-              value: "my_systemd_excludeHostRegex"
+              value: my_systemd_excludeHostRegex
       filter/exclude_systemd_priority:
         logs:
           exclude:
             match_type: regexp
             record_attributes:
             - key: PRIORITY
-              value: "my_systemd_excludePriorityRegex"
+              value: my_systemd_excludePriorityRegex
       filter/exclude_systemd_syslog:
         logs:
           exclude:
             match_type: regexp
             record_attributes:
             - key: SYSLOG_FACILITY
-              value: "my_systemd_excludeFacilityRegex"
+              value: my_systemd_excludeFacilityRegex
       filter/exclude_systemd_unit:
         logs:
           exclude:
             match_type: regexp
             record_attributes:
             - key: _SYSTEMD_UNIT
-              value: "my_systemd_excludeUnitRegex"
+              value: my_systemd_excludeUnitRegex
       filter/include_containers:
         logs:
           include:
@@ -240,7 +239,7 @@ data:
         attributes:
         - action: upsert
           key: cluster
-          value: "kubernetes"
+          value: kubernetes
       resource/containers_copy_node_to_host:
         attributes:
         - action: upsert
@@ -252,37 +251,37 @@ data:
           pattern: ^pod_annotations_.*
       source/containers:
         annotation_prefix: pod_annotations_
-        collector: "my_collectorName"
+        collector: my_collectorName
         container_annotations:
           enabled: false
           prefixes: []
         exclude:
-          k8s.container.name: "my_containers_excludeContainerRegex"
-          k8s.namespace.name: "my_containers_excludeNamespaceRegex"
-          k8s.pod.hostname: "my_containers_excludeHostRegex"
-          k8s.pod.name: "my_containers_excludePodRegex"
+          k8s.container.name: my_containers_excludeContainerRegex
+          k8s.namespace.name: my_containers_excludeNamespaceRegex
+          k8s.pod.hostname: my_containers_excludeHostRegex
+          k8s.pod.name: my_containers_excludePodRegex
         pod_key: k8s.pod.name
         pod_name_key: k8s.pod.pod_name
         pod_template_hash_key: pod_labels_pod-template-hash
-        source_category: '%{k8s.namespace.name}/%{k8s.pod.pod_name}'
-        source_category_prefix: "my_containers_sourceCategoryPrefix"
-        source_category_replace_dash: "my_containers_sourceCategoryReplaceDash"
-        source_host: '%{k8s.pod.hostname}'
-        source_name: '%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}'
+        source_category: my_containers_sourceCategory
+        source_category_prefix: my_containers_sourceCategoryPrefix
+        source_category_replace_dash: my_containers_sourceCategoryReplaceDash
+        source_host: my_containers_sourceHost
+        source_name: my_containers_sourceName
       source/kubelet:
-        collector: "my_collectorName"
-        source_category: "kubelet"
-        source_category_prefix: "my_kubelet_sourceCategoryPrefix"
-        source_category_replace_dash: "my_kubelet_sourceCategoryReplaceDash"
+        collector: my_collectorName
+        source_category: my_kubelet_sourceCategory
+        source_category_prefix: my_kubelet_sourceCategoryPrefix
+        source_category_replace_dash: my_kubelet_sourceCategoryReplaceDash
         source_host: '%{_sourceHost}'
-        source_name: "k8s_kubelet"
+        source_name: my_kubelet_sourceName
       source/systemd:
-        collector: "my_collectorName"
-        source_category: "system"
-        source_category_prefix: "my_systemd_sourceCategoryPrefix"
-        source_category_replace_dash: "my_systemd_sourceCategoryReplaceDash"
+        collector: my_collectorName
+        source_category: my_systemd_sourceCategory
+        source_category_prefix: my_systemd_sourceCategoryPrefix
+        source_category_replace_dash: my_systemd_sourceCategoryReplaceDash
         source_host: '%{_sourceHost}'
-        source_name: '%{_sourceName}'
+        source_name: my_systemd_sourceName
       sumologic_schema:
         add_cloud_namespace: false
       transform/remove_attributes:
@@ -290,8 +289,6 @@ data:
           queries:
           - limit(attributes, 0)
     receivers:
-      fluentforward:
-        endpoint: 0.0.0.0:24321
       otlp:
         protocols:
           http:
@@ -302,63 +299,22 @@ data:
       - file_storage
       - pprof
       pipelines:
-        logs/fluent/containers:
+        logs/otlp/containers:
           exporters:
           - sumologic/containers
           processors:
           - memory_limiter
-          - filter/include_fluent_tag_containers
-          - attributes/containers
+          - filter/include_containers
           - groupbyattrs/containers
           - k8s_tagger
           - resource/add_cluster
           - source/containers
           - resource/drop_annotations
-          - attributes/remove_fluent_tag
           - resource/containers_copy_node_to_host
           - sumologic_schema
           - batch
           receivers:
-          - fluentforward
-        logs/fluent/kubelet:
-          exporters:
-          - sumologic/systemd
-          processors:
-          - memory_limiter
-          - filter/include_fluent_tag_host
-          - filter/include_kubelet
-          - filter/exclude_kubelet_syslog
-          - filter/exclude_kubelet_hostname
-          - filter/exclude_kubelet_priority
-          - filter/exclude_kubelet_unit
-          - attributes/extract_systemd_source_fields
-          - attributes/remove_fluent_tag
-          - groupbyattrs/systemd
-          - resource/add_cluster
-          - source/kubelet
-          - batch
-          receivers:
-          - fluentforward
-        logs/fluent/systemd:
-          exporters:
-          - sumologic/systemd
-          processors:
-          - memory_limiter
-          - filter/include_fluent_tag_host
-          - filter/include_systemd
-          - filter/exclude_kubelet
-          - filter/exclude_systemd_syslog
-          - filter/exclude_systemd_hostname
-          - filter/exclude_systemd_priority
-          - filter/exclude_systemd_unit
-          - attributes/extract_systemd_source_fields
-          - attributes/remove_fluent_tag
-          - groupbyattrs/systemd
-          - resource/add_cluster
-          - source/systemd
-          - batch
-          receivers:
-          - fluentforward
+          - otlp
         logs/otlp/kubelet:
           exporters:
           - sumologic/systemd
