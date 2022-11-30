@@ -136,7 +136,7 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
   Error: UPGRADE FAILED: cannot patch "collection-kube-state-metrics" with kind Deployment: Deployment.apps "collection-kube-state-metrics" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
   ```
 
-- In case of overriding `image.repository`, please follow the `kube-prometheus-stack` [migration doc][kube-prometheus-stack-image-migration] on that.
+- In case of overriding `kube-prometheus-stack.**.repository`, please follow the `kube-prometheus-stack` [migration doc][kube-prometheus-stack-image-migration] on that.
 
 ### Replace special configuration values marked by 'replace' suffix
 
