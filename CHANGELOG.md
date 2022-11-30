@@ -70,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - move `fluentd.logs.default.excludeHostRegex` to `sumologic.logs.defaultFluentd.excludeHostRegex`
   - move `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
   - move `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
+- chore!: upgrade tailing-sidecar-operator to v0.5.5 [#2661]
 
 ### Changed
 
@@ -133,6 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2654]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2654
 [#2652]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2652
 [#2635]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2635
+[#2661]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2661
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
