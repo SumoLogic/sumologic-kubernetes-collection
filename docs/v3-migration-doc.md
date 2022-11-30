@@ -78,6 +78,8 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
   - moved `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
 
+- Upgrading Tailing Sidecar Operator helm chart to v0.5.5. There is no breaking change if using annotations only.
+
 ## How to upgrade
 
 ### Requirements
@@ -165,3 +167,15 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
   ```
+
+### Known issues
+
+#### Cannot delete pod if using Tailing Sidecar Operator
+
+If you are using Tailing Sidecar Operator and see the following error:
+
+```
+Error from server: admission webhook "tailing-sidecar.sumologic.com" denied the request: there is no content to decode
+```
+
+Please try to remove pod later.
