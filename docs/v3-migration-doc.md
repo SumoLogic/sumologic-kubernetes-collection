@@ -143,6 +143,9 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
   Error: UPGRADE FAILED: cannot patch "collection-kube-state-metrics" with kind Deployment: Deployment.apps "collection-kube-state-metrics" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
   ```
 
+- In case of overriding any of the `repository` property under the `kube-prometheus-stack` property,
+  please follow the `kube-prometheus-stack` [migration doc][kube-prometheus-stack-image-migration] on that.
+
 ### Replace special configuration values marked by 'replace' suffix
 
 Mechanism to replace special configuration values for traces marked by 'replace' suffix was removed and following special values in configuration are no longer automatically replaced and they need to be changed:
@@ -187,3 +190,4 @@ Please try to remove pod later.
 
 [Falco documentation]: https://github.com/falcosecurity/charts/tree/falco-2.4.2/falco
 [metrics-server-upgrade]: https://github.com/bitnami/charts/tree/5b09f7a7c0d9232f5752840b6c4e5cdc56d7f796/bitnami/metrics-server#to-600
+[kube-prometheus-stack-image-migration]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-42.1.0/charts/kube-prometheus-stack#from-41x-to-42x
