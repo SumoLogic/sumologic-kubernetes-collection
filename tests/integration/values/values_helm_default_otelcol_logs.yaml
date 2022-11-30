@@ -12,6 +12,9 @@ sumologic:
   events:
     enabled: false
 
+  traces:
+    enabled: false
+
 # We're using otelcol instead
 fluent-bit:
   enabled: false

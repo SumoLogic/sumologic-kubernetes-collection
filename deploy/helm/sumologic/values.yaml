@@ -432,9 +432,9 @@ sumologic:
       podAnnotations: {}
 
   ### Traces configuration
-  ## Set the enabled flag to true to enable traces ingestion.
+  ## Set the enabled flag to false to disable traces ingestion.
   traces:
-    enabled: false
+    enabled: true
     ## How many spans per request should be send to receiver
     spans_per_request: 100
 
@@ -3322,7 +3322,7 @@ kube-prometheus-stack:
 
 ## Configure otelcol-instrumentation - Sumo OTel Distro Collector
 otelcolInstrumentation:
-  enabled: false
+  enabled: true
   sourceMetadata:
     ## Set the _sourceName metadata field in Sumo Logic.
     sourceName: "%{k8s.namespace.name}.%{k8s.pod.pod_name}.%{k8s.container.name}"
@@ -3924,7 +3924,7 @@ metadata:
 ## Configure traces-gateway
 ## ref: docs/opentelemetry_collector.md#load-balancing-using-the-gateway
 tracesGateway:
-  enabled: false
+  enabled: true
   deployment:
     replicas: 1
     nodeSelector: {}

@@ -83,6 +83,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - move `otelcol.deployment.nodeSelector` to `tracesGateway.deployment.nodeSelector`
   - move `otelcol.deployment.priorityClassName` to `tracesGateway.deployment.priorityClassName`
   - move `otelgateway.deployment.nodeSelector` to `tracesGateway.deployment.nodeSelector`
+- feat: enable metrics and traces collection from instrumentation by default [#2154]
+  - change parameter `sumologic.traces.enabled` default value from `false` to `true`
 
 ### Changed
 
@@ -111,6 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(cleanup): fix cleanup job [#2600]
 - fix(setup): add permission to modify secrets [#2653]
 
+[#2154]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2154
 [#2483]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2483
 [#2512]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2512
 [#2514]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2514
