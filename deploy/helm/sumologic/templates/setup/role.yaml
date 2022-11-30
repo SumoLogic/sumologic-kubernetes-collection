@@ -13,5 +13,5 @@ rules:
       - ""
     resources:
       - secrets
-    verbs: ["get", "list", "describe", "create"]
+    verbs: ["get", "list", "describe", "create", "patch"]
 {{- end }}
