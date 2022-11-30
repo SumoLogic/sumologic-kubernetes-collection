@@ -130,12 +130,12 @@ func Test_Helm_Traces_Enabled(t *testing.T) {
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-otelcol-instrumentation"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
 				),
 				stepfuncs.WithLabelsF(
 					stepfuncs.LabelFormatterKV{
 						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-otelcol-instrumentation"),
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
 					},
 				),
 			),
