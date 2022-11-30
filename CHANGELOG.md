@@ -140,7 +140,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2626]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2626
 [#2622]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2622
 [#2643]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2643
-[#2446]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2446
 [#2651]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2651
 [#2648]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2648
 [#2649]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2649
