@@ -1,1 +1,0 @@
-{{ tpl (toYaml .Values.otelgateway.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}

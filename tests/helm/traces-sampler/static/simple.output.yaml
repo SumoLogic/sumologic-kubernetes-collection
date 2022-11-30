@@ -1,0 +1,55 @@
+---
+# Source: sumologic/templates/instrumentation/traces-sampler/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-traces-sampler
+  labels:
+    app: RELEASE-NAME-sumologic-traces-sampler
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  traces.sampler.conf.yaml: |
+    exporters:
+      otlphttp:
+        compression: gzip
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+    extensions:
+      health_check: {}
+      memory_ballast:
+        size_mib: 683
+      pprof: {}
+    processors:
+      batch:
+        send_batch_max_size: 512
+        send_batch_size: 256
+        timeout: 5s
+      cascading_filter:
+        num_traces: 200000
+      memory_limiter:
+        check_interval: 5s
+        limit_percentage: 75
+        spike_limit_percentage: 20
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+    service:
+      extensions:
+      - health_check
+      - memory_ballast
+      - pprof
+      pipelines:
+        traces:
+          exporters:
+          - otlphttp
+          processors:
+          - memory_limiter
+          - cascading_filter
+          - batch
+          receivers:
+          - otlp
