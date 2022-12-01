@@ -3,7 +3,7 @@
 Expand the name of the chart.
 */}}
 {{- define "sumologic.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Chart.Name .Values.nameOverride | trunc 33 | trimSuffix "-" }}
 {{- end -}}
 
 {{/*
@@ -12,10 +12,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 */}}
 {{- define "sumologic.fullname" -}}
 {{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- .Values.fullnameOverride | trunc 33 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" .Release.Name $name | trunc 33 | trimSuffix "-" }}
 {{- end -}}
 {{- end -}}
 
@@ -224,7 +224,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.otelcolinstrumentation" -}}
-{{- template "sumologic.fullname" . }}-otelcol-instrumentation
+{{- template "sumologic.fullname" . }}-otelcol-instrument
 {{- end -}}
 
 {{- define "sumologic.labels.app.otelcolinstrumentation.pod" -}}
@@ -552,7 +552,7 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.otelcolinstrumentation" -}}
-{{ template "sumologic.fullname" . }}-otelcol-instrumentation
+{{ template "sumologic.fullname" . }}-otelcol-instrument
 {{- end -}}
 
 {{- define "sumologic.metadata.name.otelcolinstrumentation.service" -}}

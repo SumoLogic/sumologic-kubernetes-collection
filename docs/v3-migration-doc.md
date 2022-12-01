@@ -169,11 +169,12 @@ Above special configuration values can be replaced either to direct values or be
 
 #### Otelcol StatefulSets
 
-If you're using `otelcol` as the logs/metrics metadata provider, please run one or both of the following commands to manually delete StatefulSets in helm chart v2 before upgrade:
+If you're using `otelcol` as the logs/metrics/traces metadata provider, please run one or all of the following commands to manually delete StatefulSets in helm chart v2 before upgrade:
 
   ```
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
+  kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-instrumentation
   ```
 
 ### Known issues

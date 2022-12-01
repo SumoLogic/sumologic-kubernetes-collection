@@ -54,12 +54,12 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrument"),
 				),
 				stepfuncs.WithLabelsF(
 					stepfuncs.LabelFormatterKV{
 						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrument"),
 					},
 				),
 			),

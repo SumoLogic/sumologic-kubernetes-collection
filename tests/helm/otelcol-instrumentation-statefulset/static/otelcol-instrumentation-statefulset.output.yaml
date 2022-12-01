@@ -3,18 +3,18 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: RELEASE-NAME-sumologic-otelcol-instrumentation
+  name: RELEASE-NAME-sumologic-otelcol-instrument
   labels:
-    app: RELEASE-NAME-sumologic-otelcol-instrumentation
-    component: RELEASE-NAME-sumologic-otelcol-instrumentation-component
+    app: RELEASE-NAME-sumologic-otelcol-instrument
+    component: RELEASE-NAME-sumologic-otelcol-instrument-component
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
 spec:
   selector:
     matchLabels:
-      app: RELEASE-NAME-sumologic-otelcol-instrumentation
-  serviceName: RELEASE-NAME-sumologic-otelcol-instrumentation
+      app: RELEASE-NAME-sumologic-otelcol-instrument
+  serviceName: RELEASE-NAME-sumologic-otelcol-instrument
   podManagementPolicy: "Parallel"
   replicas: 3
   template:
@@ -22,7 +22,7 @@ spec:
       annotations:
         checksum/config: "%CONFIG_CHECKSUM%"
       labels:
-        app: RELEASE-NAME-sumologic-otelcol-instrumentation
+        app: RELEASE-NAME-sumologic-otelcol-instrument
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
@@ -38,7 +38,7 @@ spec:
                 - key: app
                   operator: In
                   values:
-                  - RELEASE-NAME-sumologic-otelcol-instrumentation
+                  - RELEASE-NAME-sumologic-otelcol-instrument
                 - key: app
                   operator: In
                   values:
@@ -46,7 +46,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       volumes:
         - configMap:
-            name: RELEASE-NAME-sumologic-otelcol-instrumentation
+            name: RELEASE-NAME-sumologic-otelcol-instrument
           name: otelcolinstrumentation-config-vol
       securityContext:
         fsGroup: 999

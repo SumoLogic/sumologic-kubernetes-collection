@@ -85,6 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - move `otelgateway.deployment.nodeSelector` to `tracesGateway.deployment.nodeSelector`
 - feat: enable metrics and traces collection from instrumentation by default [#2154]
   - change parameter `sumologic.traces.enabled` default value from `false` to `true`
+[#2665]
+  - Truncate the statefulset name for sumologic-otelcol-instrumentation (label and metadata)
 
 ### Changed
 
@@ -159,6 +161,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2647]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2647
 [#2664]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2664
 [#2653]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2653
+[#2665]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2665
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
