@@ -244,7 +244,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{- define "sumologic.labels.app.otelcolinstrumentation.component" -}}
-{{- template "sumologic.labels.app.otelcolinstrumentation" . }}-component
+{{- printf "%s-%s" (include "sumologic.labels.app.otelcolinstrumentation" .) "component" | trunc 63 | trimSuffix "-" }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.tracesgateway" -}}
