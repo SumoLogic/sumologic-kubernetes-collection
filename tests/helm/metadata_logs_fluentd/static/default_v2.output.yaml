@@ -6,7 +6,7 @@ metadata:
   name: RELEASE-NAME-sumologic-fluentd-logs
   labels:
     app: RELEASE-NAME-sumologic-fluentd-logs
-    chart: "sumologic-2.18.2"
+    chart: "sumologic-3.0.0-beta.0"
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
@@ -182,7 +182,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.logs
-          sumo_client "k8s_2.18.2"
+          sumo_client "k8s_3.0.0-beta.0"
           @log_level error
           @include logs.output.conf
           <buffer>
@@ -226,7 +226,7 @@ data:
       <store>
         @type sumologic
         @id sumologic.endpoint.logs.default
-        sumo_client "k8s_2.18.2"
+        sumo_client "k8s_3.0.0-beta.0"
         @include logs.output.conf
         <buffer>
           @type file
@@ -267,7 +267,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.logs.kubelet
-          sumo_client "k8s_2.18.2"
+          sumo_client "k8s_3.0.0-beta.0"
           @include logs.output.conf
           <buffer>
             @type file
@@ -314,7 +314,7 @@ data:
         <store>
           @type sumologic
           @id sumologic.endpoint.logs.systemd
-          sumo_client "k8s_2.18.2"
+          sumo_client "k8s_3.0.0-beta.0"
           @include logs.output.conf
           <buffer>
             @type file

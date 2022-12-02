@@ -10,7 +10,7 @@ metadata:
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
   labels:
     app: RELEASE-NAME-sumologic
-    chart: "sumologic-2.18.2"
+    chart: "sumologic-3.0.0-beta.0"
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
