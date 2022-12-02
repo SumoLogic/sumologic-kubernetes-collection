@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v3.0.0-beta.0]
+
+### Released 2022-12-02
 
   If you use custom configuration for Telegraf Operator Helm Chart with cert-manager enabled (`telegraf-operator.certManager.enable=true`) please note that
   in this release Telegraf Operator Helm Chart is changed to 1.3.10 which uses the cert-manager apiVersion `cert-manager.io/v1`,
@@ -159,7 +161,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2647]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2647
 [#2664]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2664
 [#2653]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2653
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...main
+[v3.0.0-beta.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...v3.0.0-beta.0
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
 [cert-manager-1.6]: https://github.com/cert-manager/cert-manager/releases/tag/v1.6.0
