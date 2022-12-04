@@ -1,0 +1,43 @@
+run:
+  timeout: 10m
+  allow-parallel-runners: true
+
+linters-settings:
+  errcheck:
+    check-type-assertions: false
+    check-blank: true
+
+  maligned:
+    # print struct with more effective memory layout or not, false by default
+    suggest-new: true
+
+  unused:
+    go: "1.18"
+
+  lll:
+    # max line length, lines longer will be reported. Default is 120.
+    # '\t' is counted as 1 character by default, and can be changed with the tab-width option
+    line-length: 185
+    # tab width in spaces. Default to 1.
+    tab-width: 8
+
+linters:
+  disable-all: false
+  disable:
+    - maligned
+    - prealloc
+    - gosimple
+  enable:
+    - gofmt
+    - unused
+    - errcheck
+    - goimports
+    - misspell
+    - lll
+  fast: false
+
+issues:
+  # Maximum issues count per one linter. Set to 0 to disable. Default is 50.
+  max-issues-per-linter: 0
+  # Maximum count of issues with the same text. Set to 0 to disable. Default is 3.
+  max-same-issues: 0
