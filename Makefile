@@ -1,9 +1,11 @@
-lint: shellcheck markdownlint helm-lint yamllint markdown-links-lint markdown-table-formatter-check
+lint: shellcheck markdownlint helm-lint yamllint markdown-links-lint markdown-table-formatter-check lint-template-tests
 
 shellcheck:
 	./ci/shellcheck.sh
 
-test:
+test: test-templates test-templates-bash
+
+test-templates-bash:
 	./ci/tests.sh
 
 push-helm-chart:
@@ -69,3 +71,10 @@ vhalt:
 
 vdestroy:
 	vagrant destroy -f
+
+# Template tests
+test-templates:
+	make -C ./tests/helm test
+
+lint-template-tests:
+	make -C ./tests/helm golint

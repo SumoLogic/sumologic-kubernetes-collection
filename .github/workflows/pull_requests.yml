@@ -95,7 +95,35 @@ jobs:
             chmod +x /tmp/yq
             sudo mv /tmp/yq /usr/local/bin/yq
       - name: test
-        run: make test
+        run: make test-templates-bash
+  
+  test-templates:
+    runs-on: ubuntu-20.04
+    needs:
+      - helmlint
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.19'
+
+      # As described in
+      # https://github.com/mvdan/github-actions-golang#how-do-i-set-up-caching-between-builds
+      - uses: actions/cache@v3
+        with:
+          path: |
+            /home/runner/go/pkg/mod
+            /home/runner/.cache/go-build
+            /Users/runner/go/pkg/mod
+            /Users/runner/Library/Caches/go-build
+            /c/Users/runneradmin/go/pkg/mod
+            /c/Users/runneradmin/AppData/Local/go-build
+          key: ${{matrix.arch_os}}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{matrix.arch_os}}-go-
+      - name: test
+        run: make test-templates
 
   ##############################################################################
   # Integration tests
