@@ -1,0 +1,19 @@
+sumologic:
+  logs:
+    collector:
+      allowSideBySide: true
+
+metrics-server:
+  enabled: true
+
+telegraf-operator:
+  enabled: true
+
+falco:
+  enabled: true
+
+fluent-bit:
+  enabled: true
+
+tailing-sidecar-operator:
+  enabled: true

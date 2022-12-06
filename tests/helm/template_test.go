@@ -1,6 +1,7 @@
 package helm
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -36,6 +37,12 @@ func TestAllTemplates(t *testing.T) {
 	for _, templateDir := range templateDirectories {
 		// get template path from config script
 		configPath := path.Join(templateDir, configFileName)
+
+		// if no config script, skip this directory
+		if _, err := os.Stat(configPath); errors.Is(err, os.ErrNotExist) {
+			continue
+		}
+		
 		templatePath, err := getTemplatePathFromConfigScript(configPath)
 		require.NoError(t, err)
 		yamlDirectoryPath := path.Join(templateDir, yamlDirectory)
