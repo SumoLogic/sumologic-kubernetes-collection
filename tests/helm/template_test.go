@@ -33,7 +33,6 @@ func TestAllTemplates(t *testing.T) {
 		}
 	}
 
-	setupDependencies(t)
 	for _, templateDir := range templateDirectories {
 		// get template path from config script
 		configPath := path.Join(templateDir, configFileName)
@@ -42,7 +41,7 @@ func TestAllTemplates(t *testing.T) {
 		if _, err := os.Stat(configPath); errors.Is(err, os.ErrNotExist) {
 			continue
 		}
-		
+
 		templatePath, err := getTemplatePathFromConfigScript(configPath)
 		require.NoError(t, err)
 		yamlDirectoryPath := path.Join(templateDir, yamlDirectory)
@@ -97,25 +96,6 @@ func runTemplateTest(t *testing.T, templatePath string, valuesFileName string, o
 	require.NoError(t, err)
 
 	require.Equal(t, expected, rendered)
-}
-
-// setupDependencies adds the repos for chart dependencies and then updates them
-// ideally this should be run once per test execution on a fresh machine
-func setupDependencies(t *testing.T) {
-	repos := map[string]string{
-		"fluent":          "https://fluent.github.io/helm-charts",
-		"prometheus":      "https://prometheus-community.github.io/helm-charts",
-		"falco":           "https://falcosecurity.github.io/charts",
-		"bitnami":         "https://charts.bitnami.com/bitnami",
-		"influxdata":      "https://helm.influxdata.com/",
-		"tailing-sidecar": "https://sumologic.github.io/tailing-sidecar",
-		"opentelemetry":   "https://open-telemetry.github.io/opentelemetry-helm-charts",
-	}
-	for name, url := range repos {
-		helm.AddRepo(t, &helm.Options{}, name, url)
-	}
-	output, err := helm.RunHelmCommandAndGetOutputE(t, &helm.Options{}, "dependency", "update", chartDirectory)
-	require.NoError(t, err, output)
 }
 
 // getTemplatePathFromConfigScript extracts the template path from a config.sh script that
