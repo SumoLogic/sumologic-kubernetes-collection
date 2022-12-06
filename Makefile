@@ -74,6 +74,7 @@ vdestroy:
 
 # Template tests
 test-templates:
+	make helm-dependency-update
 	make -C ./tests/helm test
 
 lint-template-tests:
