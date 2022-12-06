@@ -5,6 +5,7 @@ metadata:
   name: {{ template "sumologic.metadata.name.metrics.service-headless" . }}
   labels:
     app: {{ template "sumologic.labels.app.metrics.service-headless" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
     {{- include "sumologic.labels.metrics" . | nindent 4 }}
 {{- if .Values.metadata.serviceLabels }}
 {{ toYaml .Values.metadata.serviceLabels | indent 4 }}
