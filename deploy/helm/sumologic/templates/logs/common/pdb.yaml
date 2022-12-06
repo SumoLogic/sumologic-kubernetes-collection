@@ -4,6 +4,8 @@ apiVersion: {{ include "apiVersion.podDisruptionBudget" . }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "sumologic.metadata.name.logs.pdb" . }}
+  labels:
+    {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:

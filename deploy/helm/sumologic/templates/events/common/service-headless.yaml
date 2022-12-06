@@ -5,6 +5,7 @@ metadata:
   name: {{ template "sumologic.metadata.name.events.service-headless" . }}
   labels:
     app: {{ template "sumologic.labels.app.events.service-headless" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
     {{- include "sumologic.labels.events" . | nindent 4 }}
 {{- if .Values.fluentd.serviceLabels }}
 {{ toYaml .Values.fluentd.serviceLabels | indent 4 }}
