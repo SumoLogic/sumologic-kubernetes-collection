@@ -1,1 +1,1 @@
-{{ tpl (toYaml .Values.tracesGateway.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}
+{{- tpl (toYaml .Values.tracesGateway.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}

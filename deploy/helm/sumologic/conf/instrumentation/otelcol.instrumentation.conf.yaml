@@ -1,1 +1,1 @@
-{{ tpl (toYaml .Values.otelcolInstrumentation.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}
+{{- tpl (toYaml .Values.otelcolInstrumentation.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}

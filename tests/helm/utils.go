@@ -2,6 +2,7 @@ package helm
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path"
 	"path/filepath"
@@ -42,6 +43,45 @@ func keys[K comparable, V any](m map[K]V) []K {
 		i++
 	}
 	return keys
+}
+
+// UnmarshalMultipleFromYaml can unmarshal multiple objects of the same type from a yaml string
+// containing multiple documents, separated by ---
+func UnmarshalMultipleFromYaml[T any](t *testing.T, yamlDocs string) []T {
+	yamlDocuments, err := SplitYaml(yamlDocs)
+	require.NoError(t, err)
+	renderedObjects := make([]T, len(yamlDocuments))
+	for i, yamlDoc := range yamlDocuments {
+		helm.UnmarshalK8SYaml(t, yamlDoc, &renderedObjects[i])
+	}
+	return renderedObjects
+}
+
+// SplitYaml splits a yaml string containing multiple yaml documents into strings
+// containing one document each
+func SplitYaml(yamlDocs string) ([]string, error) {
+	decoder := yaml.NewDecoder(strings.NewReader(yamlDocs))
+
+	var docs []string
+	for {
+		var value interface{}
+		err := decoder.Decode(&value)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		if value == nil { // skip empty documents
+			continue
+		}
+		valueBytes, err := yaml.Marshal(value)
+		if err != nil {
+			return nil, err
+		}
+		docs = append(docs, string(valueBytes))
+	}
+	return docs, nil
 }
 
 // RenderTemplateFromValuesString renders a template based on its path and a values string
