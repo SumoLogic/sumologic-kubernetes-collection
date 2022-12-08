@@ -6,40 +6,29 @@
 make test
 ```
 
-You need [yq v3](https://github.com/mikefarah/yq/releases/tag/3.4.1) installed to run these tests.
+The tests are written in Go, which is the only requirement.
+If you run these from here, be sure to update helm dependencies first by running
 
-## Adding new tests
-
-To add test for new template file, please create new directory with given structure:
-
-```text
-example_test/  # Test set name
-├── config.sh  # Configuration file
-└── static  # Test cases
-    ├── test_name.input.yaml  # Input configuration for test_name
-    └── test_name.output.yaml  # Output configuration for test_name
+```sh
+make -C ../../ helm-dependency-update
 ```
 
-## Configuration file
+## Adding new golden file tests
 
-`config.sh` should export `TEST_TEMPLATE` env variable, which should point to the helm template
-file name, e.g. for `deploy/helm/sumologic/templates/configmap.yaml` it will be `templates/configmap.yaml`:
+Aside from normal Go tests, we have a number of golden file tests.
+Golden file tests are automatically discovered - any file matching `*.input.yaml`
+will be picked up as a golden file input, and the framework will expect a corresponding
+`*.output.yaml` to exist in the same directory.
 
-```bash
-TEST_TEMPLATE="templates/configmap.yaml"
-```
+The files can be placed in any subdirectory, including nested ones. The only requirement is
+that they should be placed in the same one.
 
-There's also a shared config file: `shared_config.sh` which will be sourced for
-all tests with particular tests `config.sh`s taking precedence (as they will be
-sourced later).
+### Generating the golden output file
 
-## Input file
+Writing the output files by hand is painful. In most circumstances, if you have an input
+file, you want to generate the output using Helm, and then verify it for correctness.
 
-Input file e.g. `test_name.input.yaml` should be compatible with `values.yaml`
-
-## Output file
-
-Output file is the yaml template which is expected to be output of the following command:
+This can be done by running:
 
 ```bash
 helm template deploy/helm/sumologic/ \
@@ -47,5 +36,15 @@ helm template deploy/helm/sumologic/ \
   --set sumologic.accessId='accessId' \
   --set sumologic.accessKey='accessKey' \
   -f test_name.input.yaml \
-  -s values.yaml
+  -s ${path_to_template} >test_name.output.yaml
 ```
+
+Some aspects of the output files would change very frequently if stored literally.
+For example, the Chart version appears as a label on all resources. To avoid updating
+it with every release, we replace it in output templates.
+
+You'll need to modify the output files in the following ways:
+
+- replace all instances of the release name (`collection` by default) with `RELEASE-NAME`
+- replace all instances of the chart version with `%CURRENT_CHART_VERSION%`
+- replace all checksum annotation (`config/checksum`) values with `%CONFIG_CHECKSUM%`

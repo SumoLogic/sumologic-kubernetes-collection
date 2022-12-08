@@ -81,24 +81,6 @@ jobs:
 
   test:
     runs-on: ubuntu-20.04
-    env:
-      YQ_VERSION: 3.4.1
-    needs:
-      - shellcheck
-      - yamllint
-      - helmlint
-    steps:
-      - uses: actions/checkout@v3
-      - name: yq
-        run: |
-            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/yq https://github.com/mikefarah/yq/releases/download/${{ env.YQ_VERSION }}/yq_linux_amd64
-            chmod +x /tmp/yq
-            sudo mv /tmp/yq /usr/local/bin/yq
-      - name: test
-        run: make test-templates-bash
-
-  test-templates:
-    runs-on: ubuntu-20.04
     needs:
       - helmlint
     steps:

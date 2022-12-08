@@ -5,9 +5,6 @@ shellcheck:
 
 test: test-templates test-templates-bash
 
-test-templates-bash:
-	./ci/tests.sh
-
 push-helm-chart:
 	./ci/push-helm-chart.sh
 
