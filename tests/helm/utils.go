@@ -12,6 +12,7 @@ import (
 	"github.com/gruntwork-io/go-commons/errors"
 	"github.com/gruntwork-io/go-commons/files"
 	"github.com/gruntwork-io/terratest/modules/helm"
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -30,6 +31,44 @@ func GetChartVersion() (string, error) {
 		return "", err
 	}
 	return chartInfo.Version, nil
+}
+
+// get the slice of keys for a map
+func keys[K comparable, V any](m map[K]V) []K {
+	keys := make([]K, len(m))
+	i := 0
+	for key := range m {
+		keys[i] = key
+		i++
+	}
+	return keys
+}
+
+// RenderTemplateFromValuesString renders a template based on its path and a values string
+// it uses package defaults for other parameters
+func RenderTemplateFromValuesString(t *testing.T, valuesYaml string, templatePath string) string {
+	valuesFile, err := os.CreateTemp(t.TempDir(), "values.yaml")
+	require.NoError(t, err)
+	_, err = valuesFile.WriteString(valuesYaml)
+	require.NoError(t, err)
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFile.Name()},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{templatePath},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+	return renderedYamlString
 }
 
 // The functions below are copied from terratest for the sole reason of being able to skip the helm dependency update
