@@ -14,13 +14,13 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
-func TestAllTemplates(t *testing.T) {
+func TestGoldenFiles(t *testing.T) {
 	var err error
 
 	chartVersion, err := GetChartVersion()
 	require.NoError(t, err)
 
-	// get the template directories
+	// get the input files
 	inputFileNames, err := doublestar.FilepathGlob("**/*.input.yaml")
 	require.NoError(t, err)
 	require.NotEmpty(t, inputFileNames)
@@ -29,14 +29,14 @@ func TestAllTemplates(t *testing.T) {
 		outputFileName := strings.TrimSuffix(inputFileName, ".input.yaml") + ".output.yaml"
 		t.Run(inputFileName, func(t *testing.T) {
 			t.Parallel()
-			runTemplateTest(t, inputFileName, outputFileName, chartVersion)
+			runGoldenFileTest(t, inputFileName, outputFileName, chartVersion)
 		})
 	}
 }
 
 // runTemplateTest renders the template using the given values file and compares it to the contents
 // of the output file
-func runTemplateTest(t *testing.T, valuesFileName string, outputFileName string, chartVersion string) {
+func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName string, chartVersion string) {
 	renderedYamlString := RenderTemplate(
 		t,
 		&helm.Options{
