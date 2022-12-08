@@ -65,7 +65,7 @@ spec:
       priorityClassName: "prio"
       containers:
       - name: otelcol
-        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.56.0-sumo-0
+        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.66.0-sumo-0
         imagePullPolicy: IfNotPresent
         args:
           - --config=/etc/otel/config.yaml
@@ -131,7 +131,7 @@ spec:
       name: file-storage
     spec:
       accessModes: [ReadWriteOnce]
-      storageClassName: 
+      storageClassName:
       resources:
         requests:
           storage: 10Gi
