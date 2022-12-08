@@ -20,9 +20,7 @@ data:
         log_format: json
         sending_queue:
           enabled: true
-          persistent_storage_enabled: true
-        source_category: '%{_sourceCategory}'
-        source_name: '%{_sourceName}'
+          storage: file_storage
     extensions:
       file_storage:
         directory: /var/lib/storage/events
