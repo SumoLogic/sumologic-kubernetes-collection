@@ -38,17 +38,7 @@ func TestBuiltinLabels(t *testing.T) {
 
 	// split the rendered Yaml into individual documents and unmarshal them into K8s objects
 	// we could use the yaml decoder directly, but we'd have to implement our own unmarshaling logic then
-	renderedYamlDocuments := strings.Split(renderedYamlString, "---")
-	cleanedYamlDocuments := []string{}
-	for _, yamlDoc := range renderedYamlDocuments {
-		if len(strings.TrimSpace(yamlDoc)) > 0 {
-			cleanedYamlDocuments = append(cleanedYamlDocuments, yamlDoc)
-		}
-	}
-	renderedObjects := make([]unstructured.Unstructured, len(cleanedYamlDocuments))
-	for i, yamlDoc := range cleanedYamlDocuments {
-		helm.UnmarshalK8SYaml(t, yamlDoc, &renderedObjects[i])
-	}
+	renderedObjects := UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
 
 	for _, renderedObject := range renderedObjects {
 		if !isSubchartObject(&renderedObject) && renderedObject.GetKind() != "List" {

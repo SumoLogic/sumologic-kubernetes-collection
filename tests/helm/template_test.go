@@ -1,15 +1,12 @@
 package helm
 
 import (
-	"errors"
-	"fmt"
 	"os"
-	"path"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
 
+	doublestar "github.com/bmatcuk/doublestar/v4"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/stretchr/testify/require"
@@ -18,52 +15,28 @@ import (
 )
 
 func TestAllTemplates(t *testing.T) {
-	var templateDirectories []string
 	var err error
 
 	chartVersion, err := GetChartVersion()
 	require.NoError(t, err)
 
 	// get the template directories
-	dirEntries, err := os.ReadDir(".")
+	inputFileNames, err := doublestar.FilepathGlob("**/*.input.yaml")
 	require.NoError(t, err)
-	for _, dirEntry := range dirEntries {
-		if dirEntry.IsDir() {
-			templateDirectories = append(templateDirectories, dirEntry.Name())
-		}
-	}
-
-	for _, templateDir := range templateDirectories {
-		// get template path from config script
-		configPath := path.Join(templateDir, configFileName)
-
-		// if no config script, skip this directory
-		if _, err := os.Stat(configPath); errors.Is(err, os.ErrNotExist) {
-			continue
-		}
-
-		templatePath, err := getTemplatePathFromConfigScript(configPath)
-		require.NoError(t, err)
-		yamlDirectoryPath := path.Join(templateDir, yamlDirectory)
-
-		// get the input file names
-		inputFileNames, err := filepath.Glob(path.Join(yamlDirectoryPath, "*.input.yaml"))
-		require.NoError(t, err)
-		require.NotEmpty(t, inputFileNames)
-		for _, inputFileName := range inputFileNames { // for each input file name, run the test
-			inputFileName := inputFileName
-			outputFileName := strings.TrimSuffix(inputFileName, ".input.yaml") + ".output.yaml"
-			t.Run(inputFileName, func(t *testing.T) {
-				t.Parallel()
-				runTemplateTest(t, templatePath, inputFileName, outputFileName, chartVersion)
-			})
-		}
+	require.NotEmpty(t, inputFileNames)
+	for _, inputFileName := range inputFileNames { // for each input file name, run the test
+		inputFileName := inputFileName
+		outputFileName := strings.TrimSuffix(inputFileName, ".input.yaml") + ".output.yaml"
+		t.Run(inputFileName, func(t *testing.T) {
+			t.Parallel()
+			runTemplateTest(t, inputFileName, outputFileName, chartVersion)
+		})
 	}
 }
 
 // runTemplateTest renders the template using the given values file and compares it to the contents
 // of the output file
-func runTemplateTest(t *testing.T, templatePath string, valuesFileName string, outputFileName string, chartVersion string) {
+func runTemplateTest(t *testing.T, valuesFileName string, outputFileName string, chartVersion string) {
 	renderedYamlString := RenderTemplate(
 		t,
 		&helm.Options{
@@ -76,7 +49,7 @@ func runTemplateTest(t *testing.T, templatePath string, valuesFileName string, o
 		},
 		chartDirectory,
 		releaseName,
-		[]string{templatePath},
+		[]string{},
 		true,
 		"--namespace",
 		defaultNamespace,
@@ -86,31 +59,27 @@ func runTemplateTest(t *testing.T, templatePath string, valuesFileName string, o
 	renderedYamlString = fixupRenderedYaml(renderedYamlString, chartVersion)
 	expectedYamlBytes, err := os.ReadFile(outputFileName)
 	expectedYamlString := string(expectedYamlBytes)
-	expectedYamlString = fixupExpectedYaml(expectedYamlString)
 	require.NoError(t, err)
 
-	var expected, rendered unstructured.Unstructured
-	helm.UnmarshalK8SYaml(t, expectedYamlString, &expected)
+	var expectedObject unstructured.Unstructured
+	var renderedObjects []unstructured.Unstructured
+	helm.UnmarshalK8SYaml(t, expectedYamlString, &expectedObject)
 	require.NoError(t, err)
-	helm.UnmarshalK8SYaml(t, renderedYamlString, &rendered)
+	renderedObjects = UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
 	require.NoError(t, err)
 
-	require.Equal(t, expected, rendered)
-}
-
-// getTemplatePathFromConfigScript extracts the template path from a config.sh script that
-// the previous test framework used to set the template for the test
-func getTemplatePathFromConfigScript(configPath string) (string, error) {
-	configScript, err := os.ReadFile(configPath)
-	if err != nil {
-		return "", err
+	// find the object we expect
+	var actualObject *unstructured.Unstructured = nil
+	for _, renderedObject := range renderedObjects {
+		if renderedObject.GetName() == expectedObject.GetName() &&
+			renderedObject.GetKind() == expectedObject.GetKind() {
+			actualObject = &renderedObject
+			break
+		}
 	}
-	regex := regexp.MustCompile("TEST_TEMPLATE=\"([^)]+)\"")
-	matches := regex.FindStringSubmatch(string(configScript))
-	if len(matches) != 2 {
-		return "", fmt.Errorf("expected to get one match, got %v", matches)
-	}
-	return matches[1], nil
+	require.NotNilf(t, actualObject, "Couldn't find object %s/%s in output", expectedObject.GetKind(), expectedObject.GetName())
+
+	require.Equal(t, expectedObject, *actualObject)
 }
 
 // fixupRenderedYaml replaces certain highly variable properties with fixed ones used in the
@@ -122,11 +91,5 @@ func fixupRenderedYaml(yaml string, chartVersion string) string {
 	output = strings.ReplaceAll(output, chartVersion, "%CURRENT_CHART_VERSION%")
 	output = checksumRegex.ReplaceAllLiteralString(output, "checksum/config: '%CONFIG_CHECKSUM%'")
 	output = strings.TrimSuffix(output, "\n")
-	return output
-}
-
-// fixupExpectedYaml removes some unnecessary newlines from the expected templates
-func fixupExpectedYaml(yaml string) string {
-	output := strings.TrimSuffix(yaml, "\n")
 	return output
 }

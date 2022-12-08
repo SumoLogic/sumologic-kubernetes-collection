@@ -3,6 +3,7 @@ module github.com/SumoLogic/sumologic-kubernetes-collection/tests/helm
 go 1.19
 
 require (
+	github.com/bmatcuk/doublestar/v4 v4.4.0
 	github.com/gruntwork-io/go-commons v0.8.0
 	github.com/gruntwork-io/terratest v0.41.3
 	github.com/stretchr/testify v1.8.1

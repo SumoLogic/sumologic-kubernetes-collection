@@ -1,9 +1,9 @@
 {{- $ctx := . -}}
-{{ $instrumentationNamespaces := index .Values "opentelemetry-operator" }}
-{{- if eq ( get $instrumentationNamespaces "instrumentationNamespaces" ) "" }}
+{{- $instrumentationNamespaces := index .Values "opentelemetry-operator" -}}
+{{- if eq ( get $instrumentationNamespaces "instrumentationNamespaces" ) "" -}}
 {{ fail "No value for \"opentelemetry-operator.instrumentationNamespaces\".Value is comma separated namespaces e.g. \"ns1\\,ns2\"" }}
-{{ else }}
-{{- range $ns := splitList "," ( index .Values "opentelemetry-operator" "instrumentationNamespaces" ) }}
+{{- else -}}
+{{- range $ns := splitList "," ( index .Values "opentelemetry-operator" "instrumentationNamespaces" ) -}}
 ---
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
@@ -64,5 +64,5 @@ spec:
         value: http/protobuf
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://{{- include "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" $ctx }}:4318
-{{- end -}}
+{{ end -}}
 {{- end -}}
