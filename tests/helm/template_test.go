@@ -59,7 +59,6 @@ func runTemplateTest(t *testing.T, valuesFileName string, outputFileName string,
 	renderedYamlString = fixupRenderedYaml(renderedYamlString, chartVersion)
 	expectedYamlBytes, err := os.ReadFile(outputFileName)
 	expectedYamlString := string(expectedYamlBytes)
-	// expectedYamlString = fixupExpectedYaml(expectedYamlString)
 	require.NoError(t, err)
 
 	var expectedObject unstructured.Unstructured
