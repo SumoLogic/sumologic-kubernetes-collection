@@ -15,11 +15,11 @@ exporters:
       add_timestamp: true
       timestamp_key: timestamp
     endpoint: ${SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE}
-    source_name: "%{_sourceName}"
-    source_category: "%{_sourceCategory}"
     sending_queue:
       enabled: true
-      persistent_storage_enabled: {{ .Values.sumologic.events.persistence.enabled }}
+{{- if .Values.sumologic.events.persistence.enabled }}
+      storage: file_storage
+{{- end }}
 processors:
   memory_limiter:
     check_interval: 1s

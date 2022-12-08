@@ -4,7 +4,7 @@ otelevents:
       exporters:
         sumologic:
           sending_queue:
-            persistent_storage_enabled: false
+            storage: other
 
 sumologic:
   events:
