@@ -41,7 +41,7 @@ Sumo Logic Helm Chart Version
 
 ## Roadmap
 
-Please refer to [roadmap](/docs/roadmap.md) document.
+Please refer to [roadmap](ROADMAP.md) document.
 
 ## License
 
