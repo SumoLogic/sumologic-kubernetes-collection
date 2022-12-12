@@ -16,6 +16,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // get the chart version from Chart.yaml
@@ -43,6 +44,17 @@ func keys[K comparable, V any](m map[K]V) []K {
 		i++
 	}
 	return keys
+}
+
+// GetOtelConfigYaml renders the given template using a values string, assumes it's an
+// otel ConfigMap, and returns the otel configuration as a yaml string
+func GetOtelConfigYaml(t *testing.T, valuesYaml string, templatePath string) string {
+	renderedYamlString := RenderTemplateFromValuesString(t, valuesYaml, templatePath)
+	var configMap corev1.ConfigMap
+	helm.UnmarshalK8SYaml(t, renderedYamlString, &configMap)
+	require.Contains(t, configMap.Data, otelConfigFileName)
+	otelConfigYaml := configMap.Data[otelConfigFileName]
+	return otelConfigYaml
 }
 
 // UnmarshalMultipleFromYaml can unmarshal multiple objects of the same type from a yaml string
