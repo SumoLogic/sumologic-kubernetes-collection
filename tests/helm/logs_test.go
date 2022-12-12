@@ -3,24 +3,9 @@ package helm
 import (
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
-	corev1 "k8s.io/api/core/v1"
 )
-
-const otelConfigFileName = "config.yaml"
-
-// getOtelConfigYaml renders the given template using a values string, assumes it's an
-// otel ConfigMap, and returns the otel configuration as a yaml string
-func getOtelConfigYaml(t *testing.T, valuesYaml string, templatePath string) string {
-	renderedYamlString := RenderTemplateFromValuesString(t, valuesYaml, templatePath)
-	var configMap corev1.ConfigMap
-	helm.UnmarshalK8SYaml(t, renderedYamlString, &configMap)
-	require.Contains(t, configMap.Data, otelConfigFileName)
-	otelConfigYaml := configMap.Data[otelConfigFileName]
-	return otelConfigYaml
-}
 
 func TestMetadataOtelConfigMerge(t *testing.T) {
 	t.Parallel()
@@ -34,7 +19,7 @@ metadata:
           batch:
             send_batch_size: 7
 `
-	otelConfigYaml := getOtelConfigYaml(t, valuesYaml, templatePath)
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
 	var otelConfig struct {
 		Processors struct {
@@ -59,7 +44,7 @@ metadata:
       override:
         key: value
 `
-	otelConfigYaml := getOtelConfigYaml(t, valuesYaml, templatePath)
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
 	var otelConfig map[string]string
 	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
@@ -82,7 +67,7 @@ sumologic:
 fluent-bit:
   enabled: true
 `
-	otelConfigYaml := getOtelConfigYaml(t, valuesYaml, templatePath)
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
 	var otelConfig struct {
 		Receivers map[string]interface{}
@@ -110,7 +95,7 @@ sumologic:
     systemd:
       enabled: false
 `
-	otelConfigYaml := getOtelConfigYaml(t, valuesYaml, templatePath)
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
 
 	var otelConfig struct {
 		Exporters  map[string]interface{}
