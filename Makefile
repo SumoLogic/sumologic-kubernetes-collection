@@ -3,7 +3,7 @@ lint: shellcheck markdownlint helm-lint yamllint markdown-links-lint markdown-ta
 shellcheck:
 	./ci/shellcheck.sh
 
-test: test-templates test-templates-bash
+test: test-templates
 
 push-helm-chart:
 	./ci/push-helm-chart.sh
