@@ -19,8 +19,8 @@ data:
         sending_queue:
           enabled: true
           num_consumers: 10
-          persistent_storage_enabled: true
           queue_size: 10000
+          storage: file_storage
         timeout: 30s
       sumologic/control_plane:
         endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
@@ -29,8 +29,8 @@ data:
         sending_queue:
           enabled: true
           num_consumers: 10
-          persistent_storage_enabled: true
           queue_size: 10000
+          storage: file_storage
         timeout: 30s
       sumologic/controller:
         endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
@@ -39,8 +39,8 @@ data:
         sending_queue:
           enabled: true
           num_consumers: 10
-          persistent_storage_enabled: true
           queue_size: 10000
+          storage: file_storage
         timeout: 30s
       sumologic/default:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
@@ -49,8 +49,8 @@ data:
         sending_queue:
           enabled: true
           num_consumers: 10
-          persistent_storage_enabled: true
           queue_size: 10000
+          storage: file_storage
         timeout: 30s
       sumologic/kubelet:
         endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
@@ -59,8 +59,8 @@ data:
         sending_queue:
           enabled: true
           num_consumers: 10
-          persistent_storage_enabled: true
           queue_size: 10000
+          storage: file_storage
         timeout: 30s
       sumologic/node:
         endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
@@ -69,8 +69,8 @@ data:
         sending_queue:
           enabled: true
           num_consumers: 10
-          persistent_storage_enabled: true
           queue_size: 10000
+          storage: file_storage
         timeout: 30s
       sumologic/scheduler:
         endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
@@ -79,8 +79,8 @@ data:
         sending_queue:
           enabled: true
           num_consumers: 10
-          persistent_storage_enabled: true
           queue_size: 10000
+          storage: file_storage
         timeout: 30s
       sumologic/state:
         endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
@@ -89,8 +89,8 @@ data:
         sending_queue:
           enabled: true
           num_consumers: 10
-          persistent_storage_enabled: true
           queue_size: 10000
+          storage: file_storage
         timeout: 30s
     extensions:
       file_storage:

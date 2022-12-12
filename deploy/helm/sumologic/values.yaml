@@ -3695,7 +3695,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.57.2-sumo-1
+    tag: 0.66.0-sumo-0
     pullPolicy: IfNotPresent
 
   securityContext:
