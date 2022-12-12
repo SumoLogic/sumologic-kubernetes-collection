@@ -21,11 +21,8 @@ data:
         sending_queue:
           enabled: true
           num_consumers: 10
-          persistent_storage_enabled: true
           queue_size: 10000
-        source_category: '%{_sourceCategory}'
-        source_host: '%{_sourceHost}'
-        source_name: '%{_sourceName}'
+          storage: file_storage
       sumologic/systemd:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         json_logs:
@@ -36,11 +33,8 @@ data:
         sending_queue:
           enabled: true
           num_consumers: 10
-          persistent_storage_enabled: true
           queue_size: 10000
-        source_category: '%{_sourceCategory}'
-        source_host: '%{_sourceHost}'
-        source_name: '%{_sourceName}'
+          storage: file_storage
     extensions:
       file_storage:
         compaction:
@@ -285,9 +279,10 @@ data:
       sumologic_schema:
         add_cloud_namespace: false
       transform/remove_attributes:
-        logs:
-          queries:
-          - limit(attributes, 0)
+        log_statements:
+        - context: log
+          statements:
+          - limit(attributes, 0, [])
     receivers:
       otlp:
         protocols:
