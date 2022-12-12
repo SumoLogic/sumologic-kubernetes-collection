@@ -1,13 +1,14 @@
 package helm
 
 const (
-	configFileName    = "config.sh"
-	yamlDirectory     = "static"
-	chartDirectory    = "../../deploy/helm/sumologic"
-	chartName         = "sumologic"
-	releaseName       = "collection-test"
-	defaultNamespace  = "sumologic"
-	testDataDirectory = "./testdata"
+	configFileName     = "config.sh"
+	yamlDirectory      = "static"
+	chartDirectory     = "../../deploy/helm/sumologic"
+	chartName          = "sumologic"
+	releaseName        = "collection-test"
+	defaultNamespace   = "sumologic"
+	testDataDirectory  = "./testdata"
+	otelConfigFileName = "config.yaml"
 )
 
 var subChartNames []string = []string{
