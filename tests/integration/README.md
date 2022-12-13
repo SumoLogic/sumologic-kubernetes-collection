@@ -88,6 +88,30 @@ USE_KUBECONFIG=1 KUBECONFIG=/tmp/xm1r7h7s7 make test
 > **NOTE**: The preexisting cluster that's being used for tests does not have
 > to be a `kind` cluster.
 
+## Preloading docker images into the cluster
+
+A significant chunk of the runtime of these tests involves the cluster pulling the necessary docker images.
+In particular, this can make running the tests on slower internet connections rather painful.
+Thankfully, `kind` provides a mechanism to preload both individual docker images and multi-image archives
+into the cluster at runtime from the host.
+
+We provide a Makefile target for generating a docker image archive from the Helm values used:
+
+```bash
+make create-image-archive
+```
+
+Running the above will create an `images.tar` file in this directory, which the tests will automatically make use of.
+
+### Using a custom image archive file
+
+It's possible to change the image archive file name:
+
+```bash
+make create-image-archive IMAGE_ARCHIVE=/my/file.tar
+IMAGE_ARCHIVE=/my/file.tar make test
+```
+
 ## Runtime options
 
 The test framework has the following runtime options that can be utilized:

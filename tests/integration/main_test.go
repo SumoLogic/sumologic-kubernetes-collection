@@ -23,8 +23,10 @@ import (
 )
 
 const (
-	envNameUseKubeConfig = "USE_KUBECONFIG"
-	envNameKubeConfig    = "KUBECONFIG"
+	envNameUseKubeConfig        = "USE_KUBECONFIG"
+	envNameKubeConfig           = "KUBECONFIG"
+	envNameImageArchive         = "IMAGE_ARCHIVE"
+	defaultImageArchiveFilename = "images.tar"
 )
 
 var testenv env.Environment
@@ -141,6 +143,18 @@ func CreateKindCluster() func(context.Context, *envconf.Config, *testing.T) (con
 			return ctx, err
 		}
 
+		// load the Docker image archive if present
+		fileName, err := GetImageArchiveFilename()
+		if err != nil {
+			t.Logf("Couldn't find image archive file %s, proceeding without it", fileName)
+		} else {
+			err = k.LoadImageArchive(fileName)
+			if err != nil {
+				t.Fatalf("Loading image archive failed: %v", err)
+			}
+			t.Logf("Loaded image archive: %s", fileName)
+		}
+
 		kubectlOptions := k8s.NewKubectlOptions("", kubecfg, "")
 		k8s.WaitUntilAllNodesReady(t, kubectlOptions, 60, 2*time.Second)
 		k8s.RunKubectl(t, kubectlOptions, "describe", "node")
@@ -208,4 +222,17 @@ func DestroyActiveKindClusters(ctx context.Context, _ *envconf.Config) (context.
 		}
 	}
 	return newContext, err
+}
+
+func GetImageArchiveFilename() (string, error) {
+	fileName := os.Getenv(envNameImageArchive)
+	if fileName == "" {
+		fileName = defaultImageArchiveFilename
+	}
+
+	if _, err := os.Stat(fileName); err != nil {
+		return "", err
+	}
+
+	return fileName, nil
 }

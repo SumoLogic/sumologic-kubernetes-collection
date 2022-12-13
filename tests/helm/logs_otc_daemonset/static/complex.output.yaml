@@ -102,7 +102,7 @@ spec:
           protocol: TCP
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
-        image: public.ecr.aws/docker/library/busybox
+        image: public.ecr.aws/docker/library/busybox:latest
         command:
         - "sh"
         - "-c"
