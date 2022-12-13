@@ -4258,7 +4258,7 @@ falco:
     initContainers:
       ## Add initContainer to wait until kernel-devel is installed on host
       - name: init-falco
-        image: public.ecr.aws/docker/library/busybox
+        image: public.ecr.aws/docker/library/busybox:latest
         command:
           - 'sh'
           - '-c'
@@ -4345,7 +4345,7 @@ opentelemetry-operator:
   instrumentationJobImage:
     image:
       repository: sumologic/kubernetes-tools
-      tag: 2.13.0
+      tag: 2.14.0
 
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""
