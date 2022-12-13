@@ -52,6 +52,7 @@ spec:
       containers:
       - name: setup
         image: {{ .Values.sumologic.setup.job.image.repository }}:{{ .Values.sumologic.setup.job.image.tag }}
+        imagePullSecrets: {{ .Values.sumologic.setup.job.image.pullSecrets }}
         imagePullPolicy: {{ .Values.sumologic.setup.job.image.pullPolicy }}
         command: ["/etc/terraform/setup.sh"]
         resources:

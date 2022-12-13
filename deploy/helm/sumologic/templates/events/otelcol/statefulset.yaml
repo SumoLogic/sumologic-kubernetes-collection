@@ -100,6 +100,7 @@ spec:
       containers:
       - name: otelcol
         image: {{ .Values.otelevents.image.repository }}:{{ .Values.otelevents.image.tag }}
+        imagePullSecrets: {{ .Values.otelevents.image.pullSecrets }}
         imagePullPolicy: {{ .Values.otelevents.image.pullPolicy }}
         args:
           - --config=/etc/otel/config.yaml
