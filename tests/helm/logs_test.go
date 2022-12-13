@@ -114,3 +114,132 @@ sumologic:
 		require.NotContains(t, processorName, "kubelet")
 	}
 }
+
+func TestCollectorOtelConfigMerge(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/collector/otelcol/configmap.yaml"
+	valuesYaml := `
+otellogs:
+  config:
+    merge:
+      processors:
+        batch:
+          send_batch_size: 7
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Processors struct {
+			Batch struct {
+				SendBatchSize int `yaml:"send_batch_size"`
+			}
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	require.Equal(t, 7, otelConfig.Processors.Batch.SendBatchSize)
+}
+
+func TestCollectorOtelConfigOverride(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/collector/otelcol/configmap.yaml"
+	valuesYaml := `
+otellogs:
+  config:
+    override:
+      key: value
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig map[string]string
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	expected := map[string]string{"key": "value"}
+	require.Equal(t, expected, otelConfig)
+}
+
+func TestCollectorOtelConfigSystemdDisabled(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/collector/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  logs:
+    systemd:
+      enabled: false
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Receivers  map[string]interface{}
+		Processors map[string]interface{}
+		Service    struct {
+			Pipelines map[string]interface{}
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	require.ElementsMatch(t, []string{"filelog/containers"}, keys(otelConfig.Receivers))
+	require.ElementsMatch(t, []string{"logs/containers"}, keys(otelConfig.Service.Pipelines))
+	for processorName := range otelConfig.Processors {
+		require.NotContains(t, processorName, "systemd")
+		require.NotContains(t, processorName, "kubelet")
+	}
+}
+
+func TestCollectorOtelConfigMultilineDisabled(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/collector/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  logs:
+    multiline:
+      enabled: false
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Receivers struct {
+			Filelog struct {
+				Operators []struct {
+					Id     string
+					Type   string
+					Output string
+				}
+			} `yaml:"filelog/containers"`
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	for _, operator := range otelConfig.Receivers.Filelog.Operators {
+		require.NotEqual(t, "merge-multiline-logs", operator.Id)
+	}
+}
+
+func TestCollectorOtelConfigSystemdUnits(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/collector/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  logs:
+    systemd:
+      units:
+        - test
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Receivers struct {
+			Journald struct {
+				Units []string
+			}
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	require.Equal(t, []string{"test"}, otelConfig.Receivers.Journald.Units)
+}

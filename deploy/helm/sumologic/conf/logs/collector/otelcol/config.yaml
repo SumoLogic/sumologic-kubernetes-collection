@@ -48,6 +48,7 @@ receivers:
     fingerprint_size: 17408
     include_file_path: true
     include_file_name: false
+    storage: file_storage
     operators:
       ## Detect the container runtime log format
       ## Can be: docker-shim, CRI-O and containerd
