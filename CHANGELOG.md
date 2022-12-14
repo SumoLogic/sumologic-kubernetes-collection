@@ -108,7 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: update opentelemetry-operator chart and fix progagators list in instrumentation resource [#2628]
 - feat: upgrade node-exporter to v1.4.0 [#2649]
 - feat: drop migration script for v1 [#2654]
-- added imagePullSecrets field in otel events and sumologic-setup template
+- added imagePullSecrets field in otel events and sumologic-setup template [#2689]
 
 ### Fixed
 
