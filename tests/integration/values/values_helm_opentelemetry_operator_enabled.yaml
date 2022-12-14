@@ -25,12 +25,3 @@ opentelemetry-operator:
 
 otelcolInstrumentation:
   enabled: true
-
-tracesGateway:
-  enabled: true
-  config:
-    processors:
-      memory_limiter:
-        # fix for vagrant
-        # failed to create "memory_limiter" processor, in pipeline "traces": failed to get total memory, use fixed memory settings (limit_mib)
-        limit_mib: 8192

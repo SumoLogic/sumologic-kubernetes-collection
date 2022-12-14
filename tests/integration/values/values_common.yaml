@@ -77,21 +77,40 @@ fluentd:
   persistence:
     size: 100Mi
 
+otelevents:
+  config:
+    merge:
+      receivers:
+        raw_k8s_events:
+        # we want to get all historical events for this test
+          max_event_age: 1h
+  statefulset:
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 100m
+
+otelcol:
+  logs:
+    statefulset:
+      replicaCount: 1
+  metrics:
+    statefulset:
+      replicaCount: 1
+
 # Request less resources so that this fits on Github actions runners environment
 tracesSampler:
+  config:
+  # Default otlp pipeline from values.yaml is used.    
+    exporters:
+      otlphttp:
+        traces_endpoint: http://receiver-mock.receiver-mock:3000/receiver/v1/traces
   deployment:
     replicas: 1
     resources:
       requests:
         memory: 64Mi
         cpu: 10m
-
-otelevents:
-  statefulset:
-    resources:
-      requests:
-        memory: 64Mi
-        cpu: 100m
 
 # Request less resources so that this fits on Github actions runners environment
 tracesGateway:
@@ -111,3 +130,53 @@ otelcolInstrumentation:
       requests:
         memory: 64Mi
         cpu: 10m
+
+# We're using otelcol instead
+fluent-bit:
+  enabled: false
+
+  # Prevent snowball effect by filtering out receiver mock logs
+  config:
+    filters: |
+      [FILTER]
+          Name    grep
+          Match   containers.var.log.containers.receiver-mock*
+          Exclude log .*
+  extraVolumeMounts:
+    - mountPath: /tail-db
+      name: tail-db
+    - mountPath: /run/log/journal
+      name: run-log-journal
+  extraVolumes:
+    - hostPath:
+        path: /var/lib/fluent-bit
+        type: DirectoryOrCreate
+      name: tail-db
+    # kind doesn't enable journald persistence, and the journal resides at /run/log/journal
+    # instead of /var/log/journal
+    - hostPath:
+        path: /run/log/journal
+        type: DirectoryOrCreate
+      name: run-log-journal
+
+otellogs:
+  config:
+    merge:
+      receivers:
+        journald:
+          directory: /run/log/journal
+        # Prevent snowball effect by filtering out receiver mock logs
+        filelog/containers:
+          exclude:
+            - /var/log/pods/receiver-mock_*/*/*.log
+  daemonset:
+    extraVolumeMounts:
+      - mountPath: /run/log/journal
+        name: run-log-journal
+    extraVolumes:
+      # kind doesn't enable journald persistence, and the journal resides at /run/log/journal
+      # instead of /var/log/journal
+      - hostPath:
+          path: /run/log/journal
+          type: DirectoryOrCreate
+        name: run-log-journal
