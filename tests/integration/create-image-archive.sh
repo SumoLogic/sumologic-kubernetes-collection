@@ -36,4 +36,4 @@ do
 done <"${IMAGES_TEMPFILE}"
 
 echo "Saving archive"
-xargs -x -a "${IMAGES_TEMPFILE}" docker save -o "${IMAGE_ARCHIVE}"
+xargs -x -n 50 docker save -o "${IMAGE_ARCHIVE}" <"${IMAGES_TEMPFILE}"
