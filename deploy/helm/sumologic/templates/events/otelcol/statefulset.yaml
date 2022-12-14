@@ -100,7 +100,10 @@ spec:
       containers:
       - name: otelcol
         image: {{ .Values.otelevents.image.repository }}:{{ .Values.otelevents.image.tag }}
-        imagePullSecrets: {{ .Values.otelevents.image.pullSecrets }}
+{{- if .Values.sumologic.pullSecrets }}
+        imagePullSecrets:
+{{ toYaml .Values.sumologic.pullSecrets | indent 10 }}
+{{ end }}
         imagePullPolicy: {{ .Values.otelevents.image.pullPolicy }}
         args:
           - --config=/etc/otel/config.yaml
