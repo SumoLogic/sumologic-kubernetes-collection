@@ -3373,7 +3373,7 @@ otelcolInstrumentation:
 
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.57.2-sumo-1"
+      tag: "0.66.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Set securityContext for containers running in pods in otelcol-instrumentation statefulset.
@@ -3601,7 +3601,7 @@ tracesSampler:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.57.2-sumo-1"
+      tag: "0.66.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3652,7 +3652,7 @@ tracesSampler:
         spike_limit_percentage: 20
 
       ## Smart cascading filtering rules with preset limits.
-      ## Please see https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.57.2-sumo-1/pkg/processor/cascadingfilterprocessor
+      ## Please see https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.66.0-sumo-0/pkg/processor/cascadingfilterprocessor
       ## for details.
       cascading_filter:
         ## Max number of traces for which decisions are kept in memory
@@ -3695,7 +3695,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.57.2-sumo-1
+    tag: 0.66.0-sumo-0
     pullPolicy: IfNotPresent
 
   securityContext:
@@ -3942,7 +3942,7 @@ tracesGateway:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.57.2-sumo-1"
+      tag: "0.66.0-sumo-0"
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15
@@ -4145,7 +4145,7 @@ otellogs:
   ## Configure image for Opentelemetry Collector
   image:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.54.0-sumo-0"
+    tag: "0.66.0-sumo-0"
     pullPolicy: IfNotPresent
 
   logLevel: info
@@ -4258,7 +4258,7 @@ falco:
     initContainers:
       ## Add initContainer to wait until kernel-devel is installed on host
       - name: init-falco
-        image: public.ecr.aws/docker/library/busybox
+        image: public.ecr.aws/docker/library/busybox:latest
         command:
           - 'sh'
           - '-c'
@@ -4345,7 +4345,7 @@ opentelemetry-operator:
   instrumentationJobImage:
     image:
       repository: sumologic/kubernetes-tools
-      tag: 2.13.0
+      tag: 2.14.0
 
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""

@@ -40,7 +40,7 @@ spec:
       containers:
       - args:
         - --config=/etc/otelcol/config.yaml
-        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.54.0-sumo-0
+        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.66.0-sumo-0
         imagePullPolicy: IfNotPresent
         name: otelcol
         livenessProbe:
@@ -102,7 +102,7 @@ spec:
           protocol: TCP
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
-        image: public.ecr.aws/docker/library/busybox
+        image: public.ecr.aws/docker/library/busybox:latest
         command:
         - "sh"
         - "-c"

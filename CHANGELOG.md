@@ -90,7 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- chore: upgrade otelcol for events to 0.66.0 [#2686]
+- chore: upgrade otelcol to 0.66.0-sumo-0 [#2686] [#2687] [#2692] [#2693]
 - chore: upgrade nginx to 1.23.1 [#2544] [#2554]
 - feat: enable remote write proxy by default [#2483]
 - chore: update kubernetes-tools to 2.13.0 [#2515]
@@ -165,6 +165,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2653]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2653
 [#2686]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2686
 [#2689]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2689
+[#2687]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2687
+[#2693]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2693
+[#2692]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2692
 [v3.0.0-beta.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...v3.0.0-beta.0
 [telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0

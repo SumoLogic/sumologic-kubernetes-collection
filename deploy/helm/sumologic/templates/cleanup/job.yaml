@@ -31,7 +31,7 @@ spec:
         emptyDir: {}
       initContainers:
       - name: copy-files
-        image: public.ecr.aws/docker/library/busybox
+        image: public.ecr.aws/docker/library/busybox:latest
         command: ['sh', '-c', 'cp /configmap/* /etc/terraform']
         volumeMounts:
           - name: configmap
