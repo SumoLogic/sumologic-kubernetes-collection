@@ -1,6 +1,7 @@
 # Advanced Configuration / Security Best Practices
 
 - [Hardening fluentd StatefulSet with `securityContext`](#hardening-fluentd-statefulset-with-securitycontext)
+- [FIPS compliant binaries](#fips-compliant-binaries)
 
 ## Minimal required capabilities
 
