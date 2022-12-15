@@ -11,6 +11,7 @@ push-helm-chart:
 markdownlint:
 	markdownlint --config .markdownlint.jsonc \
 		deploy/docs \
+		docs \
 		CHANGELOG.md
 
 .PHONY: helm-version
