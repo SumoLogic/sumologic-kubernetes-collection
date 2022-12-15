@@ -90,7 +90,7 @@ In this document we detail the changes as well as the exact steps for migration.
 - Moved parameters from `otelagent.*` to `otelcolInstrumentation.*`
 
 - Moved parameters from `otelgateway.*` to `tracesGateway.*`
- 
+
 - Moved parameters from `otelcol.*` to `tracesSampler.*`
 
 - Enabled metrics and traces collection from instrumentation by default
@@ -187,7 +187,7 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
 
 **Required only if `sumologic.traces.enabled=true`.**
 
-* **Otelagent DaemonSet**
+- **Otelagent DaemonSet**
 
   If you're using `otelagent` (`otelagent.enabled=true`), please run the following command to manually delete DamemonSet and ConfigMap in helm chart v2 before upgrade:
 
@@ -196,7 +196,7 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelagent
   ```
 
-* **Otelgateway Deployment**
+- **Otelgateway Deployment**
 
   If you're using `otelgateway` (`otelgateway.enabled=true`), please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
 
@@ -205,7 +205,7 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelgateway
   ```
 
-* **Otelcol Deployment**
+- **Otelcol Deployment**
 
   Please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
 
