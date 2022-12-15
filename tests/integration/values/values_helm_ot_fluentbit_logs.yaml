@@ -1,0 +1,14 @@
+sumologic:
+  events:
+    enabled: false
+  logs:
+    collector:
+      otelcol:
+        enabled: false
+  metrics:
+    enabled: false
+  traces:
+    enabled: false
+
+fluent-bit:
+  enabled: true
