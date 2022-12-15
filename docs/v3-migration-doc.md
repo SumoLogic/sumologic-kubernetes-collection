@@ -189,26 +189,29 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
 
 * **Otelagent DaemonSet**
 
-  If you're using `otelagent` (`otelagent.enabled=true`), please run the following command to manually delete DamemonSet in helm chart v2 before upgrade:
+  If you're using `otelagent` (`otelagent.enabled=true`), please run the following command to manually delete DamemonSet and ConfigMap in helm chart v2 before upgrade:
 
   ```
   kubectl delete ds --namespace=my-namespace --cascade=false my-release-sumologic-otelagent
+  kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelagent
   ```
 
 * **Otelgateway Deployment**
 
-  If you're using `otelgateway` (`otelgateway.enabled=true`), please run the following command to manually delete Deployment in helm chart v2 before upgrade:
+  If you're using `otelgateway` (`otelgateway.enabled=true`), please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
 
   ```
   kubectl delete deployment --namespace=my-namespace --cascade=false my-release-sumologic-otelgateway
+  kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelgateway
   ```
 
 * **Otelcol Deployment**
 
-  Please run the following command to manually delete Deployment in helm chart v2 before upgrade:
+  Please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
 
   ```
   kubectl delete deployment --namespace=my-namespace --cascade=false my-release-sumologic-otelcol
+  kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelcol
   ```
 
 ### Known issues
