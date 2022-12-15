@@ -36,7 +36,7 @@ In this document we detail the changes as well as the exact steps for migration.
 - Upgrading Falco helm chart to `v2.4.2` which changed their configuration:
   Please validate and adjust your configuration to new version according to [Falco documentation]
 
-- Moving parameters from `fluentd.logs.containers` to `sumologic.logs.container`
+- Moved parameters from `fluentd.logs.containers` to `sumologic.logs.container`
   - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
   - moved `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
   - moved `fluentd.logs.contianers.sourceCategory` to `sumologic.logs.container.sourceCategory`
@@ -50,7 +50,7 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.containers.perContainerAnnotationsEnabled` to `sumologic.logs.container.perContainerAnnotationsEnabled`
   - moved `fluentd.logs.containers.perContainerAnnotationPrefixes` to `sumologic.logs.container.perContainerAnnotationPrefixes`
 
-- Moving parameters from `fluentd.logs.kubelet` to `sumologic.logs.kubelet`
+- Moved parameters from `fluentd.logs.kubelet` to `sumologic.logs.kubelet`
   - moved `fluentd.logs.kubelet.sourceName` to `sumologic.logs.kubelet.sourceName`
   - moved `fluentd.logs.kubelet.sourceCategory` to `sumologic.logs.kubelet.sourceCategory`
   - moved `fluentd.logs.kubelet.sourceCategoryPrefix` to `sumologic.logs.kubelet.sourceCategoryPrefix`
@@ -60,7 +60,7 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.kubelet.excludePriorityRegex` to `sumologic.logs.kubelet.excludePriorityRegex`
   - moved `fluentd.logs.kubelet.excludeUnitRegex` to `sumologic.logs.kubelet.excludeUnitRegex`
 
-- Moving parameters from `fluentd.logs.systemd` to `sumologic.logs.systemd`
+- Moved parameters from `fluentd.logs.systemd` to `sumologic.logs.systemd`
   - moved `fluentd.logs.systemd.sourceName` to `sumologic.logs.systemd.sourceName`
   - moved `fluentd.logs.systemd.sourceCategory` to `sumologic.logs.systemd.sourceCategory`
   - moved `fluentd.logs.systemd.sourceCategoryPrefix` to `sumologic.logs.systemd.sourceCategoryPrefix`
@@ -70,7 +70,7 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.systemd.excludePriorityRegex` to `sumologic.logs.systemd.excludePriorityRegex`
   - moved `fluentd.logs.systemd.excludeUnitRegex` to `sumologic.logs.systemd.excludeUnitRegex`
 
-- Moving parameters from `fluentd.logs.default` to `sumologic.logs.defaultFluentd`
+- Moved parameters from `fluentd.logs.default` to `sumologic.logs.defaultFluentd`
   - moved `fluentd.logs.default.sourceName` to `sumologic.logs.defaultFluentd.sourceName`
   - moved `fluentd.logs.default.sourceCategory` to `sumologic.logs.defaultFluentd.sourceCategory`
   - moved `fluentd.logs.default.sourceCategoryPrefix` to `sumologic.logs.defaultFluentd.sourceCategoryPrefix`
@@ -84,6 +84,17 @@ In this document we detail the changes as well as the exact steps for migration.
   please see [upgrading section of chart's documentation][metrics-server-upgrade].
 
 - Upgrading Tailing Sidecar Operator helm chart to v0.5.5. There is no breaking change if using annotations only.
+
+- Changed `otelagent` from `DaemonSet` to `StatefulSet`
+
+- Moved parameters from `otelagent.*` to `otelcolInstrumentation.*`
+
+- Moved parameters from `otelgateway.*` to `tracesGateway.*`
+ 
+- Moved parameters from `otelcol.*` to `tracesSampler.*`
+
+- Enabled metrics and traces collection from instrumentation by default
+  - changed parameter `sumologic.traces.enabled` default value from `false` to `true`
 
 ## How to upgrade
 
@@ -148,10 +159,8 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
 
 ### Replace special configuration values marked by 'replace' suffix
 
-Mechanism to replace special configuration values for traces marked by 'replace' suffix was removed and following special values in configuration are no longer automatically replaced and they need to be changed:
+Mechanism to replace special configuration values for traces marked by 'replace' suffix was removed and following special values in configuration are no longer automatically replaced, and they need to be changed:
 
-- `exporters.otlptraces.endpoint.replace`
-- `exporters.otlpmetrics.endpoint.replace`
 - `processors.source.collector.replace`
 - `processors.source.name.replace`
 - `processors.source.category.replace`
@@ -162,10 +171,8 @@ Mechanism to replace special configuration values for traces marked by 'replace'
 - `processors.source.exclude_container_regex.replace`
 - `processors.source.exclude_host_regex.replace`
 - `processors.resource.cluster.replace`
-- `exporters.sumologic.source_name.replace`
-- `exporters.sumologic.source_category.replace`
 
-Above special configuration values can be replaced either to direct values or be set as reference to other parameters form `values.yaml`.
+Above special configuration values can be replaced either to direct values or be set as reference to other parameters from `values.yaml`.
 
 #### Otelcol StatefulSets
 
@@ -174,6 +181,32 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   ```
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
+  ```
+
+#### Tracing/Instrumentation changes
+
+**Required only if `sumologic.traces.enabled=true`.**
+
+* **Otelagent DaemonSet**
+
+  If you're using `otelagent` (`otelagent.enabled=true`), please run the following command to manually delete DamemonSet in helm chart v2 before upgrade:
+
+  ```
+  kubectl delete ds --namespace=my-namespace --cascade=false my-release-sumologic-otelagent
+  ```
+
+* **Otelgateway Deployment**
+  If you're using `otelgateway` (`otelgateway.enabled=true`), please run the following command to manually delete Deployment in helm chart v2 before upgrade:
+
+  ```
+  kubectl delete deployment --namespace=my-namespace --cascade=false my-release-sumologic-otelgateway
+  ```
+
+* **Otelcol Deployment**
+  Please run the following command to manually delete Deployment in helm chart v2 before upgrade:
+
+  ```
+  kubectl delete deployment --namespace=my-namespace --cascade=false my-release-sumologic-otelcol
   ```
 
 ### Known issues
