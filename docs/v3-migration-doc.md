@@ -196,6 +196,7 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   ```
 
 * **Otelgateway Deployment**
+
   If you're using `otelgateway` (`otelgateway.enabled=true`), please run the following command to manually delete Deployment in helm chart v2 before upgrade:
 
   ```
@@ -203,6 +204,7 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   ```
 
 * **Otelcol Deployment**
+
   Please run the following command to manually delete Deployment in helm chart v2 before upgrade:
 
   ```
