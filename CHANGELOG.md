@@ -10,8 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - chore: upgrade Fluent Bit to v2.0.6 [#2694]
+- added imagePullSecrets field in otel events and sumologic-setup template [#2689]
 
 [#2694]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2694
+[#2689]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2689
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...main
 
 ## [v3.0.0-beta.0]
@@ -117,7 +119,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: update opentelemetry-operator chart and fix progagators list in instrumentation resource [#2628]
 - feat: upgrade node-exporter to v1.4.0 [#2649]
 - feat: drop migration script for v1 [#2654]
-- added imagePullSecrets field in otel events and sumologic-setup template [#2689]
 
 ### Fixed
 
@@ -173,7 +174,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2664]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2664
 [#2653]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2653
 [#2686]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2686
-[#2689]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2689
 [#2687]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2687
 [#2693]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2693
 [#2692]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2692
