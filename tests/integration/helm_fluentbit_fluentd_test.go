@@ -41,7 +41,7 @@ func Test_Helm_FluentBit_Fluentd(t *testing.T) {
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				k8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
 				secret := k8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
-				require.Len(t, secret.Data, 11, "Secret has incorrect number of endpoints")
+				require.Len(t, secret.Data, 10, "Secret has incorrect number of endpoints")
 				return ctx
 			}).
 		Assess("fluentd logs statefulset is ready",
