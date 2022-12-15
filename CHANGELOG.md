@@ -97,9 +97,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - move parameters from `otelagent.enabled` to `otelcolInstrumentation.enabled`
   - move `otelagent.daemonset.nodeSelector` to `otelcolInstrumentation.statefulset.nodeSelector`
   - move `otelagent.daemonset.priorityClassName` to `otelcolInstrumentation.statefulset.priorityClassName`
-  - move `otelcol.deployment.replicas` to `tracesGateway.deployment.replicas`
-  - move `otelcol.deployment.nodeSelector` to `tracesGateway.deployment.nodeSelector`
-  - move `otelcol.deployment.priorityClassName` to `tracesGateway.deployment.priorityClassName`
+  - move `otelcol.deployment.replicas` to `tracesSampler.deployment.replicas`
+  - move `otelcol.deployment.nodeSelector` to `tracesSampler.deployment.nodeSelector`
+  - move `otelcol.deployment.priorityClassName` to `tracesSampler.deployment.priorityClassName`
   - move `otelgateway.deployment.nodeSelector` to `tracesGateway.deployment.nodeSelector`
 - feat: enable metrics and traces collection from instrumentation by default [#2154]
   - change parameter `sumologic.traces.enabled` default value from `false` to `true`
