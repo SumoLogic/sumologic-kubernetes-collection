@@ -1,3 +1,3 @@
 # Fluentd persistence
 
-Moved to [/docs/fluentd-persistence.md](/docs/fluentd-persistence.md)
+Moved to [/docs/fluent/fluentd-persistence.md](/docs/fluent/fluentd-persistence.md)

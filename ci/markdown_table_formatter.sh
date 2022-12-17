@@ -11,7 +11,8 @@ fi
 
 readonly FILES="docs/README.md
 docs/best-practices.md
-docs/performance.md
+docs/fluent/best-practices.md
+docs/fluent/performance.md
 deploy/helm/sumologic/README.md"
 
 
