@@ -1,3 +1,3 @@
 # Adding Additional Fluentd Plugins
 
-Moved to [/docs/additional-fluentd-plugins.md](/docs/additional-fluentd-plugins.md)
+Moved to [/docs/fluent/additional-fluentd-plugins.md](/docs/fluent/additional-fluentd-plugins.md)
