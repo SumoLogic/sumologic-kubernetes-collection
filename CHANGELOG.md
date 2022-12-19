@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: upgrade Fluent Bit to v2.0.6 [#2694]
 - added imagePullSecrets field in otel events and sumologic-setup template [#2689]
 - chore: upgrade otelcol to 0.66.0-sumo-0 [#2686] [#2687] [#2692] [#2693]
+- feat(otellogs): read from end [#2710]
 
 [#2694]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2694
 [#2689]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2689
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2687]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2687
 [#2693]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2693
 [#2692]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2692
+[#2710]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2710
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...main
 
 ## [v3.0.0-beta.0]
