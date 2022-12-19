@@ -1,24 +1,9 @@
 # Advanced Configuration / Best Practices
 
 - [Overriding chart resource names with `fullnameOverride`](#overriding-chart-resource-names-with-fullnameoverride)
-- [Multiline Log Support](#multiline-log-support)
-  - [MySQL slow logs example](#mysql-slow-logs-example)
-  - [Disable multiline detection](#disable-multiline-detection)
-- [Collecting Log Lines Over 16KB (with multiline support)](#collecting-log-lines-over-16kb-with-multiline-support)
-  - [Multiline Support](#multiline-support)
-- [Collecting logs from /var/log/pods](#collecting-logs-from-varlogpods)
-  - [Fluentd tag for /var/log/pods and /var/log/containers](#fluentd-tag-for-varlogpods-and-varlogcontainers)
-- [Choosing Fluentd Base Image](#choosing-fluentd-base-image)
-- [Fluentd Autoscaling](#fluentd-autoscaling)
-  - [CPU resources warning](#cpu-resources-warning)
-- [Fluentd File-Based Buffer](#fluentd-file-based-buffer)
-  - [Fluentd buffer size for metrics](#fluentd-buffer-size-for-metrics)
 - [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
-- [Modifying logs in Fluentd](#modifying-logs-in-fluentd)
-- [Split Big Chunks in Fluentd](#split-big-chunks-in-fluentd)
 - [Excluding Metrics](#excluding-metrics)
 - [Excluding Dimensions](#excluding-dimensions)
-- [Add a local file to fluent-bit configuration](#add-a-local-file-to-fluent-bit-configuration)
 - [Filtering Prometheus Metrics by Namespace](#filtering-prometheus-metrics-by-namespace)
 - [Modify the Log Level for Falco](#modify-the-log-level-for-falco)
 - [Overriding metadata using annotations](#overriding-metadata-using-annotations)
@@ -27,16 +12,11 @@
     - [Including subsets of excluded data](#including-subsets-of-excluded-data)
 - [Templating Kubernetes metadata](#templating-kubernetes-metadata)
   - [Missing labels](#missing-labels)
-- [Configure Ignore_Older Config for Fluentbit](#configure-ignore_older-config-for-fluentbit)
 - [Disable logs, metrics, or falco](#disable-logs-metrics-or-falco)
-- [Load Balancing Prometheus traffic between Fluentds](#load-balancing-prometheus-traffic-between-fluentds)
-  - [Using a load balancing proxy for Prometheus remote write](#using-a-load-balancing-proxy-for-prometheus-remote-write)
 - [Changing scrape interval for Prometheus](#changing-scrape-interval-for-prometheus)
 - [Get logs not available on stdout](#get-logs-not-available-on-stdout)
 - [Adding custom fields](#adding-custom-fields)
 - [Using custom Kubernetes API server address](#using-custom-kubernetes-api-server-address)
-- [Using newer Kube Prometheus Stack](#using-newer-kube-prometheus-stack)
-- [OpenTelemetry queueing and batching](#opentelemetry-queueing-and-batching)
   - [Compaction](#compaction)
   - [Examples](#examples)
     - [Outage with huge metrics spike](#outage-with-huge-metrics-spike)
@@ -44,7 +24,6 @@
 - [Assigning Pod to particular Node](#assigning-pod-to-particular-node)
   - [Using NodeSelectors](#using-nodeselectors)
     - [Binding pods to linux nodes](#binding-pods-to-linux-nodes)
-- [Disable Thanos](#disable-thanos)
 - [Parsing log content as json](#parsing-log-content-as-json)
 
 ## Overriding chart resource names with `fullnameOverride`
@@ -78,13 +57,13 @@ kps-operator-6c8999bdfb-b4pks                        1/1     Running       0    
 ksm-5dbd694cbd-mk4bd                                 1/1     Running       0          91s
 pne-r64tk                                            1/1     Running       0          91s
 prometheus-kps-prometheus-0                          3/3     Running       1          79s
-sl-fluentd-events-0                                  1/1     Running       0          91s
-sl-fluentd-logs-0                                    1/1     Running       0          91s
-sl-fluentd-logs-1                                    1/1     Running       0          90s
-sl-fluentd-logs-2                                    1/1     Running       0          90s
-sl-fluentd-metrics-0                                 1/1     Running       0          90s
-sl-fluentd-metrics-1                                 1/1     Running       0          90s
-sl-fluentd-metrics-2                                 1/1     Running       0          90s
+sl-otelcol-events-0                                  1/1     Running       0          91s
+sl-otelcol-logs-0                                    1/1     Running       0          91s
+sl-otelcol-logs-1                                    1/1     Running       0          90s
+sl-otelcol-logs-2                                    1/1     Running       0          90s
+sl-otelcol-metrics-0                                 1/1     Running       0          90s
+sl-otelcol-metrics-1                                 1/1     Running       0          90s
+sl-otelcol-metrics-2                                 1/1     Running       0          90s
 ```
 
 ⚠️ **Note:** When changing the `fullnameOverride` property for an already installed chart with the `helm upgrade` command,
@@ -102,465 +81,13 @@ that needs to be set separately to change the names of the resources created by 
 
 See the chart's [README](/deploy/helm/sumologic/README.md) for all the available `fullnameOverride` properties.
 
-## Multiline Log Support
+## OpenTelemetry Collector Autoscaling
 
-For logs in Docker format by default, we use a regex that matches the first line of multiline logs
-that start with dates in the following format: `2019-11-17 07:14:12`.
+:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#fluentd-autoscaling)
 
-If your logs have a different date format you can provide a custom regex to detect
-the first line of multiline logs.
-See [collecting multiline logs](https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs/) for details
-on configuring a boundary regex.
+## OpenTelemetry Collector File-Based Buffer
 
-New parsers can be defined under the `fluent-bit.config.customParsers` key in
-`user-values.yaml` file as follows:
-
-```yaml
-fluent-bit:
-  config:
-    customParsers: |
-      [PARSER]
-          Name        multi_line
-          Format      regex
-          Regex       (?<log>^{"log":"\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
-      [PARSER]
-          Name        new_multi_line_parser
-          Format      regex
-          Regex       (?<log>^{"log":"\d{2}:\d{2}:\d{2}.*)
-```
-
-This way one can add a parser called `new_multi_line_parser` which matches lines
-that start with time of the format : `07:14:12`.
-
-To start using the newly defined parser, define it in `Docker_Mode_Parser` parameter
-in the `Input plugin` configuration of fluent-bit in `user-values.yaml` under
-`fluent-bit.config.inputs`:
-
-```
-Docker_Mode_Parser new_multi_line_parser
-```
-
-The regex used for needs to have at least one named capture group.
-
-For detailed information about parsing container logs please see [here](container-logs.md).
-
-### MySQL slow logs example
-
-For example to detect mulitlines for `slow logs` correctly,
-ensure that `Fluent Bit` reads `slow log` files and update your configuration
-with following snippet:
-
-```
-fluent-bit:
-  config:
-    customParsers: |
-      [PARSER]
-          Name        multi_line
-          Format      regex
-          Regex       (?<log>^{"log":"(\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*|#\sTime:\s+.*))
-```
-
-### Disable multiline detection
-
-To disable multiline detection, remove the `Docker_Mode_Parser  multi_line` setting from Fluent Bit's configuration
-in `fluent-bit.config.inputs` property.
-
-Note that to remove this line, the whole value of the `fluent-bit.config.inputs` property must be copied into your `user-values.yaml` file with that single line removed:
-
-```yaml
-fluent-bit:
-  config:
-    inputs: |
-      [INPUT]
-          Name                tail
-          Path                /var/log/containers/*.log
-          Docker_Mode         On
-          Tag                 containers.*
-          Refresh_Interval    1
-          Rotate_Wait         60
-          Mem_Buf_Limit       5MB
-          Skip_Long_Lines     On
-          DB                  /tail-db/tail-containers-state-sumo.db
-          DB.Sync             Normal
-      [INPUT]
-          Name            systemd
-          Tag             host.*
-          DB              /tail-db/systemd-state-sumo.db
-          Systemd_Filter  _SYSTEMD_UNIT=addon-config.service
-          Systemd_Filter  _SYSTEMD_UNIT=addon-run.service
-          Systemd_Filter  _SYSTEMD_UNIT=cfn-etcd-environment.service
-          Systemd_Filter  _SYSTEMD_UNIT=cfn-signal.service
-          Systemd_Filter  _SYSTEMD_UNIT=clean-ca-certificates.service
-          Systemd_Filter  _SYSTEMD_UNIT=containerd.service
-          Systemd_Filter  _SYSTEMD_UNIT=coreos-metadata.service
-          Systemd_Filter  _SYSTEMD_UNIT=coreos-setup-environment.service
-          Systemd_Filter  _SYSTEMD_UNIT=coreos-tmpfiles.service
-          Systemd_Filter  _SYSTEMD_UNIT=dbus.service
-          Systemd_Filter  _SYSTEMD_UNIT=docker.service
-          Systemd_Filter  _SYSTEMD_UNIT=efs.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd-member.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd2.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd3.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-check.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-reconfigure.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-save.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-update-status.service
-          Systemd_Filter  _SYSTEMD_UNIT=flanneld.service
-          Systemd_Filter  _SYSTEMD_UNIT=format-etcd2-volume.service
-          Systemd_Filter  _SYSTEMD_UNIT=kube-node-taint-and-uncordon.service
-          Systemd_Filter  _SYSTEMD_UNIT=kubelet.service
-          Systemd_Filter  _SYSTEMD_UNIT=ldconfig.service
-          Systemd_Filter  _SYSTEMD_UNIT=locksmithd.service
-          Systemd_Filter  _SYSTEMD_UNIT=logrotate.service
-          Systemd_Filter  _SYSTEMD_UNIT=lvm2-monitor.service
-          Systemd_Filter  _SYSTEMD_UNIT=mdmon.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-idmapd.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-mountd.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-server.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-utils.service
-          Systemd_Filter  _SYSTEMD_UNIT=node-problem-detector.service
-          Systemd_Filter  _SYSTEMD_UNIT=ntp.service
-          Systemd_Filter  _SYSTEMD_UNIT=oem-cloudinit.service
-          Systemd_Filter  _SYSTEMD_UNIT=rkt-gc.service
-          Systemd_Filter  _SYSTEMD_UNIT=rkt-metadata.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpc-idmapd.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpc-mountd.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpc-statd.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpcbind.service
-          Systemd_Filter  _SYSTEMD_UNIT=set-aws-environment.service
-          Systemd_Filter  _SYSTEMD_UNIT=system-cloudinit.service
-          Systemd_Filter  _SYSTEMD_UNIT=systemd-timesyncd.service
-          Systemd_Filter  _SYSTEMD_UNIT=update-ca-certificates.service
-          Systemd_Filter  _SYSTEMD_UNIT=user-cloudinit.service
-          Systemd_Filter  _SYSTEMD_UNIT=var-lib-etcd2.service
-          Max_Entries     1000
-          Read_From_Tail  true
-```
-
-## Collecting Log Lines Over 16KB (with multiline support)
-
-Docker daemon has a limit of 16KB/line so if a log line is longer than that,
-it might be truncated in Sumo.
-To fix this, fluent-bit exposes a parameter:
-
-``` bash
-Docker_Mode  On
-```
-
-If enabled, the plugin will recombine split Docker log lines before passing them to any parser.
-
-### Multiline Support
-
-To add multiline support to docker mode, you need to follow the
-[multiline log support](#multiline-log-support) section and assign created parser
-to the `Docker_Mode_Parser` parameter in the `Input plugin` configuration of fluent-bit:
-
-```
-Docker_Mode_Parser multi_line
-```
-
-## Collecting logs from /var/log/pods
-
-In order to collect logs from `/var/log/pods`,
-please copy full `fluent-bit.config.inputs` section from [values.yaml](/deploy/helm/sumologic/values.yaml)
-and change `Path` to `/var/log/pods/*/*/*.log`.
-
-In addition, Fluentd and/or OpenTelemetry configuration should be changed as well.
-
-Please take a look at the following examples which contains all of required changes:
-
-```yaml
-fluent-bit:
-  config:
-    inputs: |
-      [INPUT]
-          Name                tail
-          Path                /var/log/pods/*/*/*.log
-          Parser              containerd
-          Tag                 containers.*
-          Refresh_Interval    1
-          Rotate_Wait         60
-          Mem_Buf_Limit       5MB
-          Skip_Long_Lines     On
-          DB                  /tail-db/tail-containers-pods-state-sumo.db
-          DB.Sync             Normal
-      # ... Rest of fluent-bit configuration comes here
-
-## Fluentd change
-fluentd:
-  logs:
-    containers:
-      k8sMetadataFilter:
-        ## uses docker_id as alias for uid as it's being used in plugin's code directly
-        tagToMetadataRegexp: .+?\.pods\.(?<namespace>[^_]+)_(?<pod_name>[^_]+)_(?<docker_id>(?<uid>[a-f0-9\-]{36}))\.(?<container_name>[^\._]+)\.(?<run_id>\d+)\.log$
-
-## OpenTelemetry change
-metadata:
-  logs:
-    config:
-      merge:
-        processors:
-          attributes/containers:
-            actions:
-              - action: extract
-                key: fluent.tag
-                pattern: ^containers\.var\.log\.pods\.(?P<k8s_namespace>[^_]+)_(?P<k8s_pod_name>[^_]+)_(?P<k8s_uid>[a-f0-9\-]{36})\.(?P<k8s_container_name>[^\._]+)\.(?P<k8s_run_id>\d+)\.log$
-              - action: delete
-                key: k8s_uid
-              - action: delete
-                key: k8s_run_id
-              - action: insert
-                key: k8s.pod.name
-                from_attribute: k8s_pod_name
-              - action: delete
-                key: k8s_pod_name
-              - action: insert
-                key: k8s.namespace.name
-                from_attribute: k8s_namespace
-              - action: delete
-                key: k8s_namespace
-              - action: insert
-                key: k8s.container.name
-                from_attribute: k8s_container_name
-              - action: delete
-                key: k8s_container_name
-```
-
-### Fluentd tag for /var/log/pods and /var/log/containers
-
-[Fluentd tag][fluent_routing] value depends on directory from which logs are scraped:
-
-- `/var/log/pods` is resolved to `containers.var.log.pods.<namespace>_<pod>_<container_id>.<container>.<run_id>.log`
-- `/var/log/containers` is resolved to `containers.var.log.containers.<pod>_<namespace>_<container>-<container_id>.log`
-
-e.g. if you want to use additional [filter][fluentd_filter] for container `test-container`,
-you need to use the following Fluentd [filter][fluentd_filter] directive header:
-
-- `<filter containers.var.log.pods.*_*_*.test-container.*.log>` for `/var/log/pods`
-- `<filter containers.var.log.containers.*_*_test-container-*.log>` for `/var/log/containers`
-- `<filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>`
-  to support both `/var/log/pods` and `/var/log/containers`
-
-[fluentd_filter]: https://docs.fluentd.org/filter
-[fluent_routing]: https://docs.fluentd.org/configuration/config-file#interlude-routing
-
-## Choosing Fluentd Base Image
-
-Historically, the Fluentd container image used with the collection was based on Debian Linux distribution.
-
-Currently, an Alpine-based image is also available and can be used instead of the Debian-based image.
-
-The Debian-based image is the default, so you do not need to change anything to use it.
-
-To use an Alpine-based image with the collection, specify an Alpine image's tag in `fluentd.image.tag` chart property:
-
-```yaml
-fluentd:
-  image:
-    tag: <Fluentd-release>-alpine
-```
-
-For example:
-
-```yaml
-fluentd:
-  image:
-    tag: 1.12.2-sumo-6-alpine
-```
-
-Go to the [official Sumo Logic's Fluentd image repository](https://gallery.ecr.aws/sumologic/kubernetes-fluentd)
-to find the latest release of Fluentd.
-The Alpine-based releases are the ones with the `-alpine` suffix.
-
-Both Debian-based and Alpine-based images support the same architectures:
-
-- x86-64,
-- ARM 32-bit,
-- ARM 64-bit.
-
-The source code and the `Dockerfile`s for both images can be found at https://github.com/SumoLogic/sumologic-kubernetes-fluentd.
-
-## Fluentd Autoscaling
-
-We have provided an option to enable autoscaling for both logs and metrics Fluentd statefulsets.
-This is disabled by default.
-
-Whenever your Fluentd pods CPU consumption is near the limit you could experience a [delay in data ingestion
-or even a data loss](monitoring-lag.md) in extreme situations. In such cases you should enable the autoscaling.
-
-To enable autoscaling for Fluentd:
-
-- Enable metrics-server dependency
-
-  Note: If metrics-server is already installed, this step is not required.
-
-  ```yaml
-  ## Configure metrics-server
-  ## ref: https://github.com/bitnami/charts/tree/master/bitnami/metrics-server/values.yaml
-  metrics-server:
-    enabled: true
-  ```
-
-- Allow metrics-server communication with kubelet for [KOPS](https://github.com/kubernetes/kops)
-
-  Note: This step is required only for KOPS clusters
-
-  ```yaml
-  ## This goes to the kops cluster configuration file
-  kubelet:
-     # ...
-     ## Enable webhook authorization for KOPS cluster
-     ## rel: https://github.com/kubernetes/kops/issues/7200
-     authenticationTokenWebhook: true
-     authorizationMode: Webhook
-  ```
-
-- Enable autoscaling for Logs Fluentd statefulset
-
-  ```yaml
-  fluentd:
-    logs:
-      ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
-      autoscaling:
-        enabled: true
-  ```
-
-- Enable autoscaling for Metrics Fluentd statefulset
-
-  ```yaml
-  fluentd:
-    metrics:
-      ## Option to turn autoscaling on for fluentd and specify metrics for HPA.
-      autoscaling:
-        enabled: true
-  ```
-
-### CPU resources warning
-
-When enabling the Fluentd Autoscaling please make sure to set Fluentd's `resources.requests.cpu` properly.
-Because of Fluentd's single threaded nature it rarely consumes more than `1000m` CPU (1 CPU core).
-
-For example setting `resources.requests.cpu=2000m` and the `autoscaling.targetCPUUtilizationPercentage=50` means
-that autoscaling will increase the number of application pods only if average CPU usage across all application pods
-in statefulset or daemonset is more than `1000m`. This combined with Fluentd's usage of around `1000m` at most will
-result in autoscaling not working properly.
-
-**For this reason we suggest to set the Fluentd's `resources.requests.cpu=1000m` or less when using autoscaling.**
-
-## Fluentd File-Based Buffer
-
-Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less
-reliable in-memory buffer.
-
-The buffer configuration can be set in the `user-values.yaml` file under the `fluentd`
-key as follows:
-
-```yaml
-fluentd:
-  ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
-  persistence:
-    ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluentd-persistence.md
-    enabled: true
-```
-
-After changing Fluentd persistence setting (enable or disable) follow steps described in [Fluentd Persistence](fluentd-persistence.md).
-
-Additional buffering and flushing parameters can be added in the `extraConf`,
-in the `fluentd` buffer section.
-
-```yaml
-fluentd:
-## Option to specify the Fluentd buffer as file/memory.
-   buffer:
-     type : "file"
-     extraConf: |-
-       retry_exponential_backoff_base 2s
-```
-
-We have defined several file paths where the buffer chunks are stored.
-These can be observed under `fluentd.buffer.filePaths` key in `values.yaml`.
-
-Once the config has been modified in the `user-values.yaml` file you need to run
-the `helm upgrade` command to apply the changes.
-
-```bash
-helm upgrade collection sumologic/sumologic --reuse-values -f user-values.yaml --force
-```
-
-See the following links to official Fluentd buffer documentation:
-
-- https://docs.fluentd.org/configuration/buffer-section
-- https://docs.fluentd.org/buffer/file
-
-### Fluentd buffer size for metrics
-
-Should you have any connectivity problems, depending on the buffer size your setup will
-be able to survive for a given amount of time without a data loss, delivering the data
-later when everything is operational again.
-
-The FluentD buffer size is controlled by two major parameters - the size of the persistent volume
-in Kubernetes, and the maximum size of the buffer on disk. Both need to be adjusted if you want
-to buffer more (or less) data.
-
-For example:
-
-```yaml
-fluentd:
-  ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
-  persistence:
-    ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluentd-persistence.md
-    enabled: true
-    size: 20Gi
-  buffer:
-    ## totalLimitSize should be multiplication of `chunkLimitSize`, `queueChunkLimitSize` and number of filePath (maximum of `logs`, `metrics`, `traces`, `events`)
-    totalLimitSize: "20G"
-```
-
-The `fluentd.buffer` section contains other settings for FluentD buffering.
-Please study relevant documentation for `chunkLimitSize` and `queueChunkLimitSize`:
-
-- https://docs.fluentd.org/configuration/buffer-section
-- https://docs.fluentd.org/buffer/file
-
-For bigger chunks, we recommend to use [split and retry mechanism](#split-big-chunks-in-fluentd) included into sumologic output plugin.
-
-To calculate this time you need to know how much data you send. For the calculations below
-we made an assumption that a single metric data point is around 1 kilobyte in size, including
-metadata. This assumption is based on the average data we ingest. By default, for file based
-buffering we use gzip compression which gives us around 3:1 compress ratio.
-
-That results in `1 DPM` (Data Points per Minute) using around `333 bytes of buffer`. That is
-`333 kilobytes for 1 thousand DPM` and `333 megabytes for 1 million DPM`. In other words - storing
-a million data points will use a 333 megabytes of buffer every minute.
-
-This buffer size can be spread between multiple Fluentd instances. To have the best results you
-should use the metrics load balancing which can be enabled by using the following setting:
-`sumologic.metrics.remoteWriteProxy.enabled=true`. It enables the remote write proxy where nginx
-is being used to forward data from Prometheus to Fluentds. We strongly recommend using this
-setting as in case of uneven load your buffer storage is as big as single Fluentd instance buffer.
-Unfortunately even with `remoteWriteProxy` enabled you might experience uneven load. Because of
-that we also `recommend to make your buffers twice the calculated size`.
-
-The formula to calculate the buffering time:
-
-```
-minutes = (PV size in bytes * Fluentd instances) / (DPM * 333 bytes)
-```
-
-Example 1:
-My cluster sends 10 thousand DPM to Sumo. I'm using default 10 gb of buffer size. I'm also using
-3 Fluentd instances. That gives me 30 gb of buffers in total (3 * 10 gb). I'm using 3.33 mb per
-minute. My setup should be able to hold data for 9000 minutes, that is 150 hours or 6.25 days.
-We recommend treating this as 4500 minutes, that is 75 hours or 3.12 days of buffer.
-
-Example 2:
-My cluster sends 1 million DPM to Sumo. I'm using 20 gb of buffer size. I'm using 20 Fluentd
-instances. I have 400 gb of buffers in total (20 * 20 gb). I'm using 333 mb of buffer every minute.
-My setup should be able to hold data for around 1200 minutes, that is 20 hours. We recommend treating
-this as 600 minutes, that is 10 hours of buffer.
+:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#fluentd-file-based-buffer)
 
 ## Excluding Logs From Specific Components
 
@@ -591,234 +118,25 @@ excludePodRegex
   excludeNamespaceRegex: “(sumologic|kube-public)”
   ```
 
-If you wish to exclude logs based on the content of the log message, you can leverage
-the fluentd `grep` filter plugin.
-We expose `fluentd.logs.containers.extraFilterPluginConf` which allows you to inject
-additional filter plugins to process data.
-For example suppose you want to exclude the following log messages:
+:construction: *TODO*, explain how to filter based on log message here
 
-```
-.*connection accepted from.*
-.*authenticated as principal.*
-.*client metadata from.*
-```
+## Modifying logs
 
-You can simply add the following to your `user-values.yaml`:
-
-```yaml
-fluentd:
-  logs:
-    containers:
-      extraFilterPluginConf: |-
-        <filter containers.**>
-          @type grep
-          <exclude>
-            key log
-            pattern /(.*connection accepted from.*|.*authenticated as principal.*|.*client metadata from.*)/
-          </exclude>
-        </filter>
-```
-
-You can find more information on the `grep` filter plugin in the
-[fluentd documentation](https://docs.fluentd.org/filter/grep).
-
-## Modifying logs in Fluentd
-
-You can redact log messages in order to e.g. prevent sending sensitive data like passwords.
-
-In order to do that [record_transformer filter][record_transformer] can be used.
-Please consider the following configuration:
-
-```yaml
-fluentd:
-  logs:
-    containers:
-      extraFilterPluginConf: |-
-          # Apply to all test-container containers
-          <filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>
-            @type record_transformer
-            enable_ruby
-            <record>
-              # Replace `Password: <pass>` with `Password: ***`
-              log ${record["log"].gsub(/Password: (.*)/, 'Password: ***')}
-              # Replace kubernetes['namespace_name'] with 'REDACTED'
-              # if namespace_name exists in record['kubernetes'], then change value of it and then return modified record['kubernetes'] to assign as kubernetes
-              kubernetes = ${if record['kubernetes'].has_key?('namespace_name'); record['kubernetes']['namespace_name'] = "REDACTED"; end; record['kubernetes']}
-            </record>
-          </filter>
-```
-
-It is going to replace all `Password: <pass>` occurence in logs with `Password: ***` and replace namespace to `REDACTED`
-for [all containers](#fluentd-tag-for-varlogpods-and-varlogcontainers) named `test-container`.
-
-An example log before entering the `extraFilterPluginConf` section is presented below:
-
-```json
-{
-  "stream": "stdout",
-  "logtag": "F",
-  "log": "Password: 123456",
-  "docker": {
-    "container_id": "a1acfd70-c8d1-456b-95dd-515f1256906f"
-  },
-  "kubernetes": {
-    "container_name": "test-container",
-    "namespace_name": "multiline-logs-generator",
-    "pod_name": "multiline-logs-generator",
-    "pod_id": "a1acfd70-c8d1-456b-95dd-515f1256906f",
-    "host": "sumologic-kubernetes-collection",
-    "labels": {
-      "example": "multiline-logs-generator"
-    },
-    "master_url": "https://10.152.183.1:443/api",
-    "namespace_id": "3e6d679e-f9f4-4333-966c-a8354457f8f4",
-    "namespace_labels": {
-      "kubernetes.io/metadata.name": "multiline-logs-generator"
-    }
-  }
-}
-```
-
-[record_transformer]: https://docs.fluentd.org/filter/record_transformer
-
-## Split Big Chunks in Fluentd
-
-In order to support big chunks we have added split and retry mechanism into out output plugin.
-It is recommended to use it in order to process big chunks.
-It also fixes [logs duplication](troubleshoot-collection.md#duplicated-logs).
-Please consider the following configuration in order to use it:
-
-```yaml
-fluentd:
-  logs:
-    output:
-      extraConf: |-
-        ## use plugin's retry mechanisms, which uses exponential algorithm
-        use_internal_retry true
-        ## sets minimum retry interval to 5s
-        retry_min_interval 5s
-        ## sets maximum retry interval to 10m
-        retry_max_interval 10m
-        ## timeout after 72h
-        retry_timeout 72h
-        ## do not limit number of requests
-        retry_max_times 0
-        ## set maximum request size to 16m to avoid timeouts
-        max_request_size 16m
-  metrics:
-    extraOutputConf: |-
-      ## use plugin's retry mechanisms, which uses exponential algorithm
-      use_internal_retry true
-      ## sets minimum retry interval to 5s
-      retry_min_interval 5s
-      ## sets maximum retry interval to 10m
-      retry_max_interval 10m
-      ## timeout after 72h
-      retry_timeout 72h
-      ## do not limit number of requests
-      retry_max_times 0
-      # Set maximum request size to 16m to avoid timeouts
-      max_request_size 16m
-```
+:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#modifying-logs-in-fluentd)
 
 ## Excluding Metrics
 
-You can filter out metrics directly in promethus using [this documentation](additional-prometheus-configuration.md#filter-metrics).
+You can filter out metrics directly in Prometheus using [this documentation](additional-prometheus-configuration.md#filter-metrics).
 
-You can also exclude metrics by any tag in Fluentd.
-For example to filter out metrics from `sumologic` namespace, you can use following configuration:
-
-```yaml
-fluentd:
-  metrics:
-    extraFilterPluginConf: |-
-      <filter **>
-        @type grep
-          <exclude>
-            key namespace
-            pattern /^sumologic$/
-          </exclude>
-      </filter>
-```
+:construction: *TODO*, explain how to do it in OT, see [the FluentD section](fluent/best-practices.md#excluding-metrics)
 
 ## Excluding Dimensions
 
-You can also exclude dimensions in Fluentd using [record_transformer plugin][record_transformer plugin].
-For example to filter out `pod_labels_operator.prometheus.io/name` and `cluster` dimensions,
-you can use the following configuration:
+:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#excluding-metrics)
 
-```yaml
-fluentd:
-  metrics:
-    extraFilterPluginConf: |-
-      <filter **>
-        @type record_transformer
-        remove_keys $['pod_labels']['operator.prometheus.io/name'],$.cluster
-      </filter>
-```
+## Collect logs from additional files on the Node
 
-Example metric structure which is an input for `extraFilterPluginConf` is presented in the following snippet:
-
-```json
-{
-  "@metric": "container_memory_working_set_bytes",
-  "cluster": "my-cluster",
-  "container": "thanos-sidecar",
-  "endpoint": "https-metrics",
-  "image": "public.ecr.aws/sumologic/thanos:v0.23.1",
-  "instance": "10.0.2.15:10250",
-  "job": "kubelet",
-  "metrics_path": "/metrics/cadvisor",
-  "namespace": "sumologic",
-  "node": "sumologic-kubernetes-collection",
-  "pod": "prometheus-collection-kube-prometheus-prometheus-0",
-  "prometheus": "sumologic/collection-kube-prometheus-prometheus",
-  "prometheus_replica": "prometheus-collection-kube-prometheus-prometheus-0",
-  "@timestamp": 1645772362877,
-  "@value": 21032960,
-  "prometheus_service": "collection-kube-prometheus-kubelet",
-  "pod_labels": {
-    "app": "prometheus",
-    "controller-revision-hash": "prometheus-collection-kube-prometheus-prometheus-5f68598c76",
-    "operator.prometheus.io/name": "collection-kube-prometheus-prometheus",
-    "operator.prometheus.io/shard": "0",
-    "prometheus": "collection-kube-prometheus-prometheus",
-    "statefulset.kubernetes.io/pod-name": "prometheus-collection-kube-prometheus-prometheus-0"
-  },
-  "service": "collection-kube-prometheus-prometheus_prometheus-operated",
-  "statefulset": "prometheus-collection-kube-prometheus-prometheus"
-}
-```
-
-[record_transformer plugin]: https://docs.fluentd.org/filter/record_transformer
-
-## Add a local file to fluent-bit configuration
-
-If you want to capture container logs to a container that writes locally,
-you will need to ensure the logs get mounted to the host so fluent-bit can be
-configured to capture from the host.
-
-Example:
-In `user-values.yaml` in the `fluent-bit.config.input` section, you have to add
-a new `INPUT` specifying the file path (retaining the remaining part of `input`
-config), e.g.:
-
-```yaml
-fluent-bit:
-  config:
-    # ...
-    inputs: |-
-      # Copy original fluent-bit.config.inputs here
-      # ...
-      [INPUT]
-          Name        tail
-          Path        /var/log/syslog
-```
-
-Reference: https://docs.fluentbit.io/manual/pipeline/inputs/tail#configuration-file
-
-**Notice:** In some cases Tailing Sidecar Operator may help in getting logs not available on standard output (STDOUT),
-please see section [Get logs not available on stdout](#get-logs-not-available-on-stdout).
+:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#add-a-local-file-to-fluent-bit-configuration)
 
 ## Filtering Prometheus Metrics by Namespace
 
@@ -869,8 +187,6 @@ falco:
 You can use [Kubernetes annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/)
 to override some metadata and settings per pod.
 
-- `sumologic.com/format` overrides the value of the `fluentd.logs.output.logFormat` property.
-  Using `text` can break multiline detection. Check out [Troubleshooting Collection](troubleshoot-collection.md#using-text-format)
 - `sumologic.com/sourceCategory` overrides the value of the `sumologic.logs.container.sourceCategory` property
 - `sumologic.com/sourceCategoryPrefix` overrides the value of the `sumologic.logs.container.sourceCategoryPrefix` property
 - `sumologic.com/sourceCategoryReplaceDash` overrides the value of the `sumologic.logs.container.sourceCategoryReplaceDash`
@@ -1026,48 +342,6 @@ interpolate as `"undefined"`.
 For example, if you have only the label `app: travel` but you define
 `SOURCE_NAME="%{label:app}@%{label:version}"`, the source name will appear as `travel@undefined`.
 
-## Configure Ignore_Older Config for Fluentbit
-
-We have observed that the  `Ignore_Older` config does not work when `Multiline` is set to `On`.
-Default config:
-
-```
-    [INPUT]
-        Name             tail
-        Path             /var/log/containers/*.log
-        Multiline        On
-        Parser_Firstline multi_line
-        Tag              containers.*
-        Refresh_Interval 1
-        Rotate_Wait      60
-        Mem_Buf_Limit    5MB
-        Skip_Long_Lines  On
-        DB               /tail-db/tail-containers-state-sumo.db
-        DB.Sync          Normal
-```
-
-Please make the below changes to the `INPUT` section to turn off `Multiline` and
-add a `docker` parser to parse the time for `Ignore_Older` functionality to work properly.
-
-<pre>
-[INPUT]
-    Name             tail
-    Path             /var/log/containers/*.log
-    <b>Multiline        Off</b>
-    Parser_Firstline multi_line
-    Tag              containers.*
-    Refresh_Interval 1
-    Rotate_Wait      60
-    Mem_Buf_Limit    5MB
-    Skip_Long_Lines  On
-    DB               /tail-db/tail-containers-state-sumo.db
-    DB.Sync          Normal
-    <b>Ignore_Older     24h</b>
-    <b>Parser           Docker</b>
-</pre>
-
-Ref: https://docs.fluentbit.io/manual/pipeline/inputs/tail
-
 ## Disable logs, metrics, or falco
 
 If you want to disable the collection of logs, metrics, or falco, make the below changes
@@ -1078,42 +352,6 @@ respectively in the `user-values.yaml` file and run the `helm upgrade` command.
 | `sumologic.logs.enabled`    | false | disable logs collection    |
 | `sumologic.metrics.enabled` | false | disable metrics collection |
 | `falco.enabled`             | false | disable falco              |
-
-## Load Balancing Prometheus traffic between Fluentds
-
-Equal utilization of the Fluentd pods is important for collection process.
-Unfortunately, Prometheus opens a single persistent connection for each remote write target.
-As Kubernetes Services do TCP load balancing on the node level using iptables, rather than
-actually proxying the connections, this results in a single FluentD pod getting all the traffic
-for a particular remote write target until a timeout or reset occurs.
-
-If the Fluentd pod is under high pressure, incoming connections can be handled with some delay.
-To avoid backpressure, `remote_timeout` configuration options for Prometheus' `remote_write` can be used.
-By default this is `30s`, which means that Prometheus is going to wait such amount of time
-for connection to specific fluentd before trying to reach another.
-This significantly decreases performance and can lead to the Prometheus memory issues,
-so we decided to override it with `5s`.
-
-```yaml
-kube-prometheus-stack:
-  prometheus:
-    prometheusSpec:
-      additionalScrapeConfigs:
-        - #...
-          remoteTimeout: 5s
-```
-
-**NOTE** We observed that changing this value increases metrics loss during prometheus resharding,
-but the traffic is much better balanced between Fluentds and Prometheus is more stable in terms of memory.
-
-### Using a load balancing proxy for Prometheus remote write
-
-In environments with a high volume of metrics (problems may start appearing around 30k samples per second),
-the above mitigations may not be sufficient. It is possible to remedy the problem by sharding Prometheus
-itself, but that can be complicated to set up and require manual intervention to scale.
-
-A simpler alternative is to put a HTTP load balancer between Prometheus and the metrics metadata Service.
-This can be enabled in `user-values.yaml` via the `sumologic.metrics.remoteWriteProxy.enabled` key.
 
 ## Changing scrape interval for Prometheus
 
@@ -1158,68 +396,11 @@ Example of using Tailing Sidecar Operator is described in the
 
 ## Adding custom fields
 
-In order to add custom fields to container logs, the following configuration has to be applied:
-
-```yaml
-fluentd:
-  logs:
-    containers:
-      extraFilterPluginConf: |
-        <filter **>
-          @type record_modifier
-          <record>
-            _sumo_metadata ${{:_fields => "<DEFINITION OF CUSTOM FIELDS>"}}
-          </record>
-        </filter>
-      extraOutputPluginConf: |
-        <filter **>
-          @type record_modifier
-          <record>
-            _sumo_metadata ${record["_sumo_metadata"][:fields] = "#{record["_sumo_metadata"][:fields]},#{record["_sumo_metadata"][:_fields]}"; record["_sumo_metadata"]}
-          </record>
-        </filter>
-```
-
-where `<DEFINITION OF CUSTOM FIELDS>` has to be `key1=value1,key2=value2,...` formatted string.
-
-**NOTE** Do not forget to [add field in Sumo Logic service][sumo_add_fields]
-
-[sumo_add_fields]: https://help.sumologic.com/docs/manage/fields/#add-field
-
-Please consider the following configuration which adds `container_image` from kubernetes enrichment.
-
-```yaml
-fluentd:
-  logs:
-    containers:
-      extraFilterPluginConf: |
-        <filter **>
-          @type record_modifier
-          <record>
-            _sumo_metadata ${{:_fields => "container_image=#{record["kubernetes"]["container_image"]}"}}
-          </record>
-        </filter>
-      extraOutputPluginConf: |
-        <filter **>
-          @type record_modifier
-          <record>
-            _sumo_metadata ${record["_sumo_metadata"][:fields] = "#{record["_sumo_metadata"][:fields]},#{record["_sumo_metadata"][:_fields]}"; record["_sumo_metadata"]}
-          </record>
-        </filter>
-```
+:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#adding-custom-fields)
 
 ## Using custom Kubernetes API server address
 
 In order to change API server address, the following configurations can be used.
-
-For the Fluentd:
-
-```yaml
-fluentd:
-  apiServerUrl: http://my-custom-k8s.api:12345
-```
-
-For the Opentelemetry Collector:
 
 ```yaml
 metadata:
@@ -1239,99 +420,7 @@ metadata:
         value: '12345'
 ```
 
-## Using newer Kube Prometheus Stack
-
-Due to breaking changes, we do not support the latest Kube Prometheus Stack.
-We are aware that it can be a major issue, so this section describes how to install Kube Prometheus Stack in version `34.10.0`
-to work with our collection.
-
-1. Prepare [values-prometheus.yaml] with Kube Prometheus Stack configuration:
-
-   - copy content of `kube-prometheus-stack` from [values.yaml]
-   - add the following configuration:
-
-     ```yaml
-     prometheus:
-       prometheusSpec:
-         initContainers:
-           - name: "init-config-reloader"
-             env:
-               - name: FLUENTD_METRICS_SVC
-                 valueFrom:
-                   configMapKeyRef:
-                     name: sumologic-configmap
-                     key: fluentdMetrics
-               - name: NAMESPACE
-                 valueFrom:
-                   configMapKeyRef:
-                     name: sumologic-configmap
-                     key: fluentdNamespace
-     ```
-
-   - remove the following configuration:
-
-     ```yaml
-     kube-state-metrics:
-       ## Use the GCR repo, it's more recent and has ARM images starting from 1.9.8
-       image:
-         repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
-         tag: v1.9.8
-     prometheus-node-exporter:
-       image:
-         tag: v1.3.1
-     ```
-
-   - add your custom prometheus configuration
-
-1. [Upgrade sumologic chart](./installation-with-helm.md#upgrading-sumo-logic-collection) without `kube-prometheus-stack`
-   by adding the following configuration to your `user-values.yaml`:
-
-   ```yaml
-   kube-prometheus-stack:
-     enabled: false
-   ```
-
-1. [Install CRD for Kube Prometheus Stack][kube-prometheus-stack-crd]:
-
-   ```bash
-   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
-   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
-   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
-   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
-   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
-   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
-   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
-   kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
-   ```
-
-1. [Install Kube Prometheus Stack][kube-prometheus-stack] in the same namespace which collection has been installed:
-
-   ```bash
-   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-   helm repo update
-
-   helm install kube-prometheus prometheus-community/kube-prometheus-stack \
-     --namespace <NAMESPACE> \
-     --version 34.10.0 \
-     -f values-prometheus.yaml
-   ```
-
-**NOTE** Some metrics were changed in newer version of kube-prometheus-stack:
-
-- `prometheus_remote_storage_succeeded_samples_total` replaced with `prometheus_remote_storage_samples_total`
-- `prometheus_remote_storage_failed_samples_total` replaced with `prometheus_remote_storage_samples_failed_total`
-- `prometheus_remote_storage_retried_samples_total` replaced with `prometheus_remote_storage_samples_retried_total`
-- `prometheus_remote_storage_dropped_samples_total` replaced with `prometheus_remote_storage_samples_dropped_total`
-- `prometheus_remote_storage_pending_samples` replaced with `prometheus_remote_storage_samples_pending`
-- `prometheus_remote_storage_sent_bytes_total` was removed and replaced with `prometheus_remote_storage_bytes_total`
-  and `prometheus_remote_storage_metadata_bytes_total`
-
-[kube-prometheus-stack]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#install-helm-chart
-[values-prometheus.yaml]: /examples/kube_prometheus_stack/values-prometheus.yaml
-[values.yaml]: /deploy/helm/sumologic/values.yaml
-[kube-prometheus-stack-crd]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-34.10.0/charts/kube-prometheus-stack#from-33x-to-34x
-
-## OpenTelemetry queueing and batching
+## OpenTelemetry Collector queueing and batching
 
 OpenTelemetry comes with several parameters related to queue management.
 
@@ -1341,7 +430,7 @@ For [batch processor][batch_processor]:
 - `timeout` defines time after which the batch is sent regardless of the size (can be lower than `send_batch_size`).
 - `send_batch_max_size` is an upper limit of the batch size.
 
-_We could say that `send_batch_size` is a soft limit and `send_batch_max_size` is a hard limit of the batch size._
+*We could say that `send_batch_size` is a soft limit and `send_batch_max_size` is a hard limit of the batch size.*
 
 For [sumologic exporter][sumologic_exporter]:
 
@@ -1435,31 +524,8 @@ fluent-bit:
     kubernetes.io/os: linux
 ```
 
-## Disable Thanos
-
-Thanos is not used by the Sumo Logic Collection, but it is enabled for backward compatibility.
-To disable it, please use the following configuration:
-
-```yaml
-kube-prometheus-stack:
-  prometheus:
-    prometheusSpec:
-      thanos: null
-```
-
 ## Parsing log content as json
 
 In order to parse and store log content as json following configuration has to be applied:
 
-```yaml
-fluentd:
-  logs:
-    containers:
-      extraOutputPluginConf: |-
-        <filter **>
-          @type record_modifier
-          <record>
-            _sumo_metadata ${record["_sumo_metadata"][:log_format] = 'json_merge'; record["_sumo_metadata"]}
-          </record>
-        </filter>
-```
+:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#parsing-log-content-as-json)
