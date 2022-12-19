@@ -111,9 +111,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
-        if: needs.docs-changed.outputs.any_changed == 'true'
         with:
           config-file: '.markdown_link_check.json'
+          use-quiet-mode: yes
+          check-modified-files-only: yes
+          base-branch: main
 
   md-links-lint:
     runs-on: ubuntu-20.04
