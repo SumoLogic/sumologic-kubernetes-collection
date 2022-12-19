@@ -1206,6 +1206,12 @@ fluent-bit:
           Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
           Time_Key     time
           Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
+  
+  ## Disable test framework as it uses default serviceAccount
+  ## Can be removed when the following issue will be resolved:
+  ## https://github.com/fluent/helm-charts/pull/296
+  testFramework:
+    enabled: false
 
 ## Configure kube-prometheus-stack
 ## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
