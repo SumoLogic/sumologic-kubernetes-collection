@@ -41,8 +41,8 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
   - moved `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
   - moved `fluentd.logs.contianers.sourceCategory` to `sumologic.logs.container.sourceCategory`
-  - moved  `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
-  - moved  `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
+  - moved `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
+  - moved `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
   - moved `fluentd.logs.containers.excludeContainerRegex` to `sumologic.logs.container.excludeContainerRegex`
   - moved `fluentd.logs.containers.excludeHostRegex` to `sumologic.logs.container.excludeHostRegex`
   - moved `fluentd.logs.containers.excludeNamespaceRegex` to `sumologic.logs.container.excludeNamespaceRegex`
@@ -183,7 +183,7 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
 #### Additional Service Monitors
 
 If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`,
-you have to remove all Sumo Logic related service monitor from the list, because they are now covered by
+you have to remove all Sumo Logic related service monitors from the list, because they are now covered by
 `sumologic.metrics.serviceMonitors` configuration. This will make your configuration more clear.
 
 ### Known issues
