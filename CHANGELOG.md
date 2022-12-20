@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix(openshift): changed allowed fsgroups in SecurityContextConstraints [#2717]
 - fix(openshift): set securityContexts for otelcol-logs-collector [#2717]
 - fix: obey proxy settings in otelcol [#2719]
+- feat(metrics): simplify custom application metrics [#2716]
 
 [#2686]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2686
 [#2687]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2687
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2712]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2712
 [#2717]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2717
 [#2719]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2719
+[#2716]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2716
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...main
 
 ## [v3.0.0-beta.0]
