@@ -4,7 +4,9 @@ This document is going to cover multiple different use cases related to scraping
 
 ## Practical scenarios
 
-### Application metrics are exposed (one endpoint scenario)
+### Scraping metrics
+
+#### Application metrics are exposed (one endpoint scenario)
 
 If there is only one endpoint in the pod you want to scrape metrics from, you can use annotations.
 Add the following annotations to your pod definition:
@@ -35,7 +37,7 @@ kube-prometheus-stack:
 
 **Note:** We recommend to use regex validator, for example [https://regex101.com/].
 
-### Application metrics are exposed (multiple enpoints scenario)
+#### Application metrics are exposed (multiple enpoints scenario)
 
 If you want to scrape metrics from multiple endpoints in a single Pod,
 you need a service which points to the pod and also to configure `kube-prometheus-stack.prometheus.additionalServiceMonitors`
@@ -80,7 +82,7 @@ kube-prometheus-stack:
 [prometheus_service_monitors]: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.ServiceMonitor
 [https://regex101.com/]: https://regex101.com/
 
-#### Example
+##### Example
 
 Let's consider a pod which exposes the following metrics:
 
@@ -168,3 +170,32 @@ kube-prometheus-stack:
             regex: my_metric_*
             sourceLabels: [__name__]
 ```
+
+#### Application metrics are not exposed
+
+In case you want to scrape metrics from application which do not expose them, you can use telegraf operator.
+It will scrape metrics according to configuration and expose them on port `9273` so Prometheus will be able to scrape them.
+
+For example to expose metrics from nginx pod, you can use the following annotations:
+
+```
+annotations:
+  telegraf.influxdata.com/inputs: |+
+  [[inputs.nginx]]
+  urls = ["http://localhost/nginx_status"]
+  telegraf.influxdata.com/class: sumologic-prometheus
+  telegraf.influxdata.com/limits-cpu: '750m'
+```
+
+`sumologic-prometheus` defines the way telegraf operator will expose the metrics.
+They are going to be exposed in prometheus format on port `9273` and `/metrics` path.
+
+**NOTE** If you apply annotations on pod which is subject of other object, e.g. DaemonSet, it won't take affect.
+In such case, the annotation should be added to pod specification in DeamonSet template.
+
+After restart, the pod should have additional `telegraf` container.
+
+To scrape and forward exposed metrics to Sumo Logic, please follow one of the following scenarios:
+
+- [Application metrics are exposed (one endpoint scenario)](#application-metrics-are-exposed-one-endpoint-scenario)
+- [Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
