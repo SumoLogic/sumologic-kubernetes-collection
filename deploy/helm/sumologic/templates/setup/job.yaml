@@ -68,12 +68,7 @@ spec:
         env:
         - name: SUMOLOGIC_BASE_URL
           value: {{ .Values.sumologic.endpoint }}
-        - name: HTTP_PROXY
-          value: {{ .Values.sumologic.httpProxy }}
-        - name: HTTPS_PROXY
-          value: {{ .Values.sumologic.httpsProxy }}
-        - name: NO_PROXY
-          value: {{ .Values.sumologic.noProxy }}
+        {{- include "proxy-env-variables" . | nindent 8 -}}
 {{- if .Values.sumologic.setup.debug }}
         - name: DEBUG_MODE
           value: "true"

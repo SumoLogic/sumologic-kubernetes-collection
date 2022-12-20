@@ -1526,3 +1526,26 @@ Example Usage:
 {{- define "opentelemetry-operator.controller.manager.metrics.service.url" -}}
 http://opentelemetry-operator-controller-manager-metrics-service.{{ .Release.Namespace }}:8080/metrics
 {{- end -}}
+
+
+{{/*
+Environment variables used to configure the HTTP proxy for programs using
+Go's net/http. See: https://pkg.go.dev/net/http#RoundTripper
+
+Example Usage:
+'{{ include "proxy-env-variables" . }}'
+*/}}
+{{- define "proxy-env-variables" -}}
+{{- if .Values.sumologic.httpProxy -}}
+- name: HTTP_PROXY
+  value: {{ .Values.sumologic.httpProxy }}
+{{- end -}}
+{{- if .Values.sumologic.httpsProxy -}}
+- name: HTTPS_PROXY
+  value: {{ .Values.sumologic.httpsProxy }}
+{{- end -}}
+{{- if .Values.sumologic.noProxy -}}
+- name: NO_PROXY
+  value: {{ .Values.sumologic.noProxy }}
+{{- end -}}
+{{- end -}}
