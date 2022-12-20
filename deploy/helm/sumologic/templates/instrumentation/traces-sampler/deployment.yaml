@@ -64,6 +64,7 @@ spec:
           value: "80"
 {{- $ctx := .Values -}}
 {{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "traces") -}}
+{{- include "proxy-env-variables" . | nindent 8 -}}
 {{- if $tracesSampler.deployment.extraEnvVars }}
 {{- toYaml $tracesSampler.deployment.extraEnvVars | nindent 8 }}
 {{- end }}
