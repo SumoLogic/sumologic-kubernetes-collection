@@ -1549,3 +1549,23 @@ Example Usage:
   value: {{ .Values.sumologic.noProxy }}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Generate list of remoteWrite endpoints for telegraf configuration
+
+'{{ include "metric.remotewrites" . }}'
+*/}}
+{{- define "metric.remotewrites" -}}
+{{- $remoteWrites := list -}}
+{{- $kps := get .Values "kube-prometheus-stack" -}}
+{{- range $remoteWrite := $kps.prometheus.prometheusSpec.remoteWrite }}
+{{- $remoteWrites = append $remoteWrites ($remoteWrite.url | trimPrefix "http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888" | quote) -}}
+{{- end }}
+{{- range $remoteWrite := $kps.prometheus.prometheusSpec.additionalRemoteWrite }}
+{{- $remoteWrites = append $remoteWrites ($remoteWrite.url | trimPrefix "http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888" | quote) -}}
+{{- end -}}
+{{- $remoteWrites := uniq $remoteWrites -}}
+{{- $remoteWrites := sortAlpha $remoteWrites -}}
+{{ $remoteWrites | join ",\n" }}
+{{- end -}}

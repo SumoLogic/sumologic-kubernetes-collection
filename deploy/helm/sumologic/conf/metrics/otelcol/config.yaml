@@ -15,37 +15,7 @@ receivers:
         data_format = "prometheusremotewrite"
         path_tag = true
         paths = [
-          "/prometheus.metrics",
-          "/prometheus.metrics.apiserver",
-          "/prometheus.metrics.applications.activemq",
-          "/prometheus.metrics.applications.apache",
-          "/prometheus.metrics.applications.cassandra",
-          "/prometheus.metrics.applications.couchbase",
-          "/prometheus.metrics.applications.elasticsearch",
-          "/prometheus.metrics.applications.haproxy",
-          "/prometheus.metrics.applications.jmx",
-          "/prometheus.metrics.applications.kafka",
-          "/prometheus.metrics.applications.memcached",
-          "/prometheus.metrics.applications.mongodb",
-          "/prometheus.metrics.applications.mysql",
-          "/prometheus.metrics.applications.nginx",
-          "/prometheus.metrics.applications.nginx-ingress",
-          "/prometheus.metrics.applications.postgresql",
-          "/prometheus.metrics.applications.rabbitmq",
-          "/prometheus.metrics.applications.redis",
-          "/prometheus.metrics.applications.sqlserver",
-          "/prometheus.metrics.applications.squidproxy",
-          "/prometheus.metrics.applications.tomcat",
-          "/prometheus.metrics.applications.varnish",
-          "/prometheus.metrics.container",
-          "/prometheus.metrics.controller-manager",
-          "/prometheus.metrics.control-plane.coredns",
-          "/prometheus.metrics.control-plane.kube-etcd",
-          "/prometheus.metrics.kubelet",
-          "/prometheus.metrics.node",
-          "/prometheus.metrics.operator.rule",
-          "/prometheus.metrics.scheduler",
-          "/prometheus.metrics.state"
+{{ include "metric.remotewrites" . | indent 10 }}
         ]
 extensions:
   health_check: {}
