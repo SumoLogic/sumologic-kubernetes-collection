@@ -110,9 +110,16 @@ If you are installing the Helm chart in OpenShift platform, you can update `user
 sumologic:
   scc:
     create: true
-fluent-bit:
-  securityContext:
-    privileged: true
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
 tailing-sidecar-operator:
   scc:
     create: true
@@ -125,13 +132,20 @@ sumologic:
   accessId: ${SUMO_ACCESS_ID}
   accessKey: ${SUMO_ACCESS_KEY}
   clusterName: ${MY_CLUSTER_NAME}
-kube-prometheus-stack:
-  enabled: false
   scc:
     create: true
-fluent-bit:
-  securityContext:
-    privileged: true
+kube-prometheus-stack:
+  enabled: false
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
 tailing-sidecar-operator:
   scc:
     create: true

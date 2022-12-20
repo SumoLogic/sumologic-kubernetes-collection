@@ -126,9 +126,16 @@ sumologic:
 tailing-sidecar-operator:
   scc:
     create: true
-fluent-bit:
-  securityContext:
-    privileged: true
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
 ```
 
 so, it should looks like the following way:
@@ -145,9 +152,16 @@ tailing-sidecar-operator:
     create: true
 kube-prometheus-stack:
   enabled: false
-fluent-bit:
-  securityContext:
-    privileged: true
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
 ```
 
 and then upgrade it to apply configuration:
