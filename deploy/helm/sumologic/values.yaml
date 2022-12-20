@@ -4197,7 +4197,20 @@ otellogs:
     ## Set securityContext for containers running in pods in log collector daemonset
     containers:
       otelcol:
-        securityContext: {}
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+
+    ## Set securityContext for initContainers running in pods in log collector daemonset
+    initContainers:
+      changeowner:
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+            add:
+              - CAP_CHOWN
 
     nodeSelector: {}
     tolerations: []

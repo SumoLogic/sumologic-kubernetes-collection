@@ -107,6 +107,8 @@ spec:
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
         image: public.ecr.aws/docker/library/busybox:latest
+        securityContext:
+          {{- toYaml .Values.otellogs.daemonset.initContainers.changeowner.securityContext | nindent 10 }}
         command:
         - "sh"
         - "-c"

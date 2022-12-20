@@ -169,9 +169,16 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
       service:
         port: 9200
         targetPort: 9200
-  fluent-bit:
-    securityContext:
-      privileged: true
+  otellogs:
+    daemonset:
+      containers:
+        otelcol:
+          securityContext:
+            privileged: true
+      initContainers:
+        changeowner:
+          securityContext:
+            privileged: true
   tailing-sidecar-operator:
     scc:
       create: true
@@ -195,9 +202,16 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
       service:
         port: 9200
         targetPort: 9200
-  fluent-bit:
-    securityContext:
-      privileged: true
+  otellogs:
+    daemonset:
+      containers:
+        otelcol:
+          securityContext:
+            privileged: true
+      initContainers:
+        changeowner:
+          securityContext:
+            privileged: true
   tailing-sidecar-operator:
     scc:
       create: true
@@ -226,9 +240,16 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
         targetPort: 9200
     prometheusOperator:
       enabled: false
-  fluent-bit:
-    securityContext:
-      privileged: true
+  otellogs:
+    daemonset:
+      containers:
+        otelcol:
+          securityContext:
+            privileged: true
+      initContainers:
+        changeowner:
+          securityContext:
+            privileged: true
   tailing-sidecar-operator:
     scc:
       create: true
@@ -250,9 +271,16 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
         targetPort: 9200
     prometheusOperator:
       enabled: false
-  fluent-bit:
-    securityContext:
-      privileged: true
+  otellogs:
+    daemonset:
+      containers:
+        otelcol:
+          securityContext:
+            privileged: true
+      initContainers:
+        changeowner:
+          securityContext:
+            privileged: true
   tailing-sidecar-operator:
     scc:
       create: true
