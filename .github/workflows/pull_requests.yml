@@ -115,7 +115,7 @@ jobs:
           config-file: '.markdown_link_check.json'
           use-quiet-mode: yes
           check-modified-files-only: yes
-          base-branch: main
+          base-branch: ${{ github.base_ref }}
 
   md-links-lint:
     runs-on: ubuntu-20.04
