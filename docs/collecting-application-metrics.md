@@ -37,7 +37,7 @@ kube-prometheus-stack:
 
 ### Application metrics are exposed (multiple enpoints scenario)
 
-If in the pod there is more than one endpoint you want to scrape metrics from,
+If you want to scrape metrics from multiple endpoints in a single Pod,
 you need a service which points to the pod and also to configure `kube-prometheus-stack.prometheus.additionalServiceMonitors`
 in your `user-values.yaml`:
 
