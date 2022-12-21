@@ -69,17 +69,23 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 	require.NoError(t, err)
 
 	// find the object we expect
-	var actualObject *unstructured.Unstructured = nil
+	// we can have multiple objects (e.g. Kind: List)
+	var foundObjects []unstructured.Unstructured = []unstructured.Unstructured{}
+
 	for _, renderedObject := range renderedObjects {
 		if renderedObject.GetName() == expectedObject.GetName() &&
 			renderedObject.GetKind() == expectedObject.GetKind() {
-			actualObject = &renderedObject
-			break
+			foundObjects = append(foundObjects, renderedObject)
 		}
 	}
-	require.NotNilf(t, actualObject, "Couldn't find object %s/%s in output", expectedObject.GetKind(), expectedObject.GetName())
+	require.NotEmpty(t, foundObjects, "Couldn't find object %s/%s in output", expectedObject.GetKind(), expectedObject.GetName())
 
-	require.Equal(t, expectedObject, *actualObject)
+	// Simple assertion if there is only one element in the list
+	if len(foundObjects) == 1 {
+		require.Equal(t, expectedObject, foundObjects[0])
+	} else {
+		require.Contains(t, foundObjects, expectedObject)
+	}
 }
 
 // fixupRenderedYaml replaces certain highly variable properties with fixed ones used in the
