@@ -75,7 +75,7 @@ kube-prometheus-stack:
             sourceLabels: [__name__]
 ```
 
-**Note:** We recommend to use regex validator, for example [https://regex101.com/]
+**Note:** We recommend using a regex validator, for example [https://regex101.com/]
 
 [prometheus_service_monitors]: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.ServiceMonitor
 [https://regex101.com/]: https://regex101.com/
