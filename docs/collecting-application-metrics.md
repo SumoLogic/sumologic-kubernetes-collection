@@ -1,6 +1,6 @@
 # Collecting application metrics
 
-This document is going to cover multiple different use cases related to scraping custom application metrics.
+This document covers multiple different use cases related to scraping custom application metrics.
 
 ## Practical scenarios
 
