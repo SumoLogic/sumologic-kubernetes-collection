@@ -1943,6 +1943,13 @@ kube-prometheus-stack:
               target_label: pod
               replacement: $1
               action: replace
+            ## Sets _sumo_forward_ label to true
+            - source_labels: [__name__]
+              separator: ;
+              regex: (.*)
+              target_label: _sumo_forward_
+              replacement: "true"
+              action: replace
             - source_labels: [__meta_kubernetes_service_name]
               separator: ;
               regex: (.*)
@@ -3319,7 +3326,15 @@ kube-prometheus-stack:
               sourceLabels: [__name__]
 
       ## additionalRemoteWrite is appended to remoteWrite
-      additionalRemoteWrite: []
+      additionalRemoteWrite:
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.custom
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: ^true$
+              sourceLabels: [_sumo_forward_]
+            - action: labeldrop
+              regex: _sumo_forward_
 
       serviceMonitor:
         selfMonitor: false

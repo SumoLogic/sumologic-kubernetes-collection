@@ -21,22 +21,6 @@ annotations:
 
 **NOTE:** If you add more than one annotation with the same name, only the last one will be used.
 
-Next, add the following configuration to your `user-values.yaml`:
-
-```yaml
-kube-prometheus-stack:
-  prometheus:
-    prometheusSpec:
-      additionalRemoteWrite:
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<custom endpoint name>
-          writeRelabelConfigs:
-          - action: keep
-            regex: <metric1>|<metric2>|...
-            sourceLabels: [__name__]
-```
-
-**Note:** We recommend to use regex validator, for example [https://regex101.com/].
-
 #### Application metrics are exposed (multiple enpoints scenario)
 
 If you want to scrape metrics from multiple endpoints in a single Pod,
@@ -49,8 +33,16 @@ kube-prometheus-stack:
     additionalServiceMonitors:
       - name: <service monitor name>
         endpoints:
-          - port: <port name or number>
+          - port: "<port name or number>"
             path: <metrics path>
+            relabelings:
+              ## Sets _sumo_forward_ label to true
+              - sourceLabels: [__name__]
+                separator: ;
+                regex: (.*)
+                targetLabel: _sumo_forward_
+                replacement: "true"
+                action: replace
         namespaceSelector:
           matchNames:
             - <namespace>
@@ -62,14 +54,23 @@ kube-prometheus-stack:
 
 **Note** For advanced serviceMonitor configuration, please look at the [Prometheus documentation][prometheus_service_monitors]
 
-At the end, you need to add the following configuration to your `user-values.yaml`,
-to instruct Prometheus which metrics should be forwarded through the pipeline.
+**Note** If you not set `_sumo_forward_` label you will have to configure `additionalRemoteWrite`
 
 ```yaml
 kube-prometheus-stack:
   prometheus:
     prometheusSpec:
       additionalRemoteWrite:
+        ## This is required to keep default configuration. It's copy of values.yaml content
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.custom
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: ^true$
+              sourceLabels: [_sumo_forward_]
+            - action: labeldrop
+              regex: _sumo_forward_
+        ## This is your custom remoteWrite configuration
         - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<custom endpoint name>
           writeRelabelConfigs:
           - action: keep
@@ -154,21 +155,30 @@ kube-prometheus-stack:
         endpoints:
           - port: some-port
             path: /metrics
+            relabelings:
+              ## Sets _sumo_forward_ label to true
+              - sourceLabels: [__name__]
+                separator: ;
+                regex: (.*)
+                targetLabel: _sumo_forward_
+                replacement: "true"
+                action: replace
           - port: another-port
             path: /custom-endpoint
+            relabelings:
+              ## Sets _sumo_forward_ label to true
+              - sourceLabels: [__name__]
+                separator: ;
+                regex: (.*)
+                targetLabel: _sumo_forward_
+                replacement: "true"
+                action: replace
         namespaceSelector:
           matchNames:
             - my-custom-app-namespace
         selector:
           matchLabels:
             app: my-custom-app-service
-    prometheusSpec:
-      additionalRemoteWrite:
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.my_custom_metrics
-          writeRelabelConfigs:
-          - action: keep
-            regex: my_metric_*
-            sourceLabels: [__name__]
 ```
 
 #### Application metrics are not exposed
@@ -199,3 +209,4 @@ To scrape and forward exposed metrics to Sumo Logic, please follow one of the fo
 
 - [Application metrics are exposed (one endpoint scenario)](#application-metrics-are-exposed-one-endpoint-scenario)
 - [Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
+
