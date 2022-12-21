@@ -33,7 +33,6 @@ spec:
       containers:
       - name: setup
         image: public.ecr.aws/sumologic/kubernetes-setup:3.4.0
-        imagePullSecrets:
         imagePullPolicy: IfNotPresent
         command: ["/etc/terraform/setup.sh"]
         resources:
