@@ -54,31 +54,31 @@ kube-prometheus-stack:
 
 **Note** For advanced serviceMonitor configuration, please look at the [Prometheus documentation][prometheus_service_monitors]
 
-**Note** If you not set `_sumo_forward_` label you will have to configure `additionalRemoteWrite`
-
-```yaml
-kube-prometheus-stack:
-  prometheus:
-    prometheusSpec:
-      additionalRemoteWrite:
-        ## This is required to keep default configuration. It's copy of values.yaml content
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.custom
-          remoteTimeout: 5s
-          writeRelabelConfigs:
-            - action: keep
-              regex: ^true$
-              sourceLabels: [_sumo_forward_]
-            - action: labeldrop
-              regex: _sumo_forward_
-        ## This is your custom remoteWrite configuration
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<custom endpoint name>
-          writeRelabelConfigs:
-          - action: keep
-            regex: <metric1>|<metric2>|...
-            sourceLabels: [__name__]
-```
-
-**Note:** We recommend using a regex validator, for example [https://regex101.com/]
+> **Note** If you not set `_sumo_forward_` label you will have to configure `additionalRemoteWrite`:
+>
+> ```yaml
+> kube-prometheus-stack:
+>   prometheus:
+>     prometheusSpec:
+>       additionalRemoteWrite:
+>         ## This is required to keep default configuration. It's copy of values.yaml content
+>         - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.custom
+>           remoteTimeout: 5s
+>           writeRelabelConfigs:
+>             - action: keep
+>               regex: ^true$
+>               sourceLabels: [_sumo_forward_]
+>             - action: labeldrop
+>               regex: _sumo_forward_
+>         ## This is your custom remoteWrite configuration
+>         - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<custom endpoint name>
+>           writeRelabelConfigs:
+>           - action: keep
+>             regex: <metric1>|<metric2>|...
+>             sourceLabels: [__name__]
+> ```
+>
+> We recommend using a regex validator, for example [https://regex101.com/]
 
 [prometheus_service_monitors]: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.ServiceMonitor
 [https://regex101.com/]: https://regex101.com/
@@ -209,4 +209,3 @@ To scrape and forward exposed metrics to Sumo Logic, please follow one of the fo
 
 - [Application metrics are exposed (one endpoint scenario)](#application-metrics-are-exposed-one-endpoint-scenario)
 - [Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
-
