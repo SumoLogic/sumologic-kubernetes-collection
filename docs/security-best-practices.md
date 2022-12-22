@@ -1,6 +1,7 @@
 # Advanced Configuration / Security Best Practices
 
 - [Hardening fluentd StatefulSet with `securityContext`](#hardening-fluentd-statefulset-with-securitycontext)
+- [FIPS compliant binaries](#fips-compliant-binaries)
 
 ## Minimal required capabilities
 
@@ -358,3 +359,75 @@ fluentd:
         mountPath: /etc/ssl/certs/
         readOnly: true
 ```
+
+## FIPS compliant binaries
+
+We provide FIPS compliant **OpenTelemetry Collector** binaries for your data collection and enrichment.
+
+You can find them in our [ECR Public Gallery](https://gallery.ecr.aws/sumologic/sumologic-otel-collector). FIPS compliant image tags end with `-fips`.
+
+### Helm Chart v3
+
+Starting with Helm Chart v3 **OpenTelemetry Collector** is a default method of collecting data (except for Prometheus) but still you need set the FIPS compliant images.
+
+For example, to use `0.66.0-sumo-0-fips` image with Helm Chart v3 use the following configuration:
+
+```yaml
+metadata:
+  image:
+    tag: 0.66.0-sumo-0-fips
+otellogs:
+  image:
+    tag: 0.66.0-sumo-0-fips
+otelevents:
+  image:
+    tag: 0.66.0-sumo-0-fips
+otelcolInstrumentation:
+  statefulSet:
+    image:
+      tag: 0.66.0-sumo-0-fips
+traceSampler:
+  deployment:
+    image:
+      tag: 0.66.0-sumo-0-fips
+tracesGateway:
+  deployment:
+    image:
+      tag: 0.66.0-sumo-0-fips
+```
+
+### Helm Chart v2
+
+For Helm Chart v2 please [see here how to switch to OpenTelemetry Collector](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/opentelemetry_collector.md).
+
+When you use **OpenTelemetry Collector** you need set the fips compliant images.
+
+For example, to use `0.66.0-sumo-0-fips` image with Helm Chart v2 use the following configuration:
+
+```yaml
+metadata:
+  image:
+    tag: 0.66.0-sumo-0-fips
+otellogs:
+  image:
+    tag: 0.66.0-sumo-0-fips
+otelevents:
+  image:
+    tag: 0.66.0-sumo-0-fips
+otelcol:
+  deployment:
+    image:
+      tag: 0.66.0-sumo-0-fips
+otelagent:
+  daemonset:
+    image:
+      tag: 0.66.0-sumo-0-fips
+otelgateway:
+  deployment:
+    image:
+      tag: 0.66.0-sumo-0-fips
+```
+
+### FIPS compliant images for Fluent Bit and Fluentd
+
+This Helm Chart does not provide FIPS compliant binaries for **Fluent Bit** nor **Fluentd**.

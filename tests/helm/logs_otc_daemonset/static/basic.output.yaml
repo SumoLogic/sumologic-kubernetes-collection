@@ -74,7 +74,9 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         securityContext:
-          {}
+          capabilities:
+            drop:
+              - ALL
         ports:
         - name: pprof
           containerPort: 1777
@@ -85,6 +87,12 @@ spec:
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
         image: public.ecr.aws/docker/library/busybox:latest
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+            add:
+              - CAP_CHOWN
         command:
         - "sh"
         - "-c"

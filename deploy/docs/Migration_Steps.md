@@ -1,3 +1,3 @@
 # Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`
 
-Moved to [/docs/migration-steps.md](/docs/migration-steps.md)
+See the documentation for [v2](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/Migration_Steps.md)

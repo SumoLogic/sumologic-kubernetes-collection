@@ -184,9 +184,16 @@ In order to enable it, please add the following to `user-values.yaml`:
 sumologic:
   scc:
     create: true
-fluent-bit:
-  securityContext:
-    privileged: true
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
 kube-prometheus-stack:
   prometheus-node-exporter:
     service:
@@ -210,9 +217,16 @@ sumologic:
   clusterName: ${CLUSTER_NAME}
   scc:
     create: true
-fluent-bit:
-  securityContext:
-    privileged: true
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
 kube-prometheus-stack:
   prometheus-node-exporter:
     service:

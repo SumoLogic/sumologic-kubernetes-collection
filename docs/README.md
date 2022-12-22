@@ -22,31 +22,33 @@ Documentation links:
   - [Non Helm Installation](/docs/non-helm-installation.md)
 
 - Configuration
-  - [Adding Additional FluentD Plugins](/docs/additional-fluentd-plugins.md)
   - [Additional Prometheus configuration](/docs/additional-prometheus-configuration.md)
   - [Advanced Configuration/Best Practices](/docs/best-practices.md)
   - [Advanced Configuration/Security best practices](/docs/security-best-practices.md)
   - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
     - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](/docs/working-with-container-registries.md#authenticating-with-container-registry)
-  - [Container log parsing (Docker, CRI-O, containerd)](/docs/container-logs.md)
   - [Collecting Kubernetes events](/docs/collecting-kubernetes-events.md)
   - Open Telemetry `beta`
     - [Open Telemetry with `sumologic-kubernetes-collection`](/docs/opentelemetry-collector.md)
-    - [Comparison of Fluentd and Opentelemetry Collector functionality](/docs/fluentd-otc-comparison.md)
+    - [Comparison of Fluentd and Opentelemetry Collector functionality](/docs/fluent/fluentd-otc-comparison.md)
     - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
-
+  - FluentD and Fluent-Bit
+    - [Adding Additional FluentD Plugins](/docs/fluent/additional-fluentd-plugins.md)
+    - [Container log parsing with Fluent-Bit (Docker, CRI-O, containerd)](/docs/fluent/container-logs.md)
+    - [Performance estimates for running collection chart](/docs/fluent/performance.md)
+    - [FluentD persistence](/docs/fluent/fluentd-persistence.md)
 - Upgrades
   - [Upgrade from v0.17 to v1.0][migration-doc-v1]
   - [Upgrade from v1.3 to v2.0][migration-doc-v2]
 
-- [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`](/docs/migration-steps.md)
+- [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`][migration-steps]
 - [Troubleshooting Collection](/docs/troubleshoot-collection.md)
 - [Monitoring the Monitoring](/docs/monitoring-lag.md)
-- [Performance estimates for running collection chart](/docs/performance.md)
 - [Dev Releases](/docs/dev.md)
 
 [migration-doc-v1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v1_migration_doc.md
 [migration-doc-v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2_migration_doc.md
+[migration-steps]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/Migration_Steps.md
 
 ## Solution overview
 

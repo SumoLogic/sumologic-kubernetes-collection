@@ -8,13 +8,60 @@ on:
       - 'release-v[0-9]+.[0-9]+'
 
 jobs:
+  docs-changed:
+    runs-on: ubuntu-20.04
+    outputs:
+      any_changed: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Check if documentation related files changed
+        id: changed-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files: |
+            **/*.md
+            images/*
+            ci/*
+            .github/*
+            **/Makefile
+            .*
+
+  chart-changed:
+    runs-on: ubuntu-20.04
+    outputs:
+      any_changed: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Check if Helm Chart related files changed
+        id: changed-files
+        uses: tj-actions/changed-files@v35
+        with:
+          files: |
+            deploy/helm/sumologic/**/*
+            **/*.yaml
+            **/*.yml
+            **/go.mod
+            **/go.sum
+            **/*.go
+            ci/*
+            .github/*
+            **/Makefile
+            .*
+
   markdownlint:
     runs-on: ubuntu-20.04
+    needs: [docs-changed]
     steps:
       - uses: actions/checkout@v3
       - name: install markdownlint
+        if: needs.docs-changed.outputs.any_changed == 'true'
         run: npm install -g markdownlint-cli
       - name: markdownlint check
+        if: needs.docs-changed.outputs.any_changed == 'true'
         run: make markdownlint
 
   shellcheck:
@@ -37,55 +84,72 @@ jobs:
 
   yamllint:
     runs-on: ubuntu-20.04
+    needs: [chart-changed]
     steps:
       - uses: actions/checkout@v3
       - name: install yamllint
+        if: needs.chart-changed.outputs.any_changed == 'true'
         run: pip install yamllint
       - name: yamllint
+        if: needs.chart-changed.outputs.any_changed == 'true'
         run: make yamllint
 
   helmlint:
     runs-on: ubuntu-20.04
+    needs: [chart-changed]
     steps:
       - uses: actions/checkout@v3
       - name: Lint helm chart
+        if: needs.chart-changed.outputs.any_changed == 'true'
         run: |
           make helm-dependency-update
           make helm-lint
 
   markdown-link-check:
     runs-on: ubuntu-20.04
+    needs: [docs-changed]
     steps:
       - uses: actions/checkout@v3
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           config-file: '.markdown_link_check.json'
+          use-quiet-mode: yes
+          check-modified-files-only: yes
+          base-branch: ${{ github.base_ref }}
 
   md-links-lint:
     runs-on: ubuntu-20.04
+    needs: [docs-changed]
     steps:
       - uses: actions/checkout@v3
       - name: Lint markdown links
+        if: needs.docs-changed.outputs.any_changed == 'true'
         run: |
           make markdown-links-lint
 
   markdown-table-formatter-check:
     runs-on: ubuntu-20.04
+    needs: [docs-changed]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3.5.1
+        if: needs.docs-changed.outputs.any_changed == 'true'
       - name: Install markdown-table-formatter
+        if: needs.docs-changed.outputs.any_changed == 'true'
         run: npm install markdown-table-formatter --save
       - name: Run markdown-table-formatter
+        if: needs.docs-changed.outputs.any_changed == 'true'
         run: CMD=./node_modules/.bin/markdown-table-formatter make markdown-table-formatter-check
 
   test:
     runs-on: ubuntu-20.04
     needs:
       - helmlint
+      - chart-changed
     steps:
       - uses: actions/checkout@v3
       - name: Setup go
+        if: needs.chart-changed.outputs.any_changed == 'true'
         uses: actions/setup-go@v3
         with:
           go-version: '1.19'
@@ -93,6 +157,7 @@ jobs:
       # As described in
       # https://github.com/mvdan/github-actions-golang#how-do-i-set-up-caching-between-builds
       - uses: actions/cache@v3
+        if: needs.chart-changed.outputs.any_changed == 'true'
         with:
           path: |
             /home/runner/go/pkg/mod
@@ -105,6 +170,7 @@ jobs:
           restore-keys: |
             ${{matrix.arch_os}}-go-
       - name: test
+        if: needs.chart-changed.outputs.any_changed == 'true'
         run: make test-templates
 
   ##############################################################################
@@ -113,6 +179,8 @@ jobs:
 
   setup-integration-tests:
     runs-on: ubuntu-20.04
+    needs: [chart-changed]
+    if: needs.chart-changed.outputs.any_changed == 'true'
     outputs:
       kind_images: ${{ steps.set_kind_images.outputs.kind_images }}
       test_names: ${{ steps.set_test_names.outputs.test_names }}
@@ -137,12 +205,15 @@ jobs:
   lint-integration-tests:
     name: Lint integration tests
     runs-on: ubuntu-latest
+    needs: [chart-changed]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
+        if: needs.chart-changed.outputs.any_changed == 'true'
         with:
           go-version: '1.18'
       - name: golangci-lint
+        if: needs.chart-changed.outputs.any_changed == 'true'
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.49
@@ -155,6 +226,8 @@ jobs:
     name: IT - ${{ matrix.test_name }} - ${{ matrix.kind_image }}
     needs:
       - setup-integration-tests
+      - chart-changed
+    if: needs.chart-changed.outputs.any_changed == 'true'
     strategy:
       matrix:
         kind_image: ${{ fromJSON(needs.setup-integration-tests.outputs.kind_images) }}
@@ -189,10 +262,14 @@ jobs:
     if: ${{ always() }}
     needs:
       - integration-tests
+      - chart-changed
     steps:
+      - name: Skipped
+        if: needs.chart-changed.outputs.any_changed == 'false'
+        run: exit 0
       - name: Tests passed
-        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        if: ${{ (needs.chart-changed.outputs.any_changed == 'true') && !(contains(needs.*.result, 'failure')) }}
         run: exit 0
       - name: Tests failed
-        if: ${{ contains(needs.*.result, 'failure') }}
+        if: ${{ (needs.chart-changed.outputs.any_changed == 'true') && contains(needs.*.result, 'failure') }}
         run: exit 1
