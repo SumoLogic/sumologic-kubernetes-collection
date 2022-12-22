@@ -109,6 +109,8 @@ In this document we detail the changes as well as the exact steps for migration.
 - Adding `sumologic.metrics.serviceMonitors` to avoid copying values for
   `kube-prometheus-stack.prometheus.additionalServiceMonitors` configuration
 
+- Adding `metadata.metrics.config.extraProcessors` to make metrics modification easy
+
 ## How to upgrade
 
 ### Requirements
@@ -259,6 +261,13 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
 If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`,
 you have to remove all Sumo Logic related service monitors from the list, because they are now covered by
 `sumologic.metrics.serviceMonitors` configuration. This will make your configuration more clear.
+
+#### Migrating your metrics configuration
+
+If you're adding extra configuration to fluentd metrics,
+you will likely want to do analogical modifications in OpenTelemetry.
+
+Please look at the [Metrics modifications](./collecting-application-metrics.md#metrics-modifications) doc.
 
 ### Known issues
 
