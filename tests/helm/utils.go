@@ -14,6 +14,7 @@ import (
 	"github.com/gruntwork-io/go-commons/files"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/logger"
+	prometheus "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 	corev1 "k8s.io/api/core/v1"
@@ -57,6 +58,19 @@ func GetOtelConfigYaml(t *testing.T, valuesYaml string, templatePath string) str
 	return otelConfigYaml
 }
 
+// GetServiceMonitors returns serviceMonitors list from the given templatePath
+// In case of error it returns empty list
+func GetServiceMonitors(t *testing.T, valuesYaml string, templatePath string) []*prometheus.ServiceMonitor {
+	renderedYamlString, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
+	if err != nil {
+		return []*prometheus.ServiceMonitor{}
+	}
+
+	var list prometheus.ServiceMonitorList
+	helm.UnmarshalK8SYaml(t, renderedYamlString, &list)
+	return list.Items
+}
+
 // UnmarshalMultipleFromYaml can unmarshal multiple objects of the same type from a yaml string
 // containing multiple documents, separated by ---
 func UnmarshalMultipleFromYaml[T any](t *testing.T, yamlDocs string) []T {
@@ -97,13 +111,22 @@ func SplitYaml(yamlDocs string) ([]string, error) {
 }
 
 // RenderTemplateFromValuesString renders a template based on its path and a values string
-// it uses package defaults for other parameters
+// it uses package defaults for other parameters. This function will fail
+// the test if there is an error rendering the template.
 func RenderTemplateFromValuesString(t *testing.T, valuesYaml string, templatePath string) string {
+	renderedYamlString, err := RenderTemplateFromValuesStringE(t, valuesYaml, templatePath)
+	require.NoError(t, err)
+	return renderedYamlString
+}
+
+// RenderTemplateFromValuesStringE renders a template based on its path and a values string
+// it uses package defaults for other parameters.
+func RenderTemplateFromValuesStringE(t *testing.T, valuesYaml string, templatePath string) (string, error) {
 	valuesFile, err := os.CreateTemp(t.TempDir(), "values.yaml")
 	require.NoError(t, err)
 	_, err = valuesFile.WriteString(valuesYaml)
 	require.NoError(t, err)
-	renderedYamlString := RenderTemplate(
+	return RenderTemplateE(
 		t,
 		&helm.Options{
 			ValuesFiles: []string{valuesFile.Name()},
@@ -120,7 +143,6 @@ func RenderTemplateFromValuesString(t *testing.T, valuesYaml string, templatePat
 		"--namespace",
 		defaultNamespace,
 	)
-	return renderedYamlString
 }
 
 // The functions below are copied from terratest for the sole reason of being able to skip the helm dependency update

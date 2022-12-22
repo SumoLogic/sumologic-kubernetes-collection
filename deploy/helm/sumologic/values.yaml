@@ -431,6 +431,117 @@ sumologic:
       ## Add custom annotations only to metrics sts pods
       podAnnotations: {}
 
+    ## Prometheus serviceMonitors related to Sumo Logic services
+    ## They are applied only if kube-prometheus-stack is enabled
+    serviceMonitors:
+      - name: collection-sumologic-fluentd-logs
+        additionalLabels:
+          sumologic.com/app: fluentd-logs
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-logs
+        additionalLabels:
+          sumologic.com/app: otelcol-logs
+        endpoints:
+          - port: otelcol-metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-fluentd-metrics
+        additionalLabels:
+          sumologic.com/app: fluentd-metrics
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-metrics
+        additionalLabels:
+          sumologic.com/app: otelcol-metrics
+        endpoints:
+          - port: otelcol-metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-fluentd-events
+        additionalLabels:
+          sumologic.com/app: fluentd-events
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-events
+            sumologic.com/scrape: "true"
+      - name: collection-fluent-bit
+        additionalLabels:
+          sumologic.com/app: collection-fluent-bit
+        endpoints:
+          - port: http
+            path: /api/v1/metrics/prometheus
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            app.kubernetes.io/name: fluent-bit
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-logs-collector
+        additionalLabels:
+          sumologic.com/app: otelcol-logs-collector
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol-logs-collector
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-traces
+        additionalLabels:
+          sumologic.com/app: otelcol
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/component: traces
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-prometheus
+        endpoints:
+          - port: web
+            path: /metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            operated-prometheus: "true"
+
   ### Traces configuration
   ## Set the enabled flag to false to disable traces ingestion.
   traces:
@@ -1723,114 +1834,7 @@ kube-prometheus-stack:
       #   cpu: 100m
       #   memory: 30Mi
   prometheus:
-    additionalServiceMonitors:
-      - name: collection-sumologic-fluentd-logs
-        additionalLabels:
-          sumologic.com/app: fluentd-logs
-        endpoints:
-          - port: metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
-        selector:
-          matchLabels:
-            sumologic.com/app: fluentd-logs
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-otelcol-logs
-        additionalLabels:
-          sumologic.com/app: otelcol-logs
-        endpoints:
-          - port: otelcol-metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
-        selector:
-          matchLabels:
-            sumologic.com/app: fluentd-logs
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-fluentd-metrics
-        additionalLabels:
-          sumologic.com/app: fluentd-metrics
-        endpoints:
-          - port: metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
-        selector:
-          matchLabels:
-            sumologic.com/app: fluentd-metrics
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-otelcol-metrics
-        additionalLabels:
-          sumologic.com/app: otelcol-metrics
-        endpoints:
-          - port: otelcol-metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
-        selector:
-          matchLabels:
-            sumologic.com/app: fluentd-metrics
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-fluentd-events
-        additionalLabels:
-          sumologic.com/app: fluentd-events
-        endpoints:
-          - port: metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
-        selector:
-          matchLabels:
-            sumologic.com/app: fluentd-events
-            sumologic.com/scrape: "true"
-      - name: collection-fluent-bit
-        additionalLabels:
-          sumologic.com/app: collection-fluent-bit
-        endpoints:
-          - port: http
-            path: /api/v1/metrics/prometheus
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
-        selector:
-          matchLabels:
-            app.kubernetes.io/name: fluent-bit
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-otelcol-logs-collector
-        additionalLabels:
-          sumologic.com/app: otelcol-logs-collector
-        endpoints:
-          - port: metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
-        selector:
-          matchLabels:
-            sumologic.com/app: otelcol-logs-collector
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-otelcol-traces
-        additionalLabels:
-          sumologic.com/app: otelcol
-        endpoints:
-          - port: metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
-        selector:
-          matchLabels:
-            sumologic.com/component: traces
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-prometheus
-        endpoints:
-          - port: web
-            path: /metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
-        selector:
-          matchLabels:
-            operated-prometheus: "true"
+    additionalServiceMonitors: []
     prometheusSpec:
       ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
       ## NOTE changing the scrape interval to be >1m can result in metrics
@@ -1938,6 +1942,13 @@ kube-prometheus-stack:
               regex: (.*)
               target_label: pod
               replacement: $1
+              action: replace
+            ## Sets _sumo_forward_ label to true
+            - source_labels: [__name__]
+              separator: ;
+              regex: (.*)
+              target_label: _sumo_forward_
+              replacement: "true"
               action: replace
             - source_labels: [__meta_kubernetes_service_name]
               separator: ;
@@ -3315,7 +3326,16 @@ kube-prometheus-stack:
               sourceLabels: [__name__]
 
       ## additionalRemoteWrite is appended to remoteWrite
-      additionalRemoteWrite: []
+      additionalRemoteWrite:
+        ## Forward every metric which has _sumo_forward_ label set to true
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.custom
+          remoteTimeout: 5s
+          writeRelabelConfigs:
+            - action: keep
+              regex: ^true$
+              sourceLabels: [_sumo_forward_]
+            - action: labeldrop
+              regex: _sumo_forward_
 
       serviceMonitor:
         selfMonitor: false

@@ -5,8 +5,9 @@
   - [Requirements](#requirements)
   - [Manual steps](#manual-steps)
     - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
-  - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
+    - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
     - [Otelcol StatefulSets](#otelcol-statefulsets)
+    - [Additional Service Monitors](#additional-service-monitors)
 
 Based on the feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
@@ -40,8 +41,8 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
   - moved `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
   - moved `fluentd.logs.contianers.sourceCategory` to `sumologic.logs.container.sourceCategory`
-  - moved  `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
-  - moved  `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
+  - moved `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
+  - moved `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
   - moved `fluentd.logs.containers.excludeContainerRegex` to `sumologic.logs.container.excludeContainerRegex`
   - moved `fluentd.logs.containers.excludeHostRegex` to `sumologic.logs.container.excludeHostRegex`
   - moved `fluentd.logs.containers.excludeNamespaceRegex` to `sumologic.logs.container.excludeNamespaceRegex`
@@ -84,6 +85,9 @@ In this document we detail the changes as well as the exact steps for migration.
   please see [upgrading section of chart's documentation][metrics-server-upgrade].
 
 - Upgrading Tailing Sidecar Operator helm chart to v0.5.5. There is no breaking change if using annotations only.
+
+- Adding `sumologic.metrics.serviceMonitors` to avoid copying values for
+  `kube-prometheus-stack.prometheus.additionalServiceMonitors` configuration
 
 ## How to upgrade
 
@@ -146,7 +150,7 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
 - In case of overriding any of the `repository` property under the `kube-prometheus-stack` property,
   please follow the `kube-prometheus-stack` [migration doc][kube-prometheus-stack-image-migration] on that.
 
-### Replace special configuration values marked by 'replace' suffix
+#### Replace special configuration values marked by 'replace' suffix
 
 Mechanism to replace special configuration values for traces marked by 'replace' suffix was removed and following special values in configuration are no longer automatically replaced and they need to be changed:
 
@@ -175,6 +179,12 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
   ```
+
+#### Additional Service Monitors
+
+If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`,
+you have to remove all Sumo Logic related service monitors from the list, because they are now covered by
+`sumologic.metrics.serviceMonitors` configuration. This will make your configuration more clear.
 
 ### Known issues
 
