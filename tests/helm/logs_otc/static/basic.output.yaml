@@ -143,7 +143,6 @@ data:
         - from: body.log
           to: body
           type: move
-        start_at: beginning
         storage: file_storage
       journald:
         directory: /var/log/journal

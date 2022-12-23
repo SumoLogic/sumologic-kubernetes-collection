@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - chore: upgrade Fluent Bit to v1.6.10-sumo-3 [#2712]
 - chore: upgrade otelcol to 0.66.0-sumo-0 [#2686] [#2687] [#2692] [#2693]
+- feat(otellogs): read from end [#2710]
 - fix(openshift): changed allowed fsgroups in SecurityContextConstraints [#2717]
 - fix(openshift): set securityContexts for otelcol-logs-collector [#2717]
 - fix: obey proxy settings in otelcol [#2719]
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2687]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2687
 [#2693]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2693
 [#2692]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2692
+[#2710]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2710
 [#2712]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2712
 [#2717]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2717
 [#2719]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2719

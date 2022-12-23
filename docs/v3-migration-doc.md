@@ -9,8 +9,9 @@
     - [Otelcol StatefulSets](#otelcol-statefulsets)
     - [Tracing/Instrumentation changes](#tracinginstrumentation-changes)
     - [Additional Service Monitors](#additional-service-monitors)
-  - [Known issues](#known-issues)
-    - [Cannot delete pod if using Tailing Sidecar Operator](#cannot-delete-pod-if-using-tailing-sidecar-operator)
+- [Known issues](#known-issues)
+  - [Cannot delete pod if using Tailing Sidecar Operator](#cannot-delete-pod-if-using-tailing-sidecar-operator)
+  - [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
 
 Based on the feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
@@ -88,6 +89,11 @@ In this document we detail the changes as well as the exact steps for migration.
   please see [upgrading section of chart's documentation][metrics-server-upgrade].
 
 - Upgrading Tailing Sidecar Operator helm chart to v0.5.5. There is no breaking change if using annotations only.
+
+- OpenTelemetry Logs Collector will read from end of file now.
+
+  See [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
+  if you want to keep old behavior.
 
 - Changed `otelagent` from `DaemonSet` to `StatefulSet`
 
@@ -269,3 +275,19 @@ Please try to remove pod later.
 [Falco documentation]: https://github.com/falcosecurity/charts/tree/falco-2.4.2/falco
 [metrics-server-upgrade]: https://github.com/bitnami/charts/tree/5b09f7a7c0d9232f5752840b6c4e5cdc56d7f796/bitnami/metrics-server#to-600
 [kube-prometheus-stack-image-migration]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-42.1.0/charts/kube-prometheus-stack#from-41x-to-42x
+
+#### OpenTelemetry Collector doesn't read logs from the beginning of files
+
+This is done by design. We are not going to read logs from time before the collection has been installed.
+
+In order to keep old behavior (can result in logs duplication for some cases), please use the following configuration:
+
+```
+metadata:
+  logs:
+    config:
+      merge:
+        receivers:
+          filelog/containers:
+            start_at: beginning
+```
