@@ -7,11 +7,11 @@
     - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
     - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
     - [Otelcol StatefulSets](#otelcol-statefulsets)
+    - [Tracing/Instrumentation changes](#tracinginstrumentation-changes)
+    - [Additional Service Monitors](#additional-service-monitors)
 - [Known issues](#known-issues)
   - [Cannot delete pod if using Tailing Sidecar Operator](#cannot-delete-pod-if-using-tailing-sidecar-operator)
   - [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
-  - [Tracing/Instrumentation changes](#tracinginstrumentation-changes)
-  - [Additional Service Monitors](#additional-service-monitors)
 
 Based on the feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
