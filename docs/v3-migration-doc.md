@@ -7,7 +7,10 @@
     - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
     - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
     - [Otelcol StatefulSets](#otelcol-statefulsets)
+    - [Tracing/Instrumentation changes](#tracinginstrumentation-changes)
     - [Additional Service Monitors](#additional-service-monitors)
+  - [Known issues](#known-issues)
+    - [Cannot delete pod if using Tailing Sidecar Operator](#cannot-delete-pod-if-using-tailing-sidecar-operator)
 
 Based on the feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
@@ -156,6 +159,33 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
 
   ```text
   Error: UPGRADE FAILED: cannot patch "collection-kube-state-metrics" with kind Deployment: Deployment.apps "collection-kube-state-metrics" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
+  ```
+
+- Patching `prometheus-node-exporter` daemonset
+
+```bash
+kubectl get daemonset \
+  --namespace "${NAMESPACE}" \
+  --selector "app=prometheus-node-exporter,release=${HELM_RELEASE_NAME}" \
+  -o json | \
+jq ". | .items[].spec.selector.matchLabels[\"app.kubernetes.io/instance\"] |= \"${HELM_RELEASE_NAME}\"" | \
+jq ". | .items[].spec.template.metadata.labels[\"app.kubernetes.io/instance\"] |= \"${HELM_RELEASE_NAME}\"" | \
+jq ". | .items[].spec.selector.matchLabels[\"app.kubernetes.io/name\"] |= \"prometheus-node-exporter\"" | \
+jq ". | .items[].spec.template.metadata.labels[\"app.kubernetes.io/name\"] |= \"prometheus-node-exporter\"" | \
+jq '. | del(.items[].spec.selector.matchLabels["release"])' | \
+jq '. | del(.items[].spec.template.metadata.labels["release"])' | \
+jq '. | del(.items[].spec.selector.matchLabels["app"])' | \
+jq '. | del(.items[].spec.template.metadata.labels["app"])' | \
+kubectl apply \
+  --namespace="${NAMESPACE}" \
+  --force \
+  --filename -
+```
+
+  due to:
+
+  ```text
+  Error: UPGRADE FAILED: cannot patch "collection1-prometheus-node-exporter" with kind DaemonSet: DaemonSet.apps "collection1-prometheus-node-exporter" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection1", "app.kubernetes.io/name":"prometheus-node-exporter"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
   ```
 
 - In case of overriding any of the `repository` property under the `kube-prometheus-stack` property,
