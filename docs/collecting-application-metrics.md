@@ -535,5 +535,7 @@ If there is no `remote_write` for your metric definition, you can add one using 
 [Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
 section.
 
-However if you can see `remote_write` which matches your metric, Prometheus seems be ok,
-and the rootcause of missing metrics will be probably further in the pipeline.
+However if you can see `remote_write` which matches your metrics and metrics are in Prometheus,
+we recommend to look at the Prometheus, Prometheus Operator and OpenTelemetry Metrics Collector Pod logs.
+
+If the issue won't be solved, please create an issue or contact with our Customer Support.
