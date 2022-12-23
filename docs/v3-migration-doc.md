@@ -185,7 +185,7 @@ kubectl apply \
   due to:
 
   ```text
-  Error: UPGRADE FAILED: cannot patch "collection1-prometheus-node-exporter" with kind DaemonSet: DaemonSet.apps "collection1-prometheus-node-exporter" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection1", "app.kubernetes.io/name":"prometheus-node-exporter"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
+  Error: UPGRADE FAILED: cannot patch "collection-prometheus-node-exporter" with kind DaemonSet: DaemonSet.apps "collection-prometheus-node-exporter" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"prometheus-node-exporter"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
   ```
 
 - In case of overriding any of the `repository` property under the `kube-prometheus-stack` property,
