@@ -41,8 +41,6 @@ The following are required to setup Sumo Logic's Kubernetes collection.
 - An [Access ID and Access Key](https://help.sumologic.com/docs/manage/security/access-keys/) with [Manage Collectors](https://help.sumologic.com/docs/manage/users-roles/roles/role-capabilities#data-management) capability.
 - Please review our [minimum requirements](/docs/README.md#minimum-requirements) and [support matrix](/docs/README.md#support-matrix)
 
-To get an idea of the resources this chart will require to run on your cluster, you can reference our [performance doc](performance.md).
-
 ### Prerequisite
 
 Sumo Logic Apps for Kubernetes and Explore require you to add the following [fields](https://help.sumologic.com/docs/manage/fields/#manage-fields) in the Sumo Logic UI to your Fields table schema. This is to ensure your logs are tagged with relevant metadata. This is a one time setup per Sumo Logic account.
@@ -171,9 +169,16 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
       service:
         port: 9200
         targetPort: 9200
-  fluent-bit:
-    securityContext:
-      privileged: true
+  otellogs:
+    daemonset:
+      containers:
+        otelcol:
+          securityContext:
+            privileged: true
+      initContainers:
+        changeowner:
+          securityContext:
+            privileged: true
   tailing-sidecar-operator:
     scc:
       create: true
@@ -197,9 +202,16 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
       service:
         port: 9200
         targetPort: 9200
-  fluent-bit:
-    securityContext:
-      privileged: true
+  otellogs:
+    daemonset:
+      containers:
+        otelcol:
+          securityContext:
+            privileged: true
+      initContainers:
+        changeowner:
+          securityContext:
+            privileged: true
   tailing-sidecar-operator:
     scc:
       create: true
@@ -228,9 +240,16 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
         targetPort: 9200
     prometheusOperator:
       enabled: false
-  fluent-bit:
-    securityContext:
-      privileged: true
+  otellogs:
+    daemonset:
+      containers:
+        otelcol:
+          securityContext:
+            privileged: true
+      initContainers:
+        changeowner:
+          securityContext:
+            privileged: true
   tailing-sidecar-operator:
     scc:
       create: true
@@ -252,9 +271,16 @@ If you are installing the Sumo Logic Kubernetes collection Helm Chart in Openshi
         targetPort: 9200
     prometheusOperator:
       enabled: false
-  fluent-bit:
-    securityContext:
-      privileged: true
+  otellogs:
+    daemonset:
+      containers:
+        otelcol:
+          securityContext:
+            privileged: true
+      initContainers:
+        changeowner:
+          securityContext:
+            privileged: true
   tailing-sidecar-operator:
     scc:
       create: true

@@ -4,6 +4,7 @@ Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metr
 enriching them with deployment, pod, and service level metadata; and sends them to Sumo Logic.
 
 - [Requirements](#requirements)
+  - [Kubernetes version](#kubernetes-version)
 - [Prerequisite](#prerequisite)
 - [Installation Steps](#installation-steps)
   - [Authenticating with container registry](#authenticating-with-container-registry)
@@ -15,6 +16,8 @@ enriching them with deployment, pod, and service level metadata; and sends them 
 - [Customizing Installation](#customizing-installation)
 - [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
 - [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
+  - [Post installation cleanup](#post-installation-cleanup)
+  - [Removing the kubelet Service](#removing-the-kubelet-service)
 
 ## Requirements
 
@@ -172,9 +175,16 @@ you can add the following configuration to `user-values.yaml`:
 sumologic:
   scc:
     create: true
-fluent-bit:
-  securityContext:
-    privileged: true
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
 kube-prometheus-stack:
   prometheus-node-exporter:
     service:
@@ -198,9 +208,16 @@ sumologic:
   clusterName: ${MY_CLUSTER_NAME}
   scc:
     create: true
-fluent-bit:
-  securityContext:
-    privileged: true
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
 kube-prometheus-stack:
   prometheus-node-exporter:
     service:

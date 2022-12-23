@@ -1,0 +1,239 @@
+---
+# Source: sumologic/templates/metrics/prometheus/servicemonitors.yaml
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: collection-sumologic-fluentd-logs
+      namespace: sumologic
+      labels:
+        app: sumologic-prometheus
+        
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+        app.kubernetes.io/part-of: sumologic
+        chart: sumologic-%CURRENT_CHART_VERSION%
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+        sumologic.com/app: fluentd-logs
+    spec:
+      endpoints:
+        - port: metrics
+      namespaceSelector:
+        matchNames:
+        - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: fluentd-logs
+          sumologic.com/scrape: "true"
+  - apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: collection-sumologic-otelcol-logs
+      namespace: sumologic
+      labels:
+        app: sumologic-prometheus
+        
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+        app.kubernetes.io/part-of: sumologic
+        chart: sumologic-%CURRENT_CHART_VERSION%
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+        sumologic.com/app: otelcol-logs
+    spec:
+      endpoints:
+        - port: otelcol-metrics
+      namespaceSelector:
+        matchNames:
+        - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: fluentd-logs
+          sumologic.com/scrape: "true"
+  - apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: collection-sumologic-fluentd-metrics
+      namespace: sumologic
+      labels:
+        app: sumologic-prometheus
+        
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+        app.kubernetes.io/part-of: sumologic
+        chart: sumologic-%CURRENT_CHART_VERSION%
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+        sumologic.com/app: fluentd-metrics
+    spec:
+      endpoints:
+        - port: metrics
+      namespaceSelector:
+        matchNames:
+        - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: fluentd-metrics
+          sumologic.com/scrape: "true"
+  - apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: collection-sumologic-otelcol-metrics
+      namespace: sumologic
+      labels:
+        app: sumologic-prometheus
+        
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+        app.kubernetes.io/part-of: sumologic
+        chart: sumologic-%CURRENT_CHART_VERSION%
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+        sumologic.com/app: otelcol-metrics
+    spec:
+      endpoints:
+        - port: otelcol-metrics
+      namespaceSelector:
+        matchNames:
+        - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: fluentd-metrics
+          sumologic.com/scrape: "true"
+  - apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: collection-sumologic-fluentd-events
+      namespace: sumologic
+      labels:
+        app: sumologic-prometheus
+        
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+        app.kubernetes.io/part-of: sumologic
+        chart: sumologic-%CURRENT_CHART_VERSION%
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+        sumologic.com/app: fluentd-events
+    spec:
+      endpoints:
+        - port: metrics
+      namespaceSelector:
+        matchNames:
+        - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: fluentd-events
+          sumologic.com/scrape: "true"
+  - apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: collection-fluent-bit
+      namespace: sumologic
+      labels:
+        app: sumologic-prometheus
+        
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+        app.kubernetes.io/part-of: sumologic
+        chart: sumologic-%CURRENT_CHART_VERSION%
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+        sumologic.com/app: collection-fluent-bit
+    spec:
+      endpoints:
+        - path: /api/v1/metrics/prometheus
+          port: http
+      namespaceSelector:
+        matchNames:
+        - $(NAMESPACE)
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: fluent-bit
+          sumologic.com/scrape: "true"
+  - apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: collection-sumologic-otelcol-logs-collector
+      namespace: sumologic
+      labels:
+        app: sumologic-prometheus
+        
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+        app.kubernetes.io/part-of: sumologic
+        chart: sumologic-%CURRENT_CHART_VERSION%
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+        sumologic.com/app: otelcol-logs-collector
+    spec:
+      endpoints:
+        - port: metrics
+      namespaceSelector:
+        matchNames:
+        - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: otelcol-logs-collector
+          sumologic.com/scrape: "true"
+  - apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: collection-sumologic-otelcol-traces
+      namespace: sumologic
+      labels:
+        app: sumologic-prometheus
+        
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+        app.kubernetes.io/part-of: sumologic
+        chart: sumologic-%CURRENT_CHART_VERSION%
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+        sumologic.com/app: otelcol
+    spec:
+      endpoints:
+        - port: metrics
+      namespaceSelector:
+        matchNames:
+        - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/component: traces
+          sumologic.com/scrape: "true"
+  - apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: collection-sumologic-prometheus
+      namespace: sumologic
+      labels:
+        app: sumologic-prometheus
+        
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
+        app.kubernetes.io/part-of: sumologic
+        chart: sumologic-%CURRENT_CHART_VERSION%
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      endpoints:
+        - path: /metrics
+          port: web
+      namespaceSelector:
+        matchNames:
+        - $(NAMESPACE)
+      selector:
+        matchLabels:
+          operated-prometheus: "true"

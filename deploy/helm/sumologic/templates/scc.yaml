@@ -18,7 +18,8 @@ allowHostPID: true
 allowHostPorts: true
 allowPrivilegeEscalation: true # fluent-bit
 allowPrivilegedContainer: true # fluent-bit
-allowedCapabilities: []
+allowedCapabilities:
+- CAP_CHOWN # otelcol-logs-collector
 allowedUnsafeSysctls: []
 defaultAddCapabilities: []
 fsGroup:
@@ -30,6 +31,8 @@ fsGroup:
       max: 1000 # prometheus
     - min: 2000 # prometheus
       max: 2000 # prometheus
+    - min: 0  # otelcol-logs-collector
+      max: 0  # otelcol-logs-collector
 groups:
 - system:serviceaccounts:{{ .Release.Namespace }}
 priority: 0

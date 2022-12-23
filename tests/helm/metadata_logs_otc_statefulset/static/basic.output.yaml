@@ -126,6 +126,8 @@ spec:
             secretKeyRef:
               name: sumologic
               key: endpoint-logs
+        - name: NO_PROXY
+          value: kubernetes.default.svc
         - name: VALUE_FROM_SECRET
           valueFrom:
             secretKeyRef:

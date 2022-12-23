@@ -92,7 +92,10 @@ spec:
               key: secret_key
               name: secret_name
         securityContext:
-          {}
+          capabilities:
+            drop:
+              - ALL
+          privileged: true
         ports:
         - name: pprof
           containerPort: 1777
@@ -103,6 +106,13 @@ spec:
       initContainers: # ensure the host path is owned by the otel user group
       - name: changeowner
         image: public.ecr.aws/docker/library/busybox:latest
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+            add:
+              - CAP_CHOWN
+          privileged: true
         command:
         - "sh"
         - "-c"

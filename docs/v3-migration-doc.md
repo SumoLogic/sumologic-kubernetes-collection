@@ -5,11 +5,13 @@
   - [Requirements](#requirements)
   - [Manual steps](#manual-steps)
     - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
-  - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
+    - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
     - [Otelcol StatefulSets](#otelcol-statefulsets)
 - [Known issues](#known-issues)
   - [Cannot delete pod if using Tailing Sidecar Operator](#cannot-delete-pod-if-using-tailing-sidecar-operator)
   - [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
+  - [Tracing/Instrumentation changes](#tracinginstrumentation-changes)
+  - [Additional Service Monitors](#additional-service-monitors)
 
 Based on the feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
@@ -39,12 +41,12 @@ In this document we detail the changes as well as the exact steps for migration.
 - Upgrading Falco helm chart to `v2.4.2` which changed their configuration:
   Please validate and adjust your configuration to new version according to [Falco documentation]
 
-- Moving parameters from `fluentd.logs.containers` to `sumologic.logs.container`
+- Moved parameters from `fluentd.logs.containers` to `sumologic.logs.container`
   - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
   - moved `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
   - moved `fluentd.logs.contianers.sourceCategory` to `sumologic.logs.container.sourceCategory`
-  - moved  `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
-  - moved  `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
+  - moved `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
+  - moved `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
   - moved `fluentd.logs.containers.excludeContainerRegex` to `sumologic.logs.container.excludeContainerRegex`
   - moved `fluentd.logs.containers.excludeHostRegex` to `sumologic.logs.container.excludeHostRegex`
   - moved `fluentd.logs.containers.excludeNamespaceRegex` to `sumologic.logs.container.excludeNamespaceRegex`
@@ -53,7 +55,7 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.containers.perContainerAnnotationsEnabled` to `sumologic.logs.container.perContainerAnnotationsEnabled`
   - moved `fluentd.logs.containers.perContainerAnnotationPrefixes` to `sumologic.logs.container.perContainerAnnotationPrefixes`
 
-- Moving parameters from `fluentd.logs.kubelet` to `sumologic.logs.kubelet`
+- Moved parameters from `fluentd.logs.kubelet` to `sumologic.logs.kubelet`
   - moved `fluentd.logs.kubelet.sourceName` to `sumologic.logs.kubelet.sourceName`
   - moved `fluentd.logs.kubelet.sourceCategory` to `sumologic.logs.kubelet.sourceCategory`
   - moved `fluentd.logs.kubelet.sourceCategoryPrefix` to `sumologic.logs.kubelet.sourceCategoryPrefix`
@@ -63,7 +65,7 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.kubelet.excludePriorityRegex` to `sumologic.logs.kubelet.excludePriorityRegex`
   - moved `fluentd.logs.kubelet.excludeUnitRegex` to `sumologic.logs.kubelet.excludeUnitRegex`
 
-- Moving parameters from `fluentd.logs.systemd` to `sumologic.logs.systemd`
+- Moved parameters from `fluentd.logs.systemd` to `sumologic.logs.systemd`
   - moved `fluentd.logs.systemd.sourceName` to `sumologic.logs.systemd.sourceName`
   - moved `fluentd.logs.systemd.sourceCategory` to `sumologic.logs.systemd.sourceCategory`
   - moved `fluentd.logs.systemd.sourceCategoryPrefix` to `sumologic.logs.systemd.sourceCategoryPrefix`
@@ -73,7 +75,7 @@ In this document we detail the changes as well as the exact steps for migration.
   - moved `fluentd.logs.systemd.excludePriorityRegex` to `sumologic.logs.systemd.excludePriorityRegex`
   - moved `fluentd.logs.systemd.excludeUnitRegex` to `sumologic.logs.systemd.excludeUnitRegex`
 
-- Moving parameters from `fluentd.logs.default` to `sumologic.logs.defaultFluentd`
+- Moved parameters from `fluentd.logs.default` to `sumologic.logs.defaultFluentd`
   - moved `fluentd.logs.default.sourceName` to `sumologic.logs.defaultFluentd.sourceName`
   - moved `fluentd.logs.default.sourceCategory` to `sumologic.logs.defaultFluentd.sourceCategory`
   - moved `fluentd.logs.default.sourceCategoryPrefix` to `sumologic.logs.defaultFluentd.sourceCategoryPrefix`
@@ -92,6 +94,20 @@ In this document we detail the changes as well as the exact steps for migration.
 
   See [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
   if you want to keep old behavior.
+
+- Changed `otelagent` from `DaemonSet` to `StatefulSet`
+
+- Moved parameters from `otelagent.*` to `otelcolInstrumentation.*`
+
+- Moved parameters from `otelgateway.*` to `tracesGateway.*`
+
+- Moved parameters from `otelcol.*` to `tracesSampler.*`
+
+- Enabled metrics and traces collection from instrumentation by default
+  - changed parameter `sumologic.traces.enabled` default value from `false` to `true`
+
+- Adding `sumologic.metrics.serviceMonitors` to avoid copying values for
+  `kube-prometheus-stack.prometheus.additionalServiceMonitors` configuration
 
 ## How to upgrade
 
@@ -115,14 +131,14 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
 - Upgrading prometheus CRDs:
 
   ```bash
-  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
-  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
-  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
-  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
-  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
-  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
-  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
-  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+  kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
   ```
 
   due to:
@@ -151,15 +167,40 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
   Error: UPGRADE FAILED: cannot patch "collection-kube-state-metrics" with kind Deployment: Deployment.apps "collection-kube-state-metrics" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
   ```
 
+- Patching `prometheus-node-exporter` daemonset
+
+```bash
+kubectl get daemonset \
+  --namespace "${NAMESPACE}" \
+  --selector "app=prometheus-node-exporter,release=${HELM_RELEASE_NAME}" \
+  -o json | \
+jq ". | .items[].spec.selector.matchLabels[\"app.kubernetes.io/instance\"] |= \"${HELM_RELEASE_NAME}\"" | \
+jq ". | .items[].spec.template.metadata.labels[\"app.kubernetes.io/instance\"] |= \"${HELM_RELEASE_NAME}\"" | \
+jq ". | .items[].spec.selector.matchLabels[\"app.kubernetes.io/name\"] |= \"prometheus-node-exporter\"" | \
+jq ". | .items[].spec.template.metadata.labels[\"app.kubernetes.io/name\"] |= \"prometheus-node-exporter\"" | \
+jq '. | del(.items[].spec.selector.matchLabels["release"])' | \
+jq '. | del(.items[].spec.template.metadata.labels["release"])' | \
+jq '. | del(.items[].spec.selector.matchLabels["app"])' | \
+jq '. | del(.items[].spec.template.metadata.labels["app"])' | \
+kubectl apply \
+  --namespace="${NAMESPACE}" \
+  --force \
+  --filename -
+```
+
+  due to:
+
+  ```text
+  Error: UPGRADE FAILED: cannot patch "collection-prometheus-node-exporter" with kind DaemonSet: DaemonSet.apps "collection-prometheus-node-exporter" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"prometheus-node-exporter"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
+  ```
+
 - In case of overriding any of the `repository` property under the `kube-prometheus-stack` property,
   please follow the `kube-prometheus-stack` [migration doc][kube-prometheus-stack-image-migration] on that.
 
-### Replace special configuration values marked by 'replace' suffix
+#### Replace special configuration values marked by 'replace' suffix
 
-Mechanism to replace special configuration values for traces marked by 'replace' suffix was removed and following special values in configuration are no longer automatically replaced and they need to be changed:
+Mechanism to replace special configuration values for traces marked by 'replace' suffix was removed and following special values in configuration are no longer automatically replaced, and they need to be changed:
 
-- `exporters.otlptraces.endpoint.replace`
-- `exporters.otlpmetrics.endpoint.replace`
 - `processors.source.collector.replace`
 - `processors.source.name.replace`
 - `processors.source.category.replace`
@@ -170,10 +211,8 @@ Mechanism to replace special configuration values for traces marked by 'replace'
 - `processors.source.exclude_container_regex.replace`
 - `processors.source.exclude_host_regex.replace`
 - `processors.resource.cluster.replace`
-- `exporters.sumologic.source_name.replace`
-- `exporters.sumologic.source_category.replace`
 
-Above special configuration values can be replaced either to direct values or be set as reference to other parameters form `values.yaml`.
+Above special configuration values can be replaced either to direct values or be set as reference to other parameters from `values.yaml`.
 
 #### Otelcol StatefulSets
 
@@ -183,6 +222,43 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
   kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
   ```
+
+#### Tracing/Instrumentation changes
+
+**Required only if `sumologic.traces.enabled=true`.**
+
+- **Otelagent DaemonSet**
+
+  If you're using `otelagent` (`otelagent.enabled=true`), please run the following command to manually delete DamemonSet and ConfigMap in helm chart v2 before upgrade:
+
+  ```
+  kubectl delete ds --namespace=my-namespace --cascade=false my-release-sumologic-otelagent
+  kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelagent
+  ```
+
+- **Otelgateway Deployment**
+
+  If you're using `otelgateway` (`otelgateway.enabled=true`), please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
+
+  ```
+  kubectl delete deployment --namespace=my-namespace --cascade=false my-release-sumologic-otelgateway
+  kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelgateway
+  ```
+
+- **Otelcol Deployment**
+
+  Please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
+
+  ```
+  kubectl delete deployment --namespace=my-namespace --cascade=false my-release-sumologic-otelcol
+  kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelcol
+  ```
+
+#### Additional Service Monitors
+
+If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`,
+you have to remove all Sumo Logic related service monitors from the list, because they are now covered by
+`sumologic.metrics.serviceMonitors` configuration. This will make your configuration more clear.
 
 ### Known issues
 
