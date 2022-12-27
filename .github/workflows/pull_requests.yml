@@ -141,6 +141,19 @@ jobs:
         if: needs.docs-changed.outputs.any_changed == 'true'
         run: CMD=./node_modules/.bin/markdown-table-formatter make markdown-table-formatter-check
 
+  check-configuration-keys:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install pyyaml
+      - run: |
+          make check-configuration-keys
+
   test:
     runs-on: ubuntu-20.04
     needs:
