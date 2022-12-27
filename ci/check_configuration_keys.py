@@ -11,9 +11,57 @@ import yaml
 from yaml.loader import SafeLoader
 
 DESCRIPTION = 'This program verifies if all configuration from values.yaml has been documented.'
+SKIP_DEFAULTS = {
+    'fluent-bit.enabled',
+    'fluentd.events.extraEnvVars',
+    'fluentd.events.extraVolumeMounts',
+    'fluentd.events.extraVolumes',
+    'fluentd.events.statefulset.initContainers',
+    'fluentd.logs.autoscaling.targetMemoryUtilizationPercentage',
+    'fluentd.logs.extraEnvVars',
+    'fluentd.logs.extraVolumeMounts',
+    'fluentd.logs.extraVolumes',
+    'fluentd.logs.podDisruptionBudget',
+    'fluentd.logs.statefulset.initContainers',
+    'fluentd.metrics.autoscaling.targetMemoryUtilizationPercentage',
+    'fluentd.metrics.extraEnvVars',
+    'fluentd.metrics.extraVolumeMounts',
+    'fluentd.metrics.extraVolumes',
+    'fluentd.metrics.statefulset.initContainers',
+    'fluentd.persistence.storageClass',
+    'kube-prometheus-stack.enabled',
+    'kube-prometheus-stack.global.imagePullSecrets',
+    'metadata.logs.autoscaling.targetMemoryUtilizationPercentage',
+    'metadata.logs.podDisruptionBudget',
+    'metadata.logs.statefulset.extraEnvVars',
+    'metadata.logs.statefulset.extraVolumeMounts',
+    'metadata.logs.statefulset.extraVolumes',
+    'metadata.metrics.podDisruptionBudget',
+    'metadata.metrics.autoscaling.targetMemoryUtilizationPercentage',
+    'metadata.metrics.statefulset.extraEnvVars',
+    'metadata.metrics.statefulset.extraVolumeMounts',
+    'metadata.metrics.statefulset.extraVolumes',
+    'metadata.persistence.storageClass',
+    'otelcolInstrumentation.statefulset.priorityClassName',
+    'otelcolInstrumentation.statefulset.extraEnvVars',
+    'otelcolInstrumentation.statefulset.extraVolumeMounts',
+    'otelcolInstrumentation.statefulset.extraVolumes',
+    'tracesGateway.deployment.extraEnvVars',
+    'tracesGateway.deployment.extraVolumeMounts',
+    'tracesGateway.deployment.extraVolumes',
+    'tracesSampler.deployment.extraEnvVars',
+    'tracesSampler.deployment.extraVolumeMounts',
+    'tracesSampler.deployment.extraVolumes',
+    'sumologic.setup.job.tolerations',
+    'sumologic.setup.job.pullSecrets',
+    'sumologic.pullSecrets',
+    'sumologic.setup.force',
+    'sumologic.setup.debug',
+    'metrics-server.image.pullSecrets',
+    'sumologic.events.sourceCategory',
+}
 
-
-def main(values_path: str, readme_path: str) -> None:
+def main(values_path: str, readme_path: str, full_diff=False) -> None:
     """Prints differences between configuration keys from values_path and readme_path
 
     Args:
@@ -28,30 +76,38 @@ def main(values_path: str, readme_path: str) -> None:
     readme_distinct = compare_list_of_keys(readme.keys(), values_keys)
     diff_defaults = compare_values(readme, values_keys, values)
 
-    print('*' * 20)
-    print(f'Keys in values not covered by readme ({len(values_distinct)}):')
-    print('*' * 20)
-    for key in values_distinct:
-        print(key)
+    if values_distinct:
+        print('*' * 20)
+        print(f'Keys in values not covered by readme ({len(values_distinct)}):')
+        print('*' * 20)
+        for key in values_distinct:
+            print(key)
 
-    print('*' * 20)
-    print(f'Keys in readme not existing in values ({len(readme_distinct)}):')
-    print('*' * 20)
-    for key in readme_distinct:
-        print(key)
+    if readme_distinct:
+        print('*' * 20)
+        print(f'Keys in readme not existing in values ({len(readme_distinct)}):')
+        print('*' * 20)
+        for key in readme_distinct:
+            print(key)
 
-    max_key_length = max(len(key) for key in diff_defaults.keys())
-    print('*' * 20)
-    print(f'Default values comparison ({len(diff_defaults.keys())}):')
-    print('*' * 20)
-    print(f'| {"Key":{max_key_length}} | {"Default for readme":100} | {"Default for values":100} |')
-    print(f'|{"-"*(max_key_length+2)}|{"-"*102}|{"-"*102}|')
+    if diff_defaults:
+        max_key_length = max(len(key) for key in diff_defaults.keys())
 
-    for key in sorted(diff_defaults.keys()):
-        readme_value, values_value = diff_defaults[key]
+        print('*' * 20)
+        print(f'Default values comparison ({len(diff_defaults.keys())}):')
+        print('*' * 20)
+        if not full_diff:
+            print(f'| {"Key":{max_key_length}} | {"Default for readme":100} | {"Default for values":100} |')
+            print(f'|{"-"*(max_key_length+2)}|{"-"*102}|{"-"*102}|')
 
-        # Show only first 100 characters of every default
-        print(f'| {key:{max_key_length}} | {readme_value[:100]:100} | {values_value[:100]:100} |')
+        for key in sorted(diff_defaults.keys()):
+            readme_value, values_value = diff_defaults[key]
+
+            # Show only first 100 characters of every default
+            if full_diff:
+                print(f'| {key:{max_key_length}} | {readme_value} | {values_value} |')
+            else:
+                print(f'| {key:{max_key_length}} | {readme_value[:100]:100} | {values_value[:100]:100} |')
 
     if values_distinct:
         sys.exit(1)
@@ -118,6 +174,9 @@ def extract_keys(dictionary: dict) -> list:
     """
     keys = []
     if not isinstance(dictionary, dict):
+        return None
+
+    if not len(dictionary):
         return None
 
     for key, value in dictionary.items():
@@ -187,6 +246,9 @@ def compare_values(readme: dict, values_keys: list[str], values: dict) -> dict:
     """
     diff = {}
     for this_key, this_value in readme.items():
+        if this_key in SKIP_DEFAULTS:
+            continue
+
         for other_key in values_keys:
             if compare_keys(this_key, other_key):
                 other_value = get_value(this_key, values)
@@ -231,6 +293,7 @@ if __name__ == '__main__':
         description = DESCRIPTION)
     parser.add_argument('--values', required=True)
     parser.add_argument('--readme', required=True)
+    parser.add_argument('--full-diff', required=False, action='store_true')
     args = parser.parse_args()
 
-    main(args.values, args.readme)
+    main(args.values, args.readme, args.full_diff)
