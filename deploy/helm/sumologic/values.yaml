@@ -63,7 +63,7 @@ sumologic:
     #   env: {}
 
   ## If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace>
-  ## and not add the fluentD/fluent-bit logs and Prometheus remotestorage metrics.
+  ## and not add the fluentD/Fluent Bit logs and Prometheus remotestorage metrics.
   collectionMonitoring: true
 
   ## Optionally specify an array of pullSecrets.
@@ -241,7 +241,7 @@ sumologic:
       otelcol:
         enabled: true
 
-      ## Allow running otel and Fluent-Bit side by side. This will result in duplicated
+      ## Allow running otel and Fluent Bit side by side. This will result in duplicated
       ## logs being ingested. Only enabled this if you're **certain** it's what you want.
       allowSideBySide: false
 
@@ -831,7 +831,7 @@ fluentd:
       ## To use additional output plugins
       extraOutputPluginConf: |-
 
-      ## To enable stiching multiline logs in fluentd when fluent-bit Multiline feature is On
+      ## To enable stiching multiline logs in fluentd when Fluent Bit Multiline feature is On
       multiline:
         enabled: true
 
@@ -1133,10 +1133,14 @@ metrics-server:
     # pullSecrets:
     #   - imagepullsecret
 
-## Configure fluent-bit
+## Configure Fluent Bit
 ## ref: https://github.com/fluent/helm-charts/blob/master/charts/fluent-bit/values.yaml
 fluent-bit:
   enabled: false
+
+  ## Put here the new name if you want to override the full name used for Fluent Bit components.
+  # fullnameOverride: ""
+
   ## If specified, use these secrets to access the image
   # imagePullSecrets:
   #   - name: "image-pull-secret"
@@ -1145,7 +1149,7 @@ fluent-bit:
     tag: 1.6.10-sumo-3
     pullPolicy: IfNotPresent
 
-  ## Resource limits for fluent-bit
+  ## Resource limits for Fluent Bit
   resources: {}
     # limits:
     #   cpu: 100m
@@ -1154,30 +1158,34 @@ fluent-bit:
     #   cpu: 10m
     #   memory: 8Mi
 
-  ## Uncomment the flag below to not install fluent-bit helm chart as a dependency along with this helm chart.
+  ## Uncomment the flag below to not install Fluent Bit helm chart as a dependency along with this helm chart.
   ## Do not use this flag to disable logs collection.
   ## Instead, set the `sumologic.logs.enabled: false` flag to disable logs collection.
   ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.logs.enabled: false`,
   ## as this will make Fluent Bit try to write to an non-existent logs enrichment service.
   # enabled: false
 
-  ## Configuration for fluent-bit service
+  ## Configuration for Fluent Bit service
   service:
-    ## Add custom labels to fluent-bit service
+    ## Add custom labels to Fluent Bit service
     labels:
-      sumologic.com/scrape: "true"  # label used by fluent-bit service monitor
+      sumologic.com/scrape: "true"  # label used by Fluent Bit service monitor
 
-  ## Add custom pod labels to fluent-bit daemonset pods
+  ## Add custom pod labels to Fluent Bit daemonset pods
   podLabels: {}
 
-  ## Add custom pod annotations to fluent-bit daemonset pods
+  ## Add custom pod annotations to Fluent Bit daemonset pods
   podAnnotations: {}
+
+  # nodeSelector: {}
+
+  # priorityClassName: ""
 
   securityContext:
     capabilities:
       drop:
         - ALL
-  ## Set securityContext of fluent-bit daemonset containers as privileged for running in Openshift
+  ## Set securityContext of Fluent Bit daemonset containers as privileged for running in Openshift
   #   privileged: true
 
   env:
