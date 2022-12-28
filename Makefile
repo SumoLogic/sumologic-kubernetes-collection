@@ -57,6 +57,9 @@ markdown-table-formatter-check:
 markdown-table-formatter-format:
 	./ci/markdown_table_formatter.sh --format
 
+check-configuration-keys:
+	./ci/check_configuration_keys.py --values deploy/helm/sumologic/values.yaml --readme deploy/helm/sumologic/README.md
+
 # Vagrant commands
 vup:
 	vagrant up

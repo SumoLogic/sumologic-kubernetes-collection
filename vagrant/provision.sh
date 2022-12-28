@@ -118,3 +118,7 @@ KIND_VERSION=v0.11.1
 curl -Lo ./kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-amd64"
 chmod +x ./kind
 mv ./kind /usr/local/bin/kind
+
+# install python with dependencies
+apt install python3 -y
+pip install pyyaml
