@@ -4279,10 +4279,15 @@ telegraf-operator:
 ## https://github.com/falcosecurity/charts/tree/master/falco
 falco:
   enabled: false
+
+  ## Put here the new name if you want to override the full name used for Falco components.
+  # fullnameOverride: ""
+
+  # imagePullSecrets: []
+
   image:
     registry: public.ecr.aws
     # repository: falcosecurity/falco-no-driver
-    # pullSecrets: []
 
   ## Add kernel-devel package through MachineConfig, required to enable building of missing falco modules (only for OpenShift)
   addKernelDevel: true
@@ -4309,9 +4314,9 @@ falco:
             readOnly: true
 
   driver:
-  ## Enable eBPF support for Falco instead of falco-probe kernel module.
+  ## Set to epbf to enable eBPF support for Falco instead of falco-probe kernel module.
   ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#falco-and-google-kubernetes-engine-gke
-  #   kind: ebpf
+    kind: module
     loader:
       initContainer:
         image:
