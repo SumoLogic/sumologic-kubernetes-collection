@@ -3,6 +3,7 @@
 """
 
 import argparse
+import json
 import re
 import sys
 
@@ -19,11 +20,13 @@ def main(values_path: str, readme_path: str) -> None:
         values_path (str): path to values.yaml
         readme_path (str): path to README.md
     """
-    values_keys = extract_keys_from_values(values_path)
-    readme_keys = extract_keys_from_readme(readme_path)
+    values = values_to_dictionary(values_path)
+    values_keys = extract_keys(values)
+    readme = extract_keys_from_readme(readme_path)
 
-    values_distinct = compare_list_of_keys(values_keys, readme_keys)
-    readme_distinct = compare_list_of_keys(readme_keys, values_keys)
+    values_distinct = compare_list_of_keys(values_keys, readme.keys())
+    readme_distinct = compare_list_of_keys(readme.keys(), values_keys)
+    diff_defaults = compare_values(readme, values_keys, values)
 
     print('*' * 20)
     print(f'Keys in values not covered by readme ({len(values_distinct)}):')
@@ -37,45 +40,68 @@ def main(values_path: str, readme_path: str) -> None:
     for key in readme_distinct:
         print(key)
 
+    max_key_length = max(len(key) for key in diff_defaults.keys())
+    print('*' * 20)
+    print(f'Default values comparison ({len(diff_defaults.keys())}):')
+    print('*' * 20)
+    print(f'| {"Key":{max_key_length}} | {"Default for readme":100} | {"Default for values":100} |')
+    print(f'|{"-"*(max_key_length+2)}|{"-"*102}|{"-"*102}|')
+
+    for key in sorted(diff_defaults.keys()):
+        readme_value, values_value = diff_defaults[key]
+
+        # Show only first 100 characters of every default
+        print(f'| {key:{max_key_length}} | {readme_value[:100]:100} | {values_value[:100]:100} |')
+
     if values_distinct:
         sys.exit(1)
 
 
-def extract_keys_from_values(path: str) -> list:
-    """Reads given path as values.yaml and returns list of configuration keys
+def values_to_dictionary(path: str) -> dict:
+    """Reads given path as values.yaml and returns it as dict
 
     Args:
         path (str): path to the value.yaml
 
     Returns:
-        list: list of configuration keys
+        dict: values.yaml as dict
     """
     with open(path, encoding='utf-8') as file:
         values_yaml = file.read()
         values_yaml = re.sub(r'(\[\]|\{\})\n(\s+# )', r'\n\2', values_yaml, flags=re.M)
         values_yaml = re.sub(r'^(\s+)# ', r'\1', values_yaml, flags=re.M)
-        values_yaml = yaml.load(values_yaml, Loader=SafeLoader)
-        return extract_keys(values_yaml)
+        return yaml.load(values_yaml, Loader=SafeLoader)
 
 
-def extract_keys_from_readme(path: str) -> list:
-    """Reads given path as README.md and returns list of covered configuration keys
+def extract_keys_from_readme(path: str) -> dict:
+    """Reads given path as README.md and returns dict in the following form:
+
+    ```
+    {
+        configuration_key: configuration_default
+    }
+    ```
 
     Args:
         path (str): path to the README.md
 
     Returns:
-        list: list of covered configuration keys
+        dict: {configuration_key: configuration_default,...}
     """
     with open(path, encoding='utf-8') as file:
         readme = file.readlines()
 
-    keys = []
+    keys = {}
 
     for line in readme:
-        match = re.match(r'^\| `(?P<key>.*?)`', line)
-        if match:
-            keys.append(match.group('key'))
+        match = re.match(
+            r'^\|\s+`(?P<key>.*?)`\s+\|\s+(?P<description>.*?)\s+\|\s+(?P<value>.*?)\s+\|$',
+            line)
+        if match and match.group('key'):
+            value = match.group('value').strip('`').strip('"')
+            keys[match.group('key')] = value
+        elif line.startswith('|') and not line[:5] in {'|----', '| Par'}:
+            print(line)
 
     return keys
 
@@ -118,7 +144,7 @@ def compare_keys(this: str, other: str) -> bool:
     return this.startswith(other) or other.startswith(this)
 
 
-def compare_list_of_keys(this: list[str], other: list[str]) -> list[str]:
+def compare_list_of_keys(this: list[str], other: list[str]) -> list:
     """Returns all elements from this which are not beginning of any element of other
 
     Args:
@@ -140,6 +166,63 @@ def compare_list_of_keys(this: list[str], other: list[str]) -> list[str]:
             diff.append(this_key)
 
     return sorted(diff)
+
+
+def compare_values(readme: dict, values_keys: list[str], values: dict) -> dict:
+    """Returns dictionary in the following form:
+
+    ```
+    {
+        readme_key: [readme_default, values_default]
+    }
+    ```
+
+    Args:
+        readme (dict): dictionary representing readme
+        values_keys (list[str]): dot separated values keys
+        values_keys (dict): values
+
+    Returns:
+        dict:     {readme_key: [readme_default, values_default,...}
+    """
+    diff = {}
+    for this_key, this_value in readme.items():
+        for other_key in values_keys:
+            if compare_keys(this_key, other_key):
+                other_value = get_value(this_key, values)
+                if this_value != other_value:
+
+                    # Skip configuration linked to values.yaml
+                    if this_value == 'See [values.yaml]':
+                        continue
+
+                    # ToDo: compare types
+                    if this_value in {'Nil', '{}'} and other_value in {'', 'null'}:
+                        break
+                    diff[f'{this_key}'] = [this_value, other_value]
+
+    return diff
+
+
+def get_value(key: str, dictionary: dict) -> str:
+    """Returns value from dictionary for dot separated key
+
+    Args:
+        key (str): dot separated key
+        dictionary (dict): dictionary to get values from
+
+    Returns:
+        str: value for the given key. This is string or dumped json
+    """
+    value = dictionary
+
+    for subkey in key.split('.'):
+        value = value[subkey]
+
+    if isinstance(value, str):
+        return value
+
+    return json.dumps(value)
 
 
 if __name__ == '__main__':
