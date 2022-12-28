@@ -26,13 +26,13 @@ def main(values_path: str, readme_path: str) -> None:
     readme_distinct = compare_list_of_keys(readme_keys, values_keys)
 
     print('*' * 20)
-    print('Keys in values not covered by readme:')
+    print(f'Keys in values not covered by readme ({len(values_distinct)}):')
     print('*' * 20)
     for key in values_distinct:
         print(key)
 
     print('*' * 20)
-    print('Keys in readme not existing in values:')
+    print(f'Keys in readme not existing in values ({len(readme_distinct)}):')
     print('*' * 20)
     for key in readme_distinct:
         print(key)
