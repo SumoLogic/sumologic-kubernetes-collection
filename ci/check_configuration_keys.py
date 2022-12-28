@@ -139,7 +139,7 @@ def compare_list_of_keys(this: list[str], other: list[str]) -> list[str]:
         if not found:
             diff.append(this_key)
 
-    return diff
+    return sorted(diff)
 
 
 if __name__ == '__main__':
