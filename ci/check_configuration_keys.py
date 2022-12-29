@@ -91,23 +91,27 @@ def main(values_path: str, readme_path: str, full_diff=False) -> None:
             print(key)
 
     if diff_defaults:
-        max_key_length = max(len(key) for key in diff_defaults.keys())
+        max_key_length = max(len(key) for key in diff_defaults)
 
         print('*' * 20)
-        print(f'Default values comparison ({len(diff_defaults.keys())}):')
+        print(f'Default values comparison ({len(diff_defaults)}):')
         print('*' * 20)
-        if not full_diff:
-            print(f'| {"Key":{max_key_length}} | {"Default for readme":100} | {"Default for values":100} |')
+
+        if full_diff:
+            for key in sorted(diff_defaults.keys()):
+                readme_value, values_value = diff_defaults[key]
+                print(f'| {key:{max_key_length}} | {readme_value} | {values_value} |')
+        else:
+            print(f'| {"Key":{max_key_length}} | {"Default for readme":100} |'
+                  f'{"Default for values":100} |')
             print(f'|{"-"*(max_key_length+2)}|{"-"*102}|{"-"*102}|')
 
-        for key in sorted(diff_defaults.keys()):
-            readme_value, values_value = diff_defaults[key]
+            for key in sorted(diff_defaults.keys()):
+                readme_value, values_value = diff_defaults[key]
 
-            # Show only first 100 characters of every default
-            if full_diff:
-                print(f'| {key:{max_key_length}} | {readme_value} | {values_value} |')
-            else:
-                print(f'| {key:{max_key_length}} | {readme_value[:100]:100} | {values_value[:100]:100} |')
+                # Show only first 100 characters of every default
+                print(f'| {key:{max_key_length}} | {readme_value[:100]:100} |'
+                      f'{values_value[:100]:100} |')
 
     if values_distinct:
         sys.exit(1)
@@ -176,7 +180,7 @@ def extract_keys(dictionary: dict) -> list:
     if not isinstance(dictionary, dict):
         return None
 
-    if not len(dictionary):
+    if not dictionary:
         return None
 
     for key, value in dictionary.items():
