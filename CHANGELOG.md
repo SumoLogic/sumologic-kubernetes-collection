@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v2.19.1]
 
+### Released 2022-12-29
+
 ### Changed
 
 - chore: upgrade Fluent Bit to v1.6.10-sumo-3 [#2730]
