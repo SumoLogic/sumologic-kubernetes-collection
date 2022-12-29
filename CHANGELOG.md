@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v2.19.1]
 
+### Released 2022-12-29
+
 ### Changed
 
 - chore: upgrade Fluent Bit to v1.6.10-sumo-3 [#2730]
@@ -16,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The repository for the metrics-server dependency was updated [#2730]
 
 [#2730]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2730
+[v2.19.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.19.0...v2.19.1
 
 ## [v2.19.0]
 
