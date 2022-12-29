@@ -208,6 +208,7 @@ sumologic:
 
   ### Configuration for collection of Kubernetes events
   events:
+    enabled: true
     provider: otelcol
 
     ## Source name for the Events source. Default: "events"
@@ -1872,6 +1873,7 @@ kube-prometheus-stack:
       podMetadata:
         labels: {}
         annotations: {}
+      nodeSelector: {}
       ## Define resources requests and limits for single Pods.
       resources:
         limits:
@@ -4291,6 +4293,8 @@ otellogs:
 ## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
 telegraf-operator:
   enabled: false
+  ## Put here the new name if you want to override the full name used for Telegraf Operator components.
+  # fullnameOverride: ""
   image:
     sidecarImage: public.ecr.aws/sumologic/telegraf:1.21.2
   replicaCount: 1
@@ -4402,6 +4406,9 @@ falco:
 ## ref: https://github.com/SumoLogic/tailing-sidecar/blob/main/helm/tailing-sidecar-operator/values.yaml
 tailing-sidecar-operator:
   enabled: false
+
+  ## Put here the new name if you want to override the full name used for tailing-sidecar-operator components.
+  # fullnameOverride: ""
 
   ## creation of Security Context Constraints in Openshift
   scc:
