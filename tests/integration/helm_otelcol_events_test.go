@@ -23,7 +23,7 @@ func Test_Helm_Otelcol_Events(t *testing.T) {
 	const (
 		tickDuration                     = 3 * time.Second
 		waitDuration                     = 5 * time.Minute
-		expectedEventCount          uint = 70 // number determined experimentally
+		expectedEventCount          uint = 50 // number determined experimentally
 		expectedSecretEndpointCount int  = 1
 	)
 

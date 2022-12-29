@@ -12,6 +12,9 @@ Perform the following steps in order to release new verions of helm chart.
      - add link to minor version, if created
      - set "supported until" date for previous minor version to 6 months after today
    - update [deploy/README.md][deploy_matrix] (support matrix)
+   - Follow the below convention for the commit message
+      - `chore: prepare release v2.y.z`
+      - Please refer to https://www.conventionalcommits.org/en/v1.0.0/ for more on this
 
 1. Prepare PR for the `main` branch with analogical changes
 
