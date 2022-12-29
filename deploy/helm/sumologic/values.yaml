@@ -1345,6 +1345,12 @@ kube-prometheus-stack:
     # imagePullSecrets:
     #   - name: "image-pull-secret"
 
+  ## Put here the new name if you want to override the full name used for Kube Prometheus Stack components.
+  # fullnameOverride: ""
+
+  ## Provide a target gitVersion of K8S, in case .Capabilites.KubeVersion is not available (e.g. helm template). Changing this may break Sumo Logic apps.
+  # kubeTargetVersionOverride: ""
+
   ## Labels to apply to all kube-prometheus-stack resources
   commonLabels: {}
 
@@ -1816,6 +1822,11 @@ kube-prometheus-stack:
       enabled: false
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
+    ## Put here the new name if you want to override the full name used for Kube State Metrics components.
+    # fullnameOverride: ""
+
+    nodeSelector: {}
+
     ## Custom labels to apply to service, deployment and pods
     customLabels: {}
     ## Additional annotations for pods in the DaemonSet
@@ -1829,6 +1840,11 @@ kube-prometheus-stack:
       #   memory: 32Mi
   ## Resource limits for prometheus node exporter
   prometheus-node-exporter:
+    ## Put here the new name if you want to override the full name used for Prometheus Node exporter components.
+    # fullnameOverride: ""
+
+    nodeSelector: {}
+
     ## Additional labels for pods in the DaemonSet
     podLabels: {}
     ## Additional annotations for pods in the DaemonSet
