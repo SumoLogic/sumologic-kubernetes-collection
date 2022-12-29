@@ -1352,7 +1352,8 @@ kube-prometheus-stack:
   ## Put here the new name if you want to override the full name used for Kube Prometheus Stack components.
   # fullnameOverride: ""
 
-  ## Provide a target gitVersion of K8S, in case .Capabilites.KubeVersion is not available (e.g. helm template). Changing this may break Sumo Logic apps.
+  ## Provide a target gitVersion of K8S, in case .Capabilites.KubeVersion is not available (e.g. helm template).
+  ## Changing this may break Sumo Logic apps.
   # kubeTargetVersionOverride: ""
 
   ## Labels to apply to all kube-prometheus-stack resources
