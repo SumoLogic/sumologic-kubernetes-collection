@@ -4020,6 +4020,9 @@ tracesGateway:
     #     mountPath: /certs
     #     readOnly: true
 
+    ## Option to define priorityClassName to assign a priority class to pods.
+    priorityClassName:
+
   ## To enable collecting all logs, set to false
   logLevelFilter: false
 
@@ -4054,6 +4057,8 @@ tracesGateway:
         send_batch_size: 256
         ## Time duration after which a batch will be sent regardless of size
         timeout: 5s
+        ## Never more than this many spans are being sent in a batch
+        # send_batch_max_size: 512
     extensions:
       health_check: {}
       memory_ballast:
