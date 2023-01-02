@@ -352,7 +352,13 @@ metadata:
 If you do not see your metrics in Sumo Logic, please check the following stages:
 
 - [Check if metrics are in Prometheus](#check-if-metrics-are-in-prometheus)
-- Check if Prometheus knows how to send metrics to Sumo Logic
+
+  - [Investigate Prometheus scrape configuration](#investigate-prometheus-scrape-configuration)
+  - [Pod is visible in Prometheus targets](#pod-is-visible-in-prometheus-targets)
+  - [There is no target for serviceMonitor](#there-is-no-target-for-servicemonitor)
+  - [Pod is not visible in target for custom serviceMonitor](#pod-is-not-visible-in-target-for-custom-servicemonitor)
+
+- [Check if Prometheus knows how to send metrics to Sumo Logic](#check-if-prometheus-knows-how-to-send-metrics-to-sumo-logic)
 
 ### Check if metrics are in Prometheus
 
