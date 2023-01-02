@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: upgrade Fluentd to v1.15.3-sumo-0 [#2745]
   - This also upgrades Ruby from `v2.7` to `v3.1` and some other dependencies.
     See [v1.15.3-sumo-0] for more.
+- feat: adjust average utilization for metadata autoscaling [#2744]
 
 [#2724]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2724
 [#2745]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2745
+[#2744]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2744
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...main
 
