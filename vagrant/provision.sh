@@ -94,14 +94,6 @@ mkdir /opt/k9s
 curl -Lo- "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz" | tar -C /opt/k9s -xzf -
 ln -s /opt/k9s/k9s /usr/bin/k9s
 
-echo Dashboard local in-vagrant IP:
-kubectl -n kube-system get services | grep -i kubernetes-dashboard | awk '{print $3}'
-echo
-
-echo Dashboard token:
-/sumologic/vagrant/scripts/get-dashboard-token.sh
-echo
-
 ln -s /sumologic/vagrant/scripts/sumo-make.sh /usr/local/bin/sumo-make
 ln -s /sumologic/vagrant/scripts/sumo-make-completion.sh /etc/bash_completion.d/sumo-make
 
@@ -120,5 +112,14 @@ chmod +x ./kind
 mv ./kind /usr/local/bin/kind
 
 # install python with dependencies
-apt install python3 -y
+apt install -y python3 python3-pip
 pip install pyyaml
+
+# print out summary
+echo Dashboard local in-vagrant IP:
+kubectl -n kube-system get services | grep -i kubernetes-dashboard | awk '{print $3}'
+echo
+
+echo Dashboard token:
+/sumologic/vagrant/scripts/get-dashboard-token.sh
+echo
