@@ -267,6 +267,8 @@ metadata:
                     Value: app_container_7
 ```
 
+[filterprocessor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor
+
 #### Default attributes
 
 By default, the following attributes should be available:
