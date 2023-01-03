@@ -13,6 +13,9 @@ Fluent-Bit, Prometheus and Falco.
 - [Installation Steps](#installation-steps)
   - [Authenticating with container registry](#authenticating-with-container-registry)
   - [Installation in Openshift Platform](#installation-in-openshift-platform)
+  - [Additional configuration settings](#additional-configuration-settings)
+    - [Additional configuration for Kubernetes 1.25 or newer](#additional-configuration-for-kubernetes-125-or-newer)
+    - [Additional configuration for AKS 1.25](#additional-configuration-for-aks-125)
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Troubleshooting Installation](#troubleshooting-installation)
   - [Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists](#error-customresourcedefinitionsapiextensionsk8sio-alertmanagersmonitoringcoreoscom-already-exists)
@@ -250,6 +253,48 @@ using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in values.yaml.
 
 **Notice:** Generating templates for openshift require `--api-versions=security.openshift.io/v1`
 in order to generate scc.
+
+### Additional configuration settings
+
+#### Additional configuration for Kubernetes 1.25 or newer
+
+`PodSecurityPolicy` is unavailable in v1.25+ so to install Helm Chart in Kubernetes 1.25 or newer you need to add following setting to your configuration:
+
+```yaml
+kube-prometheus-stack:
+  global:
+    rbac:
+      pspEnabled: false
+  kube-state-metrics:
+    podSecurityPolicy:
+      enabled: false
+  prometheus-node-exporter:
+    rbac:
+      pspEnabled: false
+```
+
+#### Additional configuration for AKS 1.25
+
+To install Helm Chart in AKS 1.25 you need to disable `PodSecurityPolicy` which is unavailable in v1.25+ and
+to you use falco you need set newer version of falco image in configuration:
+
+```yaml
+kube-prometheus-stack:
+  global:
+    rbac:
+      pspEnabled: false
+  kube-state-metrics:
+    podSecurityPolicy:
+      enabled: false
+  prometheus-node-exporter:
+    rbac:
+      pspEnabled: false
+falco:
+  image:
+    registry: 'public.ecr.aws'
+    repository: 'falcosecurity/falco'
+    tag: '0.33.1'
+```
 
 ## Viewing Data In Sumo Logic
 

@@ -5,6 +5,9 @@ __NOTE__: The Sumo Logic Kubernetes collection process does not support collecti
 - [Requirements](#requirements)
 - [Prerequisite](#prerequisite)
 - [Install Sumo Logic Helm Chart](#install-sumo-logic-helm-chart)
+  - [Additional configuration settings](#additional-configuration-settings)
+    - [Additional configuration for Kubernetes 1.25 or newer](#additional-configuration-for-kubernetes-125-or-newer)
+    - [Additional configuration for AKS 1.25](#additional-configuration-for-aks-125)
 - [Update Existing Prometheus](#update-existing-prometheus)
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Customizing Installation](#customizing-installation)
@@ -143,6 +146,48 @@ and then run the following:
 helm upgrade --install my-release sumologic/sumologic \
   --namespace=my-namespace \
   -f values.yaml
+```
+
+### Additional configuration settings
+
+#### Additional configuration for Kubernetes 1.25 or newer
+
+`PodSecurityPolicy` is unavailable in v1.25+ so to install Helm Chart in Kubernetes 1.25 or newer you need to add following setting to your configuration:
+
+```yaml
+kube-prometheus-stack:
+  global:
+    rbac:
+      pspEnabled: false
+  kube-state-metrics:
+    podSecurityPolicy:
+      enabled: false
+  prometheus-node-exporter:
+    rbac:
+      pspEnabled: false
+```
+
+#### Additional configuration for AKS 1.25
+
+To install Helm Chart in AKS 1.25 you need to disable `PodSecurityPolicy` which is unavailable in v1.25+ and
+to you use falco you need set newer version of falco image in configuration:
+
+```yaml
+kube-prometheus-stack:
+  global:
+    rbac:
+      pspEnabled: false
+  kube-state-metrics:
+    podSecurityPolicy:
+      enabled: false
+  prometheus-node-exporter:
+    rbac:
+      pspEnabled: false
+falco:
+  image:
+    registry: 'public.ecr.aws'
+    repository: 'falcosecurity/falco'
+    tag: '0.33.1'
 ```
 
 ## Update Existing Prometheus

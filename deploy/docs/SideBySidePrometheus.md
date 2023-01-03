@@ -24,6 +24,7 @@ Our Helm chart deploys Kubernetes resources for collecting Kubernetes logs, metr
   - [Requirements](#requirements)
   - [Prerequisite](#prerequisite)
   - [Installation Steps](#installation-steps)
+    - [Additional configuration settings](#additional-configuration-settings)
   - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
   - [Troubleshooting Installation](#troubleshooting-installation)
     - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
@@ -297,6 +298,48 @@ Example command which can be used to deploy in OpenShift 4.9 or newer when exist
 helm upgrade --install my-release sumologic/sumologic \
     --namespace=openshift-monitoring \
     -f values.yaml
+```
+
+#### Additional configuration settings
+
+##### Additional configuration for Kubernetes 1.25 or newer
+
+`PodSecurityPolicy` is unavailable in v1.25+ so to install Helm Chart in Kubernetes 1.25 or newer you need to add following setting to your configuration:
+
+```yaml
+kube-prometheus-stack:
+  global:
+    rbac:
+      pspEnabled: false
+  kube-state-metrics:
+    podSecurityPolicy:
+      enabled: false
+  prometheus-node-exporter:
+    rbac:
+      pspEnabled: false
+```
+
+##### Additional configuration for AKS 1.25
+
+To install Helm Chart in AKS 1.25 you need to disable `PodSecurityPolicy` which is unavailable in v1.25+ and
+to you use falco you need set newer version of falco image in configuration:
+
+```yaml
+kube-prometheus-stack:
+  global:
+    rbac:
+      pspEnabled: false
+  kube-state-metrics:
+    podSecurityPolicy:
+      enabled: false
+  prometheus-node-exporter:
+    rbac:
+      pspEnabled: false
+falco:
+  image:
+    registry: 'public.ecr.aws'
+    repository: 'falcosecurity/falco'
+    tag: '0.33.1'
 ```
 
 ### Viewing Data In Sumo Logic

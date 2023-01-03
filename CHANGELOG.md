@@ -12,9 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: upgrade Fluentd to v1.15.3-sumo-0 [#2747]
   - This also upgrades Ruby from `v2.7` to `v3.1` and some other dependencies.
     See [v1.15.3-sumo-0] for more.
+- chore: add support for AKS 1.25, remove support for AKS 1.22 [#2748]
 
 [#2747]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2747
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
+[#2748]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2748
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.19.1...release-v2
 
 ## [v2.19.1]
