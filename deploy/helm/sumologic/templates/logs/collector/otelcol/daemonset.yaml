@@ -14,46 +14,46 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otelcol/configmap.yaml") . | sha256sum }}
-{{- if .Values.sumologic.podAnnotations }}
-{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- if $.Values.sumologic.podAnnotations }}
+{{ toYaml $.Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
-{{- if .Values.otellogs.daemonset.podAnnotations }}
-{{ toYaml .Values.otellogs.daemonset.podAnnotations | indent 8 }}
+{{- if $.Values.otellogs.daemonset.podAnnotations }}
+{{ toYaml $.Values.otellogs.daemonset.podAnnotations | indent 8 }}
 {{- end }}
       labels:
         app.kubernetes.io/name: {{ template "sumologic.labels.app.logs.collector.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
-{{- if .Values.sumologic.podLabels }}
-{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- if $.Values.sumologic.podLabels }}
+{{ toYaml $.Values.sumologic.podLabels | indent 8 }}
 {{- end }}
-{{- if .Values.otellogs.daemonset.podLabels }}
-{{ toYaml .Values.otellogs.daemonset.podLabels | indent 8 }}
+{{- if $.Values.otellogs.daemonset.podLabels }}
+{{ toYaml $.Values.otellogs.daemonset.podLabels | indent 8 }}
 {{- end }}
     spec:
-{{- if .Values.otellogs.daemonset.nodeSelector }}
+{{- if $.Values.otellogs.daemonset.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.otellogs.daemonset.nodeSelector | indent 8 }}
+{{ toYaml $.Values.otellogs.daemonset.nodeSelector | indent 8 }}
 {{- end }}
-{{- if or .Values.otellogs.daemonset.affinity }}
+{{- if or $.Values.otellogs.daemonset.affinity }}
       affinity:
-{{ toYaml .Values.otellogs.daemonset.affinity | indent 8 }}
+{{ toYaml $.Values.otellogs.daemonset.affinity | indent 8 }}
 {{- end }}
-{{- if .Values.otellogs.daemonset.tolerations }}
+{{- if $.Values.otellogs.daemonset.tolerations }}
       tolerations:
-{{ toYaml .Values.otellogs.daemonset.tolerations | indent 8 }}
+{{ toYaml $.Values.otellogs.daemonset.tolerations | indent 8 }}
 {{- end }}
       securityContext:
-        {{- toYaml .Values.otellogs.daemonset.securityContext | nindent 8 }}
-      {{- if .Values.otellogs.daemonset.priorityClassName }}
-      priorityClassName: {{ .Values.otellogs.daemonset.priorityClassName | quote }}
+        {{- toYaml $.Values.otellogs.daemonset.securityContext | nindent 8 }}
+      {{- if $.Values.otellogs.daemonset.priorityClassName }}
+      priorityClassName: {{ $.Values.otellogs.daemonset.priorityClassName | quote }}
       {{- else }}
       priorityClassName: {{ include "sumologic.metadata.name.priorityclass" . | quote }}
       {{- end }}
       containers:
       - args:
         - --config=/etc/otelcol/config.yaml
-        image: {{ .Values.otellogs.image.repository }}:{{ .Values.otellogs.image.tag }}
-        imagePullPolicy: {{ .Values.otellogs.image.pullPolicy }}
+        image: {{ $.Values.otellogs.image.repository }}:{{ $.Values.otellogs.image.tag }}
+        imagePullPolicy: {{ $.Values.otellogs.image.pullPolicy }}
         name: otelcol
         livenessProbe:
           httpGet:
@@ -64,7 +64,7 @@ spec:
             path: /
             port: 13133 # Health Check extension default port.
         resources:
-          {{- toYaml .Values.otellogs.daemonset.resources | nindent 10 }}
+          {{- toYaml $.Values.otellogs.daemonset.resources | nindent 10 }}
         volumeMounts:
         - mountPath: /etc/otelcol
           name: otelcol-config
@@ -79,8 +79,8 @@ spec:
         - mountPath: /var/log/journal
           name: varlogjournal
           readOnly: true
-{{- if .Values.otellogs.daemonset.extraVolumeMounts }}
-{{ toYaml .Values.otellogs.daemonset.extraVolumeMounts | indent 8 }}
+{{- if $.Values.otellogs.daemonset.extraVolumeMounts }}
+{{ toYaml $.Values.otellogs.daemonset.extraVolumeMounts | indent 8 }}
 {{- end }}
         env:
         - name: LOGS_METADATA_SVC
@@ -92,11 +92,11 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-{{- if .Values.otellogs.daemonset.extraEnvVars }}
-{{ toYaml .Values.otellogs.daemonset.extraEnvVars | nindent 8 }}
+{{- if $.Values.otellogs.daemonset.extraEnvVars }}
+{{ toYaml $.Values.otellogs.daemonset.extraEnvVars | nindent 8 }}
 {{- end }}
-        securityContext: 
-          {{- toYaml .Values.otellogs.daemonset.containers.otelcol.securityContext | nindent 10 }}
+        securityContext:
+          {{- toYaml $.Values.otellogs.daemonset.containers.otelcol.securityContext | nindent 10 }}
         ports:
         - name: pprof
           containerPort: 1777
@@ -108,13 +108,13 @@ spec:
       - name: changeowner
         image: public.ecr.aws/docker/library/busybox:latest
         securityContext:
-          {{- toYaml .Values.otellogs.daemonset.initContainers.changeowner.securityContext | nindent 10 }}
+          {{- toYaml $.Values.otellogs.daemonset.initContainers.changeowner.securityContext | nindent 10 }}
         command:
         - "sh"
         - "-c"
         - |
           chown -R \
-            {{ .Values.otellogs.daemonset.securityContext.fsGroup }}:{{ .Values.otellogs.daemonset.securityContext.fsGroup }} \
+            {{ $.Values.otellogs.daemonset.securityContext.fsGroup }}:{{ $.Values.otellogs.daemonset.securityContext.fsGroup }} \
             /var/lib/storage/otc
         volumeMounts:
         - mountPath: /var/lib/storage/otc
@@ -143,8 +143,8 @@ spec:
           path: /var/log/journal/
           type: ""
         name: varlogjournal
-{{- if .Values.otellogs.daemonset.extraVolumes }}
-{{ toYaml .Values.otellogs.daemonset.extraVolumes | indent 6 }}
+{{- if $.Values.otellogs.daemonset.extraVolumes }}
+{{ toYaml $.Values.otellogs.daemonset.extraVolumes | indent 6 }}
 {{- end }}
       serviceAccountName: {{ template "sumologic.metadata.name.logs.collector.serviceaccount" . }}
 {{- end }}
