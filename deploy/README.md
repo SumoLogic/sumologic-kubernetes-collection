@@ -88,9 +88,10 @@ The following table displays the tested Kubernetes and Helm versions.
 
 The following matrix displays the tested package versions for our Helm chart.
 
-| Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit                          | Falco  | Metrics Server | Telegraf Operator | Tailing Sidecar Operator | OpenTelemetry Operator |
+| Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | Fluentd | Fluent Bit                          | Falco  | Metrics Server | Telegraf Operator | Tailing Sidecar Operator | OpenTelemetry Operator |
 |:----------------------|:------------------------------------------|:--------|:------------------------------------|:-------|:---------------|:------------------|:-------------------------|:-----------------------|
-| 2.19.0 - latest       | 12.10.0                                   | 1.14.6  | 0.20.9                              | 1.18.6 | 5.11.9         | 1.3.10            | 0.3.4                    | 0.18.3                 |
+| Unreleased            | 12.10.0                                   | 1.15.3  | 0.20.9                              | 1.18.6 | 5.11.9         | 1.3.10            | 0.3.4                    | 0.18.3                 |
+| 2.19.0 - 2.19.1       | 12.10.0                                   | 1.14.6  | 0.20.9                              | 1.18.6 | 5.11.9         | 1.3.10            | 0.3.4                    | 0.18.3                 |
 | 2.18.0 - 2.18.1       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.4                    | 0.13.0                 |
 | 2.16.0 - 2.17.0       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.4                    | 0.7.0                  |
 | 2.14.1 - 2.15.0       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.3                    | 0.7.0                  |
