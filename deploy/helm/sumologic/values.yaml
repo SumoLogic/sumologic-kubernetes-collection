@@ -553,7 +553,7 @@ sumologic:
 fluentd:
   image:
     repository: public.ecr.aws/sumologic/kubernetes-fluentd
-    tag: 1.14.6-sumo-5
+    tag: 1.15.3-sumo-0
     pullPolicy: IfNotPresent
 
   additionalPlugins: []
@@ -821,8 +821,8 @@ fluentd:
         bearerTokenFile: ""
         ## Regex to match containers tag to `pod_name`, `namespace`, `container_name` and `docker_id`. All of them are obligatory
         ## See below links for reference:
-        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.14.6-sumo-5/fluent-plugin-kubernetes-metadata-filter/lib/fluent/plugin/filter_kubernetes_metadata.rb#L322-L325
-        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.14.6-sumo-5/fluent-plugin-kubernetes-metadata-filter#configuration
+        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.15.3-sumo-0/fluent-plugin-kubernetes-metadata-filter/lib/fluent/plugin/filter_kubernetes_metadata.rb#L322-L325
+        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.15.3-sumo-0/fluent-plugin-kubernetes-metadata-filter#configuration
         tagToMetadataRegexp: '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
 
       ## To use additional filter plugins
