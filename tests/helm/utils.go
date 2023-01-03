@@ -51,8 +51,14 @@ func keys[K comparable, V any](m map[K]V) []K {
 // otel ConfigMap, and returns the otel configuration as a yaml string
 func GetOtelConfigYaml(t *testing.T, valuesYaml string, templatePath string) string {
 	renderedYamlString := RenderTemplateFromValuesString(t, valuesYaml, templatePath)
+	return GetOtelConfigFromTemplate(t, renderedYamlString)
+}
+
+// GetOtelConfigFromTemplate takes otel ConfigMap template content
+// and returns the otel configuration as a yaml string
+func GetOtelConfigFromTemplate(t *testing.T, templateContent string) string {
 	var configMap corev1.ConfigMap
-	helm.UnmarshalK8SYaml(t, renderedYamlString, &configMap)
+	helm.UnmarshalK8SYaml(t, templateContent, &configMap)
 	require.Contains(t, configMap.Data, otelConfigFileName)
 	otelConfigYaml := configMap.Data[otelConfigFileName]
 	return otelConfigYaml
@@ -126,10 +132,16 @@ func RenderTemplateFromValuesStringE(t *testing.T, valuesYaml string, templatePa
 	require.NoError(t, err)
 	_, err = valuesFile.WriteString(valuesYaml)
 	require.NoError(t, err)
+	return RenderTemplateFromValuesFile(t, valuesFile.Name(), templatePath)
+}
+
+// RenderTemplateFromValuesYaml renders a template based on its path and a values file
+// it uses package defaults for other parameters.
+func RenderTemplateFromValuesFile(t *testing.T, valuesYaml string, templatePath string) (string, error) {
 	return RenderTemplateE(
 		t,
 		&helm.Options{
-			ValuesFiles: []string{valuesFile.Name()},
+			ValuesFiles: []string{valuesYaml},
 			SetStrValues: map[string]string{
 				"sumologic.accessId":  "accessId",
 				"sumologic.accessKey": "accessKey",

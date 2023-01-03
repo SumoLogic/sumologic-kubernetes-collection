@@ -1,6 +1,7 @@
 package helm
 
 import (
+	"path"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -57,38 +58,11 @@ metadata:
 func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/metrics/otelcol/configmap.yaml"
-	valuesYaml := `
-metadata:
-  metrics:
-    config:
-      extraProcessors:
-        - filter/1:
-            metrics:
-              include:
-                match_type: regexp
-                metric_names:
-                  - receiver_mock_.*
-                resource_attributes:
-                  - Key: k8s.pod.name
-                    Value: app.*
-              exclude:
-                match_type: strict
-                metric_names:
-                  - receiver_mock_logs_count
-        - transform/rename_metric:
-            metric_statements:
-              - context: metric
-                statements:
-                  - set(name, "rrreceiver_mock_metrics_count") where name == "receiver_mock_metrics_count"
-        - transform/rename_metadata:
-            metric_statements:
-              - context: resource
-                statements:
-                  - set(attributes["k8s.pod.pod_name_new"], attributes["k8s.pod.pod_name"])
-                  - delete_key(attributes, "k8s.pod.pod_name")
-                  - set(attributes["my.static.value"], "<static_value>")
-`
-	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+	valuesFilePath := path.Join(testDataDirectory, "opentelemetry-metrics-extra-processors.yaml")
+
+	otelConfigTemplate, err := RenderTemplateFromValuesFile(t, valuesFilePath, templatePath)
+	require.NoError(t, err)
+	otelConfigYaml := GetOtelConfigFromTemplate(t, otelConfigTemplate)
 
 	var otelConfig struct {
 		Processors struct {
@@ -115,9 +89,16 @@ metadata:
 				} `yaml:"metric_statements"`
 			} `yaml:"transform/rename_metadata"`
 		}
+		Service struct {
+			Pipelines struct {
+				Metrics struct {
+					Processors []string `yaml:"processors"`
+				}
+			}
+		}
 	}
 
-	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	err = yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
 	require.NoError(t, err)
 
 	require.Equal(t, "regexp", otelConfig.Processors.Filter.Metrics.Include.MatchType)
@@ -136,58 +117,8 @@ metadata:
 	}
 	require.Equal(t, "resource", otelConfig.Processors.RenameMetadata.MetricStatements[0].Context)
 	require.Equal(t, renameMetadatatatements, otelConfig.Processors.RenameMetadata.MetricStatements[0].Statements)
-}
 
-func TestMetadataMetricsOtelConfigExtraProcessorsPipeline(t *testing.T) {
-	t.Parallel()
-	templatePath := "templates/metrics/otelcol/configmap.yaml"
-	valuesYaml := `
-metadata:
-  metrics:
-    config:
-      extraProcessors:
-        - filter/1:
-            metrics:
-              include:
-                match_type: regexp
-                metric_names:
-                  - receiver_mock_.*
-                resource_attributes:
-                  - Key: k8s.pod.name
-                    Value: app.*
-              exclude:
-                match_type: strict
-                metric_names:
-                  - receiver_mock_logs_count
-        - transform/rename_metric:
-            metric_statements:
-              - context: metric
-                statements:
-                  - set(name, "rrreceiver_mock_metrics_count") where name == "receiver_mock_metrics_count"
-        - transform/rename_metadata:
-            metric_statements:
-              - context: resource
-                statements:
-                  - set(attributes["k8s.pod.pod_name_new"], attributes["k8s.pod.pod_name"])
-                  - delete_key(attributes, "k8s.pod.pod_name")
-                  - set(attributes["my.static.value"], "<static_value>")
-`
-	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
-
-	var otelConfig struct {
-		Service struct {
-			Pipelines struct {
-				Metrics struct {
-					Processors []string `yaml:"processors"`
-				}
-			}
-		}
-	}
-
-	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
-	require.NoError(t, err)
-
-	expectedValue := []string{
+	expectedPipelineValue := []string{
 		"memory_limiter",
 		"metricstransform",
 		"resource",
@@ -203,5 +134,5 @@ metadata:
 		"routing",
 	}
 
-	require.Equal(t, expectedValue, otelConfig.Service.Pipelines.Metrics.Processors)
+	require.Equal(t, expectedPipelineValue, otelConfig.Service.Pipelines.Metrics.Processors)
 }
