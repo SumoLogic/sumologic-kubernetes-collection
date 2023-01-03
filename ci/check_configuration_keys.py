@@ -113,7 +113,7 @@ def main(values_path: str, readme_path: str, full_diff=False) -> None:
                 print(f'| {key:{max_key_length}} | {readme_value[:100]:100} |'
                       f'{values_value[:100]:100} |')
 
-    if values_distinct:
+    if values_distinct or readme_distinct or diff_defaults:
         sys.exit(1)
 
 
