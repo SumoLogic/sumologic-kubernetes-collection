@@ -3795,6 +3795,18 @@ metadata:
       ## The value of this key should be a dictionary, that will replace the normal configuration.
       ## This is an advanced feature, use with caution, and review the generated configuration first.
       override: {}
+      ## Includes additional processors into pipelines.
+      ## It can be used for filtering metrics, renaming, changing metadata and so on.
+      ## This is list of objects, for example:
+      ## extraProcessors:
+      ##   - filterprocessor:
+      ##       exclude:
+      ##         match_type: strict
+      ##         metric_names:
+      ##           - hello_world
+      ##           - hello/world
+      extraProcessors: []
+
     statefulset:
       nodeSelector: {}
       tolerations: []

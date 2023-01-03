@@ -126,13 +126,81 @@ excludePodRegex
 
 ## Excluding Metrics
 
+### Prometheus
+
 You can filter out metrics directly in Prometheus using [this documentation](additional-prometheus-configuration.md#filter-metrics).
 
-:construction: *TODO*, explain how to do it in OT, see [the FluentD section](fluent/best-practices.md#excluding-metrics)
+### Fluentd
+
+See [the FluentD section](fluent/best-practices.md#excluding-metrics)
+
+### OpenTelemetry Collector
+
+See [the Filtering metrics](/docs/collecting-application-metrics.md#filtering-metrics)
+
+For example to filter out all metrics from `sumologic` namespace, you can use the following configuration:
+
+```yaml
+metadata:
+  metrics:
+    config:
+      extraProcessors:
+        - filter/exclude_sumo_metrics:
+            metrics:
+              ## Definition of exclusion
+              exclude:
+                ## Match type, can be regexp or strict
+                match_type: strict
+                ## Metadata to match for exclusion
+                resource_attributes:
+                  - Key: k8s.namespace.name
+                    Value: sumologic
+```
+
+To exclude all metrics starting with `kube_`, you can use the following configuration:
+
+```yaml
+metadata:
+  metrics:
+    config:
+      extraProcessors:
+        - filter/exclude_sumo_metrics:
+            metrics:
+              ## Definition of exclusion
+              exclude:
+                ## Match type, can be regexp or strict
+                match_type: regexp
+                ## metric names to match for inclusion
+                metric_names:
+                  - kube.*
+```
 
 ## Excluding Dimensions
 
-:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#excluding-metrics)
+### Fluentd
+
+See [the FluentD section](fluent/best-practices.md#excluding-dimensions)
+
+### OpenTelemetry Collector
+
+See [the Filtering metrics](/docs/collecting-application-metrics.md#adding-or-renaming-metadata)
+
+For example to remove `namespace` and `deployment` dimensions, you can use the following configuration:
+
+```yaml
+metadata:
+  metrics:
+    config:
+      extraProcessors:
+        - transform/remove_dimensions:
+            metric_statements:
+              - context: resource
+                statements:
+                  ## removes namespace metadata
+                  - delete_key(attributes, "namespace")
+                  ## removes deployment metadata
+                  - delete_key(attributes, "deployment")
+```
 
 ## Collect logs from additional files on the Node
 

@@ -299,6 +299,11 @@ processors:
   ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
   source:
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
+{{- if .Values.metadata.metrics.config.extraProcessors }}
+{{- range $processor := .Values.metadata.metrics.config.extraProcessors }}
+{{ toYaml $processor | indent 2}}
+{{- end }}
+{{- end }}
 service:
   telemetry:
     logs:
@@ -319,6 +324,11 @@ service:
         - resource
         - k8s_tagger
         - source
+{{- if .Values.metadata.metrics.config.extraProcessors }}
+{{- range $processor := .Values.metadata.metrics.config.extraProcessors }}
+{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
+{{- end }}
+{{- end }}
         - resource/remove_k8s_pod_pod_name
         - resource/delete_source_metadata
         - sumologic_schema

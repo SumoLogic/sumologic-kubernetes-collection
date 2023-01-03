@@ -2,11 +2,22 @@
 
 This document covers multiple different use cases related to scraping custom application metrics exposed in Prometheus format.
 
-## Practical scenarios
+There are two major sections:
 
-### Scraping metrics
+- [Scraping metrics](#scraping-metrics) which describes how to send your application metrics to sumo
+- [Metrics modifications](#metrics-modifications)
+  which describes how to filter metrics and rename both metrics and metric metadata
 
-#### Application metrics are exposed (one endpoint scenario)
+## Scraping metrics
+
+This section describes how to scrape metrics from your applications.
+Several scenarios has been covered:
+
+- [Application metrics are exposed (one endpoint scenario)](#application-metrics-are-exposed-one-endpoint-scenario)
+- [Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
+- [Application metrics are not exposed](#application-metrics-are-not-exposed)
+
+### Application metrics are exposed (one endpoint scenario)
 
 If there is only one endpoint in the Pod you want to scrape metrics from, you can use annotations.
 Add the following annotations to your Pod definition:
@@ -21,7 +32,7 @@ annotations:
 
 **NOTE:** If you add more than one annotation with the same name, only the last one will be used.
 
-#### Application metrics are exposed (multiple enpoints scenario)
+### Application metrics are exposed (multiple enpoints scenario)
 
 If you want to scrape metrics from multiple endpoints in a single Pod,
 you need a Service which points to the Pod and also to configure `kube-prometheus-stack.prometheus.additionalServiceMonitors`
@@ -83,7 +94,7 @@ kube-prometheus-stack:
 [prometheus_service_monitors]: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.ServiceMonitor
 [https://regex101.com/]: https://regex101.com/
 
-##### Example
+#### Example
 
 Let's consider a Pod which exposes the following metrics:
 
@@ -181,7 +192,7 @@ kube-prometheus-stack:
             app: my-custom-app-service
 ```
 
-#### Application metrics are not exposed
+### Application metrics are not exposed
 
 In case you want to scrape metrics from application which do not expose them, you can use telegraf operator.
 It will scrape metrics according to configuration and expose them on port `9273` so Prometheus will be able to scrape them.
@@ -209,3 +220,129 @@ To scrape and forward exposed metrics to Sumo Logic, please follow one of the fo
 
 - [Application metrics are exposed (one endpoint scenario)](#application-metrics-are-exposed-one-endpoint-scenario)
 - [Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
+
+## Metrics modifications
+
+This section coverts the following metrics modifications:
+
+- [Filtering metrics](#filtering-metrics)
+- [Renaming metric](#renaming-metric)
+- [Adding or renaming metadata](#adding-or-renaming-metadata)
+
+### Filtering metrics
+
+In order to filter in or out the metrics, you can add [filterprocessor] to metric's extraProcessors.
+Please see the following example:
+
+```yaml
+metadata:
+  metrics:
+    config:
+      extraProcessors:
+        - filter/1:
+            metrics:
+              ## Definition of inclusion
+              include:
+                ## Match type, can be regexp or strict
+                match_type: regexp
+                ## metric names to match for inclusion
+                metric_names:
+                  - prefix/.*
+                  - prefix_.*
+                ## Metadata to match for inclusion
+                resource_attributes:
+                  - Key: container.name
+                    Value: app_container_1
+              ## Definition of exclusion
+              exclude:
+                ## Match type, can be regexp or strict
+                match_type
+                ## Metric names for exclusion
+                metric_names:
+                  - hello_world
+                  - hello/world
+                ## Metadata to match for exclusion
+                resource_attributes:
+                  - Key: container.name
+                    Value: app_container_7
+```
+
+[filterprocessor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor
+
+#### Default attributes
+
+By default, the following attributes should be available:
+
+| Attribute name          | Description                                                |
+|-------------------------|------------------------------------------------------------|
+| _collector              | Sumo Logic collector name                                  |
+| _origin                 | Sumo Logic origin metadata ("kubernetes")                  |
+| _sourceCategory         | Sumo Logic source category                                 |
+| _sourceHost             | Sumo Logic source host                                     |
+| _sourceName             | Sumo Logic source Nmae                                     |
+| cluster                 | Cluster Name                                               |
+| endpoint                | Metrics endpoint                                           |
+| http_listener_v2_path   | Path used to receive data from Prometheus                  |
+| instance                | Pod instance                                               |
+| job                     | Prometheus job name                                        |
+| k8s.container.name      | Kubernetes Container name                                  |
+| k8s.deployment.name     | Kubernetes Deployment name                                 |
+| k8s.namespace.name      | Kubernetes Namespace name                                  |
+| k8s.node.name           | Kubernetes Node name                                       |
+| k8s.pod.name            | Kubernetes Pod name                                        |
+| k8s.pod.pod_name        | Kubernetes Pod name                                        |
+| k8s.replicaset.name     | Kubernetes Replicaset name                                 |
+| k8s.service.name        | Kubernetes Service name                                    |
+| k8s.statefulset.name    | Kubernetes Statefulset name                                |
+| pod_labels_<label_name> | Kubernetes Pod label. Every label is a different attribute |
+| prometheus              | Prometheus                                                 |
+| prometheus_replica      | Prometheus Replica name                                    |
+| prometheus_service      | Prometheus Service name                                    |
+
+**NOTE** Before ingestion to Sumo Logic, attributes are renamed according to the [sumologicschemaprocessor documentation][sumologicschema]
+
+[sumologicschema]: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sumologicschemaprocessor#attribute-translation
+
+### Renaming metric
+
+In order to rename metrics, the [transformprocessor] can be use.
+Please look at the following snippet:
+
+```yaml
+metadata:
+  metrics:
+    config:
+      extraProcessors:
+        - transform/1:
+            metric_statements:
+              - context: metric
+                statements:
+                  ## Renames <old_name> to <new_name>
+                  - set(name, "<new_name>") where name == "<old_name>"
+```
+
+### Adding or renaming metadata
+
+If you want to add or rename metadata, the [transformprocessor] can be use.
+Please look at the following snippet:
+
+```yaml
+metadata:
+  metrics:
+    config:
+      extraProcessors:
+        - transform/1:
+            metric_statements:
+              - context: resource
+                statements:
+                  ## adds <new_name> metadata
+                  - set(attributes["<new_name>"], attributes["<old_name>"])
+                  ## adds <new_static_name> metadata
+                  - set(attributes["<new_static_name>"], "<static_value>")
+                  ## removes <old_name> metadata
+                  - delete_key(attributes, "<old_name>")
+```
+
+**Note:** See [Default attributes](#default-attributes) for more information about attributes.
+
+[transformprocessor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor

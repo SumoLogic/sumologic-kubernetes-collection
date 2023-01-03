@@ -1,0 +1,29 @@
+metadata:
+  metrics:
+    config:
+      extraProcessors:
+        - filter/1:
+            metrics:
+              include:
+                match_type: regexp
+                metric_names:
+                  - receiver_mock_.*
+                resource_attributes:
+                  - Key: k8s.pod.name
+                    Value: app.*
+              exclude:
+                match_type: strict
+                metric_names:
+                  - receiver_mock_logs_count
+        - transform/rename_metric:
+            metric_statements:
+              - context: metric
+                statements:
+                  - set(name, "rrreceiver_mock_metrics_count") where name == "receiver_mock_metrics_count"
+        - transform/rename_metadata:
+            metric_statements:
+              - context: resource
+                statements:
+                  - set(attributes["k8s.pod.pod_name_new"], attributes["k8s.pod.pod_name"])
+                  - delete_key(attributes, "k8s.pod.pod_name")
+                  - set(attributes["my.static.value"], "<static_value>")
