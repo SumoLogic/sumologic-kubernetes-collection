@@ -24,6 +24,7 @@
 - [Assigning Pod to particular Node](#assigning-pod-to-particular-node)
   - [Using NodeSelectors](#using-nodeselectors)
     - [Binding pods to linux nodes](#binding-pods-to-linux-nodes)
+    - [Setting different resources on different nodes for logs collector](#setting-different-resources-on-different-nodes-for-logs-collector)
 - [Parsing log content as json](#parsing-log-content-as-json)
 
 ## Overriding chart resource names with `fullnameOverride`
@@ -590,6 +591,46 @@ Node selector can be changed via additional parameter in `user-values.yaml`, see
 fluent-bit:
   nodeSelector:
     kubernetes.io/os: linux
+```
+
+#### Setting different resources on different nodes for logs collector
+
+This section covers scenario, when you would like to set different resources
+for OpenTelemetry logs collector depending on the node labels.
+
+Let's consider the following example.
+
+You have node group with common label `workingGroup: IntenseLogGeneration`
+and for that specific group of nodes,
+you would like to set different resources than for rest of the cluster.
+
+We assume that you only want to set `requests.cpu` to `2` and `limits.cpu` to `10`
+and have the same memory values like main DaemonSet.
+
+```yaml
+otellogs:
+  additionalDaemonSets:
+    ## intense will be suffix for daemonset for easier recognition
+    intense:
+      nodeSelector:
+        ## we are using nodeSelector to select only nodes with `workingGroup` label set to `IntenseLogGeneration`
+        workingGroup: IntenseLogGeneration
+      resources:
+        requests:
+          cpu: 1
+        limits:
+          cpu: 10
+  daemonset:
+    # For main daemonset, we need to set nodeAffinity to not schedule on nodes with `workingGroup` label set to `IntenseLogGeneration`
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: workingGroup
+              operator: NotIn
+              values:
+              - IntenseLogGeneration
 ```
 
 ## Parsing log content as json
