@@ -29,14 +29,15 @@
 
 ## Overriding chart resource names with `fullnameOverride`
 
-Here's an example of using the `fullnameOverride` properties of this chart and its subcharts
+You can use the `fullnameOverride` properties of this chart and of its subcharts
 to override the created resource names.
+
+See the chart's [README](/deploy/helm/sumologic/README.md) for all the available `fullnameOverride` properties.
+
+Here's an example of using the `fullnameOverride` properties with the components that are enabled by default:
 
 ```yaml
 fullnameOverride: sl
-
-fluent-bit:
-  fullnameOverride: fb
 
 kube-prometheus-stack:
   fullnameOverride: kps
@@ -52,35 +53,37 @@ After installing the chart, the resources in the cluster will have names similar
 
 ```console
 $ kubectl -n <namespace> get pods
-NAME                                                 READY   STATUS        RESTARTS   AGE
-fb-95sxf                                             1/1     Running       0          91s
-kps-operator-6c8999bdfb-b4pks                        1/1     Running       0          91s
-ksm-5dbd694cbd-mk4bd                                 1/1     Running       0          91s
-pne-r64tk                                            1/1     Running       0          91s
-prometheus-kps-prometheus-0                          3/3     Running       1          79s
-sl-otelcol-events-0                                  1/1     Running       0          91s
-sl-otelcol-logs-0                                    1/1     Running       0          91s
-sl-otelcol-logs-1                                    1/1     Running       0          90s
-sl-otelcol-logs-2                                    1/1     Running       0          90s
-sl-otelcol-metrics-0                                 1/1     Running       0          90s
-sl-otelcol-metrics-1                                 1/1     Running       0          90s
-sl-otelcol-metrics-2                                 1/1     Running       0          90s
+NAME                                     READY   STATUS    RESTARTS   AGE
+kps-operator-6fdb4b955-zqsdh             1/1     Running   0          3m4s
+ksm-779757976f-4d262                     1/1     Running   0          3m4s
+pne-hfk88                                1/1     Running   0          3m4s
+prometheus-kps-prometheus-0              2/2     Running   0          3m4s
+sl-otelcol-events-0                      1/1     Running   0          3m4s
+sl-otelcol-instrumentation-0             1/1     Running   0          3m4s
+sl-otelcol-instrumentation-1             1/1     Running   0          3m4s
+sl-otelcol-instrumentation-2             1/1     Running   0          3m4s
+sl-otelcol-logs-0                        1/1     Running   0          3m4s
+sl-otelcol-logs-1                        1/1     Running   0          3m4s
+sl-otelcol-logs-2                        1/1     Running   0          3m4s
+sl-otelcol-logs-collector-24z56          1/1     Running   0          3m4s
+sl-otelcol-metrics-0                     1/1     Running   0          3m4s
+sl-otelcol-metrics-1                     1/1     Running   0          3m4s
+sl-otelcol-metrics-2                     1/1     Running   0          3m4s
+sl-remote-write-proxy-7f79766ff7-pvchj   1/1     Running   0          3m4s
+sl-remote-write-proxy-7f79766ff7-qkk8n   1/1     Running   0          3m4s
+sl-remote-write-proxy-7f79766ff7-vsjbj   1/1     Running   0          3m4s
+sl-traces-gateway-cdc7d9bbc-wq9sl        1/1     Running   0          3m4s
+sl-traces-sampler-94656c48d-cslsb        1/1     Running   0          3m4s
 ```
 
 ⚠️ **Note:** When changing the `fullnameOverride` property for an already installed chart with the `helm upgrade` command,
-you need to restart the Fluent Bit and Prometheus pods
-for the changed names of the Fluentd or Otelcol pods to be picked up:
+you need to restart the Prometheus pods
+for the changed names of the Otelcol pods to be picked up:
 
 ```sh
 helm -n <namespace> upgrade <release_name> sumologic/sumologic --values changed-fullnameoverride.yaml
-kubectl -n <namespace> rollout restart daemonset <fluent_bit_daemonset_name>
 kubectl -n <namespace> rollout restart statefulset <prometheus_statefulset_name>
 ```
-
-As you can see from the example, every subchart has its own `fullnameOverride` property
-that needs to be set separately to change the names of the resources created by that subchart.
-
-See the chart's [README](/deploy/helm/sumologic/README.md) for all the available `fullnameOverride` properties.
 
 ## OpenTelemetry Collector Autoscaling
 
