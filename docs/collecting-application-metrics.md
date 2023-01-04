@@ -346,3 +346,202 @@ metadata:
 **Note:** See [Default attributes](#default-attributes) for more information about attributes.
 
 [transformprocessor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor
+
+## Investigation
+
+If you do not see your metrics in Sumo Logic, please check the following stages:
+
+- [Check if metrics are in Prometheus](#check-if-metrics-are-in-prometheus)
+
+  - [Investigate Prometheus scrape configuration](#investigate-prometheus-scrape-configuration)
+  - [Pod is visible in Prometheus targets](#pod-is-visible-in-prometheus-targets)
+  - [There is no target for serviceMonitor](#there-is-no-target-for-servicemonitor)
+  - [Pod is not visible in target for custom serviceMonitor](#pod-is-not-visible-in-target-for-custom-servicemonitor)
+
+- [Check if Prometheus knows how to send metrics to Sumo Logic](#check-if-prometheus-knows-how-to-send-metrics-to-sumo-logic)
+
+### Check if metrics are in Prometheus
+
+First of all, you need to expose Prometheus UI locally.
+You need to find Prometheus UI service name:
+
+```console
+$ export NAMESPACE=sumologic
+$ kubectl -n "${NAMESPACE}" get service
+NAME                                            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                                                                      AGE
+collection-sumologic-otelcol-events-headless    ClusterIP   None             <none>        24231/TCP,8888/TCP                                                                                                           3d14h
+collection-sumologic-otelcol-logs-headless      ClusterIP   None             <none>        4318/TCP,24321/TCP,24231/TCP                                                                                                 3d14h
+collection-sumologic-otelcol-metrics-headless   ClusterIP   None             <none>        9888/TCP,24231/TCP                                                                                                           3d14h
+collection-sumologic-traces-sampler-headless    ClusterIP   None             <none>        1777/TCP,8888/TCP,4317/TCP,4318/TCP                                                                                          3d14h
+collection-sumologic-remote-write-proxy         ClusterIP   10.152.183.203   <none>        9888/TCP                                                                                                                     3d14h
+collection-kube-state-metrics                   ClusterIP   10.152.183.196   <none>        8080/TCP                                                                                                                     3d14h
+collection-grafana                              ClusterIP   10.152.183.150   <none>        80/TCP                                                                                                                       3d14h
+collection-prometheus-node-exporter             ClusterIP   10.152.183.238   <none>        9100/TCP                                                                                                                     3d14h
+collection-kube-prometheus-operator             ClusterIP   10.152.183.214   <none>        8080/TCP                                                                                                                     3d14h
+collection-kube-prometheus-prometheus           ClusterIP   10.152.183.130   <none>        9090/TCP                                                                                                                     3d14h
+collection-sumologic-otelcol-events             ClusterIP   10.152.183.215   <none>        24231/TCP,8888/TCP                                                                                                           3d14h
+collection-sumologic-traces-gateway             ClusterIP   10.152.183.138   <none>        1777/TCP,8888/TCP,4317/TCP,4318/TCP                                                                                          3d14h
+collection-telegraf-operator                    ClusterIP   10.152.183.192   <none>        443/TCP                                                                                                                      3d14h
+collection-sumologic-metadata-metrics           ClusterIP   10.152.183.133   <none>        9888/TCP,8888/TCP                                                                                                            3d14h
+collection-sumologic-otelcol                    ClusterIP   10.152.183.120   <none>        5778/TCP,6831/UDP,6832/UDP,8888/TCP,9411/TCP,14250/TCP,14267/TCP,14268/TCP,55678/TCP,4317/TCP,4318/TCP,55680/TCP,55681/TCP   3d14h
+collection-sumologic-metadata-logs              ClusterIP   10.152.183.16    <none>        4318/TCP,24321/TCP,8888/TCP                                                                                                  3d14h
+collection-sumologic-otelcol-logs-collector     ClusterIP   10.152.183.36    <none>        8888/TCP                                                                                                                     3d14h
+collection-sumologic-otelagent                  ClusterIP   10.152.183.141   <none>        5778/TCP,6831/UDP,6832/UDP,8888/TCP,9411/TCP,14250/TCP,14267/TCP,14268/TCP,55678/TCP,4317/TCP,4318/TCP,55680/TCP,55681/TCP   3d14h
+prometheus-operated                             ClusterIP   None             <none>        9090/TCP                                                                                                                     3d14h
+```
+
+In our example, the service is named `collection-kube-prometheus-prometheus`.
+You should look for `kube-prometheus-prometheus` phrase or it part and the service exposes on `9090/TCP`.
+
+Next, please run the following command to expose prometheus on `0.0.0.0:8000`.
+
+```console
+$ export SERVICE=collection-kube-prometheus-prometheus
+$ kubectl port-forward -n "${NAMESPACE}" service/${SERVICE} --address=0.0.0.0 8000:9090
+Forwarding from 0.0.0.0:8000 -> 9090
+```
+
+Now, you can access the Prometheus UI via `http://localhost:8000`:
+
+![Prometheus UI](/images/metrics/prometheus-ui.png)
+
+Type the metric name in the search bar and run `Execute`:
+
+![Prometheus query results](/images/metrics/prometheus-query.png)
+
+If the metrics have been found, you can go to the
+[Check if Prometheus knows how to send metrics to Sumo Logic](#check-if-prometheus-knows-how-to-send-metrics-to-sumo-logic)
+section. Otherwise, please check
+[Investigate Prometheus scrape configuration](#investigate-prometheus-scrape-configuration) section.
+
+#### Investigate Prometheus scrape configuration
+
+We assume, that you have exposed Prometheus on `localhost:8000` like in
+[Check if metrics are in Prometheus](#check-if-metrics-are-in-prometheus) section.
+
+Go to the `http://localhost:8000/targets?search=` and search for the pod you want to scrape metrics from. It should be under the `kubernetes-pods` target name if you are using annotations,
+otherwise, it should be under serviceMonitor name you defined in configuration.
+
+##### Pod is visible in Prometheus targets
+
+For example, our pod is under `kubernetes-pods` section. As we can see something is wrong, and Prometheus cannot read the metrics:
+
+![Prometheus targets without error](/images/metrics/prometheus-targets-error.png)
+
+In the `Error` column we can see the reason of that, which is:
+
+```txt
+Get "http://10.1.126.138:3004/metrics": dial tcp 10.1.126.138:3004: connect: connection refused
+```
+
+In that example, we need to check why the endpoint is not accessible, and after looking at the Pod definition,
+we see that metrics are exposed on port `3000`:
+
+```yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-pod
+  namespace: app-pod
+  labels:
+    app: app-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-pod
+  template:
+    metadata:
+      labels:
+        service: app-pod
+        app: app-pod
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3004"
+    spec:
+      containers:
+        - ports:
+            - containerPort: 3000
+# ...
+```
+
+To fix that, we need to change `prometheus.io/port: "3004"` to `prometheus.io/port: "3000"`,
+and redeploy the application.
+
+After fix, we can see that Prometheus can read metrics from the Pod now:
+
+![Prometheus targets without error](/images/metrics/prometheus-targets-ok.png)
+
+**NOTE** This example was simple as it was just simple misconfiguration.
+There can be much complicated cases, eg. Prometheus cannot authenticate to the metrics endpoints,
+or cannot access it due to network configuration.
+
+If you cannot spot your Pod in Prometheus targets and you are using annotations,
+please ensure that deployed Pod has them in the definitions.
+
+If you are using serviceMonitor, please go to the
+[There is no target for serviceMonitor](#there-is-no-target-for-servicemonitor)
+or
+[Pod is not visible in target for custom serviceMonitor](#pod-is-not-visible-in-target-for-custom-servicemonitor)
+
+##### There is no target for serviceMonitor
+
+If you created your own serviceMonitor using `additionalServiceMonitors` configuration
+and you cannot see it in the target, please contact with our Customer Support,
+or create an issue.
+
+If you crafted it by hand, please verify that it fulfills the Proemetheus serviceMonitor selector configuration:
+
+```console
+$ kubectl -n "${NAMESPACE}" describe prometheus
+...
+  Service Monitor Namespace Selector:
+  Service Monitor Selector:
+    Match Labels:
+      Release:      collection
+...
+```
+
+`Service Monitor Namespace Selector` defines which namespaces are observed by Prometheus.
+Empty value means all namespaces
+`Service Monitor Selector` defines what labels should the serviceMonitor have.
+
+##### Pod is not visible in target for custom serviceMonitor
+
+If you don't see Pod you are expecting to see for your serviceMonitor,
+but serviceMonitor is in the Prometheus targets,
+please verify if `selector` and `namespaceSelector` in `additionalServiceMonitors`
+configuration are matching your Pod's namespace and labels.
+
+### Check if Prometheus knows how to send metrics to Sumo Logic
+
+If metrics are visible in Prometheus, but you cannot see them in Sumo Logic,
+please check if Prometheus knows how to send it to Sumo Logic Metatada StatefulSet.
+
+Go to the [http://localhost:8000/config](http://localhost:8000/config) and verify if your metric
+definition is added to any `remote_write` section. It most likely will be covered by:
+
+```yaml
+- url: http://collection-sumologic-remote-write-proxy.sumologic.svc.cluster.local.:9888/prometheus.metrics.applications.custom
+  remote_timeout: 5s
+  write_relabel_configs:
+  - source_labels: [_sumo_forward_]
+    separator: ;
+    regex: ^true$
+    replacement: $1
+    action: keep
+  - separator: ;
+    regex: _sumo_forward_
+    replacement: $1
+    action: labeldrop
+```
+
+If there is no `remote_write` for your metric definition, you can add one using `additionalRemoteWrite` what has been described in
+[Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
+section.
+
+However if you can see `remote_write` which matches your metrics and metrics are in Prometheus,
+we recommend to look at the Prometheus, Prometheus Operator and OpenTelemetry Metrics Collector Pod logs.
+
+If the issue won't be solved, please create an issue or contact with our Customer Support.
