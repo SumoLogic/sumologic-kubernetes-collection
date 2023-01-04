@@ -84,7 +84,47 @@ See the chart's [README](/deploy/helm/sumologic/README.md) for all the available
 
 ## OpenTelemetry Collector Autoscaling
 
-:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#fluentd-autoscaling)
+OpenTelemetry Collector StatefulSets used for metadata enrichment can be autoscaled. This is disabled by default,
+for reasons outlined in [#2751].
+
+Whenever your OpenTelemetry Collector pods CPU consumption is close to the limit, you could experience a [delay in data ingestion
+or even data loss](/docs/monitoring-lag.md) under higher-than-normal load. In such cases you should enable autoscaling.
+
+To enable autoscaling for OpenTelemetry Collector:
+
+- Enable metrics-server dependency
+
+  Note: If metrics-server is already installed, this step is not required.
+
+  ```yaml
+  ## Configure metrics-server
+  ## ref: https://github.com/bitnami/charts/tree/master/bitnami/metrics-server/values.yaml
+  metrics-server:
+    enabled: true
+  ```
+
+- Enable autoscaling for log metadata enrichment
+
+  ```yaml
+  metadata:
+    logs:
+      autoscaling:
+        enabled: true
+  ```
+
+- Enable autoscaling for Metrics Fluentd statefulset
+
+  ```yaml
+  metadata:
+    metrics:
+      autoscaling:
+        enabled: true
+  ```
+
+It's also possible to adjust other autoscaling configuration options, like the maximum number of replicas or
+the average CPU utilization. Please refer to the [chart readme][chart_readme] and [default values.yaml][values.yaml] for details.
+
+[#2751]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2751
 
 ## OpenTelemetry Collector File-Based Buffer
 
@@ -638,3 +678,6 @@ otellogs:
 In order to parse and store log content as json following configuration has to be applied:
 
 :construction: *TODO*, see [the FluentD section](fluent/best-practices.md#parsing-log-content-as-json)
+
+[chart_readme]: ../deploy/helm/sumologic/README.md
+[values.yaml]: ../deploy/helm/sumologic/values.yaml
