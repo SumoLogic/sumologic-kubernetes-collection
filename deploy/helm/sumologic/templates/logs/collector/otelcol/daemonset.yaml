@@ -1,13 +1,13 @@
 {{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
 {{- $ctx := . }}
 {{- $instance := "" -}}
-{{- $daemonsets := list $.Values.otellogs.daemonset  -}}
-{{- $daemonsets = concat $daemonsets $.Values.otellogs.additionalDaemonSets -}}
-{{- range $counter, $value := $daemonsets }}
-{{- if not (eq $counter 0) }}
-{{- $instance = (printf "-%d" $counter ) }}
+{{- $daemonsets := dict "" $.Values.otellogs.daemonset  -}}
+{{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogs.additionalDaemonSets -}}
+{{- range $name, $value := $daemonsets }}
+{{- if not (eq $name "") }}
+{{- $instance = (printf "-%s" $name ) }}
 {{- end }}
-{{- $resources := deepCopy $.Values.otellogs.daemonset.resources | merge .resources }}
+{{- $resources := deepCopy $.Values.otellogs.daemonset.resources | merge .resources -}}
 ---
 apiVersion: apps/v1
 kind: DaemonSet

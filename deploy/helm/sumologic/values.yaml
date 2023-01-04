@@ -4309,7 +4309,8 @@ otellogs:
   ##
   ## e.g:
   ## additionalDaemonSets:
-  ##   - nodeSelector:
+  ##   linux:
+  ##     nodeSelector:
   ##       kubernetes.io/os: linux
   ##     resources:
   ##       limits:
@@ -4328,7 +4329,7 @@ otellogs:
   ##             operator: NotIn
   ##             values:
   ##             - linux
-  additionalDaemonSets: []
+  additionalDaemonSets: {}
 
 ## Configure telegraf-operator
 ## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
