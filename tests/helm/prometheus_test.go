@@ -46,6 +46,7 @@ kube-prometheus-stack:
 				"collection-sumologic-fluentd-events",
 				"collection-fluent-bit",
 				"collection-sumologic-otelcol-logs-collector",
+				"collection-sumologic-otelcol-events",
 				"collection-sumologic-otelcol-traces",
 				"collection-sumologic-prometheus",
 				"collection-sumologic-fluentd-logs-test",
@@ -80,7 +81,7 @@ sumologic:
 			TemplatePaths: allTemplatePaths,
 		},
 		{
-			Name: "default",
+			Name:       "default",
 			ValuesYaml: "",
 			ExpectedNames: []string{
 				"collection-sumologic-fluentd-logs",
@@ -90,6 +91,7 @@ sumologic:
 				"collection-sumologic-fluentd-events",
 				"collection-fluent-bit",
 				"collection-sumologic-otelcol-logs-collector",
+				"collection-sumologic-otelcol-events",
 				"collection-sumologic-otelcol-traces",
 				"collection-sumologic-prometheus",
 			},

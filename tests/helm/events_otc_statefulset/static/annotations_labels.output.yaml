@@ -28,6 +28,9 @@ spec:
         release: "RELEASE-NAME"
         heritage: "Helm"
         sumoLabel: sumoValue
+        sumologic.com/app: otelcol-events
+        sumologic.com/component: events
+        sumologic.com/scrape: "true"
         statefulsetLabel: statefulsetValue
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
