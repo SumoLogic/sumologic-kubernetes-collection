@@ -7,7 +7,7 @@
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
-{{- $resources := deepCopy $.Values.otellogs.daemonset.resources | merge .resources -}}
+{{- $resources := deepCopy $.Values.otellogs.daemonset.resources | merge .resources }}
 ---
 apiVersion: apps/v1
 kind: DaemonSet

@@ -58,28 +58,31 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 	// render the actual and expected yaml strings and fix them up
 	renderedYamlString = fixupRenderedYaml(renderedYamlString, chartVersion)
 	expectedYamlBytes, err := os.ReadFile(outputFileName)
-	expectedYamlString := string(expectedYamlBytes)
+	require.NoError(t, err)
+	expectedYamlStrings, err := SplitYaml(string(expectedYamlBytes))
 	require.NoError(t, err)
 
-	var expectedObject unstructured.Unstructured
-	var renderedObjects []unstructured.Unstructured
-	helm.UnmarshalK8SYaml(t, expectedYamlString, &expectedObject)
-	require.NoError(t, err)
-	renderedObjects = UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
-	require.NoError(t, err)
+	for _, expectedYamlString := range expectedYamlStrings {
+		var expectedObject unstructured.Unstructured
+		var renderedObjects []unstructured.Unstructured
+		helm.UnmarshalK8SYaml(t, expectedYamlString, &expectedObject)
+		require.NoError(t, err)
+		renderedObjects = UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
+		require.NoError(t, err)
 
-	// find the object we expect
-	var actualObject *unstructured.Unstructured = nil
-	for _, renderedObject := range renderedObjects {
-		if renderedObject.GetName() == expectedObject.GetName() &&
-			renderedObject.GetKind() == expectedObject.GetKind() {
-			actualObject = &renderedObject
-			break
+		// find the object we expect
+		var actualObject *unstructured.Unstructured = nil
+		for _, renderedObject := range renderedObjects {
+			if renderedObject.GetName() == expectedObject.GetName() &&
+				renderedObject.GetKind() == expectedObject.GetKind() {
+				actualObject = &renderedObject
+				break
+			}
 		}
-	}
-	require.NotNilf(t, actualObject, "Couldn't find object %s/%s in output", expectedObject.GetKind(), expectedObject.GetName())
+		require.NotNilf(t, actualObject, "Couldn't find object %s/%s in output", expectedObject.GetKind(), expectedObject.GetName())
 
-	require.Equal(t, expectedObject, *actualObject)
+		require.Equal(t, expectedObject, *actualObject)
+	}
 }
 
 // fixupRenderedYaml replaces certain highly variable properties with fixed ones used in the

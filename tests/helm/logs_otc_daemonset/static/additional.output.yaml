@@ -1,0 +1,272 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-logs-collector
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  template:
+    metadata:
+      annotations:
+        checksum/config: "%CONFIG_CHECKSUM%"
+      labels:
+        app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+        app.kubernetes.io/app-name: RELEASE-NAME-sumologic-otelcol-logs-collector
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/os
+                operator: NotIn
+                values:
+                - linux
+      securityContext:
+        fsGroup: 0
+        runAsGroup: 0
+        runAsUser: 0
+      priorityClassName: "RELEASE-NAME-sumologic-priorityclass"
+      containers:
+      - args:
+        - --config=/etc/otelcol/config.yaml
+        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.66.0-sumo-0
+        imagePullPolicy: IfNotPresent
+        name: otelcol
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 32Mi
+        volumeMounts:
+        - mountPath: /etc/otelcol
+          name: otelcol-config
+        - mountPath: /var/log/pods
+          name: varlogpods
+          readOnly: true
+        - mountPath: /var/lib/docker/containers
+          name: varlibdockercontainers
+          readOnly: true
+        - mountPath: /var/lib/storage/otc
+          name: file-storage
+        - mountPath: /var/log/journal
+          name: varlogjournal
+          readOnly: true
+        env:
+        - name: LOGS_METADATA_SVC
+          valueFrom:
+            configMapKeyRef:
+              name: sumologic-configmap
+              key: metadataLogs
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+        ports:
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
+      initContainers: # ensure the host path is owned by the otel user group
+      - name: changeowner
+        image: public.ecr.aws/docker/library/busybox:latest
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+            add:
+              - CAP_CHOWN
+        command:
+        - "sh"
+        - "-c"
+        - |
+          chown -R \
+            0:0 \
+            /var/lib/storage/otc
+        volumeMounts:
+        - mountPath: /var/lib/storage/otc
+          name: file-storage
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+          name: RELEASE-NAME-sumologic-otelcol-logs-collector
+        name: otelcol-config
+      - hostPath:
+          path: /var/log/pods
+          type: ""
+        name: varlogpods
+      - hostPath:
+          path: /var/lib/docker/containers
+          type: ""
+        name: varlibdockercontainers
+      - hostPath:
+          path: /var/lib/otc
+          type: DirectoryOrCreate
+        name: file-storage
+      - hostPath:
+          path: /var/log/journal/
+          type: ""
+        name: varlogjournal
+      serviceAccountName: RELEASE-NAME-sumologic-otelcol-logs-collector
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-logs-collector-linux
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-logs-collector
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector-linux
+  template:
+    metadata:
+      annotations:
+        checksum/config: "%CONFIG_CHECKSUM%"
+      labels:
+        app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector-linux
+        app.kubernetes.io/app-name: RELEASE-NAME-sumologic-otelcol-logs-collector
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        fsGroup: 0
+        runAsGroup: 0
+        runAsUser: 0
+      priorityClassName: "RELEASE-NAME-sumologic-priorityclass"
+      containers:
+      - args:
+        - --config=/etc/otelcol/config.yaml
+        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.66.0-sumo-0
+        imagePullPolicy: IfNotPresent
+        name: otelcol
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+        resources:
+          limits:
+            cpu: 6
+            memory: 1Gi
+          requests:
+            cpu: 2
+            memory: 32Mi
+        volumeMounts:
+        - mountPath: /etc/otelcol
+          name: otelcol-config
+        - mountPath: /var/log/pods
+          name: varlogpods
+          readOnly: true
+        - mountPath: /var/lib/docker/containers
+          name: varlibdockercontainers
+          readOnly: true
+        - mountPath: /var/lib/storage/otc
+          name: file-storage
+        - mountPath: /var/log/journal
+          name: varlogjournal
+          readOnly: true
+        env:
+        - name: LOGS_METADATA_SVC
+          valueFrom:
+            configMapKeyRef:
+              name: sumologic-configmap
+              key: metadataLogs
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+        ports:
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
+      initContainers: # ensure the host path is owned by the otel user group
+      - name: changeowner
+        image: public.ecr.aws/docker/library/busybox:latest
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+            add:
+              - CAP_CHOWN
+        command:
+        - "sh"
+        - "-c"
+        - |
+          chown -R \
+            0:0 \
+            /var/lib/storage/otc
+        volumeMounts:
+        - mountPath: /var/lib/storage/otc
+          name: file-storage
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+          name: RELEASE-NAME-sumologic-otelcol-logs-collector
+        name: otelcol-config
+      - hostPath:
+          path: /var/log/pods
+          type: ""
+        name: varlogpods
+      - hostPath:
+          path: /var/lib/docker/containers
+          type: ""
+        name: varlibdockercontainers
+      - hostPath:
+          path: /var/lib/otc
+          type: DirectoryOrCreate
+        name: file-storage
+      - hostPath:
+          path: /var/log/journal/
+          type: ""
+        name: varlogjournal
+      serviceAccountName: RELEASE-NAME-sumologic-otelcol-logs-collector
