@@ -25,6 +25,7 @@ spec:
 {{- end }}
       labels:
         app: {{ template "sumologic.labels.app.events.pod" . }}
+        {{- include "sumologic.labels.scrape.events" . | nindent 8 }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
 {{- if .Values.sumologic.podLabels }}
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}

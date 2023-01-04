@@ -675,7 +675,11 @@ sumologic.com/component: metrics
 {{- end -}}
 
 {{- define "sumologic.labels.events" -}}
+{{- if eq .Values.sumologic.events.provider "fluentd" -}}
 sumologic.com/app: fluentd-events
+{{- else -}}
+sumologic.com/app: otelcol-events
+{{- end }}
 sumologic.com/component: events
 {{- end -}}
 

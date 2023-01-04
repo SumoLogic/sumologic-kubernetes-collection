@@ -522,6 +522,18 @@ sumologic:
           matchLabels:
             sumologic.com/app: otelcol-logs-collector
             sumologic.com/scrape: "true"
+      - name: collection-sumologic-otelcol-events
+        additionalLabels:
+          sumologic.com/app: otelcol-events
+        endpoints:
+          - port: otelcol-metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol-events
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-otelcol-traces
         additionalLabels:
           sumologic.com/app: otelcol
