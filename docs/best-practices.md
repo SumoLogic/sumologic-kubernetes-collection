@@ -172,7 +172,7 @@ excludePodRegex
 
 ### Prometheus
 
-You can filter out metrics directly in Prometheus using [this documentation](additional-prometheus-configuration.md#filter-metrics).
+You can filter out metrics directly in Prometheus using [this documentation](collecting-application-metrics.md#filtering-metrics).
 
 ### Fluentd
 

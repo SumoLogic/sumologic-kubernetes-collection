@@ -306,7 +306,7 @@ helm upgrade --install my-release sumologic/sumologic -f `user-values.yaml`
 ```
 
 > __Tip__: To filter or add custom metrics to Prometheus,
-> [please refer to this document](additional-prometheus-configuration.md)
+> [please refer to this document](collecting-application-metrics.md)
 
 ## Upgrading Sumo Logic Collection
 

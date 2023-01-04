@@ -392,7 +392,7 @@ in the `user-values.yaml` as well
 helm upgrade --install my-release sumologic/sumologic -f user-values.yaml
 ```
 
-> **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional-prometheus-configuration.md)
+> **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](collecting-application-metrics.md)
 
 ### Upgrading Sumo Logic Collection
 

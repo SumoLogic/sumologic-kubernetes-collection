@@ -209,7 +209,7 @@ Finally, delete the existing Prometheus pod so that Kubernetes will respawn it w
 kubectl delete pods <prometheus_pod_name>
 ```
 
-__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional-prometheus-configuration.md)
+__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](collecting-application-metrics.md)
 
 ## Viewing Data In Sumo Logic
 
@@ -235,7 +235,7 @@ in the `user-values.yaml` as well
 helm upgrade --install my-release sumologic/sumologic -f user-values.yaml
 ```
 
-> __Tip__: To filter or add custom metrics to Prometheus, [please refer to this document](additional-prometheus-configuration.md)
+> __Tip__: To filter or add custom metrics to Prometheus, [please refer to this document](collecting-application-metrics.md)
 
 ## Upgrading Sumo Logic Collection
 

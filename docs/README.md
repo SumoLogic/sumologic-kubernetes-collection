@@ -22,7 +22,6 @@ Documentation links:
   - [Non Helm Installation](/docs/non-helm-installation.md)
 
 - Configuration
-  - [Additional Prometheus configuration](/docs/additional-prometheus-configuration.md)
   - [Advanced Configuration/Best Practices](/docs/best-practices.md)
   - [Advanced Configuration/Security best practices](/docs/security-best-practices.md)
   - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
