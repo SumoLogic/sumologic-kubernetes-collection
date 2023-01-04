@@ -4302,6 +4302,34 @@ otellogs:
     #     mountPath: /certs
     #     readOnly: true
 
+  ## additionalDaemonSets allows to set daemonsets with affinity, nodeSelector and resources
+  ## different than the main DaemonSet
+  ## Be careful and set nodeAffinity for the main DaemonSet,
+  ## as we do not support multiple pods of otellogs on the same node
+  ##
+  ## e.g:
+  ## additionalDaemonSets:
+  ##   - nodeSelector:
+  ##       kubernetes.io/os: linux
+  ##     resources:
+  ##       limits:
+  ##         memory: 1Gi
+  ##         cpu: 6
+  ##       requests:
+  ##         memory: 32Mi
+  ##         cpu: 6
+  ## daemonset:
+  ##   affinity:
+  ##     nodeAffinity:
+  ##       requiredDuringSchedulingIgnoredDuringExecution:
+  ##         nodeSelectorTerms:
+  ##         - matchExpressions:
+  ##           - key: kubernetes.io/os
+  ##             operator: NotIn
+  ##             values:
+  ##             - linux
+  additionalDaemonSets: []
+
 ## Configure telegraf-operator
 ## ref: https://github.com/influxdata/helm-charts/blob/master/charts/telegraf-operator/values.yaml
 telegraf-operator:

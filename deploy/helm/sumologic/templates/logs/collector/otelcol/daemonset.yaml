@@ -1,19 +1,28 @@
 {{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
+{{- $ctx := . }}
+{{- $instance := "" -}}
+{{- $daemonsets := list $.Values.otellogs.daemonset  -}}
+{{- $daemonsets = concat $daemonsets $.Values.otellogs.additionalDaemonSets -}}
+{{- range $counter, $value := $daemonsets }}
+{{- if not (eq $counter 0) }}
+{{- $instance = (printf "-%d" $counter ) }}
+{{- end }}
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ template "sumologic.metadata.name.logs.collector.daemonset" . }}
+  name: {{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance }}
   labels:
-    app: {{ template "sumologic.labels.app.logs.collector.daemonset" . }}
-    {{- include "sumologic.labels.common" . | nindent 4 }}
+    app: {{ template "sumologic.labels.app.logs.collector.daemonset" $ctx }}
+    {{- include "sumologic.labels.common" $ctx | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ template "sumologic.labels.app.logs.collector.pod" . }}
+      app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.pod" $ctx) $instance }}
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otelcol/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otelcol/configmap.yaml") $ctx | sha256sum }}
 {{- if $.Values.sumologic.podAnnotations }}
 {{ toYaml $.Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
@@ -21,8 +30,9 @@ spec:
 {{ toYaml $.Values.otellogs.daemonset.podAnnotations | indent 8 }}
 {{- end }}
       labels:
-        app.kubernetes.io/name: {{ template "sumologic.labels.app.logs.collector.pod" . }}
-        {{- include "sumologic.labels.common" . | nindent 8 }}
+        app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.pod" $ctx) $instance }}
+        app.kubernetes.io/app-name: {{ template "sumologic.labels.app.logs.collector.pod" $ctx }}
+        {{- include "sumologic.labels.common" $ctx | nindent 8 }}
 {{- if $.Values.sumologic.podLabels }}
 {{ toYaml $.Values.sumologic.podLabels | indent 8 }}
 {{- end }}
@@ -30,13 +40,13 @@ spec:
 {{ toYaml $.Values.otellogs.daemonset.podLabels | indent 8 }}
 {{- end }}
     spec:
-{{- if $.Values.otellogs.daemonset.nodeSelector }}
+{{- if .nodeSelector }}
       nodeSelector:
-{{ toYaml $.Values.otellogs.daemonset.nodeSelector | indent 8 }}
+{{ toYaml .nodeSelector | indent 8 }}
 {{- end }}
-{{- if or $.Values.otellogs.daemonset.affinity }}
+{{- if or .affinity }}
       affinity:
-{{ toYaml $.Values.otellogs.daemonset.affinity | indent 8 }}
+{{ toYaml .affinity | indent 8 }}
 {{- end }}
 {{- if $.Values.otellogs.daemonset.tolerations }}
       tolerations:
@@ -47,7 +57,7 @@ spec:
       {{- if $.Values.otellogs.daemonset.priorityClassName }}
       priorityClassName: {{ $.Values.otellogs.daemonset.priorityClassName | quote }}
       {{- else }}
-      priorityClassName: {{ include "sumologic.metadata.name.priorityclass" . | quote }}
+      priorityClassName: {{ include "sumologic.metadata.name.priorityclass" $ctx | quote }}
       {{- end }}
       containers:
       - args:
@@ -125,7 +135,7 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
-          name: {{ template "sumologic.metadata.name.logs.collector.configmap" . }}
+          name: {{ template "sumologic.metadata.name.logs.collector.configmap" $ctx }}
         name: otelcol-config
       - hostPath:
           path: /var/log/pods
@@ -146,5 +156,6 @@ spec:
 {{- if $.Values.otellogs.daemonset.extraVolumes }}
 {{ toYaml $.Values.otellogs.daemonset.extraVolumes | indent 6 }}
 {{- end }}
-      serviceAccountName: {{ template "sumologic.metadata.name.logs.collector.serviceaccount" . }}
+      serviceAccountName: {{ template "sumologic.metadata.name.logs.collector.serviceaccount" $ctx }}
+{{- end }}
 {{- end }}
