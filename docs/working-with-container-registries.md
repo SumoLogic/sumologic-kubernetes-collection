@@ -63,15 +63,15 @@ registries is beyond the scope of this document but in general instructions can
 be narrowed down to:
 
 ```
-docker pull public.ecr.aws/sumologic/kubernetes-fluentd:${SUMO_IMAGE_VERSION}
-docker tag public.ecr.aws/sumologic/kubernetes-fluentd:${SUMO_IMAGE_VERSION} ${REGISTRY_REPO_URL}:${TAG}
+docker pull public.ecr.aws/sumologic/sumologic-otel-collector:${SUMO_IMAGE_VERSION}
+docker tag public.ecr.aws/sumologic/sumologic-otel-collector:${SUMO_IMAGE_VERSION} ${REGISTRY_REPO_URL}:${TAG}
 docker push ${REGISTRY_REPO_URL}:${TAG}
 ```
 
 One can then use `${REGISTRY_REPO_URL}:${TAG}` in `user-values.yaml` as such:
 
 ```yaml
-fluentd:
+metadata:
   ...
   image:
     repository: ${REGISTRY_REPO_URL}

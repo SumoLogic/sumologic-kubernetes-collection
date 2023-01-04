@@ -58,7 +58,9 @@ local kp =
 ## Non-default remote write url
 
 If you aren't using the defaults, either by changing the namespace collection is deployed in or changing the service
-name, you'll have to do edit `$._config.sumologicCollectorSvc` to point to the correct fluentd service.
+name, you'll have to do edit `$._config.sumologicCollectorSvc` to point to the correct metadata enrichment service.
+
+This service can be found under the `metadataMetrics` key in the `sumologic-configmap` ConfigMap.
 
 ```jsonnet
 local kp =
@@ -69,8 +71,8 @@ local kp =
       namespace: 'monitoring',
       clusterName: 'CLUSTER NAME HERE',
 
-      // This should be the FQDN of the fluentd collection service.
-      sumologicCollectorSvc: 'http://collection-sumologic.sumologic.svc.cluster.local.:9888/',
+      // This should be the FQDN of the metadata enrichment service.
+      sumologicCollectorSvc: 'http://collection-sumologic-remote-write-proxy.sumologic.svc.cluster.local.:9888/',
     },
   };
 

@@ -85,7 +85,7 @@ If you cannot see logs in Sumo that you expect to be there, here are the things 
 
 Check if [log throttling][log_throttling] is happening.
 
-If it is, there will be messages like `HTTP ERROR 429 You have temporarily exceeded your Sumo Logic quota` in Fluentd or Otelcol logs.
+If it is, there will be messages like `HTTP ERROR 429 You have temporarily exceeded your Sumo Logic quota` in OpenTelemetry Collector logs.
 
 [log_throttling]: https://help.sumologic.com/docs/manage/ingestion-volume/log-ingestion#log-throttling
 
@@ -93,7 +93,7 @@ If it is, there will be messages like `HTTP ERROR 429 You have temporarily excee
 
 Check if an [ingest budget][ingest_budgets] limit is hit.
 
-If it is, there will be `budget.exceeded` messages from Sumo in Fluentd or Otelcol logs, similar to the following:
+If it is, there will be `budget.exceeded` messages from Sumo in OpenTelemetry Collector logs, similar to the following:
 
 ```console
 2022-04-12 13:47:17 +0000 [warn]: #0 There was an issue sending data: id: KMZJI-FCDPN-4KHKD, code: budget.exceeded, status: 200, message: Message(s) in the request dropped due to exceeded budget.
@@ -255,9 +255,9 @@ Check if any targets are down or have errors.
 
 ### Check Prometheus Remote Storage
 
-We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus/latest/storage/) integration to send metrics from Prometheus to the Fluentd collection pipeline.
+We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus/latest/storage/) integration to send metrics from Prometheus to the metadata enrichment service.
 
-You can follow [Deploy Fluentd](#prometheus-logs) to verify there are no errors during remote write.
+You [check Prometheus logs](#prometheus-logs) to verify there are no errors during remote write.
 
 You can also check `prometheus_remote_storage_.*` metrics to look for success/failure attempts.
 

@@ -1,6 +1,6 @@
 # Advanced Configuration / Security Best Practices
 
-- [Hardening fluentd StatefulSet with `securityContext`](#hardening-fluentd-statefulset-with-securitycontext)
+- [Hardening OpenTelemetry Collector StatefulSet with `securityContext`](#hardening-opentelemetry-collector-statefulsets-with-securitycontext)
 - [FIPS compliant binaries](#fips-compliant-binaries)
 
 ## Minimal required capabilities
@@ -19,8 +19,8 @@ Logically, the pipeline for a data type is composed of the following components
 Collector -> Metadata Enrichment -> Sumologic Backend
 ```
 
-Different applications may serve the same role here - for example, FluentD is currently used for metadata enrichment
-for both logs and metrics, but the plan is to replace it with the Opentelemetry Collector in the near future. Nonetheless,
+Different applications may serve the same role here - for example, OpenTelemetry Collector is currently used for metadata enrichment
+for both logs and metrics, but it used to be FluentD in v2 of the Chart. Nonetheless,
 the required capabilities are only based on the role, not the specific application.
 
 ### Logs
@@ -29,10 +29,10 @@ Log collection is done by a node agent, which reads them directly from the node 
 \- `/var/log/containers` for container logs and `/var/log/journal` for journald logs - mounted as volumes in the
 agent container. In order to read them, the agent container needs to run as a user with the right permissions.
 
-As Kubernetes distributions have different ACLs set for these directories, Fluent-Bit runs as the root user by default
+As Kubernetes distributions have different ACLs set for these directories, the log collector runs as the root user by default
 for maximum out-of-the-box compatibility. This can be set to any user or group id with permission to read log files
 in the aforementioned directories on the node. In terms of collection configuration, the value to modify is
-`fluent-bit.securityContext` for Fluent-Bit.
+`otellogs.daemonset.securityContext` for the log collector.
 
 The log collector needs to be able to talk to the log metadata enrichment service. It does not need to do any other
 requests over the network.
@@ -46,20 +46,20 @@ Example Kubernetes Network Policies restricting all but the necessary traffic fo
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: fluent-bit
+  name: otellogs
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/name: fluent-bit
+      app.kubernetes.io/name: <release_name>-sumologic-otelcol-logs-collector
   policyTypes:
   - Ingress
   - Egress
   egress:
-  # send logs to FluentD
+  # send logs to OpenTelemetry Collector
   - to:
     - podSelector:
         matchLabels:
-          app: <release_name>-sumologic-fluentd-logs
+          app: <release_name>-sumologic-otelcol-logs
     ports:
     - protocol: TCP
       port: 24321
@@ -76,20 +76,20 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: fluentd-logs
+  name: logs-metadata
 spec:
   podSelector:
     matchLabels:
-      app: <release_name>-sumologic-fluentd-logs
+      app: <release_name>-sumologic-otelcol-logs
   policyTypes:
   - Ingress
   - Egress
   ingress:
-  # allow logs from Fluent-Bit
+  # allow logs from log collector
   - from:
     - podSelector:
         matchLabels:
-          app.kubernetes.io/name: fluent-bit
+          app.kubernetes.io/name: <release_name>-sumologic-otelcol-logs-collector
     ports:
     - protocol: TCP
       port: 24321
@@ -139,11 +139,11 @@ spec:
     - protocol: TCP
       port: 9090
   egress:
-  # remote write to FluentD
+  # remote write to OpenTelemetry Collector
   - to:
     - podSelector:
         matchLabels:
-          app: <release_name>-sumologic-fluentd-metrics
+          app: <release_name>-sumologic-otelcol-metrics
     ports:
     - protocol: TCP
       port: 9888
@@ -156,12 +156,12 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: fluentd-metrics
+  name: metrics-metadata
   namespace: sumologic
 spec:
   podSelector:
     matchLabels:
-      app: collection-sumologic-fluentd-metrics
+      app: collection-sumologic-otelcol-metrics
   policyTypes:
   - Ingress
   - Egress
@@ -241,17 +241,20 @@ spec:
 You should only leave the ports for the protocol you're actually using to deliver spans to the receiver in the above definition. As with Prometheus,
 the above configuration is very permissive for ingress. You're encouraged to make it more restrictive based on your specific requirements.
 
-## Hardening fluentd StatefulSet with `securityContext`
+## Hardening OpenTelemetry Collector StatefulSets with `securityContext`
 
-One can use `fluentd.securityContext` and
-`fluentd.(logs|metrics|events).statefulset.containers.fluentd.securityContext`
-to tighten up the security requirements for fluentd containers running as part
-of collection StatefulSets.
+You can use the following properties to set Pod Security Contexts:
+
+- `metadata.securityContext`
+- `otelevents.statefulset.securityContext`
+- `otellogs.daemonset.securityContext`
+
+These sections also contain settings to alter the contexts of specific containters.
 
 One example of such a configuration can be found below:
 
 ```yaml
-fluentd:
+metadata:
   ...
   securityContext:
     ## The group ID of all processes in the statefulset containers.
@@ -263,7 +266,7 @@ fluentd:
     ...
     statefulset:
       containers:
-        fluentd:
+        otelcol:
           securityContext:
             runAsNonRoot: true
             readOnlyRootFilesystem: true
@@ -308,11 +311,11 @@ default.
 It's customary for Helm Charts to allow customizing a Pod's `initContainers` and Volumes, in part to allow changes like this one.
 In effect, what we do here is identical to what we'd do at build time, but it takes place during Pod initialization instead.
 
-Here's an example configuration of a root certificate being added to a FluentD StatefulSet this way. This assumes
+Here's an example configuration of a root certificate being added to a OpenTelemetry Collector StatefulSet this way. This assumes
 the certificate is contained in the `root-ca-cert` Secret, under the `cert.pem` key:
 
 ```yaml
-fluentd:
+metadata:
   metrics:
     statefulset:
       initContainers:
@@ -348,7 +351,7 @@ Note that if you embed all the necessary certificates in the Secret, you can ski
 and just mount the Secret directly to `/etc/ssl/certs/`. In that case, we can skip the `initContainers`:
 
 ```yaml
-fluentd:
+metadata:
   metrics:
     extraVolumes:
       - name: certs

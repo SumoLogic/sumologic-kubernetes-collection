@@ -115,7 +115,7 @@ To enable autoscaling for OpenTelemetry Collector:
         enabled: true
   ```
 
-- Enable autoscaling for Metrics Fluentd statefulset
+- Enable autoscaling for metrics metadata enrichment
 
   ```yaml
   metadata:
@@ -373,7 +373,7 @@ from being replaced with another character.
 
 You can use the `sumologic.com/exclude` [annotation](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/)
 to exclude data from Sumo.
-This data is sent to Fluentd, but not to Sumo.
+This data is sent to the metadata enrichment service, but not to Sumo.
 
 ```yaml
 apiVersion: v1

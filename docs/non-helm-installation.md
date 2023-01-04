@@ -5,8 +5,7 @@ the YAML that you will deploy into your Kubernetes cluster.**
 
 **We do not provide YAML that can be directly applied and it must be generated.**
 
-This document has instructions for setting up Sumo Logic collection using Fluentd,
-Fluent-Bit, Prometheus and Falco.
+This document has instructions for setting up Sumo Logic collection using OpenTelemetry Collector, Prometheus and Falco.
 
 - [Requirements](#requirements)
 - [Prerequisite](#prerequisite)
@@ -16,7 +15,7 @@ Fluent-Bit, Prometheus and Falco.
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Troubleshooting Installation](#troubleshooting-installation)
   - [Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists](#error-customresourcedefinitionsapiextensionsk8sio-alertmanagersmonitoringcoreoscom-already-exists)
-  - [Fluentd Pods Stuck in CreateContainerConfigError](#fluentd-pods-stuck-in-createcontainerconfigerror)
+  - [OpenTelemetry Collector Pods Stuck in CreateContainerConfigError](#opentelemetry-collector-pods-stuck-in-createcontainerconfigerror)
   - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
 - [Customizing Installation](#customizing-installation)
 - [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
@@ -281,9 +280,9 @@ If you do not see data in Sumo Logic, you can review our [troubleshooting guide]
 
 If you get `Error: customresourcedefinitions.apiextensions.k8s.io "alertmanagers.monitoring.coreos.com" already exists` it means you did not apply the CRD's yet.  Please make sure you apply CRD's before rendering as documented above.
 
-### Fluentd Pods Stuck in CreateContainerConfigError
+### OpenTelemetry Collector Pods Stuck in CreateContainerConfigError
 
-If the fluentd pods are in `CreateContainerConfigError` it can mean the setup job has not completed yet. Wait for the setup pod to complete and the issue should resolve itself.  The setup job creates a secret and the error simply means the secret is not there yet.  This usually resolves itself automatically.
+If the OpenTelemetry Collector pods are in `CreateContainerConfigError` it can mean the setup job has not completed yet. Wait for the setup pod to complete and the issue should resolve itself.  The setup job creates a secret and the error simply means the secret is not there yet.  This usually resolves itself automatically.
 
 If the issue does not solve resolve automatically, you will need to look at the logs for the setup pod. Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where you installed the rendered YAML. The pod name will contain `-setup` in the name.
 

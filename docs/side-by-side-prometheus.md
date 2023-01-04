@@ -308,12 +308,12 @@ kube-prometheus-stack:
               valueFrom:
                 configMapKeyRef:
                   name: sumologic-configmap
-                  key: fluentdMetrics
+                  key: metadataMetrics
             - name: NAMESPACE
               valueFrom:
                 configMapKeyRef:
                   name: sumologic-configmap
-                  key: fluentdNamespace
+                  key: metadataNamespace
 ```
 
 Example command which can be used to deploy in OpenShift 4.9 or newer when existing Prometheus Operator is in use

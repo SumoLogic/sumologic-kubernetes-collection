@@ -68,7 +68,7 @@ sumologic:
 
 ### Usage
 
-Source endpoints are exposed in FluentD and the OpenTelemetry collector as environmental variables.
+Source endpoints are exposed in the metadata enrichment service as environmental variables.
 The variable name is built using the schema `SUMO_ENDPOINT_<source name>_<source type>_SOURCE`,
 where `<source name>` and `<source type>` are in uppercase and dashes are replaced with underscores.
 

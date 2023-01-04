@@ -5,8 +5,9 @@ If your Kubernetes cluster requires outbound traffic to go through a proxy, you 
 ```
 sumologic.httpProxy
 sumologic.httpsProxy
-fluentd.proxyUri
 ```
+
+If you're using FluentD as the metadata provider, you should also set `fluentd.proxyUri`.
 
 You should set these properties to the URL for your proxy environment.
 

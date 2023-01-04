@@ -185,14 +185,14 @@ Next, change the `remoteWrite` section of the `prometheus-overrides.yaml` file t
 
 Next, replace the environment variables used in the `remoteWrite` section of the `prometheus-overrides.yaml` file:
 
-- Replace `$(METADATA_METRICS_SVC)` with the Helm release name that you used while installing the Sumo Logic Helm chart, followed by `-sumologic-fluentd-metrics`.
+- Replace `$(METADATA_METRICS_SVC)` with the Helm release name that you used while installing the Sumo Logic Helm chart, followed by `-sumologic-otelcol-metrics`.
 - Replace `$(NAMESPACE)` with the namespace where Sumo Logic Helm chart is running.
 
 For example:\
 If you have installed the Sumo Logic Helm chart with release name `collection` and it is running in the `sumologic` namespace,
 
 ```bash
-`$(METADATA_METRICS_SVC).$(NAMESPACE)` will be replaced by `collection-sumologic-fluentd-metrics.sumologic`
+`$(METADATA_METRICS_SVC).$(NAMESPACE)` will be replaced by `collection-sumologic-otelcol-metrics.sumologic`
 ```
 
 Next, copy the modified `remoteWrite` section of the `prometheus-overrides.yaml` file to your Prometheus configuration file’s `remote_write` section, as per the documentation [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
