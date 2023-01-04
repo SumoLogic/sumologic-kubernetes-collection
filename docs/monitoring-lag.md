@@ -47,7 +47,7 @@ pipeline.
 1. Check Prometheus Logs
 
     If all else fails, check the Prometheus logs.
-    If there is anything suspicious happening with regards to the Fluentd connection
+    If there is anything suspicious happening with regards to the connection to OpenTelemetry Collector,
     you'll see it in the Prometheus logs.
     Any logs that have `connection reset` or `context cancelled` in them are indicative
     of requests that were terminated or dropped.
