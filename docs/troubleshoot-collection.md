@@ -218,8 +218,8 @@ You can also check `prometheus_remote_storage_.*` metrics to look for success/fa
 ### Missing metrics - cannot see cluster in Explore
 
 If you are not seeing metrics coming in to Sumo or/and your cluster is not showing
-up in [Explore][explore] it is most likely due to the fact that Prometheus pod
-is not running.
+up in [Explore](https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore)
+it is most likely due to the fact that Prometheus pod is not running.
 
 One can verify that by using the following command:
 
@@ -235,8 +235,6 @@ issues:
 ```
 kubectl logs -n <NAMESPACE> -l app=kube-prometheus-stack-operator
 ```
-
-[explore]: https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore
 
 ### Pod stuck in `ContainerCreating` state
 
