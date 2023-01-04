@@ -331,7 +331,7 @@ cat user-values.yaml | \
       | tee sumologic.yaml
 ```
 
-> **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](additional-prometheus-configuration.md)
+> **Tip**: To filter or add custom metrics to Prometheus, [please refer to this document](collecting-application-metrics.md)
 
 ## Upgrading Sumo Logic Collection
 

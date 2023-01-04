@@ -429,5 +429,4 @@ with event `persistentvolumeclaim "file-storage-sumologic-otelcol-logs-1" not fo
 ### Out of memory (OOM) failures for Prometheus Pod
 
 If you observe that Prometheus Pod needs more and more resources (out of memory failures - OOM killed Prometheus) and you are not able to increase
-them then you may need to configure additional instance of Prometheus due to huge amount of collected metrics in the cluster,
-for details please see [this](/docs/additional-prometheus-configuration.md#additional-prometheus-instance) documentation.
+them then you may need to horizontally scale Prometheus. :construction: Add link to Prometheus sharding doc here.

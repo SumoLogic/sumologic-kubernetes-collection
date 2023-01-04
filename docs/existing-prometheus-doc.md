@@ -263,7 +263,7 @@ Then run
 helm upgrade $PROMETHEUS_OPERATOR_CHART_NAME stable/kube-prometheus-stack -f current-user-values.yaml -f prometheus-overrides.yaml
 ```
 
-__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](additional-prometheus-configuration.md)
+__NOTE__ To filter or add custom metrics to Prometheus, [please refer to this document](collecting-application-metrics.md)
 
 ## Troubleshooting
 
@@ -325,7 +325,7 @@ helm upgrade --install my-release sumologic/sumologic -f user-values.yaml
 ```
 
 > __Tip__: To filter or add custom metrics to Prometheus,
-> [please refer to this document](additional-prometheus-configuration.md)
+> [please refer to this document](collecting-application-metrics.md)
 
 ## Upgrading Sumo Logic Collection
 
