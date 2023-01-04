@@ -304,7 +304,7 @@ kube-prometheus-stack:
       initContainers:
         - name: "init-config-reloader"
           env:
-            - name: FLUENTD_METRICS_SVC
+            - name: METADATA_METRICS_SVC
               valueFrom:
                 configMapKeyRef:
                   name: sumologic-configmap

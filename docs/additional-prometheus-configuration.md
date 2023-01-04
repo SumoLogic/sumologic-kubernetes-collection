@@ -36,7 +36,7 @@ kube-prometheus-stack:  # Add to a user-supplied user-values.yaml
     prometheus:
       prometheusSpec:
         additionalRemoteWrite:
-          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<some_label>
+          - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<some_label>
             writeRelabelConfigs:
             - action: keep
               regex: <metric1>|<metric2>|...
@@ -267,7 +267,7 @@ kube-prometheus-stack:  # Add to a user-supplied user-values.yaml
     prometheus:
       prometheusSpec:
         additionalRemoteWrite:
-          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.YOUR_TAG
+          - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.YOUR_TAG
             writeRelabelConfigs:
             - action: keep
               regex: <YOUR_CUSTOM_MATCHER>
@@ -281,7 +281,7 @@ kube-prometheus-stack:  # Add to a user-supplied user-values.yaml
     prometheus:
       prometheusSpec:
         additionalRemoteWrite:
-          - url: http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.YOUR_TAG
+          - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.YOUR_TAG
             writeRelabelConfigs:
             - action: keep
               regex: 'example-metrics'
@@ -329,7 +329,7 @@ metadata:
 spec:
   containers:
   - env:
-    - name: FLUENTD_METRICS_SVC
+    - name: METADATA_METRICS_SVC
       valueFrom:
         configMapKeyRef:
           key: fluentdMetrics
