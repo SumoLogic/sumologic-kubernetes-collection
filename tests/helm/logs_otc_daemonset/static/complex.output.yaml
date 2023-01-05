@@ -20,6 +20,7 @@ spec:
         someAnnotation: someValue
       labels:
         app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+        app.kubernetes.io/app-name: RELEASE-NAME-sumologic-otelcol-logs-collector
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"

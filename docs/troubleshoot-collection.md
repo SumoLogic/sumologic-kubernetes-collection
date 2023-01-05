@@ -10,6 +10,7 @@
   - [Check ingest budget limits](#check-ingest-budget-limits)
   - [Check if collection pods are in a healthy state](#check-if-collection-pods-are-in-a-healthy-state)
   - [Prometheus Logs](#prometheus-logs)
+  - [OpenTelemetry Logs Collector is being CPU throttled](#opentelemetry-logs-collector-is-being-cpu-throttled)
 - [Gathering metrics](#gathering-metrics)
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
   - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
@@ -137,6 +138,53 @@ kubectl logs prometheus-collection-kube-prometheus-prometheus-0 prometheus -f
 ```
 
 Where `collection` is the `helm` release name.
+
+### OpenTelemetry Logs Collector is being CPU throttled
+
+If OpenTelemtry Logs Collector is being throttled, you should increase CPU request to higher value,
+for example:
+
+```yaml
+otellogs:
+  daemonset:
+    resources:
+      requests:
+        cpu: 2
+      limits:
+        cpu: 5
+```
+
+If this situation affects only specific group of nodes, you can change resource configuration only for them:
+
+```yaml
+otellogs:
+  additionalDaemonSets:
+    ## intense will be suffix for daemonset for easier recognition
+    intense:
+      nodeSelector:
+        ## we are using nodeSelector to select only nodes with `workingGroup` label set to `IntenseLogGeneration`
+        workingGroup: IntenseLogGeneration
+      resources:
+        requests:
+          cpu: 1
+        limits:
+          cpu: 10
+  daemonset:
+    # For main daemonset, we need to set nodeAffinity to not schedule on nodes with `workingGroup` label set to `IntenseLogGeneration`
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: workingGroup
+              operator: NotIn
+              values:
+              - IntenseLogGeneration
+```
+
+For more information look at the `Setting different resources on different nodes for logs collector` section in
+[Advanced Configuration / Best Practices](/docs/best-practices.md#setting-different-resources-on-different-nodes-for-logs-collector)
+document.
 
 ## Gathering metrics
 
