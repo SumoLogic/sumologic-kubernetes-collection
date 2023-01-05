@@ -16,12 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     See [v1.15.3-sumo-0] for more.
 - feat: adjust average utilization for metadata autoscaling [#2744]
 - chore: upgrade otelcol to 0.68.0-sumo-0 [#2755]
+- chore: remove support for AKS 1.22 [#2756]
 
 [#2724]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2724
 [#2745]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2745
 [#2750]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2750
 [#2744]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2744
 [#2755]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2755
+[#2756]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2756
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...main
 
