@@ -27,13 +27,11 @@ fluentd:
   persistence:
     enabled: true
     ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
-    ##   set, choosing the default provisioner (gp2 on AWS, standard on
+    ## If undefined (the default) or set to an empty string, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, Azure & OpenStack)
     ##
-    # storageClass: "-"
-    # annotations: {}
+    # storageClass: ""
     accessMode: ReadWriteOnce
     size: 10Gi
   buffer:
