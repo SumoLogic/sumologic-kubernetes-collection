@@ -81,7 +81,7 @@ The following table displays the tested Kubernetes and Helm versions.
 | K8s with EKS  | 1.20<br/>1.21<br/>1.22<br/>1.23 |
 | K8s with Kops | 1.21<br/>1.22<br/>1.23<br/>1.24 |
 | K8s with GKE  | 1.21<br/>1.22<br/>1.23          |
-| K8s with AKS  | 1.22<br/>1.23<br/>1.24          |
+| K8s with AKS  | 1.23<br/>1.24                   |
 | OpenShift     | 4.8<br/>4.9<br/>4.10            |
 | Helm          | 3.8.2 (Linux)                   |
 | kubectl       | 1.23.6                          |
@@ -89,7 +89,7 @@ The following table displays the tested Kubernetes and Helm versions.
 The following matrix displays the tested package versions for our Helm chart.
 
 | Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | Fluentd | Fluent Bit                          | Falco  | Metrics Server | Telegraf Operator | Tailing Sidecar Operator | OpenTelemetry Operator |
-|:----------------------|:------------------------------------------|:--------|:------------------------------------|:-------|:---------------|:------------------|:-------------------------|:-----------------------|
+|-----------------------|-------------------------------------------|---------|-------------------------------------|--------|----------------|-------------------|--------------------------|------------------------|
 | Unreleased            | 12.10.0                                   | 1.15.3  | 0.20.9                              | 1.18.6 | 5.11.9         | 1.3.10            | 0.3.4                    | 0.18.3                 |
 | 2.19.0 - 2.19.1       | 12.10.0                                   | 1.14.6  | 0.20.9                              | 1.18.6 | 5.11.9         | 1.3.10            | 0.3.4                    | 0.18.3                 |
 | 2.18.0 - 2.18.1       | 12.10.0                                   | 1.14.6  | 0.20.2                              | 1.18.6 | 5.11.9         | 1.3.5             | 0.3.4                    | 0.13.0                 |
