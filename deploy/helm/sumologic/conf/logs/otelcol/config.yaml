@@ -113,7 +113,7 @@ processors:
         record_attributes:
           - key: k8s.container.name
             value: .+
-  attributes/containers:
+  attributes/fluent_containers:
     actions:
       - action: extract
         key: fluent.tag
@@ -348,7 +348,7 @@ service:
       processors:
         - memory_limiter
         - filter/include_fluent_tag_containers
-        - attributes/containers
+        - attributes/fluent_containers
         - groupbyattrs/containers
         - k8s_tagger
         - resource/add_cluster
@@ -408,7 +408,7 @@ service:
     ## This is the same pipeline like for logs/fluent/containers with the following modifications:
     ## - filter/include_fluent_tag_containers and attributes/remove_fluent_tag are being removed
     ##   as only containers log are being provided to otlp receiver
-    ## - attributes/containers functionality is being replaced by otellogs operators
+    ## - attributes/fluent_containers functionality is being replaced by otellogs operators
     logs/otlp/containers:
       receivers:
         - otlp

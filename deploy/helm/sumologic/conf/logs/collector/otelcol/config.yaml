@@ -152,7 +152,7 @@ receivers:
 
       ## The following actions are being performed:
       ## - renaming attributes
-      ## - moving stream from body to attribtues
+      ## - moving stream from body to attributes
       ## - using body.log as body
       ## - create fluent.tag attribute in order to route in metadata pods
       ## Input Body (JSON): {
@@ -174,7 +174,6 @@ receivers:
       ## - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
       ## - run_id: "0"
       ## - stream: "stdout"
-      ## - fluent.tag: "containers.loggercontainer"
       - id: move-attributes
         type: move
         from: body.stream
@@ -194,9 +193,6 @@ receivers:
       - type: move
         from: attributes.uid
         to: attributes["k8s.pod.uid"]
-      - type: add
-        field: attributes["fluent.tag"]
-        value: EXPR("containers." + attributes["k8s.container.name"])
       - type: remove
         field: attributes["log.file.path"]
       - type: move

@@ -46,7 +46,15 @@ data:
       health_check: {}
       pprof: {}
     processors:
-      attributes/containers:
+      attributes/extract_systemd_source_fields:
+        actions:
+        - action: extract
+          key: fluent.tag
+          pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+        - action: insert
+          from_attribute: _HOSTNAME
+          key: _sourceHost
+      attributes/fluent_containers:
         actions:
         - action: extract
           key: fluent.tag
@@ -71,14 +79,6 @@ data:
           key: k8s.container.name
         - action: delete
           key: k8s_container_name
-      attributes/extract_systemd_source_fields:
-        actions:
-        - action: extract
-          key: fluent.tag
-          pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
-        - action: insert
-          from_attribute: _HOSTNAME
-          key: _sourceHost
       attributes/remove_fluent_tag:
         actions:
         - action: delete

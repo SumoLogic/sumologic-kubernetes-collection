@@ -135,9 +135,6 @@ data:
         - from: attributes.uid
           to: attributes["k8s.pod.uid"]
           type: move
-        - field: attributes["fluent.tag"]
-          type: add
-          value: EXPR("containers." + attributes["k8s.container.name"])
         - field: attributes["log.file.path"]
           type: remove
         - from: body.log
