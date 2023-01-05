@@ -154,7 +154,6 @@ receivers:
       ## - renaming attributes
       ## - moving stream from body to attributes
       ## - using body.log as body
-      ## - create fluent.tag attribute in order to route in metadata pods
       ## Input Body (JSON): {
       ##   "log": "2001-02-03 04:05:06 loggerlog 1 first line\n",
       ##   "stream": "stdout",
@@ -171,8 +170,6 @@ receivers:
       ## - k8s.container.name: "loggercontainer"
       ## - k8s.namespace.name: "default"
       ## - k8s.pod.name: "logger-multiline-4nvg4"
-      ## - k8s.pod.uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
-      ## - run_id: "0"
       ## - stream: "stdout"
       - id: move-attributes
         type: move
@@ -187,12 +184,10 @@ receivers:
       - type: move
         from: attributes.pod_name
         to: attributes["k8s.pod.name"]
-      - type: move
-        from: attributes.run_id
-        to: attributes["run_id"]
-      - type: move
-        from: attributes.uid
-        to: attributes["k8s.pod.uid"]
+      - type: remove
+        field: attributes.run_id
+      - type: remove
+        field: attributes.uid
       - type: remove
         field: attributes["log.file.path"]
       - type: move
