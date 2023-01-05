@@ -129,9 +129,31 @@ the average CPU utilization. Please refer to the [chart readme][chart_readme] an
 
 [#2751]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2751
 
-## OpenTelemetry Collector File-Based Buffer
+## OpenTelemetry Collector Persistent Buffer
 
-:construction: *TODO*, see [the Fluentd section](fluent/best-practices.md#fluentd-file-based-buffer)
+The logs and metrics metadata enrichment pods store data in a persistent file-based buffer to prevent data loss during restarts.
+This feature is enabled by default and can be disabled using the `metadata.persistence.enabled: false` property.
+
+The persistence of the event collection pods is controlled by another property: `sumologic.events.persistence.enabled` and is also enabled by default.
+
+The persistent storage is implemented from the Kubernetes perspective by adding a `volumeClaimTemplate` to the statefulset,
+which in effect creates a [PersistentVolumeClaim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) resource for each pod of the statefulset.
+
+For logs and metrics, use the following properties to configure the PVC templates:
+
+- `metadata.persistence.accessMode: ReadWriteOnce` defines the [access mode](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) used in the `PersistentVolumeClaim` resources.
+- `metadata.persistence.pvcLabels: {}` allows to set additional labels on the `PersistentVolumeClaim` resources
+- `metadata.persistence.size: 10Gi` defines the requested volume size
+- `metadata.persistence.storageClass: null` defines the [storage class](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1) name to use in the volume claim template.
+  This property is not set by default, which means that the `storageClassName` will not be set in the `PersistentVolumeClaim` resources and the default storage class will be used
+  (assuming the [DefaultStorageClass](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass) admission controller is enabled on the Kubernetes API server).
+
+For events, use the following properties:
+
+- `sumologic.events.persistence.persistentVolume.accessMode: ReadWriteOnce`
+- `sumologic.events.persistence.persistentVolume.pvcLabels: {}`
+- `sumologic.events.persistence.persistentVolume.storageClass: null`
+- `sumologic.events.persistence.size: 10Gi`
 
 ## Excluding Logs From Specific Components
 
