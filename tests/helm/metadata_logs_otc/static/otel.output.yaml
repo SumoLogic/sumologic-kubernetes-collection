@@ -206,16 +206,13 @@ data:
           - key: '*'
             tag_name: pod_labels_%s
           metadata:
-          - containerId
           - containerName
           - daemonSetName
           - deploymentName
           - hostName
           - namespace
           - nodeName
-          - podId
           - podName
-          - replicaSetName
           - serviceName
           - statefulSetName
           namespace_labels:
@@ -243,6 +240,10 @@ data:
         attributes:
         - action: delete
           pattern: ^pod_annotations_.*
+      resource/remove_k8s_pod_pod_name:
+        attributes:
+        - action: delete
+          key: k8s.pod.pod_name
       source/containers:
         annotation_prefix: pod_annotations_
         collector: kubernetes
@@ -304,6 +305,7 @@ data:
           - k8s_tagger
           - resource/add_cluster
           - source/containers
+          - resource/remove_k8s_pod_pod_name
           - resource/drop_annotations
           - resource/containers_copy_node_to_host
           - sumologic_schema
