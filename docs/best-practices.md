@@ -635,9 +635,12 @@ fluent-bit:
 
 #### Setting different resources on different nodes for logs collector
 
-All of the log collector Pods have the same resource settings, being members of the same DaemonSet. However, sometimes it's necessary to vary this based on the Node - for example when some large Nodes can contain applications generating a lot of log data.
+All of the log collector Pods have the same resource settings, being members of the same DaemonSet.
+However, sometimes it's necessary to vary this based on the Node - for example
+when some large Nodes can contain applications generating a lot of log data.
 
-It' possible to set different resource quotas for different Nodes based on labels, resulting in a different log collector DaemonSet for these Nodes.
+It's possible to set different resource quotas for different Nodes based on labels,
+resulting in a different log collector DaemonSet for these Nodes.
 
 Let's consider the following example.
 
