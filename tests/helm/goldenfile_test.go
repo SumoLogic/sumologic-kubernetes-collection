@@ -11,7 +11,9 @@ import (
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/stretchr/testify/require"
 
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 func TestGoldenFiles(t *testing.T) {
@@ -81,8 +83,18 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 		}
 		require.NotNilf(t, actualObject, "Couldn't find object %s/%s in output", expectedObject.GetKind(), expectedObject.GetName())
 
+		// separately handle the ConfigMap case, producing nicer diffs for config files
+		if expectedObject.GetKind() == "ConfigMap" {
+			var expectedConfigMap corev1.ConfigMap
+			var actualConfigMap corev1.ConfigMap
+			runtime.DefaultUnstructuredConverter.FromUnstructured(expectedObject.UnstructuredContent(), &expectedConfigMap)
+			runtime.DefaultUnstructuredConverter.FromUnstructured(actualObject.UnstructuredContent(), &actualConfigMap)
+			requireConfigMapsEqual(t, expectedConfigMap, actualConfigMap)
+		}
+
 		require.Equal(t, expectedObject, *actualObject)
 	}
+
 }
 
 // fixupRenderedYaml replaces certain highly variable properties with fixed ones used in the

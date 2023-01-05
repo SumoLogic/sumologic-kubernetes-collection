@@ -157,6 +157,16 @@ func RenderTemplateFromValuesFile(t *testing.T, valuesYaml string, templatePath 
 	)
 }
 
+// requireConfigMapsEqual compares two ConfigMaps in a way that creates nice diffs for long strings
+func requireConfigMapsEqual(t *testing.T, expected corev1.ConfigMap, actual corev1.ConfigMap) {
+	require.ElementsMatch(t, keys(expected.Data), keys(actual.Data))
+	for name, expectedContent := range expected.Data {
+		actualContent := actual.Data[name]
+		require.Equal(t, expectedContent, actualContent)
+	}
+	require.Equal(t, expected, actual)
+}
+
 // The functions below are copied from terratest for the sole reason of being able to skip the helm dependency update
 
 // RenderTemplate runs `helm template` to render the template given the provided options and returns stdout/stderr from
