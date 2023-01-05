@@ -422,7 +422,7 @@ Should you have any connectivity problems, depending on the buffer size your set
 be able to survive for a given amount of time without a data loss, delivering the data
 later when everything is operational again.
 
-The FluentD buffer size is controlled by two major parameters - the size of the persistent volume
+The Fluentd buffer size is controlled by two major parameters - the size of the persistent volume
 in Kubernetes, and the maximum size of the buffer on disk. Both need to be adjusted if you want
 to buffer more (or less) data.
 
@@ -441,7 +441,7 @@ fluentd:
     totalLimitSize: "20G"
 ```
 
-The `fluentd.buffer` section contains other settings for FluentD buffering.
+The `fluentd.buffer` section contains other settings for Fluentd buffering.
 Please study relevant documentation for `chunkLimitSize` and `queueChunkLimitSize`:
 
 - https://docs.fluentd.org/configuration/buffer-section

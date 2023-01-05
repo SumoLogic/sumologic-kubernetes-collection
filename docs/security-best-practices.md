@@ -20,7 +20,7 @@ Collector -> Metadata Enrichment -> Sumologic Backend
 ```
 
 Different applications may serve the same role here - for example, OpenTelemetry Collector is currently used for metadata enrichment
-for both logs and metrics, but it used to be FluentD in v2 of the Chart. Nonetheless,
+for both logs and metrics, but it used to be Fluentd in v2 of the Chart. Nonetheless,
 the required capabilities are only based on the role, not the specific application.
 
 ### Logs

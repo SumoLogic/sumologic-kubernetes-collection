@@ -31,11 +31,11 @@ Documentation links:
     - [Open Telemetry with `sumologic-kubernetes-collection`](/docs/opentelemetry-collector.md)
     - [Comparison of Fluentd and Opentelemetry Collector functionality](/docs/fluent/fluentd-otc-comparison.md)
     - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
-  - FluentD and Fluent-Bit
-    - [Adding Additional FluentD Plugins](/docs/fluent/additional-fluentd-plugins.md)
+  - Fluentd and Fluent-Bit
+    - [Adding Additional Fluentd Plugins](/docs/fluent/additional-fluentd-plugins.md)
     - [Container log parsing with Fluent-Bit (Docker, CRI-O, containerd)](/docs/fluent/container-logs.md)
     - [Performance estimates for running collection chart](/docs/fluent/performance.md)
-    - [FluentD persistence](/docs/fluent/fluentd-persistence.md)
+    - [Fluentd persistence](/docs/fluent/fluentd-persistence.md)
 - Upgrades
   - [Upgrade from v0.17 to v1.0][migration-doc-v1]
   - [Upgrade from v1.3 to v2.0][migration-doc-v2]
@@ -93,7 +93,7 @@ The following table displays the tested Kubernetes and Helm versions.
 
 The following matrix displays the tested package versions for our Helm chart.
 
-| Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | FluentD | Fluent Bit                          | Falco  | Metrics Server | Telegraf Operator | Tailing Sidecar Operator | OpenTelemetry Operator |
+| Sumo Logic Helm Chart | kube-prometheus-stack/Prometheus Operator | Fluentd | Fluent Bit                          | Falco  | Metrics Server | Telegraf Operator | Tailing Sidecar Operator | OpenTelemetry Operator |
 |-----------------------|-------------------------------------------|---------|-------------------------------------|--------|----------------|-------------------|--------------------------|------------------------|
 | 3.0.0-beta.1          | 40.5.0                                    | 1.14.6  | 0.21.3                              | 2.4.2  | 6.2.4          | 1.3.10            | 0.5.5                    | 0.18.3                 |
 | 3.0.0-beta.0          | 42.1.0                                    | 1.14.6  | 0.21.3                              | 2.4.2  | 6.2.4          | 1.3.10            | 0.5.5                    | 0.18.3                 |

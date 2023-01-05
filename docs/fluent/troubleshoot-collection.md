@@ -339,7 +339,7 @@ We have a couple of possible solutions for this issue:
 
 ### Duplicated logs
 
-We observed than under certain conditions, it's possible for FluentD to duplicate logs:
+We observed than under certain conditions, it's possible for Fluentd to duplicate logs:
 
 - there are several requests made of one chunk
 - one of those requests is failing, resulting in the whole batch being retried

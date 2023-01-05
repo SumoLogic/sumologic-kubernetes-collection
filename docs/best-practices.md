@@ -131,7 +131,7 @@ the average CPU utilization. Please refer to the [chart readme][chart_readme] an
 
 ## OpenTelemetry Collector File-Based Buffer
 
-:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#fluentd-file-based-buffer)
+:construction: *TODO*, see [the Fluentd section](fluent/best-practices.md#fluentd-file-based-buffer)
 
 ## Excluding Logs From Specific Components
 
@@ -166,7 +166,7 @@ excludePodRegex
 
 ## Modifying logs
 
-:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#modifying-logs-in-fluentd)
+:construction: *TODO*, see [the Fluentd section](fluent/best-practices.md#modifying-logs-in-fluentd)
 
 ## Excluding Metrics
 
@@ -176,7 +176,7 @@ You can filter out metrics directly in Prometheus using [this documentation](col
 
 ### Fluentd
 
-See [the FluentD section](fluent/best-practices.md#excluding-metrics)
+See [the Fluentd section](fluent/best-practices.md#excluding-metrics)
 
 ### OpenTelemetry Collector
 
@@ -223,7 +223,7 @@ metadata:
 
 ### Fluentd
 
-See [the FluentD section](fluent/best-practices.md#excluding-dimensions)
+See [the Fluentd section](fluent/best-practices.md#excluding-dimensions)
 
 ### OpenTelemetry Collector
 
@@ -248,7 +248,7 @@ metadata:
 
 ## Collect logs from additional files on the Node
 
-:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#add-a-local-file-to-fluent-bit-configuration)
+:construction: *TODO*, see [the Fluentd section](fluent/best-practices.md#add-a-local-file-to-fluent-bit-configuration)
 
 ## Filtering Prometheus Metrics by Namespace
 
@@ -508,7 +508,7 @@ Example of using Tailing Sidecar Operator is described in the
 
 ## Adding custom fields
 
-:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#adding-custom-fields)
+:construction: *TODO*, see [the Fluentd section](fluent/best-practices.md#adding-custom-fields)
 
 ## Using custom Kubernetes API server address
 
@@ -684,7 +684,7 @@ otellogs:
 
 In order to parse and store log content as json following configuration has to be applied:
 
-:construction: *TODO*, see [the FluentD section](fluent/best-practices.md#parsing-log-content-as-json)
+:construction: *TODO*, see [the Fluentd section](fluent/best-practices.md#parsing-log-content-as-json)
 
 [chart_readme]: ../deploy/helm/sumologic/README.md
 [values.yaml]: ../deploy/helm/sumologic/values.yaml

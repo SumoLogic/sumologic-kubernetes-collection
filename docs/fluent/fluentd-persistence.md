@@ -40,7 +40,7 @@ fluentd:
     totalLimitSize: "10G"
 ```
 
-Keep in mind that you need to adjust `fluentd.buffer.totalLimitSize` in order for FluentD to actually queue
+Keep in mind that you need to adjust `fluentd.buffer.totalLimitSize` in order for Fluentd to actually queue
 more data - increasing volume size alone is not enough.
 
 Use one of following two strategies to prepare existing collection for enabling Fluentd persistence:

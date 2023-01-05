@@ -1,3 +1,3 @@
 # Performance
 
-:construction: see [FluentD doc](/docs/fluent/performance.md) for reference
+:construction: see [Fluentd doc](/docs/fluent/performance.md) for reference
