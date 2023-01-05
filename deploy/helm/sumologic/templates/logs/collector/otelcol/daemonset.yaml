@@ -12,14 +12,14 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance }}
+  name: {{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 }}
   labels:
     app: {{ template "sumologic.labels.app.logs.collector.daemonset" $ctx }}
     {{- include "sumologic.labels.common" $ctx | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.pod" $ctx) $instance }}
+      app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.pod" $ctx) $instance | trunc 63 }}
   template:
     metadata:
       annotations:
@@ -31,8 +31,8 @@ spec:
 {{ toYaml $.Values.otellogs.daemonset.podAnnotations | indent 8 }}
 {{- end }}
       labels:
-        app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.pod" $ctx) $instance }}
-        app.kubernetes.io/app-name: {{ template "sumologic.labels.app.logs.collector.pod" $ctx }}
+        app.kubernetes.io/name: {{ printf "%s%s" (include "sumologic.labels.app.logs.collector.pod" $ctx) $instance | trunc 63 }}
+        app.kubernetes.io/app-name: {{ template "sumologic.labels.app.logs.collector.pod" $ctx | trunc 63 }}
         {{- include "sumologic.labels.common" $ctx | nindent 8 }}
 {{- if $.Values.sumologic.podLabels }}
 {{ toYaml $.Values.sumologic.podLabels | indent 8 }}
