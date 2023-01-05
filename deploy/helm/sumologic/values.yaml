@@ -598,12 +598,11 @@ fluentd:
     enabled: true
 
     ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
+    ## If undefined (the default) or set to an empty string, no storageClassName spec is
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, Azure & OpenStack)
     ##
-    # storageClass: "-"
+    # storageClass: ""
     accessMode: ReadWriteOnce
     size: 10Gi
 
@@ -3766,7 +3765,7 @@ metadata:
   ## Configure persistence for Opentelemetry Collector
   persistence:
     enabled: true
-    # storageClass: "-"
+    # storageClass: ""
     accessMode: ReadWriteOnce
     size: 10Gi
     ## Add custom labels to all otelcol statefulset PVC (logs and metrics)
