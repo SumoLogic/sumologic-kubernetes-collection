@@ -363,12 +363,14 @@ sumologic:
     fields:
       - cluster
       - container
+      - daemonset
       - deployment
       - host
       - namespace
       - node
       - pod
       - service
+      - statefulset
 
   ### Metrics configuration
   ## Set the enabled flag to false for disabling metrics ingestion altogether.

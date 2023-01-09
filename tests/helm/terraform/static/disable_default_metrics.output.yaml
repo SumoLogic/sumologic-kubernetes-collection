@@ -216,6 +216,13 @@ data:
       data_type = "String"
       state = "Enabled"
     }
+    resource "sumologic_field" "daemonset" {
+      count = var.create_fields ? 1 : 0
+  
+      field_name = "daemonset"
+      data_type = "String"
+      state = "Enabled"
+    }
     resource "sumologic_field" "deployment" {
       count = var.create_fields ? 1 : 0
   
@@ -255,6 +262,13 @@ data:
       count = var.create_fields ? 1 : 0
   
       field_name = "service"
+      data_type = "String"
+      state = "Enabled"
+    }
+    resource "sumologic_field" "statefulset" {
+      count = var.create_fields ? 1 : 0
+  
+      field_name = "statefulset"
       data_type = "String"
       state = "Enabled"
     }
@@ -530,7 +544,7 @@ data:
         local REMAINING
         REMAINING=$(jq -e '.remaining' <<< "${RESPONSE}")
         readonly REMAINING
-        if [[ $(( REMAINING - 8 )) -ge 10 ]] ; then
+        if [[ $(( REMAINING - 10 )) -ge 10 ]] ; then
             return 0
         else
             return 1
@@ -552,7 +566,7 @@ data:
             "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"
         readonly FIELDS_RESPONSE
   
-        declare -ra FIELDS=("cluster" "container" "deployment" "host" "namespace" "node" "pod" "service")
+        declare -ra FIELDS=("cluster" "container" "daemonset" "deployment" "host" "namespace" "node" "pod" "service" "statefulset")
         for FIELD in "${FIELDS[@]}" ; do
             FIELD_ID=$( echo "${FIELDS_RESPONSE}" | jq -r "select(.fieldName == \"${FIELD}\") | .fieldId" )
             # Don't try to import non existing fields
