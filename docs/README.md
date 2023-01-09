@@ -22,6 +22,8 @@ Documentation links:
   - [Non Helm Installation](/docs/non-helm-installation.md)
 
 - Configuration
+  - Logs
+    - [Collecting container logs](/docs/collecting-container-logs.md)
   - [Advanced Configuration/Best Practices](/docs/best-practices.md)
   - [Advanced Configuration/Security best practices](/docs/security-best-practices.md)
   - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
