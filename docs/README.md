@@ -105,10 +105,6 @@ The collection Helm Chart supports AWS Graviton CPUs, and has been tested in ARM
 should run fine on any ARM64 node, but there is currently no official support for non-AWS ARM environments. If you do
 however run into problems in such an environment, don't hesitate to open an [issue][issues] describing them.
 
-The only exception to the above is Falco, which currently lacks official ARM Docker images. See
-[this issue][falco] for more information.
-
-[falco]: https://github.com/falcosecurity/falco/issues/1589
 [issues]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues
 
 ### Falco support
