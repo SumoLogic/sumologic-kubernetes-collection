@@ -167,32 +167,13 @@ For events, use the following properties:
 
 ## Excluding Logs From Specific Components
 
-You can exclude specific logs from specific components from being sent to Sumo Logic
-by specifying the following parameters either in the `user-values.yaml` file or the `helm install` command.
+You can exclude logs from specific components from being sent to Sumo Logic
+using the following properties:
 
-```
-excludeContainerRegex
-excludeHostRegex
-excludeNamespaceRegex
-excludePodRegex
-```
-
-- This is Ruby regex, so all ruby regex rules apply.
-  Unlike regex in the Sumo collector, you do not need to match the entire line.
-  When doing multiple patterns, put them inside of parentheses and pipe separate them.
-
-- For things like pods and containers you will need to use a star at the end
-  because the string is dynamic. Example:
-
-  ```yaml
-  excludePodRegex: "(dashboard.*|sumologic.*)"
-  ```
-
-- For things like namespace you won’t need to use a star at the end since there is no dynamic string. Example:
-
-  ```yaml
-  excludeNamespaceRegex: “(sumologic|kube-public)”
-  ```
+- `sumologic.logs.container.excludeContainerRegex` excludes logs from specific containers
+- `sumologic.logs.container.excludeHostRegex` excludes logs from specific Kubernetes nodes
+- `sumologic.logs.container.excludeNamespaceRegex` excludes logs from specific Kubernetes namespaces
+- `sumologic.logs.container.excludePodRegex` excludes logs from specific pods
 
 :construction: *TODO*, explain how to filter based on log message here
 
