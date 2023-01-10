@@ -253,7 +253,7 @@ data:
         exclude:
           k8s.container.name: my_containers_excludeContainerRegex
           k8s.namespace.name: my_containers_excludeNamespaceRegex
-          k8s.pod.hostname: my_containers_excludeHostRegex
+          k8s.node.name: my_containers_excludeHostRegex
           k8s.pod.name: my_containers_excludePodRegex
         pod_key: k8s.pod.name
         pod_name_key: k8s.pod.pod_name
