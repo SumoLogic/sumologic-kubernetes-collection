@@ -69,3 +69,15 @@ kube-prometheus-stack:
 __Note:__ You can use method described in
 [Troubleshooting Collection document](/docs/troubleshoot-collection.md#check-the-metrics-endpoint-for-kubernetes-services)
 to troubleshoot this process.
+
+## Metrics modifications
+
+Metric modifications are the same like for
+[Collecting application metrics](/docs/collecting-application-metrics.md#metrics-modifications).
+
+## Investigation
+
+For investigation you may want to look at the
+[Collecting application metrics](/docs/collecting-application-metrics.md#metrics-modifications)
+and
+[Troubleshooting Collection document](/docs/troubleshoot-collection.md#gathering-metrics)
