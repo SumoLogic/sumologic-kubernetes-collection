@@ -72,7 +72,7 @@ to troubleshoot this process.
 
 ## Metrics modifications
 
-Metric modifications are the same like for
+See the relevant section in 
 [Collecting application metrics](/docs/collecting-application-metrics.md#metrics-modifications).
 
 ## Investigation
