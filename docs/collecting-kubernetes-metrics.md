@@ -22,7 +22,7 @@ If you want to forward additional metric from one of these services, you need to
 
 ## Example
 
-Let's consider the following example.
+Let's consider the following example:
 
 In addition to all metrics we send by default from CAdvisor you also want to forward `container_blkio_device_usage_total`.
 
