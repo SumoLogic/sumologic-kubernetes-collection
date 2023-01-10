@@ -205,6 +205,14 @@ processors:
     container_annotations:
       enabled: {{ .Values.sumologic.logs.container.perContainerAnnotationsEnabled }}
       prefixes: {{ toJson .Values.sumologic.logs.container.perContainerAnnotationPrefixes }}
+  ## logstransformprocessor is experimental, but the same functionality in transformprocessor doesn't offer robust enough error handling
+  ## TODO: use transformprocessor here after https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/16519 is closed
+  logstransform/containers_parse_json:
+    operators:
+      - type: json_parser
+        parse_from: body
+        parse_to: body
+        if: body matches "^{.*"
 {{ end }}
 {{ if .Values.sumologic.logs.systemd.enabled }}
   ## Systemd related processors
@@ -421,6 +429,7 @@ service:
         - k8s_tagger
         - resource/add_cluster
         - source/containers
+        - logstransform/containers_parse_json
         - resource/remove_k8s_pod_pod_name
         - resource/drop_annotations
         - resource/containers_copy_node_to_host
