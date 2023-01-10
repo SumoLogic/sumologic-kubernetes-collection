@@ -1,6 +1,6 @@
 # Collecting Kubernetes Metrics
 
-By default we are collecting certain list of metrics from the following services:
+By default, we collect selected metrics from the following Kubernetes components:
 
 - `Kube API Server` configured with `kube-prometheus-stack.kubeApiServer.serviceMonitor`
 - `Kubelet` configured with `kube-prometheus-stack.kubelet.serviceMonitor`
