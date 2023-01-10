@@ -7,7 +7,6 @@ By default, we collect selected metrics from the following Kubernetes components
 - `Kube Controller Manager` configured with `kube-prometheus-stack.kubeControllerManager.serviceMonitor`
 - `CoreDNS` configured with `kube-prometheus-stack.coreDns.serviceMonitor`
 - `Kube EtcD` configured with `kube-prometheus-stack.kubeEtcd.serviceMonitor`
-- `Kube EtcD` configured with `kube-prometheus-stack.kubeEtcd.serviceMonitor`
 - `Kube Scheduler` configured with `kube-prometheus-stack.kubeScheduler.serviceMonitor`
 - `Kube State Metrics` configured with `kube-prometheus-stack.kubeStateMetrics.serviceMonitor`
 - `Prometheus Node Exporter` configured with `kube-prometheus-stack.nodeExporter.serviceMonitor`
