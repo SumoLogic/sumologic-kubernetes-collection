@@ -66,7 +66,7 @@ kube-prometheus-stack:
             sourceLabels: [__name__]
 ```
 
-__Note:__ You can use method described in
+__Note:__ You can use the method described in
 [Troubleshooting Collection document](/docs/troubleshoot-collection.md#check-the-metrics-endpoint-for-kubernetes-services)
 to troubleshoot this process.
 
