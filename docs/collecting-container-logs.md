@@ -47,8 +47,16 @@ sumologic:
 
 where `first_line_regex` is a regular expression used to detect the first line of a multiline log.
 
-This feature is enabled by default. It can rarely cause problems by merging together lines which are supposed to be separate.
-In that case, feel free to disable it.
+This feature is enabled by default and the default regex will catch logs starting with a ISO8601 datetime. For example:
+
+```text
+2007-03-01T13:00:00Z this is the first line of a log record
+  this is the second line
+  and this is the third line
+2007-03-01T13:00:01Z this is a new log record
+```
+
+This feature can rarely cause problems by merging together lines which are supposed to be separate. In that case, feel free to disable it.
 
 ### Setting source name and other built-in metadata
 
@@ -131,6 +139,10 @@ metadata:
 __NOTE:__ These settings affect persistence for metrics as well.
 
 ## Advanced Configuration
+
+This section covers more advanced ways of configuring logging. Knowledge of OpenTelemetry Collector configuration format and concepts will be required.
+
+### Direct configuration
 
 There are two ways of directly configuring OpenTelemetry Collector for both log collection and metadata enrichment.
 These are both advanced features requiring a good understanding of this chart's architecture and
