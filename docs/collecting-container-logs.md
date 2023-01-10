@@ -21,7 +21,7 @@ See the [Solution Overview diagram](README.md#log-collection) for a visualisatio
 
 ## Configuration
 
-High level  configuration for logs is located in [`values.yaml`][values] under the `sumologic.logs` key. Configuration
+High level  configuration for logs is located in [values.yaml][values] under the `sumologic.logs` key. Configuration
 specific to container logs is located under the `sumologic.logs.container` key.
 
 Configuration specific to the log collector DaemonSet can be found under the `otellogs` key.
@@ -76,7 +76,7 @@ in addition to the following:
 
 - `cluster`
 - `_collector`
-- `pod_labels_*` where * is the Pod label name
+- `pod_labels_*` where `*` is the Pod label name
 
 ### Filtering
 
@@ -128,7 +128,7 @@ metadata:
     pvcLabels: {}
 ```
 
-Note that these settings affect persistence for metrics as well.
+__NOTE:__ These settings affect persistence for metrics as well.
 
 ## Advanced Configuration
 
