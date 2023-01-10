@@ -4338,7 +4338,7 @@ metadata:
             k8s.namespace.name: '{{ include "fluentd.excludeNamespaces" . }}'
             k8s.pod.name: '{{ .Values.fluentd.logs.containers.excludePodRegex | quote }}'
             k8s.container.name: '{{ .Values.fluentd.logs.containers.excludeContainerRegex | quote }}'
-            k8s.pod.hostname: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
+            k8s.node.name: '{{ .Values.fluentd.logs.containers.excludeHostRegex | quote }}'
           annotation_prefix: "pod_annotations_"
           pod_template_hash_key: "pod_labels_pod-template-hash"
           pod_name_key: "k8s.pod.pod_name"

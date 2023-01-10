@@ -14,9 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     See [v1.15.3-sumo-0] for more.
 - chore: remove support for AKS 1.22 [#2757]
 
+### Fixed
+
+- fix(logs): make `excludeHostRegex` consistent between Otelcol and Fluentd [#2772]
+  - The `fluentd.logs.container.excludeHostRegex` should filter on the Kubernetes node name
+    when the metadata provider is Otelcol, to be consistent with Fluentd.
+
 [#2747]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2747
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
 [#2757]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2757
+[#2772]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2772
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.19.1...release-v2
 
 ## [v2.19.1]
