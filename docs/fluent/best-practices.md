@@ -742,8 +742,6 @@ Reference: https://docs.fluentbit.io/manual/pipeline/inputs/tail#configuration-f
 **Notice:** In some cases Tailing Sidecar Operator may help in getting logs not available on standard output (STDOUT),
 please see section [Get logs not available on stdout](/docs/best-practices.md#get-logs-not-available-on-stdout).
 
-The section above should be added in each of the kube-state remote write blocks.
-
 ## Templating Kubernetes metadata
 
 The following Kubernetes metadata is available for string templating:
