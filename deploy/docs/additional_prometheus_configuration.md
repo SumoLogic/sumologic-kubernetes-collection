@@ -1,3 +1,3 @@
 # Additional Prometheus Configuration
 
-Moved to [/docs/additional-prometheus-configuration.md](/docs/additional-prometheus-configuration.md)
+Moved to [/docs/collecting-application-metrics.md](/docs/collecting-application-metrics.md)
