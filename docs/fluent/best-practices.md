@@ -645,9 +645,7 @@ fluentd:
 
 ## Excluding Metrics
 
-You can filter out metrics directly in promethus using [this documentation](/docs/additional-prometheus-configuration.md#filter-metrics).
-
-You can also exclude metrics by any tag in Fluentd.
+You can exclude metrics by any tag in Fluentd.
 For example to filter out metrics from `sumologic` namespace, you can use following configuration:
 
 ```yaml
