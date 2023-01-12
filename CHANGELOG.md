@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(logs): add daemonset and statefulset to default fields [#2766]
 - feat: collect metrics from otelcol event collector [#2754]
 - feat: add option to specify additionalEndpoints for metrics [#2788]
+- chore: upgrade kubernetes-setup to v3.5.0 [#2785]
 
 ### Fixed
 
@@ -40,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2771]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2771
 [#2780]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2780
 [#2788]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2788
+[#2785]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2785
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...main
 
