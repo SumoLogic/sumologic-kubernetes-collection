@@ -380,6 +380,19 @@ sumologic:
       ## Set metadata provider service (either fluentd or otelcol).
       provider: otelcol
 
+    otelcol:
+      ## Includes additional processors into pipelines.
+      ## It can be used for filtering metrics, renaming, changing metadata and so on.
+      ## This is list of objects, for example:
+      ## extraProcessors:
+      ##   - filterprocessor:
+      ##       exclude:
+      ##         match_type: strict
+      ##         metric_names:
+      ##           - hello_world
+      ##           - hello/world
+      extraProcessors: []
+
     ### Enable a load balancing proxy for Prometheus remote writes.
     ## Prometheus remote write uses a single persistent HTTP connection per target,
     ## which interacts poorly with TCP load balancing with iptables that K8s Services do.
@@ -3808,17 +3821,6 @@ metadata:
       ## The value of this key should be a dictionary, that will replace the normal configuration.
       ## This is an advanced feature, use with caution, and review the generated configuration first.
       override: {}
-      ## Includes additional processors into pipelines.
-      ## It can be used for filtering metrics, renaming, changing metadata and so on.
-      ## This is list of objects, for example:
-      ## extraProcessors:
-      ##   - filterprocessor:
-      ##       exclude:
-      ##         match_type: strict
-      ##         metric_names:
-      ##           - hello_world
-      ##           - hello/world
-      extraProcessors: []
 
       ## List of additional endpoints to be handled by Metrics Metadata Pods
       additionalEndpoints: []

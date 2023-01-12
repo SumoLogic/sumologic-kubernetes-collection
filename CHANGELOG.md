@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- feat: add metadata.metrics.config.extraProcessors [#2724]
+- feat(metrics): add `sumologic.metrics.otelcol.extraProcessors` [#2724] [#2780]
 - feat: add otellogs.additionDaemonSets configuration [#2750]
 - chore: upgrade Fluentd to v1.15.3-sumo-0 [#2745]
   - This also upgrades Ruby from `v2.7` to `v3.1` and some other dependencies.
@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2766]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2766
 [#2754]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2754
 [#2771]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2771
+[#2780]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2780
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...main
 

@@ -198,9 +198,9 @@ See [the Filtering metrics](/docs/collecting-application-metrics.md#filtering-me
 For example to filter out all metrics from `sumologic` namespace, you can use the following configuration:
 
 ```yaml
-metadata:
+sumologic:
   metrics:
-    config:
+    otelcol:
       extraProcessors:
         - filter/exclude_sumo_metrics:
             metrics:
@@ -217,9 +217,9 @@ metadata:
 To exclude all metrics starting with `kube_`, you can use the following configuration:
 
 ```yaml
-metadata:
+sumologic:
   metrics:
-    config:
+    otelcol:
       extraProcessors:
         - filter/exclude_sumo_metrics:
             metrics:
@@ -245,9 +245,9 @@ See [the Filtering metrics](/docs/collecting-application-metrics.md#adding-or-re
 For example to remove `namespace` and `deployment` dimensions, you can use the following configuration:
 
 ```yaml
-metadata:
+sumologic:
   metrics:
-    config:
+    otelcol:
       extraProcessors:
         - transform/remove_dimensions:
             metric_statements:

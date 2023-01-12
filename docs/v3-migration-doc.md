@@ -109,7 +109,7 @@ In this document we detail the changes as well as the exact steps for migration.
 - Adding `sumologic.metrics.serviceMonitors` to avoid copying values for
   `kube-prometheus-stack.prometheus.additionalServiceMonitors` configuration
 
-- Adding `metadata.metrics.config.extraProcessors` to make metrics modification easy
+- Adding `sumologic.metrics.otelcol.extraProcessors` to make metrics modification easy
 
 ## How to upgrade
 
