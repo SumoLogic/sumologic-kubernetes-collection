@@ -1569,7 +1569,7 @@ Generate list of remoteWrite endpoints for telegraf configuration
 {{- range $remoteWrite := $kps.prometheus.prometheusSpec.additionalRemoteWrite }}
 {{- $endpoints = append $endpoints ($remoteWrite.url | trimPrefix "http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888" | quote) -}}
 {{- end -}}
-{{- range $endpoint := $kps.metadata.metrics.config.additionalEndpoints }}
+{{- range $endpoint := .Values.metadata.metrics.config.additionalEndpoints }}
 {{- $endpoints = append $endpoints ($endpoint.url | quote) -}}
 {{- end -}}
 {{- $endpoints := uniq $endpoints -}}
