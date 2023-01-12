@@ -1,7 +1,9 @@
 # Customer Issues Playbook
 
-For all customer issues Open Source Collection team needs to receive information mentioned
-in [Basic information](#basic-information) section.
+In case you encounter any issues try looking into the [troubleshooting doc](troubleshoot-collection.md) first.
+
+If you are unable to fix your issue using [troubleshooting doc](troubleshoot-collection.md) and would like to raise a customer issue,
+Sumo Logic needs to receive information mentioned in [Basic information](#basic-information) section.
 [Additional information](#additional-information-specific-for-type-of-customer-issue) may be needed for specific types of customer issues.
 
 - [Basic information](#basic-information)
