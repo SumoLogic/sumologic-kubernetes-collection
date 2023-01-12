@@ -3820,6 +3820,9 @@ metadata:
       ##           - hello/world
       extraProcessors: []
 
+      ## List of additional endpoints to be handled by Metrics Metadata Pods
+      additionalEndpoints: []
+
     statefulset:
       nodeSelector: {}
       tolerations: []
