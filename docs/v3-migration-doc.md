@@ -1,115 +1,44 @@
 # Kubernetes Collection `v3.0.0` - Breaking Changes
 
-- [Changes](#changes)
+<!-- TOC -->
+- [Important changes](#important-changes)
+  - [OpenTelemetry Collector](#opentelemetry-collector)
+  - [kube-prometheus-stack upgrade](#kube-prometheus-stack-upgrade)
 - [How to upgrade](#how-to-upgrade)
   - [Requirements](#requirements)
+  - [Migrating the configuration](#migrating-the-configuration)
   - [Manual steps](#manual-steps)
     - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
     - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
     - [Otelcol StatefulSets](#otelcol-statefulsets)
     - [Tracing/Instrumentation changes](#tracinginstrumentation-changes)
     - [Additional Service Monitors](#additional-service-monitors)
-- [Known issues](#known-issues)
-  - [Cannot delete pod if using Tailing Sidecar Operator](#cannot-delete-pod-if-using-tailing-sidecar-operator)
-  - [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
+    - [Migrating your metrics configuration](#migrating-your-metrics-configuration)
+  - [Running the helm upgrade](#running-the-helm-upgrade)
+  - [Known issues](#known-issues)
+    - [Cannot delete pod if using Tailing Sidecar Operator](#cannot-delete-pod-if-using-tailing-sidecar-operator)
+    - [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
+- [Full list of changes](#full-list-of-changes)
+<!-- /TOC -->
 
 Based on the feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
 
 In this document we detail the changes as well as the exact steps for migration.
 
-## Changes
+## Important changes
 
-- Upgrading kube-prometheus stack
+### OpenTelemetry Collector
 
-  We are updating Kube-prometheus-stack to newest available version.
-  Major feature related to that change is upgrading kube-state-metrics to v2
+The new version replaces both Fluentd and Fluent Bit with the OpenTelemetry Collector. In the majority of cases, this doesn't
+require any manual intervention. However, custom processing in Fluentd or Fluent Bit will need to be ported to the OpenTelemetry Collector
+configuration format. See below for details.
 
-- Removing mechanism to replace values in configuration for traces marked by 'replace' suffix
-- Moving direct configuration of OpenTelemetry Collector for log metadata
+### kube-prometheus-stack upgrade
 
-  Removed explicit configuration for otelcol under `metadata.logs.config`.
-  Added option to merge configuration under `metadata.logs.config.merge`
-  or overwrite default configuration `metadata.logs.config.override`
-- Moving direct configuration of OpenTelemetry Collector for metrics metadata
+We've upgraded kube-prometheus-stack, which results in some changes to metrics, and a need for some manual intervention during the upgrade.
 
-  Removed explicit configuration for otelcol under `metadata.metrics.config`.
-  Added option to merge configuration under `metadata.metrics.config.merge`
-  or overwrite default configuration `metadata.metrics.config.override`
-- Removing support for `sumologic.cluster.load_config_file`.
-  Leaving this configuration will result in setup job failure.
-- Upgrading Falco helm chart to `v2.4.2` which changed their configuration:
-  Please validate and adjust your configuration to new version according to [Falco documentation]
-
-- Moved parameters from `fluentd.logs.containers` to `sumologic.logs.container`
-  - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
-  - moved `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
-  - moved `fluentd.logs.contianers.sourceCategory` to `sumologic.logs.container.sourceCategory`
-  - moved `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
-  - moved `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
-  - moved `fluentd.logs.containers.excludeContainerRegex` to `sumologic.logs.container.excludeContainerRegex`
-  - moved `fluentd.logs.containers.excludeHostRegex` to `sumologic.logs.container.excludeHostRegex`
-  - moved `fluentd.logs.containers.excludeNamespaceRegex` to `sumologic.logs.container.excludeNamespaceRegex`
-  - moved `fluentd.logs.containers.excludePodRegex` to `sumologic.logs.container.excludePodRegex`
-  - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
-  - moved `fluentd.logs.containers.perContainerAnnotationsEnabled` to `sumologic.logs.container.perContainerAnnotationsEnabled`
-  - moved `fluentd.logs.containers.perContainerAnnotationPrefixes` to `sumologic.logs.container.perContainerAnnotationPrefixes`
-
-- Moved parameters from `fluentd.logs.kubelet` to `sumologic.logs.kubelet`
-  - moved `fluentd.logs.kubelet.sourceName` to `sumologic.logs.kubelet.sourceName`
-  - moved `fluentd.logs.kubelet.sourceCategory` to `sumologic.logs.kubelet.sourceCategory`
-  - moved `fluentd.logs.kubelet.sourceCategoryPrefix` to `sumologic.logs.kubelet.sourceCategoryPrefix`
-  - moved `fluentd.logs.kubelet.sourceCategoryReplaceDash` to `sumologic.logs.kubelet.sourceCategoryReplaceDash`
-  - moved `fluentd.logs.kubelet.excludeFacilityRegex` to `sumologic.logs.kubelet.excludeFacilityRegex`
-  - moved `fluentd.logs.kubelet.excludeHostRegex` to `sumologic.logs.kubelet.excludeHostRegex`
-  - moved `fluentd.logs.kubelet.excludePriorityRegex` to `sumologic.logs.kubelet.excludePriorityRegex`
-  - moved `fluentd.logs.kubelet.excludeUnitRegex` to `sumologic.logs.kubelet.excludeUnitRegex`
-
-- Moved parameters from `fluentd.logs.systemd` to `sumologic.logs.systemd`
-  - moved `fluentd.logs.systemd.sourceName` to `sumologic.logs.systemd.sourceName`
-  - moved `fluentd.logs.systemd.sourceCategory` to `sumologic.logs.systemd.sourceCategory`
-  - moved `fluentd.logs.systemd.sourceCategoryPrefix` to `sumologic.logs.systemd.sourceCategoryPrefix`
-  - moved `fluentd.logs.systemd.sourceCategoryReplaceDash` to `sumologic.logs.systemd.sourceCategoryReplaceDash`
-  - moved `fluentd.logs.systemd.excludeFacilityRegex` to `sumologic.logs.systemd.excludeFacilityRegex`
-  - moved `fluentd.logs.systemd.excludeHostRegex` to `sumologic.logs.systemd.excludeHostRegex`
-  - moved `fluentd.logs.systemd.excludePriorityRegex` to `sumologic.logs.systemd.excludePriorityRegex`
-  - moved `fluentd.logs.systemd.excludeUnitRegex` to `sumologic.logs.systemd.excludeUnitRegex`
-
-- Moved parameters from `fluentd.logs.default` to `sumologic.logs.defaultFluentd`
-  - moved `fluentd.logs.default.sourceName` to `sumologic.logs.defaultFluentd.sourceName`
-  - moved `fluentd.logs.default.sourceCategory` to `sumologic.logs.defaultFluentd.sourceCategory`
-  - moved `fluentd.logs.default.sourceCategoryPrefix` to `sumologic.logs.defaultFluentd.sourceCategoryPrefix`
-  - moved `fluentd.logs.default.sourceCategoryReplaceDash` to `sumologic.logs.defaultFluentd.sourceCategoryReplaceDash`
-  - moved `fluentd.logs.default.excludeFacilityRegex` to `sumologic.logs.defaultFluentd.excludeFacilityRegex`
-  - moved `fluentd.logs.default.excludeHostRegex` to `sumologic.logs.defaultFluentd.excludeHostRegex`
-  - moved `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
-  - moved `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
-
-- Upgrading Metrics Server to `6.2.4`. In case of changing `metrics-server.*` configuration
-  please see [upgrading section of chart's documentation][metrics-server-upgrade].
-
-- Upgrading Tailing Sidecar Operator helm chart to v0.5.5. There is no breaking change if using annotations only.
-
-- OpenTelemetry Logs Collector will read from end of file now.
-
-  See [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
-  if you want to keep old behavior.
-
-- Changed `otelagent` from `DaemonSet` to `StatefulSet`
-
-- Moved parameters from `otelagent.*` to `otelcolInstrumentation.*`
-
-- Moved parameters from `otelgateway.*` to `tracesGateway.*`
-
-- Moved parameters from `otelcol.*` to `tracesSampler.*`
-
-- Enabled metrics and traces collection from instrumentation by default
-  - changed parameter `sumologic.traces.enabled` default value from `false` to `true`
-
-- Adding `sumologic.metrics.serviceMonitors` to avoid copying values for
-  `kube-prometheus-stack.prometheus.additionalServiceMonitors` configuration
-
-- Adding `sumologic.metrics.otelcol.extraProcessors` to make metrics modification easy
+See the full list of changes [here](#full-list-of-changes).
 
 ## How to upgrade
 
@@ -118,6 +47,33 @@ In this document we detail the changes as well as the exact steps for migration.
 - `helm3`
 - `kubectl`
 - `jq`
+- `docker`
+
+### Migrating the configuration
+
+We've made some breaking changes to our configuration file format, but most of them can be handled automatically by our migration tool.
+
+You can get your current configuration from the cluster by running:
+
+```bash
+helm get values --output yaml <RELEASE-NAME> > user-values.yaml
+```
+
+Afterwards, run the upgrade tool:
+
+```bash
+docker run \
+  --rm \
+  -v $(pwd):/values \
+  -i sumologic/kubernetes-tools:2.15.0 \
+  update-collection-v3 -in /values/user-values.yaml -out /values/new-values.yaml
+```
+
+You should have `new-values.yaml` in your working directory which can be used for the upgrade. Pay attention
+to the migration script output - it may notify you of additional manual steps you need to carry out.
+
+Before you run the upgrade command, please review the manual steps below, and carry out the ones
+relevant to your use case.
 
 ### Manual steps
 
@@ -269,6 +225,14 @@ you will likely want to do analogical modifications in OpenTelemetry.
 
 Please look at the [Metrics modifications](./collecting-application-metrics.md#metrics-modifications) doc.
 
+### Running the helm upgrade
+
+Once you've taken care of any manual steps necessary for your configuration, run the helm upgrade:
+
+```bash
+helm upgrade <RELEASE-NAME> sumologic/sumologic --version=3.0.0 -f new-values.yaml
+```
+
 ### Known issues
 
 #### Cannot delete pod if using Tailing Sidecar Operator
@@ -300,3 +264,96 @@ metadata:
           filelog/containers:
             start_at: beginning
 ```
+
+## Full list of changes
+
+- Upgrading kube-prometheus stack
+
+  We are updating Kube-prometheus-stack to newest available version.
+  Major feature related to that change is upgrading kube-state-metrics to v2
+
+- Removing mechanism to replace values in configuration for traces marked by 'replace' suffix
+- Moving direct configuration of OpenTelemetry Collector for log metadata
+
+  Removed explicit configuration for otelcol under `metadata.logs.config`.
+  Added option to merge configuration under `metadata.logs.config.merge`
+  or overwrite default configuration `metadata.logs.config.override`
+- Moving direct configuration of OpenTelemetry Collector for metrics metadata
+
+  Removed explicit configuration for otelcol under `metadata.metrics.config`.
+  Added option to merge configuration under `metadata.metrics.config.merge`
+  or overwrite default configuration `metadata.metrics.config.override`
+- Removing support for `sumologic.cluster.load_config_file`.
+  Leaving this configuration will result in setup job failure.
+- Upgrading Falco helm chart to `v2.4.2` which changed their configuration:
+  Please validate and adjust your configuration to new version according to [Falco documentation]
+
+- Moved parameters from `fluentd.logs.containers` to `sumologic.logs.container`
+  - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
+  - moved `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
+  - moved `fluentd.logs.contianers.sourceCategory` to `sumologic.logs.container.sourceCategory`
+  - moved `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
+  - moved `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
+  - moved `fluentd.logs.containers.excludeContainerRegex` to `sumologic.logs.container.excludeContainerRegex`
+  - moved `fluentd.logs.containers.excludeHostRegex` to `sumologic.logs.container.excludeHostRegex`
+  - moved `fluentd.logs.containers.excludeNamespaceRegex` to `sumologic.logs.container.excludeNamespaceRegex`
+  - moved `fluentd.logs.containers.excludePodRegex` to `sumologic.logs.container.excludePodRegex`
+  - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
+  - moved `fluentd.logs.containers.perContainerAnnotationsEnabled` to `sumologic.logs.container.perContainerAnnotationsEnabled`
+  - moved `fluentd.logs.containers.perContainerAnnotationPrefixes` to `sumologic.logs.container.perContainerAnnotationPrefixes`
+
+- Moved parameters from `fluentd.logs.kubelet` to `sumologic.logs.kubelet`
+  - moved `fluentd.logs.kubelet.sourceName` to `sumologic.logs.kubelet.sourceName`
+  - moved `fluentd.logs.kubelet.sourceCategory` to `sumologic.logs.kubelet.sourceCategory`
+  - moved `fluentd.logs.kubelet.sourceCategoryPrefix` to `sumologic.logs.kubelet.sourceCategoryPrefix`
+  - moved `fluentd.logs.kubelet.sourceCategoryReplaceDash` to `sumologic.logs.kubelet.sourceCategoryReplaceDash`
+  - moved `fluentd.logs.kubelet.excludeFacilityRegex` to `sumologic.logs.kubelet.excludeFacilityRegex`
+  - moved `fluentd.logs.kubelet.excludeHostRegex` to `sumologic.logs.kubelet.excludeHostRegex`
+  - moved `fluentd.logs.kubelet.excludePriorityRegex` to `sumologic.logs.kubelet.excludePriorityRegex`
+  - moved `fluentd.logs.kubelet.excludeUnitRegex` to `sumologic.logs.kubelet.excludeUnitRegex`
+
+- Moved parameters from `fluentd.logs.systemd` to `sumologic.logs.systemd`
+  - moved `fluentd.logs.systemd.sourceName` to `sumologic.logs.systemd.sourceName`
+  - moved `fluentd.logs.systemd.sourceCategory` to `sumologic.logs.systemd.sourceCategory`
+  - moved `fluentd.logs.systemd.sourceCategoryPrefix` to `sumologic.logs.systemd.sourceCategoryPrefix`
+  - moved `fluentd.logs.systemd.sourceCategoryReplaceDash` to `sumologic.logs.systemd.sourceCategoryReplaceDash`
+  - moved `fluentd.logs.systemd.excludeFacilityRegex` to `sumologic.logs.systemd.excludeFacilityRegex`
+  - moved `fluentd.logs.systemd.excludeHostRegex` to `sumologic.logs.systemd.excludeHostRegex`
+  - moved `fluentd.logs.systemd.excludePriorityRegex` to `sumologic.logs.systemd.excludePriorityRegex`
+  - moved `fluentd.logs.systemd.excludeUnitRegex` to `sumologic.logs.systemd.excludeUnitRegex`
+
+- Moved parameters from `fluentd.logs.default` to `sumologic.logs.defaultFluentd`
+  - moved `fluentd.logs.default.sourceName` to `sumologic.logs.defaultFluentd.sourceName`
+  - moved `fluentd.logs.default.sourceCategory` to `sumologic.logs.defaultFluentd.sourceCategory`
+  - moved `fluentd.logs.default.sourceCategoryPrefix` to `sumologic.logs.defaultFluentd.sourceCategoryPrefix`
+  - moved `fluentd.logs.default.sourceCategoryReplaceDash` to `sumologic.logs.defaultFluentd.sourceCategoryReplaceDash`
+  - moved `fluentd.logs.default.excludeFacilityRegex` to `sumologic.logs.defaultFluentd.excludeFacilityRegex`
+  - moved `fluentd.logs.default.excludeHostRegex` to `sumologic.logs.defaultFluentd.excludeHostRegex`
+  - moved `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
+  - moved `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
+
+- Upgrading Metrics Server to `6.2.4`. In case of changing `metrics-server.*` configuration
+  please see [upgrading section of chart's documentation][metrics-server-upgrade].
+
+- Upgrading Tailing Sidecar Operator helm chart to v0.5.5. There is no breaking change if using annotations only.
+
+- OpenTelemetry Logs Collector will read from end of file now.
+
+  See [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
+  if you want to keep old behavior.
+
+- Changed `otelagent` from `DaemonSet` to `StatefulSet`
+
+- Moved parameters from `otelagent.*` to `otelcolInstrumentation.*`
+
+- Moved parameters from `otelgateway.*` to `tracesGateway.*`
+
+- Moved parameters from `otelcol.*` to `tracesSampler.*`
+
+- Enabled metrics and traces collection from instrumentation by default
+  - changed parameter `sumologic.traces.enabled` default value from `false` to `true`
+
+- Adding `sumologic.metrics.serviceMonitors` to avoid copying values for
+  `kube-prometheus-stack.prometheus.additionalServiceMonitors` configuration
+
+- Adding `sumologic.metrics.otelcol.extraProcessors` to make metrics modification easy
