@@ -235,9 +235,9 @@ In order to filter in or out the metrics, you can add [filterprocessor] to metri
 Please see the following example:
 
 ```yaml
-metadata:
+sumologic:
   metrics:
-    config:
+    otelcol:
       extraProcessors:
         - filter/1:
             metrics:
@@ -309,9 +309,9 @@ In order to rename metrics, the [transformprocessor] can be use.
 Please look at the following snippet:
 
 ```yaml
-metadata:
+sumologic:
   metrics:
-    config:
+    otelcol:
       extraProcessors:
         - transform/1:
             metric_statements:
@@ -327,9 +327,9 @@ If you want to add or rename metadata, the [transformprocessor] can be use.
 Please look at the following snippet:
 
 ```yaml
-metadata:
+sumologic:
   metrics:
-    config:
+    otelcol:
       extraProcessors:
         - transform/1:
             metric_statements:
