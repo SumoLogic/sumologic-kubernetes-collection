@@ -7,13 +7,16 @@
 - [How to upgrade](#how-to-upgrade)
   - [Requirements](#requirements)
   - [Migrating the configuration](#migrating-the-configuration)
-  - [Manual steps](#manual-steps)
+  - [Metrics migration](#metrics-migration)
     - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
-    - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
-    - [Otelcol StatefulSets](#otelcol-statefulsets)
-    - [Tracing/Instrumentation changes](#tracinginstrumentation-changes)
+    - [Otelcol StatefulSet](#otelcol-statefulset)
     - [Additional Service Monitors](#additional-service-monitors)
-    - [Migrating your metrics configuration](#migrating-your-metrics-configuration)
+    - [Custom metrics filtering and modification](#custom-metrics-filtering-and-modification)
+  - [Logs migration](#logs-migration)
+    - [Replacing Fluent Bit with OpenTelemetry Collector](#replacing-fluent-bit-with-opentelemetry-collector)
+    - [Otelcol StatefulSet](#otelcol-statefulset)
+  - [Tracing migration](#tracing-migration)
+    - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
   - [Running the helm upgrade](#running-the-helm-upgrade)
   - [Known issues](#known-issues)
     - [Cannot delete pod if using Tailing Sidecar Operator](#cannot-delete-pod-if-using-tailing-sidecar-operator)
@@ -75,18 +78,19 @@ to the migration script output - it may notify you of additional manual steps yo
 Before you run the upgrade command, please review the manual steps below, and carry out the ones
 relevant to your use case.
 
-### Manual steps
+### Metrics migration
 
-1. Perform required manual steps:
-    - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
-2. Delete the following StatefulSets (otelcol):
-    - [Otelcol StatefulSets](#otelcol-statefulsets)
+If you don't have metrics collection enabled, skip straight to the [next major section](#logs-migration).
+
+The metrics migration requires one major manual step that everyone needs to do, which is upgrading kube-prometheus-stack.
 
 #### Upgrade kube-prometheus-stack
 
-Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
+**When?**: If you have metrics enabled at all.
 
-- Upgrading prometheus CRDs:
+Carry out the following:
+
+- Upgrade Prometheus CRDs:
 
   ```bash
   kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
@@ -99,13 +103,13 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
   kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
   ```
 
-  due to:
+  otherwise you'll get the following error:
 
   ```text
   Error: UPGRADE FAILED: error validating "": error validating data: ValidationError(Prometheus.spec): unknown field "shards" in com.coreos.monitoring.v1.Prometheus.spec
   ```
 
-- Patching `kube-state-metrics` deployment:
+- Patch the `kube-state-metrics` Deployment with new labels:
 
   ```bash
   kubectl get deployment \
@@ -119,13 +123,13 @@ Upgrade of kube-prometheus-stack is a breaking change and requires manual steps:
     --filename -
   ```
 
-  due to:
+  otherwise you'll get an error:
 
   ```text
   Error: UPGRADE FAILED: cannot patch "collection-kube-state-metrics" with kind Deployment: Deployment.apps "collection-kube-state-metrics" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"kube-state-metrics"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
   ```
 
-- Patching `prometheus-node-exporter` daemonset
+- Patch the `prometheus-node-exporter` Daemonset with new labels:
 
 ```bash
 kubectl get daemonset \
@@ -146,14 +150,82 @@ kubectl apply \
   --filename -
 ```
 
-  due to:
+  otherwise you'll get an error:
 
   ```text
   Error: UPGRADE FAILED: cannot patch "collection-prometheus-node-exporter" with kind DaemonSet: DaemonSet.apps "collection-prometheus-node-exporter" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"prometheus-node-exporter"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
   ```
 
-- In case of overriding any of the `repository` property under the `kube-prometheus-stack` property,
+- If you overrode any of the `repository` keys under the `kube-prometheus-stack` key,
   please follow the `kube-prometheus-stack` [migration doc][kube-prometheus-stack-image-migration] on that.
+
+#### Otelcol StatefulSet
+
+**When?**: If you're using `otelcol` as the metrics metadata provider already.
+
+Run the following command to manually delete StatefulSets in helm chart v2 before upgrade:
+
+  ```
+  kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
+  ```
+
+#### Additional Service Monitors
+
+**When?**: If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`.
+
+If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`,
+you have to remove all Sumo Logic related service monitors from the list, because they are now covered by
+`sumologic.metrics.serviceMonitors` configuration. This will make your configuration more clear.
+
+#### Custom metrics filtering and modification
+
+**When?**: If you added extra configuration to Fluentd metrics
+
+If you're adding extra configuration to fluentd metrics,
+you will likely want to do analogical modifications in OpenTelemetry.
+
+Please look at the [Metrics modifications](./collecting-application-metrics.md#metrics-modifications) doc.
+
+### Logs migration
+
+If you don't have log collection enabled, skip straight to the [next major section](#tracing-migration).
+
+#### Replacing Fluent Bit with OpenTelemetry Collector
+
+**When?**: If you're using `fluent-bit` as the log collector, which is the default.
+
+On upgrade, the Fluent Bit DaemonSet will be deleted, and a new OpenTelemetry Collector Daemonset will be created.
+If a log file were to be rotated between the Fluent Bit Pod disappearing and the OpenTelemetry Collector Pod starting, logs
+added to that file after Fluent Bit was deleted will not be ingested. If you're ok with this minor loss of data, you can proceed without
+any manual intervention.
+
+If you'd prefer to ingest duplicated data for a period of time instead, with OpenTelemetry Collector and Fluent Bit running
+side by side, enable the following setting:
+
+```yaml
+sumologic:
+  logs:
+    collector:
+      allowSideBySide: false
+fluent-bit:
+  enabled: true
+```
+
+After the upgrade, once OpenTelemetry Collector is running, you can disable Fluent Bit again and proceed without any data loss.
+
+#### Otelcol StatefulSet
+
+**When?**: If you're using `otelcol` as the logs metadata provider already.
+
+Run the following command to manually delete StatefulSets in helm chart v2 before upgrade:
+
+  ```
+  kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
+  ```
+
+### Tracing migration
+
+If you don't have tracing collection enabled, you can skip straight to the [end](#running-the-helm-upgrade) and upgrade using Helm.
 
 #### Replace special configuration values marked by 'replace' suffix
 
@@ -171,17 +243,6 @@ Mechanism to replace special configuration values for traces marked by 'replace'
 - `processors.resource.cluster.replace`
 
 Above special configuration values can be replaced either to direct values or be set as reference to other parameters from `values.yaml`.
-
-#### Otelcol StatefulSets
-
-If you're using `otelcol` as the logs/metrics metadata provider, please run one or both of the following commands to manually delete StatefulSets in helm chart v2 before upgrade:
-
-  ```
-  kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
-  kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
-  ```
-
-#### Tracing/Instrumentation changes
 
 **Required only if `sumologic.traces.enabled=true`.**
 
@@ -211,19 +272,6 @@ If you're using `otelcol` as the logs/metrics metadata provider, please run one 
   kubectl delete deployment --namespace=my-namespace --cascade=false my-release-sumologic-otelcol
   kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelcol
   ```
-
-#### Additional Service Monitors
-
-If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`,
-you have to remove all Sumo Logic related service monitors from the list, because they are now covered by
-`sumologic.metrics.serviceMonitors` configuration. This will make your configuration more clear.
-
-#### Migrating your metrics configuration
-
-If you're adding extra configuration to fluentd metrics,
-you will likely want to do analogical modifications in OpenTelemetry.
-
-Please look at the [Metrics modifications](./collecting-application-metrics.md#metrics-modifications) doc.
 
 ### Running the helm upgrade
 
