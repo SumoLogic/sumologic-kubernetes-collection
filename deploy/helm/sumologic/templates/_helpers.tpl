@@ -1570,7 +1570,7 @@ Generate list of remoteWrite endpoints for telegraf configuration
 {{- $endpoints = append $endpoints ($remoteWrite.url | trimPrefix "http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888" | quote) -}}
 {{- end -}}
 {{- range $endpoint := .Values.metadata.metrics.config.additionalEndpoints }}
-{{- $endpoints = append $endpoints ($endpoint.url | quote) -}}
+{{- $endpoints = append $endpoints ($endpoint | quote) -}}
 {{- end -}}
 {{- $endpoints := uniq $endpoints -}}
 {{- $endpoints := sortAlpha $endpoints -}}
