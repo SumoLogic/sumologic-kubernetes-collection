@@ -3822,6 +3822,9 @@ metadata:
       ## This is an advanced feature, use with caution, and review the generated configuration first.
       override: {}
 
+      ## List of additional endpoints to be handled by Metrics Metadata Pods
+      additionalEndpoints: []
+
     statefulset:
       nodeSelector: {}
       tolerations: []

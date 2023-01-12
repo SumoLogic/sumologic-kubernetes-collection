@@ -15,7 +15,7 @@ receivers:
         data_format = "prometheusremotewrite"
         path_tag = true
         paths = [
-{{ include "metric.remotewrites" . | indent 10 }}
+{{ include "metric.endpoints" . | indent 10 }}
         ]
 extensions:
   health_check: {}
