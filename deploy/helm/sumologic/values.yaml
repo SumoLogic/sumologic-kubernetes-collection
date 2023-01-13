@@ -3448,7 +3448,7 @@ otelcolInstrumentation:
 
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.68.0-sumo-0"
+      tag: "0.69.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Set securityContext for containers running in pods in otelcol-instrumentation statefulset.
@@ -3678,7 +3678,7 @@ tracesSampler:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.68.0-sumo-0"
+      tag: "0.69.0-sumo-0"
       pullPolicy: IfNotPresent
 
     ## Extra Environment Values - allows yaml definitions
@@ -3729,7 +3729,7 @@ tracesSampler:
         spike_limit_percentage: 20
 
       ## Smart cascading filtering rules with preset limits.
-      ## Please see https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.68.0-sumo-0/pkg/processor/cascadingfilterprocessor
+      ## Please see https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.69.0-sumo-0/pkg/processor/cascadingfilterprocessor
       ## for details.
       cascading_filter:
         ## Max number of traces for which decisions are kept in memory
@@ -3772,7 +3772,7 @@ metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.68.0-sumo-0
+    tag: 0.69.0-sumo-0
     pullPolicy: IfNotPresent
 
   securityContext:
@@ -4023,7 +4023,7 @@ tracesGateway:
     podAnnotations: {}
     image:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.68.0-sumo-0"
+      tag: "0.69.0-sumo-0"
       pullPolicy: IfNotPresent
     livenessProbe:
       periodSeconds: 15
@@ -4128,7 +4128,7 @@ otelevents:
   ## Configure image for Opentelemetry Collector
   image:
     repository: public.ecr.aws/sumologic/sumologic-otel-collector
-    tag: 0.68.0-sumo-0
+    tag: 0.69.0-sumo-0
     pullPolicy: IfNotPresent
 
   logLevel: info
@@ -4231,7 +4231,7 @@ otellogs:
   ## Configure image for Opentelemetry Collector
   image:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.68.0-sumo-0"
+    tag: "0.69.0-sumo-0"
     pullPolicy: IfNotPresent
 
   logLevel: info
