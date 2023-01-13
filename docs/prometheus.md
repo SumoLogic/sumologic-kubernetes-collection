@@ -178,8 +178,8 @@ Now, build Kube Prometheus Stack configuration for Sumo Logic:
   kube-prometheus-stack:
     prometheus-node-exporter:
       service:
-          port: 9200
-          targetPort: 9200
+        port: 9200
+        targetPort: 9200
   ```
 
   > __NOTE:__ Change port to other value if Prometheus Node Exporter Pods are in Pending state and you see the following warning in Events:
@@ -200,8 +200,8 @@ kube-prometheus-stack:
       releaseNamespace: true
   prometheus-node-exporter:
     service:
-        port: 9200
-        targetPort: 9200
+      port: 9200
+      targetPort: 9200
 ```
 
 Prometheus configuration is ready and now you can proceed with installation.
