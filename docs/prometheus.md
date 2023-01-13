@@ -27,7 +27,7 @@ __NOTE:__ In this document we assume that `${NAMESPACE}` represents namespace in
 ## No Prometheus in the cluster
 
 If you don't have Prometheus or Kube Prometheus Stack installed in your cluster
-there is not much you can worry about.
+there is not much you need to worry about.
 There is no special configuration required, unless you want to have
 [Custom Application Metrics](/docs/collecting-application-metrics.md) or
 [Custom Kubernetes Metrics](/docs/collecting-kubernetes-metrics.md),
