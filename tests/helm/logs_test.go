@@ -115,6 +115,40 @@ sumologic:
 	}
 }
 
+func TestMetadataOtelExtraProcessors(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+        - filter/include-host:
+            logs:
+              include:
+                match_type: strict
+                resource_attributes:
+                - key: host.name
+                  value: just_this_one_hostname
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Exporters  map[string]interface{}
+		Processors map[string]interface{}
+		Service    struct {
+			Pipelines map[string]interface{}
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	for processorName := range otelConfig.Processors {
+		require.Contains(t, processorName, "filter/include-host")
+	}
+}
+
 func TestCollectorOtelConfigMerge(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/logs/collector/otelcol/configmap.yaml"

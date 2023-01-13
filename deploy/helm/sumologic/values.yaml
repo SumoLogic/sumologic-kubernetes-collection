@@ -253,6 +253,10 @@ sumologic:
     container:
       enabled: true
 
+      otelcol:
+        ## Extra processors for container logs. See [/docs/collecting-container-logs.md](/docs/collecting-container-logs.md) for details.
+        extraProcessors: []
+
       ## Set the _sourceHost metadata field in Sumo Logic.
       sourceHost: "%{k8s.pod.hostname}"
       ## Set the _sourceName metadata field in Sumo Logic.

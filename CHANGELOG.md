@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- feat(logs): add `sumologic.logs.container.otelcol.extraProcessors` [#2790]
+
 ### Changed
 
 - feat: add metadata.metrics.config.extraProcessors [#2724]
@@ -37,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2766]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2766
 [#2754]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2754
 [#2771]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2771
+[#2790]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2790
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...main
 

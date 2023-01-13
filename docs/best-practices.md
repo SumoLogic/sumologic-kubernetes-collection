@@ -3,8 +3,6 @@
 - [Overriding chart resource names with `fullnameOverride`](#overriding-chart-resource-names-with-fullnameoverride)
 - [OpenTelemetry Collector Autoscaling](#opentelemetry-collector-autoscaling)
 - [OpenTelemetry Collector Persistent Buffer](#opentelemetry-collector-persistent-buffer)
-- [Excluding Logs From Specific Components](#excluding-logs-from-specific-components)
-- [Modifying logs](#modifying-logs)
 - [Excluding Metrics](#excluding-metrics)
   - [Prometheus](#prometheus)
   - [Fluentd](#fluentd)
@@ -164,22 +162,6 @@ For events, use the following properties:
 - `sumologic.events.persistence.persistentVolume.pvcLabels: {}`
 - `sumologic.events.persistence.persistentVolume.storageClass: null`
 - `sumologic.events.persistence.size: 10Gi`
-
-## Excluding Logs From Specific Components
-
-You can exclude logs from specific components from being sent to Sumo Logic
-using the following properties:
-
-- `sumologic.logs.container.excludeContainerRegex` excludes logs from specific containers
-- `sumologic.logs.container.excludeHostRegex` excludes logs from specific Kubernetes nodes
-- `sumologic.logs.container.excludeNamespaceRegex` excludes logs from specific Kubernetes namespaces
-- `sumologic.logs.container.excludePodRegex` excludes logs from specific pods
-
-:construction: *TODO*, explain how to filter based on log message here
-
-## Modifying logs
-
-:construction: *TODO*, see [the Fluentd section](fluent/best-practices.md#modifying-logs-in-fluentd)
 
 ## Excluding Metrics
 
