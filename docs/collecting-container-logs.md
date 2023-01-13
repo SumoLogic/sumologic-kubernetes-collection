@@ -7,7 +7,6 @@
   - [Modifying log records](#modifying-log-records)
   - [Persistence](#persistence)
 - [Advanced Configuration](#advanced-configuration)
-  - [Advanced Filtering](#advanced-filtering)
   - [Disabling container logs](#disabling-container-logs)
 <!-- /TOC -->
 
@@ -109,11 +108,102 @@ sumologic:
       excludePodRegex: ""
 ```
 
-For more advanced filtering logic, see [here](#advanced-filtering).
+For more advanced scenarios, use [OpenTelemetry processors][opentelemetry_processors].
+Add them to `sumologic.logs.container.otelcol.extraProcessors`.
+
+Here are some examples:
+
+```yaml
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+        - filter/include-logs-based-on-resource-attribute:
+            logs:
+              include:
+                match_type: strict
+                resource_attributes:
+                  - Key: host.name
+                    Value: just_this_one_hostname
+        - filter/include-logs-based-on-resource-attribute-regex:
+            logs:
+              include:
+                match_type: regexp
+                resource_attributes:
+                  - Key: host.name
+                    Value: prefix.*
+        - filter/exclude-healthcheck-logs:
+            logs:
+              exclude:
+                match_type: regexp
+                bodies:
+                - /healthcheck
+```
+
+For more examples and detailed documentation, see [Filter processor docs][filter_processor_docs].
 
 ### Modifying log records
 
-:construction: This needs `extraProcessors` for logs.
+To modify log records, use [OpenTelemetry processors][opentelemetry_processors].
+Add them to `sumologic.logs.container.otelcol.extraProcessors`.
+
+Here are some examples.
+
+To modify log body, use the [Transform processor][transform_processor_docs]:
+
+```yaml
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+        - transform/mask-card-numbers:
+            log_statements:
+            - context: log
+              statements:
+              - replace_pattern(body, "card=\\d+", "card=***")
+```
+
+To modify record attributes, use the [Attributes processor][attributes_processor_docs]:
+
+```yaml
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+        - attributes/delete-record-attribute:
+            actions:
+            - action: delete
+              key: unwanted.attribute
+        # To rename old.attribute to new.attribute, first create new.attribute and then delete old.attribute.
+        - attributes/rename-old-to-new:
+            - action: insert
+              key: new.attribute
+              from_attribute: old.attribute
+            - action: delete
+              key: old.attribute
+```
+
+To modify resource attributes, use the [Resource processor][resource_processor_docs]:
+
+```yaml
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+        - resource/add-resource-attribute:
+            attributes:
+            - action: insert
+              key: environment
+              value: staging
+        - resource/remove:
+            attributes:
+            - action: delete
+              key: redundant-attribute
+```
 
 ### Persistence
 
@@ -161,10 +251,6 @@ that may change between minor releases of this Chart.
 
 See [Sumologic OpenTelemetry Collector configuration][configuration] for more information.
 
-### Advanced Filtering
-
-:construction: This needs `extraProcessors` for logs.
-
 ### Disabling container logs
 
 Container logs are collected by default. This can be disabled by setting:
@@ -176,7 +262,12 @@ sumologic:
       enabled: false
 ```
 
-[configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/Configuration.md
+[configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/configuration.md
 [values]: /deploy/helm/sumologic/values.yaml
 [source_name]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions/#Source_Name
 [opentelemetry_k8s]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/semantic_conventions/k8s.md
+[filter_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/filterprocessor/README.md
+[opentelemetry_processors]: https://opentelemetry.io/docs/collector/configuration/#processors
+[attributes_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/attributesprocessor/README.md
+[resource_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/resourceprocessor/README.md
+[transform_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/transformprocessor/README.md
