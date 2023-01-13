@@ -39,18 +39,19 @@ If you already have Prometheus operator in your cluster, the necessary changes d
 
 In that situation we support three scenarios:
 
-- Installing Sumo Logic Prometheus Operator side by side with existing Operator
+1. Installing Sumo Logic Prometheus Operator side by side with existing Operator
 
-  __NOTE:__ This is possible if Custom Resource Definitions in the cluster are compatible with those required by Sumo Logic,
-  or there is possibility to install Custom Resource Definition which will be accepted by all
-  Prometheus Operators
-- Using existing Operator to create Sumo Logic Prometheus instance
+   __NOTE:__ This is possible if Custom Resource Definitions in the cluster are compatible with those required by Sumo Logic,
+   or there is possibility to install Custom Resource Definition which will be accepted by all
+   Prometheus Operators
 
-  __NOTE:__ This is possible if Custom Resource Definitions in the cluster are compatible with those required by Sumo Logic,
-  or there is possibility to install Custom Resource Definition which will be accepted by all
-  Prometheus Operators
+1. Using existing Operator to create Sumo Logic Prometheus instance
 
-- Using existing Kube Prometheus Stack
+   __NOTE:__ This is possible if Custom Resource Definitions in the cluster are compatible with those required by Sumo Logic,
+   or there is possibility to install Custom Resource Definition which will be accepted by all
+   Prometheus Operators
+
+1. Using existing Kube Prometheus Stack
 
 ### Custom Resource Definition compatibility
 
