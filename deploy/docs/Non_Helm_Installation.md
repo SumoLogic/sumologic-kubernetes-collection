@@ -1,3 +1,4 @@
 # Non Helm Installation
 
-Moved to [/docs/non-helm-installation.md](/docs/non-helm-installation.md)
+Covered by [/docs/installation.md](/docs/installation.md), especially by
+[Non-helm installation](/docs/installation.md#non-helm-installation) section.

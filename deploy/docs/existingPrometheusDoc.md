@@ -1,3 +1,4 @@
 # How to install if you have an existing Prometheus operator
 
-Moved to [/docs/existing-prometheus-doc.md](/docs/existing-prometheus-doc.md)
+Covered by [/docs/installation.md](/docs/installation.md), especially by
+[Installing with existing Prometheus](/docs/installation.md#installing-with-existing-prometheus) section.

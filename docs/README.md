@@ -17,9 +17,7 @@ Documentation for other versions can be found in the [main README file](https://
 
 Documentation links:
 
-- Installation
-  - [Installation with Helm](/docs/installation-with-helm.md)
-  - [Non Helm Installation](/docs/non-helm-installation.md)
+- [Installation](/docs/installation.md)
 
 - Configuration
   - Logs
