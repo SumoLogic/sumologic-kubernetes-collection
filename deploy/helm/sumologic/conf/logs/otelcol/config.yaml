@@ -213,6 +213,11 @@ processors:
         parse_from: body
         parse_to: body
         if: body matches "^{.*"
+{{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
+{{ toYaml $processor | indent 2}}
+{{- end }}
+{{- end }}
 {{ end }}
 {{ if .Values.sumologic.logs.systemd.enabled }}
   ## Systemd related processors
@@ -362,6 +367,11 @@ service:
         - k8s_tagger
         - resource/add_cluster
         - source/containers
+{{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
+{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
+{{- end }}
+{{- end }}
         - resource/remove_k8s_pod_pod_name
         - resource/drop_annotations
         - attributes/remove_fluent_tag
@@ -430,6 +440,11 @@ service:
         - resource/add_cluster
         - source/containers
         - logstransform/containers_parse_json
+{{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
+{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
+{{- end }}
+{{- end }}
         - resource/remove_k8s_pod_pod_name
         - resource/drop_annotations
         - resource/containers_copy_node_to_host
