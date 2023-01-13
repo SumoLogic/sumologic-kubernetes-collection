@@ -310,7 +310,7 @@ You need to ensure that the following values are correctly added to your Kube Pr
     value: ${NAMESPACE}
     ```
 
-After all of the changes, your Kube Prometheus Stack should looks like the following:
+After all of the changes, your Kube Prometheus Stack should look like the following:
 
 ```yaml
 prometheus:
