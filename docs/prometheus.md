@@ -54,7 +54,7 @@ In that situation we support three scenarios:
 
 ### Custom Resource Definition compatibility
 
-CRD versions required by Sumo Logic Collection is `v0.59.2` or newer. If you are using newer version in your cluster, you probably don't have to do anything.
+Sumo Logic collection requires CRD version of `v0.59.2` or newer. If you are using a newer version in your cluster, you probably don't have to do anything.
 Otherwise, ensure that the Custom Resource Definitions won't break your existing Prometheus Operators and then apply them using the following commands:
 
 ```yaml
