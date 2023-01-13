@@ -3,6 +3,8 @@
 <!-- TOC -->
 - [Requirements](#requirements)
   - [Helm](#helm)
+    - [Non-helm installation](#non-helm-installation)
+      - [OpenShift](#openshift)
   - [Sumo Logic Account](#sumo-logic-account)
   - [Sumo Logic fields](#sumo-logic-fields)
 - [Add repository](#add-repository)
@@ -10,13 +12,13 @@
   - [Required parameters](#required-parameters)
   - [Proxy](#proxy)
   - [Installing with existing Prometheus](#installing-with-existing-prometheus)
-  - [Optional parameter](#optional-parameter)
+  - [Installing in Openshift platform](#installing-in-openshift-platform)
+  - [Setting cluster name](#setting-cluster-name)
   - [Example](#example)
 - [Install chart](#install-chart)
 - [Customizing Installation](#customizing-installation)
   - [Override names of the resources](#override-names-of-the-resources)
   - [Authenticating with container registry](#authenticating-with-container-registry)
-  - [Installing the helm chart in Openshift platform](#installing-the-helm-chart-in-openshift-platform)
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Troubleshooting Installation](#troubleshooting-installation)
   - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
@@ -33,6 +35,10 @@ enriching them with deployment, pod, and service level metadata; and sends them 
 ## Requirements
 
 ### Helm
+
+Helm is required but you can use it for template generation if you don't want to use it to manage your installation.
+
+#### Non-helm installation
 
 If you don't want to use Helm to manage the installation,
 please use `helm template` to generate Kubernetes templates and apply them using Kubectl.
@@ -53,6 +59,22 @@ with
 
 ```bash
 helm template \
+  -n "${NAMESPACE}" \
+  --create-namespace \
+  -f user-values.yaml \
+  my-release \
+  sumologic/sumologic | tee sumologic-rendered.yaml
+kubectl create namespace "${NAMESPACE}"
+kubectl apply -f sumologic-rendered.yaml -n "${NAMESPACE}"
+```
+
+##### OpenShift
+
+For Openshift, you need to add `--api-versions=security.openshift.io/v1` argument to `helm template`, so the final set of upgrade commands will look like the following:
+
+```
+helm template \
+  --api-versions=security.openshift.io/v1` \
   -n "${NAMESPACE}" \
   --create-namespace \
   -f user-values.yaml \
@@ -131,7 +153,42 @@ please see the following [additional properties](installing-behind-proxy.md) you
 If there Prometheus is already in your cluster,
 please see [Prometheus document](/docs/prometheus.md#prometheus)
 
-### Optional parameter
+### Installing in Openshift platform
+
+The daemonset/statefulset fails to create the pods in Openshift environment due to
+the request of elevated privileges, like HostPath mounts, privileged: true, etc.
+
+If you wish to install the chart in the Openshift Platform, it requires a SCC resource
+which is only created in Openshift (detected via API capabilities in the chart),
+you can add the following configuration to `user-values.yaml`:
+
+```yaml
+sumologic:
+  scc:
+    create: true
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
+tailing-sidecar-operator:
+  scc:
+    create: true
+```
+
+__Notice:__ Prometheus Operator is deployed by default on OpenShift platform,
+you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
+`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in `user-values.yaml` or
+exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
+using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in `user-values.yaml`.
+For details see [Prometheus document](/docs/prometheus.md#prometheus-operator-in-the-cluster)
+
+### Setting cluster name
 
 The following parameter is optional, but we recommend setting it.
 
@@ -218,88 +275,6 @@ To do so please refer to the following
 
 [aws-public-ecr-docs]: https://aws.amazon.com/blogs/aws/amazon-ecr-public-a-new-public-container-registry/
 [aws-ecr-pricing]: https://aws.amazon.com/ecr/pricing/
-
-### Installing the helm chart in Openshift platform
-
-The daemonset/statefulset fails to create the pods in Openshift environment due to
-the request of elevated privileges, like HostPath mounts, privileged: true, etc.
-
-If you wish to install the chart in the Openshift Platform, it requires a SCC resource
-which is only created in Openshift (detected via API capabilities in the chart),
-you can add the following configuration to `user-values.yaml`:
-
-```yaml
-sumologic:
-  scc:
-    create: true
-otellogs:
-  daemonset:
-    containers:
-      otelcol:
-        securityContext:
-          privileged: true
-    initContainers:
-      changeowner:
-        securityContext:
-          privileged: true
-kube-prometheus-stack:
-  prometheus-node-exporter:
-    service:
-      port: 9200
-      targetPort: 9200
-  prometheusOperator:
-    namespaces:
-      additional:
-        - my-namespace
-tailing-sidecar-operator:
-  scc:
-    create: true
-```
-
-so, it will look like the following:
-
-```yaml
-sumologic:
-  accessId: ${SUMO_ACCESS_ID}
-  accessKey: ${SUMO_ACCESS_KEY}
-  clusterName: ${MY_CLUSTER_NAME}
-  scc:
-    create: true
-otellogs:
-  daemonset:
-    containers:
-      otelcol:
-        securityContext:
-          privileged: true
-    initContainers:
-      changeowner:
-        securityContext:
-          privileged: true
-kube-prometheus-stack:
-  prometheus-node-exporter:
-    service:
-      port: 9200
-      targetPort: 9200
-  prometheusOperator:
-    namespaces:
-      additional:
-        - my-namespace
-tailing-sidecar-operator:
-  scc:
-    create: true
-```
-
-```bash
-helm upgrade --install my-release sumologic/sumologic \
-  --namespace=my-namespace \
-  -f `user-values.yaml`
-```
-
-__Notice:__ Prometheus Operator is deployed by default on OpenShift platform,
-you may either limit scope for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
-`kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in `user-values.yaml` or
-exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
-using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in `user-values.yaml`.
 
 ## Viewing Data In Sumo Logic
 
