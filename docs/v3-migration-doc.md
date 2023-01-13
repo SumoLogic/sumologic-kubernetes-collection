@@ -52,6 +52,13 @@ See the full list of changes [here](#full-list-of-changes).
 - `jq`
 - `docker`
 
+Set the following environment variables that our commands will make use of:
+
+```bash
+export NAMESPACE=...
+export HELM_RELEASE_NAME=...
+```
+
 ### Migrating the configuration
 
 We've made some breaking changes to our configuration file format, but most of them can be handled automatically by our migration tool.
@@ -59,7 +66,7 @@ We've made some breaking changes to our configuration file format, but most of t
 You can get your current configuration from the cluster by running:
 
 ```bash
-helm get values --output yaml <RELEASE-NAME> > user-values.yaml
+helm get values --output yaml "${HELM_RELEASE_NAME}" > user-values.yaml
 ```
 
 Afterwards, run the upgrade tool:
@@ -166,7 +173,7 @@ kubectl apply \
 Run the following command to manually delete StatefulSets in helm chart v2 before upgrade:
 
   ```
-  kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-metrics
+  kubectl delete sts --namespace=${NAMESPACE} --cascade=orphan -lapp=${HELM_RELEASE_NAME}-sumologic-otelcol-metrics
   ```
 
 #### Additional Service Monitors
@@ -220,7 +227,7 @@ After the upgrade, once OpenTelemetry Collector is running, you can disable Flue
 Run the following command to manually delete StatefulSets in helm chart v2 before upgrade:
 
   ```
-  kubectl delete sts --namespace=my-namespace --cascade=false my-release-sumologic-otelcol-logs
+  kubectl delete sts --namespace=${NAMESPACE} --cascade=orphan -lapp=${HELM_RELEASE_NAME}-sumologic-otelcol-logs
   ```
 
 ### Tracing migration
@@ -251,8 +258,8 @@ Above special configuration values can be replaced either to direct values or be
   If you're using `otelagent` (`otelagent.enabled=true`), please run the following command to manually delete DamemonSet and ConfigMap in helm chart v2 before upgrade:
 
   ```
-  kubectl delete ds --namespace=my-namespace --cascade=false my-release-sumologic-otelagent
-  kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelagent
+  kubectl delete ds --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelagent
+  kubectl delete cm --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelagent
   ```
 
 - **Otelgateway Deployment**
@@ -260,8 +267,8 @@ Above special configuration values can be replaced either to direct values or be
   If you're using `otelgateway` (`otelgateway.enabled=true`), please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
 
   ```
-  kubectl delete deployment --namespace=my-namespace --cascade=false my-release-sumologic-otelgateway
-  kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelgateway
+  kubectl delete deployment --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelgateway
+  kubectl delete cm --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelgateway
   ```
 
 - **Otelcol Deployment**
@@ -269,8 +276,8 @@ Above special configuration values can be replaced either to direct values or be
   Please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
 
   ```
-  kubectl delete deployment --namespace=my-namespace --cascade=false my-release-sumologic-otelcol
-  kubectl delete cm --namespace-my-namespace --cascade=false my-release-sumologic-otelcol
+  kubectl delete deployment --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelcol
+  kubectl delete cm --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelcol
   ```
 
 ### Running the helm upgrade
@@ -278,7 +285,7 @@ Above special configuration values can be replaced either to direct values or be
 Once you've taken care of any manual steps necessary for your configuration, run the helm upgrade:
 
 ```bash
-helm upgrade <RELEASE-NAME> sumologic/sumologic --version=3.0.0 -f new-values.yaml
+helm upgrade ${HELM_RELEASE_NAME} sumologic/sumologic --version=3.0.0 -f new-values.yaml
 ```
 
 ### Known issues
