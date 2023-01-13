@@ -81,7 +81,7 @@ Required Custom Resource Definitions are listed in [Kube Prometheus Stack reposi
 
 ### Installing Sumo Logic Prometheus Operator side by side with existing Operator
 
-You can have multiple Prometheus Operators in the cluster, but you need to ensure that they do not observe the same namespace.
+You can have multiple Prometheus Operators in the cluster, but you need to ensure that they do not observe the same namespace(s).
 __Every__ Operator should have `${NAMESPACE}` as part of `--deny-namespaces` argument or shouldn't have it as part of `--namespaces` argument,
 for example:
 
