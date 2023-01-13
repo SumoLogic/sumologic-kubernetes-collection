@@ -127,7 +127,7 @@ After that, please follow to [Prepare Sumo Logic Configuration to work with exis
 Ensure that the `${NAMESPACE}` is being watched by your operator.
 For exactly one operator it should be part of `--namespaces` argument or shouldn't be part of `--deny-namespaces` argument.
 
-In the following example both of operators are going to watch `${NAMESPACE}` (which is incorrect, but shows two ways to observe the namespace):
+In the following example both operators are going to watch `${NAMESPACE}` (which is incorrect, but shows two ways to observe the namespace):
 
 ```shell
 $ kubectl get deployment -l app=kube-prometheus-stack-operator -oyaml -A
