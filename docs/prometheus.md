@@ -35,8 +35,7 @@ but these steps can be performed after initial installation.
 
 ## Prometheus Operator in the cluster
 
-If you already have Prometheus operator in your cluster, the things can be less or more complicated.
-It depends on compatibility of Prometheus Operator used in your cluster and Prometheus Operator used by Sumo Logic Kubernetes Collection.
+If you already have Prometheus operator in your cluster, the necessary changes depend on the compatibility between Prometheus Operator used in your cluster and Prometheus Operator used by Sumo Logic Kubernetes Collection.
 
 In that situation we support three scenarios:
 
