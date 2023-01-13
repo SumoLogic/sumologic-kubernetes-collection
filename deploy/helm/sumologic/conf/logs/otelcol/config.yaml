@@ -27,10 +27,11 @@ extensions:
 exporters:
 {{ if .Values.sumologic.logs.container.enabled }}
   sumologic/containers:
-    log_format: json
+    log_format: {{ include "logs.otelcol.container.exporter.format" . }}
     json_logs:
       add_timestamp: true
       timestamp_key: timestamp
+      flatten_body: {{ eq .Values.sumologic.logs.container.format "json_merge" }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
     ## Configuration for sending queue
     ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration

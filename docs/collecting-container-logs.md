@@ -59,6 +59,112 @@ This feature is enabled by default and the default regex will catch logs startin
 
 This feature can rarely cause problems by merging together lines which are supposed to be separate. In that case, feel free to disable it.
 
+### Log format
+
+There are three log formats available: `fields`, `json_merge` and `text`. `fields` is the default.
+
+You can change it by setting:
+
+```yaml
+sumologic:
+  logs:
+    container:
+      format: fields
+```
+
+We're going to demonstrate the differences between them on two example log lines:
+
+1. A plain text log
+
+    ```text
+    2007-03-01T13:00:00Z I am a log line
+    ```
+
+1. A JSON log
+
+    ```json
+    {"log_property": "value","text": "I am a json log"}
+    ```
+
+#### `fields` log format
+
+Logs formatted as `fields` are wrapped in a JSON object with additional properties, with the log body residing under the `log` key.
+
+For example, log line 1 will show up in Sumo Logic as:
+
+```javascript
+{
+  log: "2007-03-01T13:00:00Z I am a log line",
+  stream: "stdout",
+  timestamp: 1673627100045
+}
+```
+
+If the log line contains json, as log line 2 does, it will be displayed as a nested object inside the `log` key:
+
+```javascript
+{
+  log: {
+    log_property: "value",
+    text: "I am a json log"
+  },
+  stream: "stdout",
+  timestamp: 1673627100045
+}
+```
+
+#### `json_merge` log format
+
+`json_merge` is identical to `fields` for non-JSON logs, but behaves differently for JSON logs. If the log is JSON, it
+gets merged into the top-level object.
+
+Log line 1 will show up the same way as it did for `fields`:
+
+```javascript
+{
+  log: "2007-03-01T13:00:00Z I am a log line",
+  stream: "stdout",
+  timestamp: 1673627100045
+}
+```
+
+However, the attributes from log line 2 will show up at the top level:
+
+```javascript
+{
+  log: {
+    log_property: "value",
+    text: "I am a json log"
+  },
+  stream: "stdout",
+  timestamp: 1673627100045
+  log_property: "value",
+  text: "I am a json log"
+}
+```
+
+#### `text` log format
+
+The `text` log format sends the log line as-is without any additional wrappers.
+
+Log line 1 will therefore show up as plain text:
+
+```text
+2007-03-01T13:00:00Z I am a log line
+```
+
+Whereas log line 2 will be displayed as JSON:
+
+```javascript
+{
+  log_property: "value",
+  text: "I am a json log"
+}
+```
+
+> **Warning**
+> Setting the format to `text` has certain consequences for multiline detection. See [here][troubleshooting_text_format] for more details.
+
 ### Setting source name and other built-in metadata
 
 It's possible to customize the built-in Sumo Logic metadata (like [source name][source_name] for example) for container logs:
@@ -250,7 +356,8 @@ sumologic:
               from_attribute: pod_labels_app.kubernetes.io/name
 ```
 
-**NOTE** Make sure the field is [added in Sumo Logic][sumo_add_fields].
+> **Note**
+> Make sure the field is [added in Sumo Logic][sumo_add_fields].
 
 ### Persistence
 
@@ -273,7 +380,8 @@ metadata:
     pvcLabels: {}
 ```
 
-**NOTE:** These settings affect persistence for metrics as well.
+> **Note**
+> These settings affect persistence for metrics as well.
 
 ## Advanced Configuration
 
@@ -319,3 +427,4 @@ sumologic:
 [transform_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/transformprocessor/README.md
 [sumo_fields]: https://help.sumologic.com/docs/manage/fields/
 [sumo_add_fields]: https://help.sumologic.com/docs/manage/fields/#add-field
+[troubleshooting_text_format]: fluent/troubleshoot-collection.md#using-text-format

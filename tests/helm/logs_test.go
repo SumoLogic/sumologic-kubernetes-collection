@@ -1,6 +1,7 @@
 package helm
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -197,6 +198,69 @@ fluent-bit:
 
 	containersPipeline := otelConfig.Service.Pipelines["logs/fluent/containers"]
 	require.Contains(t, containersPipeline.Processors, "filter/include-host")
+}
+
+func TestMetadataLogFormat(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/otelcol/configmap.yaml"
+
+	type OtelConfig struct {
+		Exporters struct {
+			Containers struct {
+				LogFormat string `yaml:"log_format"`
+				JsonLogs  struct {
+					FlattenBody bool `yaml:"flatten_body"`
+				} `yaml:"json_logs"`
+			} `yaml:"sumologic/containers"`
+		}
+	}
+
+	testCases := []struct {
+		logFormat                   string
+		expectedExporterLogFormat   string
+		expectedExporterFlattenBody bool
+	}{
+		{
+			logFormat:                   "json",
+			expectedExporterLogFormat:   "json",
+			expectedExporterFlattenBody: false,
+		},
+		{
+			logFormat:                   "fields",
+			expectedExporterLogFormat:   "json",
+			expectedExporterFlattenBody: false,
+		},
+		{
+			logFormat:                   "json_merge",
+			expectedExporterLogFormat:   "json",
+			expectedExporterFlattenBody: true,
+		},
+		{
+			logFormat:                   "text",
+			expectedExporterLogFormat:   "text",
+			expectedExporterFlattenBody: false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.logFormat, func(t *testing.T) {
+			t.Parallel()
+			var otelConfig OtelConfig
+			valuesYamlTemplate := `
+sumologic:
+  logs:
+    container:
+      format: %s
+`
+			valuesYaml := fmt.Sprintf(valuesYamlTemplate, testCase.logFormat)
+			otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+			err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+			require.NoError(t, err)
+			require.Equal(t, testCase.expectedExporterLogFormat, otelConfig.Exporters.Containers.LogFormat)
+			require.Equal(t, testCase.expectedExporterFlattenBody, otelConfig.Exporters.Containers.JsonLogs.FlattenBody)
+		})
+	}
 }
 
 func TestCollectorOtelConfigMerge(t *testing.T) {

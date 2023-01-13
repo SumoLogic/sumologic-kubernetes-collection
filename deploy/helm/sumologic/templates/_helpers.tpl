@@ -1576,3 +1576,19 @@ Generate list of remoteWrite endpoints for telegraf configuration
 {{- $endpoints := sortAlpha $endpoints -}}
 {{ $endpoints | join ",\n" }}
 {{- end -}}
+
+{{/*
+Return the log format for the Sumologic exporter for container logs.
+
+'{{ include "logs.otelcol.container.exporter.format" . }}'
+*/}}
+{{- define "logs.otelcol.container.exporter.format" -}}
+{{- $jsonFormats := list "json" "fields" "json_merge" -}}
+{{- if has .Values.sumologic.logs.container.format $jsonFormats -}}
+{{- "json" -}}
+{{- else if eq .Values.sumologic.logs.container.format "text" -}}
+{{- "text" -}}
+{{- else -}}
+{{- fail "`sumologic.logs.container.format` can only be `json`, `text`, `json_merge` or `fields`" -}}
+{{- end -}}
+{{- end -}}

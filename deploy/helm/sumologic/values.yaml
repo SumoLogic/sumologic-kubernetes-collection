@@ -252,6 +252,11 @@ sumologic:
 
     container:
       enabled: true
+      ## Format to post logs into Sumo: fields, json, json_merge, or text.
+      ## NOTE: json is an alias for fields
+      ## NOTE: Multiline log detection works differently for `text` format. See below link for full reference:
+      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#using-text-format
+      format: fields
 
       otelcol:
         ## Extra processors for container logs. See [/docs/collecting-container-logs.md](/docs/collecting-container-logs.md) for details.
@@ -806,11 +811,6 @@ fluentd:
     ## https://github.com/SumoLogic/fluentd-output-sumologic
     ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/logs/fluentd/logs.output.conf
     output:
-      ## Format to post logs into Sumo: fields, json, json_merge, or text.
-      ## NOTE: for logs metadata, fields is required.
-      ## NOTE: Multiline log detection works differently for `text` format. See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#using-text-format
-      logFormat: fields
       ## Option to control adding timestamp to logs.
       addTimestamp: true
       ## Field name when add_timestamp is on.

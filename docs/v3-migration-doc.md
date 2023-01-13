@@ -453,3 +453,5 @@ metadata:
   `kube-prometheus-stack.prometheus.additionalServiceMonitors` configuration
 
 - Adding `sumologic.metrics.otelcol.extraProcessors` to make metrics modification easy
+
+- Moved `fluentd.logs.output.logFormat` to `sumologic.logs.container.format`
