@@ -15,6 +15,7 @@
   - [Logs migration](#logs-migration)
     - [Replacing Fluent Bit with OpenTelemetry Collector](#replacing-fluent-bit-with-opentelemetry-collector)
     - [Otelcol StatefulSet](#otelcol-statefulset)
+    - [Custom logs filtering and processing](#custom-logs-filtering-and-processing)
   - [Tracing migration](#tracing-migration)
     - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
   - [Running the helm upgrade](#running-the-helm-upgrade)
@@ -189,7 +190,7 @@ you have to remove all Sumo Logic related service monitors from the list, becaus
 **When?**: If you added extra configuration to Fluentd metrics
 
 If you're adding extra configuration to fluentd metrics,
-you will likely want to do analogical modifications in OpenTelemetry.
+you will likely want to do analogous modifications in OpenTelemetry.
 
 Please look at the [Metrics modifications](./collecting-application-metrics.md#metrics-modifications) doc.
 
@@ -213,7 +214,7 @@ side by side, enable the following setting:
 sumologic:
   logs:
     collector:
-      allowSideBySide: false
+      allowSideBySide: true
 fluent-bit:
   enabled: true
 ```
@@ -229,6 +230,15 @@ Run the following command to manually delete StatefulSets in helm chart v2 befor
   ```
   kubectl delete sts --namespace=${NAMESPACE} --cascade=orphan -lapp=${HELM_RELEASE_NAME}-sumologic-otelcol-logs
   ```
+
+#### Custom logs filtering and processing
+
+**When?**: If you added extra configuration to Fluentd logs
+
+If you're adding extra configuration to Fluentd logss,
+you will likely want to do analogous modifications in OpenTelemetry.
+
+Please look at the [Logs modifications](./collecting-container-logs.md#modifying-log-records) doc.
 
 ### Tracing migration
 
@@ -287,6 +297,9 @@ Once you've taken care of any manual steps necessary for your configuration, run
 ```bash
 helm upgrade ${HELM_RELEASE_NAME} sumologic/sumologic --version=3.0.0 -f new-values.yaml
 ```
+
+After you're done, please review the [full list of changes](#full-list-of-changes), as some of them
+may impact you even if they don't require additional action.
 
 ### Known issues
 
