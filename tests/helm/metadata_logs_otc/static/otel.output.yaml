@@ -16,6 +16,7 @@ data:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         json_logs:
           add_timestamp: true
+          flatten_body: false
           timestamp_key: timestamp
         log_format: json
         sending_queue:
