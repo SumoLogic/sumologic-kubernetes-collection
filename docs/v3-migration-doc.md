@@ -18,6 +18,7 @@
     - [Custom logs filtering and processing](#custom-logs-filtering-and-processing)
   - [Tracing migration](#tracing-migration)
     - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
+    - [OpenTelemetry Collector Deployments](#opentelemetry-collector-deployments)
   - [Running the helm upgrade](#running-the-helm-upgrade)
   - [Known issues](#known-issues)
     - [Cannot delete pod if using Tailing Sidecar Operator](#cannot-delete-pod-if-using-tailing-sidecar-operator)
@@ -42,7 +43,10 @@ configuration format. See below for details.
 
 We've upgraded kube-prometheus-stack, which results in some changes to metrics, and a need for some manual intervention during the upgrade.
 
-See the full list of changes [here](#full-list-of-changes).
+### Tracing enabled by default
+
+Trace collection is now enabled by default. If you don't have instrumented applications in your cluster, or don't want to collect traces,
+you'll need to disable this feature manually.
 
 ## How to upgrade
 
@@ -242,9 +246,19 @@ Please look at the [Logs modifications](./collecting-container-logs.md#modifying
 
 ### Tracing migration
 
+Trace collection is now enabled by default. If you'd like to keep it disabled, set:
+
+```yaml
+sumologic:
+  traces:
+    enabled: false
+```
+
 If you don't have tracing collection enabled, you can skip straight to the [end](#running-the-helm-upgrade) and upgrade using Helm.
 
 #### Replace special configuration values marked by 'replace' suffix
+
+**When?**: If you used any configuration values for traces with the `*.replace` suffix
 
 Mechanism to replace special configuration values for traces marked by 'replace' suffix was removed and following special values in configuration are no longer automatically replaced, and they need to be changed:
 
@@ -261,11 +275,24 @@ Mechanism to replace special configuration values for traces marked by 'replace'
 
 Above special configuration values can be replaced either to direct values or be set as reference to other parameters from `values.yaml`.
 
-**Required only if `sumologic.traces.enabled=true`.**
+#### OpenTelemetry Collector Deployments
+
+- **Otelcol Deployment**
+
+  **When?**: If tracing is enabled
+
+  Please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
+
+  ```
+  kubectl delete deployment --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelcol
+  kubectl delete cm --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelcol
+  ```
 
 - **Otelagent DaemonSet**
 
-  If you're using `otelagent` (`otelagent.enabled=true`), please run the following command to manually delete DamemonSet and ConfigMap in helm chart v2 before upgrade:
+  **When?**: If you're using `otelagent` (`otelagent.enabled=true`)
+  
+  Please run the following command to manually delete DamemonSet and ConfigMap in helm chart v2 before upgrade:
 
   ```
   kubectl delete ds --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelagent
@@ -274,20 +301,13 @@ Above special configuration values can be replaced either to direct values or be
 
 - **Otelgateway Deployment**
 
-  If you're using `otelgateway` (`otelgateway.enabled=true`), please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
+  **When?**: If you're using `otelgateway` (`otelgateway.enabled=true`)
+  
+  Please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
 
   ```
   kubectl delete deployment --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelgateway
   kubectl delete cm --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelgateway
-  ```
-
-- **Otelcol Deployment**
-
-  Please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
-
-  ```
-  kubectl delete deployment --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelcol
-  kubectl delete cm --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelcol
   ```
 
 ### Running the helm upgrade
