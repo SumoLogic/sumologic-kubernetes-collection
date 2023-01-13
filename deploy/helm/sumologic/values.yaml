@@ -1851,6 +1851,15 @@ kube-prometheus-stack:
       enabled: false
     tls:
       enabled: false
+    ## Namespaces to scope the interaction of the Prometheus Operator and the apiserver (allow list).
+    ## This is mutually exclusive with denyNamespaces. Setting this to an empty object will disable the configuration
+    ##
+    ## namespaces:
+    ##   releaseNamespace: true
+    ##   additional:
+    ##     - kube-system
+    namespaces:
+      releaseNamespace: true
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
     ## Put here the new name if you want to override the full name used for Kube State Metrics components.
