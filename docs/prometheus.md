@@ -190,7 +190,7 @@ Now, build Kube Prometheus Stack configuration for Sumo Logic:
   >   Warning  FailedScheduling  13m (x249 over 4h25m)  default-scheduler  0/3 nodes are available: 1 node(s) didn't have free ports for the requested pod ports, 2 node(s) didn't match Pod's node affinity/selector.
   > ```
 
-Gathering all together, the configuration for `user-values.yaml` should look like the following:
+ln total, the configuration for `user-values.yaml` should look like the following:
 
 ```yaml
 kube-prometheus-stack:
