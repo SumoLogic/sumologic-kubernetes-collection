@@ -1,7 +1,7 @@
 # Prometheus
 
 Prometheus is crucial part of the metrics pipeline. It is also a complicated and powerful tool. In Kubernetes specifically, it's also often managed by Prometheus Operator and a set of custom resources.
-There are multiple scenarios of having it in the cluster and this document describes how to deal with the different situations.
+It's possible that you already have some part of the K8s Prometheus stack already installed, and would like to make use of it. This document describes how to deal with all the possible cases.
 
 __NOTE:__ In this document we assume that `${NAMESPACE}` represents namespace in which the Sumo Logic Kubernetes Collection is going to be installed.
 
