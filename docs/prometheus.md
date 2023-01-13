@@ -56,7 +56,7 @@ In that situation we support three scenarios:
 ### Custom Resource Definition compatibility
 
 CRD versions required by Sumo Logic Collection is `v0.59.2` or newer. If you are using newer version in your cluster, you probably don't have to do anything.
-Otherwise, ensure that the Custom Resource Definitions won't break your existing Prometheus Operators and apply them using the following commands:
+Otherwise, ensure that the Custom Resource Definitions won't break your existing Prometheus Operators and then apply them using the following commands:
 
 ```yaml
 kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
@@ -164,13 +164,13 @@ kube-prometheus-stack:
     enabled: false
 ```
 
-After that, please follow to [Prepare Sumo Logic Configuration to work with existing Operator](#prepare-sumo-logic-configuration-to-work-with-existing-operator)
+Next, please follow to [Prepare Sumo Logic Configuration to work with existing Operator](#prepare-sumo-logic-configuration-to-work-with-existing-operator)
 
 ### Prepare Sumo Logic Configuration to work with existing Operator
 
 :construction: Describe how to use node-exporter from different operators
 
-Now it's time to build Kube Prometheus Stack configuration for Sumo Logic:
+Now, build Kube Prometheus Stack configuration for Sumo Logic:
 
 - Change Node Exporter port to avoid conflicts with other Prometheuses
 
@@ -191,7 +191,7 @@ Now it's time to build Kube Prometheus Stack configuration for Sumo Logic:
   >   Warning  FailedScheduling  13m (x249 over 4h25m)  default-scheduler  0/3 nodes are available: 1 node(s) didn't have free ports for the requested pod ports, 2 node(s) didn't match Pod's node affinity/selector.
   > ```
 
-To sum up, the configuration for `user-values.yaml` should look like the following:
+Gathering all together, the configuration for `user-values.yaml` should look like the following:
 
 ```yaml
 kube-prometheus-stack:
@@ -311,7 +311,7 @@ You need to ensure that the following values are correctly added to your Kube Pr
     value: ${NAMESPACE}
     ```
 
-After all of this changes, your Kube Prometheus Stack should looks like the following:
+After all of the changes, your Kube Prometheus Stack should looks like the following:
 
 ```yaml
 prometheus:
