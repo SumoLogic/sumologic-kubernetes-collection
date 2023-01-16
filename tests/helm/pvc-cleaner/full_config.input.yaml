@@ -1,4 +1,10 @@
-pvc-cleaner:
+sumologic:
+  podLabels:
+    someSumo: label
+  podAnnotations:
+    someSumo: annotation
+
+pvcCleaner:
   metrics:
     enabled: true
   logs:
@@ -35,18 +41,18 @@ pvc-cleaner:
     affinity:
       podAntiAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchExpressions:
-            - key: app
-              operator: In
-              values:
-              - RELEASE-NAME-sumologic-fluentd-logs
-              - RELEASE-NAME-sumologic-fluentd-metrics
-            - key: app
-              operator: In
-              values:
-              - prometheus-operator-prometheus
-          topologyKey: "kubernetes.io/hostname"
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - RELEASE-NAME-sumologic-fluentd-logs
+                    - RELEASE-NAME-sumologic-fluentd-metrics
+                - key: app
+                  operator: In
+                  values:
+                    - prometheus-operator-prometheus
+            topologyKey: "kubernetes.io/hostname"
 
     podLabels:
       some: label
