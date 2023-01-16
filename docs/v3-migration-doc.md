@@ -4,6 +4,7 @@
 - [Important changes](#important-changes)
   - [OpenTelemetry Collector](#opentelemetry-collector)
   - [kube-prometheus-stack upgrade](#kube-prometheus-stack-upgrade)
+  - [Tracing enabled by default](#tracing-enabled-by-default)
 - [How to upgrade](#how-to-upgrade)
   - [Requirements](#requirements)
   - [Migrating the configuration](#migrating-the-configuration)
@@ -26,10 +27,10 @@
 - [Full list of changes](#full-list-of-changes)
 <!-- /TOC -->
 
-Based on the feedback from our users, we will be introducing several changes
+Based on feedback from our users, we will be introducing several changes
 to the Sumo Logic Kubernetes Collection solution.
 
-In this document we detail the changes as well as the exact steps for migration.
+This document describes the major changes and the necessary migration steps.
 
 ## Important changes
 
@@ -66,7 +67,7 @@ export HELM_RELEASE_NAME=...
 
 ### Migrating the configuration
 
-We've made some breaking changes to our configuration file format, but most of them can be handled automatically by our migration tool.
+We've made some breaking changes to our configuration file format, but most of them will be handled automatically by our migration tool.
 
 You can get your current configuration from the cluster by running:
 
@@ -94,7 +95,7 @@ relevant to your use case.
 
 If you don't have metrics collection enabled, skip straight to the [next major section](#logs-migration).
 
-The metrics migration requires one major manual step that everyone needs to do, which is upgrading kube-prometheus-stack.
+The metrics migration involves one major manual step that everyone needs to do, which is upgrading kube-prometheus-stack.
 
 #### Upgrade kube-prometheus-stack
 
@@ -175,11 +176,14 @@ kubectl apply \
 
 **When?**: If you're using `otelcol` as the metrics metadata provider already.
 
-Run the following command to manually delete StatefulSets in helm chart v2 before upgrade:
+Run the following command to manually delete otelcol StatefulSets:
 
   ```
   kubectl delete sts --namespace=${NAMESPACE} --cascade=orphan -lapp=${HELM_RELEASE_NAME}-sumologic-otelcol-metrics
   ```
+
+The reason this is necessary is that the Service name for this StatefulSet has changed, and Kubernetes forbids
+modification of this value on existing StatefulSets.
 
 #### Additional Service Monitors
 
@@ -212,7 +216,7 @@ added to that file after Fluent Bit was deleted will not be ingested. If you're 
 any manual intervention.
 
 If you'd prefer to ingest duplicated data for a period of time instead, with OpenTelemetry Collector and Fluent Bit running
-side by side, enable the following setting:
+side by side, enable the following settings:
 
 ```yaml
 sumologic:
@@ -229,18 +233,21 @@ After the upgrade, once OpenTelemetry Collector is running, you can disable Flue
 
 **When?**: If you're using `otelcol` as the logs metadata provider already.
 
-Run the following command to manually delete StatefulSets in helm chart v2 before upgrade:
+Run the following command to manually delete otelcol StatefulSets:
 
   ```
   kubectl delete sts --namespace=${NAMESPACE} --cascade=orphan -lapp=${HELM_RELEASE_NAME}-sumologic-otelcol-logs
   ```
 
+The reason this is necessary is that the Service name for this StatefulSet has changed, and Kubernetes forbids
+modification of this value on existing StatefulSets.
+
 #### Custom logs filtering and processing
 
 **When?**: If you added extra configuration to Fluentd logs
 
-If you're adding extra configuration to Fluentd logss,
-you will likely want to do analogous modifications in OpenTelemetry.
+If you added extra configuration to Fluentd logs,
+you will likely want to do analogous modifications in OpenTelemetry Collector.
 
 Please look at the [Logs modifications](./collecting-container-logs.md#modifying-log-records) doc.
 
@@ -260,7 +267,8 @@ If you don't have tracing collection enabled, you can skip straight to the [end]
 
 **When?**: If you used any configuration values for traces with the `*.replace` suffix
 
-Mechanism to replace special configuration values for traces marked by 'replace' suffix was removed and following special values in configuration are no longer automatically replaced, and they need to be changed:
+The mechanism to replace special configuration values for traces marked by the 'replace' suffix was removed and the following
+special values in the configuration are no longer automatically replaced, and they need to be changed:
 
 - `processors.source.collector.replace`
 - `processors.source.name.replace`
@@ -273,7 +281,7 @@ Mechanism to replace special configuration values for traces marked by 'replace'
 - `processors.source.exclude_host_regex.replace`
 - `processors.resource.cluster.replace`
 
-Above special configuration values can be replaced either to direct values or be set as reference to other parameters from `values.yaml`.
+The above special configuration values can be replaced either to direct values or be set as reference to other parameters from `values.yaml`.
 
 #### OpenTelemetry Collector Deployments
 
@@ -281,7 +289,7 @@ Above special configuration values can be replaced either to direct values or be
 
   **When?**: If tracing is enabled
 
-  Please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
+  Run the following command to manually delete otelcol Deployment and ConfigMap:
 
   ```
   kubectl delete deployment --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelcol
@@ -292,7 +300,7 @@ Above special configuration values can be replaced either to direct values or be
 
   **When?**: If you're using `otelagent` (`otelagent.enabled=true`)
   
-  Please run the following command to manually delete DamemonSet and ConfigMap in helm chart v2 before upgrade:
+  Run the following command to manually delete otelagent DamemonSet and ConfigMap:
 
   ```
   kubectl delete ds --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelagent
@@ -303,7 +311,7 @@ Above special configuration values can be replaced either to direct values or be
 
   **When?**: If you're using `otelgateway` (`otelgateway.enabled=true`)
   
-  Please run the following command to manually delete Deployment and ConfigMap in helm chart v2 before upgrade:
+  Run the following command to manually delete otelgateway Deployment and ConfigMap:
 
   ```
   kubectl delete deployment --namespace=${NAMESPACE} --cascade=orphan ${HELM_RELEASE_NAME}-sumologic-otelgateway
@@ -331,7 +339,7 @@ If you are using Tailing Sidecar Operator and see the following error:
 Error from server: admission webhook "tailing-sidecar.sumologic.com" denied the request: there is no content to decode
 ```
 
-Please try to remove pod later.
+Please try to remove the pod later.
 
 [Falco documentation]: https://github.com/falcosecurity/charts/tree/falco-2.4.2/falco
 [metrics-server-upgrade]: https://github.com/bitnami/charts/tree/5b09f7a7c0d9232f5752840b6c4e5cdc56d7f796/bitnami/metrics-server#to-600
@@ -339,7 +347,7 @@ Please try to remove pod later.
 
 #### OpenTelemetry Collector doesn't read logs from the beginning of files
 
-This is done by design. We are not going to read logs from time before the collection has been installed.
+This is done by design. We are not going to read logs from before the collection has been installed.
 
 In order to keep old behavior (can result in logs duplication for some cases), please use the following configuration:
 
