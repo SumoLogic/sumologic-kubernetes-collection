@@ -17,6 +17,7 @@ function helm() {
 }
 
 function set_up_github() {
+  git config --global user.email "continuous-integration@sumologic.com"
   git config --global user.name "Continuous Integration [bot]"
 }
 
