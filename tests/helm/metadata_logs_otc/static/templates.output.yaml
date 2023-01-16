@@ -246,10 +246,21 @@ data:
         attributes:
         - action: delete
           pattern: ^pod_annotations_.*
-      resource/remove_k8s_pod_pod_name:
+      resource/remove_pod_name:
         attributes:
         - action: delete
-          key: k8s.pod.pod_name
+          key: pod_name
+      resource/set_empty_source_metadata:
+        attributes:
+        - action: insert
+          key: _sourceCategory
+          value: ""
+        - action: insert
+          key: _sourceHost
+          value: ""
+        - action: insert
+          key: _sourceName
+          value: ""
       source/containers:
         annotation_prefix: pod_annotations_
         collector: my_collectorName
@@ -261,8 +272,8 @@ data:
           k8s.namespace.name: my_containers_excludeNamespaceRegex
           k8s.node.name: my_containers_excludeHostRegex
           k8s.pod.name: my_containers_excludePodRegex
-        pod_key: k8s.pod.name
-        pod_name_key: k8s.pod.pod_name
+        pod_key: pod
+        pod_name_key: pod_name
         pod_template_hash_key: pod_labels_pod-template-hash
         source_category: my_containers_sourceCategory
         source_category_prefix: my_containers_sourceCategoryPrefix
@@ -310,12 +321,13 @@ data:
           - groupbyattrs/containers
           - k8s_tagger
           - resource/add_cluster
-          - source/containers
-          - logstransform/containers_parse_json
-          - resource/remove_k8s_pod_pod_name
-          - resource/drop_annotations
+          - resource/set_empty_source_metadata
           - resource/containers_copy_node_to_host
           - sumologic_schema
+          - source/containers
+          - logstransform/containers_parse_json
+          - resource/remove_pod_name
+          - resource/drop_annotations
           - batch
           receivers:
           - otlp

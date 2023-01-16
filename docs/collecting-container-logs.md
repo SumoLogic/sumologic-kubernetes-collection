@@ -68,11 +68,11 @@ sumologic:
   logs:
     container:
       ## Set the _sourceHost metadata field in Sumo Logic.
-      sourceHost: "%{k8s.pod.hostname}"
+      sourceHost: ""
       ## Set the _sourceName metadata field in Sumo Logic.
-      sourceName: "%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}"
+      sourceName: "%{namespace}.%{pod}.%{container}"
       ## Set the _sourceCategory metadata field in Sumo Logic.
-      sourceCategory: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+      sourceCategory: "%{namespace}/%{pod_name}"
       ## Set the prefix, for _sourceCategory metadata.
       sourceCategoryPrefix: "kubernetes/"
       ## Used to replace - with another character.
@@ -80,10 +80,21 @@ sumologic:
 ```
 
 As can be seen in the above example, these fields can contain templates of the form `%{field_name}`, where `field_name` is the name
-of a resource attribute. Available resource attributes include [OpenTelemetry Kubernetes resource attributes][opentelemetry_k8s],
-in addition to the following:
+of a resource attribute. Available resource attributes include the values of `sumologic.logs.fields`, which by default are:
 
 - `cluster`
+- `container`
+- `daemonset`
+- `deployment`
+- `host`
+- `namespace`
+- `node`
+- `pod`
+- `service`
+- `statefulset`
+
+in addition to the following:
+
 - `_collector`
 - `pod_labels_*` where `*` is the Pod label name
 
@@ -301,7 +312,6 @@ sumologic:
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/configuration.md
 [values]: /deploy/helm/sumologic/values.yaml
 [source_name]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions/#Source_Name
-[opentelemetry_k8s]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/semantic_conventions/k8s.md
 [filter_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/filterprocessor/README.md
 [opentelemetry_processors]: https://opentelemetry.io/docs/collector/configuration/#processors
 [attributes_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/attributesprocessor/README.md

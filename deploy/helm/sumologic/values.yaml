@@ -258,11 +258,11 @@ sumologic:
         extraProcessors: []
 
       ## Set the _sourceHost metadata field in Sumo Logic.
-      sourceHost: "%{k8s.pod.hostname}"
+      sourceHost: ""
       ## Set the _sourceName metadata field in Sumo Logic.
-      sourceName: "%{k8s.namespace.name}.%{k8s.pod.name}.%{k8s.container.name}"
+      sourceName: "%{namespace}.%{pod}.%{container}"
       ## Set the _sourceCategory metadata field in Sumo Logic.
-      sourceCategory: "%{k8s.namespace.name}/%{k8s.pod.pod_name}"
+      sourceCategory: "%{namespace}/%{pod_name}"
       ## Set the prefix, for _sourceCategory metadata.
       sourceCategoryPrefix: "kubernetes/"
       ## Used to replace - with another character.
