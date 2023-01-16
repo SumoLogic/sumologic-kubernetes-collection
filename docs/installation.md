@@ -46,7 +46,7 @@ enriching them with deployment, pod, and service level metadata; and sends them 
 
 ### Helm
 
-Helm is required but you can use it for template generation if you don't want to use it to manage your installation.
+Helm is required, but you can use it for template generation only, if you don't want to use it to manage your installation.
 
 #### Non-helm installation
 
@@ -135,7 +135,7 @@ This is a one time setup per Sumo Logic account.
 
 ## Add repository
 
-Before installing the chart, you need to add `sumologic` Helm repo:
+Before installing the chart, you need to add the `sumologic` Helm repo:
 
 ```bash
 helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
@@ -144,7 +144,7 @@ helm repo update
 
 ## Prepare minimal configuration
 
-Next you can prepare `user-values.yaml` with configuration.
+Next you can prepare a `user-values.yaml` file with your configuration.
 
 ### Required parameters
 
@@ -160,10 +160,10 @@ please see the following [additional properties](installing-behind-proxy.md) you
 
 ### Installing with existing Prometheus
 
-If there Prometheus is already in your cluster,
+If you already have Prometheus installed in your cluster, and would like to use it instead of the Prometheus instance provided by the Chart,
 please see [Prometheus document](/docs/prometheus.md#prometheus)
 
-### Installing in Openshift platform
+### Installing in OpenShift platform
 
 The daemonset/statefulset fails to create the pods in Openshift environment due to
 the request of elevated privileges, like HostPath mounts, privileged: true, etc.
@@ -219,7 +219,7 @@ sumologic:
   clusterName: ${MY_CLUSTER_NAME}
 ```
 
-#### Openshift with limiting the scope of the interaction of our Prometheus Operator
+#### OpenShift with limiting the scope of the interaction of our Prometheus Operator
 
 An example configuration for Openshift which install our Prometheus Operator side by side with an existing one:
 
@@ -254,9 +254,9 @@ tailing-sidecar-operator:
     create: true
 ```
 
-#### Openshift using existing Prometheus Operator which is by default available in `openshift-monitoring` namespace
+#### OpenShift using existing Prometheus Operator which is by default available in `openshift-monitoring` namespace
 
-An example configuration for Openshift which uses existing Prometheus Operator:
+An example configuration for OpenShift which uses existing Prometheus Operator:
 
 ```yaml
 sumologic:
