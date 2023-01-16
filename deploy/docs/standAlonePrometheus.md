@@ -1,3 +1,4 @@
 # How to install if you have standalone Prometheus
 
-Moved to [/docs/standalone-prometheus.md](/docs/standalone-prometheus.md)
+Covered by [/docs/installation.md](/docs/installation.md), especially by
+[Installing with existing Prometheus](/docs/installation.md#installing-with-existing-prometheus) section.

@@ -1,4 +1,4 @@
-# Collecting Kubernetes events
+# Collecting Kubernetes Events
 
 You can collect Kubernetes events from the Kubernetes API server and send them to Sumo Logic as logs.
 

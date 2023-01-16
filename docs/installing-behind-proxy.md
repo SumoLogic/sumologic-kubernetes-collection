@@ -24,7 +24,7 @@ There are two ways of dealing with this:
 - Injecting the custom root CA into the setup image: [see here][rebuilding]
 
 [rebuilding]: ./security-best-practices.md#adding-a-custom-root-ca-certificate-by-rebuilding-container-images
-[manual]: ./installation-with-helm.md#prerequisite
+[manual]: ./installation.md#prerequisite
 
 ## Troubleshooting
 
