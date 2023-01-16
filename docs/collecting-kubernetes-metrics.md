@@ -1,4 +1,4 @@
-# Collecting Kubernetes Metrics
+# Collecting Kubernetes metrics
 
 By default, we collect selected metrics from the following Kubernetes components:
 

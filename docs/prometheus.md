@@ -5,24 +5,21 @@ It's possible that you already have some part of the K8s Prometheus stack alread
 
 __NOTE:__ In this document we assume that `${NAMESPACE}` represents namespace in which the Sumo Logic Kubernetes Collection is going to be installed.
 
+<!-- TOC -->
 - [No Prometheus in the cluster](#no-prometheus-in-the-cluster)
 - [Prometheus Operator in the cluster](#prometheus-operator-in-the-cluster)
-
   - [Custom Resource Definition compatibility](#custom-resource-definition-compatibility)
-
   - [Installing Sumo Logic Prometheus Operator side by side with existing Operator](#installing-sumo-logic-prometheus-operator-side-by-side-with-existing-operator)
-
     - [Set Sumo Logic Prometheus Operator to observe installation namespace](#set-sumo-logic-prometheus-operator-to-observe-installation-namespace)
-
   - [Using existing Operator to create Sumo Logic Prometheus instance](#using-existing-operator-to-create-sumo-logic-prometheus-instance)
-
     - [Disable Sumo Logic Prometheus Operator](#disable-sumo-logic-prometheus-operator)
-
   - [Prepare Sumo Logic Configuration to work with existing Operator](#prepare-sumo-logic-configuration-to-work-with-existing-operator)
-
   - [Using existing Kube Prometheus Stack](#using-existing-kube-prometheus-stack)
-
     - [Build Prometheus Configuration](#build-prometheus-configuration)
+- [Troubleshooting](#troubleshooting)
+  - [UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "prometheusrulemutate.monitoring.coreos.com"](#upgrade-failed-failed-to-create-resource-internal-error-occurred-failed-calling-webhook-prometheusrulemutatemonitoringcoreoscom)
+  - [Error: unable to build kubernetes objects from release manifest: error validating "": error validating data: ValidationError(Prometheus.spec)](#error-unable-to-build-kubernetes-objects-from-release-manifest-error-validating--error-validating-data-validationerrorprometheusspec)
+<!-- /TOC -->
 
 ## No Prometheus in the cluster
 
@@ -328,3 +325,18 @@ prometheus:
 ```
 
 Prometheus configuration is ready. Apply the changes on the cluster.
+
+## Troubleshooting
+
+### UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "prometheusrulemutate.monitoring.coreos.com"
+
+If you receive the above error, you can take the following steps and then repeat the `helm upgrade` command.
+
+```bash
+kubectl delete  validatingwebhookconfigurations.admissionregistration.k8s.io kube-prometheus-stack-admission
+kubectl delete  MutatingWebhookConfiguration  kube-prometheus-stack-admission
+```
+
+### Error: unable to build kubernetes objects from release manifest: error validating "": error validating data: ValidationError(Prometheus.spec)
+
+Refer to [Custom Resource Definition compatibility](#custom-resource-definition-compatibility)

@@ -14,15 +14,25 @@
   - [Installing with existing Prometheus](#installing-with-existing-prometheus)
   - [Installing in Openshift platform](#installing-in-openshift-platform)
   - [Setting cluster name](#setting-cluster-name)
-  - [Example](#example)
+  - [Examples](#examples)
+    - [Minimal configuration](#minimal-configuration)
+    - [Openshift with limiting the scope of the interaction of our Prometheus Operator](#openshift-with-limiting-the-scope-of-the-interaction-of-our-prometheus-operator)
+    - [Openshift using existing Prometheus Operator which is by default available in `openshift-monitoring` namespace](#openshift-using-existing-prometheus-operator-which-is-by-default-available-in-openshift-monitoring-namespace)
 - [Install chart](#install-chart)
 - [Customizing Installation](#customizing-installation)
   - [Override names of the resources](#override-names-of-the-resources)
   - [Authenticating with container registry](#authenticating-with-container-registry)
+  - [Collecting container logs](#collecting-container-logs)
+  - [Collecting application metrics](#collecting-application-metrics)
+  - [Collecting Kubernetes metrics](#collecting-kubernetes-metrics)
+  - [Collecting Kubernetes events](#collecting-kubernetes-events)
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Troubleshooting Installation](#troubleshooting-installation)
+  - [General troubleshooting](#general-troubleshooting)
   - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
-  - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
+    - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
+  - [OpenTelemetry Collector Pods Stuck in CreateContainerConfigError](#opentelemetry-collector-pods-stuck-in-createcontainerconfigerror)
+  - [Prometheus Troubleshooting](#prometheus-troubleshooting)
 - [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
 - [Uninstalling Sumo Logic Collection](#uninstalling-sumo-logic-collection)
   - [Post installation cleanup](#post-installation-cleanup)
@@ -196,7 +206,9 @@ The following parameter is optional, but we recommend setting it.
   This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
   Whitespaces in the cluster name will be replaced with dashes.
 
-### Example
+### Examples
+
+#### Minimal configuration
 
 An example file with the minimum configuration is provided below.
 
@@ -206,6 +218,78 @@ sumologic:
   accessKey: ${SUMO_ACCESS_KEY}
   clusterName: ${MY_CLUSTER_NAME}
 ```
+
+#### Openshift with limiting the scope of the interaction of our Prometheus Operator
+
+An example configuration for Openshift which install our Prometheus Operator side by side with an existing one:
+
+```yaml
+sumologic:
+  accessId: ${SUMO_ACCESS_ID}
+  accessKey: ${SUMO_ACCESS_KEY}
+  clusterName: ${MY_CLUSTER_NAME}
+  scc:
+    create: true
+kube-prometheus-stack:
+  prometheusOperator:
+    namespaces:
+      additional:
+        - my-namespace
+  prometheus-node-exporter:
+    service:
+      port: 9200
+      targetPort: 9200
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
+tailing-sidecar-operator:
+  scc:
+    create: true
+```
+
+#### Openshift using existing Prometheus Operator which is by default available in `openshift-monitoring` namespace
+
+An example configuration for Openshift which uses existing Prometheus Operator:
+
+```yaml
+sumologic:
+  accessId: ${SUMO_ACCESS_ID}
+  accessKey: ${SUMO_ACCESS_KEY}
+  clusterName: ${MY_CLUSTER_NAME}
+  scc:
+    create: true
+kube-prometheus-stack:
+  prometheus-node-exporter:
+    service:
+      port: 9200
+      targetPort: 9200
+  prometheusOperator:
+    enabled: false
+otellogs:
+  daemonset:
+    containers:
+      otelcol:
+        securityContext:
+          privileged: true
+    initContainers:
+      changeowner:
+        securityContext:
+          privileged: true
+tailing-sidecar-operator:
+  scc:
+    create: true
+```
+
+__NOTE:__ Please refer to
+[Using existing Operator to create Sumo Logic Prometheus instance](/docs/prometheus.md#using-existing-operator-to-create-sumo-logic-prometheus-instance)
+before applying the configuration.
 
 ## Install chart
 
@@ -247,9 +331,11 @@ helm upgrade \
 We documented some often customizations:
 
 - [Override names of the resources](#override-names-of-the-resources)
-- [Installing with existing Prometheus](#installing-with-existing-prometheus)
 - [Authenticating with container registry](#authenticating-with-container-registry)
-- [Installing the helm chart in Openshift platform](#installing-the-helm-chart-in-openshift-platform)
+- [Collecting container logs](#collecting-container-logs)
+- [Collecting application metrics](#collecting-application-metrics)
+- [Collecting Kubernetes metrics](#collecting-kubernetes-metrics)
+- [Collecting Kubernetes events](#collecting-kubernetes-events)
 
 ### Override names of the resources
 
@@ -276,6 +362,22 @@ To do so please refer to the following
 [aws-public-ecr-docs]: https://aws.amazon.com/blogs/aws/amazon-ecr-public-a-new-public-container-registry/
 [aws-ecr-pricing]: https://aws.amazon.com/ecr/pricing/
 
+### Collecting container logs
+
+Refer to [Collecting container logs document](/docs/collecting-container-logs.md#collecting-container-logs)
+
+### Collecting application metrics
+
+Refer to [Collecting application metric document](/docs/collecting-application-metrics.md#collecting-application-metrics)
+
+### Collecting Kubernetes metrics
+
+Refer to [Collecting application metric document](/docs/collecting-kubernetes-metrics.md#collecting-kubernetes-metrics)
+
+### Collecting Kubernetes events
+
+Refer to [Collecting Kubernetes events document](/docs/collecting-kubernetes-events.md#collecting-kubernetes-events)
+
 ## Viewing Data In Sumo Logic
 
 Once you have completed installation, you can
@@ -288,6 +390,10 @@ If you do not see data in Sumo Logic, you can review our
 [open a new Explore tab]: https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore
 
 ## Troubleshooting Installation
+
+### General troubleshooting
+
+Please refer to [Troubleshooting document](/docs/troubleshoot-collection.md#troubleshooting-collection).
 
 ### Error: timed out waiting for the condition
 
@@ -310,7 +416,7 @@ Get the logs from that pod:
 kubectl logs POD_NAME -f
 ```
 
-### Error: collector with name 'sumologic' does not exist
+#### Error: collector with name 'sumologic' does not exist
 
 If you get
 
@@ -325,6 +431,31 @@ in your Sumo Logic account, that are used to send data to Sumo.
 This error occurs if the endpoints had already been created by an earlier run of the installation process.
 
 You can find more information in our [troubleshooting documentation](troubleshoot-collection.md).
+
+### OpenTelemetry Collector Pods Stuck in CreateContainerConfigError
+
+If the OpenTelemetry Collector Pods are in `CreateContainerConfigError` it can mean the setup job has not completed yet.
+Wait for the setup pod to complete and the issue should resolve itself.
+The setup job creates a secret and the error simply means the secret is not there yet.
+This usually resolves itself automatically.
+
+If the issue does not solve resolve automatically, you will need to look at the logs for the setup pod.
+Kubernetes schedules the job in a pod, so you can look at logs from the pod to see why the job is failing.
+First find the pod name in the namespace where you installed the rendered YAML. The pod name will contain `-setup` in the name.
+
+```sh
+kubectl get pods
+```
+
+Get the logs from that pod:
+
+```
+kubectl logs POD_NAME -f
+```
+
+### Prometheus Troubleshooting
+
+Please refer to [Troubleshooting section in Prometheus document](/docs/prometheus.md#troubleshooting).
 
 ## Upgrading Sumo Logic Collection
 
