@@ -3,6 +3,7 @@ package integration
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -142,18 +143,29 @@ func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
 		Assess("expected container log metadata is present for log generator deployment", stepfuncs.WaitUntilExpectedLogsPresent(
 			logsGeneratorCount,
 			map[string]string{
-				"cluster":         "kubernetes",
-				"_collector":      "kubernetes",
-				"namespace":       internal.LogsGeneratorName,
-				"pod_labels_app":  internal.LogsGeneratorName,
-				"container":       internal.LogsGeneratorName,
-				"deployment":      internal.LogsGeneratorName,
-				"pod":             "",
-				"host":            "",
-				"node":            "",
-				"_sourceName":     "",
-				"_sourceCategory": "",
-				"_sourceHost":     "",
+				"cluster":        internal.ClusterName,
+				"_collector":     internal.ClusterName,
+				"namespace":      internal.LogsGeneratorName,
+				"pod_labels_app": internal.LogsGeneratorName,
+				"container":      internal.LogsGeneratorName,
+				"deployment":     internal.LogsGeneratorName,
+				"pod":            fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDeploymentSuffixRegex),
+				"host":           internal.NodeNameRegex,
+				"node":           internal.NodeNameRegex,
+				"_sourceName": fmt.Sprintf(
+					"%s\\.%s%s\\.%s",
+					internal.LogsGeneratorNamespace,
+					internal.LogsGeneratorName,
+					internal.PodDeploymentSuffixRegex,
+					internal.LogsGeneratorName,
+				),
+				"_sourceCategory": fmt.Sprintf(
+					"%s/%s/%s", // dashes instead of hyphens due to sourceCategoryReplaceDash
+					internal.ClusterName,
+					strings.ReplaceAll(internal.LogsGeneratorNamespace, "-", "/"),
+					strings.ReplaceAll(internal.LogsGeneratorName, "-", "/"), // this is the pod name prefix, in this case the deployment name
+				),
+				"_sourceHost": fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDeploymentSuffixRegex),
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
@@ -164,17 +176,28 @@ func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
 		Assess("expected container log metadata is present for log generator daemonset", stepfuncs.WaitUntilExpectedLogsPresent(
 			logsGeneratorCount,
 			map[string]string{
-				"_collector":      "kubernetes",
-				"namespace":       internal.LogsGeneratorName,
-				"pod_labels_app":  internal.LogsGeneratorName,
-				"container":       internal.LogsGeneratorName,
-				"daemonset":       internal.LogsGeneratorName,
-				"pod":             "",
-				"host":            "",
-				"node":            "",
-				"_sourceName":     "",
-				"_sourceCategory": "",
-				"_sourceHost":     "",
+				"_collector":     "kubernetes",
+				"namespace":      internal.LogsGeneratorName,
+				"pod_labels_app": internal.LogsGeneratorName,
+				"container":      internal.LogsGeneratorName,
+				"daemonset":      internal.LogsGeneratorName,
+				"pod":            fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDaemonSetSuffixRegex),
+				"host":           internal.NodeNameRegex,
+				"node":           internal.NodeNameRegex,
+				"_sourceName": fmt.Sprintf(
+					"%s\\.%s%s\\.%s",
+					internal.LogsGeneratorNamespace,
+					internal.LogsGeneratorName,
+					internal.PodDaemonSetSuffixRegex,
+					internal.LogsGeneratorName,
+				),
+				"_sourceCategory": fmt.Sprintf(
+					"%s/%s/%s", // dashes instead of hyphens due to sourceCategoryReplaceDash
+					internal.ClusterName,
+					strings.ReplaceAll(internal.LogsGeneratorNamespace, "-", "/"),
+					strings.ReplaceAll(internal.LogsGeneratorName, "-", "/"), // this is the pod name prefix, in this case the DaemonSet name
+				),
+				"_sourceHost": fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDaemonSetSuffixRegex),
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
@@ -188,7 +211,7 @@ func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
 				"cluster":         "kubernetes",
 				"_sourceName":     "(?!undefined$).*",
 				"_sourceCategory": "kubernetes/system",
-				"_sourceHost":     "(?!undefined$).*",
+				"_sourceHost":     internal.NodeNameRegex,
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
@@ -202,7 +225,7 @@ func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
 				"cluster":         "kubernetes",
 				"_sourceName":     "k8s_kubelet",
 				"_sourceCategory": "kubernetes/kubelet",
-				"_sourceHost":     "(?!undefined$).*",
+				"_sourceHost":     internal.NodeNameRegex,
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
