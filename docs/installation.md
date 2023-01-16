@@ -10,10 +10,10 @@
 - [Add repository](#add-repository)
 - [Prepare minimal configuration](#prepare-minimal-configuration)
   - [Required parameters](#required-parameters)
+  - [Setting cluster name](#setting-cluster-name)
   - [Proxy](#proxy)
   - [Installing with existing Prometheus](#installing-with-existing-prometheus)
   - [Installing in Openshift platform](#installing-in-openshift-platform)
-  - [Setting cluster name](#setting-cluster-name)
   - [Examples](#examples)
     - [Minimal configuration](#minimal-configuration)
     - [Openshift with limiting the scope of the interaction of our Prometheus Operator](#openshift-with-limiting-the-scope-of-the-interaction-of-our-prometheus-operator)
@@ -153,6 +153,14 @@ The Helm chart installation requires two parameter overrides:
 - `sumologic.accessId` - Sumo [Access ID](https://help.sumologic.com/docs/manage/security/access-keys/).
 - `sumologic.accessKey` - Sumo [Access key](https://help.sumologic.com/docs/manage/security/access-keys/).
 
+### Setting cluster name
+
+The following parameter is optional, but we recommend setting it.
+
+- `sumologic.clusterName` - An identifier for your Kubernetes cluster.
+  This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
+  Whitespaces in the cluster name will be replaced with dashes.
+
 ### Proxy
 
 If you are installing the collection in a cluster that requires proxying outbound requests,
@@ -197,14 +205,6 @@ you may either limit scope for Prometheus Operator installed with Sumo Logic Kub
 exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection
 using `kube-prometheus-stack.prometheusOperator.denyNamespaces` in `user-values.yaml`.
 For details see [Prometheus document](/docs/prometheus.md#prometheus-operator-in-the-cluster)
-
-### Setting cluster name
-
-The following parameter is optional, but we recommend setting it.
-
-- `sumologic.clusterName` - An identifier for your Kubernetes cluster.
-  This is the name you will see for the cluster in Sumo Logic. Default is `kubernetes`.
-  Whitespaces in the cluster name will be replaced with dashes.
 
 ### Examples
 
