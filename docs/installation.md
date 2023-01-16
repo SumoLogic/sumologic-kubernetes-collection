@@ -364,19 +364,19 @@ To do so please refer to the following
 
 ### Collecting container logs
 
-Refer to [Collecting container logs document](/docs/collecting-container-logs.md#collecting-container-logs)
+Refer to [Collecting Container Logs document](/docs/collecting-container-logs.md#collecting-container-logs)
 
 ### Collecting application metrics
 
-Refer to [Collecting application metric document](/docs/collecting-application-metrics.md#collecting-application-metrics)
+Refer to [Collecting Application Metrics document](/docs/collecting-application-metrics.md#collecting-application-metrics)
 
 ### Collecting Kubernetes metrics
 
-Refer to [Collecting application metric document](/docs/collecting-kubernetes-metrics.md#collecting-kubernetes-metrics)
+Refer to [Collecting Kubernetes Metrics document](/docs/collecting-kubernetes-metrics.md#collecting-kubernetes-metrics)
 
 ### Collecting Kubernetes events
 
-Refer to [Collecting Kubernetes events document](/docs/collecting-kubernetes-events.md#collecting-kubernetes-events)
+Refer to [Collecting Kubernetes Events document](/docs/collecting-kubernetes-events.md#collecting-kubernetes-events)
 
 ## Viewing Data In Sumo Logic
 

@@ -1,4 +1,4 @@
-# Collecting container logs
+# Collecting Container Logs
 <!-- TOC -->
 - [Configuration](#configuration)
   - [Multiline log parsing](#multiline-log-parsing)

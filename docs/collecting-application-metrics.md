@@ -1,4 +1,4 @@
-# Collecting application metrics
+# Collecting Application Metrics
 
 This document covers multiple different use cases related to scraping custom application metrics exposed in Prometheus format.
 
