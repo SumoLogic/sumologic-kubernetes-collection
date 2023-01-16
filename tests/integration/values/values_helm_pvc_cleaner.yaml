@@ -1,0 +1,29 @@
+metadata:
+  metrics:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 2
+
+  logs:
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 2
+
+pvcCleaner:
+  job:
+    schedule: "*/1 * * * *"
+    resources:
+      limits:
+        memory: 64Mi
+        cpu: 20m
+      requests:
+        memory: 16Mi
+        cpu: 10m
+
+  logs:
+    enabled: true
+
+  metrics:
+    enabled: true
