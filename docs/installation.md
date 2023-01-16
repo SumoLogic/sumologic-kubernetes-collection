@@ -328,7 +328,7 @@ helm upgrade \
   sumologic/sumologic
 ```
 
-We documented some often customizations:
+We documented some common customizations:
 
 - [Override names of the resources](#override-names-of-the-resources)
 - [Authenticating with container registry](#authenticating-with-container-registry)
