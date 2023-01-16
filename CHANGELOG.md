@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     to be consistent with Fluentd and chart v2.
 - fix(logs): correctly handle newlines [#2805]
   - Fixes [#2802], [#2803]
+- fix(logs): make built-in metadata consistent between fluentd and otel [#2801]
 
 [#2724]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2724
 [#2745]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2745
@@ -55,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2802]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2802
 [#2803]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2803
 [#2805]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2805
+[#2801]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2801
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...main
 

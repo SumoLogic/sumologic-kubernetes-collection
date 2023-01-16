@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 	"testing"
 	"time"
 
@@ -310,10 +311,20 @@ func Test_Helm_FluentBit_Fluentd(t *testing.T) {
 				"host":           internal.NodeNameRegex,
 				"master_url":     ".+",
 				"node":           internal.NodeNameRegex,
-				// The values below are a result of a bug and should be fixed shortly, see https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2767
-				"_sourceName":     "undefined.undefined.undefined",
-				"_sourceCategory": "kubernetes/undefined/undefined",
-				"_sourceHost":     "undefined",
+				"_sourceName": fmt.Sprintf(
+					"%s\\.%s%s\\.%s",
+					internal.LogsGeneratorNamespace,
+					internal.LogsGeneratorName,
+					internal.PodDeploymentSuffixRegex,
+					internal.LogsGeneratorName,
+				),
+				"_sourceCategory": fmt.Sprintf(
+					"%s/%s/%s", // dashes instead of hyphens due to sourceCategoryReplaceDash
+					internal.ClusterName,
+					strings.ReplaceAll(internal.LogsGeneratorNamespace, "-", "/"),
+					strings.ReplaceAll(internal.LogsGeneratorName, "-", "/"), // this is the pod name prefix, in this case the Deployment name
+				),
+				"_sourceHost": internal.EmptyRegex,
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,

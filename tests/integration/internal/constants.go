@@ -40,6 +40,7 @@ const (
 	PodDaemonSetSuffixRegex  = "-[a-z0-9]{4,5}"
 	NodeNameRegex            = ".*-control-plane" // node name for KinD TODO: get this from the cluster directly instead
 	NotUndefinedRegex        = "(?!undefined$).*"
+	EmptyRegex               = "^$"
 )
 
 // metrics we expect the receiver to get

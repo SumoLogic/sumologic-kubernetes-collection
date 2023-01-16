@@ -165,7 +165,7 @@ func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
 					strings.ReplaceAll(internal.LogsGeneratorNamespace, "-", "/"),
 					strings.ReplaceAll(internal.LogsGeneratorName, "-", "/"), // this is the pod name prefix, in this case the deployment name
 				),
-				"_sourceHost": fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDeploymentSuffixRegex),
+				"_sourceHost": internal.EmptyRegex,
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
@@ -197,7 +197,7 @@ func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
 					strings.ReplaceAll(internal.LogsGeneratorNamespace, "-", "/"),
 					strings.ReplaceAll(internal.LogsGeneratorName, "-", "/"), // this is the pod name prefix, in this case the DaemonSet name
 				),
-				"_sourceHost": fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDaemonSetSuffixRegex),
+				"_sourceHost": internal.EmptyRegex,
 			},
 			internal.ReceiverMockNamespace,
 			internal.ReceiverMockServiceName,
