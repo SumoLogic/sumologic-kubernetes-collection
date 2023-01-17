@@ -209,7 +209,7 @@ func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
 			10, // we don't really control this, just want to check if the logs show up
 			map[string]string{
 				"cluster":         "kubernetes",
-				"_sourceName":     "(?!undefined$).*",
+				"_sourceName":     internal.NotUndefinedRegex,
 				"_sourceCategory": "kubernetes/system",
 				"_sourceHost":     internal.NodeNameRegex,
 			},
