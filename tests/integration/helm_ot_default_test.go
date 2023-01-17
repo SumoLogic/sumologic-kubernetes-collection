@@ -443,7 +443,7 @@ func Test_Helm_Default_OT(t *testing.T) {
 			10, // we don't really control this, just want to check if the logs show up
 			map[string]string{
 				"cluster":         "kubernetes",
-				"_sourceName":     "(?!undefined$).*",
+				"_sourceName":     internal.NotUndefinedRegex,
 				"_sourceCategory": "kubernetes/system",
 				"_sourceHost":     internal.NodeNameRegex,
 			},

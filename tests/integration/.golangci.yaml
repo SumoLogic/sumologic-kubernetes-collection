@@ -22,19 +22,19 @@ linters-settings:
     tab-width: 8
 
 linters:
-  disable-all: false
-  disable:
-    - maligned
-    - prealloc
-    - gosimple
+  disable-all: true
   enable:
     - gofmt
-    - unused
     - errcheck
     - goimports
     - misspell
     - lll
-  fast: false
+    - govet
+    - ineffassign
+    - typecheck
+    - unused
+    - gosimple
+    - staticcheck
 
 issues:
   # Maximum issues count per one linter. Set to 0 to disable. Default is 50.

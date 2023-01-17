@@ -266,11 +266,8 @@ func Test_Helm_FluentBit_Fluentd(t *testing.T) {
 					}
 
 					log.V(0).InfoS("sample's labels", "labels", labels)
-					if !labels.MatchAll(expectedLabels) {
-						return false
-					}
 
-					return true
+					return labels.MatchAll(expectedLabels)
 				}, waitDuration, tickDuration)
 				return ctx
 			},
@@ -306,12 +303,12 @@ func Test_Helm_FluentBit_Fluentd(t *testing.T) {
 				"container":      internal.LogsGeneratorName,
 				"deployment":     internal.LogsGeneratorName,
 				"replicaset":     fmt.Sprintf("%s%s", internal.LogsGeneratorName, "-[a-z0-9]{9,10}"),
-				"namespace_id":   ".*",
+				"namespace_id":   ".+",
 				"pod":            fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDeploymentSuffixRegex),
-				"pod_id":         ".*",
-				"container_id":   ".*",
+				"pod_id":         ".+",
+				"container_id":   ".+",
 				"host":           internal.NodeNameRegex,
-				"master_url":     ".*",
+				"master_url":     ".+",
 				"node":           internal.NodeNameRegex,
 				// The values below are a result of a bug and should be fixed shortly, see https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2767
 				"_sourceName":     "undefined.undefined.undefined",
@@ -328,7 +325,7 @@ func Test_Helm_FluentBit_Fluentd(t *testing.T) {
 			10, // we don't really control this, just want to check if the logs show up
 			map[string]string{
 				"cluster":         "kubernetes",
-				"_sourceName":     "(?!undefined$).*",
+				"_sourceName":     internal.NotUndefinedRegex,
 				"_sourceCategory": "kubernetes/system",
 				"_sourceHost":     internal.NodeNameRegex,
 			},
