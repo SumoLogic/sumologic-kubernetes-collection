@@ -101,10 +101,10 @@ receivers:
       - id: merge-docker-lines
         type: recombine
         source_identifier: attributes["log.file.path"]
-        output: {{ .Values.sumologic.logs.multiline.enabled | ternary "merge-multiline-logs" "extract-metadata-from-filepath" }}
         combine_field: body.log
         combine_with: ""
         is_last_entry: body.log matches "\n$"
+        output: strip-trailing-newline
 
       ## merge-cri-lines stitches back together log lines split by CRI logging drivers.
       ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "logtag": "P" }
@@ -119,6 +119,16 @@ receivers:
         is_last_entry: body.logtag == "F"
         overwrite_with: newest
 
+      ## strip-trailing-newline removes the trailing "\n" from the `log` key. This is required for logs coming from Docker container runtime.
+      ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
+      ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver", "stream": "stdout" }
+      - id: strip-trailing-newline
+        type: regex_parser
+        regex: "^(?P<log>.*)\n$"
+        parse_from: body.log
+        parse_to: body
+        output: {{ .Values.sumologic.logs.multiline.enabled | ternary "merge-multiline-logs" "extract-metadata-from-filepath" }}
+
       ## merge-multiline-logs merges incoming log records into multiline logs.
       ## Input Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
       ## Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
@@ -130,7 +140,7 @@ receivers:
         output: extract-metadata-from-filepath
         source_identifier: attributes["log.file.path"]
         combine_field: body.log
-        combine_with: ""
+        combine_with: "\n"
         is_first_entry: body.log matches {{ .Values.sumologic.logs.multiline.first_line_regex | quote }}
 {{- end }}
 
