@@ -22,7 +22,6 @@
 - [Disable logs, metrics, or falco](#disable-logs-metrics-or-falco)
 - [Changing scrape interval for Prometheus](#changing-scrape-interval-for-prometheus)
 - [Get logs not available on stdout](#get-logs-not-available-on-stdout)
-- [Adding custom fields](#adding-custom-fields)
 - [Using custom Kubernetes API server address](#using-custom-kubernetes-api-server-address)
 - [OpenTelemetry Collector queueing and batching](#opentelemetry-collector-queueing-and-batching)
   - [Compaction](#compaction)
@@ -500,10 +499,6 @@ Providing that the file with logs is accessible through volume, to enable tailin
 
 Example of using Tailing Sidecar Operator is described in the
 [blog post](https://www.sumologic.com/blog/tailing-sidecar-operator/).
-
-## Adding custom fields
-
-:construction: *TODO*, see [the Fluentd section](fluent/best-practices.md#adding-custom-fields)
 
 ## Using custom Kubernetes API server address
 

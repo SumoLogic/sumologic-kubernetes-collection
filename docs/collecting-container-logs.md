@@ -5,8 +5,10 @@
   - [Setting source name and other built-in metadata](#setting-source-name-and-other-built-in-metadata)
   - [Filtering](#filtering)
   - [Modifying log records](#modifying-log-records)
+    - [Adding custom fields](#adding-custom-fields)
   - [Persistence](#persistence)
 - [Advanced Configuration](#advanced-configuration)
+  - [Direct configuration](#direct-configuration)
   - [Disabling container logs](#disabling-container-logs)
 <!-- /TOC -->
 
@@ -205,6 +207,40 @@ sumologic:
               key: redundant-attribute
 ```
 
+#### Adding custom fields
+
+To add a custom [field][sumo_fields] named `static-field` with value `hardcoded-value` to logs, use the following configuration:
+
+```yaml
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+        - resource/add-static-field:
+            attributes:
+            - action: insert
+              key: static-field
+              value: hardcoded-value
+```
+
+To add a custom field named `k8s_app` with a value that comes from e.g. the pod label `app.kubernetes.io/name`, use the following configuration:
+
+```yaml
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+        - resource/add-k8s_app-field:
+            attributes:
+            - action: insert
+              key: k8s_app
+              from_attribute: pod_labels_app.kubernetes.io/name
+```
+
+**NOTE** Make sure the field is [added in Sumo Logic][sumo_add_fields].
+
 ### Persistence
 
 By default, the metadata enrichment service provisions and uses a Kubernetes PersistentVolume as an on-disk queue that guarantees
@@ -226,7 +262,7 @@ metadata:
     pvcLabels: {}
 ```
 
-__NOTE:__ These settings affect persistence for metrics as well.
+**NOTE:** These settings affect persistence for metrics as well.
 
 ## Advanced Configuration
 
@@ -271,3 +307,5 @@ sumologic:
 [attributes_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/attributesprocessor/README.md
 [resource_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/resourceprocessor/README.md
 [transform_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/transformprocessor/README.md
+[sumo_fields]: https://help.sumologic.com/docs/manage/fields/
+[sumo_add_fields]: https://help.sumologic.com/docs/manage/fields/#add-field
