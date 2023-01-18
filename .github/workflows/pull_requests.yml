@@ -67,7 +67,7 @@ jobs:
   shellcheck:
     runs-on: ubuntu-20.04
     env:
-      YQ_VERSION: 3.4.1
+      YQ_VERSION: 4.30.8
     steps:
       - uses: actions/checkout@v3
       - name: install shellcheck
@@ -76,7 +76,7 @@ jobs:
             sudo cp shellcheck-v0.7.1/shellcheck /usr/local/bin && rm -rf shellcheck-v0.7.1
       - name: install yq
         run: |
-            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/yq https://github.com/mikefarah/yq/releases/download/${{ env.YQ_VERSION }}/yq_linux_amd64
+            curl --retry 10 --retry-max-time 120 --retry-delay 5 -L -o /tmp/yq https://github.com/mikefarah/yq/releases/download/v${{ env.YQ_VERSION }}/yq_linux_amd64
             chmod +x /tmp/yq
             sudo mv /tmp/yq /usr/local/bin/yq
       - name: shellcheck
