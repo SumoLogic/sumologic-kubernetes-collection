@@ -109,7 +109,7 @@ receivers:
       ## merge-cri-lines stitches back together log lines split by CRI logging drivers.
       ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "logtag": "P" }
       ## Input Body (JSON): { "log": "ne that was split by the logging driver", "logtag": "F" }
-      ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
+      ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver", "logtag": "F" }
       - id: merge-cri-lines
         type: recombine
         source_identifier: attributes["log.file.path"]
