@@ -75,13 +75,22 @@ You can get your current configuration from the cluster by running:
 helm get values --output yaml "${HELM_RELEASE_NAME}" > user-values.yaml
 ```
 
-Afterwards, run the upgrade tool:
+Afterwards, you can download the migration tool and run it directly.
+Set the OS and ARCH variables to your operating system and architecture.
+
+```bash
+OS=linux ARCH=amd64; curl -L "https://github.com/SumoLogic/sumologic-kubernetes-tools/releases/download/v2.16.0/update-collection-v3-sumo-${OS}_${ARCH}" -o update-collection-v3
+chmod +x update-collection-v3
+./update-collection-v3 -in user-values.yaml -out new-values.yaml
+```
+
+You can also run it with Docker:
 
 ```bash
 docker run \
   --rm \
   -v $(pwd):/values \
-  -i sumologic/kubernetes-tools:2.15.0 \
+  -i sumologic/kubernetes-tools:2.16.0 \
   update-collection-v3 -in /values/user-values.yaml -out /values/new-values.yaml
 ```
 
