@@ -94,7 +94,7 @@ data:
           combine_with: ""
           id: merge-docker-lines
           is_last_entry: body.log matches "\n$"
-          output: merge-multiline-logs
+          output: strip-trailing-newline
           source_identifier: attributes["log.file.path"]
           type: recombine
         - combine_field: body.log
@@ -105,8 +105,17 @@ data:
           overwrite_with: newest
           source_identifier: attributes["log.file.path"]
           type: recombine
+        - id: strip-trailing-newline
+          output: merge-multiline-logs
+          parse_from: body.log
+          parse_to: body
+          regex: |-
+            ^(?P<log>.*)
+            $
+          type: regex_parser
         - combine_field: body.log
-          combine_with: ""
+          combine_with: |2+
+
           id: merge-multiline-logs
           is_first_entry: body.log matches "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
           output: extract-metadata-from-filepath
