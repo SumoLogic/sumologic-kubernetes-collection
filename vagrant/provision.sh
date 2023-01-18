@@ -2,6 +2,8 @@
 
 set -x
 
+YQ_VERSION=4.30.8
+
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get --yes upgrade
@@ -55,9 +57,9 @@ ln -s /usr/bin/helm3 /usr/bin/helm
 usermod -a -G microk8s vagrant
 
 # install yq with access to file structure
-curl https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -L -o /usr/local/bin/yq-3.4.1
-chmod +x /usr/local/bin/yq-3.4.1
-ln -s /usr/local/bin/yq-3.4.1 /usr/local/bin/yq
+curl "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -L -o /usr/local/bin/yq-"${YQ_VERSION}"
+chmod +x /usr/local/bin/yq-"${YQ_VERSION}"
+ln -s /usr/local/bin/yq-"${YQ_VERSION}" /usr/local/bin/yq
 
 # Install docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
