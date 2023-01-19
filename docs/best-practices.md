@@ -2,6 +2,7 @@
 
 - [Overriding chart resource names with `fullnameOverride`](#overriding-chart-resource-names-with-fullnameoverride)
 - [OpenTelemetry Collector Autoscaling](#opentelemetry-collector-autoscaling)
+  - [Cleaning unused PVCs](#cleaning-unused-pvcs)
 - [OpenTelemetry Collector Persistent Buffer](#opentelemetry-collector-persistent-buffer)
 - [Excluding Metrics](#excluding-metrics)
   - [Prometheus](#prometheus)
@@ -134,6 +135,48 @@ It's also possible to adjust other autoscaling configuration options, like the m
 Please refer to the [chart readme][chart_readme] and [default values.yaml][values.yaml] for details.
 
 [#2751]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2751
+
+### Cleaning unused PVCs
+
+When autoscaling is enabled, new Persistent Volume Claims will be created for new pods. However, Kubernetes doesn't support removing unused
+PVCs after downscaling a StatefulSet yet, which means that they will be reused when the StatefulSet gets upscaled again. This creates
+problems in EKS when new instance of the pod is created in a different availability zone than the initial one, as PVs cannot be mounted
+across different AZs.
+
+To solve this problem, `pvcCleaner` can be used to remove unused PVCs:
+
+- For log metadata enrichment
+
+  ```yaml
+  pvcCleaner:
+    logs:
+      enabled: true
+  ```
+
+- For metrics metadata enrichment
+
+  ```yaml
+  pvcCleaner:
+    metrics:
+      enabled: true
+  ```
+
+  This will create `cronJobs` that will run the [pvcCleaner script][pvcCleaner-script] regularly. The schedule is by default set to 15
+  minutes, but it can be overriden:
+
+  ```yaml
+  pvcCleaner:
+    job:
+      schedule: "*/10 * * * *"
+  ```
+
+  The schedule is written in [Cron] format.
+
+  **Note:** it is recommended to enable `pvcCleaner` only for the types of telemetry which are autoscaled to avoid creating unnecessary
+  `cronJobs`.
+
+[pvcCleaner-script]: https://github.com/SumoLogic/sumologic-kubernetes-tools/blob/v2.15.0/src/commands/pvc-cleaner
+[Cron]: https://en.wikipedia.org/wiki/Cron
 
 ## OpenTelemetry Collector Persistent Buffer
 
@@ -621,6 +664,7 @@ for below pods:
 | `otellogs`              | `otellogs.daemonset.nodeSelector.kubernetes.io/os`                              |
 | `metadata`              | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`                    |
 | `metadata`              | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`                       |
+| `pvcCleaner`            | `pvcCleaner.job.nodeSelector.kubernetes.io/os`                                  |
 
 Node selector can be changed via additional parameter in `user-values.yaml`, see an example for Fluent-Bit below:
 
