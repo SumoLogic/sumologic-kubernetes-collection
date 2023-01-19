@@ -4,11 +4,14 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  annotations:
+    someDaemonsetAnnotation: someValue
   labels:
     app: RELEASE-NAME-sumologic-otelcol-logs-collector
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
+    someDaemonsetLabel: someValue
 spec:
   selector:
     matchLabels:

@@ -13,9 +13,16 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}
+{{- if $.Values.otellogs.daemonset.annotations }}
+  annotations:
+{{ toYaml $.Values.otellogs.daemonset.annotations| indent 4 }}
+{{- end }}
   labels:
     app: {{ template "sumologic.labels.app.logs.collector.daemonset" $ctx }}
     {{- include "sumologic.labels.common" $ctx | nindent 4 }}
+{{- if $.Values.otellogs.daemonset.labels }}
+{{ toYaml $.Values.otellogs.daemonset.labels | indent 4 }}
+{{- end }}
 spec:
   selector:
     matchLabels:
