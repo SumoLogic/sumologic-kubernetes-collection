@@ -51,6 +51,7 @@ jobs:
             .github/*
             **/Makefile
             .*
+            tests/integration/kind_images.json
 
   markdownlint:
     runs-on: ubuntu-20.04
