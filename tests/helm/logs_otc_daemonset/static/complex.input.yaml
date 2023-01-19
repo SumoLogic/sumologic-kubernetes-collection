@@ -16,6 +16,14 @@ otellogs:
       runAsUser: 0
       runAsGroup: 0
 
+    ## Add custom labels to the otelcol daemonset
+    labels:
+      someDaemonsetLabel: someValue
+
+    ## Add custom annotations to the otelcol daemonset
+    annotations:
+      someDaemonsetAnnotation: someValue
+
     ## Add custom labels to all otelcol daemonset pods
     podLabels:
       someLabel: someValue
