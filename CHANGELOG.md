@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: upgrade kubernetes-setup to v3.5.0 [#2785]
 - feat(logs): parse JSON logs [#2773]
 - feat(logs): add format setting [#2794]
+- chore: remove support for EKS 1.20 [#2807]
 
 ### Fixed
 
@@ -59,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2805]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2805
 [#2801]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2801
 [#2794]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2794
+[#2807]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2807
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...main
 
