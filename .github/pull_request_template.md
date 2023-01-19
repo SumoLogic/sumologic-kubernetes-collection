@@ -1,18 +1,14 @@
-##### Description
+<!--- 
+Describe your PR here 
+-->
 
-Fill in your description here.
-
----
-
-##### Checklist
+### Checklist
 
 <!---
 Remove items which don't apply to your PR.
 -->
 
-- [ ] Changelog updated
-
-###### Testing performed
-
-- [ ] Redeploy fluentd and fluentd-events pods
-- [ ] Confirm events, logs, and metrics are coming in
+- [ ] Changelog updated or skip changelog label added
+- [ ] Documentation updated
+- [ ] Template tests added for new features
+- [ ] Integration tests added or modified for major features
