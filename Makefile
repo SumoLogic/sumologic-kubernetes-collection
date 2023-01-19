@@ -133,6 +133,22 @@ helm-dependency-update: helm-version
 markdown-link-check:
 	./ci/markdown_link_check.sh
 
+.PHONE: tool-versions
+tool-versions:
+	kubectl version --client=true --short 2>/dev/null
+	helm version
+	jq --version
+	yq --version
+	markdown-link-check --version
+	markdownlint --version
+	prettier --version
+	python -V
+	towncrier --version
+	shellcheck --version
+	golangci-lint version
+	go version
+	kind version
+
 # Vagrant commands
 .PHONY: vup
 vup:
