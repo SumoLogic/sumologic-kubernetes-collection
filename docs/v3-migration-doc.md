@@ -79,7 +79,7 @@ Afterwards, you can download the migration tool and run it directly.
 Set the OS and ARCH variables to your operating system and architecture.
 
 ```bash
-OS=linux ARCH=amd64; curl -L "https://github.com/SumoLogic/sumologic-kubernetes-tools/releases/download/v2.16.0/update-collection-v3-sumo-${OS}_${ARCH}" -o update-collection-v3
+OS=linux ARCH=amd64; curl -L "https://github.com/SumoLogic/sumologic-kubernetes-tools/releases/download/v2.17.0/update-collection-v3-sumo-${OS}_${ARCH}" -o update-collection-v3
 chmod +x update-collection-v3
 ./update-collection-v3 -in user-values.yaml -out new-values.yaml
 ```
@@ -90,7 +90,7 @@ You can also run it with Docker:
 docker run \
   --rm \
   -v $(pwd):/values \
-  -i sumologic/kubernetes-tools:2.16.0 \
+  -i sumologic/kubernetes-tools:2.17.0 \
   update-collection-v3 -in /values/user-values.yaml -out /values/new-values.yaml
 ```
 
@@ -332,7 +332,7 @@ The above special configuration values can be replaced either to direct values o
 Once you've taken care of any manual steps necessary for your configuration, run the helm upgrade:
 
 ```bash
-helm upgrade ${HELM_RELEASE_NAME} sumologic/sumologic --version=3.0.0 -f new-values.yaml
+helm upgrade --namespace "${NAMESPACE}" "${HELM_RELEASE_NAME}" sumologic/sumologic --version=3.0.0 -f new-values.yaml
 ```
 
 After you're done, please review the [full list of changes](#full-list-of-changes), as some of them
