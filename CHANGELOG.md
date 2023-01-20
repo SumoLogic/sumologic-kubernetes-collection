@@ -5,20 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v3.0.0]
+
+### Migration from v2
+
+See the [migration guide][v3_migration_guide] for details.
 
 ### Added
 
 - feat(logs): allow setting daemonset labels and annotations [#2811]
 
 [#2811]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2811
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-rc.0...main
+[v3.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-rc.0...v3.0.0
 
 ## [v3.0.0-rc.0]
-
-### Migration from v2
-
-See the [migration guide][v3_migration_guide] for details.
 
 ### Added
 
