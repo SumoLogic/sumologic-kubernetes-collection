@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set -euo pipefail
 
 YQ_VERSION=4.30.8
 
@@ -62,10 +62,11 @@ chmod +x /usr/local/bin/yq-"${YQ_VERSION}"
 ln -s /usr/local/bin/yq-"${YQ_VERSION}" /usr/local/bin/yq
 
 # Install docker
+LSB_RELEASE="$(lsb_release -cs)"
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
+   ${LSB_RELEASE} \
    stable"
 apt-get install -y docker-ce docker-ce-cli containerd.io
 usermod -aG docker vagrant

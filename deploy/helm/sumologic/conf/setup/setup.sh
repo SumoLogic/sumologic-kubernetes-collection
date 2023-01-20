@@ -11,7 +11,8 @@ if [[ ${DEBUG_MODE,,} == "${DEBUG_MODE_ENABLED_FLAG}" ]]; then
 
     while true; do
         sleep 10
-        echo "$(date) Sleeping in the debug mode..."
+        DATE=$(date)
+        echo "${DATE} Sleeping in the debug mode..."
     done
 fi
 
@@ -23,6 +24,7 @@ function fix_sumo_base_url() {
     BASE_URL="https://api.sumologic.com/api/"
   fi
 
+  # shellcheck disable=SC2312
   OPTIONAL_REDIRECTION="$(curl -XGET -s -o /dev/null -D - \
           -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
           "${BASE_URL}"v1/collectors \
@@ -91,6 +93,7 @@ terraform init -input=false -get=false || terraform init -input=false -upgrade
 # Sumo Logic fields
 if should_create_fields ; then
     readonly CREATE_FIELDS=1
+    # shellcheck disable=SC2312
     FIELDS_RESPONSE="$(curl -XGET -s \
         -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
         "${SUMOLOGIC_BASE_URL}"v1/fields | jq '.data[]' )"

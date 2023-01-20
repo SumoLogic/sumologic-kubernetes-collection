@@ -2,6 +2,8 @@
 
 # shellcheck disable=SC2154
 
+set -euo pipefail
+
 err_report() {
     echo "Script error on line $1"
     exit 1
@@ -9,8 +11,9 @@ err_report() {
 trap 'err_report $LINENO' ERR
 
 function helm() {
+  PWD="$(pwd)"
   docker run --rm \
-    -v "$(pwd):/chart" \
+    -v "${PWD}:/chart" \
     -w /chart \
     sumologic/kubernetes-tools:2.13.0 \
     helm "$@"
@@ -83,7 +86,8 @@ function fetch_current_branch() {
   # and we need to unshallow the repository because otherwise we'd get:
   # fatal: No tags can describe '<SHA>'.
   # Try --always, or create some tags.
-  if [[ "true" == "$(git rev-parse --is-shallow-repository)" ]]; then
+  IS_SHALLOW="$(git rev-parse --is-shallow-repository)"
+  if [[ "true" == "${IS_SHALLOW}" ]]; then
     git fetch -v --tags --unshallow origin "${BRANCH}"
   else
     git fetch -v --tags origin "${BRANCH}"

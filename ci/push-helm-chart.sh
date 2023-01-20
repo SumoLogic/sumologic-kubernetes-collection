@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 ROOT_DIR="$(dirname "$(dirname "${0}")")"
 readonly ROOT_DIR="${ROOT_DIR}"
 
@@ -16,11 +18,13 @@ pushd "${ROOT_DIR}" || exit 1
 
 set_up_github
 
-echo "Pushing helm chart in: $(pwd) with version tag: ${DEV_VERSION} to the dev catalog"
+PWD=$(pwd)
+echo "Pushing helm chart in: ${PWD} with version tag: ${DEV_VERSION} to the dev catalog"
 push_helm_chart "${DEV_VERSION}" "./dev"
 
-if is_checkout_on_tag; then
-  echo "Pushing helm chart in: $(pwd) with version tag: ${RELEASE_VERSION} to the release catalog"
+IS_CHECKOUT_ON_TAG=$(is_checkout_on_tag)
+if ${IS_CHECKOUT_ON_TAG}; then
+  echo "Pushing helm chart in: ${PWD} with version tag: ${RELEASE_VERSION} to the release catalog"
   push_helm_chart "${RELEASE_VERSION}" "."
 fi
 

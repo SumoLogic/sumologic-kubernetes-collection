@@ -48,3 +48,25 @@ You'll need to modify the output files in the following ways:
 - replace all instances of the release name (`collection` by default) with `RELEASE-NAME`
 - replace all instances of the chart version with `%CURRENT_CHART_VERSION%`
 - replace all checksum annotation (`config/checksum`) values with `%CONFIG_CHECKSUM%`
+
+You can use the following snippet to regenerate the output templates in a single directory:
+
+```bash
+export PATH_TO_TEMPLATE=
+export CHART_VERSION=3.0.0
+
+for filename in *.input.yaml; do
+  test_name=${"${filename%%.input.yaml}"}
+  helm template ../../../../deploy/helm/sumologic/ \
+  --namespace sumologic \
+  --set sumologic.accessId='accessId' \
+  --set sumologic.accessKey='accessKey' \
+  -f ${test_name}.input.yaml \
+  -s ${PATH_TO_TEMPLATE} >${test_name}.output.yaml
+
+  sed -i "s/release-name/RELEASE-NAME/g" ${test_name}.output.yaml
+  sed -i "s/${CHART_VERSION}/%CURRENT_CHART_VERSION%/g" ${test_name}.output.yaml
+  sed -i "s#config/checksum: .*$#checksum: '%CONFIG_CHECKSUM%'#g" ${test_name}.output.yaml
+done
+
+```
