@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # Create a docker image archive of all images used in test values files
 
 IMAGE_ARCHIVE=${IMAGE_ARCHIVE:-images.tar}

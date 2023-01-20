@@ -30,7 +30,8 @@ vagrant ssh-config > "${SSH_CONFIG_PATH}"
 ssh -o StrictHostKeyChecking=no -F "${SSH_CONFIG_PATH}" default 'kubectl config view --raw' | \
 	sed "s/127.0.0.1/${VAGRANT_IP}/g" > "${CONFIG_PATH}"
 
-mv -v "${KUBECONFIG_PATH}" "${KUBECONFIG_PATH}.bkp.$(date +%s)"
+TODAY="$(date +%s)"
+mv -v "${KUBECONFIG_PATH}" "${KUBECONFIG_PATH}.bkp.${TODAY}"
 cp "${CONFIG_PATH}" "${KUBECONFIG_PATH}"
 
 clean_up

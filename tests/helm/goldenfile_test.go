@@ -93,7 +93,6 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 			require.NoError(t, err)
 			requireConfigMapsEqual(t, expectedConfigMap, actualConfigMap)
 		}
-
 		require.Equal(t, expectedObject, *actualObject)
 	}
 

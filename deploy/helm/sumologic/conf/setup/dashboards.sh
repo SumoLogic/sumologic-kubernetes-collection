@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 SUMOLOGIC_ACCESSID=${SUMOLOGIC_ACCESSID:=""}
 readonly SUMOLOGIC_ACCESSID
 SUMOLOGIC_ACCESSKEY=${SUMOLOGIC_ACCESSKEY:=""}
@@ -21,7 +23,7 @@ function load_dashboards_folder_id() {
 
   local ADMIN_FOLDER_JOB_STATUS
   ADMIN_FOLDER_JOB_STATUS="InProgress"
-  while [ "${ADMIN_FOLDER_JOB_STATUS}" = "InProgress" ]; do
+  while [[ "${ADMIN_FOLDER_JOB_STATUS}" = "InProgress" ]]; do
     ADMIN_FOLDER_JOB_STATUS="$(curl -XGET -s \
           -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
           "${SUMOLOGIC_BASE_URL}"v2/content/folders/adminRecommended/"${ADMIN_FOLDER_JOB_ID}"/status | jq '.status' | tr -d '"' )"
@@ -29,7 +31,7 @@ function load_dashboards_folder_id() {
     sleep 1
   done
 
-  if [ "${ADMIN_FOLDER_JOB_STATUS}" != "Success" ]; then
+  if [[ "${ADMIN_FOLDER_JOB_STATUS}" != "Success" ]]; then
     echo "Could not fetch data from the \"Admin Recommended\" content folder. The K8s Dashboards won't be installed."
     echo "You can still install them manually:"
     echo "https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes#installing-the-kubernetes-app"
@@ -91,7 +93,7 @@ if [[ -z "${K8S_FOLDER_ID}" ]]; then
   readonly APP_INSTALL_JOB_ID
 
   APP_INSTALL_JOB_STATUS="InProgress"
-  while [ "${APP_INSTALL_JOB_STATUS}" = "InProgress" ]; do
+  while [[ "${APP_INSTALL_JOB_STATUS}" = "InProgress" ]]; do
     APP_INSTALL_JOB_STATUS="$(curl -XGET -s \
           -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
           "${SUMOLOGIC_BASE_URL}"v1/apps/install/"${APP_INSTALL_JOB_ID}"/status | jq '.status' | tr -d '"' )"
@@ -99,7 +101,7 @@ if [[ -z "${K8S_FOLDER_ID}" ]]; then
     sleep 1
   done
 
-  if [ "${APP_INSTALL_JOB_STATUS}" != "Success" ]; then
+  if [[ "${APP_INSTALL_JOB_STATUS}" != "Success" ]]; then
     ERROR_MSG="$(curl -XGET -s \
           -u "${SUMOLOGIC_ACCESSID}:${SUMOLOGIC_ACCESSKEY}" \
           "${SUMOLOGIC_BASE_URL}"v1/apps/install/"${APP_INSTALL_JOB_ID}"/status )"
@@ -125,7 +127,7 @@ if [[ -z "${K8S_FOLDER_ID}" ]]; then
       "${SUMOLOGIC_BASE_URL}"v2/content/"${K8S_FOLDER_ID}"/permissions/add | jq '.errors' )
     readonly PERMS_ERRORS
 
-    if [ "${PERMS_ERRORS}" != "null" ]; then
+    if [[ "${PERMS_ERRORS}" != "null" ]]; then
       echo "Setting permissions for the installed content failed."
       echo "${PERMS_ERRORS}"
     fi

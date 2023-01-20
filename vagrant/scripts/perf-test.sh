@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 # Exemplar script output
 # TEST_DURATION=300 TEST_WARMUP_DURATION=30 ./scripts/perf-test.sh
@@ -71,7 +71,8 @@ function run_test() {
     local DURATION_SECONDS="${2}"
     echo "Starting perf tests"
 
-    if [[ $(is_avalanche_running) -eq 0 ]]; then
+    IS_AVALANCHE_RUNNING="$(is_avalanche_running)"
+    if [[ ${IS_AVALANCHE_RUNNING} -eq 0 ]]; then
         echo "Avalanche is running, stop it, wait for the collection to cool down and then rerun the test"
         exit 1
     fi

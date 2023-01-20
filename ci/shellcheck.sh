@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
 echo "Checking the bash scripts with shellcheck..."
 find . ! -path '*deploy/helm/sumologic/conf/setup/setup.sh' ! -path '*deploy/helm/sumologic/conf/setup/monitors.sh' ! -path "*/tmp/*" -name '*.sh' -type 'f' -print |
@@ -21,7 +21,7 @@ find . -path '*tests/helm/terraform/static/*.output.yaml' -type 'f' -print |
     while read -r file; do
         # Run tests in their own context
         echo "Checking ${file} (monitors.sh) with shellcheck"
-        yq '.data."monitors.sh"' "${file}" | shellcheck --enable all --external-sources --exclude SC2155 -
+        yq '.data."monitors.sh"' "${file}" | shellcheck --enable all --external-sources --exclude SC2155 --exclude SC2312 -
     done
 
 find . -path '*tests/helm/terraform/static/*.output.yaml' -type 'f' -print |

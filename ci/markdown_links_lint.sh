@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 GREP="grep"
-if [[ "$(uname -s)" == "Darwin" ]]; then
+OS="$(uname -s)"
+if [[ "${OS}" == "Darwin" ]]; then
     GREP="ggrep"
 fi
 
