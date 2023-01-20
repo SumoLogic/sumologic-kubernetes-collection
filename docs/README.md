@@ -1,4 +1,4 @@
-# Deployment Guide for unreleased version
+# Deployment Guide for v3.0.0
 
 This page has instructions for collecting Kubernetes logs, metrics, and events;
 enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
