@@ -72,7 +72,7 @@ We've made some breaking changes to our configuration file format, but most of t
 You can get your current configuration from the cluster by running:
 
 ```bash
-helm get values --output yaml "${HELM_RELEASE_NAME}" > user-values.yaml
+helm get values --namespace "${NAMESPACE}" --output yaml "${HELM_RELEASE_NAME}" > user-values.yaml
 ```
 
 Afterwards, you can download the migration tool and run it directly.
