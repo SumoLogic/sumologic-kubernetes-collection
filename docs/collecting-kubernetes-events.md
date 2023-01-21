@@ -92,7 +92,7 @@ from its start time.
 
 ### Configuring the event provider
 
-Event collection is performed by the provider specified in `sumologic.events.provider`. This can be either `fluentd` for Fluentd or `otelcol` for OpenTelemetry Collector (which is currently the default).
+Event collection is performed by the provider specified in `sumologic.events.provider`. This can be either `otelcol` for OpenTelemetry Collector (which is the default) or `fluentd` for Fluentd. Note that Fluentd is deprecated and will be removed in the next major release.
 You can switch the provider by setting the property:
 
 ```yaml
@@ -103,8 +103,8 @@ sumologic:
 
 To change provider-specific configuration, see the following sections of the [values.yaml][values_yaml] file, depending on the provider used:
 
-- `fluentd.events` for Fluentd provider (the default)
 - `otelevents` for OpenTelemetry Collector provider
+- `fluentd.events` for Fluentd provider
 
 Also see [OpenTelemetry Collector document][otelcol_config] for more details on configuring the Otelcol provider.
 
