@@ -87,11 +87,13 @@ jobs:
   yamllint:
     runs-on: ubuntu-20.04
     needs: [chart-changed]
+    env:
+      PRETTIER_VERSION: 2.8.1
     steps:
       - uses: actions/checkout@v3
       - name: install yamllint
         if: needs.chart-changed.outputs.any_changed == 'true'
-        run: pip install yamllint
+        run: npm install -g prettier@${PRETTIER_VERSION}
       - name: yamllint
         if: needs.chart-changed.outputs.any_changed == 'true'
         run: make yaml-lint
