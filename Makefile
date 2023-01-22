@@ -1,26 +1,23 @@
-lint: shellcheck markdownlint helm-lint yamllint markdown-links-lint markdown-table-formatter-check lint-template-tests
+# Linters
 
-shellcheck:
-	./ci/shellcheck.sh
+.PHONY: lint
+lint: chart-lint docs-lint tests-lint
 
-test: test-templates
+.PHONY: chart-lint
+chart-lint: helm-lint yaml-lint shellcheck
 
-push-helm-chart:
-	./ci/push-helm-chart.sh
+.PHONY: docs-lint
+docs-lint: markdown-lint markdown-links-lint markdown-table-formatter-check
 
-markdownlint:
+.PHONY: tests-lint
+tests-lint: template-tests-lint integration-tests-lint
+
+.PHONY: markdown-lint
+markdown-lint:
 	markdownlint --config .markdownlint.jsonc \
 		deploy/docs \
 		docs \
 		CHANGELOG.md
-
-.PHONY: helm-version
-helm-version:
-	helm version
-
-.PHONY: helm-dependency-update
-helm-dependency-update: helm-version
-	helm dependency update deploy/helm/sumologic
 
 .PHONY: helm-lint
 helm-lint: helm-version
@@ -40,43 +37,91 @@ helm-lint: helm-version
 		--set sumologic.accessKey=X \
 		deploy/helm/sumologic/ || true
 
-yamllint:
-	yamllint -c .yamllint.yaml\
+.PHONY: yaml-lint
+yaml-lint:
+	yamllint -c .yamllint.yaml \
 		deploy/helm/sumologic/values.yaml \
 		vagrant/values.yaml
 
+.PHONY: shellcheck
+shellcheck:
+	./ci/shellcheck.sh
+
+.PHONY: markdown-links-lint
 markdown-links-lint:
 	./ci/markdown_links_lint.sh
 
-markdown-link-check:
-	./ci/markdown_link_check.sh
-
+.PHONY: markdown-table-formatter-check
 markdown-table-formatter-check:
 	./ci/markdown_table_formatter.sh --check
 
-markdown-table-formatter-format:
-	./ci/markdown_table_formatter.sh --format
-
+.PHONY: check-configuration-keys
 check-configuration-keys:
 	./ci/check_configuration_keys.py --values deploy/helm/sumologic/values.yaml --readme deploy/helm/sumologic/README.md
 
-# Vagrant commands
-vup:
-	vagrant up
+.PHONY: markdown-table-formatter-check
+template-tests-lint:
+	make -C ./tests/helm golint
 
-vssh:
-	vagrant ssh -c 'cd /sumologic; exec "$$SHELL"'
+.PHONY: integration-tests-lint
+integration-tests-lint:
+	make -C ./tests/helm golint
 
-vhalt:
-	vagrant halt
+# Formatters
 
-vdestroy:
-	vagrant destroy -f
+.PHONY: format
+format: markdown-table-formatter-format
 
-# Template tests
+.PHONY: markdown-table-formatter-format
+markdown-table-formatter-format:
+	./ci/markdown_table_formatter.sh
+
+# Tests
+.PHONY: test
+test: test-templates
+
+## Template tests
+.PHONY: test-templates
 test-templates:
 	make helm-dependency-update
 	make -C ./tests/helm test
 
-lint-template-tests:
-	make -C ./tests/helm golint
+## Integration tests
+.PHONY: test-integration
+make test-integration:
+	make -C ./tests/integration test
+
+
+# Various utilities
+.PHONY: push-helm-chart
+push-helm-chart:
+	./ci/push-helm-chart.sh
+
+.PHONY: helm-version
+helm-version:
+	helm version
+
+.PHONY: helm-dependency-update
+helm-dependency-update: helm-version
+	helm dependency update deploy/helm/sumologic
+
+.PHONY: markdown-link-check
+markdown-link-check:
+	./ci/markdown_link_check.sh
+
+# Vagrant commands
+.PHONY: vup
+vup:
+	vagrant up
+
+.PHONY: vssh
+vssh:
+	vagrant ssh -c 'cd /sumologic; exec "$$SHELL"'
+
+.PHONY: vhalt
+vhalt:
+	vagrant halt
+
+.PHONY: vdestroy
+vdestroy:
+	vagrant destroy -f

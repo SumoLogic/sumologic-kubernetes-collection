@@ -63,7 +63,7 @@ jobs:
         run: npm install -g markdownlint-cli
       - name: markdownlint check
         if: needs.docs-changed.outputs.any_changed == 'true'
-        run: make markdownlint
+        run: make markdown-lint
 
   shellcheck:
     runs-on: ubuntu-20.04
@@ -93,7 +93,7 @@ jobs:
         run: pip install yamllint
       - name: yamllint
         if: needs.chart-changed.outputs.any_changed == 'true'
-        run: make yamllint
+        run: make yaml-lint
 
   helmlint:
     runs-on: ubuntu-20.04
