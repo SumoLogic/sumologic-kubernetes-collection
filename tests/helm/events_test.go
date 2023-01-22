@@ -51,4 +51,3 @@ otelevents:
 	expected := map[string]string{"key": "value"}
 	require.Equal(t, expected, otelConfig)
 }
-
