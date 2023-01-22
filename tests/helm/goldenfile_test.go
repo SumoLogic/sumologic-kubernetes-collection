@@ -87,8 +87,10 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 		if expectedObject.GetKind() == "ConfigMap" {
 			var expectedConfigMap corev1.ConfigMap
 			var actualConfigMap corev1.ConfigMap
-			runtime.DefaultUnstructuredConverter.FromUnstructured(expectedObject.UnstructuredContent(), &expectedConfigMap)
-			runtime.DefaultUnstructuredConverter.FromUnstructured(actualObject.UnstructuredContent(), &actualConfigMap)
+			err = runtime.DefaultUnstructuredConverter.FromUnstructured(expectedObject.UnstructuredContent(), &expectedConfigMap)
+			require.NoError(t, err)
+			err = runtime.DefaultUnstructuredConverter.FromUnstructured(actualObject.UnstructuredContent(), &actualConfigMap)
+			require.NoError(t, err)
 			requireConfigMapsEqual(t, expectedConfigMap, actualConfigMap)
 		}
 
