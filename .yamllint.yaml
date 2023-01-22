@@ -1,13 +1,14 @@
 extends: relaxed
 
 rules:
-    comments: enable
-    comments-indentation: disable
+  comments:
+    min-spaces-from-content: 1
+  comments-indentation: disable
 
-    line-length:
-        max: 140
-        level: error
+  line-length:
+    max: 140
+    level: error
 
-    indentation:
-        level: error
-        indent-sequences: consistent
+  indentation:
+    level: error
+    indent-sequences: consistent

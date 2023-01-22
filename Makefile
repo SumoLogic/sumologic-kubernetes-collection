@@ -14,10 +14,7 @@ tests-lint: template-tests-lint integration-tests-lint
 
 .PHONY: markdown-lint
 markdown-lint:
-	markdownlint --config .markdownlint.jsonc \
-		deploy/docs \
-		docs \
-		CHANGELOG.md
+	prettier --check "**/*.md"
 
 .PHONY: helm-lint
 helm-lint: helm-version
@@ -39,9 +36,7 @@ helm-lint: helm-version
 
 .PHONY: yaml-lint
 yaml-lint:
-	yamllint -c .yamllint.yaml \
-		deploy/helm/sumologic/values.yaml \
-		vagrant/values.yaml
+	prettier --check "**/*.yaml"
 
 .PHONY: shellcheck
 shellcheck:
@@ -70,11 +65,15 @@ integration-tests-lint:
 # Formatters
 
 .PHONY: format
-format: markdown-table-formatter-format
+format: markdown-table-formatter-format yaml-format
 
 .PHONY: markdown-table-formatter-format
 markdown-table-formatter-format:
 	./ci/markdown_table_formatter.sh
+
+.PHONY: yaml-format
+yaml-format:
+	prettier -w "**/*.yaml"
 
 # Tests
 .PHONY: test
