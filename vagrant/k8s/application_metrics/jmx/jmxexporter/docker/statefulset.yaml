@@ -18,32 +18,32 @@ spec:
         prometheus.io/port: "8888"
     spec:
       containers:
-      - name: jolokia
-        image: public.ecr.aws/docker/library/tomcat:jdk8-adoptopenjdk-openj9
-        env:
-        - name: CATALINA_OPTS
-          value: "-javaagent:/var/lib/jmx_agent/jmx_prometheus_javaagent-0.13.0.jar=8888:/config.yaml"
-        volumeMounts:
-        - mountPath: /var/lib/jmx_agent
-          name: agent
-        - name: config-volume
-          mountPath: /config.yaml
-          subPath: config.yaml
+        - name: jolokia
+          image: public.ecr.aws/docker/library/tomcat:jdk8-adoptopenjdk-openj9
+          env:
+            - name: CATALINA_OPTS
+              value: "-javaagent:/var/lib/jmx_agent/jmx_prometheus_javaagent-0.13.0.jar=8888:/config.yaml"
+          volumeMounts:
+            - mountPath: /var/lib/jmx_agent
+              name: agent
+            - name: config-volume
+              mountPath: /config.yaml
+              subPath: config.yaml
       initContainers:
-      - name: downloadagent
-        image: public.ecr.aws/itx-devops/curlimages_curl:latest
-        command:
-        - "curl"
-        - "-L"
-        - "https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.13.0/jmx_prometheus_javaagent-0.13.0.jar"
-        - "-o"
-        - "/var/lib/jmx_agent/jmx_prometheus_javaagent-0.13.0.jar"
-        volumeMounts:
-        - mountPath: /var/lib/jmx_agent
-          name: agent
+        - name: downloadagent
+          image: public.ecr.aws/itx-devops/curlimages_curl:latest
+          command:
+            - "curl"
+            - "-L"
+            - "https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.13.0/jmx_prometheus_javaagent-0.13.0.jar"
+            - "-o"
+            - "/var/lib/jmx_agent/jmx_prometheus_javaagent-0.13.0.jar"
+          volumeMounts:
+            - mountPath: /var/lib/jmx_agent
+              name: agent
       volumes:
-       - name: agent
-         emptyDir:
-       - name: config-volume
-         configMap:
-           name: jmxexporter-config
+        - name: agent
+          emptyDir:
+        - name: config-volume
+          configMap:
+            name: jmxexporter-config

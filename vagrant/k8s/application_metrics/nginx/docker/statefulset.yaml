@@ -18,17 +18,17 @@ spec:
           [[inputs.nginx]]
             urls = ["http://localhost/nginx_status"]
         telegraf.influxdata.com/class: sumologic-prometheus
-        telegraf.influxdata.com/limits-cpu: '750m'
+        telegraf.influxdata.com/limits-cpu: "750m"
         prometheus.io/scrape: "true"
         prometheus.io/port: "9273"
     spec:
       containers:
-      - name: nginx
-        image: nginx:alpine
-        volumeMounts:
-        - name: config-volume
-          mountPath: /etc/nginx/conf.d/default.conf
-          subPath: default.conf
+        - name: nginx
+          image: nginx:alpine
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
       volumes:
         - name: config-volume
           configMap:

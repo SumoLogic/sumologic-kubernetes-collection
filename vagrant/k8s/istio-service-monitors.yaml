@@ -12,17 +12,17 @@ spec:
       app: receiver-mock
   namespaceSelector:
     matchNames:
-    - receiver-mock
+      - receiver-mock
   endpoints:
-  - port: "3000" # Same as service's port name
-    interval: 1s
-    # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
-    scheme: https
-    tlsConfig:
-      caFile: /etc/prom-certs/root-cert.pem
-      certFile: /etc/prom-certs/cert-chain.pem
-      keyFile: /etc/prom-certs/key.pem
-      insecureSkipVerify: true
+    - port: "3000" # Same as service's port name
+      interval: 1s
+      # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+      scheme: https
+      tlsConfig:
+        caFile: /etc/prom-certs/root-cert.pem
+        certFile: /etc/prom-certs/cert-chain.pem
+        keyFile: /etc/prom-certs/key.pem
+        insecureSkipVerify: true
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -37,14 +37,14 @@ spec:
       app: avalanche
   namespaceSelector:
     matchNames:
-    - avalanche
+      - avalanche
   endpoints:
-  - port: "http-avalanche" # Same as service's port name
-    interval: 10s
-    # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
-    scheme: https
-    tlsConfig:
-      caFile: /etc/prom-certs/root-cert.pem
-      certFile: /etc/prom-certs/cert-chain.pem
-      keyFile: /etc/prom-certs/key.pem
-      insecureSkipVerify: true
+    - port: "http-avalanche" # Same as service's port name
+      interval: 10s
+      # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+      scheme: https
+      tlsConfig:
+        caFile: /etc/prom-certs/root-cert.pem
+        certFile: /etc/prom-certs/cert-chain.pem
+        keyFile: /etc/prom-certs/key.pem
+        insecureSkipVerify: true

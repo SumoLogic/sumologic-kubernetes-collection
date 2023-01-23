@@ -21,11 +21,11 @@ spec:
         name: logs-generator
     spec:
       containers:
-      - image: sumologic/kubernetes-tools:2.13.0
-        imagePullPolicy: Always
-        name: logs-generator
-        command:
-          - logs-generator
-          - --time-resolution=1 
-          - --random-patterns=10
-          - --logs-throughput=100
+        - image: sumologic/kubernetes-tools:2.13.0
+          imagePullPolicy: Always
+          name: logs-generator
+          command:
+            - logs-generator
+            - --time-resolution=1
+            - --random-patterns=10
+            - --logs-throughput=100

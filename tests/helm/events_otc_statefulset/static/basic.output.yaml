@@ -42,100 +42,100 @@ spec:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - RELEASE-NAME-sumologic-otelcol-logs
-                - RELEASE-NAME-sumologic-otelcol-metrics
-              - key: app
-                operator: In
-                values:
-                - prometheus-operator-prometheus
-            topologyKey: "kubernetes.io/hostname"
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - RELEASE-NAME-sumologic-otelcol-logs
+                      - RELEASE-NAME-sumologic-otelcol-metrics
+                  - key: app
+                    operator: In
+                    values:
+                      - prometheus-operator-prometheus
+              topologyKey: "kubernetes.io/hostname"
 
       volumes:
-      - name: config-volume
-        configMap:
-          name: RELEASE-NAME-sumologic-otelcol-events
-      - name: es-certs
-        secret:
-          defaultMode: 420
-          secretName: es-certs
+        - name: config-volume
+          configMap:
+            name: RELEASE-NAME-sumologic-otelcol-events
+        - name: es-certs
+          secret:
+            defaultMode: 420
+            secretName: es-certs
       securityContext:
         fsGroup: 999
       priorityClassName: "prio"
       containers:
-      - name: otelcol
-        image: public.ecr.aws/sumologic/sumologic-otel-collector:0.69.0-sumo-0
-        imagePullPolicy: IfNotPresent
-        args:
-          - --config=/etc/otel/config.yaml
-        resources:
-          limits:
-            cpu: 2000m
-            memory: 2Gi
-          requests:
-            cpu: 100m
-            memory: 777Mi
-        ports:
-        - name: metrics
-          containerPort: 8888
-          protocol: TCP
-        - name: pprof
-          containerPort: 1777
-          protocol: TCP
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 13133 # Health Check extension default port.
-          failureThreshold: 3
-          initialDelaySeconds: 15
-          periodSeconds: 15
-          timeoutSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 13133 # Health Check extension default port.
-          failureThreshold: 3
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 3
-        startupProbe:
-          httpGet:
-            path: /
-            port: 13133 # Health Check extension default port.
-          failureThreshold: 60
-          periodSeconds: 3
-        volumeMounts:
-        - name: config-volume
-          mountPath: /etc/otel/config.yaml
-          subPath: config.yaml
-        - name: file-storage
-          mountPath: /var/lib/storage/events
-        - mountPath: /certs
-          name: es-certs
-          readOnly: true
-        env:
-        - name: SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE
-          valueFrom:
-            secretKeyRef:
-              name: sumologic
-              key: endpoint-events
-        - name: NO_PROXY
-          value: kubernetes.default.svc
-        - name: VALUE_FROM_SECRET
-          valueFrom:
-            secretKeyRef:
-              key: secret_key
-              name: secret_name
+        - name: otelcol
+          image: public.ecr.aws/sumologic/sumologic-otel-collector:0.69.0-sumo-0
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config=/etc/otel/config.yaml
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+            requests:
+              cpu: 100m
+              memory: 777Mi
+          ports:
+            - name: metrics
+              containerPort: 8888
+              protocol: TCP
+            - name: pprof
+              containerPort: 1777
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 60
+            periodSeconds: 3
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/otel/config.yaml
+              subPath: config.yaml
+            - name: file-storage
+              mountPath: /var/lib/storage/events
+            - mountPath: /certs
+              name: es-certs
+              readOnly: true
+          env:
+            - name: SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-events
+            - name: NO_PROXY
+              value: kubernetes.default.svc
+            - name: VALUE_FROM_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: secret_key
+                  name: secret_name
   volumeClaimTemplates:
-  - metadata:
-      name: file-storage
-    spec:
-      accessModes: [ReadWriteOnce]
-      storageClassName:
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: file-storage
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName:
+        resources:
+          requests:
+            storage: 10Gi

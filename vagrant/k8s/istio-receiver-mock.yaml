@@ -18,9 +18,9 @@ spec:
         app: receiver-mock
       annotations:
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
-        traffic.sidecar.istio.io/includeInboundPorts: "3002"   # do not intercept any inbound ports
-        traffic.sidecar.istio.io/includeOutboundIPRanges: ""  # do not intercept any outbound traffic
-        proxy.istio.io/config: |  # configure an env variable `OUTPUT_CERTS` to write certificates to the given folder
+        traffic.sidecar.istio.io/includeInboundPorts: "3002" # do not intercept any inbound ports
+        traffic.sidecar.istio.io/includeOutboundIPRanges: "" # do not intercept any outbound traffic
+        proxy.istio.io/config: | # configure an env variable `OUTPUT_CERTS` to write certificates to the given folder
           proxyMetadata:
             OUTPUT_CERTS: /etc/istio-output-certs
         sidecar.istio.io/userVolumeMount: '[{"name": "istio-certs", "mountPath": "/etc/istio-output-certs"}]' # mount the shared volume at sidecar proxy
@@ -55,9 +55,9 @@ spec:
       imagePullSecrets:
         - name: regcred
       volumes:
-      - emptyDir:
-          medium: Memory
-        name: istio-certs
+        - emptyDir:
+            medium: Memory
+          name: istio-certs
 
 ---
 apiVersion: v1

@@ -13,8 +13,8 @@ otellogs:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/os
-              operator: NotIn
-              values:
-              - linux
+            - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: NotIn
+                  values:
+                    - linux

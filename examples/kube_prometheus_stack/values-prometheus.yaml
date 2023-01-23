@@ -7,11 +7,11 @@
 # enabled: false
 
 # global:
-  ## Reference to one or more secrets to be used when pulling images
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ##
-  # imagePullSecrets:
-  #   - name: "image-pull-secret"
+## Reference to one or more secrets to be used when pulling images
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+##
+# imagePullSecrets:
+#   - name: "image-pull-secret"
 
 ## Labels to apply to all kube-prometheus-stack resources
 commonLabels: {}
@@ -23,7 +23,7 @@ additionalPrometheusRulesMap:
       - name: node-pre-1.14.rules
         rules:
           - expr: sum(min(kube_pod_info) by (node))
-            record: ':kube_pod_info_node_count:'
+            record: ":kube_pod_info_node_count:"
           - expr: 1 - avg(rate(node_cpu_seconds_total{job="node-exporter",mode="idle"}[1m]))
             record: :node_cpu_utilisation:avg1m
           - expr: |-
@@ -41,7 +41,7 @@ additionalPrometheusRulesMap:
               )
               /
               sum(node_memory_MemTotal_bytes{job="node-exporter"})
-            record: ':node_memory_utilisation:'
+            record: ":node_memory_utilisation:"
           - expr: |-
               sum by (node) (
                 (
@@ -75,14 +75,14 @@ additionalPrometheusRulesMap:
               * on (namespace, pod) group_left(node)
                 node_namespace_pod:kube_pod_info:
               )
-            record: 'node:node_memory_utilisation:'
+            record: "node:node_memory_utilisation:"
           - expr: 1 - (node:node_memory_bytes_available:sum / node:node_memory_bytes_total:sum)
-            record: 'node:node_memory_utilisation_2:'
+            record: "node:node_memory_utilisation_2:"
           - expr: |-
               max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
               - node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
               / node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
-            record: 'node:node_filesystem_usage:'
+            record: "node:node_filesystem_usage:"
           - expr: |-
               sum by (node) (
                 node_memory_MemTotal_bytes{job="node-exporter"}
@@ -118,7 +118,7 @@ additionalPrometheusRulesMap:
               sum(node_load1{job="node-exporter"})
               /
               sum(node:node_num_cpu:sum)
-            record: ':node_cpu_saturation_load1:'
+            record: ":node_cpu_saturation_load1:"
           - expr: avg(irate(node_disk_io_time_weighted_seconds_total{job="node-exporter",device=~"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+"}[1m]))
             record: :node_disk_saturation:avg_irate
           - expr: |-
@@ -171,14 +171,14 @@ additionalPrometheusRulesMap:
               )
               /
               node:node_num_cpu:sum
-            record: 'node:node_cpu_saturation_load1:'
+            record: "node:node_cpu_saturation_load1:"
           - expr: |-
               max by (instance, namespace, pod, device) (
                 node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
                 /
                 node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
                 )
-            record: 'node:node_filesystem_avail:'
+            record: "node:node_filesystem_avail:"
           - expr: |-
               max(
                 max(
@@ -192,7 +192,7 @@ additionalPrometheusRulesMap:
                   ), "host_ip", "$1", "instance", "(.*):.*"
                 )
               ) by (node)
-            record: 'node:node_inodes_total:'
+            record: "node:node_inodes_total:"
           - expr: |-
               max(
                 max(
@@ -206,7 +206,7 @@ additionalPrometheusRulesMap:
                   ), "host_ip", "$1", "instance", "(.*):.*"
                 )
               ) by (node)
-            record: 'node:node_inodes_free:'
+            record: "node:node_inodes_free:"
 
 ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording
 ## rules to be missing and empty panels in Sumo Logic Kubernetes apps.
@@ -228,7 +228,7 @@ kubeApiServer:
     metricRelabelings:
       - action: keep
         regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum)|apiserver_request_duration_seconds_bucket)
-        sourceLabels: [ __name__]
+        sourceLabels: [__name__]
 kubelet:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -363,7 +363,7 @@ kubeEtcd:
     metricRelabelings:
       - action: keep
         regex: (?:etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total)|etcd_debugging_(mvcc_db_total_size_in_bytes|store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
-        sourceLabels: [ __name__]
+        sourceLabels: [__name__]
 kubeScheduler:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -424,7 +424,7 @@ kubeStateMetrics:
     metricRelabelings:
       - action: keep
         regex: (?:kube_statefulset_status_observed_generation|kube_statefulset_status_replicas|kube_statefulset_replicas|kube_statefulset_metadata_generation|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_desired_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_number_unavailable|kube_deployment_spec_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_node_info|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_hpa_spec_max_replicas|kube_hpa_spec_min_replicas|kube_hpa_status_(condition|(current|desired)_replicas)|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_limits|kube_pod_container_status_ready|kube_pod_container_status_terminated_reason|kube_pod_container_status_waiting_reason|kube_pod_container_status_restarts_total|kube_pod_status_phase|kube_pod_info)
-        sourceLabels: [ __name__]
+        sourceLabels: [__name__]
 nodeExporter:
   serviceMonitor:
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
@@ -467,7 +467,8 @@ prometheusOperator:
   ## Annotations to add to the operator pod
   podAnnotations: {}
   ## Resource limits for prometheus operator
-  resources: {}
+  resources:
+    {}
     # limits:
     #   cpu: 200m
     #   memory: 200Mi
@@ -484,7 +485,8 @@ kube-state-metrics:
   customLabels: {}
   ## Additional annotations for pods in the DaemonSet
   podAnnotations: {}
-  resources: {}
+  resources:
+    {}
     # limits:
     #   cpu: 100m
     #   memory: 64Mi
@@ -497,7 +499,8 @@ prometheus-node-exporter:
   podLabels: {}
   ## Additional annotations for pods in the DaemonSet
   podAnnotations: {}
-  resources: {}
+  resources:
+    {}
     # limits:
     #   cpu: 200m
     #   memory: 50Mi
@@ -668,7 +671,7 @@ prometheus:
       ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
       ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
       ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
-      - job_name: 'kubernetes-pods'
+      - job_name: "kubernetes-pods"
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
@@ -945,7 +948,7 @@ prometheus:
         remoteTimeout: 5s
         writeRelabelConfigs:
           - action: keep
-            regex: 'cluster_quantile:apiserver_request_duration_seconds:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile|cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile|cluster_quantile:scheduler_framework_extension_point_duration_seconds:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:'
+            regex: "cluster_quantile:apiserver_request_duration_seconds:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile|cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile|cluster_quantile:scheduler_framework_extension_point_duration_seconds:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:"
             sourceLabels: [__name__]
       ## health
       ## fluentbit_input_bytes_total

@@ -98,7 +98,7 @@ data:
     exclude_container_regex "my_containers_excludeContainerRegex"
     exclude_host_regex "my_containers_excludeHostRegex"
     per_container_annotations_enabled false
-    per_container_annotation_prefixes 
+    per_container_annotation_prefixes
   logs.output.conf: |
     data_type logs
     log_key log
@@ -111,8 +111,8 @@ data:
     compress "true"
     compress_encoding "gzip"
   logs.source.containers.conf: |
-    
-    
+
+
     <filter containers.**>
       @type record_transformer
       enable_ruby
@@ -132,7 +132,7 @@ data:
       @label @NORMAL
     </match>
     <label @NORMAL>
-    
+
       # only match fluentd logs based on fluentd container log file name.
       # by default, this is <filter **collection-sumologic-fluentd**>
       <filter **RELEASE-NAME-sumologic-fluentd**>
@@ -146,13 +146,13 @@ data:
           pattern /\/usr\/local|\[error\]|\[fatal\]|drop_oldest_chunk|retry succeeded/
         </regexp>
       </filter>
-  
-    
-  
-    
-  
-    
-  
+
+
+
+
+
+
+
       # third-party Kubernetes metadata  filter plugin
       <filter containers.**>
         @type kubernetes_metadata
@@ -197,7 +197,7 @@ data:
       </match>
     </label>
   logs.source.default.conf: |
-    
+
     <filter **>
       @type grep
       <exclude>
@@ -239,7 +239,7 @@ data:
       </store>
     </match>
   logs.source.systemd.conf: |
-    
+
     <match host.kubelet.**>
       @type relabel
       @label @KUBELET
@@ -280,7 +280,7 @@ data:
         </store>
       </match>
     </label>
-    
+
     <match host.**>
       @type relabel
       @label @SYSTEMD

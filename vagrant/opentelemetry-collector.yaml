@@ -48,13 +48,13 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name:  prometheus-collector
+  name: prometheus-collector
   namespace: sumologic
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name:  prometheus-collector
+  name: prometheus-collector
   namespace: sumologic
 rules:
   - apiGroups:
@@ -73,7 +73,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name:  prometheus-collector
+  name: prometheus-collector
   namespace: sumologic
 roleRef:
   apiGroup: rbac.authorization.k8s.io

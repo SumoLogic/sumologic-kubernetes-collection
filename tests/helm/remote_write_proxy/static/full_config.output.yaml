@@ -24,7 +24,7 @@ spec:
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
-        
+
         cluster: sumo-demo
         my-label: rwp
     spec:
@@ -35,21 +35,21 @@ spec:
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - preference:
-              matchExpressions:
-              - key: another-node-label-key
-                operator: In
-                values:
-                - another-node-label-value
-            weight: 1
+            - preference:
+                matchExpressions:
+                  - key: another-node-label-key
+                    operator: In
+                    values:
+                      - another-node-label-value
+              weight: 1
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/e2e-az-name
-                operator: In
-                values:
-                - e2e-az1
-                - e2e-az2
+              - matchExpressions:
+                  - key: kubernetes.io/e2e-az-name
+                    operator: In
+                    values:
+                      - e2e-az1
+                      - e2e-az2
       tolerations:
         - effect: NoSchedule
           key: key1
@@ -59,38 +59,38 @@ spec:
         allowPrivilegeEscalation: false
       priorityClassName: "high-priority"
       containers:
-      - name: nginx
-        image: public.ecr.aws/nginx/nginx-custom:0.0-alpine
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 80
-        resources:
-          limits:
-            cpu: 400m
-            memory: 1024Mi
-          requests:
-            cpu: 300m
-            memory: 512Mi
-        livenessProbe:
-          tcpSocket:
-            port: 80
-          failureThreshold: 10
-          initialDelaySeconds: 60
-          periodSeconds: 20
-          successThreshold: 2
-          timeoutSeconds: 10
-        readinessProbe:
-          tcpSocket:
-            port: 80
-          failureThreshold: 6
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 2
-          timeoutSeconds: 6
-        volumeMounts:
-          - name: config
-            mountPath: /etc/nginx/conf.d/remote-write-proxy.conf
-            subPath: remote-write-proxy.conf
+        - name: nginx
+          image: public.ecr.aws/nginx/nginx-custom:0.0-alpine
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 400m
+              memory: 1024Mi
+            requests:
+              cpu: 300m
+              memory: 512Mi
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            failureThreshold: 10
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            successThreshold: 2
+            timeoutSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            failureThreshold: 6
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 2
+            timeoutSeconds: 6
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/conf.d/remote-write-proxy.conf
+              subPath: remote-write-proxy.conf
       volumes:
         - name: config
           configMap:

@@ -82,7 +82,7 @@ otelevents:
     merge:
       receivers:
         raw_k8s_events:
-        # we want to get all historical events for this test
+          # we want to get all historical events for this test
           max_event_age: 1h
   statefulset:
     resources:
@@ -101,7 +101,7 @@ otelcol:
 # Request less resources so that this fits on Github actions runners environment
 tracesSampler:
   config:
-  # Default otlp pipeline from values.yaml is used.    
+    # Default otlp pipeline from values.yaml is used.
     exporters:
       otlphttp:
         traces_endpoint: http://receiver-mock.receiver-mock:3000/receiver/v1/traces

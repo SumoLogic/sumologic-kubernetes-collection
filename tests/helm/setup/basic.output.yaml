@@ -22,38 +22,38 @@ spec:
       restartPolicy: OnFailure
       serviceAccountName: RELEASE-NAME-sumologic-setup
       volumes:
-      - name: setup
-        configMap:
-          name: RELEASE-NAME-sumologic-setup
-          defaultMode: 0777
-      - name: custom
-        configMap:
-          name: RELEASE-NAME-sumologic-setup-custom
-          defaultMode: 0777
-      containers:
-      - name: setup
-        image: public.ecr.aws/sumologic/kubernetes-setup:3.5.0
-        imagePullPolicy: IfNotPresent
-        command: ["/etc/terraform/setup.sh"]
-        resources:
-          limits:
-            cpu: 2000m
-            memory: 256Mi
-          requests:
-            cpu: 200m
-            memory: 64Mi
-        volumeMounts:
         - name: setup
-          mountPath: /etc/terraform
-        - name: custom
-          mountPath: /customer-scripts
-        envFrom:
-        - secretRef:
+          configMap:
             name: RELEASE-NAME-sumologic-setup
-        env:
-        - name: SUMOLOGIC_BASE_URL
-          value:
-        - name: NO_PROXY
-          value: kubernetes.default.svc
+            defaultMode: 0777
+        - name: custom
+          configMap:
+            name: RELEASE-NAME-sumologic-setup-custom
+            defaultMode: 0777
+      containers:
+        - name: setup
+          image: public.ecr.aws/sumologic/kubernetes-setup:3.5.0
+          imagePullPolicy: IfNotPresent
+          command: ["/etc/terraform/setup.sh"]
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 256Mi
+            requests:
+              cpu: 200m
+              memory: 64Mi
+          volumeMounts:
+            - name: setup
+              mountPath: /etc/terraform
+            - name: custom
+              mountPath: /customer-scripts
+          envFrom:
+            - secretRef:
+                name: RELEASE-NAME-sumologic-setup
+          env:
+            - name: SUMOLOGIC_BASE_URL
+              value:
+            - name: NO_PROXY
+              value: kubernetes.default.svc
       securityContext:
         runAsUser: 999

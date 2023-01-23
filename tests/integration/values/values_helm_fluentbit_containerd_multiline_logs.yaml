@@ -85,12 +85,12 @@ fluent-bit:
           DB                  /tail-db/tail-containers-state-sumo.db
           DB.Sync             Normal
     customParsers: |
-     [PARSER]
-         Name         containerd_multiline_pattern
-         Format       regex
-         Regex        (?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\w+ \d+ \d{2}:\d{2}:\d{2} .*)
-         Time_Key     time
-         Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
+      [PARSER]
+          Name         containerd_multiline_pattern
+          Format       regex
+          Regex        (?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\w+ \d+ \d{2}:\d{2}:\d{2} .*)
+          Time_Key     time
+          Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
     filters: |
       [FILTER]
           Name    lua

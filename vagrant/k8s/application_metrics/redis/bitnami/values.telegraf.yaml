@@ -7,7 +7,7 @@ master:
       servers = ["tcp://:test_password@localhost:6379"]
       password = "test_password"
     telegraf.influxdata.com/class: sumologic-prometheus
-    telegraf.influxdata.com/limits-cpu: '750m'
+    telegraf.influxdata.com/limits-cpu: "750m"
 slave:
   podAnnotations:
     prometheus.io/port: "9273"
@@ -17,5 +17,5 @@ slave:
       servers = ["tcp://:test_password@localhost:6379"]
       password = "test_password"
     telegraf.influxdata.com/class: sumologic-prometheus
-    telegraf.influxdata.com/limits-cpu: '750m'
+    telegraf.influxdata.com/limits-cpu: "750m"
 password: test_password

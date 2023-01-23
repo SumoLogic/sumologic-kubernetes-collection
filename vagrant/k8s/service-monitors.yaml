@@ -12,10 +12,10 @@ spec:
       app: receiver-mock
   namespaceSelector:
     matchNames:
-    - receiver-mock
+      - receiver-mock
   endpoints:
-  - port: "3000" # Same as service's port name
-    interval: 1s
+    - port: "3000" # Same as service's port name
+      interval: 1s
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -30,7 +30,7 @@ spec:
       app: avalanche
   namespaceSelector:
     matchNames:
-    - avalanche
+      - avalanche
   endpoints:
-  - port: "http-avalanche" # Same as service's port name
-    interval: 10s
+    - port: "http-avalanche" # Same as service's port name
+      interval: 10s

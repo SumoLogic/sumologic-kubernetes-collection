@@ -2,18 +2,18 @@
 rules:
   default: false
   custom:
-  - seriesQuery: 'kube_pod_info{namespace!="",pod!=""}'
-    # Renames kube_pod_info to pod_info
-    name:
-      matches: "kube_pod_info"
-      as: "pod_info"
-    resources:
-      overrides:
-        # overrides query namespace label with the namespace from kubernetes api
-        namespace: {resource: "namespace"}
-        # overrides query pod label with the pod from kubernetes api
-        pod: {resource: "pod"}
-    metricsQuery: 'sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)'
+    - seriesQuery: 'kube_pod_info{namespace!="",pod!=""}'
+      # Renames kube_pod_info to pod_info
+      name:
+        matches: "kube_pod_info"
+        as: "pod_info"
+      resources:
+        overrides:
+          # overrides query namespace label with the namespace from kubernetes api
+          namespace: { resource: "namespace" }
+          # overrides query pod label with the pod from kubernetes api
+          pod: { resource: "pod" }
+      metricsQuery: "sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)"
 
 prometheus:
   url: http://collection-kube-prometheus-prometheus.sumologic.svc

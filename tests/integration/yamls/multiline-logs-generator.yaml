@@ -38,14 +38,14 @@ metadata:
     example: multiline-logs-generator
 spec:
   containers:
-  - name: example-container-multiline-logs-long-lines
-    image: public.ecr.aws/docker/library/busybox:latest
-    args:
-    - /bin/sh
-    - /multiline-logs-generator/multiline-generator.sh
-    volumeMounts:
-    - name: multiline-logs-generator
-      mountPath: /multiline-logs-generator
+    - name: example-container-multiline-logs-long-lines
+      image: public.ecr.aws/docker/library/busybox:latest
+      args:
+        - /bin/sh
+        - /multiline-logs-generator/multiline-generator.sh
+      volumeMounts:
+        - name: multiline-logs-generator
+          mountPath: /multiline-logs-generator
   volumes:
     - name: multiline-logs-generator
       configMap:

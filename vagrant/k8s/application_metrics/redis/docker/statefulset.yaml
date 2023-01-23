@@ -18,7 +18,7 @@ spec:
           [[inputs.redis]]
           servers = ["tcp://localhost:6379"]
         telegraf.influxdata.com/class: sumologic-prometheus
-        telegraf.influxdata.com/limits-cpu: '750m'
+        telegraf.influxdata.com/limits-cpu: "750m"
         prometheus.io/scrape: "true"
         prometheus.io/port: "9273"
 

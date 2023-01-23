@@ -23,8 +23,8 @@ kube-prometheus-stack:
     prometheusSpec:
       podMetadata:
         annotations:
-          traffic.sidecar.istio.io/includeOutboundIPRanges: ""  # do not intercept any outbound traffic
-          proxy.istio.io/config: |  # configure an env variable `OUTPUT_CERTS` to write certificates to the given folder
+          traffic.sidecar.istio.io/includeOutboundIPRanges: "" # do not intercept any outbound traffic
+          proxy.istio.io/config: | # configure an env variable `OUTPUT_CERTS` to write certificates to the given folder
             proxyMetadata:
               OUTPUT_CERTS: /etc/istio-output-certs
           sidecar.istio.io/userVolumeMount: '[{"name": "istio-certs", "mountPath": "/etc/istio-output-certs"}]' # mount the shared volume at sidecar proxy
