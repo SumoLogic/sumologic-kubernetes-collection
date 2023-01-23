@@ -7,9 +7,9 @@ kube-prometheus-stack:
       dashboardproviders.yaml:
         apiVersion: 1
         providers:
-          - name: 'default'
+          - name: "default"
             orgId: 1
-            folder: ''
+            folder: ""
             type: file
             disableDeletion: false
             editable: true
@@ -17,7 +17,7 @@ kube-prometheus-stack:
               path: /var/lib/grafana/dashboards/default
     sidecar:
       image:
-        sha: ''
+        sha: ""
   prometheus:
     prometheusSpec:
       externalLabels:
@@ -139,7 +139,6 @@ fluent-bit:
           Max_Entries     1000
           Read_From_Tail  true
     ## NOTE: Requires trailing "." for fully-qualified name resolution
-
     # Filter out receiver-mock logs to prevent snowball effect
     # NOTE: kubernetes filter is copied as is in default values.yaml of fluen-bit's chart:
     # https://github.com/fluent/helm-charts/blob/fluent-bit-0.14.1/charts/fluent-bit/values.yaml#L192-L200

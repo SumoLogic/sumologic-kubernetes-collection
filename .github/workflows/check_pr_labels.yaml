@@ -10,6 +10,6 @@ jobs:
     steps:
       - uses: pmalek-sumo/verify-pr-label-action@v1.4.4
         with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
-          invalid-labels: 'do-not-merge/hold'
-          pull-request-number: '${{ github.event.pull_request.number }}'
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          invalid-labels: "do-not-merge/hold"
+          pull-request-number: "${{ github.event.pull_request.number }}"

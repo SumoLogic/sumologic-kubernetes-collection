@@ -87,38 +87,36 @@ spec:
 
 
         telegraf.influxdata.com/class: sumologic-prometheus
-        telegraf.influxdata.com/limits-cpu: '750m'
+        telegraf.influxdata.com/limits-cpu: "750m"
         prometheus.io/scrape: "true"
         prometheus.io/port: "9273"
     spec:
       containers:
-      - name: jolokia
-        image: public.ecr.aws/docker/library/tomcat:jdk8-adoptopenjdk-openj9
-        command:
-        - "/bin/bash"
-        args:
-        - "-c"
-        - >-
-          bash catalina.sh run 2>&1 | tee -a /tmp/stdout.log &
-          sleep 5 &&
-          java -jar /var/lib/jolokia_agent/jolokia-jvm-1.6.2-agent.jar start org.apache.catalina.startup.Bootstrap 2>&1 | tee -a /tmp/stdout.log &
-          tail -f /tmp/stdout.log
-        volumeMounts:
-        - mountPath: /var/lib/jolokia_agent
-          name: agent
+        - name: jolokia
+          image: public.ecr.aws/docker/library/tomcat:jdk8-adoptopenjdk-openj9
+          command:
+            - "/bin/bash"
+          args:
+            - "-c"
+            - >-
+              bash catalina.sh run 2>&1 | tee -a /tmp/stdout.log & sleep 5 && java -jar /var/lib/jolokia_agent/jolokia-jvm-1.6.2-agent.jar
+              start org.apache.catalina.startup.Bootstrap 2>&1 | tee -a /tmp/stdout.log & tail -f /tmp/stdout.log
+          volumeMounts:
+            - mountPath: /var/lib/jolokia_agent
+              name: agent
       initContainers:
-      - name: downloadagent
-        image: public.ecr.aws/itx-devops/curlimages_curl:latest
-        command:
-        - "curl"
-        args:
-        - "-L"
-        - "https://search.maven.org/remotecontent?filepath=org/jolokia/jolokia-jvm/1.6.2/jolokia-jvm-1.6.2-agent.jar"
-        - "-o"
-        - "/var/lib/jolokia_agent/jolokia-jvm-1.6.2-agent.jar"
-        volumeMounts:
-        - mountPath: /var/lib/jolokia_agent
-          name: agent
+        - name: downloadagent
+          image: public.ecr.aws/itx-devops/curlimages_curl:latest
+          command:
+            - "curl"
+          args:
+            - "-L"
+            - "https://search.maven.org/remotecontent?filepath=org/jolokia/jolokia-jvm/1.6.2/jolokia-jvm-1.6.2-agent.jar"
+            - "-o"
+            - "/var/lib/jolokia_agent/jolokia-jvm-1.6.2-agent.jar"
+          volumeMounts:
+            - mountPath: /var/lib/jolokia_agent
+              name: agent
       volumes:
-       - name: agent
-         emptyDir:
+        - name: agent
+          emptyDir:

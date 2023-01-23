@@ -11,7 +11,7 @@ otellogs:
   daemonset:
     ## Set securityContext for containers running in pods in log collector daemonset
     securityContext:
-    ## In order to reliably read logs from mounted node logging paths, we need to run as root
+      ## In order to reliably read logs from mounted node logging paths, we need to run as root
       fsGroup: 0
       runAsUser: 0
       runAsGroup: 0
@@ -41,7 +41,7 @@ otellogs:
         cpu: 100m
 
     ## Option to define priorityClassName to assign a priority class to pods.
-    priorityClassName: 'prio'
+    priorityClassName: "prio"
 
     ## Set securityContext for containers running in pods in log collector daemonset
     containers:

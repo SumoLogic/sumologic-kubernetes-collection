@@ -14,7 +14,10 @@ tests-lint: template-tests-lint integration-tests-lint
 
 .PHONY: markdown-lint
 markdown-lint:
-	prettier --check "**/*.md"
+	markdownlint --config .markdownlint.jsonc \
+		deploy/docs \
+		docs \
+		CHANGELOG.md
 
 .PHONY: helm-lint
 helm-lint: helm-version

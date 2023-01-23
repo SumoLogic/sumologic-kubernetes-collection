@@ -28,7 +28,7 @@ sumologic:
 
     systemd:
       sourceName: my_systemd_sourceName
-      sourceCategory:  my_systemd_sourceCategory
+      sourceCategory: my_systemd_sourceCategory
       sourceCategoryPrefix: my_systemd_sourceCategoryPrefix
       sourceCategoryReplaceDash: my_systemd_sourceCategoryReplaceDash
       excludeFacilityRegex: my_systemd_excludeFacilityRegex
@@ -38,7 +38,7 @@ sumologic:
 
     defaultFluentd:
       sourceName: my_defaultFluentd_sourceName
-      sourceCategory:  my_defaultFluentd_sourceCategory
+      sourceCategory: my_defaultFluentd_sourceCategory
       sourceCategoryPrefix: my_defaultFluentd_sourceCategoryPrefix
       sourceCategoryReplaceDash: my_defaultFluentd_sourceCategoryReplaceDash
       excludeFacilityRegex: my_defaultFluentd_excludeFacilityRegex

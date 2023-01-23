@@ -1,6 +1,6 @@
 otelcolInstrumentation:
   sourceMetadata:
-      excludeNamespaceRegex: "kube\\s+"
-      excludePodRegex: "^foo.*"
-      excludeContainerRegex: "[123+]bar$|xyz"
-      excludeHostRegex: hhh123
+    excludeNamespaceRegex: "kube\\s+"
+    excludePodRegex: "^foo.*"
+    excludeContainerRegex: "[123+]bar$|xyz"
+    excludeHostRegex: hhh123

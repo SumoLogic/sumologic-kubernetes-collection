@@ -21,7 +21,7 @@ otelevents:
         memory: 777Mi
         cpu: 100m
     ## Option to define priorityClassName to assign a priority class to pods.
-    priorityClassName: 'prio'
+    priorityClassName: "prio"
 
     ## Add custom labels only to logs sts pods
     podLabels:

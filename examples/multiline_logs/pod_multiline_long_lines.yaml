@@ -4,23 +4,24 @@ metadata:
   name: example-pod-multiline-logs-long-lines
 spec:
   containers:
-  - name: example-container-multiline-logs-long-lines
-    image: public.ecr.aws/docker/library/busybox:latest
-    args:
-    - /bin/sh
-    - -c
-    - >
-      while true; do
-        LONG_STRING="$(cat /dev/urandom | tr -dc ''a-z0-9'' | head -c 30000)"
-        echo "2022-02-08T20:53:28.621+0000 1st single line..."
-        echo "2022-02-08T20:53:29.622+0000 2nd single line..."
-        echo "2022-02-08T20:53:30.623+0000 Exception in thread "main" java.lang.RuntimeException: Something has gone wrong, aborting! ${LONG_STRING} end of the 1st long line
-          at com.myproject.module.MyProject.badMethod(MyProject.java:22)
-          at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)
-          at com.myproject.module.MyProject.anotherMethod(MyProject.java:14)
-          at com.myproject.module.MyProject.someMethod(MyProject.java:10)"
-        echo "    at com.myproject.module.MyProject.verylongLine(MyProject.java:100000) ${LONG_STRING} end of the 2nd long line"
-        echo "    at com.myproject.module.MyProject.main(MyProject.java:6)
-      2022-02-08T20:53:31.624+0000 another line..."
-        sleep 5
-      done
+    - name: example-container-multiline-logs-long-lines
+      image: public.ecr.aws/docker/library/busybox:latest
+      args:
+        - /bin/sh
+        - -c
+        - >
+          while true; do
+            LONG_STRING="$(cat /dev/urandom | tr -dc ''a-z0-9'' | head -c 30000)"
+            echo "2022-02-08T20:53:28.621+0000 1st single line..."
+            echo "2022-02-08T20:53:29.622+0000 2nd single line..."
+            echo "2022-02-08T20:53:30.623+0000 Exception in thread "main" java.lang.RuntimeException: Something has gone wrong, aborting!
+          ${LONG_STRING} end of the 1st long line
+              at com.myproject.module.MyProject.badMethod(MyProject.java:22)
+              at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)
+              at com.myproject.module.MyProject.anotherMethod(MyProject.java:14)
+              at com.myproject.module.MyProject.someMethod(MyProject.java:10)"
+            echo "    at com.myproject.module.MyProject.verylongLine(MyProject.java:100000) ${LONG_STRING} end of the 2nd long line"
+            echo "    at com.myproject.module.MyProject.main(MyProject.java:6)
+          2022-02-08T20:53:31.624+0000 another line..."
+            sleep 5
+          done
