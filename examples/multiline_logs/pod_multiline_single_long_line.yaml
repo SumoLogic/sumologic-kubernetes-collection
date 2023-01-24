@@ -9,13 +9,12 @@ spec:
       args:
         - /bin/sh
         - -c
-        - >
+        - |
           while true; do
             LONG_STRING="$(cat /dev/urandom | tr -dc ''a-z0-9'' | head -c 30000)"
             echo "2022-02-08T20:53:28.621+0000 1st single line..."
             echo "2022-02-08T20:53:29.622+0000 2nd single line..."
-            echo "2022-02-08T20:53:30.623+0000 Exception in thread "main" java.lang.RuntimeException: Something has gone wrong, aborting!
-          ${LONG_STRING} end of the 1st long line
+            echo "2022-02-08T20:53:30.623+0000 Exception in thread "main" java.lang.RuntimeException: Something has gone wrong, aborting! ${LONG_STRING} end of the 1st long line
               at com.myproject.module.MyProject.badMethod(MyProject.java:22)
               at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)
               at com.myproject.module.MyProject.anotherMethod(MyProject.java:14)
