@@ -133,8 +133,8 @@ kubectl describe pods POD_NAME
 
 To view Prometheus logs:
 
-```
-kubectl logs prometheus-collection-kube-prometheus-prometheus-0 prometheus -f
+```sh
+kubectl -n "${NAMESPACE}" logs -l app.kubernetes.io/name=prometheus --container prometheus -f
 ```
 
 Where `collection` is the `helm` release name.
@@ -238,7 +238,12 @@ For kubernetes services you can use the following way:
 First run the following command to expose the Prometheus UI:
 
 ```sh
-kubectl port-forward prometheus-collection-kube-prometheus-prometheus-0 8080:9090
+$ kubectl -n "${NAMESPACE}" get pod -l app.kubernetes.io/name=prometheus
+NAME                                                 READY   STATUS    RESTARTS   AGE
+prometheus-collection-kube-prometheus-prometheus-0   2/2     Running   0          13m
+$ kubectl -n "${NAMESPACE}" port-forward prometheus-collection-kube-prometheus-prometheus-0 8080:9090
+Forwarding from 127.0.0.1:8080 -> 9090
+Forwarding from [::1]:8080 -> 9090
 ```
 
 Then, in your browser, go to `localhost:8080`. You should be in the Prometheus UI now.
