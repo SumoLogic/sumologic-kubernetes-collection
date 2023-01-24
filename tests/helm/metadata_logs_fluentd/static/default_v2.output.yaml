@@ -98,7 +98,7 @@ data:
     exclude_container_regex ""
     exclude_host_regex ""
     per_container_annotations_enabled false
-    per_container_annotation_prefixes
+    per_container_annotation_prefixes []
   logs.output.conf: |
     data_type logs
     log_key log
