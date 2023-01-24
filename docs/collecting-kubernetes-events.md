@@ -2,12 +2,11 @@
 
 You can collect Kubernetes events from the Kubernetes API server and send them to Sumo Logic as logs.
 
-This feature is enabled by default.
-To disable it, set the `sumologic.events.enabled` property to `false`.
+This feature is enabled by default. To disable it, set the `sumologic.events.enabled` property to `false`.
 
-The event collector collects events by requesting all Kubernetes events from the Kubernetes API server.
-Note that the resource API used is [core v1][event_v1_core] and not [events.k8s.io/v1][event_events_k8s_io].
-The events are sent as logs in their original JSON format to Sumo Logic.
+The event collector collects events by requesting all Kubernetes events from the Kubernetes API server. Note that the resource API used is
+[core v1][event_v1_core] and not [events.k8s.io/v1][event_events_k8s_io]. The events are sent as logs in their original JSON format to Sumo
+Logic.
 
 Example Kubernetes event:
 
@@ -69,9 +68,9 @@ sumologic:
 
 ### Customizing persistence
 
-By default, the event collector provisions and uses a Kubernetes PersistentVolume to persist some information over service restarts.
-In particular, the collector remembers the most recently processed Event this way, thus avoiding having to reprocess past Events
-after restart. The Persistent Volume is also used to buffer Event data if the remote destination is inaccessible.
+By default, the event collector provisions and uses a Kubernetes PersistentVolume to persist some information over service restarts. In
+particular, the collector remembers the most recently processed Event this way, thus avoiding having to reprocess past Events after restart.
+The Persistent Volume is also used to buffer Event data if the remote destination is inaccessible.
 
 Persistence can be customized via the `sumologic.events.persistence` section:
 
@@ -86,13 +85,14 @@ sumologic:
 
 #### Disabling persistence
 
-Persistence can be disabled by setting `sumologic.events.persistence.enabled` to `false`. Keep in mind that doing so will cause
-either duplication or data loss whenever the collector is restarted. By default, the collector reads Events 1 minute into the past
-from its start time.
+Persistence can be disabled by setting `sumologic.events.persistence.enabled` to `false`. Keep in mind that doing so will cause either
+duplication or data loss whenever the collector is restarted. By default, the collector reads Events 1 minute into the past from its start
+time.
 
 ### Configuring the event provider
 
-Event collection is performed by the provider specified in `sumologic.events.provider`. This can be either `otelcol` for OpenTelemetry Collector (which is the default) or `fluentd` for Fluentd. Note that Fluentd is deprecated and will be removed in the next major release.
+Event collection is performed by the provider specified in `sumologic.events.provider`. This can be either `otelcol` for OpenTelemetry
+Collector (which is the default) or `fluentd` for Fluentd. Note that Fluentd is deprecated and will be removed in the next major release.
 You can switch the provider by setting the property:
 
 ```yaml
@@ -101,7 +101,8 @@ sumologic:
     provider: fluentd
 ```
 
-To change provider-specific configuration, see the following sections of the [values.yaml][values_yaml] file, depending on the provider used:
+To change provider-specific configuration, see the following sections of the [values.yaml][values_yaml] file, depending on the provider
+used:
 
 - `otelevents` for OpenTelemetry Collector provider
 - `fluentd.events` for Fluentd provider

@@ -1,7 +1,7 @@
 # Terraform
 
-Terraform is used by sumologic-kubernetes-collection during the setup process
-to automatically create HTTP sources and store their URLs in the Kubernetes secret.
+Terraform is used by sumologic-kubernetes-collection during the setup process to automatically create HTTP sources and store their URLs in
+the Kubernetes secret.
 
 We are using two providers to perform those actions:
 
@@ -10,11 +10,9 @@ We are using two providers to perform those actions:
 
 ## Kubernetes Terraform provider
 
-[Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/)
-is responsible for creating the secret with the created HTTP source endpoints during setup process.
-The default configuration is expected to work in most cases, however, for self-hosted
-Kubernetes clusters there can be a few exceptions.
-For these cases we expose the provider configuration in `values.yaml`.
+[Kubernetes Terraform provider](https://www.terraform.io/docs/providers/kubernetes/) is responsible for creating the secret with the created
+HTTP source endpoints during setup process. The default configuration is expected to work in most cases, however, for self-hosted Kubernetes
+clusters there can be a few exceptions. For these cases we expose the provider configuration in `values.yaml`.
 
 ```yaml
 sumologic:
@@ -28,12 +26,12 @@ sumologic:
     # insecure:
     # client_certificate:
     # client_key:
-    cluster_ca_certificate: "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/ca.crt\")}"
+    cluster_ca_certificate: '${file("/var/run/secrets/kubernetes.io/serviceaccount/ca.crt")}'
     # config_path:
     # config_context:
     # config_context_auth_info:
     # config_context_cluster:
-    token: "${file(\"/var/run/secrets/kubernetes.io/serviceaccount/token\")}"
+    token: '${file("/var/run/secrets/kubernetes.io/serviceaccount/token")}'
     # exec:
     #   api_version:
     #   command:
@@ -45,8 +43,8 @@ sumologic:
 
 ## Sumo Logic Terraform provider
 
-The [Sumo Logic Terraform provider](https://www.terraform.io/docs/providers/sumologic/) creates your HTTP sources.
-The related configuration section in the `values.yaml` file is under `sumologic.collector.sources`:
+The [Sumo Logic Terraform provider](https://www.terraform.io/docs/providers/sumologic/) creates your HTTP sources. The related configuration
+section in the `values.yaml` file is under `sumologic.collector.sources`:
 
 ```yaml
 sumologic:
@@ -59,18 +57,18 @@ sumologic:
         example-source: # source reference name
           name: # name of the source (visible on the sumologic platform)
           config-name: # name which be used in secret to store the url. This is backward-compatibility option
-          category: # this is backward compatibility property. It's deprecated and it's going to be removed in version 2.0
-                    # Sets source category to "${var.cluster_name}/${local.default_events_source}" if true
-                    # To overwrite category, please use `sumologic.collector.sources[].properties.category`
-          properties: # Additional Terraform properties like fields or content_type
-                      # ref: https://registry.terraform.io/providers/SumoLogic/sumologic/latest/docs/resources/http_source#argument-reference
+          category:# this is backward compatibility property. It's deprecated and it's going to be removed in version 2.0
+            # Sets source category to "${var.cluster_name}/${local.default_events_source}" if true
+            # To overwrite category, please use `sumologic.collector.sources[].properties.category`
+          properties:# Additional Terraform properties like fields or content_type
+            # ref: https://registry.terraform.io/providers/SumoLogic/sumologic/latest/docs/resources/http_source#argument-reference
 ```
 
 ### Usage
 
-Source endpoints are exposed in the metadata enrichment service as environmental variables.
-The variable name is built using the schema `SUMO_ENDPOINT_<source name>_<source type>_SOURCE`,
-where `<source name>` and `<source type>` are in uppercase and dashes are replaced with underscores.
+Source endpoints are exposed in the metadata enrichment service as environmental variables. The variable name is built using the schema
+`SUMO_ENDPOINT_<source name>_<source type>_SOURCE`, where `<source name>` and `<source type>` are in uppercase and dashes are replaced with
+underscores.
 
 Examples:
 
@@ -79,14 +77,15 @@ Examples:
 
 ### Properties
 
-You can set all of the source [properties](https://registry.terraform.io/providers/SumoLogic/sumologic/latest/docs/resources/http_source#argument-reference)
-using `sumologic.collector.sources.<events,logs,metrics,traces>.<source ref name>.properties`.
+You can set all of the source
+[properties](https://registry.terraform.io/providers/SumoLogic/sumologic/latest/docs/resources/http_source#argument-reference) using
+`sumologic.collector.sources.<events,logs,metrics,traces>.<source ref name>.properties`.
 
 #### Processing Rules
 
-You can add [Processing Rules](https://help.sumologic.com/docs/send-data/collection/processing-rules) to an HTTP source via `user-values.yaml`.
-Below is an example of an exclude rule to filter `DEBUG` log messages.
-All logs from Kubernetes (Systemd, container, and custom logs) will have this filter applied.
+You can add [Processing Rules](https://help.sumologic.com/docs/send-data/collection/processing-rules) to an HTTP source via
+`user-values.yaml`. Below is an example of an exclude rule to filter `DEBUG` log messages. All logs from Kubernetes (Systemd, container, and
+custom logs) will have this filter applied.
 
 ```yaml
 sumologic:
@@ -110,8 +109,8 @@ sumologic:
 
 #### Fields
 
-The configuration snippet below configures two [fields](https://help.sumologic.com/docs/manage/fields/),
-(`node` and `deployment`) for the default logs source:
+The configuration snippet below configures two [fields](https://help.sumologic.com/docs/manage/fields/), (`node` and `deployment`) for the
+default logs source:
 
 ```yaml
 sumologic:

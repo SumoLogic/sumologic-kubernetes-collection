@@ -26,8 +26,8 @@ Fluent Bit and Fluentd are going to be removed and no longer used.
 
 Prometheus is going to be deprecated and replaced with OpenTelemetry Collector by default.
 
-We are also going to move metadata enrichment closer to it's sources,
-e.g. for logs it's going to be performed by OpenTelemetry Collector daemonset (node agent)
+We are also going to move metadata enrichment closer to it's sources, e.g. for logs it's going to be performed by OpenTelemetry Collector
+daemonset (node agent)
 
 ## Helm Chart v5
 

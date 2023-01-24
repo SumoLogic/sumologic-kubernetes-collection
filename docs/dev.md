@@ -5,7 +5,7 @@ This document contains information helpful for developers.
 ## Installation of non-official Helm charts
 
 | DISCLAIMER                                                                                                                                                                 |
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | We recommend testing dev releases on non-production clusters. <br/> These releases are generated continuously from contributions to this repo and may not be fully tested. |
 
 Non-official Helm charts are available in [dev] directory on [gh-pages] branch.

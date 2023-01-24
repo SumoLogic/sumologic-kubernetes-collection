@@ -2,8 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
@@ -48,8 +48,7 @@ See the [migration guide][v3_migration_guide] for details.
 - feat(metrics): add `sumologic.metrics.otelcol.extraProcessors` [#2724] [#2780]
 - feat: add otellogs.additionDaemonSets configuration [#2750]
 - chore: upgrade Fluentd to v1.15.3-sumo-0 [#2745]
-  - This also upgrades Ruby from `v2.7` to `v3.1` and some other dependencies.
-    See [v1.15.3-sumo-0] for more.
+  - This also upgrades Ruby from `v2.7` to `v3.1` and some other dependencies. See [v1.15.3-sumo-0] for more.
 - feat: adjust average utilization for metadata autoscaling [#2744]
 - chore: upgrade otelcol to 0.69.0-sumo-0 [#2755] [#2791]
 - chore: remove support for AKS 1.22 [#2756]
@@ -65,8 +64,7 @@ See the [migration guide][v3_migration_guide] for details.
 
 - fix(logs): remove unnecessary metadata [#2761]
 - fix(logs): make `excludeHostRegex` consistent between Otelcol and Fluentd [#2771]
-  - The `sumologic.logs.container.excludeHostRegex` should filter on the Kubernetes node name,
-    to be consistent with Fluentd and chart v2.
+  - The `sumologic.logs.container.excludeHostRegex` should filter on the Kubernetes node name, to be consistent with Fluentd and chart v2.
 - fix(logs): correctly handle newlines [#2805]
   - Fixes [#2802], [#2803]
 - fix(logs): make built-in metadata consistent between fluentd and otel [#2801]
@@ -126,11 +124,11 @@ See the [migration guide][v3_migration_guide] for details.
 
 ### Released 2022-12-02
 
-  If you use custom configuration for Telegraf Operator Helm Chart with cert-manager enabled (`telegraf-operator.certManager.enable=true`) please note that
-  in this release Telegraf Operator Helm Chart is changed to 1.3.10 which uses the cert-manager apiVersion `cert-manager.io/v1`,
-  previous apiVersion `cert-manager.io/v1alpha2` was deprecated in cert-manager [1.4][cert-manager-1.4]
-  and removed in cert-manager [1.6][cert-manager-1.6],
-  for differences between Telegraf Operator Helm Chart 1.3.5 and Telegraf Operator Helm Chart 1.3.10 please see [this][telegraf_operator_comapare_1.3.5_and_1.3.10].
+If you use custom configuration for Telegraf Operator Helm Chart with cert-manager enabled (`telegraf-operator.certManager.enable=true`)
+please note that in this release Telegraf Operator Helm Chart is changed to 1.3.10 which uses the cert-manager apiVersion
+`cert-manager.io/v1`, previous apiVersion `cert-manager.io/v1alpha2` was deprecated in cert-manager [1.4][cert-manager-1.4] and removed in
+cert-manager [1.6][cert-manager-1.6], for differences between Telegraf Operator Helm Chart 1.3.5 and Telegraf Operator Helm Chart 1.3.10
+please see [this][telegraf_operator_comapare_1.3.5_and_1.3.10].
 
 ### Breaking Changes
 
@@ -275,7 +273,8 @@ See the [migration guide][v3_migration_guide] for details.
 [#2664]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2664
 [#2653]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2653
 [v3.0.0-beta.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...v3.0.0-beta.0
-[telegraf_operator_comapare_1.3.5_and_1.3.10]: https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
+[telegraf_operator_comapare_1.3.5_and_1.3.10]:
+  https://github.com/influxdata/helm-charts/compare/telegraf-operator-1.3.5...telegraf-operator-1.3.10
 [cert-manager-1.4]: https://github.com/cert-manager/cert-manager/releases/tag/v1.4.0
 [cert-manager-1.6]: https://github.com/cert-manager/cert-manager/releases/tag/v1.6.0
 
@@ -349,9 +348,10 @@ See the [migration guide][v3_migration_guide] for details.
 
 ### Released 2022-07-29
 
-This release changes the OpenTelemetry Collector `Traces` [exporters configuration](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.14.0/deploy/helm/sumologic/values.yaml#L3428)
-for `otelagent` component. Collecting metrics and logs from OpenTelemetry Collector `Traces` is added.
-This change affects you only if you have enabled traces with `sumologic.traces.enabled: true`.
+This release changes the OpenTelemetry Collector `Traces`
+[exporters configuration](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.14.0/deploy/helm/sumologic/values.yaml#L3428)
+for `otelagent` component. Collecting metrics and logs from OpenTelemetry Collector `Traces` is added. This change affects you only if you
+have enabled traces with `sumologic.traces.enabled: true`.
 
 ### Changed
 
@@ -405,9 +405,9 @@ This change affects you only if you have enabled traces with `sumologic.traces.e
 
 ### Released 2022-07-06
 
-This release changes the OpenTelemetry Collector `Traces` service endpoint `CHART_NAME-sumologic-otelcol.NAMESPACE`
-to `deprecated`. Service will still work and point to `CHART_NAME-sumologic-otelagent.NAMESPACE`.
-This change affects you only if you have enabled traces with `sumologic.traces.enabled: true`.
+This release changes the OpenTelemetry Collector `Traces` service endpoint `CHART_NAME-sumologic-otelcol.NAMESPACE` to `deprecated`. Service
+will still work and point to `CHART_NAME-sumologic-otelagent.NAMESPACE`. This change affects you only if you have enabled traces with
+`sumologic.traces.enabled: true`.
 
 ### Added
 
@@ -446,14 +446,15 @@ This change affects you only if you have enabled traces with `sumologic.traces.e
 
 ### Released 2022-06-09
 
-This release changes the OpenTelemetry Collector binary used for traces collection ([#2334]).
-This change affects you only if you have enabled traces with `sumologic.traces.enabled: true`
-AND you have customized the configuration in the `otelcol.config.processors.source` property.
-If you have modified these properties, make sure to compare the [new configuration][source_processor_new_config]
-with the [old configuration][source_processor_old_config] and apply corresponding changes to your config.
+This release changes the OpenTelemetry Collector binary used for traces collection ([#2334]). This change affects you only if you have
+enabled traces with `sumologic.traces.enabled: true` AND you have customized the configuration in the `otelcol.config.processors.source`
+property. If you have modified these properties, make sure to compare the [new configuration][source_processor_new_config] with the [old
+configuration][source_processor_old_config] and apply corresponding changes to your config.
 
-[source_processor_old_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.9.1/deploy/helm/sumologic/values.yaml#L3476-L3492
-[source_processor_new_config]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.10.0/deploy/helm/sumologic/values.yaml#L3507-L3522
+[source_processor_old_config]:
+  https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.9.1/deploy/helm/sumologic/values.yaml#L3476-L3492
+[source_processor_new_config]:
+  https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/v2.10.0/deploy/helm/sumologic/values.yaml#L3507-L3522
 
 ### Added
 
@@ -546,7 +547,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - fix(otellogs): set resources on Otelcol logs collector daemonset [#2291]
 
-[v2.8.1]:  https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...v2.8.1
+[v2.8.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.8.0...v2.8.1
 
 ## [v2.8.0]
 
@@ -614,8 +615,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 ### Fixed
 
 - fix: switch to ECR for the busybox image [#2255][#2255]
-- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-2`,
-  it is Fluent Bit 1.6.10 with updated dependencies,
+- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-2`, it is Fluent Bit 1.6.10 with updated dependencies,
   image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2260][#2260]
 
 [#2255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2255
@@ -752,8 +752,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 ### Changed
 
-- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-1`,
-  it is Fluent Bit 1.6.10 with updated dependencies,
+- chore: change Fluent Bit image to `public.ecr.aws/sumologic/fluent-bit:1.6.10-sumo-1`, it is Fluent Bit 1.6.10 with updated dependencies,
   image repository: https://github.com/SumoLogic/fluent-bit-docker-image [#2131][#2131]
 
 ### Fixed
@@ -919,7 +918,6 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - fix(helm): add job and cronjob to clusterrole's permission set [#1994][#1994]
 
 [#1994]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1994
-
 [v2_3_2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.2
 
 ## [v2.3.1][v2_3_1] - 2021-12-14
@@ -957,8 +955,8 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
   - Move insecure parameter to separate configuration variable
   - Fix OTLP/HTTP metadata tagging
-  - Update [Cascading Filter processor][v0.38.1-cfp] to a new version which adds new features such filtering
-    by number of errors and switches to a new, [easier to use config format][v0.38.1-cfp-help]
+  - Update [Cascading Filter processor][v0.38.1-cfp] to a new version which adds new features such filtering by number of errors and
+    switches to a new, [easier to use config format][v0.38.1-cfp-help]
   - Change the default number of traces for Cascading Filter to 200000
 
 ### Fixed
@@ -966,7 +964,8 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - Reduced the number of API server calls from the metrics metadata enrichment plugin by a significant amount [#1927][#1927]
 
 [v2_3_0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
-[v0.38.1-cfp]: https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
+[v0.38.1-cfp]:
+  https://github.com/SumoLogic/opentelemetry-collector-contrib/tree/v0.38.1-sumo/processor/cascadingfilterprocessor#cascading-filter-processor
 [v0.38.1-cfp-help]: https://help.sumologic.com/docs/apm/traces/advanced-configuration/filter-shape-tracing-data
 [#1907]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1907
 [#1906]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1906
@@ -1006,29 +1005,25 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - Add support otelcol for metrics pipeline [#1702][#1702]
 - Add otelcol as alternative logs metadata provider [#1697][#1697]
 
-  Adds new `values.yaml` property `sumologic.logs.metadata.provider` and associated configuration properties
-  to replace Fluentd with Sumo Logic Distro of OpenTelemetry Collector for logs metadata enrichment.
+  Adds new `values.yaml` property `sumologic.logs.metadata.provider` and associated configuration properties to replace Fluentd with Sumo
+  Logic Distro of OpenTelemetry Collector for logs metadata enrichment.
 
 - otelcol: add systemd logs pipeline [#1767][#1767]
 
-  - This change introduces logs metadata enrichment with Sumo Open Telemetry
-    distro for systemd logs (when `sumologic.logs.metadata.provider` is set to
-    `otelcol`)
+  - This change introduces logs metadata enrichment with Sumo Open Telemetry distro for systemd logs (when
+    `sumologic.logs.metadata.provider` is set to `otelcol`)
 
-    One notable change comparing the new behavior to `fluentd` metadata enrichment
-    is that setting source name in `sourceprocessor` configuration is respected
-    i.e.  whatever is set in
-    `otelcol.metadata.logs.config.processors.source/systemd.source_name` will be
-    set as source name for systemd logs.
+    One notable change comparing the new behavior to `fluentd` metadata enrichment is that setting source name in `sourceprocessor`
+    configuration is respected i.e. whatever is set in `otelcol.metadata.logs.config.processors.source/systemd.source_name` will be set as
+    source name for systemd logs.
 
-    The old behavior is being retained i.e. extracting the source name from
-    `fluent.tag` using `attributes/extract_systemd_source_name_from_fluent_tag`
-    processor. For instance, for `fluent.tag=host.docker.service`, source name
-    will be set to `docker`.
+    The old behavior is being retained i.e. extracting the source name from `fluent.tag` using
+    `attributes/extract_systemd_source_name_from_fluent_tag` processor. For instance, for `fluent.tag=host.docker.service`, source name will
+    be set to `docker`.
 
-    In order to set the source name to something else please change
-    `otelcol.metadata.logs.config.processors.source/systemd:.source_name`
+    In order to set the source name to something else please change `otelcol.metadata.logs.config.processors.source/systemd:.source_name`
     configuration value.
+
 - feat(otelcol/logs/kubelet): add kubelet logs pipeline [#1772][#1772]
 - Enable custom labels for events, metrics and logs services [#1550][#1550]
 - Add remote write configs for Kafka Metrics [#1554][#1554]
@@ -1061,8 +1056,8 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - feat(deploy/otc): ensure backward compatibility for tpl change [#1721][#1721]
 - fix(setup): hide custom-configmap if setup is disabled [#1804][#1804]
-- fix: don't include fluentd.logs.containers.excludeNamespaceRegex in ns exclusion regex
-  when collectionMonitoring is disabled [#1852][#1852]
+- fix: don't include fluentd.logs.containers.excludeNamespaceRegex in ns exclusion regex when collectionMonitoring is disabled
+  [#1852][#1852]
 - fix: use fluentd.excludeNamespaces helm template, also for tracing config [#1857][#1857]
 - Limited k8s scrape [#1861][#1861]
 
@@ -1275,7 +1270,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - vagrant: get-kubeconfig: add verbose for moving old config [#1488]
 - Upgrade Fluentd image to 1.12.0-sumo-2 [#1493]
 - events: add overrideOutputConf property [#1497]
-- Fix match fluent.** deprecation warning [#1498]
+- Fix match fluent.\*\* deprecation warning [#1498]
 - feat: Add source category prefix annotation [#1501]
 - fluent-bit: disable keepalive [#1495]
 - Add Tailing Sidecar Operator as Helm Chart dependency [#1507]
@@ -1495,7 +1490,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 ### Changed
 
 - Add check for vagrant disksize plugin in Vagrantfile [#996]
-- Allow HostsPorts for openshift (required for  node-exporter) [#997]
+- Allow HostsPorts for openshift (required for node-exporter) [#997]
 - Extract unit tests from build.sh and run as separate build stage [#974]
 - Upgrade fluent-plugin-kubernetes_metadata_filter from 2.4.1 to 2.5.2 [#998]
 - Add known k8s api callers to vagrant values.yaml and upgrade falco chart to 1.5.0 [#1003]
@@ -2126,12 +2121,12 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 ### Changed
 
-- ingest retry succeeded logs and expose param in values file  [#671]
+- ingest retry succeeded logs and expose param in values file [#671]
 - Update falco helm chart [#670]
 - Update fluent-bit helm chart [#669]
 - Update metrics server helm chart [#668]
 - Update prometheus operator helm chart [#667]
-- Add dynamic generation of terraform kubernetes object  [#675]
+- Add dynamic generation of terraform kubernetes object [#675]
 - List metrics forwarded to the sumologic [#629]
 - Set `Ignore_Older` to `24h` by default to prevent older logs from being ingested on install. [#664]
 - Expose Scrape Intervals in values.yaml to make it easier to adjust. [#665]
@@ -2415,8 +2410,8 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - Bump otelcol to newer version [#510]
 - Release v0.17 backports [#515]
 - add sed command to replace cluster name for non-helm users [#524]
-- Hostname and _sourceHost fix for v0.17 [#530]
-- Revert the _sourceHost changes [#535]
+- Hostname and \_sourceHost fix for v0.17 [#530]
+- Revert the \_sourceHost changes [#535]
 
 [v0_17_1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v0.17.1
 [#503]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/503
@@ -2556,7 +2551,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 ### Changed
 
 - use proper heading format [#371]
-- Prometheus fix for k8s 1.16  [#370]
+- Prometheus fix for k8s 1.16 [#370]
 - fix typo in prometheus metrics regex [#373]
 - freno-helm3 [#369]
 - Modify regexes to match both deprecated and new metrics in 1.16 [#372]
@@ -2576,7 +2571,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - Revert PV and statefulset related changes [#390]
 - Change cache refresh interval to 30 min [#394]
 - Add ebpf enable to helm_installation for GKE [#393]
-- Increase the default number of output threads to  8 [#396]
+- Increase the default number of output threads to 8 [#396]
 - add generic fluentd pipeline to catch all logs [#403]
 - comment out libsonnet stuff [#410]
 - Add common configuration and troubleshooting tasks [#408]
@@ -2771,7 +2766,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - Re-add wget dependency for setup.sh script [#251]
 - bump output plugin version to 1.6.1 [#252]
 - Fix grafana from starting via Helm deployment [#253]
-- Fix etcd_request_cache_(get|add)_latencies_summary to wildcard match [#254]
+- Fix etcd_request_cache\_(get|add)\_latencies_summary to wildcard match [#254]
 - Add NodeSelector and Tolerations to both deployments [#256]
 - Cut release 0.10.0 [#258]
 
@@ -2883,7 +2878,8 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 
 - Remove symlinks to legacy helm override files [#154]
 - SUMO-117653: Change docker image pull policy to IfNotPresent [#165]
-- fix labels, disable Fluent-Bit Helm Chart serviceMonitor, use Prometheus Operator additionalServiceMonitors to work around expectation that Prometheus Operator is already installed. [#159]
+- fix labels, disable Fluent-Bit Helm Chart serviceMonitor, use Prometheus Operator additionalServiceMonitors to work around expectation
+  that Prometheus Operator is already installed. [#159]
 - Git ignore Helm chart deps [#166]
 - Migrate kubernetes_sumologic filter plugin [#167]
 - SUMO-117261: Skip using TRAVIS_COMMIT_RANGE for yaml detection [#168]
@@ -3016,7 +3012,7 @@ with the [old configuration][source_processor_old_config] and apply correspondin
 - Byi deploy metrics [#6]
 - rename `_sourceType` to `_origin` [#9]
 - space_as parameter [#7]
-- move _origin to meta tag [#10]
+- move \_origin to meta tag [#10]
 - Byi helm yaml [#11]
 - select metrics [#12]
 - Split metrics to multiple http sources [#13]

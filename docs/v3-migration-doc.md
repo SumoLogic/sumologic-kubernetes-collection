@@ -1,6 +1,7 @@
 # Kubernetes Collection `v3.0.0` - Breaking Changes
 
 <!-- TOC -->
+
 - [Important changes](#important-changes)
   - [OpenTelemetry Collector](#opentelemetry-collector)
   - [kube-prometheus-stack upgrade](#kube-prometheus-stack-upgrade)
@@ -30,8 +31,7 @@
 - [Full list of changes](#full-list-of-changes)
 <!-- /TOC -->
 
-Based on feedback from our users, we will be introducing several changes
-to the Sumo Logic Kubernetes Collection solution.
+Based on feedback from our users, we will be introducing several changes to the Sumo Logic Kubernetes Collection solution.
 
 This document describes the major changes and the necessary migration steps.
 
@@ -39,9 +39,9 @@ This document describes the major changes and the necessary migration steps.
 
 ### OpenTelemetry Collector
 
-The new version replaces both Fluentd and Fluent Bit with the OpenTelemetry Collector. In the majority of cases, this doesn't
-require any manual intervention. However, custom processing in Fluentd or Fluent Bit will need to be ported to the OpenTelemetry Collector
-configuration format. See below for details.
+The new version replaces both Fluentd and Fluent Bit with the OpenTelemetry Collector. In the majority of cases, this doesn't require any
+manual intervention. However, custom processing in Fluentd or Fluent Bit will need to be ported to the OpenTelemetry Collector configuration
+format. See below for details.
 
 ### kube-prometheus-stack upgrade
 
@@ -78,8 +78,8 @@ You can get your current configuration from the cluster by running:
 helm get values --namespace "${NAMESPACE}" --output yaml "${HELM_RELEASE_NAME}" > user-values.yaml
 ```
 
-Afterwards, you can download the migration tool and run it directly.
-Set the OS and ARCH variables to your operating system and architecture.
+Afterwards, you can download the migration tool and run it directly. Set the OS and ARCH variables to your operating system and
+architecture.
 
 ```bash
 OS=linux ARCH=amd64; curl -L "https://github.com/SumoLogic/sumologic-kubernetes-tools/releases/download/v2.19.0/update-collection-v3-sumo-${OS}_${ARCH}" -o update-collection-v3
@@ -97,11 +97,10 @@ docker run \
   update-collection-v3 -in /values/user-values.yaml -out /values/new-values.yaml
 ```
 
-You should have `new-values.yaml` in your working directory which can be used for the upgrade. Pay attention
-to the migration script output - it may notify you of additional manual steps you need to carry out.
+You should have `new-values.yaml` in your working directory which can be used for the upgrade. Pay attention to the migration script
+output - it may notify you of additional manual steps you need to carry out.
 
-Before you run the upgrade command, please review the manual steps below, and carry out the ones
-relevant to your use case.
+Before you run the upgrade command, please review the manual steps below, and carry out the ones relevant to your use case.
 
 ### Metrics migration
 
@@ -175,14 +174,14 @@ kubectl apply \
   --filename -
 ```
 
-  otherwise you'll get an error:
+otherwise you'll get an error:
 
-  ```text
-  Error: UPGRADE FAILED: cannot patch "collection-prometheus-node-exporter" with kind DaemonSet: DaemonSet.apps "collection-prometheus-node-exporter" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"prometheus-node-exporter"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
-  ```
+```text
+Error: UPGRADE FAILED: cannot patch "collection-prometheus-node-exporter" with kind DaemonSet: DaemonSet.apps "collection-prometheus-node-exporter" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"app.kubernetes.io/instance":"collection", "app.kubernetes.io/name":"prometheus-node-exporter"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
+```
 
-- If you overrode any of the `repository` keys under the `kube-prometheus-stack` key,
-  please follow the `kube-prometheus-stack` [migration doc][kube-prometheus-stack-image-migration] on that.
+- If you overrode any of the `repository` keys under the `kube-prometheus-stack` key, please follow the `kube-prometheus-stack` [migration
+  doc][kube-prometheus-stack-image-migration] on that.
 
 #### Otelcol StatefulSet
 
@@ -190,27 +189,26 @@ kubectl apply \
 
 Run the following command to manually delete otelcol StatefulSets:
 
-  ```
-  kubectl delete sts --namespace=${NAMESPACE} --cascade=orphan -lapp=${HELM_RELEASE_NAME}-sumologic-otelcol-metrics
-  ```
+```
+kubectl delete sts --namespace=${NAMESPACE} --cascade=orphan -lapp=${HELM_RELEASE_NAME}-sumologic-otelcol-metrics
+```
 
-The reason this is necessary is that the Service name for this StatefulSet has changed, and Kubernetes forbids
-modification of this value on existing StatefulSets.
+The reason this is necessary is that the Service name for this StatefulSet has changed, and Kubernetes forbids modification of this value on
+existing StatefulSets.
 
 #### Additional Service Monitors
 
 **When?**: If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`.
 
-If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`,
-you have to remove all Sumo Logic related service monitors from the list, because they are now covered by
-`sumologic.metrics.serviceMonitors` configuration. This will make your configuration more clear.
+If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`, you have to remove all Sumo Logic related service monitors
+from the list, because they are now covered by `sumologic.metrics.serviceMonitors` configuration. This will make your configuration more
+clear.
 
 #### Custom metrics filtering and modification
 
 **When?**: If you added extra configuration to Fluentd metrics
 
-If you're adding extra configuration to fluentd metrics,
-you will likely want to do analogous modifications in OpenTelemetry.
+If you're adding extra configuration to fluentd metrics, you will likely want to do analogous modifications in OpenTelemetry.
 
 Please look at the [Metrics modifications](./collecting-application-metrics.md#metrics-modifications) doc.
 
@@ -224,15 +222,14 @@ If you don't have log collection enabled, skip straight to the [next major secti
 
 ##### Migration with (small) data loss
 
-On upgrade, the Fluent Bit DaemonSet will be deleted, and a new OpenTelemetry Collector Daemonset will be created.
-If a log file were to be rotated between the Fluent Bit Pod disappearing and the OpenTelemetry Collector Pod starting, logs
-added to that file after Fluent Bit was deleted will not be ingested. If you're ok with this minor loss of data, you can proceed without
-any manual intervention.
+On upgrade, the Fluent Bit DaemonSet will be deleted, and a new OpenTelemetry Collector Daemonset will be created. If a log file were to be
+rotated between the Fluent Bit Pod disappearing and the OpenTelemetry Collector Pod starting, logs added to that file after Fluent Bit was
+deleted will not be ingested. If you're ok with this minor loss of data, you can proceed without any manual intervention.
 
 ##### Migration with data duplication
 
-If you'd prefer to ingest duplicated data for a period of time instead, with OpenTelemetry Collector and Fluent Bit running
-side by side, enable the following settings:
+If you'd prefer to ingest duplicated data for a period of time instead, with OpenTelemetry Collector and Fluent Bit running side by side,
+enable the following settings:
 
 ```yaml
 sumologic:
@@ -247,13 +244,13 @@ After the upgrade, once OpenTelemetry Collector is running, you can disable Flue
 
 ##### Migration without data duplication and data loss (advanced)
 
-If you want to migrate without losing data or ingesting duplicates, you can go with a more complex solution.
-The idea is to have two separated groups of nodes. One for Fluent Bit and one for OpenTelemetry Collector.
+If you want to migrate without losing data or ingesting duplicates, you can go with a more complex solution. The idea is to have two
+separated groups of nodes. One for Fluent Bit and one for OpenTelemetry Collector.
 
 The node group for Fluent Bit should contain all existing nodes. The second group of nodes is dedicated to all new pods.
 
-Let's consider an example for that.
-We added `workerGroup: old-worker-group` label to all existing nodes, and then applied the following configuration:
+Let's consider an example for that. We added `workerGroup: old-worker-group` label to all existing nodes, and then applied the following
+configuration:
 
 ```yaml
 sumologic:
@@ -271,17 +268,16 @@ otellogs:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
-          - matchExpressions:
-            ## run OpenTelemetry Logs Collector on all nodes which do not match label: workerGroup=old-worker-group
-            - key: workerGroup
-              operator: NotIn
-              values:
-              - old-worker-group
+            - matchExpressions:
+                ## run OpenTelemetry Logs Collector on all nodes which do not match label: workerGroup=old-worker-group
+                - key: workerGroup
+                  operator: NotIn
+                  values:
+                    - old-worker-group
 ```
 
-After upgrading the Helm Chart, we drained all nodes with `workerGroup: old-worker-group`,
-and then we set OpenTelemetry Collector as only logs collector in the cluster
-by removing `fluent-bit` and `otellogs` unnecessary configuration sections.
+After upgrading the Helm Chart, we drained all nodes with `workerGroup: old-worker-group`, and then we set OpenTelemetry Collector as only
+logs collector in the cluster by removing `fluent-bit` and `otellogs` unnecessary configuration sections.
 
 ```yaml
 sumologic:
@@ -296,19 +292,18 @@ sumologic:
 
 Run the following command to manually delete otelcol StatefulSets:
 
-  ```
-  kubectl delete sts --namespace=${NAMESPACE} --cascade=orphan -lapp=${HELM_RELEASE_NAME}-sumologic-otelcol-logs
-  ```
+```
+kubectl delete sts --namespace=${NAMESPACE} --cascade=orphan -lapp=${HELM_RELEASE_NAME}-sumologic-otelcol-logs
+```
 
-The reason this is necessary is that the Service name for this StatefulSet has changed, and Kubernetes forbids
-modification of this value on existing StatefulSets.
+The reason this is necessary is that the Service name for this StatefulSet has changed, and Kubernetes forbids modification of this value on
+existing StatefulSets.
 
 #### Custom logs filtering and processing
 
 **When?**: If you added extra configuration to Fluentd logs
 
-If you added extra configuration to Fluentd logs,
-you will likely want to do analogous modifications in OpenTelemetry Collector.
+If you added extra configuration to Fluentd logs, you will likely want to do analogous modifications in OpenTelemetry Collector.
 
 Please look at the [Logs modifications](./collecting-container-logs.md#modifying-log-records) doc.
 
@@ -328,8 +323,8 @@ If you don't have tracing collection enabled, you can skip straight to the [end]
 
 **When?**: If you used any configuration values for traces with the `*.replace` suffix
 
-The mechanism to replace special configuration values for traces marked by the 'replace' suffix was removed and the following
-special values in the configuration are no longer automatically replaced, and they need to be changed:
+The mechanism to replace special configuration values for traces marked by the 'replace' suffix was removed and the following special values
+in the configuration are no longer automatically replaced, and they need to be changed:
 
 - `processors.source.collector.replace`
 - `processors.source.name.replace`
@@ -342,7 +337,8 @@ special values in the configuration are no longer automatically replaced, and th
 - `processors.source.exclude_host_regex.replace`
 - `processors.resource.cluster.replace`
 
-The above special configuration values can be replaced either to direct values or be set as reference to other parameters from `values.yaml`.
+The above special configuration values can be replaced either to direct values or be set as reference to other parameters from
+`values.yaml`.
 
 #### OpenTelemetry Collector Deployments
 
@@ -350,9 +346,8 @@ The above special configuration values can be replaced either to direct values o
 
   **When?**: If tracing is enabled
 
-  > **Warning**
-  > `otelcol` Deployment was moved to `tracesSampler` Deployment.
-  
+  > **Warning** > `otelcol` Deployment was moved to `tracesSampler` Deployment.
+
   Run the following command to manually delete otelcol Deployment and ConfigMap:
 
   ```
@@ -363,9 +358,8 @@ The above special configuration values can be replaced either to direct values o
 - **Otelagent DaemonSet**
 
   **When?**: If you're using `otelagent` (`otelagent.enabled=true`)
-  
-  > **Warning**
-  > `otelagent` DaemonSet was replaced by `otelcolInstrumentation` **StatefulSet**.
+
+  > **Warning** > `otelagent` DaemonSet was replaced by `otelcolInstrumentation` **StatefulSet**.
 
   Run the following command to manually delete otelagent DamemonSet and ConfigMap:
 
@@ -378,8 +372,7 @@ The above special configuration values can be replaced either to direct values o
 
   **When?**: If you're using `otelgateway` (`otelgateway.enabled=true`)
 
-  > **Warning**
-  > `otelgateway` Deployment was moved to `tracesGateway` Deployment.
+  > **Warning** > `otelgateway` Deployment was moved to `tracesGateway` Deployment.
 
   Run the following command to manually delete otelgateway Deployment and ConfigMap:
 
@@ -396,8 +389,8 @@ Once you've taken care of any manual steps necessary for your configuration, run
 helm upgrade --namespace "${NAMESPACE}" "${HELM_RELEASE_NAME}" sumologic/sumologic --version=3.0.0 -f new-values.yaml
 ```
 
-After you're done, please review the [full list of changes](#full-list-of-changes), as some of them
-may impact you even if they don't require additional action.
+After you're done, please review the [full list of changes](#full-list-of-changes), as some of them may impact you even if they don't
+require additional action.
 
 ### Known issues
 
@@ -411,9 +404,10 @@ Error from server: admission webhook "tailing-sidecar.sumologic.com" denied the 
 
 Please try to remove the pod later.
 
-[Falco documentation]: https://github.com/falcosecurity/charts/tree/falco-2.4.2/falco
+[falco documentation]: https://github.com/falcosecurity/charts/tree/falco-2.4.2/falco
 [metrics-server-upgrade]: https://github.com/bitnami/charts/tree/5b09f7a7c0d9232f5752840b6c4e5cdc56d7f796/bitnami/metrics-server#to-600
-[kube-prometheus-stack-image-migration]: https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-42.1.0/charts/kube-prometheus-stack#from-41x-to-42x
+[kube-prometheus-stack-image-migration]:
+  https://github.com/prometheus-community/helm-charts/tree/kube-prometheus-stack-42.1.0/charts/kube-prometheus-stack#from-41x-to-42x
 
 #### OpenTelemetry Collector doesn't read logs from the beginning of files
 
@@ -435,26 +429,26 @@ metadata:
 
 - Upgrading kube-prometheus stack
 
-  We are updating Kube-prometheus-stack to newest available version.
-  Major feature related to that change is upgrading kube-state-metrics to v2
+  We are updating Kube-prometheus-stack to newest available version. Major feature related to that change is upgrading kube-state-metrics to
+  v2
 
 - Removing mechanism to replace values in configuration for traces marked by 'replace' suffix
 - Moving direct configuration of OpenTelemetry Collector for log metadata
 
-  Removed explicit configuration for otelcol under `metadata.logs.config`.
-  Added option to merge configuration under `metadata.logs.config.merge`
-  or overwrite default configuration `metadata.logs.config.override`
+  Removed explicit configuration for otelcol under `metadata.logs.config`. Added option to merge configuration under
+  `metadata.logs.config.merge` or overwrite default configuration `metadata.logs.config.override`
+
 - Moving direct configuration of OpenTelemetry Collector for metrics metadata
 
-  Removed explicit configuration for otelcol under `metadata.metrics.config`.
-  Added option to merge configuration under `metadata.metrics.config.merge`
-  or overwrite default configuration `metadata.metrics.config.override`
-- Removing support for `sumologic.cluster.load_config_file`.
-  Leaving this configuration will result in setup job failure.
-- Upgrading Falco helm chart to `v2.4.2` which changed their configuration:
-  Please validate and adjust your configuration to new version according to [Falco documentation]
+  Removed explicit configuration for otelcol under `metadata.metrics.config`. Added option to merge configuration under
+  `metadata.metrics.config.merge` or overwrite default configuration `metadata.metrics.config.override`
+
+- Removing support for `sumologic.cluster.load_config_file`. Leaving this configuration will result in setup job failure.
+- Upgrading Falco helm chart to `v2.4.2` which changed their configuration: Please validate and adjust your configuration to new version
+  according to [Falco documentation]
 
 - Moved parameters from `fluentd.logs.containers` to `sumologic.logs.container`
+
   - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
   - moved `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
   - moved `fluentd.logs.contianers.sourceCategory` to `sumologic.logs.container.sourceCategory`
@@ -469,6 +463,7 @@ metadata:
   - moved `fluentd.logs.containers.perContainerAnnotationPrefixes` to `sumologic.logs.container.perContainerAnnotationPrefixes`
 
 - Moved parameters from `fluentd.logs.kubelet` to `sumologic.logs.kubelet`
+
   - moved `fluentd.logs.kubelet.sourceName` to `sumologic.logs.kubelet.sourceName`
   - moved `fluentd.logs.kubelet.sourceCategory` to `sumologic.logs.kubelet.sourceCategory`
   - moved `fluentd.logs.kubelet.sourceCategoryPrefix` to `sumologic.logs.kubelet.sourceCategoryPrefix`
@@ -479,6 +474,7 @@ metadata:
   - moved `fluentd.logs.kubelet.excludeUnitRegex` to `sumologic.logs.kubelet.excludeUnitRegex`
 
 - Moved parameters from `fluentd.logs.systemd` to `sumologic.logs.systemd`
+
   - moved `fluentd.logs.systemd.sourceName` to `sumologic.logs.systemd.sourceName`
   - moved `fluentd.logs.systemd.sourceCategory` to `sumologic.logs.systemd.sourceCategory`
   - moved `fluentd.logs.systemd.sourceCategoryPrefix` to `sumologic.logs.systemd.sourceCategoryPrefix`
@@ -489,6 +485,7 @@ metadata:
   - moved `fluentd.logs.systemd.excludeUnitRegex` to `sumologic.logs.systemd.excludeUnitRegex`
 
 - Moved parameters from `fluentd.logs.default` to `sumologic.logs.defaultFluentd`
+
   - moved `fluentd.logs.default.sourceName` to `sumologic.logs.defaultFluentd.sourceName`
   - moved `fluentd.logs.default.sourceCategory` to `sumologic.logs.defaultFluentd.sourceCategory`
   - moved `fluentd.logs.default.sourceCategoryPrefix` to `sumologic.logs.defaultFluentd.sourceCategoryPrefix`
@@ -498,14 +495,15 @@ metadata:
   - moved `fluentd.logs.default.excludePriorityRegex` to `sumologic.logs.defaultFluentd.excludePriorityRegex`
   - moved `fluentd.logs.default.excludeUnitRegex` to `sumologic.logs.defaultFluentd.excludeUnitRegex`
 
-- Upgrading Metrics Server to `6.2.4`. In case of changing `metrics-server.*` configuration
-  please see [upgrading section of chart's documentation][metrics-server-upgrade].
+- Upgrading Metrics Server to `6.2.4`. In case of changing `metrics-server.*` configuration please see [upgrading section of chart's
+  documentation][metrics-server-upgrade].
 
 - Upgrading Tailing Sidecar Operator helm chart to v0.5.5. There is no breaking change if using annotations only.
 
 - OpenTelemetry Logs Collector will read from end of file now.
 
-  See [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
+  See
+  [OpenTelemetry Collector doesn't read logs from the beginning of files](#opentelemetry-collector-doesnt-read-logs-from-the-beginning-of-files)
   if you want to keep old behavior.
 
 - Changed `otelagent` from `DaemonSet` to `StatefulSet`
@@ -517,10 +515,11 @@ metadata:
 - Moved parameters from `otelcol.*` to `tracesSampler.*`
 
 - Enabled metrics and traces collection from instrumentation by default
+
   - changed parameter `sumologic.traces.enabled` default value from `false` to `true`
 
-- Adding `sumologic.metrics.serviceMonitors` to avoid copying values for
-  `kube-prometheus-stack.prometheus.additionalServiceMonitors` configuration
+- Adding `sumologic.metrics.serviceMonitors` to avoid copying values for `kube-prometheus-stack.prometheus.additionalServiceMonitors`
+  configuration
 
 - Adding `sumologic.metrics.otelcol.extraProcessors` to make metrics modification easy
 

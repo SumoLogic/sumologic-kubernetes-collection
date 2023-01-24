@@ -1,10 +1,8 @@
 # Fluentd persistence
 
-Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less
-reliable in-memory buffer by default.
+Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less reliable in-memory buffer by default.
 
-The buffer configuration can be set in the `user-values.yaml` file under the `fluentd`
-key as follows:
+The buffer configuration can be set in the `user-values.yaml` file under the `fluentd` key as follows:
 
 ```yaml
 fluentd:
@@ -12,9 +10,8 @@ fluentd:
     enabled: true
 ```
 
-When the Fluentd persistence setting is to be changed (enabled or disabled)
-it is required to recreate or delete existing Fluentd StatefulSet,
-as it is not possible to add/remove `volumeClaimTemplate` for StatefulSet.
+When the Fluentd persistence setting is to be changed (enabled or disabled) it is required to recreate or delete existing Fluentd
+StatefulSet, as it is not possible to add/remove `volumeClaimTemplate` for StatefulSet.
 
 **Note:** The below commands are using `yq` in version `3.4.0` <= `x` < `4.0.0`.
 
@@ -38,23 +35,21 @@ fluentd:
     totalLimitSize: "10G"
 ```
 
-Keep in mind that you need to adjust `fluentd.buffer.totalLimitSize` in order for Fluentd to actually queue
-more data - increasing volume size alone is not enough.
+Keep in mind that you need to adjust `fluentd.buffer.totalLimitSize` in order for Fluentd to actually queue more data - increasing volume
+size alone is not enough.
 
 Use one of following two strategies to prepare existing collection for enabling Fluentd persistence:
 
 - ### Enabling Fluentd persistence by recreating Fluentd StatefulSet
 
-  In a heavy used clusters with high load of logs and metrics it might be possible that
-  recreating Fluentd StatefulSet with new `volumeClaimTemplate` may cause logs and metrics
-  being unavailable for the time of recreation. It usually shouldn't take more than several seconds.
+  In a heavy used clusters with high load of logs and metrics it might be possible that recreating Fluentd StatefulSet with new
+  `volumeClaimTemplate` may cause logs and metrics being unavailable for the time of recreation. It usually shouldn't take more than several
+  seconds.
 
-  To recreate Fluentd StatefulSets with new `volumeClaimTemplate` one can run
-  the following commands for all Fluentd StatefulSets.
+  To recreate Fluentd StatefulSets with new `volumeClaimTemplate` one can run the following commands for all Fluentd StatefulSets.
 
-  Remember to adjust `volumeClaimTemplate` (`VOLUME_CLAIM_TEMPLATE` variable in command below)
-  which will be added to `volumeClaimTemplates` in StatefulSet `spec` according to your needs,
-  for details please check `PersistentVolumeClaim` in Kubernetes API specification.
+  Remember to adjust `volumeClaimTemplate` (`VOLUME_CLAIM_TEMPLATE` variable in command below) which will be added to `volumeClaimTemplates`
+  in StatefulSet `spec` according to your needs, for details please check `PersistentVolumeClaim` in Kubernetes API specification.
 
   Also remember to replace the `NAMESPACE` and `RELEASE_NAME` variables with proper values.
 
@@ -133,9 +128,8 @@ Use one of following two strategies to prepare existing collection for enabling 
   kubectl apply --namespace ${NAMESPACE} --force --filename -
   ```
 
-  **Notice** When StatefulSets managed by helm are modified by commands specified above,
-  one might expect a warning similar to this one:
-   `Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply`
+  **Notice** When StatefulSets managed by helm are modified by commands specified above, one might expect a warning similar to this one:
+  `Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply`
 
   Upgrade collection with Fluentd persistence enabled, e.g.
 
@@ -201,24 +195,22 @@ Use one of following two strategies to prepare existing collection for enabling 
   helm upgrade <RELEASE-NAME> sumologic/sumologic --version=<VERSION> -f <VALUES>
   ```
 
-  **Notice:** After the Helm chart upgrade is done, in order to remove temporary Fluentd
-  StatefulSets run the following command:
+  **Notice:** After the Helm chart upgrade is done, in order to remove temporary Fluentd StatefulSets run the following command:
 
-   ```bash
+  ```bash
   NAMESPACE=sumologic && \
   RELEASE_NAME=collection && \
   kubectl wait --for=condition=ready pod \
-    --namespace ${NAMESPACE} \
-    --selector "release==${RELEASE_NAME},heritage=Helm" && \
+   --namespace ${NAMESPACE} \
+   --selector "release==${RELEASE_NAME},heritage=Helm" && \
   kubectl delete statefulset \
-    --namespace ${NAMESPACE} \
-    --selector "release==${RELEASE_NAME},heritage=tmp"
+   --namespace ${NAMESPACE} \
+   --selector "release==${RELEASE_NAME},heritage=tmp"
   ```
 
 ## Disabling Fluentd persistence
 
-To disable Fluentd persistence in existing collection modify `user-values.yaml` file under the `fluentd`
-key as follows:
+To disable Fluentd persistence in existing collection modify `user-values.yaml` file under the `fluentd` key as follows:
 
 ```yaml
 fluentd:
@@ -230,12 +222,11 @@ Use one of following two strategies to prepare existing collection for disabling
 
 - ### Disabling Fluentd persistence by recreating Fluentd StatefulSet
 
-  In a heavy used clusters with high load of logs and metrics it might be possible that
-  recreating Fluentd StatefulSet without `volumeClaimTemplate` may cause logs and metrics
-  being unavailable for the time of recreation. It usually shouldn't take more than several seconds.
+  In a heavy used clusters with high load of logs and metrics it might be possible that recreating Fluentd StatefulSet without
+  `volumeClaimTemplate` may cause logs and metrics being unavailable for the time of recreation. It usually shouldn't take more than several
+  seconds.
 
-  To recreate Fluentd StatefulSets without `volumeClaimTemplate` one can run
-  the following commands for all Fluentd StatefulSets.
+  To recreate Fluentd StatefulSets without `volumeClaimTemplate` one can run the following commands for all Fluentd StatefulSets.
 
   Remember to replace the `NAMESPACE` and `RELEASE_NAME` variables with proper values.
 
@@ -266,8 +257,7 @@ Use one of following two strategies to prepare existing collection for disabling
   kubectl apply --namespace ${NAMESPACE} --force --filename -
   ```
 
-  **Notice** When StatefulSets managed by helm are modified by commands specified above,
-  one might expect a warning similar to this one:
+  **Notice** When StatefulSets managed by helm are modified by commands specified above, one might expect a warning similar to this one:
   `Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply`
 
   Upgrade collection with Fluentd persistence disabled, e.g.
@@ -276,8 +266,8 @@ Use one of following two strategies to prepare existing collection for disabling
   helm upgrade <RELEASE-NAME> sumologic/sumologic --version=<VERSION> -f <VALUES>
   ```
 
-  **Notice:** After the Helm chart upgrade is done, it is needed to remove remaining `PersistentVolumeClaims`
-  which are no longer used by Fluend Statefulsets.
+  **Notice:** After the Helm chart upgrade is done, it is needed to remove remaining `PersistentVolumeClaims` which are no longer used by
+  Fluend Statefulsets.
 
   To remove remaining `PersistentVolumeClaims`:
 
@@ -345,20 +335,20 @@ Use one of following two strategies to prepare existing collection for disabling
   helm upgrade <RELEASE-NAME> sumologic/sumologic --version=<VERSION> -f <VALUES>
   ```
 
-  **Notice:** After the Helm chart upgrade is done, it is needed to remove temporary Fluentd
-  StatefulSets and remaining `PersistentVolumeClaims` which are no longer used by Fluend Statefulsets.
+  **Notice:** After the Helm chart upgrade is done, it is needed to remove temporary Fluentd StatefulSets and remaining
+  `PersistentVolumeClaims` which are no longer used by Fluend Statefulsets.
 
   To remove temporary Fluentd StatefulSets:
 
-   ```bash
+  ```bash
   NAMESPACE=sumologic && \
   RELEASE_NAME=collection && \
   kubectl wait --for=condition=ready pod \
-    --namespace ${NAMESPACE} \
-    --selector "release==${RELEASE_NAME},heritage=Helm" && \
+   --namespace ${NAMESPACE} \
+   --selector "release==${RELEASE_NAME},heritage=Helm" && \
   kubectl delete statefulset \
-    --namespace ${NAMESPACE} \
-    --selector "release==${RELEASE_NAME},heritage=tmp"
+   --namespace ${NAMESPACE} \
+   --selector "release==${RELEASE_NAME},heritage=tmp"
   ```
 
   To remove remaining `PersistentVolumeClaims`:

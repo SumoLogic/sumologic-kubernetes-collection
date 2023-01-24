@@ -1,9 +1,8 @@
 # Deployment Guide for unreleased version
 
-This page has instructions for collecting Kubernetes logs, metrics, and events;
-enriching them with deployment, pod, and service level metadata; and sending them to Sumo Logic.
-See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/)
-for details on our Kubernetes Solution.
+This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level
+metadata; and sending them to Sumo Logic. See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/) for
+details on our Kubernetes Solution.
 
 - [Solution overview](#solution-overview)
 - [Minimum Requirements](#minimum-requirements)
@@ -11,7 +10,8 @@ for details on our Kubernetes Solution.
   - [ARM support](#arm-support)
   - [Falco support](#falco-support)
 
-Documentation for other versions can be found in the [main README file](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/README.md#documentation).
+Documentation for other versions can be found in the
+[main README file](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/README.md#documentation).
 
 ---
 
@@ -37,6 +37,7 @@ Documentation links:
     - [Performance estimates for running collection chart](/docs/fluent/performance.md)
     - [Fluentd persistence](/docs/fluent/fluentd-persistence.md)
 - Upgrades
+
   - [Upgrade from v0.17 to v1.0][migration-doc-v1]
   - [Upgrade from v1.3 to v2.0][migration-doc-v2]
 
@@ -68,7 +69,7 @@ The diagrams below illustrate the components of the Kubernetes collection soluti
 ## Minimum Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | K8s  | 1.21+   |
 | Helm | 3.5+    |
 
@@ -77,7 +78,7 @@ The diagrams below illustrate the components of the Kubernetes collection soluti
 The following table displays the tested Kubernetes and Helm versions.
 
 | Name          | Version                                  |
-|---------------|------------------------------------------|
+| ------------- | ---------------------------------------- |
 | K8s with EKS  | 1.21<br/>1.22<br/>1.23<br/>1.24          |
 | K8s with Kops | 1.22<br/>1.23<br/>1.24<br/>1.25          |
 | K8s with GKE  | 1.21<br/>1.22<br/>1.23<br/>1.24<br/>1.25 |
@@ -89,7 +90,7 @@ The following table displays the tested Kubernetes and Helm versions.
 The following table displays the currently used software versions for our Helm chart.
 
 | Name                                      | Version |
-|-------------------------------------------|---------|
+| ----------------------------------------- | ------- |
 | OpenTelemetry Collector                   | 0.69.0  |
 | OpenTelemetry Operator                    | 0.18.3  |
 | kube-prometheus-stack/Prometheus Operator | 40.5.0  |
@@ -101,9 +102,9 @@ The following table displays the currently used software versions for our Helm c
 
 ### ARM support
 
-The collection Helm Chart supports AWS Graviton CPUs, and has been tested in ARM-based EKS clusters. In principle, it
-should run fine on any ARM64 node, but there is currently no official support for non-AWS ARM environments. If you do
-however run into problems in such an environment, don't hesitate to open an [issue][issues] describing them.
+The collection Helm Chart supports AWS Graviton CPUs, and has been tested in ARM-based EKS clusters. In principle, it should run fine on any
+ARM64 node, but there is currently no official support for non-AWS ARM environments. If you do however run into problems in such an
+environment, don't hesitate to open an [issue][issues] describing them.
 
 [issues]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues
 

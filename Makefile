@@ -7,13 +7,14 @@ lint: chart-lint docs-lint tests-lint
 chart-lint: helm-lint yaml-lint shellcheck
 
 .PHONY: docs-lint
-docs-lint: markdown-lint markdown-links-lint markdown-table-formatter-check
+docs-lint: markdown-lint markdown-links-lint
 
 .PHONY: tests-lint
 tests-lint: template-tests-lint integration-tests-lint
 
 .PHONY: markdown-lint
 markdown-lint:
+	prettier --check "**/*.md"
 	markdownlint --config .markdownlint.jsonc \
 		deploy/docs \
 		docs \
@@ -49,15 +50,11 @@ shellcheck:
 markdown-links-lint:
 	./ci/markdown_links_lint.sh
 
-.PHONY: markdown-table-formatter-check
-markdown-table-formatter-check:
-	./ci/markdown_table_formatter.sh --check
-
 .PHONY: check-configuration-keys
 check-configuration-keys:
 	./ci/check_configuration_keys.py --values deploy/helm/sumologic/values.yaml --readme deploy/helm/sumologic/README.md
 
-.PHONY: markdown-table-formatter-check
+.PHONY: template-tests-lint
 template-tests-lint:
 	make -C ./tests/helm golint
 
@@ -70,9 +67,9 @@ integration-tests-lint:
 .PHONY: format
 format: markdown-table-formatter-format yaml-format
 
-.PHONY: markdown-table-formatter-format
-markdown-table-formatter-format:
-	./ci/markdown_table_formatter.sh
+.PHONY: markdown-format
+markdown-format:
+	prettier -w "**/*.md"
 
 .PHONY: yaml-format
 yaml-format:
