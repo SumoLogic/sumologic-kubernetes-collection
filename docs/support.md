@@ -2,14 +2,14 @@
 
 In case you encounter any issues try looking into the [troubleshooting doc](troubleshoot-collection.md) first.
 
-If you are unable to fix your issue using [troubleshooting doc](troubleshoot-collection.md) and would like to raise a customer issue,
-Sumo Logic needs to receive information mentioned in [Basic information](#basic-information) section.
+If you are unable to fix your issue using [troubleshooting doc](troubleshoot-collection.md) and would like to raise a customer issue, Sumo
+Logic needs to receive information mentioned in [Basic information](#basic-information) section.
 [Additional information](#additional-information-specific-for-type-of-customer-issue) may be needed for specific types of customer issues.
 
 - [Basic information](#basic-information)
 - [Additional information specific for type of customer issue](#additional-information-specific-for-type-of-customer-issue)
   - [Wrong format of logs in Sumo](#wrong-format-of-logs-in-sumo)
-  
+
 ## Basic information
 
 - Version of Sumo Logic Kubernetes Collection Helm Chart, e.g.
@@ -32,7 +32,8 @@ Sumo Logic needs to receive information mentioned in [Basic information](#basic-
   helm get values <RELEASE_NAME> -n <NAMESPACE> -a > all_values.yaml
   ```
 
-- If non helm installation is used then please provide all commands used to install Sumo Logic Kubernetes Collection along with all output files.
+- If non helm installation is used then please provide all commands used to install Sumo Logic Kubernetes Collection along with all output
+  files.
 
   - Example 1
 

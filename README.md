@@ -1,8 +1,9 @@
 # sumologic-kubernetes-collection
 
-This repo contains all the necessary resources to collect observability data from Kubernetes clusters and send it to Sumo Logic.
-Sumo Logic leverages [CNCF](https://www.cncf.io) supported technology including [OpenTelemetry](https://opentelemetry.io), [Prometheus](https://prometheus.io) and [Falco](https://www.falco.org/) to collect logs, metrics and traces from Kubernetes clusters.
-The following diagram provides an overview of the collection process.
+This repo contains all the necessary resources to collect observability data from Kubernetes clusters and send it to Sumo Logic. Sumo Logic
+leverages [CNCF](https://www.cncf.io) supported technology including [OpenTelemetry](https://opentelemetry.io),
+[Prometheus](https://prometheus.io) and [Falco](https://www.falco.org/) to collect logs, metrics and traces from Kubernetes clusters. The
+following diagram provides an overview of the collection process.
 
 ![overview](/images/overview-v3.png)
 
@@ -15,7 +16,7 @@ Detailed instructions are available in our Installation Guides in documentation 
 Sumo Logic Helm Chart Version
 
 | version                                                                                                   | status                                  |
-|-----------------------------------------------------------------------------------------------------------|-----------------------------------------|
+| --------------------------------------------------------------------------------------------------------- | --------------------------------------- |
 | [v3.0](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.0/docs/README.md)     | current / supported                     |
 | [v2.19](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.19/deploy/README.md) | deprecated / supported until 2023-05-24 |
 | [v2.18](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v2.18/deploy/README.md) | deprecated / supported until 2023-04-21 |

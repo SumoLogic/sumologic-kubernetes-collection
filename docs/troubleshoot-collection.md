@@ -37,7 +37,8 @@ Please refer to [the Troubleshooting Installation section in Installation docume
 
 ## Namespace configuration
 
-The following `kubectl` commands assume you are in the correct namespace `sumologic`. By default, these commands will use the namespace `default`.
+The following `kubectl` commands assume you are in the correct namespace `sumologic`. By default, these commands will use the namespace
+`default`.
 
 To run a single command in the `sumologic` namespace, pass in the flag `-n sumologic`.
 
@@ -79,7 +80,8 @@ Run:
 kubectl get pods
 ```
 
-to get a list of running pods. If any of them are not in the `Status: running` state, something is wrong. To get the logs for that pod, you can either:
+to get a list of running pods. If any of them are not in the `Status: running` state, something is wrong. To get the logs for that pod, you
+can either:
 
 Stream the logs to `stdout`:
 
@@ -111,8 +113,7 @@ Where `collection` is the `helm` release name.
 
 ### OpenTelemetry Logs Collector is being CPU throttled
 
-If OpenTelemtry Logs Collector is being throttled, you should increase CPU request to higher value,
-for example:
+If OpenTelemtry Logs Collector is being throttled, you should increase CPU request to higher value, for example:
 
 ```yaml
 otellogs:
@@ -145,11 +146,11 @@ otellogs:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
-          - matchExpressions:
-            - key: workingGroup
-              operator: NotIn
-              values:
-              - IntenseLogGeneration
+            - matchExpressions:
+                - key: workingGroup
+                  operator: NotIn
+                  values:
+                    - IntenseLogGeneration
 ```
 
 For more information look at the `Setting different resources on different nodes for logs collector` section in
@@ -197,6 +198,8 @@ For kubernetes services you can use the following way:
    ```bash
    kubectl exec -it sumologic-debug -n <namespace> bash
 
+   ```
+
 3. Talk with API directly like prometheus does, e.g.
 
    ```bash
@@ -220,17 +223,16 @@ Then, in your browser, go to `localhost:8080`. You should be in the Prometheus U
 
 From here you can start typing the expected name of a metric to see if Prometheus auto-completes the entry.
 
-If you can't find the expected metrics, ensure that prometheus configuration is correct and up to date.
-In the top menu, navigate to section `Status > Configuration` or go to the `http://localhost:8080/config`.
-Review the configuration.
+If you can't find the expected metrics, ensure that prometheus configuration is correct and up to date. In the top menu, navigate to section
+`Status > Configuration` or go to the `http://localhost:8080/config`. Review the configuration.
 
-Next, you can check if Prometheus is successfully scraping the `/metrics` endpoints.
-In the top menu, navigate to section `Status > Targets` or go to the `http://localhost:8080/targets`.
-Check if any targets are down or have errors.
+Next, you can check if Prometheus is successfully scraping the `/metrics` endpoints. In the top menu, navigate to section `Status > Targets`
+or go to the `http://localhost:8080/targets`. Check if any targets are down or have errors.
 
 ### Check Prometheus Remote Storage
 
-We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus/latest/storage/) integration to send metrics from Prometheus to the metadata enrichment service.
+We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus/latest/storage/) integration to send metrics from
+Prometheus to the metadata enrichment service.
 
 You [check Prometheus logs](#prometheus-logs) to verify there are no errors during remote write.
 
@@ -240,9 +242,9 @@ You can also check `prometheus_remote_storage_.*` metrics to look for success/fa
 
 ### Missing metrics - cannot see cluster in Explore
 
-If you are not seeing metrics coming in to Sumo or/and your cluster is not showing
-up in [Explore](https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore)
-it is most likely due to the fact that Prometheus pod is not running.
+If you are not seeing metrics coming in to Sumo or/and your cluster is not showing up in
+[Explore](https://help.sumologic.com/docs/observability/kubernetes/monitoring#open-explore) it is most likely due to the fact that
+Prometheus pod is not running.
 
 One can verify that by using the following command:
 
@@ -252,8 +254,7 @@ NAME                                 READY   STATUS    RESTARTS   AGE
 prometheus-<NAMESPACE>-prometheus-0  2/2     Running   1          4d20h
 ```
 
-In case it is not running one can check prometheus-operator logs for any related
-issues:
+In case it is not running one can check prometheus-operator logs for any related issues:
 
 ```
 kubectl logs -n <NAMESPACE> -l app=kube-prometheus-stack-operator
@@ -271,7 +272,8 @@ you have an unhealthy node. Killing the node should resolve this issue.
 
 ### Missing `kubelet` metrics
 
-Navigate to the `kubelet` targets using the steps above. You may see that the targets are down with 401 errors. If so, there are two known workarounds you can try.
+Navigate to the `kubelet` targets using the steps above. You may see that the targets are down with 401 errors. If so, there are two known
+workarounds you can try.
 
 #### 1. Enable the `authenticationTokenWebhook` flag in the cluster
 
@@ -320,10 +322,9 @@ helm upgrade collection sumologic/sumologic --reuse-values --version=<RELEASE-VE
 
 ### Missing `kube-controller-manager` or `kube-scheduler` metrics
 
-There’s an issue with backwards compatibility in the current version of the
-kube-prometheus-stack helm chart that requires us to override the selectors
-for kube-scheduler and kube-controller-manager in order to see metrics from them.
-If you are not seeing metrics from these two targets, you can use the following config.
+There’s an issue with backwards compatibility in the current version of the kube-prometheus-stack helm chart that requires us to override
+the selectors for kube-scheduler and kube-controller-manager in order to see metrics from them. If you are not seeing metrics from these two
+targets, you can use the following config.
 
 ```yaml
 kube-prometheus-stack:
@@ -343,21 +344,21 @@ Delete the pod forcefully by adding `--force --grace-period=0` to the `kubectl d
 
 ### Rancher
 
-If you are running the out of the box rancher monitoring setup, you cannot run our Prometheus operator alongside it. The Rancher Prometheus Operator setup will actually kill and permanently terminate our Prometheus Operator instance and will prevent the metrics system from coming up.
-If you have the Rancher prometheus operator setup running, they will have to use the UI to disable it before they can install our collection process.
+If you are running the out of the box rancher monitoring setup, you cannot run our Prometheus operator alongside it. The Rancher Prometheus
+Operator setup will actually kill and permanently terminate our Prometheus Operator instance and will prevent the metrics system from coming
+up. If you have the Rancher prometheus operator setup running, they will have to use the UI to disable it before they can install our
+collection process.
 
 ### Falco and Google Kubernetes Engine (GKE)
 
-`Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default
-operating system for its worker node pools.
-COS is a security-enhanced operating system that limits access to certain parts of the underlying OS.
-Because of this security constraint, Falco cannot insert its kernel module to process events for system calls.
-However, COS provides the ability to use extended Berkeley Packet Filter (eBPF)
-to supply the stream of system calls to the Falco engine.
-eBPF is currently only supported on GKE and COS.
-For more information see [Falco documentation](https://falco.org/docs/getting-started/third-party/#gke).
+`Google Kubernetes Engine (GKE)` uses Container-Optimized OS (COS) as the default operating system for its worker node pools. COS is a
+security-enhanced operating system that limits access to certain parts of the underlying OS. Because of this security constraint, Falco
+cannot insert its kernel module to process events for system calls. However, COS provides the ability to use extended Berkeley Packet Filter
+(eBPF) to supply the stream of system calls to the Falco engine. eBPF is currently only supported on GKE and COS. For more information see
+[Falco documentation](https://falco.org/docs/getting-started/third-party/#gke).
 
-To install on `GKE`, use the provided override file to customize your configuration and uncomment the following lines in the `values.yaml` file referenced below:
+To install on `GKE`, use the provided override file to customize your configuration and uncomment the following lines in the `values.yaml`
+file referenced below:
 
 ```
   #driver:
@@ -366,16 +367,14 @@ To install on `GKE`, use the provided override file to customize your configurat
 
 ### Falco and OpenShift
 
-Falco does not provide modules for all kernels.
-When Falco module is not available for particular kernel, Falco tries to build it.
-Building a module requires `kernel-devel` package installed on nodes.
+Falco does not provide modules for all kernels. When Falco module is not available for particular kernel, Falco tries to build it. Building
+a module requires `kernel-devel` package installed on nodes.
 
 For OpenShift, installation of `kernel-devel` on nodes is provided through MachineConfig used by
-[Machine Config operator](https://github.com/openshift/machine-config-operator).
-When update of machine configuration is needed machine is rebooted, please see
-[documentation](https://github.com/openshift/machine-config-operator/blob/master/docs/MachineConfigDaemon.md#coordinating-updates).
-The process of changing nodes configuration may require long time
-during which Pods scheduled on unchanged nodes are in `Init` state.
+[Machine Config operator](https://github.com/openshift/machine-config-operator). When update of machine configuration is needed machine is
+rebooted, please see
+[documentation](https://github.com/openshift/machine-config-operator/blob/master/docs/MachineConfigDaemon.md#coordinating-updates). The
+process of changing nodes configuration may require long time during which Pods scheduled on unchanged nodes are in `Init` state.
 
 Node configuration can be verified by following annotations:
 
@@ -385,8 +384,7 @@ Node configuration can be verified by following annotations:
 
 After that, please remove Otelcol pods and associated PVC-s.
 
-For example, if the namespace where the collection is installed is `collection`,
-run the following set of commands:
+For example, if the namespace where the collection is installed is `collection`, run the following set of commands:
 
 ```bash
 NAMESPACE_NAME=collection
@@ -398,13 +396,13 @@ for POD_NAME in $(kubectl get pods --template '{{range .items}}{{.metadata.name}
 done
 ```
 
-The duplicated pod deletion command is there to make sure the pod is not stuck in `Pending` state
-with event `persistentvolumeclaim "file-storage-sumologic-otelcol-logs-1" not found`.
+The duplicated pod deletion command is there to make sure the pod is not stuck in `Pending` state with event
+`persistentvolumeclaim "file-storage-sumologic-otelcol-logs-1" not found`.
 
 ### Out of memory (OOM) failures for Prometheus Pod
 
-If you observe that Prometheus Pod needs more and more resources (out of memory failures - OOM killed Prometheus) and you are not able to increase
-them then you may need to horizontally scale Prometheus. :construction: Add link to Prometheus sharding doc here.
+If you observe that Prometheus Pod needs more and more resources (out of memory failures - OOM killed Prometheus) and you are not able to
+increase them then you may need to horizontally scale Prometheus. :construction: Add link to Prometheus sharding doc here.
 
 ### OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy
 

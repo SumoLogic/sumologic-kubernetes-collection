@@ -36,8 +36,7 @@
 
 ## Overriding chart resource names with `fullnameOverride`
 
-You can use the `fullnameOverride` properties of this chart and of its subcharts
-to override the created resource names.
+You can use the `fullnameOverride` properties of this chart and of its subcharts to override the created resource names.
 
 See the chart's [README](/deploy/helm/sumologic/README.md) for all the available `fullnameOverride` properties.
 
@@ -83,9 +82,8 @@ sl-traces-gateway-cdc7d9bbc-wq9sl        1/1     Running   0          3m4s
 sl-traces-sampler-94656c48d-cslsb        1/1     Running   0          3m4s
 ```
 
-⚠️ **Note:** When changing the `fullnameOverride` property for an already installed chart with the `helm upgrade` command,
-you need to restart the Prometheus pods
-for the changed names of the Otelcol pods to be picked up:
+⚠️ **Note:** When changing the `fullnameOverride` property for an already installed chart with the `helm upgrade` command, you need to
+restart the Prometheus pods for the changed names of the Otelcol pods to be picked up:
 
 ```sh
 helm -n <namespace> upgrade <release_name> sumologic/sumologic --values changed-fullnameoverride.yaml
@@ -94,11 +92,12 @@ kubectl -n <namespace> rollout restart statefulset <prometheus_statefulset_name>
 
 ## OpenTelemetry Collector Autoscaling
 
-OpenTelemetry Collector StatefulSets used for metadata enrichment can be autoscaled. This is disabled by default,
-for reasons outlined in [#2751].
+OpenTelemetry Collector StatefulSets used for metadata enrichment can be autoscaled. This is disabled by default, for reasons outlined in
+[#2751].
 
-Whenever your OpenTelemetry Collector pods CPU consumption is close to the limit, you could experience a [delay in data ingestion
-or even data loss](/docs/monitoring-lag.md) under higher-than-normal load. In such cases you should enable autoscaling.
+Whenever your OpenTelemetry Collector pods CPU consumption is close to the limit, you could experience a
+[delay in data ingestion or even data loss](/docs/monitoring-lag.md) under higher-than-normal load. In such cases you should enable
+autoscaling.
 
 To enable autoscaling for OpenTelemetry Collector:
 
@@ -131,29 +130,35 @@ To enable autoscaling for OpenTelemetry Collector:
         enabled: true
   ```
 
-It's also possible to adjust other autoscaling configuration options, like the maximum number of replicas or
-the average CPU utilization. Please refer to the [chart readme][chart_readme] and [default values.yaml][values.yaml] for details.
+It's also possible to adjust other autoscaling configuration options, like the maximum number of replicas or the average CPU utilization.
+Please refer to the [chart readme][chart_readme] and [default values.yaml][values.yaml] for details.
 
 [#2751]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2751
 
 ## OpenTelemetry Collector Persistent Buffer
 
-The logs and metrics metadata enrichment pods store data in a persistent file-based buffer to prevent data loss during restarts.
-This feature is enabled by default and can be disabled using the `metadata.persistence.enabled: false` property.
+The logs and metrics metadata enrichment pods store data in a persistent file-based buffer to prevent data loss during restarts. This
+feature is enabled by default and can be disabled using the `metadata.persistence.enabled: false` property.
 
-The persistence of the event collection pods is controlled by another property: `sumologic.events.persistence.enabled` and is also enabled by default.
+The persistence of the event collection pods is controlled by another property: `sumologic.events.persistence.enabled` and is also enabled
+by default.
 
-The persistent storage is implemented from the Kubernetes perspective by adding a `volumeClaimTemplate` to the statefulset,
-which in effect creates a [PersistentVolumeClaim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) resource for each pod of the statefulset.
+The persistent storage is implemented from the Kubernetes perspective by adding a `volumeClaimTemplate` to the statefulset, which in effect
+creates a [PersistentVolumeClaim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) resource for each
+pod of the statefulset.
 
 For logs and metrics, use the following properties to configure the PVC templates:
 
-- `metadata.persistence.accessMode: ReadWriteOnce` defines the [access mode](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) used in the `PersistentVolumeClaim` resources.
+- `metadata.persistence.accessMode: ReadWriteOnce` defines the
+  [access mode](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) used in the `PersistentVolumeClaim` resources.
 - `metadata.persistence.pvcLabels: {}` allows to set additional labels on the `PersistentVolumeClaim` resources
 - `metadata.persistence.size: 10Gi` defines the requested volume size
-- `metadata.persistence.storageClass: null` defines the [storage class](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1) name to use in the volume claim template.
-  This property is not set by default, which means that the `storageClassName` will not be set in the `PersistentVolumeClaim` resources and the default storage class will be used
-  (assuming the [DefaultStorageClass](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass) admission controller is enabled on the Kubernetes API server).
+- `metadata.persistence.storageClass: null` defines the
+  [storage class](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1) name to use in the volume claim template. This
+  property is not set by default, which means that the `storageClassName` will not be set in the `PersistentVolumeClaim` resources and the
+  default storage class will be used (assuming the
+  [DefaultStorageClass](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass) admission
+  controller is enabled on the Kubernetes API server).
 
 For events, use the following properties:
 
@@ -242,42 +247,41 @@ sumologic:
 
 ## Collect logs from additional files on the Node
 
-:construction: *TODO*, see [the Fluentd section](fluent/best-practices.md#add-a-local-file-to-fluent-bit-configuration)
+:construction: _TODO_, see [the Fluentd section](fluent/best-practices.md#add-a-local-file-to-fluent-bit-configuration)
 
 ## Filtering Prometheus Metrics by Namespace
 
-If you want to filter metrics by namespace, it can be done in the prometheus remote write config.
-Here is an example of excluding kube-state metrics for namespace1 and namespace2:
+If you want to filter metrics by namespace, it can be done in the prometheus remote write config. Here is an example of excluding kube-state
+metrics for namespace1 and namespace2:
 
 ```yaml
- - action: drop
-   regex: kube-state-metrics;(namespace1|namespace2)
-   sourceLabels: [job, namespace]
+- action: drop
+  regex: kube-state-metrics;(namespace1|namespace2)
+  sourceLabels: [job, namespace]
 ```
 
 The section above should be added in each of the kube-state remote write blocks.
 
-Here is another example of excluding up metrics in the sumologic namespace
-while still collecting up metrics for all other namespaces:
+Here is another example of excluding up metrics in the sumologic namespace while still collecting up metrics for all other namespaces:
 
 ```yaml
-     # up metrics
-     - url: http://collection-sumologic.sumologic.svc.cluster.local.:9888/prometheus.metrics
-       writeRelabelConfigs:
-       - action: keep
-         regex: up
-         sourceLabels: [__name__]
-       - action: drop
-         regex: up;sumologic
-         sourceLabels: [__name__,namespace]
+# up metrics
+- url: http://collection-sumologic.sumologic.svc.cluster.local.:9888/prometheus.metrics
+  writeRelabelConfigs:
+    - action: keep
+      regex: up
+      sourceLabels: [__name__]
+    - action: drop
+      regex: up;sumologic
+      sourceLabels: [__name__, namespace]
 ```
 
 The section above should be added in each of the kube-state remote write blocks.
 
 ## Modify the Log Level for Falco
 
-To modify the default log level for Falco, edit the following section in the `user-values.yaml` file.
-Available log levels can be found in Falco's documentation here: https://falco.org/docs/configuration/.
+To modify the default log level for Falco, edit the following section in the `user-values.yaml` file. Available log levels can be found in
+Falco's documentation here: https://falco.org/docs/configuration/.
 
 ```yaml
 falco:
@@ -290,13 +294,12 @@ falco:
 
 ## Overriding metadata using annotations
 
-You can use [Kubernetes annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/)
-to override some metadata and settings per pod.
+You can use [Kubernetes annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) to override some
+metadata and settings per pod.
 
 - `sumologic.com/sourceCategory` overrides the value of the `sumologic.logs.container.sourceCategory` property
 - `sumologic.com/sourceCategoryPrefix` overrides the value of the `sumologic.logs.container.sourceCategoryPrefix` property
-- `sumologic.com/sourceCategoryReplaceDash` overrides the value of the `sumologic.logs.container.sourceCategoryReplaceDash`
-  property
+- `sumologic.com/sourceCategoryReplaceDash` overrides the value of the `sumologic.logs.container.sourceCategoryReplaceDash` property
 - `sumologic.com/sourceName` overrides the value of the `sumologic.logs.container.sourceName` property
 
 For example:
@@ -321,16 +324,16 @@ spec:
         sumologic.com/sourceName: "mywebsite_nginx"
     spec:
       containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
 ```
 
 ### Overriding source category with pod annotations
 
-The following example shows how to customize the source category for data from a specific deployment.
-The resulting value of `_sourceCategory` field will be `my-component`:
+The following example shows how to customize the source category for data from a specific deployment. The resulting value of
+`_sourceCategory` field will be `my-component`:
 
 ```yaml
 apiVersion: v1
@@ -352,22 +355,21 @@ spec:
       name: my-component
     spec:
       containers:
-      - name: my-component
-        image: my-image
+        - name: my-component
+          image: my-image
 ```
 
 The `sumologic.com/sourceCategory` annotation defines the source category for the data.
 
 The empty `sumologic.com/sourceCategoryPrefix` annotation removes the default prefix added to the source category.
 
-The `sumologic.com/sourceCategoryReplaceDash` annotation with value `-` prevents the dash in the source category
-from being replaced with another character.
+The `sumologic.com/sourceCategoryReplaceDash` annotation with value `-` prevents the dash in the source category from being replaced with
+another character.
 
 ### Excluding data using annotations
 
-You can use the `sumologic.com/exclude` [annotation](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/)
-to exclude data from Sumo.
-This data is sent to the metadata enrichment service, but not to Sumo.
+You can use the `sumologic.com/exclude` [annotation](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) to
+exclude data from Sumo. This data is sent to the metadata enrichment service, but not to Sumo.
 
 ```yaml
 apiVersion: v1
@@ -387,17 +389,16 @@ spec:
         sumologic.com/exclude: "true"
     spec:
       containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
 ```
 
 #### Including subsets of excluded data
 
-If you excluded a whole namespace, but still need one or few pods to be still included for shipping to Sumo,
-you can use the `sumologic.com/include` annotation to include it.
-It takes precedence over the exclusion described above.
+If you excluded a whole namespace, but still need one or few pods to be still included for shipping to Sumo, you can use the
+`sumologic.com/include` annotation to include it. It takes precedence over the exclusion described above.
 
 ```yaml
 apiVersion: v1
@@ -420,10 +421,10 @@ spec:
         sumologic.com/include: "true"
     spec:
       containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
 ```
 
 ## Templating Kubernetes metadata
@@ -431,7 +432,7 @@ spec:
 The following Kubernetes metadata is available for string templating:
 
 | String template  | Description                                             |
-|------------------|---------------------------------------------------------|
+| ---------------- | ------------------------------------------------------- |
 | `%{namespace}`   | Namespace name                                          |
 | `%{pod}`         | Full pod name (e.g. `travel-products-4136654265-zpovl`) |
 | `%{pod_name}`    | Friendly pod name (e.g. `travel-products`)              |
@@ -442,43 +443,41 @@ The following Kubernetes metadata is available for string templating:
 
 ### Missing labels
 
-Unlike the other templates, labels are not guaranteed to exist, so missing labels
-interpolate as `"undefined"`.
+Unlike the other templates, labels are not guaranteed to exist, so missing labels interpolate as `"undefined"`.
 
-For example, if you have only the label `app: travel` but you define
-`SOURCE_NAME="%{label:app}@%{label:version}"`, the source name will appear as `travel@undefined`.
+For example, if you have only the label `app: travel` but you define `SOURCE_NAME="%{label:app}@%{label:version}"`, the source name will
+appear as `travel@undefined`.
 
 ## Disable logs, metrics, or falco
 
-If you want to disable the collection of logs, metrics, or falco, make the below changes
-respectively in the `user-values.yaml` file and run the `helm upgrade` command.
+If you want to disable the collection of logs, metrics, or falco, make the below changes respectively in the `user-values.yaml` file and run
+the `helm upgrade` command.
 
 | parameter                   | value | function                   |
-|-----------------------------|-------|----------------------------|
+| --------------------------- | ----- | -------------------------- |
 | `sumologic.logs.enabled`    | false | disable logs collection    |
 | `sumologic.metrics.enabled` | false | disable metrics collection |
 | `falco.enabled`             | false | disable falco              |
 
 ## Changing scrape interval for Prometheus
 
-Default scrapeInterval for collection is `30s`. This is the recommended value which ensures that all of Sumo Logic dashboards
-are filled up with proper data.
+Default scrapeInterval for collection is `30s`. This is the recommended value which ensures that all of Sumo Logic dashboards are filled up
+with proper data.
 
 To change it, you can use following configuration:
 
 ```yaml
-kube-prometheus-stack:  # For user-values.yaml
+kube-prometheus-stack: # For user-values.yaml
   prometheus:
     prometheusSpec:
-      scrapeInterval: '1m'
+      scrapeInterval: "1m"
 ```
 
 ## Get logs not available on stdout
 
-When logs from a pod are not available on stdout, [Tailing Sidecar Operator](https://github.com/SumoLogic/tailing-sidecar)
-can help with collecting them using standard logging pipeline.
-To tail logs using Tailing Sidecar Operator the file with those logs needs to be accessible through a volume
-mounted to sidecar container.
+When logs from a pod are not available on stdout, [Tailing Sidecar Operator](https://github.com/SumoLogic/tailing-sidecar) can help with
+collecting them using standard logging pipeline. To tail logs using Tailing Sidecar Operator the file with those logs needs to be accessible
+through a volume mounted to sidecar container.
 
 Providing that the file with logs is accessible through volume, to enable tailing of logs using Tailing Sidecar Operator:
 
@@ -497,8 +496,7 @@ Providing that the file with logs is accessible through volume, to enable tailin
       tailing-sidecar: <sidecar-name-0>:<volume-name-0>:<path-to-tail-0>;<sidecar-name-1>:<volume-name-1>:<path-to-tail-1>
   ```
 
-Example of using Tailing Sidecar Operator is described in the
-[blog post](https://www.sumologic.com/blog/tailing-sidecar-operator/).
+Example of using Tailing Sidecar Operator is described in the [blog post](https://www.sumologic.com/blog/tailing-sidecar-operator/).
 
 ## Using custom Kubernetes API server address
 
@@ -509,17 +507,17 @@ metadata:
   logs:
     statefulset:
       extraEnvVars:
-      - name: KUBERNETES_SERVICE_HOST
-        value: my-custom-k8s.api
-      - name: KUBERNETES_SERVICE_PORT
-        value: '12345'
+        - name: KUBERNETES_SERVICE_HOST
+          value: my-custom-k8s.api
+        - name: KUBERNETES_SERVICE_PORT
+          value: "12345"
   metrics:
     statefulset:
       extraEnvVars:
-      - name: KUBERNETES_SERVICE_HOST
-        value: my-custom-k8s.api
-      - name: KUBERNETES_SERVICE_PORT
-        value: '12345'
+        - name: KUBERNETES_SERVICE_HOST
+          value: my-custom-k8s.api
+        - name: KUBERNETES_SERVICE_PORT
+          value: "12345"
 ```
 
 ## OpenTelemetry Collector queueing and batching
@@ -532,63 +530,65 @@ For [batch processor][batch_processor]:
 - `timeout` defines time after which the batch is sent regardless of the size (can be lower than `send_batch_size`).
 - `send_batch_max_size` is an upper limit of the batch size.
 
-*We could say that `send_batch_size` is a soft limit and `send_batch_max_size` is a hard limit of the batch size.*
+_We could say that `send_batch_size` is a soft limit and `send_batch_max_size` is a hard limit of the batch size._
 
-In Helm Chart's default configuration, `send_batch_max_size` is set to `2 * send_batch_size`.
-It is necessary to consider changing the value of `send_batch_max_size` whenever `send_batch_size` is changed.
-More information can be found in [sumologic-otel-collector's documentation][sumo-otelcol-batching-doc].
+In Helm Chart's default configuration, `send_batch_max_size` is set to `2 * send_batch_size`. It is necessary to consider changing the value
+of `send_batch_max_size` whenever `send_batch_size` is changed. More information can be found in [sumologic-otel-collector's
+documentation][sumo-otelcol-batching-doc].
 
 For [sumologic exporter][sumologic_exporter]:
 
 - `max_request_body_size` defines maximum size of requests to sumologic before compression.
 - `timeout` defines connection timeout. It is recommended to adjust this value in relation to `max_request_body_size`.
 
-- `sending_queue.num_consumers` is the number of consumers that dequeue batches. It translates to maximum number of parallel connections to the sumologic backend.
+- `sending_queue.num_consumers` is the number of consumers that dequeue batches. It translates to maximum number of parallel connections to
+  the sumologic backend.
 - `sending_queue.queue_size` is capacity of the queue in terms of batches (batches can vary between `1` and `send_batch_max_size`)
 
-**As effective value of `sending_queue.queue_size` depends on current traffic,**
-**there is no way to figure out optimal PVC size in relation to `sending_queue.queue_size`.**
-**Due to that, we recommend to set `sending_queue.queue_size` to high value in order to use maximum resources of PVC.**
+**As effective value of `sending_queue.queue_size` depends on current traffic,** **there is no way to figure out optimal PVC size in
+relation to `sending_queue.queue_size`.** **Due to that, we recommend to set `sending_queue.queue_size` to high value in order to use
+maximum resources of PVC.**
 
 **The above in connection with PVC monitoring can lead to constant alerts (eg. [KubePersistentVolumeFillingUp][filling_up_alert]),**
 **because once filled in PVC never reduces its fill.**
 
 [batch_processor]: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.47.0/processor/batchprocessor#batch-processor
-[sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.50.0-sumo-0/pkg/exporter/sumologicexporter#sumo-logic-exporter
+[sumologic_exporter]:
+  https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.50.0-sumo-0/pkg/exporter/sumologicexporter#sumo-logic-exporter
 [filling_up_alert]: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumefillingup/
-[sumo-otelcol-batching-doc]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/best-practices.md#using-batch-processor-to-batch-data
+[sumo-otelcol-batching-doc]:
+  https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/best-practices.md#using-batch-processor-to-batch-data
 
 ### Compaction
 
-The OpenTelemetry Collector doesn't have a compaction mechanism.
-Local storage can only grow - it can reuse disk space that has already been allocated, but not free it.
-This leads to a situation where the database file can grow a lot (due to a spike in data traffic)
-but after some time only small piece of the file will be used for data storage (until next spike).
+The OpenTelemetry Collector doesn't have a compaction mechanism. Local storage can only grow - it can reuse disk space that has already been
+allocated, but not free it. This leads to a situation where the database file can grow a lot (due to a spike in data traffic) but after some
+time only small piece of the file will be used for data storage (until next spike).
 
 ### Examples
 
 Here are some useful examples and calculations for queue and batch parameters.
 
-For the calculations below we made an assumption that a single metric data point is around 1 kilobyte in size, including metadata.
-This assumption is based on the average data we ingest.
-Persistent storage doesn't compress data so we assume that single metric data point takes 1 kilobyte on disk as well.
+For the calculations below we made an assumption that a single metric data point is around 1 kilobyte in size, including metadata. This
+assumption is based on the average data we ingest. Persistent storage doesn't compress data so we assume that single metric data point takes
+1 kilobyte on disk as well.
 
 `number_of_instances` represents number of `sumologic-otelcol-metrics` instances.
 
 #### Outage with huge metrics spike
 
-Let's consider a huge metrics spike in your network while connection to the Sumologic is down.
-Huge load means that batch processor is going to push batches due to `send_batch_max_size` instead of `timeout`.
-The reliability of the system can be calculated using the following formulas:
+Let's consider a huge metrics spike in your network while connection to the Sumologic is down. Huge load means that batch processor is going
+to push batches due to `send_batch_max_size` instead of `timeout`. The reliability of the system can be calculated using the following
+formulas:
 
 - If limited by queue_size: `number_of_instances*send_batch_max_size*sending_queue.queue_size/load_in_DPM` minutes.
 - If limited by PVC size: `number_of_instances*PVC_size/(1KB*load_in_DPM)` minutes.
 
 #### Outage with low DPM load
 
-Let's consider a low but constant load in your network while connection to the Sumologic is down.
-Low load means that batch processor is going to push batches due to `timeout` instead of `send_batch_max_size`.
-The reliability of the system can be calculated using the following formulas:
+Let's consider a low but constant load in your network while connection to the Sumologic is down. Low load means that batch processor is
+going to push batches due to `timeout` instead of `send_batch_max_size`. The reliability of the system can be calculated using the following
+formulas:
 
 - If limited by queue_size: `number_of_instances*timeout[min]*sending_queue.queue_size/load_in_DPM` minutes.
 - If limited by PVC size: `number_of_instances*PVC_size/(1KB*load_in_DPM)` minutes.
@@ -597,17 +597,16 @@ The reliability of the system can be calculated using the following formulas:
 
 ### Using NodeSelectors
 
-Kubernetes offers a feature of assigning specific pod to node. Such kind of control is sometimes useful,
-whenever you want to ensure that pod will end up on specific node according your requirements like operating system
-or connected devices.
+Kubernetes offers a feature of assigning specific pod to node. Such kind of control is sometimes useful, whenever you want to ensure that
+pod will end up on specific node according your requirements like operating system or connected devices.
 
 #### Binding pods to linux nodes
 
-Using this feature we can bind them to linux nodes.
-In order to do that `nodeSelector` has to be used. By default node selectors can be set for below pods:
+Using this feature we can bind them to linux nodes. In order to do that `nodeSelector` has to be used. By default node selectors can be set
+for below pods:
 
 | component               | key                                                                             |
-|-------------------------|---------------------------------------------------------------------------------|
+| ----------------------- | ------------------------------------------------------------------------------- |
 | `fluent-bit`            | `fluent-bit.nodeSelector.kubernetes.io/os`                                      |
 | `fluentd`               | `fluentd.events.statefulset.nodeSelector.kubernetes.io/os`                      |
 | `fluentd`               | `fluentd.logs.statefulset.nodeSelector.kubernetes.io/os`                        |
@@ -633,21 +632,18 @@ fluent-bit:
 
 #### Setting different resources on different nodes for logs collector
 
-All of the log collector Pods have the same resource settings, being members of the same DaemonSet.
-However, sometimes it's necessary to vary this based on the Node - for example
-when some large Nodes can contain applications generating a lot of log data.
+All of the log collector Pods have the same resource settings, being members of the same DaemonSet. However, sometimes it's necessary to
+vary this based on the Node - for example when some large Nodes can contain applications generating a lot of log data.
 
-It's possible to set different resource quotas for different Nodes based on labels,
-resulting in a different log collector DaemonSet for these Nodes.
+It's possible to set different resource quotas for different Nodes based on labels, resulting in a different log collector DaemonSet for
+these Nodes.
 
 Let's consider the following example.
 
-You have node group with common label `workingGroup: IntenseLogGeneration`
-and for that specific group of nodes,
-you would like to set different resources than for rest of the cluster.
+You have node group with common label `workingGroup: IntenseLogGeneration` and for that specific group of nodes, you would like to set
+different resources than for rest of the cluster.
 
-We assume that you only want to set `requests.cpu` to `2` and `limits.cpu` to `10`
-and have the same memory values like main DaemonSet.
+We assume that you only want to set `requests.cpu` to `2` and `limits.cpu` to `10` and have the same memory values like main DaemonSet.
 
 ```yaml
 otellogs:
@@ -668,18 +664,18 @@ otellogs:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
-          - matchExpressions:
-            - key: workingGroup
-              operator: NotIn
-              values:
-              - IntenseLogGeneration
+            - matchExpressions:
+                - key: workingGroup
+                  operator: NotIn
+                  values:
+                    - IntenseLogGeneration
 ```
 
 ## Parsing log content as json
 
 In order to parse and store log content as json following configuration has to be applied:
 
-:construction: *TODO*, see [the Fluentd section](fluent/best-practices.md#parsing-log-content-as-json)
+:construction: _TODO_, see [the Fluentd section](fluent/best-practices.md#parsing-log-content-as-json)
 
 [chart_readme]: ../deploy/helm/sumologic/README.md
 [values.yaml]: ../deploy/helm/sumologic/values.yaml

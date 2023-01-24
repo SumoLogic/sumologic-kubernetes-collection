@@ -56,12 +56,14 @@ jobs:
   markdownlint:
     runs-on: ubuntu-20.04
     needs: [docs-changed]
+    env:
+      PRETTIER_VERSION: 2.8.3
     steps:
       - uses: actions/checkout@v3
-      - name: install markdownlint
+      - name: install markdownlint and prettier
         if: needs.docs-changed.outputs.any_changed == 'true'
-        run: npm install -g markdownlint-cli
-      - name: markdownlint check
+        run: npm install -g markdownlint-cli prettier@${PRETTIER_VERSION}
+      - name: markdown-lint check
         if: needs.docs-changed.outputs.any_changed == 'true'
         run: make markdown-lint
 
@@ -88,7 +90,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [chart-changed]
     env:
-      PRETTIER_VERSION: 2.8.1
+      PRETTIER_VERSION: 2.8.3
     steps:
       - uses: actions/checkout@v3
       - name: install yamllint
@@ -130,20 +132,6 @@ jobs:
         if: needs.docs-changed.outputs.any_changed == 'true'
         run: |
           make markdown-links-lint
-
-  markdown-table-formatter-check:
-    runs-on: ubuntu-20.04
-    needs: [docs-changed]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3.6.0
-        if: needs.docs-changed.outputs.any_changed == 'true'
-      - name: Install markdown-table-formatter
-        if: needs.docs-changed.outputs.any_changed == 'true'
-        run: npm install markdown-table-formatter --save
-      - name: Run markdown-table-formatter
-        if: needs.docs-changed.outputs.any_changed == 'true'
-        run: CMD=./node_modules/.bin/markdown-table-formatter make markdown-table-formatter-check
 
   check-configuration-keys:
     runs-on: ubuntu-20.04

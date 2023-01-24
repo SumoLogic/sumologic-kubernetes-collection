@@ -12,8 +12,8 @@ git clone https://github.com/SumoLogic/sumologic-kubernetes-collection.git
 ./ci/build.sh
 ```
 
-There is a prepared Vagrant environment with [microk8s](https://microk8s.io/) set up for collection tests,
-for details see [here](vagrant/README.md).
+There is a prepared Vagrant environment with [microk8s](https://microk8s.io/) set up for collection tests, for details see
+[here](vagrant/README.md).
 
 ## Releasing guide
 

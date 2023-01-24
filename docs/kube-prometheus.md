@@ -1,8 +1,7 @@
 # kube-prometheus Mixin
 
-If you are already using kube-prometheus, you can use the Prometheus installation from there and send metrics to Sumo
-Logic using a mixin to add the correct remote_write configs and add the `cluster` external_label.
-You can generate mixin configuration using `kubectl` or `docker`:
+If you are already using kube-prometheus, you can use the Prometheus installation from there and send metrics to Sumo Logic using a mixin to
+add the correct remote_write configs and add the `cluster` external_label. You can generate mixin configuration using `kubectl` or `docker`:
 
 ```bash
  # using kubectl
@@ -18,9 +17,8 @@ You can generate mixin configuration using `kubectl` or `docker`:
   template-prometheus-mixin > kube-prometheus-sumo-logic-mixin.libsonnet
 ```
 
-The defaults assume you're deploying Sumo Logic collection via Helm and using few customizations.
-When deploying collection, disable the built-in Prometheus
-Operator by editing `values.yml`:
+The defaults assume you're deploying Sumo Logic collection via Helm and using few customizations. When deploying collection, disable the
+built-in Prometheus Operator by editing `values.yml`:
 
 ```yaml
 kube-prometheus-stack:
@@ -57,8 +55,8 @@ local kp =
 
 ## Non-default remote write url
 
-If you aren't using the defaults, either by changing the namespace collection is deployed in or changing the service
-name, you'll have to do edit `$._config.sumologicCollectorSvc` to point to the correct metadata enrichment service.
+If you aren't using the defaults, either by changing the namespace collection is deployed in or changing the service name, you'll have to do
+edit `$._config.sumologicCollectorSvc` to point to the correct metadata enrichment service.
 
 This service can be found under the `metadataMetrics` key in the `sumologic-configmap` ConfigMap.
 

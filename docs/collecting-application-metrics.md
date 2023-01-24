@@ -5,13 +5,11 @@ This document covers multiple different use cases related to scraping custom app
 There are two major sections:
 
 - [Scraping metrics](#scraping-metrics) which describes how to send your application metrics to sumo
-- [Metrics modifications](#metrics-modifications)
-  which describes how to filter metrics and rename both metrics and metric metadata
+- [Metrics modifications](#metrics-modifications) which describes how to filter metrics and rename both metrics and metric metadata
 
 ## Scraping metrics
 
-This section describes how to scrape metrics from your applications.
-Several scenarios has been covered:
+This section describes how to scrape metrics from your applications. Several scenarios has been covered:
 
 - [Application metrics are exposed (one endpoint scenario)](#application-metrics-are-exposed-one-endpoint-scenario)
 - [Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
@@ -19,8 +17,8 @@ Several scenarios has been covered:
 
 ### Application metrics are exposed (one endpoint scenario)
 
-If there is only one endpoint in the Pod you want to scrape metrics from, you can use annotations.
-Add the following annotations to your Pod definition:
+If there is only one endpoint in the Pod you want to scrape metrics from, you can use annotations. Add the following annotations to your Pod
+definition:
 
 ```yaml
 # ...
@@ -34,9 +32,8 @@ annotations:
 
 ### Application metrics are exposed (multiple enpoints scenario)
 
-If you want to scrape metrics from multiple endpoints in a single Pod,
-you need a Service which points to the Pod and also to configure `kube-prometheus-stack.prometheus.additionalServiceMonitors`
-in your `user-values.yaml`:
+If you want to scrape metrics from multiple endpoints in a single Pod, you need a Service which points to the Pod and also to configure
+`kube-prometheus-stack.prometheus.additionalServiceMonitors` in your `user-values.yaml`:
 
 ```yaml
 kube-prometheus-stack:
@@ -84,14 +81,15 @@ kube-prometheus-stack:
 >         ## This is your custom remoteWrite configuration
 >         - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<custom endpoint name>
 >           writeRelabelConfigs:
->           - action: keep
->             regex: <metric1>|<metric2>|...
->             sourceLabels: [__name__]
+>             - action: keep
+>               regex: <metric1>|<metric2>|...
+>               sourceLabels: [__name__]
 > ```
 >
 > We recommend using a regex validator, for example [https://regex101.com/]
 
-[prometheus_service_monitors]: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.ServiceMonitor
+[prometheus_service_monitors]:
+  https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.ServiceMonitor
 [https://regex101.com/]: https://regex101.com/
 
 #### Example
@@ -123,11 +121,11 @@ metadata:
   # ...
 spec:
   containers:
-  - ports:
-    - containerPort: 3000
-      protocol: TCP
-    - containerPort: 3001
-      protocol: TCP
+    - ports:
+        - containerPort: 3000
+          protocol: TCP
+        - containerPort: 3001
+          protocol: TCP
   # ...
 ```
 
@@ -144,14 +142,14 @@ metadata:
   namespace: my-custom-app-namespace
 spec:
   ports:
-  - name: "some-port"
-    port: 3000
-    protocol: TCP
-    targetPort: 3000
-  - name: "another-port"
-    port: 3001
-    protocol: TCP
-    targetPort: 3001
+    - name: "some-port"
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+    - name: "another-port"
+      port: 3001
+      protocol: TCP
+      targetPort: 3001
   selector:
     app: my-custom-app
 ```
@@ -194,8 +192,8 @@ kube-prometheus-stack:
 
 ### Application metrics are not exposed
 
-In case you want to scrape metrics from application which do not expose them, you can use telegraf operator.
-It will scrape metrics according to configuration and expose them on port `9273` so Prometheus will be able to scrape them.
+In case you want to scrape metrics from application which do not expose them, you can use telegraf operator. It will scrape metrics
+according to configuration and expose them on port `9273` so Prometheus will be able to scrape them.
 
 For example to expose metrics from nginx Pod, you can use the following annotations:
 
@@ -208,11 +206,11 @@ annotations:
   telegraf.influxdata.com/limits-cpu: '750m'
 ```
 
-`sumologic-prometheus` defines the way telegraf operator will expose the metrics.
-They are going to be exposed in prometheus format on port `9273` and `/metrics` path.
+`sumologic-prometheus` defines the way telegraf operator will expose the metrics. They are going to be exposed in prometheus format on port
+`9273` and `/metrics` path.
 
-**NOTE** If you apply annotations on Pod which is subject of other object, e.g. DaemonSet, it won't take affect.
-In such case, the annotation should be added to Pod specification in DeamonSet template.
+**NOTE** If you apply annotations on Pod which is subject of other object, e.g. DaemonSet, it won't take affect. In such case, the
+annotation should be added to Pod specification in DeamonSet template.
 
 After restart, the Pod should have additional `telegraf` container.
 
@@ -231,8 +229,7 @@ This section coverts the following metrics modifications:
 
 ### Filtering metrics
 
-In order to filter in or out the metrics, you can add [filterprocessor] to metric's extraProcessors.
-Please see the following example:
+In order to filter in or out the metrics, you can add [filterprocessor] to metric's extraProcessors. Please see the following example:
 
 ```yaml
 sumologic:
@@ -274,12 +271,12 @@ sumologic:
 By default, the following attributes should be available:
 
 | Attribute name          | Description                                                |
-|-------------------------|------------------------------------------------------------|
-| _collector              | Sumo Logic collector name                                  |
-| _origin                 | Sumo Logic origin metadata ("kubernetes")                  |
-| _sourceCategory         | Sumo Logic source category                                 |
-| _sourceHost             | Sumo Logic source host                                     |
-| _sourceName             | Sumo Logic source Nmae                                     |
+| ----------------------- | ---------------------------------------------------------- |
+| \_collector             | Sumo Logic collector name                                  |
+| \_origin                | Sumo Logic origin metadata ("kubernetes")                  |
+| \_sourceCategory        | Sumo Logic source category                                 |
+| \_sourceHost            | Sumo Logic source host                                     |
+| \_sourceName            | Sumo Logic source Nmae                                     |
 | cluster                 | Cluster Name                                               |
 | endpoint                | Metrics endpoint                                           |
 | http_listener_v2_path   | Path used to receive data from Prometheus                  |
@@ -294,19 +291,19 @@ By default, the following attributes should be available:
 | k8s.replicaset.name     | Kubernetes Replicaset name                                 |
 | k8s.service.name        | Kubernetes Service name                                    |
 | k8s.statefulset.name    | Kubernetes Statefulset name                                |
-| pod_labels_<label_name> | Kubernetes Pod label. Every label is a different attribute |
+| pod*labels*<label_name> | Kubernetes Pod label. Every label is a different attribute |
 | prometheus              | Prometheus                                                 |
 | prometheus_replica      | Prometheus Replica name                                    |
 | prometheus_service      | Prometheus Service name                                    |
 
 **NOTE** Before ingestion to Sumo Logic, attributes are renamed according to the [sumologicschemaprocessor documentation][sumologicschema]
 
-[sumologicschema]: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sumologicschemaprocessor#attribute-translation
+[sumologicschema]:
+  https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sumologicschemaprocessor#attribute-translation
 
 ### Renaming metric
 
-In order to rename metrics, the [transformprocessor] can be use.
-Please look at the following snippet:
+In order to rename metrics, the [transformprocessor] can be use. Please look at the following snippet:
 
 ```yaml
 sumologic:
@@ -323,8 +320,7 @@ sumologic:
 
 ### Adding or renaming metadata
 
-If you want to add or rename metadata, the [transformprocessor] can be use.
-Please look at the following snippet:
+If you want to add or rename metadata, the [transformprocessor] can be use. Please look at the following snippet:
 
 ```yaml
 sumologic:
@@ -362,8 +358,7 @@ If you do not see your metrics in Sumo Logic, please check the following stages:
 
 ### Check if metrics are in Prometheus
 
-First of all, you need to expose Prometheus UI locally.
-You need to find Prometheus UI service name:
+First of all, you need to expose Prometheus UI locally. You need to find Prometheus UI service name:
 
 ```console
 $ export NAMESPACE=sumologic
@@ -390,8 +385,8 @@ collection-sumologic-otelagent                  ClusterIP   10.152.183.141   <no
 prometheus-operated                             ClusterIP   None             <none>        9090/TCP                                                                                                                     3d14h
 ```
 
-In our example, the service is named `collection-kube-prometheus-prometheus`.
-You should look for `kube-prometheus-prometheus` phrase or it part and the service exposes on `9090/TCP`.
+In our example, the service is named `collection-kube-prometheus-prometheus`. You should look for `kube-prometheus-prometheus` phrase or it
+part and the service exposes on `9090/TCP`.
 
 Next, please run the following command to expose prometheus on `0.0.0.0:8000`.
 
@@ -410,17 +405,16 @@ Type the metric name in the search bar and run `Execute`:
 ![Prometheus query results](/images/metrics/prometheus-query.png)
 
 If the metrics have been found, you can go to the
-[Check if Prometheus knows how to send metrics to Sumo Logic](#check-if-prometheus-knows-how-to-send-metrics-to-sumo-logic)
-section. Otherwise, please check
-[Investigate Prometheus scrape configuration](#investigate-prometheus-scrape-configuration) section.
+[Check if Prometheus knows how to send metrics to Sumo Logic](#check-if-prometheus-knows-how-to-send-metrics-to-sumo-logic) section.
+Otherwise, please check [Investigate Prometheus scrape configuration](#investigate-prometheus-scrape-configuration) section.
 
 #### Investigate Prometheus scrape configuration
 
 We assume, that you have exposed Prometheus on `localhost:8000` like in
 [Check if metrics are in Prometheus](#check-if-metrics-are-in-prometheus) section.
 
-Go to the `http://localhost:8000/targets?search=` and search for the pod you want to scrape metrics from. It should be under the `kubernetes-pods` target name if you are using annotations,
-otherwise, it should be under serviceMonitor name you defined in configuration.
+Go to the `http://localhost:8000/targets?search=` and search for the pod you want to scrape metrics from. It should be under the
+`kubernetes-pods` target name if you are using annotations, otherwise, it should be under serviceMonitor name you defined in configuration.
 
 ##### Pod is visible in Prometheus targets
 
@@ -434,8 +428,8 @@ In the `Error` column we can see the reason of that, which is:
 Get "http://10.1.126.138:3004/metrics": dial tcp 10.1.126.138:3004: connect: connection refused
 ```
 
-In that example, we need to check why the endpoint is not accessible, and after looking at the Pod definition,
-we see that metrics are exposed on port `3000`:
+In that example, we need to check why the endpoint is not accessible, and after looking at the Pod definition, we see that metrics are
+exposed on port `3000`:
 
 ```yaml
 ---
@@ -466,30 +460,25 @@ spec:
 # ...
 ```
 
-To fix that, we need to change `prometheus.io/port: "3004"` to `prometheus.io/port: "3000"`,
-and redeploy the application.
+To fix that, we need to change `prometheus.io/port: "3004"` to `prometheus.io/port: "3000"`, and redeploy the application.
 
 After fix, we can see that Prometheus can read metrics from the Pod now:
 
 ![Prometheus targets without error](/images/metrics/prometheus-targets-ok.png)
 
-**NOTE** This example was simple as it was just simple misconfiguration.
-There can be much complicated cases, eg. Prometheus cannot authenticate to the metrics endpoints,
-or cannot access it due to network configuration.
+**NOTE** This example was simple as it was just simple misconfiguration. There can be much complicated cases, eg. Prometheus cannot
+authenticate to the metrics endpoints, or cannot access it due to network configuration.
 
-If you cannot spot your Pod in Prometheus targets and you are using annotations,
-please ensure that deployed Pod has them in the definitions.
+If you cannot spot your Pod in Prometheus targets and you are using annotations, please ensure that deployed Pod has them in the
+definitions.
 
-If you are using serviceMonitor, please go to the
-[There is no target for serviceMonitor](#there-is-no-target-for-servicemonitor)
-or
+If you are using serviceMonitor, please go to the [There is no target for serviceMonitor](#there-is-no-target-for-servicemonitor) or
 [Pod is not visible in target for custom serviceMonitor](#pod-is-not-visible-in-target-for-custom-servicemonitor)
 
 ##### There is no target for serviceMonitor
 
-If you created your own serviceMonitor using `additionalServiceMonitors` configuration
-and you cannot see it in the target, please contact with our Customer Support,
-or create an issue.
+If you created your own serviceMonitor using `additionalServiceMonitors` configuration and you cannot see it in the target, please contact
+with our Customer Support, or create an issue.
 
 If you crafted it by hand, please verify that it fulfills the Proemetheus serviceMonitor selector configuration:
 
@@ -503,45 +492,41 @@ $ kubectl -n "${NAMESPACE}" describe prometheus
 ...
 ```
 
-`Service Monitor Namespace Selector` defines which namespaces are observed by Prometheus.
-Empty value means all namespaces
+`Service Monitor Namespace Selector` defines which namespaces are observed by Prometheus. Empty value means all namespaces
 `Service Monitor Selector` defines what labels should the serviceMonitor have.
 
 ##### Pod is not visible in target for custom serviceMonitor
 
-If you don't see Pod you are expecting to see for your serviceMonitor,
-but serviceMonitor is in the Prometheus targets,
-please verify if `selector` and `namespaceSelector` in `additionalServiceMonitors`
-configuration are matching your Pod's namespace and labels.
+If you don't see Pod you are expecting to see for your serviceMonitor, but serviceMonitor is in the Prometheus targets, please verify if
+`selector` and `namespaceSelector` in `additionalServiceMonitors` configuration are matching your Pod's namespace and labels.
 
 ### Check if Prometheus knows how to send metrics to Sumo Logic
 
-If metrics are visible in Prometheus, but you cannot see them in Sumo Logic,
-please check if Prometheus knows how to send it to Sumo Logic Metatada StatefulSet.
+If metrics are visible in Prometheus, but you cannot see them in Sumo Logic, please check if Prometheus knows how to send it to Sumo Logic
+Metatada StatefulSet.
 
-Go to the [http://localhost:8000/config](http://localhost:8000/config) and verify if your metric
-definition is added to any `remote_write` section. It most likely will be covered by:
+Go to the [http://localhost:8000/config](http://localhost:8000/config) and verify if your metric definition is added to any `remote_write`
+section. It most likely will be covered by:
 
 ```yaml
 - url: http://collection-sumologic-remote-write-proxy.sumologic.svc.cluster.local.:9888/prometheus.metrics.applications.custom
   remote_timeout: 5s
   write_relabel_configs:
-  - source_labels: [_sumo_forward_]
-    separator: ;
-    regex: ^true$
-    replacement: $1
-    action: keep
-  - separator: ;
-    regex: _sumo_forward_
-    replacement: $1
-    action: labeldrop
+    - source_labels: [_sumo_forward_]
+      separator: ;
+      regex: ^true$
+      replacement: $1
+      action: keep
+    - separator: ;
+      regex: _sumo_forward_
+      replacement: $1
+      action: labeldrop
 ```
 
 If there is no `remote_write` for your metric definition, you can add one using `additionalRemoteWrite` what has been described in
-[Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
-section.
+[Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario) section.
 
-However if you can see `remote_write` which matches your metrics and metrics are in Prometheus,
-we recommend to look at the Prometheus, Prometheus Operator and OpenTelemetry Metrics Collector Pod logs.
+However if you can see `remote_write` which matches your metrics and metrics are in Prometheus, we recommend to look at the Prometheus,
+Prometheus Operator and OpenTelemetry Metrics Collector Pod logs.
 
 If the issue won't be solved, please create an issue or contact with our Customer Support.

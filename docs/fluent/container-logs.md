@@ -15,18 +15,17 @@ In order to collect logs in Docker format, modify Fluent Bit input section to fo
 fluent-bit:
   config:
     inputs: |
-          Name                tail
-          Path                /var/log/containers/*.log
-          Docker_Mode         On
-          Docker_Mode_Parser  multi_line
-          Tag                 containers.*
-          Refresh_Interval    1
-          Rotate_Wait         60
-          Mem_Buf_Limit       5MB
-          Skip_Long_Lines     On
-          DB                  /tail-db/tail-containers-state-sumo.db
-          DB.Sync             Normal
-
+      Name                tail
+      Path                /var/log/containers/*.log
+      Docker_Mode         On
+      Docker_Mode_Parser  multi_line
+      Tag                 containers.*
+      Refresh_Interval    1
+      Rotate_Wait         60
+      Mem_Buf_Limit       5MB
+      Skip_Long_Lines     On
+      DB                  /tail-db/tail-containers-state-sumo.db
+      DB.Sync             Normal
 ```
 
 Adjust `multi_line` parser defined in `values.yaml` in `customParsers` to pattern which starts log entry:
@@ -56,10 +55,10 @@ Log will be visible in Sumo in this form:
 
 ```json
 {
-   "timestamp":1613736567740,
-   "log":"2021-02-19T12:09:26.1613736566 this is the first line\n  this the second line",
-   "stream":"stdout",
-   "time":"2021-02-19T12:09:26.739254308Z"
+  "timestamp": 1613736567740,
+  "log": "2021-02-19T12:09:26.1613736566 this is the first line\n  this the second line",
+  "stream": "stdout",
+  "time": "2021-02-19T12:09:26.739254308Z"
 }
 ```
 
@@ -115,15 +114,14 @@ will have following form in Sumo:
 
 ```json
 {
-   "timestamp":1613650078811,
-   "stream":"stdout",
-   "logtag":"F",
-   "log":"this is a log message"
+  "timestamp": 1613650078811,
+  "stream": "stdout",
+  "logtag": "F",
+  "log": "this is a log message"
 }
 ```
 
-In order to have time from log line as a string value in log in Sumo please
-remove the following lines from `crio` parser configuration:
+In order to have time from log line as a string value in log in Sumo please remove the following lines from `crio` parser configuration:
 
 ```
           Time_Key     time
@@ -134,11 +132,11 @@ and `time` key will be visible in Sumo:
 
 ```json
 {
-   "timestamp":1613650456722,
-   "time":"2021-02-18T12:14:16.722375295+00:00",
-   "stream":"stdout",
-   "logtag":"F",
-   "log":"this is a log message"
+  "timestamp": 1613650456722,
+  "time": "2021-02-18T12:14:16.722375295+00:00",
+  "stream": "stdout",
+  "logtag": "F",
+  "log": "this is a log message"
 }
 ```
 
@@ -194,15 +192,15 @@ will have following form in Sumo:
 
 ```json
 {
-   "timestamp":1613653807337,
-   "stream":"stdout",
-   "logtag":"F",
-   "log":"this is a log message"
+  "timestamp": 1613653807337,
+  "stream": "stdout",
+  "logtag": "F",
+  "log": "this is a log message"
 }
 ```
 
-In order to have time from log line as a string value in log in Sumo please
-remove the following lines from `containerd` parser configuration:
+In order to have time from log line as a string value in log in Sumo please remove the following lines from `containerd` parser
+configuration:
 
 ```
           Time_Key     time
@@ -213,18 +211,18 @@ and `time` key will be visible in Sumo:
 
 ```json
 {
-   "timestamp":1613654044683,
-   "time":"2021-02-18T13:14:04.683042846Z",
-   "stream":"stdout",
-   "logtag":"F",
-   "log":"this is a log message"
+  "timestamp": 1613654044683,
+  "time": "2021-02-18T13:14:04.683042846Z",
+  "stream": "stdout",
+  "logtag": "F",
+  "log": "this is a log message"
 }
 ```
 
 ## Configuration for multiline logs for containerd log format
 
-Fluent Bit by default reads container logs from `/var/log/containers/` directory on the Kubernetes node,
-please see configuration of tail input plugin in [values.yaml][values]:
+Fluent Bit by default reads container logs from `/var/log/containers/` directory on the Kubernetes node, please see configuration of tail
+input plugin in [values.yaml][values]:
 
 ```yaml
 fluent-bit:
@@ -288,47 +286,45 @@ kubectl logs example-pod-multiline-logs-long-lines
 
 <!-- markdownlint-enable line_length -->
 
-Containerd splits log lines which it considers too long (16384 bytes by default,
-see `max_container_log_line_size` in [containerd configuration][containerd-config]) into parts,
-and tags these parts with either `P` (for `Partial`) or `F` (for `Full`).
-This process is completely unrelated to multiline logs which are created by application.
-To avoid confusion, we refer to this feature as **multipart** logs, as opposed to **multiline**.
+Containerd splits log lines which it considers too long (16384 bytes by default, see `max_container_log_line_size` in [containerd
+configuration][containerd-config]) into parts, and tags these parts with either `P` (for `Partial`) or `F` (for `Full`). This process is
+completely unrelated to multiline logs which are created by application. To avoid confusion, we refer to this feature as **multipart** logs,
+as opposed to **multiline**.
 
 [containerd-config]: https://github.com/containerd/containerd/blob/main/docs/cri/config.md
 [values]: /deploy/helm/sumologic/values.yaml
 
 ### Using old multiline parser
 
-In order to collect multiline logs in containerd log format which can contain very long lines that
-containerd splits into parts, you can use prepared Fluent Bit configuration
-available in [/examples/multiline_logs/values_containerd.yaml](/examples/multiline_logs/values_containerd.yaml).
+In order to collect multiline logs in containerd log format which can contain very long lines that containerd splits into parts, you can use
+prepared Fluent Bit configuration available in
+[/examples/multiline_logs/values_containerd.yaml](/examples/multiline_logs/values_containerd.yaml).
 
-This configuration uses [old multiline configuration parameters][old-multiline-parser] with
-[lua filter][lua-filter] to join multipart logs (taking into account log tags `P` and `F`)
-and remove parts specific for containerd format and not related to the application log.
+This configuration uses [old multiline configuration parameters][old-multiline-parser] with [lua filter][lua-filter] to join multipart logs
+(taking into account log tags `P` and `F`) and remove parts specific for containerd format and not related to the application log.
 
-To adjust the multiline parser to your log format, please modify the parser in the `customParsers` section to match
-the first line of a multiline log:
+To adjust the multiline parser to your log format, please modify the parser in the `customParsers` section to match the first line of a
+multiline log:
 
 ```yaml
-    customParsers: |
-      [PARSER]
-          Name         containerd_multiline_pattern
-          Format       regex
-          Regex        (?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* .*)
-          Time_Key     time
-          Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
+customParsers: |
+  [PARSER]
+      Name         containerd_multiline_pattern
+      Format       regex
+      Regex        (?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* .*)
+      Time_Key     time
+      Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
 ```
 
-**_Notice:_** Strict regular expression is needed to differentiate between the first line, next line of the log
-and partial log line. When you know that your logs will not contain very long lines you may prepare regular expression
-in generic form, e.g. `(?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\S+ .*)`
+**_Notice:_** Strict regular expression is needed to differentiate between the first line, next line of the log and partial log line. When
+you know that your logs will not contain very long lines you may prepare regular expression in generic form, e.g.
+`(?<time>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.]\d+Z) (?<stream>stdout|stderr) (?<logtag>[P|F]) (?<log>\S+ .*)`
 
 To test the regular expression, you can use the [Rubular][rubular] web site.
 
 For example, when logs are generated by a Pod created using
-[/examples/multiline_logs/pod_multiline_long_lines.yaml](/examples/multiline_logs/pod_multiline_long_lines.yaml)
-and have the following form in the log file in `/var/log/containers/` directory:
+[/examples/multiline_logs/pod_multiline_long_lines.yaml](/examples/multiline_logs/pod_multiline_long_lines.yaml) and have the following form
+in the log file in `/var/log/containers/` directory:
 
 <!-- markdownlint-disable line_length -->
 
@@ -346,8 +342,8 @@ and have the following form in the log file in `/var/log/containers/` directory:
 
 <!-- markdownlint-enable line_length -->
 
-and Sumo Logic collection is deployed using [prepared configuration](/examples/multiline_logs/values_containerd.yaml),
-for example with the following command:
+and Sumo Logic collection is deployed using [prepared configuration](/examples/multiline_logs/values_containerd.yaml), for example with the
+following command:
 
 ```bash
 helm upgrade collection sumologic/sumologic \
@@ -385,8 +381,8 @@ log: "2022-02-08T20:53:30.623+0000 Exception in thread main java.lang.RuntimeExc
 
 ### Using new multiline parser (Fluent Bit v.1.8+)
 
-If you are using `containerd` or `crio` and you have multiline logs (eg. stacktraces),
-you can use fluent-bit at least in version `1.8.9` with [multiline.parser][multiline-parsing] introduced:
+If you are using `containerd` or `crio` and you have multiline logs (eg. stacktraces), you can use fluent-bit at least in version `1.8.9`
+with [multiline.parser][multiline-parsing] introduced:
 
 ```yaml
 fluent-bit:
@@ -395,8 +391,8 @@ fluent-bit:
     repository: fluent/fluent-bit
 ```
 
-This version introduced built-in parsers (especially `cri`),
-which correctly handles containerd partial logs (logs with `P` logtag) and removes parts specific for containerd log format:
+This version introduced built-in parsers (especially `cri`), which correctly handles containerd partial logs (logs with `P` logtag) and
+removes parts specific for containerd log format:
 
 ```yaml
 fluent-bit:
@@ -420,8 +416,7 @@ In addition it allows to specify custom multiline log using `MULTILINE_PARSER`.
 
 Please see [fluent-bit documentation][configurable-multiline-parsers] to learn more about this feature.
 
-For example, if continuation of multiline log is always starting from whitespace char,
-you can use the following configuration:
+For example, if continuation of multiline log is always starting from whitespace char, you can use the following configuration:
 
 ```yaml
 fluent-bit:
@@ -477,17 +472,17 @@ fluent-bit:
           Multiline.parser      multiline_stacktrace
 ```
 
-**Note:** This filter does not perform buffering that persists across different Chunks.
-This filter process one Chunk at a time and is not suitable for sources that might send multiline messages in separated chunks.
-There is [open issue][fluent-bit-multiline-issue] to support that case directly in tail plugin.
+**Note:** This filter does not perform buffering that persists across different Chunks. This filter process one Chunk at a time and is not
+suitable for sources that might send multiline messages in separated chunks. There is [open issue][fluent-bit-multiline-issue] to support
+that case directly in tail plugin.
 
 Example `user-values.yaml` with all settings described above is available in
-[/examples/multiline_logs/values_containerd_new_parser.yaml](/examples/multiline_logs/values_containerd_new_parser.yaml),
-you need to only adjust rules to your log format.
+[/examples/multiline_logs/values_containerd_new_parser.yaml](/examples/multiline_logs/values_containerd_new_parser.yaml), you need to only
+adjust rules to your log format.
 
 For example, when logs are generated by a Pod created using
-[/examples/multiline_logs/pod_multiline_single_long_line.yaml](/examples/multiline_logs/pod_multiline_single_long_line.yaml)
-and have the following form when you get them using `kubectl logs` command:
+[/examples/multiline_logs/pod_multiline_single_long_line.yaml](/examples/multiline_logs/pod_multiline_single_long_line.yaml) and have the
+following form when you get them using `kubectl logs` command:
 
 <!-- markdownlint-disable line_length -->
 
@@ -502,10 +497,11 @@ kubectl logs example-pod-mutiline-logs-long-lines
     at com.myproject.module.MyProject.main(MyProject.java:6)
 ...
 ```
+
 <!-- markdownlint-enable line_length -->
 
-and Sumo Logic collection is deployed using [prepared configuration](/examples/multiline_logs/values_containerd_new_parser.yaml),
-for example with the following command:
+and Sumo Logic collection is deployed using [prepared configuration](/examples/multiline_logs/values_containerd_new_parser.yaml), for
+example with the following command:
 
 ```bash
 helm upgrade collection sumologic/sumologic \
@@ -537,6 +533,7 @@ time: "2022-02-11T09:34:42.345288915Z"
 <!-- markdownlint-enable line_length -->
 
 [multiline-parsing]: https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/multiline-parsing
-[configurable-multiline-parsers]: https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/multiline-parsing#configurable-multiline-parsers
+[configurable-multiline-parsers]:
+  https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/multiline-parsing#configurable-multiline-parsers
 [multiline-filter]: https://docs.fluentbit.io/manual/pipeline/filters/multiline-stacktrace
 [fluent-bit-multiline-issue]: https://github.com/fluent/fluent-bit/issues/4234

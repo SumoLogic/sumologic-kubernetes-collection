@@ -24,9 +24,9 @@ You can set up the Vagrant environment with just one command:
 vagrant up
 ```
 
-If you experience following error (MacOS specific) 
+If you experience following error (MacOS specific)
 
-```
+````
 There was an error while executing `VBoxManage`, a CLI used by Vagrant
 for controlling VirtualBox. The command and stderr is shown below.
 
@@ -38,7 +38,7 @@ VBoxManage: error: Failed to create the host-only adapter
 VBoxManage: error: VBoxNetAdpCtl: Error while adding new interface: failed to open /dev/vboxnetctl: No such file or directory
 VBoxManage: error: Details: code NS_ERROR_FAILURE (0x80004005), component HostNetworkInterfaceWrap, interface IHostNetworkInterface
 VBoxManage: error: Context: "RTEXITCODE handleCreate(HandlerArg *)" at line 95 of file VBoxManageHostonly.cpp```
-```
+````
 
 go to System Preferences > Security & Privacy Then hit the "Allow" for Oracle VirtualBox
 
@@ -64,8 +64,8 @@ or
 /sumologic/vagrant/Makefile upgrade
 ```
 
-This command will prepare environment (namespaces, receiver-mock, etc.)
-and after that it will install/upgrade collector in the vagrant environment.
+This command will prepare environment (namespaces, receiver-mock, etc.) and after that it will install/upgrade collector in the vagrant
+environment.
 
 To remove collector please use:
 
@@ -208,13 +208,12 @@ Patch for receiver-mock contains two significant changes:
   curl -k --key /etc/prom-certs/key.pem --cert /etc/prom-certs/cert-chain.pem https://10.1.126.170:24231/metrics
   ```
 
-- additional service port `3002`, which is not managed by istio, but points to the standard 3000 port.
-  This change is required for setup job to work correctly outside of istio
+- additional service port `3002`, which is not managed by istio, but points to the standard 3000 port. This change is required for setup job
+  to work correctly outside of istio
 
 #### Adjust setup job configuration
 
-Setup job disables istio sidecar, as it finish before sidecar is ready which leads to fail.
-This is done by the following configuration:
+Setup job disables istio sidecar, as it finish before sidecar is ready which leads to fail. This is done by the following configuration:
 
 ```yaml
 sumologic:

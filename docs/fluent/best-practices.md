@@ -26,16 +26,14 @@
 
 ## Multiline Log Support
 
-For logs in Docker format by default, we use a regex that matches the first line of multiline logs
-that start with dates in the following format: `2019-11-17 07:14:12`.
+For logs in Docker format by default, we use a regex that matches the first line of multiline logs that start with dates in the following
+format: `2019-11-17 07:14:12`.
 
-If your logs have a different date format you can provide a custom regex to detect
-the first line of multiline logs.
-See [collecting multiline logs](https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs/) for details
-on configuring a boundary regex.
+If your logs have a different date format you can provide a custom regex to detect the first line of multiline logs. See
+[collecting multiline logs](https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs/) for details on
+configuring a boundary regex.
 
-New parsers can be defined under the `fluent-bit.config.customParsers` key in
-`user-values.yaml` file as follows:
+New parsers can be defined under the `fluent-bit.config.customParsers` key in `user-values.yaml` file as follows:
 
 ```yaml
 fluent-bit:
@@ -51,12 +49,10 @@ fluent-bit:
           Regex       (?<log>^{"log":"\d{2}:\d{2}:\d{2}.*)
 ```
 
-This way one can add a parser called `new_multi_line_parser` which matches lines
-that start with time of the format : `07:14:12`.
+This way one can add a parser called `new_multi_line_parser` which matches lines that start with time of the format : `07:14:12`.
 
-To start using the newly defined parser, define it in `Docker_Mode_Parser` parameter
-in the `Input plugin` configuration of fluent-bit in `user-values.yaml` under
-`fluent-bit.config.inputs`:
+To start using the newly defined parser, define it in `Docker_Mode_Parser` parameter in the `Input plugin` configuration of fluent-bit in
+`user-values.yaml` under `fluent-bit.config.inputs`:
 
 ```
 Docker_Mode_Parser new_multi_line_parser
@@ -68,8 +64,7 @@ For detailed information about parsing container logs please see [here](containe
 
 ### MySQL slow logs example
 
-For example to detect mulitlines for `slow logs` correctly,
-ensure that `Fluent Bit` reads `slow log` files and update your configuration
+For example to detect mulitlines for `slow logs` correctly, ensure that `Fluent Bit` reads `slow log` files and update your configuration
 with following snippet:
 
 ```
@@ -84,10 +79,11 @@ fluent-bit:
 
 ### Disable multiline detection
 
-To disable multiline detection, remove the `Docker_Mode_Parser  multi_line` setting from Fluent Bit's configuration
-in `fluent-bit.config.inputs` property.
+To disable multiline detection, remove the `Docker_Mode_Parser multi_line` setting from Fluent Bit's configuration in
+`fluent-bit.config.inputs` property.
 
-Note that to remove this line, the whole value of the `fluent-bit.config.inputs` property must be copied into your `user-values.yaml` file with that single line removed:
+Note that to remove this line, the whole value of the `fluent-bit.config.inputs` property must be copied into your `user-values.yaml` file
+with that single line removed:
 
 ```yaml
 fluent-bit:
@@ -162,11 +158,10 @@ fluent-bit:
 
 ## Collecting Log Lines Over 16KB (with multiline support)
 
-Docker daemon has a limit of 16KB/line so if a log line is longer than that,
-it might be truncated in Sumo.
-To fix this, fluent-bit exposes a parameter:
+Docker daemon has a limit of 16KB/line so if a log line is longer than that, it might be truncated in Sumo. To fix this, fluent-bit exposes
+a parameter:
 
-``` bash
+```bash
 Docker_Mode  On
 ```
 
@@ -174,9 +169,8 @@ If enabled, the plugin will recombine split Docker log lines before passing them
 
 ### Multiline Support
 
-To add multiline support to docker mode, you need to follow the
-[multiline log support](#multiline-log-support) section and assign created parser
-to the `Docker_Mode_Parser` parameter in the `Input plugin` configuration of fluent-bit:
+To add multiline support to docker mode, you need to follow the [multiline log support](#multiline-log-support) section and assign created
+parser to the `Docker_Mode_Parser` parameter in the `Input plugin` configuration of fluent-bit:
 
 ```
 Docker_Mode_Parser multi_line
@@ -184,9 +178,8 @@ Docker_Mode_Parser multi_line
 
 ## Collecting logs from /var/log/pods
 
-In order to collect logs from `/var/log/pods`,
-please copy full `fluent-bit.config.inputs` section from [values.yaml](/deploy/helm/sumologic/values.yaml)
-and change `Path` to `/var/log/pods/*/*/*.log`.
+In order to collect logs from `/var/log/pods`, please copy full `fluent-bit.config.inputs` section from
+[values.yaml](/deploy/helm/sumologic/values.yaml) and change `Path` to `/var/log/pods/*/*/*.log`.
 
 In addition, Fluentd and/or OpenTelemetry configuration should be changed as well.
 
@@ -256,13 +249,13 @@ metadata:
 - `/var/log/pods` is resolved to `containers.var.log.pods.<namespace>_<pod>_<container_id>.<container>.<run_id>.log`
 - `/var/log/containers` is resolved to `containers.var.log.containers.<pod>_<namespace>_<container>-<container_id>.log`
 
-e.g. if you want to use additional [filter][fluentd_filter] for container `test-container`,
-you need to use the following Fluentd [filter][fluentd_filter] directive header:
+e.g. if you want to use additional [filter][fluentd_filter] for container `test-container`, you need to use the following Fluentd
+[filter][fluentd_filter] directive header:
 
 - `<filter containers.var.log.pods.*_*_*.test-container.*.log>` for `/var/log/pods`
 - `<filter containers.var.log.containers.*_*_test-container-*.log>` for `/var/log/containers`
-- `<filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>`
-  to support both `/var/log/pods` and `/var/log/containers`
+- `<filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>` to support both
+  `/var/log/pods` and `/var/log/containers`
 
 [fluentd_filter]: https://docs.fluentd.org/filter
 [fluent_routing]: https://docs.fluentd.org/configuration/config-file#interlude-routing
@@ -291,9 +284,8 @@ fluentd:
     tag: 1.12.2-sumo-6-alpine
 ```
 
-Go to the [official Sumo Logic's Fluentd image repository](https://gallery.ecr.aws/sumologic/kubernetes-fluentd)
-to find the latest release of Fluentd.
-The Alpine-based releases are the ones with the `-alpine` suffix.
+Go to the [official Sumo Logic's Fluentd image repository](https://gallery.ecr.aws/sumologic/kubernetes-fluentd) to find the latest release
+of Fluentd. The Alpine-based releases are the ones with the `-alpine` suffix.
 
 Both Debian-based and Alpine-based images support the same architectures:
 
@@ -305,11 +297,11 @@ The source code and the `Dockerfile`s for both images can be found at https://gi
 
 ## Fluentd Autoscaling
 
-We have provided an option to enable autoscaling for both logs and metrics Fluentd statefulsets.
-This is disabled by default.
+We have provided an option to enable autoscaling for both logs and metrics Fluentd statefulsets. This is disabled by default.
 
-Whenever your Fluentd pods CPU consumption is near the limit you could experience a [delay in data ingestion
-or even a data loss](/docs/monitoring-lag.md) in extreme situations. In such cases you should enable the autoscaling.
+Whenever your Fluentd pods CPU consumption is near the limit you could experience a
+[delay in data ingestion or even a data loss](/docs/monitoring-lag.md) in extreme situations. In such cases you should enable the
+autoscaling.
 
 To enable autoscaling for Fluentd:
 
@@ -331,11 +323,11 @@ To enable autoscaling for Fluentd:
   ```yaml
   ## This goes to the kops cluster configuration file
   kubelet:
-     # ...
-     ## Enable webhook authorization for KOPS cluster
-     ## rel: https://github.com/kubernetes/kops/issues/7200
-     authenticationTokenWebhook: true
-     authorizationMode: Webhook
+    # ...
+    ## Enable webhook authorization for KOPS cluster
+    ## rel: https://github.com/kubernetes/kops/issues/7200
+    authenticationTokenWebhook: true
+    authorizationMode: Webhook
   ```
 
 - Enable autoscaling for Logs Fluentd statefulset
@@ -360,23 +352,20 @@ To enable autoscaling for Fluentd:
 
 ### CPU resources warning
 
-When enabling the Fluentd Autoscaling please make sure to set Fluentd's `resources.requests.cpu` properly.
-Because of Fluentd's single threaded nature it rarely consumes more than `1000m` CPU (1 CPU core).
+When enabling the Fluentd Autoscaling please make sure to set Fluentd's `resources.requests.cpu` properly. Because of Fluentd's single
+threaded nature it rarely consumes more than `1000m` CPU (1 CPU core).
 
-For example setting `resources.requests.cpu=2000m` and the `autoscaling.targetCPUUtilizationPercentage=50` means
-that autoscaling will increase the number of application pods only if average CPU usage across all application pods
-in statefulset or daemonset is more than `1000m`. This combined with Fluentd's usage of around `1000m` at most will
-result in autoscaling not working properly.
+For example setting `resources.requests.cpu=2000m` and the `autoscaling.targetCPUUtilizationPercentage=50` means that autoscaling will
+increase the number of application pods only if average CPU usage across all application pods in statefulset or daemonset is more than
+`1000m`. This combined with Fluentd's usage of around `1000m` at most will result in autoscaling not working properly.
 
 **For this reason we suggest to set the Fluentd's `resources.requests.cpu=1000m` or less when using autoscaling.**
 
 ## Fluentd File-Based Buffer
 
-Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less
-reliable in-memory buffer.
+Starting with `v2.0.0` we're using file-based buffer for Fluentd instead of less reliable in-memory buffer.
 
-The buffer configuration can be set in the `user-values.yaml` file under the `fluentd`
-key as follows:
+The buffer configuration can be set in the `user-values.yaml` file under the `fluentd` key as follows:
 
 ```yaml
 fluentd:
@@ -389,23 +378,21 @@ fluentd:
 
 After changing Fluentd persistence setting (enable or disable) follow steps described in [Fluentd Persistence](fluentd-persistence.md).
 
-Additional buffering and flushing parameters can be added in the `extraConf`,
-in the `fluentd` buffer section.
+Additional buffering and flushing parameters can be added in the `extraConf`, in the `fluentd` buffer section.
 
 ```yaml
 fluentd:
-## Option to specify the Fluentd buffer as file/memory.
-   buffer:
-     type : "file"
-     extraConf: |-
-       retry_exponential_backoff_base 2s
+  ## Option to specify the Fluentd buffer as file/memory.
+  buffer:
+    type: "file"
+    extraConf: |-
+      retry_exponential_backoff_base 2s
 ```
 
-We have defined several file paths where the buffer chunks are stored.
-These can be observed under `fluentd.buffer.filePaths` key in `values.yaml`.
+We have defined several file paths where the buffer chunks are stored. These can be observed under `fluentd.buffer.filePaths` key in
+`values.yaml`.
 
-Once the config has been modified in the `user-values.yaml` file you need to run
-the `helm upgrade` command to apply the changes.
+Once the config has been modified in the `user-values.yaml` file you need to run the `helm upgrade` command to apply the changes.
 
 ```bash
 helm upgrade collection sumologic/sumologic --reuse-values -f user-values.yaml --force
@@ -418,13 +405,11 @@ See the following links to official Fluentd buffer documentation:
 
 ### Fluentd buffer size for metrics
 
-Should you have any connectivity problems, depending on the buffer size your setup will
-be able to survive for a given amount of time without a data loss, delivering the data
-later when everything is operational again.
+Should you have any connectivity problems, depending on the buffer size your setup will be able to survive for a given amount of time
+without a data loss, delivering the data later when everything is operational again.
 
-The Fluentd buffer size is controlled by two major parameters - the size of the persistent volume
-in Kubernetes, and the maximum size of the buffer on disk. Both need to be adjusted if you want
-to buffer more (or less) data.
+The Fluentd buffer size is controlled by two major parameters - the size of the persistent volume in Kubernetes, and the maximum size of the
+buffer on disk. Both need to be adjusted if you want to buffer more (or less) data.
 
 For example:
 
@@ -441,30 +426,26 @@ fluentd:
     totalLimitSize: "20G"
 ```
 
-The `fluentd.buffer` section contains other settings for Fluentd buffering.
-Please study relevant documentation for `chunkLimitSize` and `queueChunkLimitSize`:
+The `fluentd.buffer` section contains other settings for Fluentd buffering. Please study relevant documentation for `chunkLimitSize` and
+`queueChunkLimitSize`:
 
 - https://docs.fluentd.org/configuration/buffer-section
 - https://docs.fluentd.org/buffer/file
 
 For bigger chunks, we recommend to use [split and retry mechanism](#split-big-chunks-in-fluentd) included into sumologic output plugin.
 
-To calculate this time you need to know how much data you send. For the calculations below
-we made an assumption that a single metric data point is around 1 kilobyte in size, including
-metadata. This assumption is based on the average data we ingest. By default, for file based
+To calculate this time you need to know how much data you send. For the calculations below we made an assumption that a single metric data
+point is around 1 kilobyte in size, including metadata. This assumption is based on the average data we ingest. By default, for file based
 buffering we use gzip compression which gives us around 3:1 compress ratio.
 
-That results in `1 DPM` (Data Points per Minute) using around `333 bytes of buffer`. That is
-`333 kilobytes for 1 thousand DPM` and `333 megabytes for 1 million DPM`. In other words - storing
-a million data points will use a 333 megabytes of buffer every minute.
+That results in `1 DPM` (Data Points per Minute) using around `333 bytes of buffer`. That is `333 kilobytes for 1 thousand DPM` and
+`333 megabytes for 1 million DPM`. In other words - storing a million data points will use a 333 megabytes of buffer every minute.
 
-This buffer size can be spread between multiple Fluentd instances. To have the best results you
-should use the metrics load balancing which can be enabled by using the following setting:
-`sumologic.metrics.remoteWriteProxy.enabled=true`. It enables the remote write proxy where nginx
-is being used to forward data from Prometheus to Fluentds. We strongly recommend using this
-setting as in case of uneven load your buffer storage is as big as single Fluentd instance buffer.
-Unfortunately even with `remoteWriteProxy` enabled you might experience uneven load. Because of
-that we also `recommend to make your buffers twice the calculated size`.
+This buffer size can be spread between multiple Fluentd instances. To have the best results you should use the metrics load balancing which
+can be enabled by using the following setting: `sumologic.metrics.remoteWriteProxy.enabled=true`. It enables the remote write proxy where
+nginx is being used to forward data from Prometheus to Fluentds. We strongly recommend using this setting as in case of uneven load your
+buffer storage is as big as single Fluentd instance buffer. Unfortunately even with `remoteWriteProxy` enabled you might experience uneven
+load. Because of that we also `recommend to make your buffers twice the calculated size`.
 
 The formula to calculate the buffering time:
 
@@ -472,22 +453,18 @@ The formula to calculate the buffering time:
 minutes = (PV size in bytes * Fluentd instances) / (DPM * 333 bytes)
 ```
 
-Example 1:
-My cluster sends 10 thousand DPM to Sumo. I'm using default 10 gb of buffer size. I'm also using
-3 Fluentd instances. That gives me 30 gb of buffers in total (3 * 10 gb). I'm using 3.33 mb per
-minute. My setup should be able to hold data for 9000 minutes, that is 150 hours or 6.25 days.
-We recommend treating this as 4500 minutes, that is 75 hours or 3.12 days of buffer.
+Example 1: My cluster sends 10 thousand DPM to Sumo. I'm using default 10 gb of buffer size. I'm also using 3 Fluentd instances. That gives
+me 30 gb of buffers in total (3 \* 10 gb). I'm using 3.33 mb per minute. My setup should be able to hold data for 9000 minutes, that is 150
+hours or 6.25 days. We recommend treating this as 4500 minutes, that is 75 hours or 3.12 days of buffer.
 
-Example 2:
-My cluster sends 1 million DPM to Sumo. I'm using 20 gb of buffer size. I'm using 20 Fluentd
-instances. I have 400 gb of buffers in total (20 * 20 gb). I'm using 333 mb of buffer every minute.
-My setup should be able to hold data for around 1200 minutes, that is 20 hours. We recommend treating
-this as 600 minutes, that is 10 hours of buffer.
+Example 2: My cluster sends 1 million DPM to Sumo. I'm using 20 gb of buffer size. I'm using 20 Fluentd instances. I have 400 gb of buffers
+in total (20 \* 20 gb). I'm using 333 mb of buffer every minute. My setup should be able to hold data for around 1200 minutes, that is 20
+hours. We recommend treating this as 600 minutes, that is 10 hours of buffer.
 
 ## Excluding Logs From Specific Components
 
-You can exclude specific logs from specific components from being sent to Sumo Logic
-by specifying the following parameters either in the `user-values.yaml` file or the `helm install` command.
+You can exclude specific logs from specific components from being sent to Sumo Logic by specifying the following parameters either in the
+`user-values.yaml` file or the `helm install` command.
 
 ```
 excludeContainerRegex
@@ -496,12 +473,10 @@ excludeNamespaceRegex
 excludePodRegex
 ```
 
-- This is Ruby regex, so all ruby regex rules apply.
-  Unlike regex in the Sumo collector, you do not need to match the entire line.
-  When doing multiple patterns, put them inside of parentheses and pipe separate them.
+- This is Ruby regex, so all ruby regex rules apply. Unlike regex in the Sumo collector, you do not need to match the entire line. When
+  doing multiple patterns, put them inside of parentheses and pipe separate them.
 
-- For things like pods and containers you will need to use a star at the end
-  because the string is dynamic. Example:
+- For things like pods and containers you will need to use a star at the end because the string is dynamic. Example:
 
   ```yaml
   excludePodRegex: "(dashboard.*|sumologic.*)"
@@ -513,11 +488,9 @@ excludePodRegex
   excludeNamespaceRegex: “(sumologic|kube-public)”
   ```
 
-If you wish to exclude logs based on the content of the log message, you can leverage
-the fluentd `grep` filter plugin.
-We expose `fluentd.logs.containers.extraFilterPluginConf` which allows you to inject
-additional filter plugins to process data.
-For example suppose you want to exclude the following log messages:
+If you wish to exclude logs based on the content of the log message, you can leverage the fluentd `grep` filter plugin. We expose
+`fluentd.logs.containers.extraFilterPluginConf` which allows you to inject additional filter plugins to process data. For example suppose
+you want to exclude the following log messages:
 
 ```
 .*connection accepted from.*
@@ -541,37 +514,35 @@ fluentd:
         </filter>
 ```
 
-You can find more information on the `grep` filter plugin in the
-[fluentd documentation](https://docs.fluentd.org/filter/grep).
+You can find more information on the `grep` filter plugin in the [fluentd documentation](https://docs.fluentd.org/filter/grep).
 
 ## Modifying logs in Fluentd
 
 You can redact log messages in order to e.g. prevent sending sensitive data like passwords.
 
-In order to do that [record_transformer filter][record_transformer] can be used.
-Please consider the following configuration:
+In order to do that [record_transformer filter][record_transformer] can be used. Please consider the following configuration:
 
 ```yaml
 fluentd:
   logs:
     containers:
       extraFilterPluginConf: |-
-          # Apply to all test-container containers
-          <filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>
-            @type record_transformer
-            enable_ruby
-            <record>
-              # Replace `Password: <pass>` with `Password: ***`
-              log ${record["log"].gsub(/Password: (.*)/, 'Password: ***')}
-              # Replace kubernetes['namespace_name'] with 'REDACTED'
-              # if namespace_name exists in record['kubernetes'], then change value of it and then return modified record['kubernetes'] to assign as kubernetes
-              kubernetes = ${if record['kubernetes'].has_key?('namespace_name'); record['kubernetes']['namespace_name'] = "REDACTED"; end; record['kubernetes']}
-            </record>
-          </filter>
+        # Apply to all test-container containers
+        <filter containers.var.log.pods.*_*_*.test-container.*.log containers.var.log.containers.*_*_test-container-*.log>
+          @type record_transformer
+          enable_ruby
+          <record>
+            # Replace `Password: <pass>` with `Password: ***`
+            log ${record["log"].gsub(/Password: (.*)/, 'Password: ***')}
+            # Replace kubernetes['namespace_name'] with 'REDACTED'
+            # if namespace_name exists in record['kubernetes'], then change value of it and then return modified record['kubernetes'] to assign as kubernetes
+            kubernetes = ${if record['kubernetes'].has_key?('namespace_name'); record['kubernetes']['namespace_name'] = "REDACTED"; end; record['kubernetes']}
+          </record>
+        </filter>
 ```
 
-It is going to replace all `Password: <pass>` occurence in logs with `Password: ***` and replace namespace to `REDACTED`
-for [all containers](#fluentd-tag-for-varlogpods-and-varlogcontainers) named `test-container`.
+It is going to replace all `Password: <pass>` occurence in logs with `Password: ***` and replace namespace to `REDACTED` for
+[all containers](#fluentd-tag-for-varlogpods-and-varlogcontainers) named `test-container`.
 
 An example log before entering the `extraFilterPluginConf` section is presented below:
 
@@ -605,10 +576,9 @@ An example log before entering the `extraFilterPluginConf` section is presented 
 
 ## Split Big Chunks in Fluentd
 
-In order to support big chunks we have added split and retry mechanism into out output plugin.
-It is recommended to use it in order to process big chunks.
-It also fixes [logs duplication](troubleshoot-collection.md#duplicated-logs).
-Please consider the following configuration in order to use it:
+In order to support big chunks we have added split and retry mechanism into out output plugin. It is recommended to use it in order to
+process big chunks. It also fixes [logs duplication](troubleshoot-collection.md#duplicated-logs). Please consider the following
+configuration in order to use it:
 
 ```yaml
 fluentd:
@@ -645,8 +615,8 @@ fluentd:
 
 ## Excluding Metrics
 
-You can exclude metrics by any tag in Fluentd.
-For example to filter out metrics from `sumologic` namespace, you can use following configuration:
+You can exclude metrics by any tag in Fluentd. For example to filter out metrics from `sumologic` namespace, you can use following
+configuration:
 
 ```yaml
 fluentd:
@@ -663,9 +633,8 @@ fluentd:
 
 ## Excluding Dimensions
 
-You can also exclude dimensions in Fluentd using [record_transformer plugin][record_transformer plugin].
-For example to filter out `pod_labels_operator.prometheus.io/name` and `cluster` dimensions,
-you can use the following configuration:
+You can also exclude dimensions in Fluentd using [record_transformer plugin][record_transformer plugin]. For example to filter out
+`pod_labels_operator.prometheus.io/name` and `cluster` dimensions, you can use the following configuration:
 
 ```yaml
 fluentd:
@@ -714,14 +683,11 @@ Example metric structure which is an input for `extraFilterPluginConf` is presen
 
 ## Add a local file to fluent-bit configuration
 
-If you want to capture container logs to a container that writes locally,
-you will need to ensure the logs get mounted to the host so fluent-bit can be
-configured to capture from the host.
+If you want to capture container logs to a container that writes locally, you will need to ensure the logs get mounted to the host so
+fluent-bit can be configured to capture from the host.
 
-Example:
-In `user-values.yaml` in the `fluent-bit.config.input` section, you have to add
-a new `INPUT` specifying the file path (retaining the remaining part of `input`
-config), e.g.:
+Example: In `user-values.yaml` in the `fluent-bit.config.input` section, you have to add a new `INPUT` specifying the file path (retaining
+the remaining part of `input` config), e.g.:
 
 ```yaml
 fluent-bit:
@@ -737,15 +703,15 @@ fluent-bit:
 
 Reference: https://docs.fluentbit.io/manual/pipeline/inputs/tail#configuration-file
 
-**Notice:** In some cases Tailing Sidecar Operator may help in getting logs not available on standard output (STDOUT),
-please see section [Get logs not available on stdout](/docs/best-practices.md#get-logs-not-available-on-stdout).
+**Notice:** In some cases Tailing Sidecar Operator may help in getting logs not available on standard output (STDOUT), please see section
+[Get logs not available on stdout](/docs/best-practices.md#get-logs-not-available-on-stdout).
 
 ## Templating Kubernetes metadata
 
 The following Kubernetes metadata is available for string templating:
 
 | String template  | Description                                             |
-|------------------|---------------------------------------------------------|
+| ---------------- | ------------------------------------------------------- |
 | `%{namespace}`   | Namespace name                                          |
 | `%{pod}`         | Full pod name (e.g. `travel-products-4136654265-zpovl`) |
 | `%{pod_name}`    | Friendly pod name (e.g. `travel-products`)              |
@@ -756,8 +722,7 @@ The following Kubernetes metadata is available for string templating:
 
 ## Configure Ignore_Older Config for Fluentbit
 
-We have observed that the  `Ignore_Older` config does not work when `Multiline` is set to `On`.
-Default config:
+We have observed that the `Ignore_Older` config does not work when `Multiline` is set to `On`. Default config:
 
 ```
     [INPUT]
@@ -774,8 +739,8 @@ Default config:
         DB.Sync          Normal
 ```
 
-Please make the below changes to the `INPUT` section to turn off `Multiline` and
-add a `docker` parser to parse the time for `Ignore_Older` functionality to work properly.
+Please make the below changes to the `INPUT` section to turn off `Multiline` and add a `docker` parser to parse the time for `Ignore_Older`
+functionality to work properly.
 
 <pre>
 [INPUT]

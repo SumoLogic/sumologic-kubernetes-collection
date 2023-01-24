@@ -25,12 +25,9 @@
 
 ## `helm install` hanging
 
-If `helm install` hangs, it usually means the pre-install setup job is failing
-and is in a retry loop.
-Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm install` command.
-Kubernetes schedules the job in a pod, so you can look at logs from the pod to see
-why the job is failing.
-First find the pod name in the namespace where the Helm chart is deployed:
+If `helm install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to a Helm limitation, errors from
+the setup job cannot be fed back to the `helm install` command. Kubernetes schedules the job in a pod, so you can look at logs from the pod
+to see why the job is failing. First find the pod name in the namespace where the Helm chart is deployed:
 
 ```sh
 kubectl get pods -n sumologic
@@ -48,18 +45,19 @@ If you see `Secret 'sumologic::sumologic' exists, abort.` from the logs, delete 
 kubectl delete secret sumologic -n sumologic
 ```
 
-`helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries, rerun the `helm install` command.
+`helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries,
+rerun the `helm install` command.
 
 ## Installation fails with error `function "dig" not defined`
 
 You need to use a more recent version of Helm. See [Minimum Requirements](/docs/README.md#minimum-requirements).
 
-If you are using ArgoCD or another tool that uses Helm under the hood,
-make sure that tool uses the required version of Helm.
+If you are using ArgoCD or another tool that uses Helm under the hood, make sure that tool uses the required version of Helm.
 
 ## Namespace configuration
 
-The following `kubectl` commands assume you are in the correct namespace `sumologic`. By default, these commands will use the namespace `default`.
+The following `kubectl` commands assume you are in the correct namespace `sumologic`. By default, these commands will use the namespace
+`default`.
 
 To run a single command in the `sumologic` namespace, pass in the flag `-n sumologic`.
 
@@ -91,7 +89,8 @@ Some known indicators that autoscaling for Fluentd must be enabled:
 kubectl logs collection-sumologic-xxxxxxxxx-xxxxx -f
 ```
 
-To enable more detailed debug or trace logs from all of Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the relevant `.conf` section and apply the change to your deployment:
+To enable more detailed debug or trace logs from all of Fluentd, add the following lines to the `fluentd-sumologic.yaml` file under the
+relevant `.conf` section and apply the change to your deployment:
 
 ```
 <system>
@@ -131,8 +130,8 @@ Where `collection` is the `helm` release name.
 
 ### Send data to Fluentd stdout instead of to Sumo
 
-To help reduce the points of possible failure, we can write data to Fluentd logs rather than sending to Sumo directly using the Sumo Logic output plugin.
-To do this, use the following configuration:
+To help reduce the points of possible failure, we can write data to Fluentd logs rather than sending to Sumo directly using the Sumo Logic
+output plugin. To do this, use the following configuration:
 
 ```yaml
 fluentd:
@@ -158,8 +157,7 @@ You should see data being sent to Fluentd logs, which you can get using the comm
 
 ### Send data to Fluent Bit stdout
 
-In order to see what exactly the Fluent Bit reads, you can write data to Fluent Bit logs.
-To do this, use the following configuration:
+In order to see what exactly the Fluent Bit reads, you can write data to Fluent Bit logs. To do this, use the following configuration:
 
 ```yaml
 fluent-bit:
@@ -220,11 +218,11 @@ If you are seeing a Fluentd Pod stuck in the `Pending` state, using the [file ba
 Warning  FailedScheduling  16s (x23 over 31m)  default-scheduler  0/6 nodes are available: 2 node(s) had volume node affinity conflict, 4 node(s) were unschedulable.
 ```
 
-you have a volume node affinity conflict. It can happen when Fluentd Pod was running in one AZ and has been rescheduled into
-another AZ. Deleting the existing PVC and then killing the Pod should resolve this issue.
+you have a volume node affinity conflict. It can happen when Fluentd Pod was running in one AZ and has been rescheduled into another AZ.
+Deleting the existing PVC and then killing the Pod should resolve this issue.
 
-The Fluentd StatefulSet Pods and their PVCs are bound by their number: `*-sumologic-fluentd-logs-1` Pod will be using
-the `buffer-*-sumologic-fluentd-logs-1` PVC.
+The Fluentd StatefulSet Pods and their PVCs are bound by their number: `*-sumologic-fluentd-logs-1` Pod will be using the
+`buffer-*-sumologic-fluentd-logs-1` PVC.
 
 ### Gzip compression errors
 
@@ -234,8 +232,7 @@ If you observe the following errors from Fluentd pods:
 2021-01-18 15:47:23 +0000 [warn]: #0 [sumologic.endpoint.logs.gc] failed to flush the buffer. retry_time=3 next_retry_seconds=2021-01-18 15:47:27 +0000 chunk="5b92e97a5ee3cbd7e59859644d9686e3" error_class=Zlib::GzipFile::Error error="not in gzip format"
 ```
 
-Please disable gzip compression for buffer.
-Add following configuration to your `user-values.yaml` and upgrade collection:
+Please disable gzip compression for buffer. Add following configuration to your `user-values.yaml` and upgrade collection:
 
 ```yaml
 fluentd:
@@ -245,8 +242,7 @@ fluentd:
 
 After that, please remove Fluentd pods and associated PVC-s.
 
-For example, if the namespace where the collection is installed is `collection`,
-run the following set of commands:
+For example, if the namespace where the collection is installed is `collection`, run the following set of commands:
 
 ```bash
 NAMESPACE_NAME=collection
@@ -258,8 +254,8 @@ for POD_NAME in $(kubectl get pods --template '{{range .items}}{{.metadata.name}
 done
 ```
 
-The duplicated pod deletion command is there to make sure the pod is not stuck in `Pending` state
-with event `persistentvolumeclaim "buffer-sumologic-fluentd-logs-1" not found`.
+The duplicated pod deletion command is there to make sure the pod is not stuck in `Pending` state with event
+`persistentvolumeclaim "buffer-sumologic-fluentd-logs-1" not found`.
 
 ### `/fluentd/buffer` permissions issue
 
@@ -269,8 +265,8 @@ When you encounter the following (or a similar) error message in fluentd logs:
 2021-11-23 07:05:56 +0000 [error]: #0 unexpected error error_class=Errno::EACCES error="Permission denied @ dir_s_mkdir - /fluentd/buffer/logs"
 ```
 
-this means that most likely the volume that has been provisioned as PersistentVolume
-for your fluentd has incorrect ownership and/or permissions set.
+this means that most likely the volume that has been provisioned as PersistentVolume for your fluentd has incorrect ownership and/or
+permissions set.
 
 You can verify that this is the case with the following `kubectl` command:
 
@@ -280,58 +276,54 @@ $ kubectl exec -it -n <NAMESPACE> <RELEASE_NAME>-<NAMESPACE>-fluentd-logs-0 \
 drwx------ 6 root root 4096 Dec 17 16:01 /fluentd/buffer
 ```
 
-In the above snippet you can observe that `/fluentd/buffer/` is owned by `root`, and
-only that user can access it.
+In the above snippet you can observe that `/fluentd/buffer/` is owned by `root`, and only that user can access it.
 
-There are many possible reasons for this behaviour, this can depend on the
-cloud provider that you use and the StorageClasses that are available/set in your cluster.
+There are many possible reasons for this behaviour, this can depend on the cloud provider that you use and the StorageClasses that are
+available/set in your cluster.
 
 We have a couple of possible solutions for this issue:
 
-1. Use an init container that will `chown` the buffer directory. Init containers for
-   fluentd are available since collection chart version [`v2.3.0`][v2_3] and can
-   be utilized in the following manner:
+1. Use an init container that will `chown` the buffer directory. Init containers for fluentd are available since collection chart version
+   [`v2.3.0`][v2_3] and can be utilized in the following manner:
 
-  ```yaml
-  fluentd:
-    logs:
-      enabled: true
-      statefulset:
-        initContainers:
+```yaml
+fluentd:
+  logs:
+    enabled: true
+    statefulset:
+      initContainers:
         - name: chown
           image: busybox:latest
           # Please note that the user that our fluentd instances run as has an ID of 999
           # and a primary group 999
           # rel: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/b8b51/Dockerfile#L113
-          command: ['chown', '-R', '999:999', '/fluentd/buffer']
+          command: ["chown", "-R", "999:999", "/fluentd/buffer"]
           volumeMounts:
-          - name: buffer
-            mountPath: "/fluentd/buffer"
-  ```
+            - name: buffer
+              mountPath: "/fluentd/buffer"
+```
 
-1. Use a [security context][security_context] that will make your fluentd run as
-   a different user.
-   Mark that below snippet will run fluentd as `root` which in security constrained
-   environments might not be desired.
+1. Use a [security context][security_context] that will make your fluentd run as a different user. Mark that below snippet will run fluentd
+   as `root` which in security constrained environments might not be desired.
 
-  ```yaml
-  fluentd:
-    logs:
-      enabled: true
-      statefulset:
-        containers:
-          fluentd:
-            securityContext:
-              runAsUser: 0
-  ```
+```yaml
+fluentd:
+  logs:
+    enabled: true
+    statefulset:
+      containers:
+        fluentd:
+          securityContext:
+            runAsUser: 0
+```
 
 1. Use a different [storage class][storage_class]:
 
-  ```
-  fluentd:
-    persistence:
-      storageClass: managed-csi
-  ```
+```
+fluentd:
+  persistence:
+    storageClass: managed-csi
+```
 
 [v2_3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v2.3.0
 [storage_class]: https://kubernetes.io/docs/concepts/storage/storage-classes/
@@ -344,8 +336,8 @@ We observed than under certain conditions, it's possible for Fluentd to duplicat
 - there are several requests made of one chunk
 - one of those requests is failing, resulting in the whole batch being retried
 
-In order to mitigate this, please use [fluentd-output-sumologic] with `use_internal_retry` option.
-Please follow [Split Big Chunks in Fluentd](best-practices.md#split-big-chunks-in-fluentd)
+In order to mitigate this, please use [fluentd-output-sumologic] with `use_internal_retry` option. Please follow
+[Split Big Chunks in Fluentd](best-practices.md#split-big-chunks-in-fluentd)
 
 [fluentd-output-sumologic]: https://github.com/SumoLogic/fluentd-output-sumologic
 
@@ -374,10 +366,10 @@ Consider the following examples:
 
 ##### Problem
 
-If you changed log format to `text`, you need to know that multiline detection performed on the collection side is not respected anymore.
-As we are sending logs as a wall of plain text, there is no way to inform Sumo Logic, which line belongs to which log.
-In such scenario, multiline detection is performed on Sumo Logic side. By default it uses [Infer Boundaries][infer-boundaries].
-You can review the source configuration in [HTTP Source Settings][http-source].
+If you changed log format to `text`, you need to know that multiline detection performed on the collection side is not respected anymore. As
+we are sending logs as a wall of plain text, there is no way to inform Sumo Logic, which line belongs to which log. In such scenario,
+multiline detection is performed on Sumo Logic side. By default it uses [Infer Boundaries][infer-boundaries]. You can review the source
+configuration in [HTTP Source Settings][http-source].
 
 **Note**: Your source name is going to be taken from `sumologic.collectorName` or `sumologic.clusterName` (`kubernetes` by default).
 

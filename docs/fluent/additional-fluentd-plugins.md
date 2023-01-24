@@ -1,11 +1,10 @@
 # Adding Additional Fluentd Plugins
 
-To add additional Fluentd plugins, you can modify `user-values.yaml`
-or create a new container image from our provided image.
+To add additional Fluentd plugins, you can modify `user-values.yaml` or create a new container image from our provided image.
 
 ## Configuration
 
-__Note__: If your plugin requires additional system libraries, it cannot be installed this way.
+**Note**: If your plugin requires additional system libraries, it cannot be installed this way.
 
 ```yaml
 fluentd:
@@ -18,8 +17,8 @@ fluentd:
 
 Use the [Sumo Logic Fluentd](https://gallery.ecr.aws/sumologic/kubernetes-fluentd) image as the base image.
 
-__Note:__ To choose between Debian-based and Alpine-based image,
-see [Choosing Fluentd base image](best-practices.md#choosing-fluentd-base-image).
+**Note:** To choose between Debian-based and Alpine-based image, see
+[Choosing Fluentd base image](best-practices.md#choosing-fluentd-base-image).
 
 To create a Debian-based image:
 

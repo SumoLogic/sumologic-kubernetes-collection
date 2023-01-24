@@ -48,7 +48,7 @@ The following table contains information about metrics scraped by Sumo Logic's P
 - forwarded - `yes` if metric is being forwarded to Sumo Logic
 
 | name                                                     | source             | forwarded |
-|----------------------------------------------------------|--------------------|-----------|
+| -------------------------------------------------------- | ------------------ | --------- |
 | `apiserver_request_count`                                | apiserver          | yes       |
 | `apiserver_request_total`                                | apiserver          | yes       |
 | `apiserver_request_duration_seconds_count`               | apiserver          | yes       |
@@ -208,7 +208,7 @@ sum(min(kube_pod_info) by (node))
 Dependends on the following metrics and aggregations:
 
 | name          | source             |
-|---------------|--------------------|
+| ------------- | ------------------ |
 | kube_pod_info | kube-state-metrics |
 
 ### `:node_cpu_saturation_load1:`
@@ -224,7 +224,7 @@ sum(node:node_num_cpu:sum)
 Dependends on the following metrics and aggregations:
 
 | name                                          | source        |
-|-----------------------------------------------|---------------|
+| --------------------------------------------- | ------------- |
 | node_load1                                    | node-exporter |
 | [node:node_num_cpu:sum](#nodenode_num_cpusum) | aggregations  |
 
@@ -239,7 +239,7 @@ Rule definition:
 Dependends on the following metrics and aggregations:
 
 | name                   | source        |
-|------------------------|---------------|
+| ---------------------- | ------------- |
 | node_cpu_seconds_total | node-exporter |
 
 ### `:node_disk_saturation:avg_irate`
@@ -253,7 +253,7 @@ avg(irate(node_disk_io_time_weighted_seconds_total{job="node-exporter",device=~"
 Dependends on the following metrics and aggregations:
 
 | name                                     | source        |
-|------------------------------------------|---------------|
+| ---------------------------------------- | ------------- |
 | node_disk_io_time_weighted_seconds_total | node-exporter |
 
 ### `:node_disk_utilisation:avg_irate`
@@ -267,7 +267,7 @@ avg(irate(node_disk_io_time_seconds_total{job="node-exporter",device=~"nvme.+|rb
 Dependends on the following metrics and aggregations:
 
 | name                            | source        |
-|---------------------------------|---------------|
+| ------------------------------- | ------------- |
 | node_disk_io_time_seconds_total | node-exporter |
 
 ### `:node_memory_swap_io_bytes:sum_rate`
@@ -284,7 +284,7 @@ Rule definition:
 Dependends on the following metrics and aggregations:
 
 | name                | source        |
-|---------------------|---------------|
+| ------------------- | ------------- |
 | node_vmstat_pgpgin  | node-exporter |
 | node_vmstat_pgpgout | node-exporter |
 
@@ -306,7 +306,7 @@ sum(node_memory_MemTotal_bytes{job="node-exporter"})
 Dependends on the following metrics and aggregations:
 
 | name                       | source        |
-|----------------------------|---------------|
+| -------------------------- | ------------- |
 | node_memory_MemFree_bytes  | node-exporter |
 | node_memory_Cached_bytes   | node-exporter |
 | node_memory_Buffers_bytes  | node-exporter |
@@ -324,7 +324,7 @@ sum(irate(node_network_transmit_drop_total{job="node-exporter",device!~"veth.+"}
 Dependends on the following metrics and aggregations:
 
 | name                             | source        |
-|----------------------------------|---------------|
+| -------------------------------- | ------------- |
 | node_network_receive_drop_total  | node-exporter |
 | node_network_transmit_drop_total | node-exporter |
 
@@ -340,7 +340,7 @@ sum(irate(node_network_transmit_bytes_total{job="node-exporter",device!~"veth.+"
 Dependends on the following metrics and aggregations:
 
 | name                              | source        |
-|-----------------------------------|---------------|
+| --------------------------------- | ------------- |
 | node_network_receive_bytes_total  | node-exporter |
 | node_network_transmit_bytes_total | node-exporter |
 
@@ -361,7 +361,7 @@ histogram_quantile(0.5, sum(rate(apiserver_request_duration_seconds_bucket{job="
 Dependends on the following metrics and aggregations:
 
 | name                                      | source    |
-|-------------------------------------------|-----------|
+| ----------------------------------------- | --------- |
 | apiserver_request_duration_seconds_bucket | apiserver |
 
 ### `cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile`
@@ -377,7 +377,7 @@ histogram_quantile(0.5, sum(rate(scheduler_binding_duration_seconds_bucket{job="
 Dependends on the following metrics and aggregations:
 
 | name                                      | source         |
-|-------------------------------------------|----------------|
+| ----------------------------------------- | -------------- |
 | scheduler_binding_duration_seconds_bucket | kube-scheduler |
 
 ### `cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile`
@@ -393,7 +393,7 @@ histogram_quantile(0.5, sum(rate(scheduler_e2e_scheduling_duration_seconds_bucke
 Dependends on the following metrics and aggregations:
 
 | name                                             | source         |
-|--------------------------------------------------|----------------|
+| ------------------------------------------------ | -------------- |
 | scheduler_e2e_scheduling_duration_seconds_bucket | kube-scheduler |
 
 ### `cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile`
@@ -409,7 +409,7 @@ histogram_quantile(0.5, sum(rate(scheduler_scheduling_algorithm_duration_seconds
 Dependends on the following metrics and aggregations:
 
 | name                                                   | source         |
-|--------------------------------------------------------|----------------|
+| ------------------------------------------------------ | -------------- |
 | scheduler_scheduling_algorithm_duration_seconds_bucket | kube-scheduler |
 
 ### `instance:node_filesystem_usage:sum`
@@ -427,7 +427,7 @@ sum(rate(node_network_receive_bytes_total[3m])) BY (instance)
 Dependends on the following metrics and aggregations:
 
 | name                             | source        |
-|----------------------------------|---------------|
+| -------------------------------- | ------------- |
 | node_network_receive_bytes_total | node-exporter |
 
 ### `node:cluster_cpu_utilisation:ratio`
@@ -445,7 +445,7 @@ scalar(sum(node:node_num_cpu:sum))
 Dependends on the following metrics and aggregations:
 
 | name                                                              | source      |
-|-------------------------------------------------------------------|-------------|
+| ----------------------------------------------------------------- | ----------- |
 | [node:node_cpu_utilisation:avg1m](#nodenode_cpu_utilisationavg1m) | aggregation |
 | [node:node_num_cpu:sum](#nodenode_num_cpusum)                     | aggregation |
 
@@ -462,7 +462,7 @@ scalar(sum(node:node_memory_bytes_total:sum))
 Dependends on the following metrics and aggregations:
 
 | name                                                                        | source      |
-|-----------------------------------------------------------------------------|-------------|
+| --------------------------------------------------------------------------- | ----------- |
 | [node:node_memory_bytes_total:sum](#nodenode_memory_bytes_totalsum)         | aggregation |
 | [node:node_memory_bytes_available:sum](#nodenode_memory_bytes_availablesum) | aggregation |
 
@@ -483,7 +483,7 @@ node:node_num_cpu:sum
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_load1                                                            | node-exporter |
 | [node_namespace_pod:kube_pod_info:](#node_namespace_podkube_pod_info) | aggregation   |
 | [node:node_num_cpu:sum](#nodenode_num_cpusum)                         | aggregation   |
@@ -502,7 +502,7 @@ Rule definition:
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_cpu_seconds_total                                                | node-exporter |
 | [node_namespace_pod:kube_pod_info:](#node_namespace_podkube_pod_info) | aggregation   |
 
@@ -521,7 +521,7 @@ avg by (node) (
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_disk_io_time_weighted_seconds_total                              | node-exporter |
 | [node_namespace_pod:kube_pod_info:](#node_namespace_podkube_pod_info) | aggregation   |
 
@@ -540,7 +540,7 @@ avg by (node) (
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_disk_io_time_seconds_total                                       | node-exporter |
 | [node_namespace_pod:kube_pod_info:](#node_namespace_podkube_pod_info) | aggregation   |
 
@@ -559,7 +559,7 @@ max by (instance, namespace, pod, device) (
 Dependends on the following metrics and aggregations:
 
 | name                        | source        |
-|-----------------------------|---------------|
+| --------------------------- | ------------- |
 | node_filesystem_avail_bytes | node-exporter |
 | node_filesystem_size_bytes  | node-exporter |
 
@@ -576,7 +576,7 @@ max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"
 Dependends on the following metrics and aggregations:
 
 | name                        | source        |
-|-----------------------------|---------------|
+| --------------------------- | ------------- |
 | node_filesystem_avail_bytes | node-exporter |
 | node_filesystem_size_bytes  | node-exporter |
 
@@ -602,7 +602,7 @@ max(
 Dependends on the following metrics and aggregations:
 
 | name                       | source             |
-|----------------------------|--------------------|
+| -------------------------- | ------------------ |
 | kube_pod_info              | kube-state-metrics |
 | node_filesystem_files_free | node-exporter      |
 
@@ -628,7 +628,7 @@ max(
 Dependends on the following metrics and aggregations:
 
 | name                  | source             |
-|-----------------------|--------------------|
+| --------------------- | ------------------ |
 | kube_pod_info         | kube-state-metrics |
 | node_filesystem_files | node-exporter      |
 
@@ -647,7 +647,7 @@ sum by (node) (
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_memory_MemTotal_bytes                                            | node-exporter |
 | [node_namespace_pod:kube_pod_info:](#node_namespace_podkube_pod_info) | aggregation   |
 
@@ -667,7 +667,7 @@ Rule definition:
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_vmstat_pgpgin                                                    | node-exporter |
 | node_vmstat_pgpgout                                                   | node-exporter |
 | [node_namespace_pod:kube_pod_info:](#node_namespace_podkube_pod_info) | aggregation   |
@@ -698,7 +698,7 @@ sum by (node) (
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_memory_MemFree_bytes                                             | node-exporter |
 | node_memory_Cached_bytes                                              | node-exporter |
 | node_memory_Buffers_bytes                                             | node-exporter |
@@ -718,7 +718,7 @@ node:node_memory_bytes_total:sum
 Dependends on the following metrics and aggregations:
 
 | name                                                                        | source      |
-|-----------------------------------------------------------------------------|-------------|
+| --------------------------------------------------------------------------- | ----------- |
 | [node:node_memory_bytes_available:sum](#nodenode_memory_bytes_availablesum) | aggregation |
 | [node:node_memory_bytes_total:sum](#nodenode_memory_bytes_totalsum)         | aggregation |
 
@@ -733,7 +733,7 @@ Rule definition:
 Dependends on the following metrics and aggregations:
 
 | name                                                                        | source      |
-|-----------------------------------------------------------------------------|-------------|
+| --------------------------------------------------------------------------- | ----------- |
 | [node:node_memory_bytes_available:sum](#nodenode_memory_bytes_availablesum) | aggregation |
 | [node:node_memory_bytes_total:sum](#nodenode_memory_bytes_totalsum)         | aggregation |
 
@@ -753,7 +753,7 @@ sum by (node) (
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_network_receive_drop_total                                       | node-exporter |
 | node_network_transmit_drop_total                                      | node-exporter |
 | [node_namespace_pod:kube_pod_info:](#node_namespace_podkube_pod_info) | aggregation   |
@@ -774,7 +774,7 @@ sum by (node) (
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_network_receive_bytes_total                                      | node-exporter |
 | node_network_transmit_bytes_total                                     | node-exporter |
 | [node_namespace_pod:kube_pod_info:](#node_namespace_podkube_pod_info) | aggregation   |
@@ -794,7 +794,7 @@ count by (cluster, node) (sum by (node, cpu) (
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_cpu_seconds_total                                                | node-exporter |
 | [node_namespace_pod:kube_pod_info:](#node_namespace_podkube_pod_info) | aggregation   |
 
@@ -812,7 +812,7 @@ topk by(namespace, pod) (1,
 Dependends on the following metrics and aggregations:
 
 | name          | source             |
-|---------------|--------------------|
+| ------------- | ------------------ |
 | kube_pod_info | kube-state-metrics |
 
 ## Aggregations not forwarded to Sumo
@@ -836,7 +836,7 @@ sum by (node) (
 Dependends on the following metrics and aggregations:
 
 | name                                                                  | source        |
-|-----------------------------------------------------------------------|---------------|
+| --------------------------------------------------------------------- | ------------- |
 | node_memory_MemFree_bytes                                             | node-exporter |
 | node_memory_Cached_bytes                                              | node-exporter |
 | node_memory_Buffers_bytes                                             | node-exporter |
