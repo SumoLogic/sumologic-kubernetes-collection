@@ -2,8 +2,7 @@
 
 <!-- TOC -->
 
-- [`helm install` hanging](#helm-install-hanging)
-- [Installation fails with error `function "dig" not defined`](#installation-fails-with-error-function-dig-not-defined)
+- [Troubleshooting Installation](#troubleshooting-installation)
 - [Namespace configuration](#namespace-configuration)
 - [Gathering logs](#gathering-logs)
   - [Check log throttling](#check-log-throttling)
@@ -31,39 +30,9 @@
 
 <!-- /TOC -->
 
-## `helm install` hanging
+## Troubleshooting Installation
 
-If `helm install` hangs, it usually means the pre-install setup job is failing
-and is in a retry loop.
-Due to a Helm limitation, errors from the setup job cannot be fed back to the `helm install` command.
-Kubernetes schedules the job in a pod, so you can look at logs from the pod to see
-why the job is failing.
-First find the pod name in the namespace where the Helm chart is deployed:
-
-```sh
-kubectl get pods -n sumologic
-```
-
-Get the logs from that pod:
-
-```
-kubectl logs POD_NAME -f
-```
-
-If you see `Secret 'sumologic::sumologic' exists, abort.` from the logs, delete the existing secret:
-
-```
-kubectl delete secret sumologic -n sumologic
-```
-
-`helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries, rerun the `helm install` command.
-
-## Installation fails with error `function "dig" not defined`
-
-You need to use a more recent version of Helm. See [Minimum Requirements](/docs/README.md#minimum-requirements).
-
-If you are using ArgoCD or another tool that uses Helm under the hood,
-make sure that tool uses the required version of Helm.
+Please refer to [the Troubleshooting Installation section in Installation document](/docs/installation.md#troubleshooting-installation)
 
 ## Namespace configuration
 
