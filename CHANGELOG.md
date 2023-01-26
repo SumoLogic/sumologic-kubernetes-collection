@@ -14,8 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - chore: add support for EKS 1.24 [#2831]
+- chore: add support for GKE 1.24 [#2832]
 
 [#2831]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2831
+[#2832]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2832
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0...release-v3.0
 
 ## [v3.0.0]
