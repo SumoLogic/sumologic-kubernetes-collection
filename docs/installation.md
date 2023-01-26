@@ -29,8 +29,10 @@
 - [Viewing Data In Sumo Logic](#viewing-data-in-sumo-logic)
 - [Troubleshooting Installation](#troubleshooting-installation)
   - [General troubleshooting](#general-troubleshooting)
+  - [Installation fails with error `function "dig" not defined`](#installation-fails-with-error-function-dig-not-defined)
   - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
     - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
+    - [Secret 'sumologic::sumologic' exists, abort](#secret-sumologicsumologic-exists-abort)
   - [OpenTelemetry Collector Pods Stuck in CreateContainerConfigError](#opentelemetry-collector-pods-stuck-in-createcontainerconfigerror)
   - [Prometheus Troubleshooting](#prometheus-troubleshooting)
 - [Upgrading Sumo Logic Collection](#upgrading-sumo-logic-collection)
@@ -395,6 +397,13 @@ If you do not see data in Sumo Logic, you can review our
 
 Please refer to [Troubleshooting document](/docs/troubleshoot-collection.md#troubleshooting-collection).
 
+### Installation fails with error `function "dig" not defined`
+
+You need to use a more recent version of Helm. See [Minimum Requirements](/docs/README.md#minimum-requirements).
+
+If you are using ArgoCD or another tool that uses Helm under the hood,
+make sure that tool uses the required version of Helm.
+
 ### Error: timed out waiting for the condition
 
 If `helm upgrade --install` hangs, it usually means the pre-install setup job is failing and is in a retry loop.
@@ -431,6 +440,17 @@ in your Sumo Logic account, that are used to send data to Sumo.
 This error occurs if the endpoints had already been created by an earlier run of the installation process.
 
 You can find more information in our [troubleshooting documentation](troubleshoot-collection.md).
+
+#### Secret 'sumologic::sumologic' exists, abort
+
+If you see `Secret 'sumologic::sumologic' exists, abort.` from the logs, delete the existing secret:
+
+```bash
+kubectl delete secret sumologic -n ${NAMESPACE}
+```
+
+`helm install` should proceed after the existing secret is deleted before exhausting retries.
+If it did time out after exhausting retries, rerun the `helm install` command.
 
 ### OpenTelemetry Collector Pods Stuck in CreateContainerConfigError
 
