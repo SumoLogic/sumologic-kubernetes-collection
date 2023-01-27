@@ -298,7 +298,8 @@ The above special configuration values can be replaced either to direct values o
 
   **When?**: If tracing is enabled
 
-  **IMPORTANT:** `otelcol` Deployment was moved to `tracesSampler` Deployment.
+  > **Warning**
+  > `otelcol` Deployment was moved to `tracesSampler` Deployment.
   Run the following command to manually delete otelcol Deployment and ConfigMap:
 
   ```
@@ -310,7 +311,8 @@ The above special configuration values can be replaced either to direct values o
 
   **When?**: If you're using `otelagent` (`otelagent.enabled=true`)
   
-  **IMPORTANT:** `otelagent` DaemonSet was replaced by `otelcolInstrumentation` **StatefulSet**.
+  > **Warning**
+  > `otelagent` DaemonSet was replaced by `otelcolInstrumentation` **StatefulSet**.
   Run the following command to manually delete otelagent DamemonSet and ConfigMap:
 
   ```
@@ -322,7 +324,8 @@ The above special configuration values can be replaced either to direct values o
 
   **When?**: If you're using `otelgateway` (`otelgateway.enabled=true`)
 
-  **IMPORTANT:** `otelgateway` Deployment was moved to `tracesGateway` Deployment.
+  > **Warning**
+  > `otelgateway` Deployment was moved to `tracesGateway` Deployment.
   Run the following command to manually delete otelgateway Deployment and ConfigMap:
 
   ```
