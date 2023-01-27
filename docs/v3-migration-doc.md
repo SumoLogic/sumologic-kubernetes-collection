@@ -300,6 +300,7 @@ The above special configuration values can be replaced either to direct values o
 
   > **Warning**
   > `otelcol` Deployment was moved to `tracesSampler` Deployment.
+  
   Run the following command to manually delete otelcol Deployment and ConfigMap:
 
   ```
@@ -313,6 +314,7 @@ The above special configuration values can be replaced either to direct values o
   
   > **Warning**
   > `otelagent` DaemonSet was replaced by `otelcolInstrumentation` **StatefulSet**.
+
   Run the following command to manually delete otelagent DamemonSet and ConfigMap:
 
   ```
@@ -326,6 +328,7 @@ The above special configuration values can be replaced either to direct values o
 
   > **Warning**
   > `otelgateway` Deployment was moved to `tracesGateway` Deployment.
+
   Run the following command to manually delete otelgateway Deployment and ConfigMap:
 
   ```
