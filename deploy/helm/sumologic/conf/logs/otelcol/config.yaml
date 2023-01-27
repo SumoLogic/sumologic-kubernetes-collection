@@ -88,6 +88,8 @@ processors:
   batch:
     ## Number of spans after which a batch will be sent regardless of time
     send_batch_size: 1_024
+    ## Maximum number of spans sent at once
+    send_batch_max_size: 2_048
     ## Time duration after which a batch will be sent regardless of size
     timeout: 1s
   resource/add_cluster:
