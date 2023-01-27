@@ -269,6 +269,7 @@ exporters:
 processors:
   batch:
     send_batch_size: 1000
+    send_batch_max_size: 2000
     timeout: 1s
   ## copy _SYSTEMD_UNIT, SYSLOG_FACILITY, _HOSTNAME and PRIORITY from body to attributes
   ## so they can be used by metadata processors same way like for fluentd
