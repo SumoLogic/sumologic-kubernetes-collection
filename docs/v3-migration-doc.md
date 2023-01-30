@@ -279,7 +279,7 @@ otellogs:
               - old-worker-group
 ```
 
-After upgrading the collection, we drained all nodes with `workerGroup: old-worker-group`,
+After upgrading the Helm Chart, we drained all nodes with `workerGroup: old-worker-group`,
 and then we set OpenTelemetry Collector as only logs collector in the cluster
 by removing `fluent-bit` and `otellogs` unnecessary configuration sections.
 
