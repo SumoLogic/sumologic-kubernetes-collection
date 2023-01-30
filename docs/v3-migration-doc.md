@@ -250,7 +250,7 @@ After the upgrade, once OpenTelemetry Collector is running, you can disable Flue
 If you want to migrate without losing data or ingesting duplicates, you can go with a more complex solution.
 The idea is to have two separated groups of nodes. One for Fluent Bit and one for OpenTelemetry Collector.
 
-Node group for Fluent Bit should contains all and only existing nodes. The second group of nodes is dedicated to all new pods.
+The node group for Fluent Bit should contain all existing nodes. The second group of nodes is dedicated to all new pods.
 
 Let's consider an example for that.
 We added `workerGroup: old-worker-group` label to all existing nodes, and then apply the following configuration:
