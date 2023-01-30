@@ -250,7 +250,7 @@ After the upgrade, once OpenTelemetry Collector is running, you can disable Flue
 If you don't want to lose data and to duplicate them, you can go wih more complex solution.
 The idea is to have two separated group of nodes. One for Fluent Bit and one for OpenTelemetry Collector.
 
-Node group for FLuent Bit should contains all and only existing nodes. The second group of nodes is dedicated to all new pods.
+Node group for Fluent Bit should contains all and only existing nodes. The second group of nodes is dedicated to all new pods.
 
 Let's consider an example for that.
 We added `workerGroup: old-worker-group` label to all existing nodes, and then apply the following configuration:
