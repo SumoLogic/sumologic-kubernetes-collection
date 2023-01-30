@@ -253,7 +253,7 @@ The idea is to have two separated groups of nodes. One for Fluent Bit and one fo
 The node group for Fluent Bit should contain all existing nodes. The second group of nodes is dedicated to all new pods.
 
 Let's consider an example for that.
-We added `workerGroup: old-worker-group` label to all existing nodes, and then apply the following configuration:
+We added `workerGroup: old-worker-group` label to all existing nodes, and then applied the following configuration:
 
 ```yaml
 sumologic:
