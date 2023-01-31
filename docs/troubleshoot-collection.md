@@ -27,6 +27,7 @@
   - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
   - [Falco and OpenShift](#falco-and-openshift)
   - [Out of memory (OOM) failures for Prometheus Pod](#out-of-memory-oom-failures-for-prometheus-pod)
+  - [Prometheus: server returned HTTP status 404 Not Found: 404 page not found](#prometheus-server-returned-http-status-404-not-found-404-page-not-found)
 
 <!-- /TOC -->
 
@@ -404,3 +405,41 @@ with event `persistentvolumeclaim "file-storage-sumologic-otelcol-logs-1" not fo
 
 If you observe that Prometheus Pod needs more and more resources (out of memory failures - OOM killed Prometheus) and you are not able to increase
 them then you may need to horizontally scale Prometheus. :construction: Add link to Prometheus sharding doc here.
+
+### Prometheus: server returned HTTP status 404 Not Found: 404 page not found
+
+If you see the following error in Prometheus logs:
+
+```text
+ts=2023-01-30T16:39:27.436Z caller=dedupe.go:112 component=remote level=error remote_name=2b2fa9 url=http://sumologic-sumologic-remote-write-proxy.sumologic.svc.cluster.local:9888/prometheus.metrics.kubelet msg="non-recoverable error" count=194 exemplarCount=0 err="server returned HTTP status 404 Not Found: 404 page not found"
+```
+
+please change the following configurations:
+
+- `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite`
+- `kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite`
+
+so `url` start with `http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`.
+
+Please see the following example:
+
+```yaml
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      remoteWrite:
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.state
+          ...
+```
+
+Alternatively you can add `prometheus.metrics.kubelet` to `metadata.metrics.config.additionalEndpoints`
+
+Please see the following example:
+
+```yaml
+metadata:
+  metrics:
+    config:
+      additionalEndpoints:
+        - prometheus.metrics.kubelet
+```
