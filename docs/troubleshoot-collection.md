@@ -27,6 +27,7 @@
   - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
   - [Falco and OpenShift](#falco-and-openshift)
   - [Out of memory (OOM) failures for Prometheus Pod](#out-of-memory-oom-failures-for-prometheus-pod)
+  - [OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy](#opentelemetry-dial-tcp-lookup-collection-sumologic-metadata-logssumologicsvcclusterlocal-device-or-resource-busy)
 
 <!-- /TOC -->
 
@@ -404,3 +405,29 @@ with event `persistentvolumeclaim "file-storage-sumologic-otelcol-logs-1" not fo
 
 If you observe that Prometheus Pod needs more and more resources (out of memory failures - OOM killed Prometheus) and you are not able to increase
 them then you may need to horizontally scale Prometheus. :construction: Add link to Prometheus sharding doc here.
+
+### OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy
+
+If you see the following error in OpenTelemetry Pods:
+
+```yaml
+2023-01-31T14:50:20.263Z        info    exporterhelper/queued_retry.go:426      Exporting failed. Will retry the request after interval.        {"kind": "exporter", "data_type": "logs", "name": "otlphttp", "error": "failed to make an HTTP request: Post \"http://collection-sumologic-metadata-logs.sumologic.svc.cluster.local.:4318/v1/logs\": dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy", "interval": "16.601790675s"}
+```
+
+Add the following environment variable to the affected Statefulset/Daemonset/Deployment:
+
+```yaml
+extraEnvVars:
+  - name: GODEBUG
+    value: netdns=go
+```
+
+For example for OpenTelemetry Logs Collector:
+
+```yaml
+otellogs:
+  daemonset:
+    extraEnvVars:
+      - name: GODEBUG
+        value: netdns=go
+```
