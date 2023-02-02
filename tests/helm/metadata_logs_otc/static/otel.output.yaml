@@ -226,7 +226,7 @@ data:
         - from: build_hostname
       logstransform/containers_parse_json:
         operators:
-        - if: body matches "^{.*"
+        - if: body matches "^{[\\s\\S]+"
           parse_from: body
           parse_to: body
           type: json_parser
