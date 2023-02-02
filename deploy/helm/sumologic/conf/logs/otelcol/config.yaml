@@ -226,7 +226,7 @@ processors:
       - type: json_parser
         parse_from: body
         parse_to: body
-        if: body matches "^{.*"
+        if: body matches "^{[\\s\\S]+"
 {{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{ toYaml $processor | indent 2}}
