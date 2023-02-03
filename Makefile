@@ -60,7 +60,7 @@ template-tests-lint:
 
 .PHONY: integration-tests-lint
 integration-tests-lint:
-	make -C ./tests/helm golint
+	make -C ./tests/integration golint
 
 # Formatters
 
