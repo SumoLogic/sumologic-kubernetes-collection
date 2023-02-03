@@ -7,7 +7,7 @@ gomod-tidy:
 	go mod tidy -compat=1.19
 
 LINT=golangci-lint
-GOLANGCI_LINT_VERSION ?= v1.49.0
+GOLANGCI_LINT_VERSION ?= v1.51.0
 
 .PHONY: install-golint
 install-golangci-lint:
