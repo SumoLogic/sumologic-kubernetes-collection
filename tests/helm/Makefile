@@ -2,6 +2,10 @@
 test:
 	go test -timeout 30m -v
 
+.PHONY: regenerate-goldenfiles
+regenerate-goldenfiles:
+	REGENERATE_GOLDENFILES=1 go test -run=^TestGoldenFiles$ || true
+
 .PHONY: gomod-tidy
 gomod-tidy:
 	go mod tidy -compat=1.19
