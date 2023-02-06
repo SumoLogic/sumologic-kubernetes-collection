@@ -9,6 +9,7 @@ import (
 	doublestar "github.com/bmatcuk/doublestar/v4"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	corev1 "k8s.io/api/core/v1"
@@ -74,14 +75,31 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 
 		// find the object we expect
 		var actualObject *unstructured.Unstructured = nil
-		for _, renderedObject := range renderedObjects {
+		var objectIndex int
+		for i, renderedObject := range renderedObjects {
 			if renderedObject.GetName() == expectedObject.GetName() &&
 				renderedObject.GetKind() == expectedObject.GetKind() {
 				actualObject = &renderedObject
+				objectIndex = i
 				break
 			}
 		}
 		require.NotNilf(t, actualObject, "Couldn't find object %s/%s in output", expectedObject.GetKind(), expectedObject.GetName())
+
+		// regenerate golden file if enabled and the values don't match
+		// we intentionally use the Helm output directly here, because it's more human-readable
+		regenerateGoldenFiles := os.Getenv("REGENERATE_GOLDENFILES") != ""
+		if regenerateGoldenFiles && !assert.Equal(t, expectedObject, *actualObject) {
+			t.Logf("Regenerating output for %s", valuesFileName)
+			yamlDocuments := strings.Split(renderedYamlString, "---")[1:] // Helm output starts with ---, so we skip the first result
+			yamlDoc := "---" + yamlDocuments[objectIndex]
+			outputFile, err := os.OpenFile(outputFileName, os.O_WRONLY, os.ModePerm)
+			require.NoError(t, err)
+			err = outputFile.Truncate(0)
+			require.NoError(t, err)
+			_, err = outputFile.Write([]byte(yamlDoc))
+			require.NoError(t, err)
+		}
 
 		// separately handle the ConfigMap case, producing nicer diffs for config files
 		if expectedObject.GetKind() == "ConfigMap" {

@@ -85,6 +85,13 @@ test-templates:
 	make helm-dependency-update
 	make -C ./tests/helm test
 
+### Regenerate golden files for template tests
+### Be sure the output is what you expect before committing!
+.PHONY: regenerate-goldenfiles
+regenerate-goldenfiles:
+	make -C ./tests/helm regenerate-goldenfiles
+	make yaml-format
+
 ## Integration tests
 .PHONY: test-integration
 make test-integration:
