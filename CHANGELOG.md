@@ -15,9 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - chore: add support for EKS 1.24 [#2831]
 - chore: add support for GKE 1.24 [#2832]
+- chore: remove support for KOPS 1.21 [#2848]
+- chore: add support for KOPS 1.25 [#2848]
+- chore: add support for AKS 1.25 [#2848]
+- chore: add support for GKE 1.25 [#2848]
+- chore: add support for Openshift 4.11 [#2848]
 
 [#2831]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2831
 [#2832]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2832
+[#2848]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2848
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0...release-v3.0
 
 ## [v3.0.0]
