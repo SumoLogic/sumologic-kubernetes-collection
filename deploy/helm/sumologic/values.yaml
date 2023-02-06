@@ -3604,10 +3604,10 @@ otelcolInstrumentation:
       batch:
         ## Number of spans after which a batch will be sent regardless of time
         send_batch_size: 256
+        ## Never more than this many spans are being sent in a batch
+        send_batch_max_size: 512
         ## Time duration after which a batch will be sent regardless of size
         timeout: 5s
-        ## Never more than this many spans are being sent in a batch
-        # send_batch_max_size: 512
     extensions:
       health_check: {}
       memory_ballast:
@@ -4095,6 +4095,8 @@ tracesGateway:
       batch:
         ## Number of spans after which a batch will be sent regardless of time
         send_batch_size: 256
+        ## Maximum number of spans sent at once
+        send_batch_max_size: 512
         ## Time duration after which a batch will be sent regardless of size
         timeout: 5s
         ## Never more than this many spans are being sent in a batch

@@ -16,6 +16,9 @@
     - [Custom metrics filtering and modification](#custom-metrics-filtering-and-modification)
   - [Logs migration](#logs-migration)
     - [Replacing Fluent Bit with OpenTelemetry Collector](#replacing-fluent-bit-with-opentelemetry-collector)
+      - [Migration with (small) data loss](#migration-with-small-data-loss)
+      - [Migration with data duplication](#migration-with-data-duplication)
+      - [Migration without data duplication and data loss (advanced)](#migration-without-data-duplication-and-data-loss-advanced)
     - [Otelcol StatefulSet](#otelcol-statefulset)
     - [Custom logs filtering and processing](#custom-logs-filtering-and-processing)
   - [Tracing migration](#tracing-migration)
@@ -80,7 +83,7 @@ Afterwards, you can download the migration tool and run it directly.
 Set the OS and ARCH variables to your operating system and architecture.
 
 ```bash
-OS=linux ARCH=amd64; curl -L "https://github.com/SumoLogic/sumologic-kubernetes-tools/releases/download/v2.17.0/update-collection-v3-sumo-${OS}_${ARCH}" -o update-collection-v3
+OS=linux ARCH=amd64; curl -L "https://github.com/SumoLogic/sumologic-kubernetes-tools/releases/download/v2.19.0/update-collection-v3-sumo-${OS}_${ARCH}" -o update-collection-v3
 chmod +x update-collection-v3
 ./update-collection-v3 -in user-values.yaml -out new-values.yaml
 ```
@@ -91,7 +94,7 @@ You can also run it with Docker:
 docker run \
   --rm \
   -v $(pwd):/values \
-  -i sumologic/kubernetes-tools:2.17.0 \
+  -i sumologic/kubernetes-tools:2.19.0 \
   update-collection-v3 -in /values/user-values.yaml -out /values/new-values.yaml
 ```
 
@@ -232,10 +235,14 @@ If you don't have log collection enabled, skip straight to the [next major secti
 
 **When?**: If you're using `fluent-bit` as the log collector, which is the default.
 
+##### Migration with (small) data loss
+
 On upgrade, the Fluent Bit DaemonSet will be deleted, and a new OpenTelemetry Collector Daemonset will be created.
 If a log file were to be rotated between the Fluent Bit Pod disappearing and the OpenTelemetry Collector Pod starting, logs
 added to that file after Fluent Bit was deleted will not be ingested. If you're ok with this minor loss of data, you can proceed without
 any manual intervention.
+
+##### Migration with data duplication
 
 If you'd prefer to ingest duplicated data for a period of time instead, with OpenTelemetry Collector and Fluent Bit running
 side by side, enable the following settings:
@@ -250,6 +257,51 @@ fluent-bit:
 ```
 
 After the upgrade, once OpenTelemetry Collector is running, you can disable Fluent Bit again and proceed without any data loss.
+
+##### Migration without data duplication and data loss (advanced)
+
+If you want to migrate without losing data or ingesting duplicates, you can go with a more complex solution.
+The idea is to have two separated groups of nodes. One for Fluent Bit and one for OpenTelemetry Collector.
+
+The node group for Fluent Bit should contain all existing nodes. The second group of nodes is dedicated to all new pods.
+
+Let's consider an example for that.
+We added `workerGroup: old-worker-group` label to all existing nodes, and then applied the following configuration:
+
+```yaml
+sumologic:
+  logs:
+    collector:
+      allowSideBySide: true
+fluent-bit:
+  enabled: true
+  nodeSelector:
+    ## run Fluent-Bit on all nodes matching label: workerGroup=old-worker-group
+    workerGroup: old-worker-group
+otellogs:
+  daemonset:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            ## run OpenTelemetry Logs Collector on all nodes which do not match label: workerGroup=old-worker-group
+            - key: workerGroup
+              operator: NotIn
+              values:
+              - old-worker-group
+```
+
+After upgrading the Helm Chart, we drained all nodes with `workerGroup: old-worker-group`,
+and then we set OpenTelemetry Collector as only logs collector in the cluster
+by removing `fluent-bit` and `otellogs` unnecessary configuration sections.
+
+```yaml
+sumologic:
+  logs:
+    collector:
+      allowSideBySide: true
+```
 
 #### Otelcol StatefulSet
 
@@ -311,6 +363,9 @@ The above special configuration values can be replaced either to direct values o
 
   **When?**: If tracing is enabled
 
+  > **Warning**
+  > `otelcol` Deployment was moved to `tracesSampler` Deployment.
+  
   Run the following command to manually delete otelcol Deployment and ConfigMap:
 
   ```
@@ -322,6 +377,9 @@ The above special configuration values can be replaced either to direct values o
 
   **When?**: If you're using `otelagent` (`otelagent.enabled=true`)
   
+  > **Warning**
+  > `otelagent` DaemonSet was replaced by `otelcolInstrumentation` **StatefulSet**.
+
   Run the following command to manually delete otelagent DamemonSet and ConfigMap:
 
   ```
@@ -332,7 +390,10 @@ The above special configuration values can be replaced either to direct values o
 - **Otelgateway Deployment**
 
   **When?**: If you're using `otelgateway` (`otelgateway.enabled=true`)
-  
+
+  > **Warning**
+  > `otelgateway` Deployment was moved to `tracesGateway` Deployment.
+
   Run the following command to manually delete otelgateway Deployment and ConfigMap:
 
   ```

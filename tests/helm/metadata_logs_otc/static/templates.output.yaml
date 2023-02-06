@@ -85,6 +85,7 @@ data:
         - action: delete
           key: fluent.tag
       batch:
+        send_batch_max_size: 2048
         send_batch_size: 1024
         timeout: 1s
       filter/exclude_kubelet:
@@ -225,7 +226,7 @@ data:
         - from: build_hostname
       logstransform/containers_parse_json:
         operators:
-        - if: body matches "^{.*"
+        - if: body matches "^{[\\s\\S]+"
           parse_from: body
           parse_to: body
           type: json_parser

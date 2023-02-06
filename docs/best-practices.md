@@ -534,6 +534,10 @@ For [batch processor][batch_processor]:
 
 *We could say that `send_batch_size` is a soft limit and `send_batch_max_size` is a hard limit of the batch size.*
 
+In Helm Chart's default configuration, `send_batch_max_size` is set to `2 * send_batch_size`.
+It is necessary to consider changing the value of `send_batch_max_size` whenever `send_batch_size` is changed.
+More information can be found in [sumologic-otel-collector's documentation][sumo-otelcol-batching-doc].
+
 For [sumologic exporter][sumologic_exporter]:
 
 - `max_request_body_size` defines maximum size of requests to sumologic before compression.
@@ -552,6 +556,7 @@ For [sumologic exporter][sumologic_exporter]:
 [batch_processor]: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.47.0/processor/batchprocessor#batch-processor
 [sumologic_exporter]: https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.50.0-sumo-0/pkg/exporter/sumologicexporter#sumo-logic-exporter
 [filling_up_alert]: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubepersistentvolumefillingup/
+[sumo-otelcol-batching-doc]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/best-practices.md#using-batch-processor-to-batch-data
 
 ### Compaction
 
