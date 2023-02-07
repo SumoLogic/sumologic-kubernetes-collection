@@ -6,6 +6,9 @@ Describe your PR here
 
 <!---
 Remove items which don't apply to your PR.
+
+You can add a changelog entry by running `make add-changelog-entry`
+See [/docs/dev.md] for more details
 -->
 
 - [ ] Changelog updated or skip changelog label added
