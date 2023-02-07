@@ -1,0 +1,31 @@
+{% if sections[""] -%}
+
+### Released {{ versiondata.date }}
+
+{% for category, val in definitions.items() if category in sections[""] -%}
+
+### {{ definitions[category]['name'] }}
+
+{% for text, values in sections[""][category].items() %}
+- {{ text }} {{ values|join(', ') }}
+{% endfor %}
+
+{% endfor %}
+{% else %}
+No significant changes.
+
+
+{% endif %}
+
+{%- set all_values = [] %}
+{%- for category, val in definitions.items() if category in sections[""] %}
+{% for text, values in sections[""][category].items() %}
+{% for value in values %}
+{{ all_values.append(value) or "" -}}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{%- for value in all_values | unique %}
+{{ value }}: https://github.com/SumoLogic/sumologic-kubernetes-collection/pulls/{{ value | trim('[]#') }}
+{% endfor %}
+[v{{ versiondata.version }}]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v{{ versiondata.version }}

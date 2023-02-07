@@ -91,6 +91,35 @@ make test-integration:
 	make -C ./tests/integration test
 
 
+# Changelog management
+## We use Towncrier (https://towncrier.readthedocs.io) for changelog management
+
+ENTRY_TEXT ?= 'Use [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for your changelog entry'
+CHANGE_ID ?= 9999
+CHANGE_TYPE ?= changed
+
+## Usage: make add-changelog-entry CHANGE_TYPE=changed
+.PHONY: add-changelog-entry
+add-changelog-entry:
+	towncrier create -c "$(ENTRY_TEXT)" "(CHANGE_ID).(CHANGE_TYPE).txt"
+
+## Consume the files in .changelog and update CHANGELOG.md
+## We also format it afterwards to make sure it's consistent with our style
+## Usage: make update-changelog VERSION=x.x.x
+.PHONY: update-changelog
+update-changelog:
+ifndef VERSION
+	$(error Usage: make update-changelog VERSION=x.x.x)
+endif
+	towncrier build --yes --version $(VERSION)
+	prettier -w CHANGELOG.md
+	git add CHANGELOG.md
+
+## Check if the branch relative to main adds a changelog entry
+.PHONY: check-changelog
+check-changelog:
+	towncrier check
+
 # Various utilities
 .PHONY: push-helm-chart
 push-helm-chart:
