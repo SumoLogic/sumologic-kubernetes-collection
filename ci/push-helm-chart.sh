@@ -22,8 +22,8 @@ PWD=$(pwd)
 echo "Pushing helm chart in: ${PWD} with version tag: ${DEV_VERSION} to the dev catalog"
 push_helm_chart "${DEV_VERSION}" "./dev"
 
-IS_CHECKOUT_ON_TAG=$(is_checkout_on_tag)
-if ${IS_CHECKOUT_ON_TAG}; then
+# shellcheck disable=SC2310
+if is_checkout_on_tag; then
   echo "Pushing helm chart in: ${PWD} with version tag: ${RELEASE_VERSION} to the release catalog"
   push_helm_chart "${RELEASE_VERSION}" "."
 fi
