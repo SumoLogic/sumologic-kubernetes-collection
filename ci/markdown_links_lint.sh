@@ -24,7 +24,7 @@ for file in ${FILES}; do
     # filter out all links pointing to specific release, tag or commit
     # filter out links ended with /releases
     if "${GREP}" -HnoP '\[[^\]]*\]\([^\)]*\)' "${file}" \
-        | "${GREP}" 'github.com/sumologic-kubernetes-collection' \
+        | "${GREP}" 'github.com/sumologic/sumologic-kubernetes-collection' \
         | "${GREP}" -vP '(\/(blob|tree)\/(v\d+\.|[a-f0-9]{40}\/|release\-))' \
         | "${GREP}" -vP '\/releases\)'; then
     
