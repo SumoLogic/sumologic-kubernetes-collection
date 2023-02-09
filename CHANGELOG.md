@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- fix(logs): fix excluding logs by container, namespace, node, pod regex
+
+[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0...release-v3.0
+
 ## [v3.0.0]
 
 ### Migration from v2
