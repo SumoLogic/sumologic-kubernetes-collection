@@ -17,13 +17,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - chore: add support for GKE 1.25 [#2848]
 - chore: add support for Openshift 4.11 [#2848]
 - feat(otelcol): add max size in batch processors [#2839]
-- fix(logs): fix excluding logs by container, namespace, node, pod regex
+- fix(logs): fix excluding logs by container, namespace, node, pod regex [#2852]
 - chore: bump sumologic-kubernetes-setup image to 3.6.0 and kube-state-metrics image to 2.7.0 [#2857]
 
 [#2831]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2831
 [#2832]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2832
 [#2839]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2839
 [#2848]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2848
+[#2852]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2852
 [#2857]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2857
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0...main
 
