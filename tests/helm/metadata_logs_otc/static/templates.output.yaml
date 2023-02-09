@@ -270,10 +270,10 @@ data:
           enabled: false
           prefixes: []
         exclude:
-          k8s.container.name: my_containers_excludeContainerRegex
-          k8s.namespace.name: my_containers_excludeNamespaceRegex
-          k8s.node.name: my_containers_excludeHostRegex
-          k8s.pod.name: my_containers_excludePodRegex
+          container: my_containers_excludeContainerRegex
+          namespace: my_containers_excludeNamespaceRegex
+          node: my_containers_excludeHostRegex
+          pod: my_containers_excludePodRegex
         pod_key: pod
         pod_name_key: pod_name
         pod_template_hash_key: pod_labels_pod-template-hash

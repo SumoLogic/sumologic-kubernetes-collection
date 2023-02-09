@@ -210,10 +210,10 @@ processors:
     source_category_prefix: {{ .Values.sumologic.logs.container.sourceCategoryPrefix | quote }}
     source_category_replace_dash: {{ .Values.sumologic.logs.container.sourceCategoryReplaceDash | quote }}
     exclude:
-      k8s.namespace.name: {{ include "logs.excludeNamespaces" . }}
-      k8s.pod.name: {{ .Values.sumologic.logs.container.excludePodRegex | quote }}
-      k8s.container.name: {{ .Values.sumologic.logs.container.excludeContainerRegex | quote }}
-      k8s.node.name: {{ .Values.sumologic.logs.container.excludeHostRegex | quote }}
+      namespace: {{ include "logs.excludeNamespaces" . }}
+      pod: {{ .Values.sumologic.logs.container.excludePodRegex | quote }}
+      container: {{ .Values.sumologic.logs.container.excludeContainerRegex | quote }}
+      node: {{ .Values.sumologic.logs.container.excludeHostRegex | quote }}
     annotation_prefix: "pod_annotations_"
     pod_template_hash_key: "pod_labels_pod-template-hash"
     pod_name_key: "pod_name"
