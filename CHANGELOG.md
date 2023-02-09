@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v3.0.1]
 
+### Released 2023-02-09
+
 ### Fixed
 
 - fix(logs): fix excluding logs by container, namespace, node, pod regex
@@ -14,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v3.0.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0...v3.0.1
 
 ## [v3.0.0]
+
+### Released 2023-01-20
 
 ### Migration from v2
 
@@ -27,6 +31,8 @@ See the [migration guide][v3_migration_guide] for details.
 [v3.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-rc.0...v3.0.0
 
 ## [v3.0.0-rc.0]
+
+### Released 2023-01-19
 
 ### Added
 
