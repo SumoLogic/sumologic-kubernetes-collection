@@ -94,14 +94,10 @@ make test-integration:
 # Changelog management
 ## We use Towncrier (https://towncrier.readthedocs.io) for changelog management
 
-ENTRY_TEXT ?= 'Use [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for your changelog entry'
-CHANGE_ID ?= 9999
-CHANGE_TYPE ?= changed
-
-## Usage: make add-changelog-entry CHANGE_TYPE=changed
+## Usage: make add-changelog-entry
 .PHONY: add-changelog-entry
 add-changelog-entry:
-	towncrier create -c "$(ENTRY_TEXT)" "(CHANGE_ID).(CHANGE_TYPE).txt"
+	./ci/add-changelog-entry.sh
 
 ## Consume the files in .changelog and update CHANGELOG.md
 ## We also format it afterwards to make sure it's consistent with our style
