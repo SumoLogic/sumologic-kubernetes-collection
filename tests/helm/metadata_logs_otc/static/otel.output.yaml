@@ -270,10 +270,10 @@ data:
           enabled: false
           prefixes: []
         exclude:
-          k8s.container.name: ""
-          k8s.namespace.name: ""
-          k8s.node.name: ""
-          k8s.pod.name: ""
+          container: ""
+          namespace: ""
+          node: ""
+          pod: ""
         pod_key: pod
         pod_name_key: pod_name
         pod_template_hash_key: pod_labels_pod-template-hash
