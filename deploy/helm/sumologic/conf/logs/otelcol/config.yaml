@@ -181,7 +181,6 @@ processors:
     extract:
       metadata:
         ## extract the following well-known metadata fields
-        - containerName
         - daemonSetName
         - deploymentName
         - hostName

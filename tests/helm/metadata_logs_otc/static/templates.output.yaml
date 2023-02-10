@@ -208,7 +208,6 @@ data:
           - key: '*'
             tag_name: pod_labels_%s
           metadata:
-          - containerName
           - daemonSetName
           - deploymentName
           - hostName
