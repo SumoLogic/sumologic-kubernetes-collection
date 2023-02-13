@@ -15,14 +15,17 @@ jobs:
     if: "!contains(github.event.pull_request.labels.*.name, 'skip-changelog')"
     env:
       TOWNCRIER_VERSION: 22.12.0
+      PR_NUMBER: ${{ github.event.number }}
     steps:
       - uses: actions/checkout@v3
+      - name: Add PR base ref
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
       - name: install towncrier
         run: pip install towncrier==${{ env.TOWNCRIER_VERSION }}
-      - name: Check for CHANGELOG changes
+      - name: Check if new CHANGELOG entries added
         run: |
-          # Only the latest commit of the feature branch is available
-          # automatically. To diff with the base branch, we need to
-          # fetch that too (and we only need its latest commit).
-          git fetch origin ${{ github.base_ref }} --depth=1
           make check-changelog
+      - name: Check if new CHANGELOG entries reference the correct PR
+        run: |
+          git diff --name-only ${{ github.base_ref }} HEAD .changelog | grep ${PR_NUMBER}
