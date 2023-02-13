@@ -10,11 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 - fix(logs): fix container attribute [#2863]
+
+  Fixes [#2862] Logs from two different containers of one pod show up in Sumo as coming from one of the containers
+
 - fix(setup): fix error when creating fields [#2866]
 
   Fixes [#2865] Setup job fails trying to create fields that already exist
 
 [#2863]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2863
+[#2862]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2862
 [#2866]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2866
 [#2865]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2865
 [Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.1.0...main
