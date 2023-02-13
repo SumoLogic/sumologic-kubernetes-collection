@@ -56,6 +56,8 @@ spec:
         - name: config-volume
           configMap:
             name: RELEASE-NAME-sumologic-otelcol-metrics
+        - name: tmp
+          emptyDir: {}
         - name: es-certs
           secret:
             defaultMode: 420
@@ -112,6 +114,8 @@ spec:
             - name: config-volume
               mountPath: /etc/otel/config.yaml
               subPath: config.yaml
+            - name: tmp
+              mountPath: /tmp
             - name: file-storage
               mountPath: /var/lib/storage/otc
             - mountPath: /certs
