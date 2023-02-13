@@ -7,7 +7,9 @@
 ### {{ definitions[category]['name'] }}
 
 {% for text, values in sections[""][category].items() %}
-- {{ text }} {{ values|join(', ') }}
+{%- set lines = text.split('\n') -%}
+- {{ lines[0] }} {{ values|join(', ') }}
+{{ lines[1:] | join('\n') }}
 {% endfor %}
 
 {% endfor %}
@@ -28,4 +30,5 @@ No significant changes.
 {%- for value in all_values | unique %}
 {{ value }}: https://github.com/SumoLogic/sumologic-kubernetes-collection/pulls/{{ value | trim('[]#') }}
 {% endfor %}
-[v{{ versiondata.version }}]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v{{ versiondata.version }}
+[v{{ versiondata.version }}]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v{{
+versiondata.version }}
