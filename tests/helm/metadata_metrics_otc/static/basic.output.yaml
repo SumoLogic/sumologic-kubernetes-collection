@@ -97,7 +97,6 @@ data:
         compaction:
           directory: /var/lib/storage/otc
           on_rebound: true
-          on_start: true
         directory: /var/lib/storage/otc
         timeout: 10s
       health_check: {}

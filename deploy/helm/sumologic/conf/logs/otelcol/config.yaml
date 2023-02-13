@@ -18,7 +18,6 @@ extensions:
     directory: /var/lib/storage/otc
     timeout: 10s
     compaction:
-      on_start: true
       on_rebound: true
       # Can't be /tmp yet, see https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/13449
       directory: /var/lib/storage/otc
