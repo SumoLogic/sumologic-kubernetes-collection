@@ -97,6 +97,8 @@ spec:
       - name: config-volume
         configMap:
           name: {{ template "sumologic.metadata.name.logs.configmap" . }}
+      - name: tmp
+        emptyDir: {}
 {{- if .Values.metadata.logs.statefulset.extraVolumes }}
 {{ toYaml .Values.metadata.logs.statefulset.extraVolumes | indent 6 }}
 {{- end }}
@@ -149,6 +151,8 @@ spec:
         - name: config-volume
           mountPath: /etc/otel/config.yaml
           subPath: config.yaml
+        - name: tmp
+          mountPath: /tmp
 {{- if .Values.metadata.persistence.enabled }}
         - name: file-storage
           mountPath: /var/lib/storage/otc
