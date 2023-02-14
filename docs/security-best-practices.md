@@ -372,30 +372,30 @@ with `-fips`.
 Starting with Helm Chart v3 **OpenTelemetry Collector** is a default method of collecting data (except for Prometheus) but still you need
 set the FIPS compliant images.
 
-For example, to use `0.69.0-sumo-0-fips` image with Helm Chart v3 use the following configuration:
+For example, to use `0.71.0-sumo-0-fips` image with Helm Chart v3 use the following configuration:
 
 ```yaml
 metadata:
   image:
-    tag: 0.69.0-sumo-0-fips
+    tag: 0.71.0-sumo-0-fips
 otellogs:
   image:
-    tag: 0.69.0-sumo-0-fips
+    tag: 0.71.0-sumo-0-fips
 otelevents:
   image:
-    tag: 0.69.0-sumo-0-fips
+    tag: 0.71.0-sumo-0-fips
 otelcolInstrumentation:
   statefulSet:
     image:
-      tag: 0.69.0-sumo-0-fips
+      tag: 0.71.0-sumo-0-fips
 traceSampler:
   deployment:
     image:
-      tag: 0.69.0-sumo-0-fips
+      tag: 0.71.0-sumo-0-fips
 tracesGateway:
   deployment:
     image:
-      tag: 0.69.0-sumo-0-fips
+      tag: 0.71.0-sumo-0-fips
 ```
 
 ### Helm Chart v2
@@ -405,30 +405,30 @@ For Helm Chart v2 please
 
 When you use **OpenTelemetry Collector** you need set the fips compliant images.
 
-For example, to use `0.69.0-sumo-0-fips` image with Helm Chart v2 use the following configuration:
+For example, to use `0.71.0-sumo-0-fips` image with Helm Chart v2 use the following configuration:
 
 ```yaml
 metadata:
   image:
-    tag: 0.69.0-sumo-0-fips
+    tag: 0.71.0-sumo-0-fips
 otellogs:
   image:
-    tag: 0.69.0-sumo-0-fips
+    tag: 0.71.0-sumo-0-fips
 otelevents:
   image:
-    tag: 0.69.0-sumo-0-fips
+    tag: 0.71.0-sumo-0-fips
 otelcol:
   deployment:
     image:
-      tag: 0.69.0-sumo-0-fips
+      tag: 0.71.0-sumo-0-fips
 otelagent:
   daemonset:
     image:
-      tag: 0.69.0-sumo-0-fips
+      tag: 0.71.0-sumo-0-fips
 otelgateway:
   deployment:
     image:
-      tag: 0.69.0-sumo-0-fips
+      tag: 0.71.0-sumo-0-fips
 ```
 
 ### FIPS compliant images for Fluent Bit and Fluentd
