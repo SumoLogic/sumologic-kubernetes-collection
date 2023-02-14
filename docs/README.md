@@ -20,6 +20,7 @@ Documentation links:
 - [Installation](/docs/installation.md)
 
 - Configuration
+  - [Examples](/docs/configuration-examples.md)
   - Logs
     - [Collecting container logs](/docs/collecting-container-logs.md)
   - [Advanced Configuration/Best Practices](/docs/best-practices.md)
