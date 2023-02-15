@@ -22,6 +22,10 @@ PWD=$(pwd)
 echo "Pushing helm chart in: ${PWD} with version tag: ${DEV_VERSION} to the dev catalog"
 push_helm_chart "${DEV_VERSION}" "./dev"
 
+echo "Pruning the dev Helm Chart releases older than one month"
+max_age_timestamp="$(date --date="-1 month" +"%s")"
+prune_helm_releases "./dev" "${max_age_timestamp}"
+
 # shellcheck disable=SC2310
 if is_checkout_on_tag; then
   echo "Pushing helm chart in: ${PWD} with version tag: ${RELEASE_VERSION} to the release catalog"

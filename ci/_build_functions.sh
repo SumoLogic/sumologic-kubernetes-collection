@@ -67,6 +67,48 @@ function push_helm_chart() {
   set +ex
 }
 
+function prune_helm_releases() {
+  local chart_dir="$1"
+  local max_age_timestamp="$2"
+  local remote="origin"
+
+  echo "Pruning Helm Chart releases in ${chart_dir}"
+
+  set -ex
+  # this loop is to allow for concurent builds: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1853 
+  while true; do
+    git fetch "${remote}" gh-pages
+    git stash push
+    git checkout -B gh-pages "${remote}/gh-pages"
+    
+    last_pruned_commit="$(git rev-list HEAD --min-age "${max_age_timestamp}" -n 1)"
+    root_commit="$(git rev-list --max-parents=0 HEAD)"
+    for filename in $(git diff --name-only "${root_commit}" "${last_pruned_commit}" '{chart_dir}/*'); do 
+      git rm "${filename}"
+    done
+
+    helm repo index --url "https://sumologic.github.io/sumologic-kubernetes-collection${chart_dir:1}/" "${chart_dir}"
+
+    git add "${chart_dir}/index.yaml"
+    git status
+
+    # If the commit fails because there aren't any changes, skip the rest
+    git commit -m "Prune Helm Chart releases" || break
+
+    # Go back to the branch we checkout out at before gh-pages
+    git checkout -
+    # Pop the changes in case there are any
+    # this command will fail on empty stash, hence the || true
+    git stash pop || true
+
+    if git push "${remote}" gh-pages; then
+      # Push was successful, we're done
+      break
+    fi
+  done
+  set +ex
+}
+
 function is_checkout_on_tag() {
   git describe --exact-match --tags HEAD 2>/dev/null
 }
