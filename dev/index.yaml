@@ -3,7 +3,7 @@ entries:
   sumologic:
   - apiVersion: v2
     appVersion: 3.1.1-0-g3fb1a4e6cb
-    created: "2023-02-15T16:27:15.569776288+01:00"
+    created: "2023-02-16T09:01:16.079954071Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -46,11 +46,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.1-0-g3fb1a4e6cb.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.1-0-g3fb1a4e6cb.tgz
     version: 3.1.1-0-g3fb1a4e6cb
   - apiVersion: v2
     appVersion: 3.1.0-9-g7ad390d599
-    created: "2023-02-15T16:27:15.51759075+01:00"
+    created: "2023-02-16T09:01:16.025260173Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -93,11 +93,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-9-g7ad390d599.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-9-g7ad390d599.tgz
     version: 3.1.0-9-g7ad390d599
   - apiVersion: v2
     appVersion: 3.1.0-8-g173819ab84
-    created: "2023-02-15T16:27:15.440996516+01:00"
+    created: "2023-02-16T09:01:15.969174283Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -140,11 +140,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-8-g173819ab84.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-8-g173819ab84.tgz
     version: 3.1.0-8-g173819ab84
   - apiVersion: v2
     appVersion: 3.1.0-5-g3fb1a4e6cb
-    created: "2023-02-15T16:27:15.374647389+01:00"
+    created: "2023-02-16T09:01:15.914679884Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -187,11 +187,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-5-g3fb1a4e6cb.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-5-g3fb1a4e6cb.tgz
     version: 3.1.0-5-g3fb1a4e6cb
   - apiVersion: v2
     appVersion: 3.1.0-4-gf34c2a4867
-    created: "2023-02-15T16:27:15.314158866+01:00"
+    created: "2023-02-16T09:01:15.85928679Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -234,11 +234,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-4-gf34c2a4867.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-4-gf34c2a4867.tgz
     version: 3.1.0-4-gf34c2a4867
   - apiVersion: v2
     appVersion: 3.1.0-4-gdd0f0d7c34
-    created: "2023-02-15T16:27:15.273652439+01:00"
+    created: "2023-02-16T09:01:15.804355294Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -281,11 +281,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-4-gdd0f0d7c34.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-4-gdd0f0d7c34.tgz
     version: 3.1.0-4-gdd0f0d7c34
   - apiVersion: v2
     appVersion: 3.1.0-3-g0c5feacb9d
-    created: "2023-02-15T16:27:15.212500063+01:00"
+    created: "2023-02-16T09:01:15.748581102Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -328,11 +328,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-3-g0c5feacb9d.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-3-g0c5feacb9d.tgz
     version: 3.1.0-3-g0c5feacb9d
   - apiVersion: v2
     appVersion: 3.1.0-2-gaf7bc9f284
-    created: "2023-02-15T16:27:15.152875629+01:00"
+    created: "2023-02-16T09:01:15.69282421Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -375,11 +375,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-2-gaf7bc9f284.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-2-gaf7bc9f284.tgz
     version: 3.1.0-2-gaf7bc9f284
   - apiVersion: v2
     appVersion: 3.1.0-14-gc33e1f1185
-    created: "2023-02-16T09:01:08.141144084Z"
+    created: "2023-02-16T09:01:15.637877614Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -426,7 +426,7 @@ entries:
     version: 3.1.0-14-gc33e1f1185
   - apiVersion: v2
     appVersion: 3.1.0-13-ge32bee0801
-    created: "2023-02-15T16:27:15.082498671+01:00"
+    created: "2023-02-16T09:01:15.581122128Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -469,11 +469,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-13-ge32bee0801.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-13-ge32bee0801.tgz
     version: 3.1.0-13-ge32bee0801
   - apiVersion: v2
     appVersion: 3.1.0-12-g936929fdd2
-    created: "2023-02-15T16:27:15.014718758+01:00"
+    created: "2023-02-16T09:01:15.525592035Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -516,11 +516,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-12-g936929fdd2.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-12-g936929fdd2.tgz
     version: 3.1.0-12-g936929fdd2
   - apiVersion: v2
     appVersion: 3.1.0-11-ga2d1bca74b
-    created: "2023-02-15T16:27:14.95850208+01:00"
+    created: "2023-02-16T09:01:15.468724049Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -563,11 +563,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-11-ga2d1bca74b.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-11-ga2d1bca74b.tgz
     version: 3.1.0-11-ga2d1bca74b
   - apiVersion: v2
     appVersion: 3.1.0-10-gee36f3e520
-    created: "2023-02-15T16:27:14.884607089+01:00"
+    created: "2023-02-16T09:01:15.412821956Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -610,11 +610,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-10-gee36f3e520.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-10-gee36f3e520.tgz
     version: 3.1.0-10-gee36f3e520
   - apiVersion: v2
     appVersion: 3.1.0-1-g5c8020a381
-    created: "2023-02-15T16:27:14.796397954+01:00"
+    created: "2023-02-16T09:01:15.35725356Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -657,11 +657,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-1-g5c8020a381.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-1-g5c8020a381.tgz
     version: 3.1.0-1-g5c8020a381
   - apiVersion: v2
     appVersion: 3.1.0-1-g379a2e6963
-    created: "2023-02-15T16:27:14.721071268+01:00"
+    created: "2023-02-16T09:01:15.302733958Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -704,11 +704,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-1-g379a2e6963.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-1-g379a2e6963.tgz
     version: 3.1.0-1-g379a2e6963
   - apiVersion: v2
     appVersion: 3.1.0-0-g723c2ab9dd
-    created: "2023-02-15T16:27:14.647595507+01:00"
+    created: "2023-02-16T09:01:15.245358871Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -751,11 +751,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.1.0-0-g723c2ab9dd.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.1.0-0-g723c2ab9dd.tgz
     version: 3.1.0-0-g723c2ab9dd
   - apiVersion: v2
     appVersion: 3.0.1-1-g40f1b838ba
-    created: "2023-02-15T16:27:14.571596258+01:00"
+    created: "2023-02-16T09:01:15.190138673Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -798,11 +798,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.1-1-g40f1b838ba.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.1-1-g40f1b838ba.tgz
     version: 3.0.1-1-g40f1b838ba
   - apiVersion: v2
     appVersion: 3.0.1-0-ga5485162f0
-    created: "2023-02-15T16:27:14.509053067+01:00"
+    created: "2023-02-16T09:01:15.136032168Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -845,11 +845,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.1-0-ga5485162f0.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.1-0-ga5485162f0.tgz
     version: 3.0.1-0-ga5485162f0
   - apiVersion: v2
     appVersion: 3.0.0-rc.0-9-g5f7a3c866e
-    created: "2023-02-15T16:27:14.43299863+01:00"
+    created: "2023-02-16T09:01:15.080488172Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -892,11 +892,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-rc.0-9-g5f7a3c866e.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-rc.0-9-g5f7a3c866e.tgz
     version: 3.0.0-rc.0-9-g5f7a3c866e
   - apiVersion: v2
     appVersion: 3.0.0-rc.0-8-gf498d78322
-    created: "2023-02-15T16:27:14.358114044+01:00"
+    created: "2023-02-16T09:01:15.024475978Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -939,11 +939,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-rc.0-8-gf498d78322.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-rc.0-8-gf498d78322.tgz
     version: 3.0.0-rc.0-8-gf498d78322
   - apiVersion: v2
     appVersion: 3.0.0-rc.0-7-g63722bd50d
-    created: "2023-02-15T16:27:14.283338945+01:00"
+    created: "2023-02-16T09:01:14.970468273Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -986,11 +986,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-rc.0-7-g63722bd50d.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-rc.0-7-g63722bd50d.tgz
     version: 3.0.0-rc.0-7-g63722bd50d
   - apiVersion: v2
     appVersion: 3.0.0-rc.0-6-g5b128ea26e
-    created: "2023-02-15T16:27:14.207282147+01:00"
+    created: "2023-02-16T09:01:14.915278474Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1033,11 +1033,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-rc.0-6-g5b128ea26e.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-rc.0-6-g5b128ea26e.tgz
     version: 3.0.0-rc.0-6-g5b128ea26e
   - apiVersion: v2
     appVersion: 3.0.0-rc.0-5-g50d3ebdaed
-    created: "2023-02-15T16:27:14.142097021+01:00"
+    created: "2023-02-16T09:01:14.860447474Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1080,11 +1080,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-rc.0-5-g50d3ebdaed.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-rc.0-5-g50d3ebdaed.tgz
     version: 3.0.0-rc.0-5-g50d3ebdaed
   - apiVersion: v2
     appVersion: 3.0.0-rc.0-4-gd3eba6e4ea
-    created: "2023-02-15T16:27:14.071582457+01:00"
+    created: "2023-02-16T09:01:14.805291575Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1127,11 +1127,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-rc.0-4-gd3eba6e4ea.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-rc.0-4-gd3eba6e4ea.tgz
     version: 3.0.0-rc.0-4-gd3eba6e4ea
   - apiVersion: v2
     appVersion: 3.0.0-rc.0-3-gd0a87da5bc
-    created: "2023-02-15T16:27:14.001576589+01:00"
+    created: "2023-02-16T09:01:14.750538274Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1174,11 +1174,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-rc.0-3-gd0a87da5bc.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-rc.0-3-gd0a87da5bc.tgz
     version: 3.0.0-rc.0-3-gd0a87da5bc
   - apiVersion: v2
     appVersion: 3.0.0-rc.0-10-gc2e293b7d0
-    created: "2023-02-15T16:27:13.957783043+01:00"
+    created: "2023-02-16T09:01:14.695271176Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1221,11 +1221,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-rc.0-10-gc2e293b7d0.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-rc.0-10-gc2e293b7d0.tgz
     version: 3.0.0-rc.0-10-gc2e293b7d0
   - apiVersion: v2
     appVersion: 3.0.0-rc.0-0-g8debd758b2
-    created: "2023-02-15T16:27:13.894149779+01:00"
+    created: "2023-02-16T09:01:14.640413076Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1268,11 +1268,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-rc.0-0-g8debd758b2.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-rc.0-0-g8debd758b2.tgz
     version: 3.0.0-rc.0-0-g8debd758b2
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-67-g8debd758b2
-    created: "2023-02-15T16:27:13.823985546+01:00"
+    created: "2023-02-16T09:01:14.58488398Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1315,11 +1315,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-67-g8debd758b2.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-67-g8debd758b2.tgz
     version: 3.0.0-beta.1-67-g8debd758b2
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-65-g233db1865f
-    created: "2023-02-15T16:27:13.759031684+01:00"
+    created: "2023-02-16T09:01:14.530025679Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1362,11 +1362,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-65-g233db1865f.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-65-g233db1865f.tgz
     version: 3.0.0-beta.1-65-g233db1865f
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-64-g5d1acd2439
-    created: "2023-02-15T16:27:13.692849183+01:00"
+    created: "2023-02-16T09:01:14.470895202Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1409,11 +1409,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-64-g5d1acd2439.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-64-g5d1acd2439.tgz
     version: 3.0.0-beta.1-64-g5d1acd2439
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-63-g8048c0ba4f
-    created: "2023-02-15T16:27:13.628687091+01:00"
+    created: "2023-02-16T09:01:14.414851008Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1456,11 +1456,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-63-g8048c0ba4f.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-63-g8048c0ba4f.tgz
     version: 3.0.0-beta.1-63-g8048c0ba4f
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-62-g7271ef35eb
-    created: "2023-02-15T16:27:13.567411678+01:00"
+    created: "2023-02-16T09:01:14.359950308Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1503,11 +1503,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-62-g7271ef35eb.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-62-g7271ef35eb.tgz
     version: 3.0.0-beta.1-62-g7271ef35eb
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-61-gc3aff6a44d
-    created: "2023-02-15T16:27:13.488914781+01:00"
+    created: "2023-02-16T09:01:14.305239107Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1550,11 +1550,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-61-gc3aff6a44d.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-61-gc3aff6a44d.tgz
     version: 3.0.0-beta.1-61-gc3aff6a44d
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-60-gd24928f189
-    created: "2023-02-15T16:27:13.422527885+01:00"
+    created: "2023-02-16T09:01:14.249359313Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1597,11 +1597,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-60-gd24928f189.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-60-gd24928f189.tgz
     version: 3.0.0-beta.1-60-gd24928f189
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-58-gf22b447fea
-    created: "2023-02-15T16:27:13.359773739+01:00"
+    created: "2023-02-16T09:01:14.192990621Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1644,11 +1644,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-58-gf22b447fea.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-58-gf22b447fea.tgz
     version: 3.0.0-beta.1-58-gf22b447fea
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-57-g372a03349b
-    created: "2023-02-15T16:27:13.319677271+01:00"
+    created: "2023-02-16T09:01:14.137668523Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1691,11 +1691,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-57-g372a03349b.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-57-g372a03349b.tgz
     version: 3.0.0-beta.1-57-g372a03349b
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-55-g061d8f4e60
-    created: "2023-02-15T16:27:13.271014196+01:00"
+    created: "2023-02-16T09:01:14.081577529Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1738,11 +1738,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-55-g061d8f4e60.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-55-g061d8f4e60.tgz
     version: 3.0.0-beta.1-55-g061d8f4e60
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-54-gc695905428
-    created: "2023-02-15T16:27:13.219296876+01:00"
+    created: "2023-02-16T09:01:14.026029933Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1785,11 +1785,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-54-gc695905428.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-54-gc695905428.tgz
     version: 3.0.0-beta.1-54-gc695905428
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-53-g7a225100e0
-    created: "2023-02-15T16:27:13.145751906+01:00"
+    created: "2023-02-16T09:01:13.969959839Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1832,11 +1832,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-53-g7a225100e0.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-53-g7a225100e0.tgz
     version: 3.0.0-beta.1-53-g7a225100e0
   - apiVersion: v2
     appVersion: 3.0.0-beta.1-48-g2e6e5fea31
-    created: "2023-02-15T16:27:13.083498238+01:00"
+    created: "2023-02-16T09:01:13.915123239Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1879,11 +1879,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-beta.1-48-g2e6e5fea31.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-beta.1-48-g2e6e5fea31.tgz
     version: 3.0.0-beta.1-48-g2e6e5fea31
   - apiVersion: v2
     appVersion: 3.0.0-9-g15f30ce706
-    created: "2023-02-15T16:27:13.007368423+01:00"
+    created: "2023-02-16T09:01:13.860781336Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1926,11 +1926,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-9-g15f30ce706.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-9-g15f30ce706.tgz
     version: 3.0.0-9-g15f30ce706
   - apiVersion: v2
     appVersion: 3.0.0-8-g6e158e4dfa
-    created: "2023-02-15T16:27:12.932647062+01:00"
+    created: "2023-02-16T09:01:13.804510243Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -1973,11 +1973,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-8-g6e158e4dfa.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-8-g6e158e4dfa.tgz
     version: 3.0.0-8-g6e158e4dfa
   - apiVersion: v2
     appVersion: 3.0.0-7-gb2f7d61947
-    created: "2023-02-15T16:27:12.855855303+01:00"
+    created: "2023-02-16T09:01:13.750705537Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2020,11 +2020,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-7-gb2f7d61947.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-7-gb2f7d61947.tgz
     version: 3.0.0-7-gb2f7d61947
   - apiVersion: v2
     appVersion: 3.0.0-7-ga5485162f0
-    created: "2023-02-15T16:27:12.793306971+01:00"
+    created: "2023-02-16T09:01:13.696132235Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2067,11 +2067,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-7-ga5485162f0.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-7-ga5485162f0.tgz
     version: 3.0.0-7-ga5485162f0
   - apiVersion: v2
     appVersion: 3.0.0-6-ge46de0889a
-    created: "2023-02-15T16:27:12.733803864+01:00"
+    created: "2023-02-16T09:01:13.638861748Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2114,11 +2114,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-6-ge46de0889a.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-6-ge46de0889a.tgz
     version: 3.0.0-6-ge46de0889a
   - apiVersion: v2
     appVersion: 3.0.0-6-gaa996beaf7
-    created: "2023-02-15T16:27:12.669648013+01:00"
+    created: "2023-02-16T09:01:13.584643544Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2161,11 +2161,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-6-gaa996beaf7.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-6-gaa996beaf7.tgz
     version: 3.0.0-6-gaa996beaf7
   - apiVersion: v2
     appVersion: 3.0.0-5-gde12bc224d
-    created: "2023-02-15T16:27:12.573845114+01:00"
+    created: "2023-02-16T09:01:13.529302846Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2208,11 +2208,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-5-gde12bc224d.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-5-gde12bc224d.tgz
     version: 3.0.0-5-gde12bc224d
   - apiVersion: v2
     appVersion: 3.0.0-5-g232469d2b3
-    created: "2023-02-15T16:27:12.507647734+01:00"
+    created: "2023-02-16T09:01:13.473904849Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2255,11 +2255,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-5-g232469d2b3.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-5-g232469d2b3.tgz
     version: 3.0.0-5-g232469d2b3
   - apiVersion: v2
     appVersion: 3.0.0-4-ga2b3be7f54
-    created: "2023-02-15T16:27:12.436131694+01:00"
+    created: "2023-02-16T09:01:13.417788156Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2302,11 +2302,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-4-ga2b3be7f54.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-4-ga2b3be7f54.tgz
     version: 3.0.0-4-ga2b3be7f54
   - apiVersion: v2
     appVersion: 3.0.0-4-g9c11f57068
-    created: "2023-02-15T16:27:12.372956628+01:00"
+    created: "2023-02-16T09:01:13.363803851Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2349,11 +2349,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-4-g9c11f57068.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-4-g9c11f57068.tgz
     version: 3.0.0-4-g9c11f57068
   - apiVersion: v2
     appVersion: 3.0.0-34-g723c2ab9dd
-    created: "2023-02-15T16:27:12.309344212+01:00"
+    created: "2023-02-16T09:01:13.309323448Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2396,11 +2396,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-34-g723c2ab9dd.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-34-g723c2ab9dd.tgz
     version: 3.0.0-34-g723c2ab9dd
   - apiVersion: v2
     appVersion: 3.0.0-33-gb9612ba3c2
-    created: "2023-02-15T16:27:12.232915504+01:00"
+    created: "2023-02-16T09:01:13.25413605Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2443,11 +2443,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-33-gb9612ba3c2.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-33-gb9612ba3c2.tgz
     version: 3.0.0-33-gb9612ba3c2
   - apiVersion: v2
     appVersion: 3.0.0-32-ge45260a9b9
-    created: "2023-02-15T16:27:12.170931309+01:00"
+    created: "2023-02-16T09:01:13.198240755Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2490,11 +2490,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-32-ge45260a9b9.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-32-ge45260a9b9.tgz
     version: 3.0.0-32-ge45260a9b9
   - apiVersion: v2
     appVersion: 3.0.0-31-g071ca46a0f
-    created: "2023-02-15T16:27:12.099975815+01:00"
+    created: "2023-02-16T09:01:13.14421725Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2537,11 +2537,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-31-g071ca46a0f.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-31-g071ca46a0f.tgz
     version: 3.0.0-31-g071ca46a0f
   - apiVersion: v2
     appVersion: 3.0.0-3-gc358c8c475
-    created: "2023-02-15T16:27:12.027215646+01:00"
+    created: "2023-02-16T09:01:13.08935085Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2584,11 +2584,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-3-gc358c8c475.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-3-gc358c8c475.tgz
     version: 3.0.0-3-gc358c8c475
   - apiVersion: v2
     appVersion: 3.0.0-3-g78c40150a3
-    created: "2023-02-15T16:27:11.970458861+01:00"
+    created: "2023-02-16T09:01:13.034006352Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2631,11 +2631,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-3-g78c40150a3.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-3-g78c40150a3.tgz
     version: 3.0.0-3-g78c40150a3
   - apiVersion: v2
     appVersion: 3.0.0-29-g8ee2bf398b
-    created: "2023-02-15T16:27:11.918107998+01:00"
+    created: "2023-02-16T09:01:12.978442556Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2678,11 +2678,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-29-g8ee2bf398b.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-29-g8ee2bf398b.tgz
     version: 3.0.0-29-g8ee2bf398b
   - apiVersion: v2
     appVersion: 3.0.0-28-gcb6cc537b8
-    created: "2023-02-15T16:27:11.844021062+01:00"
+    created: "2023-02-16T09:01:12.923901054Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2725,11 +2725,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-28-gcb6cc537b8.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-28-gcb6cc537b8.tgz
     version: 3.0.0-28-gcb6cc537b8
   - apiVersion: v2
     appVersion: 3.0.0-27-gd863a593bb
-    created: "2023-02-15T16:27:11.783396093+01:00"
+    created: "2023-02-16T09:01:12.86964855Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2772,11 +2772,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-27-gd863a593bb.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-27-gd863a593bb.tgz
     version: 3.0.0-27-gd863a593bb
   - apiVersion: v2
     appVersion: 3.0.0-26-g605592e0fc
-    created: "2023-02-15T16:27:11.710550036+01:00"
+    created: "2023-02-16T09:01:12.81482965Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2819,11 +2819,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-26-g605592e0fc.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-26-g605592e0fc.tgz
     version: 3.0.0-26-g605592e0fc
   - apiVersion: v2
     appVersion: 3.0.0-25-geca5aaed6a
-    created: "2023-02-15T16:27:11.644723715+01:00"
+    created: "2023-02-16T09:01:12.759243654Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2866,11 +2866,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-25-geca5aaed6a.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-25-geca5aaed6a.tgz
     version: 3.0.0-25-geca5aaed6a
   - apiVersion: v2
     appVersion: 3.0.0-22-g476a990856
-    created: "2023-02-15T16:27:11.564521171+01:00"
+    created: "2023-02-16T09:01:12.70311256Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2913,11 +2913,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-22-g476a990856.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-22-g476a990856.tgz
     version: 3.0.0-22-g476a990856
   - apiVersion: v2
     appVersion: 3.0.0-21-g307df69fb0
-    created: "2023-02-15T16:27:11.492204372+01:00"
+    created: "2023-02-16T09:01:12.647305565Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -2960,11 +2960,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-21-g307df69fb0.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-21-g307df69fb0.tgz
     version: 3.0.0-21-g307df69fb0
   - apiVersion: v2
     appVersion: 3.0.0-20-g7c3d3e99c1
-    created: "2023-02-15T16:27:11.420718611+01:00"
+    created: "2023-02-16T09:01:12.591403271Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3007,11 +3007,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-20-g7c3d3e99c1.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-20-g7c3d3e99c1.tgz
     version: 3.0.0-20-g7c3d3e99c1
   - apiVersion: v2
     appVersion: 3.0.0-2-ge47dbdb13e
-    created: "2023-02-15T16:27:11.343060663+01:00"
+    created: "2023-02-16T09:01:12.535129278Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3054,11 +3054,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-2-ge47dbdb13e.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-2-ge47dbdb13e.tgz
     version: 3.0.0-2-ge47dbdb13e
   - apiVersion: v2
     appVersion: 3.0.0-2-g26525fb64a
-    created: "2023-02-15T16:27:11.269197542+01:00"
+    created: "2023-02-16T09:01:12.47984018Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3101,11 +3101,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-2-g26525fb64a.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-2-g26525fb64a.tgz
     version: 3.0.0-2-g26525fb64a
   - apiVersion: v2
     appVersion: 3.0.0-19-g4bad635b30
-    created: "2023-02-15T16:27:11.194590688+01:00"
+    created: "2023-02-16T09:01:12.423708587Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3148,11 +3148,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-19-g4bad635b30.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-19-g4bad635b30.tgz
     version: 3.0.0-19-g4bad635b30
   - apiVersion: v2
     appVersion: 3.0.0-18-gccf31b3aec
-    created: "2023-02-15T16:27:11.124039696+01:00"
+    created: "2023-02-16T09:01:12.369316784Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3195,11 +3195,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-18-gccf31b3aec.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-18-gccf31b3aec.tgz
     version: 3.0.0-18-gccf31b3aec
   - apiVersion: v2
     appVersion: 3.0.0-17-g2d53b0e03c
-    created: "2023-02-15T16:27:11.047301556+01:00"
+    created: "2023-02-16T09:01:12.31331609Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3242,11 +3242,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-17-g2d53b0e03c.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-17-g2d53b0e03c.tgz
     version: 3.0.0-17-g2d53b0e03c
   - apiVersion: v2
     appVersion: 3.0.0-16-gdcf26c56f5
-    created: "2023-02-15T16:27:10.968564644+01:00"
+    created: "2023-02-16T09:01:12.258947287Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3289,11 +3289,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-16-gdcf26c56f5.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-16-gdcf26c56f5.tgz
     version: 3.0.0-16-gdcf26c56f5
   - apiVersion: v2
     appVersion: 3.0.0-14-g606ebfd9fe
-    created: "2023-02-15T16:27:10.894743012+01:00"
+    created: "2023-02-16T09:01:12.20341529Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3336,11 +3336,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-14-g606ebfd9fe.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-14-g606ebfd9fe.tgz
     version: 3.0.0-14-g606ebfd9fe
   - apiVersion: v2
     appVersion: 3.0.0-13-g9762ab0b7f
-    created: "2023-02-15T16:27:10.831390441+01:00"
+    created: "2023-02-16T09:01:12.148837888Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3383,11 +3383,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-13-g9762ab0b7f.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-13-g9762ab0b7f.tgz
     version: 3.0.0-13-g9762ab0b7f
   - apiVersion: v2
     appVersion: 3.0.0-12-gde55cdd164
-    created: "2023-02-15T16:27:10.762809908+01:00"
+    created: "2023-02-16T09:01:12.090465007Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3430,11 +3430,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-12-gde55cdd164.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-12-gde55cdd164.tgz
     version: 3.0.0-12-gde55cdd164
   - apiVersion: v2
     appVersion: 3.0.0-11-g19c373b5d7
-    created: "2023-02-15T16:27:10.689027214+01:00"
+    created: "2023-02-16T09:01:12.035496108Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3477,11 +3477,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-11-g19c373b5d7.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-11-g19c373b5d7.tgz
     version: 3.0.0-11-g19c373b5d7
   - apiVersion: v2
     appVersion: 3.0.0-10-g0197120779
-    created: "2023-02-15T16:27:10.623559806+01:00"
+    created: "2023-02-16T09:01:11.981140505Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3524,11 +3524,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-10-g0197120779.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-10-g0197120779.tgz
     version: 3.0.0-10-g0197120779
   - apiVersion: v2
     appVersion: 3.0.0-1-gdf3ff1b5c2
-    created: "2023-02-15T16:27:10.551510859+01:00"
+    created: "2023-02-16T09:01:11.926404204Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3571,11 +3571,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-1-gdf3ff1b5c2.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-1-gdf3ff1b5c2.tgz
     version: 3.0.0-1-gdf3ff1b5c2
   - apiVersion: v2
     appVersion: 3.0.0-1-g70baba2641
-    created: "2023-02-15T16:27:10.48559171+01:00"
+    created: "2023-02-16T09:01:11.870630408Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3618,11 +3618,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-1-g70baba2641.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-1-g70baba2641.tgz
     version: 3.0.0-1-g70baba2641
   - apiVersion: v2
     appVersion: 3.0.0-0-gc2e293b7d0
-    created: "2023-02-15T16:27:10.437974819+01:00"
+    created: "2023-02-16T09:01:11.814559515Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3665,11 +3665,11 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-3.0.0-0-gc2e293b7d0.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-3.0.0-0-gc2e293b7d0.tgz
     version: 3.0.0-0-gc2e293b7d0
   - apiVersion: v2
     appVersion: 2.19.1-6-g3772539d1a
-    created: "2023-02-15T16:27:10.371354339+01:00"
+    created: "2023-02-16T09:01:11.758282122Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -3712,6 +3712,6 @@ entries:
     - https://github.com/SumoLogic/sumologic-kubernetes-collection
     type: application
     urls:
-    - sumologic-2.19.1-6-g3772539d1a.tgz
+    - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.19.1-6-g3772539d1a.tgz
     version: 2.19.1-6-g3772539d1a
-generated: "2023-02-16T09:01:08.081635809Z"
+generated: "2023-02-16T09:01:11.702510627Z"
