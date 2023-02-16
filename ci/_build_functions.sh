@@ -29,12 +29,13 @@ function push_helm_chart() {
   local chart_dir="$2"
   local sync_dir="./tmp-helm-sync"
   local remote="origin"
+  local retry_count=10
 
   echo "Pushing new Helm Chart release ${version}"
 
   set -ex
   # this loop is to allow for concurent builds: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1853 
-  while true; do
+  for _ in 1..${retry_count}; do
     # due to helm repo index issue: https://github.com/helm/helm/issues/7363
     # we need to create new package in a different dir, merge the index and move the package back
     mkdir -p "${sync_dir}"
@@ -75,37 +76,32 @@ function prune_helm_releases() {
   echo "Pruning Helm Chart releases in ${chart_dir}"
 
   set -ex
-  # this loop is to allow for concurent builds: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1853 
-  while true; do
-    git fetch "${remote}" gh-pages
-    git stash push
-    git checkout -B gh-pages "${remote}/gh-pages"
-    
-    last_pruned_commit="$(git rev-list HEAD --min-age "${max_age_timestamp}" -n 1)"
-    root_commit="$(git rev-list --max-parents=0 HEAD)"
-    for filename in $(git diff --name-only "${root_commit}" "${last_pruned_commit}" '{chart_dir}/*'); do 
-      git rm "${filename}"
-    done
-
-    helm repo index --url "https://sumologic.github.io/sumologic-kubernetes-collection${chart_dir:1}/" "${chart_dir}"
-
-    git add "${chart_dir}/index.yaml"
-    git status
-
-    # If the commit fails because there aren't any changes, skip the rest
-    git commit -m "Prune Helm Chart releases" || break
-
-    # Go back to the branch we checkout out at before gh-pages
-    git checkout -
-    # Pop the changes in case there are any
-    # this command will fail on empty stash, hence the || true
-    git stash pop || true
-
-    if git push "${remote}" gh-pages; then
-      # Push was successful, we're done
-      break
-    fi
+  git fetch "${remote}" gh-pages
+  git stash push
+  git checkout -B gh-pages "${remote}/gh-pages"
+  
+  last_pruned_commit="$(git rev-list HEAD --min-age "${max_age_timestamp}" -n 1)"
+  root_commit="$(git rev-list --max-parents=0 HEAD)"
+  for filename in $(git diff --name-only "${root_commit}" "${last_pruned_commit}" "${chart_dir}/"); do 
+    git rm "${filename}"
   done
+
+  helm repo index --url "https://sumologic.github.io/sumologic-kubernetes-collection${chart_dir:1}/" "${chart_dir}"
+
+  git add "${chart_dir}/index.yaml"
+  git status
+
+  # If the commit fails because there aren't any changes, skip the rest
+  git commit -m "Prune Helm Chart releases" || return
+
+  # Go back to the branch we checkout out at before gh-pages
+  git checkout -
+  # Pop the changes in case there are any
+  # this command will fail on empty stash, hence the || true
+  git stash pop || true
+
+  # We might fail here because of a concurrent build, but that's ok
+  git push "${remote}" gh-pages || true
   set +ex
 }
 
