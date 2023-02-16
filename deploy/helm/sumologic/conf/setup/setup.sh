@@ -109,7 +109,7 @@ if should_create_fields ; then
 
         terraform import \
             -var="create_fields=1" \
-            sumologic_field."${FIELD}" "${FIELD_ID}"
+            sumologic_field."${FIELD}"[0] "${FIELD_ID}"
     done
 else
     readonly CREATE_FIELDS=0
