@@ -7,6 +7,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.2.0]
+
+### Released 2023-02-16
+
+### Changed
+
+- feat: disable otel storage compaction on start [#2870]
+- chore: upgrade otelcol to 0.71.0-sumo-0 [#2872]
+- feat: use /tmp for otel storage compaction [#2873]
+- chore: bump setup image to 3.6.0 [#2882]
+
+### Fixed
+
+- feat(instrumentation): scrape label added and updated [#2875]
+
+[#2870]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pulls/2870
+[#2872]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pulls/2872
+[#2873]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pulls/2873
+[#2882]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pulls/2882
+[#2875]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pulls/2875
+[v3.2.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.2.0
+
 ## [v3.1.1]
 
 ### Released 2023-02-13
