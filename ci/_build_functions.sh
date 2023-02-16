@@ -82,8 +82,10 @@ function prune_helm_releases() {
   
   last_pruned_commit="$(git rev-list HEAD --min-age "${max_age_timestamp}" -n 1)"
   root_commit="$(git rev-list --max-parents=0 HEAD)"
-  for filename in $(git diff --name-only "${root_commit}" "${last_pruned_commit}" "${chart_dir}/"); do 
-    git rm "${filename}"
+  for filename in $(git diff --name-only "${root_commit}" "${last_pruned_commit}" "${chart_dir}/"); do
+    if [[ -f "${filename}" ]]; then
+      git rm "${filename}"
+    fi
   done
 
   helm repo index --url "https://sumologic.github.io/sumologic-kubernetes-collection${chart_dir:1}/" "${chart_dir}"
