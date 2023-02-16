@@ -8,6 +8,7 @@ metadata:
   name: {{ template "sumologic.metadata.name.instrumentation.otelagent.service" . }}
   labels:
     app: {{ template "sumologic.labels.app.otelcolinstrumentation.service" . }}
+    {{- include "sumologic.labels.scrape.instrumentation" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   selector:

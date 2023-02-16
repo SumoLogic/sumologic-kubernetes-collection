@@ -683,8 +683,8 @@ sumologic.com/app: otelcol-events
 sumologic.com/component: events
 {{- end -}}
 
-{{- define "sumologic.labels.traces.component" -}}
-sumologic.com/component: traces
+{{- define "sumologic.labels.instrumentation.component" -}}
+sumologic.com/component: instrumentation
 {{- end -}}
 
 {{- define "sumologic.labels.logs.collector" -}}
@@ -713,7 +713,7 @@ sumologic.com/scrape: "true"
 
 {{- define "sumologic.labels.scrape.instrumentation" -}}
 {{ template "sumologic.label.scrape" . }}
-{{ template "sumologic.labels.traces.component" . }}
+{{ template "sumologic.labels.instrumentation.component" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.scrape.logs.collector" -}}
