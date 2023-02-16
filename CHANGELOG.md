@@ -7,17 +7,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
-## [Unreleased]
-
-### Released TBA
-
-### Changed
-
-- feat(instrumentation): scrape label added and updated [#2875]
-
-[#2875]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2875
-[Unreleased]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.1.1...main
-
 ## [v3.1.1]
 
 ### Released 2023-02-13
