@@ -9,7 +9,7 @@
 {% for text, values in sections[""][category].items() %}
 {%- set lines = text.split('\n') -%}
 - {{ lines[0] }} {{ values|join(', ') }}
-{{ lines[1:] | join('\n') }}
+{{- lines[1:] | join('\n') }}
 {% endfor %}
 
 {% endfor %}
