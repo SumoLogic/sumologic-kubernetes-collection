@@ -3,9 +3,6 @@
 OpenTelemetry Collector is a software to receive, process and export logs, metrics and traces. We offer it as drop-in replacement for
 Fluentd in our collection.
 
-> :warning: **This feature is currently in beta and its configuration can change. It is nonetheless production-ready and will become the
-> default in the next major version.**
-
 - [Metrics](#metrics)
   - [Metrics Configuration](#metrics-configuration)
 - [Logs](#logs)
@@ -110,7 +107,7 @@ The `metadata.logs.config.override` and `otellogs.config.override` keys can be u
 the default configuration. As above, care must be taken not to depend on implementation details that may change between minor releases of
 this Chart.
 
-[configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/Configuration.md
+[configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/configuration.md
 [values]: /deploy/helm/sumologic/values.yaml
 
 ### Multiline log parsing
