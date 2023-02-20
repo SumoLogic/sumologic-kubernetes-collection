@@ -35,26 +35,7 @@ Logic needs to receive information mentioned in [Basic information](#basic-infor
 - If non helm installation is used then please provide all commands used to install Sumo Logic Kubernetes Collection along with all output
   files.
 
-  - Example 1
-
-    When commands below are used, please send these commands and `sumologic.yaml` file
-
-    ```bash
-    kubectl run tools \
-    -i --quiet --rm \
-    --restart=Never \
-    --image sumologic/kubernetes-tools:2.9.0 -- \
-    template \
-    --name-template 'collection' \
-    --set sumologic.accessId='<ACCESS_ID>' \
-    --set sumologic.accessKey='<ACCESS_KEY>' \
-    --set sumologic.clusterName='<CLUSTER_NAME>' \
-    | tee sumologic.yaml
-
-    kubectl apply -f sumologic.yaml
-    ```
-
-  - Example 2
+  - Example
 
     When commands below are used, please send these commands, `sumologic.yaml` and `values.yaml`
 
