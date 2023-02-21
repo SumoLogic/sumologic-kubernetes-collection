@@ -566,7 +566,7 @@ sumologic:
             - $(NAMESPACE)
         selector:
           matchLabels:
-            sumologic.com/component: traces
+            sumologic.com/component: instrumentation
             sumologic.com/scrape: "true"
       - name: collection-sumologic-prometheus
         endpoints:
