@@ -4306,9 +4306,13 @@ otellogs:
             drop:
               - ALL
 
-    ## Set securityContext for initContainers running in pods in log collector daemonset
+    ## Set securityContext and image for initContainers running in pods in log collector daemonset
     initContainers:
       changeowner:
+        image:
+          repository: "public.ecr.aws/docker/library/busybox"
+          tag: "1.36.0"
+          pullPolicy: IfNotPresent
         securityContext:
           capabilities:
             drop:
@@ -4411,7 +4415,7 @@ falco:
     initContainers:
       ## Add initContainer to wait until kernel-devel is installed on host
       - name: init-falco
-        image: public.ecr.aws/docker/library/busybox:latest
+        image: public.ecr.aws/docker/library/busybox:1.36.0
         command:
           - "sh"
           - "-c"
