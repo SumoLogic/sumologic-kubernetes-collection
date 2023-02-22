@@ -236,7 +236,7 @@ items:
           - $(NAMESPACE)
       selector:
         matchLabels:
-          sumologic.com/component: traces
+          sumologic.com/component: instrumentation
           sumologic.com/scrape: "true"
   - apiVersion: monitoring.coreos.com/v1
     kind: ServiceMonitor
