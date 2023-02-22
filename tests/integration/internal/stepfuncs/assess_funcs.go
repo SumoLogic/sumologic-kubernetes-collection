@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
+	promv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	log "k8s.io/klog/v2"
 	"sigs.k8s.io/e2e-framework/klient/k8s"
 	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
@@ -248,7 +248,7 @@ func WaitUntilStatefulSetIsReady(
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		sts := appsv1.StatefulSet{
-			ObjectMeta: v1.ObjectMeta{
+			ObjectMeta: metav1.ObjectMeta{
 				Namespace: ctxopts.Namespace(ctx),
 			},
 		}
@@ -299,7 +299,7 @@ func WaitUntilDaemonSetIsReady(
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		ds := appsv1.DaemonSet{
-			ObjectMeta: v1.ObjectMeta{
+			ObjectMeta: metav1.ObjectMeta{
 				Namespace: ctxopts.Namespace(ctx),
 			},
 		}
@@ -350,7 +350,7 @@ func WaitUntilDeploymentIsReady(
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		deps := appsv1.Deployment{
-			ObjectMeta: v1.ObjectMeta{
+			ObjectMeta: metav1.ObjectMeta{
 				Namespace: ctxopts.Namespace(ctx),
 			},
 		}
@@ -408,6 +408,71 @@ func WaitForPvcCount(appName string, count int, waitDuration time.Duration, tick
 
 		}, waitDuration, tickDuration)
 
+		return ctx
+	}
+}
+
+// WaitForSumoServiceMonitorCount waits for a specified duration of time and checks with the
+// specified tick interval whether the Sumo ServiceMonitor are present.
+func WaitForSumoServiceMonitorCount(count int, waitDuration time.Duration, tickDuration time.Duration) features.Func {
+	return func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+		kubectlOptions := ctxopts.KubectlOptions(ctx)
+
+		assert.Eventually(t, func() bool {
+			output, err := terrak8s.RunKubectlAndGetOutputE(t, kubectlOptions, "get", "servicemonitor")
+
+			require.NoError(t, err)
+
+			lines := strings.Split(output, "\n")
+			if len(lines) > 0 && strings.HasPrefix(lines[0], "NAME") {
+				counter := 0
+				for _, line := range lines {
+					if strings.HasPrefix(line, "collection") {
+						counter += 1
+					}
+				}
+				return counter == count
+			} else {
+				return false
+			}
+
+		}, waitDuration, tickDuration)
+
+		return ctx
+	}
+}
+
+// WaitUntilServiceMonitorPresent waits for a specified duration of time and checks with the
+// specified tick interval whether the ServiceMonitor (as described by the provided options)
+// is present.
+func WaitUntilServiceMonitorPresent(
+	name string,
+	labels features.Labels,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		sm := promv1.ServiceMonitor{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: name,
+			},
+			Spec: promv1.ServiceMonitorSpec{
+				Selector: metav1.LabelSelector{
+					MatchLabels: labels,
+				},
+			}}
+		sml := promv1.ServiceMonitorList{Items: []*promv1.ServiceMonitor{&sm}}
+
+		res := envConf.Client().Resources(ctxopts.Namespace(ctx))
+
+		require.NoError(t,
+			wait.For(
+				conditions.New(res).
+					ResourceListN(&sml, 1),
+				wait.WithTimeout(waitDuration),
+				wait.WithInterval(tickDuration),
+			),
+		)
 		return ctx
 	}
 }

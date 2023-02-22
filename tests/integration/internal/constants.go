@@ -41,6 +41,9 @@ const (
 	NodeNameRegex            = ".*-control-plane" // node name for KinD TODO: get this from the cluster directly instead
 	NotUndefinedRegex        = "(?!undefined$).*"
 	EmptyRegex               = "^$"
+
+	// Service Monitors number
+	DefaultExpectedSumoServiceMonitors = 10
 )
 
 // metrics we expect the receiver to get
