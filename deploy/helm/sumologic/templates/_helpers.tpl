@@ -1625,3 +1625,17 @@ Return the log format for the Sumologic exporter for container logs.
 {{- fail "`sumologic.logs.container.format` can only be `json`, `text`, `json_merge` or `fields`" -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return otlp or none for Instrumentation resource exporters configuration.
+
+'{{ include "instrumentation.resource.exporter" (dict "enabled" .Values...) }}'
+*/}}
+{{- define "instrumentation.resource.exporter" }}
+{{- $enabled := .enabled -}}
+{{- if $enabled -}}
+{{- "otlp" -}}
+{{- else -}}
+{{- "none" -}}
+{{- end -}}
+{{- end -}}

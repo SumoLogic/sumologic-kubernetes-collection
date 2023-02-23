@@ -4509,6 +4509,28 @@ opentelemetry-operator:
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""
 
+  instrumentation:
+    dotnet:
+      traces:
+        enabled: true
+      metrics:
+        enabled: true
+    java:
+      traces:
+        enabled: true
+      metrics:
+        enabled: true
+    python:
+      traces:
+        enabled: true
+      metrics:
+        enabled: true
+    # Current instrumentation doesn't support customization
+    # for nodejs. Traces are always enabled.
+    #nodejs:
+    #  traces:
+    #    enabled: true
+    
   ## Specific for OpenTelemetry Operator chart values
   admissionWebhooks:
     failurePolicy: Fail
