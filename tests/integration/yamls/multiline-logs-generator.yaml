@@ -39,7 +39,7 @@ metadata:
 spec:
   containers:
     - name: example-container-multiline-logs-long-lines
-      image: public.ecr.aws/docker/library/busybox:latest
+      image: public.ecr.aws/docker/library/busybox:1.36.0
       args:
         - /bin/sh
         - /multiline-logs-generator/multiline-generator.sh
