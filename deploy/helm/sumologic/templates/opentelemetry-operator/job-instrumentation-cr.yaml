@@ -1,3 +1,4 @@
+{{- $ctx := . }}
 {{ $operatorEnabled := index .Values "opentelemetry-operator" "enabled" }}
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
 {{ $createDefaultInstrumentation := index .Values "opentelemetry-operator" "createDefaultInstrumentation" }}
@@ -6,12 +7,15 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation.job" . }}
+  name: {{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation.job" . }}-{{ include (print $.Template.BasePath "/opentelemetry-operator/configmap-instrumentation-cr.yaml") $ctx | sha256sum | substr 0 5 }}
   labels:
     app: {{ template "sumologic.labels.app.opentelemetry.operator.instrumentation.job" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/opentelemetry-operator/configmap-instrumentation-cr.yaml") $ctx | sha256sum }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       containers:
@@ -24,7 +28,7 @@ spec:
         command: ["/bin/bash", "-c"]
         args:
           - |
-            max_wait=60
+            max_wait=180
             sleep_interval=5
             counter=0
             ready=false
