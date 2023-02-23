@@ -4517,6 +4517,13 @@ opentelemetry-operator:
 
   manager:
     env:
+    resources:
+      limits:
+        cpu: 250m
+        memory: 512Mi
+      requests:
+        cpu: 150m
+        memory: 256Mi
 
 pvcCleaner:
   metrics:
