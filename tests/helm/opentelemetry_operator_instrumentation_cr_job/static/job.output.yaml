@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: RELEASE-NAME-sumologic-ot-operator-instr
+  name: RELEASE-NAME-sumologic-ot-operator-instr-%CONFIG_CHECKSUM_PART%
   labels:
     app: RELEASE-NAME-sumologic-ot-operator-instr
     chart: "sumologic-%CURRENT_CHART_VERSION%"
@@ -11,6 +11,9 @@ metadata:
     heritage: "Helm"
 spec:
   template:
+    metadata:
+      annotations:
+        checksum/config: "%CONFIG_CHECKSUM%"
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
       containers:
@@ -23,13 +26,13 @@ spec:
           command: ["/bin/bash", "-c"]
           args:
             - |
-              max_wait=60
+              max_wait=180
               sleep_interval=5
               counter=0
               ready=false
               while [[ ready != "false" ]]
               do
-                is_ready=$(curl -s -o /dev/null -m 3 -L -w ''%{http_code}'' http://opentelemetry-operator-controller-manager-metrics-service.sumologic:8080/metrics)
+                is_ready=$(curl -s -o /dev/null -m 3 -L -w ''%{http_code}'' http://RELEASE-NAME-opentelemetry-operator.sumologic:8080/metrics)
 
                 if [[ is_ready -eq "200" ]]
                 then

@@ -28,18 +28,16 @@ data:
         - baggage
       resource:
         addK8sUIDAttributes: false
-      sampler:
-        type: always_on
       env:
         - name: OTEL_APPLICATION_NAMESPACE_NAME
           value: ot-operator1
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator1
       dotnet:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.4.0-beta.1
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.5.0
         env:
           - name: OTEL_METRICS_EXPORTER
-            value: none
+            value: otlp
           - name: OTEL_LOGS_EXPORTER
             value: none
           - name: OTEL_TRACES_EXPORTER
@@ -51,22 +49,26 @@ data:
       python:
         # Force to use older image because of LOGS exporting issue
         # https://github.com/open-telemetry/opentelemetry-python/issues/2594
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.28b1
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.36b0
         env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
           - name: OTEL_TRACES_EXPORTER
-            value: otlp_proto_http
-          - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318/v1/traces
+            value: otlp
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: http/protobuf
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
       nodejs:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.27.0
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.34.0
         env:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
       java:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.16.0
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.23.0
         env:
           - name: OTEL_METRICS_EXPORTER
-            value: none
+            value: otlp
           - name: OTEL_TRACES_EXPORTER
             value: otlp
           - name: OTEL_EXPORTER_OTLP_PROTOCOL
@@ -90,18 +92,16 @@ data:
         - baggage
       resource:
         addK8sUIDAttributes: false
-      sampler:
-        type: always_on
       env:
         - name: OTEL_APPLICATION_NAMESPACE_NAME
           value: ot-operator2
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: application=ot-operator2
       dotnet:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.4.0-beta.1
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:0.5.0
         env:
           - name: OTEL_METRICS_EXPORTER
-            value: none
+            value: otlp
           - name: OTEL_LOGS_EXPORTER
             value: none
           - name: OTEL_TRACES_EXPORTER
@@ -113,22 +113,26 @@ data:
       python:
         # Force to use older image because of LOGS exporting issue
         # https://github.com/open-telemetry/opentelemetry-python/issues/2594
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.28b1
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.36b0
         env:
+          - name: OTEL_METRICS_EXPORTER
+            value: otlp
           - name: OTEL_TRACES_EXPORTER
-            value: otlp_proto_http
-          - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318/v1/traces
+            value: otlp
+          - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            value: http/protobuf
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
       nodejs:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.27.0
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.34.0
         env:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4317
       java:
-        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.16.0
+        image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:1.23.0
         env:
           - name: OTEL_METRICS_EXPORTER
-            value: none
+            value: otlp
           - name: OTEL_TRACES_EXPORTER
             value: otlp
           - name: OTEL_EXPORTER_OTLP_PROTOCOL
