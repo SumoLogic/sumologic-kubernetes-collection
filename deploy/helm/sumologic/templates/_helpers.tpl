@@ -1561,7 +1561,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "opentelemetry-operator.controller.manager.metrics.service.url" -}}
-http://opentelemetry-operator-controller-manager-metrics-service.{{ .Release.Namespace }}:8080/metrics
+http://{{ .Release.Name }}-opentelemetry-operator.{{ .Release.Namespace }}:8080/metrics
 {{- end -}}
 
 
