@@ -15,8 +15,7 @@ Changed [#2894] OpenTelemetry-Operator was updated to [v0.24.0]. New configurati
   - `opentelemetry-operator.manager.resources.requests.cpu`
   - `opentelemetry-operator.manager.resources.requests.memory`
 
-> **Warning** > This action is required only if you have enabled `opentelemetry-operator` with `opentelemetry-operator.enabled: true`.
-> Please delete the following resources before update of the chart:
+> **Warning** > This action is required only if you have enabled `opentelemetry-operator` with `opentelemetry-operator.enabled: true`. Please delete the following resources before update of the chart:
 
 - `opentelemetry-operator-validating-webhook-configuration` (validatingwebhookconfiguration)
 - `opentelemetry-operator-mutating-webhook-configuration` (mutatingwebhookconfiguration)
