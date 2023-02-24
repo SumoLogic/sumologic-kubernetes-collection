@@ -34,6 +34,18 @@ kube-prometheus-stack:
     service:
       targetPort: 2381
 
+  # starting with K8s 1.23, the scheduler uses a secure port for metrics
+  # kube-prometheus-stack sets the default port based on the version
+  # however, kind uses kubeadm, which uses the secure port for 1.21 and 1.22 as well
+  # TODO: delete this after we drop support for 1.22
+  kubeScheduler:
+    service:
+      port: 10259
+      targetPort: 10259
+    serviceMonitor:
+      https: true
+      insecureSkipVerify: true
+
 # Request less resources so that this fits on Github actions runners environment
 metadata:
   persistence:
