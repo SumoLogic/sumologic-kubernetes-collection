@@ -225,9 +225,9 @@ var (
 		CoreDNSMetrics,
 		CAdvisorMetrics,
 		NodeExporterMetrics,
-		OtelcolMetrics,
 	}
-	DefaultExpectedMetrics []string
+	DefaultExpectedMetrics                 []string
+	DefaultExpectedFluentdFluentbitMetrics []string
 )
 
 type KindImagesSpec struct {
@@ -251,8 +251,14 @@ func InitializeConstants() error {
 	}
 
 	DefaultExpectedMetrics = []string{}
-	for _, metrics := range DefaultExpectedMetricsGroups {
+	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, OtelcolMetrics)
+	for _, metrics := range metricsGroupsWithOtelcol {
 		DefaultExpectedMetrics = append(DefaultExpectedMetrics, metrics...)
+	}
+
+	DefaultExpectedFluentdFluentbitMetrics = []string{}
+	for _, metrics := range DefaultExpectedMetricsGroups {
+		DefaultExpectedFluentdFluentbitMetrics = append(DefaultExpectedMetrics, metrics...)
 	}
 
 	log.Printf("Successfully read kind images spec")
