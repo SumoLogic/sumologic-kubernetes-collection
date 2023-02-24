@@ -250,15 +250,15 @@ func InitializeConstants() error {
 		return err
 	}
 
+	DefaultExpectedFluentdFluentbitMetrics = []string{}
+	for _, metrics := range DefaultExpectedMetricsGroups {
+		DefaultExpectedFluentdFluentbitMetrics = append(DefaultExpectedMetrics, metrics...)
+	}
+
 	DefaultExpectedMetrics = []string{}
 	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, OtelcolMetrics)
 	for _, metrics := range metricsGroupsWithOtelcol {
 		DefaultExpectedMetrics = append(DefaultExpectedMetrics, metrics...)
-	}
-
-	DefaultExpectedFluentdFluentbitMetrics = []string{}
-	for _, metrics := range DefaultExpectedMetricsGroups {
-		DefaultExpectedFluentdFluentbitMetrics = append(DefaultExpectedMetrics, metrics...)
 	}
 
 	log.Printf("Successfully read kind images spec")
