@@ -28,7 +28,7 @@ function get_default_pr_number() {
     local commit_hash
     commit_hash=$(git show -s --format=%h)
     existing_pr_number=$(curl -s "https://api.github.com/repos/SumoLogic/sumologic-kubernetes-collection/commits/${commit_hash}/pulls?per_page=1" | jq '.[0].number' 2>/dev/null)
-    if [[ -n "${existing_pr_number}" ]]; then
+    if [[ -n "${existing_pr_number}" && "${existing_pr_number}" != "null" ]]; then
         echo "${existing_pr_number}"
         return
     fi
