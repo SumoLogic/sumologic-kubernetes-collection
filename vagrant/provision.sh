@@ -32,8 +32,8 @@ echo "--authorization-mode=Webhook" >> /var/snap/microk8s/current/args/kubelet
 # allow privileged
 echo "--allow-privileged=true" >> /var/snap/microk8s/current/args/kube-apiserver
 # remove address flags to listen on all interfaces
-sed -i '/address/d' kube-scheduler
-sed -i '/address/d' kub-controller-manager
+sed -i '/address/d' /var/snap/microk8s/current/args/kube-scheduler
+sed -i '/address/d' /var/snap/microk8s/current/args/kube-controller-manager
 
 systemctl restart snap.microk8s.daemon-kubelet.service
 systemctl restart snap.microk8s.daemon-apiserver.service
