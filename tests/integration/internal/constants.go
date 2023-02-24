@@ -188,6 +188,21 @@ var (
 		"node_load15",
 		"node_cpu_seconds_total",
 	}
+	OtelcolMetrics = []string{
+		"otelcol_exporter_enqueue_failed_log_records",
+		"otelcol_exporter_enqueue_failed_metric_points",
+		"otelcol_exporter_enqueue_failed_spans",
+		"otelcol_exporter_queue_capacity",
+		"otelcol_process_cpu_seconds",
+		"otelcol_process_memory_rss",
+		"otelcol_process_runtime_heap_alloc_bytes",
+		"otelcol_process_runtime_total_alloc_bytes",
+		"otelcol_process_runtime_total_sys_memory_bytes",
+		"otelcol_process_uptime",
+		"otelcol_loadbalancer_num_backend_updates",
+		"otelcol_loadbalancer_num_backends",
+		"otelcol_loadbalancer_num_resolutions",
+	}
 )
 
 var (
@@ -210,6 +225,7 @@ var (
 		CoreDNSMetrics,
 		CAdvisorMetrics,
 		NodeExporterMetrics,
+		OtelcolMetrics,
 	}
 	DefaultExpectedMetrics []string
 )
