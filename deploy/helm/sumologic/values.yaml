@@ -1742,13 +1742,16 @@ kube-prometheus-stack:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       interval:
       ## see docs/scraped_metrics.md
-      ## scheduler metrics_latency_microseconds
+      ##
+      ## scheduler_e2e_* is present for K8s <1.23
       ## scheduler_e2e_scheduling_duration_seconds_bucket
       ## scheduler_e2e_scheduling_duration_seconds_count
       ## scheduler_e2e_scheduling_duration_seconds_sum
-      ## scheduler_binding_duration_seconds_bucket
-      ## scheduler_binding_duration_seconds_count
-      ## scheduler_binding_duration_seconds_sum
+      ##
+      ## scheduler_scheduling_attempt_duration_seconds is present for K8s >=1.23
+      ## scheduler_scheduling_attempt_duration_seconds_bucket
+      ## scheduler_scheduling_attempt_duration_seconds_count
+      ## scheduler_scheduling_attempt_duration_seconds_sum
       ## scheduler_framework_extension_point_duration_seconds_bucket
       ## scheduler_framework_extension_point_duration_seconds_count
       ## scheduler_framework_extension_point_duration_seconds_sum
@@ -1757,7 +1760,7 @@ kube-prometheus-stack:
       ## scheduler_scheduling_algorithm_duration_seconds_sum
       metricRelabelings:
         - action: keep
-          regex: (?:scheduler_(?:e2e_scheduling|binding|framework_extension_point|scheduling_algorithm)_duration_seconds.*)
+          regex: (?:scheduler_(?:e2e_scheduling|scheduling_attempt|framework_extension_point|scheduling_algorithm)_duration_seconds.*)
           sourceLabels: [__name__]
   kubeStateMetrics:
     serviceMonitor:
@@ -2097,13 +2100,17 @@ kube-prometheus-stack:
             - action: keep
               regex: kubelet;cloudprovider_.*_api_request_duration_seconds.*
               sourceLabels: [job, __name__]
-        ## scheduler metrics_latency_microseconds
+        ## scheduler metrics
+        ##
+        ## scheduler_e2e_* is present for K8s <1.23
         ## scheduler_e2e_scheduling_duration_seconds_bucket
         ## scheduler_e2e_scheduling_duration_seconds_count
         ## scheduler_e2e_scheduling_duration_seconds_sum
-        ## scheduler_binding_duration_seconds_bucket
-        ## scheduler_binding_duration_seconds_count
-        ## scheduler_binding_duration_seconds_sum
+        ##
+        ## scheduler_scheduling_attempt_duration_seconds is present for K8s >=1.23
+        ## scheduler_scheduling_attempt_duration_seconds_bucket
+        ## scheduler_scheduling_attempt_duration_seconds_count
+        ## scheduler_scheduling_attempt_duration_seconds_sum
         ## scheduler_framework_extension_point_duration_seconds_bucket
         ## scheduler_framework_extension_point_duration_seconds_count
         ## scheduler_framework_extension_point_duration_seconds_sum
@@ -2114,7 +2121,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: kube-scheduler;scheduler_(?:e2e_scheduling|binding|framework_extension_point|scheduling_algorithm)_duration_seconds.*
+              regex: kube-scheduler;scheduler_(?:e2e_scheduling|scheduling_attempt|framework_extension_point|scheduling_algorithm)_duration_seconds.*
               sourceLabels: [job, __name__]
         ## api server metrics:
         ## apiserver_request_count

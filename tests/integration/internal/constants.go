@@ -86,15 +86,21 @@ var (
 		"kubelet_running_pods",
 	}
 	KubeSchedulerMetrics = []string{
-		"scheduler_e2e_scheduling_duration_seconds_count",
-		"scheduler_e2e_scheduling_duration_seconds_sum",
-		"scheduler_e2e_scheduling_duration_seconds_bucket",
+		// TODO: check different metrics depending on K8s version
+		// scheduler_scheduling_duration_seconds is present for K8s <1.23
+		// scheduler_scheduling_attempt_duration_seconds is present for K8s >=1.23
+		// "scheduler_e2e_scheduling_duration_seconds_count",
+		// "scheduler_e2e_scheduling_duration_seconds_sum",
+		// "scheduler_e2e_scheduling_duration_seconds_bucket",
+		// "scheduler_scheduling_attempt_duration_seconds_count",
+		// "scheduler_scheduling_attempt_duration_seconds_sum",
+		// "scheduler_scheduling_attempt_duration_seconds_bucket",
 		"scheduler_scheduling_algorithm_duration_seconds_count",
 		"scheduler_scheduling_algorithm_duration_seconds_sum",
 		"scheduler_scheduling_algorithm_duration_seconds_bucket",
-		// Deprecated in Kubernetes 1.21: https://github.com/kubernetes/kubernetes/pull/96447
-		// TODO: Remove this and the values.yaml settings after we drop support for 1.20
-		// "scheduler_binding_duration_seconds",
+		"scheduler_framework_extension_point_duration_seconds_bucket",
+		"scheduler_framework_extension_point_duration_seconds_count",
+		"scheduler_framework_extension_point_duration_seconds_sum",
 	}
 	KubeApiServerMetrics = []string{
 		"apiserver_request_total",
@@ -202,7 +208,7 @@ var (
 		KubeletMetrics,
 		// See: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2079
 		// TODO: Enable this again after the above issue is resolved
-		// KubeSchedulerMetrics,
+		KubeSchedulerMetrics,
 		KubeApiServerMetrics,
 		KubeEtcdMetrics,
 		// Need to upgrade kube-prometheus stack to use the secure metrics endpoint for controller metrics
