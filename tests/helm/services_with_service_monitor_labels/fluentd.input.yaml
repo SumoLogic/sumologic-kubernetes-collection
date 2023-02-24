@@ -1,0 +1,10 @@
+sumologic:
+  logs:
+    metadata:
+      provider: fluentd
+      collector:
+        otelcol:
+          enabled: false
+  metrics:
+    metadata:
+      provider: fluentd
