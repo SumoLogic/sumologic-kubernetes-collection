@@ -1590,17 +1590,12 @@ kube-prometheus-stack:
       ## see docs/scraped_metrics.md
       ## apiserver_request_count
       ## apiserver_request_total
-      ## apiserver_request_duration_seconds_count
       ## apiserver_request_duration_seconds_bucket
+      ## apiserver_request_duration_seconds_count
       ## apiserver_request_duration_seconds_sum
-      ## apiserver_request_latencies_count
-      ## apiserver_request_latencies_sum
-      ## apiserver_request_latencies_summary
-      ## apiserver_request_latencies_summary_count
-      ## apiserver_request_latencies_summary_sum
       metricRelabelings:
         - action: keep
-          regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum)|apiserver_request_duration_seconds_bucket)
+          regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds)_(?:count|sum|bucket))
           sourceLabels: [__name__]
   kubelet:
     serviceMonitor:
@@ -2127,13 +2122,9 @@ kube-prometheus-stack:
         ## api server metrics:
         ## apiserver_request_count
         ## apiserver_request_total
+        ## apiserver_request_duration_seconds_bucket
         ## apiserver_request_duration_seconds_count
         ## apiserver_request_duration_seconds_sum
-        ## apiserver_request_latencies_count
-        ## apiserver_request_latencies_sum
-        ## apiserver_request_latencies_summary
-        ## apiserver_request_latencies_summary_count
-        ## apiserver_request_latencies_summary_sum
         ## etcd_request_cache_get_duration_seconds_count
         ## etcd_request_cache_get_duration_seconds_sum
         ## etcd_request_cache_add_duration_seconds_count
@@ -2150,7 +2141,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds|latencies)_(?:count|sum)|apiserver_request_latencies_summary(?:|_count|_sum)|etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total))
+              regex: apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds)_(?:count|sum|bucket)|etcd_helper_cache_(?:hit|miss)_(?:count|total))
               sourceLabels: [job, __name__]
         ## kubelet metrics:
         ## kubelet_docker_operations_errors

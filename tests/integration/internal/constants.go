@@ -106,17 +106,7 @@ var (
 		"apiserver_request_total",
 		"apiserver_request_duration_seconds_count",
 		"apiserver_request_duration_seconds_sum",
-		// We have the following metrics in our values.yaml, but they've been deprecated for a while
-		// Kubernetes 1.14 deprecation notice:
-		// https://github.com/kubernetes/kubernetes/blob/8ac5d4d6a92d59bba70844fbd6e5de2383a08c96/CHANGELOG/CHANGELOG-1.14.md#deprecated-metrics
-		// Kubernetes 1.17 disablement notice:
-		// https://github.com/kubernetes/kubernetes/blob/ea0764452222146c47ec826977f49d7001b0ea8c/CHANGELOG/CHANGELOG-1.17.md#deprecatedchanged-metrics
-		// TODO: Remove these from values.yaml and replace them with non-deprecated equivalents
-		// "apiserver_request_latencies_count",
-		// "apiserver_request_latencies_sum",
-		// "apiserver_request_latencies_summary",
-		// "apiserver_request_latencies_summary_count",
-		// "apiserver_request_latencies_summary_sum",
+		"apiserver_request_duration_seconds_bucket",
 	}
 	KubeEtcdMetrics = []string{
 		// Deprecated in etcd v3: https://github.com/kubernetes/kubernetes/pull/79520
