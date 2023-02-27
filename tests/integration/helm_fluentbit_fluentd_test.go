@@ -35,7 +35,7 @@ func Test_Helm_FluentBit_Fluentd(t *testing.T) {
 		logsGeneratorCount uint = 1000
 		expectedEventCount uint = 100
 	)
-	expectedMetrics := internal.DefaultExpectedMetrics
+	expectedMetrics := internal.DefaultExpectedFluentdFluentbitMetrics
 
 	featInstall := features.New("installation").
 		Assess("sumologic secret is created with endpoints",
