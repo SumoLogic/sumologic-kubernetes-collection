@@ -144,13 +144,6 @@ var (
 		"process_cpu_seconds_total",
 		"process_open_fds",
 		"process_resident_memory_bytes",
-		// Deprecated in https://coredns.io/2020/06/15/coredns-1.7.0-release/#metric-changes
-		// "coredns_cache_size",
-		// "coredns_dns_response_rcode_count_total",
-		// "coredns_forward_request_count_total",
-		// No idea where this came from, doesn't seem to exist
-		// TODO: confirm it doesn't exist and remove it from values.yaml
-		// "coredns_dns_request_count_total",
 	}
 	CAdvisorMetrics = []string{
 		"container_cpu_usage_seconds_total",
