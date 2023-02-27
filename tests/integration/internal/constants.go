@@ -145,9 +145,7 @@ var (
 		"process_resident_memory_bytes",
 	}
 	KubeControllerManagerMetrics = []string{
-		"cloudprovider_aws_api_request_duration_seconds_bucket",
-		"cloudprovider_aws_api_request_duration_seconds_count",
-		"cloudprovider_aws_api_request_duration_seconds_sum",
+		// we only collect AWS-specific metrics here
 	}
 	CoreDNSMetrics = []string{
 		"coredns_cache_entries",
@@ -212,13 +210,10 @@ var (
 		KubeNodeMetrics,
 		KubePodMetrics,
 		KubeletMetrics,
-		// See: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2079
-		// TODO: Enable this again after the above issue is resolved
 		KubeSchedulerMetrics,
 		KubeApiServerMetrics,
 		KubeEtcdMetrics,
-		// Need to upgrade kube-prometheus stack to use the secure metrics endpoint for controller metrics
-		// KubeControllerManagerMetrics,
+		KubeControllerManagerMetrics,
 		CoreDNSMetrics,
 		CAdvisorMetrics,
 		NodeExporterMetrics,
