@@ -34,7 +34,7 @@ function get_default_pr_number() {
     fi
 
     local latest_pr_number
-    latest_pr_number=$(curl -s "https://api.github.com/repos/SumoLogic/sumologic-kubernetes-collection/issues?per_page=1" | jq '.[0].number')
+    latest_pr_number=$(curl -s "https://api.github.com/repos/SumoLogic/sumologic-kubernetes-collection/issues?state=all&per_page=1" | jq '.[0].number')
     echo "$((latest_pr_number + 1))"
 }
 
