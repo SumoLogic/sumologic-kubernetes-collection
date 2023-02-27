@@ -110,22 +110,7 @@ var (
 		"apiserver_request_duration_seconds_bucket",
 	}
 	KubeEtcdMetrics = []string{
-		// Deprecated in etcd v3: https://github.com/kubernetes/kubernetes/pull/79520
-		// "etcd_request_cache_get_duration_seconds_count",
-		// "etcd_request_cache_get_duration_seconds_sum",
-		// "etcd_request_cache_add_duration_seconds_count",
-		// "etcd_request_cache_add_duration_seconds_sum",
-		// "etcd_request_cache_add_latencies_summary_count",
-		// "etcd_request_cache_add_latencies_summary_sum",
-		// "etcd_request_cache_get_latencies_summary_count",
-		// "etcd_request_cache_get_latencies_summary_sum",
-		// "etcd_helper_cache_hit_count",
-		// "etcd_helper_cache_hit_total",
-		// "etcd_helper_cache_miss_count",
-		// "etcd_helper_cache_miss_total",
-		// Deprecated in etcd 3.5: https://github.com/etcd-io/etcd/blob/e433d12656c5dbd41f4f6b085ced134647ffeb14/CHANGELOG-3.5.md#breaking-changes
-		// TODO: Replace with etcd_mvcc_db_total_size_in_bytes
-		//"etcd_debugging_mvcc_db_total_size_in_bytes",
+		"etcd_mvcc_db_total_size_in_bytes",
 		"etcd_debugging_store_expires_total",
 		"etcd_debugging_store_watchers",
 		"etcd_disk_backend_commit_duration_seconds_bucket",
