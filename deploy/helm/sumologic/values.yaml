@@ -1673,24 +1673,23 @@ kube-prometheus-stack:
       interval:
       ## see docs/scraped_metrics.md
       ## coredns:
-      ## coredns_cache_size
       ## coredns_cache_entries
       ## coredns_cache_hits_total
       ## coredns_cache_misses_total
       ## coredns_dns_request_duration_seconds_count
       ## coredns_dns_request_duration_seconds_sum
-      ## coredns_dns_request_count_total
       ## coredns_dns_requests_total
-      ## coredns_dns_response_rcode_count_total
       ## coredns_dns_responses_total
-      ## coredns_forward_request_count_total
       ## coredns_forward_requests_total
+      ## process_cpu_seconds_total
+      ## process_open_fds
+      ## process_resident_memory_bytes
       ## process_cpu_seconds_total
       ## process_open_fds
       ## process_resident_memory_bytes
       metricRelabelings:
         - action: keep
-          regex: (?:coredns_cache_(size|entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+          regex: (?:coredns_cache_(entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
           sourceLabels: [__name__]
   kubeEtcd:
     serviceMonitor:
@@ -2313,17 +2312,13 @@ kube-prometheus-stack:
               sourceLabels: [__name__]
         ## control plane metrics
         ## coredns:
-        ## coredns_cache_size
         ## coredns_cache_entries
         ## coredns_cache_hits_total
         ## coredns_cache_misses_total
         ## coredns_dns_request_duration_seconds_count
         ## coredns_dns_request_duration_seconds_sum
-        ## coredns_dns_request_count_total
         ## coredns_dns_requests_total
-        ## coredns_dns_response_rcode_count_total
         ## coredns_dns_responses_total
-        ## coredns_forward_request_count_total
         ## coredns_forward_requests_total
         ## process_cpu_seconds_total
         ## process_open_fds
@@ -2332,7 +2327,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: coredns;(?:coredns_cache_(size|entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+              regex: coredns;(?:coredns_cache_(entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
               sourceLabels: [job, __name__]
         ## etcd server:
         ## etcd_mvcc_db_total_size_in_bytes
