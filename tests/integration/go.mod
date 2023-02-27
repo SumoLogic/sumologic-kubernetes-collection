@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/gruntwork-io/terratest v0.41.11
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	k8s.io/api v0.26.1
 	k8s.io/apimachinery v0.26.1
 	k8s.io/klog/v2 v2.90.0
