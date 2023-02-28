@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: RELEASE-NAME-sumologic-ot-operator-instr-%CONFIG_CHECKSUM_PART%
+  name: RELEASE-NAME-sumologic-ot-operator-instr
   labels:
     app: RELEASE-NAME-sumologic-ot-operator-instr
     chart: "sumologic-%CURRENT_CHART_VERSION%"
@@ -14,9 +14,6 @@ metadata:
     helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
 spec:
   template:
-    metadata:
-      annotations:
-        checksum/config: "%CONFIG_CHECKSUM%"
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
       containers:
