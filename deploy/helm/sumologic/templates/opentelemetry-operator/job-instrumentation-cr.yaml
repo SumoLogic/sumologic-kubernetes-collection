@@ -7,7 +7,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation.job" . }}-{{ include (print $.Template.BasePath "/opentelemetry-operator/configmap-instrumentation-cr.yaml") $ctx | sha256sum | substr 0 5 }}
+  name: {{ template "sumologic.metadata.name.opentelemetry.operator.instrumentation.job" . }}
   labels:
     app: {{ template "sumologic.labels.app.opentelemetry.operator.instrumentation.job" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
@@ -16,9 +16,6 @@ metadata:
     helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
 spec:
   template:
-    metadata:
-      annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/opentelemetry-operator/configmap-instrumentation-cr.yaml") $ctx | sha256sum }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
       containers:

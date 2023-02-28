@@ -102,12 +102,10 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 // expected templates
 func fixupRenderedYaml(yaml string, chartVersion string) string {
 	checksumRegex := regexp.MustCompile("checksum/config: [a-z0-9]{64}")
-	checksumRegexPart := regexp.MustCompile("RELEASE-NAME-sumologic-ot-operator-instr-[a-z0-9]{5}")
 	output := yaml
 	output = strings.ReplaceAll(output, releaseName, "RELEASE-NAME")
 	output = strings.ReplaceAll(output, chartVersion, "%CURRENT_CHART_VERSION%")
 	output = checksumRegex.ReplaceAllLiteralString(output, "checksum/config: '%CONFIG_CHECKSUM%'")
-	output = checksumRegexPart.ReplaceAllLiteralString(output, "RELEASE-NAME-sumologic-ot-operator-instr-%CONFIG_CHECKSUM_PART%")
 	output = strings.TrimSuffix(output, "\n")
 	return output
 }
