@@ -19,6 +19,9 @@ Changed [#2894] OpenTelemetry-Operator was updated to [v0.24.0]. New configurati
 
 - `opentelemetry-operator-validating-webhook-configuration` (validatingwebhookconfiguration)
 - `opentelemetry-operator-mutating-webhook-configuration` (mutatingwebhookconfiguration)
+- `opentelemetry-operator-controller-manager-metrics-service` (service)
+- `opentelemetry-operator-webhook-service` (service)
+- `opentelemetry-operator-controller-manager` (deployment)
 
 [#2894]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2894
 [v0.24.0]: https://github.com/open-telemetry/opentelemetry-helm-charts/releases/tag/opentelemetry-operator-0.24.0
