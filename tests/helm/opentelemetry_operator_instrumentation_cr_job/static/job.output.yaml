@@ -9,6 +9,9 @@ metadata:
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
+  annotations:
+    helm.sh/hook: "post-install, post-upgrade"
+    helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
 spec:
   template:
     metadata:
@@ -39,16 +42,16 @@ spec:
                   ready=true
                   break
                 else
-                  echo "Waiting for opentelemetry-operator-controller-manager..."
+                  echo "Waiting for RELEASE-NAME-opentelemetry-operator"
                   sleep $sleep_interval
                   counter=$(($counter + $sleep_interval))
                 fi
 
                 if [[ "$counter" -gt "$max_wait" ]]
                 then
-                  echo "Couldn't reach opentelemetry-operator-controller-manager"
+                  echo "Couldn't reach RELEASE-NAME-opentelemetry-operator"
                   echo "Instrumentation resources not applied!"
-                  break
+                  exit 1
                 fi
               done
 
@@ -56,6 +59,7 @@ spec:
               then
                 echo "Applying Instrumentation resources"
                 kubectl apply -f /tmp/instrumentation-cr.yaml
+                exit $?
               fi
       volumes:
         - name: instrumentation-cr-configmap
