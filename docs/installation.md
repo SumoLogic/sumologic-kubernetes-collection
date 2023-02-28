@@ -54,7 +54,12 @@ Helm is required, but you can use it for template generation only, if you don't 
 If you don't want to use Helm to manage the installation, please use `helm template` to generate Kubernetes templates and apply them using
 Kubectl.
 
-Simply replace
+> **Warning:** > Before upgrade, please delete the old jobs:
+
+- `kubectl delete job -n ${NAMESPACE} my-release-sumologic-setup`
+- `kubectl delete job -n ${NAMESPACE} my-release-sumologic-ot-operator-instr` (needed only if `opentelemetry-operator.enabled=true`)
+
+Simply replace:
 
 ```bash
 helm upgrade \
