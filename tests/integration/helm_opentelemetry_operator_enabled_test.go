@@ -19,7 +19,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
 func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
@@ -34,51 +33,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		require.Fail(t, "failed to register scheme: %v", err)
 	}
 
-	featTraces := features.New("traces").
-		Assess("traces-sampler deployment is ready",
-			stepfuncs.WaitUntilDeploymentIsReady(
-				waitDuration,
-				tickDuration,
-				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
-				),
-				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
-					K: "app",
-					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
-				},
-				),
-			),
-		).
-		Assess("otelcol-instrumentation statefulset is ready",
-			stepfuncs.WaitUntilStatefulSetIsReady(
-				waitDuration,
-				tickDuration,
-				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
-				),
-				stepfuncs.WithLabelsF(
-					stepfuncs.LabelFormatterKV{
-						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
-					},
-				),
-			),
-		).
-		Assess("traces-gateway deployment is ready",
-			stepfuncs.WaitUntilDeploymentIsReady(
-				waitDuration,
-				tickDuration,
-				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
-				),
-				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
-					K: "app",
-					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
-				},
-				),
-			),
-		).
-		Feature()
+	featTraces := GetTracesFeature()
 
 	featOpenTelemetryOperator := features.New("opentelemetry-operator").
 		// TODO: Rewrite into similar step func as WaitUntilStatefulSetIsReady but for deployments

@@ -3,7 +3,6 @@ package integration
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 	"time"
 
@@ -21,7 +20,6 @@ import (
 	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
 
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
@@ -99,156 +97,7 @@ func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
 			}).
 		Feature()
 
-	featLogs := features.New("logs").
-		Setup(stepfuncs.GenerateLogs(
-			stepfuncs.LogsGeneratorDeployment,
-			logsGeneratorCount,
-			internal.LogsGeneratorName,
-			internal.LogsGeneratorNamespace,
-			internal.LogsGeneratorImage,
-		)).
-		Setup(stepfuncs.GenerateLogs(
-			stepfuncs.LogsGeneratorDaemonSet,
-			logsGeneratorCount,
-			internal.LogsGeneratorName,
-			internal.LogsGeneratorNamespace,
-			internal.LogsGeneratorImage,
-		)).
-		Assess("logs from log generator deployment present", stepfuncs.WaitUntilExpectedLogsPresent(
-			logsGeneratorCount,
-			map[string]string{
-				"namespace":      internal.LogsGeneratorName,
-				"pod_labels_app": internal.LogsGeneratorName,
-				"deployment":     internal.LogsGeneratorName,
-			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
-			waitDuration,
-			tickDuration,
-		)).
-		Assess("logs from log generator daemonset present", stepfuncs.WaitUntilExpectedLogsPresent(
-			logsGeneratorCount,
-			map[string]string{
-				"namespace":      internal.LogsGeneratorName,
-				"pod_labels_app": internal.LogsGeneratorName,
-				"daemonset":      internal.LogsGeneratorName,
-			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
-			waitDuration,
-			tickDuration,
-		)).
-		Assess("expected container log metadata is present for log generator deployment", stepfuncs.WaitUntilExpectedLogsPresent(
-			logsGeneratorCount,
-			map[string]string{
-				"cluster":        internal.ClusterName,
-				"_collector":     internal.ClusterName,
-				"namespace":      internal.LogsGeneratorName,
-				"pod_labels_app": internal.LogsGeneratorName,
-				"container":      internal.LogsGeneratorName,
-				"deployment":     internal.LogsGeneratorName,
-				"pod":            fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDeploymentSuffixRegex),
-				"host":           internal.NodeNameRegex,
-				"node":           internal.NodeNameRegex,
-				"_sourceName": fmt.Sprintf(
-					"%s\\.%s%s\\.%s",
-					internal.LogsGeneratorNamespace,
-					internal.LogsGeneratorName,
-					internal.PodDeploymentSuffixRegex,
-					internal.LogsGeneratorName,
-				),
-				"_sourceCategory": fmt.Sprintf(
-					"%s/%s/%s", // dashes instead of hyphens due to sourceCategoryReplaceDash
-					internal.ClusterName,
-					strings.ReplaceAll(internal.LogsGeneratorNamespace, "-", "/"),
-					strings.ReplaceAll(internal.LogsGeneratorName, "-", "/"), // this is the pod name prefix, in this case the deployment name
-				),
-				"_sourceHost": internal.EmptyRegex,
-			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
-			waitDuration,
-			tickDuration,
-		)).
-		Assess("expected container log metadata is present for log generator daemonset", stepfuncs.WaitUntilExpectedLogsPresent(
-			logsGeneratorCount,
-			map[string]string{
-				"_collector":     "kubernetes",
-				"namespace":      internal.LogsGeneratorName,
-				"pod_labels_app": internal.LogsGeneratorName,
-				"container":      internal.LogsGeneratorName,
-				"daemonset":      internal.LogsGeneratorName,
-				"pod":            fmt.Sprintf("%s%s", internal.LogsGeneratorName, internal.PodDaemonSetSuffixRegex),
-				"host":           internal.NodeNameRegex,
-				"node":           internal.NodeNameRegex,
-				"_sourceName": fmt.Sprintf(
-					"%s\\.%s%s\\.%s",
-					internal.LogsGeneratorNamespace,
-					internal.LogsGeneratorName,
-					internal.PodDaemonSetSuffixRegex,
-					internal.LogsGeneratorName,
-				),
-				"_sourceCategory": fmt.Sprintf(
-					"%s/%s/%s", // dashes instead of hyphens due to sourceCategoryReplaceDash
-					internal.ClusterName,
-					strings.ReplaceAll(internal.LogsGeneratorNamespace, "-", "/"),
-					strings.ReplaceAll(internal.LogsGeneratorName, "-", "/"), // this is the pod name prefix, in this case the DaemonSet name
-				),
-				"_sourceHost": internal.EmptyRegex,
-			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
-			waitDuration,
-			tickDuration,
-		)).
-		Assess("logs from node systemd present", stepfuncs.WaitUntilExpectedLogsPresent(
-			10, // we don't really control this, just want to check if the logs show up
-			map[string]string{
-				"cluster":         "kubernetes",
-				"_sourceName":     internal.NotUndefinedRegex,
-				"_sourceCategory": "kubernetes/system",
-				"_sourceHost":     internal.NodeNameRegex,
-			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
-			waitDuration,
-			tickDuration,
-		)).
-		Assess("logs from kubelet present", stepfuncs.WaitUntilExpectedLogsPresent(
-			1, // we don't really control this, just want to check if the logs show up
-			map[string]string{
-				"cluster":         "kubernetes",
-				"_sourceName":     "k8s_kubelet",
-				"_sourceCategory": "kubernetes/kubelet",
-				"_sourceHost":     internal.NodeNameRegex,
-			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
-			waitDuration,
-			tickDuration,
-		)).
-		Teardown(
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				opts := *ctxopts.KubectlOptions(ctx)
-				opts.Namespace = internal.LogsGeneratorNamespace
-				terrak8s.RunKubectl(t, &opts, "delete", "deployment", internal.LogsGeneratorName)
-				return ctx
-			}).
-		Teardown(
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				opts := *ctxopts.KubectlOptions(ctx)
-				opts.Namespace = internal.LogsGeneratorNamespace
-				terrak8s.RunKubectl(t, &opts, "delete", "daemonset", internal.LogsGeneratorName)
-				return ctx
-			}).
-		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.LogsGeneratorNamespace)).
-		Feature()
+	featLogs := GetLogsFeature()
 
 	testenv.Test(t, featInstall, featLogs)
 }
