@@ -1,6 +1,6 @@
 # Sumo Logic Helm Repository
 
-![Sumologic](https://sumologic.github.io/sumologic-kubernetes-collection/images/overview.png)
+![Sumologic](https://sumologic.github.io/sumologic-kubernetes-collection/images/overview-v3.png)
 
 ## Add the Sumo Logic Helm repository
 
