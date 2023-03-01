@@ -15,7 +15,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
@@ -91,22 +90,7 @@ func Test_Helm_FluentBit_Containerd_Multiline_Logs(t *testing.T) {
 			}).
 		Feature()
 
-	featMultilineLogs := features.New("multiline logs").
-		Setup(stepfuncs.KubectlApplyFOpt(internal.MultilineLogsGenerator, internal.MultilineLogsNamespace)).
-		Assess("multiline logs present", stepfuncs.WaitUntilExpectedLogsPresent(
-			multilineLogCount,
-			map[string]string{
-				"namespace":          internal.MultilineLogsNamespace,
-				"pod_labels_example": internal.MultilineLogsPodName,
-			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
-			waitDuration,
-			tickDuration,
-		)).
-		Teardown(stepfuncs.KubectlDeleteFOpt(internal.MultilineLogsGenerator, internal.MultilineLogsNamespace)).
-		Feature()
+	featMultilineLogs := GetMultilineLogsFeature()
 
 	testenv.Test(t, featInstall, featMultilineLogs)
 }
