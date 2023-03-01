@@ -28,7 +28,7 @@ No significant changes.
 {% endfor %}
 {% endfor %}
 {%- for value in all_values | unique %}
-{{ value }}: https://github.com/SumoLogic/sumologic-kubernetes-collection/pulls/{{ value | trim('[]#') }}
+{{ value }}: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/{{ value | trim('[]#') }}
 {% endfor %}
 [v{{ versiondata.version }}]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v{{
 versiondata.version }}
