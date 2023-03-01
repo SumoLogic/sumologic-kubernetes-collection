@@ -7,6 +7,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.3.0]
+
+### Released 2023-03-01
+
+### Added
+
+- feat(chart): add `pvcCleaner` [#2796]
+
+### Changed
+
+- chore(otoperator): update opentelemetry operator, add instrumentation customization [#2894] Changed [#2894] OpenTelemetry-Operator was
+  updated to [v0.24.0]. New configuration flags were added:
+
+  - Flags to control metrics/traces export from specific instrumentation in `Instrumentation` resource.
+    - `opentelemetry-operator.instrumentation.dotnet.metrics.enabled`
+    - `opentelemetry-operator.instrumentation.dotnet.traces.enabled`
+    - `opentelemetry-operator.instrumentation.java.metrics.enabled`
+    - `opentelemetry-operator.instrumentation.java.traces.enabled`
+    - `opentelemetry-operator.instrumentation.python.metrics.enabled`
+    - `opentelemetry-operator.instrumentation.python.traces.enabled`
+  - Flags to set CPU and Memory requests and limits for OpenTelemetry-Operator
+    - `opentelemetry-operator.manager.resources.limits.cpu`
+    - `opentelemetry-operator.manager.resources.limits.memory`
+    - `opentelemetry-operator.manager.resources.requests.cpu`
+    - `opentelemetry-operator.manager.resources.requests.memory`
+
+  > **Warning** > This action is required only if you have enabled `opentelemetry-operator` with `opentelemetry-operator.enabled: true`.
+  > Please delete the following resources before update of the chart:
+
+  - `opentelemetry-operator-validating-webhook-configuration` (validatingwebhookconfiguration)
+  - `opentelemetry-operator-mutating-webhook-configuration` (mutatingwebhookconfiguration)
+  - `opentelemetry-operator-controller-manager-metrics-service` (service)
+  - `opentelemetry-operator-webhook-service` (service)
+  - `opentelemetry-operator-controller-manager` (deployment)
+
+  [v0.24.0]: https://github.com/open-telemetry/opentelemetry-helm-charts/releases/tag/opentelemetry-operator-0.24.0
+
+- chore(metrics): remove deprecated apiserver metrics [#2898]
+
+### Fixed
+
+- feat(servicemonitor): fix instrumentation scraping, add tests [#2892]
+- fix(busybox): use exact version of busybox img [#2893]
+- fix: collect the right kube-scheduler metrics [#2896]
+
+[#2796]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2796
+[#2894]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2894
+[#2898]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2898
+[#2892]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2892
+[#2893]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2893
+[#2896]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2896
+[v3.3.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.3.0
+
 ## [v3.2.0]
 
 ### Released 2023-02-16
