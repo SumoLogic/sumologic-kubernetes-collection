@@ -6,7 +6,7 @@ Perform the following steps in order to release new verions of helm chart.
 
 1. Prepare and merge PR with the following changes:
 
-   - update [changelog][changelog] by running `make update-changelog`
+   - update [changelog][changelog] by running `make update-changelog VERSION=x.y.z` where `x.y.z` is the new version number.
    - update [chart][chart]
    - update [README.md][documentation]
      - add link to minor version, if created
