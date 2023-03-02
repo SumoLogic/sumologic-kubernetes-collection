@@ -13,6 +13,7 @@
     - [Upgrade kube-prometheus-stack](#upgrade-kube-prometheus-stack)
     - [Otelcol StatefulSet](#otelcol-statefulset)
     - [Additional Service Monitors](#additional-service-monitors)
+    - [Remote Write Migration](#remote-write-migration)
     - [Custom metrics filtering and modification](#custom-metrics-filtering-and-modification)
   - [Logs migration](#logs-migration)
     - [Replacing Fluent Bit with OpenTelemetry Collector](#replacing-fluent-bit-with-opentelemetry-collector)
@@ -203,6 +204,18 @@ existing StatefulSets.
 If you're using `kube-prometheus-stack.prometheus.additionalServiceMonitors`, you have to remove all Sumo Logic related service monitors
 from the list, because they are now covered by `sumologic.metrics.serviceMonitors` configuration. This will make your configuration more
 clear.
+
+#### Remote Write Migration
+
+**When?**: If you're using `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite`.
+
+If you're using `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` you should move all non-default
+configurations to `kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite` and leave
+`kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` unchanged.
+
+In addition please ensure that `url` for all `remoteWrite` configurations starts with
+`http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888` instead of
+`http://$(FLUENTD_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`
 
 #### Custom metrics filtering and modification
 
