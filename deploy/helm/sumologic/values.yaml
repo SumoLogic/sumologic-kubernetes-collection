@@ -63,7 +63,7 @@ sumologic:
     #   env: {}
 
   ## If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace>
-  ## and not add the fluentD/Fluent Bit logs and Prometheus remotestorage metrics.
+  ## and not add the Otelcol logs and Prometheus remotestorage metrics.
   collectionMonitoring: true
 
   ## Optionally specify an array of pullSecrets.
@@ -76,10 +76,10 @@ sumologic:
   # pullSecrets:
   #   - name: myRegistryKeySecretName
 
-  ## Add custom labels to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
+  ## Add custom labels to the following sumologic resources(otelcol sts, setup job, otelcol deployment)
   podLabels: {}
 
-  ## Add custom annotations to the following sumologic resources(fluentd sts, setup job, otelcol deployment)
+  ## Add custom annotations to the following sumologic resources(otelcol sts, setup job, otelcol deployment)
   podAnnotations: {}
 
   ## Add custom annotations to sumologic serviceAccounts
@@ -209,6 +209,7 @@ sumologic:
   ### Configuration for collection of Kubernetes events
   events:
     enabled: true
+    ## Defines which provider is used for Kubernetes events collection - `otelcol` or `fluentd`. `otelcol` is the default and is recommended. `fluentd` is deprecated.
     provider: otelcol
 
     ## Source name for the Events source. Default: "events"
@@ -235,7 +236,7 @@ sumologic:
   logs:
     enabled: true
     metadata:
-      ## Set provider service (either fluentd or otelcol).
+      ## Defines logs metadata enrichment provider - `otelcol` or `fluentd`. `otelcol` is the default and is recommended. `fluentd` is deprecated.
       provider: otelcol
 
     collector:
@@ -386,7 +387,7 @@ sumologic:
   metrics:
     enabled: true
     metadata:
-      ## Set metadata provider service (either fluentd or otelcol).
+      ## Defines metrics metadata enrichment provider - `otelcol` or `fluentd`. `otelcol` is the default and is recommended. `fluentd` is deprecated.
       provider: otelcol
 
     otelcol:
