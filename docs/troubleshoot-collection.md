@@ -431,7 +431,7 @@ kube-prometheus-stack:
           ...
 ```
 
-Alternatively you can add `prometheus.metrics.kubelet` to `metadata.metrics.config.additionalEndpoints`
+Alternatively you can add `/prometheus.metrics.kubelet` to `metadata.metrics.config.additionalEndpoints`
 
 Please see the following example:
 
@@ -440,7 +440,7 @@ metadata:
   metrics:
     config:
       additionalEndpoints:
-        - prometheus.metrics.kubelet
+        - /prometheus.metrics.kubelet
 ```
 
 ### OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy
