@@ -244,15 +244,15 @@ sumologic:
                 include:
                   match_type: strict
                   resource_attributes:
-                    - Key: host.name
-                      Value: just_this_one_hostname
+                    - key: host.name
+                      value: just_this_one_hostname
           - filter/include-logs-based-on-resource-attribute-regex:
               logs:
                 include:
                   match_type: regexp
                   resource_attributes:
-                    - Key: host.name
-                      Value: prefix.*
+                    - key: host.name
+                      value: prefix.*
           - filter/exclude-healthcheck-logs:
               logs:
                 exclude:

@@ -248,8 +248,8 @@ sumologic:
                   - prefix_.*
                 ## Metadata to match for inclusion
                 resource_attributes:
-                  - Key: container.name
-                    Value: app_container_1
+                  - key: container.name
+                    value: app_container_1
               ## Definition of exclusion
               exclude:
                 ## Match type, can be regexp or strict
@@ -260,8 +260,8 @@ sumologic:
                   - hello/world
                 ## Metadata to match for exclusion
                 resource_attributes:
-                  - Key: container.name
-                    Value: app_container_7
+                  - key: container.name
+                    value: app_container_7
 ```
 
 [filterprocessor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor

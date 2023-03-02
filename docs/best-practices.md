@@ -239,8 +239,8 @@ sumologic:
                 match_type: strict
                 ## Metadata to match for exclusion
                 resource_attributes:
-                  - Key: k8s.namespace.name
-                    Value: sumologic
+                  - key: k8s.namespace.name
+                    value: sumologic
 ```
 
 To exclude all metrics starting with `kube_`, you can use the following configuration:
