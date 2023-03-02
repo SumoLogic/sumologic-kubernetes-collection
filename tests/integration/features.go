@@ -8,8 +8,11 @@ import (
 	"testing"
 	"time"
 
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	log "k8s.io/klog/v2"
+	"sigs.k8s.io/e2e-framework/klient/k8s"
 	"sigs.k8s.io/e2e-framework/klient/k8s/resources"
 	"sigs.k8s.io/e2e-framework/klient/wait"
 	"sigs.k8s.io/e2e-framework/klient/wait/conditions"
@@ -437,4 +440,387 @@ func GetTracesFeature() features.Feature {
 		}).
 		Teardown(stepfuncs.KubectlDeleteNamespaceOpt(internal.TracesGeneratorNamespace)).
 		Feature()
+}
+
+type featureCheck func(*features.FeatureBuilder) *features.FeatureBuilder
+
+func GetInstallFeature(installChecks []featureCheck) features.Feature {
+	featureBuilder := features.New("installation")
+	for _, installCheck := range installChecks {
+		featureBuilder = installCheck(featureBuilder)
+	}
+
+	return featureBuilder.Feature()
+}
+
+func CheckSumologicSecret(endpointCount int) featureCheck {
+	return func(builder *features.FeatureBuilder) *features.FeatureBuilder {
+		return builder.Assess("sumologic secret is created with endpoints",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
+				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
+				require.Len(t, secret.Data, endpointCount, "Secret has incorrect number of endpoints")
+				return ctx
+			})
+	}
+}
+
+func CheckOtelcolMetadataMetricsInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("otelcol metrics statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-metrics"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-metrics"),
+					},
+				),
+			),
+		).
+		Assess("otelcol metrics buffers PVCs are created and bound",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
+				pvcs := corev1.PersistentVolumeClaimList{}
+				cond := conditions.
+					New(res).
+					ResourceListMatchN(&pvcs, 1,
+						func(object k8s.Object) bool {
+							pvc := object.(*corev1.PersistentVolumeClaim)
+							if pvc.Status.Phase != corev1.ClaimBound {
+								log.V(0).Infof("PVC %q not bound yet", pvc.Name)
+								return false
+							}
+							return true
+						},
+						resources.WithLabelSelector(
+							fmt.Sprintf("app=%s-sumologic-otelcol-metrics", ctxopts.HelmRelease(ctx)),
+						),
+					)
+				require.NoError(t,
+					wait.For(cond,
+						wait.WithTimeout(waitDuration),
+						wait.WithInterval(tickDuration),
+					),
+				)
+				return ctx
+			})
+}
+
+func CheckOtelcolMetadataLogsInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("otelcol logs statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs"),
+					},
+				),
+			),
+		).
+		Assess("otelcol logs buffers PVCs are created and bound",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
+				pvcs := corev1.PersistentVolumeClaimList{}
+				cond := conditions.
+					New(res).
+					ResourceListMatchN(&pvcs, 1,
+						func(object k8s.Object) bool {
+							pvc := object.(*corev1.PersistentVolumeClaim)
+							if pvc.Status.Phase != corev1.ClaimBound {
+								log.V(0).Infof("PVC %q not bound yet", pvc.Name)
+								return false
+							}
+							return true
+						},
+						resources.WithLabelSelector(
+							fmt.Sprintf("app=%s-sumologic-otelcol-logs", ctxopts.HelmRelease(ctx)),
+						),
+					)
+				require.NoError(t,
+					wait.For(cond,
+						wait.WithTimeout(waitDuration),
+						wait.WithInterval(tickDuration),
+					),
+				)
+				return ctx
+			})
+}
+
+func CheckOtelcolEventsInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("otelcol events statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-events"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-events"),
+					},
+				),
+			),
+		).
+		Assess("otelcol events buffers PVCs are created",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				namespace := ctxopts.Namespace(ctx)
+				releaseName := ctxopts.HelmRelease(ctx)
+				kubectlOptions := ctxopts.KubectlOptions(ctx)
+
+				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
+				cl, err := terrak8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				require.NoError(t, err)
+
+				assert.Eventually(t, func() bool {
+					pvcs, err := cl.CoreV1().
+						PersistentVolumeClaims(namespace).
+						List(ctx, v1.ListOptions{
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-otelcol-events", releaseName),
+						})
+					if !assert.NoError(t, err) {
+						return false
+					}
+
+					return len(pvcs.Items) == 1
+				}, waitDuration, tickDuration)
+				return ctx
+			})
+}
+
+func CheckPrometheusInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("prometheus pod is available",
+			stepfuncs.WaitUntilPodsAvailable(
+				v1.ListOptions{
+					LabelSelector: "app.kubernetes.io/name=prometheus",
+				},
+				1,
+				waitDuration,
+				tickDuration,
+			),
+		)
+}
+
+func CheckOtelcolLogsCollectorInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("otelcol daemonset is ready",
+			stepfuncs.WaitUntilDaemonSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs-collector"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-logs-collector"),
+					},
+				),
+			),
+		)
+
+}
+
+func CheckFluentBitInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("fluent-bit daemonset is running",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				var daemonsets []appsv1.DaemonSet
+				require.Eventually(t, func() bool {
+					daemonsets = terrak8s.ListDaemonSets(t, ctxopts.KubectlOptions(ctx), v1.ListOptions{
+						LabelSelector: "app.kubernetes.io/name=fluent-bit",
+					})
+
+					return len(daemonsets) == 1
+				}, waitDuration, tickDuration)
+
+				require.EqualValues(t, 0, daemonsets[0].Status.NumberUnavailable)
+				return ctx
+			})
+
+}
+
+func CheckTracesInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("traces-sampler deployment is ready",
+			stepfuncs.WaitUntilDeploymentIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+				),
+				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
+					K: "app",
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+				},
+				),
+			)).
+		Assess("otelcol-instrumentation statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
+					},
+				),
+			),
+		).
+		Assess("traces-gateway deployment is ready",
+			stepfuncs.WaitUntilDeploymentIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+				),
+				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
+					K: "app",
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+				},
+				),
+			))
+
+}
+
+func CheckFluentdMetadataLogsInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("fluentd logs statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-logs"),
+					},
+				),
+			),
+		).
+		Assess("fluentd logs buffers PVCs are created",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				namespace := ctxopts.Namespace(ctx)
+				releaseName := ctxopts.HelmRelease(ctx)
+				kubectlOptions := ctxopts.KubectlOptions(ctx)
+
+				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
+				cl, err := terrak8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				require.NoError(t, err)
+
+				assert.Eventually(t, func() bool {
+					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
+						List(ctx, v1.ListOptions{
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-logs", releaseName),
+						})
+					if !assert.NoError(t, err) {
+						return false
+					}
+
+					return err == nil && len(pvcs.Items) == 3
+				}, waitDuration, tickDuration)
+				return ctx
+			})
+}
+
+func CheckFluentdMetadataMetricsInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("fluentd metrics statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-metrics"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-metrics"),
+					},
+				),
+			),
+		).
+		Assess("fluentd metrics buffers PVCs are created",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				namespace := ctxopts.Namespace(ctx)
+				releaseName := ctxopts.HelmRelease(ctx)
+				kubectlOptions := ctxopts.KubectlOptions(ctx)
+
+				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
+				cl, err := terrak8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				require.NoError(t, err)
+
+				assert.Eventually(t, func() bool {
+					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
+						List(ctx, v1.ListOptions{
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-metrics", releaseName),
+						})
+					if !assert.NoError(t, err) {
+						return false
+					}
+
+					return err == nil && len(pvcs.Items) == 3
+				}, waitDuration, tickDuration)
+				return ctx
+			})
+}
+
+func CheckFluentdEventsInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("fluentd events statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-fluentd-events"),
+					},
+				),
+			),
+		).
+		Assess("fluentd events buffers PVCs are created",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				namespace := ctxopts.Namespace(ctx)
+				releaseName := ctxopts.HelmRelease(ctx)
+				kubectlOptions := ctxopts.KubectlOptions(ctx)
+
+				t.Logf("kubeconfig: %s", kubectlOptions.ConfigPath)
+				cl, err := terrak8s.GetKubernetesClientFromOptionsE(t, kubectlOptions)
+				require.NoError(t, err)
+
+				assert.Eventually(t, func() bool {
+					pvcs, err := cl.CoreV1().PersistentVolumeClaims(namespace).
+						List(ctx, v1.ListOptions{
+							LabelSelector: fmt.Sprintf("app=%s-sumologic-fluentd-events", releaseName),
+						})
+					if !assert.NoError(t, err) {
+						return false
+					}
+
+					return err == nil && len(pvcs.Items) == 1
+				}, waitDuration, tickDuration)
+				return ctx
+			})
 }
