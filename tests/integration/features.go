@@ -93,31 +93,28 @@ func GetMetricsFeature(expectedMetrics []string) features.Feature {
 					// labels might not be attached at the very first record).
 					sample := metricsSamples[0]
 					labels := sample.Labels
+					releaseName := ctxopts.HelmRelease(ctx)
+					namespace := ctxopts.Namespace(ctx)
 					expectedLabels := receivermock.Labels{
-						"cluster":    "kubernetes",
-						"_origin":    "kubernetes",
-						"container":  "receiver-mock",
-						"deployment": "receiver-mock",
-						"endpoint":   "https-metrics",
-						// TODO: verify the source of label's value.
-						// For OTC metadata enrichment this is set to <RELEASE_NAME>-sumologic-otelcol-metrics-<POD_IN_STS_NUMBER>
-						// hence with longer time range the time series about a particular metric
-						// that we receive diverge into n, where n is the number of metrics
-						// enrichment pods.
-						"image":                        "",
-						"instance":                     "",
+						"cluster":                      "kubernetes",
+						"_origin":                      "kubernetes",
+						"container":                    "receiver-mock",
+						"deployment":                   "receiver-mock",
+						"endpoint":                     "https-metrics",
+						"image":                        "sumologic/kubernetes-tools:.*",
+						"instance":                     internal.IpWithPortRegex,
 						"job":                          "kubelet",
 						"metrics_path":                 "/metrics/cadvisor",
 						"namespace":                    "receiver-mock",
-						"node":                         "",
+						"node":                         internal.NodeNameRegex,
 						"pod_labels_app":               "receiver-mock",
-						"pod_labels_pod-template-hash": "",
+						"pod_labels_pod-template-hash": ".+",
 						"pod_labels_service":           "receiver-mock",
 						"pod":                          podList.Items[0].Name,
-						"prometheus_replica":           "",
-						"prometheus_service":           "",
-						"prometheus":                   "",
-						"replicaset":                   "",
+						"prometheus_replica":           fmt.Sprintf("prometheus-%s-.*-0", releaseName),
+						"prometheus_service":           fmt.Sprintf("%s-.*-kubelet", releaseName),
+						"prometheus":                   fmt.Sprintf("%s/%s-.*-prometheus", namespace, releaseName),
+						"replicaset":                   "receiver-mock-.*",
 						"service":                      "receiver-mock",
 					}
 
