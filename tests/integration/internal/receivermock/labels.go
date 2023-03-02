@@ -18,6 +18,10 @@ func (labels Labels) Match(label, value string) bool {
 		return false
 	}
 
+	if value == "" { // special case
+		return true
+	}
+
 	if value != "" && value != v {
 		log.Infof("Requested label %q exists in label set but has a different value %q", label, v)
 		return false
@@ -38,14 +42,21 @@ func (labels Labels) MatchRegex(label string, re *regexp.Regexp) bool {
 	return true
 }
 
-// MatchAll matches returns whether all the requested labels are present (if set as empty string - "")
-// and (if a corresponding value has been provided) that all values match.
+// MatchAll matches returns whether all the requested labels are present
+// and (if a corresponding value has been provided) that all values match
+// matching is done via regex if the value is a valid regex, otherwise via strict equality
+// the special value "" matches everything for historical reasons
 func (labels Labels) MatchAll(requested Labels) bool {
 	ret := true
 	for label, value := range requested {
-		if !labels.Match(label, value) {
-			ret = false
+		valueRegex, err := regexp.Compile(value)
+		var matched bool
+		if err != nil {
+			matched = labels.Match(label, value)
+		} else {
+			matched = labels.MatchRegex(label, valueRegex)
 		}
+		ret = ret && matched
 	}
 	return ret
 }
