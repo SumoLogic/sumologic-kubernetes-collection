@@ -4,8 +4,14 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    
+    labels:
+      - skip-changelog
 
   - package-ecosystem: "gomod"
     directory: "/tests/integration/"
     schedule:
       interval: "daily"
+    
+    labels:
+      - skip-changelog
