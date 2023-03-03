@@ -89,6 +89,7 @@ sudo cp "shellcheck-${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin
 rm -rf "shellcheck-${SHELLCHECK_VERSION}/"
 
 npm install -g markdownlint-cli
+npm install -g prettier
 # shellcheck disable=SC2016
 echo 'export PATH="$PATH:$HOME/.gem/bin"' >> /home/vagrant/.bashrc
 
