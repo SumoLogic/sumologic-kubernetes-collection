@@ -209,8 +209,8 @@ clear.
 
 **When?**: If you're using `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite`.
 
-If you're using `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` you should move all non-default
-configurations to `kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite` and leave
+If you're using `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` you should move all non-default configurations to
+`kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite` and leave
 `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` unchanged.
 
 In addition please ensure that `url` for all `remoteWrite` configurations starts with
