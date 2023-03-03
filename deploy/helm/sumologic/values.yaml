@@ -1645,6 +1645,13 @@ kube-prometheus-stack:
         - action: keep
           regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
           sourceLabels: [__name__]
+        ## Drop container metrics with container tag set to an empty string:
+        ## these are the pod aggregated container metrics which can be aggregated
+        ## in Sumo anyway. There's also some cgroup-specific time series we also
+        ## do not need.
+        - action: drop
+          sourceLabels: [__name__, container]
+          regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes);$
         - action: labelmap
           regex: container_name
           replacement: container
