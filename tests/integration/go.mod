@@ -3,7 +3,7 @@ module github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration
 go 1.18
 
 require (
-	github.com/gruntwork-io/terratest v0.41.11
+	github.com/gruntwork-io/terratest v0.41.12
 	github.com/stretchr/testify v1.8.2
 	k8s.io/api v0.26.2
 	k8s.io/apimachinery v0.26.2
@@ -36,7 +36,7 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go v1.40.56 // indirect
+	github.com/aws/aws-sdk-go v1.44.122 // indirect
 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -48,7 +48,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
-	github.com/google/uuid v1.2.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/gruntwork-io/go-commons v0.8.0 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
@@ -70,7 +70,7 @@ require (
 	github.com/vladimirvivien/gexe v0.2.0 // indirect
 	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b // indirect
+	golang.org/x/oauth2 v0.1.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/term v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
