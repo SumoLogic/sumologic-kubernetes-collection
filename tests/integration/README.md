@@ -170,10 +170,10 @@ structure:
 {
   "supported": [
     ...
-    "kindest/node:v1.21.2@sha256:9d07ff05e4afefbba983fac311807b3c17a5f36e7061f6cb7e2ba756255b2be4",
-    "kindest/node:v1.22.4@sha256:d3c56a1a9e3bb93e44be546fb71ed81a748f412d5f173bf8459ee2e3e58930d8"
+    "kindest/node:v1.25.3",
+    "kindest/node:v1.23.6"
    ],
-  "default": "kindest/node:v1.21.2@sha256:9d07ff05e4afefbba983fac311807b3c17a5f36e7061f6cb7e2ba756255b2be4"
+  "default": "kindest/node:v1.25.3"
 }
 ```
 

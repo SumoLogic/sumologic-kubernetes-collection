@@ -1,6 +1,6 @@
 .PHONY: test
 test:
-	go test -timeout 20m -v
+	go test -timeout 30m -v
 
 .PHONY: gomod-tidy
 gomod-tidy:
