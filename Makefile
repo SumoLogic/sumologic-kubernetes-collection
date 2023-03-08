@@ -40,7 +40,7 @@ helm-lint: helm-version
 
 .PHONY: yaml-lint
 yaml-lint:
-	prettier --check "**/*.yaml"
+	prettier --check "**/*.yaml" "**/*.yml"
 
 .PHONY: shellcheck
 shellcheck:
@@ -73,7 +73,7 @@ markdown-format:
 
 .PHONY: yaml-format
 yaml-format:
-	prettier -w "**/*.yaml"
+	prettier -w "**/*.yaml" "**/*.yml"
 
 # Tests
 .PHONY: test
