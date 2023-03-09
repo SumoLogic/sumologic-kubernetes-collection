@@ -14,6 +14,8 @@ data:
     exporters:
       otlphttp:
         endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
+        sending_queue:
+          queue_size: 10
     extensions:
       file_storage:
         compaction:
