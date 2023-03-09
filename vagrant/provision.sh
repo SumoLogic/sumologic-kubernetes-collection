@@ -109,7 +109,7 @@ curl -LJ "https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o go.linux-
     && ln -s /usr/local/go/bin/go /usr/local/bin
 
 # Install Kind
-KIND_VERSION=v0.11.1
+KIND_VERSION=v0.17.0
 curl -Lo ./kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-amd64"
 chmod +x ./kind
 mv ./kind /usr/local/bin/kind
