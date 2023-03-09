@@ -368,8 +368,7 @@ rerun the `helm install` command.
 
 ### OpenTelemetry Collector Pods Stuck in CreateContainerConfigError
 
-If the OpenTelemetry Collector Pods are in `CreateContainerConfigError` it can mean the setup job has not completed yet. Wait for the setup
-pod to complete and the issue should resolve itself. The setup job creates a secret and the error simply means the secret is not there yet.
+If the OpenTelemetry Collector Pods are in `CreateContainerConfigError` it can mean the setup job has not been completed yet. Make sure that the `sumologic.setupEnable` parameter is set to `true`. Then wait for the setup pod to complete and the issue should resolve itself. The setup job creates a secret and the error simply means the secret is not there yet.
 This usually resolves itself automatically.
 
 If the issue does not solve resolve automatically, you will need to look at the logs for the setup pod. Kubernetes schedules the job in a
