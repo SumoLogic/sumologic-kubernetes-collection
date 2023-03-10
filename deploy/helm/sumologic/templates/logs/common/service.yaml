@@ -26,4 +26,12 @@ spec:
     port: 8888
     targetPort: 8888
     protocol: TCP
+  {{- if .Values.metadata.logs.statefulset.extraPorts }}
+    {{- range .Values.metadata.logs.statefulset.extraPorts }}
+  - name: {{ toYaml .name }}
+    port: {{ toYaml .containerPort }}
+    targetPort: {{ toYaml .containerPort }}
+    protocol: {{ toYaml .protocol }}
+    {{- end }}
+  {{- end }}
 {{- end }}

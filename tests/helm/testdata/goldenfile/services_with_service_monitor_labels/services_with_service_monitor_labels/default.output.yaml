@@ -178,6 +178,14 @@ spec:
       port: 8888
       targetPort: 8888
       protocol: TCP
+    - name: otlphttp2
+      port: 4319
+      targetPort: 4319
+      protocol: TCP
+    - name: otlphttp3
+      port: 4320
+      targetPort: 4320
+      protocol: TCP
 ---
 # Source: sumologic/templates/metrics/common/service.yaml
 apiVersion: v1

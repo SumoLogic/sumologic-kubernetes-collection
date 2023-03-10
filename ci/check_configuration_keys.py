@@ -36,6 +36,7 @@ SKIP_DEFAULTS = {
     'metadata.logs.statefulset.extraEnvVars',
     'metadata.logs.statefulset.extraVolumeMounts',
     'metadata.logs.statefulset.extraVolumes',
+    'metadata.logs.statefulset.extraPorts',
     'metadata.metrics.podDisruptionBudget',
     'metadata.metrics.autoscaling.targetMemoryUtilizationPercentage',
     'metadata.metrics.statefulset.extraEnvVars',
