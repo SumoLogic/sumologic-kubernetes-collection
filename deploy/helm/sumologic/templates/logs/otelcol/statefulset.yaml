@@ -132,6 +132,9 @@ spec:
         - name: pprof
           containerPort: 1777
           protocol: TCP
+        {{- if .Values.metadata.logs.statefulset.extraPorts }}
+          {{- toYaml .Values.metadata.logs.statefulset.extraPorts | nindent 8 }}
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /

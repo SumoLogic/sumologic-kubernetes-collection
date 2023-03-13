@@ -3999,6 +3999,10 @@ metadata:
       #   - name: es-certs
       #     mountPath: /certs
       #     readOnly: true
+      # extraPorts:
+      #   - name: otlphttp2
+      #     containerPort: 4319
+      #     protocol: TCP
 
     ## Option to turn autoscaling on for logs and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
