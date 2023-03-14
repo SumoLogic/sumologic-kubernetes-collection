@@ -221,24 +221,20 @@ func TestMetadataLogFormat(t *testing.T) {
 		expectedExporterFlattenBody bool
 	}{
 		{
-			logFormat:                   "json",
-			expectedExporterLogFormat:   "json",
-			expectedExporterFlattenBody: false,
+			logFormat:                 "json",
+			expectedExporterLogFormat: "json",
 		},
 		{
-			logFormat:                   "fields",
-			expectedExporterLogFormat:   "json",
-			expectedExporterFlattenBody: false,
+			logFormat:                 "fields",
+			expectedExporterLogFormat: "json",
 		},
 		{
-			logFormat:                   "json_merge",
-			expectedExporterLogFormat:   "json",
-			expectedExporterFlattenBody: true,
+			logFormat:                 "json_merge",
+			expectedExporterLogFormat: "json",
 		},
 		{
-			logFormat:                   "text",
-			expectedExporterLogFormat:   "text",
-			expectedExporterFlattenBody: false,
+			logFormat:                 "text",
+			expectedExporterLogFormat: "text",
 		},
 	}
 
@@ -258,7 +254,7 @@ sumologic:
 			err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
 			require.NoError(t, err)
 			require.Equal(t, testCase.expectedExporterLogFormat, otelConfig.Exporters.Containers.LogFormat)
-			require.Equal(t, testCase.expectedExporterFlattenBody, otelConfig.Exporters.Containers.JsonLogs.FlattenBody)
+			require.False(t, otelConfig.Exporters.Containers.JsonLogs.FlattenBody)
 		})
 	}
 }

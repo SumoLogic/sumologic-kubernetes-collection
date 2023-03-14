@@ -29,7 +29,6 @@ exporters:
     json_logs:
       add_timestamp: true
       timestamp_key: timestamp
-      flatten_body: {{ eq .Values.sumologic.logs.container.format "json_merge" }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
     ## Configuration for sending queue
     ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
@@ -47,10 +46,6 @@ exporters:
     json_logs:
       add_timestamp: true
       timestamp_key: timestamp
-      ## use flatten_body, but OTLP won't require any flattening
-      ## fluent based logs will be all send as record attributes
-      ## otellogs based logs will be all send as body attributes
-      flatten_body: true
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
     ## Configuration for sending queue
     ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
@@ -339,6 +334,15 @@ processors:
         statements:
           - limit(attributes, 0, [])
 
+  ## Move attributes from the body to the record and drop the body if it's a map
+  ## The map check isn't perfect, as there's no way to check for this explicitly in OTTL
+  ## We always parse json earlier in the pipeline though, so this is safe
+  transform/flatten:
+    log_statements:
+      - context: log
+        statements:
+          - merge_maps(attributes, body, "insert")
+
   ## kubelet related processors
   filter/include_kubelet:
     logs:
@@ -391,6 +395,11 @@ service:
         - resource/remove_pod_name
         - resource/drop_annotations
         - attributes/remove_fluent_tag
+{{- if eq .Values.sumologic.logs.container.format "text" }} 
+        - transform/remove_attributes
+{{- else if eq .Values.sumologic.logs.container.format "json_merge" }} 
+        - transform/flatten
+{{- end }}
         - batch
       exporters:
         - sumologic/containers
@@ -413,6 +422,8 @@ service:
         - groupbyattrs/systemd
         - resource/add_cluster
         - source/systemd
+        - transform/remove_attributes
+        - transform/flatten
         - batch
       exporters:
         - sumologic/systemd
@@ -432,6 +443,8 @@ service:
         - groupbyattrs/systemd
         - resource/add_cluster
         - source/kubelet
+        - transform/remove_attributes
+        - transform/flatten
         - batch
       exporters:
         - sumologic/systemd
@@ -464,6 +477,11 @@ service:
 {{- end }}
         - resource/remove_pod_name
         - resource/drop_annotations
+{{- if eq .Values.sumologic.logs.container.format "text" }} 
+        - transform/remove_attributes
+{{- else if eq .Values.sumologic.logs.container.format "json_merge" }} 
+        - transform/flatten
+{{- end }}
         - batch
       exporters:
         - sumologic/containers
@@ -490,6 +508,7 @@ service:
         - resource/add_cluster
         - source/systemd
         - transform/remove_attributes
+        - transform/flatten
         - batch
       exporters:
         - sumologic/systemd
@@ -513,6 +532,7 @@ service:
         - resource/add_cluster
         - source/kubelet
         - transform/remove_attributes
+        - transform/flatten
         - batch
       exporters:
         - sumologic/systemd
