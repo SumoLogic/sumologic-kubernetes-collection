@@ -37,6 +37,7 @@ Documentation links:
 - Upgrades
   - [Upgrade from v0.17 to v1.0](./docs/v1_migration_doc.md)
   - [Upgrade from v1.3 to v2.0](./docs/v2_migration_doc.md)
+  - [Upgrade from v2.17 to v2.18](./docs/v2-18-migration.md)
 
 - [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`](./docs/Migration_Steps.md)
 - [Troubleshooting Collection](./docs/Troubleshoot_Collection.md)
