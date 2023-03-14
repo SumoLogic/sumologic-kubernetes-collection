@@ -15,8 +15,7 @@ data:
       sumologic/containers:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         json_logs:
-          add_timestamp: true
-          timestamp_key: timestamp
+          add_timestamp: false
         log_format: json
         sending_queue:
           enabled: true
@@ -26,8 +25,7 @@ data:
       sumologic/systemd:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         json_logs:
-          add_timestamp: true
-          timestamp_key: timestamp
+          add_timestamp: false
         log_format: json
         sending_queue:
           enabled: true
@@ -294,11 +292,17 @@ data:
         source_name: my_systemd_sourceName
       sumologic_schema:
         add_cloud_namespace: false
+      transform/add_timestamp:
+        log_statements:
+        - context: log
+          statements:
+          - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
       transform/flatten:
         log_statements:
         - context: log
           statements:
           - merge_maps(attributes, body, "insert")
+          - set(body, "") where IsMatch(body, "^{") == true
       transform/remove_attributes:
         log_statements:
         - context: log
@@ -331,6 +335,7 @@ data:
           - logstransform/containers_parse_json
           - resource/remove_pod_name
           - resource/drop_annotations
+          - transform/add_timestamp
           - batch
           receivers:
           - otlp
@@ -352,6 +357,7 @@ data:
           - source/kubelet
           - transform/remove_attributes
           - transform/flatten
+          - transform/add_timestamp
           - batch
           receivers:
           - otlp
@@ -374,6 +380,7 @@ data:
           - source/systemd
           - transform/remove_attributes
           - transform/flatten
+          - transform/add_timestamp
           - batch
           receivers:
           - otlp
