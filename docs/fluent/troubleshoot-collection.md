@@ -5,12 +5,12 @@
 - [`helm install` hanging](#helm-install-hanging)
 - [Installation fails with error `function "dig" not defined`](#installation-fails-with-error-function-dig-not-defined)
 - [Namespace configuration](#namespace-configuration)
-- [Gathering logs](#gathering-logs)
+- [Collecting logs](#collecting-logs)
   - [Check Fluentd autoscaling](#check-fluentd-autoscaling)
   - [Fluentd Logs](#fluentd-logs)
   - [Send data to Fluentd stdout instead of to Sumo](#send-data-to-fluentd-stdout-instead-of-to-sumo)
   - [Send data to Fluent Bit stdout](#send-data-to-fluent-bit-stdout)
-- [Gathering metrics](#gathering-metrics)
+- [Collecting metrics](#collecting-metrics)
   - [Check Fluentd autoscaling](#check-fluentd-autoscaling-1)
   - [Check FluentBit and Fluentd output metrics](#check-fluentbit-and-fluentd-output-metrics)
 - [Common Issues](#common-issues)
@@ -67,7 +67,7 @@ To set your namespace context more permanently, you can run
 kubectl config set-context $(kubectl config current-context) --namespace=sumologic
 ```
 
-## Gathering logs
+## Collecting logs
 
 If you cannot see logs in Sumo that you expect to be there, here are the things to check.
 
@@ -174,7 +174,7 @@ fluent-bit:
           Match *
 ```
 
-## Gathering metrics
+## Collecting metrics
 
 ### Check Fluentd autoscaling
 
