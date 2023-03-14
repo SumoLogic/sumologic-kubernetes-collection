@@ -74,4 +74,4 @@ See the relevant section in [Collecting application metrics](/docs/collecting-ap
 
 For investigation you may want to look at the
 [Collecting application metrics](/docs/collecting-application-metrics.md#metrics-modifications) and
-[Troubleshooting Collection document](/docs/troubleshoot-collection.md#gathering-metrics)
+[Troubleshooting Collection document](/docs/troubleshoot-collection.md#collecting-metrics)

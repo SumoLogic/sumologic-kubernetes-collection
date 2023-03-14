@@ -4,13 +4,13 @@
 
 - [Troubleshooting Installation](#troubleshooting-installation)
 - [Namespace configuration](#namespace-configuration)
-- [Gathering logs](#gathering-logs)
+- [Collecting logs](#collecting-logs)
   - [Check log throttling](#check-log-throttling)
   - [Check ingest budget limits](#check-ingest-budget-limits)
   - [Check if collection pods are in a healthy state](#check-if-collection-pods-are-in-a-healthy-state)
   - [Prometheus Logs](#prometheus-logs)
   - [OpenTelemetry Logs Collector is being CPU throttled](#opentelemetry-logs-collector-is-being-cpu-throttled)
-- [Gathering metrics](#gathering-metrics)
+- [Collecting metrics](#collecting-metrics)
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
   - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
@@ -49,7 +49,7 @@ To set your namespace context more permanently, you can run
 kubectl config set-context $(kubectl config current-context) --namespace=sumologic
 ```
 
-## Gathering logs
+## Collecting logs
 
 If you cannot see logs in Sumo that you expect to be there, here are the things to check.
 
@@ -158,7 +158,7 @@ For more information look at the `Setting different resources on different nodes
 [Advanced Configuration / Best Practices](/docs/best-practices.md#setting-different-resources-on-different-nodes-for-logs-collector)
 document.
 
-## Gathering metrics
+## Collecting metrics
 
 ### Check the `/metrics` endpoint
 
