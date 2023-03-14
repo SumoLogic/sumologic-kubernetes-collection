@@ -115,6 +115,51 @@ Return the log format for the Sumologic exporter for container logs.
 {{- end -}}
 {{- end -}}
 
+{{/*
+Return the exporters for container log pipeline.
+
+'{{ include "logs.otelcol.container.exporters" . }}'
+*/}}
+{{- define "logs.otelcol.container.exporters" -}}
+{{- if eq .Values.sumologic.logs.sourceType "http" -}}
+- sumologic/containers
+{{- else if eq .Values.sumologic.logs.sourceType "otlp" }}
+- sumologic
+{{- else -}}
+{{- fail "`sumologic.logs.sourceType` can only be `http` or `otlp`" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the exporters for systemd log pipeline.
+
+'{{ include "logs.otelcol.systemd.exporters" . }}'
+*/}}
+{{- define "logs.otelcol.systemd.exporters" -}}
+{{- if eq .Values.sumologic.logs.sourceType "http" -}}
+- sumologic/systemd
+{{- else if eq .Values.sumologic.logs.sourceType "otlp" }}
+- sumologic
+{{- else -}}
+{{- fail "`sumologic.logs.sourceType` can only be `http` or `otlp`" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the exporters for kubelet log pipeline.
+
+'{{ include "logs.otelcol.kubelet.exporters" . }}'
+*/}}
+{{- define "logs.otelcol.kubelet.exporters" -}}
+{{- if eq .Values.sumologic.logs.sourceType "http" }}
+- sumologic/systemd
+{{- else if eq .Values.sumologic.logs.sourceType "otlp" }}
+- sumologic
+{{- else }}
+{{- fail "`sumologic.logs.sourceType` can only be `http` or `otlp`" -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs" -}}
 {{- if eq .Values.sumologic.logs.metadata.provider "fluentd" -}}
 {{ template "sumologic.labels.app.fluentd" . }}-logs

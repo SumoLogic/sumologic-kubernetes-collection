@@ -1,16 +1,5 @@
-extensions:
-  health_check: {}
-{{ if .Values.metadata.persistence.enabled }}
-  ## Configuration for File Storage extension
-  file_storage:
-    directory: /var/lib/storage/otc
-    timeout: 10s
-    compaction:
-      on_rebound: true
-      directory: /tmp
-{{ end }}
-  pprof: {}
 exporters:
+{{- if eq .Values.sumologic.logs.sourceType "http" }}
 {{ if .Values.sumologic.logs.container.enabled }}
   sumologic/containers:
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
@@ -24,7 +13,7 @@ exporters:
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
-{{ end }}
+{{- end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
   sumologic/systemd:
@@ -39,18 +28,33 @@ exporters:
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
-{{ end }}
+{{- end }}
+
+{{ else }}
+  sumologic:
+    endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
+    log_format: otlp
+    clear_logs_timestamp: false
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10_000
+{{- if .Values.metadata.persistence.enabled }}
+      storage: file_storage
+{{- end }}
+{{- end }}
 
 extensions:
+  health_check: {}
 {{ if .Values.metadata.persistence.enabled }}
+  ## Configuration for File Storage extension
   file_storage:
-    compaction:
-      directory: /tmp
-      on_rebound: true
     directory: /var/lib/storage/otc
     timeout: 10s
+    compaction:
+      on_rebound: true
+      directory: /tmp
 {{ end }}
-  health_check: {}
   pprof: {}
 
 processors:
@@ -460,7 +464,7 @@ service:
 {{ if .Values.sumologic.logs.container.enabled }}
     logs/fluent/containers:
       exporters:
-        - sumologic/containers
+{{ include "logs.otelcol.container.exporters" . | indent 8 }}
       processors:
         - memory_limiter
         - filter/include_fluent_tag_containers
@@ -495,7 +499,7 @@ service:
 {{ if .Values.sumologic.logs.systemd.enabled }}
     logs/fluent/kubelet:
       exporters:
-        - sumologic/systemd
+{{ include "logs.otelcol.kubelet.exporters" . | indent 8 }}
       processors:
         - memory_limiter
         - filter/include_fluent_tag_host
@@ -516,7 +520,7 @@ service:
 
     logs/fluent/systemd:
       exporters:
-        - sumologic/systemd
+{{ include "logs.otelcol.systemd.exporters" . | indent 8 }}
       processors:
         - memory_limiter
         - filter/include_fluent_tag_host
@@ -546,7 +550,7 @@ service:
     ## - attributes/fluent_containers functionality is being replaced by otellogs operators
     logs/otlp/containers:
       exporters:
-        - sumologic/containers
+{{ include "logs.otelcol.container.exporters" . | indent 8 }}
       processors:
         - memory_limiter
         - filter/include_containers
@@ -582,7 +586,7 @@ service:
     ## - added transform/remove_attributes processor
     logs/otlp/kubelet:
       exporters:
-        - sumologic/systemd
+{{ include "logs.otelcol.kubelet.exporters" . | indent 8 }}
       processors:
         - memory_limiter
         - filter/include_fluent_tag_host
@@ -608,7 +612,7 @@ service:
     ## - added transform/remove_attributes processor
     logs/otlp/systemd:
       exporters:
-        - sumologic/systemd
+{{ include "logs.otelcol.systemd.exporters" . | indent 8 }}
       processors:
         - memory_limiter
         - filter/include_fluent_tag_host

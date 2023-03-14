@@ -4,11 +4,12 @@ import (
 	"testing"
 )
 
-func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
+func Test_Helm_OTLP(t *testing.T) {
+
 	installChecks := []featureCheck{
 		CheckSumologicSecret(2),
 		CheckOtelcolMetadataLogsInstall,
-		CheckFluentBitInstall,
+		CheckOtelcolLogsCollectorInstall,
 	}
 
 	featInstall := GetInstallFeature(installChecks)

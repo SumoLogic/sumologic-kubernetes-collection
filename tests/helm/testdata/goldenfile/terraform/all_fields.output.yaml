@@ -345,6 +345,7 @@ data:
     locals {
       default_events_source                       = "events"
       default_logs_source                         = "logs"
+      default_otlp_logs_source                    = "logs-otlp"
       apiserver_metrics_source                    = "apiserver-metrics"
       control_plane_metrics_source                = "control-plane-metrics"
       controller_metrics_source                   = "kube-controller-manager-metrics"
@@ -484,6 +485,12 @@ data:
         }
     }
 
+    resource "sumologic_http_source" "default_otlp_logs_source" {
+        name         = local.default_otlp_logs_source
+        collector_id = sumologic_collector.collector.id
+        content_type = "Otlp"
+    }
+
     resource "sumologic_http_source" "apiserver_metrics_source" {
         name         = local.apiserver_metrics_source
         collector_id = sumologic_collector.collector.id
@@ -584,6 +591,7 @@ data:
       data = {
         endpoint-events                           = sumologic_http_source.default_events_source.url
         endpoint-logs                             = sumologic_http_source.default_logs_source.url
+        endpoint-logs-otlp                        = sumologic_http_source.default_otlp_logs_source.url
         endpoint-metrics-apiserver                = sumologic_http_source.apiserver_metrics_source.url
         endpoint-control_plane_metrics_source     = sumologic_http_source.control_plane_metrics_source.url
         endpoint-metrics-kube-controller-manager  = sumologic_http_source.controller_metrics_source.url
@@ -727,6 +735,7 @@ data:
     true  # prevent to render empty if; then
     terraform import sumologic_http_source.default_events_source "${COLLECTOR_NAME}/events"
     terraform import sumologic_http_source.default_logs_source "${COLLECTOR_NAME}/logs"
+    terraform import sumologic_http_source.default_otlp_logs_source "${COLLECTOR_NAME}/logs-otlp"
     terraform import sumologic_http_source.apiserver_metrics_source "${COLLECTOR_NAME}/apiserver-metrics"
     terraform import sumologic_http_source.control_plane_metrics_source "${COLLECTOR_NAME}/control-plane-metrics"
     terraform import sumologic_http_source.controller_metrics_source "${COLLECTOR_NAME}/kube-controller-manager-metrics"

@@ -6,7 +6,7 @@ import (
 
 func Test_Helm_FluentBit_Containerd_Multiline_Logs(t *testing.T) {
 	installChecks := []featureCheck{
-		CheckSumologicSecret(1),
+		CheckSumologicSecret(2),
 		CheckOtelcolMetadataLogsInstall,
 		CheckFluentBitInstall,
 	}
