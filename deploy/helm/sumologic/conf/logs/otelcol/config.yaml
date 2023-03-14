@@ -27,8 +27,7 @@ exporters:
   sumologic/containers:
     log_format: {{ include "logs.otelcol.container.exporter.format" . }}
     json_logs:
-      add_timestamp: true
-      timestamp_key: timestamp
+      add_timestamp: false
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
     ## Configuration for sending queue
     ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
@@ -44,8 +43,7 @@ exporters:
   sumologic/systemd:
     log_format: json
     json_logs:
-      add_timestamp: true
-      timestamp_key: timestamp
+      add_timestamp: false
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
     ## Configuration for sending queue
     ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
@@ -342,6 +340,14 @@ processors:
       - context: log
         statements:
           - merge_maps(attributes, body, "insert")
+          - set(body, "") where IsMatch(body, "^{") == true
+
+  ## Add timestamp to attributes
+  transform/add_timestamp:
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
 
   ## kubelet related processors
   filter/include_kubelet:
@@ -400,6 +406,7 @@ service:
 {{- else if eq .Values.sumologic.logs.container.format "json_merge" }} 
         - transform/flatten
 {{- end }}
+        - transform/add_timestamp
         - batch
       exporters:
         - sumologic/containers
@@ -424,6 +431,7 @@ service:
         - source/systemd
         - transform/remove_attributes
         - transform/flatten
+        - transform/add_timestamp
         - batch
       exporters:
         - sumologic/systemd
@@ -445,6 +453,7 @@ service:
         - source/kubelet
         - transform/remove_attributes
         - transform/flatten
+        - transform/add_timestamp
         - batch
       exporters:
         - sumologic/systemd
@@ -482,6 +491,7 @@ service:
 {{- else if eq .Values.sumologic.logs.container.format "json_merge" }} 
         - transform/flatten
 {{- end }}
+        - transform/add_timestamp
         - batch
       exporters:
         - sumologic/containers
@@ -509,6 +519,7 @@ service:
         - source/systemd
         - transform/remove_attributes
         - transform/flatten
+        - transform/add_timestamp
         - batch
       exporters:
         - sumologic/systemd
@@ -533,6 +544,7 @@ service:
         - source/kubelet
         - transform/remove_attributes
         - transform/flatten
+        - transform/add_timestamp
         - batch
       exporters:
         - sumologic/systemd
