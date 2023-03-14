@@ -20,6 +20,7 @@ Documentation links:
 - [Installation](/docs/installation.md)
 
 - Configuration
+
   - [Examples](/docs/configuration-examples.md)
   - Logs
     - [Collecting container logs](/docs/collecting-container-logs.md)
@@ -37,10 +38,12 @@ Documentation links:
     - [Container log parsing with Fluent-Bit (Docker, CRI-O, containerd)](/docs/fluent/container-logs.md)
     - [Performance estimates for running collection chart](/docs/fluent/performance.md)
     - [Fluentd persistence](/docs/fluent/fluentd-persistence.md)
+
 - Upgrades
 
   - [Upgrade from v0.17 to v1.0][migration-doc-v1]
   - [Upgrade from v1.3 to v2.0][migration-doc-v2]
+  - [Upgrade from v2 to v3][migration-doc-v3]
 
 - [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`][migration-steps]
 - [Troubleshooting Collection](/docs/troubleshoot-collection.md)
@@ -49,6 +52,7 @@ Documentation links:
 
 [migration-doc-v1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v1_migration_doc.md
 [migration-doc-v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2_migration_doc.md
+[migration-doc-v3]: ./v3-migration-doc.md
 [migration-steps]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/Migration_Steps.md
 
 ## Solution overview
