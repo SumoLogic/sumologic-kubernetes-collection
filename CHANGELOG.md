@@ -84,6 +84,8 @@ for differences between Telegraf Operator Helm Chart 1.3.5 and Telegraf Operator
 
 ### Released 2022-10-20
 
+See [Upgrading from v2.17 to v2.18][v2-18-migration].
+
 This release updates Opentelemetry Operator and disables by default creation of `Instrumentation` resource.
 `opentelemetry-operator.manager.env.WATCH_NAMESPACE` has no longer effect on creation of `Instrumentation` resource.
 To create `Instrumentation` resource it is required to set `opentelemetry-operator.createDefaultInstrumentation` to `true` and
@@ -92,9 +94,9 @@ This change affects you only if you have enabled opentelemetry-operator and trac
 
 ### Changed
 
-- chore: upgrade nginx to 1.23.1 [#2544] [#2554]
+- chore: upgrade nginx to 1.23.1 [#2544]
 - chore: remove support for GKE 1.20 [#2579]
-- chore(opentelemetry-operator): upgrade opentelemetry-operator subchart to 0.13.0 [#2577]
+- chore(opentelemetry-operator): upgrade opentelemetry-operator subchart to 0.13.0 [#2577] ([Upgrade guide][v2-18-migration])
 
 ### Fixed
 
@@ -105,6 +107,7 @@ This change affects you only if you have enabled opentelemetry-operator and trac
 [#2579]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2579
 [#2577]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2577
 [v2.18.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.17.0...v2.18.0
+[v2-18-migration]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2-18-migration.md
 
 ## [v2.17.0]
 
