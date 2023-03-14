@@ -16,7 +16,6 @@ data:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         json_logs:
           add_timestamp: true
-          flatten_body: false
           timestamp_key: timestamp
         log_format: json
         sending_queue:
@@ -28,7 +27,6 @@ data:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
         json_logs:
           add_timestamp: true
-          flatten_body: true
           timestamp_key: timestamp
         log_format: json
         sending_queue:
@@ -296,6 +294,11 @@ data:
         source_name: '%{_sourceName}'
       sumologic_schema:
         add_cloud_namespace: false
+      transform/flatten:
+        log_statements:
+        - context: log
+          statements:
+          - merge_maps(attributes, body, "insert")
       transform/remove_attributes:
         log_statements:
         - context: log
@@ -348,6 +351,7 @@ data:
           - resource/add_cluster
           - source/kubelet
           - transform/remove_attributes
+          - transform/flatten
           - batch
           receivers:
           - otlp
@@ -369,6 +373,7 @@ data:
           - resource/add_cluster
           - source/systemd
           - transform/remove_attributes
+          - transform/flatten
           - batch
           receivers:
           - otlp
