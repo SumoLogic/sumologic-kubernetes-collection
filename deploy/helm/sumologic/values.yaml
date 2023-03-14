@@ -201,6 +201,11 @@ sumologic:
           #   - name: "Test Exclude Debug"
           #     filter_type: "Exclude"
           #     regexp: ".*DEBUG.*"
+        default-otlp:
+          name: logs-otlp
+          config-name: endpoint-logs-otlp
+          properties:
+            content_type: Otlp
       events:
         default:
           name: events
@@ -416,6 +421,8 @@ sumologic:
       - pod
       - service
       - statefulset
+
+    sourceType: http
 
   ### Metrics configuration
   ## Set the enabled flag to false for disabling metrics ingestion altogether.
