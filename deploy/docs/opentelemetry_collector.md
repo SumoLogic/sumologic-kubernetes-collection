@@ -95,7 +95,7 @@ the `otellogs.config.override` and `metadata.logs.config` sections. Only use the
 by the high-level settings. See [Sumologic OpenTelemetry Collector configuration][configuration]
 for more information
 
-[configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/Configuration.md
+[configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/configuration.md
 [values]: ../helm/sumologic/values.yaml
 
 ### Multiline log parsing
