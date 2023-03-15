@@ -65,7 +65,7 @@ integration-tests-lint:
 # Formatters
 
 .PHONY: format
-format: markdown-table-formatter-format yaml-format
+format: markdown-format yaml-format
 
 .PHONY: markdown-format
 markdown-format:
