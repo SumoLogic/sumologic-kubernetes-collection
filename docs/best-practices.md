@@ -290,7 +290,59 @@ sumologic:
 
 ## Collect logs from additional files on the Node
 
-:construction: _TODO_, see [the Fluentd section](fluent/best-practices.md#add-a-local-file-to-fluent-bit-configuration)
+To collect logs from additional files on Node, it is necessary to:
+
+- mount log file to make it accessible by log collector pod
+- create an additional pipeline in both the log collector and metadata enrichment service to transfer your data
+- open a new port for this pipeline to enable sending data from the log collector to the metadata enrichment service
+
+The following configuration can be used for these purposes:
+
+```yaml
+otellogs:
+  config:
+    merge:
+      receivers:
+        filelog/extrafiles:
+          include: [/var/log/extrafiles/extrafile.log]
+      exporters:
+        otlphttp/extrafiles:
+          endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4319
+      service:
+        pipelines:
+          logs/extrafiles:
+            receivers: [filelog/extrafiles]
+            exporters: [otlphttp/extrafiles]
+  daemonset:
+    extraVolumes:
+      - name: extrafiles-mount
+        hostPath:
+          path: PATH_TO_YOUR_LOG_FILE
+          type: File
+    extraVolumeMounts:
+      - name: extrafiles-mount
+        mountPath: /var/log/extrafiles/extrafile.log
+        readOnly: true
+
+metadata:
+  logs:
+    config:
+      merge:
+        receivers:
+          otlp/extrafiles:
+            protocols:
+              http:
+                endpoint: 0.0.0.0:4319
+        service:
+          pipelines:
+            logs/extrafiles:
+              receivers: [otlp/extrafiles]
+              exporters: [sumologic/containers]
+      extraPorts:
+        - name: otlphttp2
+          containerPort: 4319
+          protocol: TCP
+```
 
 ## Filtering Prometheus Metrics by Namespace
 
