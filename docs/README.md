@@ -41,6 +41,7 @@ Documentation links:
 
   - [Upgrade from v0.17 to v1.0][migration-doc-v1]
   - [Upgrade from v1.3 to v2.0][migration-doc-v2]
+  - [Upgrade from v2 to v3][migration-doc-v3]
 
 - [Migration steps from `SumoLogic/fluentd-kubernetes-sumologic`][migration-steps]
 - [Troubleshooting Collection](/docs/troubleshoot-collection.md)
@@ -49,6 +50,7 @@ Documentation links:
 
 [migration-doc-v1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v1_migration_doc.md
 [migration-doc-v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2_migration_doc.md
+[migration-doc-v3]: /docs/v3-migration-doc.md
 [migration-steps]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/Migration_Steps.md
 
 ## Solution overview
