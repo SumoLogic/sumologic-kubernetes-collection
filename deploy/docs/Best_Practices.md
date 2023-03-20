@@ -703,8 +703,8 @@ fluentd:
         retry_timeout 72h
         ## do not limit number of requests
         retry_max_times 0
-        ## set maximum request size to 16m to avoid timeouts
-        max_request_size 16m
+        ## set maximum request size to 1m to avoid timeouts
+        max_request_size 1m
   metrics:
     extraOutputConf: |-
       ## use plugin's retry mechanisms, which uses exponential algorithm
