@@ -337,12 +337,20 @@ metadata:
           pipelines:
             logs/extrafiles:
               receivers: [otlp/extrafiles]
+              processors:
+                - memory_limiter
+                - batch
               exporters: [sumologic/containers]
       extraPorts:
         - name: otlphttp2
           containerPort: 4319
           protocol: TCP
 ```
+
+In the example above, two internally defined processors were used in metadata pipeline:
+[batch](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/batchprocessor) and
+[memory limiter](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/memorylimiterprocessor). If you need to
+change the parameters of these processors in any way, you can define your own and use them in this pipeline.
 
 ## Filtering Prometheus Metrics by Namespace
 
