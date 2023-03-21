@@ -13,7 +13,7 @@ func Test_Helm_FluentBit_Fluentd(t *testing.T) {
 	expectedMetrics := internal.DefaultExpectedFluentdFluentbitMetrics
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(12),
+		CheckSumologicSecret(13),
 		CheckFluentdMetadataLogsInstall,
 		CheckFluentdMetadataMetricsInstall,
 		CheckFluentdEventsInstall,
