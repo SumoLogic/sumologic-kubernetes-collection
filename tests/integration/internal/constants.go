@@ -160,7 +160,7 @@ var (
 		"node_load15",
 		"node_cpu_seconds_total",
 	}
-	OtelcolMetrics = []string{
+	DefaultOtelcolMetrics = []string{
 		"otelcol_exporter_enqueue_failed_log_records",
 		"otelcol_exporter_enqueue_failed_metric_points",
 		"otelcol_exporter_enqueue_failed_spans",
@@ -171,6 +171,8 @@ var (
 		"otelcol_process_runtime_total_alloc_bytes",
 		"otelcol_process_runtime_total_sys_memory_bytes",
 		"otelcol_process_uptime",
+	}
+	TracingOtelcolMetrics = []string{
 		"otelcol_loadbalancer_num_backend_updates",
 		"otelcol_loadbalancer_num_backends",
 		"otelcol_loadbalancer_num_resolutions",
@@ -225,7 +227,7 @@ func InitializeConstants() error {
 	}
 
 	DefaultExpectedMetrics = []string{}
-	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, OtelcolMetrics)
+	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics)
 	for _, metrics := range metricsGroupsWithOtelcol {
 		DefaultExpectedMetrics = append(DefaultExpectedMetrics, metrics...)
 	}
