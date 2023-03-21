@@ -290,6 +290,33 @@ sumologic.com/app: otelcol
 {{ template "sumologic.metadata.name.metrics.targetallocator.name" . }}
 {{- end -}}
 
+{{/*
+Return the metrics format for the default Sumologic exporter for metrics.
+'{{ include "metrics.otelcol.exporter.format" . }}'
+*/}}
+{{- define "metrics.otelcol.exporter.format" -}}
+{{- if eq .Values.sumologic.metrics.sourceType "http" -}}
+{{- "prometheus" -}}
+{{- else if eq .Values.sumologic.metrics.sourceType "otlp" -}}
+{{- "otlp" -}}
+{{- else -}}
+{{- fail "`sumologic.metrics.sourceType` can only be `http` or `otlp`" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the endpoint for the default Sumologic exporter for metrics.
+'{{ include "metrics.otelcol.exporter.endpoint" . }}'
+*/}}
+{{- define "metrics.otelcol.exporter.endpoint" -}}
+{{- if eq .Values.sumologic.metrics.sourceType "http" -}}
+{{- "${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}" -}}
+{{- else if eq .Values.sumologic.metrics.sourceType "otlp" -}}
+{{- "${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}" -}}
+{{- else -}}
+{{- fail "`sumologic.metrics.sourceType` can only be `http` or `otlp`" -}}
+{{- end -}}
+{{- end -}}
 
 {{/*
 Generate metrics match configuration

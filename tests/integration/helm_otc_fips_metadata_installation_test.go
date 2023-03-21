@@ -16,7 +16,7 @@ func Test_Helm_Default_OT_FIPS(t *testing.T) {
 	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(14),
+		CheckSumologicSecret(15),
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,

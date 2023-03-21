@@ -2,6 +2,7 @@ sumologic:
   metrics:
     metadata:
       provider: otelcol
+    sourceType: otlp
 
 metadata:
   image:

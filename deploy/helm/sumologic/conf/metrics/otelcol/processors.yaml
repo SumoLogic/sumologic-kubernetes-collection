@@ -115,6 +115,7 @@ resource/remove_k8s_pod_pod_name:
     - action: delete
       key: k8s.pod.pod_name
 
+{{- if eq .Values.sumologic.metrics.sourceType "http" }}
 ## NOTE: below listed rules could be simplified if routingprocessor
 ## supports regex matching. At this point we could group route entries
 ## going to the same set of exporters.
@@ -163,6 +164,7 @@ routing:
     - exporters:
         - sumologic/default
       value: /prometheus.metrics.applications.custom
+{{- end }}
 
 ## Configuration for Source Processor
 ## Source processor adds Sumo Logic related metadata
@@ -176,6 +178,7 @@ source:
 sumologic_schema:
   add_cloud_namespace: false
 
+{{- if eq .Values.sumologic.metrics.sourceType "http" }}
 transform/prepare_routing:
   error_mode: ignore
   metric_statements:
@@ -189,6 +192,14 @@ transform/prepare_routing:
         - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.node") where resource.attributes["job"] == "node-exporter"
         - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.scheduler") where resource.attributes["job"] == "kube-scheduler"
         - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.state") where resource.attributes["job"] == "kube-state-metrics"
+{{ else }}
+transform/drop_routing_attribute:
+  error_mode: ignore
+  metric_statements:
+    - context: resource
+      statements:
+        - delete_key(attributes, "http_listener_v2_path")
+{{- end }}
 
 transform/remove_name:
   error_mode: ignore

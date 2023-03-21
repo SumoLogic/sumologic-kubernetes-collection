@@ -1,6 +1,6 @@
 sumologic:
   metrics:
-    enabled: false
+    sourceType: otlp
   events:
     sourceType: otlp
   logs:

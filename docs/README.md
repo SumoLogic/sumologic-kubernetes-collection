@@ -40,6 +40,7 @@ Documentation links:
     - [Comparison of Fluentd and Opentelemetry Collector functionality](/docs/fluent/fluentd-otc-comparison.md)
     - [Comparison of Fluent Bit and Opentelemetry Collector functionality](/docs/fluentbit-otc-comparison.md)
     - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
+    - [OTLP source](/docs/otlp-source.md)
   - Fluentd and Fluent-Bit
     - [Adding Additional Fluentd Plugins](/docs/fluent/additional-fluentd-plugins.md)
     - [Container log parsing with Fluent-Bit (Docker, CRI-O, containerd)](/docs/fluent/container-logs.md)

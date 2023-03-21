@@ -7,8 +7,6 @@ The data needed to be converted to the formats the generic HTTP source supports 
 Recently, we've added support for directly sending data using the OTLP protocol to Sumo Logic. This is achieved using the [OTLP
 source][otlp_source]. This document explains how to use this new source with the Helm Chart.
 
-**Note:** This Chart currently only supports OTLP Source for the following signal types: logs, events
-
 ## Enabling the OTLP source
 
 ### For logs
@@ -18,6 +16,16 @@ Add the following to your configuration:
 ```yaml
 sumologic:
   logs:
+    sourceType: otlp
+```
+
+### For metrics
+
+Add the following to your configuration:
+
+```yaml
+sumologic:
+  metricss:
     sourceType: otlp
 ```
 

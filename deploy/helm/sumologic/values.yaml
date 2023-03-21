@@ -166,6 +166,11 @@ sumologic:
         default:
           name: (default-metrics)
           config-name: endpoint-metrics
+        default-otlp:
+          name: metrics-otlp
+          config-name: endpoint-metrics-otlp
+          properties:
+            content_type: Otlp
         apiserver:
           name: apiserver-metrics
           config-name: endpoint-metrics-apiserver
@@ -721,6 +726,10 @@ sumologic:
         selector:
           matchLabels:
             app: kube-prometheus-stack-prometheus
+
+    ## The type of source we send to in Sumo. The possible values are http and otlp.
+    ## Consult the documentation for more information.
+    sourceType: http
 
   ### Traces configuration
   ## Set the enabled flag to false to disable traces ingestion.

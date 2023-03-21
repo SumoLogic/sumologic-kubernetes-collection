@@ -4,6 +4,7 @@ import (
 	"path"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -140,4 +141,49 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 	}
 
 	require.Equal(t, expectedPipelineValue, otelConfig.Service.Pipelines.Metrics.Processors)
+}
+
+func TestMetadataSourceTypeOTLP(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/metrics/otelcol/configmap.yaml"
+
+	type OtelConfig struct {
+		Exporters struct {
+			Default struct {
+				MetricFormat string `yaml:"metric_format"`
+				Endpoint     string
+			} `yaml:"sumologic/default"`
+			Rest map[string]interface{} `yaml:",inline"`
+		}
+		Processors map[string]interface{}
+		Service    struct {
+			Pipelines struct {
+				Metrics struct {
+					Processors []string `yaml:"processors"`
+					Exporters  []string `yaml:"exporters"`
+				}
+			}
+		}
+	}
+
+	var otelConfig OtelConfig
+	valuesYaml := `
+sumologic:
+  metrics:
+    sourceType: otlp
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	assert.Equal(t, otelConfig.Exporters.Default.MetricFormat, "otlp")
+	assert.Equal(t, otelConfig.Exporters.Default.Endpoint, "${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}")
+	assert.Len(t, otelConfig.Exporters.Rest, 0)
+	assert.NotContains(t, otelConfig.Processors, "routing")
+	assert.NotContains(t, otelConfig.Processors, "transform/prepare_routing")
+	assert.Contains(t, otelConfig.Processors, "transform/drop_routing_attribute")
+	assert.NotContains(t, otelConfig.Service.Pipelines.Metrics.Processors, "routing")
+	assert.NotContains(t, otelConfig.Service.Pipelines.Metrics.Processors, "transform/prepare_routing")
+	assert.Contains(t, otelConfig.Service.Pipelines.Metrics.Processors, "transform/drop_routing_attribute")
+	assert.Equal(t, otelConfig.Service.Pipelines.Metrics.Exporters, []string{"sumologic/default"})
 }
