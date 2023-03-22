@@ -36,6 +36,21 @@ sumologic:
   endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
   cleanupEnabled: false
 
+  logs:
+    collector:
+      allowSideBySide: true
+    container:
+      k8sMetadataFilter:
+        ## uses docker_id as alias for uid as it's being used in plugin's code directly
+        tagToMetadataRegexp: .+?\.pods\.(?<namespace>[^_]+)_(?<pod_name>[^_]+)_(?<docker_id>(?<uid>[a-f0-9\-]{36}))\.(?<container_name>[^\._]+)\.(?<run_id>\d+)\.log$
+      extraFilterPluginConf: |
+        # Filter out receiver-mock logs to prevent snowball effect
+        <match **receiver-mock**>
+          @type null
+        </match>
+      multiline:
+        enabled: false
+
 telegraf-operator:
   enabled: true
   replicaCount: 1
@@ -70,6 +85,7 @@ falco:
           (container.image.repository endswith ".amazonaws.com/eks/kube-proxy")
 
 fluent-bit:
+  enabled: true
   config:
     inputs: |
       [INPUT]
@@ -155,20 +171,6 @@ fluent-bit:
           Match                containers.var.log.pods.receiver-mock*
           Exclude              log .*
 
-fluentd:
-  logs:
-    containers:
-      k8sMetadataFilter:
-        ## uses docker_id as alias for uid as it's being used in plugin's code directly
-        tagToMetadataRegexp: .+?\.pods\.(?<namespace>[^_]+)_(?<pod_name>[^_]+)_(?<docker_id>(?<uid>[a-f0-9\-]{36}))\.(?<container_name>[^\._]+)\.(?<run_id>\d+)\.log$
-      extraFilterPluginConf: |
-        # Filter out receiver-mock logs to prevent snowball effect
-        <match **receiver-mock**>
-          @type null
-        </match>
-      multiline:
-        enabled: false
-
 otellogs:
   config:
     receivers:
@@ -230,8 +232,6 @@ metadata:
         service:
           pipelines:
             logs/fluent/containers:
-              receivers:
-                - fluentforward
               processors:
                 - memory_limiter
                 - filter/include_fluent_tag_containers
@@ -246,8 +246,6 @@ metadata:
                 - attributes/remove_fluent_tag
                 - resource/containers_copy_node_to_host
                 - batch
-              exporters:
-                - sumologic/containers
             logs/fluent/systemd:
               processors:
                 - memory_limiter
