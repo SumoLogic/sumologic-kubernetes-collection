@@ -1591,12 +1591,11 @@ kube-prometheus-stack:
       ## see docs/scraped_metrics.md
       ## apiserver_request_count
       ## apiserver_request_total
-      ## apiserver_request_duration_seconds_bucket
       ## apiserver_request_duration_seconds_count
       ## apiserver_request_duration_seconds_sum
       metricRelabelings:
         - action: keep
-          regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds)_(?:count|sum|bucket))
+          regex: (?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds)_(?:count|sum))
           sourceLabels: [__name__]
   kubelet:
     serviceMonitor:
@@ -2129,7 +2128,6 @@ kube-prometheus-stack:
         ## api server metrics:
         ## apiserver_request_count
         ## apiserver_request_total
-        ## apiserver_request_duration_seconds_bucket
         ## apiserver_request_duration_seconds_count
         ## apiserver_request_duration_seconds_sum
         ## etcd_request_cache_get_duration_seconds_count
@@ -2148,7 +2146,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds)_(?:count|sum|bucket)|etcd_helper_cache_(?:hit|miss)_(?:count|total))
+              regex: apiserver;(?:apiserver_request_(?:count|total)|apiserver_request_(?:duration_seconds)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total))
               sourceLabels: [job, __name__]
         ## kubelet metrics:
         ## kubelet_docker_operations_errors

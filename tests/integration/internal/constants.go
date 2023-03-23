@@ -107,7 +107,6 @@ var (
 		"apiserver_request_total",
 		"apiserver_request_duration_seconds_count",
 		"apiserver_request_duration_seconds_sum",
-		"apiserver_request_duration_seconds_bucket",
 	}
 	KubeEtcdMetrics = []string{
 		"etcd_mvcc_db_total_size_in_bytes",
