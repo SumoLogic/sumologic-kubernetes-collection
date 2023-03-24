@@ -214,7 +214,7 @@ data:
       count = var.create_fields ? 1 : 0
 
       lifecycle {
-        ignore_changes = ["field_name", "data_type"]
+        ignore_changes = [field_name, data_type]
       }
 
       field_name = "cluster"
@@ -225,7 +225,7 @@ data:
       count = var.create_fields ? 1 : 0
 
       lifecycle {
-        ignore_changes = ["field_name", "data_type"]
+        ignore_changes = [field_name, data_type]
       }
 
       field_name = "container"
@@ -236,7 +236,7 @@ data:
       count = var.create_fields ? 1 : 0
 
       lifecycle {
-        ignore_changes = ["field_name", "data_type"]
+        ignore_changes = [field_name, data_type]
       }
 
       field_name = "daemonset"
@@ -247,7 +247,7 @@ data:
       count = var.create_fields ? 1 : 0
 
       lifecycle {
-        ignore_changes = ["field_name", "data_type"]
+        ignore_changes = [field_name, data_type]
       }
 
       field_name = "deployment"
@@ -258,7 +258,7 @@ data:
       count = var.create_fields ? 1 : 0
 
       lifecycle {
-        ignore_changes = ["field_name", "data_type"]
+        ignore_changes = [field_name, data_type]
       }
 
       field_name = "host"
@@ -269,7 +269,7 @@ data:
       count = var.create_fields ? 1 : 0
 
       lifecycle {
-        ignore_changes = ["field_name", "data_type"]
+        ignore_changes = [field_name, data_type]
       }
 
       field_name = "namespace"
@@ -280,7 +280,7 @@ data:
       count = var.create_fields ? 1 : 0
 
       lifecycle {
-        ignore_changes = ["field_name", "data_type"]
+        ignore_changes = [field_name, data_type]
       }
 
       field_name = "node"
@@ -291,7 +291,7 @@ data:
       count = var.create_fields ? 1 : 0
 
       lifecycle {
-        ignore_changes = ["field_name", "data_type"]
+        ignore_changes = [field_name, data_type]
       }
 
       field_name = "pod"
@@ -302,7 +302,7 @@ data:
       count = var.create_fields ? 1 : 0
 
       lifecycle {
-        ignore_changes = ["field_name", "data_type"]
+        ignore_changes = [field_name, data_type]
       }
 
       field_name = "service"
@@ -313,7 +313,7 @@ data:
       count = var.create_fields ? 1 : 0
 
       lifecycle {
-        ignore_changes = ["field_name", "data_type"]
+        ignore_changes = [field_name, data_type]
       }
 
       field_name = "statefulset"
