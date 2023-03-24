@@ -153,7 +153,7 @@ spec:
 {{- if or .Values.sumologic.collector.sources .Values.fluentd.logs.extraEnvVars }}
         env:
 {{- $ctx := .Values -}}
-{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs") -}}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "logs") | nindent 8 -}}
         {{- if .Values.fluentd.logs.extraEnvVars }}
 {{ toYaml .Values.fluentd.logs.extraEnvVars | nindent 8 }}
         {{- end }}

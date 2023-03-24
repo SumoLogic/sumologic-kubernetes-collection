@@ -1223,8 +1223,8 @@ Example:
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
 {{- range $name, $source := (index .Context.sumologic.collector.sources $type) -}}
-{{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" $type  "Name" $name ) | nindent 8 -}}
-{{- end }}
+{{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" $type  "Name" $name ) -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -1234,7 +1234,7 @@ Example:
 
 {{ include "kubernetes.sources.env" (dict "Context" .Values "Type" "metrics" "Name" $name ) }}
 */}}
-{{- define "kubernetes.sources.env" -}}
+{{ define "kubernetes.sources.env" }}
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
 {{- $name := .Name -}}
@@ -1243,7 +1243,7 @@ Example:
     secretKeyRef:
       name: sumologic
       key: {{ template "terraform.sources.config-map-variable" (dict "Type" $type "Context" $ctx "Name" $name) }}
-{{- end -}}
+{{ end }}
 
 
 {{/*
