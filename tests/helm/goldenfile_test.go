@@ -100,9 +100,6 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 				if err := helm.UnmarshalK8SYamlE(t, document, &expectedObject); err != nil {
 					continue
 				}
-				if expectedObject.GetKind() == "" && expectedObject.GetName() == "" {
-					continue
-				}
 				yamlDocuments = append(yamlDocuments, document)
 			}
 			yamlDoc := "---" + yamlDocuments[objectIndex]
