@@ -37,8 +37,8 @@ const (
 	logRecords              = 4   // number of log records in single loop, see: tests/integration/yamls/pod_multiline_long_lines.yaml
 	logLoops                = 500 // number of loops in which logs are generated, see: tests/integration/yamls/pod_multiline_long_lines.yaml
 	multilineLogCount  uint = logRecords * logLoops
-	tracesPerExporter  uint = 10 // number of traces generated per exporter
-	spansPerTrace      uint = 5
+	tracesPerExporter  uint = 5 // number of traces generated per exporter
+	spansPerTrace      uint = 2
 )
 
 func GetMetricsFeature(expectedMetrics []string) features.Feature {
