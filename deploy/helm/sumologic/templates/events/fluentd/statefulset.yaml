@@ -106,7 +106,7 @@ spec:
           periodSeconds: 5
         env:
 {{- $ctx := .Values -}}
-{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "events") -}}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "events") | nindent 8 -}}
 {{- if .Values.fluentd.events.extraEnvVars }}
 {{ toYaml .Values.fluentd.events.extraEnvVars | nindent 8 }}
 {{- end }}
