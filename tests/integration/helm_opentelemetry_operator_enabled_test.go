@@ -27,6 +27,13 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		waitDuration = time.Minute * 2
 	)
 
+	installChecks := []featureCheck{
+		CheckSumologicSecret(2),
+		CheckTracesInstall,
+	}
+
+	featInstall := GetInstallFeature(installChecks)
+
 	// It is required to add v1alpha1 OT Operator Scheme to K8s Scheme
 	// https://github.com/open-telemetry/opentelemetry-operator/issues/772
 	if err := otoperatorappsv1.AddToScheme(scheme.Scheme); err != nil {
@@ -100,5 +107,5 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		}).
 		Feature()
 
-	testenv.Test(t, featTraces, featOpenTelemetryOperator)
+	testenv.Test(t, featInstall, featTraces, featOpenTelemetryOperator)
 }
