@@ -1,0 +1,22 @@
+---
+# Source: sumologic/templates/logs/collector/otelcol/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-logs-collector
+    sumologic.com/scrape: "true"
+    sumologic.com/app: otelcol-logs-collector
+    sumologic.com/component: logs
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  selector:
+    app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  ports:
+    - name: metrics
+      port: 8888
+      targetPort: 8888
+      protocol: TCP

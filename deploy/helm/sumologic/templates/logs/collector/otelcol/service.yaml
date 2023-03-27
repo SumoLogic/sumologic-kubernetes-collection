@@ -1,4 +1,4 @@
-{{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
+{{- if and (eq (include "logs.collector.otelcol.enabled" .) "true") (.Values.otellogs.metrics.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,10 +14,8 @@ spec:
   selector:
     app.kubernetes.io/name: {{ template "sumologic.labels.app.logs.collector.pod" . }}
   ports:
-  {{- if eq .Values.otellogs.metrics.enabled true }}
   - name: metrics
     port: 8888
     targetPort: 8888
     protocol: TCP
-  {{- end }}
 {{- end }}
