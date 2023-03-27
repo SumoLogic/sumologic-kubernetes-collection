@@ -1,7 +1,7 @@
-# Service will point to otelcolInstrumentation as deprecated and after 2023-01-15 should be removed.
 {{ $otelcolInstrumentationEnabled := .Values.otelcolInstrumentation.enabled }}
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
 {{- if and $tracesEnabled $otelcolInstrumentationEnabled }}
+# Service will point to otelcolInstrumentation as deprecated and after 2023-01-15 should be removed.
 apiVersion: v1
 kind: Service
 metadata:

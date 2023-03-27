@@ -101,7 +101,7 @@ if should_create_fields ; then
 
     declare -ra FIELDS=({{ include "helm-toolkit.utils.joinListWithSpaces" .Values.sumologic.logs.fields }})
     for FIELD in "${FIELDS[@]}" ; do
-        FIELD_ID=$( echo "${FIELDS_RESPONSE}" | jq -r "select(.fieldName == \"${FIELD}\") | .fieldId" )
+        FIELD_ID=$( echo "${FIELDS_RESPONSE}" | jq -r "select(.fieldName | ascii_downcase == \"${FIELD}\") | .fieldId" )
         # Don't try to import non existing fields
         if [[ -z "${FIELD_ID}" ]]; then
             continue

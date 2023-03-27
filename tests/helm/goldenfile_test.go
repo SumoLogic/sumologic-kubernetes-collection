@@ -90,8 +90,18 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 		// we intentionally use the Helm output directly here, because it's more human-readable
 		regenerateGoldenFiles := os.Getenv("REGENERATE_GOLDENFILES") != ""
 		if regenerateGoldenFiles && !assert.Equal(t, expectedObject, *actualObject) {
-			t.Logf("Regenerating output for %s", valuesFileName)
-			yamlDocuments := strings.Split(renderedYamlString, "---")[1:] // Helm output starts with ---, so we skip the first result
+			yamlDocuments := []string{}
+			preYamlDocuments := strings.Split(renderedYamlString, "---")
+			// Try to parse all documents to eliminate empty ones:
+			// - Helm output starts with ---
+			// - Output consisting of comments only
+			for _, document := range preYamlDocuments {
+				var expectedObject unstructured.Unstructured
+				if err := helm.UnmarshalK8SYamlE(t, document, &expectedObject); err != nil {
+					continue
+				}
+				yamlDocuments = append(yamlDocuments, document)
+			}
 			yamlDoc := "---" + yamlDocuments[objectIndex]
 			outputFile, err := os.OpenFile(outputFileName, os.O_WRONLY, os.ModePerm)
 			require.NoError(t, err)
