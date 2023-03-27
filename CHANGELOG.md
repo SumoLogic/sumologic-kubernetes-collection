@@ -7,6 +7,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.4.0]
+
+### Released 2023-03-27
+
+### Added
+
+- feat: Add extraPorts parameter to metadata.logs.statefulset [#2924]
+
+### Changed
+
+- chore(metrics): remove deprecated coredns and etcd metrics [#2899]
+- chore: upgrade otelcol to 0.73.0-sumo-1 [#2927]
+- chore: bump setup image to 3.7.0 [#2950]
+
+### Fixed
+
+- fix(metrics): drop cadvisor container metrics without metadata [#2918]
+- fix(logs): reduce the queue size of the logs collector [#2923]
+- fix(cleanup): proxy env vars updated. fixes #2928 [#2932]
+- fix(metrics): drop apiserver request histograms [#2952]
+- fix(setup): do not create field which already exist [#2953]
+
+[#2924]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2924
+[#2899]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2899
+[#2927]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2927
+[#2950]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2950
+[#2918]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2918
+[#2923]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2923
+[#2932]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2932
+[#2952]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2952
+[#2953]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2953
+[v3.4.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.4.0
+
 ## [v3.3.0]
 
 ### Released 2023-03-01
