@@ -24,7 +24,7 @@ func Test_Helm_Default_OT(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics)
+	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
 
 	featLogs := GetLogsFeature()
 

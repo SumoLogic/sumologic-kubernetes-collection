@@ -20,7 +20,7 @@ func Test_Helm_FluentBit_Fluentd(t *testing.T) {
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics)
+	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
 
 	featLogs := GetLogsFeature()
 

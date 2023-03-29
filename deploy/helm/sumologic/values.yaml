@@ -423,6 +423,20 @@ sumologic:
       ## Defines metrics metadata enrichment provider - `otelcol` or `fluentd`. `otelcol` is the default and is recommended. `fluentd` is deprecated.
       provider: otelcol
 
+    collector:
+      ### Experimental otel Prometheus replacement
+      ## To enable, you need opentelemetry-operator enabled as well
+      ## Currently not feature complete, only intended for testing
+      otelcol:
+        enabled: false
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: 1000m
+          requests:
+            memory: 768Mi
+            cpu: 500m
+
     otelcol:
       ## Includes additional processors into pipelines.
       ## It can be used for filtering metrics, renaming, changing metadata and so on.
@@ -4625,6 +4639,9 @@ opentelemetry-operator:
       issuerRef: {}
 
   manager:
+    collectorImage:
+      repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
+      tag: "0.73.0-sumo-1"
     env:
     resources:
       limits:

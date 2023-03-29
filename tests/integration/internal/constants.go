@@ -38,6 +38,8 @@ const (
 	// useful regular expressions for matching metadata
 	PodDeploymentSuffixRegex = "-[a-z0-9]{9,10}-[a-z0-9]{4,5}" // the Pod suffix for Deployments
 	PodDaemonSetSuffixRegex  = "-[a-z0-9]{4,5}"
+	NetworkPortRegex         = "\\d{1,5}"
+	IpRegex                  = "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"
 	IpWithPortRegex          = "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,5}"
 	NodeNameRegex            = ".*-control-plane" // node name for KinD TODO: get this from the cluster directly instead
 	NotUndefinedRegex        = "(?!undefined$).*"

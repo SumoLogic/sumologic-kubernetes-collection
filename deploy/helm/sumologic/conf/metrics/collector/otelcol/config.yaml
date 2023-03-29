@@ -1,0 +1,123 @@
+receivers:
+  prometheus:
+    config:
+      global:
+        scrape_interval: 30s
+      scrape_configs:
+        ## These scrape configs are for kubelet metrics
+        ## Prometheus operator does this by manually maintaining a Service with Endpoints for all Nodes
+        ## We don't have that capability, so we need to use a static configuration
+        - job_name: kubelet
+          scheme: https
+          authorization:
+            credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          tls_config:
+            ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            insecure_skip_verify: true
+          honor_labels: true
+          kubernetes_sd_configs:
+            - role: node
+          metric_relabel_configs:
+            - action: keep
+              regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
+              source_labels: [__name__]
+            # TODO: The below can't be used due to https://github.com/open-telemetry/opentelemetry-operator/issues/958
+            # - action: labeldrop
+            #   regex: id
+          relabel_configs: &relabel_configs # partially copied from what operator generates
+            - source_labels:
+              - __meta_kubernetes_node_name
+              target_label: node
+            - source_labels:
+              - __meta_kubernetes_namespace
+              target_label: namespace
+            - source_labels:
+              - __meta_kubernetes_pod_name
+              target_label: pod
+            - source_labels:
+              - __meta_kubernetes_pod_container_name
+              target_label: container
+            - target_label: endpoint
+              replacement: https-metrics
+            - source_labels:
+              - __metrics_path__
+              target_label: metrics_path
+              action: replace
+            - source_labels:
+              - __address__
+              target_label: instance
+              action: replace
+        - job_name: cadvisor
+          scheme: https
+          authorization:
+            credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          tls_config:
+            ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            insecure_skip_verify: true
+          honor_labels: true
+          metrics_path: /metrics/cadvisor
+          kubernetes_sd_configs:
+            - role: node
+          metric_relabel_configs:
+            - action: replace
+              regex: .*
+              replacement: kubelet
+              source_labels: [__name__]
+              target_label: job
+            - action: keep
+              regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
+              source_labels: [__name__]
+            ## Drop container metrics with container tag set to an empty string:
+            ## these are the pod aggregated container metrics which can be aggregated
+            ## in Sumo anyway. There's also some cgroup-specific time series we also
+            ## do not need.
+            - action: drop
+              source_labels: [__name__, container]
+              regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes);$
+            - action: labelmap
+              regex: container_name
+              replacement: container
+            - action: drop
+              source_labels: [container]
+              regex: POD
+            # TODO: The below can't be used due to https://github.com/open-telemetry/opentelemetry-operator/issues/958
+            # - action: labeldrop
+            #   regex: (id|name)
+          relabel_configs: *relabel_configs  # partially copied from what operator generates
+    target_allocator:
+      endpoint: http://{{ template "sumologic.metadata.name.metrics.targetallocator.name" . }}
+      interval: 30s
+      collector_id: ${POD_NAME}
+extensions:
+  health_check: {}
+{{ if .Values.metadata.persistence.enabled }}
+  ## Configuration for File Storage extension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
+  file_storage:
+    directory: /var/lib/storage/otc
+    timeout: 10s
+    compaction:
+      on_rebound: true
+      directory: /tmp
+{{ end }}
+  pprof: {}
+exporters:
+{{ tpl (.Files.Get "conf/metrics/otelcol/exporters.yaml") . | indent 2 }}
+processors:
+{{ tpl (.Files.Get "conf/metrics/otelcol/processors.yaml") . | indent 2 }}
+service:
+  telemetry:
+    logs:
+      level: {{ .Values.metadata.metrics.logLevel }}
+    metrics:
+      address: 0.0.0.0:8888 # this is the default, but setting it explicitly lets the operator add it automatically
+  extensions:
+    - health_check
+{{- if .Values.metadata.persistence.enabled }}
+    - file_storage
+{{- end }}
+    - pprof
+  pipelines:
+    metrics:
+{{ tpl (.Files.Get "conf/metrics/otelcol/pipeline.yaml") . | indent 6 }}
+

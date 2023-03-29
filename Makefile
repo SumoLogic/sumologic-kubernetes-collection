@@ -7,7 +7,7 @@ lint: chart-lint docs-lint tests-lint
 chart-lint: helm-lint yaml-lint shellcheck
 
 .PHONY: docs-lint
-docs-lint: markdown-lint markdown-links-lint
+docs-lint: markdown-lint markdown-links-lint check-configuration-keys
 
 .PHONY: tests-lint
 tests-lint: template-tests-lint integration-tests-lint
@@ -65,7 +65,7 @@ integration-tests-lint:
 # Formatters
 
 .PHONY: format
-format: markdown-table-formatter-format yaml-format
+format: markdown-format yaml-format
 
 .PHONY: markdown-format
 markdown-format:

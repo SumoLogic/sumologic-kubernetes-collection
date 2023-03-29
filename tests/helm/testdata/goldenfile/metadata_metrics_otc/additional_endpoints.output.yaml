@@ -106,6 +106,12 @@ data:
         send_batch_max_size: 2048
         send_batch_size: 1024
         timeout: 1s
+      groupbyattrs:
+        keys:
+        - container
+        - namespace
+        - pod
+        - service
       k8s_tagger:
         extract:
           delimiter: _
@@ -155,6 +161,11 @@ data:
           key: prometheus_service
         - action: delete
           key: service
+        - action: upsert
+          from_attribute: service.name
+          key: job
+        - action: delete
+          key: service.name
         - action: upsert
           key: _origin
           value: kubernetes
@@ -280,6 +291,7 @@ data:
           processors:
           - memory_limiter
           - metricstransform
+          - groupbyattrs
           - resource
           - k8s_tagger
           - source

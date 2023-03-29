@@ -10,6 +10,7 @@ exporters:
 processors:
   - memory_limiter
   - metricstransform
+  - groupbyattrs
   - resource
   - k8s_tagger
   - source
@@ -24,4 +25,8 @@ processors:
   - batch
   - routing
 receivers:
+{{- if not .Values.sumologic.metrics.collector.otelcol.enabled }}
   - telegraf
+{{- else }}
+  - prometheus
+{{- end }}

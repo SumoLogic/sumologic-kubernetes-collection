@@ -1,0 +1,32 @@
+sumologic:
+  logs:
+    enabled: false
+  traces:
+    enabled: false
+  events:
+    enabled: false
+  metrics:
+    enabled: true
+    remoteWriteProxy:
+      enabled: false
+    collector:
+      otelcol:
+        enabled: true
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 50m
+
+kube-prometheus-stack:
+  prometheus:
+    enabled: false
+  prometheusOperator:
+    enabled: false
+
+opentelemetry-operator:
+  enabled: true
+  admissionWebhooks:
+    create: false
+  manager:
+    env:
+      ENABLE_WEBHOOKS: "false"
