@@ -1,0 +1,57 @@
+{{- if and (eq (include "metrics.otelcol.enabled" .) "true") .Values.sumologic.metrics.collector.otelcol.enabled }}
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: {{ template "sumologic.metadata.name.metrics.collector.opentelemetrycollector" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.metrics.collector" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  mode: statefulset
+  replicas: 3
+  serviceAccount: {{ template "sumologic.metadata.name.metrics.collector.serviceaccount" . }}
+  targetAllocator:
+    serviceAccount: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
+    enabled: true
+    prometheusCR:
+      enabled: true
+  env:
+{{- $ctx := .Values -}}
+{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics") | nindent 4 -}}
+{{- include "proxy-env-variables" . | nindent 4 -}}
+{{- if .Values.metadata.metrics.statefulset.extraEnvVars }}
+{{ toYaml .Values.metadata.metrics.statefulset.extraEnvVars | nindent 4 }}
+{{- end }}
+  ports:
+  - name: pprof
+    port: 1777
+  resources:
+    {{ .Values.sumologic.metrics.collector.otelcol.resources | toYaml | nindent 4 }}
+  volumes:
+  - name: tmp
+    emptyDir: {}
+  volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+{{- if .Values.metadata.persistence.enabled }}
+  - name: file-storage
+    mountPath: /var/lib/storage/otc
+{{- end }}
+{{- if .Values.metadata.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: file-storage
+{{- if .Values.metadata.persistence.pvcLabels }}
+      labels:
+{{ toYaml .Values.metadata.persistence.pvcLabels | indent 8 }}
+{{- end }}
+    spec:
+      accessModes: [{{ .Values.metadata.persistence.accessMode }}]
+      storageClassName: {{ .Values.metadata.persistence.storageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.metadata.persistence.size }}
+{{- end }}
+  config: |
+{{- (tpl (.Files.Get "conf/metrics/collector/otelcol/config.yaml") .) | nindent 4 }}
+{{- end }}

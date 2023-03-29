@@ -29,19 +29,23 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
+type MetricsCollector string
+
 const (
-	tickDuration            = 3 * time.Second
-	waitDuration            = 5 * time.Minute
-	expectedEventCount uint = 50 // number determined experimentally
-	logsGeneratorCount uint = 1000
-	logRecords              = 4   // number of log records in single loop, see: tests/integration/yamls/pod_multiline_long_lines.yaml
-	logLoops                = 500 // number of loops in which logs are generated, see: tests/integration/yamls/pod_multiline_long_lines.yaml
-	multilineLogCount  uint = logRecords * logLoops
-	tracesPerExporter  uint = 5 // number of traces generated per exporter
-	spansPerTrace      uint = 2
+	tickDuration                        = 3 * time.Second
+	waitDuration                        = 1 * time.Minute
+	expectedEventCount uint             = 50 // number determined experimentally
+	logsGeneratorCount uint             = 1000
+	logRecords                          = 4   // number of log records in single loop, see: tests/integration/yamls/pod_multiline_long_lines.yaml
+	logLoops                            = 500 // number of loops in which logs are generated, see: tests/integration/yamls/pod_multiline_long_lines.yaml
+	multilineLogCount  uint             = logRecords * logLoops
+	tracesPerExporter  uint             = 5 // number of traces generated per exporter
+	spansPerTrace      uint             = 2
+	Prometheus         MetricsCollector = "prometheus"
+	Otelcol            MetricsCollector = "otelcol"
 )
 
-func GetMetricsFeature(expectedMetrics []string) features.Feature {
+func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector) features.Feature {
 	return features.New("metrics").
 		Assess("expected metrics are present",
 			stepfuncs.WaitUntilExpectedMetricsPresent(
@@ -105,7 +109,6 @@ func GetMetricsFeature(expectedMetrics []string) features.Feature {
 						"deployment":                   "receiver-mock",
 						"endpoint":                     "https-metrics",
 						"image":                        "sumologic/kubernetes-tools:.*",
-						"instance":                     internal.IpWithPortRegex,
 						"job":                          "kubelet",
 						"metrics_path":                 "/metrics/cadvisor",
 						"namespace":                    "receiver-mock",
@@ -114,11 +117,30 @@ func GetMetricsFeature(expectedMetrics []string) features.Feature {
 						"pod_labels_pod-template-hash": ".+",
 						"pod_labels_service":           "receiver-mock",
 						"pod":                          podList.Items[0].Name,
-						"prometheus_replica":           fmt.Sprintf("prometheus-%s-.*-0", releaseName),
-						"prometheus_service":           fmt.Sprintf("%s-.*-kubelet", releaseName),
-						"prometheus":                   fmt.Sprintf("%s/%s-.*-prometheus", namespace, releaseName),
 						"replicaset":                   "receiver-mock-.*",
 						"service":                      "receiver-mock",
+					}
+					prometheusLabels := receivermock.Labels{
+						"instance":           internal.IpWithPortRegex,
+						"prometheus_replica": fmt.Sprintf("prometheus-%s-.*-0", releaseName),
+						"prometheus":         fmt.Sprintf("%s/%s-.*-prometheus", namespace, releaseName),
+						"prometheus_service": fmt.Sprintf("%s-.*-kubelet", releaseName),
+					}
+					otelcolLabels := receivermock.Labels{
+						"http.scheme":         "http.",
+						"net.host.name":       internal.IpRegex,
+						"net.host.port":       internal.NetworkPortRegex,
+						"service.instance.id": internal.IpWithPortRegex,
+					}
+
+					if metricsCollector == Prometheus {
+						for key, value := range prometheusLabels {
+							expectedLabels[key] = value
+						}
+					} else if metricsCollector == Otelcol {
+						for key, value := range otelcolLabels {
+							expectedLabels[key] = value
+						}
 					}
 
 					log.V(0).InfoS("sample's labels", "labels", labels)
@@ -499,6 +521,52 @@ func CheckOtelcolMetadataMetricsInstall(builder *features.FeatureBuilder) *featu
 						},
 						resources.WithLabelSelector(
 							fmt.Sprintf("app=%s-sumologic-otelcol-metrics", ctxopts.HelmRelease(ctx)),
+						),
+					)
+				require.NoError(t,
+					wait.For(cond,
+						wait.WithTimeout(waitDuration),
+						wait.WithInterval(tickDuration),
+					),
+				)
+				return ctx
+			})
+}
+
+func CheckOtelcolMetricsCollectorInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("otelcol metrics collector statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-metrics-collector"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-metrics"),
+					},
+				),
+			),
+		).
+		Assess("otelcol metrics collector buffers PVCs are created and bound",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
+				pvcs := corev1.PersistentVolumeClaimList{}
+				cond := conditions.
+					New(res).
+					ResourceListMatchN(&pvcs, 1,
+						func(object k8s.Object) bool {
+							pvc := object.(*corev1.PersistentVolumeClaim)
+							if pvc.Status.Phase != corev1.ClaimBound {
+								log.V(0).Infof("PVC %q not bound yet", pvc.Name)
+								return false
+							}
+							return true
+						},
+						resources.WithLabelSelector(
+							fmt.Sprintf("app.kubernetes.io/instance=%s.%s-sumologic-metrics", ctxopts.Namespace(ctx), ctxopts.HelmRelease(ctx)),
 						),
 					)
 				require.NoError(t,

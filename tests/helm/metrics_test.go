@@ -121,6 +121,7 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 	expectedPipelineValue := []string{
 		"memory_limiter",
 		"metricstransform",
+		"groupbyattrs",
 		"resource",
 		"k8s_tagger",
 		"source",

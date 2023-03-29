@@ -217,6 +217,75 @@ sumologic.com/scrape: "true"
 {{- end -}}
 
 {{/*
+Definitions for metrics collector
+*/}}
+
+{{- define "sumologic.labels.app.metrics.collector" -}}
+{{- template "sumologic.fullname" . }}-metrics
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.collector.pod" -}}
+{{- template "sumologic.labels.app.metrics.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.clusterrole" -}}
+{{- template "sumologic.labels.app.metrics.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.clusterrolebinding" -}}
+{{- template "sumologic.labels.app.metrics.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.serviceaccount" -}}
+{{- template "sumologic.labels.app.metrics.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.metrics.collector.opentelemetrycollector" -}}
+{{- template "sumologic.labels.app.metrics.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.collector" -}}
+{{- template "sumologic.fullname" . }}-metrics
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.collector.opentelemetrycollector" -}}
+{{ template "sumologic.metadata.name.metrics.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.collector.serviceaccount" -}}
+{{ template "sumologic.metadata.name.metrics.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.collector.clusterrole" -}}
+{{ template "sumologic.metadata.name.metrics.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.collector.clusterrolebinding.prometheus" -}}
+{{ template "sumologic.metadata.name.metrics.collector" . }}-prometheus
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.collector.clusterrolebinding.metadata" -}}
+{{ template "sumologic.metadata.name.metrics.collector" . }}-metadata
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.targetallocator.name" -}}
+{{ template "sumologic.metadata.name.metrics.collector.opentelemetrycollector" . }}-targetallocator
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.targetallocator.serviceaccount" -}}
+{{ template "sumologic.metadata.name.metrics.targetallocator.name" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.targetallocator.clusterrole" -}}
+{{ template "sumologic.metadata.name.metrics.targetallocator.name" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.metrics.targetallocator.clusterrolebinding" -}}
+{{ template "sumologic.metadata.name.metrics.targetallocator.name" . }}
+{{- end -}}
+
+
+{{/*
 Generate metrics match configuration
 
 Example usage (as one line):

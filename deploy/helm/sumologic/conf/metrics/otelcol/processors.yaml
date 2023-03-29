@@ -9,6 +9,14 @@ batch:
   ## Time duration after which a batch will be sent regardless of size
   timeout: 1s
 
+# Prometheus receiver puts all labels in record-level attributes, and we need them in resource
+groupbyattrs:
+  keys:
+    - container
+    - namespace
+    - pod
+    - service
+
 ## The Kubernetes sprocessor automatically tags logs, metrics and traces with Kubernetes metadata like pod name, namespace name etc.
 ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
 k8s_tagger:
@@ -79,6 +87,11 @@ resource:
       key: prometheus_service
     - action: delete
       key: service
+    - action: upsert
+      from_attribute: service.name
+      key: job
+    - action: delete  # we don't want service.name to be set, as the schema processor translates it to "service"
+      key: service.name
     - action: upsert
       key: _origin  # add "_origin" metadata to metrics to keep the same format as for metrics from Fluentd
       value: kubernetes
