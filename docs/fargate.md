@@ -96,165 +96,189 @@ fi
 
 ## Metrics
 
-### Set up Volumes
+You can install metrics with or without persistence. See the following sections for more details:
 
-- Create EFS access points for metric Pods
+- [Persistence disabled](#persistence-disabled)
+- [Persistence enabled](#persistence-enabled)
 
-  ```bash
-  ## Create EFS access points for metric Pods
-  for (( counter=0; counter<"${METRIC_PODS}"; counter++ )); do
-    FSAP_ID="$(
-      aws efs describe-access-points \
-        --region "${AWS_REGION}" | 
+### Persistence Disabled
+
+To disable persistence, add the following configuration to `user-values.yaml`:
+
+```yaml
+metadata:
+  persistence:
+    enabled: false
+```
+
+**Note: This is going to disable persistence for logs and metrics.**
+
+### Persistence Enabled
+
+If you want to keep persistance (which is default configuration), you need to manually create Volumes for the Metric Pods.
+We recommend to create Persistance Volume Claims on the top of EFS Storage. In order to set up them, please apply the following steps:
+
+#### Create EFS access points for metric Pods
+
+```bash
+## Create EFS access points for metric Pods
+for (( counter=0; counter<"${METRIC_PODS}"; counter++ )); do
+  FSAP_ID="$(
+    aws efs describe-access-points \
+      --region "${AWS_REGION}" | 
+    jq ".AccessPoints[] | 
+      select(.RootDirectory.Path == \"/sumologic/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}\") |
+      .AccessPointId" \
+      --raw-output)"
+
+  if [[ -z "${FSAP_ID}" ]]; then
+    aws efs create-access-point \
+        --file-system-id "${EFS_ID}" \
+        --posix-user Uid=1000,Gid=1000 \
+        --root-directory "Path=/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter},CreationInfo={OwnerUid=1000,OwnerGid=1000,Permissions=777}" \
+        --region "${AWS_REGION}"
+  fi
+done
+```
+
+#### Create a security group to be used with mount targets
+  
+```bash
+## Create a security group to be used with mount targets
+export VPC_ID="$(
+  aws ec2 describe-vpcs \
+    --region "${AWS_REGION}" | \
+    jq ".Vpcs[] | 
+      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) | 
+      .VpcId" \
+    --raw-output)"
+
+aws ec2 create-security-group \
+  --description "Sumo Logic Collection for Fargate" \
+  --group-name "${SG_NAME}" \
+  --vpc-id "${VPC_ID}" \
+  --region "${AWS_REGION}"
+export SG_ID="$(
+  aws ec2 describe-security-groups \
+    --region "${AWS_REGION}" | \
+    jq ".SecurityGroups[] | 
+      select(.GroupName == \"${SG_NAME}\") | 
+      .GroupId" \
+      --raw-output)"
+```
+
+#### Authorize ingress for security group
+
+```bash
+## Authorize ingress for security group
+export CIDR_BLOCK="$(
+  aws ec2 describe-vpcs \
+    --region "${AWS_REGION}" | \
+    jq ".Vpcs[] | 
+      select(.VpcId == \"${VPC_ID}\") | 
+      .CidrBlock" \
+      --raw-output)"
+aws ec2 authorize-security-group-ingress \
+  --group-id "${SG_ID}" \
+  --protocol tcp \
+  --port 2049 \
+  --region "${AWS_REGION}" \
+  --cidr "${CIDR_BLOCK}"
+```
+
+#### Create mount targets for each pair of EFS access point and subnet
+
+```bash
+## Create mount targets for each pair of EFS access point and subnet
+export SUBNETS="$(
+  aws ec2 describe-subnets \
+    --region "${AWS_REGION}" | \
+    jq ".Subnets[] | 
+      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) | 
+      .SubnetId" \
+      --raw-output)"
+for subnet in $(echo "${SUBNETS}"); do
+    aws efs create-mount-target \
+    --file-system-id "${EFS_ID}" \
+    --subnet-id "${subnet}" \
+    --security-group "${SG_ID}" \
+    --region "${AWS_REGION}"
+done
+```
+
+#### Create `sumo-metrics-pvc.yaml` with PVC per access point
+
+```bash
+## Create `sumo-metrics-pvc.yaml` with PVC per access point
+echo "---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: efs-sc
+provisioner: efs.csi.aws.com
+volumeBindingMode: Immediate" | tee sumo-metrics-pvc.yaml
+
+for (( counter=0; counter<$METRIC_PODS; counter++ )); do
+  FSAP_ID="$(
+    aws efs describe-access-points \
+      --region "${AWS_REGION}" | \
       jq ".AccessPoints[] | 
-        select(.RootDirectory.Path == \"/sumologic/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}\") |
+        select(.RootDirectory.Path == \"/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}\") |
         .AccessPointId" \
         --raw-output)"
 
-    if [[ -z "${FSAP_ID}" ]]; then
-      aws efs create-access-point \
-          --file-system-id "${EFS_ID}" \
-          --posix-user Uid=1000,Gid=1000 \
-          --root-directory "Path=/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter},CreationInfo={OwnerUid=1000,OwnerGid=1000,Permissions=777}" \
-          --region "${AWS_REGION}"
-    fi
-  done
-  ```
-
-- Create a security group to be used with mount targets
-  
-  ```bash
-  ## Create a security group to be used with mount targets
-  export VPC_ID="$(
-    aws ec2 describe-vpcs \
-      --region "${AWS_REGION}" | \
-      jq ".Vpcs[] | 
-        select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) | 
-        .VpcId" \
-      --raw-output)"
-
-  aws ec2 create-security-group \
-    --description "Sumo Logic Collection for Fargate" \
-    --group-name "${SG_NAME}" \
-    --vpc-id "${VPC_ID}" \
-    --region "${AWS_REGION}"
-  export SG_ID="$(
-    aws ec2 describe-security-groups \
-      --region "${AWS_REGION}" | \
-      jq ".SecurityGroups[] | 
-        select(.GroupName == \"${SG_NAME}\") | 
-        .GroupId" \
-        --raw-output)"
-  ```
-
-- Authorize ingress for security group
-
-  ```bash
-  ## Authorize ingress for security group
-  export CIDR_BLOCK="$(
-    aws ec2 describe-vpcs \
-      --region "${AWS_REGION}" | \
-      jq ".Vpcs[] | 
-        select(.VpcId == \"${VPC_ID}\") | 
-        .CidrBlock" \
-        --raw-output)"
-  aws ec2 authorize-security-group-ingress \
-    --group-id "${SG_ID}" \
-    --protocol tcp \
-    --port 2049 \
-    --region "${AWS_REGION}" \
-    --cidr "${CIDR_BLOCK}"
-  ```
-
-- Create mount targets for each pair of EFS access point and subnet
-
-  ```bash
-  ## Create mount targets for each pair of EFS access point and subnet
-  export SUBNETS="$(
-    aws ec2 describe-subnets \
-      --region "${AWS_REGION}" | \
-      jq ".Subnets[] | 
-        select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) | 
-        .SubnetId" \
-        --raw-output)"
-  for subnet in $(echo "${SUBNETS}"); do
-      aws efs create-mount-target \
-      --file-system-id "${EFS_ID}" \
-      --subnet-id "${subnet}" \
-      --security-group "${SG_ID}" \
-      --region "${AWS_REGION}"
-  done
-  ```
-
-- Create `sumo-metrics-pvc.yaml` with PVC per access point:
-
-  ```bash
-  ## Create `sumo-metrics-pvc.yaml` with PVC per access point
   echo "---
-  apiVersion: storage.k8s.io/v1
-  kind: StorageClass
-  metadata:
-    name: efs-sc
-  provisioner: efs.csi.aws.com
-  volumeBindingMode: Immediate" | tee sumo-metrics-pvc.yaml
-
-  for (( counter=0; counter<$METRIC_PODS; counter++ )); do
-    FSAP_ID="$(
-      aws efs describe-access-points \
-        --region "${AWS_REGION}" | \
-        jq ".AccessPoints[] | 
-          select(.RootDirectory.Path == \"/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}\") |
-          .AccessPointId" \
-          --raw-output)"
-
-    echo "---
-  apiVersion: v1
-  kind: PersistentVolume
-  metadata:
-    name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}
-  spec:
-    capacity:
-      storage: 10Gi
-    volumeMode: Filesystem
-    accessModes:
-      - ReadWriteMany
-    persistentVolumeReclaimPolicy: Retain
-    storageClassName: efs-sc
-    claimRef:
-      namespace: ${NAMESPACE}
-      name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}
-    csi:
-      driver: efs.csi.aws.com
-      volumeHandle: ${EFS_ID}::${FSAP_ID}
-  ---
-  apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}
+  labels:
+    app: ${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  claimRef:
     namespace: ${NAMESPACE}
-  spec:
-    accessModes:
-      - ReadWriteMany
-    storageClassName: efs-sc
-    resources:
-      requests:
-        storage: 5Gi"
-  done | tee -a sumo-metrics-pvc.yaml
-  ```
+    name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: ${EFS_ID}::${FSAP_ID}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}
+  namespace: ${NAMESPACE}
+  labels:
+    app: ${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 5Gi"
+done | tee -a sumo-metrics-pvc.yaml
+```
 
-- Create namespace if it doesn't exist already
+#### Create namespace if it doesn't exist already
 
-  ```bash
-  ## Create namespace if it doesn't exist already
-  kubectl create namespace "${NAMESPACE}"
-  ```
+```bash
+## Create namespace if it doesn't exist already
+kubectl create namespace "${NAMESPACE}"
+```
 
-- Apply `sumo-metrics-pvc.yaml`
+#### Apply `sumo-metrics-pvc.yaml`
 
-  ```bash
-  ## Apply `sumo-metrics-pvc.yaml`
-  kubectl apply -f sumo-metrics-pvc.yaml -n "${NAMESPACE}"
-  ```
+```bash
+## Apply `sumo-metrics-pvc.yaml`
+kubectl apply -f sumo-metrics-pvc.yaml -n "${NAMESPACE}"
+```
 
 ### Install or upgrade collection
 
@@ -280,4 +304,89 @@ helm upgrade \
 
 ### Troubleshooting
 
-#### Pods are in Pending state
+#### Helm installation failed
+
+If Helm installation failed on Fargate, the possible reason is missing or incorrect Fargate profile.
+Check Setup Job descripion:
+
+```sh
+$ kubectl -n "${NAMESPACE}" describe pod
+...
+Events:
+  Type     Reason            Age    From               Message
+  ----     ------            ----   ----               -------
+  Warning  FailedScheduling  2m40s  default-scheduler  0/2 nodes are available: 2 node(s) had untolerated taint {eks.amazonaws.com/compute-type: fargate}. preemption: 0/2 nodes are available: 2 Preemption is not helpful for scheduling.
+```
+
+If you see the above or similiar output, ensure that your fargate profile for `${NAMESPACE}` exists and is correct.
+
+See [Set up Fargate Profile for Sumo Logic namespace](#set-up-fargate-profile-for-sumo-logic-namespace) for more information
+
+#### otelcol-metrics Pods are in Pending state with `Pod not supported on Fargate: volumes not supported` error
+
+If otelcol-metrics Pods are in `Pending` state with the following error:
+
+```sh
+$ kubectl describe pod collection-sumologic-otelcol-metrics-0 -n sumologic
+...
+Events:
+  Type     Reason            Age    From               Message
+  ----     ------            ----   ----               -------
+  Warning  FailedScheduling  7m11s  fargate-scheduler  Scheduling%!(EXTRA string=Pod not supported on Fargate: volumes not supported: file-storage not supported because: PVC file-storage-collection-sumologic-otelcol-metrics-0 not bound)
+```
+
+Please remove all Persistence Volume Claims related to metrics:
+
+```
+kubectl -n "${NAMESPACE}" delete pvc -l "app=${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics"
+```
+
+Then you can either [disable persistence](#persistence-disabled) or ensure that all steps from [persistence enabled](#persistence-enabled) has been applied correctly.
+
+After all, upgrade collection with new configuration and eventually remove metrics pods:
+
+```sh
+kubectl -n "${NAMESPACE}" delete pod -l "app=${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics"
+```
+
+#### otelcol-metrics Pods are in Pending state with `Output: Failed to resolve "fs-xxxxxxxx.efs.us-east-2.amazonaws.com" - check that your file system ID is correct, and ensure that the VPC has an EFS mount target for this file system ID.` error
+
+If otelcol-metrics Pods are in `Pending` state with the following error:
+
+```sh
+$ kubectl describe pod collection-sumologic-otelcol-metrics-0 -n sumologic
+...
+Events:
+  Type     Reason           Age   From               Message
+  ----     ------           ----  ----               -------
+  Warning  LoggingDisabled  51s   fargate-scheduler  Logging%!(EXTRA string=Disabled logging because aws-logging configmap was not found. configmap "aws-logging" not found)
+  Normal   Scheduled        1s    fargate-scheduler  Binding%!(EXTRA string=Successfully assigned %v to %v, string=sumologic/collection-sumologic-otelcol-metrics-0, string=fargate-ip-192-168-180-219.us-east-2.compute.internal)
+  Warning  FailedMount      1s    kubelet            MountVolume.SetUp failed for volume "file-storage-collection-sumologic-otelcol-metrics-0" : rpc error: code = Internal desc = Could not mount "fs-xxxxxxxxxxxxxxxxx:/" at "/var/lib/kubelet/pods/48e15743-b526-4c2c-bd42-373330e77201/volumes/kubernetes.io~csi/file-storage-collection-sumologic-otelcol-metrics-0/mount": mount failed: exit status 1
+Mounting command: mount
+Mounting arguments: -t efs -o accesspoint=fsap-yyyyyyyyyyyyyyyyy,tls fs-xxxxxxxxxxxxxxxxx:/ /var/lib/kubelet/pods/48e15743-b526-4c2c-bd42-373330e77201/volumes/kubernetes.io~csi/file-storage-collection-sumologic-otelcol-metrics-0/mount
+Output: Failed to resolve "fs-xxxxxxxxxxxxxxxxx.efs.us-east-2.amazonaws.com" - check that your file system ID is correct, and ensure that the VPC has an EFS mount target for this file system ID.
+See https://docs.aws.amazon.com/console/efs/mount-dns-name for more detail.
+Attempting to lookup mount target ip address using botocore. Failed to import necessary dependency botocore, please install botocore first.
+```
+
+Ensure that the following steps has been applied:
+
+- [Create a security group to be used with mount targets](#create-a-security-group-to-be-used-with-mount-targets)
+- [Authorize ingress for security group](#authorize-ingress-for-security-group)
+- [Create mount targets for each pair of EFS access point and subnet](#create-mount-targets-for-each-pair-of-efs-access-point-and-subnet)
+
+#### Helm upgrade failed `Error: UPGRADE FAILED: cannot patch "collection-sumologic-otelcol-metrics"`
+
+If during helm upgrade you will see the following error:
+
+```text
+Error: UPGRADE FAILED: cannot patch "collection-sumologic-otelcol-metrics" with kind StatefulSet: StatefulSet.apps "collection-sumologic-otelcol-metrics" is invalid: spec: Forbidden: updates to statefulset spec for fields other than 'replicas', 'template', 'updateStrategy', 'persistentVolumeClaimRetentionPolicy' and 'minReadySeconds' are forbidden
+```
+
+It means that you have to manually remove Metrics Metadata Statefulset:
+
+```bash
+kubectl -n "${NAMESPACE}" delete statefulset -l "app=${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics"
+```
+
+This error may occur if you are switching persistence option for already installed Sumo Logic Kubernetes Collection.

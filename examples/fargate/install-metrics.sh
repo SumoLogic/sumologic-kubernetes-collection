@@ -132,6 +132,8 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}
+  labels:
+    app: ${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics
 spec:
   capacity:
     storage: 10Gi
@@ -151,6 +153,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}
+  labels:
+    app: ${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics
   namespace: ${NAMESPACE}
 spec:
   accessModes:
