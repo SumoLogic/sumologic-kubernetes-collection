@@ -1,7 +1,7 @@
 # Fargate
 
-The following documentation assumes that you are using eksctl to manage Fargate cluster.
-Code snippets are using environemnt variables in order to make them as generic and reusable.
+The following documentation assumes that you are using eksctl to manage Fargate cluster. Code snippets are using environemnt variables in
+order to make them as generic and reusable.
 
 Let's consider the following variables:
 
@@ -31,7 +31,8 @@ This section is going to gather all operations which may be common between diffe
 
 ### Set up Fargate Profile for Sumo Logic namespace
 
-In order to install our collection, please create fargate profile using [Amazon Documentation](https://docs.aws.amazon.com/eks/latest/userguide/fargate-profile.html#create-fargate-profile).
+In order to install our collection, please create fargate profile using
+[Amazon Documentation](https://docs.aws.amazon.com/eks/latest/userguide/fargate-profile.html#create-fargate-profile).
 
 ```bash
 ## Set up Fargate Profile for Sumo Logic namespace
@@ -57,7 +58,7 @@ aws efs create-file-system \
 export EFS_ID="$(
   aws efs describe-file-systems \
     --region="${AWS_REGION}" | \
-    jq '.FileSystems[] | 
+    jq '.FileSystems[] |
       select(.Tags[].Key == "Name" and .Tags[].Value == "SumologicCollectionVolumes") |
       .FileSystemId' \
       --raw-output)"
@@ -70,7 +71,7 @@ The following snippet ensures that the Volume won't be duplicated:
 export EFS_ID="$(
   aws efs describe-file-systems \
     --region="${AWS_REGION}" | \
-    jq '.FileSystems[] | 
+    jq '.FileSystems[] |
       select(.Tags[].Key == "Name" and .Tags[].Value == "SumologicCollectionVolumes") |
       .FileSystemId' \
       --raw-output)"
@@ -85,8 +86,8 @@ if [[ -z "${EFS_ID}" ]]; then
   export EFS_ID="$(
     aws efs describe-file-systems \
       --region="${AWS_REGION}" | \
-      jq '.FileSystems[] | 
-        select(.Tags[].Key == "Name" and .Tags[].Value == "SumologicCollectionVolumes") | 
+      jq '.FileSystems[] |
+        select(.Tags[].Key == "Name" and .Tags[].Value == "SumologicCollectionVolumes") |
         .FileSystemId' \
         --raw-output)"
 fi
@@ -115,8 +116,8 @@ metadata:
 
 ### Persistence Enabled
 
-If you want to keep persistance (which is default configuration), you need to manually create Volumes for the Metric Pods.
-We recommend to create Persistance Volume Claims on the top of EFS Storage. In order to set up them, please apply the following steps:
+If you want to keep persistance (which is default configuration), you need to manually create Volumes for the Metric Pods. We recommend to
+create Persistance Volume Claims on the top of EFS Storage. In order to set up them, please apply the following steps:
 
 #### Create EFS access points for metric Pods
 
@@ -125,8 +126,8 @@ We recommend to create Persistance Volume Claims on the top of EFS Storage. In o
 for (( counter=0; counter<"${METRIC_PODS}"; counter++ )); do
   FSAP_ID="$(
     aws efs describe-access-points \
-      --region "${AWS_REGION}" | 
-    jq ".AccessPoints[] | 
+      --region "${AWS_REGION}" |
+    jq ".AccessPoints[] |
       select(.RootDirectory.Path == \"/sumologic/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}\") |
       .AccessPointId" \
       --raw-output)"
@@ -142,14 +143,14 @@ done
 ```
 
 #### Create a security group to be used with mount targets
-  
+
 ```bash
 ## Create a security group to be used with mount targets
 export VPC_ID="$(
   aws ec2 describe-vpcs \
     --region "${AWS_REGION}" | \
-    jq ".Vpcs[] | 
-      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) | 
+    jq ".Vpcs[] |
+      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) |
       .VpcId" \
     --raw-output)"
 
@@ -161,8 +162,8 @@ aws ec2 create-security-group \
 export SG_ID="$(
   aws ec2 describe-security-groups \
     --region "${AWS_REGION}" | \
-    jq ".SecurityGroups[] | 
-      select(.GroupName == \"${SG_NAME}\") | 
+    jq ".SecurityGroups[] |
+      select(.GroupName == \"${SG_NAME}\") |
       .GroupId" \
       --raw-output)"
 ```
@@ -174,8 +175,8 @@ export SG_ID="$(
 export CIDR_BLOCK="$(
   aws ec2 describe-vpcs \
     --region "${AWS_REGION}" | \
-    jq ".Vpcs[] | 
-      select(.VpcId == \"${VPC_ID}\") | 
+    jq ".Vpcs[] |
+      select(.VpcId == \"${VPC_ID}\") |
       .CidrBlock" \
       --raw-output)"
 aws ec2 authorize-security-group-ingress \
@@ -193,8 +194,8 @@ aws ec2 authorize-security-group-ingress \
 export SUBNETS="$(
   aws ec2 describe-subnets \
     --region "${AWS_REGION}" | \
-    jq ".Subnets[] | 
-      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) | 
+    jq ".Subnets[] |
+      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) |
       .SubnetId" \
       --raw-output)"
 for subnet in $(echo "${SUBNETS}"); do
@@ -222,7 +223,7 @@ for (( counter=0; counter<$METRIC_PODS; counter++ )); do
   FSAP_ID="$(
     aws efs describe-access-points \
       --region "${AWS_REGION}" | \
-      jq ".AccessPoints[] | 
+      jq ".AccessPoints[] |
         select(.RootDirectory.Path == \"/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}\") |
         .AccessPointId" \
         --raw-output)"
@@ -282,9 +283,9 @@ kubectl apply -f sumo-metrics-pvc.yaml -n "${NAMESPACE}"
 
 ### Install or upgrade collection
 
-Disable Prometheus Node Exporter. As Amazon Fargate does not support Daemonsets, they won't beworking correctly.
-There is no need to have Node Exporter on Amazon Fargate as Amazon takes care of Nodes management.
-To disable Prometheus Node Exporter, please add the following configuration to `user-values.yaml`:
+Disable Prometheus Node Exporter. As Amazon Fargate does not support Daemonsets, they won't beworking correctly. There is no need to have
+Node Exporter on Amazon Fargate as Amazon takes care of Nodes management. To disable Prometheus Node Exporter, please add the following
+configuration to `user-values.yaml`:
 
 ```yaml
 kube-prometheus-stack:
@@ -306,8 +307,7 @@ helm upgrade \
 
 #### Helm installation failed
 
-If Helm installation failed on Fargate, the possible reason is missing or incorrect Fargate profile.
-Check Setup Job descripion:
+If Helm installation failed on Fargate, the possible reason is missing or incorrect Fargate profile. Check Setup Job descripion:
 
 ```sh
 $ kubectl -n "${NAMESPACE}" describe pod
@@ -341,7 +341,8 @@ Please remove all Persistence Volume Claims related to metrics:
 kubectl -n "${NAMESPACE}" delete pvc -l "app=${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics"
 ```
 
-Then you can either [disable persistence](#persistence-disabled) or ensure that all steps from [persistence enabled](#persistence-enabled) has been applied correctly.
+Then you can either [disable persistence](#persistence-disabled) or ensure that all steps from [persistence enabled](#persistence-enabled)
+has been applied correctly.
 
 After all, upgrade collection with new configuration and eventually remove metrics pods:
 
