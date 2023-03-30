@@ -150,7 +150,7 @@ export VPC_ID="$(
   aws ec2 describe-vpcs \
     --region "${AWS_REGION}" | \
     jq ".Vpcs[] |
-      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) |
+      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", \"Value\": \"${CLUSTER}\"}) |
       .VpcId" \
     --raw-output)"
 
@@ -195,7 +195,7 @@ export SUBNETS="$(
   aws ec2 describe-subnets \
     --region "${AWS_REGION}" | \
     jq ".Subnets[] |
-      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) |
+      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", \"Value\": \"${CLUSTER}\"}) |
       .SubnetId" \
       --raw-output)"
 for subnet in $(echo "${SUBNETS}"); do

@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 export CLUSTER=sumologic-demo
 export PROFILE_NAME=sumologic
 export NAMESPACE=sumologic
@@ -38,14 +40,14 @@ if [[ -z "${EFS_ID}" ]]; then
 fi
 
 ## Create EFS access points for metric Pods
-for (( counter=0; counter<"${METRIC_PODS}"; counter++ )); do
+for (( counter=0; counter<METRIC_PODS; counter++ )); do
   FSAP_ID="$(
     aws efs describe-access-points \
       --region "${AWS_REGION}" | 
     jq ".AccessPoints[] | 
       select(.RootDirectory.Path == \"/sumologic/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}\") |
       .AccessPointId" \
-      --raw-output)"
+      --raw-output)" || true
 
   if [[ -z "${FSAP_ID}" ]]; then
     aws efs create-access-point \
@@ -60,8 +62,8 @@ done
 export VPC_ID="$(
   aws ec2 describe-vpcs \
     --region "${AWS_REGION}" | \
-    jq ".Vpcs[] | 
-      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) | 
+    jq ".Vpcs[] |
+      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", \"Value\": \"${CLUSTER}\"}) |
       .VpcId" \
     --raw-output)"
 
@@ -97,11 +99,11 @@ aws ec2 authorize-security-group-ingress \
 export SUBNETS="$(
   aws ec2 describe-subnets \
     --region "${AWS_REGION}" | \
-    jq ".Subnets[] | 
-      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", "Value": \"${CLUSTER}\"}) | 
+    jq ".Subnets[] |
+      select(.Tags[]=={\"Key\": \"alpha.eksctl.io/cluster-name\", \"Value\": \"${CLUSTER}\"}) |
       .SubnetId" \
       --raw-output)"
-for subnet in $(echo "${SUBNETS}"); do
+for subnet in ${SUBNETS}; do
     aws efs create-mount-target \
     --file-system-id "${EFS_ID}" \
     --subnet-id "${subnet}" \
@@ -118,14 +120,14 @@ metadata:
 provisioner: efs.csi.aws.com
 volumeBindingMode: Immediate" | tee sumo-metrics-pvc.yaml
 
-for (( counter=0; counter<$METRIC_PODS; counter++ )); do
+for (( counter=0; counter<METRIC_PODS; counter++ )); do
   FSAP_ID="$(
     aws efs describe-access-points \
       --region "${AWS_REGION}" | \
-      jq ".AccessPoints[] | 
+      jq ".AccessPoints[] |
         select(.RootDirectory.Path == \"/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter}\") |
         .AccessPointId" \
-        --raw-output)"
+        --raw-output)" || true
 
   echo "---
 apiVersion: v1
