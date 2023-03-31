@@ -4,6 +4,7 @@
 
 - [Troubleshooting Installation](#troubleshooting-installation)
 - [Namespace configuration](#namespace-configuration)
+- [Collection Dashboards](#collection-dashboards)
 - [Collecting logs](#collecting-logs)
   - [Check log throttling](#check-log-throttling)
   - [Check ingest budget limits](#check-ingest-budget-limits)
@@ -15,6 +16,7 @@
   - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+  - [Check Prometheus memory usage](#check-prometheus-memory-usage)
 - [Common Issues](#common-issues)
   - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
   - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
@@ -27,6 +29,7 @@
   - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
   - [Falco and OpenShift](#falco-and-openshift)
   - [Out of memory (OOM) failures for Prometheus Pod](#out-of-memory-oom-failures-for-prometheus-pod)
+  - [Otelcol enqueue failures](#otelcol-enqueue-failures)
   - [Prometheus: server returned HTTP status 404 Not Found: 404 page not found](#prometheus-server-returned-http-status-404-not-found-404-page-not-found)
   - [OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy](#opentelemetry-dial-tcp-lookup-collection-sumologic-metadata-logssumologicsvcclusterlocal-device-or-resource-busy)
 
@@ -48,6 +51,12 @@ To set your namespace context more permanently, you can run
 ```sh
 kubectl config set-context $(kubectl config current-context) --namespace=sumologic
 ```
+
+## Collection dashboards
+
+Please consult this when diagnosing issues before diving into Kubernetes directly.
+
+[Zaidan Collection](https://stagdata.long.sumologic.net/ui/#/library/folder/20836981)
 
 ## Collecting logs
 
@@ -239,6 +248,63 @@ You [check Prometheus logs](#prometheus-logs) to verify there are no errors duri
 
 You can also check `prometheus_remote_storage_.*` metrics to look for success/failure attempts.
 
+### Check Prometheus memory usage
+
+Verify memory usage with `kubectl`. First get the actual usage with:
+
+```
+kubectl top pod -n <DEP>-collections -l app.kubernetes.io/name=prometheus
+NAME                                                   CPU(cores)   MEMORY(bytes)
+prometheus-stag-collection-prometheus-0-state-0        89m          2853Mi
+prometheus-stag-collection-prometheus-1-controller-0   146m         2991Mi
+prometheus-stag-collection-prometheus-2-kubelet-0      82m          2845Mi
+prometheus-stag-collection-prometheus-3-container-0    131m         3045Mi
+prometheus-stag-collection-prometheus-4-container-0    102m         2817Mi
+prometheus-stag-collection-prometheus-5-node-0         133m         2989Mi
+prometheus-stag-collection-prometheus-6-operator-r-0   182m         2968Mi
+prometheus-stag-collection-prometheus-7-prometheus-0   114m         3283Mi
+prometheus-stag-collection-prometheus-8-control-pl-0   121m         3017Mi
+prometheus-stag-collection-prometheus-9-sumo-0         155m         2953Mi
+prometheus-stag-collection-prometheus-assembly-0       50m          821Mi
+```
+
+Now get the memory limits of prometheus containers from the pods:
+
+```
+kubectl get pod -n stag-collections -l app.kubernetes.io/name=prometheus -o "custom-columns=NAME:.metadata.name,CONTAINERS:.spec.containers[*].name,MEM_LIMIT:.spec.containers[*].resources.limits.memory"
+NAME                                                   CONTAINERS                   MEM_LIMIT
+prometheus-stag-collection-prometheus-0-state-0        prometheus,config-reloader   20Gi,50Mi
+prometheus-stag-collection-prometheus-1-controller-0   prometheus,config-reloader   20Gi,50Mi
+prometheus-stag-collection-prometheus-2-kubelet-0      prometheus,config-reloader   20Gi,50Mi
+prometheus-stag-collection-prometheus-3-container-0    prometheus,config-reloader   20Gi,50Mi
+prometheus-stag-collection-prometheus-4-container-0    prometheus,config-reloader   20Gi,50Mi
+prometheus-stag-collection-prometheus-5-node-0         prometheus,config-reloader   20Gi,50Mi
+prometheus-stag-collection-prometheus-6-operator-r-0   prometheus,config-reloader   20Gi,50Mi
+prometheus-stag-collection-prometheus-7-prometheus-0   prometheus,config-reloader   20Gi,50Mi
+prometheus-stag-collection-prometheus-8-control-pl-0   prometheus,config-reloader   20Gi,50Mi
+prometheus-stag-collection-prometheus-9-sumo-0         prometheus,config-reloader   20Gi,50Mi
+prometheus-stag-collection-prometheus-assembly-0       prometheus,config-reloader   20Gi,50Mi
+```
+
+Note that pods can contain more than one container so in this example prometheus pods have 20Gi memory limit and config-reloader containers
+have 50Mi memory limit.
+
+When memory usage is higher than ~`95%` of Prometheus container's memory limit, (in the above case it's not: none of the containers exceeded
+`95% * 20 = 19Gi` of used memory) remove WAL from within the container:
+
+```
+kubectl -n <DEP>-collections \
+  exec -t prometheus-<DEP>-collection-prometheus-<POD_SUFFIX> \
+  -c prometheus -- sh -c "rm -rf /prometheus/*"
+```
+
+and restart it:
+
+```bash
+kubectl -n <DEP>-collections \
+  delete pod prometheus-<DEP>-collection-prometheus-<POD_SUFFIX>
+```
+
 ## Common Issues
 
 ### Missing metrics - cannot see cluster in Explore
@@ -404,6 +470,32 @@ The duplicated pod deletion command is there to make sure the pod is not stuck i
 
 If you observe that Prometheus Pod needs more and more resources (out of memory failures - OOM killed Prometheus) and you are not able to
 increase them then you may need to horizontally scale Prometheus. :construction: Add link to Prometheus sharding doc here.
+
+### Otelcol enqueue failures
+
+Enqueue failures happen when otelcol can't write to its persistent queue. They signify data loss, as otelcol is unable to locally buffer the
+data, and is forced to drop it.
+
+#### Queue full
+
+Most of the time, this happens because the queue is full, which is almost always caused by otelcol not being able to send data to Sumo, and
+should be accompanied by other alerts. Resolving the underlying issue will resolve the alert - in this case, this alert is informational.
+
+The queue size can be checked on the Otelcol dashboard, available in [the collection dashboards folder](#collection-dashboards).
+
+#### Persistent Volume failure
+
+If there is no accompanying queue growth, this alert signifies that something is wrong with the underlying Persistent Volume. If the alert
+drilldown only shows one timeseries, this is almost surely the case - sending failures affect all Pods equally. The short-term solution
+involves deleting the corresponding PersistentVolumeClaim and restarting the Pod:
+
+```bash
+POD_NAME=DEP-collection-sumologic-otelcol-metrics-0
+kubectl -n DEP-collections delete pvc "file-storage-${POD_NAME}" &
+kubectl -n DEP-collections delete pod ${POD_NAME}
+# delete pod again due to race condition (new pod is trying to use old pvc)
+kubectl -n DEP-collections delete pod ${POD_NAME}
+```
 
 ### Prometheus: server returned HTTP status 404 Not Found: 404 page not found
 
