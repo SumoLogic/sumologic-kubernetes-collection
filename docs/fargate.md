@@ -1,6 +1,6 @@
 # Fargate
 
-The following documentation assumes that you are using eksctl to manage Fargate cluster. Code snippets are using environemnt variables in
+The following documentation assumes that you are using eksctl to manage Fargate cluster. Code snippets are using environment variables in
 order to make them as generic and reusable.
 
 Let's consider the following variables:
