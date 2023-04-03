@@ -3,6 +3,26 @@
 The following documentation assumes that you are using eksctl to manage Fargate cluster. Code snippets are using environment variables in
 order to make them as generic and reusable.
 
+- [Common operations](#common-operations)
+  - [Set up Fargate Profile for Sumo Logic namespace](#set-up-fargate-profile-for-sumo-logic-namespace)
+  - [Create EFS Volume](#create-efs-volume)
+- [Metrics](#metrics)
+  - [Persistence Disabled](#persistence-disabled)
+  - [Persistence Enabled](#persistence-enabled)
+    - [Create EFS access points for metric Pods](#create-efs-access-points-for-metric-pods)
+    - [Create a security group to be used with mount targets](#create-a-security-group-to-be-used-with-mount-targets)
+    - [Authorize ingress for security group](#authorize-ingress-for-security-group)
+    - [Create mount targets for each pair of EFS access point and subnet](#create-mount-targets-for-each-pair-of-efs-access-point-and-subnet)
+    - [Create sumo-metrics-pvc.yaml with PVC per access point](#create-sumo-metrics-pvcyaml-with-pvc-per-access-point)
+    - [Create namespace if it doesn't exist already](#create-namespace-if-it-doesnt-exist-already)
+    - [Apply sumo-metrics-pvc.yaml](#apply-sumo-metrics-pvcyaml)
+  - [Install or upgrade collection](#install-or-upgrade-collection)
+  - [Troubleshooting](#troubleshooting)
+    - [Helm installation failed](#helm-installation-failed)
+    - [otelcol-metrics Pods are in Pending state with Pod not supported on Fargate: volumes not supported error](#otelcol-metrics-pods-are-in-pending-state-with-pod-not-supported-on-fargate-volumes-not-supported-error)
+      - [otelcol-metrics Pods are in Pending state with Output: Failed to resolve "fs-xxxxxxxx.efs.us-east-2.amazonaws.com" - check that your file system ID is correct, and ensure that the VPC has an EFS mount target for this file system ID. error](#otelcol-metrics-pods-are-in-pending-state-with-output-failed-to-resolve-fs-xxxxxxxxefsus-east-2amazonawscom---check-that-your-file-system-id-is-correct-and-ensure-that-the-vpc-has-an-efs-mount-target-for-this-file-system-id-error)
+      - [Helm upgrade failed Error: UPGRADE FAILED: cannot patch "collection-sumologic-otelcol-metrics"](#helm-upgrade-failed-error-upgrade-failed-cannot-patch-collection-sumologic-otelcol-metrics)
+
 Let's consider the following variables:
 
 - `CLUSTER` - eksctl cluster name
