@@ -117,7 +117,7 @@ metadata:
 ### Persistence Enabled
 
 If you want to keep persistence (which is default configuration), you need to manually create Volumes for the Metric Pods. We recommend to
-create Persistance Volume Claims on the top of EFS Storage. In order to set up them, please apply the following steps:
+create Persistent Volume Claims on the top of EFS Storage. In order to set up them, please apply the following steps:
 
 #### Create EFS access points for metric Pods
 
