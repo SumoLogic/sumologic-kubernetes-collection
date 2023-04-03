@@ -283,7 +283,7 @@ kubectl apply -f sumo-metrics-pvc.yaml -n "${NAMESPACE}"
 
 ### Install or upgrade collection
 
-Disable Prometheus Node Exporter. As Amazon Fargate does not support Daemonsets, they won't beworking correctly. There is no need to have
+Disable Prometheus Node Exporter. As Amazon Fargate does not support Daemonsets, they won't be working correctly. There is no need to have
 Node Exporter on Amazon Fargate as Amazon takes care of Nodes management. To disable Prometheus Node Exporter, please add the following
 configuration to `user-values.yaml`:
 
