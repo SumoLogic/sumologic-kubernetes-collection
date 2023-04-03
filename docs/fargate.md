@@ -112,7 +112,7 @@ metadata:
     enabled: false
 ```
 
-**Note: This is going to disable persistence for logs and metrics.**
+**Note: This is going to disable persistence for both logs and metrics.**
 
 ### Persistence Enabled
 
