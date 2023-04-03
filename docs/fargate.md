@@ -141,6 +141,11 @@ create Persistent Volume Claims on the top of EFS Storage. In order to set up th
 
 #### Create EFS access points for metric Pods
 
+EFS Access Point is an entry point for an application. We recommend to create Acess Points pointing to the directories using
+`/${NAMESPACE}/${PVC_NAME}` schema.
+
+You can create them using the following `bash` script:
+
 ```bash
 ## Create EFS access points for metric Pods
 for (( counter=0; counter<"${METRIC_PODS}"; counter++ )); do
@@ -163,6 +168,10 @@ done
 ```
 
 #### Create a security group to be used with mount targets
+
+We recommend to create Sumo Logic specific Security Group. It is needed to authorize cluster to use EFS storage.
+
+It can be done using the following `bash` script:
 
 ```bash
 ## Create a security group to be used with mount targets
@@ -190,6 +199,10 @@ export SG_ID="$(
 
 #### Authorize ingress for security group
 
+After creating Security Group, the VPC network should be granted to access EFS port.
+
+It can be done using the following `bash` script:
+
 ```bash
 ## Authorize ingress for security group
 export CIDR_BLOCK="$(
@@ -208,6 +221,10 @@ aws ec2 authorize-security-group-ingress \
 ```
 
 #### Create mount targets for each pair of EFS access point and subnet
+
+In order to be able to mount EFS access point within the subnet, the mount target should be created for them.
+
+It can be done using the following `bash` script:
 
 ```bash
 ## Create mount targets for each pair of EFS access point and subnet
@@ -228,6 +245,14 @@ done
 ```
 
 #### Create `sumo-metrics-pvc.yaml` with PVC per access point
+
+After creation Access Points and ensuring that they have been authorized, the following Kubernetes storage objects have to be created:
+
+- `StorageClass` which informs AWS to bind EFS Access Points with Kubernetes Persitence Volume objects
+- `PersistentVolume` which is a Kubernetes representation of the EFS Access Point
+- `PersistenceVolumeClaim` which is a user request to use the storage
+
+The objects can be created using the following `bash` script:
 
 ```bash
 ## Create `sumo-metrics-pvc.yaml` with PVC per access point
