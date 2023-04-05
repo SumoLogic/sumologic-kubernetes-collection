@@ -141,7 +141,7 @@ create Persistent Volume Claims on the top of EFS Storage. In order to set up th
 
 #### Create EFS access points for metric Pods
 
-EFS Access Point is an entry point for an application. We recommend to create Acess Points pointing to the directories using
+EFS Access Point is an entry point for an application. We recommend to create Access Points pointing to the directories using
 `/${NAMESPACE}/${PVC_NAME}` schema.
 
 You can create them using the following `bash` script:
