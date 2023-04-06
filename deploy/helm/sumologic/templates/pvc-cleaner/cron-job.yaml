@@ -47,19 +47,27 @@ spec:
           - name: pvc-cleaner
             image: {{ .Values.pvcCleaner.job.image.repository }}:{{ .Values.pvcCleaner.job.image.tag }}
             command:
-             - "pvc-cleaner"
-             - "{{ .Release.Namespace }}"
-             - "app={{ template "sumologic.labels.app.logs.statefulset" . }}"
-             - "{{ template "sumologic.metadata.name.logs.hpa" . }}"
+            - "bash"
+            - "/pvc-cleaner/pvc-cleaner.sh"
+            - "{{ .Release.Namespace }}"
+            - "app={{ template "sumologic.labels.app.logs.statefulset" . }}"
+            - "{{ template "sumologic.metadata.name.logs.hpa" . }}"
             imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
             resources:
               {{- toYaml .Values.pvcCleaner.job.resources | nindent 14 }}
+            volumeMounts:
+            - name: pvc-cleaner
+              mountPath: /pvc-cleaner
+          volumes:
+          - configMap:
+              defaultMode: 420
+              name: {{ template "sumologic.metadata.name.pvcCleaner.configmap" . }}
+            name: pvc-cleaner
           restartPolicy: Never
           serviceAccountName: {{ template "sumologic.metadata.name.pvcCleaner.roles.serviceaccount" . }}
 {{- end }}
 
 ---
-
 {{- if eq .Values.pvcCleaner.metrics.enabled true }}
 apiVersion: batch/v1
 kind: CronJob
@@ -109,13 +117,22 @@ spec:
           - name: pvc-cleaner
             image: {{ .Values.pvcCleaner.job.image.repository }}:{{ .Values.pvcCleaner.job.image.tag }}
             command:
-             - "pvc-cleaner"
-             - "{{ .Release.Namespace }}"
-             - "app={{ template "sumologic.labels.app.metrics.statefulset" . }}"
-             - "{{ template "sumologic.metadata.name.metrics.hpa" . }}"
+            - "bash"
+            - "/pvc-cleaner/pvc-cleaner.sh"
+            - "{{ .Release.Namespace }}"
+            - "app={{ template "sumologic.labels.app.metrics.statefulset" . }}"
+            - "{{ template "sumologic.metadata.name.metrics.hpa" . }}"
             imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
             resources:
               {{- toYaml .Values.pvcCleaner.job.resources | nindent 14 }}
+            volumeMounts:
+            - name: pvc-cleaner
+              mountPath: /pvc-cleaner
+          volumes:
+          - configMap:
+              defaultMode: 420
+              name: {{ template "sumologic.metadata.name.pvcCleaner.configmap" . }}
+            name: pvc-cleaner
           restartPolicy: Never
           serviceAccountName: {{ template "sumologic.metadata.name.pvcCleaner.roles.serviceaccount" . }}
 {{- end }}

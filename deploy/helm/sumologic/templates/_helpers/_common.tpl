@@ -262,8 +262,16 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- template "sumologic.fullname" . }}-pvc-cleaner
 {{- end -}}
 
+{{- define "sumologic.metadata.name.pvcCleaner.configmap" -}}
+{{- template "sumologic.metadata.name.pvcCleaner" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.pvcCleaner" -}}
 pvc-cleaner
+{{- end -}}
+
+{{- define "sumologic.labels.app.pvcCleaner.configmap" -}}
+{{- template "sumologic.labels.app.pvcCleaner" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.pvcCleaner.roles.serviceaccount" -}}

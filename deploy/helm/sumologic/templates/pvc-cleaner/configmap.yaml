@@ -1,0 +1,11 @@
+{{- if or (eq .Values.pvcCleaner.logs.enabled true) (eq .Values.pvcCleaner.metrics.enabled true) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.pvcCleaner.configmap" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.pvcCleaner.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+{{- (tpl (.Files.Glob "conf/pvc-cleaner/*.sh").AsConfig .) | nindent 2 }}
+{{- end }}
