@@ -1,82 +1,105 @@
+exporters:
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/exporter/otlphttpexporter
+  otlphttp:
+    endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
+    sending_queue:
+      queue_size: 10
+
 extensions:
-  health_check: {}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/storage/filestorage
   file_storage:
+    compaction:
+      directory: /var/lib/storage/otc
+      on_rebound: true
     directory: /var/lib/storage/otc
     timeout: 10s
-    compaction:
-      on_rebound: true
-      directory: /var/lib/storage/otc
+
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/healthcheckextension
+  health_check: {}
+
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/pprofextension
   pprof: {}
-service:
-  telemetry:
-    logs:
-      level: {{ .Values.otellogs.logLevel | quote }}
-  extensions:
-    - health_check
-    - file_storage
-    - pprof
-  pipelines:
-{{- if .Values.sumologic.logs.container.enabled }}
-    logs/containers:
-      receivers:
-        - filelog/containers
-      processors:
-        - batch
-      exporters:
-        - otlphttp
-{{- end }}
+
+processors:
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/batchprocessor
+  batch:
+    send_batch_max_size: 2000
+    send_batch_size: 1000
+    timeout: 1s
+
 {{- if .Values.sumologic.logs.systemd.enabled }}
-    logs/systemd:
-      receivers:
-        - journald
-      processors:
-        - logstransform/systemd
-        - batch
-      exporters:
-        - otlphttp
+  ## copy _SYSTEMD_UNIT, SYSLOG_FACILITY, _HOSTNAME and PRIORITY from body to attributes
+  ## so they can be used by metadata processors same way like for fluentd
+  ## build fluent.tag attribute as `host.{_SYSTEMD_UNIT}`
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/logstransformprocessor
+  logstransform/systemd:
+    operators:
+      - from: body._SYSTEMD_UNIT
+        to: attributes._SYSTEMD_UNIT
+        type: copy
+      - from: body.SYSLOG_FACILITY
+        to: attributes.SYSLOG_FACILITY
+        type: copy
+      - from: body._HOSTNAME
+        to: attributes._HOSTNAME
+        type: copy
+      - from: body.PRIORITY
+        to: attributes.PRIORITY
+        type: copy
+      - field: attributes["fluent.tag"]
+        type: add
+        value: EXPR("host." + attributes["_SYSTEMD_UNIT"])
+      - field: body.__CURSOR
+        type: remove
+      - field: body.__MONOTONIC_TIMESTAMP
+        type: remove
 {{- end }}
+
 receivers:
 {{- if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/receiver/filelogreceiver
   filelog/containers:
-    include:
-      - /var/log/pods/*/*/*.log
     ## sets fingerprint_size to 17kb in order to match the longest possible docker line (which by default is 16kb)
     ## we want to include timestamp, which is at the end of the line
     fingerprint_size: 17408
-    include_file_path: true
+    include:
+      - /var/log/pods/*/*/*.log
     include_file_name: false
-    storage: file_storage
+    include_file_path: true
     operators:
       ## Detect the container runtime log format
       ## Can be: docker-shim, CRI-O and containerd
       - id: get-format
-        type: router
         routes:
-          - output: parser-docker
-            expr: 'body matches "^\\{"'
-          - output: parser-crio
-            expr: 'body matches "^[^ Z]+ "'
-          - output: parser-containerd
-            expr: 'body matches "^[^ Z]+Z"'
+          - expr: 'body matches "^\\{"'
+            output: parser-docker
+          - expr: 'body matches "^[^ Z]+ "'
+            output: parser-crio
+          - expr: 'body matches "^[^ Z]+Z"'
+            output: parser-containerd
+        type: router
+
       ## Parse CRI-O format
       - id: parser-crio
-        type: regex_parser
-        regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$'
         output: merge-cri-lines
         parse_to: body
+        regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$'
         timestamp:
-          parse_from: body.time
-          layout_type: gotime
           layout: '2006-01-02T15:04:05.000000000-07:00'
+          layout_type: gotime
+          parse_from: body.time
+        type: regex_parser
+
       ## Parse CRI-Containerd format
       - id: parser-containerd
-        type: regex_parser
-        regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$'
         output: merge-cri-lines
         parse_to: body
+        regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)( |)(?P<log>.*)$'
         timestamp:
-          parse_from: body.time
           layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          parse_from: body.time
+        type: regex_parser
+
       ## Parse docker-shim format
       ## parser-docker interprets the input string as JSON and moves the `time` field from the JSON to Timestamp field in the OTLP log
       ## record.
@@ -85,61 +108,61 @@ receivers:
       ## Input Timestamp: _empty_
       ## Output Timestamp: 2021-11-25 09:59:13.23887954 +0000 UTC
       - id: parser-docker
-        type: json_parser
-        parse_to: body
         output: merge-docker-lines
+        parse_to: body
         timestamp:
-          parse_from: body.time
           layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          parse_from: body.time
+        type: json_parser
 
       ## merge-docker-lines stitches back together log lines split by Docker logging driver.
       ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "stream": "stdout" }
       ## Input Body (JSON): { "log": "ne that was split by the logging driver\n", "stream": "stdout" }
       ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n","stream":"stdout"}
       - id: merge-docker-lines
-        type: recombine
-        source_identifier: attributes["log.file.path"]
         combine_field: body.log
         combine_with: ""
         is_last_entry: body.log matches "\n$"
         output: strip-trailing-newline
+        source_identifier: attributes["log.file.path"]
+        type: recombine
 
       ## merge-cri-lines stitches back together log lines split by CRI logging drivers.
       ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long li", "logtag": "P" }
       ## Input Body (JSON): { "log": "ne that was split by the logging driver", "logtag": "F" }
       ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver", "logtag": "F" }
       - id: merge-cri-lines
-        type: recombine
-        source_identifier: attributes["log.file.path"]
-        output: {{ .Values.sumologic.logs.multiline.enabled | ternary "merge-multiline-logs" "extract-metadata-from-filepath" }}
         combine_field: body.log
         combine_with: ""
         is_last_entry: body.logtag == "F"
+        output: {{ .Values.sumologic.logs.multiline.enabled | ternary "merge-multiline-logs" "extract-metadata-from-filepath" }}
         overwrite_with: newest
+        source_identifier: attributes["log.file.path"]
+        type: recombine
 
       ## strip-trailing-newline removes the trailing "\n" from the `log` key. This is required for logs coming from Docker container runtime.
       ## Input Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver\n", "stream": "stdout" }
       ## Output Body (JSON): { "log": "2001-02-03 04:05:06 very long line that was split by the logging driver", "stream": "stdout" }
       - id: strip-trailing-newline
-        type: regex_parser
-        regex: "^(?P<log>.*)\n$"
+        output: {{ .Values.sumologic.logs.multiline.enabled | ternary "merge-multiline-logs" "extract-metadata-from-filepath" }}
         parse_from: body.log
         parse_to: body
-        output: {{ .Values.sumologic.logs.multiline.enabled | ternary "merge-multiline-logs" "extract-metadata-from-filepath" }}
+        regex: "^(?P<log>.*)\n$"
+        type: regex_parser
 
+{{- if .Values.sumologic.logs.multiline.enabled }}
       ## merge-multiline-logs merges incoming log records into multiline logs.
       ## Input Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
       ## Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
       ## Input Body (JSON): { "log": "  third line\n", "stream": "stdout" }
       ## Output Body (JSON): { "log": "2001-02-03 04:05:06 first line\n  second line\n  third line\n", "stream": "stdout" }
-{{- if .Values.sumologic.logs.multiline.enabled }}
       - id: merge-multiline-logs
-        type: recombine
-        output: extract-metadata-from-filepath
-        source_identifier: attributes["log.file.path"]
         combine_field: body.log
         combine_with: "\n"
         is_first_entry: body.log matches {{ .Values.sumologic.logs.multiline.first_line_regex | quote }}
+        output: extract-metadata-from-filepath
+        source_identifier: attributes["log.file.path"]
+        type: recombine
 {{- end }}
 
       ## extract-metadata-from-filepath extracts data from the `log.file.path` Attribute into the Attributes
@@ -154,9 +177,9 @@ receivers:
       ## - uid: "aed49747-b541-4a07-8663-f7e1febc47d5"
       ## }
       - id: extract-metadata-from-filepath
-        type: regex_parser
-        regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$'
         parse_from: attributes["log.file.path"]
+        regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$'
+        type: regex_parser
 
       ## The following actions are being performed:
       ## - renaming attributes
@@ -180,29 +203,40 @@ receivers:
       ## - k8s.pod.name: "logger-multiline-4nvg4"
       ## - stream: "stdout"
       - id: move-attributes
-        type: move
         from: body.stream
         to: attributes["stream"]
-      - type: move
-        from: attributes.container_name
+        type: move
+
+      - from: attributes.container_name
         to: attributes["k8s.container.name"]
-      - type: move
-        from: attributes.namespace
+        type: move
+
+      - from: attributes.namespace
         to: attributes["k8s.namespace.name"]
-      - type: move
-        from: attributes.pod_name
+        type: move
+
+      - from: attributes.pod_name
         to: attributes["k8s.pod.name"]
-      - type: remove
-        field: attributes.run_id
-      - type: remove
-        field: attributes.uid
-      - type: remove
-        field: attributes["log.file.path"]
-      - type: move
-        from: body.log
+        type: move
+
+      - field: attributes.run_id
+        type: remove
+
+      - field: attributes.uid
+        type: remove
+
+      - field: attributes["log.file.path"]
+        type: remove
+
+      - from: body.log
         to: body
+        type: move
+
+    storage: file_storage
 {{- end }}
+
 {{- if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/receiver/journaldreceiver
   journald:
     directory: /var/log/journal
     ## This is not a full equivalent of fluent-bit filtering as fluent-bit filters by `_SYSTEMD_UNIT`
@@ -261,40 +295,32 @@ receivers:
       - var-lib-etcd2.service
 {{- end }}
 {{- end }}
-exporters:
-  otlphttp:
-    endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
-    sending_queue:
-      queue_size: 10
-processors:
-  batch:
-    send_batch_size: 1000
-    send_batch_max_size: 2000
-    timeout: 1s
-  ## copy _SYSTEMD_UNIT, SYSLOG_FACILITY, _HOSTNAME and PRIORITY from body to attributes
-  ## so they can be used by metadata processors same way like for fluentd
-  ## build fluent.tag attribute as `host.{_SYSTEMD_UNIT}`
-{{- if .Values.sumologic.logs.systemd.enabled }}
-  logstransform/systemd:
-    operators:
-      - type: copy
-        from: body._SYSTEMD_UNIT
-        to: attributes._SYSTEMD_UNIT
-      - type: copy
-        from: body.SYSLOG_FACILITY
-        to: attributes.SYSLOG_FACILITY
-      - type: copy
-        from: body._HOSTNAME
-        to: attributes._HOSTNAME
-      - type: copy
-        from: body.PRIORITY
-        to: attributes.PRIORITY
-      - type: add
-        field: attributes["fluent.tag"]
-        value: EXPR("host." + attributes["_SYSTEMD_UNIT"])
-      ## Removes __CURSOR and __MONOTONIC_TIMESTAMP keys from body
-      - type: remove
-        field: body.__CURSOR
-      - type: remove
-        field: body.__MONOTONIC_TIMESTAMP
+
+service:
+  extensions:
+    - health_check
+    - file_storage
+    - pprof
+  pipelines:
+{{- if .Values.sumologic.logs.container.enabled }}
+    logs/containers:
+      exporters:
+        - otlphttp
+      processors:
+        - batch
+      receivers:
+        - filelog/containers
 {{- end }}
+{{- if .Values.sumologic.logs.systemd.enabled }}
+    logs/systemd:
+      exporters:
+        - otlphttp
+      processors:
+        - logstransform/systemd
+        - batch
+      receivers:
+        - journald
+{{- end }}
+  telemetry:
+    logs:
+      level: {{ .Values.otellogs.logLevel | quote }}

@@ -1,105 +1,212 @@
-receivers:
-{{ if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
-  fluentforward:
-    endpoint: 0.0.0.0:24321
-{{ end }}
-{{ if eq (include "logs.collector.otelcol.enabled" .) "true" }}
-  otlp:
-    protocols:
-      http:
-        endpoint: 0.0.0.0:4318
-{{ end }}
-extensions:
-  health_check: {}
-{{ if .Values.metadata.persistence.enabled }}
-  ## Configuration for File Storage extension
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
-  file_storage:
-    directory: /var/lib/storage/otc
-    timeout: 10s
-    compaction:
-      on_rebound: true
-      directory: /tmp
-{{ end }}
-  pprof: {}
 exporters:
 {{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
   sumologic/containers:
+    endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+    json_logs:
+      add_timestamp: false
     log_format: {{ include "logs.otelcol.container.exporter.format" . }}
-    json_logs:
-      add_timestamp: false
-    endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-    ## Configuration for sending queue
-    ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
     sending_queue:
       enabled: true
+      num_consumers: 10
+      queue_size: 10_000
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
-      num_consumers: 10
-      queue_size: 10_000
-{{ end }}
-{{ if .Values.sumologic.logs.systemd.enabled }}
-  sumologic/systemd:
-    log_format: json
-    json_logs:
-      add_timestamp: false
-    endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-    ## Configuration for sending queue
-    ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
-    sending_queue:
-      enabled: true
-{{- if .Values.metadata.persistence.enabled }}
-      storage: file_storage
-{{- end }}
-      num_consumers: 10
-      queue_size: 10_000
 {{ end }}
 
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
+  sumologic/systemd:
+    endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
+    json_logs:
+      add_timestamp: false
+    log_format: json
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10_000
+{{- if .Values.metadata.persistence.enabled }}
+      storage: file_storage
+{{- end }}
+{{ end }}
+
+extensions:
+{{ if .Values.metadata.persistence.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/storage/filestorage
+  file_storage:
+    compaction:
+      directory: /tmp
+      on_rebound: true
+    directory: /var/lib/storage/otc
+    timeout: 10s
+{{ end }}
+
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/healthcheckextension
+  health_check: {}
+
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/pprofextension
+  pprof: {}
+
 processors:
-  ## Common processors
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/attributesprocessor
+  attributes/extract_systemd_source_fields:
+    actions:
+      - action: extract
+        key: fluent.tag
+        pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
+      - action: insert
+        from_attribute: _HOSTNAME
+        key: _sourceHost
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/attributesprocessor
+  attributes/fluent_containers:
+    actions:
+      - action: extract
+        key: fluent.tag
+        pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
+      - action: insert
+        from_attribute: container_id
+        key: k8s.container.id
+      - action: delete
+        key: container_id
+      - action: insert
+        from_attribute: k8s_pod_name
+        key: k8s.pod.name
+      - action: delete
+        key: k8s_pod_name
+      - action: insert
+        from_attribute: k8s_namespace
+        key: k8s.namespace.name
+      - action: delete
+        key: k8s_namespace
+      - action: insert
+        from_attribute: k8s_container_name
+        key: k8s.container.name
+      - action: delete
+        key: k8s_container_name
+{{ end }}
+
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/attributesprocessor
   attributes/remove_fluent_tag:
     actions:
       - action: delete
         key: fluent.tag
-  ## The memory_limiter processor is used to prevent out of memory situations on the collector.
-  memory_limiter:
-    ## check_interval is the time between measurements of memory usage for the
-    ## purposes of avoiding going over the limits. Defaults to zero, so no
-    ## checks will be performed. Values below 1 second are not recommended since
-    ## it can result in unnecessary CPU consumption.
-    check_interval: 5s
-
-    ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
-    limit_percentage: 75
-    ## Spike limit (calculated from available memory). Must be less than limit_percentage.
-    spike_limit_percentage: 20
 
   ## The batch processor accepts spans and places them into batches grouped by node and resource
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/batchprocessor
   batch:
-    ## Number of spans after which a batch will be sent regardless of time
-    send_batch_size: 1_024
     ## Maximum number of spans sent at once
     send_batch_max_size: 2_048
+    ## Number of spans after which a batch will be sent regardless of time
+    send_batch_size: 1_024
     ## Time duration after which a batch will be sent regardless of size
     timeout: 1s
-  resource/add_cluster:
-    attributes:
-      - key: cluster
-        value: {{ .Values.sumologic.clusterName | quote }}
-        action: upsert
 
-  ## Containers related processors
-{{ if .Values.sumologic.logs.container.enabled }}
-  sumologic_schema:
-    add_cloud_namespace: false
-  filter/include_fluent_tag_containers:
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/exclude_kubelet:
     logs:
-      include:
+      exclude:
+        match_type: strict
+        record_attributes:
+          - key: _SYSTEMD_UNIT
+            value: kubelet.service
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/exclude_kubelet_hostname:
+    logs:
+      exclude:
         match_type: regexp
         record_attributes:
-          - key: fluent.tag
-            value: containers\..+
+          - key: _HOSTNAME
+            value: {{ .Values.sumologic.logs.kubelet.excludeHostRegex | default "$^" | quote }}
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/exclude_kubelet_priority:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: PRIORITY
+            value: {{ .Values.sumologic.logs.kubelet.excludePriorityRegex | default "$^" | quote }}
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/exclude_kubelet_syslog:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: SYSLOG_FACILITY
+            value: {{ .Values.sumologic.logs.kubelet.excludeFacilityRegex | default "$^" | quote }}
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/exclude_kubelet_unit:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: _SYSTEMD_UNIT
+            value: {{ .Values.sumologic.logs.kubelet.excludeUnitRegex | default "$^" | quote }}
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/exclude_systemd_hostname:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: _HOSTNAME
+            value: {{ .Values.sumologic.logs.systemd.excludeHostRegex | default "$^" | quote }}
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/exclude_systemd_priority:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: PRIORITY
+            value: {{ .Values.sumologic.logs.systemd.excludePriorityRegex | default "$^" | quote }}
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/exclude_systemd_syslog:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: SYSLOG_FACILITY
+            value: {{ .Values.sumologic.logs.systemd.excludeFacilityRegex | default "$^" | quote }}
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/exclude_systemd_unit:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: _SYSTEMD_UNIT
+            value: {{ .Values.sumologic.logs.systemd.excludeUnitRegex | default "$^" | quote }}
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
   filter/include_containers:
     logs:
       include:
@@ -107,57 +214,54 @@ processors:
         record_attributes:
           - key: k8s.container.name
             value: .+
-  attributes/fluent_containers:
-    actions:
-      - action: extract
-        key: fluent.tag
-        pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
-      - action: insert
-        key: k8s.container.id
-        from_attribute: container_id
-      - action: delete
-        key: container_id
-      - action: insert
-        key: k8s.pod.name
-        from_attribute: k8s_pod_name
-      - action: delete
-        key: k8s_pod_name
-      - action: insert
-        key: k8s.namespace.name
-        from_attribute: k8s_namespace
-      - action: delete
-        key: k8s_namespace
-      - action: insert
-        key: k8s.container.name
-        from_attribute: k8s_container_name
-      - action: delete
-        key: k8s_container_name
-  resource/containers_copy_node_to_host:
-    attributes:
-      - action: upsert
-        key: k8s.pod.hostname
-        from_attribute: k8s.node.name
-  resource/drop_annotations:
-    attributes:
-      - pattern: ^pod_annotations_.*
-        action: delete
-  resource/remove_pod_name:
-    attributes:
-      - action: delete
-        key: pod_name
-  # As sourceprocessor can't set these attributes to be empty, we do it here instead
-  # If they're defined to be anything else in sourceprocessor, those values will overwrite these
-  resource/set_empty_source_metadata:
-    attributes:
-    - key: _sourceCategory
-      action: insert
-      value: ""
-    - key: _sourceHost
-      action: insert
-      value: ""
-    - key: _sourceName
-      action: insert
-      value: ""
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/include_fluent_tag_containers:
+    logs:
+      include:
+        match_type: regexp
+        record_attributes:
+          - key: fluent.tag
+            value: containers\..+
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/include_fluent_tag_host:
+    logs:
+      include:
+        match_type: regexp
+        record_attributes:
+          - key: fluent.tag
+            value: host\..+
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/include_kubelet:
+    logs:
+      include:
+        match_type: strict
+        record_attributes:
+          - key: _SYSTEMD_UNIT
+            value: kubelet.service
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  filter/include_systemd:
+    logs:
+      include:
+        match_type: regexp
+        record_attributes:
+          - key: _SYSTEMD_UNIT
+            value: .+
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/groupbyattrsprocessor
   groupbyattrs/containers:
     keys:
       - k8s.container.id
@@ -165,11 +269,28 @@ processors:
       - k8s.namespace.name
       - k8s.pod.name
       - _collector
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/groupbyattrsprocessor
+  groupbyattrs/systemd:
+    keys:
+      - _sourceName
+      - _sourceHost
+      - _collector
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
   k8s_tagger:
-    ## Has to be false to enrich metadata
-    passthrough: false
-    owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
     extract:
+      annotations:
+        - key: "*"
+          tag_name: "pod_annotations_%s"
+      delimiter: "_"
+      labels:
+        - key: "*"
+          tag_name: "pod_labels_%s"
       metadata:
         ## extract the following well-known metadata fields
         - daemonSetName
@@ -180,183 +301,115 @@ processors:
         - podName
         - serviceName
         - statefulSetName
-      annotations:
-        - tag_name: "pod_annotations_%s"
-          key: "*"
       namespace_labels:
-        - tag_name: "namespace_labels_%s"
-          key: "*"
-      labels:
-        - tag_name: "pod_labels_%s"
-          key: "*"
-      delimiter: "_"
+        - key: "*"
+          tag_name: "namespace_labels_%s"
+    # To enable fetching additional metadata using `owner` relationship
+    owner_lookup_enabled: true
+    ## Has to be false to enrich metadata
+    passthrough: false
     pod_association:
       - from: build_hostname
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## logstransformprocessor is experimental, but the same functionality in transformprocessor doesn't offer robust enough error handling
+  ## TODO: use transformprocessor here after https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/16519 is closed
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/logstransformprocessor
+  logstransform/containers_parse_json:
+    operators:
+      - if: body matches "^{[\\s\\S]+"
+        parse_from: body
+        parse_to: body
+        type: json_parser
+{{ end }}
+
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/memorylimiterprocessor
+  memory_limiter:
+    ## check_interval is the time between measurements of memory usage for the
+    ## purposes of avoiding going over the limits. Defaults to zero, so no
+    ## checks will be performed. Values below 1 second are not recommended since
+    ## it can result in unnecessary CPU consumption.
+    check_interval: 5s
+    ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+    limit_percentage: 75
+    ## Spike limit (calculated from available memory). Must be less than limit_percentage.
+    spike_limit_percentage: 20
+
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+  resource/add_cluster:
+    attributes:
+      - action: upsert
+        key: cluster
+        value: {{ .Values.sumologic.clusterName | quote }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+  resource/containers_copy_node_to_host:
+    attributes:
+      - action: upsert
+        from_attribute: k8s.node.name
+        key: k8s.pod.hostname
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+  resource/drop_annotations:
+    attributes:
+      - action: delete
+        pattern: ^pod_annotations_.*
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+  resource/remove_pod_name:
+    attributes:
+      - action: delete
+        key: pod_name
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  # As sourceprocessor can't set these attributes to be empty, we do it here instead
+  # If they're defined to be anything else in sourceprocessor, those values will overwrite these
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+  resource/set_empty_source_metadata:
+    attributes:
+    - action: insert
+      key: _sourceCategory
+      value: ""
+    - action: insert
+      key: _sourceHost
+      value: ""
+    - action: insert
+      key: _sourceName
+      value: ""
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
   source/containers:
-    collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
-    source_host: {{ .Values.sumologic.logs.container.sourceHost | quote }}
-    source_name:  {{ .Values.sumologic.logs.container.sourceName | quote }}
-    source_category: {{ .Values.sumologic.logs.container.sourceCategory | quote }}
-    source_category_prefix: {{ .Values.sumologic.logs.container.sourceCategoryPrefix | quote }}
-    source_category_replace_dash: {{ .Values.sumologic.logs.container.sourceCategoryReplaceDash | quote }}
-    exclude:
-      namespace: {{ include "logs.excludeNamespaces" . }}
-      pod: {{ .Values.sumologic.logs.container.excludePodRegex | quote }}
-      container: {{ .Values.sumologic.logs.container.excludeContainerRegex | quote }}
-      node: {{ .Values.sumologic.logs.container.excludeHostRegex | quote }}
     annotation_prefix: "pod_annotations_"
-    pod_template_hash_key: "pod_labels_pod-template-hash"
-    pod_name_key: "pod_name"
-    pod_key: "pod"
+    collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
     container_annotations:
       enabled: {{ .Values.sumologic.logs.container.perContainerAnnotationsEnabled }}
       prefixes: {{ toJson .Values.sumologic.logs.container.perContainerAnnotationPrefixes }}
-  ## logstransformprocessor is experimental, but the same functionality in transformprocessor doesn't offer robust enough error handling
-  ## TODO: use transformprocessor here after https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/16519 is closed
-  logstransform/containers_parse_json:
-    operators:
-      - type: json_parser
-        parse_from: body
-        parse_to: body
-        if: body matches "^{[\\s\\S]+"
-{{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
-{{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
-{{ toYaml $processor | indent 2}}
-{{- end }}
-{{- end }}
+    exclude:
+      container: {{ .Values.sumologic.logs.container.excludeContainerRegex | quote }}
+      namespace: {{ include "logs.excludeNamespaces" . }}
+      node: {{ .Values.sumologic.logs.container.excludeHostRegex | quote }}
+      pod: {{ .Values.sumologic.logs.container.excludePodRegex | quote }}
+    pod_key: "pod"
+    pod_name_key: "pod_name"
+    pod_template_hash_key: "pod_labels_pod-template-hash"
+    source_category: {{ .Values.sumologic.logs.container.sourceCategory | quote }}
+    source_category_prefix: {{ .Values.sumologic.logs.container.sourceCategoryPrefix | quote }}
+    source_category_replace_dash: {{ .Values.sumologic.logs.container.sourceCategoryReplaceDash | quote }}
+    source_host: {{ .Values.sumologic.logs.container.sourceHost | quote }}
+    source_name: {{ .Values.sumologic.logs.container.sourceName | quote }}
 {{ end }}
+
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## Systemd related processors
-  filter/include_fluent_tag_host:
-    logs:
-      include:
-        match_type: regexp
-        record_attributes:
-          - key: fluent.tag
-            value: host\..+
-  attributes/extract_systemd_source_fields:
-    actions:
-      - action: extract
-        key: fluent.tag
-        pattern: ^host\.(?P<_sourceName>[a-zA-z0-9]+)\..+$
-      - action: insert
-        from_attribute: _HOSTNAME
-        key: _sourceHost
-  filter/include_systemd:
-    logs:
-      include:
-        match_type: regexp
-        record_attributes:
-          - key: _SYSTEMD_UNIT
-            value: .+
-  filter/exclude_kubelet:
-    logs:
-      exclude:
-        match_type: strict
-        record_attributes:
-          - key: _SYSTEMD_UNIT
-            value: kubelet.service
-  filter/exclude_systemd_syslog:
-    logs:
-      exclude:
-        match_type: regexp
-        record_attributes:
-          - key: SYSLOG_FACILITY
-            value: {{ .Values.sumologic.logs.systemd.excludeFacilityRegex | default "$^" | quote }}
-  filter/exclude_systemd_hostname:
-    logs:
-      exclude:
-        match_type: regexp
-        record_attributes:
-          - key: _HOSTNAME
-            value: {{ .Values.sumologic.logs.systemd.excludeHostRegex | default "$^" | quote }}
-  filter/exclude_systemd_priority:
-    logs:
-      exclude:
-        match_type: regexp
-        record_attributes:
-          - key: PRIORITY
-            value: {{ .Values.sumologic.logs.systemd.excludePriorityRegex | default "$^" | quote }}
-  filter/exclude_systemd_unit:
-    logs:
-      exclude:
-        match_type: regexp
-        record_attributes:
-          - key: _SYSTEMD_UNIT
-            value: {{ .Values.sumologic.logs.systemd.excludeUnitRegex | default "$^" | quote }}
-  filter/exclude_kubelet_syslog:
-    logs:
-      exclude:
-        match_type: regexp
-        record_attributes:
-          - key: SYSLOG_FACILITY
-            value: {{ .Values.sumologic.logs.kubelet.excludeFacilityRegex | default "$^" | quote }}
-  filter/exclude_kubelet_hostname:
-    logs:
-      exclude:
-        match_type: regexp
-        record_attributes:
-          - key: _HOSTNAME
-            value: {{ .Values.sumologic.logs.kubelet.excludeHostRegex | default "$^" | quote }}
-  filter/exclude_kubelet_priority:
-    logs:
-      exclude:
-        match_type: regexp
-        record_attributes:
-          - key: PRIORITY
-            value: {{ .Values.sumologic.logs.kubelet.excludePriorityRegex | default "$^" | quote }}
-  filter/exclude_kubelet_unit:
-    logs:
-      exclude:
-        match_type: regexp
-        record_attributes:
-          - key: _SYSTEMD_UNIT
-            value: {{ .Values.sumologic.logs.kubelet.excludeUnitRegex | default "$^" | quote }}
-
-  groupbyattrs/systemd:
-    keys:
-      - _sourceName
-      - _sourceHost
-      - _collector
-  source/systemd:
-    collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
-    source_host: "%{_sourceHost}"
-    source_name: {{ .Values.sumologic.logs.systemd.sourceName | quote }}
-    source_category: {{ .Values.sumologic.logs.systemd.sourceCategory | quote }}
-    source_category_prefix: {{ .Values.sumologic.logs.systemd.sourceCategoryPrefix | quote }}
-    source_category_replace_dash: {{ .Values.sumologic.logs.systemd.sourceCategoryReplaceDash | quote }}
-  ## Remove all attributes, so body won't by nested by SumoLogic receiver in case of using otlp format
-  transform/remove_attributes:
-    log_statements:
-      - context: log
-        statements:
-          - limit(attributes, 0, [])
-
-  ## Move attributes from the body to the record and drop the body if it's a map
-  ## The map check isn't perfect, as there's no way to check for this explicitly in OTTL
-  ## We always parse json earlier in the pipeline though, so this is safe
-  transform/flatten:
-    log_statements:
-      - context: log
-        statements:
-          - merge_maps(attributes, body, "insert")
-          - set(body, "") where IsMatch(body, "^{") == true
-
-  ## Add timestamp to attributes
-  transform/add_timestamp:
-    log_statements:
-      - context: log
-        statements:
-          - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
-
-  ## kubelet related processors
-  filter/include_kubelet:
-    logs:
-      include:
-        match_type: strict
-        record_attributes:
-          - key: _SYSTEMD_UNIT
-            value: kubelet.service
+  ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
   source/kubelet:
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
     source_host: "%{_sourceHost}"
@@ -366,10 +419,78 @@ processors:
     source_category_replace_dash: {{ .Values.sumologic.logs.kubelet.sourceCategoryReplaceDash | quote }}
 {{ end }}
 
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
+  source/systemd:
+    collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
+    source_category: {{ .Values.sumologic.logs.systemd.sourceCategory | quote }}
+    source_category_prefix: {{ .Values.sumologic.logs.systemd.sourceCategoryPrefix | quote }}
+    source_category_replace_dash: {{ .Values.sumologic.logs.systemd.sourceCategoryReplaceDash | quote }}
+    source_host: "%{_sourceHost}"
+    source_name: {{ .Values.sumologic.logs.systemd.sourceName | quote }}
+{{ end }}
+
+{{ if .Values.sumologic.logs.container.enabled }}
+  ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sumologicschemaprocessor
+  sumologic_schema:
+    add_cloud_namespace: false
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## Add timestamp to attributes
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/transformprocessor
+  transform/add_timestamp:
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## Move attributes from the body to the record and drop the body if it's a map
+  ## The map check isn't perfect, as there's no way to check for this explicitly in OTTL
+  ## We always parse json earlier in the pipeline though, so this is safe
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/transformprocessor
+  transform/flatten:
+    log_statements:
+      - context: log
+        statements:
+          - merge_maps(attributes, body, "insert")
+          - set(body, "") where IsMatch(body, "^{") == true
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+  ## Remove all attributes, so body won't by nested by SumoLogic receiver in case of using otlp format
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/transformprocessor
+  transform/remove_attributes:
+    log_statements:
+      - context: log
+        statements:
+          - limit(attributes, 0, [])
+{{ end }}
+
+{{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
+{{ toYaml $processor | indent 2}}
+{{- end }}
+{{- end }}
+
+receivers:
+{{ if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/receiver/fluentforwardreceiver
+  fluentforward:
+    endpoint: 0.0.0.0:24321
+{{ end }}
+
+{{ if eq (include "logs.collector.otelcol.enabled" .) "true" }}
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/receiver/otlpreceiver
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+{{ end }}
+
 service:
-  telemetry:
-    logs:
-      level: {{ .Values.metadata.logs.logLevel }}
   extensions:
     - health_check
 {{ if .Values.metadata.persistence.enabled }}
@@ -380,8 +501,8 @@ service:
 {{ if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
 {{ if .Values.sumologic.logs.container.enabled }}
     logs/fluent/containers:
-      receivers:
-        - fluentforward
+      exporters:
+        - sumologic/containers
       processors:
         - memory_limiter
         - filter/include_fluent_tag_containers
@@ -408,13 +529,37 @@ service:
 {{- end }}
         - transform/add_timestamp
         - batch
-      exporters:
-        - sumologic/containers
-{{ end }}
-{{ if .Values.sumologic.logs.systemd.enabled }}
-    logs/fluent/systemd:
       receivers:
         - fluentforward
+{{ end }}
+
+{{ if .Values.sumologic.logs.systemd.enabled }}
+    logs/fluent/kubelet:
+      exporters:
+        - sumologic/systemd
+      processors:
+        - memory_limiter
+        - filter/include_fluent_tag_host
+        - filter/include_kubelet
+        - filter/exclude_kubelet_syslog
+        - filter/exclude_kubelet_hostname
+        - filter/exclude_kubelet_priority
+        - filter/exclude_kubelet_unit
+        - attributes/extract_systemd_source_fields
+        - attributes/remove_fluent_tag
+        - groupbyattrs/systemd
+        - resource/add_cluster
+        - source/kubelet
+        - transform/remove_attributes
+        - transform/flatten
+        - transform/add_timestamp
+        - batch
+      receivers:
+        - fluentforward
+
+    logs/fluent/systemd:
+      exporters:
+        - sumologic/systemd
       processors:
         - memory_limiter
         - filter/include_fluent_tag_host
@@ -433,32 +578,11 @@ service:
         - transform/flatten
         - transform/add_timestamp
         - batch
-      exporters:
-        - sumologic/systemd
-    logs/fluent/kubelet:
       receivers:
         - fluentforward
-      processors:
-        - memory_limiter
-        - filter/include_fluent_tag_host
-        - filter/include_kubelet
-        - filter/exclude_kubelet_syslog
-        - filter/exclude_kubelet_hostname
-        - filter/exclude_kubelet_priority
-        - filter/exclude_kubelet_unit
-        - attributes/extract_systemd_source_fields
-        - attributes/remove_fluent_tag
-        - groupbyattrs/systemd
-        - resource/add_cluster
-        - source/kubelet
-        - transform/remove_attributes
-        - transform/flatten
-        - transform/add_timestamp
-        - batch
-      exporters:
-        - sumologic/systemd
 {{ end }}
 {{ end }}
+
 {{ if eq (include "logs.collector.otelcol.enabled" .) "true" }}
 {{ if .Values.sumologic.logs.container.enabled }}
     ## This is the same pipeline like for logs/fluent/containers with the following modifications:
@@ -466,8 +590,8 @@ service:
     ##   as only containers log are being provided to otlp receiver
     ## - attributes/fluent_containers functionality is being replaced by otellogs operators
     logs/otlp/containers:
-      receivers:
-        - otlp
+      exporters:
+        - sumologic/containers
       processors:
         - memory_limiter
         - filter/include_containers
@@ -493,16 +617,43 @@ service:
 {{- end }}
         - transform/add_timestamp
         - batch
-      exporters:
-        - sumologic/containers
+      receivers:
+        - otlp
 {{ end }}
+
 {{ if .Values.sumologic.logs.systemd.enabled }}
+    ## This is the same pipeline like logs/fluent/kubelet, but with the following changes:
+    ## - otlp receiver instead of fluentforward
+    ## - added transform/remove_attributes processor
+    logs/otlp/kubelet:
+      exporters:
+        - sumologic/systemd
+      processors:
+        - memory_limiter
+        - filter/include_fluent_tag_host
+        - filter/include_kubelet
+        - filter/exclude_kubelet_syslog
+        - filter/exclude_kubelet_hostname
+        - filter/exclude_kubelet_priority
+        - filter/exclude_kubelet_unit
+        - attributes/extract_systemd_source_fields
+        - attributes/remove_fluent_tag
+        - groupbyattrs/systemd
+        - resource/add_cluster
+        - source/kubelet
+        - transform/remove_attributes
+        - transform/flatten
+        - transform/add_timestamp
+        - batch
+      receivers:
+        - otlp
+
     ## This is the same pipeline like logs/fluent/systemd, but with the following changes:
     ## - otlp receiver instead of fluentforward
     ## - added transform/remove_attributes processor
     logs/otlp/systemd:
-      receivers:
-        - otlp
+      exporters:
+        - sumologic/systemd
       processors:
         - memory_limiter
         - filter/include_fluent_tag_host
@@ -521,32 +672,10 @@ service:
         - transform/flatten
         - transform/add_timestamp
         - batch
-      exporters:
-        - sumologic/systemd
-    ## This is the same pipeline like logs/fluent/kubelet, but with the following changes:
-    ## - otlp receiver instead of fluentforward
-    ## - added transform/remove_attributes processor
-    logs/otlp/kubelet:
       receivers:
         - otlp
-      processors:
-        - memory_limiter
-        - filter/include_fluent_tag_host
-        - filter/include_kubelet
-        - filter/exclude_kubelet_syslog
-        - filter/exclude_kubelet_hostname
-        - filter/exclude_kubelet_priority
-        - filter/exclude_kubelet_unit
-        - attributes/extract_systemd_source_fields
-        - attributes/remove_fluent_tag
-        - groupbyattrs/systemd
-        - resource/add_cluster
-        - source/kubelet
-        - transform/remove_attributes
-        - transform/flatten
-        - transform/add_timestamp
-        - batch
-      exporters:
-        - sumologic/systemd
 {{ end }}
 {{ end }}
+  telemetry:
+    logs:
+      level: {{ .Values.metadata.logs.logLevel }}

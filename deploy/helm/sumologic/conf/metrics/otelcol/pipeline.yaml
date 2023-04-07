@@ -1,5 +1,12 @@
-receivers:
-  - telegraf
+exporters:
+  - sumologic/default
+  - sumologic/apiserver
+  - sumologic/control_plane
+  - sumologic/controller
+  - sumologic/kubelet
+  - sumologic/node
+  - sumologic/scheduler
+  - sumologic/state
 processors:
   - memory_limiter
   - metricstransform
@@ -16,12 +23,5 @@ processors:
   - sumologic_schema
   - batch
   - routing
-exporters:
-  - sumologic/default
-  - sumologic/apiserver
-  - sumologic/control_plane
-  - sumologic/controller
-  - sumologic/kubelet
-  - sumologic/node
-  - sumologic/scheduler
-  - sumologic/state
+receivers:
+  - telegraf
