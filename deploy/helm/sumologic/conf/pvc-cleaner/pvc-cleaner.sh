@@ -21,7 +21,7 @@ function print_help() {
 # Disable 'Command appears to be unreachable.' as it is invoked in trap
 # shellcheck disable=SC2317
 function err_report() {
-  if [ "${1}" != "0" ]; then
+  if [[ "${1}" != "0" ]]; then
     echo
     echo "Caught error with code ${1} on line ${2}."
     echo "The unmounted PVCs deletion has failed."
@@ -114,16 +114,19 @@ function get_replicas_to_keep() {
   max_number "${desired_replicas}" "${current_replicas}"
 }
 
+# shellcheck disable=SC2310
 if ! check_args "$@"; then
   print_help
   exit 0
 fi
 
+# shellcheck disable=SC2310
 if ! test_kubectl_connection; then
   echo "The kubectl command could not list PVCs, please check the connection."
   exit 1
 fi
 
+# shellcheck disable=SC2310
 if ! delete_all && ! check_hpa_exists; then
   echo "Provided HPA ${HPA_NAME} not found."
   exit 1
@@ -134,6 +137,7 @@ PVC_AMOUNT="$(get_pvcs_count)"
 
 readonly PVC_LIST PVC_AMOUNT
 
+# shellcheck disable=SC2310
 if check_pvc_amount "${PVC_AMOUNT}"; then
   echo "Found ${PVC_AMOUNT} PVC instances in the '${NAMESPACE}' namespace with '${PVC_SELECTOR}' selector."
   echo
@@ -142,6 +146,7 @@ else
   exit 1
 fi
 
+# shellcheck disable=SC2310
 if delete_all; then
   KEEP_REPLICAS=""
   echo "Preparing for deletion of all the unmounted PVCs."
@@ -156,11 +161,13 @@ readonly KEEP_REPLICAS
 
 for pvc in ${PVC_LIST}; do
   pvc_number="$(get_pvc_number "${pvc}")"
+  # shellcheck disable=SC2310
   if ! delete_all && [[ "${pvc_number}" -lt ${KEEP_REPLICAS} ]]; then
     echo "Skipping pvc: ${pvc}"
     continue
   fi
 
+  # shellcheck disable=SC2310
   if check_if_pvc_unmounted "${pvc}"; then
     echo "Deleting the unmounted pvc: ${pvc}"
     kubectl --namespace "${NAMESPACE}" delete pvc "${pvc}"
