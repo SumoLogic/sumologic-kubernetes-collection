@@ -1,0 +1,63 @@
+sumologic:
+  podLabels:
+    someSumo: label
+  podAnnotations:
+    someSumo: annotation
+
+pvcCleaner:
+  metrics:
+    enabled: true
+  logs:
+    enabled: true
+  job:
+    image:
+      repository: private.ecr.aws/sumologic/kubernetes-tools
+      tag: x.y.z
+      pullPolicy: Always
+    pullSecrets:
+      - name: myRegistryKeySecretName
+    resources:
+      limits:
+        memory: 1025Mi
+        cpu: 31m
+      requests:
+        memory: 63Mi
+        cpu: 12m
+    nodeSelector:
+      my: node
+    ## Add custom labels only to setup job pod
+
+    ## Node tolerations for server scheduling to nodes with taints
+    ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+    ##
+    tolerations:
+      - key: null
+        operator: Exists
+        effect: "NoSchedule"
+
+    ## Affinity and anti-affinity
+    ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+    ##
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - RELEASE-NAME-sumologic-fluentd-logs
+                    - RELEASE-NAME-sumologic-fluentd-metrics
+                - key: app
+                  operator: In
+                  values:
+                    - prometheus-operator-prometheus
+            topologyKey: "kubernetes.io/hostname"
+
+    podLabels:
+      some: label
+    ## Add custom annotations only to setup job pod
+    podAnnotations:
+      some: annotation
+
+    schedule: "*/2 * * * *"
