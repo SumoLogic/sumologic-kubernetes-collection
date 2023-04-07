@@ -18,7 +18,9 @@ function print_help() {
   echo "  pvc-cleaner namespace PVC-selector [HPA-name]"
 }
 
-err_report() {
+# Disable 'Command appears to be unreachable.' as it is invoked in trap
+# shellcheck disable=SC2317
+function err_report() {
   if [ "${1}" != "0" ]; then
     echo
     echo "Caught error with code ${1} on line ${2}."
@@ -127,8 +129,10 @@ if ! delete_all && ! check_hpa_exists; then
   exit 1
 fi
 
-readonly PVC_LIST="$(get_sorted_pvcs)"
-readonly PVC_AMOUNT="$(get_pvcs_count)"
+PVC_LIST="$(get_sorted_pvcs)"
+PVC_AMOUNT="$(get_pvcs_count)"
+
+readonly PVC_LIST PVC_AMOUNT
 
 if check_pvc_amount "${PVC_AMOUNT}"; then
   echo "Found ${PVC_AMOUNT} PVC instances in the '${NAMESPACE}' namespace with '${PVC_SELECTOR}' selector."
