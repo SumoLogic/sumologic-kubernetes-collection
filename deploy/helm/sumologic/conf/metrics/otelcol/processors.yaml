@@ -1,141 +1,22 @@
-## Configuration for Metrics Transform Processor
-## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/metricstransformprocessor
-metricstransform:
-  transforms:
-    ## rename all prometheus_remote_write_$name metrics to $name
-    include: ^prometheus_remote_write_(.*)$$
-    match_type: regexp
-    action: update
-    new_name: $$1
-## NOTE: Drop these for now and and when proper configuration options
-## are exposed and source processor is configured then send them
-## as headers.
-## ref: https://github.com/SumoLogic/sumologic-otel-collector/issues/265
-resource/delete_source_metadata:
-  attributes:
-    - key: _sourceCategory
-      action: delete
-    - key: _sourceHost
-      action: delete
-    - key: _sourceName
-      action: delete
-## Configuration for Resource Processor
-## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/processor/resourceprocessor
-resource:
-  attributes:
-    - key: k8s.namespace.name
-      from_attribute: namespace
-      action: upsert
-    - key: namespace  # remove namespace to avoid duplication when attribute translation is enabled
-      action: delete
-    - key: k8s.pod.name
-      from_attribute: pod
-      action: upsert
-    - key: pod  # remove pod to avoid duplication when attribute translation is enabled
-      action: delete
-    - key: k8s.container.name  # add container in OpenTelemetry convention to unify configuration for Source processor
-      from_attribute: container
-      action: upsert
-    - key: container  # remove container to avoid duplication when attribute translation is enabled
-      action: delete
-    - key: prometheus_service
-      from_attribute: service
-      action: upsert
-    - key: service
-      action: delete
-    - key: _origin  # add "_origin" metadata to metrics to keep the same format as for metrics from Fluentd
-      value: kubernetes
-      action: upsert
-    - key: cluster
-      value: {{ .Values.sumologic.clusterName | quote }}
-      action: upsert
-resource/remove_k8s_pod_pod_name:
-  attributes:
-    - action: delete
-      key: k8s.pod.pod_name
-## NOTE: below listed rules could be simplified if routingprocessor
-## supports regex matching. At this point we could group route entries
-## going to the same set of exporters.
-routing:
-  ## NOTE: add a feature to routingprocessor to drop the routing
-  ## attribute to prevent it being sent to the exporters.
-  from_attribute: http_listener_v2_path
-  drop_resource_routing_attribute: true
-  attribute_source: resource
-  default_exporters:
-    - sumologic/default
-  table:
-    ## apiserver metrics
-    - value: /prometheus.metrics.apiserver
-      exporters:
-        - sumologic/apiserver
-    ## container metrics
-    - value: /prometheus.metrics.container
-      exporters:
-        - sumologic/kubelet
-    ## control-plane metrics
-    - value: /prometheus.metrics.control-plane.coredns
-      exporters:
-        - sumologic/control_plane
-    - value: /prometheus.metrics.control-plane.kube-etcd
-      exporters:
-        - sumologic/control_plane
-    ## controller metrics
-    - value: /prometheus.metrics.controller-manager
-      exporters:
-        - sumologic/controller
-    ## kubelet metrics
-    - value: /prometheus.metrics.kubelet
-      exporters:
-        - sumologic/kubelet
-    ## node metrics
-    - value: /prometheus.metrics.node
-      exporters:
-        - sumologic/node
-    ## scheduler metrics
-    - value: /prometheus.metrics.scheduler
-      exporters:
-        - sumologic/scheduler
-    ## state metrics
-    - value: /prometheus.metrics.state
-      exporters:
-        - sumologic/state
-
-## Configuration for Memory Limiter Processor
-## The memory_limiter processor is used to prevent out of memory situations on the collector.
-## ref: https://github.com/SumoLogic/opentelemetry-collector/tree/main/processor/memorylimiter
-memory_limiter:
-  ## check_interval is the time between measurements of memory usage for the
-  ## purposes of avoiding going over the limits. Defaults to zero, so no
-  ## checks will be performed. Values below 1 second are not recommended since
-  ## it can result in unnecessary CPU consumption.
-  check_interval: 5s
-
-  ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
-  limit_percentage: 75
-  ## Spike limit (calculated from available memory). Must be less than limit_percentage.
-  spike_limit_percentage: 20
-
-sumologic_schema:
-  add_cloud_namespace: false
-
 ## Configuration for Batch Processor
 ## The batch processor accepts spans and places them into batches grouped by node and resource
-## ref: https://github.com/SumoLogic/opentelemetry-collector/blob/main/processor/batchprocessor
+## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/batchprocessor
 batch:
-  ## Number of spans after which a batch will be sent regardless of time
-  send_batch_size: 1_024
   ## Maximum number of spans sent at once
   send_batch_max_size: 2_048
+  ## Number of spans after which a batch will be sent regardless of time
+  send_batch_size: 1_024
   ## Time duration after which a batch will be sent regardless of size
   timeout: 1s
-## Configuration for Kubernetes Processor
+
+## The Kubernetes sprocessor automatically tags logs, metrics and traces with Kubernetes metadata like pod name, namespace name etc.
 ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
 k8s_tagger:
-  ## Has to be false to enrich metadata
-  passthrough: false
-  owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
   extract:
+    delimiter: "_"
+    labels:
+      - key: "*"
+        tag_name: "pod_labels_%s"
     metadata:
       ## extract the following well-known metadata fields
       - daemonSetName
@@ -144,17 +25,146 @@ k8s_tagger:
       - replicaSetName
       - serviceName
       - statefulSetName
-    labels:
-      - tag_name: "pod_labels_%s"
-        key: "*"
-    delimiter: "_"
+  owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
+  ## Has to be false to enrich metadata
+  passthrough: false
   pod_association:
     - from: build_hostname  # Pods are identified by Pod name and namespace
+
+## Configuration for Memory Limiter Processor
+## The memory_limiter processor is used to prevent out of memory situations on the collector.
+## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/memorylimiter
+memory_limiter:
+  ## check_interval is the time between measurements of memory usage for the
+  ## purposes of avoiding going over the limits. Defaults to zero, so no
+  ## checks will be performed. Values below 1 second are not recommended since
+  ## it can result in unnecessary CPU consumption.
+  check_interval: 5s
+  ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+  limit_percentage: 75
+  ## Spike limit (calculated from available memory). Must be less than limit_percentage.
+  spike_limit_percentage: 20
+
+## Configuration for Metrics Transform Processor
+## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/metricstransformprocessor
+metricstransform:
+  transforms:
+    ## rename all prometheus_remote_write_$name metrics to $name
+    action: update
+    include: ^prometheus_remote_write_(.*)$$
+    match_type: regexp
+    new_name: $$1
+
+## Configuration for Resource Processor
+## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+resource:
+  attributes:
+    - action: upsert
+      from_attribute: namespace
+      key: k8s.namespace.name
+    - action: delete
+      key: namespace  # remove namespace to avoid duplication when attribute translation is enabled
+    - action: upsert
+      from_attribute: pod
+      key: k8s.pod.name
+    - action: delete
+      key: pod  # remove pod to avoid duplication when attribute translation is enabled
+    - action: upsert
+      from_attribute: container
+      key: k8s.container.name  # add container in OpenTelemetry convention to unify configuration for Source processor
+    - action: delete
+      key: container  # remove container to avoid duplication when attribute translation is enabled
+    - action: upsert
+      from_attribute: service
+      key: prometheus_service
+    - action: delete
+      key: service
+    - action: upsert
+      key: _origin  # add "_origin" metadata to metrics to keep the same format as for metrics from Fluentd
+      value: kubernetes
+    - action: upsert
+      key: cluster
+      value: {{ .Values.sumologic.clusterName | quote }}
+
+## NOTE: Drop these for now and and when proper configuration options
+## are exposed and source processor is configured then send them
+## as headers.
+## ref: https://github.com/SumoLogic/sumologic-otel-collector/issues/265
+## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+resource/delete_source_metadata:
+  attributes:
+    - action: delete
+      key: _sourceCategory
+    - action: delete
+      key: _sourceHost
+    - action: delete
+      key: _sourceName
+
+## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+resource/remove_k8s_pod_pod_name:
+  attributes:
+    - action: delete
+      key: k8s.pod.pod_name
+
+## NOTE: below listed rules could be simplified if routingprocessor
+## supports regex matching. At this point we could group route entries
+## going to the same set of exporters.
+## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/routingprocessor
+routing:
+  attribute_source: resource
+  default_exporters:
+    - sumologic/default
+  drop_resource_routing_attribute: true
+  from_attribute: http_listener_v2_path
+  table:
+    ## apiserver metrics
+    - exporters:
+        - sumologic/apiserver
+      value: /prometheus.metrics.apiserver
+    ## container metrics
+    - exporters:
+        - sumologic/kubelet
+      value: /prometheus.metrics.container
+    ## control-plane metrics
+    - exporters:
+        - sumologic/control_plane
+      value: /prometheus.metrics.control-plane.coredns
+    - exporters:
+        - sumologic/control_plane
+      value: /prometheus.metrics.control-plane.kube-etcd
+    ## controller metrics
+    - exporters:
+        - sumologic/controller
+      value: /prometheus.metrics.controller-manager
+    ## kubelet metrics
+    - exporters:
+        - sumologic/kubelet
+      value: /prometheus.metrics.kubelet
+    ## node metrics
+    - exporters:
+        - sumologic/node
+      value: /prometheus.metrics.node
+    ## scheduler metrics
+    - exporters:
+        - sumologic/scheduler
+      value: /prometheus.metrics.scheduler
+    ## state metrics
+    - exporters:
+        - sumologic/state
+      value: /prometheus.metrics.state
+
 ## Configuration for Source Processor
 ## Source processor adds Sumo Logic related metadata
 ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
 source:
   collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
+
+## The Sumo Logic Schema processor modifies the metadata on logs, metrics and traces sent to Sumo Logic
+## so that the Sumo Logic apps can make full use of the ingested data.
+## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sumologicschemaprocessor
+sumologic_schema:
+  add_cloud_namespace: false
+
 {{- if .Values.sumologic.metrics.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.metrics.otelcol.extraProcessors }}
 {{ toYaml $processor }}

@@ -1,3 +1,27 @@
+exporters:
+{{ tpl (.Files.Get "conf/metrics/otelcol/exporters.yaml") . | indent 2 }}
+
+extensions:
+{{ if .Values.metadata.persistence.enabled }}
+  ## Configuration for File Storage extension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/storage/filestorage
+  file_storage:
+    compaction:
+      directory: /tmp
+      on_rebound: true
+    directory: /var/lib/storage/otc
+    timeout: 10s
+{{ end }}
+
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/healthcheckextension
+  health_check: {}
+
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/pprofextension
+  pprof: {}
+
+processors:
+{{ tpl (.Files.Get "conf/metrics/otelcol/processors.yaml") . | indent 2 }}
+
 receivers:
   ## Configuration for Telegraf Receiver
   ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/receiver/telegrafreceiver
@@ -17,27 +41,8 @@ receivers:
         paths = [
 {{ include "metric.endpoints" . | indent 10 }}
         ]
-extensions:
-  health_check: {}
-{{ if .Values.metadata.persistence.enabled }}
-  ## Configuration for File Storage extension
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
-  file_storage:
-    directory: /var/lib/storage/otc
-    timeout: 10s
-    compaction:
-      on_rebound: true
-      directory: /tmp
-{{ end }}
-  pprof: {}
-exporters:
-{{ tpl (.Files.Get "conf/metrics/otelcol/exporters.yaml") . | indent 2 }}
-processors:
-{{ tpl (.Files.Get "conf/metrics/otelcol/processors.yaml") . | indent 2 }}
+
 service:
-  telemetry:
-    logs:
-      level: {{ .Values.metadata.metrics.logLevel }}
   extensions:
     - health_check
 {{ if .Values.metadata.persistence.enabled }}
@@ -47,4 +52,6 @@ service:
   pipelines:
     metrics:
 {{ tpl (.Files.Get "conf/metrics/otelcol/pipeline.yaml") . | indent 6 }}
-
+  telemetry:
+    logs:
+      level: {{ .Values.metadata.metrics.logLevel }}

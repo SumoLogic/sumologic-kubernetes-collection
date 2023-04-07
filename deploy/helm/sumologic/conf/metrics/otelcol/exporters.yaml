@@ -1,106 +1,121 @@
-sumologic/default:
+## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
+sumologic/apiserver:
+  endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
+  max_request_body_size: 16_777_216  # 16 MB before compression
   metric_format: prometheus
-  endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
   sending_queue:
     enabled: true
+    num_consumers: 10
+    queue_size: 10_000
 {{- if .Values.metadata.persistence.enabled }}
     storage: file_storage
 {{- end }}
+  ## set timeout to 30s due to big requests
+  timeout: 30s
+
+## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
+sumologic/control_plane:
+  endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
+  max_request_body_size: 16_777_216  # 16 MB before compression
+  metric_format: prometheus
+  sending_queue:
+    enabled: true
+    num_consumers: 10
+    queue_size: 10_000
+{{- if .Values.metadata.persistence.enabled }}
+    storage: file_storage
+{{- end }}
+  ## set timeout to 30s due to big requests
+  timeout: 30s
+
+## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
+sumologic/controller:
+  endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
+  max_request_body_size: 16_777_216  # 16 MB before compression
+  metric_format: prometheus
+  sending_queue:
+    enabled: true
+    num_consumers: 10
+    queue_size: 10_000
+{{- if .Values.metadata.persistence.enabled }}
+    storage: file_storage
+{{- end }}
+  ## set timeout to 30s due to big requests
+  timeout: 30s
+
+## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
+sumologic/default:
+  endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+  max_request_body_size: 16_777_216  # 16 MB before compression
+  metric_format: prometheus
+  sending_queue:
+    enabled: true
     num_consumers: 10
     ## setting queue_size a high number, so we always use maximum space of the storage
     ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
     queue_size: 10_000
-  max_request_body_size: 16_777_216  # 16 MB before compression
-  ## set timeout to 30s due to big requests
-  timeout: 30s
-sumologic/apiserver:
-  metric_format: prometheus
-  endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
-  sending_queue:
-    enabled: true
 {{- if .Values.metadata.persistence.enabled }}
     storage: file_storage
 {{- end }}
-    num_consumers: 10
-    queue_size: 10_000
-  max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
-sumologic/control_plane:
-  metric_format: prometheus
-  endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
-  sending_queue:
-    enabled: true
-{{- if .Values.metadata.persistence.enabled }}
-    storage: file_storage
-{{- end }}
-    num_consumers: 10
-    queue_size: 10_000
-  max_request_body_size: 16_777_216  # 16 MB before compression
-  ## set timeout to 30s due to big requests
-  timeout: 30s
-sumologic/controller:
-  metric_format: prometheus
-  endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
-  sending_queue:
-    enabled: true
-{{- if .Values.metadata.persistence.enabled }}
-    storage: file_storage
-{{- end }}
-    num_consumers: 10
-    queue_size: 10_000
-  max_request_body_size: 16_777_216  # 16 MB before compression
-  ## set timeout to 30s due to big requests
-  timeout: 30s
+
+## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
 sumologic/kubelet:
-  metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
+  max_request_body_size: 16_777_216  # 16 MB before compression
+  metric_format: prometheus
   sending_queue:
     enabled: true
+    num_consumers: 10
+    queue_size: 10_000
 {{- if .Values.metadata.persistence.enabled }}
     storage: file_storage
 {{- end }}
-    num_consumers: 10
-    queue_size: 10_000
-  max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+
+## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
 sumologic/node:
-  metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
+  max_request_body_size: 16_777_216  # 16 MB before compression
+  metric_format: prometheus
   sending_queue:
     enabled: true
+    num_consumers: 10
+    queue_size: 10_000
 {{- if .Values.metadata.persistence.enabled }}
     storage: file_storage
 {{- end }}
-    num_consumers: 10
-    queue_size: 10_000
-  max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+
+## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
 sumologic/scheduler:
-  metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
+  max_request_body_size: 16_777_216  # 16 MB before compression
+  metric_format: prometheus
   sending_queue:
     enabled: true
+    num_consumers: 10
+    queue_size: 10_000
 {{- if .Values.metadata.persistence.enabled }}
     storage: file_storage
 {{- end }}
-    num_consumers: 10
-    queue_size: 10_000
-  max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
+
+## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
 sumologic/state:
-  metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
+  max_request_body_size: 16_777_216  # 16 MB before compression
+  metric_format: prometheus
   sending_queue:
     enabled: true
+    num_consumers: 10
+    queue_size: 10_000
 {{- if .Values.metadata.persistence.enabled }}
     storage: file_storage
 {{- end }}
-    num_consumers: 10
-    queue_size: 10_000
-  max_request_body_size: 16_777_216  # 16 MB before compression
   ## set timeout to 30s due to big requests
   timeout: 30s
