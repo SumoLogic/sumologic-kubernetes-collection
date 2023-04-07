@@ -623,16 +623,6 @@ prometheus:
       requests:
         cpu: 500m
         memory: 1Gi
-    thanos:
-      ## Defines the resource requirements for the Thanos sidecar
-      ## Setting those as there are no default values in the upstream chart
-      resources:
-        limits:
-          cpu: 10m
-          memory: 32Mi
-        requests:
-          cpu: 1m
-          memory: 8Mi
     containers:
       - name: "config-reloader"
         env:
