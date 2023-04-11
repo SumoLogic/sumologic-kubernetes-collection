@@ -26,6 +26,33 @@ processors:
     send_batch_max_size: 2000
     send_batch_size: 1000
     timeout: 1s
+  transform/get_cloudwatch_pod:
+    log_statements:
+      - context: resource
+        statements:
+          - set(attributes["k8s.pod.name"], attributes["cloudwatch.log.stream"])
+          - set(attributes["k8s.container.name"], attributes["cloudwatch.log.stream"])
+          - set(attributes["k8s.namespace.name"], attributes["cloudwatch.log.stream"])
+          - replace_pattern(attributes["k8s.pod.name"], "^.*kube\\.var\\.log\\.containers\\.([0-9a-zA-Z\\-]+)\\_.*", "$$1")
+          - replace_pattern(attributes["k8s.container.name"], "^.*kube\\.var\\.log\\.containers\\.([0-9a-zA-Z\\-]+)\\_.*", "$$1")
+          - replace_pattern(attributes["k8s.namespace.name"], "^.*kube\\.var\\.log\\.containers\\.[0-9a-zA-Z\\-]+\\_([a-zA-Z\\-]*)_.*", "$$1")
+  transform/parse:
+    log_statements:
+      - context: log
+        statements:
+          - set(body, ParseJSON(body)) where IsMatch(body, "^{") == true
+  transform/flatten:
+    log_statements:
+      - context: log
+        statements:
+          - merge_maps(attributes, body, "insert")
+          - set(body, "") where IsMatch(body, "^{") == true
+  transform/move:
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["k8s.container.name"], resource.attributes["k8s.container.name"])
+          - set(attributes["k8s.deployment.name"], resource.attributes["k8s.deployment.name"])
 
 receivers:
   awscloudwatch:
@@ -46,6 +73,10 @@ service:
       receivers:
         - awscloudwatch
       processors:
+        - transform/parse 
+        - transform/flatten 
+        - transform/get_cloudwatch_pod 
+        - transform/move
         - batch
       exporters:
         - otlphttp
