@@ -582,7 +582,16 @@ service:
         - fluentforward
 {{ end }}
 {{ end }}
-
+{{- if .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
+    logs/otlp/otelcloudwatch:
+      receivers:
+        - otlp
+      processors:
+        - memory_limiter
+        - batch
+      exporters:
+        - sumologic/systemd
+{{ end }}
 {{ if eq (include "logs.collector.otelcol.enabled" .) "true" }}
 {{ if .Values.sumologic.logs.container.enabled }}
     ## This is the same pipeline like for logs/fluent/containers with the following modifications:

@@ -26,7 +26,6 @@ processors:
     send_batch_max_size: 2000
     send_batch_size: 1000
     timeout: 1s
-
 {{- if .Values.sumologic.logs.systemd.enabled }}
   ## copy _SYSTEMD_UNIT, SYSLOG_FACILITY, _HOSTNAME and PRIORITY from body to attributes
   ## so they can be used by metadata processors same way like for fluentd
@@ -234,7 +233,15 @@ receivers:
 
     storage: file_storage
 {{- end }}
-
+{{- if .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
+  awscloudwatch:
+    region: {{ .Values.sumologic.logs.collector.otelcloudwatch.cloudwatch.region }}
+    logs:
+      poll_interval: {{ .Values.sumologic.logs.collector.otelcloudwatch.cloudwatch.poll_interval }}
+      groups:
+        autodiscover:
+          limit: {{ .Values.sumologic.logs.collector.otelcloudwatch.cloudwatch.groups.autodiscover.limit }}
+{{- end }}
 {{- if .Values.sumologic.logs.systemd.enabled }}
   ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/receiver/journaldreceiver
   journald:
@@ -302,6 +309,15 @@ service:
     - file_storage
     - pprof
   pipelines:
+{{- if .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
+    logs/collector/otelcloudwatch:
+      receivers:
+        - awscloudwatch
+      processors:
+        - batch
+      exporters:
+        - otlphttp
+{{- end }}
 {{- if .Values.sumologic.logs.container.enabled }}
     logs/containers:
       exporters:
