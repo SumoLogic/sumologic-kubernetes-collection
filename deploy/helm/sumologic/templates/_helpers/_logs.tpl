@@ -73,6 +73,10 @@ Example Usage:
 {{ $enabled }}
 {{- end -}}
 
+{{- define "logs.collector.otelcloudwatch.enabled" -}}
+{{- $enabled := and (eq (include "logs.enabled" .) "true") (eq .Values.sumologic.logs.collector.otelcloudwatch.enabled true) -}}
+{{- end -}}
+
 {{/*
 Check if Fluent-Bit logs collector is enabled.
 It's enabled if logs in general are enabled and fluent-bit.enabled is set to true.
@@ -131,6 +135,10 @@ Return the log format for the Sumologic exporter for container logs.
 {{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.collector.statefulset" -}}
+{{- template "sumologic.metadata.name.logs.collector.cloudwatch" . }}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.logs.collector.service" -}}
 {{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
@@ -151,12 +159,24 @@ Return the log format for the Sumologic exporter for container logs.
 {{- template "sumologic.labels.app.logs.collector" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.logs.collector.statefulset" -}}
+{{- template "sumologic.fullname" . }}-otelcloudwatch-logs-collector
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs.collector.pod" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.collector.service" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.cloudwatch.service" -}}
+{{- template "sumologic.metadata.name.logs.collector.cloudwatch" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.cloudwatch.service-headless" -}}
+{{- template "sumologic.labels.app.logs.cloudwatch.service" . }}-headless
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.pod" -}}
@@ -217,6 +237,10 @@ Return the log format for the Sumologic exporter for container logs.
 
 {{- define "sumologic.metadata.name.logs.collector" -}}
 {{- template "sumologic.fullname" . }}-otelcol-logs-collector
+{{- end -}}
+
+{{- define "sumologic.metadata.name.logs.collector.cloudwatch" -}}
+{{- template "sumologic.fullname" . }}-otelcol-cloudwatch-collector
 {{- end -}}
 
 {{- define "sumologic.labels.logs" -}}
