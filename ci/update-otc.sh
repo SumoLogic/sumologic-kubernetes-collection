@@ -9,12 +9,21 @@ if [[ "$#" -ne 2 ]]; then
 	exit 1
 fi
 
-OTC_CURRENT_VERSION=${1}
-OTC_NEW_VERSION=${2}
+otc_current_version=${1}
+otc_new_version=${2}
 
-echo "Updating OTC from ${OTC_CURRENT_VERSION} to ${OTC_NEW_VERSION}"
+echo "Updating OTC from ${otc_current_version} to ${otc_new_version}"
 
-sed -i "s/${OTC_CURRENT_VERSION}/${OTC_NEW_VERSION}/" ./deploy/helm/sumologic/README.md
-sed -i "s/${OTC_CURRENT_VERSION}/${OTC_NEW_VERSION}/" ./deploy/helm/sumologic/values.yaml
-sed -i "s/${OTC_CURRENT_VERSION}/${OTC_NEW_VERSION}/" ./docs/security-best-practices.md
-sed -i "s/${OTC_CURRENT_VERSION}/${OTC_NEW_VERSION}/" ./tests/helm/testdata/goldenfile/*/*.yaml
+sed -i "s/${otc_current_version}/${otc_new_version}/" ./deploy/helm/sumologic/README.md
+sed -i "s/${otc_current_version}/${otc_new_version}/" ./deploy/helm/sumologic/values.yaml
+sed -i "s/${otc_current_version}/${otc_new_version}/" ./docs/*.md
+sed -i "s/${otc_current_version}/${otc_new_version}/" ./tests/helm/testdata/goldenfile/*/*.yaml
+
+upstream_current_version=${otc_current_version%%-sumo-*}
+upstream_new_version=${otc_new_version%%-sumo-*}
+
+sed -i "s/${upstream_current_version}/${upstream_new_version}/" ./deploy/helm/sumologic/conf/events/otelcol/config.yaml
+sed -i "s/${upstream_current_version}/${upstream_new_version}/" ./deploy/helm/sumologic/conf/logs/collector/otelcol/config.yaml
+sed -i "s/${upstream_current_version}/${upstream_new_version}/" ./deploy/helm/sumologic/conf/logs/otelcol/config.yaml
+sed -i "s/${upstream_current_version}/${upstream_new_version}/" ./deploy/helm/sumologic/conf/metrics/otelcol/*.yaml
+sed -i "s/${upstream_current_version}/${upstream_new_version}/" ./docs/*.md
