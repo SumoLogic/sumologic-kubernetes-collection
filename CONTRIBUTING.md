@@ -33,3 +33,21 @@ There is a prepared Vagrant environment with [microk8s](https://microk8s.io/) se
 In order to relase, please follow [the releasing guide][release].
 
 [release]: ./deploy/docs/release.md
+
+## Updating OpenTelemetry Collector image
+
+Example:
+
+```shell
+make update-otc OTC_CURRENT_VERSION=0.73.0-sumo-1 OTC_NEW_VERSION=0.74.0-sumo-0
+```
+
+Note: this make target uses GNU `sed`. If you're on a Mac, see e.g. [here](https://stackoverflow.com/a/56007296/4603021).
+
+You should examine the resulting changes as the automated tool can make mistakes. It's just a dummy "search and replace" under the hood.
+
+What it does is:
+
+- It updates the OTC image version (for logs, metrics and traces) in the chart's values file and README file.
+- It updates the OTC image version in test files.
+- It updates the links to the documentation of OTC components, e.g. [here](./deploy/helm/sumologic/conf/logs/otelcol/config.yaml).

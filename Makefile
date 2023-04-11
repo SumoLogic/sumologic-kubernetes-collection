@@ -123,6 +123,12 @@ endif
 check-changelog:
 	towncrier check
 
+## Update OpenTelemetry Collector version
+## Usage: make update-otc OTC_CURRENT_VERSION=0.73.0-sumo-1 OTC_NEW_VERSION=0.74.0-sumo-0
+.PHONY: update-otc
+update-otc:
+	./ci/update-otc.sh ${OTC_CURRENT_VERSION} ${OTC_NEW_VERSION}
+
 # Various utilities
 .PHONY: push-helm-chart
 push-helm-chart:
