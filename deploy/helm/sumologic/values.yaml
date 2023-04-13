@@ -243,7 +243,7 @@ sumologic:
       otelcol:
         enabled: true
       otelcloudwatch:
-        enabled: true
+        enabled: false
         cloudwatch:
           region: us-east-2
           poll_interval: 1m
