@@ -3,6 +3,8 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+  pullSecrets:
+    - name: myRegistryKeySecretName
 
 fluent-bit:
   enabled: false
