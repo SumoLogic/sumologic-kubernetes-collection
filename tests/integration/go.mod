@@ -1,6 +1,6 @@
 module github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration
 
-go 1.18
+go 1.20
 
 require (
 	github.com/gruntwork-io/terratest v0.41.16
