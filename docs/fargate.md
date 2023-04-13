@@ -6,6 +6,11 @@ order to make them as generic and reusable.
 - [Common operations](#common-operations)
   - [Set up Fargate Profile for Sumo Logic namespace](#set-up-fargate-profile-for-sumo-logic-namespace)
   - [Create EFS Volume](#create-efs-volume)
+- [Logs](#logs)
+  - [Fluent-bit log router configuration](#fluent-bit-log-router-configuration)
+  - [Cloudwatch logs collection](#cloudwatch-logs-collection)
+    - [Authenticate with Cloudwatch](#authenticate-with-cloudwatch)
+    - [Enable cloudwatch collection](#enable-cloudwatch-collection-eks-fargate-only)
 - [Metrics](#metrics)
   - [Persistence Disabled](#persistence-disabled)
   - [Persistence Enabled](#persistence-enabled)
@@ -114,6 +119,135 @@ fi
 ```
 
 `EFS_ID` is going to be used in setting up Volumes for metric pods.
+
+## Logs
+
+The following are some of the steps needed to setup and enable logs collection on Fargate
+
+### Fluent-bit log router configuration
+
+Below are the steps to configure the log router on fargate
+
+- Create a dedicated Kubernetes namespace named `aws-observability`
+
+```yaml
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: aws-observability
+  labels:
+    aws-observability: enabled
+```
+
+The fargate log router manages the `Service` and `Input` sections. One needs to create a `ConfigMap` to enable log routing to cloudwatch, an
+example is shown below:
+
+```yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: aws-logging
+  namespace: aws-observability
+data:
+  flb_log_cw: "true" # Set to true to ship Fluent Bit process logs to CloudWatch.
+  output.conf: |
+    [OUTPUT]
+        Name cloudwatch_logs
+        Match   kube.*
+        region region-code
+        log_group_name my-logs
+        log_stream_prefix from-fluent-bit-
+        log_retention_days 60
+        auto_create_group true
+```
+
+For more information on this refer to [fargate-logging](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
+
+### Cloudwatch logs collection
+
+After setting up fluent-bit to forward logs to cloudwatch, the next step is to setup and enable cloudwatch collection
+
+This involves the following:
+
+- [Setup Cloudwatch authentication](#authenticate-with-cloudwatch)
+- [Enable Clouwatch collection](#enable-cloudwatch-collection-eks-fargate-only)
+
+#### Authenticate with Cloudwatch
+
+To configure the service account to use an IAM role (for authentication), follow the steps below
+
+- Set your AWS account ID to an environment variable
+- Set your cluster's OIDC identity provider to an environment variable. Replace `my-cluster` with the name of your cluster
+- Set the namespace and the service account name
+
+```bash
+account_id=$(aws sts get-caller-identity --query "Account" --output text)
+oidc_provider=$(aws eks describe-cluster --name my-cluster --region $AWS_REGION --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
+export namespace=default
+export service_account=my-service-account
+```
+
+Set the following trust relationship
+
+```bash
+cat >trust-relationship.json <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::$account_id:oidc-provider/$oidc_provider"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "$oidc_provider:aud": "sts.amazonaws.com",
+          "$oidc_provider:sub": "system:serviceaccount:$namespace:$service_account"
+        }
+      }
+    }
+  ]
+}
+EOF
+```
+
+After these variables have been set and the above trush relationship is defined, the next step is to create an IAM role and attach it to a
+policy.
+
+```bash
+aws iam create-role --role-name my-role --assume-role-policy-document file://trust-relationship.json --description "my-role-description"
+aws iam attach-role-policy --role-name my-role --policy-arn=arn:aws:iam::$account_id:policy/my-policy
+```
+
+#### Enable cloudwatch collection (EKS fargate only)
+
+Update the `user-values.yaml` to add the following annotation to the service account. Replace `account-id` and `my-role` with the
+appropriate values
+
+```yaml
+sumologic:
+  logs:
+    collector:
+      otelcloudwatch:
+        enabled: true
+        roleArn: arn:aws:iam::account-id:role/my-role
+        # cloudwatch receiver configuration: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscloudwatchreceiver
+        awscloudwatch:
+          region: us-east-2
+          logs:
+            poll_interval: 1m
+            groups:
+              autodiscover:
+                limit: 10
+```
+
+where `my-role` is the name of the role created while setting up [authentication](#authenticate-with-cloudwatch)
+
+For more information on creating the appropriate roles and policies, please refer to
+[service account IAM role](https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html)
+
+Finally, install/upgrade the [collection](#install-or-upgrade-collection)
 
 ## Metrics
 

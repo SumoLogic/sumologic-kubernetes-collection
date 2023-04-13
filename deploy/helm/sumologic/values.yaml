@@ -244,12 +244,14 @@ sumologic:
         enabled: true
       otelcloudwatch:
         enabled: false
-        cloudwatch:
+        roleArn: ""
+        awscloudwatch:
           region: us-east-2
-          poll_interval: 1m
-          groups:
-            autodiscover:
-              limit: 10
+          logs:
+            poll_interval: 1m
+            groups:
+              autodiscover:
+                limit: 10
       ## Allow running otel and Fluent Bit side by side. This will result in duplicated
       ## logs being ingested. Only enabled this if you're **certain** it's what you want.
       allowSideBySide: false

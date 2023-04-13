@@ -615,7 +615,7 @@ service:
         - memory_limiter
         - batch
       exporters:
-        - sumologic/systemd
+        - sumologic/containers
 {{ end }}
 {{ if eq (include "logs.collector.otelcol.enabled" .) "true" }}
 {{ if .Values.sumologic.logs.container.enabled }}
