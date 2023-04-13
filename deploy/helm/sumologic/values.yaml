@@ -4563,7 +4563,7 @@ pvcCleaner:
 
   job:
     image:
-      repository: public.ecr.aws/sumologic/kubectl
+      repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
       tag: 1.26.3
       pullPolicy: IfNotPresent
 
