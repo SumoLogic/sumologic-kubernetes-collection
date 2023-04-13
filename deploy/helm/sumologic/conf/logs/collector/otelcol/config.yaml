@@ -235,12 +235,7 @@ receivers:
 {{- end }}
 {{- if .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
   awscloudwatch:
-    region: {{ .Values.sumologic.logs.collector.otelcloudwatch.cloudwatch.region }}
-    logs:
-      poll_interval: {{ .Values.sumologic.logs.collector.otelcloudwatch.cloudwatch.poll_interval }}
-      groups:
-        autodiscover:
-          limit: {{ .Values.sumologic.logs.collector.otelcloudwatch.cloudwatch.groups.autodiscover.limit }}
+{{ toYaml .Values.sumologic.logs.collector.otelcloudwatch.awscloudwatch | indent 4 }}
 {{- end }}
 {{- if .Values.sumologic.logs.systemd.enabled }}
   ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/receiver/journaldreceiver
