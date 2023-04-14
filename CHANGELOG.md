@@ -7,6 +7,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.5.0]
+
+### Released 2023-04-14
+
+### Changed
+
+- chore: upgrade fluent-bit chart to 0.25.0 [#2968]
+- chore: upgrade nginx image to 1.23.3-alpine [#2970]
+- chore: upgrade tailing-sidecar to 0.7.0 [#2971]
+- feat: stop using sumologic kubernetes tools for pvc cleaner [#2973], [#2983]
+
+### Fixed
+
+- fix(otelllogs): fix disabling otellogs metrics collection [#2958]
+- fix(pvcCleaner): don't create resources when pvcCleaner is disabled [#2962]
+- fix(otellogs): configure imagePullSecrets for otellogs [#2984]
+
+[#2968]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2968
+[#2970]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2970
+[#2971]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2971
+[#2973]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2973
+[#2983]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2983
+[#2958]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2958
+[#2962]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2962
+[#2984]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2984
+[v3.5.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.5.0
+
 ## [v3.4.0]
 
 ### Released 2023-03-27
