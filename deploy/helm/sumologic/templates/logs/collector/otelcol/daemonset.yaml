@@ -67,10 +67,6 @@ spec:
       {{- else }}
       priorityClassName: {{ include "sumologic.metadata.name.priorityclass" $ctx | quote }}
       {{- end }}
-{{- if $.Values.sumologic.pullSecrets }}
-      imagePullSecrets:
-{{ toYaml $.Values.sumologic.pullSecrets | indent 8 }}
-{{- end }}
       containers:
       - args:
         - --config=/etc/otelcol/config.yaml

@@ -41,8 +41,6 @@ spec:
         runAsGroup: 0
         runAsUser: 0
       priorityClassName: "prio"
-      imagePullSecrets:
-        - name: myRegistryKeySecretName
       containers:
         - args:
             - --config=/etc/otelcol/config.yaml
