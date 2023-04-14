@@ -52,7 +52,7 @@ function check_hpa_exists() {
 function get_sorted_pvcs() {
   kubectl -n "${NAMESPACE}" get pvc --selector="${PVC_SELECTOR}" --no-headers \
     | awk '{print $1}' \
-    | sort --version-sort
+    | sort -V
 }
 
 function get_pvcs_count() {
