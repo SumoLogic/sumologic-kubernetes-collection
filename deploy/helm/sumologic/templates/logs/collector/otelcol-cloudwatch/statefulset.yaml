@@ -58,9 +58,11 @@ spec:
             path: config.yaml
           name: {{ template "sumologic.metadata.name.logs.collector.configmap" . }}
         name: otelcol-config
+{{- if .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled }}
       - name: file-storage
         persistentVolumeClaim:
           claimName: file-storage-sumo-sumologic-otelcol-logs-0
+{{- end }}
       securityContext:
         {{- toYaml .Values.metadata.securityContext | nindent 8 }}
       {{- if .Values.otellogs.statefulset.priorityClassName }}
@@ -100,8 +102,10 @@ spec:
         volumeMounts:
         - mountPath: /etc/otelcol
           name: otelcol-config
+{{- if .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled}}
         - mountPath: /var/lib/storage/otc
           name: file-storage
+{{- end }}
         env:
         - name: LOGS_METADATA_SVC
           valueFrom:

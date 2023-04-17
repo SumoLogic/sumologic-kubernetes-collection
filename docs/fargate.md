@@ -10,7 +10,7 @@ order to make them as generic and reusable.
   - [Fluent-bit log router configuration](#fluent-bit-log-router-configuration)
   - [Cloudwatch logs collection](#cloudwatch-logs-collection)
     - [Authenticate with Cloudwatch](#authenticate-with-cloudwatch)
-    - [Enable cloudwatch collection](#enable-cloudwatch-collection-eks-fargate-only)
+    - [Enable cloudwatch collection](#enable-cloudwatch-collection)
 - [Metrics](#metrics)
   - [Persistence Disabled](#persistence-disabled)
   - [Persistence Enabled](#persistence-enabled)
@@ -126,6 +126,9 @@ The following are some of the steps needed to setup and enable logs collection o
 
 ### Fluent-bit log router configuration
 
+Amazon EKS on Fargate offers a built-in log router based on Fluent Bit. This means that you don't explicitly run a Fluent Bit container as a
+sidecar, but Amazon runs it for you. All that you have to do is configure the log router.
+
 Below are the steps to configure the log router on fargate
 
 - Create a dedicated Kubernetes namespace named `aws-observability`
@@ -161,6 +164,9 @@ data:
         auto_create_group true
 ```
 
+You can stream logs from Fargate directly to Amazon CloudWatch, using the output plugin shown above. Cloudwatch is currently the only
+supported output plugin in fluent-bit running on EKS fargate.
+
 For more information on this refer to [fargate-logging](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
 
 ### Cloudwatch logs collection
@@ -170,7 +176,7 @@ After setting up fluent-bit to forward logs to cloudwatch, the next step is to s
 This involves the following:
 
 - [Setup Cloudwatch authentication](#authenticate-with-cloudwatch)
-- [Enable Clouwatch collection](#enable-cloudwatch-collection-eks-fargate-only)
+- [Enable Clouwatch collection](#enable-cloudwatch-collection)
 
 #### Authenticate with Cloudwatch
 
@@ -183,8 +189,7 @@ To configure the service account to use an IAM role (for authentication), follow
 ```bash
 account_id=$(aws sts get-caller-identity --query "Account" --output text)
 oidc_provider=$(aws eks describe-cluster --name my-cluster --region $AWS_REGION --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
-export namespace=default
-export service_account=my-service-account
+export service_account=<FULLNAME>-otel-logs-collector
 ```
 
 Set the following trust relationship
@@ -220,7 +225,9 @@ aws iam create-role --role-name my-role --assume-role-policy-document file://tru
 aws iam attach-role-policy --role-name my-role --policy-arn=arn:aws:iam::$account_id:policy/my-policy
 ```
 
-#### Enable cloudwatch collection (EKS fargate only)
+The above policy must have permissions to list and read cloudwatch log groups and streams.
+
+#### Enable cloudwatch collection
 
 Update the `user-values.yaml` to add the following annotation to the service account. Replace `account-id` and `my-role` with the
 appropriate values
@@ -230,16 +237,17 @@ sumologic:
   logs:
     collector:
       otelcloudwatch:
-        enabled: true
-        roleArn: arn:aws:iam::account-id:role/my-role
-        # cloudwatch receiver configuration: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscloudwatchreceiver
-        awscloudwatch:
-          region: us-east-2
-          logs:
-            poll_interval: 1m
-            groups:
-              autodiscover:
-                limit: 10
+        enabled: false
+        roleArn: ""
+        ## Configure persistence for the cloudwatch collector
+        persistence:
+          enabled: true
+        region: us-east-2
+        pollInterval: 1m
+        logGroups:
+          /aws/my-logs:
+            streams:
+              prefixes: [] # using a stream prefix is recommended
 ```
 
 where `my-role` is the name of the role created while setting up [authentication](#authenticate-with-cloudwatch)
