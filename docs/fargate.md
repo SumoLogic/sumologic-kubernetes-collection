@@ -7,7 +7,9 @@ order to make them as generic and reusable.
   - [Set up Fargate Profile for Sumo Logic namespace](#set-up-fargate-profile-for-sumo-logic-namespace)
   - [Create EFS Volume](#create-efs-volume)
 - [Logs](#logs)
-  - [Fluent-bit log router configuration](#fluent-bit-log-router-configuration)
+  - [Fluent-bit log router configuration](#fluent-bit-log-router)
+    - [Prerequisites](#prerequisites)
+    - [Configuration](#configuration)
   - [Cloudwatch logs collection](#cloudwatch-logs-collection)
     - [Authenticate with Cloudwatch](#authenticate-with-cloudwatch)
     - [Enable cloudwatch collection](#enable-cloudwatch-collection)
@@ -124,7 +126,17 @@ fi
 
 The following are some of the steps needed to setup and enable logs collection on Fargate
 
-### Fluent-bit log router configuration
+### Fluent-bit log router
+
+#### Prerequisites
+
+- An existing Fargate profile that specifies an existing Kubernetes namespace that you deploy Fargate pods to. For more information, see
+  [Create a Fargate profile for your cluster](https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-gs-create-profile)
+
+- An existing
+  [Fargate pod execution role](https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-sg-pod-execution-role)
+
+#### Configuration
 
 Amazon EKS on Fargate offers a built-in log router based on Fluent Bit. This means that you don't explicitly run a Fluent Bit container as a
 sidecar, but Amazon runs it for you. All that you have to do is configure the log router.

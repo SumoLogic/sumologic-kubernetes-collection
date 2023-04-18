@@ -250,7 +250,11 @@ sumologic:
           enabled: true
         region: us-east-2
         pollInterval: 1m
-        # A map of log group and stream prefixes
+        ## A map of log group and stream prefixes
+        ## This is a map of log group and stream prefix, for example:
+        ## logGroups:
+        ##   fluent-bit:
+        ##     names: [fluent-bit]
         logGroups: {}
 
       ## Allow running otel and Fluent Bit side by side. This will result in duplicated
