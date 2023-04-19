@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otelcol/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otelcol-cloudwatch/configmap.yaml") . | sha256sum }}
 {{- if .Values.sumologic.podAnnotations }}
 {{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
 {{- end }}
@@ -56,7 +56,7 @@ spec:
           items:
           - key: config.yaml
             path: config.yaml
-          name: {{ template "sumologic.metadata.name.logs.collector.configmap" . }}
+          name: {{ template "sumologic.metadata.name.logs.collector.cloudwatch" . }}
         name: otelcol-config
 {{- if .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled }}
       - name: file-storage

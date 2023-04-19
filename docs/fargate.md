@@ -13,6 +13,9 @@ order to make them as generic and reusable.
   - [Cloudwatch logs collection](#cloudwatch-logs-collection)
     - [Authenticate with Cloudwatch](#authenticate-with-cloudwatch)
     - [Enable cloudwatch collection](#enable-cloudwatch-collection)
+  - [Troubleshooting Logs](#troubleshooting-logs)
+    - [AWS logging](#invalid-configmap)
+    - [Invalid configuration](#invalid-cloudwatch-receiver-configuration)
 - [Metrics](#metrics)
   - [Persistence Disabled](#persistence-disabled)
   - [Persistence Enabled](#persistence-enabled)
@@ -177,13 +180,14 @@ data:
 ```
 
 You can stream logs from Fargate directly to Amazon CloudWatch, using the output plugin shown above. Cloudwatch is currently the only
-supported output plugin in fluent-bit running on EKS fargate.
+supported output plugin in Fluent Bit running on EKS fargate. Note that the log router setup depends on the prerequisites. Otherwise, one
+might fail to enable [aws-logging](#invalid-configmap)
 
 For more information on this refer to [fargate-logging](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
 
 ### Cloudwatch logs collection
 
-After setting up fluent-bit to forward logs to cloudwatch, the next step is to setup and enable cloudwatch collection
+After setting up Fluent Bit to forward logs to cloudwatch, the next step is to setup and enable cloudwatch collection
 
 This involves the following:
 
@@ -229,7 +233,7 @@ cat >trust-relationship.json <<EOF
 EOF
 ```
 
-After these variables have been set and the above trush relationship is defined, the next step is to create an IAM role and attach it to a
+After these variables have been set and the above trust relationship is defined, the next step is to create an IAM role and attach it to a
 policy.
 
 ```bash
@@ -257,9 +261,8 @@ sumologic:
         region: us-east-2
         pollInterval: 1m
         logGroups:
-          /aws/my-logs:
-            streams:
-              prefixes: [] # using a stream prefix is recommended
+          ameriprise-fargate-fluent-bit-logs:
+            prefixes: [from-fluent-bit] # using a stream prefix is recommended
 ```
 
 where `my-role` is the name of the role created while setting up [authentication](#authenticate-with-cloudwatch)
@@ -590,3 +593,25 @@ kubectl -n "${NAMESPACE}" delete statefulset -l "app=${HELM_INSTALLATION_NAME}-s
 ```
 
 This error may occur if you are switching persistence option for already installed Sumo Logic Kubernetes Collection.
+
+### Troubleshooting Logs
+
+#### Invalid ConfigMap
+
+If Fluent Bit log router hasn't been setup correctly, you will see the warning below:
+
+```text
+Warning  LoggingDisabled  <unknown>  fargate-scheduler  Disabled logging because aws-logging configmap was not found. configmap "aws-logging" not found
+```
+
+#### Invalid cloudwatch receiver configuration
+
+If when cloudwatch logs collection is enabled, you see the following error in the logs
+
+```
+error    awscloudwatchreceiver@v0.73.0/logs.go:215    unable to retrieve logs from cloudwatch    {"kind": "receiver", "name": "awscloudwatch", "data_type" │
+│ : "logs", "log group": "ameriprise-fargate-fluent", "error": "ResourceNotFoundException: The specified log group does not exist."}
+```
+
+It means that the cloudwatch receiver hasn't been configured correctly. Please ensure that the configuration follows this
+[example format](#enable-cloudwatch-collection)

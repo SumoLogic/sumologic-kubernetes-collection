@@ -1,0 +1,21 @@
+{{- if .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
+{{ $baseConfig := (tpl (.Files.Get "conf/logs/collector/otelcloudwatch/config.yaml") .) | fromYaml }}
+{{ $mergeConfig := .Values.otellogs.config.merge }}
+{{ $overrideConfig := .Values.otellogs.config.override }}
+{{ $finalConfig := "" }}
+{{ if $overrideConfig }}
+{{ $finalConfig = $overrideConfig }}
+{{ else }}
+{{ $finalConfig = mergeOverwrite $baseConfig $mergeConfig }}
+{{ end }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "sumologic.metadata.name.logs.collector.cloudwatch" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.logs.cloudwatch.configmap" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+data:
+  config.yaml: |
+{{- $finalConfig | toYaml | nindent 4 }}
+{{- end }}

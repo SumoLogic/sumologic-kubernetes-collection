@@ -159,10 +159,6 @@ Return the log format for the Sumologic exporter for container logs.
 {{- template "sumologic.labels.app.logs.collector" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.logs.collector.statefulset" -}}
-{{- template "sumologic.fullname" . }}-otelcloudwatch-logs-collector
-{{- end -}}
-
 {{- define "sumologic.labels.app.logs.collector.pod" -}}
 {{- template "sumologic.labels.app.logs.collector" . }}
 {{- end -}}
@@ -171,12 +167,20 @@ Return the log format for the Sumologic exporter for container logs.
 {{- template "sumologic.labels.app.logs.collector" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.logs.cloudwatch.configmap" -}}
+{{- template "sumologic.fullname" . }}-otelcloudwatch-logs-collector
+{{- end -}}
+
 {{- define "sumologic.labels.app.logs.cloudwatch.service" -}}
 {{- template "sumologic.metadata.name.logs.collector.cloudwatch" . }}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.cloudwatch.service-headless" -}}
 {{- template "sumologic.labels.app.logs.cloudwatch.service" . }}-headless
+{{- end -}}
+
+{{- define "sumologic.labels.app.logs.collector.statefulset" -}}
+{{- template "sumologic.fullname" . }}-otelcloudwatch-logs-collector
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.pod" -}}

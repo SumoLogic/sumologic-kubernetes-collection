@@ -31,7 +31,7 @@ spec:
             items:
               - key: config.yaml
                 path: config.yaml
-            name: RELEASE-NAME-sumologic-otelcol-logs-collector
+            name: RELEASE-NAME-sumologic-otelcol-cloudwatch-collector
           name: otelcol-config
         - name: file-storage
           persistentVolumeClaim:

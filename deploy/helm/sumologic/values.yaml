@@ -242,13 +242,14 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+      ## Experimental
       otelcloudwatch:
         enabled: false
         roleArn: ""
         ## Configure persistence for the cloudwatch collector
         persistence:
           enabled: true
-        region: us-east-2
+        region: ""
         pollInterval: 1m
         ## A map of log group and stream prefixes
         ## This is a map of log group and stream prefix, for example:
