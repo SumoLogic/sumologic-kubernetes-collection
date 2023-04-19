@@ -341,6 +341,7 @@ metadata:
                 - memory_limiter
                 - batch
               exporters: [sumologic/containers]
+    statefulset:
       extraPorts:
         - name: otlphttp2
           containerPort: 4319
