@@ -1,0 +1,119 @@
+{{- if .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "sumologic.metadata.name.logs.collector.statefulset" . }}
+  labels:
+    app: {{ template "sumologic.labels.app.logs.collector.statefulset" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.labels.app.logs.collector.statefulset" . }}
+  serviceName: {{ template "sumologic.labels.app.logs.cloudwatch.service-headless" . }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/logs/collector/otelcol-cloudwatch/configmap.yaml") . | sha256sum }}
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+{{- if .Values.otelcloudwatch.statefulset.podAnnotations }}
+{{ toYaml .Values.otelcloudwatch.statefulset.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+        app: {{ template "sumologic.labels.app.logs.collector.statefulset" . }}
+        {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+{{- if .Values.otelcloudwatch.statefulset.podLabels }}
+{{ toYaml .Values.otelcloudwatch.statefulset.podLabels | indent 8 }}
+{{- end }}
+    spec:
+      serviceAccountName: {{ template "sumologic.metadata.name.logs.collector.serviceaccount" . }}
+{{- if .Values.otelcloudwatch.statefulset.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.otelcloudwatch.statefulset.nodeSelector | indent 8 }}
+{{- end }}
+{{- if .Values.otelcloudwatch.statefulset.tolerations }}
+      tolerations:
+{{ toYaml .Values.otelcloudwatch.statefulset.tolerations | indent 8 }}
+{{- end }}
+{{- if .Values.otelcloudwatch.statefulset.affinity }}
+      affinity:
+{{- if .Values.otelcloudwatch.statefulset.affinity }}
+{{ toYaml .Values.otelcloudwatch.statefulset.affinity | indent 8 }}
+{{- end }}
+{{- end }}
+{{- if .Values.otelcloudwatch.statefulset.topologySpreadConstraints }}
+      topologySpreadConstraints:
+{{ toYaml .Values.otelcloudwatch.statefulset.topologySpreadConstraints | indent 6 }}
+{{- end }}
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: config.yaml
+            path: config.yaml
+          name: {{ template "sumologic.metadata.name.logs.collector.cloudwatch" . }}
+        name: otelcol-config
+{{- if .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled }}
+      - name: file-storage
+        persistentVolumeClaim:
+          claimName: file-storage-sumo-sumologic-otelcol-logs-0
+{{- end }}
+      securityContext:
+        {{- toYaml .Values.metadata.securityContext | nindent 8 }}
+      {{- if .Values.otelcloudwatch.statefulset.priorityClassName }}
+      priorityClassName: {{ .Values.otelcloudwatch.statefulset.priorityClassName | quote }}
+      {{- end }}
+      containers:
+      - name: otelcol
+        image: {{ .Values.metadata.image.repository }}:{{ .Values.metadata.image.tag }}
+        imagePullPolicy: {{ .Values.metadata.image.pullPolicy }}
+        args:
+          - --config=/etc/otelcol/config.yaml
+        resources:
+          {{- toYaml .Values.otelcloudwatch.statefulset.resources | nindent 10 }}
+        {{- if .Values.otelcloudwatch.statefulset.containers.otelcol.securityContext }}
+        securityContext:
+          {{- toYaml .Values.otelcloudwatch.statefulset.containers.otelcol.securityContext | nindent 10 }}
+        {{- end }}
+        ports:
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          {{- toYaml .Values.otelcloudwatch.statefulset.containers.otelcol.livenessProbe | nindent 10 }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          {{- toYaml .Values.otelcloudwatch.statefulset.containers.otelcol.readinessProbe | nindent 10 }}
+        startupProbe:
+          httpGet:
+            path: /
+            port: 13133 # Health Check extension default port.
+          {{- toYaml .Values.otelcloudwatch.statefulset.containers.otelcol.startupProbe | nindent 10 }}
+        volumeMounts:
+        - mountPath: /etc/otelcol
+          name: otelcol-config
+{{- if .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled}}
+        - mountPath: /var/lib/storage/otc
+          name: file-storage
+{{- end }}
+        env:
+        - name: LOGS_METADATA_SVC
+          valueFrom:
+            configMapKeyRef:
+              name: sumologic-configmap
+              key: metadataLogs
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+{{- end }}

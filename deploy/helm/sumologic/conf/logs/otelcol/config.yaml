@@ -1,3 +1,27 @@
+receivers:
+{{ if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
+  fluentforward:
+    endpoint: 0.0.0.0:24321
+{{ end }}
+{{ if or .Values.sumologic.logs.collector.otelcol.enabled .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+{{ end }}
+extensions:
+  health_check: {}
+{{ if .Values.metadata.persistence.enabled }}
+  ## Configuration for File Storage extension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
+  file_storage:
+    directory: /var/lib/storage/otc
+    timeout: 10s
+    compaction:
+      on_rebound: true
+      directory: /tmp
+{{ end }}
+  pprof: {}
 exporters:
 {{ if .Values.sumologic.logs.container.enabled }}
   ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
@@ -582,7 +606,17 @@ service:
         - fluentforward
 {{ end }}
 {{ end }}
-
+## Use this pipeline for cloudwatch logs
+{{- if .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
+    logs/otlp/otelcloudwatch:
+      receivers:
+        - otlp
+      processors:
+        - memory_limiter
+        - batch
+      exporters:
+        - sumologic/containers
+{{ end }}
 {{ if eq (include "logs.collector.otelcol.enabled" .) "true" }}
 {{ if .Values.sumologic.logs.container.enabled }}
     ## This is the same pipeline like for logs/fluent/containers with the following modifications:

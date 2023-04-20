@@ -8,6 +8,16 @@ order to make them as generic and reusable.
 - [Common operations](#common-operations)
   - [Set up Fargate Profile for Sumo Logic namespace](#set-up-fargate-profile-for-sumo-logic-namespace)
   - [Create EFS Volume](#create-efs-volume)
+- [Logs](#logs)
+  - [Fluent-bit log router configuration](#fluent-bit-log-router)
+    - [Prerequisites](#prerequisites)
+    - [Configuration](#configuration)
+  - [Cloudwatch logs collection](#cloudwatch-logs-collection)
+    - [Authenticate with Cloudwatch](#authenticate-with-cloudwatch)
+    - [Enable cloudwatch collection](#enable-cloudwatch-collection)
+  - [Troubleshooting Logs](#troubleshooting-logs)
+    - [AWS logging](#invalid-configmap)
+    - [Invalid configuration](#invalid-cloudwatch-receiver-configuration)
 - [Metrics](#metrics)
   - [Persistence Disabled](#persistence-disabled)
   - [Persistence Enabled](#persistence-enabled)
@@ -116,6 +126,153 @@ fi
 ```
 
 `EFS_ID` is going to be used in setting up Volumes for metric pods.
+
+## Logs
+
+The following are some of the steps needed to setup and enable logs collection on Fargate
+
+### Fluent-bit log router
+
+#### Prerequisites
+
+- An existing Fargate profile that specifies an existing Kubernetes namespace that you deploy Fargate pods to. For more information, see
+  [Create a Fargate profile for your cluster](https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-gs-create-profile)
+
+- An existing
+  [Fargate pod execution role](https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-sg-pod-execution-role)
+
+#### Configuration
+
+Amazon EKS on Fargate offers a built-in log router based on Fluent Bit. This means that you don't explicitly run a Fluent Bit container as a
+sidecar, but Amazon runs it for you. All that you have to do is configure the log router.
+
+Below are the steps to configure the log router on fargate
+
+- Create a dedicated Kubernetes namespace named `aws-observability`
+
+```yaml
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: aws-observability
+  labels:
+    aws-observability: enabled
+```
+
+The fargate log router manages the `Service` and `Input` sections. One needs to create a `ConfigMap` to enable log routing to cloudwatch, an
+example is shown below:
+
+```yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: aws-logging
+  namespace: aws-observability
+data:
+  flb_log_cw: "true" # Set to true to ship Fluent Bit process logs to CloudWatch.
+  output.conf: |
+    [OUTPUT]
+        Name cloudwatch_logs
+        Match   kube.*
+        region region-code
+        log_group_name my-logs
+        log_stream_prefix from-fluent-bit-
+        log_retention_days 60
+        auto_create_group true
+```
+
+You can stream logs from Fargate directly to Amazon CloudWatch, using the output plugin shown above. Cloudwatch is currently the only
+supported output plugin in Fluent Bit running on EKS fargate. Note that the log router setup depends on the prerequisites. Otherwise, one
+might fail to enable [aws-logging](#invalid-configmap)
+
+For more information on this refer to [fargate-logging](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
+
+### Cloudwatch logs collection
+
+After setting up Fluent Bit to forward logs to cloudwatch, the next step is to setup and enable cloudwatch collection
+
+This involves the following:
+
+- [Setup Cloudwatch authentication](#authenticate-with-cloudwatch)
+- [Enable Clouwatch collection](#enable-cloudwatch-collection)
+
+#### Authenticate with Cloudwatch
+
+To configure the service account to use an IAM role (for authentication), follow the steps below
+
+- Set your AWS account ID to an environment variable
+- Set your cluster's OIDC identity provider to an environment variable. Replace `my-cluster` with the name of your cluster
+- Set the namespace and the service account name
+
+```bash
+account_id=$(aws sts get-caller-identity --query "Account" --output text)
+oidc_provider=$(aws eks describe-cluster --name my-cluster --region $AWS_REGION --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
+export service_account=<FULLNAME>-otel-logs-collector
+```
+
+Set the following trust relationship
+
+```bash
+cat >trust-relationship.json <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::$account_id:oidc-provider/$oidc_provider"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "$oidc_provider:aud": "sts.amazonaws.com",
+          "$oidc_provider:sub": "system:serviceaccount:$namespace:$service_account"
+        }
+      }
+    }
+  ]
+}
+EOF
+```
+
+After these variables have been set and the above trust relationship is defined, the next step is to create an IAM role and attach it to a
+policy.
+
+```bash
+aws iam create-role --role-name my-role --assume-role-policy-document file://trust-relationship.json --description "my-role-description"
+aws iam attach-role-policy --role-name my-role --policy-arn=arn:aws:iam::$account_id:policy/my-policy
+```
+
+The above policy must have permissions to list and read cloudwatch log groups and streams.
+
+#### Enable cloudwatch collection
+
+Update the `user-values.yaml` to add the following annotation to the service account. Replace `account-id` and `my-role` with the
+appropriate values
+
+```yaml
+sumologic:
+  logs:
+    collector:
+      otelcloudwatch:
+        enabled: false
+        roleArn: ""
+        ## Configure persistence for the cloudwatch collector
+        persistence:
+          enabled: true
+        region: us-east-2
+        pollInterval: 1m
+        logGroups:
+          ameriprise-fargate-fluent-bit-logs:
+            prefixes: [from-fluent-bit] # using a stream prefix is recommended
+```
+
+where `my-role` is the name of the role created while setting up [authentication](#authenticate-with-cloudwatch)
+
+For more information on creating the appropriate roles and policies, please refer to
+[service account IAM role](https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html)
+
+Finally, install/upgrade the [collection](#install-or-upgrade-collection)
 
 ## Metrics
 
@@ -438,3 +595,25 @@ kubectl -n "${NAMESPACE}" delete statefulset -l "app=${HELM_INSTALLATION_NAME}-s
 ```
 
 This error may occur if you are switching persistence option for already installed Sumo Logic Kubernetes Collection.
+
+### Troubleshooting Logs
+
+#### Invalid ConfigMap
+
+If Fluent Bit log router hasn't been setup correctly, you will see the warning below:
+
+```text
+Warning  LoggingDisabled  <unknown>  fargate-scheduler  Disabled logging because aws-logging configmap was not found. configmap "aws-logging" not found
+```
+
+#### Invalid cloudwatch receiver configuration
+
+If when cloudwatch logs collection is enabled, you see the following error in the logs
+
+```
+error    awscloudwatchreceiver@v0.73.0/logs.go:215    unable to retrieve logs from cloudwatch    {"kind": "receiver", "name": "awscloudwatch", "data_type" │
+│ : "logs", "log group": "ameriprise-fargate-fluent", "error": "ResourceNotFoundException: The specified log group does not exist."}
+```
+
+It means that the cloudwatch receiver hasn't been configured correctly. Please ensure that the configuration follows this
+[example format](#enable-cloudwatch-collection)

@@ -242,6 +242,21 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+      ## Experimental
+      otelcloudwatch:
+        enabled: false
+        roleArn: ""
+        ## Configure persistence for the cloudwatch collector
+        persistence:
+          enabled: true
+        region: ""
+        pollInterval: 1m
+        ## A map of log group and stream prefixes
+        ## This is a map of log group and stream prefix, for example:
+        ## logGroups:
+        ##   fluent-bit:
+        ##     names: [fluent-bit]
+        logGroups: {}
 
       ## Allow running otel and Fluent Bit side by side. This will result in duplicated
       ## logs being ingested. Only enabled this if you're **certain** it's what you want.
@@ -4234,6 +4249,52 @@ otelevents:
     #   - name: es-certs
     #     mountPath: /certs
     #     readOnly: true
+
+## Configure cloudwatch collection with Otelcol
+otelcloudwatch:
+  statefulset:
+    nodeSelector: {}
+    tolerations: []
+    topologySpreadConstraints: []
+    affinity: {}
+    ## Acceptable values for podAntiAffinity:
+    ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
+    ## hard: specifies rules that must be met for a pod to be scheduled onto a node
+    podAntiAffinity: "soft"
+    replicaCount: 1
+    resources:
+      limits:
+        memory: 1Gi
+        cpu: 1000m
+      requests:
+        memory: 768Mi
+        ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
+        ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/best-practices.md#cpu-resources-warning
+        cpu: 500m
+    ## Option to define priorityClassName to assign a priority class to pods.
+    priorityClassName:
+
+    ## Add custom labels only to logs otel sts pods
+    podLabels: {}
+    ## Add custom annotations only to logs otel sts pods
+    podAnnotations: {}
+    ## Set securityContext for containers running in pods in otelcol-instrumentation statefulset.
+    containers:
+      otelcol:
+        securityContext: {}
+        livenessProbe:
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        startupProbe:
+          periodSeconds: 3
+          failureThreshold: 60
 
 ## Configure log collection with Otelcol
 otellogs:
