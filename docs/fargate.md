@@ -1,5 +1,7 @@
 # Fargate
 
+**NOTE: This is an experimental feature and it's not a subject of breaking changes policy.**
+
 The following documentation assumes that you are using eksctl to manage Fargate cluster. Code snippets are using environment variables in
 order to make them as generic and reusable.
 
