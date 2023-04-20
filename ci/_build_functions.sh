@@ -35,7 +35,7 @@ function push_helm_chart() {
 
   set -ex
   # this loop is to allow for concurent builds: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/1853 
-  for _ in 1..${retry_count}; do
+  for i in 1..${retry_count}; do
     # due to helm repo index issue: https://github.com/helm/helm/issues/7363
     # we need to create new package in a different dir, merge the index and move the package back
     mkdir -p "${sync_dir}"
@@ -63,6 +63,9 @@ function push_helm_chart() {
     if git push "${remote}" gh-pages; then
       # Push was successful, we're done
       break
+    elif [[ "${i}" == "${retry_count}" ]]; then
+      echo "Pushing Helm Chart release failed ${retry_count} times, aborting..."
+      exit 1
     fi
   done
   set +ex
