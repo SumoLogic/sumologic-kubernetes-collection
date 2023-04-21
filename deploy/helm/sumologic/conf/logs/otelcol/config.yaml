@@ -460,7 +460,6 @@ processors:
     add_cloud_namespace: false
 {{ end }}
 
-{{ if .Values.sumologic.logs.systemd.enabled }}
   ## Add timestamp to attributes
   ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/transformprocessor
   transform/add_timestamp:
@@ -468,9 +467,7 @@ processors:
       - context: log
         statements:
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
-{{ end }}
 
-{{ if .Values.sumologic.logs.systemd.enabled }}
   ## Move attributes from the body to the record and drop the body if it's a map
   ## The map check isn't perfect, as there's no way to check for this explicitly in OTTL
   ## We always parse json earlier in the pipeline though, so this is safe
@@ -481,9 +478,7 @@ processors:
         statements:
           - merge_maps(attributes, body, "insert")
           - set(body, "") where IsMatch(body, "^{") == true
-{{ end }}
 
-{{ if .Values.sumologic.logs.systemd.enabled }}
   ## Remove all attributes, so body won't by nested by SumoLogic receiver in case of using otlp format
   ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/transformprocessor
   transform/remove_attributes:
@@ -491,7 +486,6 @@ processors:
       - context: log
         statements:
           - limit(attributes, 0, [])
-{{ end }}
 
 {{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
