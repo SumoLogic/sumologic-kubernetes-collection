@@ -2,38 +2,42 @@
 
 **NOTE: This is an experimental feature and it's not a subject of breaking changes policy.**
 
+The following are some limitations of deploying this helm chart on EKS fargate
+
+- Only support EKS version 1.24 and above
+- Does not support multiline logs
+
 The following documentation assumes that you are using eksctl to manage Fargate cluster. Code snippets are using environment variables in
 order to make them as generic and reusable.
 
 - [Common operations](#common-operations)
   - [Set up Fargate Profile for Sumo Logic namespace](#set-up-fargate-profile-for-sumo-logic-namespace)
   - [Create EFS Volume](#create-efs-volume)
-- [Logs](#logs)
+- [Cloudwatch Logs Collection](#logs)
   - [Fluent-bit log router configuration](#fluent-bit-log-router)
     - [Prerequisites](#prerequisites)
     - [Configuration](#configuration)
   - [Cloudwatch logs collection](#cloudwatch-logs-collection)
     - [Authenticate with Cloudwatch](#authenticate-with-cloudwatch)
     - [Enable cloudwatch collection](#enable-cloudwatch-collection)
-  - [Troubleshooting Logs](#troubleshooting-logs)
-    - [AWS logging](#invalid-configmap)
-    - [Invalid configuration](#invalid-cloudwatch-receiver-configuration)
-- [Metrics](#metrics)
+- [Persistence (events/logs/metrics)](#persistence-eventslogsmetrics)
   - [Persistence Disabled](#persistence-disabled)
   - [Persistence Enabled](#persistence-enabled)
-    - [Create EFS access points for metric Pods](#create-efs-access-points-for-metric-pods)
+    - [Create EFS access points for events/logs/metrics Pods](#create-efs-access-points-for-eventslogsmetrics-pods)
     - [Create a security group to be used with mount targets](#create-a-security-group-to-be-used-with-mount-targets)
     - [Authorize ingress for security group](#authorize-ingress-for-security-group)
     - [Create mount targets for each pair of EFS access point and subnet](#create-mount-targets-for-each-pair-of-efs-access-point-and-subnet)
     - [Create sumo-metrics-pvc.yaml with PVC per access point](#create-sumo-metrics-pvcyaml-with-pvc-per-access-point)
-    - [Create namespace if it doesn't exist already](#create-namespace-if-it-doesnt-exist-already)
-    - [Apply sumo-metrics-pvc.yaml](#apply-sumo-metrics-pvcyaml)
-  - [Install or upgrade collection](#install-or-upgrade-collection)
-  - [Troubleshooting](#troubleshooting)
-    - [Helm installation failed](#helm-installation-failed)
-    - [otelcol-metrics Pods are in Pending state with Pod not supported on Fargate: volumes not supported error](#otelcol-metrics-pods-are-in-pending-state-with-pod-not-supported-on-fargate-volumes-not-supported-error)
-      - [otelcol-metrics Pods are in Pending state with Output: Failed to resolve "fs-xxxxxxxx.efs.us-east-2.amazonaws.com" - check that your file system ID is correct, and ensure that the VPC has an EFS mount target for this file system ID. error](#otelcol-metrics-pods-are-in-pending-state-with-output-failed-to-resolve-fs-xxxxxxxxefsus-east-2amazonawscom---check-that-your-file-system-id-is-correct-and-ensure-that-the-vpc-has-an-efs-mount-target-for-this-file-system-id-error)
-      - [Helm upgrade failed Error: UPGRADE FAILED: cannot patch "collection-sumologic-otelcol-metrics"](#helm-upgrade-failed-error-upgrade-failed-cannot-patch-collection-sumologic-otelcol-metrics)
+    - [Create sumo-logs-pvc.yaml with PVC per access point](#create-sumo-logs-pvcyaml-with-pvc-per-access-point)
+    - [Create sumo-events-pvc.yaml with PVC per access point](#create-sumo-events-pvcyaml-with-pvc-per-access-point)
+- [Install or upgrade collection](#install-or-upgrade-collection)
+- [Troubleshooting](#troubleshooting)
+  - [Helm installation failed](#helm-installation-failed)
+  - [otelcol-metrics Pods are in Pending state with Pod not supported on Fargate: volumes not supported error](#otelcol-metrics-pods-are-in-pending-state-with-pod-not-supported-on-fargate-volumes-not-supported-error)
+    - [otelcol-metrics Pods are in Pending state with Output: Failed to resolve "fs-xxxxxxxx.efs.us-east-2.amazonaws.com" - check that your file system ID is correct, and ensure that the VPC has an EFS mount target for this file system ID. error](#otelcol-metrics-pods-are-in-pending-state-with-output-failed-to-resolve-fs-xxxxxxxxefsus-east-2amazonawscom---check-that-your-file-system-id-is-correct-and-ensure-that-the-vpc-has-an-efs-mount-target-for-this-file-system-id-error)
+    - [Helm upgrade failed Error: UPGRADE FAILED: cannot patch "collection-sumologic-otelcol-metrics"](#helm-upgrade-failed-error-upgrade-failed-cannot-patch-collection-sumologic-otelcol-metrics)
+  - [AWS logging](#invalid-configmap)
+  - [Invalid configuration](#invalid-cloudwatch-receiver-configuration)
 
 Let's consider the following variables:
 
@@ -55,6 +59,8 @@ export AWS_REGION=us-east-2
 export HELM_INSTALLATION_NAME=collection
 export SG_NAME=sumologic-collection
 export METRIC_PODS=10
+export LOG_PODS=3
+export EVENT_PODS=1
 ```
 
 ## Common operations
@@ -125,7 +131,7 @@ if [[ -z "${EFS_ID}" ]]; then
 fi
 ```
 
-`EFS_ID` is going to be used in setting up Volumes for metric pods.
+`EFS_ID` is going to be used in setting up Volumes for events, logs and metrics pods.
 
 ## Logs
 
@@ -163,22 +169,50 @@ The fargate log router manages the `Service` and `Input` sections. One needs to 
 example is shown below:
 
 ```yaml
+# fluent-bit-fargate
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: aws-observability
+  labels:
+    aws-observability: enabled
+---
 kind: ConfigMap
 apiVersion: v1
 metadata:
   name: aws-logging
   namespace: aws-observability
 data:
-  flb_log_cw: "true" # Set to true to ship Fluent Bit process logs to CloudWatch.
+  flb_log_cw: "true"
+  filters.conf: |
+    [FILTER]
+        Name parser
+        Match *
+        Key_Name log
+        Parser containerd
+  parsers.conf: |
+    [PARSER]
+        Name         containerd
+        Format       regex
+        Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr|stdout) (?<logtag>[^ ]*) (?<log>.*)$
+        Time_Key     time
+        Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
   output.conf: |
     [OUTPUT]
         Name cloudwatch_logs
-        Match   kube.*
-        region region-code
-        log_group_name my-logs
+        Match *
+        region us-east-2
+        log_group_name fluent-bit-cloudwatch
         log_stream_prefix from-fluent-bit-
-        log_retention_days 60
         auto_create_group true
+```
+
+Apply the above ConfigMap using the command below:
+
+```bash
+## Apply `fluent-bit-fargate.yaml`
+kubectl apply -f fluent-bit-fargate.yaml
 ```
 
 You can stream logs from Fargate directly to Amazon CloudWatch, using the output plugin shown above. Cloudwatch is currently the only
@@ -254,17 +288,21 @@ appropriate values
 sumologic:
   logs:
     collector:
+      ## https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscloudwatchreceiver
       otelcloudwatch:
         enabled: false
-        roleArn: ""
+        roleArn: arn:aws:iam::$account_id:role/my-role
         ## Configure persistence for the cloudwatch collector
         persistence:
           enabled: true
         region: us-east-2
         pollInterval: 1m
         logGroups:
-          ameriprise-fargate-fluent-bit-logs:
-            prefixes: [from-fluent-bit] # using a stream prefix is recommended
+          ## The log group name
+          my-fluent-bit-logs:
+            ## The log stream prefix, can also be specified as
+            ## names: []
+            prefixes: [from-fluent-bit]
 ```
 
 where `my-role` is the name of the role created while setting up [authentication](#authenticate-with-cloudwatch)
@@ -272,18 +310,18 @@ where `my-role` is the name of the role created while setting up [authentication
 For more information on creating the appropriate roles and policies, please refer to
 [service account IAM role](https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html)
 
-Finally, install/upgrade the [collection](#install-or-upgrade-collection)
+After setting up cloudwatch logs, the next step is to setup [persistence volumes](#persistence-enabled)
 
-## Metrics
+## Persistence (events/logs/metrics)
 
-You can install metrics with or without persistence. See the following sections for more details:
+You can install events/logs/metrics with or without persistence. See the following sections for more details:
 
 - [Persistence disabled](#persistence-disabled)
 - [Persistence enabled](#persistence-enabled)
 
 ### Persistence Disabled
 
-To disable persistence, add the following configuration to `user-values.yaml`:
+To disable persistence (metadata), add the following configuration to `user-values.yaml`:
 
 ```yaml
 metadata:
@@ -293,12 +331,23 @@ metadata:
 
 **Note: This is going to disable persistence for both logs and metrics.**
 
+To disable persistence for the cloudwatch collector
+
+```yaml
+sumologic:
+  logs:
+    collector:
+      otelcloudwatch:
+        persistence:
+          enabled: false
+```
+
 ### Persistence Enabled
 
-If you want to keep persistence (which is default configuration), you need to manually create Volumes for the Metric Pods. We recommend to
-create Persistent Volume Claims on the top of EFS Storage. In order to set up them, please apply the following steps:
+If you want to keep persistence (which is default configuration), you need to manually create Volumes for the events, logs and metrics Pods.
+We recommend to create Persistent Volume Claims on the top of EFS Storage. In order to set up them, please apply the following steps:
 
-#### Create EFS access points for metric Pods
+#### Create EFS access points for events/logs/metrics Pods
 
 EFS Access Point is an entry point for an application. We recommend to create Access Points pointing to the directories using
 `/${NAMESPACE}/${PVC_NAME}` schema.
@@ -321,6 +370,44 @@ for (( counter=0; counter<"${METRIC_PODS}"; counter++ )); do
         --file-system-id "${EFS_ID}" \
         --posix-user Uid=1000,Gid=1000 \
         --root-directory "Path=/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics-${counter},CreationInfo={OwnerUid=1000,OwnerGid=1000,Permissions=777}" \
+        --region "${AWS_REGION}"
+  fi
+done
+
+## Create EFS access points for Log Pods
+for (( counter=0; counter<"${LOG_PODS}"; counter++ )); do
+  FSAP_ID="$(
+    aws efs describe-access-points \
+      --region "${AWS_REGION}" |
+    jq ".AccessPoints[] |
+      select(.RootDirectory.Path == \"/sumologic/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-log-${counter}\") |
+      .AccessPointId" \
+      --raw-output)"
+
+  if [[ -z "${FSAP_ID}" ]]; then
+    aws efs create-access-point \
+        --file-system-id "${EFS_ID}" \
+        --posix-user Uid=1000,Gid=1000 \
+        --root-directory "Path=/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-log-${counter},CreationInfo={OwnerUid=1000,OwnerGid=1000,Permissions=777}" \
+        --region "${AWS_REGION}"
+  fi
+done
+
+## Create EFS access points for Event Pods
+for (( counter=0; counter<"${LOG_PODS}"; counter++ )); do
+  FSAP_ID="$(
+    aws efs describe-access-points \
+      --region "${AWS_REGION}" |
+    jq ".AccessPoints[] |
+      select(.RootDirectory.Path == \"/sumologic/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-events-${counter}\") |
+      .AccessPointId" \
+      --raw-output)"
+
+  if [[ -z "${FSAP_ID}" ]]; then
+    aws efs create-access-point \
+        --file-system-id "${EFS_ID}" \
+        --posix-user Uid=1000,Gid=1000 \
+        --root-directory "Path=/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-events-${counter},CreationInfo={OwnerUid=1000,OwnerGid=1000,Permissions=777}" \
         --region "${AWS_REGION}"
   fi
 done
@@ -471,21 +558,161 @@ spec:
 done | tee -a sumo-metrics-pvc.yaml
 ```
 
-#### Create namespace if it doesn't exist already
+Create namespace if it doesn't exist already
 
 ```bash
 ## Create namespace if it doesn't exist already
 kubectl create namespace "${NAMESPACE}"
 ```
 
-#### Apply `sumo-metrics-pvc.yaml`
+Apply `sumo-metrics-pvc.yaml`
 
 ```bash
 ## Apply `sumo-metrics-pvc.yaml`
 kubectl apply -f sumo-metrics-pvc.yaml -n "${NAMESPACE}"
 ```
 
-### Install or upgrade collection
+#### Create `sumo-logs-pvc.yaml` with PVC per access point
+
+The objects can be created using the following `bash` script:
+
+```bash
+## Create `sumo-logs-pvc.yaml` with PVC per access point
+echo "---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: efs-sc
+provisioner: efs.csi.aws.com
+volumeBindingMode: Immediate" | tee sumo-logs-pvc.yaml
+
+for (( counter=0; counter<$LOG_PODS; counter++ )); do
+  FSAP_ID="$(
+    aws efs describe-access-points \
+      --region "${AWS_REGION}" | \
+      jq ".AccessPoints[] |
+        select(.RootDirectory.Path == \"/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-logs-${counter}\") |
+        .AccessPointId" \
+        --raw-output)"
+
+  echo "---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-logs-${counter}
+  labels:
+    app: ${HELM_INSTALLATION_NAME}-sumologic-otelcol-logs
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  claimRef:
+    namespace: ${NAMESPACE}
+    name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-logs-${counter}
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: ${EFS_ID}::${FSAP_ID}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-logs-${counter}
+  namespace: ${NAMESPACE}
+  labels:
+    app: ${HELM_INSTALLATION_NAME}-sumologic-otelcol-logs
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 5Gi"
+done | tee -a sumo-logs-pvc.yaml
+```
+
+Apply `sumo-logs-pvc.yaml`
+
+```bash
+## Apply `sumo-logs-pvc.yaml`
+kubectl apply -f sumo-logs-pvc.yaml -n "${NAMESPACE}"
+```
+
+#### Create `sumo-events-pvc.yaml` with PVC per access point
+
+The objects can be created using the following `bash` script:
+
+```bash
+## Create `sumo-events-pvc.yaml` with PVC per access point
+echo "---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: efs-sc
+provisioner: efs.csi.aws.com
+volumeBindingMode: Immediate" | tee sumo-events-pvc.yaml
+
+for (( counter=0; counter<$EVENT_PODS; counter++ )); do
+  FSAP_ID="$(
+    aws efs describe-access-points \
+      --region "${AWS_REGION}" | \
+      jq ".AccessPoints[] |
+        select(.RootDirectory.Path == \"/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-events-${counter}\") |
+        .AccessPointId" \
+        --raw-output)"
+
+  echo "---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-events-${counter}
+  labels:
+    app: ${HELM_INSTALLATION_NAME}-sumologic-otelcol-events
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  claimRef:
+    namespace: ${NAMESPACE}
+    name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-events-${counter}
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: ${EFS_ID}::${FSAP_ID}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-events-${counter}
+  namespace: ${NAMESPACE}
+  labels:
+    app: ${HELM_INSTALLATION_NAME}-sumologic-otelcol-events
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 5Gi"
+done | tee -a sumo-events-pvc.yaml
+```
+
+Apply `sumo-events-pvc.yaml`
+
+```bash
+## Apply `sumo-events-pvc.yaml`
+kubectl apply -f sumo-events-pvc.yaml -n "${NAMESPACE}"
+```
+
+After the persistence volumes and claims have been created, [install the helm chart](#install-or-upgrade-collection)
+
+## Install or upgrade collection
 
 Disable Prometheus Node Exporter. As Amazon Fargate does not support Daemonsets, they won't be working correctly. There is no need to have
 Node Exporter on Amazon Fargate as Amazon takes care of Nodes management. To disable Prometheus Node Exporter, please add the following
@@ -507,9 +734,9 @@ helm upgrade \
     sumologic/sumologic
 ```
 
-### Troubleshooting
+## Troubleshooting
 
-#### Helm installation failed
+### Helm installation failed
 
 If Helm installation failed on Fargate, the possible reason is missing or incorrect Fargate profile. Check Setup Job descripion:
 
@@ -526,7 +753,7 @@ If you see the above or similiar output, ensure that your fargate profile for `$
 
 See [Set up Fargate Profile for Sumo Logic namespace](#set-up-fargate-profile-for-sumo-logic-namespace) for more information
 
-#### otelcol-metrics Pods are in Pending state with `Pod not supported on Fargate: volumes not supported` error
+### otelcol-metrics Pods are in Pending state with `Pod not supported on Fargate: volumes not supported` error
 
 If otelcol-metrics Pods are in `Pending` state with the following error:
 
@@ -554,7 +781,7 @@ After all, upgrade collection with new configuration and eventually remove metri
 kubectl -n "${NAMESPACE}" delete pod -l "app=${HELM_INSTALLATION_NAME}-sumologic-otelcol-metrics"
 ```
 
-#### otelcol-metrics Pods are in Pending state with `Output: Failed to resolve "fs-xxxxxxxx.efs.us-east-2.amazonaws.com" - check that your file system ID is correct, and ensure that the VPC has an EFS mount target for this file system ID.` error
+### otelcol-metrics Pods are in Pending state with `Output: Failed to resolve "fs-xxxxxxxx.efs.us-east-2.amazonaws.com" - check that your file system ID is correct, and ensure that the VPC has an EFS mount target for this file system ID.` error
 
 If otelcol-metrics Pods are in `Pending` state with the following error:
 
@@ -580,7 +807,7 @@ Ensure that the following steps has been applied:
 - [Authorize ingress for security group](#authorize-ingress-for-security-group)
 - [Create mount targets for each pair of EFS access point and subnet](#create-mount-targets-for-each-pair-of-efs-access-point-and-subnet)
 
-#### Helm upgrade failed `Error: UPGRADE FAILED: cannot patch "collection-sumologic-otelcol-metrics"`
+### Helm upgrade failed `Error: UPGRADE FAILED: cannot patch "collection-sumologic-otelcol-metrics"`
 
 If during helm upgrade you will see the following error:
 
@@ -596,9 +823,7 @@ kubectl -n "${NAMESPACE}" delete statefulset -l "app=${HELM_INSTALLATION_NAME}-s
 
 This error may occur if you are switching persistence option for already installed Sumo Logic Kubernetes Collection.
 
-### Troubleshooting Logs
-
-#### Invalid ConfigMap
+### Invalid ConfigMap
 
 If Fluent Bit log router hasn't been setup correctly, you will see the warning below:
 
@@ -606,7 +831,7 @@ If Fluent Bit log router hasn't been setup correctly, you will see the warning b
 Warning  LoggingDisabled  <unknown>  fargate-scheduler  Disabled logging because aws-logging configmap was not found. configmap "aws-logging" not found
 ```
 
-#### Invalid cloudwatch receiver configuration
+### Invalid cloudwatch receiver configuration
 
 If when cloudwatch logs collection is enabled, you see the following error in the logs
 
