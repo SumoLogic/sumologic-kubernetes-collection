@@ -25,8 +25,3 @@ kube-prometheus-stack:
 
 opentelemetry-operator:
   enabled: true
-  admissionWebhooks:
-    create: false
-  manager:
-    env:
-      ENABLE_WEBHOOKS: "false"

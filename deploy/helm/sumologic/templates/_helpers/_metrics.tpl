@@ -220,28 +220,34 @@ sumologic.com/scrape: "true"
 Definitions for metrics collector
 */}}
 
+{{- define "sumologic.labels.component.metrics" -}}
+sumologic.com/component: metrics
+{{- end -}}
+
 {{- define "sumologic.labels.app.metrics.collector" -}}
-{{- template "sumologic.fullname" . }}-metrics
+sumologic.com/app: otelcol
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics.collector.pod" -}}
-{{- template "sumologic.labels.app.metrics.collector" . }}
+{{ template "sumologic.labels.app.metrics.collector" . }}
+{{ template "sumologic.labels.component.metrics" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.metrics.clusterrole" -}}
-{{- template "sumologic.labels.app.metrics.collector" . }}
+{{- define "sumologic.labels.metrics.clusterrole" -}}
+{{- template "sumologic.labels.component.metrics" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.metrics.clusterrolebinding" -}}
-{{- template "sumologic.labels.app.metrics.collector" . }}
+{{- define "sumologic.labels.metrics.clusterrolebinding" -}}
+{{- template "sumologic.labels.component.metrics" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.metrics.serviceaccount" -}}
-{{- template "sumologic.labels.app.metrics.collector" . }}
+{{- define "sumologic.labels.metrics.serviceaccount" -}}
+{{- template "sumologic.labels.component.metrics" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.metrics.collector.opentelemetrycollector" -}}
-{{- template "sumologic.labels.app.metrics.collector" . }}
+{{- define "sumologic.labels.metrics.opentelemetrycollector" -}}
+{{ template "sumologic.labels.app.metrics.collector" . }}
+{{ template "sumologic.labels.component.metrics" . }}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics.collector" -}}

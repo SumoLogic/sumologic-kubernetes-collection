@@ -4,7 +4,7 @@ kind: OpenTelemetryCollector
 metadata:
   name: {{ template "sumologic.metadata.name.metrics.collector.opentelemetrycollector" . }}
   labels:
-    app: {{ template "sumologic.labels.app.metrics.collector" . }}
+    {{- include "sumologic.labels.metrics.opentelemetrycollector" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   mode: statefulset

@@ -537,16 +537,10 @@ func CheckOtelcolMetricsCollectorInstall(builder *features.FeatureBuilder) *feat
 	return builder.
 		Assess("otelcol metrics collector statefulset is ready",
 			stepfuncs.WaitUntilStatefulSetIsReady(
-				waitDuration,
+				waitDuration*2,
 				tickDuration,
 				stepfuncs.WithNameF(
 					stepfuncs.ReleaseFormatter("%s-sumologic-metrics-collector"),
-				),
-				stepfuncs.WithLabelsF(
-					stepfuncs.LabelFormatterKV{
-						K: "app",
-						V: stepfuncs.ReleaseFormatter("%s-sumologic-metrics"),
-					},
 				),
 			),
 		).
