@@ -1,3 +1,23 @@
+exporters:
+{{ tpl (.Files.Get "conf/metrics/otelcol/exporters.yaml") . | indent 2 }}
+
+extensions:
+  health_check: {}
+{{ if .Values.metadata.persistence.enabled }}
+  ## Configuration for File Storage extension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
+  file_storage:
+    directory: /var/lib/storage/otc
+    timeout: 10s
+    compaction:
+      on_rebound: true
+      directory: /tmp
+{{ end }}
+  pprof: {}
+
+processors:
+{{ tpl (.Files.Get "conf/metrics/otelcol/processors.yaml") . | indent 2 }}
+
 receivers:
   prometheus:
     config:
@@ -88,23 +108,7 @@ receivers:
       endpoint: http://{{ template "sumologic.metadata.name.metrics.targetallocator.name" . }}
       interval: 30s
       collector_id: ${POD_NAME}
-extensions:
-  health_check: {}
-{{ if .Values.metadata.persistence.enabled }}
-  ## Configuration for File Storage extension
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
-  file_storage:
-    directory: /var/lib/storage/otc
-    timeout: 10s
-    compaction:
-      on_rebound: true
-      directory: /tmp
-{{ end }}
-  pprof: {}
-exporters:
-{{ tpl (.Files.Get "conf/metrics/otelcol/exporters.yaml") . | indent 2 }}
-processors:
-{{ tpl (.Files.Get "conf/metrics/otelcol/processors.yaml") . | indent 2 }}
+
 service:
   telemetry:
     logs:

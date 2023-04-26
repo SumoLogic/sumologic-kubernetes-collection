@@ -4634,6 +4634,13 @@ opentelemetry-operator:
     failurePolicy: Fail
     enabled: true
 
+    ## skip admission webhook on our own OpenTelemetryCollector object to avoid having to wait for operator to start
+    objectSelector:
+      matchExpressions:
+        - key: sumologic.com/component
+          operator: NotIn
+          values: ["metrics"]
+
     certManager:
       enabled: false
       issuerRef: {}

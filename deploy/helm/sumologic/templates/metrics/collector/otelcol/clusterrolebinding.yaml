@@ -4,7 +4,7 @@ kind: ClusterRoleBinding
 metadata:
   name: {{ template "sumologic.metadata.name.metrics.collector.clusterrolebinding.prometheus" . }}
   labels:
-    app: {{ template "sumologic.labels.app.metrics.clusterrolebinding" . }}
+    {{- include "sumologic.labels.metrics.clusterrolebinding" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 subjects:
 - kind: ServiceAccount
@@ -20,7 +20,7 @@ kind: ClusterRoleBinding
 metadata:
   name: {{ template "sumologic.metadata.name.metrics.collector.clusterrolebinding.metadata" . }}
   labels:
-    app: {{ template "sumologic.labels.app.metrics.clusterrolebinding" . }}
+    {{- include "sumologic.labels.metrics.clusterrolebinding" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 subjects:
 - kind: ServiceAccount
