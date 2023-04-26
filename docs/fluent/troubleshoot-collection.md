@@ -403,5 +403,4 @@ sumologic:
 [infer-boundaries]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#infer-boundaries
 [http-source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source
 [boundary-regex]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#boundary-regex
-[sumologic-terraform-provider]:
-  https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/terraform.md#sumo-logic-terraform-provider
+[sumologic-terraform-provider]: ../terraform.md#sumo-logic-terraform-provider
