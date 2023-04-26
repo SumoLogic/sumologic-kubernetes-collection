@@ -398,6 +398,9 @@ sumologic:
 
 **Note**: If you use `json` format along with `text` format, you need to add regex for `json` as well (`\\{\".*`)
 
+**Note**: Details about `sumologic.collector.sources` configuration can be found [here][sumologic-terraform-provider]
+
 [infer-boundaries]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#infer-boundaries
 [http-source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source
 [boundary-regex]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#boundary-regex
+[sumologic-terraform-provider]: ../terraform.md#sumo-logic-terraform-provider
