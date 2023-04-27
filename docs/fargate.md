@@ -12,7 +12,7 @@ order to make them as generic and reusable.
 
 - [Common operations](#common-operations)
   - [Set up Fargate Profile for Sumo Logic namespace](#set-up-fargate-profile-for-sumo-logic-namespace)
-  - [Create EFS Volume](#create-efs-volume)
+  - [Create EFS File system](#create-efs-file-system)
 - [Cloudwatch Logs Collection](#logs)
   - [Fluent-bit log router configuration](#fluent-bit-log-router)
     - [Prerequisites](#prerequisites)
@@ -26,7 +26,7 @@ order to make them as generic and reusable.
     - [Create EFS access points for events/logs/metrics Pods](#create-efs-access-points-for-eventslogsmetrics-pods)
     - [Create a security group to be used with mount targets](#create-a-security-group-to-be-used-with-mount-targets)
     - [Authorize ingress for security group](#authorize-ingress-for-security-group)
-    - [Create mount targets for each pair of EFS access point and subnet](#create-mount-targets-for-each-pair-of-efs-access-point-and-subnet)
+    - [Create mount targets in each AZ](#create-mount-targets-in-each-az-using-efs-access-points)
     - [Create sumo-metrics-pvc.yaml with PVC per access point](#create-sumo-metrics-pvcyaml-with-pvc-per-access-point)
     - [Create sumo-logs-pvc.yaml with PVC per access point](#create-sumo-logs-pvcyaml-with-pvc-per-access-point)
     - [Create sumo-events-pvc.yaml with PVC per access point](#create-sumo-events-pvcyaml-with-pvc-per-access-point)
@@ -48,6 +48,8 @@ Let's consider the following variables:
 - `HELM_INSTALLATION_NAME` - Helm release name
 - `SG_NAME` - Name of security group to be (created and/or) used
 - `METRIC_PODS` - Maximum number of metric pods for the cluster. This value is needed to manually create Volumes
+- `LOG_PODS` - Maximum number of log pods for the cluster. This value is needed to manually create Volumes
+- `EVENT_PODS` - Maximum number of event pods for the cluster. This value is needed to manually create Volumes
 
 Let's consider the following example values:
 
@@ -80,12 +82,15 @@ eksctl create fargateprofile \
   --namespace "${NAMESPACE}"
 ```
 
-### Create EFS Volume
+### Create EFS File system
+
+[Dynamic provisioning](https://aws.amazon.com/blogs/containers/introducing-efs-csi-dynamic-provisioning/) of EFS volumes is not supported on
+Fargate pods
 
 In order to use persistency you need to manually create EFS volume:
 
 ```bash
-## Create EFS Volume
+## Create EFS File system
 aws efs create-file-system \
   --encrypted \
   --performance-mode generalPurpose \
@@ -105,7 +110,7 @@ export EFS_ID="$(
 The following snippet ensures that the Volume won't be duplicated:
 
 ```bash
-## Create EFS Volume
+## Create EFS File system
 export EFS_ID="$(
   aws efs describe-file-systems \
     --region="${AWS_REGION}" | \
@@ -131,7 +136,7 @@ if [[ -z "${EFS_ID}" ]]; then
 fi
 ```
 
-`EFS_ID` is going to be used in setting up Volumes for events, logs and metrics pods.
+`EFS_ID` is going to be used in setting up volumes for events, logs and metrics pods.
 
 ## Logs
 
@@ -224,13 +229,13 @@ This involves the following:
 To configure the service account to use an IAM role (for authentication), follow the steps below
 
 - Set your AWS account ID to an environment variable
-- Set your cluster's OIDC identity provider to an environment variable. Replace `my-cluster` with the name of your cluster
-- Set the namespace and the service account name
+- Set your cluster's OIDC identity provider to an environment variable
+- Set the the service account
 
 ```bash
-account_id=$(aws sts get-caller-identity --query "Account" --output text)
-oidc_provider=$(aws eks describe-cluster --name my-cluster --region $AWS_REGION --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
-export service_account=<FULLNAME>-otel-logs-collector
+export account_id=$(aws sts get-caller-identity --query "Account" --output text)
+export oidc_provider=$(aws eks describe-cluster --name $CLUSTER --region $AWS_REGION --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
+export service_account=$HELM_INSTALLATION_NAME-sumologic-otelcol-logs-collector
 ```
 
 Set the following trust relationship
@@ -266,13 +271,13 @@ aws iam create-role --role-name my-role --assume-role-policy-document file://tru
 aws iam attach-role-policy --role-name my-role --policy-arn=arn:aws:iam::$account_id:policy/my-policy
 ```
 
-The above policy must have permissions to list, read and describe cloudwatch log groups and streams. For more on this please refer to [IAM
-policies for CloudWatch Logs](# https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/iam-identity-based-access-control-cwl.html)
+The above policy must have permissions to list, read and describe cloudwatch log groups and streams. For more on this please refer to
+[access for CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/iam-identity-based-access-control-cwl.html)
 
 #### Enable cloudwatch collection
 
 Update the `user-values.yaml` to add the following annotation to the service account. Replace `account-id` and `my-role` with the
-appropriate values
+appropriate values. This configuration is also referenced in the step to [install the helm chart](#install-or-upgrade-collection)
 
 ```yaml
 sumologic:
@@ -281,11 +286,11 @@ sumologic:
       ## https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscloudwatchreceiver
       otelcloudwatch:
         enabled: false
-        roleArn: arn:aws:iam::$account_id:role/my-role
+        roleArn: arn:aws:iam::${account_id}:role/my-role
         ## Configure persistence for the cloudwatch collector
         persistence:
           enabled: true
-        region: us-east-2
+        region: ${AWS_REGION}
         pollInterval: 1m
         logGroups:
           ## The log group name
@@ -384,7 +389,7 @@ for (( counter=0; counter<"${LOG_PODS}"; counter++ )); do
 done
 
 ## Create EFS access points for Event Pods
-for (( counter=0; counter<"${LOG_PODS}"; counter++ )); do
+for (( counter=0; counter<"${EVENT_PODS}"; counter++ )); do
   FSAP_ID="$(
     aws efs describe-access-points \
       --region "${AWS_REGION}" |
@@ -456,9 +461,11 @@ aws ec2 authorize-security-group-ingress \
   --cidr "${CIDR_BLOCK}"
 ```
 
-#### Create mount targets for each pair of EFS access point and subnet
+#### Create mount targets in each AZ using EFS access points
 
 In order to be able to mount EFS access point within the subnet, the mount target should be created for them.
+
+_Note:_ You can only create one mount target per Availability Zone
 
 It can be done using the following `bash` script:
 
@@ -812,7 +819,7 @@ Ensure that the following steps has been applied:
 
 - [Create a security group to be used with mount targets](#create-a-security-group-to-be-used-with-mount-targets)
 - [Authorize ingress for security group](#authorize-ingress-for-security-group)
-- [Create mount targets for each pair of EFS access point and subnet](#create-mount-targets-for-each-pair-of-efs-access-point-and-subnet)
+- [Create mount targets in each AZ using EFS AP](#create-mount-targets-in-each-az-using-efs-access-points)
 
 ### Helm upgrade failed `Error: UPGRADE FAILED: cannot patch "collection-sumologic-otelcol-metrics"`
 
