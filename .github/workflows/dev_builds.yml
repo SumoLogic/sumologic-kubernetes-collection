@@ -10,7 +10,7 @@ on:
 
 jobs:
   markdown-link-check:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
@@ -20,7 +20,7 @@ jobs:
           use-quiet-mode: yes
 
   push-helm-chart:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: Push dev helm chart
@@ -29,7 +29,7 @@ jobs:
   # Add this to dev builds as that's the only way for cache to be shared across branches.
   # https://docs.github.com/en/actions/advanced-guides/caching-dependencies-to-speed-up-workflows#matching-a-cache-key
   setup-integration-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       kind_images: ${{ steps.set_kind_images.outputs.kind_images }}
       test_names: ${{ steps.set_test_names.outputs.test_names }}
@@ -52,7 +52,7 @@ jobs:
         run: echo "Test names ${{ steps.set_test_names.outputs.test_names }}"
 
   integration-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: IT - ${{ matrix.test_name }} - ${{ matrix.kind_image }}
     needs:
       - setup-integration-tests
