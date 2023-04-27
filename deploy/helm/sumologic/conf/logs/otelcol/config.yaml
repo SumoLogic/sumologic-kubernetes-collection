@@ -1,14 +1,3 @@
-receivers:
-{{ if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
-  fluentforward:
-    endpoint: 0.0.0.0:24321
-{{ end }}
-{{ if or .Values.sumologic.logs.collector.otelcol.enabled .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
-  otlp:
-    protocols:
-      http:
-        endpoint: 0.0.0.0:4318
-{{ end }}
 extensions:
   health_check: {}
 {{ if .Values.metadata.persistence.enabled }}
@@ -500,7 +489,7 @@ receivers:
     endpoint: 0.0.0.0:24321
 {{ end }}
 
-{{ if eq (include "logs.collector.otelcol.enabled" .) "true" }}
+{{ if or .Values.sumologic.logs.collector.otelcol.enabled .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
   ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/receiver/otlpreceiver
   otlp:
     protocols:
@@ -600,18 +589,8 @@ service:
         - fluentforward
 {{ end }}
 {{ end }}
-## Use this pipeline for cloudwatch logs
-{{- if .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
-    logs/otlp/otelcloudwatch:
-      receivers:
-        - otlp
-      processors:
-        - memory_limiter
-        - batch
-      exporters:
-        - sumologic/containers
-{{ end }}
-{{ if eq (include "logs.collector.otelcol.enabled" .) "true" }}
+
+{{ if or .Values.sumologic.logs.collector.otelcol.enabled .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
 {{ if .Values.sumologic.logs.container.enabled }}
     ## This is the same pipeline like for logs/fluent/containers with the following modifications:
     ## - filter/include_fluent_tag_containers and attributes/remove_fluent_tag are being removed
