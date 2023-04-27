@@ -19,6 +19,3 @@ nodes:
             dataDir: /tmp/etcd
             extraArgs:
               listen-metrics-urls: http://0.0.0.0:2381
-      - | ## https://github.com/kubernetes-sigs/kind/issues/3061
-        kind: KubeletConfiguration
-        cgroupDriver: systemd
