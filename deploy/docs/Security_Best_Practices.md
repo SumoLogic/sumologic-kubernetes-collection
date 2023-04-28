@@ -1,6 +1,6 @@
 # Advanced Configuration / Security Best Practices
 
-- [Hardening fluentd StatefulSet with `securityContext`](#hardening-fluentd-statefulset-with-securitycontext)
+- [Setting `securityContext`](#setting-securitycontext)
 - [FIPS compliant binaries](#fips-compliant-binaries)
 
 ## Minimal required capabilities
@@ -241,41 +241,146 @@ spec:
 You should only leave the ports for the protocol you're actually using to deliver spans to the receiver in the above definition. As with Prometheus,
 the above configuration is very permissive for ingress. You're encouraged to make it more restrictive based on your specific requirements.
 
-## Hardening fluentd StatefulSet with `securityContext`
+## Setting `securityContext`
 
 One can use `fluentd.securityContext` and
 `fluentd.(logs|metrics|events).statefulset.containers.fluentd.securityContext`
 to tighten up the security requirements for fluentd containers running as part
 of collection StatefulSets.
 
+`securityContext` for FluentBit can be set using `fluent-bit.securityContext` or `fluent-bit.podSecurityContext`.
+
 One example of such a configuration can be found below:
 
 ```yaml
-fluentd:
-  ...
+fluent-bit:
   securityContext:
-    ## The group ID of all processes in the statefulset containers.
-    ## By default this needs to be fluent(999).
-    fsGroup: 999
-    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+  initContainers:
+  - name: changepermissions
+    image: public.ecr.aws/docker/library/busybox
+    command:
+    - "sh"
+    - "-c"
+    - chmod 1777 /tail-db
+    volumeMounts:
+    - mountPath: /tail-db
+      name: tail-db
+    securityContext:
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+
+fluentd:
   logs:
-    enabled: true
-    ...
     statefulset:
       containers:
         fluentd:
           securityContext:
-            runAsNonRoot: true
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            runAsNonRoot: true
+            runAsUser: 999
+      initContainers:
+      - name: restore-original-permissions-on-tmp-dir
+        image: public.ecr.aws/docker/library/busybox
+        command:
+        - "sh"
+        - "-c"
+        - chmod 1777 /tmp
+        volumeMounts:
+        - mountPath: /tmp
+          name: fluentd-tmp
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
     extraVolumeMounts:
-      - mountPath: /tmp/
-        name: tmp-volume-logs
+    - name: fluentd-tmp
+      mountPath: /tmp
     extraVolumes:
-      - emptyDir: {}
-        name: tmp-volume-logs
+    - name: fluentd-tmp
+      emptyDir: {}
   metrics:
-    ...
+    statefulset:
+      containers:
+        fluentd:
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            runAsNonRoot: true
+            runAsUser: 999
+      initContainers:
+      - name: restore-original-permissions-on-tmp-dir
+        image: public.ecr.aws/docker/library/busybox
+        command:
+        - "sh"
+        - "-c"
+        - chmod 1777 /tmp
+        volumeMounts:
+        - mountPath: /tmp
+          name: fluentd-tmp
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+    extraVolumeMounts:
+    - name: fluentd-tmp
+      mountPath: /tmp
+    extraVolumes:
+    - name: fluentd-tmp
+      emptyDir: {}
+  events:
+    statefulset:
+      containers:
+        fluentd:
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            runAsNonRoot: true
+            runAsUser: 999
+      initContainers:
+      - name: restore-original-permissions-on-tmp-dir
+        image: public.ecr.aws/docker/library/busybox
+        command:
+        - "sh"
+        - "-c"
+        - chmod 1777 /tmp
+        volumeMounts:
+        - mountPath: /tmp
+          name: fluentd-tmp
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+    extraVolumeMounts:
+    - name: fluentd-tmp
+      mountPath: /tmp
+    extraVolumes:
+    - name: fluentd-tmp
+      emptyDir: {}
 ```
 
 ## Using a custom root CA for TLS interception
