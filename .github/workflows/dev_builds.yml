@@ -60,17 +60,19 @@ jobs:
       matrix:
         kind_image: ${{ fromJSON(needs.setup-integration-tests.outputs.kind_images) }}
         test_name: ${{ fromJSON(needs.setup-integration-tests.outputs.test_names) }}
+    env:
+      KIND_VERSION: 0.17.0
     steps:
       - uses: actions/checkout@v3
       - name: Setup go
         uses: actions/setup-go@v4
         with:
           go-version: "1.20"
-      - uses: engineerd/setup-kind@v0.5.0
-        with:
-          version: v0.17.0
-          # Cluster will be created by the tests themselves so no need to create it here.
-          skipClusterCreation: "true"
+      - name: Setup kind
+        run: |
+          curl --retry 10 --retry-max-time 120 --retry-delay 5 -Lo ./kind https://kind.sigs.k8s.io/dl/v${{env.KIND_VERSION}}/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
       # As described in
       # https://github.com/mvdan/github-actions-golang#how-do-i-set-up-caching-between-builds
       - uses: actions/cache@v3
