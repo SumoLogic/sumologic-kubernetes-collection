@@ -68,21 +68,12 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: "1.20"
+          cache-dependency-path: "**/go.sum"
       - name: Setup kind
         run: |
           curl --retry 10 --retry-max-time 120 --retry-delay 5 -Lo ./kind https://kind.sigs.k8s.io/dl/v${{env.KIND_VERSION}}/kind-linux-amd64
           chmod +x ./kind
           sudo mv ./kind /usr/local/bin/kind
-      # As described in
-      # https://github.com/mvdan/github-actions-golang#how-do-i-set-up-caching-between-builds
-      - uses: actions/cache@v3
-        with:
-          path: |
-            /home/runner/go/pkg/mod
-            /home/runner/.cache/go-build
-          key: ${{ runner.os }}-go-integration-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-integration-
       - name: Run integration test - ${{ matrix.test_name }}
         working-directory: ./tests/integration/
         run: make test TEST_NAME=${{matrix.test_name}} KIND_NODE_IMAGE=${{matrix.kind_image}}
