@@ -74,7 +74,9 @@ function push_helm_chart() {
 function prune_helm_releases() {
   local chart_dir="$1"
   local max_age_timestamp="$2"
+  local major_version_number="${3}"
   local remote="origin"
+  local file_prefix="sumologic-${major_version_number}"
 
   echo "Pruning Helm Chart releases in ${chart_dir}"
 
@@ -86,7 +88,7 @@ function prune_helm_releases() {
   last_pruned_commit="$(git rev-list HEAD --min-age "${max_age_timestamp}" -n 1)"
   root_commit="$(git rev-list --max-parents=0 HEAD)"
   for filename in $(git diff --name-only "${root_commit}" "${last_pruned_commit}" "${chart_dir}/"); do
-    if [[ -f "${filename}" ]]; then
+    if [[ -f "${filename}" && ${filename} == ${file_prefix}* ]]; then
       git rm "${filename}"
     fi
   done

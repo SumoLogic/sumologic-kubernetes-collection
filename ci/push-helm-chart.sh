@@ -24,7 +24,8 @@ push_helm_chart "${DEV_VERSION}" "./dev"
 
 echo "Pruning the dev Helm Chart releases older than one month"
 max_age_timestamp="$(date --date="-1 month" +"%s")"
-prune_helm_releases "./dev" "${max_age_timestamp}"
+major_version_number=$(echo "${DEV_VERSION}" | cut -dv -f2 | cut -d. -f1)
+prune_helm_releases "./dev" "${max_age_timestamp}" "${major_version_number}"
 
 # shellcheck disable=SC2310
 if is_checkout_on_tag; then
