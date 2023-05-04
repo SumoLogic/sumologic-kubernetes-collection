@@ -7,6 +7,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.6.0]
+
+### Released 2023-05-04
+
+### Added
+
+- Added the otel cloudwatch statefulset logs collector (fargate) with documentation updates [#2982]
+
+### Changed
+
+- chore: add support for KOPS 1.26, EKS 1.25, AKS 1.26, OpenShift 4.12; remove support for GKE 1.21, EKS 1.21, AKS 1.23 [#2969]
+- chore: update setup image to 3.8.0 [#3000]
+- chore: upgrade opentelemetry-operator chart to 0.27.0 [#3008]
+
+### Fixed
+
+- fix: fix logs pipeline if systemd is disabled [#3001]
+
+[#2982]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2982
+[#2969]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2969
+[#3000]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3000
+[#3008]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3008
+[#3001]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3001
+[v3.6.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.6.0
+
 ## [v3.5.0]
 
 ### Released 2023-04-14
