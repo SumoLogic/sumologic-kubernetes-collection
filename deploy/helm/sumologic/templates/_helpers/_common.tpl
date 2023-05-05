@@ -434,15 +434,15 @@ Example Usage:
 '{{ include "proxy-env-variables" . }}'
 */}}
 {{- define "proxy-env-variables" -}}
-{{- if .Values.sumologic.httpProxy -}}
+{{- if .Values.sumologic.httpProxy }}
 - name: HTTP_PROXY
   value: {{ .Values.sumologic.httpProxy }}
 {{- end -}}
-{{- if .Values.sumologic.httpsProxy -}}
+{{- if .Values.sumologic.httpsProxy }}
 - name: HTTPS_PROXY
   value: {{ .Values.sumologic.httpsProxy }}
 {{- end -}}
-{{- if .Values.sumologic.noProxy -}}
+{{- if .Values.sumologic.noProxy }}
 - name: NO_PROXY
   value: {{ .Values.sumologic.noProxy }}
 {{- end -}}
