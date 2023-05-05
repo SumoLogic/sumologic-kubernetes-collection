@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.6.1]
+
+### Released 2023-05-05
+
+### Fixed
+
+- fix: fix setting proxy in templates [#3022]
+
+[#3022]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3022
+[v3.6.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.6.1
+
 ## [v3.6.0]
 
 ### Released 2023-05-04
