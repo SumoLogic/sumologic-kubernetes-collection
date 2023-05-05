@@ -111,7 +111,7 @@ spec:
             - name: HTTP_PROXY
               value: http://proxy.internal
             - name: HTTPS_PROXY
-              value: http://proxy.internal
+              value: https://proxy.internal
             - name: NO_PROXY
               value: http://non-proxy.internal
   volumeClaimTemplates:
