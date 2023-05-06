@@ -97,6 +97,81 @@ func TestOtelImageFIPSSuffix(t *testing.T) {
 		}
 	}
 }
+func TestNameAndLabelLength(t *testing.T) {
+	// object kinds whose names are limited to 63 characters instead of K8s default of 253
+	// not all of these are strictly required, but it's a good practice to limit them regardless
+	limitedNameKinds := []string{
+		"Pod",
+		"Service",
+		"Deployment",
+		"DaemonSet",
+		"StatefulSet",
+	}
+	valuesFilePath := path.Join(testDataDirectory, "everything-enabled.yaml")
+	releaseName := strings.Repeat("a", maxHelmReleaseNameLength)
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+
+	// split the rendered Yaml into individual documents and unmarshal them into K8s objects
+	// we could use the yaml decoder directly, but we'd have to implement our own unmarshaling logic then
+	renderedObjects := UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
+
+	for _, renderedObject := range renderedObjects {
+		name := renderedObject.GetName()
+		kind := renderedObject.GetKind()
+		maxNameLength := k8sMaxNameLength
+		for _, limitedNameKind := range limitedNameKinds {
+			if kind == limitedNameKind {
+				maxNameLength = k8sMaxLabelLength
+			}
+		}
+		assert.LessOrEqualf(t, len(name), maxNameLength, "object kind `%s` name `%s` must be no more than %d characters", renderedObject.GetKind(), name, maxNameLength)
+		labels := renderedObject.GetLabels()
+		for key, value := range labels {
+			assert.LessOrEqualf(t, len(value), k8sMaxLabelLength, "value of label %s=%s must be no more than %d characters", key, value, k8sMaxLabelLength)
+		}
+	}
+}
+
+func TestReleaseNameTooLong(t *testing.T) {
+	valuesFilePath := path.Join(testDataDirectory, "everything-enabled.yaml")
+	releaseName := strings.Repeat("a", maxHelmReleaseNameLength+1)
+	_, err := RenderTemplateE(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+	require.NoError(t, err)
+	// we can't check whether NOTES are rendered correctly due to https://github.com/helm/helm/issues/6901
+	// TODO: Add an error check here after we start enforcing the limit: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/3057
+}
 
 // check the built-in labels added to all K8s objects created by the chart
 func checkBuiltinLabels(t *testing.T, object metav1.Object, chartVersion string) {
