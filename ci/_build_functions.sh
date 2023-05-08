@@ -88,7 +88,7 @@ function prune_helm_releases() {
   last_pruned_commit="$(git rev-list HEAD --min-age "${max_age_timestamp}" -n 1)"
   root_commit="$(git rev-list --max-parents=0 HEAD)"
   for filename in $(git diff --name-only "${root_commit}" "${last_pruned_commit}" "${chart_dir}/"); do
-    if [[ -f "${filename}" && ${filename} == ${file_prefix}* ]]; then
+    if [[ -f "${filename}" && ${chart_dir}/${filename} = ${file_prefix}* ]]; then
       git rm "${filename}"
     fi
   done
