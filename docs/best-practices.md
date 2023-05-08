@@ -12,6 +12,7 @@
   - [Fluentd](#fluentd-1)
   - [OpenTelemetry Collector](#opentelemetry-collector-1)
 - [Collect logs from additional files on the Node](#collect-logs-from-additional-files-on-the-node)
+- [Remove attributes from systemd logs](#removing-attributes-from-systemd-logs)
 - [Filtering Prometheus Metrics by Namespace](#filtering-prometheus-metrics-by-namespace)
 - [Modify the Log Level for Falco](#modify-the-log-level-for-falco)
 - [Overriding metadata using annotations](#overriding-metadata-using-annotations)
@@ -352,6 +353,32 @@ In the example above, two internally defined processors were used in metadata pi
 [batch](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/batchprocessor) and
 [memory limiter](https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/memorylimiterprocessor). If you need to
 change the parameters of these processors in any way, you can define your own and use them in this pipeline.
+
+## Removing attributes from systemd logs
+
+If you want to remove some attributes from Systemd logs, like for example `PRIORITY` and `SYSLOG_FACILITY`, you can do it the following way:
+
+```yaml
+otellogs:
+  config:
+    merge:
+      processors:
+        transform/cleanup_systemd:
+          log_statements:
+            - context: log
+              statements:
+                - delete_key(body, "PRIORITY")
+                - delete_key(body, "SYSLOG_FACILITY")
+      service:
+        pipelines:
+          logs/systemd:
+            processors:
+              - logstransform/systemd
+              - transform/cleanup_systemd
+              - batch
+```
+
+**Note: We do not guarantee that the structure of `otellogs.config.merge` will remain the same between minor helm chart versions**
 
 ## Filtering Prometheus Metrics by Namespace
 
