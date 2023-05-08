@@ -74,7 +74,7 @@ function push_helm_chart() {
 function prune_helm_releases() {
   local chart_dir="$1"
   local max_age_timestamp="$2"
-  local major_version_number="${3}"
+  local major_version_number="$3"
   local remote="origin"
   local file_prefix="sumologic-${major_version_number}"
 
