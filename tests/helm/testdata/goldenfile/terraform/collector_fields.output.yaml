@@ -469,11 +469,19 @@ data:
     resource "sumologic_http_source" "default_events_source" {
         name         = local.default_events_source
         collector_id = sumologic_collector.collector.id
+        default_date_formats {
+          format  = "epoch"
+          locator = "\"timestamp\":(\\d+)"
+        }
     }
 
     resource "sumologic_http_source" "default_logs_source" {
         name         = local.default_logs_source
         collector_id = sumologic_collector.collector.id
+        default_date_formats {
+          format  = "epoch"
+          locator = "\"timestamp\":(\\d+)"
+        }
     }
 
     resource "sumologic_http_source" "apiserver_metrics_source" {
