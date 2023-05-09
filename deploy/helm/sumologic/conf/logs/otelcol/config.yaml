@@ -46,7 +46,7 @@ exporters:
 
 extensions:
 {{ if .Values.metadata.persistence.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/storage/filestorage
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/extension/storage/filestorage
   file_storage:
     compaction:
       directory: /tmp
@@ -55,15 +55,15 @@ extensions:
     timeout: 10s
 {{ end }}
 
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/healthcheckextension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/extension/healthcheckextension
   health_check: {}
 
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/pprofextension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/extension/pprofextension
   pprof: {}
 
 processors:
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/attributesprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/attributesprocessor
   attributes/extract_systemd_source_fields:
     actions:
       - action: extract
@@ -75,7 +75,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/attributesprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/attributesprocessor
   attributes/fluent_containers:
     actions:
       - action: extract
@@ -103,14 +103,14 @@ processors:
         key: k8s_container_name
 {{ end }}
 
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/attributesprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/attributesprocessor
   attributes/remove_fluent_tag:
     actions:
       - action: delete
         key: fluent.tag
 
   ## The batch processor accepts spans and places them into batches grouped by node and resource
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/batchprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.76.1/processor/batchprocessor
   batch:
     ## Maximum number of spans sent at once
     send_batch_max_size: 2_048
@@ -120,7 +120,7 @@ processors:
     timeout: 1s
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/exclude_kubelet:
     logs:
       exclude:
@@ -131,7 +131,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/exclude_kubelet_hostname:
     logs:
       exclude:
@@ -142,7 +142,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/exclude_kubelet_priority:
     logs:
       exclude:
@@ -153,7 +153,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/exclude_kubelet_syslog:
     logs:
       exclude:
@@ -164,7 +164,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/exclude_kubelet_unit:
     logs:
       exclude:
@@ -175,7 +175,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/exclude_systemd_hostname:
     logs:
       exclude:
@@ -186,7 +186,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/exclude_systemd_priority:
     logs:
       exclude:
@@ -197,7 +197,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/exclude_systemd_syslog:
     logs:
       exclude:
@@ -208,7 +208,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/exclude_systemd_unit:
     logs:
       exclude:
@@ -219,7 +219,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/include_containers:
     logs:
       include:
@@ -230,7 +230,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/include_fluent_tag_containers:
     logs:
       include:
@@ -241,7 +241,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/include_fluent_tag_host:
     logs:
       include:
@@ -252,7 +252,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/include_kubelet:
     logs:
       include:
@@ -263,7 +263,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/filterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/filterprocessor
   filter/include_systemd:
     logs:
       include:
@@ -274,7 +274,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/groupbyattrsprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/groupbyattrsprocessor
   groupbyattrs/containers:
     keys:
       - k8s.container.id
@@ -285,7 +285,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/groupbyattrsprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/groupbyattrsprocessor
   groupbyattrs/systemd:
     keys:
       - _sourceName
@@ -328,7 +328,7 @@ processors:
 {{ if .Values.sumologic.logs.container.enabled }}
   ## logstransformprocessor is experimental, but the same functionality in transformprocessor doesn't offer robust enough error handling
   ## TODO: use transformprocessor here after https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/16519 is closed
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/logstransformprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/logstransformprocessor
   logstransform/containers_parse_json:
     operators:
       - if: body matches "^{[\\s\\S]+"
@@ -337,7 +337,7 @@ processors:
         type: json_parser
 {{ end }}
 
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/memorylimiterprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.76.1/processor/memorylimiterprocessor
   memory_limiter:
     ## check_interval is the time between measurements of memory usage for the
     ## purposes of avoiding going over the limits. Defaults to zero, so no
@@ -349,7 +349,7 @@ processors:
     ## Spike limit (calculated from available memory). Must be less than limit_percentage.
     spike_limit_percentage: 20
 
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
   resource/add_cluster:
     attributes:
       - action: upsert
@@ -357,7 +357,7 @@ processors:
         value: {{ .Values.sumologic.clusterName | quote }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
   resource/containers_copy_node_to_host:
     attributes:
       - action: upsert
@@ -366,7 +366,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
   resource/drop_annotations:
     attributes:
       - action: delete
@@ -374,7 +374,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
   resource/remove_pod_name:
     attributes:
       - action: delete
@@ -384,7 +384,7 @@ processors:
 {{ if .Values.sumologic.logs.container.enabled }}
   # As sourceprocessor can't set these attributes to be empty, we do it here instead
   # If they're defined to be anything else in sourceprocessor, those values will overwrite these
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/resourceprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
   resource/set_empty_source_metadata:
     attributes:
     - action: insert
@@ -450,7 +450,7 @@ processors:
 {{ end }}
 
   ## Add timestamp to attributes
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/transformprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/transformprocessor
   transform/add_timestamp:
     log_statements:
       - context: log
@@ -460,7 +460,7 @@ processors:
   ## Move attributes from the body to the record and drop the body if it's a map
   ## The map check isn't perfect, as there's no way to check for this explicitly in OTTL
   ## We always parse json earlier in the pipeline though, so this is safe
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/transformprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/transformprocessor
   transform/flatten:
     log_statements:
       - context: log
@@ -469,7 +469,7 @@ processors:
           - set(body, "") where IsMatch(body, "^{") == true
 
   ## Remove all attributes, so body won't by nested by SumoLogic receiver in case of using otlp format
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/transformprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/transformprocessor
   transform/remove_attributes:
     log_statements:
       - context: log
@@ -484,13 +484,13 @@ processors:
 
 receivers:
 {{ if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/receiver/fluentforwardreceiver
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/receiver/fluentforwardreceiver
   fluentforward:
     endpoint: 0.0.0.0:24321
 {{ end }}
 
 {{ if or .Values.sumologic.logs.collector.otelcol.enabled .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/receiver/otlpreceiver
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.76.1/receiver/otlpreceiver
   otlp:
     protocols:
       http:

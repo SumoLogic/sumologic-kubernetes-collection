@@ -4,7 +4,7 @@ exporters:
 extensions:
 {{ if .Values.metadata.persistence.enabled }}
   ## Configuration for File Storage extension
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/storage/filestorage
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/extension/storage/filestorage
   file_storage:
     compaction:
       directory: /tmp
@@ -13,10 +13,10 @@ extensions:
     timeout: 10s
 {{ end }}
 
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/healthcheckextension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/extension/healthcheckextension
   health_check: {}
 
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/pprofextension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/extension/pprofextension
   pprof: {}
 
 processors:

@@ -1,12 +1,12 @@
 exporters:
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/exporter/otlphttpexporter
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.76.1/exporter/otlphttpexporter
   otlphttp:
     endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
     sending_queue:
       queue_size: 10
 
 extensions:
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/storage/filestorage
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/extension/storage/filestorage
   file_storage:
     compaction:
       directory: /var/lib/storage/otc
@@ -14,14 +14,14 @@ extensions:
     directory: /var/lib/storage/otc
     timeout: 10s
 
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/healthcheckextension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/extension/healthcheckextension
   health_check: {}
 
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/pprofextension
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/extension/pprofextension
   pprof: {}
 
 processors:
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/batchprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.76.1/processor/batchprocessor
   batch:
     send_batch_max_size: 2000
     send_batch_size: 1000
@@ -31,7 +31,7 @@ processors:
   ## copy _SYSTEMD_UNIT, SYSLOG_FACILITY, _HOSTNAME and PRIORITY from body to attributes
   ## so they can be used by metadata processors same way like for fluentd
   ## build fluent.tag attribute as `host.{_SYSTEMD_UNIT}`
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/processor/logstransformprocessor
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/logstransformprocessor
   logstransform/systemd:
     operators:
       - from: body._SYSTEMD_UNIT
@@ -57,7 +57,7 @@ processors:
 
 receivers:
 {{- if .Values.sumologic.logs.container.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/receiver/filelogreceiver
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/receiver/filelogreceiver
   filelog/containers:
     ## sets fingerprint_size to 17kb in order to match the longest possible docker line (which by default is 16kb)
     ## we want to include timestamp, which is at the end of the line
@@ -236,7 +236,7 @@ receivers:
 {{- end }}
 
 {{- if .Values.sumologic.logs.systemd.enabled }}
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/receiver/journaldreceiver
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/receiver/journaldreceiver
   journald:
     directory: /var/log/journal
     ## This is not a full equivalent of fluent-bit filtering as fluent-bit filters by `_SYSTEMD_UNIT`
