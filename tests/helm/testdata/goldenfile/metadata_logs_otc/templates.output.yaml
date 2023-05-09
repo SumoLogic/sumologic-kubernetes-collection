@@ -218,12 +218,6 @@ data:
         passthrough: false
         pod_association:
         - from: build_hostname
-      logstransform/containers_parse_json:
-        operators:
-        - if: body matches "^{[\\s\\S]+"
-          parse_from: body
-          parse_to: body
-          type: json_parser
       memory_limiter:
         check_interval: 5s
         limit_percentage: 75
@@ -297,6 +291,12 @@ data:
         - context: log
           statements:
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
+      transform/containers_parse_json:
+        error_mode: ignore
+        log_statements:
+        - context: log
+          statements:
+          - set(body, ParseJSON(body)) where IsMatch(body, "^{") == true
       transform/flatten:
         log_statements:
         - context: log
@@ -332,7 +332,7 @@ data:
           - resource/containers_copy_node_to_host
           - sumologic_schema
           - source/containers
-          - logstransform/containers_parse_json
+          - transform/containers_parse_json
           - resource/remove_pod_name
           - resource/drop_annotations
           - transform/add_timestamp

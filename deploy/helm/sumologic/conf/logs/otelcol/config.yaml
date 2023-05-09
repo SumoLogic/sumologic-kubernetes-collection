@@ -326,15 +326,13 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-  ## logstransformprocessor is experimental, but the same functionality in transformprocessor doesn't offer robust enough error handling
-  ## TODO: use transformprocessor here after https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/16519 is closed
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/logstransformprocessor
-  logstransform/containers_parse_json:
-    operators:
-      - if: body matches "^{[\\s\\S]+"
-        parse_from: body
-        parse_to: body
-        type: json_parser
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/transformprocessor
+  transform/containers_parse_json:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - set(body, ParseJSON(body)) where IsMatch(body, "^{") == true
 {{ end }}
 
   ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.76.1/processor/memorylimiterprocessor
@@ -605,7 +603,7 @@ service:
         - resource/containers_copy_node_to_host
         - sumologic_schema
         - source/containers
-        - logstransform/containers_parse_json
+        - transform/containers_parse_json
 {{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
