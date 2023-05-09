@@ -188,17 +188,26 @@ sumologic:
         default:
           name: logs
           config-name: endpoint-logs
-
           ## Properties can be used to extend default settings, such as processing rules, fields etc
-          # properties:
-          #  filters:
-          #    - name: "Test Exclude Debug"
-          #      filter_type: "Exclude"
-          #      regexp: ".*DEBUG.*"
+          properties:
+            default_date_formats:
+              ## Ensures that timestamp key has precedence over timestamp auto discovery
+              - format: epoch
+                locator: '\"timestamp\":(\\d+)'
+
+          # filters:
+          #   - name: "Test Exclude Debug"
+          #     filter_type: "Exclude"
+          #     regexp: ".*DEBUG.*"
       events:
         default:
           name: events
           config-name: endpoint-events
+          properties:
+            default_date_formats:
+              ## Ensures that timestamp key has precedence over timestamp auto discovery
+              - format: epoch
+                locator: '\"timestamp\":(\\d+)'
       traces:
         default:
           name: traces
