@@ -115,12 +115,14 @@ in Sumo Logic UI to your Fields table schema.
 
 - `cluster`
 - `container`
+- `daemonset`
 - `deployment`
 - `host`
 - `namespace`
 - `node`
 - `pod`
 - `service`
+- `statefulset`
 
 This is normally done in the setup job when `sumologic.setupEnabled` is set
 to `true` (default behavior).
