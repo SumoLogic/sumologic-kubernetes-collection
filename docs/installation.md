@@ -114,12 +114,14 @@ Sumo Logic Apps for Kubernetes and Explore require below listed fields to be add
 
 - `cluster`
 - `container`
+- `daemonset`
 - `deployment`
 - `host`
 - `namespace`
 - `node`
 - `pod`
 - `service`
+- `statefulset`
 
 This is normally done in the setup job when `sumologic.setupEnabled` is set to `true` (default behavior).
 
