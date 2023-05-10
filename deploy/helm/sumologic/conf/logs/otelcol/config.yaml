@@ -557,8 +557,6 @@ service:
         - groupbyattrs/systemd
         - resource/add_cluster
         - source/kubelet
-        - transform/remove_attributes
-        - transform/flatten
         - transform/add_timestamp
         - batch
       receivers:
@@ -581,8 +579,6 @@ service:
         - groupbyattrs/systemd
         - resource/add_cluster
         - source/systemd
-        - transform/remove_attributes
-        - transform/flatten
         - transform/add_timestamp
         - batch
       receivers:
