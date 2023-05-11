@@ -109,7 +109,7 @@ spec:
       {{- end }}
       containers:
       - name: otelcol
-        image: {{ .Values.metadata.image.repository }}:{{ .Values.metadata.image.tag }}
+        image: {{ template "sumologic.metadata.image" . }}
         imagePullPolicy: {{ .Values.metadata.image.pullPolicy }}
         args:
           - --config=/etc/otel/config.yaml

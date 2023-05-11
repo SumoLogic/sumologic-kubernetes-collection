@@ -55,7 +55,7 @@ spec:
       {{- end }}
       containers:
       - name: otelcol
-        image: {{ $tracesSampler.deployment.image.repository }}:{{ $tracesSampler.deployment.image.tag }}
+        image: {{ template "sumologic.tracessampler.image" . }}
         imagePullPolicy: {{ $tracesSampler.deployment.image.pullPolicy }}
         args:
           - --config=/conf/traces.sampler.conf.yaml

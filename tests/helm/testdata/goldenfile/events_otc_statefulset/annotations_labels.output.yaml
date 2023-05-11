@@ -59,7 +59,7 @@ spec:
         fsGroup: 999
       containers:
         - name: otelcol
-          image: public.ecr.aws/sumologic/sumologic-otel-collector:0.76.1-sumo-0
+          image: my_repository:my_tag
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/otel/config.yaml

@@ -1,0 +1,87 @@
+---
+# Source: sumologic/templates/instrumentation/traces-sampler/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-sumologic-traces-gateway
+  labels:
+    app: RELEASE-NAME-sumologic-traces-sampler
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  minReadySeconds: 5
+  progressDeadlineSeconds: 120
+  replicas: 1
+  selector:
+    matchLabels:
+      app: RELEASE-NAME-sumologic-traces-sampler
+  template:
+    metadata:
+      annotations:
+        checksum/config: "%CONFIG_CHECKSUM%"
+      labels:
+        app: RELEASE-NAME-sumologic-traces-sampler
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      serviceAccountName: RELEASE-NAME-sumologic
+      containers:
+        - name: otelcol
+          image: my_repository:my_tag
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config=/conf/traces.sampler.conf.yaml
+          env:
+            - name: GOGC
+              value: "80"
+            - name: SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-traces
+
+            - name: NO_PROXY
+              value: kubernetes.default.svc
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 4Gi
+            requests:
+              cpu: 200m
+              memory: 384Mi
+          ports:
+            - name: pprof
+              containerPort: 1777
+              protocol: TCP
+            - containerPort: 5778 # Default endpoint for Jaeger Sampling.
+            - containerPort: 6831 # Default endpoint for Jaeger Thrift Compact receiver.
+              protocol: UDP
+            - containerPort: 6832 # Default endpoint for Jaeger Thrift Binary receiver.
+              protocol: UDP
+            - containerPort: 8888 # Default endpoint for querying metrics.
+            - containerPort: 9411 # Default endpoint for Zipkin receiver.
+            - containerPort: 14250 # Default endpoint for Jaeger gRPC receiver.
+            - containerPort: 14267 # Default endpoint for Jaeger TChannel receiver.
+            - containerPort: 14268 # Default endpoint for Jaeger HTTP receiver.
+            - containerPort: 55678 # Default endpoint for Opencensus receiver.
+            - containerPort: 4317 # Default endpoint for OTLP gRPC receiver.
+            - containerPort: 4318 # Default endpoint for OTLP HTTP receiver.
+            - containerPort: 55680 # Old endpoint for OTLP gRPC receiver.
+            - containerPort: 55681 # Default endpoint for OTLP HTTP receiver. (deprecated)
+          volumeMounts:
+            - name: otel-collector-config-vol
+              mountPath: /conf
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+      volumes:
+        - configMap:
+            name: RELEASE-NAME-sumologic-traces-sampler
+          name: otel-collector-config-vol

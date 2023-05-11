@@ -6,7 +6,7 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 )
 
-func Test_Helm_Default_OT_FIPS_Metadata(t *testing.T) {
+func Test_Helm_Default_OT_FIPS(t *testing.T) {
 
 	expectedMetrics := internal.DefaultExpectedMetrics
 	// we have tracing enabled, so check tracing-specific metrics

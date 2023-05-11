@@ -1,0 +1,94 @@
+---
+# Source: sumologic/templates/logs/collector/otelcol-cloudwatch/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-cloudwatch-collector
+  labels:
+    app: RELEASE-NAME-sumologic-otelcloudwatch-logs-collector
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+      app: RELEASE-NAME-sumologic-otelcloudwatch-logs-collector
+  serviceName: RELEASE-NAME-sumologic-otelcol-cloudwatch-collector-headless
+  template:
+    metadata:
+      annotations:
+        checksum/config: "%CONFIG_CHECKSUM%"
+      labels:
+        app: RELEASE-NAME-sumologic-otelcloudwatch-logs-collector
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      serviceAccountName: RELEASE-NAME-sumologic-otelcol-logs-collector
+      volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: config.yaml
+                path: config.yaml
+            name: RELEASE-NAME-sumologic-otelcol-cloudwatch-collector
+          name: otelcol-config
+        - name: file-storage
+          persistentVolumeClaim:
+            claimName: file-storage-sumo-sumologic-otelcol-logs-0
+      securityContext:
+        fsGroup: 999
+      containers:
+        - name: otelcol
+          image: my_repository:my_tag
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config=/etc/otelcol/config.yaml
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 768Mi
+          ports:
+            - name: metrics
+              containerPort: 8888
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 60
+            periodSeconds: 3
+          volumeMounts:
+            - mountPath: /etc/otelcol
+              name: otelcol-config
+            - mountPath: /var/lib/storage/otc
+              name: file-storage
+          env:
+            - name: LOGS_METADATA_SVC
+              valueFrom:
+                configMapKeyRef:
+                  name: sumologic-configmap
+                  key: metadataLogs
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace

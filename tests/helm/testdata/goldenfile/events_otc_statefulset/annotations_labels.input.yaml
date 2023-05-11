@@ -7,6 +7,9 @@ sumologic:
     sumoLabel: sumoValue
 
 otelevents:
+  image:
+    repository: my_repository
+    tag: my_tag
   statefulset:
     ## Add custom labels only to logs sts pods
     podLabels:

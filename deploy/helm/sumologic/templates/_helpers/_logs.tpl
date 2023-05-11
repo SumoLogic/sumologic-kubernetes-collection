@@ -293,3 +293,10 @@ Example:
 {{- end -}}
 {{ print $excludeNamespaceRegex }}
 {{- end -}}
+
+{{/*
+Return the otelcol log collector image
+*/}}
+{{- define "sumologic.logs.collector.image" -}}
+{{ template "utils.getOtelImage" (dict "overrideImage" .Values.otellogs.image "defaultImage" .Values.sumologic.otelcolImage) }}
+{{- end -}}
