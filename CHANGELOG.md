@@ -7,6 +7,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.7.0]
+
+### Released 2023-05-11
+
+### Added
+
+- chore: add support for GKE 1.26 [#3047]
+- chore: add support for EKS 1.26 [#3047]
+
+### Changed
+
+- feat: use timestamp as message time if exists [#3039]
+- chore: upgrade otelcol to 0.76.1-sumo-0 [#3041]
+- chore: drop support for OpenShift 4.8 and 4.9 [#3043]
+- chore: drop support for GKE 1.22 [#3043]
+
+### Fixed
+
+- fix(logs): systemd logs with otel and Fluent Bit [#3042]
+
+[#3047]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3047
+[#3039]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3039
+[#3041]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3041
+[#3043]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3043
+[#3042]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3042
+[v3.7.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.7.0
+
 ## [v3.6.1]
 
 ### Released 2023-05-05
