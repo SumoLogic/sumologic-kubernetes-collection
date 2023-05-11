@@ -375,26 +375,9 @@ set the FIPS compliant images.
 For example, to use `0.76.1-sumo-0-fips` image with Helm Chart v3 use the following configuration:
 
 ```yaml
-metadata:
-  image:
-    tag: 0.76.1-sumo-0-fips
-otellogs:
-  image:
-    tag: 0.76.1-sumo-0-fips
-otelevents:
-  image:
-    tag: 0.76.1-sumo-0-fips
-otelcolInstrumentation:
-  statefulSet:
-    image:
-      tag: 0.76.1-sumo-0-fips
-traceSampler:
-  deployment:
-    image:
-      tag: 0.76.1-sumo-0-fips
-tracesGateway:
-  deployment:
-    image:
+sumologic:
+  otelcol:
+    defaultImage:
       tag: 0.76.1-sumo-0-fips
 ```
 

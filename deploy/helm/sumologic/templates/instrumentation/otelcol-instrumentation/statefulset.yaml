@@ -106,7 +106,7 @@ spec:
       {{- end }}
       containers:
       - name: otelcol
-        image: {{ $otelcolInstrumentation.statefulset.image.repository }}:{{ $otelcolInstrumentation.statefulset.image.tag }}
+        image: {{ template "sumologic.instrumentation.otelagent.image" . }}
         imagePullPolicy: {{ $otelcolInstrumentation.statefulset.image.pullPolicy }}
         args:
           - "--config=/conf/otelcol.instrumentation.conf.yaml"

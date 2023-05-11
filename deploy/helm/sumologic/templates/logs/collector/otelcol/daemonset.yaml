@@ -70,7 +70,7 @@ spec:
       containers:
       - args:
         - --config=/etc/otelcol/config.yaml
-        image: {{ $.Values.otellogs.image.repository }}:{{ $.Values.otellogs.image.tag }}
+        image: {{ template "sumologic.logs.collector.image" $ctx }}
         imagePullPolicy: {{ $.Values.otellogs.image.pullPolicy }}
         name: otelcol
         livenessProbe:

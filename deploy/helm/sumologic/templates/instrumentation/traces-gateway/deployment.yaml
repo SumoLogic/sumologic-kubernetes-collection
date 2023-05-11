@@ -61,7 +61,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: otelcol
-        image: {{ $tracesGateway.deployment.image.repository }}:{{ $tracesGateway.deployment.image.tag }}
+        image: {{ template "sumologic.tracesgateway.image" . }}
         imagePullPolicy: {{ $tracesGateway.deployment.image.pullPolicy }}
         args:
           - "--config=/conf/traces.gateway.conf.yaml"

@@ -152,6 +152,27 @@ sumologic.com/component: instrumentation
 {{- end -}}
 
 {{/*
+Return the otelcol agent image
+*/}}
+{{- define "sumologic.instrumentation.otelagent.image" -}}
+{{ template "utils.getOtelImage" (dict "overrideImage" .Values.otelcolInstrumentation.statefulset.image "defaultImage" .Values.sumologic.otelcolImage) }}
+{{- end -}}
+
+{{/*
+Return the otelcol trace sampler image
+*/}}
+{{- define "sumologic.tracessampler.image" -}}
+{{ template "utils.getOtelImage" (dict "overrideImage" .Values.tracesSampler.deployment.image "defaultImage" .Values.sumologic.otelcolImage) }}
+{{- end -}}
+
+{{/*
+Return the otelcol gateway image
+*/}}
+{{- define "sumologic.tracesgateway.image" -}}
+{{ template "utils.getOtelImage" (dict "overrideImage" .Values.tracesGateway.deployment.image "defaultImage" .Values.sumologic.otelcolImage) }}
+{{- end -}}
+
+{{/*
 Create endpoint based on OTC Tracing deployment type
 */}}
 {{- define "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" -}}

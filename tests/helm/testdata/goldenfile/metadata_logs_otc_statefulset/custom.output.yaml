@@ -15,56 +15,69 @@ spec:
       app: RELEASE-NAME-sumologic-otelcol-logs
   serviceName: RELEASE-NAME-sumologic-otelcol-logs-headless
   podManagementPolicy: "Parallel"
-  replicas: 3
+  replicas: 4
   template:
     metadata:
       annotations:
         checksum/config: "%CONFIG_CHECKSUM%"
+        someAnnotation: someValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-logs
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
+        someLabel: someValue
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
+      nodeSelector:
+        sumologic.com/kind: worker
+      tolerations:
+        - effect: NoSchedule
+          key: worker
+          operator: Equal
+          value: worker
       affinity:
         podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app
-                      operator: In
-                      values:
-                        - RELEASE-NAME-sumologic-otelcol-logs
-                        - RELEASE-NAME-sumologic-otelcol-metrics
-                    - key: app
-                      operator: In
-                      values:
-                        - prometheus-operator-prometheus
-                topologyKey: "kubernetes.io/hostname"
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - RELEASE-NAME-sumologic-otelcol-logs
+                      - RELEASE-NAME-sumologic-otelcol-metrics
+                  - key: app
+                    operator: In
+                    values:
+                      - prometheus-operator-prometheus
+              topologyKey: "kubernetes.io/hostname"
+
       volumes:
         - name: config-volume
           configMap:
             name: RELEASE-NAME-sumologic-otelcol-logs
         - name: tmp
           emptyDir: {}
+        - name: es-certs
+          secret:
+            defaultMode: 420
+            secretName: es-certs
       securityContext:
         fsGroup: 999
+      priorityClassName: "prio"
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.76.1-sumo-0"
+          image: my_repository:my_tag
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/otel/config.yaml
           resources:
             limits:
-              cpu: 1000m
-              memory: 1Gi
+              cpu: 2000m
+              memory: 2Gi
             requests:
-              cpu: 500m
-              memory: 768Mi
+              cpu: 100m
+              memory: 777Mi
           ports:
             - name: fluent-bit
               containerPort: 24321
@@ -77,6 +90,12 @@ spec:
               protocol: TCP
             - name: pprof
               containerPort: 1777
+              protocol: TCP
+            - name: otlphttp2
+              containerPort: 4319
+              protocol: TCP
+            - name: otlphttp3
+              containerPort: 4320
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -108,15 +127,22 @@ spec:
               mountPath: /tmp
             - name: file-storage
               mountPath: /var/lib/storage/otc
+            - mountPath: /certs
+              name: es-certs
+              readOnly: true
           env:
             - name: SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE
               valueFrom:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-logs
-
             - name: NO_PROXY
               value: kubernetes.default.svc
+            - name: VALUE_FROM_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: secret_key
+                  name: secret_name
   volumeClaimTemplates:
     - metadata:
         name: file-storage

@@ -283,6 +283,13 @@ pvc-cleaner
 {{- end -}}
 
 {{/*
+Return the otelcol metadata enrichment image
+*/}}
+{{- define "sumologic.metadata.image" -}}
+{{ template "utils.getOtelImage" (dict "overrideImage" .Values.metadata.image "defaultImage" .Values.sumologic.otelcolImage) }}
+{{- end -}}
+
+{{/*
 Create common labels used throughout the chart.
 If dryRun=true, we do not create any chart labels.
 */}}
@@ -307,6 +314,26 @@ Returns clusterName with spaces replaced with dashes
 */}}
 {{- define "sumologic.clusterNameReplaceSpaceWithDash" -}}
 {{ .Values.sumologic.clusterName | replace " " "-"}}
+{{- end -}}
+
+{{/*
+Returns the otelcol image given two image dicts of the form {"repository": "...", "tag"}
+The first block is for defaults, and the second for overrides.
+For both the image repository and tag, the override will be used if present, otherwise the default will be used.
+This is a helper method for ensuring the global default image is used where appropriate.
+
+Example usage:
+
+{{ template "utils.getOtelImage" (dict "overrideImage" .Values.tracesSampler.deployment.image "defaultImage" .Values.sumologic.otelcolImage) }}
+*/}}
+{{- define "utils.getOtelImage" -}}
+{{- $defaultRepository := .defaultImage.repository -}}
+{{- $defaultTag := .defaultImage.tag -}}
+{{- $repositoryOverride := .overrideImage.repository -}}
+{{- $tagOverride:= .overrideImage.tag -}}
+{{- $repository := $repositoryOverride | default $defaultRepository }}
+{{- $tag := $tagOverride | default $defaultTag }}
+{{- printf "%s:%s" $repository $tag | quote }}
 {{- end -}}
 
 {{/*

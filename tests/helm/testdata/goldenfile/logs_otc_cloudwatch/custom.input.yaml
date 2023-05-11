@@ -1,0 +1,10 @@
+sumologic:
+  logs:
+    collector:
+      otelcloudwatch:
+        enabled: true
+
+metadata:
+  image:
+    repository: my_repository
+    tag: my_tag

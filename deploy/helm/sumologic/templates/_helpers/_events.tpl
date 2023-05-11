@@ -120,3 +120,10 @@ sumologic.com/component: events
 {{ template "sumologic.label.scrape" . }}
 {{ template "sumologic.labels.events" . }}
 {{- end -}}
+
+{{/*
+Return the otelcol events image
+*/}}
+{{- define "sumologic.events.image" -}}
+{{ template "utils.getOtelImage" (dict "overrideImage" .Values.otelevents.image "defaultImage" .Values.sumologic.otelcolImage) }}
+{{- end -}}

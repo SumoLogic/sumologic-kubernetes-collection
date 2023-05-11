@@ -8,6 +8,9 @@ fluent-bit:
   enabled: false
 
 otellogs:
+  image:
+    repository: my_repository
+    tag: my_tag
   daemonset:
     ## Set securityContext for containers running in pods in log collector daemonset
     securityContext:
