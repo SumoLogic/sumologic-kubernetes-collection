@@ -298,10 +298,11 @@ data:
           statements:
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
       transform/flatten:
+        error_mode: ignore
         log_statements:
         - context: log
           statements:
-          - merge_maps(attributes, body, "insert")
+          - merge_maps(attributes, body, "insert") where IsMatch(body, "^{") == true
           - set(body, "") where IsMatch(body, "^{") == true
       transform/remove_attributes:
         log_statements:
