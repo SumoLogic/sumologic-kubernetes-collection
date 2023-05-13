@@ -626,6 +626,9 @@ fluentd:
   ## to ingest all fluentd logs, turn the logLevelFilter to false
   logLevelFilter: true
 
+  ## Turn on fluentd monitor_agent
+  monitorAgent: false
+
   ## Verify SumoLogic HTTPS certificates
   verifySsl: true
   ## Proxy URI for sumologic output plugin

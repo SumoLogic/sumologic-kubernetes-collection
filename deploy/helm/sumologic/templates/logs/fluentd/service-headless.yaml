@@ -22,4 +22,10 @@ spec:
     port: 24231
     targetPort: 24231
     protocol: TCP
+  {{- if .Values.fluentd.monitorAgent }}
+  - name: fluentd-monitor
+    port: 24220
+    targetPort: 24220
+    protocol: TCP
+  {{- end }}
 {{- end }}

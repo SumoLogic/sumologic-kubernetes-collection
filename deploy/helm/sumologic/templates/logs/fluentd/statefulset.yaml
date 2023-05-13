@@ -127,6 +127,11 @@ spec:
         - name: fluent-bit
           containerPort: 24321
           protocol: TCP
+        {{- if .Values.fluentd.monitorAgent }}
+        - name: fluentd-monitor
+          containerPort: 24220
+          protocol: TCP
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
