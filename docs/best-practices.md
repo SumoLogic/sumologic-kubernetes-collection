@@ -34,6 +34,7 @@
     - [Binding pods to linux nodes](#binding-pods-to-linux-nodes)
     - [Setting different resources on different nodes for logs collector](#setting-different-resources-on-different-nodes-for-logs-collector)
 - [Parsing log content as json](#parsing-log-content-as-json)
+- [Keeping Source Category for metrics](#keeping-source-category-for-metrics)
 
 ## Overriding chart resource names with `fullnameOverride`
 
@@ -784,3 +785,24 @@ In order to parse and store log content as json following configuration has to b
 
 [chart_readme]: ../deploy/helm/sumologic/README.md
 [values.yaml]: ../deploy/helm/sumologic/values.yaml
+
+## Keeping Source Category for metrics
+
+In order to keep Source Category for metrics, the following configuration can be applied:
+
+```yaml
+metadata:
+  metrics:
+    config:
+      merge:
+        processors:
+          resource/delete_source_metadata:
+            attributes:
+              ## Do not remove _sourceCategory
+              # - key: _sourceCategory
+              #   action: delete
+              - key: _sourceHost
+                action: delete
+              - key: _sourceName
+                action: delete
+```
