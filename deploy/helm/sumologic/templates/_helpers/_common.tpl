@@ -329,10 +329,12 @@ Example usage:
 {{- define "utils.getOtelImage" -}}
 {{- $defaultRepository := .defaultImage.repository -}}
 {{- $defaultTag := .defaultImage.tag -}}
+{{- $addFipsSuffix := .defaultImage.addFipsSuffix | default false -}}
 {{- $repositoryOverride := .overrideImage.repository -}}
 {{- $tagOverride:= .overrideImage.tag -}}
-{{- $repository := $repositoryOverride | default $defaultRepository }}
-{{- $tag := $tagOverride | default $defaultTag }}
+{{- $repository := $repositoryOverride | default $defaultRepository -}}
+{{- $tag := $tagOverride | default $defaultTag -}}
+{{- $tag := $addFipsSuffix | ternary (printf "%s-%s" $tag "fips") $tag -}}
 {{- printf "%s:%s" $repository $tag | quote }}
 {{- end -}}
 
