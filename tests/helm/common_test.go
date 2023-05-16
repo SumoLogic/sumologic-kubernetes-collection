@@ -10,8 +10,11 @@ import (
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 func TestBuiltinLabels(t *testing.T) {
@@ -47,6 +50,50 @@ func TestBuiltinLabels(t *testing.T) {
 			t.Run(objectName, func(t *testing.T) {
 				checkBuiltinLabels(t, &object, chartVersion)
 			})
+		}
+	}
+}
+
+func TestOtelImageFIPSSuffix(t *testing.T) {
+	t.Parallel()
+	valuesFilePath := path.Join(testDataDirectory, "fipsmode.yaml")
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+
+	// split the rendered Yaml into individual documents and unmarshal them into K8s objects
+	// we could use the yaml decoder directly, but we'd have to implement our own unmarshaling logic then
+	renderedObjects := UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
+
+	for _, renderedObject := range renderedObjects {
+		podSpec, err := GetPodSpec(renderedObject)
+		require.NoError(t, err)
+		if podSpec != nil {
+			for _, container := range podSpec.Containers {
+				if container.Name == otelContainerName {
+					assert.True(
+						t,
+						strings.HasSuffix(container.Image, otelImageFIPSSuffix),
+						"%s should have %s suffix",
+						container.Name,
+						otelImageFIPSSuffix,
+					)
+				}
+			}
 		}
 	}
 }
@@ -89,4 +136,34 @@ func isSubchartObject(object metav1.Object) bool {
 	}
 
 	return false
+}
+
+// Get a PodSpec from the unstructured object, if possible
+// This only works on Deployments, StatefulSets and DaemonSets
+func GetPodSpec(object unstructured.Unstructured) (*corev1.PodSpec, error) {
+	switch object.GetKind() {
+	case "Deployment":
+		deployment := &appsv1.Deployment{}
+		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &deployment)
+		if err != nil {
+			return nil, err
+		}
+		return &deployment.Spec.Template.Spec, nil
+	case "StatefulSet":
+		statefulset := &appsv1.StatefulSet{}
+		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &statefulset)
+		if err != nil {
+			return nil, err
+		}
+		return &statefulset.Spec.Template.Spec, nil
+	case "DaemonSet":
+		daemonset := &appsv1.DaemonSet{}
+		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &daemonset)
+		if err != nil {
+			return nil, err
+		}
+		return &daemonset.Spec.Template.Spec, nil
+	default:
+		return nil, nil
+	}
 }

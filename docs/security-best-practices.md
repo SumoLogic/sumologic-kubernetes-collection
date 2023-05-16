@@ -372,14 +372,16 @@ with `-fips`.
 Starting with Helm Chart v3 **OpenTelemetry Collector** is a default method of collecting data (except for Prometheus) but still you need
 set the FIPS compliant images.
 
-For example, to use `0.76.1-sumo-0-fips` image with Helm Chart v3 use the following configuration:
+To automatically use FIPS-compliant images for all components, set:
 
 ```yaml
 sumologic:
-  otelcol:
-    defaultImage:
-      tag: 0.76.1-sumo-0-fips
+  otelcolImage:
+    addFipsSuffix: true
 ```
+
+> **Note** This only adds a `-fips` suffix to the image tag. If you're customizing the tag and repository (for example by using a custom
+> registry), please make sure to preserve this naming convention if you want to use this feature.
 
 ### Helm Chart v2
 
