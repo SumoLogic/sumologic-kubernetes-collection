@@ -49,6 +49,8 @@ spec:
                         values:
                           - prometheus-operator-prometheus
                   topologyKey: kubernetes.io/hostname
+          securityContext:
+            runAsUser: 1000
           containers:
             - name: pvc-cleaner
               image: private.ecr.aws/sumologic/kubernetes-tools:x.y.z

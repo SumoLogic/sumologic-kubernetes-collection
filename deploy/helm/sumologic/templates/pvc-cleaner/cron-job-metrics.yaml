@@ -43,6 +43,10 @@ spec:
           affinity:
 {{ toYaml . | indent 12 }}
 {{- end }}
+{{- with .Values.pvcCleaner.job.securityContext }}
+          securityContext:
+{{ toYaml . | indent 12 }}
+{{- end }}
           containers:
           - name: pvc-cleaner
             image: {{ .Values.pvcCleaner.job.image.repository }}:{{ .Values.pvcCleaner.job.image.tag }}

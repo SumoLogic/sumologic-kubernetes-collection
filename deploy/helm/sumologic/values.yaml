@@ -4669,3 +4669,7 @@ pvcCleaner:
 
     ## Schedule for cronJobs
     schedule: "*/15 * * * *"
+
+    ## securityContext for pvcCleaner pods
+    securityContext:
+      runAsUser: 1000
