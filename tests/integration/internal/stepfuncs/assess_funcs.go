@@ -172,11 +172,15 @@ func WaitUntilExpectedMetricsPresent(
 				if err != nil {
 					return "", err
 				}
+				missingMetrics := []string{}
 				for _, expectedMetricName := range expectedMetrics {
 					_, ok := metricCounts[expectedMetricName]
 					if !ok {
-						return "", fmt.Errorf("couldn't find metric %q in received metrics", expectedMetricName)
+						missingMetrics = append(missingMetrics, expectedMetricName)
 					}
+				}
+				if len(missingMetrics) > 0 {
+					return "", fmt.Errorf("couldn't find the following metrics in received metrics: %v", missingMetrics)
 				}
 				return fmt.Sprintf("All expected metrics were received: %v", expectedMetrics), nil
 			},
