@@ -1,6 +1,6 @@
 # Fargate
 
-**NOTE: This is an experimental feature and it's not a subject of breaking changes policy.**
+**NOTE: This is the alpha release of EKS Fargate.**
 
 The following are some limitations of deploying this helm chart on EKS fargate
 
@@ -554,6 +554,31 @@ The following are some of the steps needed to setup and enable logs collection o
 - An existing
   [Fargate pod execution role](https://docs.aws.amazon.com/eks/latest/userguide/fargate-getting-started.html#fargate-sg-pod-execution-role)
 
+Also, ensure that the following policy is attached to the EKS fargate pod execution role
+
+```bash
+cat >eks-logging-policy.json <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogStream",
+                "logs:CreateLogGroup",
+                "logs:DescribeLogStreams",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+
+aws iam create-policy --policy-name eks-logging-policy --policy-document file://eks-logging-policy.json
+aws iam attach-role-policy --role-name <eks-fargate-pod-execution-role> --policy-arn=arn:aws:iam::$account_id:policy/eks-logging-policy
+```
+
 #### Configuration
 
 Amazon EKS on Fargate offers a built-in log router based on Fluent Bit. This means that you don't explicitly run a Fluent Bit container as a
@@ -640,7 +665,63 @@ export oidc_provider=$(aws eks describe-cluster --name $CLUSTER --region $AWS_RE
 export service_account=$HELM_INSTALLATION_NAME-sumologic-otelcol-logs-collector
 ```
 
-Set the following trust relationship
+Create a cloudwatch policy
+
+```bash
+cat >cloudwatch-policy.json <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "logs:GetLogEvents",
+                "logs:ListTagsForResource"
+            ],
+            "Resource": [
+                "arn:aws:logs:*:*:log-group:*:log-stream:*",
+                "arn:aws:logs:*:*:destination:*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "logs:DescribeQueries",
+                "logs:DescribeExportTasks",
+                "logs:GetLogRecord",
+                "logs:GetQueryResults",
+                "logs:StopQuery",
+                "logs:TestMetricFilter",
+                "logs:DescribeQueryDefinitions",
+                "logs:DescribeResourcePolicies",
+                "logs:GetLogDelivery",
+                "logs:DescribeDestinations",
+                "logs:ListLogDeliveries",
+                "logs:ListTagsLogGroup",
+                "logs:GetDataProtectionPolicy",
+                "s3:GetObject",
+                "logs:DescribeLogGroups",
+                "logs:DescribeLogStreams",
+                "logs:DescribeSubscriptionFilters",
+                "logs:StartQuery",
+                "logs:Unmask",
+                "logs:DescribeMetricFilters",
+                "logs:FilterLogEvents",
+                "logs:GetLogGroupFields",
+                "logs:ListTagsForResource"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+
+aws iam create-policy --policy-name cloudwatch-policy --policy-document file://cloudwatch-policy.json
+```
+
+Create a cloudwatch role
 
 ```bash
 cat >trust-relationship.json <<EOF
@@ -663,14 +744,14 @@ cat >trust-relationship.json <<EOF
   ]
 }
 EOF
+
+aws iam create-role --role-name cloudwatch-role --assume-role-policy-document file://trust-relationship.json --description "my-role-description"
 ```
 
-After these variables have been set and the above trust relationship is defined, the next step is to create an IAM role and attach it to a
-policy.
+Attach the cloudwatch-role to the cloudwatch policy
 
 ```bash
-aws iam create-role --role-name my-role --assume-role-policy-document file://trust-relationship.json --description "my-role-description"
-aws iam attach-role-policy --role-name my-role --policy-arn=arn:aws:iam::$account_id:policy/my-policy
+aws iam attach-role-policy --role-name cloudwatch-role --policy-arn=arn:aws:iam::$account_id:policy/cloudwatch-policy
 ```
 
 The above policy must have permissions to list, read and describe cloudwatch log groups and streams. For more on this please refer to
@@ -688,7 +769,7 @@ sumologic:
       ## https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscloudwatchreceiver
       otelcloudwatch:
         enabled: false
-        roleArn: arn:aws:iam::${account_id}:role/my-role
+        roleArn: arn:aws:iam::${account_id}:role/cloudwatch-role
         ## Configure persistence for the cloudwatch collector
         persistence:
           enabled: true
@@ -696,7 +777,7 @@ sumologic:
         pollInterval: 1m
         logGroups:
           ## The log group name
-          my-fluent-bit-logs:
+          fluent-bit-cloudwatch:
             ## The log stream prefix, can also be specified as
             ## names: []
             prefixes: [from-fluent-bit]
@@ -724,11 +805,11 @@ sumologic:
     collector:
       otelcloudwatch:
         enabled: true
-        roleArn: arn:aws:iam::${account_id}:role/<my-role>
+        roleArn: arn:aws:iam::${account_id}:role/cloudwatch-role
         region: <region>
         logGroups:
           fluent-bit-cloudwatch:
-            prefixes: [from-fluent-bit-kube.var.log.containers.sample-app]
+            prefixes: [from-fluent-bit]
 ```
 
 ```bash
