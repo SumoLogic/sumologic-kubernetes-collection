@@ -53,7 +53,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 				internal.ReceiverMockNamespace,
 				internal.ReceiverMockServiceName,
 				internal.ReceiverMockServicePort,
-				waitDuration,
+				2*time.Minute, // take longer to account for recording rule metrics
 				tickDuration,
 			),
 		).
