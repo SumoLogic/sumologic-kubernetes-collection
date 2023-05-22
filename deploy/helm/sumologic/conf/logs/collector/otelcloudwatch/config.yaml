@@ -35,13 +35,6 @@ processors:
   groupbyattrs/stream:
     keys:
       - cloudwatch.log.stream
-  ## need to reset the source identifier after grouping
-  transform/reset_source_identifier:
-    error_mode: ignore
-    log_statements:
-      - context: log
-        statements:
-          - set(attributes["cloudwatch.log.stream"], resource.attributes["cloudwatch.log.stream"])
   transform/parsejson:
     error_mode: ignore
     log_statements:
@@ -69,16 +62,14 @@ processors:
         is_last_entry: attributes.logtag == "F"
         output: "merge-multiline-logs"
         overwrite_with: newest
-        source_identifier: attributes["cloudwatch.log.stream"]
+        source_identifier: resource["cloudwatch.log.stream"]
         type: recombine
       - id: merge-multiline-logs
         combine_field: attributes.log
         combine_with: "\n"
         is_first_entry: attributes.log matches {{ .Values.sumologic.logs.multiline.first_line_regex | quote }}
-        source_identifier: attributes["cloudwatch.log.stream"]
+        source_identifier: resource["cloudwatch.log.stream"]
         type: recombine
-      - field: attributes["cloudwatch.log.stream"]
-        type: remove
 receivers:
   awscloudwatch:
     region: {{ .Values.sumologic.logs.collector.otelcloudwatch.region }}
@@ -100,7 +91,6 @@ service:
       processors:
         - transform/set_source_identifier
         - groupbyattrs/stream
-        - transform/reset_source_identifier
         - transform/parsejson
         - logstransform/cloudwatch
         - transform/metadata
