@@ -26,7 +26,24 @@ processors:
     send_batch_max_size: 2000
     send_batch_size: 1000
     timeout: 1s
-  transform/cloudwatch_logs:
+  transform/set_source_identifier:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["cloudwatch.log.stream"], resource.attributes["cloudwatch.log.stream"])
+  groupbyattrs/stream:
+    keys:
+      - cloudwatch.log.stream
+  transform/parsejson:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - set(body, ParseJSON(body)) where IsMatch(body, "^{") == true
+          - merge_maps(attributes, body, "insert")
+          - set(body, "") where IsMatch(body, "^{") == true
+  transform/metadata:
     error_mode: ignore
     log_statements:
       - context: log
@@ -37,13 +54,22 @@ processors:
           - replace_pattern(attributes["k8s.pod.name"], "^.*kube\\.var\\.log\\.containers\\.([0-9a-zA-Z\\-]+)\\_.*", "$$1")
           - replace_pattern(attributes["k8s.container.name"], "^.*kube\\.var\\.log\\.containers\\.[0-9a-zA-Z\\-]+\\_[a-zA-Z\\-]*\\_([a-zA-Z]*).*", "$$1")
           - replace_pattern(attributes["k8s.namespace.name"], "^.*kube\\.var\\.log\\.containers\\.[0-9a-zA-Z\\-]+\\_([a-zA-Z\\-]*)_.*", "$$1")
-  transform/parse:
-    log_statements:
-      - context: log
-        statements:
-          - set(body, ParseJSON(body)) where IsMatch(body, "^{") == true
-          - merge_maps(attributes, body, "insert")
-          - set(body, "") where IsMatch(body, "^{") == true
+  logstransform/cloudwatch:
+    operators:
+      - id: merge-cri-lines
+        combine_field: attributes.log
+        combine_with: ""
+        is_last_entry: attributes.logtag == "F"
+        output: "merge-multiline-logs"
+        overwrite_with: newest
+        source_identifier: resource["cloudwatch.log.stream"]
+        type: recombine
+      - id: merge-multiline-logs
+        combine_field: attributes.log
+        combine_with: "\n"
+        is_first_entry: attributes.log matches {{ .Values.sumologic.logs.multiline.first_line_regex | quote }}
+        source_identifier: resource["cloudwatch.log.stream"]
+        type: recombine
 receivers:
   awscloudwatch:
     region: {{ .Values.sumologic.logs.collector.otelcloudwatch.region }}
@@ -63,8 +89,11 @@ service:
       receivers:
         - awscloudwatch
       processors:
-        - transform/parse
-        - transform/cloudwatch_logs
+        - transform/set_source_identifier
+        - groupbyattrs/stream
+        - transform/parsejson
+        - logstransform/cloudwatch
+        - transform/metadata
         - batch
       exporters:
         - otlphttp

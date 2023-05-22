@@ -1,11 +1,8 @@
 # Fargate
 
-**NOTE: This is the alpha release of EKS Fargate.**
+**Release Note: Generally Available (GA) Release of EKS Fargate.**
 
-The following are some limitations of deploying this helm chart on EKS fargate
-
-- Only supports EKS version 1.24 and above
-- Does not support multiline logs
+Supports EKS version 1.24 and above
 
 The following documentation assumes that you are using eksctl to manage Fargate cluster. Code snippets are using environment variables in
 order to make them as generic and reusable.
@@ -780,7 +777,7 @@ sumologic:
           fluent-bit-cloudwatch:
             ## The log stream prefix, can also be specified as
             ## names: []
-            prefixes: [from-fluent-bit]
+            names: [from-fluent-bit]
 ```
 
 where `my-role` is the name of the role created while setting up [authentication](#authenticate-with-cloudwatch)
