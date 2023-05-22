@@ -15,6 +15,7 @@ sumologic:
         workerCountAutotune: false
         ## Nginx listen port
         port: 80
+        enableAccessLogs: false
       replicaCount: 4
       image:
         repository: public.ecr.aws/nginx/nginx-custom

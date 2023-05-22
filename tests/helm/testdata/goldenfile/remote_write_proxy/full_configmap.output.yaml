@@ -1,0 +1,25 @@
+---
+# Source: sumologic/templates/metrics/remote-write-proxy/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-remote-write-proxy
+  labels:
+    app: RELEASE-NAME-sumologic-remote-write-proxy
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  remote-write-proxy.conf: |
+    upstream remote {
+        server RELEASE-NAME-sumologic-metadata-metrics:9888;
+    }
+
+    server {
+        listen 80 default_server;
+        access_log off;
+        location / {
+            client_body_buffer_size 32k;
+            proxy_pass http://remote;
+        }
+    }
