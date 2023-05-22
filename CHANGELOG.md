@@ -7,6 +7,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.8.0]
+
+### Released 2023-05-22
+
+### Added
+
+- feat(metrics): add experimental otel metrics collector [#2988]
+- feat: allow setting otelcol image globally [#3051]
+- feat: add optional fips suffix for otelcol images [#3056]
+- feat(EKS Fargate): Add multiline support to EKS Fargate [#3059]
+- feat(metric): allow disabling remote write proxy access logs [#3062]
+
+### Changed
+
+- feat(pvc-cleaner): run pvcCleaner as non-root user [#3055]
+
+### Fixed
+
+- fix: warn about release name length [#3054]
+
+[#2988]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2988
+[#3051]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3051
+[#3056]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3056
+[#3059]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3059
+[#3062]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3062
+[#3055]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3055
+[#3054]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3054
+[v3.8.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.8.0
+
 ## [v3.7.0]
 
 ### Released 2023-05-11
