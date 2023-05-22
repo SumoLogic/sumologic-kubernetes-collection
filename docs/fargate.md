@@ -775,9 +775,14 @@ sumologic:
         logGroups:
           ## The log group name
           fluent-bit-cloudwatch:
-            ## The log stream prefix, can also be specified as
+            ## The log stream names and prefixes, can also be specified as
             ## names: []
-            names: [from-fluent-bit]
+            ## prefixes:
+            ## - from-fluent-bit-prefix
+            prefixes:
+              - from-fluent-bit-prefix
+            names:
+              - from-fluent-bit-fullname.log
 ```
 
 where `my-role` is the name of the role created while setting up [authentication](#authenticate-with-cloudwatch)
@@ -806,7 +811,10 @@ sumologic:
         region: <region>
         logGroups:
           fluent-bit-cloudwatch:
-            prefixes: [from-fluent-bit]
+            prefixes:
+              - from-fluent-bit-prefix
+            names:
+              - from-fluent-bit-fullname.log
 ```
 
 ```bash
