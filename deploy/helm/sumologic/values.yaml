@@ -467,6 +467,8 @@ sumologic:
         workerCountAutotune: true
         ## Nginx listen port
         port: 8080
+        ## Nginx access logs
+        enableAccessLogs: true
       replicaCount: 3
       image:
         repository: public.ecr.aws/sumologic/nginx-unprivileged
