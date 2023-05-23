@@ -519,6 +519,7 @@ service:
         - resource/containers_copy_node_to_host
         - sumologic_schema
         - source/containers
+        - transform/containers_parse_json
 {{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
