@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ template "sumologic.metadata.name.pvcCleaner.logs" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "sumo-otel-logs.namespace" . }}
   labels:
     app: {{ template "sumologic.labels.app.pvcCleaner.logs" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
