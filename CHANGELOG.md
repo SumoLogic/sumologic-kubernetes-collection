@@ -290,6 +290,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [v3.0.0]
 
+### Released 2023-01-20
+
 ### Migration from v2
 
 See the [migration guide][v3_migration_guide] for details.
@@ -302,6 +304,8 @@ See the [migration guide][v3_migration_guide] for details.
 [v3.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-rc.0...v3.0.0
 
 ## [v3.0.0-rc.0]
+
+### Released 2023-01-19
 
 ### Added
 
@@ -360,6 +364,8 @@ See the [migration guide][v3_migration_guide] for details.
 [v3.0.0-rc.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...v3.0.0-rc.0
 
 ## [v3.0.0-beta.1]
+
+### Released 2023-01-02
 
 ### Changed
 
@@ -877,6 +883,8 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 
 ## [v2.8.1][v2.8.1]
 
+### Released 2022-05-26
+
 ### Changed
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
@@ -939,6 +947,8 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 [v2.7.3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.7.2...v2.7.3
 
 ## [v2.7.2][v2.7.2]
+
+### Released 2022-05-26
 
 ### Changed
 
@@ -1014,6 +1024,8 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 
 ## [v2.6.1][v2.6.1]
 
+### Released 2022-05-26
+
 ### Changed
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
@@ -1077,6 +1089,8 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 [v2.5.4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.5.3...v2.5.4
 
 ## [v2.5.3][v2.5.3]
+
+### Released 2022-05-26
 
 ### Changed
 
@@ -1168,6 +1182,8 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 
 ## [v2.4.2][v2_4_2]
 
+### Released 2022-05-26
+
 ### Changed
 
 - chore(deps): upgrade fluentd to 1.14.6-sumo-3 [#2287][#2287]
@@ -1240,6 +1256,8 @@ configuration][source_processor_old_config] and apply corresponding changes to y
 [v2.3.4]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v2.3.3...v2.3.4
 
 ## [v2.3.3][v2_3_3]
+
+### Released 2022-05-26
 
 ### Changed
 
