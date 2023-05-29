@@ -7,6 +7,7 @@ const (
 	chartName                = "sumologic"
 	releaseName              = "collection-test"
 	defaultNamespace         = "sumologic"
+	defaultK8sVersion        = "1.22.0"
 	testDataDirectory        = "./testdata"
 	otelConfigFileName       = "config.yaml"
 	otelImageFIPSSuffix      = "-fips"
