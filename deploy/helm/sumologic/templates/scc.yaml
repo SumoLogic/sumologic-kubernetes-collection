@@ -34,7 +34,7 @@ fsGroup:
     - min: 0  # otelcol-logs-collector
       max: 0  # otelcol-logs-collector
 groups:
-- system:serviceaccounts:{{ .Release.Namespace }}
+- system:serviceaccounts:{{ template "sumologic.namespace" . }}
 priority: 0
 readOnlyRootFilesystem: false
 requiredDropCapabilities: []

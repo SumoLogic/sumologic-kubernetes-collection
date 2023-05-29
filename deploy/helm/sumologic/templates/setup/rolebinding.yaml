@@ -16,5 +16,5 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: {{ template "sumologic.metadata.name.setup.roles.serviceaccount" . }}
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ template "sumologic.namespace" . }}
 {{- end }}

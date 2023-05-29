@@ -206,7 +206,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "opentelemetry-operator.controller.manager.metrics.service.url" -}}
-http://{{ .Release.Name }}-opentelemetry-operator.{{ .Release.Namespace }}:8080/metrics
+http://{{ .Release.Name }}-opentelemetry-operator.{{ template "sumologic.namespace" . }}:8080/metrics
 {{- end -}}
 
 {{/*

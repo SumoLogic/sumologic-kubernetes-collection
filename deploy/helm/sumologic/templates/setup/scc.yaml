@@ -25,7 +25,7 @@ defaultAddCapabilities: []
 fsGroup:
   type: MustRunAs
 groups:
-- system:serviceaccounts:{{ .Release.Namespace }}
+- system:serviceaccounts:{{ template "sumologic.namespace" . }}
 priority: 0
 readOnlyRootFilesystem: false
 requiredDropCapabilities: []

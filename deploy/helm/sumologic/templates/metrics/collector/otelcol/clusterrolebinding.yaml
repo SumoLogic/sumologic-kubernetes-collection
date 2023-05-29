@@ -9,7 +9,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: {{ template "sumologic.metadata.name.metrics.collector.serviceaccount" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "sumologic.namespace" . }}
 roleRef:
   kind: ClusterRole
   name: {{ template "sumologic.metadata.name.metrics.collector.clusterrole" . }}
@@ -24,7 +24,7 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 subjects:
 - kind: ServiceAccount
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "sumologic.namespace" . }}
   name: {{ template "sumologic.metadata.name.metrics.collector.serviceaccount" . }}
 roleRef:
   kind: ClusterRole

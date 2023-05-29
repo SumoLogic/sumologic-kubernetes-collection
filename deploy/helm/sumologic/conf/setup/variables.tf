@@ -9,7 +9,7 @@ variable "collector_name" {
 
 variable "namespace_name" {
   type  = string
-  default = "{{ .Release.Namespace }}"
+  default = "{{ template "sumologic.namespace" . }}"
 }
 
 variable "create_fields" {

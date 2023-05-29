@@ -53,7 +53,7 @@ spec:
             command:
             - "bash"
             - "/pvc-cleaner/pvc-cleaner.sh"
-            - "{{ .Release.Namespace }}"
+            - "{{ template "sumologic.namespace" . }}"
             - "app={{ template "sumologic.labels.app.logs.statefulset" . }}"
             - "{{ template "sumologic.metadata.name.logs.hpa" . }}"
             imagePullPolicy: {{ .Values.pvcCleaner.job.image.pullPolicy }}
