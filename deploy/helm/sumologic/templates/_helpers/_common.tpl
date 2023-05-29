@@ -23,7 +23,7 @@ Allow the release namespace to be overridden
 */}}
 {{- define "sumologic.namespace" -}}
   {{- if .Values.namespaceOverride -}}
-    {{- Values.namespaceOverride -}}
+    {{- .Values.namespaceOverride -}}
   {{- else -}}
     {{- .Release.Namespace -}}
   {{- end -}}
