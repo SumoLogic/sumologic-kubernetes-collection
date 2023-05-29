@@ -3,6 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name:  {{ template "sumologic.metadata.name.cleanup.roles.rolebinding" . }}
+  namespace: {{ template "sumologic.namespace" . }}
   annotations:
 {{ include "sumologic.annotations.app.cleanup.helmsh" "2" | indent 4 }}
   labels:

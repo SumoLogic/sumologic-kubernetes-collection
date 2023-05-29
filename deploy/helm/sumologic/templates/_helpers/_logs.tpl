@@ -300,14 +300,3 @@ Return the otelcol log collector image
 {{- define "sumologic.logs.collector.image" -}}
 {{ template "utils.getOtelImage" (dict "overrideImage" .Values.otellogs.image "defaultImage" .Values.sumologic.otelcolImage) }}
 {{- end -}}
-
-{{/*
-Allow the release namespace to be overridden for multi-namespace deployments in combined charts
-*/}}
-{{- define "sumo-otel-logs.namespace" -}}
-  {{- if .Values.sumologic.logs.namespaceOverride -}}
-    {{- Values.sumologic.logs.namespaceOverride -}}
-  {{- else -}}
-    {{- .Release.Namespace -}}
-  {{- end -}}
-{{- end -}}

@@ -14,7 +14,7 @@ kind: DaemonSet
 metadata:
   name: {{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}
 {{- if $.Values.otellogs.daemonset.annotations }}
-  namespace: {{ template "sumo-otel-logs.namespace" . }}
+  namespace: {{ template "sumologic.namespace" . }}
   annotations:
 {{ toYaml $.Values.otellogs.daemonset.annotations| indent 4 }}
 {{- end }}

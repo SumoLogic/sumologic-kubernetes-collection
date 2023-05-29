@@ -5,6 +5,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "sumologic.metadata.name.tracesgateway.deployment" . }}
+  namespace: {{ template "sumologic.namespace" . }}
   labels:
     app: {{ template "sumologic.labels.app.tracesgateway.pod" . }}
     component: {{ template "sumologic.labels.app.tracesgateway.component" . }}

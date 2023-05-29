@@ -3,6 +3,7 @@
 
 nameOverride: ""
 fullnameOverride: ""
+namespaceOverride: ""
 
 sumologic:
   ### Setup
@@ -253,7 +254,6 @@ sumologic:
   ## Set the enabled flag to false for disabling logs ingestion altogether.
   logs:
     enabled: true
-    namespaceOverride: ""
     metadata:
       ## Defines logs metadata enrichment provider - `otelcol` or `fluentd`. `otelcol` is the default and is recommended. `fluentd` is deprecated.
       provider: otelcol

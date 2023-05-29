@@ -5,6 +5,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "sumologic.metadata.name.tracesgateway.configmap" . }}
+  namespace: {{ template "sumologic.namespace" . }}
   labels:
     app: {{ template "sumologic.labels.app.tracesgateway.configmap" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
