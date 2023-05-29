@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/gruntwork-io/terratest/modules/helm"
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -361,6 +363,42 @@ sumologic:
 	for _, operator := range otelConfig.Receivers.Filelog.Operators {
 		require.NotEqual(t, "merge-multiline-logs", operator.Id)
 	}
+}
+
+func TestCollectorOtelConfigNoDockerShim(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/collector/otelcol/configmap.yaml"
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{templatePath},
+		true,
+		"--namespace",
+		defaultNamespace,
+		"--kube-version",
+		"1.24.3",
+	)
+	otelConfigYaml := GetOtelConfigFromTemplate(t, renderedYamlString)
+
+	var otelConfig struct {
+		Receivers struct {
+			Filelog struct {
+				FingerprintSize string `yaml:"fingerprint_size"`
+			} `yaml:"filelog/containers"`
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+	require.Empty(t, otelConfig.Receivers.Filelog.FingerprintSize)
 }
 
 func TestCollectorOtelConfigSystemdUnits(t *testing.T) {
