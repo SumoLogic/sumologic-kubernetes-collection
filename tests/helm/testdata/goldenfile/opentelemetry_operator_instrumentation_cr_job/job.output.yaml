@@ -1,66 +1,37 @@
 ---
-# Source: sumologic/templates/opentelemetry-operator/job-instrumentation-cr.yaml
-apiVersion: batch/v1
-kind: Job
+# Source: sumologic/charts/opentelemetry-operator/templates/tests/test-service-connection.yaml
+apiVersion: v1
+kind: Pod
 metadata:
-  name: RELEASE-NAME-sumologic-ot-operator-instr
+  name: "RELEASE-NAME-opentelemetry-operator-webhook"
+  namespace: sumologic
   labels:
-    app: RELEASE-NAME-sumologic-ot-operator-instr
-    chart: "sumologic-%CURRENT_CHART_VERSION%"
-    release: "RELEASE-NAME"
-    heritage: "Helm"
+    helm.sh/chart: opentelemetry-operator-0.27.0
+    app.kubernetes.io/name: opentelemetry-operator
+    app.kubernetes.io/version: "0.75.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/component: controller-manager
   annotations:
-    helm.sh/hook: "post-install, post-upgrade"
-    helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
+    "helm.sh/hook": test
 spec:
-  template:
-    spec:
-      serviceAccountName: RELEASE-NAME-sumologic
-      containers:
-        - name: instrumentation-cr-applier
-          image: sumologic/kubernetes-tools:2.14.0
-          volumeMounts:
-            - name: instrumentation-cr-configmap
-              mountPath: /tmp/instrumentation-cr.yaml
-              subPath: instrumentation.cr.yaml
-          command: ["/bin/bash", "-c"]
-          args:
-            - |
-              max_wait=180
-              sleep_interval=5
-              counter=0
-              ready=false
-              while [[ ready != "false" ]]
-              do
-                is_ready=$(curl -s -o /dev/null -m 3 -L -w ''%{http_code}'' http://RELEASE-NAME-opentelemetry-operator.sumologic:8080/metrics)
-
-                if [[ is_ready -eq "200" ]]
-                then
-                  ready=true
-                  break
-                else
-                  echo "Waiting for RELEASE-NAME-opentelemetry-operator"
-                  sleep $sleep_interval
-                  counter=$(($counter + $sleep_interval))
-                fi
-
-                if [[ "$counter" -gt "$max_wait" ]]
-                then
-                  echo "Couldn't reach RELEASE-NAME-opentelemetry-operator"
-                  echo "Instrumentation resources not applied!"
-                  exit 1
-                fi
-              done
-
-              if [[ $ready == true ]]
-              then
-                echo "Applying Instrumentation resources"
-                kubectl apply -f /tmp/instrumentation-cr.yaml
-                exit $?
-              fi
-      volumes:
-        - name: instrumentation-cr-configmap
-          configMap:
-            name: RELEASE-NAME-sumologic-ot-operator-instr-cm
-      restartPolicy: OnFailure
-  backoffLimit: 5
+  containers:
+    - name: wget
+      image: "busybox:latest"
+      env:
+        - name: WEBHOOK_SERVICE_CLUSTERIP
+          value: "RELEASE-NAME-opentelemetry-operator-webhook"
+        - name: WEBHOOK_SERVICE_PORT
+          value: "443"
+      command:
+        - sh
+        - -c
+        # The following shell script tests if the webhook service is up. If the service is up, when we try
+        # to wget its exposed port, we will get an HTTP error 400.
+        - |
+          wget_output=$(wget -q "$WEBHOOK_SERVICE_CLUSTERIP:$WEBHOOK_SERVICE_PORT")
+          if wget_output=="wget: server returned error: HTTP/1.0 400 Bad Request"
+          then exit 0
+          else exit 1
+          fi
+  restartPolicy: Never

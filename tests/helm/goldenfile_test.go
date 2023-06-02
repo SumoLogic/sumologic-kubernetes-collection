@@ -56,6 +56,8 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 		true,
 		"--namespace",
 		defaultNamespace,
+		"--kube-version",
+		defaultK8sVersion,
 	)
 
 	// render the actual and expected yaml strings and fix them up

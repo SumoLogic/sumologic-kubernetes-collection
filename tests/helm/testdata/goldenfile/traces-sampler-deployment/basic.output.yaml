@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: RELEASE-NAME-sumologic-traces-sampler
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-traces-sampler
     chart: "sumologic-%CURRENT_CHART_VERSION%"

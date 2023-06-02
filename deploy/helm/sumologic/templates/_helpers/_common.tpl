@@ -22,9 +22,9 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 Allow the release namespace to be overridden
 */}}
 {{- define "sumologic.namespace" -}}
-  {{- if .Values.namespaceOverride -}}
+  {{- if .Values.namespaceOverride }}
     {{- .Values.namespaceOverride -}}
-  {{- else -}}
+  {{- else }}
     {{- .Release.Namespace -}}
   {{- end -}}
 {{- end -}}

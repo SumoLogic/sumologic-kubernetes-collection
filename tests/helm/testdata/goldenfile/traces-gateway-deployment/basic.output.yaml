@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: RELEASE-NAME-sumologic-traces-gateway
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-traces-gateway
     component: RELEASE-NAME-sumologic-traces-gateway-component

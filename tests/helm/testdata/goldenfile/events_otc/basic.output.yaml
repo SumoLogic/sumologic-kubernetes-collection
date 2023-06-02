@@ -4,6 +4,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: RELEASE-NAME-sumologic-otelcol-events
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcol-events
     chart: "sumologic-%CURRENT_CHART_VERSION%"

@@ -4,6 +4,7 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: RELEASE-NAME-sumologic-metrics
+  namespace: sumologic
   labels:
     sumologic.com/app: otelcol
     sumologic.com/component: metrics
