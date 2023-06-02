@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ template "sumologic.metadata.name.roles.clusterrole" . }}
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   labels:
     app: {{ template "sumologic.labels.app.roles.clusterrole" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}

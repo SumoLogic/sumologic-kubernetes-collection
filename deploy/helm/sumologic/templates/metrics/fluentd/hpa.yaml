@@ -7,7 +7,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "sumologic.metadata.name.metrics.hpa" . }}
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   labels:
     app: {{ template "sumologic.labels.app.metrics.hpa" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}

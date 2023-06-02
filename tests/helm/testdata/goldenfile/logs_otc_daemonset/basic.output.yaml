@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcol-logs-collector
     chart: "sumologic-%CURRENT_CHART_VERSION%"
@@ -32,7 +33,7 @@ spec:
       containers:
         - args:
             - --config=/etc/otelcol/config.yaml
-          image: public.ecr.aws/sumologic/sumologic-otel-collector:0.76.1-sumo-0
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.76.1-sumo-0"
           imagePullPolicy: IfNotPresent
           name: otelcol
           livenessProbe:
@@ -87,14 +88,15 @@ spec:
               protocol: TCP
       initContainers: # ensure the host path is owned by the otel user group
         - name: changeowner
+          # yamllint disable-line rule:line-length
           image: public.ecr.aws/docker/library/busybox:1.36.0
           imagePullPolicy: IfNotPresent
           securityContext:
             capabilities:
-              drop:
-                - ALL
               add:
                 - CAP_CHOWN
+              drop:
+                - ALL
           command:
             - "sh"
             - "-c"

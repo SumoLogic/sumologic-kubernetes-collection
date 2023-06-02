@@ -2,13 +2,13 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: {{ template "sumologic.metadata.name.roles.clusterrolebinding" . }}
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   labels:
     app: {{ template "sumologic.labels.app.roles.clusterrolebinding" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 subjects:
 - kind: ServiceAccount
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   name: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
 roleRef:
   kind: ClusterRole

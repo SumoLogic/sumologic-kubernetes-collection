@@ -3,7 +3,7 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: {{ template "sumologic.metadata.name.metrics.collector.opentelemetrycollector" . }}
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   labels:
     {{- include "sumologic.labels.metrics.opentelemetrycollector" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}

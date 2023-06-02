@@ -9,7 +9,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
 roleRef:
   kind: ClusterRole
   name: {{ template "sumologic.metadata.name.metrics.targetallocator.clusterrole" . }}

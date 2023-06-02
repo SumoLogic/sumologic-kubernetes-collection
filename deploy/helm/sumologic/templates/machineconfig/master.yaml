@@ -8,7 +8,7 @@ metadata:
     {{- include "sumologic.labels.machineconfig.master" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
   name: {{ template "sumologic.labels.app.machineconfig.master" . }}
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
 spec:
   extensions:
     - kernel-devel

@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name:  {{ template "sumologic.metadata.name.cleanup.roles.role" . }}
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   annotations:
 {{ include "sumologic.annotations.app.cleanup.helmsh" "1" | indent 4 }}
   labels:

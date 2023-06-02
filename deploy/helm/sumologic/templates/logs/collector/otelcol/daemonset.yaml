@@ -13,7 +13,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  $ctx }}
   {{- if $.Values.otellogs.daemonset.annotations }}
   annotations:
 {{ toYaml $.Values.otellogs.daemonset.annotations| indent 4 }}

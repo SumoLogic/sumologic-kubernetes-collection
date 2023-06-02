@@ -4,7 +4,7 @@ apiVersion: {{ include "apiVersion.podDisruptionBudget" . }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "sumologic.metadata.name.metrics.pdb" . }}
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   labels:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:

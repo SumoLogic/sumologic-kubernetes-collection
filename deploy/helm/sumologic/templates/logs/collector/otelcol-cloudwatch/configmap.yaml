@@ -12,7 +12,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "sumologic.metadata.name.logs.collector.cloudwatch" . }}
-  namespace: {{ template "sumologic.namespace" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   labels:
     app: {{ template "sumologic.labels.app.logs.cloudwatch.configmap" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
