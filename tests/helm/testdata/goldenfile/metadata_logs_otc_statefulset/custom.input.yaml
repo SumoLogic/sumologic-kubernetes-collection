@@ -70,6 +70,8 @@ metadata:
         - name: otlphttp3
           containerPort: 4320
           protocol: TCP
+      extraArgs:
+        - --config=/etc/otel/test-config.yaml
 
     ## Option to turn autoscaling on for logs and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
