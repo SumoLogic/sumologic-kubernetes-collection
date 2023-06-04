@@ -469,7 +469,7 @@ sumologic:
         ## Nginx listen port
         port: 8080
         ## Nginx access logs
-        enableAccessLogs: true
+        enableAccessLogs: false
       replicaCount: 3
       image:
         repository: public.ecr.aws/sumologic/nginx-unprivileged
@@ -1229,8 +1229,8 @@ fluent-bit:
   # imagePullSecrets:
   #   - name: "image-pull-secret"
   image:
-    repository: public.ecr.aws/sumologic/fluent-bit
-    tag: 1.6.10-sumo-3
+    repository: cr.fluentbit.io/fluent/fluent-bit
+    tag: 2.1.4
     pullPolicy: IfNotPresent
 
   ## Resource limits for Fluent Bit
