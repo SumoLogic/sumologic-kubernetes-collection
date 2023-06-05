@@ -1,1 +1,4 @@
 chore: upgrade Fluent Bit to 2.1.4
+
+This change may break some custom Fluent Bit configurations. A temporary workaround is to switch back to the 1.6.10-sumo-3 image.
+We recommend updating the custom configuration, or better yet, switching to Otel.
