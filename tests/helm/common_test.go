@@ -245,7 +245,7 @@ func GetPodSpec(object unstructured.Unstructured) (*corev1.PodSpec, error) {
 
 func TestNamespaceOverride(t *testing.T) {
 	valuesFilePath := path.Join(testDataDirectory, "everything-enabled.yaml")
-	namespaceOverride := "sumologic"
+	namespaceOverride := "override"
 	renderedYamlString := RenderTemplate(
 		t,
 		&helm.Options{
@@ -262,7 +262,7 @@ func TestNamespaceOverride(t *testing.T) {
 		[]string{},
 		true,
 		"--namespace",
-		"sumologic",
+		"override",
 	)
 
 	// split the rendered Yaml into individual documents and unmarshal them into K8s objects
