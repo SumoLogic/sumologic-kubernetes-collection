@@ -8,4 +8,4 @@ metadata:
 data:
   metadataLogs: {{ template "sumologic.metadata.name.logs.service" . }}
   metadataMetrics: {{ template "sumologic.metrics.metadata.endpoint" . }}
-  metadatanamespace: {{ template "sumologic.namespace"  . }}
+  metadataNamespace: {{ template "sumologic.namespace"  . }}
