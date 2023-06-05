@@ -176,7 +176,7 @@ Return the otelcol gateway image
 Create endpoint based on OTC Tracing deployment type
 */}}
 {{- define "sumologic.opentelemetry.operator.instrumentation.collector.endpoint" -}}
-{{ printf "%s.%s" ( include "sumologic.metadata.name.instrumentation.otelagent.service" . ) .Release.Namespace }}
+{{ printf "%s.%s" ( include "sumologic.metadata.name.instrumentation.otelagent.service" . ) ( include "sumologic.namespace" .  ) }}
 {{- end -}}
 
 {{/*
@@ -189,9 +189,9 @@ Example Usage:
 {{- define "otelcolinstrumentation.exporter.endpoint" -}}
 {{ $tracesGatewayEnabled := .Values.tracesGateway.enabled }}
 {{- if (eq $tracesGatewayEnabled true) }}
-{{- printf "%s.%s" ( include "sumologic.metadata.name.tracesgateway.service" . ) .Release.Namespace }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.tracesgateway.service" . ) ( include "sumologic.namespace" .  ) }}
 {{- else }}
-{{- printf "%s.%s" ( include "sumologic.metadata.name.tracessampler.service" . ) .Release.Namespace }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.tracessampler.service" . ) ( include "sumologic.namespace" .  ) }}
 {{- end }}
 {{- end -}}
 
@@ -202,7 +202,7 @@ Example Usage:
 '{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'
 */}}
 {{- define "tracesgateway.exporter.loadbalancing.endpoint" -}}
-{{- printf "%s.%s" ( include "sumologic.metadata.name.tracessampler.service-headless" . ) .Release.Namespace }}
+{{- printf "%s.%s" ( include "sumologic.metadata.name.tracessampler.service-headless" . ) ( include "sumologic.namespace" .  ) }}
 {{- end -}}
 
 {{- define "opentelemetry-operator.controller.manager.metrics.service.url" -}}
