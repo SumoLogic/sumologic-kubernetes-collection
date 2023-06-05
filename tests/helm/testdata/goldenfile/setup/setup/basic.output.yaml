@@ -54,7 +54,6 @@ spec:
           env:
             - name: SUMOLOGIC_BASE_URL
               value:
-
             - name: NO_PROXY
               value: kubernetes.default.svc
       securityContext:

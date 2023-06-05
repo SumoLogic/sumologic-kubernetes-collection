@@ -24,13 +24,13 @@ spec:
         someAnnotation: someValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-events
-        sumologic.com/scrape: "true"
-        sumologic.com/app: otelcol-events
-        sumologic.com/component: events
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
         someLabel: someValue
+        sumologic.com/app: otelcol-events
+        sumologic.com/component: events
+        sumologic.com/scrape: "true"
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
       nodeSelector:
@@ -69,7 +69,7 @@ spec:
       priorityClassName: "prio"
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.76.1-sumo-0"
+          image: public.ecr.aws/sumologic/sumologic-otel-collector:0.76.1-sumo-0
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/otel/config.yaml
@@ -124,10 +124,8 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-events
-
             - name: NO_PROXY
               value: kubernetes.default.svc
-
             - name: VALUE_FROM_SECRET
               valueFrom:
                 secretKeyRef:
