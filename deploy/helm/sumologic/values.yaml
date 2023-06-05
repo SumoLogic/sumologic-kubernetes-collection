@@ -1228,7 +1228,7 @@ fluent-bit:
   # imagePullSecrets:
   #   - name: "image-pull-secret"
   image:
-    repository: cr.fluentbit.io/fluent/fluent-bit
+    repository: public.ecr.aws/sumologic/fluent-bit
     tag: 2.1.4
     pullPolicy: IfNotPresent
 
