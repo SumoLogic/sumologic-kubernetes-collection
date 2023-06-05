@@ -4051,7 +4051,6 @@ metadata:
       #     containerPort: 4319
       #     protocol: TCP
       # extraArgs:
-      #   - --config=/etc/otel/config.yaml
 
     ## Option to turn autoscaling on for logs and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
