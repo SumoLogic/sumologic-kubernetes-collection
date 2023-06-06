@@ -4050,6 +4050,7 @@ metadata:
       #   - name: otlphttp2
       #     containerPort: 4319
       #     protocol: TCP
+      # extraArgs:
 
     ## Option to turn autoscaling on for logs and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.

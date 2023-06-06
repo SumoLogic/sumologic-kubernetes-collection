@@ -71,6 +71,7 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/otel/config.yaml
+            - --config=/etc/otel/test-config.yaml
           resources:
             limits:
               cpu: 2000m
