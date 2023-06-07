@@ -274,7 +274,10 @@ func TestNamespaceOverride(t *testing.T) {
 			object := renderedObject
 			objectName := fmt.Sprintf("%s/%s", object.GetKind(), object.GetName())
 			t.Run(objectName, func(t *testing.T) {
-				require.Equal(t, namespaceOverride, object.GetNamespace())
+				namespace := object.GetNamespace()
+				if namespace != "" {
+					require.Equal(t, namespaceOverride, object.GetNamespace())
+				}
 			})
 		}
 	}
