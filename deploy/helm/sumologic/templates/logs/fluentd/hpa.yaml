@@ -18,12 +18,6 @@ spec:
   minReplicas: {{ .Values.fluentd.logs.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.fluentd.logs.autoscaling.maxReplicas }}
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: {{ .Values.fluentd.logs.autoscaling.targetCPUUtilizationPercentage }}
 {{- if .Values.fluentd.logs.autoscaling.targetMemoryUtilizationPercentage }}
   - type: Resource
     resource:
@@ -32,4 +26,10 @@ spec:
         type: Utilization
         averageUtilization: {{ .Values.fluentd.logs.autoscaling.targetMemoryUtilizationPercentage }}
 {{- end -}}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.fluentd.logs.autoscaling.targetCPUUtilizationPercentage }}
 {{- end -}}
