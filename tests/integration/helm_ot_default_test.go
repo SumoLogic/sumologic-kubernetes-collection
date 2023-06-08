@@ -34,5 +34,5 @@ func Test_Helm_Default_OT(t *testing.T) {
 
 	featTraces := GetTracesFeature()
 
-	testenv.Test(t, featInstall, featMetrics, featLogs, featMultilineLogs, featEvents, featTraces)
+	testenv.BeforeEachFeature(stepfuncs.KubectlOverrideNamespaceOpt()).Test(t, featInstall, featMetrics, featLogs, featMultilineLogs, featEvents, featTraces)
 }

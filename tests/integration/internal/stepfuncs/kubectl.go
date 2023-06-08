@@ -50,6 +50,12 @@ func KubectlCreateNamespaceTestOpt() features.Func {
 	}
 }
 
+func KubectlOverrideNamespaceOpt(namespace string) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		return ctxopts.WithNamespace(ctx, internal.OverrideNamespace)
+	}
+}
+
 // KubectlApplyFOpt returns a features.Func that will run "kubectl apply -f" in the provided namespace
 // with the provided yaml file path as an argument.
 func KubectlApplyFOpt(yamlPath string, namespace string) features.Func {

@@ -27,6 +27,8 @@ const (
 	LogsGeneratorName      = "logs-generator"
 	LogsGeneratorImage     = "sumologic/kubernetes-tools:2.14.0"
 
+	OverrideNamespace = "test-override"
+
 	TracesGeneratorNamespace = "customer-trace-tester"
 	TracesGeneratorName      = "customer-trace-tester"
 	TracesGeneratorImage     = "sumologic/kubernetes-tools:2.14.0"
