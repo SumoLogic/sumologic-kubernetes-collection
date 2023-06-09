@@ -2,6 +2,8 @@ package integration
 
 import (
 	"testing"
+
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
 )
 
 func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
@@ -15,5 +17,5 @@ func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
 
 	featLogs := GetLogsFeature()
 
-	testenv.Test(t, featInstall, featLogs)
+	testenv.BeforeEachFeature(stepfuncs.KubectlOverrideNamespaceOpt()).Test(t, featInstall, featLogs)
 }
