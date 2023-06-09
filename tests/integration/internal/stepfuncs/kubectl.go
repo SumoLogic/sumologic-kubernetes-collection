@@ -8,7 +8,6 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
@@ -53,8 +52,7 @@ func KubectlCreateNamespaceTestOpt() features.Func {
 
 func KubectlOverrideNamespaceOpt(namespace string) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOptions.Namespace = namespace
-		return KubectlCreateNamespaceOpt(name)(ctx, t, envConf)
+		return KubectlCreateNamespaceOpt(namespace)(ctx, t, envConf)
 	}
 }
 
