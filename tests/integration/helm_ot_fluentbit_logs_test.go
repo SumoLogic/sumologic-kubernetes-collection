@@ -17,5 +17,10 @@ func Test_Helm_OT_FluentBit_Logs(t *testing.T) {
 
 	featLogs := GetLogsFeature()
 
-	testenv.BeforeEachFeature(stepfuncs.KubectlOverrideNamespaceOpt()).Test(t, featInstall, featLogs)
+	f := stepfuncs.IntoTestEnvFuncs(
+		stepfuncs.KubectlCreateNamespaceOpt(internal.OverrideNamespace),
+	)
+
+	testenv.BeforeEachFeature(f).Test(t, featInstall, featLogs)
+
 }
