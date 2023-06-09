@@ -8,6 +8,7 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
+    "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/strings"
 )
@@ -50,11 +51,12 @@ func KubectlCreateNamespaceTestOpt() features.Func {
 	}
 }
 
-// func KubectlOverrideNamespaceOpt(namespace string) features.Func {
-// 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-// 		return ctxopts.WithNamespace(ctx, internal.OverrideNamespace)
-// 	}
-// }
+func KubectlOverrideNamespaceOpt(namespace string) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		name := internal.OverrideNamespace
+		return KubectlCreateNamespaceOpt(name)(ctx, t, envConf)
+	}
+}
 
 // KubectlApplyFOpt returns a features.Func that will run "kubectl apply -f" in the provided namespace
 // with the provided yaml file path as an argument.
