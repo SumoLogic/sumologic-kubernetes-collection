@@ -438,6 +438,8 @@ sumologic:
             cpu: 500m
 
     otelcol:
+      ## Drop the _sourceCategory, _sourceHost, and _sourceName attributes from metrics; may be desired to reduce cardinality.
+      deleteSourceMetadata: true
       ## Includes additional processors into pipelines.
       ## It can be used for filtering metrics, renaming, changing metadata and so on.
       ## This is list of objects, for example:

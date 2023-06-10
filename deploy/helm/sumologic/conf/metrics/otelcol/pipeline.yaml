@@ -20,7 +20,9 @@ processors:
 {{- end }}
 {{- end }}
   - resource/remove_k8s_pod_pod_name
+{{- if .Values.sumologic.metrics.otelcol.deleteSourceMetadata }}
   - resource/delete_source_metadata
+{{- end }}
   - sumologic_schema
   - batch
   - routing
