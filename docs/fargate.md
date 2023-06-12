@@ -20,6 +20,7 @@ order to make them as generic and reusable.
     - [Create sumo-metrics-pvc.yaml with PVC per access point](#create-sumo-metrics-pvcyaml-with-pvc-per-access-point)
     - [Create sumo-logs-pvc.yaml with PVC per access point](#create-sumo-logs-pvcyaml-with-pvc-per-access-point)
     - [Create sumo-events-pvc.yaml with PVC per access point](#create-sumo-events-pvcyaml-with-pvc-per-access-point)
+    - [Setup Prometheus (outside Sumo Logic collection) with Persistence](#setup-prometheus-with-persistence)
 - [Cloudwatch Logs Collection](#logs)
   - [Fluent-bit log router configuration](#fluent-bit-log-router)
     - [Prerequisites](#prerequisites)
@@ -536,6 +537,322 @@ Please verify that all the expected persistent volume claims (PVCs) have been cr
 ## Get PVCs
 kubectl get pvc -n "${NAMESPACE}"
 ```
+
+#### Setup Prometheus with persistence
+
+##### EKS node group definition
+
+In a `eksctl-nodegroup.yaml` we define the new managed node group:
+
+```yaml
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-cluster
+  region: eu-west-1
+
+managedNodeGroups:
+  - name: ng-1-monitoring
+    labels: { role: monitoring }
+    instanceType: t3.small
+    desiredCapacity: 1
+    minSize: 1
+    maxSize: 2
+```
+
+And we create the managed node group:
+
+```sh
+eksctl create nodegroup --config-file=eksctl-nodegroup.yaml
+```
+
+Verify that the node group is up and running with the following command:
+
+```sh
+eksctl get nodegroup --cluster eks-cluster --region eu-west-1
+```
+
+##### EFS Configuration
+
+Next, we are going to create an EFS filesystem. It will be used by the Prometheus container to store real-time metric data:
+
+```yaml
+aws efs create-file-system \ --tags Key=Name,Value=PrometheusFs \ --region eu-west-1
+```
+
+You will get the following response:
+
+```json
+{
+  "OwnerId": "174112236391",
+  "CreationToken": "41d3ee19-9f1d-4b60-859d-937d2e2e1586",
+  "FileSystemId": "fs-98132853",
+  "CreationTime": "2020-03-31T09:33:57+02:00",
+  "LifeCycleState": "available",
+  "Name": "PrometheusFs",
+  "NumberOfMountTargets": 0,
+  "SizeInBytes": {
+    "Value": 6144,
+    "ValueInIA": 0,
+    "ValueInStandard": 6144
+  },
+  "PerformanceMode": "generalPurpose",
+  "Encrypted": false,
+  "ThroughputMode": "bursting",
+  "Tags": [
+    {
+      "Key": "Name",
+      "Value": "PrometheusFs"
+    }
+  ]
+}
+```
+
+Then we need to create a mount target for each private subnet, specifying the security group of the EKS cluster created with eksctl:
+
+```sh
+aws eks describe-cluster --name eks-cluster --region eu-west-1 | jq  ".cluster.resourcesVpcConfig.clusterSecurityGroupId"
+"sg-029325a242a081e08"
+
+aws efs create-mount-target \
+--file-system-id fs-98132853 \
+--subnet-id "subnet-09be91ec7cb1ddbd6" \
+--security-group "sg-029325a242a081e08" \
+--region eu-west-1
+
+aws efs create-mount-target \
+--file-system-id fs-98132853 \
+--subnet-id "subnet-0e5d1f9e4e203ce75" \
+--security-group "sg-029325a242a081e08" \
+--region eu-west-1
+```
+
+##### EFS Provisioner
+
+Now that the Node group and the EFS have been created we move on k8s setup. Create a prometheus namespace:
+
+```sh
+kubectl create namespace prometheus
+```
+
+In order to have our prometheus container mount the EFS volume we have just created, we need to deploy an
+[efs-provisioner](https://github.com/kubernetes-incubator/external-storage/tree/master/aws/efs).
+
+The efs-provisioner allows you to mount EFS storage as PersistentVolumes in Kubernetes. It consists of a container that has access to an
+AWS [EFS](https://aws.amazon.com/efs/) resource. The container reads a ConfigMap which contains the EFS filesystem ID, the AWS region and
+the name you want to use for your efs-provisioner. This name will be used later when you create a storage class.
+
+To do that we create a `prometheus-efs-manifest.yaml` as follows:
+
+```yaml
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: prometheus-efs
+  namespace: prometheus
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "prometheus-efs"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Mi
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: prometheus-efs
+
+provisioner: prometheus/aws-efs
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: efs-provisioner-runner
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "update", "patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: run-efs-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: efs-provisioner
+    # replace with namespace where provisioner is deployed
+    namespace: prometheus
+roleRef:
+  kind: ClusterRole
+  name: efs-provisioner-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: leader-locking-efs-provisioner
+  namespace: prometheus
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: leader-locking-efs-provisioner
+  namespace: prometheus
+
+subjects:
+  - kind: ServiceAccount
+    name: efs-provisioner
+    # replace with namespace where provisioner is deployed
+    namespace: prometheus
+roleRef:
+  kind: Role
+  name: leader-locking-efs-provisioner
+  apiGroup: rbac.authorization.k8s.io
+```
+
+Then we create a prometheus-efs-deployment.yaml file to define a ConfigMap, replace `<FS_ID>` with your EFS filesystem id in the field
+`file.system.id` (in our example fs-98132853) and `<AWS_REGION>` with the region of our cluster, and a new Deployment replacing `<EFS_URL>`
+with the url of our EFS filesystem in the following format `fs_id.efs.region.amazonaws.com` .
+
+```yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: efs-provisioner
+  namespace: prometheus
+data:
+  file.system.id: <FS_ID>
+  aws.region: <AWS_REGION>
+  provisioner.name: prometheus/aws-efs
+  dns.name: ""
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: efs-provisioner
+  namespace: prometheus
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: efs-provisioner
+  namespace: prometheus
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: efs-provisioner
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: efs-provisioner
+    spec:
+      serviceAccount: efs-provisioner
+      containers:
+        - name: efs-provisioner
+          image: quay.io/external_storage/efs-provisioner:latest
+          env:
+            - name: FILE_SYSTEM_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: efs-provisioner
+                  key: file.system.id
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: efs-provisioner
+                  key: aws.region
+            - name: DNS_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: efs-provisioner
+                  key: dns.name
+                  optional: true
+            - name: PROVISIONER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: efs-provisioner
+                  key: provisioner.name
+          volumeMounts:
+            - name: pv-volume
+              mountPath: /persistentvolumes
+      volumes:
+        - name: pv-volume
+          nfs:
+            server: <EFS_URL>
+            path: /
+```
+
+And we apply our configuration:
+
+```sh
+kubectl apply -f prometheus-efs-manifest.yaml,prometheus-efs-deployment.yaml
+```
+
+Verify the correctness of the deployment:
+
+```sh
+kubectl get deployment efs-provisioner -n prometheus
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+efs-provisioner   1/1     1            1           3d18h
+```
+
+##### Prometheus deployment
+
+Once we have our efs-provisioner up and running, we create a `prometheus-helm-config.yaml`:
+
+```yaml
+alertmanager:
+  persistentVolume:
+    enabled: true
+    existingClaim: prometheus-efs
+
+server:
+  persistentVolume:
+    enabled: true
+    existingClaim: prometheus-efs
+```
+
+Install Prometheus using `helm` with the configuration above:
+
+```sh
+helm install prometheus stable/prometheus -f prometheus-helm-config.yaml -n prometheus
+```
+
+Enable port forwarding:
+
+```sh
+kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090
+```
+
+Verify the installation navigating with the browser to <http://localhost:8080/targets>.
+
+Finally, send metrics to Sumo Logic using a mixin to add the correct remote_write configs and add the cluster external_label. You can
+generate mixin configuration using kubectl or docker as mentioned below:
+
+https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/prometheus-fargate-persistence/docs/kube-prometheus.md
 
 ## Logs
 
