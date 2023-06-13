@@ -17,6 +17,30 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
+func TestK8sResourceValidation(t *testing.T) {
+	valuesFilePath := path.Join(testDataDirectory, "everything-enabled.yaml")
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+
+	_, err := UnmarshalMultipleK8sObjectsFromYaml(renderedYamlString)
+	require.NoError(t, err)
+}
+
 func TestBuiltinLabels(t *testing.T) {
 	valuesFilePath := path.Join(testDataDirectory, "everything-enabled.yaml")
 	chartVersion, err := GetChartVersion()

@@ -1,6 +1,8 @@
 package helm
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -9,6 +11,7 @@ import (
 	"strings"
 	"testing"
 
+	monitoringv1 "github.com/coreos/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/gruntwork-io/go-commons/collections"
 	"github.com/gruntwork-io/go-commons/errors"
 	"github.com/gruntwork-io/go-commons/files"
@@ -18,6 +21,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 	corev1 "k8s.io/api/core/v1"
+	apiextv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/serializer"
+	utilyaml "k8s.io/apimachinery/pkg/util/yaml"
+	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	apiregv1 "k8s.io/kube-aggregator/pkg/apis/apiregistration/v1"
 )
 
 // get the chart version from Chart.yaml
@@ -87,6 +96,53 @@ func UnmarshalMultipleFromYaml[T any](t *testing.T, yamlDocs string) []T {
 		helm.UnmarshalK8SYaml(t, yamlDoc, &renderedObjects[i])
 	}
 	return renderedObjects
+}
+
+// UnmarshalMultipleK8sObjectsFromYaml unmarshals all the objects in the provided yaml string into
+// Kubernetes object. The returned type is runtime.Object, and these can later be cast to the right
+// concrete type based on meta information.
+func UnmarshalMultipleK8sObjectsFromYaml(yamlDocs string) (objects []runtime.Object, err error) {
+	scheme := runtime.NewScheme()
+	err = clientgoscheme.AddToScheme(scheme)
+	if err != nil {
+		return objects, err
+	}
+
+	err = apiextv1.AddToScheme(scheme)
+	if err != nil {
+		return objects, err
+	}
+
+	err = apiregv1.AddToScheme(scheme)
+	if err != nil {
+		return objects, err
+	}
+
+	err = monitoringv1.AddToScheme(scheme)
+	if err != nil {
+		return objects, err
+	}
+
+	decoder := serializer.NewCodecFactory(scheme).UniversalDeserializer()
+	multidocReader := utilyaml.NewYAMLReader(bufio.NewReader(bytes.NewReader([]byte(yamlDocs))))
+
+	for {
+		buf, err := multidocReader.Read()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return objects, err
+		}
+
+		obj, _, err := decoder.Decode(buf, nil, nil)
+		if err != nil {
+			return objects, err
+		}
+		objects = append(objects, obj)
+	}
+
+	return objects, err
 }
 
 // SplitYaml splits a yaml string containing multiple yaml documents into strings

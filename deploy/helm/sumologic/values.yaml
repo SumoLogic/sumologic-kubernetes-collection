@@ -1230,7 +1230,7 @@ fluent-bit:
   # imagePullSecrets:
   #   - name: "image-pull-secret"
   image:
-    repository: cr.fluentbit.io/fluent/fluent-bit
+    repository: public.ecr.aws/sumologic/fluent-bit
     tag: 2.1.4
     pullPolicy: IfNotPresent
 
@@ -4055,6 +4055,7 @@ metadata:
       #   - name: otlphttp2
       #     containerPort: 4319
       #     protocol: TCP
+      # extraArgs:
 
     ## Option to turn autoscaling on for logs and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.

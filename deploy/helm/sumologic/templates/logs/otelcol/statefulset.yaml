@@ -114,6 +114,9 @@ spec:
         imagePullPolicy: {{ .Values.metadata.image.pullPolicy }}
         args:
           - --config=/etc/otel/config.yaml
+{{- if .Values.metadata.logs.statefulset.extraArgs }}
+{{ toYaml .Values.metadata.logs.statefulset.extraArgs | indent 10 }}
+{{- end }}
         resources:
           {{- toYaml .Values.metadata.logs.statefulset.resources | nindent 10 }}
         {{- if .Values.metadata.logs.statefulset.containers.otelcol.securityContext }}
