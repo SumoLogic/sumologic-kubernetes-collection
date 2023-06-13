@@ -18,7 +18,7 @@ apt-get --yes install apt-transport-https jq make npm yamllint
 
 echo "export EDITOR=vim" >> /home/vagrant/.bashrc
 
-snap install microk8s --classic --channel=1.22/stable
+snap install microk8s --classic --channel=1.23/stable
 microk8s.status --wait-ready
 ufw allow in on cbr0
 ufw allow out on cbr0
