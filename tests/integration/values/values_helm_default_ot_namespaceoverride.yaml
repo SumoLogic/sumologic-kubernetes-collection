@@ -1,0 +1,10 @@
+namespaceOverride: "test-override"
+
+kube-prometheus-stack:
+  namespaceOverride: "test-override"
+
+  kube-state-metrics:
+    namespaceOverride: "test-override"
+  
+  prometheus-node-exporter:
+    namespaceOverride: "test-override"

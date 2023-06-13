@@ -75,6 +75,7 @@ func ConfigureTestEnv(testenv env.Environment) {
 		// TODO: Create namespaces only for specific tests
 		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[0]),
 		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[1]),
+		stepfuncs.KubectlCreateNamespaceOpt(internal.OverrideNamespace),
 		// Create Test Namespace
 		stepfuncs.KubectlCreateNamespaceTestOpt(),
 		stepfuncs.SetHelmOptionsTestOpt([]string{}),
@@ -101,6 +102,7 @@ func ConfigureTestEnv(testenv env.Environment) {
 		stepfuncs.HelmDeleteTestOpt(),
 		stepfuncs.KubectlDeleteNamespaceOpt(openTelemetryOperatorNamespaces[0]),
 		stepfuncs.KubectlDeleteNamespaceOpt(openTelemetryOperatorNamespaces[1]),
+		stepfuncs.KubectlDeleteNamespaceOpt(internal.OverrideNamespace),
 		stepfuncs.KubectlDeleteNamespaceTestOpt(),
 		stepfuncs.KubectlDeleteFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
 	) {
