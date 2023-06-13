@@ -19,7 +19,7 @@ Example usage:
 
 */}}
 {{- define "terraform.secret.fullname" -}}
-{{ .Release.Namespace }}/{{ template "terraform.secret.name" . }}
+{{ template "sumologic.namespace" . }}/{{ template "terraform.secret.name" . }}
 {{- end -}}
 
 {{/*

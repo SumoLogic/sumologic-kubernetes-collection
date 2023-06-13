@@ -286,9 +286,9 @@ Example:
 {{- $excludeNamespaceRegex := .Values.sumologic.logs.container.excludeNamespaceRegex | quote -}}
 {{- if eq .Values.sumologic.collectionMonitoring false -}}
   {{- if .Values.sumologic.logs.container.excludeNamespaceRegex -}}
-  {{- $excludeNamespaceRegex = printf "%s|%s" .Release.Namespace .Values.sumologic.logs.container.excludeNamespaceRegex | quote -}}
+  {{- $excludeNamespaceRegex = printf "%s|%s" ( include "sumologic.namespace" .  ) .Values.sumologic.logs.container.excludeNamespaceRegex | quote -}}
   {{- else -}}
-  {{- $excludeNamespaceRegex = printf "%s" .Release.Namespace | quote -}}
+  {{- $excludeNamespaceRegex = printf "%s" ( include "sumologic.namespace" .  ) | quote -}}
   {{- end -}}
 {{- end -}}
 {{ print $excludeNamespaceRegex }}

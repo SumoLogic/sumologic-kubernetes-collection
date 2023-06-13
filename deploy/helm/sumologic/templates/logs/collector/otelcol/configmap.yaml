@@ -12,6 +12,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "sumologic.metadata.name.logs.collector.configmap" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   labels:
     app: {{ template "sumologic.labels.app.logs.collector.configmap" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}

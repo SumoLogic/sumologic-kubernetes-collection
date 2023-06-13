@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcol-logs-collector
     chart: "sumologic-%CURRENT_CHART_VERSION%"
@@ -144,6 +145,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: RELEASE-NAME-sumologic-otelcol-logs-collector-linux
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcol-logs-collector
     chart: "sumologic-%CURRENT_CHART_VERSION%"

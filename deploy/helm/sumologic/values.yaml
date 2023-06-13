@@ -3,6 +3,8 @@
 
 nameOverride: ""
 fullnameOverride: ""
+## Use the same namespace as namespaceOverride in 'kube-prometheus-stack.namespaceOverride' if Prometheus setup is also enabled
+namespaceOverride: ""
 
 sumologic:
   ### Setup
@@ -1431,6 +1433,9 @@ kube-prometheus-stack:
 
   ## Put here the new name if you want to override the full name used for Kube Prometheus Stack components.
   # fullnameOverride: ""
+
+  ## Put here the new namespace if you want to override the namespace used for Kube Prometheus Stack components.
+  # namespaceOverride: ""
 
   ## Provide a target gitVersion of K8S, in case .Capabilites.KubeVersion is not available (e.g. helm template).
   ## Changing this may break Sumo Logic apps.

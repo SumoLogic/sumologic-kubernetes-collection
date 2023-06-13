@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "sumologic.metadata.name.logs.service" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   labels:
     app: {{ template "sumologic.labels.app.logs.service" . }}
     {{- include "sumologic.labels.scrape.logs" . | nindent 4 }}

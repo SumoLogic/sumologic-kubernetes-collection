@@ -266,3 +266,43 @@ func GetPodSpec(object unstructured.Unstructured) (*corev1.PodSpec, error) {
 		return nil, nil
 	}
 }
+
+func TestNamespaceOverride(t *testing.T) {
+	valuesFilePath := path.Join(testDataDirectory, "everything-enabled.yaml")
+	namespaceOverride := "override"
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+				"namaespaceOverride":  namespaceOverride,
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		"override",
+	)
+
+	// split the rendered Yaml into individual documents and unmarshal them into K8s objects
+	// we could use the yaml decoder directly, but we'd have to implement our own unmarshaling logic then
+	renderedObjects := UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
+
+	for _, renderedObject := range renderedObjects {
+		if !isSubchartObject(&renderedObject) && renderedObject.GetKind() != "List" {
+			object := renderedObject
+			objectName := fmt.Sprintf("%s/%s", object.GetKind(), object.GetName())
+			t.Run(objectName, func(t *testing.T) {
+				namespace := object.GetNamespace()
+				if namespace != "" {
+					require.Equal(t, namespaceOverride, object.GetNamespace())
+				}
+			})
+		}
+	}
+}

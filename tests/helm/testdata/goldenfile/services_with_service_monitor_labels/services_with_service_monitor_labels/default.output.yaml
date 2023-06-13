@@ -4,6 +4,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: RELEASE-NAME-sumologic-otelcol-events
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcol-events
     sumologic.com/scrape: "true"
@@ -32,6 +33,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: RELEASE-NAME-sumologic-otelagent
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcol-instrumentation
     sumologic.com/scrape: "true"
@@ -78,6 +80,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: RELEASE-NAME-sumologic-traces-gateway
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-traces-gateway
     sumologic.com/scrape: "true"
@@ -104,6 +107,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: RELEASE-NAME-sumologic-traces-sampler-headless
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-traces-sampler-headless
     sumologic.com/scrape: "true"
@@ -132,6 +136,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcol-logs-collector
     sumologic.com/scrape: "true"
@@ -154,6 +159,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: RELEASE-NAME-sumologic-metadata-logs
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcol-logs
     sumologic.com/scrape: "true"
@@ -192,6 +198,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: RELEASE-NAME-sumologic-metadata-metrics
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcol-metrics
     sumologic.com/scrape: "true"

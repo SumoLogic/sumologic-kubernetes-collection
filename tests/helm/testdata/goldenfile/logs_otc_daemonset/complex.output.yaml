@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  namespace: sumologic
   annotations:
     someDaemonsetAnnotation: someValue
   labels:

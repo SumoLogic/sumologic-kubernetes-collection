@@ -4,6 +4,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: RELEASE-NAME-sumologic-ot-operator-instr-cm
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-ot-operator-instr-cm
     chart: "sumologic-%CURRENT_CHART_VERSION%"

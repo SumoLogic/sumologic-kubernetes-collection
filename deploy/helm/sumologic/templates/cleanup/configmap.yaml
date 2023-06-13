@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "sumologic.metadata.name.cleanup.configmap" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   annotations:
 {{ include "sumologic.annotations.app.cleanup.helmsh" "0" | indent 4 }}
   labels:

@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: RELEASE-NAME-sumologic-otelcol-cloudwatch-collector
+  namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcloudwatch-logs-collector
     chart: "sumologic-%CURRENT_CHART_VERSION%"

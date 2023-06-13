@@ -5,6 +5,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "sumologic.metadata.name.tracessampler.deployment" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   labels:
     app: {{ template "sumologic.labels.app.tracessampler.deployment" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}

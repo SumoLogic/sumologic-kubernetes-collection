@@ -5,6 +5,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "sumologic.metadata.name.otelcolinstrumentation.statefulset" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
   labels:
     app: {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
     component: {{ template "sumologic.labels.app.otelcolinstrumentation.component" . }}
