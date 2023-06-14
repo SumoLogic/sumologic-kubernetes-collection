@@ -431,6 +431,18 @@ sumologic:
       ## Currently not feature complete, only intended for testing
       otelcol:
         enabled: false
+
+        ## Option to turn autoscaling on for fluentd and specify params for HPA.
+        ## Autoscaling needs metrics-server to access cpu metrics.
+        autoscaling:
+          enabled: false
+          minReplicas: 3
+          maxReplicas: 10
+          targetCPUUtilizationPercentage: 100
+          # targetMemoryUtilizationPercentage: 50
+
+        replicaCount: 3
+
         resources:
           limits:
             memory: 1Gi

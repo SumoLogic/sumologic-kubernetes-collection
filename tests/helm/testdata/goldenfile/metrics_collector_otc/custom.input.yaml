@@ -1,0 +1,19 @@
+sumologic:
+  metrics:
+    enabled: true
+    collector:
+      otelcol:
+        enabled: true
+        autoscaling:
+          enabled: true
+          minReplicas: 15
+          maxReplicas: 30
+          targetCPUUtilizationPercentage: 95
+          targetMemoryUtilizationPercentage: 90
+        resources:
+          limits:
+            memory: 2Gi
+            cpu: 3000m
+          requests:
+            memory: 1Gi
+            cpu: 1000m
