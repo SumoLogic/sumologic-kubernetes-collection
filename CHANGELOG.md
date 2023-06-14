@@ -7,6 +7,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.9.0]
+
+### Released 2023-06-14
+
+### Breaking Changes
+
+- feat(metrics)!: disable remote write proxy access logs by default [#3071]
+
+  The logs can be enabled by setting`sumologic.metrics.remoteWriteProxy.config.enableAccessLogs` to `true`.
+
+### Added
+
+- fix: otelcol logs json_merge where message bodies are only sometimes json [#3050]
+
+### Changed
+
+- feat: override namespace from values [#3068]
+- chore: upgrade Fluent Bit to 2.1.4 [#3075] This change may break some custom Fluent Bit configurations.
+
+  A temporary workaround is to switch back to the 1.6.10-sumo-3 image. We recommend updating the custom configuration, or better yet,
+  switching to Otel.
+
+- feat: pass extra arguments to otel logs statefulset [#3076]
+- Reordering HPA metrics to match HPA ordering [#3078]
+- chore: drop support for k8s 1.22 [#3081]
+
+### Fixed
+
+- fix(logs): parse json in fluent bit pipeline [#3063]
+- fix(logs): use longer fingerprint only on K8s <1.24 [#3070]
+
+[#3071]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3071
+[#3050]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3050
+[#3068]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3068
+[#3075]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3075
+[#3076]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3076
+[#3078]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3078
+[#3081]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3081
+[#3063]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3063
+[#3070]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3070
+[v3.9.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.9.0
+
 ## [v3.8.0]
 
 ### Released 2023-05-22
