@@ -301,7 +301,7 @@ processors:
     log_statements:
       - context: log
         statements:
-          - set(body, ParseJSON(body)) where IsMatch(body, "^{") == true
+          - set(body, ParseJSON(body)) where IsMatch(body, "^{")
 {{ end }}
   memory_limiter:
     ## check_interval is the time between measurements of memory usage for the
@@ -419,8 +419,8 @@ processors:
     log_statements:
       - context: log
         statements:
-          - merge_maps(attributes, body, "insert") where IsMatch(body, "^{") == true
-          - set(body, "") where IsMatch(body, "^{") == true
+          - merge_maps(attributes, body, "insert") where IsMatch(body, "^{")
+          - set(body, "") where IsMatch(body, "^{")
 
   ## Remove all attributes, so body won't by nested by SumoLogic receiver in case of using otlp format
   transform/remove_attributes:
