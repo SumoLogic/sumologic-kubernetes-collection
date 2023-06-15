@@ -571,6 +571,19 @@ sumologic:
           matchLabels:
             sumologic.com/app: fluentd-metrics
             sumologic.com/scrape: "true"
+      - name: collection-sumologic-metrics-collector
+        additionalLabels:
+          sumologic.com/app: otelcol-metrics
+        endpoints:
+          - port: monitoring
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol
+            sumologic.com/component: metrics
+            sumologic.com/scrape: "true"
       - name: collection-sumologic-fluentd-events
         additionalLabels:
           sumologic.com/app: fluentd-events
