@@ -501,10 +501,10 @@ podAntiAffinity:
       - key: app
         operator: In
         values:
-        - {{ template "sumologic.labels.app.logs" . }}
-        - {{ template "sumologic.labels.app.metrics" . }}
-        - {{ template "sumologic.labels.app.events" . }}
-        - {{ template "sumologic.labels.app.otelcolinstrumentation" . }}
+        - {{ template "sumologic.labels.app.logs.pod" . }}
+        - {{ template "sumologic.labels.app.metrics.pod" . }}
+        - {{ template "sumologic.labels.app.events.pod" . }}
+        - {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
       - key: app
         operator: In
         values:
@@ -529,8 +529,8 @@ podAntiAffinity:
           values:
           - {{ template "sumologic.labels.app.logs.pod" . }}
           - {{ template "sumologic.labels.app.metrics.pod" . }}
-          - {{ template "sumologic.labels.app.events" . }}
-          - {{ template "sumologic.labels.app.otelcolinstrumentation" . }}
+          - {{ template "sumologic.labels.app.events.pod" . }}
+          - {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
         - key: app
           operator: In
           values:
