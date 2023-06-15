@@ -5,7 +5,6 @@ extensions:
   health_check: {}
 {{ if .Values.metadata.persistence.enabled }}
   ## Configuration for File Storage extension
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
   file_storage:
     directory: /var/lib/storage/otc
     timeout: 10s
