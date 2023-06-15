@@ -487,3 +487,53 @@ Example Usage:
   value: {{ .Values.sumologic.noProxy }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Pod anti affinity "hard"
+
+'{{ include "pod-anti-affinity-hard" . }}'
+*/}}
+{{- define "pod-anti-affinity-hard" -}}
+podAntiAffinity:
+  requiredDuringSchedulingIgnoredDuringExecution:
+  - labelSelector:
+      matchExpressions:
+      - key: app
+        operator: In
+        values:
+        - {{ template "sumologic.labels.app.logs" . }}
+        - {{ template "sumologic.labels.app.metrics" . }}
+        - {{ template "sumologic.labels.app.events" . }}
+        - {{ template "sumologic.labels.app.otelcolinstrumentation" . }}
+      - key: app
+        operator: In
+        values:
+        - prometheus-operator-prometheus
+    topologyKey: "kubernetes.io/hostname"
+{{- end -}}
+
+{{/*
+Pod anti affinity "soft"
+
+'{{ include "pod-anti-affinity-soft" . }}'
+*/}}
+{{- define "pod-anti-affinity-soft" -}}
+podAntiAffinity:
+  preferredDuringSchedulingIgnoredDuringExecution:
+  - weight: 100
+    podAffinityTerm:
+      labelSelector:
+        matchExpressions:
+        - key: app
+          operator: In
+          values:
+          - {{ template "sumologic.labels.app.logs.pod" . }}
+          - {{ template "sumologic.labels.app.metrics.pod" . }}
+          - {{ template "sumologic.labels.app.events" . }}
+          - {{ template "sumologic.labels.app.otelcolinstrumentation" . }}
+        - key: app
+          operator: In
+          values:
+          - prometheus-operator-prometheus
+      topologyKey: "kubernetes.io/hostname"
+{{- end -}}

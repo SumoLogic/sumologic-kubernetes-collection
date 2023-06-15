@@ -40,6 +40,8 @@ spec:
                       values:
                         - RELEASE-NAME-sumologic-otelcol-logs
                         - RELEASE-NAME-sumologic-otelcol-metrics
+                        - RELEASE-NAME-sumologic-otelcol-events
+                        - RELEASE-NAME-sumologic-otelcol-instrumentation
                     - key: app
                       operator: In
                       values:

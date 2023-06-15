@@ -57,37 +57,9 @@ spec:
 {{ toYaml .Values.fluentd.metrics.statefulset.affinity | indent 8 }}
 {{- end }}
 {{- if eq .Values.fluentd.metrics.statefulset.podAntiAffinity "hard"}}
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - {{ template "sumologic.labels.app.logs" . }}
-                - {{ template "sumologic.labels.app.metrics" . }}
-              - key: app
-                operator: In
-                values:
-                - prometheus-operator-prometheus
-            topologyKey: "kubernetes.io/hostname"
+{{ include "pod-anti-affinity-hard" . | indent 8 }}
 {{else if eq .Values.fluentd.metrics.statefulset.podAntiAffinity "soft"}}
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - {{ template "sumologic.labels.app.logs.pod" . }}
-                  - {{ template "sumologic.labels.app.metrics.pod" . }}
-                - key: app
-                  operator: In
-                  values:
-                  - prometheus-operator-prometheus
-              topologyKey: "kubernetes.io/hostname"
+{{ include "pod-anti-affinity-soft" . | indent 8 }}
 {{- end }}
 {{- end }}
 {{- if .Values.fluentd.metrics.statefulset.topologySpreadConstraints }}
