@@ -24,7 +24,7 @@ items:
         - port: metrics
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           sumologic.com/app: fluentd-logs
@@ -50,7 +50,7 @@ items:
         - port: otelcol-metrics
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           sumologic.com/app: fluentd-logs
@@ -76,7 +76,7 @@ items:
         - port: metrics
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           sumologic.com/app: fluentd-metrics
@@ -102,7 +102,7 @@ items:
         - port: otelcol-metrics
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           sumologic.com/app: fluentd-metrics
@@ -128,7 +128,7 @@ items:
         - port: monitoring
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           sumologic.com/app: otelcol
@@ -155,7 +155,7 @@ items:
         - port: metrics
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           sumologic.com/app: fluentd-events
@@ -182,7 +182,7 @@ items:
           port: http
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           app.kubernetes.io/name: fluent-bit
@@ -208,7 +208,7 @@ items:
         - port: metrics
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           sumologic.com/app: otelcol-logs-collector
@@ -234,7 +234,7 @@ items:
         - port: otelcol-metrics
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           sumologic.com/app: otelcol-events
@@ -260,7 +260,7 @@ items:
         - port: metrics
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           sumologic.com/component: instrumentation
@@ -286,7 +286,7 @@ items:
           port: web
       namespaceSelector:
         matchNames:
-          - $(NAMESPACE)
+          - sumologic
       selector:
         matchLabels:
           operated-prometheus: "true"

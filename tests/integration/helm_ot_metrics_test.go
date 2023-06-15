@@ -12,7 +12,6 @@ func Test_Helm_OT_Metrics(t *testing.T) {
 
 	// drop histogram metrics for now, there's a couple problems with them
 	// don't check recording rule metrics, not supported yet
-	// also don't check otelcol metrics for now, we don't have a ServiceMonitor
 	expectedMetricsGroups := [][]string{
 		internal.KubeStateMetrics,
 		internal.KubeDaemonSetMetrics,
@@ -27,6 +26,7 @@ func Test_Helm_OT_Metrics(t *testing.T) {
 		internal.CoreDNSMetrics,
 		internal.CAdvisorMetrics,
 		internal.NodeExporterMetrics,
+		internal.DefaultOtelcolMetrics,
 	}
 	for _, metrics := range expectedMetricsGroups {
 		for _, metric := range metrics {

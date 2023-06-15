@@ -11,6 +11,7 @@ metadata:
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
+    sumologic.com/scrape: "true"
 spec:
   mode: statefulset
   replicas: 3

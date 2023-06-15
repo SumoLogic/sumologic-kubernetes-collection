@@ -23,10 +23,9 @@ items:
     {{- if .jobLabel }}
       jobLabel: {{ .jobLabel }}
     {{- end }}
-    {{- if .namespaceSelector }}
       namespaceSelector:
-{{ toYaml .namespaceSelector | indent 8 }}
-    {{- end }}
+        matchNames:
+          - {{ template "kube-prometheus-stack.namespace" $ }}
       selector:
 {{ toYaml .selector | indent 8 }}
     {{- if .targetLabels }}
