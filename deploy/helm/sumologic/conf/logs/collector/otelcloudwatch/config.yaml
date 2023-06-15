@@ -1,27 +1,20 @@
 exporters:
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/exporter/otlphttpexporter
   otlphttp:
     endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
     sending_queue:
       queue_size: 10
 
 extensions:
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/storage/filestorage
   file_storage:
     compaction:
       directory: /var/lib/storage/otc
       on_rebound: true
     directory: /var/lib/storage/otc
     timeout: 10s
-
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/healthcheckextension
   health_check: {}
-
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.73.0/extension/pprofextension
   pprof: {}
 
 processors:
-  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.73.0/processor/batchprocessor
   batch:
     send_batch_max_size: 2000
     send_batch_size: 1000

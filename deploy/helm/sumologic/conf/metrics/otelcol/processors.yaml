@@ -1,6 +1,5 @@
 ## Configuration for Batch Processor
 ## The batch processor accepts spans and places them into batches grouped by node and resource
-## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.76.1/processor/batchprocessor
 batch:
   ## Maximum number of spans sent at once
   send_batch_max_size: 2_048
@@ -18,7 +17,6 @@ groupbyattrs:
     - service
 
 ## The Kubernetes sprocessor automatically tags logs, metrics and traces with Kubernetes metadata like pod name, namespace name etc.
-## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
 k8s_tagger:
   extract:
     delimiter: "_"
@@ -41,7 +39,6 @@ k8s_tagger:
 
 ## Configuration for Memory Limiter Processor
 ## The memory_limiter processor is used to prevent out of memory situations on the collector.
-## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.76.1/processor/memorylimiter
 memory_limiter:
   ## check_interval is the time between measurements of memory usage for the
   ## purposes of avoiding going over the limits. Defaults to zero, so no
@@ -54,7 +51,6 @@ memory_limiter:
   spike_limit_percentage: 20
 
 ## Configuration for Metrics Transform Processor
-## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/metricstransformprocessor
 metricstransform:
   transforms:
     ## rename all prometheus_remote_write_$name metrics to $name
@@ -64,7 +60,6 @@ metricstransform:
     new_name: $$1
 
 ## Configuration for Resource Processor
-## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
 resource:
   attributes:
     - action: upsert
@@ -102,8 +97,6 @@ resource:
 ## NOTE: Drop these for now and and when proper configuration options
 ## are exposed and source processor is configured then send them
 ## as headers.
-## ref: https://github.com/SumoLogic/sumologic-otel-collector/issues/265
-## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
 resource/delete_source_metadata:
   attributes:
     - action: delete
@@ -112,8 +105,6 @@ resource/delete_source_metadata:
       key: _sourceHost
     - action: delete
       key: _sourceName
-
-## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
 resource/remove_k8s_pod_pod_name:
   attributes:
     - action: delete
@@ -122,7 +113,6 @@ resource/remove_k8s_pod_pod_name:
 ## NOTE: below listed rules could be simplified if routingprocessor
 ## supports regex matching. At this point we could group route entries
 ## going to the same set of exporters.
-## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/routingprocessor
 routing:
   attribute_source: resource
   default_exporters:
@@ -168,13 +158,11 @@ routing:
 
 ## Configuration for Source Processor
 ## Source processor adds Sumo Logic related metadata
-## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
 source:
   collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
 
 ## The Sumo Logic Schema processor modifies the metadata on logs, metrics and traces sent to Sumo Logic
 ## so that the Sumo Logic apps can make full use of the ingested data.
-## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sumologicschemaprocessor
 sumologic_schema:
   add_cloud_namespace: false
 

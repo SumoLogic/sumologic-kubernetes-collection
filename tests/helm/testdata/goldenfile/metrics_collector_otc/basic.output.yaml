@@ -93,7 +93,6 @@ spec:
             storage: 10Gi
   config: |
     exporters:
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
       sumologic/apiserver:
         endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
         max_request_body_size: 16_777_216  # 16 MB before compression
@@ -105,8 +104,6 @@ spec:
           storage: file_storage
         ## set timeout to 30s due to big requests
         timeout: 30s
-      
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
       sumologic/control_plane:
         endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
         max_request_body_size: 16_777_216  # 16 MB before compression
@@ -118,8 +115,6 @@ spec:
           storage: file_storage
         ## set timeout to 30s due to big requests
         timeout: 30s
-      
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
       sumologic/controller:
         endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
         max_request_body_size: 16_777_216  # 16 MB before compression
@@ -131,8 +126,6 @@ spec:
           storage: file_storage
         ## set timeout to 30s due to big requests
         timeout: 30s
-      
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
       sumologic/default:
         endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
         max_request_body_size: 16_777_216  # 16 MB before compression
@@ -146,8 +139,6 @@ spec:
           storage: file_storage
         ## set timeout to 30s due to big requests
         timeout: 30s
-      
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
       sumologic/kubelet:
         endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
         max_request_body_size: 16_777_216  # 16 MB before compression
@@ -159,8 +150,6 @@ spec:
           storage: file_storage
         ## set timeout to 30s due to big requests
         timeout: 30s
-      
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
       sumologic/node:
         endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
         max_request_body_size: 16_777_216  # 16 MB before compression
@@ -172,8 +161,6 @@ spec:
           storage: file_storage
         ## set timeout to 30s due to big requests
         timeout: 30s
-      
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
       sumologic/scheduler:
         endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
         max_request_body_size: 16_777_216  # 16 MB before compression
@@ -185,8 +172,6 @@ spec:
           storage: file_storage
         ## set timeout to 30s due to big requests
         timeout: 30s
-      
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/exporter/sumologicexporter
       sumologic/state:
         endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
         max_request_body_size: 16_777_216  # 16 MB before compression
@@ -204,7 +189,6 @@ spec:
       health_check: {}
 
       ## Configuration for File Storage extension
-      ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/release/v0.37.x/extension/storage/filestorage
       file_storage:
         directory: /var/lib/storage/otc
         timeout: 10s
@@ -217,7 +201,6 @@ spec:
     processors:
       ## Configuration for Batch Processor
       ## The batch processor accepts spans and places them into batches grouped by node and resource
-      ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.76.1/processor/batchprocessor
       batch:
         ## Maximum number of spans sent at once
         send_batch_max_size: 2_048
@@ -235,7 +218,6 @@ spec:
           - service
       
       ## The Kubernetes sprocessor automatically tags logs, metrics and traces with Kubernetes metadata like pod name, namespace name etc.
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/k8sprocessor
       k8s_tagger:
         extract:
           delimiter: "_"
@@ -258,7 +240,6 @@ spec:
       
       ## Configuration for Memory Limiter Processor
       ## The memory_limiter processor is used to prevent out of memory situations on the collector.
-      ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/v0.76.1/processor/memorylimiter
       memory_limiter:
         ## check_interval is the time between measurements of memory usage for the
         ## purposes of avoiding going over the limits. Defaults to zero, so no
@@ -271,7 +252,6 @@ spec:
         spike_limit_percentage: 20
       
       ## Configuration for Metrics Transform Processor
-      ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/metricstransformprocessor
       metricstransform:
         transforms:
           ## rename all prometheus_remote_write_$name metrics to $name
@@ -281,7 +261,6 @@ spec:
           new_name: $$1
       
       ## Configuration for Resource Processor
-      ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
       resource:
         attributes:
           - action: upsert
@@ -319,8 +298,6 @@ spec:
       ## NOTE: Drop these for now and and when proper configuration options
       ## are exposed and source processor is configured then send them
       ## as headers.
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/issues/265
-      ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
       resource/delete_source_metadata:
         attributes:
           - action: delete
@@ -329,8 +306,6 @@ spec:
             key: _sourceHost
           - action: delete
             key: _sourceName
-      
-      ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/resourceprocessor
       resource/remove_k8s_pod_pod_name:
         attributes:
           - action: delete
@@ -339,7 +314,6 @@ spec:
       ## NOTE: below listed rules could be simplified if routingprocessor
       ## supports regex matching. At this point we could group route entries
       ## going to the same set of exporters.
-      ## ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.76.1/processor/routingprocessor
       routing:
         attribute_source: resource
         default_exporters:
@@ -385,13 +359,11 @@ spec:
       
       ## Configuration for Source Processor
       ## Source processor adds Sumo Logic related metadata
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sourceprocessor
       source:
         collector: "kubernetes"
       
       ## The Sumo Logic Schema processor modifies the metadata on logs, metrics and traces sent to Sumo Logic
       ## so that the Sumo Logic apps can make full use of the ingested data.
-      ## ref: https://github.com/SumoLogic/sumologic-otel-collector/tree/main/pkg/processor/sumologicschemaprocessor
       sumologic_schema:
         add_cloud_namespace: false
       
