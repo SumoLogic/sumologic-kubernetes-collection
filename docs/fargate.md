@@ -929,7 +929,7 @@ Warning  LoggingDisabled  <unknown>  fargate-scheduler  Disabled logging because
 If when cloudwatch logs collection is enabled, you see the following error in the logs
 
 ```
-error    awscloudwatchreceiver@v0.76.1/logs.go:215    unable to retrieve logs from cloudwatch    {"kind": "receiver", "name": "awscloudwatch", "data_type" │
+error    awscloudwatchreceiver@v0.79.0/logs.go:215    unable to retrieve logs from cloudwatch    {"kind": "receiver", "name": "awscloudwatch", "data_type" │
 │ : "logs", "log group": "ameriprise-fargate-fluent", "error": "ResourceNotFoundException: The specified log group does not exist."}
 ```
 

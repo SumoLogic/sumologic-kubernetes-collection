@@ -297,14 +297,14 @@ data:
         log_statements:
         - context: log
           statements:
-          - set(body, ParseJSON(body)) where IsMatch(body, "^{") == true
+          - set(body, ParseJSON(body)) where IsMatch(body, "^{")
       transform/flatten:
         error_mode: ignore
         log_statements:
         - context: log
           statements:
-          - merge_maps(attributes, body, "insert") where IsMatch(body, "^{") == true
-          - set(body, "") where IsMatch(body, "^{") == true
+          - merge_maps(attributes, body, "insert") where IsMatch(body, "^{")
+          - set(body, "") where IsMatch(body, "^{")
       transform/remove_attributes:
         log_statements:
         - context: log

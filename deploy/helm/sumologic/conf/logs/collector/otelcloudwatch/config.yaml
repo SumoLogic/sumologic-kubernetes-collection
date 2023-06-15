@@ -33,9 +33,9 @@ processors:
     log_statements:
       - context: log
         statements:
-          - set(body, ParseJSON(body)) where IsMatch(body, "^{") == true
+          - set(body, ParseJSON(body)) where IsMatch(body, "^{")
           - merge_maps(attributes, body, "insert")
-          - set(body, "") where IsMatch(body, "^{") == true
+          - set(body, "") where IsMatch(body, "^{")
   transform/metadata:
     error_mode: ignore
     log_statements:
