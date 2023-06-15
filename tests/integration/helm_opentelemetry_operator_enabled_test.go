@@ -18,6 +18,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 )
 
@@ -31,6 +32,9 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		CheckSumologicSecret(2),
 		CheckTracesInstall,
 	}
+
+	expectedMetrics := internal.DefaultExpectedFluentdFluentbitMetrics
+	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
 
 	featInstall := GetInstallFeature(installChecks)
 
@@ -107,5 +111,5 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 		}).
 		Feature()
 
-	testenv.Test(t, featInstall, featTraces, featOpenTelemetryOperator)
+	testenv.Test(t, featInstall, featTraces, featOpenTelemetryOperator, featMetrics)
 }
