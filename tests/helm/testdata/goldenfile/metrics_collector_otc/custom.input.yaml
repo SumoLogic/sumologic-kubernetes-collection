@@ -26,6 +26,8 @@ sumologic:
         podLabels:
           podKey: podValue
         priorityClassName: customPriority
+        nodeSelector:
+          workingGroup: production
   podAnnotations:
     podAnnotationKey: podAnnotationValue
   podLabels:

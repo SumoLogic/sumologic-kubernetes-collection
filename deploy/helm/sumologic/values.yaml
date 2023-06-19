@@ -448,6 +448,8 @@ sumologic:
           targetCPUUtilizationPercentage: 100
           # targetMemoryUtilizationPercentage: 50
 
+        nodeSelector: {}
+
         ## Add custom annotations only to events fluentd sts pods
         podAnnotations: {}
         ## Add custom labels only to events fluentd sts pods

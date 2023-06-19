@@ -36,6 +36,10 @@ spec:
         {{ .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector | toYaml | nindent 8 }}
       podMonitorSelector: 
         {{ .Values.sumologic.metrics.collector.otelcol.podMonitorSelector | toYaml | nindent 8 }}
+{{- if .Values.sumologic.metrics.collector.otelcol.nodeSelector }}
+  nodeSelector:
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.nodeSelector | indent 4 }}
+{{- end }}
 {{- if .Values.sumologic.metrics.collector.otelcol.priorityClassName }}
   priorityClassName: {{ .Values.sumologic.metrics.collector.otelcol.priorityClassName | quote }}
 {{- end }}

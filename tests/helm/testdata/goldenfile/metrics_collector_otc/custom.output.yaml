@@ -33,6 +33,8 @@ spec:
         smkey: smvalue
       podMonitorSelector:
         pmkey: pmvalue
+  nodeSelector:
+    workingGroup: production
   priorityClassName: "customPriority"
   autoscaler:
     maxReplicas: 30
