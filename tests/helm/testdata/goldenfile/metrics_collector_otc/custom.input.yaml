@@ -32,6 +32,9 @@ sumologic:
           - key: null
             operator: Exists
             effect: "NoSchedule"
+        securityContext:
+          fsGroup: 999
+
   podAnnotations:
     podAnnotationKey: podAnnotationValue
   podLabels:

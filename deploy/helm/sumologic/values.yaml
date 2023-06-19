@@ -475,6 +475,7 @@ sumologic:
         ## Selector for PodMonitors used for target discovery.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
         podMonitorSelector: {}
+        securityContext: {}
         tolerations: []
 
     otelcol:

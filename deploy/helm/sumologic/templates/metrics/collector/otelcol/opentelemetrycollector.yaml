@@ -44,6 +44,10 @@ spec:
   tolerations:
 {{ toYaml .Values.sumologic.metrics.collector.otelcol.tolerations | indent 4 }}
 {{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.securityContext }}
+  securityContext:
+    {{- toYaml .Values.sumologic.metrics.collector.otelcol.securityContext | nindent 4 }}
+{{- end }}
 {{- if .Values.sumologic.metrics.collector.otelcol.priorityClassName }}
   priorityClassName: {{ .Values.sumologic.metrics.collector.otelcol.priorityClassName | quote }}
 {{- end }}

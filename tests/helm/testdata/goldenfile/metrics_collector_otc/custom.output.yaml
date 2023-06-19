@@ -39,6 +39,8 @@ spec:
     - effect: NoSchedule
       key: null
       operator: Exists
+  securityContext:
+    fsGroup: 999
   priorityClassName: "customPriority"
   autoscaler:
     maxReplicas: 30
