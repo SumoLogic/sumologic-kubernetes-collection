@@ -7,6 +7,7 @@ metadata:
   labels:
     {{- include "sumologic.labels.metrics.opentelemetrycollector" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
+    {{- include "sumologic.label.scrape" . | nindent 4 }}
 spec:
   mode: statefulset
   replicas: {{ .Values.sumologic.metrics.collector.otelcol.replicaCount }}

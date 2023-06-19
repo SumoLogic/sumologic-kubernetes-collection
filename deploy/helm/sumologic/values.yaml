@@ -528,9 +528,6 @@ sumologic:
           sumologic.com/app: fluentd-logs
         endpoints:
           - port: metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: fluentd-logs
@@ -540,9 +537,6 @@ sumologic:
           sumologic.com/app: otelcol-logs
         endpoints:
           - port: otelcol-metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: fluentd-logs
@@ -552,9 +546,6 @@ sumologic:
           sumologic.com/app: fluentd-metrics
         endpoints:
           - port: metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: fluentd-metrics
@@ -564,21 +555,25 @@ sumologic:
           sumologic.com/app: otelcol-metrics
         endpoints:
           - port: otelcol-metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: fluentd-metrics
+            sumologic.com/scrape: "true"
+      - name: collection-sumologic-metrics-collector
+        additionalLabels:
+          sumologic.com/app: otelcol-metrics
+        endpoints:
+          - port: monitoring
+        selector:
+          matchLabels:
+            sumologic.com/app: otelcol
+            sumologic.com/component: metrics
             sumologic.com/scrape: "true"
       - name: collection-sumologic-fluentd-events
         additionalLabels:
           sumologic.com/app: fluentd-events
         endpoints:
           - port: metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: fluentd-events
@@ -589,9 +584,6 @@ sumologic:
         endpoints:
           - port: http
             path: /api/v1/metrics/prometheus
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
         selector:
           matchLabels:
             app.kubernetes.io/name: fluent-bit
@@ -601,9 +593,6 @@ sumologic:
           sumologic.com/app: otelcol-logs-collector
         endpoints:
           - port: metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: otelcol-logs-collector
@@ -613,9 +602,6 @@ sumologic:
           sumologic.com/app: otelcol-events
         endpoints:
           - port: otelcol-metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/app: otelcol-events
@@ -625,9 +611,6 @@ sumologic:
           sumologic.com/app: otelcol
         endpoints:
           - port: metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
         selector:
           matchLabels:
             sumologic.com/component: instrumentation
@@ -636,9 +619,6 @@ sumologic:
         endpoints:
           - port: web
             path: /metrics
-        namespaceSelector:
-          matchNames:
-            - $(NAMESPACE)
         selector:
           matchLabels:
             operated-prometheus: "true"
