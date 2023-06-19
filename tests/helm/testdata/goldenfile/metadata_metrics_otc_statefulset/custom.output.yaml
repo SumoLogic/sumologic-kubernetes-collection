@@ -47,6 +47,8 @@ spec:
                     values:
                       - RELEASE-NAME-sumologic-otelcol-logs
                       - RELEASE-NAME-sumologic-otelcol-metrics
+                      - RELEASE-NAME-sumologic-otelcol-events
+                      - RELEASE-NAME-sumologic-otelcol-instrumentation
                   - key: app
                     operator: In
                     values:
@@ -68,7 +70,7 @@ spec:
       priorityClassName: "prio"
       containers:
         - name: otelcol
-          image: my_repository:my_tag
+          image: "my_repository:my_tag"
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/otel/config.yaml
@@ -163,8 +165,10 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-metrics-kube-state
+
             - name: NO_PROXY
               value: kubernetes.default.svc
+
             - name: VALUE_FROM_SECRET
               valueFrom:
                 secretKeyRef:

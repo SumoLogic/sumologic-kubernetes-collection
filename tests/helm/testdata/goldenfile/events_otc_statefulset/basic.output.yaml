@@ -24,13 +24,13 @@ spec:
         someAnnotation: someValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-events
+        sumologic.com/scrape: "true"
+        sumologic.com/app: otelcol-events
+        sumologic.com/component: events
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
         someLabel: someValue
-        sumologic.com/app: otelcol-events
-        sumologic.com/component: events
-        sumologic.com/scrape: "true"
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
       nodeSelector:
@@ -50,6 +50,8 @@ spec:
                     values:
                       - RELEASE-NAME-sumologic-otelcol-logs
                       - RELEASE-NAME-sumologic-otelcol-metrics
+                      - RELEASE-NAME-sumologic-otelcol-events
+                      - RELEASE-NAME-sumologic-otelcol-instrumentation
                   - key: app
                     operator: In
                     values:
@@ -124,8 +126,10 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-events
+
             - name: NO_PROXY
               value: kubernetes.default.svc
+
             - name: VALUE_FROM_SECRET
               valueFrom:
                 secretKeyRef:

@@ -487,3 +487,65 @@ Example Usage:
   value: {{ .Values.sumologic.noProxy }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Pod anti affinity "hard"
+
+'{{ include "pod-anti-affinity-hard" . }}'
+*/}}
+{{- define "pod-anti-affinity-hard" -}}
+podAntiAffinity:
+  requiredDuringSchedulingIgnoredDuringExecution:
+  - labelSelector:
+      matchExpressions:
+      - key: app
+        operator: In
+        values:
+{{- if eq (include "logs.enabled" .) "true" }}
+        - {{ template "sumologic.labels.app.logs.pod" . }}
+{{- end }}
+{{- if eq (include "metrics.enabled" .) "true" }}
+        - {{ template "sumologic.labels.app.metrics.pod" . }}
+{{- end }}
+{{- if eq (include "events.enabled" .) "true" }}
+        - {{ template "sumologic.labels.app.events.pod" . }}
+{{- end }}
+        - {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
+      - key: app
+        operator: In
+        values:
+        - prometheus-operator-prometheus
+    topologyKey: "kubernetes.io/hostname"
+{{- end -}}
+
+{{/*
+Pod anti affinity "soft"
+
+'{{ include "pod-anti-affinity-soft" . }}'
+*/}}
+{{- define "pod-anti-affinity-soft" -}}
+podAntiAffinity:
+  preferredDuringSchedulingIgnoredDuringExecution:
+  - weight: 100
+    podAffinityTerm:
+      labelSelector:
+        matchExpressions:
+        - key: app
+          operator: In
+          values:
+{{- if eq (include "logs.enabled" .) "true" }}
+          - {{ template "sumologic.labels.app.logs.pod" . }}
+{{- end }}
+{{- if eq (include "metrics.enabled" .) "true" }}
+          - {{ template "sumologic.labels.app.metrics.pod" . }}
+{{- end }}
+{{- if eq (include "events.enabled" .) "true" }}
+          - {{ template "sumologic.labels.app.events.pod" . }}
+{{- end }}
+          - {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
+        - key: app
+          operator: In
+          values:
+          - prometheus-operator-prometheus
+      topologyKey: "kubernetes.io/hostname"
+{{- end -}}

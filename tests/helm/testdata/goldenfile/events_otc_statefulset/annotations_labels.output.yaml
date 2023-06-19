@@ -25,13 +25,13 @@ spec:
         statefulsetAnnotation: statefulsetValue
       labels:
         app: RELEASE-NAME-sumologic-otelcol-events
+        sumologic.com/scrape: "true"
+        sumologic.com/app: otelcol-events
+        sumologic.com/component: events
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
         sumoLabel: sumoValue
-        sumologic.com/app: otelcol-events
-        sumologic.com/component: events
-        sumologic.com/scrape: "true"
         statefulsetLabel: statefulsetValue
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
@@ -46,7 +46,9 @@ spec:
                       operator: In
                       values:
                         - RELEASE-NAME-sumologic-otelcol-logs
+                        - RELEASE-NAME-sumologic-otelcol-metrics
                         - RELEASE-NAME-sumologic-otelcol-events
+                        - RELEASE-NAME-sumologic-otelcol-instrumentation
                     - key: app
                       operator: In
                       values:
@@ -60,7 +62,7 @@ spec:
         fsGroup: 999
       containers:
         - name: otelcol
-          image: my_repository:my_tag
+          image: "my_repository:my_tag"
           imagePullPolicy: IfNotPresent
           args:
             - --config=/etc/otel/config.yaml
@@ -112,6 +114,7 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-events
+
             - name: NO_PROXY
               value: kubernetes.default.svc
   volumeClaimTemplates:
