@@ -501,9 +501,15 @@ podAntiAffinity:
       - key: app
         operator: In
         values:
+{{- if eq (include "logs.enabled" .) "true" }}
         - {{ template "sumologic.labels.app.logs.pod" . }}
+{{- end }}
+{{- if eq (include "metrics.enabled" .) "true" }}
         - {{ template "sumologic.labels.app.metrics.pod" . }}
+{{- end }}
+{{- if eq (include "events.enabled" .) "true" }}
         - {{ template "sumologic.labels.app.events.pod" . }}
+{{- end }}
         - {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
       - key: app
         operator: In
@@ -527,9 +533,15 @@ podAntiAffinity:
         - key: app
           operator: In
           values:
+{{- if eq (include "logs.enabled" .) "true" }}
           - {{ template "sumologic.labels.app.logs.pod" . }}
+{{- end }}
+{{- if eq (include "metrics.enabled" .) "true" }}
           - {{ template "sumologic.labels.app.metrics.pod" . }}
+{{- end }}
+{{- if eq (include "events.enabled" .) "true" }}
           - {{ template "sumologic.labels.app.events.pod" . }}
+{{- end }}
           - {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
         - key: app
           operator: In
