@@ -12,6 +12,14 @@ metadata:
     release: "RELEASE-NAME"
     heritage: "Helm"
     sumologic.com/scrape: "true"
+
+    podLabelKey: podLabelValue
+
+    podKey: podValue
+  annotations:
+    podAnnotationKey: podAnnotationValue
+
+    annotationKey: annotationValue
 spec:
   mode: statefulset
   replicas: 3

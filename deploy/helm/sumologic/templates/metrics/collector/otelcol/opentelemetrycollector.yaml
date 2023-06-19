@@ -8,6 +8,21 @@ metadata:
     {{- include "sumologic.labels.metrics.opentelemetrycollector" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
     {{- include "sumologic.label.scrape" . | nindent 4 }}
+    {{- if .Values.sumologic.podLabels }}
+    {{ toYaml .Values.sumologic.podLabels | nindent 4 }}
+    {{- end }}
+    {{- if .Values.sumologic.metrics.collector.otelcol.podLabels }}
+    {{ toYaml .Values.sumologic.metrics.collector.otelcol.podLabels | nindent 4 }}
+    {{- end }}
+{{- if or .Values.sumologic.podAnnotations .Values.sumologic.metrics.collector.otelcol.podAnnotations }}
+  annotations:
+    {{- if .Values.sumologic.podAnnotations }}
+    {{ toYaml .Values.sumologic.podAnnotations | nindent 4 }}
+    {{- end }}
+    {{- if .Values.sumologic.metrics.collector.otelcol.podAnnotations }}
+    {{ toYaml .Values.sumologic.metrics.collector.otelcol.podAnnotations | nindent 4 }}
+    {{- end }}
+{{- end }}
 spec:
   mode: statefulset
   replicas: {{ .Values.sumologic.metrics.collector.otelcol.replicaCount }}

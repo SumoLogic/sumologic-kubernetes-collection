@@ -21,3 +21,11 @@ sumologic:
           smkey: smvalue
         podMonitorSelector:
           pmkey: pmvalue
+        podAnnotations:
+          annotationKey: annotationValue
+        podLabels:
+          podKey: podValue
+  podAnnotations:
+    podAnnotationKey: podAnnotationValue
+  podLabels:
+    podLabelKey: podLabelValue
