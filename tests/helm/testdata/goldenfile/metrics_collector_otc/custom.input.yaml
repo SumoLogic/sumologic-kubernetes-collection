@@ -39,3 +39,20 @@ sumologic:
     podAnnotationKey: podAnnotationValue
   podLabels:
     podLabelKey: podLabelValue
+
+metadata:
+  metrics:
+    statefulset:
+      extraEnvVars:
+        - name: VALUE_FROM_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: secret_name
+              key: secret_key
+  persistence:
+    enabled: true
+    pvcLabels:
+      pvcLabel: pvcValue
+    accessMode: "mode"
+    storageClass: "my-class"
+    size: 123Gi

@@ -91,6 +91,12 @@ spec:
 
     - name: NO_PROXY
       value: kubernetes.default.svc
+
+    - name: VALUE_FROM_SECRET
+      valueFrom:
+        secretKeyRef:
+          key: secret_key
+          name: secret_name
   ports:
     - name: pprof
       port: 1777
@@ -112,12 +118,14 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: file-storage
+        labels:
+          pvcLabel: pvcValue
       spec:
-        accessModes: [ReadWriteOnce]
-        storageClassName:
+        accessModes: [mode]
+        storageClassName: my-class
         resources:
           requests:
-            storage: 10Gi
+            storage: 123Gi
   config: |
     exporters:
       sumologic/apiserver:
