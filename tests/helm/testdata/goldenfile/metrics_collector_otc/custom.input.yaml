@@ -28,6 +28,10 @@ sumologic:
         priorityClassName: customPriority
         nodeSelector:
           workingGroup: production
+        tolerations:
+          - key: null
+            operator: Exists
+            effect: "NoSchedule"
   podAnnotations:
     podAnnotationKey: podAnnotationValue
   podLabels:

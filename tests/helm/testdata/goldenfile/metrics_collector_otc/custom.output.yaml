@@ -35,6 +35,10 @@ spec:
         pmkey: pmvalue
   nodeSelector:
     workingGroup: production
+  tolerations:
+    - effect: NoSchedule
+      key: null
+      operator: Exists
   priorityClassName: "customPriority"
   autoscaler:
     maxReplicas: 30

@@ -40,6 +40,10 @@ spec:
   nodeSelector:
 {{ toYaml .Values.sumologic.metrics.collector.otelcol.nodeSelector | indent 4 }}
 {{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.tolerations }}
+  tolerations:
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.tolerations | indent 4 }}
+{{- end }}
 {{- if .Values.sumologic.metrics.collector.otelcol.priorityClassName }}
   priorityClassName: {{ .Values.sumologic.metrics.collector.otelcol.priorityClassName | quote }}
 {{- end }}
