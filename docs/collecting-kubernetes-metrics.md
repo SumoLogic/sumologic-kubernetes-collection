@@ -8,8 +8,8 @@ By default, we collect selected metrics from the following Kubernetes components
 - `CoreDNS` configured with `kube-prometheus-stack.coreDns.serviceMonitor`
 - `Kube EtcD` configured with `kube-prometheus-stack.kubeEtcd.serviceMonitor`
 - `Kube Scheduler` configured with `kube-prometheus-stack.kubeScheduler.serviceMonitor`
-- `Kube State Metrics` configured with `kube-prometheus-stack.kubeStateMetrics.serviceMonitor`
-- `Prometheus Node Exporter` configured with `kube-prometheus-stack.nodeExporter.serviceMonitor`
+- `Kube State Metrics` configured with `kube-prometheus-stack.kube-state-metrics.prometheus.monitor`
+- `Prometheus Node Exporter` configured with `kube-prometheus-stack.prometheus-node-exporter.prometheus.monitor`
 
 If you want to forward additional metric from one of these services, you need to make two configuration changes:
 
