@@ -14,10 +14,8 @@ data:
   config.yaml: |
     exporters:
       sumologic:
+        clear_logs_timestamp: false
         endpoint: ${SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE}
-        json_logs:
-          add_timestamp: true
-          timestamp_key: timestamp
         log_format: json
         sending_queue:
           enabled: true
@@ -45,6 +43,11 @@ data:
         source_name: testSourceName
       sumologic_schema:
         add_cloud_namespace: false
+      transform/add_timestamp:
+        log_statements:
+        - context: log
+          statements:
+          - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
     receivers:
       raw_k8s_events: {}
     service:
@@ -60,6 +63,7 @@ data:
           - resource/add_cluster
           - source
           - sumologic_schema
+          - transform/add_timestamp
           - batch
           receivers:
           - raw_k8s_events

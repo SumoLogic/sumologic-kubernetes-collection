@@ -1,10 +1,8 @@
 exporters:
   sumologic:
-    endpoint: ${SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE}
-    json_logs:
-      add_timestamp: true
-      timestamp_key: timestamp
-    log_format: json
+    endpoint: {{ include "sumologic.events.exporter.endpoint" . }}
+    log_format: {{ include "sumologic.events.exporter.format" . }}
+    clear_logs_timestamp: false # this only affects the otlp format
     sending_queue:
       enabled: true
 {{- if .Values.sumologic.events.persistence.enabled }}
@@ -42,6 +40,13 @@ processors:
   sumologic_schema:
     add_cloud_namespace: false
 
+  ## Add timestamp to attributes
+  transform/add_timestamp:
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
+
 receivers:
   raw_k8s_events: {}
 
@@ -61,6 +66,7 @@ service:
         - resource/add_cluster
         - source
         - sumologic_schema
+        - transform/add_timestamp
         - batch
       receivers:
         - raw_k8s_events

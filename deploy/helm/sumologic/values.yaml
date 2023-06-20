@@ -215,6 +215,11 @@ sumologic:
               ## Ensures that timestamp key has precedence over timestamp auto discovery
               - format: epoch
                 locator: '\"timestamp\":(\\d+)'
+        default-otlp:
+          name: events-otlp
+          config-name: endpoint-events-otlp
+          properties:
+            content_type: Otlp
       traces:
         default:
           name: traces
@@ -260,6 +265,8 @@ sumologic:
         ## Add custom labels to otelcol event statefulset PVC
         pvcLabels: {}
         # storageClass:
+
+    sourceType: http
 
   ### Logs configuration
   ## Set the enabled flag to false for disabling logs ingestion altogether.

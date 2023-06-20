@@ -127,3 +127,29 @@ Return the otelcol events image
 {{- define "sumologic.events.image" -}}
 {{ template "utils.getOtelImage" (dict "overrideImage" .Values.otelevents.image "defaultImage" .Values.sumologic.otelcolImage) }}
 {{- end -}}
+
+{{/*
+Return the events otel exporter endpoint
+*/}}
+{{- define "sumologic.events.exporter.endpoint" -}}
+{{- if eq .Values.sumologic.events.sourceType "http" -}}
+${SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE}
+{{- else if eq .Values.sumologic.events.sourceType "otlp" -}}
+${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
+{{- else -}}
+{{- fail "`sumologic.events.sourceType` can only be `http` or `otlp`" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the events otel exporter format
+*/}}
+{{- define "sumologic.events.exporter.format" -}}
+{{- if eq .Values.sumologic.events.sourceType "http" -}}
+json
+{{- else if eq .Values.sumologic.events.sourceType "otlp" -}}
+otlp
+{{- else -}}
+{{- fail "`sumologic.events.sourceType` can only be `http` or `otlp`" -}}
+{{- end -}}
+{{- end -}}
