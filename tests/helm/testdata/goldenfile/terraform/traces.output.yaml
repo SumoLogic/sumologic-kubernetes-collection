@@ -345,6 +345,7 @@ data:
     locals {
       default_metrics_source                      = "(default-metrics)"
       default_traces_source                       = "traces"
+      default_otlp_traces_source                  = "traces-otlp"
     }
   main.tf: |
     terraform {
@@ -467,6 +468,12 @@ data:
         content_type = "Zipkin"
     }
 
+    resource "sumologic_http_source" "default_otlp_traces_source" {
+        name         = local.default_otlp_traces_source
+        collector_id = sumologic_collector.collector.id
+        content_type = "Otlp"
+    }
+
     resource "kubernetes_secret" "sumologic_collection_secret" {
       metadata {
         name = "sumologic"
@@ -476,6 +483,7 @@ data:
       data = {
         endpoint-metrics                          = sumologic_http_source.default_metrics_source.url
         endpoint-traces                           = sumologic_http_source.default_traces_source.url
+        endpoint-traces-otlp                      = sumologic_http_source.default_otlp_traces_source.url
       }
 
       type = "Opaque"
@@ -609,6 +617,7 @@ data:
     true  # prevent to render empty if; then
     terraform import sumologic_http_source.default_metrics_source "${COLLECTOR_NAME}/(default-metrics)"
     terraform import sumologic_http_source.default_traces_source "${COLLECTOR_NAME}/traces"
+    terraform import sumologic_http_source.default_otlp_traces_source "${COLLECTOR_NAME}/traces-otlp"
     fi
 
     # Kubernetes Secret

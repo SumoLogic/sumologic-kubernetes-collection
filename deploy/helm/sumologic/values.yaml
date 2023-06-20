@@ -221,6 +221,11 @@ sumologic:
           config-name: endpoint-traces
           properties:
             content_type: Zipkin
+        default-otlp:
+          name: traces-otlp
+          config-name: endpoint-traces-otlp
+          properties:
+            content_type: Otlp
 
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:

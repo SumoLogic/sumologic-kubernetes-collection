@@ -6,4 +6,10 @@ sumologic:
   logs:
     sourceType: otlp
   traces:
-    enabled: false
+    enabled: true
+
+tracesSampler:
+  config:
+    exporters:
+      otlphttp:
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}/v1/traces

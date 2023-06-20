@@ -28,7 +28,7 @@ func Test_Helm_OpenTelemetry_Operator_Enabled(t *testing.T) {
 	)
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(2),
+		CheckSumologicSecret(3),
 		CheckTracesInstall,
 	}
 

@@ -13,7 +13,7 @@ func Test_Helm_Default_OT(t *testing.T) {
 	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(12),
+		CheckSumologicSecret(13),
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,
