@@ -1,6 +1,7 @@
 sumologic:
   events:
     provider: otelcol
+    sourceType: otlp
   podAnnotations:
     sumoAnnotation: sumoValue
   podLabels:

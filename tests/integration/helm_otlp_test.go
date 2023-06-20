@@ -10,9 +10,10 @@ import (
 func Test_Helm_OTLP(t *testing.T) {
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(5),
+		CheckSumologicSecret(7),
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolLogsCollectorInstall,
+		CheckOtelcolEventsInstall,
 	}
 
 	featInstall := GetInstallFeature(installChecks)
@@ -21,5 +22,7 @@ func Test_Helm_OTLP(t *testing.T) {
 
 	featTraces := GetTracesFeature()
 
-	testenv.Test(t, featInstall, featLogs, featTraces)
+	featEvents := GetEventsFeature()
+
+	testenv.Test(t, featInstall, featLogs, featEvents, featTraces)
 }

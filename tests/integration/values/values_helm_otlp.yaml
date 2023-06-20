@@ -2,7 +2,7 @@ sumologic:
   metrics:
     enabled: false
   events:
-    enabled: false
+    sourceType: otlp
   logs:
     sourceType: otlp
   traces:
