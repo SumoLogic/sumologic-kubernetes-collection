@@ -42,6 +42,11 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-traces
+            - name: SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-traces-otlp
 
             - name: NO_PROXY
               value: kubernetes.default.svc

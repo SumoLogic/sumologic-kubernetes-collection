@@ -356,6 +356,7 @@ data:
       state_metrics_source                        = "kube-state-metrics"
       test_source_metrics_source                  = "(Test source)"
       default_traces_source                       = "traces"
+      default_otlp_traces_source                  = "traces-otlp"
     }
   main.tf: |
     terraform {
@@ -582,6 +583,12 @@ data:
         content_type = "Zipkin"
     }
 
+    resource "sumologic_http_source" "default_otlp_traces_source" {
+        name         = local.default_otlp_traces_source
+        collector_id = sumologic_collector.collector.id
+        content_type = "Otlp"
+    }
+
     resource "kubernetes_secret" "sumologic_collection_secret" {
       metadata {
         name = "sumologic"
@@ -602,6 +609,7 @@ data:
         endpoint-metrics-kube-state               = sumologic_http_source.state_metrics_source.url
         endpoint-test_source_metrics_source       = sumologic_http_source.test_source_metrics_source.url
         endpoint-traces                           = sumologic_http_source.default_traces_source.url
+        endpoint-traces-otlp                      = sumologic_http_source.default_otlp_traces_source.url
       }
 
       type = "Opaque"
@@ -746,6 +754,7 @@ data:
     terraform import sumologic_http_source.state_metrics_source "${COLLECTOR_NAME}/kube-state-metrics"
     terraform import sumologic_http_source.test_source_metrics_source "${COLLECTOR_NAME}/(Test source)"
     terraform import sumologic_http_source.default_traces_source "${COLLECTOR_NAME}/traces"
+    terraform import sumologic_http_source.default_otlp_traces_source "${COLLECTOR_NAME}/traces-otlp"
     fi
 
     # Kubernetes Secret

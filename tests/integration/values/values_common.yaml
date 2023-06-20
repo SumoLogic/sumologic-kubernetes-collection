@@ -104,7 +104,7 @@ tracesSampler:
     # Default otlp pipeline from values.yaml is used.
     exporters:
       otlphttp:
-        traces_endpoint: http://receiver-mock.receiver-mock:3000/receiver/v1/traces
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}/v1/traces
   deployment:
     replicas: 1
     resources:

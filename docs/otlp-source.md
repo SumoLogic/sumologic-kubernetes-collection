@@ -21,6 +21,18 @@ sumologic:
 
 **Note:** The source is automatically created during Chart installation. This setting simply makes the Chart start sending data to it.
 
+### Enabling the OTLP source for traces
+
+Add the following to your configuration:
+
+```yaml
+tracesSampler:
+  config:
+    exporters:
+      otlphttp:
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}
+```
+
 ## Benefits
 
 Sending data directly via OTLP is more efficient, as we skip the conversion step. OTLP is also a binary-encoded format, which improves the
