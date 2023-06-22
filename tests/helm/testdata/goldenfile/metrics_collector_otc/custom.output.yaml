@@ -21,6 +21,10 @@ spec:
     enabled: true
     prometheusCR:
       enabled: true
+      serviceMonitorSelector:
+        smkey: smvalue
+      podMonitorSelector:
+        pmkey: pmvalue
   autoscaler:
     maxReplicas: 30
     minReplicas: 15

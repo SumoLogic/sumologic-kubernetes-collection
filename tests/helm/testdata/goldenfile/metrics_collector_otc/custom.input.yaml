@@ -17,3 +17,7 @@ sumologic:
           requests:
             memory: 1Gi
             cpu: 1000m
+        serviceMonitorSelector:
+          smkey: smvalue
+        podMonitorSelector:
+          pmkey: pmvalue

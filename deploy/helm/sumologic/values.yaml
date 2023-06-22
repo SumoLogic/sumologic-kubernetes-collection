@@ -458,6 +458,14 @@ sumologic:
             memory: 768Mi
             cpu: 500m
 
+        ## Selector for ServiceMonitors used for target discovery.
+        ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
+        serviceMonitorSelector: {}
+
+        ## Selector for PodMonitors used for target discovery.
+        ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
+        podMonitorSelector: {}
+
     otelcol:
       ## Includes additional processors into pipelines.
       ## It can be used for filtering metrics, renaming, changing metadata and so on.
