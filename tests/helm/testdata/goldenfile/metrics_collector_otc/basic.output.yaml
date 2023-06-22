@@ -21,6 +21,8 @@ spec:
     enabled: true
     prometheusCR:
       enabled: true
+      serviceMonitorSelector: {}
+      podMonitorSelector: {}
   env:
     - name: SUMO_ENDPOINT_APISERVER_METRICS_SOURCE
       valueFrom:
