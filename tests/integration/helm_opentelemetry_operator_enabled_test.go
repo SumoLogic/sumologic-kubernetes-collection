@@ -1,3 +1,6 @@
+//go:build allversions
+// +build allversions
+
 package integration
 
 import (

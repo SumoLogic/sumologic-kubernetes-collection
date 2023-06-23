@@ -57,6 +57,14 @@ This will:
 > | ------------------------------- | --------------------------------------------- |
 > | `Test_Helm_Default_OT_Metadata` | `values/values_helm_default_ot_metadata.yaml` |
 
+## Build tags and CI
+
+Tests are tagged with either `allreleases` or `onlylatest`. This determines whether the CI will run them on all supported K8s versions, or
+just the latest one.
+
+The `allreleases` tag is reserved for tests checking basic functionality - the rest should use `onlylatest` to prevent an explosion of CI
+test runs.
+
 ## Using pre-existing clusters
 
 You should pay special care when reusing clusters across test runs since left over artifacts in clusters might cause false positives or
@@ -157,9 +165,8 @@ or
 make test TEST_NAME="Test_Helm_Default_OT_Metadata" TEST_ARGS="--feature '(installation)'"
 ```
 
-[sig_e2e_testing_harness]: https://github.com/kubernetes-sigs/e2e-framework/blob/main/docs/design/test-harness-framework.md
-[sig_e2e_testing_harness_filtering_tests]:
-  https://github.com/kubernetes-sigs/e2e-framework/blob/fee1391aeccdc260069bd5e0b25c6b187c2293c4/docs/design/test-harness-framework.md#filtering-feature-tests
+[sig_e2e_testing_harness]: https://github.com/kubernetes-sigs/e2e-framework/tree/main/docs/design
+[sig_e2e_testing_harness_filtering_tests]: https://github.com/kubernetes-sigs/e2e-framework/tree/main/docs/design#filtering-feature-tests
 
 ## K8s node images matrix
 
