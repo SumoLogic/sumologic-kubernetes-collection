@@ -62,7 +62,7 @@ spec:
 {{- if .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled }}
       - name: file-storage
         persistentVolumeClaim:
-          claimName: file-storage-sumo-sumologic-otelcol-logs-0
+          claimName: {{ template "sumologic.labels.app.logs.cloudwatch.pvc" . }}
 {{- end }}
       securityContext:
         {{- toYaml .Values.metadata.securityContext | nindent 8 }}
