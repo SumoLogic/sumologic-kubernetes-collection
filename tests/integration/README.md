@@ -59,11 +59,13 @@ This will:
 
 ## Build tags and CI
 
-Tests are tagged with either `allreleases` or `onlylatest`. This determines whether the CI will run them on all supported K8s versions, or
+Tests are tagged with either `allversions` or `onlylatest`. This determines whether the CI will run them on all supported K8s versions, or
 just the latest one.
 
-The `allreleases` tag is reserved for tests checking basic functionality - the rest should use `onlylatest` to prevent an explosion of CI
+The `allversions` tag is reserved for tests checking basic functionality - the rest should use `onlylatest` to prevent an explosion of CI
 test runs.
+
+> **Note** Tests in files without a build tag will not be run by the CI or make targets.
 
 ## Using pre-existing clusters
 
