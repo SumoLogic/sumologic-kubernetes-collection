@@ -480,7 +480,10 @@ sumologic:
         ## Selector for PodMonitors used for target discovery.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
         podMonitorSelector: {}
-        securityContext: {}
+        securityContext:
+          ## The group ID of all processes in the statefulset containers. This can be anything, but it does need to be set.
+          ## The default is 0 (root), and containers don't have write permissions for volumes in that case.
+          fsGroup: 999
         tolerations: []
 
     otelcol:
@@ -3871,8 +3874,8 @@ metadata:
     pullPolicy: IfNotPresent
 
   securityContext:
-    ## ToDo: Verify following comment
-    ## The group ID of all processes in the statefulset containers. By default this needs to be otelcol(999).
+    ## The group ID of all processes in the statefulset containers. This can be anything, but it does need to be set.
+    ## The default is 0 (root), and containers don't have write permissions for volumes in that case.
     fsGroup: 999
 
   ## Add custom labels to all otelcol sts pods(logs and metrics)
@@ -4279,8 +4282,8 @@ otelevents:
     podAnnotations: {}
 
     securityContext:
-      ## ToDo: Verify following comment
-      ## The group ID of all processes in the statefulset containers. By default this needs to be otelcol(999).
+      ## The group ID of all processes in the statefulset containers. This can be anything, but it does need to be set.
+      ## The default is 0 (root), and containers don't have write permissions for volumes in that case.
       fsGroup: 999
 
     ## Set securityContext for containers running in pods in events statefulset.

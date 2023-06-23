@@ -67,6 +67,8 @@ spec:
 
     - name: NO_PROXY
       value: kubernetes.default.svc
+  podSecurityContext:
+    fsGroup: 999
   ports:
     - name: pprof
       port: 1777
