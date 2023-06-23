@@ -39,8 +39,6 @@ spec:
     - effect: NoSchedule
       key: null
       operator: Exists
-  securityContext:
-    fsGroup: 999
   priorityClassName: "customPriority"
   autoscaler:
     maxReplicas: 30
@@ -97,6 +95,8 @@ spec:
         secretKeyRef:
           key: secret_key
           name: secret_name
+  podSecurityContext:
+    fsGroup: 999
   ports:
     - name: pprof
       port: 1777
