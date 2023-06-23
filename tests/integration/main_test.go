@@ -32,30 +32,34 @@ const (
 var testenv env.Environment
 
 func TestMain(m *testing.M) {
-	if err := internal.InitializeConstants(); err != nil {
-		log.Fatalf("failed initializing constants: %v", err)
-	}
-
 	cfg, err := envconf.NewFromFlags()
 	if err != nil {
 		log.Fatalf("envconf.NewFromFlags() failed: %s", err)
 	}
 
-	if useKubeConfig := os.Getenv(envNameUseKubeConfig); len(useKubeConfig) > 0 {
-		kubeconfig := os.Getenv(envNameKubeConfig)
+	testenv = env.NewWithConfig(cfg)
 
-		cfg.WithKubeconfigFile(kubeconfig)
-		testenv = env.NewWithConfig(cfg).
-			BeforeEachTest(InjectKubectlOptionsFromKubeconfig(kubeconfig))
+	if !cfg.DryRunMode() {
 
-		ConfigureTestEnv(testenv)
-	} else {
-		testenv = env.NewWithConfig(cfg)
+		if err := internal.InitializeConstants(); err != nil {
+			log.Fatalf("failed initializing constants: %v", err)
+		}
 
-		testenv.BeforeEachTest(CreateKindCluster())
-		ConfigureTestEnv(testenv)
-		testenv.AfterEachTest(DestroyKindCluster())
-		testenv.Finish(DestroyActiveKindClusters)
+		if useKubeConfig := os.Getenv(envNameUseKubeConfig); len(useKubeConfig) > 0 {
+			kubeconfig := os.Getenv(envNameKubeConfig)
+
+			cfg.WithKubeconfigFile(kubeconfig)
+			testenv = testenv.
+				BeforeEachTest(InjectKubectlOptionsFromKubeconfig(kubeconfig))
+
+			ConfigureTestEnv(testenv)
+		} else {
+
+			testenv.BeforeEachTest(CreateKindCluster())
+			ConfigureTestEnv(testenv)
+			testenv.AfterEachTest(DestroyKindCluster())
+			testenv.Finish(DestroyActiveKindClusters)
+		}
 	}
 
 	os.Exit(testenv.Run(m))

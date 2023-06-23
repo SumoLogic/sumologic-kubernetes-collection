@@ -4,6 +4,7 @@ KIND_NODE_IMAGE ?= $(shell jq '.default' kind_images.json)
 CLUSTER_NAME ?= sumologic
 IMAGE_ARCHIVE ?= images.tar
 KUBE_CONFIG := $(shell mktemp)
+GOTAGS ?= allversions,onlylatest
 
 .PHONY: create-cluster
 create-cluster:
@@ -21,7 +22,7 @@ delete-cluster:
 .PHONY: test
 test:
 	KIND_NODE_IMAGE=$(KIND_NODE_IMAGE) \
-		go test -timeout 30m -v -count 1 -run=$(TEST_NAME) . -args $(TEST_ARGS)
+		go test -timeout 30m -v -count 1 -tags=$(GOTAGS) -run=$(TEST_NAME) . -args $(TEST_ARGS)
 
 .PHONY: create-image-archive
 create-image-archive:
@@ -42,3 +43,15 @@ install-golangci-lint:
 .PHONY: golint
 golint:
 	$(LINT) run --verbose
+
+# Test listing utilities, used in CI
+.PHONY: list-tests
+list-tests: list-tests-allversions list-tests-onlylatest
+
+.PHONY: list-tests-allversions
+list-tests-allversions:
+	@go test -list '.*' -tags "allversions" -args --dry-run | head -n -1
+
+.PHONY: list-tests-onlylatest
+list-tests-onlylatest:
+	@go test -list '.*' -tags "onlylatest" -args --dry-run | head -n -1

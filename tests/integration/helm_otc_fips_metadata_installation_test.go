@@ -1,3 +1,6 @@
+//go:build onlylatest
+// +build onlylatest
+
 package integration
 
 import (
