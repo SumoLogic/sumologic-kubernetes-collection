@@ -198,7 +198,7 @@ for (( counter=0; counter<"${LOG_PODS}"; counter++ )); do
     aws efs describe-access-points \
       --region "${AWS_REGION}" |
     jq ".AccessPoints[] |
-      select(.RootDirectory.Path == \"/sumologic/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-log-${counter}\") |
+      select(.RootDirectory.Path == \"/sumologic/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-logs-${counter}\") |
       .AccessPointId" \
       --raw-output)"
 
@@ -206,7 +206,7 @@ for (( counter=0; counter<"${LOG_PODS}"; counter++ )); do
     aws efs create-access-point \
         --file-system-id "${EFS_ID}" \
         --posix-user Uid=1000,Gid=1000 \
-        --root-directory "Path=/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-log-${counter},CreationInfo={OwnerUid=1000,OwnerGid=1000,Permissions=777}" \
+        --root-directory "Path=/${NAMESPACE}/file-storage-${HELM_INSTALLATION_NAME}-sumologic-otelcol-logs-${counter},CreationInfo={OwnerUid=1000,OwnerGid=1000,Permissions=777}" \
         --region "${AWS_REGION}"
   fi
 done
