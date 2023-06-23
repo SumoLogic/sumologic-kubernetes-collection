@@ -229,8 +229,7 @@ Return the exporters for kubelet log pipeline.
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.cloudwatch.pvc" -}}
-{{- $namespace := printf "%s" ( include "sumologic.namespace" .  ) | quote -}}
-{{- printf "file-storage-%s-sumologic-otelcol-logs-0" $namespace -}}
+{{- printf "file-storage-%s-sumologic-otelcol-logs-0" .Release.Name -}}
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs.pod" -}}

@@ -36,7 +36,7 @@ spec:
           name: otelcol-config
         - name: file-storage
           persistentVolumeClaim:
-            claimName: file-storage-sumo-sumologic-otelcol-logs-0
+            claimName: file-storage-RELEASE-NAME-sumologic-otelcol-logs-0
       securityContext:
         fsGroup: 999
       containers:
