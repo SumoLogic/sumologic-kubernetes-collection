@@ -14,7 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
-        if: needs.docs-changed.outputs.any_changed == 'true'
         with:
           config-file: ".markdown_link_check.json"
           use-quiet-mode: yes
@@ -26,54 +25,6 @@ jobs:
       - name: Push dev helm chart
         run: make push-helm-chart
 
-  # Add this to dev builds as that's the only way for cache to be shared across branches.
-  # https://docs.github.com/en/actions/advanced-guides/caching-dependencies-to-speed-up-workflows#matching-a-cache-key
-  setup-integration-tests:
-    runs-on: ubuntu-22.04
-    outputs:
-      kind_images: ${{ steps.set_kind_images.outputs.kind_images }}
-      test_names: ${{ steps.set_test_names.outputs.test_names }}
-    steps:
-      - uses: actions/checkout@v3
-      - id: set_kind_images
-        name: Set kind images
-        working-directory: ./tests/integration/
-        run: |
-          echo "kind_images=$(jq -cM '.supported' kind_images.json)" >> $GITHUB_OUTPUT
-      - name: Print kind images
-        run: echo "Kind images ${{ steps.set_kind_images.outputs.kind_images }}"
-      - id: set_test_names
-        name: Set test names
-        working-directory: ./tests/integration/
-        # grep magic described in https://unix.stackexchange.com/a/13472
-        run: |
-          echo "test_names=$(grep -shoP "(?<=^func )(Test[a-zA-z_0-9]+)(?=\(t \*testing.T\) {)" * | jq -R . | jq -cs .)" >> $GITHUB_OUTPUT
-      - name: Print test names
-        run: echo "Test names ${{ steps.set_test_names.outputs.test_names }}"
-
   integration-tests:
-    runs-on: ubuntu-22.04
-    name: IT - ${{ matrix.test_name }} - ${{ matrix.kind_image }}
-    needs:
-      - setup-integration-tests
-    strategy:
-      matrix:
-        kind_image: ${{ fromJSON(needs.setup-integration-tests.outputs.kind_images) }}
-        test_name: ${{ fromJSON(needs.setup-integration-tests.outputs.test_names) }}
-    env:
-      KIND_VERSION: 0.17.0
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup go
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.20"
-          cache-dependency-path: "**/go.sum"
-      - name: Setup kind
-        run: |
-          curl --retry 10 --retry-max-time 120 --retry-delay 5 -Lo ./kind https://kind.sigs.k8s.io/dl/v${{env.KIND_VERSION}}/kind-linux-amd64
-          chmod +x ./kind
-          sudo mv ./kind /usr/local/bin/kind
-      - name: Run integration test - ${{ matrix.test_name }}
-        working-directory: ./tests/integration/
-        run: make test TEST_NAME=^${{matrix.test_name}}$ KIND_NODE_IMAGE=${{matrix.kind_image}}
+    name: Integration Testsś
+    uses: ./.github/workflows/workflow-integration-tests.yaml
