@@ -21,3 +21,38 @@ sumologic:
           smkey: smvalue
         podMonitorSelector:
           pmkey: pmvalue
+        podAnnotations:
+          annotationKey: annotationValue
+        podLabels:
+          podKey: podValue
+        priorityClassName: customPriority
+        nodeSelector:
+          workingGroup: production
+        tolerations:
+          - key: null
+            operator: Exists
+            effect: "NoSchedule"
+        securityContext:
+          fsGroup: 999
+
+  podAnnotations:
+    podAnnotationKey: podAnnotationValue
+  podLabels:
+    podLabelKey: podLabelValue
+
+metadata:
+  metrics:
+    statefulset:
+      extraEnvVars:
+        - name: VALUE_FROM_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: secret_name
+              key: secret_key
+  persistence:
+    enabled: true
+    pvcLabels:
+      pvcLabel: pvcValue
+    accessMode: "mode"
+    storageClass: "my-class"
+    size: 123Gi

@@ -12,6 +12,14 @@ metadata:
     release: "RELEASE-NAME"
     heritage: "Helm"
     sumologic.com/scrape: "true"
+
+    podLabelKey: podLabelValue
+
+    podKey: podValue
+  annotations:
+    podAnnotationKey: podAnnotationValue
+
+    annotationKey: annotationValue
 spec:
   mode: statefulset
   replicas: 3
@@ -25,6 +33,15 @@ spec:
         smkey: smvalue
       podMonitorSelector:
         pmkey: pmvalue
+  nodeSelector:
+    workingGroup: production
+  tolerations:
+    - effect: NoSchedule
+      key: null
+      operator: Exists
+  securityContext:
+    fsGroup: 999
+  priorityClassName: "customPriority"
   autoscaler:
     maxReplicas: 30
     minReplicas: 15
@@ -74,6 +91,12 @@ spec:
 
     - name: NO_PROXY
       value: kubernetes.default.svc
+
+    - name: VALUE_FROM_SECRET
+      valueFrom:
+        secretKeyRef:
+          key: secret_key
+          name: secret_name
   ports:
     - name: pprof
       port: 1777
@@ -95,12 +118,14 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: file-storage
+        labels:
+          pvcLabel: pvcValue
       spec:
-        accessModes: [ReadWriteOnce]
-        storageClassName:
+        accessModes: [mode]
+        storageClassName: my-class
         resources:
           requests:
-            storage: 10Gi
+            storage: 123Gi
   config: |
     exporters:
       sumologic/apiserver:

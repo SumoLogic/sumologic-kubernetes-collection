@@ -8,6 +8,21 @@ metadata:
     {{- include "sumologic.labels.metrics.opentelemetrycollector" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
     {{- include "sumologic.label.scrape" . | nindent 4 }}
+    {{- if .Values.sumologic.podLabels }}
+    {{ toYaml .Values.sumologic.podLabels | nindent 4 }}
+    {{- end }}
+    {{- if .Values.sumologic.metrics.collector.otelcol.podLabels }}
+    {{ toYaml .Values.sumologic.metrics.collector.otelcol.podLabels | nindent 4 }}
+    {{- end }}
+{{- if or .Values.sumologic.podAnnotations .Values.sumologic.metrics.collector.otelcol.podAnnotations }}
+  annotations:
+    {{- if .Values.sumologic.podAnnotations }}
+    {{ toYaml .Values.sumologic.podAnnotations | nindent 4 }}
+    {{- end }}
+    {{- if .Values.sumologic.metrics.collector.otelcol.podAnnotations }}
+    {{ toYaml .Values.sumologic.metrics.collector.otelcol.podAnnotations | nindent 4 }}
+    {{- end }}
+{{- end }}
 spec:
   mode: statefulset
   replicas: {{ .Values.sumologic.metrics.collector.otelcol.replicaCount }}
@@ -21,6 +36,21 @@ spec:
         {{ .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector | toYaml | nindent 8 }}
       podMonitorSelector: 
         {{ .Values.sumologic.metrics.collector.otelcol.podMonitorSelector | toYaml | nindent 8 }}
+{{- if .Values.sumologic.metrics.collector.otelcol.nodeSelector }}
+  nodeSelector:
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.nodeSelector | indent 4 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.tolerations }}
+  tolerations:
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.tolerations | indent 4 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.securityContext }}
+  securityContext:
+    {{- toYaml .Values.sumologic.metrics.collector.otelcol.securityContext | nindent 4 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.priorityClassName }}
+  priorityClassName: {{ .Values.sumologic.metrics.collector.otelcol.priorityClassName | quote }}
+{{- end }}
 {{- if .Values.sumologic.metrics.collector.otelcol.autoscaling.enabled }}
   autoscaler:
     maxReplicas: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.maxReplicas }}

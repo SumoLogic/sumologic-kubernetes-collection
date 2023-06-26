@@ -448,6 +448,16 @@ sumologic:
           targetCPUUtilizationPercentage: 100
           # targetMemoryUtilizationPercentage: 50
 
+        nodeSelector: {}
+
+        ## Add custom annotations only to events fluentd sts pods
+        podAnnotations: {}
+        ## Add custom labels only to events fluentd sts pods
+        podLabels: {}
+
+        ## Option to define priorityClassName to assign a priority class to pods.
+        priorityClassName:
+
         replicaCount: 3
 
         resources:
@@ -465,6 +475,8 @@ sumologic:
         ## Selector for PodMonitors used for target discovery.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
         podMonitorSelector: {}
+        securityContext: {}
+        tolerations: []
 
     otelcol:
       ## Includes additional processors into pipelines.
