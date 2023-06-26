@@ -76,4 +76,4 @@ jobs:
           sudo mv ./kind /usr/local/bin/kind
       - name: Run integration test - ${{ matrix.test_name }}
         working-directory: ./tests/integration/
-        run: make test TEST_NAME=${{matrix.test_name}} KIND_NODE_IMAGE=${{matrix.kind_image}}
+        run: make test TEST_NAME=^${{matrix.test_name}}$ KIND_NODE_IMAGE=${{matrix.kind_image}}
