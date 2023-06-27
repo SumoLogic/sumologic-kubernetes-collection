@@ -193,6 +193,8 @@ spec:
       targetPort: 4320
       protocol: TCP
 ---
+
+---
 # Source: sumologic/templates/metrics/common/service.yaml
 apiVersion: v1
 kind: Service
@@ -211,6 +213,9 @@ spec:
   selector:
     app: RELEASE-NAME-sumologic-otelcol-metrics
   ports:
+    - name: otlphttp
+      port: 4318
+      protocol: TCP
     - name: prom-write
       port: 9888
       targetPort: 9888

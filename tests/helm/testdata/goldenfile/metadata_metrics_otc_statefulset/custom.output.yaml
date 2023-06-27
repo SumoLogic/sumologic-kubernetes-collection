@@ -82,6 +82,9 @@ spec:
               cpu: 100m
               memory: 777Mi
           ports:
+            - name: otlphttp
+              containerPort: 4318
+              protocol: TCP
             - name: prom-write
               containerPort: 9888
               protocol: TCP

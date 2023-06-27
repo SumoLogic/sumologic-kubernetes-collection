@@ -44,6 +44,7 @@ func Test_Helm_OT_Metrics(t *testing.T) {
 
 	installChecks := []featureCheck{
 		CheckSumologicSecret(8),
+		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolMetricsCollectorInstall,
 	}
 

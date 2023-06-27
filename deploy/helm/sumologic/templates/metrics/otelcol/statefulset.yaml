@@ -1,4 +1,4 @@
-{{ if and (eq (include "metrics.otelcol.enabled" .) "true") (not .Values.sumologic.metrics.collector.otelcol.enabled) }}
+{{ if eq (include "metrics.otelcol.enabled" .) "true" }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -93,6 +93,9 @@ spec:
           {{- toYaml .Values.metadata.metrics.statefulset.containers.otelcol.securityContext | nindent 10 }}
         {{- end }}
         ports:
+        - name: otlphttp
+          containerPort: 4318
+          protocol: TCP
         - name: prom-write
           containerPort: 9888
           protocol: TCP

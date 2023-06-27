@@ -35,6 +35,10 @@ receivers:
         paths = [
 {{ include "metric.endpoints" . | indent 10 }}
         ]
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
 
 service:
   extensions:

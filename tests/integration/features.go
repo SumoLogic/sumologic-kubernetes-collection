@@ -543,34 +543,7 @@ func CheckOtelcolMetricsCollectorInstall(builder *features.FeatureBuilder) *feat
 					stepfuncs.ReleaseFormatter("%s-sumologic-metrics-collector"),
 				),
 			),
-		).
-		Assess("otelcol metrics collector buffers PVCs are created and bound",
-			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
-				pvcs := corev1.PersistentVolumeClaimList{}
-				cond := conditions.
-					New(res).
-					ResourceListMatchN(&pvcs, 1,
-						func(object k8s.Object) bool {
-							pvc := object.(*corev1.PersistentVolumeClaim)
-							if pvc.Status.Phase != corev1.ClaimBound {
-								log.V(0).Infof("PVC %q not bound yet", pvc.Name)
-								return false
-							}
-							return true
-						},
-						resources.WithLabelSelector(
-							fmt.Sprintf("app.kubernetes.io/instance=%s.%s-sumologic-metrics", ctxopts.Namespace(ctx), ctxopts.HelmRelease(ctx)),
-						),
-					)
-				require.NoError(t,
-					wait.For(cond,
-						wait.WithTimeout(waitDuration),
-						wait.WithInterval(tickDuration),
-					),
-				)
-				return ctx
-			})
+		)
 }
 
 func CheckOtelcolMetadataLogsInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
