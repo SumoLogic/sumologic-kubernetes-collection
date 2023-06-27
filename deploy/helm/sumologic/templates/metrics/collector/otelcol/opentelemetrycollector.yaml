@@ -32,9 +32,9 @@ spec:
     enabled: true
     prometheusCR:
       enabled: true
-      serviceMonitorSelector: 
+      serviceMonitorSelector:
         {{ .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector | toYaml | nindent 8 }}
-      podMonitorSelector: 
+      podMonitorSelector:
         {{ .Values.sumologic.metrics.collector.otelcol.podMonitorSelector | toYaml | nindent 8 }}
 {{- if .Values.sumologic.metrics.collector.otelcol.nodeSelector }}
   nodeSelector:
@@ -57,12 +57,12 @@ spec:
 {{- end }}
 {{- end }}
   env:
-{{- $ctx := .Values -}}
-{{- include "kubernetes.sources.envs" (dict "Context" $ctx "Type" "metrics") | nindent 4 -}}
-{{- include "proxy-env-variables" . | nindent 4 -}}
-{{- if .Values.metadata.metrics.statefulset.extraEnvVars }}
-{{ toYaml .Values.metadata.metrics.statefulset.extraEnvVars | nindent 4 }}
-{{- end }}
+  - name: METADATA_METRICS_SVC
+    value: {{ template "sumologic.metadata.name.metrics.service" . }} # no need for remote write proxy here
+  - name: NAMESPACE
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.namespace
   podSecurityContext:
     {{ .Values.sumologic.metrics.collector.otelcol.securityContext | toYaml | nindent 4 }}
   ports:
@@ -73,28 +73,13 @@ spec:
   volumes:
   - name: tmp
     emptyDir: {}
+  - name: file-storage
+    emptyDir: {}
   volumeMounts:
   - name: tmp
     mountPath: /tmp
-{{- if .Values.metadata.persistence.enabled }}
   - name: file-storage
     mountPath: /var/lib/storage/otc
-{{- end }}
-{{- if .Values.metadata.persistence.enabled }}
-  volumeClaimTemplates:
-  - metadata:
-      name: file-storage
-{{- if .Values.metadata.persistence.pvcLabels }}
-      labels:
-{{ toYaml .Values.metadata.persistence.pvcLabels | indent 8 }}
-{{- end }}
-    spec:
-      accessModes: [{{ .Values.metadata.persistence.accessMode }}]
-      storageClassName: {{ .Values.metadata.persistence.storageClass }}
-      resources:
-        requests:
-          storage: {{ .Values.metadata.persistence.size }}
-{{- end }}
   config: |
 {{- (tpl (.Files.Get "conf/metrics/collector/otelcol/config.yaml") .) | nindent 4 }}
 {{- end }}

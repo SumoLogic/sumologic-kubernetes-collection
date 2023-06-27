@@ -15,6 +15,9 @@ spec:
   selector:
     app: {{ template "sumologic.labels.app.metrics.pod" . }}
   ports:
+  - name: otlphttp
+    port: 4318
+    protocol: TCP
   - name: prom-write
     port: 9888
     targetPort: 9888

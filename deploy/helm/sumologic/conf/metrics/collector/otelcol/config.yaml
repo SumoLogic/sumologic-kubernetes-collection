@@ -1,21 +1,22 @@
 exporters:
-{{ tpl (.Files.Get "conf/metrics/otelcol/exporters.yaml") . | indent 2 }}
+  otlphttp:
+    endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
+    sending_queue:
+      queue_size: 10000
+      num_consumers: 10
+      storage: file_storage
 
 extensions:
   health_check: {}
-{{ if .Values.metadata.persistence.enabled }}
-  ## Configuration for File Storage extension
+  pprof: {}
   file_storage:
     directory: /var/lib/storage/otc
     timeout: 10s
     compaction:
       on_rebound: true
       directory: /tmp
-{{ end }}
-  pprof: {}
 
-processors:
-{{ tpl (.Files.Get "conf/metrics/otelcol/processors.yaml") . | indent 2 }}
+processors: {}
 
 receivers:
   prometheus:
@@ -116,11 +117,10 @@ service:
       address: 0.0.0.0:8888 # this is the default, but setting it explicitly lets the operator add it automatically
   extensions:
     - health_check
-{{- if .Values.metadata.persistence.enabled }}
-    - file_storage
-{{- end }}
     - pprof
+    - file_storage
   pipelines:
     metrics:
-{{ tpl (.Files.Get "conf/metrics/otelcol/pipeline.yaml") . | indent 6 }}
+      exporters: [otlphttp]
+      receivers: [prometheus]
 

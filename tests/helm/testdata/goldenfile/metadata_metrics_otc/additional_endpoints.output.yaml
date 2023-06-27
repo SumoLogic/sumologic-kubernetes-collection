@@ -224,6 +224,10 @@ data:
       sumologic_schema:
         add_cloud_namespace: false
     receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4318
       telegraf:
         agent_config: |
           [agent]
@@ -303,6 +307,7 @@ data:
           - routing
           receivers:
           - telegraf
+          - otlp
       telemetry:
         logs:
           level: info

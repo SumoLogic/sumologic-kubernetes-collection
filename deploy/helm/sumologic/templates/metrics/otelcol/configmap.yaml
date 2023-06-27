@@ -1,4 +1,4 @@
-{{ if and (eq (include "metrics.otelcol.enabled" .) "true") (not .Values.sumologic.metrics.collector.otelcol.enabled) }}
+{{ if eq (include "metrics.otelcol.enabled" .) "true" }}
 {{ $baseConfig := (tpl (.Files.Get "conf/metrics/otelcol/config.yaml") .) | fromYaml }}
 {{ $mergeConfig := .Values.metadata.metrics.config.merge }}
 {{ $overrideConfig := .Values.metadata.metrics.config.override }}

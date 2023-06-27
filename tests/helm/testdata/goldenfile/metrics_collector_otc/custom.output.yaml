@@ -46,55 +46,12 @@ spec:
     targetCPUUtilization: 95
     targetMemoryUtilization: 90
   env:
-    - name: SUMO_ENDPOINT_APISERVER_METRICS_SOURCE
+    - name: METADATA_METRICS_SVC
+      value: RELEASE-NAME-sumologic-metadata-metrics # no need for remote write proxy here
+    - name: NAMESPACE
       valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-apiserver
-    - name: SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-control_plane_metrics_source
-    - name: SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-kube-controller-manager
-    - name: SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics
-    - name: SUMO_ENDPOINT_KUBELET_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-kubelet
-    - name: SUMO_ENDPOINT_NODE_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-node-exporter
-    - name: SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-kube-scheduler
-    - name: SUMO_ENDPOINT_STATE_METRICS_SOURCE
-      valueFrom:
-        secretKeyRef:
-          name: sumologic
-          key: endpoint-metrics-kube-state
-
-    - name: NO_PROXY
-      value: kubernetes.default.svc
-
-    - name: VALUE_FROM_SECRET
-      valueFrom:
-        secretKeyRef:
-          key: secret_key
-          name: secret_name
+        fieldRef:
+          fieldPath: metadata.namespace
   podSecurityContext:
     fsGroup: 999
   ports:
@@ -110,120 +67,25 @@ spec:
   volumes:
     - name: tmp
       emptyDir: {}
+    - name: file-storage
+      emptyDir: {}
   volumeMounts:
     - name: tmp
       mountPath: /tmp
     - name: file-storage
       mountPath: /var/lib/storage/otc
-  volumeClaimTemplates:
-    - metadata:
-        name: file-storage
-        labels:
-          pvcLabel: pvcValue
-      spec:
-        accessModes: [mode]
-        storageClassName: my-class
-        resources:
-          requests:
-            storage: 123Gi
   config: |
     exporters:
-      sumologic/apiserver:
-        endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
-        max_request_body_size: 16_777_216  # 16 MB before compression
-        metric_format: prometheus
+      otlphttp:
+        endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
         sending_queue:
-          enabled: true
+          queue_size: 10000
           num_consumers: 10
-          queue_size: 10_000
           storage: file_storage
-        ## set timeout to 30s due to big requests
-        timeout: 30s
-      sumologic/control_plane:
-        endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
-        max_request_body_size: 16_777_216  # 16 MB before compression
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10_000
-          storage: file_storage
-        ## set timeout to 30s due to big requests
-        timeout: 30s
-      sumologic/controller:
-        endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
-        max_request_body_size: 16_777_216  # 16 MB before compression
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10_000
-          storage: file_storage
-        ## set timeout to 30s due to big requests
-        timeout: 30s
-      sumologic/default:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
-        max_request_body_size: 16_777_216  # 16 MB before compression
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          ## setting queue_size a high number, so we always use maximum space of the storage
-          ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
-          queue_size: 10_000
-          storage: file_storage
-        ## set timeout to 30s due to big requests
-        timeout: 30s
-      sumologic/kubelet:
-        endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
-        max_request_body_size: 16_777_216  # 16 MB before compression
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10_000
-          storage: file_storage
-        ## set timeout to 30s due to big requests
-        timeout: 30s
-      sumologic/node:
-        endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
-        max_request_body_size: 16_777_216  # 16 MB before compression
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10_000
-          storage: file_storage
-        ## set timeout to 30s due to big requests
-        timeout: 30s
-      sumologic/scheduler:
-        endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
-        max_request_body_size: 16_777_216  # 16 MB before compression
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10_000
-          storage: file_storage
-        ## set timeout to 30s due to big requests
-        timeout: 30s
-      sumologic/state:
-        endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
-        max_request_body_size: 16_777_216  # 16 MB before compression
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10_000
-          storage: file_storage
-        ## set timeout to 30s due to big requests
-        timeout: 30s
-      
 
     extensions:
       health_check: {}
-
-      ## Configuration for File Storage extension
+      pprof: {}
       file_storage:
         directory: /var/lib/storage/otc
         timeout: 10s
@@ -231,177 +93,7 @@ spec:
           on_rebound: true
           directory: /tmp
 
-      pprof: {}
-
-    processors:
-      ## Configuration for Batch Processor
-      ## The batch processor accepts spans and places them into batches grouped by node and resource
-      batch:
-        ## Maximum number of spans sent at once
-        send_batch_max_size: 2_048
-        ## Number of spans after which a batch will be sent regardless of time
-        send_batch_size: 1_024
-        ## Time duration after which a batch will be sent regardless of size
-        timeout: 1s
-      
-      # Prometheus receiver puts all labels in record-level attributes, and we need them in resource
-      groupbyattrs:
-        keys:
-          - container
-          - namespace
-          - pod
-          - service
-      
-      ## The Kubernetes sprocessor automatically tags logs, metrics and traces with Kubernetes metadata like pod name, namespace name etc.
-      k8s_tagger:
-        extract:
-          delimiter: "_"
-          labels:
-            - key: "*"
-              tag_name: "pod_labels_%s"
-          metadata:
-            ## extract the following well-known metadata fields
-            - daemonSetName
-            - deploymentName
-            - nodeName
-            - replicaSetName
-            - serviceName
-            - statefulSetName
-        owner_lookup_enabled: true  # To enable fetching additional metadata using `owner` relationship
-        ## Has to be false to enrich metadata
-        passthrough: false
-        pod_association:
-          - from: build_hostname  # Pods are identified by Pod name and namespace
-      
-      ## Configuration for Memory Limiter Processor
-      ## The memory_limiter processor is used to prevent out of memory situations on the collector.
-      memory_limiter:
-        ## check_interval is the time between measurements of memory usage for the
-        ## purposes of avoiding going over the limits. Defaults to zero, so no
-        ## checks will be performed. Values below 1 second are not recommended since
-        ## it can result in unnecessary CPU consumption.
-        check_interval: 5s
-        ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
-        limit_percentage: 75
-        ## Spike limit (calculated from available memory). Must be less than limit_percentage.
-        spike_limit_percentage: 20
-      
-      ## Configuration for Metrics Transform Processor
-      metricstransform:
-        transforms:
-          ## rename all prometheus_remote_write_$name metrics to $name
-          action: update
-          include: ^prometheus_remote_write_(.*)$$
-          match_type: regexp
-          new_name: $$1
-      
-      ## Configuration for Resource Processor
-      resource:
-        attributes:
-          - action: upsert
-            from_attribute: namespace
-            key: k8s.namespace.name
-          - action: delete
-            key: namespace  # remove namespace to avoid duplication when attribute translation is enabled
-          - action: upsert
-            from_attribute: pod
-            key: k8s.pod.name
-          - action: delete
-            key: pod  # remove pod to avoid duplication when attribute translation is enabled
-          - action: upsert
-            from_attribute: container
-            key: k8s.container.name  # add container in OpenTelemetry convention to unify configuration for Source processor
-          - action: delete
-            key: container  # remove container to avoid duplication when attribute translation is enabled
-          - action: upsert
-            from_attribute: service
-            key: prometheus_service
-          - action: delete
-            key: service
-          - action: upsert
-            from_attribute: service.name
-            key: job
-          - action: delete  # we don't want service.name to be set, as the schema processor translates it to "service"
-            key: service.name
-          - action: upsert
-            key: _origin  # add "_origin" metadata to metrics to keep the same format as for metrics from Fluentd
-            value: kubernetes
-          - action: upsert
-            key: cluster
-            value: "kubernetes"
-      
-      ## NOTE: Drop these for now and and when proper configuration options
-      ## are exposed and source processor is configured then send them
-      ## as headers.
-      resource/delete_source_metadata:
-        attributes:
-          - action: delete
-            key: _sourceCategory
-          - action: delete
-            key: _sourceHost
-          - action: delete
-            key: _sourceName
-      resource/remove_k8s_pod_pod_name:
-        attributes:
-          - action: delete
-            key: k8s.pod.pod_name
-      
-      ## NOTE: below listed rules could be simplified if routingprocessor
-      ## supports regex matching. At this point we could group route entries
-      ## going to the same set of exporters.
-      routing:
-        attribute_source: resource
-        default_exporters:
-          - sumologic/default
-        drop_resource_routing_attribute: true
-        from_attribute: http_listener_v2_path
-        table:
-          ## apiserver metrics
-          - exporters:
-              - sumologic/apiserver
-            value: /prometheus.metrics.apiserver
-          ## container metrics
-          - exporters:
-              - sumologic/kubelet
-            value: /prometheus.metrics.container
-          ## control-plane metrics
-          - exporters:
-              - sumologic/control_plane
-            value: /prometheus.metrics.control-plane.coredns
-          - exporters:
-              - sumologic/control_plane
-            value: /prometheus.metrics.control-plane.kube-etcd
-          ## controller metrics
-          - exporters:
-              - sumologic/controller
-            value: /prometheus.metrics.controller-manager
-          ## kubelet metrics
-          - exporters:
-              - sumologic/kubelet
-            value: /prometheus.metrics.kubelet
-          ## node metrics
-          - exporters:
-              - sumologic/node
-            value: /prometheus.metrics.node
-          ## scheduler metrics
-          - exporters:
-              - sumologic/scheduler
-            value: /prometheus.metrics.scheduler
-          ## state metrics
-          - exporters:
-              - sumologic/state
-            value: /prometheus.metrics.state
-      
-      ## Configuration for Source Processor
-      ## Source processor adds Sumo Logic related metadata
-      source:
-        collector: "kubernetes"
-      
-      ## The Sumo Logic Schema processor modifies the metadata on logs, metrics and traces sent to Sumo Logic
-      ## so that the Sumo Logic apps can make full use of the ingested data.
-      sumologic_schema:
-        add_cloud_namespace: false
-      
+    processors: {}
 
     receivers:
       prometheus:
@@ -502,30 +194,9 @@ spec:
           address: 0.0.0.0:8888 # this is the default, but setting it explicitly lets the operator add it automatically
       extensions:
         - health_check
-        - file_storage
         - pprof
+        - file_storage
       pipelines:
         metrics:
-          exporters:
-            - sumologic/default
-            - sumologic/apiserver
-            - sumologic/control_plane
-            - sumologic/controller
-            - sumologic/kubelet
-            - sumologic/node
-            - sumologic/scheduler
-            - sumologic/state
-          processors:
-            - memory_limiter
-            - metricstransform
-            - groupbyattrs
-            - resource
-            - k8s_tagger
-            - source
-            - resource/remove_k8s_pod_pod_name
-            - resource/delete_source_metadata
-            - sumologic_schema
-            - batch
-            - routing
-          receivers:
-            - prometheus
+          exporters: [otlphttp]
+          receivers: [prometheus]
