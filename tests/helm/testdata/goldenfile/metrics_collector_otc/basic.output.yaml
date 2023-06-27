@@ -99,7 +99,7 @@ spec:
                 # TODO: The below can't be used due to https://github.com/open-telemetry/opentelemetry-operator/issues/958
                 # - action: labeldrop
                 #   regex: id
-              relabel_configs: &relabel_configs # partially copied from what operator generates
+              relabel_configs: # partially copied from what operator generates
                 - source_labels:
                   - __meta_kubernetes_node_name
                   target_label: node
@@ -158,7 +158,29 @@ spec:
                 # TODO: The below can't be used due to https://github.com/open-telemetry/opentelemetry-operator/issues/958
                 # - action: labeldrop
                 #   regex: (id|name)
-              relabel_configs: *relabel_configs  # partially copied from what operator generates
+              relabel_configs: # partially copied from what operator generates
+                - source_labels:
+                  - __meta_kubernetes_node_name
+                  target_label: node
+                - source_labels:
+                  - __meta_kubernetes_namespace
+                  target_label: namespace
+                - source_labels:
+                  - __meta_kubernetes_pod_name
+                  target_label: pod
+                - source_labels:
+                  - __meta_kubernetes_pod_container_name
+                  target_label: container
+                - target_label: endpoint
+                  replacement: https-metrics
+                - source_labels:
+                  - __metrics_path__
+                  target_label: metrics_path
+                  action: replace
+                - source_labels:
+                  - __address__
+                  target_label: instance
+                  action: replace
         target_allocator:
           endpoint: http://RELEASE-NAME-sumologic-metrics-targetallocator
           interval: 30s

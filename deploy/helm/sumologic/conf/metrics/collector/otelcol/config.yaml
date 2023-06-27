@@ -24,6 +24,7 @@ receivers:
       global:
         scrape_interval: 30s
       scrape_configs:
+{{- if .Values.sumologic.metrics.collector.otelcol.kubelet.enabled }}
         ## These scrape configs are for kubelet metrics
         ## Prometheus operator does this by manually maintaining a Service with Endpoints for all Nodes
         ## We don't have that capability, so we need to use a static configuration
@@ -44,7 +45,7 @@ receivers:
             # TODO: The below can't be used due to https://github.com/open-telemetry/opentelemetry-operator/issues/958
             # - action: labeldrop
             #   regex: id
-          relabel_configs: &relabel_configs # partially copied from what operator generates
+          relabel_configs: # partially copied from what operator generates
             - source_labels:
               - __meta_kubernetes_node_name
               target_label: node
@@ -67,6 +68,8 @@ receivers:
               - __address__
               target_label: instance
               action: replace
+{{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.cAdvisor.enabled }}
         - job_name: cadvisor
           scheme: https
           authorization:
@@ -103,7 +106,30 @@ receivers:
             # TODO: The below can't be used due to https://github.com/open-telemetry/opentelemetry-operator/issues/958
             # - action: labeldrop
             #   regex: (id|name)
-          relabel_configs: *relabel_configs  # partially copied from what operator generates
+          relabel_configs: # partially copied from what operator generates
+            - source_labels:
+              - __meta_kubernetes_node_name
+              target_label: node
+            - source_labels:
+              - __meta_kubernetes_namespace
+              target_label: namespace
+            - source_labels:
+              - __meta_kubernetes_pod_name
+              target_label: pod
+            - source_labels:
+              - __meta_kubernetes_pod_container_name
+              target_label: container
+            - target_label: endpoint
+              replacement: https-metrics
+            - source_labels:
+              - __metrics_path__
+              target_label: metrics_path
+              action: replace
+            - source_labels:
+              - __address__
+              target_label: instance
+              action: replace
+{{- end }}
     target_allocator:
       endpoint: http://{{ template "sumologic.metadata.name.metrics.targetallocator.name" . }}
       interval: 30s

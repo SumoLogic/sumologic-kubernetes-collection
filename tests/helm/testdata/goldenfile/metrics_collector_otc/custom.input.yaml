@@ -35,6 +35,11 @@ sumologic:
         securityContext:
           fsGroup: 999
 
+        kubelet:
+          enabled: false
+        cAdvisor:
+          enabled: false
+
   podAnnotations:
     podAnnotationKey: podAnnotationValue
   podLabels:
