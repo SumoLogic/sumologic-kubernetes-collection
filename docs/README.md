@@ -5,6 +5,9 @@ metadata; and sending them to Sumo Logic. See our [documentation guide](https://
 details on our Kubernetes Solution.
 
 - [Solution overview](#solution-overview)
+  - [Log Collection](#log-collection)
+  - [Metrics Collection](#metrics-collection)
+  - [Kubernetes Events Collection](#kubernetes-events-collection)
 - [Minimum Requirements](#minimum-requirements)
 - [Support Matrix](#support-matrix)
   - [ARM support](#arm-support)
@@ -76,7 +79,7 @@ The diagrams below illustrate the components of the Kubernetes collection soluti
 ## Minimum Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | K8s  | 1.21+   |
 | Helm | 3.5+    |
 
@@ -85,20 +88,20 @@ The diagrams below illustrate the components of the Kubernetes collection soluti
 The following table displays the tested Kubernetes and Helm versions.
 
 | Name                   | Version                         |
-| ---------------------- | ------------------------------- |
+|------------------------|---------------------------------|
 | K8s with EKS           | 1.23<br/>1.24<br/>1.25<br/>1.26 |
 | K8s with EKS (fargate) | 1.24<br/>1.25<br/>1.26          |
 | K8s with Kops          | 1.23<br/>1.24<br/>1.25<br/>1.26 |
 | K8s with GKE           | 1.23<br/>1.24<br/>1.25<br/>1.26 |
 | K8s with AKS           | 1.24<br/>1.25<br/>1.26          |
-| OpenShift              | 4.10<br/>4.11<br/>4.12          |
+| OpenShift              | 4.10<br/>4.11<br/>4.12</br>4.13 |
 | Helm                   | 3.8.2 (Linux)                   |
 | kubectl                | 1.23.6                          |
 
 The following table displays the currently used software versions for our Helm chart.
 
 | Name                                      | Version |
-| ----------------------------------------- | ------- |
+|-------------------------------------------|---------|
 | OpenTelemetry Collector                   | 0.79.0  |
 | OpenTelemetry Operator                    | 0.24.0  |
 | kube-prometheus-stack/Prometheus Operator | 40.5.0  |
