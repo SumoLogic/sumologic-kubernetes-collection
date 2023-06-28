@@ -19,13 +19,18 @@ sumologic:
     sourceType: otlp
 ```
 
-**Note:** The source is automatically created during Chart installation. This setting simply makes the Chart start sending data to it.
+**Note:** The source is automatically created during Chart installation. This setting simply makes the Chart start sending data to it. If
+you normally have setup disabled, you need to either enable it after enabling the otlp source, or create the source manually.
 
 ### Enabling the OTLP source for traces
 
 Add the following to your configuration:
 
 ```yaml
+sumologic:
+  traces:
+    sourceType: otlp
+
 tracesSampler:
   config:
     exporters:

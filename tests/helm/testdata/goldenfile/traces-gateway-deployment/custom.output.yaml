@@ -1,38 +1,45 @@
 ---
-# Source: sumologic/templates/instrumentation/traces-sampler/deployment.yaml
+# Source: sumologic/templates/instrumentation/traces-gateway/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: RELEASE-NAME-sumologic-traces-gateway
+  namespace: sumologic
   labels:
-    app: RELEASE-NAME-sumologic-traces-sampler
+    app: RELEASE-NAME-sumologic-traces-gateway
+    component: RELEASE-NAME-sumologic-traces-gateway-component
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
 spec:
   minReadySeconds: 5
-  progressDeadlineSeconds: 120
   replicas: 1
   selector:
     matchLabels:
-      app: RELEASE-NAME-sumologic-traces-sampler
+      app: RELEASE-NAME-sumologic-traces-gateway
+      component: RELEASE-NAME-sumologic-traces-gateway-component
   template:
     metadata:
       annotations:
         checksum/config: "%CONFIG_CHECKSUM%"
       labels:
-        app: RELEASE-NAME-sumologic-traces-sampler
+        app: RELEASE-NAME-sumologic-traces-gateway
+        component: RELEASE-NAME-sumologic-traces-gateway-component
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
     spec:
       serviceAccountName: RELEASE-NAME-sumologic
+      # Otel agent quits if the load balancing backend (collector/samples) is
+      # not ready during first connect attempt. Restart policy `Always` guarantees that
+      # the agent will have a chance to retry when collector is ready.
+      restartPolicy: Always
       containers:
         - name: otelcol
-          image: my_repository:my_tag
+          image: "my_repository:my_tag"
           imagePullPolicy: IfNotPresent
           args:
-            - --config=/conf/traces.sampler.conf.yaml
+            - "--config=/conf/traces.gateway.conf.yaml"
           env:
             - name: GOGC
               value: "80"
@@ -41,16 +48,27 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-traces
+            - name: SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-traces-otlp
+
+            - name: SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-metrics
 
             - name: NO_PROXY
               value: kubernetes.default.svc
           resources:
             limits:
-              cpu: 2000m
-              memory: 4Gi
+              cpu: 1000m
+              memory: 2Gi
             requests:
-              cpu: 200m
-              memory: 384Mi
+              cpu: 50m
+              memory: 196Mi
           ports:
             - name: pprof
               containerPort: 1777
@@ -66,22 +84,35 @@ spec:
             - containerPort: 14267 # Default endpoint for Jaeger TChannel receiver.
             - containerPort: 14268 # Default endpoint for Jaeger HTTP receiver.
             - containerPort: 55678 # Default endpoint for Opencensus receiver.
-            - containerPort: 4317 # Default endpoint for OTLP gRPC receiver.
+            - containerPort: 4317 # Default endpoint for OTLP receiver.
             - containerPort: 4318 # Default endpoint for OTLP HTTP receiver.
             - containerPort: 55680 # Old endpoint for OTLP gRPC receiver.
             - containerPort: 55681 # Default endpoint for OTLP HTTP receiver. (deprecated)
           volumeMounts:
-            - name: otel-collector-config-vol
+            - name: tracesgateway-config-vol
               mountPath: /conf
           livenessProbe:
             httpGet:
               path: /
               port: 13133 # Health Check extension default port.
+            failureThreshold: 3
+            periodSeconds: 15
+            timeoutSeconds: 10
           readinessProbe:
             httpGet:
               path: /
               port: 13133 # Health Check extension default port.
+            failureThreshold: 3
+            periodSeconds: 10
+            timeoutSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /
+              port: 13133
+            failureThreshold: 60
+            periodSeconds: 5
+            timeoutSeconds: 3
       volumes:
         - configMap:
-            name: RELEASE-NAME-sumologic-traces-sampler
-          name: otel-collector-config-vol
+            name: RELEASE-NAME-sumologic-traces-gateway
+          name: tracesgateway-config-vol

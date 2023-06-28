@@ -117,11 +117,6 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-logs
-            - name: SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-logs-otlp
 
             - name: NO_PROXY
               value: kubernetes.default.svc

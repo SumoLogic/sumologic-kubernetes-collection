@@ -6,7 +6,7 @@ sumologic:
   logs:
     sourceType: otlp
   traces:
-    enabled: true
+    sourceType: otlp
 
 tracesSampler:
   config:
