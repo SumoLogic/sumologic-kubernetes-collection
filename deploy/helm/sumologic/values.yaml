@@ -662,6 +662,8 @@ sumologic:
     ## How many spans per request should be send to receiver
     spans_per_request: 100
 
+    sourceType: http
+
 fluentd:
   image:
     repository: public.ecr.aws/sumologic/kubernetes-fluentd

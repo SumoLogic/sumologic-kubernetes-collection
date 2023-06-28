@@ -391,7 +391,16 @@ Example:
 {{- $ctx := .Context -}}
 {{- $type := .Type -}}
 {{- range $name, $source := (index .Context.sumologic.collector.sources $type) -}}
+{{/* 
+This is a slight hack to prevent otlp sources from being added as env variables if they're not enabled.
+As a result, the user can upgrade without enabling setup until they actually enable otlp sources.
+*/}}
+{{- $signalTypeConfig := index $ctx.sumologic $type -}}
+{{- $signalSourceType := $signalTypeConfig.sourceType | default "http" -}}
+{{- $sourceContentType := (($source).properties).content_type | default "" -}}
+{{- if or (ne $sourceContentType "Otlp") (eq $signalSourceType "otlp") -}}
 {{- include "kubernetes.sources.env" (dict "Context" $ctx "Type" $type  "Name" $name ) -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 

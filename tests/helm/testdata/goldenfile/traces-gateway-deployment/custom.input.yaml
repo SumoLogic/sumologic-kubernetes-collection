@@ -1,4 +1,8 @@
-tracesSampler:
+sumologic:
+  traces:
+    sourceType: otlp
+
+tracesGateway:
   deployment:
     image:
       repository: my_repository

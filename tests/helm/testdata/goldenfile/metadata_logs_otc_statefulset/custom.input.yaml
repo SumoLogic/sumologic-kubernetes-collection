@@ -3,6 +3,8 @@ sumologic:
     metadata:
       provider: otelcol
 
+    sourceType: otlp
+
 metadata:
   image:
     repository: my_repository
