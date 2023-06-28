@@ -7,6 +7,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.9.1]
+
+### Released 2023-06-28
+
+### Added
+
+- feat(logs): add ability to use OTLP source [#3040]
+- feat: add autoscaling to metrics collector [#3082]
+- feat: add serviceMonitor for metrics collector [#3084]
+- feat(traces): add ability to use OTLP source [#3094]
+- feat(metrics): add selectors for Prometheus CRs to otel metrics collector [#3096]
+- chore: add support for EKS 1.27 [#3104]
+- chore: add support for OpenShift 4.13 [#3104]
+
+### Changed
+
+- feat: unify anti-affinity configuration [#3085]
+- chore: upgrade otel to 0.79.0-sumo-0 [#3087]
+- feat(helm): add missing options for experimental opentelemetry metrics" [#3092]
+- chore: Upgrade kubernetes setup to v3.9.0 [#3098]
+- feat(helm): move relabelling in prometheus from remoteWrites to serviceMonitors [#3103]
+
+### Fixed
+
+- fix(metrics): upgrade kube-state-metrics to 2.7.0 [#3086]
+
+[#3040]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3040
+[#3082]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3082
+[#3084]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3084
+[#3094]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3094
+[#3096]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3096
+[#3104]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3104
+[#3085]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3085
+[#3087]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3087
+[#3092]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3092
+[#3098]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3098
+[#3103]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3103
+[#3086]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3086
+[v3.9.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.9.1
+
 ## [v3.9.0]
 
 ### Released 2023-06-14
