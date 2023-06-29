@@ -6,7 +6,7 @@ metadata:
   namespace: "sumologic"
   labels:
     app.kubernetes.io/name: metrics-server
-    helm.sh/chart: metrics-server-6.2.4
+    helm.sh/chart: metrics-server-6.3.1
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -21,7 +21,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: metrics-server
-        helm.sh/chart: metrics-server-6.2.4
+        helm.sh/chart: metrics-server-6.3.1
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
     spec:
@@ -43,7 +43,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: metrics-server
-          image: docker.io/bitnami/metrics-server:0.6.2-debian-11-r0
+          image: docker.io/bitnami/metrics-server:0.6.3-debian-11-r16
           imagePullPolicy: "IfNotPresent"
           securityContext:
             readOnlyRootFilesystem: false
