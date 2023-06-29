@@ -1231,8 +1231,8 @@ metrics-server:
   apiService:
     create: true
   extraArgs:
-    - kubelet-insecure-tls=true
-    - kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+    - --kubelet-insecure-tls=true
+    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
   ## Optionally specify image options for metrics-server
   # image:
   ## Optionally specify an array of imagePullSecrets.
