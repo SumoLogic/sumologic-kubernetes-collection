@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.9.1]
+
+### Released 2023-06-29
+
+### Changed
+
+- chore: Upgrade kubernetes setup to v3.9.0 [#3098]
+
+[#3098]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3098
+[v3.9.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.9.1
+
 ## [v3.9.0]
 
 ### Released 2023-06-14
