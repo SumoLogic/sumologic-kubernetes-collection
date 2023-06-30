@@ -82,9 +82,6 @@ spec:
               - delete_key(resource.attributes, "net.host.name")
               - delete_key(resource.attributes, "net.host.port")
               - delete_key(resource.attributes, "service.instance.id")
-              # TODO: Delete these two once we upgrade operator past https://github.com/open-telemetry/opentelemetry-operator/issues/958
-              - delete_key(attributes, "id")
-              - delete_key(attributes, "name")
 
     receivers:
       prometheus:
@@ -109,9 +106,8 @@ spec:
                 - action: keep
                   regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
                   source_labels: [__name__]
-                # TODO: The below can't be used due to https://github.com/open-telemetry/opentelemetry-operator/issues/958
-                # - action: labeldrop
-                #   regex: id
+                - action: labeldrop
+                  regex: id
               relabel_configs: # partially copied from what operator generates
                 - source_labels:
                   - __meta_kubernetes_node_name
@@ -168,9 +164,8 @@ spec:
                 - action: drop
                   source_labels: [container]
                   regex: POD
-                # TODO: The below can't be used due to https://github.com/open-telemetry/opentelemetry-operator/issues/958
-                # - action: labeldrop
-                #   regex: (id|name)
+                - action: labeldrop
+                  regex: (id|name)
               relabel_configs: # partially copied from what operator generates
                 - source_labels:
                   - __meta_kubernetes_node_name
