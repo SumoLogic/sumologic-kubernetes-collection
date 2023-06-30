@@ -13,7 +13,7 @@ sources:
   - https://github.com/SumoLogic/sumologic-kubernetes-collection
 dependencies:
   - name: fluent-bit
-    version: 0.25.0
+    version: 0.31.0
     repository: https://fluent.github.io/helm-charts
     condition: fluent-bit.enabled,sumologic.logs.enabled
   - name: kube-prometheus-stack
