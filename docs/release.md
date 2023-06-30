@@ -12,14 +12,10 @@ Perform the following steps in order to release new verions of helm chart.
      - add link to minor version, if created
      - set "supported until" date for previous minor version to 6 months after today
 
-1. Create and push new tag:
+1. Define a new tag:
 
    ```bash
    export TAG=x.y.z
-   git checkout main
-   git pull
-   git tag -sm "v${TAG}" "v${TAG}"
-   git push origin "v${TAG}"
    ```
 
 1. Prepare release branch:
@@ -36,6 +32,15 @@ Perform the following steps in order to release new verions of helm chart.
      ```bash
      git push -u origin "release-v${TAG%.*}"
      ```
+
+1. Create and push new tag:
+
+   ```bash
+   git checkout "release-v${TAG%.*}"
+   git pull
+   git tag -sm "v${TAG}" "v${TAG}"
+   git push origin "v${TAG}"
+   ```
 
 1. Create [new release][releases]
 
