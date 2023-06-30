@@ -132,6 +132,7 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 		"resource/delete_source_metadata",
 		"sumologic_schema",
 		"batch",
+		"transform/prepare_routing",
 		"routing",
 	}
 
