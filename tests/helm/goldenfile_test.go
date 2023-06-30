@@ -24,15 +24,15 @@ func TestGoldenFiles(t *testing.T) {
 	require.NoError(t, err)
 
 	// get the input files
-	inputFileNames, err := doublestar.FilepathGlob("**/*.input.yaml")
+	inputFileNames, err := doublestar.FilepathGlob("testdata/goldenfile/**/*.input.yaml")
 	require.NoError(t, err)
 	require.NotEmpty(t, inputFileNames)
 	for _, inputFileName := range inputFileNames { // for each input file name, run the test
-		inputFileName := inputFileName
-		outputFileName := strings.TrimSuffix(inputFileName, ".input.yaml") + ".output.yaml"
+		valuesFileName := inputFileName
+		outputFileName := strings.TrimSuffix(valuesFileName, ".input.yaml") + ".output.yaml"
 		t.Run(inputFileName, func(t *testing.T) {
 			t.Parallel()
-			runGoldenFileTest(t, inputFileName, outputFileName, chartVersion)
+			runGoldenFileTest(t, valuesFileName, outputFileName, chartVersion)
 		})
 	}
 }
@@ -93,7 +93,7 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 		regenerateGoldenFiles := os.Getenv("REGENERATE_GOLDENFILES") != ""
 		if regenerateGoldenFiles && !assert.Equal(t, expectedObject, *actualObject) {
 			yamlDocuments := []string{}
-			preYamlDocuments := strings.Split(renderedYamlString, "---")
+			preYamlDocuments := strings.Split(renderedYamlString, "\n---")
 			// Try to parse all documents to eliminate empty ones:
 			// - Helm output starts with ---
 			// - Output consisting of comments only

@@ -104,9 +104,6 @@ spec:
               - delete_key(resource.attributes, "net.host.name")
               - delete_key(resource.attributes, "net.host.port")
               - delete_key(resource.attributes, "service.instance.id")
-              # TODO: Delete these two once we upgrade operator past https://github.com/open-telemetry/opentelemetry-operator/issues/958
-              - delete_key(attributes, "id")
-              - delete_key(attributes, "name")
 
       filter/drop_unnecessary_metrics:
         error_mode: ignore

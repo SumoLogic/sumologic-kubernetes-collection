@@ -4700,6 +4700,8 @@ opentelemetry-operator:
       enabled: false
       issuerRef: {}
 
+    autoGenerateCert: true
+
   manager:
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
