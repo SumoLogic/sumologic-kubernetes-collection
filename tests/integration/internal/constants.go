@@ -50,43 +50,42 @@ const (
 
 // metrics we expect the receiver to get
 // metrics which are expected in current E2E tests but aren't present here, are commented out
-// TODO: figure out why the expected metrics aren't present
 var (
-	KubeStateMetrics = []string{
+	KubeStateMetrics = []string{ // used by the Kubernetes App
 		"kube_statefulset_status_observed_generation",
 		"kube_statefulset_status_replicas",
 		"kube_statefulset_replicas",
 		"kube_statefulset_metadata_generation",
 	}
 	KubeDaemonSetMetrics = []string{
-		"kube_daemonset_status_current_number_scheduled",
-		"kube_daemonset_status_desired_number_scheduled",
-		"kube_daemonset_status_number_misscheduled",
-		"kube_daemonset_status_number_unavailable",
+		"kube_daemonset_status_current_number_scheduled", // used by Kubernetes App
+		"kube_daemonset_status_desired_number_scheduled", // used by Kubernetes App
+		"kube_daemonset_status_number_misscheduled",      // not used by any App
+		"kube_daemonset_status_number_unavailable",       // not used by any App
 	}
-	KubeDeploymentMetrics = []string{
+	KubeDeploymentMetrics = []string{ // used by the Kubernetes App
 		"kube_deployment_status_replicas_available",
 		"kube_deployment_status_replicas_unavailable",
 		"kube_deployment_spec_replicas",
 	}
-	KubeNodeMetrics = []string{
+	KubeNodeMetrics = []string{ // used by the Kubernetes App
 		"kube_node_info",
 		"kube_node_status_allocatable",
 		"kube_node_status_capacity",
-		"kube_node_status_condition",
+		"kube_node_status_condition", // also used by Global Intelligence for Kubernetes Devops
 	}
-	KubePodMetrics = []string{
+	KubePodMetrics = []string{ // used by the Kubernetes App
 		"kube_pod_container_info",
-		"kube_pod_container_resource_requests",
-		"kube_pod_container_resource_limits",
+		"kube_pod_container_resource_requests", // also used by Global Intelligence for Kubernetes Devops
+		"kube_pod_container_resource_limits",   // also used by Global Intelligence for Kubernetes Devops
 		"kube_pod_container_status_ready",
 		// No container is being terminated,
 		// so metric is not being generated
 		// "kube_pod_container_status_terminated_reason",
-		"kube_pod_container_status_restarts_total",
+		"kube_pod_container_status_restarts_total", // not used by any App
 		"kube_pod_status_phase",
 	}
-	KubeletMetrics = []string{
+	KubeletMetrics = []string{ // not used by any App
 		"kubelet_running_containers",
 		"kubelet_running_pods",
 	}
@@ -94,26 +93,26 @@ var (
 		// TODO: check different metrics depending on K8s version
 		// scheduler_scheduling_duration_seconds is present for K8s <1.23
 		// scheduler_scheduling_attempt_duration_seconds is present for K8s >=1.23
-		// "scheduler_e2e_scheduling_duration_seconds_count",
-		// "scheduler_e2e_scheduling_duration_seconds_sum",
-		// "scheduler_e2e_scheduling_duration_seconds_bucket",
-		// "scheduler_scheduling_attempt_duration_seconds_count",
-		// "scheduler_scheduling_attempt_duration_seconds_sum",
-		// "scheduler_scheduling_attempt_duration_seconds_bucket",
-		"scheduler_scheduling_algorithm_duration_seconds_count",
-		"scheduler_scheduling_algorithm_duration_seconds_sum",
-		"scheduler_scheduling_algorithm_duration_seconds_bucket",
-		"scheduler_framework_extension_point_duration_seconds_bucket",
-		"scheduler_framework_extension_point_duration_seconds_count",
-		"scheduler_framework_extension_point_duration_seconds_sum",
+		// "scheduler_e2e_scheduling_duration_seconds_count",   // not used by any App
+		// "scheduler_e2e_scheduling_duration_seconds_sum",     // used by Kubernetes - Control Plane
+		// "scheduler_e2e_scheduling_duration_seconds_bucket",  // not used by any App
+		// "scheduler_scheduling_attempt_duration_seconds_count",  // not used by any App
+		// "scheduler_scheduling_attempt_duration_seconds_sum",    // not used by any App
+		// "scheduler_scheduling_attempt_duration_seconds_bucket", // not used by any App
+		"scheduler_scheduling_algorithm_duration_seconds_count",       // not used by any App
+		"scheduler_scheduling_algorithm_duration_seconds_sum",         // used by Kubernetes - Control Plane
+		"scheduler_scheduling_algorithm_duration_seconds_bucket",      // not used by any App
+		"scheduler_framework_extension_point_duration_seconds_bucket", // not used by any App, probably will be used by Kubernetes - Control Plane
+		"scheduler_framework_extension_point_duration_seconds_count",  // not used by any App, probably will be used by Kubernetes - Control Plane
+		"scheduler_framework_extension_point_duration_seconds_sum",    // not used by any App, probably will be used by Kubernetes - Control Plane
 	}
 	KubeApiServerMetrics = []string{
-		"apiserver_request_total",
-		"apiserver_request_duration_seconds_count",
-		"apiserver_request_duration_seconds_sum",
+		"apiserver_request_total",                  // used by Kubernetes - Control Plane
+		"apiserver_request_duration_seconds_count", // not used by any App
+		"apiserver_request_duration_seconds_sum",   // not used by any App
 	}
-	KubeEtcdMetrics = []string{
-		"etcd_mvcc_db_total_size_in_bytes",
+	KubeEtcdMetrics = []string{ // used by Kubernetes - Control Plane
+		"etcd_mvcc_db_total_size_in_bytes", // not used by any App
 		"etcd_debugging_store_expires_total",
 		"etcd_debugging_store_watchers",
 		"etcd_disk_backend_commit_duration_seconds_bucket",
@@ -136,35 +135,35 @@ var (
 		// we only collect AWS-specific metrics here
 	}
 	CoreDNSMetrics = []string{
-		"coredns_cache_entries",
-		"coredns_cache_hits_total",
-		"coredns_cache_misses_total",
-		"coredns_dns_request_duration_seconds_count",
-		"coredns_dns_request_duration_seconds_sum",
-		"coredns_dns_requests_total",
-		"coredns_dns_responses_total",
-		"coredns_forward_requests_total",
-		"process_cpu_seconds_total",
-		"process_open_fds",
-		"process_resident_memory_bytes",
+		"coredns_cache_entries",                      // used by the Kubernetes App
+		"coredns_cache_hits_total",                   // not used by any App
+		"coredns_cache_misses_total",                 // not used by any App
+		"coredns_dns_request_duration_seconds_count", // used by the Kubernetes App
+		"coredns_dns_request_duration_seconds_sum",   // used by the Kubernetes App
+		"coredns_dns_requests_total",                 // not used by any App
+		"coredns_dns_responses_total",                // not used by any App
+		"coredns_forward_requests_total",             // used by the Kubernetes App
+		"process_cpu_seconds_total",                  // used by the Kubernetes App
+		"process_open_fds",                           // used by the Kubernetes App
+		"process_resident_memory_bytes",              // used by the Kubernetes App
 	}
-	CAdvisorMetrics = []string{
-		"container_cpu_usage_seconds_total",
+	CAdvisorMetrics = []string{ // used by the Kubernetes App
+		"container_cpu_usage_seconds_total", // also used by Global Intelligence for Kubernetes Devops
 		// These metrics will be available in containerd after kind upgrades past
 		// https://github.com/containerd/containerd/issues/5882
 		// "container_fs_usage_bytes",
 		// "container_fs_limit_bytes",
 		"container_network_receive_bytes_total",
-		"container_memory_working_set_bytes",
+		"container_memory_working_set_bytes", // also used by Global Intelligence for Kubernetes Devops
 		"container_network_transmit_bytes_total",
 	}
 	NodeExporterMetrics = []string{
-		"node_load1",
-		"node_load5",
-		"node_load15",
-		"node_cpu_seconds_total",
+		"node_load1",             // used by the Kubernetes App
+		"node_load5",             // used by the Kubernetes App
+		"node_load15",            // used by the Kubernetes App
+		"node_cpu_seconds_total", // not used by any App
 	}
-	DefaultOtelcolMetrics = []string{
+	DefaultOtelcolMetrics = []string{ // used by the Kubernetes App
 		"otelcol_exporter_enqueue_failed_log_records",
 		"otelcol_exporter_enqueue_failed_metric_points",
 		"otelcol_exporter_enqueue_failed_spans",
@@ -176,36 +175,36 @@ var (
 		"otelcol_process_runtime_total_sys_memory_bytes",
 		"otelcol_process_uptime",
 	}
-	TracingOtelcolMetrics = []string{
+	TracingOtelcolMetrics = []string{ // not used by any App
 		"otelcol_loadbalancer_num_backend_updates",
 		"otelcol_loadbalancer_num_backends",
 		"otelcol_loadbalancer_num_resolutions",
 	}
 	RecordingRuleMetrics = []string{
-		":kube_pod_info_node_count:",
-		"node:node_cpu_utilisation:avg1m",
-		":node_memory_utilisation:",
+		":kube_pod_info_node_count:",      // not used by any App
+		"node:node_cpu_utilisation:avg1m", // used by the Kubernetes App
+		":node_memory_utilisation:",       // used by the Kubernetes App
 		// "node:node_memory_bytes_available:sum", // not present, depends on other recording rules that don't exist
-		"node:node_memory_utilisation:ratio",
-		"node:node_memory_utilisation:",
-		"node:node_memory_utilisation_2:",
-		"node:node_filesystem_usage:",
-		"node:node_memory_bytes_total:sum",
-		":node_net_utilisation:sum_irate",
-		"node:node_net_utilisation:sum_irate",
-		":node_net_saturation:sum_irate",
-		"node:node_net_saturation:sum_irate",
-		":node_cpu_saturation_load1:",
-		":node_disk_saturation:avg_irate",
-		"node:node_disk_saturation:avg_irate",
-		":node_disk_utilisation:avg_irate",
-		"node:node_disk_utilisation:avg_irate",
-		":node_memory_swap_io_bytes:sum_rate",
-		"node:node_memory_swap_io_bytes:sum_rate",
-		"node:cluster_cpu_utilisation:ratio",
-		"node:cluster_memory_utilisation:ratio",
-		"node:node_cpu_saturation_load1:",
-		"node:node_filesystem_avail:",
+		"node:node_memory_utilisation:ratio",      // used by the Kubernetes App
+		"node:node_memory_utilisation:",           // not used by any App
+		"node:node_memory_utilisation_2:",         // not used by any App
+		"node:node_filesystem_usage:",             // used by the Kubernetes App
+		"node:node_memory_bytes_total:sum",        // used by the Kubernetes App
+		":node_net_utilisation:sum_irate",         // not used by any App
+		"node:node_net_utilisation:sum_irate",     // used by the Kubernetes App
+		":node_net_saturation:sum_irate",          // not used by any App
+		"node:node_net_saturation:sum_irate",      // used by the Kubernetes App
+		":node_cpu_saturation_load1:",             // not used by any App
+		":node_disk_saturation:avg_irate",         // not used by any App
+		"node:node_disk_saturation:avg_irate",     // used by the Kubernetes App
+		":node_disk_utilisation:avg_irate",        // not used by any App
+		"node:node_disk_utilisation:avg_irate",    // used by the Kubernetes App
+		":node_memory_swap_io_bytes:sum_rate",     // not used by any App
+		"node:node_memory_swap_io_bytes:sum_rate", // not used by any App
+		"node:cluster_cpu_utilisation:ratio",      // not used by any App
+		"node:cluster_memory_utilisation:ratio",   // used by the Kubernetes App
+		"node:node_cpu_saturation_load1:",         // used by the Kubernetes App
+		"node:node_filesystem_avail:",             // not used by any App
 		// "node:node_inodes_total:", // looks like we're not collecting node_filesystem_files which this requires
 		// "node:node_inodes_free:",  // looks like we're not collecting node_filesystem_files_free which this requires
 	}
