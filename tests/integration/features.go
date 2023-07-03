@@ -3,6 +3,7 @@ package integration
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 	"testing"
@@ -105,6 +106,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					expectedLabels := receivermock.Labels{
 						"cluster":                      "kubernetes",
 						"_origin":                      "kubernetes",
+						"_collector":                   "kubernetes",
 						"container":                    "receiver-mock",
 						"deployment":                   "receiver-mock",
 						"endpoint":                     "https-metrics",
@@ -121,6 +123,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 						"service":                      "receiver-mock",
 					}
 					prometheusLabels := receivermock.Labels{
+						"k8s.node.name":      internal.NodeNameRegex, // TODO: Remove this during the migration to v4
 						"instance":           internal.IpWithPortRegex,
 						"prometheus_replica": fmt.Sprintf("prometheus-%s-.*-0", releaseName),
 						"prometheus":         fmt.Sprintf("%s/%s-.*-prometheus", namespace, releaseName),
@@ -144,7 +147,10 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					}
 
 					log.V(0).InfoS("sample's labels", "labels", labels)
-					return labels.MatchAll(expectedLabels)
+					extra, missing := labels.DiffLabelNames(expectedLabels, regexp.MustCompile("pod_labels_.*"))
+					log.V(0).InfoS("extra labels", "labels", extra)
+					log.V(0).InfoS("missing labels", "labels", missing)
+					return labels.MatchAll(expectedLabels) && len(extra) == 0 && len(missing) == 0
 				}, waitDuration, tickDuration)
 				return ctx
 			},
