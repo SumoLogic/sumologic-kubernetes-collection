@@ -44,6 +44,7 @@ const (
 	spansPerTrace      uint             = 2
 	Prometheus         MetricsCollector = "prometheus"
 	Otelcol            MetricsCollector = "otelcol"
+	Fluentd            MetricsCollector = "fluentd"
 )
 
 func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector) features.Feature {
@@ -106,7 +107,6 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					expectedLabels := receivermock.Labels{
 						"cluster":                      "kubernetes",
 						"_origin":                      "kubernetes",
-						"_collector":                   "kubernetes",
 						"container":                    "receiver-mock",
 						"deployment":                   "receiver-mock",
 						"endpoint":                     "https-metrics",
@@ -123,6 +123,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 						"service":                      "receiver-mock",
 					}
 					prometheusLabels := receivermock.Labels{
+						"_collector":         "kubernetes",
 						"k8s.node.name":      internal.NodeNameRegex, // TODO: Remove this during the migration to v4
 						"instance":           internal.IpWithPortRegex,
 						"prometheus_replica": fmt.Sprintf("prometheus-%s-.*-0", releaseName),
@@ -130,10 +131,13 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 						"prometheus_service": fmt.Sprintf("%s-.*-kubelet", releaseName),
 					}
 					otelcolLabels := receivermock.Labels{
-						"http.scheme":         "http.",
-						"net.host.name":       internal.IpRegex,
-						"net.host.port":       internal.NetworkPortRegex,
-						"service.instance.id": internal.IpWithPortRegex,
+						"_collector": "kubernetes",
+					}
+					fluentdLabels := receivermock.Labels{
+						"instance":           internal.IpWithPortRegex,
+						"prometheus_replica": fmt.Sprintf("prometheus-%s-.*-0", releaseName),
+						"prometheus":         fmt.Sprintf("%s/%s-.*-prometheus", namespace, releaseName),
+						"prometheus_service": fmt.Sprintf("%s-.*-kubelet", releaseName),
 					}
 
 					if metricsCollector == Prometheus {
@@ -142,6 +146,10 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 						}
 					} else if metricsCollector == Otelcol {
 						for key, value := range otelcolLabels {
+							expectedLabels[key] = value
+						}
+					} else if metricsCollector == Fluentd {
+						for key, value := range fluentdLabels {
 							expectedLabels[key] = value
 						}
 					}
