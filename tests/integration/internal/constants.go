@@ -86,20 +86,22 @@ var (
 		"kube_pod_container_status_restarts_total",
 		"kube_pod_status_phase",
 	}
+	// These metrics are collected by Prometheus, but only used for recording rules
+	// Otel actually sends these to the remote
+	AdditionalKubePodMetrics = []string{
+		"kube_pod_info",
+	}
+	KubeServiceMetrics = []string{
+		"kube_service_info",
+		"kube_service_spec_type",
+	}
 	KubeletMetrics = []string{
 		"kubelet_running_containers",
 		"kubelet_running_pods",
+		"kubelet_runtime_operations_duration_seconds_count",
+		"kubelet_runtime_operations_duration_seconds_sum",
 	}
 	KubeSchedulerMetrics = []string{
-		// TODO: check different metrics depending on K8s version
-		// scheduler_scheduling_duration_seconds is present for K8s <1.23
-		// scheduler_scheduling_attempt_duration_seconds is present for K8s >=1.23
-		// "scheduler_e2e_scheduling_duration_seconds_count",
-		// "scheduler_e2e_scheduling_duration_seconds_sum",
-		// "scheduler_e2e_scheduling_duration_seconds_bucket",
-		// "scheduler_scheduling_attempt_duration_seconds_count",
-		// "scheduler_scheduling_attempt_duration_seconds_sum",
-		// "scheduler_scheduling_attempt_duration_seconds_bucket",
 		"scheduler_scheduling_algorithm_duration_seconds_count",
 		"scheduler_scheduling_algorithm_duration_seconds_sum",
 		"scheduler_scheduling_algorithm_duration_seconds_bucket",
@@ -154,6 +156,7 @@ var (
 	}
 	CAdvisorMetrics = []string{
 		"container_cpu_usage_seconds_total",
+		"container_cpu_cfs_throttled_seconds_total",
 		// These metrics will be available in containerd after kind upgrades past
 		// https://github.com/containerd/containerd/issues/5882
 		// "container_fs_usage_bytes",
@@ -168,25 +171,153 @@ var (
 		"node_load15",
 		"node_cpu_seconds_total",
 	}
+	// These metrics are collected by Prometheus, but only used for recording rules
+	// Otel actually sends these to the remote
+	AdditionalNodeExporterMetrics = []string{
+		"node_disk_io_time_weighted_seconds_total",
+		"node_disk_io_time_seconds_total",
+		"node_vmstat_pgpgin",
+		"node_vmstat_pgpgout",
+		"node_memory_MemFree_bytes",
+		"node_memory_Cached_bytes",
+		"node_memory_Buffers_bytes",
+		"node_memory_MemTotal_bytes",
+		"node_network_receive_drop_total",
+		"node_network_transmit_drop_total",
+		"node_network_receive_bytes_total",
+		"node_network_transmit_bytes_total",
+		"node_filesystem_avail_bytes",
+		"node_filesystem_size_bytes",
+	}
 	DefaultOtelcolMetrics = []string{
-		"otelcol_exporter_enqueue_failed_log_records",
-		"otelcol_exporter_enqueue_failed_metric_points",
-		"otelcol_exporter_enqueue_failed_spans",
-		"otelcol_exporter_queue_capacity",
 		"otelcol_process_cpu_seconds",
 		"otelcol_process_memory_rss",
 		"otelcol_process_runtime_heap_alloc_bytes",
 		"otelcol_process_runtime_total_alloc_bytes",
 		"otelcol_process_runtime_total_sys_memory_bytes",
 		"otelcol_process_uptime",
+		"otelcol_exporter_enqueue_failed_metric_points",
+		"otelcol_exporter_enqueue_failed_spans",
+		"otelcol_exporter_enqueue_failed_log_records",
+		"otelcol_exporter_queue_capacity",
+		"otelcol_exporter_queue_size",
+		"otelcol_exporter_requests_bytes",
+		"otelcol_exporter_requests_duration",
+		"otelcol_exporter_requests_records",
+		"otelcol_exporter_requests_sent",
+		"otelcol_exporter_sent_metric_points",
+		"otelcol_otelsvc_k8s_other_added",
+		"otelcol_otelsvc_k8s_other_updated",
+		"otelcol_otelsvc_k8s_pod_added",
+		"otelcol_otelsvc_k8s_pod_table_size",
+		"otelcol_otelsvc_k8s_pod_updated",
+		"otelcol_processor_accepted_metric_points",
+		"otelcol_processor_batch_batch_send_size_bucket",
+		"otelcol_processor_batch_batch_send_size_count",
+		"otelcol_processor_batch_batch_send_size_sum",
+		"otelcol_processor_batch_timeout_trigger_send",
+		"otelcol_processor_dropped_metric_points",
+		"otelcol_processor_groupbyattrs_metric_groups_bucket",
+		"otelcol_processor_groupbyattrs_metric_groups_count",
+		"otelcol_processor_groupbyattrs_metric_groups_sum",
+		"otelcol_processor_groupbyattrs_num_non_grouped_metrics",
+		"otelcol_processor_refused_metric_points",
+	}
+	LogsOtelcolMetrics = []string{
+		"otelcol_exporter_sent_log_records",
+		"otelcol_receiver_accepted_log_records",
+		"otelcol_processor_accepted_log_records",
+		"otelcol_receiver_refused_log_records",
+		"otelcol_processor_refused_log_records",
+		"otelcol_processor_dropped_log_records",
+		"otelcol_processor_groupbyattrs_num_grouped_logs",
+		"otelcol_processor_groupbyattrs_log_groups_bucket",
+		"otelcol_processor_groupbyattrs_log_groups_count",
+		"otelcol_processor_groupbyattrs_log_groups_sum",
 	}
 	TracingOtelcolMetrics = []string{
 		"otelcol_loadbalancer_num_backend_updates",
 		"otelcol_loadbalancer_num_backends",
 		"otelcol_loadbalancer_num_resolutions",
 	}
+	MetricsCollectorOtelcolMetrics = []string{
+		"otelcol_receiver_refused_metric_points",
+		"otelcol_processor_groupbyattrs_num_grouped_metrics",
+		"otelcol_receiver_accepted_metric_points",
+	}
+	PrometheusMetrics = []string{
+		"prometheus_remote_storage_bytes_total",
+		"prometheus_remote_storage_enqueue_retries_total",
+		"prometheus_remote_storage_exemplars_dropped_total",
+		"prometheus_remote_storage_exemplars_failed_total",
+		"prometheus_remote_storage_exemplars_in_total",
+		"prometheus_remote_storage_exemplars_pending",
+		"prometheus_remote_storage_exemplars_retried_total",
+		"prometheus_remote_storage_exemplars_total",
+		"prometheus_remote_storage_highest_timestamp_in_seconds",
+		"prometheus_remote_storage_max_samples_per_send",
+		"prometheus_remote_storage_metadata_bytes_total",
+		"prometheus_remote_storage_metadata_failed_total",
+		"prometheus_remote_storage_metadata_retried_total",
+		"prometheus_remote_storage_metadata_total",
+		"prometheus_remote_storage_queue_highest_sent_timestamp_seconds",
+		"prometheus_remote_storage_samples_dropped_total",
+		"prometheus_remote_storage_samples_failed_total",
+		"prometheus_remote_storage_samples_in_total",
+		"prometheus_remote_storage_samples_pending",
+		"prometheus_remote_storage_samples_retried_total",
+		"prometheus_remote_storage_samples_total",
+		"prometheus_remote_storage_sent_batch_duration_seconds_bucket",
+		"prometheus_remote_storage_sent_batch_duration_seconds_count",
+		"prometheus_remote_storage_sent_batch_duration_seconds_sum",
+		"prometheus_remote_storage_shard_capacity",
+		"prometheus_remote_storage_shards",
+		"prometheus_remote_storage_shards_desired",
+		"prometheus_remote_storage_shards_max",
+		"prometheus_remote_storage_shards_min",
+		"prometheus_remote_storage_string_interner_zero_reference_releases_total",
+	}
+	FluentBitMetrics = []string{
+		"fluentbit_build_info",
+		"fluentbit_filter_add_records_total",
+		"fluentbit_filter_bytes_total",
+		"fluentbit_filter_drop_records_total",
+		"fluentbit_filter_records_total",
+		"fluentbit_input_bytes_total",
+		"fluentbit_input_files_closed_total",
+		"fluentbit_input_files_opened_total",
+		"fluentbit_input_files_rotated_total",
+		"fluentbit_input_records_total",
+		"fluentbit_output_dropped_records_total",
+		"fluentbit_output_errors_total",
+		"fluentbit_output_proc_bytes_total",
+		"fluentbit_output_proc_records_total",
+		"fluentbit_output_retried_records_total",
+		"fluentbit_output_retries_failed_total",
+		"fluentbit_output_retries_total",
+		"fluentbit_uptime",
+	}
+	FluentDMetrics = []string{
+		"fluentd_output_status_buffer_available_space_ratio",
+		"fluentd_output_status_buffer_queue_length",
+		"fluentd_output_status_buffer_stage_byte_size",
+		"fluentd_output_status_buffer_stage_length",
+		"fluentd_output_status_buffer_total_bytes",
+		"fluentd_output_status_emit_count",
+		"fluentd_output_status_emit_records",
+		"fluentd_output_status_flush_time_count",
+		"fluentd_output_status_num_errors",
+		"fluentd_output_status_queue_byte_size",
+		"fluentd_output_status_retry_count",
+		"fluentd_output_status_retry_wait",
+		"fluentd_output_status_rollback_count",
+		"fluentd_output_status_slow_flush_count",
+		"fluentd_output_status_write_count",
+	}
 	RecordingRuleMetrics = []string{
 		":kube_pod_info_node_count:",
+		"node:node_num_cpu:sum",
+		"node_namespace_pod:kube_pod_info:",
 		"node:node_cpu_utilisation:avg1m",
 		":node_memory_utilisation:",
 		// "node:node_memory_bytes_available:sum", // not present, depends on other recording rules that don't exist
@@ -199,6 +330,7 @@ var (
 		"node:node_net_utilisation:sum_irate",
 		":node_net_saturation:sum_irate",
 		"node:node_net_saturation:sum_irate",
+		":node_cpu_utilisation:avg1m",
 		":node_cpu_saturation_load1:",
 		":node_disk_saturation:avg_irate",
 		"node:node_disk_saturation:avg_irate",
@@ -212,6 +344,27 @@ var (
 		"node:node_filesystem_avail:",
 		// "node:node_inodes_total:", // looks like we're not collecting node_filesystem_files which this requires
 		// "node:node_inodes_free:",  // looks like we're not collecting node_filesystem_files_free which this requires
+		"instance:node_network_receive_bytes:rate:sum",
+	}
+	OtherMetrics = []string{
+		"up",
+	}
+	// these metrics may or may not show up depending on the specifics of the test
+	// we accept them, but don't fail if they're not present
+	FlakyMetrics = []string{
+		"otelcol_otelsvc_k8s_pod_deleted",
+		"otelcol_processor_batch_batch_size_trigger_send",
+		"otelcol_otelsvc_k8s_ip_lookup_miss",
+		"kube_pod_container_status_waiting_reason",
+		// TODO: check different metrics depending on K8s version
+		// scheduler_scheduling_duration_seconds is present for K8s <1.23
+		// scheduler_scheduling_attempt_duration_seconds is present for K8s >=1.23
+		"scheduler_e2e_scheduling_duration_seconds_count",
+		"scheduler_e2e_scheduling_duration_seconds_sum",
+		"scheduler_e2e_scheduling_duration_seconds_bucket",
+		"scheduler_scheduling_attempt_duration_seconds_count",
+		"scheduler_scheduling_attempt_duration_seconds_sum",
+		"scheduler_scheduling_attempt_duration_seconds_bucket",
 	}
 )
 
@@ -224,6 +377,7 @@ var (
 		KubeDeploymentMetrics,
 		KubeNodeMetrics,
 		KubePodMetrics,
+		KubeServiceMetrics,
 		KubeletMetrics,
 		KubeSchedulerMetrics,
 		KubeApiServerMetrics,
@@ -232,7 +386,9 @@ var (
 		CoreDNSMetrics,
 		CAdvisorMetrics,
 		NodeExporterMetrics,
+		PrometheusMetrics,
 		RecordingRuleMetrics,
+		OtherMetrics,
 	}
 	DefaultExpectedMetrics                 []string
 	DefaultExpectedFluentdFluentbitMetrics []string
@@ -259,12 +415,12 @@ func InitializeConstants() error {
 	}
 
 	DefaultExpectedFluentdFluentbitMetrics = []string{}
-	for _, metrics := range DefaultExpectedMetricsGroups {
-		DefaultExpectedFluentdFluentbitMetrics = append(DefaultExpectedMetrics, metrics...)
+	for _, metrics := range append(DefaultExpectedMetricsGroups, FluentBitMetrics, FluentDMetrics) {
+		DefaultExpectedFluentdFluentbitMetrics = append(DefaultExpectedFluentdFluentbitMetrics, metrics...)
 	}
 
 	DefaultExpectedMetrics = []string{}
-	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics)
+	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics, LogsOtelcolMetrics)
 	for _, metrics := range metricsGroupsWithOtelcol {
 		DefaultExpectedMetrics = append(DefaultExpectedMetrics, metrics...)
 	}

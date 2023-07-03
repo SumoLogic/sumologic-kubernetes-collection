@@ -20,7 +20,9 @@ func Test_Helm_OT_Metrics(t *testing.T) {
 		internal.KubeDaemonSetMetrics,
 		internal.KubeDeploymentMetrics,
 		internal.KubeNodeMetrics,
+		internal.AdditionalKubePodMetrics,
 		internal.KubePodMetrics,
+		internal.KubeServiceMetrics,
 		internal.KubeletMetrics,
 		internal.KubeSchedulerMetrics,
 		internal.KubeApiServerMetrics,
@@ -29,13 +31,16 @@ func Test_Helm_OT_Metrics(t *testing.T) {
 		internal.CoreDNSMetrics,
 		internal.CAdvisorMetrics,
 		internal.NodeExporterMetrics,
+		internal.AdditionalNodeExporterMetrics,
 		internal.DefaultOtelcolMetrics,
+		internal.MetricsCollectorOtelcolMetrics,
+		internal.OtherMetrics,
 	}
 	for _, metrics := range expectedMetricsGroups {
 		for _, metric := range metrics {
-			if strings.HasSuffix(metric, "_count") ||
-				strings.HasSuffix(metric, "_sum") ||
-				strings.HasSuffix(metric, "_bucket") {
+			if strings.HasPrefix(metric, "apiserver_request_duration_seconds") ||
+				strings.HasPrefix(metric, "coredns_dns_request_duration_seconds") ||
+				strings.HasPrefix(metric, "kubelet_runtime_operations_duration_seconds") {
 				continue
 			}
 			expectedMetrics = append(expectedMetrics, metric)
