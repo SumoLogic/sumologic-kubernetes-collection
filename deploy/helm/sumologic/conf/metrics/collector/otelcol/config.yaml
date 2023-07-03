@@ -16,13 +16,18 @@ extensions:
       on_rebound: true
       directory: /tmp
 
-# TODO: Delete this once we upgrade operator past https://github.com/open-telemetry/opentelemetry-operator/issues/958
+
 processors:
-  transform/drop_id_name:
+  transform/drop_unnecessary_attributes:
     error_mode: ignore
     metric_statements:
       - context: datapoint
         statements:
+          - delete_key(resource.attributes, "http.scheme")
+          - delete_key(resource.attributes, "net.host.name")
+          - delete_key(resource.attributes, "net.host.port")
+          - delete_key(resource.attributes, "service.instance.id")
+          # TODO: Delete these two once we upgrade operator past https://github.com/open-telemetry/opentelemetry-operator/issues/958
           - delete_key(attributes, "id")
           - delete_key(attributes, "name")
 
@@ -156,6 +161,6 @@ service:
   pipelines:
     metrics:
       exporters: [otlphttp]
-      processors: [transform/drop_id_name]
+      processors: [transform/drop_unnecessary_attributes]
       receivers: [prometheus]
 
