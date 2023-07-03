@@ -60,3 +60,29 @@ func (labels Labels) MatchAll(requested Labels) bool {
 	}
 	return ret
 }
+
+// DiffLabelNames calculates the difference in label names between the two label sets. It returns two slices of strings:
+// the names of labels from origin not in `requested`, and the names of labels from requested not in origin
+func (labels Labels) DiffLabelNames(requested Labels, skipRegex *regexp.Regexp) (extra []string, missing []string) {
+	extra, missing = []string{}, []string{}
+	for label := range requested {
+		if skipRegex != nil && skipRegex.MatchString(label) {
+			continue
+		}
+		if _, ok := labels[label]; !ok {
+			missing = append(missing, label)
+		}
+	}
+
+	for label := range labels {
+		if skipRegex != nil && skipRegex.MatchString(label) {
+			continue
+		}
+
+		if _, ok := requested[label]; !ok && !skipRegex.MatchString(label) {
+			extra = append(extra, label)
+		}
+	}
+
+	return
+}
