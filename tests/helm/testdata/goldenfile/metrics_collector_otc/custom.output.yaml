@@ -93,7 +93,15 @@ spec:
           on_rebound: true
           directory: /tmp
 
-    processors: {}
+    # TODO: Delete this once we upgrade operator past https://github.com/open-telemetry/opentelemetry-operator/issues/958
+    processors:
+      transform/drop_id_name:
+        error_mode: ignore
+        metric_statements:
+          - context: datapoint
+            statements:
+              - delete_key(attributes, "id")
+              - delete_key(attributes, "name")
 
     receivers:
       prometheus:
@@ -119,4 +127,5 @@ spec:
       pipelines:
         metrics:
           exporters: [otlphttp]
+          processors: [transform/drop_id_name]
           receivers: [prometheus]
