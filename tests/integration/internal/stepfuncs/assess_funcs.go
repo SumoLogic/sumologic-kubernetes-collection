@@ -2,6 +2,7 @@ package stepfuncs
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
@@ -23,6 +24,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	k8s_internal "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/k8s"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/receivermock"
@@ -172,16 +174,42 @@ func WaitUntilExpectedMetricsPresent(
 				if err != nil {
 					return "", err
 				}
-				missingMetrics := []string{}
+				expectedMetricsMap := map[string]bool{}
 				for _, expectedMetricName := range expectedMetrics {
+					expectedMetricsMap[expectedMetricName] = true
+				}
+
+				extraMetrics := []string{}
+				missingMetrics := []string{}
+				for expectedMetricName := range expectedMetricsMap {
 					_, ok := metricCounts[expectedMetricName]
 					if !ok {
 						missingMetrics = append(missingMetrics, expectedMetricName)
 					}
 				}
-				if len(missingMetrics) > 0 {
-					return "", fmt.Errorf("couldn't find the following metrics in received metrics: %v", missingMetrics)
+
+				// when checking for unnecessary metrics, we accept the flaky metrics as well
+				for _, flakyMetric := range internal.FlakyMetrics {
+					expectedMetricsMap[flakyMetric] = true
 				}
+				for foundMetricName := range metricCounts {
+					_, ok := expectedMetricsMap[foundMetricName]
+					if !ok {
+						extraMetrics = append(extraMetrics, foundMetricName)
+					}
+				}
+
+				errs := []error{}
+				if len(missingMetrics) > 0 {
+					errs = append(errs, fmt.Errorf("couldn't find the following metrics in received metrics: %v", missingMetrics))
+				}
+				if len(extraMetrics) > 0 {
+					errs = append(errs, fmt.Errorf("found the following unexpected metrics: %v", extraMetrics))
+				}
+				if len(errs) > 0 {
+					return "", errors.Join(errs...)
+				}
+
 				return fmt.Sprintf("All expected metrics were received: %v", expectedMetrics), nil
 			},
 		)
