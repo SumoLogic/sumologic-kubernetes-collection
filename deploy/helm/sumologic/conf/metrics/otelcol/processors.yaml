@@ -16,6 +16,11 @@ groupbyattrs:
     - pod
     - service
 
+groupbyattrs/group_by_name:
+  keys:
+    - __name__
+    - job
+
 ## The Kubernetes sprocessor automatically tags logs, metrics and traces with Kubernetes metadata like pod name, namespace name etc.
 k8s_tagger:
   extract:
@@ -110,20 +115,6 @@ resource/remove_k8s_pod_pod_name:
     - action: delete
       key: k8s.pod.pod_name
 
-transform/prepare_routing:
-  error_mode: ignore
-  metric_statements:
-    - context: metric
-      statements:
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.apiserver") where resource.attributes["job"] == "apiserver"
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.control-plane.coredns") where resource.attributes["job"] == "coredns"
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.control-plane.kube-etcd") where resource.attributes["job"] == "kube-etcd"
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.controller-manager") where resource.attributes["job"] == "kubelet" and IsMatch(name, "^cloudprovider_.*")
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.kubelet") where resource.attributes["job"] == "kubelet" and not IsMatch(name, "^cloudprovider_.*")
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.node") where resource.attributes["job"] == "node-exporter"
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.scheduler") where resource.attributes["job"] == "kube-scheduler"
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.state") where resource.attributes["job"] == "kube-state-metrics"
-
 ## NOTE: below listed rules could be simplified if routingprocessor
 ## supports regex matching. At this point we could group route entries
 ## going to the same set of exporters.
@@ -175,6 +166,34 @@ source:
 ## so that the Sumo Logic apps can make full use of the ingested data.
 sumologic_schema:
   add_cloud_namespace: false
+
+transform/prepare_routing:
+  error_mode: ignore
+  metric_statements:
+    - context: metric
+      statements:
+        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.apiserver") where resource.attributes["job"] == "apiserver"
+        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.control-plane.coredns") where resource.attributes["job"] == "coredns"
+        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.control-plane.kube-etcd") where resource.attributes["job"] == "kube-etcd"
+        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.controller-manager") where resource.attributes["job"] == "kubelet" and IsMatch(name, "^cloudprovider_.*")
+        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.kubelet") where resource.attributes["job"] == "kubelet" and not IsMatch(name, "^cloudprovider_.*")
+        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.node") where resource.attributes["job"] == "node-exporter"
+        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.scheduler") where resource.attributes["job"] == "kube-scheduler"
+        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.state") where resource.attributes["job"] == "kube-state-metrics"
+
+transform/remove_name:
+  error_mode: ignore
+  metric_statements:
+    - context: resource
+      statements:
+        - delete_key(attributes, "__name__")
+
+transform/set_name:
+  error_mode: ignore
+  metric_statements:
+    - context: datapoint
+      statements:
+        - set(attributes["__name__"], metric.name) where IsMatch(metric.name, "^cloudprovider_.*")
 
 {{- if .Values.sumologic.metrics.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.metrics.otelcol.extraProcessors }}

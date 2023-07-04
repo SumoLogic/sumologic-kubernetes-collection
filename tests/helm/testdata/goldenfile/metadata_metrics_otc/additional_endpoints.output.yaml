@@ -113,6 +113,10 @@ data:
         - namespace
         - pod
         - service
+      groupbyattrs/group_by_name:
+        keys:
+        - __name__
+        - job
       k8s_tagger:
         extract:
           delimiter: _
@@ -241,6 +245,18 @@ data:
             where resource.attributes["job"] == "kube-scheduler"
           - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.state")
             where resource.attributes["job"] == "kube-state-metrics"
+      transform/remove_name:
+        error_mode: ignore
+        metric_statements:
+        - context: resource
+          statements:
+          - delete_key(attributes, "__name__")
+      transform/set_name:
+        error_mode: ignore
+        metric_statements:
+        - context: datapoint
+          statements:
+          - set(attributes["__name__"], metric.name) where IsMatch(metric.name, "^cloudprovider_.*")
     receivers:
       otlp:
         protocols:
@@ -321,6 +337,9 @@ data:
           - resource/remove_k8s_pod_pod_name
           - resource/delete_source_metadata
           - sumologic_schema
+          - transform/set_name
+          - groupbyattrs/group_by_name
+          - transform/remove_name
           - batch
           - transform/prepare_routing
           - routing
