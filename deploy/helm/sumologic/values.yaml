@@ -1834,7 +1834,7 @@ kube-prometheus-stack:
       ## process_resident_memory_bytes
       metricRelabelings:
         - action: keep
-          regex: (?:etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total)|etcd_mvcc_db_total_size_in_bytes|etcd_debugging_(store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+          regex: (?:etcd_request_cache_(?:add|get)_(?:duration_seconds|latencies_summary)_(?:count|sum)|etcd_helper_cache_(?:hit|miss)_(?:count|total)|etcd_mvcc_db_total_size_in_bytes|etcd_debugging_(store_(expires_total|watchers))|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_.*|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
           sourceLabels: [__name__]
   kubeScheduler:
     serviceMonitor:
@@ -2459,7 +2459,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: kube-etcd;(?:etcd_debugging_(store_(expires_total|watchers))|etcd_mvcc_db_total_size_in_bytes|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_bucket|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+              regex: kube-etcd;(?:etcd_debugging_(store_(expires_total|watchers))|etcd_mvcc_db_total_size_in_bytes|etcd_disk_(backend_commit|wal_fsync)_duration_seconds_.*|etcd_grpc_proxy_cache_(hits|misses)_total|etcd_network_client_grpc_(received|sent)_bytes_total|etcd_server_(has_leader|leader_changes_seen_total)|etcd_server_proposals_(pending|(applied|committed|failed)_total)|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
               sourceLabels: [job, __name__]
 
         ## Nginx ingress controller metrics
