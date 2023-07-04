@@ -131,7 +131,11 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 		"resource/remove_k8s_pod_pod_name",
 		"resource/delete_source_metadata",
 		"sumologic_schema",
+		"transform/set_name",
+		"groupbyattrs/group_by_name",
+		"transform/remove_name",
 		"batch",
+		"transform/prepare_routing",
 		"routing",
 	}
 
