@@ -31,6 +31,12 @@ processors:
           - delete_key(attributes, "id")
           - delete_key(attributes, "name")
 
+  filter/drop_unnecessary_metrics:
+    error_mode: ignore
+    metrics:
+      metric:
+        - IsMatch(name, "scrape_.*")
+
 receivers:
   prometheus:
     config:
@@ -161,6 +167,8 @@ service:
   pipelines:
     metrics:
       exporters: [otlphttp]
-      processors: [transform/drop_unnecessary_attributes]
+      processors:
+        - filter/drop_unnecessary_metrics
+        - transform/drop_unnecessary_attributes
       receivers: [prometheus]
 
