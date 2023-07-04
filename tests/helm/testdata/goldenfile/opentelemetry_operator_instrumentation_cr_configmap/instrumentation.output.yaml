@@ -48,8 +48,6 @@ data:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
       python:
-        # Force to use older image because of LOGS exporting issue
-        # https://github.com/open-telemetry/opentelemetry-python/issues/2594
         image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.39b0
         env:
           - name: OTEL_METRICS_EXPORTER
@@ -112,8 +110,6 @@ data:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://RELEASE-NAME-sumologic-otelagent.sumologic:4318
       python:
-        # Force to use older image because of LOGS exporting issue
-        # https://github.com/open-telemetry/opentelemetry-python/issues/2594
         image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.39b0
         env:
           - name: OTEL_METRICS_EXPORTER
