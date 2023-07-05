@@ -116,7 +116,8 @@ spec:
         config:
           global:
             scrape_interval: 30s
-          scrape_configs:
+          ## As of right now, if scrape_configs is empty, it needs to be an empty list, otherwise otel-operator rejects it
+          scrape_configs: []
         target_allocator:
           endpoint: http://RELEASE-NAME-sumologic-metrics-targetallocator
           interval: 30s
