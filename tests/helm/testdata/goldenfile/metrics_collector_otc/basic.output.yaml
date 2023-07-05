@@ -94,7 +94,8 @@ spec:
         config:
           global:
             scrape_interval: 30s
-          scrape_configs:
+          ## As of right now, if scrape_configs is empty, it needs to be an empty list, otherwise otel-operator rejects it
+          scrape_configs: 
             ## These scrape configs are for kubelet metrics
             ## Prometheus operator does this by manually maintaining a Service with Endpoints for all Nodes
             ## We don't have that capability, so we need to use a static configuration
