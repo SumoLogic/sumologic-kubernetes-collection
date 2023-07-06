@@ -35,6 +35,7 @@
     - [Setting different resources on different nodes for logs collector](#setting-different-resources-on-different-nodes-for-logs-collector)
 - [Parsing log content as json](#parsing-log-content-as-json)
 - [Keeping Source Category for metrics](#keeping-source-category-for-metrics)
+- [Using newer Kube Prometheus Stack](#using-newer-kube-prometheus-stack)
 
 ## Overriding chart resource names with `fullnameOverride`
 
@@ -807,3 +808,69 @@ metadata:
               - key: _sourceName
                 action: delete
 ```
+
+## Using newer Kube Prometheus Stack
+
+Due to breaking changes, we do not support the latest [Kube Prometheus Stack][kube-prometheus-stack]. We are aware that it can be a major
+issue, so this section describes how to install newer Kube Prometheus Stack to work with our collection.
+
+1. Prepare `values.yaml` for Kube Prometheus Stack
+
+   - copy content of `kube-prometheus-stack` from [values.yaml][values.yaml], e.g. for Sumologic Kubernetes Collection v3.9 you need to copy
+     [these][kube-prometheus-stack-3.9] lines
+
+   - remove configuration for images for Kube Prometheus Stack to use newer versions, e.g. for Sumologic Kubernetes Collection v3.9 you need
+     to remove [tag][kube-state-metrics-tag] for kube-state-metrics
+
+   - add your custom configuration
+
+2. Upgrade sumologic chart without Kube Prometheus Stack by adding the following configuration to your `values.yaml`:
+
+```yaml
+kube-prometheus-stack:
+  enabled: false
+```
+
+1. Verify changes in newer Kube Prometheus Stack which you want to install, you can find information about changes
+   [here][kube-prometheus-stack-upgrade].
+
+1. Install CRD for Kube Prometheus Stack to do this please see [upgrade instruction][kube-prometheus-stack-upgrade] for Kube Prometheus
+   Stack, for example to upgrade from 40.x to 41.x:
+
+```bash
+kubectl apply --server-side -f
+https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+kubectl apply --server-side -f
+https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+kubectl apply --server-side -f
+https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+kubectl apply --server-side -f
+https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+kubectl apply --server-side -f
+https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+kubectl apply --server-side -f
+https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+kubectl apply --server-side -f
+https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+kubectl apply --server-side -f
+https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.60.1/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+```
+
+1. Install Kube Prometheus Stack in the same namespace in which collection has been installed:
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+helm install kube-prometheus prometheus-community/kube-prometheus-stack \
+  --namespace <NAMESPACE> \
+  --version <VERSION> \
+  -f values-prometheus.yaml
+```
+
+[kube-prometheus-stack]: https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
+[kube-prometheus-stack-3.9]:
+  https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/3d5bf2855f0a5254007b7dfffa64b320cefadf53/deploy/helm/sumologic/values.yaml#L1418-L3462
+[kube-state-metrics-tag]:
+  https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/3d5bf2855f0a5254007b7dfffa64b320cefadf53/deploy/helm/sumologic/values.yaml#L1941
+[kube-prometheus-stack-upgrade]: https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#upgrading-chart
