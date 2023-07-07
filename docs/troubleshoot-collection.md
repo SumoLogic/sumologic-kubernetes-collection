@@ -403,7 +403,8 @@ The duplicated pod deletion command is there to make sure the pod is not stuck i
 ### Out of memory (OOM) failures for Prometheus Pod
 
 If you observe that Prometheus Pod needs more and more resources (out of memory failures - OOM killed Prometheus) and you are not able to
-increase them then you may need to horizontally scale Prometheus. :construction: Add link to Prometheus sharding doc here.
+increase them then you may need to horizontally scale Prometheus. For details please refer to -
+[Prometheus sharding](./prometheus.md#horizontal-scaling-sharding).
 
 ### Prometheus: server returned HTTP status 404 Not Found: 404 page not found
 
