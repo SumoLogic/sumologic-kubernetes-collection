@@ -35,6 +35,7 @@ Documentation links:
   - Open Telemetry
     - [Open Telemetry with `sumologic-kubernetes-collection`](/docs/opentelemetry-collector.md)
     - [Comparison of Fluentd and Opentelemetry Collector functionality](/docs/fluent/fluentd-otc-comparison.md)
+    - [Comparison of Fluent Bit and Opentelemetry Collector functionality](/docs/fluentbit-otc-comparison.md)
     - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
   - Fluentd and Fluent-Bit
     - [Adding Additional Fluentd Plugins](/docs/fluent/additional-fluentd-plugins.md)

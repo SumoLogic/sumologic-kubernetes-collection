@@ -17,10 +17,7 @@
     - [Custom metrics filtering and modification](#custom-metrics-filtering-and-modification)
   - [Logs migration](#logs-migration)
     - [Replacing Fluent Bit with OpenTelemetry Collector](#replacing-fluent-bit-with-opentelemetry-collector)
-      - [Migration with (small) data loss](#migration-with-small-data-loss)
-      - [Migration with data duplication](#migration-with-data-duplication)
-      - [Migration without data duplication and data loss (advanced)](#migration-without-data-duplication-and-data-loss-advanced)
-    - [Otelcol StatefulSet](#otelcol-statefulset)
+    - [Otelcol StatefulSet](#otelcol-statefulset-1)
     - [Custom logs filtering and processing](#custom-logs-filtering-and-processing)
   - [Tracing migration](#tracing-migration)
     - [Replace special configuration values marked by 'replace' suffix](#replace-special-configuration-values-marked-by-replace-suffix)
@@ -42,7 +39,9 @@ This document describes the major changes and the necessary migration steps.
 
 The new version replaces both Fluentd and Fluent Bit with the OpenTelemetry Collector. In the majority of cases, this doesn't require any
 manual intervention. However, custom processing in Fluentd or Fluent Bit will need to be ported to the OpenTelemetry Collector configuration
-format. See below for details.
+format. Please check [Solution Overview][solution-overview] and see below for details.
+
+[solution-overview]: /docs/README.md#solution-overview
 
 ### kube-prometheus-stack upgrade
 
