@@ -10,6 +10,7 @@ Fluentd in our collection.
   - [Multiline Log Parsing](#multiline-log-parsing)
   - [Container Logs](#container-logs)
   - [SystemD Logs](#systemd-logs)
+  - [Running otelcol and Fluent Bit side by side](#running-otelcol-and-fluent-bit-side-by-side)
 - [Persistence](#persistence)
   - [Enabling persistence](#enabling-persistence)
     - [Enabling OpenTelemetry Collector persistence by recreating StatefulSet](#enabling-opentelemetry-collector-persistence-by-recreating-statefulset)
@@ -110,7 +111,7 @@ this Chart.
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/configuration.md
 [values]: /deploy/helm/sumologic/values.yaml
 
-### Multiline log parsing
+### Multiline Log Parsing
 
 Multiline log parsing for OpenTelemetry Collector can be configured using the `sumologic.logs.multiline` section in `user-values.yaml`.
 
@@ -562,11 +563,11 @@ sumologic:
   traces:
     enabled: true
 
-  otelagent:
-    enabled: true
+otelcolInstrumentation:
+  enabled: true
 
-  otelgateway:
-    enabled: true
+tracesGateway:
+  enabled: true
 ```
 
 Refs:

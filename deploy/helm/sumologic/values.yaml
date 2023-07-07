@@ -3509,6 +3509,7 @@ kube-prometheus-stack:
         selfMonitor: false
 
 ## Configure otelcol-instrumentation - Sumo OTel Distro Collector
+## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector.md#traces
 otelcolInstrumentation:
   enabled: true
   sourceMetadata:
@@ -3770,6 +3771,7 @@ otelcolInstrumentation:
           exporters: [sumologic/metrics]
 
 ## Configure traces-sampler
+## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector.md#traces
 tracesSampler:
   deployment:
     nodeSelector: {}
@@ -4121,7 +4123,7 @@ metadata:
       # maxUnavailable: 1
 
 ## Configure traces-gateway
-## ref: docs/opentelemetry_collector.md#load-balancing-using-the-gateway
+## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector.md#traces
 tracesGateway:
   enabled: true
   deployment:
@@ -4715,6 +4717,7 @@ opentelemetry-operator:
         cpu: 150m
         memory: 256Mi
 
+## pvcCleaner deletes unused PVCs
 pvcCleaner:
   metrics:
     enabled: false

@@ -19,6 +19,7 @@ installed.
   - [Prepare Sumo Logic Configuration to work with existing Operator](#prepare-sumo-logic-configuration-to-work-with-existing-operator)
   - [Using existing Kube Prometheus Stack](#using-existing-kube-prometheus-stack)
     - [Build Prometheus Configuration](#build-prometheus-configuration)
+- [Using a load balancing proxy for Prometheus remote write](#using-a-load-balancing-proxy-for-prometheus-remote-write)
 - [Troubleshooting](#troubleshooting)
   - [UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "prometheusrulemutate.monitoring.coreos.com"](#upgrade-failed-failed-to-create-resource-internal-error-occurred-failed-calling-webhook-prometheusrulemutatemonitoringcoreoscom)
   - [Error: unable to build kubernetes objects from release manifest: error validating "": error validating data: ValidationError(Prometheus.spec)](#error-unable-to-build-kubernetes-objects-from-release-manifest-error-validating--error-validating-data-validationerrorprometheusspec)
@@ -340,6 +341,15 @@ prometheus:
 ```
 
 Prometheus configuration is ready. Apply the changes on the cluster.
+
+## Using a load balancing proxy for Prometheus remote write
+
+In environments with a high volume of metrics (problems may start appearing around 30k samples per second), the above mitigations may not be
+sufficient. It is possible to remedy the problem by sharding Prometheus itself, but that can be complicated to set up and require manual
+intervention to scale.
+
+A simpler alternative is to put a HTTP load balancer between Prometheus and the metrics metadata Service. This is enabled in `values.yaml`
+via the `sumologic.metrics.remoteWriteProxy.enabled` key.
 
 ## Troubleshooting
 
