@@ -98,12 +98,16 @@ spec:
       transform/drop_unnecessary_attributes:
         error_mode: ignore
         metric_statements:
-          - context: datapoint
+          - context: resource
             statements:
-              - delete_key(resource.attributes, "http.scheme")
-              - delete_key(resource.attributes, "net.host.name")
-              - delete_key(resource.attributes, "net.host.port")
-              - delete_key(resource.attributes, "service.instance.id")
+              - delete_key(attributes, "http.scheme")
+              - delete_key(attributes, "net.host.name")
+              - delete_key(attributes, "net.host.port")
+              - delete_key(attributes, "service.instance.id")
+              # prometheus receiver adds these automatically
+              # we drop them to make the rest of our pipeline easier to reason about
+              # after the collector and metadata are merged, consider using them instead of k8sattributes processor
+              - delete_matching_keys(attributes, "k8s.*")
 
       filter/drop_unnecessary_metrics:
         error_mode: ignore
