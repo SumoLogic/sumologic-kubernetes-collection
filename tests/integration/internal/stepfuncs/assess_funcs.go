@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -217,6 +219,48 @@ func WaitUntilExpectedMetricsPresent(
 			t.Fatal(err)
 		}
 		t.Log(message)
+		return ctx
+	}
+}
+
+// WaitUntilExpectedMetricsPresent returns a features.Func that can be used in `Assess` calls.
+// It will wait until metrics selected by the provided filters have the expected labels
+func WaitUntilExpectedMetricLabelsPresent(
+	metricFilters receivermock.MetadataFilters,
+	expectedLabels receivermock.Labels,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		// Get the receiver mock pod as metrics source
+		rClient, tunnelCloseFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		defer tunnelCloseFunc()
+
+		assert.Eventually(t, func() bool {
+			metricsSamples, err := rClient.GetMetricsSamples(metricFilters)
+			if err != nil {
+				log.ErrorS(err, "failed getting samples from receiver-mock")
+				return false
+			}
+
+			if len(metricsSamples) == 0 {
+				log.InfoS("got 0 metrics samples", "filters", metricFilters)
+				return false
+			}
+
+			sort.Sort(receivermock.MetricsSamplesByTime(metricsSamples))
+			// For now let's take the newest metric sample only because it will have the most
+			// accurate labels and the most labels attached (for instance service/deployment
+			// labels might not be attached at the very first record).
+			sample := metricsSamples[0]
+			labels := sample.Labels
+
+			log.V(0).InfoS("sample's labels", "labels", labels)
+			extra, missing := labels.DiffLabelNames(expectedLabels, regexp.MustCompile("pod_labels_.*"))
+			log.V(0).InfoS("extra labels", "labels", extra)
+			log.V(0).InfoS("missing labels", "labels", missing)
+			return labels.MatchAll(expectedLabels) && len(extra) == 0 && len(missing) == 0
+		}, waitDuration, tickDuration)
 		return ctx
 	}
 }
