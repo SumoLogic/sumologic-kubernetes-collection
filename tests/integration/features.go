@@ -3,8 +3,6 @@ package integration
 import (
 	"context"
 	"fmt"
-	"regexp"
-	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -59,8 +57,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 				tickDuration,
 			),
 		).
-		Assess("expected labels are present",
-			// TODO: refactor into a step func?
+		Assess("expected labels are present for container metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				// Get the receiver mock pod as metrics source
 				res := envConf.Client().Resources(internal.ReceiverMockNamespace)
@@ -77,93 +74,100 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 						wait.WithInterval(tickDuration),
 					),
 				)
-				rClient, tunnelCloseFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
-				defer tunnelCloseFunc()
+				metricFilters := receivermock.MetadataFilters{
+					"__name__": "container_memory_working_set_bytes",
+					"pod":      podList.Items[0].Name,
+				}
+				releaseName := ctxopts.HelmRelease(ctx)
+				namespace := ctxopts.Namespace(ctx)
+				expectedLabels := receivermock.Labels{
+					"cluster":                      "kubernetes",
+					"_origin":                      "kubernetes",
+					"container":                    "receiver-mock",
+					"deployment":                   "receiver-mock",
+					"endpoint":                     "https-metrics",
+					"image":                        "sumologic/kubernetes-tools:.*",
+					"job":                          "kubelet",
+					"metrics_path":                 "/metrics/cadvisor",
+					"namespace":                    "receiver-mock",
+					"node":                         internal.NodeNameRegex,
+					"pod_labels_app":               "receiver-mock",
+					"pod_labels_pod-template-hash": ".+",
+					"pod_labels_service":           "receiver-mock",
+					"pod":                          podList.Items[0].Name,
+					"replicaset":                   "receiver-mock-.*",
+					"service":                      "receiver-mock",
+				}
+				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 
-				assert.Eventually(t, func() bool {
-					filters := receivermock.MetadataFilters{
-						"__name__": "container_memory_working_set_bytes",
-						"pod":      podList.Items[0].Name,
-					}
-					metricsSamples, err := rClient.GetMetricsSamples(filters)
-					if err != nil {
-						log.ErrorS(err, "failed getting samples from receiver-mock")
-						return false
-					}
+				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
+			},
+		).
+		Assess("expected labels are present for kube-state-metrics",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				metricFilters := receivermock.MetadataFilters{
+					"__name__":   "kube_deployment_spec_replicas",
+					"deployment": "receiver-mock",
+				}
+				releaseName := ctxopts.HelmRelease(ctx)
+				namespace := ctxopts.Namespace(ctx)
+				expectedLabels := receivermock.Labels{
+					"cluster":    "kubernetes",
+					"_origin":    "kubernetes",
+					"deployment": "receiver-mock",
+					"endpoint":   "http",
+					"job":        "kube-state-metrics",
+					"namespace":  "receiver-mock",
+				}
+				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
+				// drop some unnecessary labels
+				delete(expectedLabels, "prometheus_service")
+				delete(expectedLabels, "k8s.node.name")
 
-					if len(metricsSamples) == 0 {
-						log.InfoS("got 0 metrics samples", "filters", filters)
-						return false
-					}
-
-					sort.Sort(receivermock.MetricsSamplesByTime(metricsSamples))
-					// For now let's take the newest metric sample only because it will have the most
-					// accurate labels and the most labels attached (for instance service/deployment
-					// labels might not be attached at the very first record).
-					sample := metricsSamples[0]
-					labels := sample.Labels
-					releaseName := ctxopts.HelmRelease(ctx)
-					namespace := ctxopts.Namespace(ctx)
-					expectedLabels := receivermock.Labels{
-						"cluster":                      "kubernetes",
-						"_origin":                      "kubernetes",
-						"container":                    "receiver-mock",
-						"deployment":                   "receiver-mock",
-						"endpoint":                     "https-metrics",
-						"image":                        "sumologic/kubernetes-tools:.*",
-						"job":                          "kubelet",
-						"metrics_path":                 "/metrics/cadvisor",
-						"namespace":                    "receiver-mock",
-						"node":                         internal.NodeNameRegex,
-						"pod_labels_app":               "receiver-mock",
-						"pod_labels_pod-template-hash": ".+",
-						"pod_labels_service":           "receiver-mock",
-						"pod":                          podList.Items[0].Name,
-						"replicaset":                   "receiver-mock-.*",
-						"service":                      "receiver-mock",
-					}
-					prometheusLabels := receivermock.Labels{
-						"_collector":         "kubernetes",
-						"k8s.node.name":      internal.NodeNameRegex, // TODO: Remove this during the migration to v4
-						"instance":           internal.IpWithPortRegex,
-						"prometheus_replica": fmt.Sprintf("prometheus-%s-.*-0", releaseName),
-						"prometheus":         fmt.Sprintf("%s/%s-.*-prometheus", namespace, releaseName),
-						"prometheus_service": fmt.Sprintf("%s-.*-kubelet", releaseName),
-					}
-					otelcolLabels := receivermock.Labels{
-						"_collector": "kubernetes",
-					}
-					fluentdLabels := receivermock.Labels{
-						"instance":           internal.IpWithPortRegex,
-						"prometheus_replica": fmt.Sprintf("prometheus-%s-.*-0", releaseName),
-						"prometheus":         fmt.Sprintf("%s/%s-.*-prometheus", namespace, releaseName),
-						"prometheus_service": fmt.Sprintf("%s-.*-kubelet", releaseName),
-					}
-
-					if metricsCollector == Prometheus {
-						for key, value := range prometheusLabels {
-							expectedLabels[key] = value
-						}
-					} else if metricsCollector == Otelcol {
-						for key, value := range otelcolLabels {
-							expectedLabels[key] = value
-						}
-					} else if metricsCollector == Fluentd {
-						for key, value := range fluentdLabels {
-							expectedLabels[key] = value
-						}
-					}
-
-					log.V(0).InfoS("sample's labels", "labels", labels)
-					extra, missing := labels.DiffLabelNames(expectedLabels, regexp.MustCompile("pod_labels_.*"))
-					log.V(0).InfoS("extra labels", "labels", extra)
-					log.V(0).InfoS("missing labels", "labels", missing)
-					return labels.MatchAll(expectedLabels) && len(extra) == 0 && len(missing) == 0
-				}, waitDuration, tickDuration)
-				return ctx
+				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
 			},
 		).
 		Feature()
+}
+
+// addCollectorSpecificMetricLabels adds labels which are present only for the specific metric collector or metadata Service
+func addCollectorSpecificMetricLabels(labels receivermock.Labels, releaseName string, serviceMonitorNamespace string, collector MetricsCollector) receivermock.Labels {
+	outputLabels := make(receivermock.Labels, len(labels))
+	for key, value := range labels {
+		outputLabels[key] = value
+	}
+	prometheusLabels := receivermock.Labels{
+		"_collector":         "kubernetes",
+		"k8s.node.name":      internal.NodeNameRegex, // TODO: Remove this during the migration to v4
+		"instance":           internal.IpWithPortRegex,
+		"prometheus_replica": fmt.Sprintf("prometheus-%s-.*-0", releaseName),
+		"prometheus":         fmt.Sprintf("%s/%s-.*-prometheus", serviceMonitorNamespace, releaseName),
+		"prometheus_service": fmt.Sprintf("%s-.*-kubelet", releaseName),
+	}
+	otelcolLabels := receivermock.Labels{
+		"_collector": "kubernetes",
+	}
+	fluentdLabels := receivermock.Labels{
+		"instance":           internal.IpWithPortRegex,
+		"prometheus_replica": fmt.Sprintf("prometheus-%s-.*-0", releaseName),
+		"prometheus":         fmt.Sprintf("%s/%s-.*-prometheus", serviceMonitorNamespace, releaseName),
+		"prometheus_service": fmt.Sprintf("%s-.*-kubelet", releaseName),
+	}
+
+	if collector == Prometheus {
+		for key, value := range prometheusLabels {
+			outputLabels[key] = value
+		}
+	} else if collector == Otelcol {
+		for key, value := range otelcolLabels {
+			outputLabels[key] = value
+		}
+	} else if collector == Fluentd {
+		for key, value := range fluentdLabels {
+			outputLabels[key] = value
+		}
+	}
+	return outputLabels
 }
 
 func GetLogsFeature() features.Feature {
