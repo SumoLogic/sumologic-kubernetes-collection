@@ -303,8 +303,8 @@ data:
         log_statements:
         - context: log
           statements:
-          - merge_maps(attributes, body, "insert") where IsMatch(body, "^{")
-          - set(body, "") where IsMatch(body, "^{")
+          - merge_maps(attributes, body, "insert") where IsMap(body)
+          - set(body, "") where IsMap(body)
       transform/remove_attributes:
         log_statements:
         - context: log
