@@ -26,7 +26,8 @@ Here are some tips on how to judge if you're seeing lag in your Sumo Logic colle
    Collector pods with requests. If you see any `429` status codes in the OpenTelemetry Collector logs, that means you are likely getting
    throttled and need to contact Sumo Logic to increase your base plan or increase the throttling limit. If you aren't seeing `429` then you
    likely are in a situation where the incoming traffic into OpenTelemetry Collector is higher than the current replica count can handle.
-   This is a good indication that you should scale up.
+   This is a good indication that you should scale up. Please see also
+   [OpenTelemetry Collector queueing and batching](./best-practices.md#opentelemetry-collector-queueing-and-batching).
 
 1. Check Prometheus Remote Write Metrics
 
