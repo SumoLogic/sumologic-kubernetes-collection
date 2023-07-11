@@ -4611,6 +4611,13 @@ falco:
       - /etc/falco/rules.d
       - /etc/falco/rules.available/application_rules.yaml
 
+  falcoctl:
+    artifact:
+      follow:
+        enabled: false
+      install:
+        enabled: false
+
   customRules:
     ## Mark the following as known k8s api callers:
     ## * fluentd and its plugins from sumologic/kubernetes-fluentd image
