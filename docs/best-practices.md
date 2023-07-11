@@ -29,6 +29,7 @@
   - [Examples](#examples)
     - [Outage with huge metrics spike](#outage-with-huge-metrics-spike)
     - [Outage with low DPM load](#outage-with-low-dpm-load)
+    - [Example configuration](#example-configuration)
 - [Assigning Pod to particular Node](#assigning-pod-to-particular-node)
   - [Using NodeSelectors](#using-nodeselectors)
     - [Binding pods to linux nodes](#binding-pods-to-linux-nodes)
@@ -698,6 +699,62 @@ formulas:
 
 - If limited by queue_size: `number_of_instances*timeout[min]*sending_queue.queue_size/load_in_DPM` minutes.
 - If limited by PVC size: `number_of_instances*PVC_size/(1KB*load_in_DPM)` minutes.
+
+#### Example configuration
+
+Below there is example configuration to change `sending_queue` for metrics metadata otelcol, logs metadata otelcol and logs collector
+otelcol
+
+```yaml
+metadata:
+  logs:
+    config:
+      merge:
+        exporters:
+          sumologic/containers:
+            sending_queue:
+              queue_size: 25000
+          sumologic/systemd:
+            sending_queue:
+              queue_size: 25000
+
+  metrics:
+    config:
+      merge:
+        exporters:
+          sumologic/apiserver:
+            sending_queue:
+              queue_size: 25000
+          sumologic/control_plane:
+            sending_queue:
+              queue_size: 25000
+          sumologic/controller:
+            sending_queue:
+              queue_size: 25000
+          sumologic/default:
+            sending_queue:
+              queue_size: 25000
+          sumologic/kubelet:
+            sending_queue:
+              queue_size: 25000
+          sumologic/node:
+            sending_queue:
+              queue_size: 25000
+          sumologic/scheduler:
+            sending_queue:
+              queue_size: 25000
+          sumologic/state:
+            sending_queue:
+              queue_size: 25000
+
+otellogs:
+  config:
+    merge:
+      exporters:
+        otlphttp:
+          sending_queue:
+            queue_size: 20
+```
 
 ## Assigning Pod to particular Node
 
