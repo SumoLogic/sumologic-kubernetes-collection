@@ -1275,7 +1275,7 @@ fluent-bit:
   #   - name: "image-pull-secret"
   image:
     repository: public.ecr.aws/sumologic/fluent-bit
-    tag: 2.1.4
+    tag: 2.1.6
     pullPolicy: IfNotPresent
 
   ## Resource limits for Fluent Bit

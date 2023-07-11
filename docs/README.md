@@ -110,7 +110,7 @@ The following table displays the currently used software versions for our Helm c
 | Telegraf Operator                         | 1.3.10  |
 | Tailing Sidecar Operator                  | 0.5.5   |
 | Fluentd                                   | 1.15.3  |
-| Fluent Bit                                | 2.1.4   |
+| Fluent Bit                                | 2.1.6   |
 
 ### ARM support
 
