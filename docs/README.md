@@ -108,7 +108,7 @@ The following table displays the currently used software versions for our Helm c
 | kube-prometheus-stack/Prometheus Operator | 40.5.0  |
 | Falco                                     | 2.4.2   |
 | Telegraf Operator                         | 1.3.10  |
-| Tailing Sidecar Operator                  | 0.5.5   |
+| Tailing Sidecar Operator                  | 0.8.0   |
 | Fluentd                                   | 1.15.3  |
 | Fluent Bit                                | 2.1.6   |
 
