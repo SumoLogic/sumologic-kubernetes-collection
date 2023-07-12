@@ -37,6 +37,10 @@ const (
 	MultilineLogsPodName   = "multiline-logs-generator"
 	MultilineLogsGenerator = "yamls/multiline-logs-generator.yaml"
 
+	TailingSidecarTestNamespace      = "tailing-sidecar"
+	TailingSidecarTest               = "yamls/tailing-sidecar-test.yaml"
+	TailingSidecarTestDeploymentName = "test-tailing-sidecar-operator"
+
 	// useful regular expressions for matching metadata
 	PodDeploymentSuffixRegex = "-[a-z0-9]{9,10}-[a-z0-9]{4,5}" // the Pod suffix for Deployments
 	PodDaemonSetSuffixRegex  = "-[a-z0-9]{4,5}"
