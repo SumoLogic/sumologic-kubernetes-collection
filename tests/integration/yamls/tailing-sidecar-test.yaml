@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tailing-sidecar
+---
+apiVersion: tailing-sidecar.sumologic.com/v1
+kind: TailingSidecarConfig
+metadata:
+  name: test-tailing-sidecar-operator
+  namespace: tailing-sidecar
+spec:
+  podSelector:
+    matchLabels:
+      test-tailing-sidecar: "true"
+  configs:
+    test-sidecar:
+      volumeMount:
+        name: varlogconfig
+        mountPath: /varconfig/log
+      path: /varconfig/log/example2.log
+      annotations:
+        sourceCategory: test-sidecar
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-tailing-sidecar-operator
+  namespace: tailing-sidecar
+  labels:
+    app: test-tailing-sidecar-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tailing-sidecar: "true"
+      test-tailing-sidecar: "true"
+      app: test-tailing-sidecar-operator
+  template:
+    metadata:
+      name: test-tailing-sidecar-operator
+      namespace: tailing-sidecar
+      annotations:
+        tailing-sidecar: varlog:/var/log/example0.log;named-container:varlog:/var/log/example1.log
+      labels:
+        tailing-sidecar: "true"
+        test-tailing-sidecar: "true"
+        app: test-tailing-sidecar-operator
+    spec:
+      containers:
+        - name: count
+          image: bash
+          args:
+            - /usr/local/bin/bash
+            - -c
+            - >
+              i=0; for i in {1..50}; do
+                echo "example0: $i $(date)" >> /var/log/example0.log;
+                echo "example1: $i $(date)" >> /var/log/example1.log;
+                echo "example2: $i $(date)" >> /varconfig/log/example2.log;
+                sleep 1;
+              done; while true; do
+                sleep 1;
+              done;
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+            - name: varlogconfig
+              mountPath: /varconfig/log
+      volumes:
+        - name: varlog
+          emptyDir: {}
+        - name: varlogconfig
+          emptyDir: {}
+      securityContext:
+        runAsUser: 1000
