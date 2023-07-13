@@ -14,6 +14,7 @@ data:
   otelcol.instrumentation.conf.yaml: |
     exporters:
       otlphttp/traces:
+        compression: zstd
         endpoint: http://RELEASE-NAME-sumologic-traces-sampler.sumologic:4318
       sumologic/metrics:
         compress_encoding: gzip

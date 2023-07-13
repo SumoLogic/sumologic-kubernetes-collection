@@ -1,6 +1,7 @@
 exporters:
   otlphttp:
     endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
+    compression: zstd
     sending_queue:
       queue_size: 10
 
