@@ -3757,6 +3757,7 @@ otelcolInstrumentation:
           queue_size: 5000
       otlphttp/traces:
         endpoint: 'http://{{ include "otelcolinstrumentation.exporter.endpoint" . }}:4318'
+        compression: zstd
     service:
       extensions: [health_check, memory_ballast, pprof]
       pipelines:
