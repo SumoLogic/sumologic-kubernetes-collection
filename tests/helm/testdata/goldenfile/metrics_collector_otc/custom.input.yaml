@@ -4,6 +4,7 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+        scrapeInterval: 60s
         autoscaling:
           enabled: true
           minReplicas: 15
