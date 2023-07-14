@@ -25,6 +25,7 @@ spec:
     enabled: true
     prometheusCR:
       enabled: true
+      scrapeInterval: 60s
       serviceMonitorSelector:
         smkey: smvalue
       podMonitorSelector:
@@ -121,7 +122,7 @@ spec:
       prometheus:
         config:
           global:
-            scrape_interval: 30s
+            scrape_interval: 60s
           scrape_configs: []
         target_allocator:
           endpoint: http://RELEASE-NAME-sumologic-metrics-targetallocator

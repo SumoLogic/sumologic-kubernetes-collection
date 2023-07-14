@@ -12,6 +12,7 @@ sumologic:
     collector:
       otelcol:
         enabled: true
+        scrapeInterval: 15s
         resources:
           requests:
             memory: 128Mi

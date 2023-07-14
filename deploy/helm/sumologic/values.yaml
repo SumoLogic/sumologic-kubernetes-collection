@@ -462,6 +462,9 @@ sumologic:
       otelcol:
         enabled: false
 
+        ## Default scrape interval
+        scrapeInterval: 30s
+
         ## Option to turn autoscaling on for fluentd and specify params for HPA.
         ## Autoscaling needs metrics-server to access cpu metrics.
         autoscaling:

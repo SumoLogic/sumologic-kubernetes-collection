@@ -23,6 +23,7 @@ spec:
     enabled: true
     prometheusCR:
       enabled: true
+      scrapeInterval: {{ .Values.sumologic.metrics.collector.otelcol.scrapeInterval }}
       serviceMonitorSelector:
         {{ .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector | toYaml | nindent 8 }}
       podMonitorSelector:
