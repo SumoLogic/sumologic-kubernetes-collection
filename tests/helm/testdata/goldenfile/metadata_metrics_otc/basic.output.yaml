@@ -277,7 +277,6 @@ data:
             path_tag = true
             paths = [
               "/prometheus.metrics",
-              "/prometheus.metrics.apiserver",
               "/prometheus.metrics.applications.activemq",
               "/prometheus.metrics.applications.apache",
               "/prometheus.metrics.applications.cassandra",
@@ -299,15 +298,8 @@ data:
               "/prometheus.metrics.applications.squidproxy",
               "/prometheus.metrics.applications.tomcat",
               "/prometheus.metrics.applications.varnish",
-              "/prometheus.metrics.container",
-              "/prometheus.metrics.control-plane.coredns",
-              "/prometheus.metrics.control-plane.kube-etcd",
-              "/prometheus.metrics.controller-manager",
-              "/prometheus.metrics.kubelet",
               "/prometheus.metrics.node",
-              "/prometheus.metrics.operator.rule",
-              "/prometheus.metrics.scheduler",
-              "/prometheus.metrics.state"
+              "/prometheus.metrics.operator.rule"
             ]
     service:
       extensions:
