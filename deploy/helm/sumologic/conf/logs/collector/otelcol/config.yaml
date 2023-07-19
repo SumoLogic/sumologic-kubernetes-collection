@@ -51,10 +51,11 @@ receivers:
 {{- if .Values.sumologic.logs.container.enabled }}
   filelog/containers:
 {{ if lt (int .Capabilities.KubeVersion.Minor) 24 }}
-    ## sets fingerprint_size to 17kb in order to match the longest possible docker line (which by default is 16kb)
+    ## sets fingerprint_size to 16kb in order to match the longest possible docker line (which by default is 16kb)
     ## we want to include timestamp, which is at the end of the line
+    ## setting higher fingerprint_size is not recommended when https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/22936 is not fixed
     ## Not necessary in 1.24 and later, as docker-shim is not present anymore
-    fingerprint_size: 17408
+    fingerprint_size: 16384
 {{ end }}
     include:
       - /var/log/pods/*/*/*.log
