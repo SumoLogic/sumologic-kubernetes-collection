@@ -671,11 +671,15 @@ sumologic:
             sumologic.com/scrape: "true"
       - name: collection-sumologic-prometheus
         endpoints:
-          - port: web
+          - port: http-web
             path: /metrics
+            metricRelabelings:
+              - action: keep
+                regex: prometheus_remote_storage_.*
+                sourceLabels: [__name__]
         selector:
           matchLabels:
-            operated-prometheus: "true"
+            app: kube-prometheus-stack-prometheus
 
   ### Traces configuration
   ## Set the enabled flag to false to disable traces ingestion.
@@ -2186,7 +2190,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:kube-state-metrics|kubelet|kube-scheduler|apiserver|coredns|kube-etcd|.+-sumologic-.+|.+-prometheus)
+              regex: (?:kube-state-metrics|kubelet|kube-scheduler|apiserver|coredns|kube-etcd|.+-sumologic-.+|.+-prometheus|.+-fluent-bit)
               sourceLabels: [job]
             ## This is only used for recording rules
             - action: drop
@@ -3288,11 +3292,6 @@ kube-prometheus-stack:
               sourceLabels: [_sumo_forward_]
             - action: labeldrop
               regex: _sumo_forward_
-
-    service:
-      labels:
-        sumologic.com/app: prometheus
-        sumologic.com/scrape: "true"
 
     serviceMonitor:
       selfMonitor: false

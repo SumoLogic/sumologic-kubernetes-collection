@@ -178,7 +178,12 @@ items:
         sumologic.com/app: collection-fluent-bit
     spec:
       endpoints:
-        - path: /api/v1/metrics/prometheus
+        - metricRelabelings:
+            - action: keep
+              regex: fluentbit_.*
+              sourceLabels:
+                - __name__
+          path: /api/v1/metrics/prometheus
           port: http
       namespaceSelector:
         matchNames:
@@ -282,11 +287,16 @@ items:
         heritage: "Helm"
     spec:
       endpoints:
-        - path: /metrics
-          port: web
+        - metricRelabelings:
+            - action: keep
+              regex: prometheus_remote_storage_.*
+              sourceLabels:
+                - __name__
+          path: /metrics
+          port: http-web
       namespaceSelector:
         matchNames:
           - sumologic
       selector:
         matchLabels:
-          operated-prometheus: "true"
+          app: kube-prometheus-stack-prometheus
