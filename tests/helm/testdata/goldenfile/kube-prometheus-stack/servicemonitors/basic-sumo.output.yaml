@@ -163,7 +163,7 @@ items:
   - apiVersion: monitoring.coreos.com/v1
     kind: ServiceMonitor
     metadata:
-      name: collection-fluent-bit
+      name: collection-sumologic-fluent-bit
       namespace: sumologic
       labels:
         app: sumologic-prometheus
