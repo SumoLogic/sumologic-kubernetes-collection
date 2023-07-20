@@ -1488,6 +1488,37 @@ kube-prometheus-stack:
   ## Labels to apply to all kube-prometheus-stack resources
   commonLabels: {}
 
+  defaultRules:
+    rules:
+      alertmanager: false
+      etcd: false
+      configReloaders: false
+      general: false
+      k8s: false
+      kubeApiserverAvailability: false
+      kubeApiserverBurnrate: false
+      kubeApiserverHistogram: false
+      kubeApiserverSlos: false
+      kubeControllerManager: false
+      kubelet: false
+      kubeProxy: false
+      kubePrometheusGeneral: false
+      kubePrometheusNodeRecording: true
+      kubernetesApps: false
+      kubernetesResources: false
+      kubernetesStorage: false
+      kubernetesSystem: false
+      kubeSchedulerAlerting: false
+      kubeSchedulerRecording: false
+      kubeStateMetrics: false
+      network: false
+      node: true
+      nodeExporterAlerting: false
+      nodeExporterRecording: false
+      prometheus: false
+      prometheusOperator: false
+      windows: false
+
   ## k8s pre-1.14 prometheus recording rules
   additionalPrometheusRulesMap:
     pre-1.14-node-rules:
