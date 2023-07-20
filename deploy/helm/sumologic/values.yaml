@@ -3535,6 +3535,15 @@ otelcolInstrumentation:
     ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
     excludePodRegex: ""
 
+  ## Option to turn autoscaling on for fluentd and specify params for HPA.
+  ## Autoscaling needs metrics-server to access cpu metrics.
+  autoscaling:
+    enabled: false
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 100
+    # targetMemoryUtilizationPercentage: 50
+
   statefulset:
     nodeSelector: {}
     tolerations: []
@@ -4127,6 +4136,16 @@ metadata:
 ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector.md#traces
 tracesGateway:
   enabled: true
+
+  ## Option to turn autoscaling on for fluentd and specify params for HPA.
+  ## Autoscaling needs metrics-server to access cpu metrics.
+  autoscaling:
+    enabled: false
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 100
+    # targetMemoryUtilizationPercentage: 50
+
   deployment:
     replicas: 1
     nodeSelector: {}
@@ -4138,6 +4157,7 @@ tracesGateway:
       requests:
         memory: 196Mi
         cpu: 50m
+
     ## Add custom labels only to traces-gateway deployment.
     podLabels: {}
     ## Add custom annotations only to traces-gateway deployment.

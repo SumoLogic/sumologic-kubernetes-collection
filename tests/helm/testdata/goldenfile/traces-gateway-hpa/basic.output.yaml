@@ -1,0 +1,26 @@
+---
+# Source: sumologic/templates/instrumentation/traces-gateway/hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: RELEASE-NAME-sumologic-traces-gateway
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-traces-gateway
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: RELEASE-NAME-sumologic-traces-gateway
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 100
