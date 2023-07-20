@@ -628,12 +628,16 @@ sumologic:
           matchLabels:
             sumologic.com/app: fluentd-events
             sumologic.com/scrape: "true"
-      - name: collection-fluent-bit
+      - name: collection-sumologic-fluent-bit
         additionalLabels:
           sumologic.com/app: collection-fluent-bit
         endpoints:
           - port: http
             path: /api/v1/metrics/prometheus
+            metricRelabelings:
+              - action: keep
+                regex: fluentbit_.*
+                sourceLabels: [__name__]
         selector:
           matchLabels:
             app.kubernetes.io/name: fluent-bit
@@ -2182,7 +2186,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:kube-state-metrics|kubelet|kube-scheduler|apiserver|coredns|kube-etcd)
+              regex: (?:kube-state-metrics|kubelet|kube-scheduler|apiserver|coredns|kube-etcd|.+-sumologic-.+|.+-prometheus)
               sourceLabels: [job]
             ## This is only used for recording rules
             - action: drop
@@ -2242,70 +2246,6 @@ kube-prometheus-stack:
             - action: keep
               regex: "cluster_quantile:apiserver_request_duration_seconds:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile|cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile|cluster_quantile:scheduler_framework_extension_point_duration_seconds:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:"
               sourceLabels: [__name__]
-        ## health
-        ## fluentbit_input_bytes_total
-        ## fluentbit_input_files_closed_total
-        ## fluentbit_input_files_opened_total
-        ## fluentbit_input_files_rotated_total
-        ## fluentbit_input_records_total
-        ## fluentbit_output_errors_total
-        ## fluentbit_output_proc_bytes_total
-        ## fluentbit_output_proc_records_total
-        ## fluentbit_output_retries_failed_total
-        ## fluentbit_output_retries_total
-        ## fluentd_output_status_buffer_available_space_ratio
-        ## fluentd_output_status_buffer_queue_length
-        ## fluentd_output_status_buffer_stage_byte_size
-        ## fluentd_output_status_buffer_stage_length
-        ## fluentd_output_status_buffer_total_bytes
-        ## fluentd_output_status_emit_count
-        ## fluentd_output_status_emit_records
-        ## fluentd_output_status_flush_time_count
-        ## fluentd_output_status_num_errors
-        ## fluentd_output_status_queue_byte_size
-        ## fluentd_output_status_retry_count
-        ## fluentd_output_status_retry_wait
-        ## fluentd_output_status_rollback_count
-        ## fluentd_output_status_slow_flush_count
-        ## fluentd_output_status_write_count
-        ## otelcol_otelsvc_k8s_other_added
-        ## otelcol_otelsvc_k8s_other_updated
-        ## otelcol_otelsvc_k8s_pod_added
-        ## otelcol_otelsvc_k8s_pod_deleted
-        ## otelcol_otelsvc_k8s_pod_updated
-        ## otelcol_process_cpu_seconds
-        ## otelcol_process_runtime_heap_alloc_bytes
-        ## otelcol_process_runtime_total_alloc_bytes
-        ## otelcol_process_runtime_total_sys_memory_bytes
-        ## otelcol_queue_length
-        ## otelcol_spans_dropped
-        ## otelcol_trace_batches_dropped
-        ## prometheus_remote_storage_dropped_samples_total
-        ## prometheus_remote_storage_enqueue_retries_total
-        ## prometheus_remote_storage_failed_samples_total
-        ## prometheus_remote_storage_highest_timestamp_in_seconds
-        ## prometheus_remote_storage_pending_samples
-        ## prometheus_remote_storage_queue_highest_sent_timestamp_seconds
-        ## prometheus_remote_storage_retried_samples_total
-        ## prometheus_remote_storage_samples_in_total
-        ## prometheus_remote_storage_sent_batch_duration_seconds_bucket
-        ## prometheus_remote_storage_sent_batch_duration_seconds_count
-        ## prometheus_remote_storage_sent_batch_duration_seconds_sum
-        ## prometheus_remote_storage_shard_capacity
-        ## prometheus_remote_storage_shards
-        ## prometheus_remote_storage_shards_desired
-        ## prometheus_remote_storage_shards_max
-        ## prometheus_remote_storage_shards_min
-        ## prometheus_remote_storage_string_interner_zero_reference_releases_total
-        ## prometheus_remote_storage_succeeded_samples_total
-        ## up
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics
-          remoteTimeout: 5s
-          writeRelabelConfigs:
-            - action: keep
-              regex: (?:up|prometheus_remote_storage_.*|fluentd_.*|fluentbit.*|otelcol.*)
-              sourceLabels: [__name__]
-
         ## Nginx ingress controller metrics
         ## rel: https://docs.nginx.com/nginx-ingress-controller/logging-and-monitoring/prometheus/#available-metrics
         ## nginx_ingress_controller_ingress_resources_total
@@ -3349,8 +3289,13 @@ kube-prometheus-stack:
             - action: labeldrop
               regex: _sumo_forward_
 
-      serviceMonitor:
-        selfMonitor: false
+    service:
+      labels:
+        sumologic.com/app: prometheus
+        sumologic.com/scrape: "true"
+
+    serviceMonitor:
+      selfMonitor: false
 
 ## Configure otelcol-instrumentation - Sumo OTel Distro Collector
 ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector.md#traces
