@@ -1,0 +1,38 @@
+{{ $otelcolInstrumentation := .Values.otelcolInstrumentation }}
+{{ $tracesEnabled := .Values.sumologic.traces.enabled }}
+{{- if and $tracesEnabled $otelcolInstrumentation.enabled $otelcolInstrumentation.autoscaling.enabled }}
+{{- if and (eq .Capabilities.KubeVersion.Major "1") (lt (int (include "kubernetes.minor" .)) 23) }}
+apiVersion: autoscaling/v2beta2
+{{- else }}
+apiVersion: autoscaling/v2
+{{- end }}
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "sumologic.metadata.name.otelcolinstrumentation.hpa" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
+  labels:
+    app: {{ template "sumologic.labels.app.otelcolinstrumentation.hpa" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: {{ template "sumologic.metadata.name.otelcolinstrumentation.statefulset" . }}
+  minReplicas: {{ $otelcolInstrumentation.autoscaling.minReplicas }}
+  maxReplicas: {{ $otelcolInstrumentation.autoscaling.maxReplicas }}
+  metrics:
+{{- if $otelcolInstrumentation.autoscaling.targetMemoryUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ $otelcolInstrumentation.autoscaling.targetMemoryUtilizationPercentage }}
+{{- end }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ $otelcolInstrumentation.autoscaling.targetCPUUtilizationPercentage }}
+{{- end -}}

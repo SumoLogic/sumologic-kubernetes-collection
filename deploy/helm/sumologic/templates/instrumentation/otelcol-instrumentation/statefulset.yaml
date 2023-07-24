@@ -16,7 +16,9 @@ spec:
       app: {{ template "sumologic.labels.app.otelcolinstrumentation.pod" . }}
   serviceName: {{ template "sumologic.metadata.name.otelcolinstrumentation.service" . }}
   podManagementPolicy: "Parallel"
+{{- if not $otelcolInstrumentation.autoscaling.enabled }}
   replicas: {{ $otelcolInstrumentation.statefulset.replicaCount }}
+{{- end }}
   template:
     metadata:
       annotations:

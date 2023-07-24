@@ -38,6 +38,10 @@
 {{- template "sumologic.labels.app.otelcolinstrumentation" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.otelcolinstrumentation.hpa" -}}
+{{- template "sumologic.labels.app.otelcolinstrumentation" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.otelcolinstrumentation.service" -}}
 {{- template "sumologic.labels.app.otelcolinstrumentation" . }}
 {{- end -}}
@@ -59,6 +63,10 @@
 {{- end -}}
 
 {{- define "sumologic.labels.app.tracesgateway.pod" -}}
+{{- template "sumologic.labels.app.tracesgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.labels.app.tracesgateway.hpa" -}}
 {{- template "sumologic.labels.app.tracesgateway" . }}
 {{- end -}}
 
@@ -118,6 +126,10 @@
 {{ template "sumologic.metadata.name.otelcolinstrumentation" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.otelcolinstrumentation.hpa" -}}
+{{ template "sumologic.metadata.name.otelcolinstrumentation" . }}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.tracesgateway" -}}
 {{ template "sumologic.fullname" . }}-traces-gateway
 {{- end -}}
@@ -131,6 +143,10 @@
 {{- end -}}
 
 {{- define "sumologic.metadata.name.tracesgateway.deployment" -}}
+{{ template "sumologic.metadata.name.tracesgateway" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.tracesgateway.hpa" -}}
 {{ template "sumologic.metadata.name.tracesgateway" . }}
 {{- end -}}
 
