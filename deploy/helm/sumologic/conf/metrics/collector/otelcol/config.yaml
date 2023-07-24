@@ -37,15 +37,71 @@ processors:
     error_mode: ignore
     metrics:
       metric:
-        - IsMatch(name, "scrape_.*")
+        # we let the metrics from annotations ("kubernetes-pods") through as they are
+        - resource.attributes["service.name"] != "kubernetes-pods" and IsMatch(name, "scrape_.*")
 
 receivers:
   prometheus:
     config:
       global:
         scrape_interval: 30s
-      ## As of right now, if scrape_configs is empty, it needs to be an empty list, otherwise otel-operator rejects it
-      scrape_configs: {{ not (or .Values.sumologic.metrics.collector.otelcol.kubelet.enabled .Values.sumologic.metrics.collector.otelcol.cAdvisor.enabled) | ternary "[]" "" }}
+      scrape_configs:
+        ## scraping metrics basing on annotations:
+        ##   - prometheus.io/scrape: true - to scrape metrics from the pod
+        ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
+        ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
+        ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
+        - job_name: "kubernetes-pods"
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: true
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+              action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              target_label: __address__
+            - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+              separator: ;
+              regex: Node;(.*)
+              target_label: node
+              replacement: $1
+              action: replace
+            - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+              separator: ;
+              regex: Pod;(.*)
+              target_label: pod
+              replacement: $1
+              action: replace
+            - source_labels: [__metrics_path__]
+              separator: ;
+              regex: (.*)
+              target_label: endpoint
+              replacement: $1
+              action: replace
+            - source_labels: [__meta_kubernetes_namespace]
+              action: replace
+              target_label: namespace
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
+            - source_labels: [__meta_kubernetes_service_name]
+              separator: ;
+              regex: (.*)
+              target_label: service
+              replacement: $1
+              action: replace
+            - source_labels: [__meta_kubernetes_pod_name]
+              separator: ;
+              regex: (.*)
+              target_label: pod
+              replacement: $1
+              action: replace
 {{- if .Values.sumologic.metrics.collector.otelcol.kubelet.enabled }}
         ## These scrape configs are for kubelet metrics
         ## Prometheus operator does this by manually maintaining a Service with Endpoints for all Nodes

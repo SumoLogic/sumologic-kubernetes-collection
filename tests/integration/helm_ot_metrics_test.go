@@ -34,6 +34,7 @@ func Test_Helm_OT_Metrics(t *testing.T) {
 		internal.AdditionalNodeExporterMetrics,
 		internal.DefaultOtelcolMetrics,
 		internal.MetricsCollectorOtelcolMetrics,
+		internal.ReceiverMockMetrics,
 		internal.OtherMetrics,
 	}
 	for _, metrics := range expectedMetricsGroups {
