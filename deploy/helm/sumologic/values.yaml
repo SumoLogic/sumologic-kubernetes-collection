@@ -178,8 +178,8 @@ sumologic:
         state:
           name: kube-state-metrics
           config-name: endpoint-metrics-kube-state
-        kubelet:
-          name: kubelet-metrics
+        :
+          name: -metrics
           config-name: endpoint-metrics-kubelet
         node:
           name: node-exporter-metrics
@@ -373,6 +373,7 @@ sumologic:
       excludeUnitRegex: ""
 
     kubelet:
+      enabled: true
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "k8s_kubelet"
       ## Set the _sourceCategory metadata field in Sumo Logic.
