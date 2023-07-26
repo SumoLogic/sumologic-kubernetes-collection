@@ -47,17 +47,11 @@ func WaitUntilPodsAvailable(listOptions metav1.ListOptions, count int, wait time
 func WaitUntilExpectedSpansPresent(
 	expectedSpansCount uint,
 	expectedSpansMetadata map[string]string,
-	receiverMockNamespace string,
-	receiverMockServiceName string,
-	receiverMockServicePort int,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOpts := *ctxopts.KubectlOptions(ctx)
-		kubectlOpts.Namespace = receiverMockNamespace
-		terrak8s.WaitUntilServiceAvailable(t, &kubectlOpts, receiverMockServiceName, int(waitDuration), tickDuration)
-
+		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
 		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()
 
@@ -91,16 +85,11 @@ func WaitUntilExpectedTracesPresent(
 	expectedTracesCount uint,
 	expectedSpansPerTraceCount uint,
 	expectedTracesMetadata map[string]string,
-	receiverMockNamespace string,
-	receiverMockServiceName string,
-	receiverMockServicePort int,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOpts := *ctxopts.KubectlOptions(ctx)
-		kubectlOpts.Namespace = receiverMockNamespace
-		terrak8s.WaitUntilServiceAvailable(t, &kubectlOpts, receiverMockServiceName, int(waitDuration), tickDuration)
+		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
 
 		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()
@@ -147,20 +136,14 @@ func WaitUntilExpectedTracesPresent(
 }
 
 // WaitUntilExpectedMetricsPresent returns a features.Func that can be used in `Assess` calls.
-// It will wait until all the provided metrics are returned by receiver-mock's HTTP API on
-// the provided Service and port, until it succeeds or waitDuration passes.
+// It will wait until all the expected metrics are present in receiver-mock's metrics store
 func WaitUntilExpectedMetricsPresent(
 	expectedMetrics []string,
-	receiverMockNamespace string,
-	receiverMockServiceName string,
-	receiverMockServicePort int,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOpts := *ctxopts.KubectlOptions(ctx)
-		kubectlOpts.Namespace = receiverMockNamespace
-		terrak8s.WaitUntilServiceAvailable(t, &kubectlOpts, receiverMockServiceName, int(waitDuration), tickDuration)
+		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
 
 		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()
@@ -224,6 +207,85 @@ func WaitUntilExpectedMetricsPresent(
 }
 
 // WaitUntilExpectedMetricsPresent returns a features.Func that can be used in `Assess` calls.
+// It will wait until all the expected metrics are present in receiver-mock's metrics store, for the provided filters
+func WaitUntilExpectedMetricsPresentWithFilters(
+	expectedMetrics []string,
+	metricFilters receivermock.MetadataFilters,
+	errOnExtra bool,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) features.Func {
+	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
+
+		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		defer closeTunnelFunc()
+
+		retries := int(waitDuration / tickDuration)
+		message, err := retry.DoWithRetryE(
+			t,
+			"WaitUntilExpectedMetricsPresentWithFilters()",
+			retries,
+			tickDuration,
+			func() (string, error) {
+				metricsSamples, err := client.GetMetricsSamples(metricFilters)
+				if err != nil {
+					return "", fmt.Errorf("failed getting samples from receiver-mock: %v", err)
+				}
+
+				expectedMetricsMap := map[string]bool{}
+				for _, expectedMetricName := range expectedMetrics {
+					expectedMetricsMap[expectedMetricName] = true
+				}
+
+				receivedMetricsMap := map[string]bool{}
+				for _, sample := range metricsSamples {
+					receivedMetricsMap[sample.Metric] = true
+				}
+
+				extraMetrics := []string{}
+				missingMetrics := []string{}
+				for expectedMetricName := range expectedMetricsMap {
+					_, ok := receivedMetricsMap[expectedMetricName]
+					if !ok {
+						missingMetrics = append(missingMetrics, expectedMetricName)
+					}
+				}
+
+				// when checking for unnecessary metrics, we accept the flaky metrics as well
+				for _, flakyMetric := range internal.FlakyMetrics {
+					expectedMetricsMap[flakyMetric] = true
+				}
+				for foundMetricName := range receivedMetricsMap {
+					_, ok := expectedMetricsMap[foundMetricName]
+					if !ok {
+						extraMetrics = append(extraMetrics, foundMetricName)
+					}
+				}
+
+				errs := []error{}
+				if len(missingMetrics) > 0 {
+					errs = append(errs, fmt.Errorf("couldn't find the following metrics in received metrics: %v", missingMetrics))
+				}
+				if len(extraMetrics) > 0 && errOnExtra {
+					errs = append(errs, fmt.Errorf("found the following unexpected metrics: %v", extraMetrics))
+				}
+				if len(errs) > 0 {
+					return "", errors.Join(errs...)
+				}
+
+				return fmt.Sprintf("All expected metrics were received: %v", expectedMetrics), nil
+			},
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Log(message)
+		return ctx
+	}
+}
+
+// WaitUntilExpectedMetricsPresent returns a features.Func that can be used in `Assess` calls.
 // It will wait until metrics selected by the provided filters have the expected labels
 func WaitUntilExpectedMetricLabelsPresent(
 	metricFilters receivermock.MetadataFilters,
@@ -232,6 +294,8 @@ func WaitUntilExpectedMetricLabelsPresent(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
+
 		// Get the receiver mock pod as metrics source
 		rClient, tunnelCloseFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
 		defer tunnelCloseFunc()
@@ -271,16 +335,11 @@ func WaitUntilExpectedMetricLabelsPresent(
 func WaitUntilExpectedLogsPresent(
 	expectedLogsCount uint,
 	expectedLogsMetadata map[string]string,
-	receiverMockNamespace string,
-	receiverMockServiceName string,
-	receiverMockServicePort int,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		kubectlOpts := *ctxopts.KubectlOptions(ctx)
-		kubectlOpts.Namespace = receiverMockNamespace
-		terrak8s.WaitUntilServiceAvailable(t, &kubectlOpts, receiverMockServiceName, int(waitDuration), tickDuration)
+		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
 
 		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()

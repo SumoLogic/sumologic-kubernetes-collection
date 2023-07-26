@@ -220,6 +220,9 @@ data:
         - exporters:
           - sumologic/state
           value: /prometheus.metrics.state
+        - exporters:
+          - sumologic/default
+          value: /prometheus.metrics.applications.custom
       source:
         collector: kubernetes
       sumologic_schema:

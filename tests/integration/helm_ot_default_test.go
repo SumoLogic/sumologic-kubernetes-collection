@@ -29,6 +29,8 @@ func Test_Helm_Default_OT(t *testing.T) {
 
 	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
 
+	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.NginxMetrics, Prometheus, false)
+
 	featLogs := GetLogsFeature()
 
 	featMultilineLogs := GetMultilineLogsFeature()
@@ -37,5 +39,5 @@ func Test_Helm_Default_OT(t *testing.T) {
 
 	featTraces := GetTracesFeature()
 
-	testenv.Test(t, featInstall, featMetrics, featLogs, featMultilineLogs, featEvents, featTraces)
+	testenv.Test(t, featInstall, featMetrics, featTelegrafMetrics, featLogs, featMultilineLogs, featEvents, featTraces)
 }

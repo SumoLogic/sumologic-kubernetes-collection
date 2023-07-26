@@ -51,9 +51,6 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		Assess("expected metrics are present",
 			stepfuncs.WaitUntilExpectedMetricsPresent(
 				expectedMetrics,
-				internal.ReceiverMockNamespace,
-				internal.ReceiverMockServiceName,
-				internal.ReceiverMockServicePort,
 				2*time.Minute, // take longer to account for recording rule metrics
 				tickDuration,
 			),
@@ -131,6 +128,59 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		Feature()
 }
 
+func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollector, errOnExtra bool) features.Feature {
+	return features.New("telegraf_metrics").
+		Setup(stepfuncs.KubectlApplyFOpt(internal.NginxTelegrafMetricsTest, internal.NginxTelegrafNamespace)).
+		Assess("expected metrics are present",
+			stepfuncs.WaitUntilExpectedMetricsPresentWithFilters(
+				expectedMetrics,
+				receivermock.MetadataFilters{"deployment": "nginx", "endpoint": "/metrics"},
+				errOnExtra,
+				waitDuration,
+				tickDuration,
+			),
+		).
+		Assess("expected labels are present for annotation metrics",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				metricFilters := receivermock.MetadataFilters{"__name__": "nginx_accepts", "endpoint": "/metrics"}
+				releaseName := ctxopts.HelmRelease(ctx)
+				namespace := ctxopts.Namespace(ctx)
+				expectedLabels := receivermock.Labels{
+					"cluster":                      "kubernetes",
+					"_origin":                      "kubernetes",
+					"deployment":                   "nginx",
+					"endpoint":                     "/metrics",
+					"namespace":                    internal.NginxTelegrafNamespace,
+					"node":                         internal.NodeNameRegex,
+					"pod_labels_app":               "nginx",
+					"pod_labels_pod-template-hash": ".+",
+					"pod":                          "nginx-.+",
+					"replicaset":                   "nginx-.*",
+					"service":                      "nginx",
+					"app":                          "nginx",
+					"host":                         "nginx-.+",
+					"port":                         "80",
+					"server":                       "localhost",
+					"pod_template_hash":            ".+",
+				}
+				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
+
+				// drop some unnecessary labels
+				delete(expectedLabels, "k8s.node.name")
+				delete(expectedLabels, "prometheus_service")
+
+				// Prometheus currently suffers from a bug where it removes the job label, but Otel keeps it
+				if metricsCollector == Otelcol {
+					expectedLabels["job"] = "pod-annotations"
+				}
+
+				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
+			},
+		).
+		Teardown(stepfuncs.KubectlDeleteFOpt(internal.NginxTelegrafMetricsTest, internal.NginxTelegrafNamespace)).
+		Feature()
+}
+
 // addCollectorSpecificMetricLabels adds labels which are present only for the specific metric collector or metadata Service
 func addCollectorSpecificMetricLabels(labels receivermock.Labels, releaseName string, serviceMonitorNamespace string, collector MetricsCollector) receivermock.Labels {
 	outputLabels := make(receivermock.Labels, len(labels))
@@ -194,9 +244,6 @@ func GetLogsFeature() features.Feature {
 				"pod_labels_app": internal.LogsGeneratorName,
 				"deployment":     internal.LogsGeneratorName,
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -207,9 +254,6 @@ func GetLogsFeature() features.Feature {
 				"pod_labels_app": internal.LogsGeneratorName,
 				"daemonset":      internal.LogsGeneratorName,
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -242,9 +286,6 @@ func GetLogsFeature() features.Feature {
 				),
 				"_sourceHost": internal.EmptyRegex,
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -276,9 +317,6 @@ func GetLogsFeature() features.Feature {
 				),
 				"_sourceHost": internal.EmptyRegex,
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -290,9 +328,6 @@ func GetLogsFeature() features.Feature {
 				"_sourceCategory": "kubernetes/system",
 				"_sourceHost":     internal.NodeNameRegex,
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -304,9 +339,6 @@ func GetLogsFeature() features.Feature {
 				"_sourceCategory": "kubernetes/kubelet",
 				"_sourceHost":     internal.NodeNameRegex,
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -338,9 +370,6 @@ func GetMultilineLogsFeature() features.Feature {
 				"namespace":          internal.MultilineLogsNamespace,
 				"pod_labels_example": internal.MultilineLogsPodName,
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -357,9 +386,6 @@ func GetEventsFeature() features.Feature {
 				"_sourceCategory": fmt.Sprintf("%s/events", internal.ClusterName),
 				"cluster":         "kubernetes",
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -391,9 +417,6 @@ func GetTracesFeature() features.Feature {
 				// "_sourceCategory":    "kubernetes/customer/trace/tester/customer/trace/tester",
 				"_sourceName": fmt.Sprintf("%s.%s.%s", internal.TracesGeneratorNamespace, internal.TracesGeneratorName, internal.TracesGeneratorName),
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -413,9 +436,6 @@ func GetTracesFeature() features.Feature {
 				// "_sourceCategory":    "kubernetes/customer/trace/tester/customer/trace/tester",
 				"_sourceName": fmt.Sprintf("%s.%s.%s", internal.TracesGeneratorNamespace, internal.TracesGeneratorName, internal.TracesGeneratorName),
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -435,9 +455,6 @@ func GetTracesFeature() features.Feature {
 				// "_sourceCategory":    "kubernetes/customer/trace/tester/customer/trace/tester",
 				"_sourceName": fmt.Sprintf("%s.%s.%s", internal.TracesGeneratorNamespace, internal.TracesGeneratorName, internal.TracesGeneratorName),
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -458,18 +475,12 @@ func GetTracesFeature() features.Feature {
 				"_sourceName":       fmt.Sprintf("%s.%s.%s", internal.TracesGeneratorNamespace, internal.TracesGeneratorName, internal.TracesGeneratorName),
 				"otel.library.name": "jaegerThriftHttp",
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
 		Assess("wait for all spans", stepfuncs.WaitUntilExpectedSpansPresent(
 			4*tracesPerExporter*spansPerTrace, // there are 4 exporters
 			map[string]string{},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).
@@ -492,9 +503,6 @@ func GetTailingSidecarFeature() features.Feature {
 				"namespace":  internal.TailingSidecarTestNamespace,
 				"deployment": internal.TailingSidecarTestDeploymentName,
 			},
-			internal.ReceiverMockNamespace,
-			internal.ReceiverMockServiceName,
-			internal.ReceiverMockServicePort,
 			waitDuration,
 			tickDuration,
 		)).

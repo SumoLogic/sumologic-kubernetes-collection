@@ -38,7 +38,7 @@ processors:
     metrics:
       metric:
         # we let the metrics from annotations ("kubernetes-pods") through as they are
-        - resource.attributes["service.name"] != "kubernetes-pods" and IsMatch(name, "scrape_.*")
+        - resource.attributes["service.name"] != "pod-annotations" and IsMatch(name, "scrape_.*")
 
 receivers:
   prometheus:
@@ -51,7 +51,7 @@ receivers:
         ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
         ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
         ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
-        - job_name: "kubernetes-pods"
+        - job_name: "pod-annotations"
           kubernetes_sd_configs:
             - role: pod
           relabel_configs:

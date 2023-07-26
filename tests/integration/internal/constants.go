@@ -41,6 +41,9 @@ const (
 	TailingSidecarTest               = "yamls/tailing-sidecar-test.yaml"
 	TailingSidecarTestDeploymentName = "test-tailing-sidecar-operator"
 
+	NginxTelegrafMetricsTest = "yamls/nginx.yaml"
+	NginxTelegrafNamespace   = "nginx"
+
 	// useful regular expressions for matching metadata
 	PodDeploymentSuffixRegex = "-[a-z0-9]{9,10}-[a-z0-9]{4,5}" // the Pod suffix for Deployments
 	PodDaemonSetSuffixRegex  = "-[a-z0-9]{4,5}"
@@ -386,6 +389,16 @@ var (
 		"receiver_mock_logs_bytes_count",
 		"receiver_mock_logs_bytes_ip_count",
 		"receiver_mock_metrics_ip_count",
+	}
+
+	NginxMetrics = []string{
+		"nginx_accepts",
+		"nginx_active",
+		"nginx_handled",
+		"nginx_reading",
+		"nginx_requests",
+		"nginx_waiting",
+		"nginx_writing",
 	}
 )
 

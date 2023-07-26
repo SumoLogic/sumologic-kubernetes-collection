@@ -1,10 +1,13 @@
 package k8s
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
 
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/retry"
 	"github.com/stretchr/testify/require"
@@ -70,6 +73,17 @@ func WaitUntilPodsAvailableE(
 	}
 	t.Log(message)
 	return nil
+}
+
+func WaitUntilReceiverMockAvailable(
+	ctx context.Context,
+	t *testing.T,
+	waitDuration time.Duration,
+	tickDuration time.Duration,
+) {
+	kubectlOpts := *ctxopts.KubectlOptions(ctx)
+	kubectlOpts.Namespace = internal.ReceiverMockNamespace
+	k8s.WaitUntilServiceAvailable(t, &kubectlOpts, internal.ReceiverMockServiceName, int(waitDuration), tickDuration)
 }
 
 func formatSelectors(listOptions v1.ListOptions) string {
