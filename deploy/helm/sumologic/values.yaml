@@ -693,7 +693,7 @@ sumologic:
 fluentd:
   image:
     repository: public.ecr.aws/sumologic/kubernetes-fluentd
-    tag: 1.15.3-sumo-0
+    tag: 1.16.2-sumo-0
     pullPolicy: IfNotPresent
 
   additionalPlugins: []
