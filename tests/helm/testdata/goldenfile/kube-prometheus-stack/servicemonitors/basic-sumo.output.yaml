@@ -216,7 +216,7 @@ items:
           - sumologic
       selector:
         matchLabels:
-          sumologic.com/app: otelcol-logs-collector
+          sumologic.com/app-name: otelcol-logs-collector
           sumologic.com/scrape: "true"
   - apiVersion: monitoring.coreos.com/v1
     kind: ServiceMonitor

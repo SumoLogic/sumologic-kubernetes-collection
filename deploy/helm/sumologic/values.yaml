@@ -649,7 +649,7 @@ sumologic:
           - port: metrics
         selector:
           matchLabels:
-            sumologic.com/app: otelcol-logs-collector
+            sumologic.com/app-name: otelcol-logs-collector
             sumologic.com/scrape: "true"
       - name: collection-sumologic-otelcol-events
         additionalLabels:
