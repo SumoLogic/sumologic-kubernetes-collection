@@ -178,8 +178,8 @@ sumologic:
         state:
           name: kube-state-metrics
           config-name: endpoint-metrics-kube-state
-        :
-          name: -metrics
+        kubelet:
+          name: kubelet-metrics
           config-name: endpoint-metrics-kubelet
         node:
           name: node-exporter-metrics
