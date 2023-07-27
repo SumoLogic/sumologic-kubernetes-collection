@@ -222,6 +222,8 @@ data:
           value: /prometheus.metrics.state
       source:
         collector: kubernetes
+        exclude:
+          k8s.namespace.name: ""
       sumologic_schema:
         add_cloud_namespace: false
       transform/prepare_routing:
