@@ -67,18 +67,6 @@ receivers:
               regex: ([^:]+)(?::\d+)?;(\d+)
               replacement: $1:$2
               target_label: __address__
-            - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
-              separator: ;
-              regex: Node;(.*)
-              target_label: node
-              replacement: $1
-              action: replace
-            - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
-              separator: ;
-              regex: Pod;(.*)
-              target_label: pod
-              replacement: $1
-              action: replace
             - source_labels: [__metrics_path__]
               separator: ;
               regex: (.*)
@@ -90,12 +78,6 @@ receivers:
               target_label: namespace
             - action: labelmap
               regex: __meta_kubernetes_pod_label_(.+)
-            - source_labels: [__meta_kubernetes_service_name]
-              separator: ;
-              regex: (.*)
-              target_label: service
-              replacement: $1
-              action: replace
             - source_labels: [__meta_kubernetes_pod_name]
               separator: ;
               regex: (.*)
@@ -122,19 +104,10 @@ receivers:
               source_labels: [__name__]
             - action: labeldrop
               regex: id
-          relabel_configs: # partially copied from what operator generates
+          relabel_configs:
             - source_labels:
               - __meta_kubernetes_node_name
               target_label: node
-            - source_labels:
-              - __meta_kubernetes_namespace
-              target_label: namespace
-            - source_labels:
-              - __meta_kubernetes_pod_name
-              target_label: pod
-            - source_labels:
-              - __meta_kubernetes_pod_container_name
-              target_label: container
             - target_label: endpoint
               replacement: https-metrics
             - source_labels:
@@ -178,23 +151,11 @@ receivers:
               regex: container_name
               replacement: container
             - action: drop
-              source_labels: [container]
+              source_labels: [container] # partially copied from what operator generates
               regex: POD
             - action: labeldrop
               regex: (id|name)
-          relabel_configs: # partially copied from what operator generates
-            - source_labels:
-              - __meta_kubernetes_node_name
-              target_label: node
-            - source_labels:
-              - __meta_kubernetes_namespace
-              target_label: namespace
-            - source_labels:
-              - __meta_kubernetes_pod_name
-              target_label: pod
-            - source_labels:
-              - __meta_kubernetes_pod_container_name
-              target_label: container
+          relabel_configs:
             - target_label: endpoint
               replacement: https-metrics
             - source_labels:
