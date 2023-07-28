@@ -3,6 +3,8 @@ sumologic:
     collector:
       otelcloudwatch:
         enabled: true
+        persistence:
+          enabled: false
 
 metadata:
   image:

@@ -6,12 +6,14 @@ exporters:
       queue_size: 10
 
 extensions:
+{{ if .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled }}
   file_storage:
     compaction:
       directory: /var/lib/storage/otc
       on_rebound: true
     directory: /var/lib/storage/otc
     timeout: 10s
+{{ end }}
   health_check: {}
   pprof: {}
 
@@ -76,7 +78,9 @@ receivers:
 service:
   extensions:
     - health_check
+{{ if .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled }}
     - file_storage
+{{ end }}
     - pprof
   pipelines:
     logs/collector/otelcloudwatch:
