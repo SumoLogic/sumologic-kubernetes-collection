@@ -26,5 +26,5 @@ jobs:
         run: make push-helm-chart
 
   integration-tests:
-    name: Integration Testsś
+    name: Integration Tests
     uses: ./.github/workflows/workflow-integration-tests.yaml
