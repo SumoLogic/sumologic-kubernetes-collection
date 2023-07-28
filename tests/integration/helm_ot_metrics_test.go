@@ -58,5 +58,7 @@ func Test_Helm_OT_Metrics(t *testing.T) {
 
 	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
 
-	testenv.Test(t, featInstall, featMetrics)
+	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.NginxMetrics, Otelcol, false)
+
+	testenv.Test(t, featInstall, featMetrics, featTelegrafMetrics)
 }

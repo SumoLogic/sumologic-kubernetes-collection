@@ -25,9 +25,11 @@ func Test_Helm_FluentBit_Fluentd(t *testing.T) {
 
 	featMetrics := GetMetricsFeature(expectedMetrics, Fluentd)
 
+	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.NginxMetrics, Fluentd, false)
+
 	featLogs := GetLogsFeature()
 
 	featEvents := GetEventsFeature()
 
-	testenv.Test(t, featInstall, featMetrics, featLogs, featEvents)
+	testenv.Test(t, featInstall, featMetrics, featTelegrafMetrics, featLogs, featEvents)
 }

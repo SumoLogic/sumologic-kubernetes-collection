@@ -248,3 +248,13 @@ otellogs:
           path: /run/log/journal
           type: DirectoryOrCreate
         name: run-log-journal
+
+telegraf-operator:
+  resources:
+    requests:
+      cpu: 5m
+      memory: 32Mi
+  sidecarResources:
+    requests:
+      cpu: 5m
+      memory: 10Mi
