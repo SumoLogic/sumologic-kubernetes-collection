@@ -13,7 +13,7 @@ metadata:
 {{- end }}
 spec:
   selector:
-    app.kubernetes.io/name: {{ template "sumologic.labels.app.logs.collector.pod" . }}
+    app.kubernetes.io/app-name: {{ template "sumologic.labels.app.logs.collector.pod" . }}
   ports:
   - name: metrics
     port: 8888

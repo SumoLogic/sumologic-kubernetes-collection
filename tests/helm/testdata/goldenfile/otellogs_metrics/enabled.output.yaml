@@ -15,7 +15,7 @@ metadata:
     heritage: "Helm"
 spec:
   selector:
-    app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+    app.kubernetes.io/app-name: RELEASE-NAME-sumologic-otelcol-logs-collector
   ports:
     - name: metrics
       port: 8888
