@@ -7,6 +7,66 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.11.0]
+
+### Released 2023-07-28
+
+### Added
+
+- docs(prometheus): Added a section on prometheus sharding [#3140]
+- feat(metrics/collector): collect metrics from annotated Pods [#3162]
+
+### Changed
+
+- chore: add support for EKS (fargate) 1.27 [#3136]
+- chore: upgrade otel to 0.81.0-sumo-0 [#3139]
+- chore(chart): update fluent-bit to 2.1.6 [#3142]
+- chore(chart): update falco chart to 3.3.0; falco to 0.35.1 [#3143]
+- chore(chart): update tailing sidecar operator to 0.8.0 [#3145]
+- chore(chart): update metrics-server chart to 6.4.3 [#3146]
+- chore: add support for GKE 1.27 [#3148]
+- chore: add support for AKS 1.27 [#3149]
+- chore: use zstd compression for internal otlp data [#3156]
+- feat(metrics): do not filter in default remote write definitions [#3157]
+- feat: add hpa for traces-gateway and otelcol-instrumentation [#3159]
+- feat(metrics): disable default Prometheus rules [#3160] Note: If you had customized metrics collection to forward some of these metrics,
+  you can re-enable the relevant rules under `kube-prometheus-stack.defaultRules`.
+- feat(metrics): remove collection metrics remote write [#3161]
+- chore: update fluentd image to 1.16.2-sumo-0 [#3165]
+- feat: fix serviceMonitor for additional daemonsets [#3166]
+
+### Fixed
+
+- fix(metrics/collector): drop k8s labels [#3141]
+- feat(helm): change the minimum version for using autoscaling/v2 api to 1.23 [#3155]
+- fix(helm/metrics): exclude namespace if collectionMonitoring is disabled [#3170]
+- fix(metrics): don't forward duplicate metrics from annotated Pods [#3171]
+- fix(helm): fix cloudwatch collector configuration for disabled persistence [#3172]
+
+[#3140]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3140
+[#3162]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3162
+[#3136]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3136
+[#3139]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3139
+[#3142]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3142
+[#3143]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3143
+[#3145]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3145
+[#3146]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3146
+[#3148]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3148
+[#3149]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3149
+[#3156]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3156
+[#3157]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3157
+[#3159]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3159
+[#3160]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3160
+[#3161]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3161
+[#3165]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3165
+[#3166]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3166
+[#3141]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3141
+[#3155]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3155
+[#3170]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3170
+[#3171]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3171
+[#3172]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3172
+[v3.11.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.11.0
+
 ## [v3.10.0]
 
 ### Released 2023-07-06
