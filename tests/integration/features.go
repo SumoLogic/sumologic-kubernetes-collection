@@ -150,6 +150,7 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 					"_origin":                      "kubernetes",
 					"deployment":                   "nginx",
 					"endpoint":                     "/metrics",
+					"job":                          "pod-annotations",
 					"namespace":                    internal.NginxTelegrafNamespace,
 					"node":                         internal.NodeNameRegex,
 					"pod_labels_app":               "nginx",
@@ -168,11 +169,6 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 				// drop some unnecessary labels
 				delete(expectedLabels, "k8s.node.name")
 				delete(expectedLabels, "prometheus_service")
-
-				// Prometheus currently suffers from a bug where it removes the job label, but Otel keeps it
-				if metricsCollector == Otelcol {
-					expectedLabels["job"] = "pod-annotations"
-				}
 
 				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
 			},

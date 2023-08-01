@@ -2159,12 +2159,6 @@ kube-prometheus-stack:
               target_label: _sumo_forward_
               replacement: "true"
               action: replace
-            - source_labels: [__meta_kubernetes_service_name]
-              separator: ;
-              regex: (.*)
-              target_label: job
-              replacement: ${1}
-              action: replace
 
       remoteWrite:
         ## infrastructure metrics
