@@ -30,7 +30,7 @@ There is a prepared Vagrant environment with [microk8s](https://microk8s.io/) se
 
 ## Releasing guide
 
-In order to relase, please follow [the releasing guide][release].
+In order to release, please follow [the releasing guide][release].
 
 [release]: ./deploy/docs/release.md
 

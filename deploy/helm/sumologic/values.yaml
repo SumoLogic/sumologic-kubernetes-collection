@@ -373,6 +373,7 @@ sumologic:
       excludeUnitRegex: ""
 
     kubelet:
+      enabled: true
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "k8s_kubelet"
       ## Set the _sourceCategory metadata field in Sumo Logic.

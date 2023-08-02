@@ -383,7 +383,7 @@ processors:
     source_name: {{ .Values.sumologic.logs.container.sourceName | quote }}
 {{ end }}
 
-{{ if .Values.sumologic.logs.systemd.enabled }}
+{{ if .Values.sumologic.logs.kubelet.enabled }}
   source/kubelet:
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
     source_host: "%{_sourceHost}"
