@@ -213,6 +213,27 @@ receivers:
         type: remove
 
 {{- if .Values.sumologic.logs.multiline.enabled }}
+      ## Detect the container runtime log format
+      ## Can be: docker-shim, CRI-O and containerd
+      - id: multiline
+        default: merge-multiline-logs
+        routes:
+{{- range $i, $config := .Values.sumologic.logs.multiline.additional }}
+          - expr: {{ $config.condition }}
+            output: {{ printf "merge-multiline-logs-%d" $i }}
+{{- end }}
+        type: router
+
+{{- range $i, $config := .Values.sumologic.logs.multiline.additional }}
+      - id: {{ printf "merge-multiline-logs-%d" $i }}
+        combine_field: body
+        combine_with: "\n"
+        is_first_entry: body matches {{ $config.first_line_regex | quote }}
+        source_identifier: attributes["log.file.path"]
+        output: clean-up-log-file-path
+        type: recombine
+{{- end }}
+
       ## merge-multiline-logs merges incoming log records into multiline logs.
       ## Input Body (JSON): { "log": "2001-02-03 04:05:06 first line\n", "stream": "stdout" }
       ## Input Body (JSON): { "log": "  second line\n", "stream": "stdout" }
@@ -223,10 +244,12 @@ receivers:
         combine_with: "\n"
         is_first_entry: body matches {{ .Values.sumologic.logs.multiline.first_line_regex | quote }}
         source_identifier: attributes["log.file.path"]
+        output: clean-up-log-file-path
         type: recombine
 {{- end }}
 
       - field: attributes["log.file.path"]
+        id: clean-up-log-file-path
         type: remove
 
     storage: file_storage
