@@ -1587,8 +1587,6 @@ kube-prometheus-stack:
                   node_namespace_pod:kube_pod_info:
                 )
               record: "node:node_memory_utilisation:"
-            - expr: 1 - (node:node_memory_bytes_available:sum / node:node_memory_bytes_total:sum)
-              record: "node:node_memory_utilisation_2:"
             - expr: |-
                 max by (instance, namespace, pod, device) ((node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
                 - node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"})
@@ -1606,25 +1604,9 @@ kube-prometheus-stack:
                 sum(irate(node_network_transmit_bytes_total{job="node-exporter",device!~"veth.+"}[1m]))
               record: :node_net_utilisation:sum_irate
             - expr: |-
-                sum by (node) (
-                  (irate(node_network_receive_bytes_total{job="node-exporter",device!~"veth.+"}[1m]) +
-                  irate(node_network_transmit_bytes_total{job="node-exporter",device!~"veth.+"}[1m]))
-                * on (namespace, pod) group_left(node)
-                  node_namespace_pod:kube_pod_info:
-                )
-              record: node:node_net_utilisation:sum_irate
-            - expr: |-
                 sum(irate(node_network_receive_drop_total{job="node-exporter",device!~"veth.+"}[1m])) +
                 sum(irate(node_network_transmit_drop_total{job="node-exporter",device!~"veth.+"}[1m]))
               record: :node_net_saturation:sum_irate
-            - expr: |-
-                sum by (node) (
-                  (irate(node_network_receive_drop_total{job="node-exporter",device!~"veth.+"}[1m]) +
-                  irate(node_network_transmit_drop_total{job="node-exporter",device!~"veth.+"}[1m]))
-                * on (namespace, pod) group_left(node)
-                  node_namespace_pod:kube_pod_info:
-                )
-              record: node:node_net_saturation:sum_irate
             - expr: |-
                 sum(node_load1{job="node-exporter"})
                 /
@@ -1663,13 +1645,6 @@ kube-prometheus-stack:
                 )
               record: node:node_memory_swap_io_bytes:sum_rate
             - expr: |-
-                node:node_cpu_utilisation:avg1m
-                  *
-                node:node_num_cpu:sum
-                  /
-                scalar(sum(node:node_num_cpu:sum))
-              record: node:cluster_cpu_utilisation:ratio
-            - expr: |-
                 (node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum)
                 /
                 scalar(sum(node:node_memory_bytes_total:sum))
@@ -1683,41 +1658,6 @@ kube-prometheus-stack:
                 /
                 node:node_num_cpu:sum
               record: "node:node_cpu_saturation_load1:"
-            - expr: |-
-                max by (instance, namespace, pod, device) (
-                  node_filesystem_avail_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
-                  /
-                  node_filesystem_size_bytes{fstype=~"ext[234]|btrfs|xfs|zfs"}
-                  )
-              record: "node:node_filesystem_avail:"
-            - expr: |-
-                max(
-                  max(
-                    kube_pod_info{job="kube-state-metrics", host_ip!=""}
-                  ) by (node, host_ip)
-                  * on (host_ip) group_right (node)
-                  label_replace(
-                    (
-                      max(node_filesystem_files{job="node-exporter", mountpoint="/"})
-                      by (instance)
-                    ), "host_ip", "$1", "instance", "(.*):.*"
-                  )
-                ) by (node)
-              record: "node:node_inodes_total:"
-            - expr: |-
-                max(
-                  max(
-                    kube_pod_info{job="kube-state-metrics", host_ip!=""}
-                  ) by (node, host_ip)
-                  * on (host_ip) group_right (node)
-                  label_replace(
-                    (
-                      max(node_filesystem_files_free{job="node-exporter", mountpoint="/"})
-                      by (instance)
-                    ), "host_ip", "$1", "instance", "(.*):.*"
-                  )
-                ) by (node)
-              record: "node:node_inodes_free:"
 
   ## NOTE changing the serviceMonitor scrape interval to be >1m can result in metrics from recording
   ## rules to be missing and empty panels in Sumo Logic Kubernetes apps.
@@ -2194,30 +2134,16 @@ kube-prometheus-stack:
         ## :node_memory_utilisation:
         ## :node_net_saturation:sum_irate
         ## :node_net_utilisation:sum_irate
-        ## cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
-        ## cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
-        ## cluster_quantile:scheduler_framework_extension_point_duration_seconds:histogram_quantile
-        ## cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
-        ## cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
-        ## instance:node_filesystem_usage:sum  # no rules definition found
-        ## instance:node_network_receive_bytes:rate:sum
-        ## node:cluster_cpu_utilisation:ratio
         ## node:cluster_memory_utilisation:ratio
         ## node:node_cpu_saturation_load1:
         ## node:node_cpu_utilisation:avg1m
         ## node:node_disk_saturation:avg_irate
         ## node:node_disk_utilisation:avg_irate
-        ## node:node_filesystem_avail:
         ## node:node_filesystem_usage:
-        ## node:node_inodes_free:
-        ## node:node_inodes_total:
         ## node:node_memory_bytes_total:sum
         ## node:node_memory_swap_io_bytes:sum_rate
         ## node:node_memory_utilisation:
         ## node:node_memory_utilisation:ratio
-        ## node:node_memory_utilisation_2:
-        ## node:node_net_saturation:sum_irate
-        ## node:node_net_utilisation:sum_irate
         ## node:node_num_cpu:sum
         ## node_namespace_pod:kube_pod_info:
         - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.operator.rule
@@ -2227,7 +2153,7 @@ kube-prometheus-stack:
               regex: ^true$
               sourceLabels: [_sumo_forward_]
             - action: keep
-              regex: "cluster_quantile:apiserver_request_duration_seconds:histogram_quantile|instance:node_filesystem_usage:sum|instance:node_network_receive_bytes:rate:sum|cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile|cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile|cluster_quantile:scheduler_framework_extension_point_duration_seconds:histogram_quantile|node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|node:cluster_cpu_utilisation:ratio|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_utilisation_2:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|node:node_filesystem_avail:|:node_net_utilisation:sum_irate|node:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate|node:node_net_saturation:sum_irate|node:node_inodes_total:|node:node_inodes_free:"
+              regex: "node_namespace_pod:kube_pod_info:|:kube_pod_info_node_count:|node:node_num_cpu:sum|:node_cpu_utilisation:avg1m|node:node_cpu_utilisation:avg1m|:node_cpu_saturation_load1:|node:node_cpu_saturation_load1:|:node_memory_utilisation:|node:node_memory_bytes_total:sum|node:node_memory_utilisation:ratio|node:cluster_memory_utilisation:ratio|:node_memory_swap_io_bytes:sum_rate|node:node_memory_utilisation:|node:node_memory_swap_io_bytes:sum_rate|:node_disk_utilisation:avg_irate|node:node_disk_utilisation:avg_irate|:node_disk_saturation:avg_irate|node:node_disk_saturation:avg_irate|node:node_filesystem_usage:|:node_net_utilisation:sum_irate|:node_net_saturation:sum_irate"
               sourceLabels: [__name__]
         ## Nginx ingress controller metrics
         ## rel: https://docs.nginx.com/nginx-ingress-controller/logging-and-monitoring/prometheus/#available-metrics
