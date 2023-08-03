@@ -143,8 +143,38 @@ data:
           type: remove
         - default: merge-multiline-logs
           id: multiline
-          routes: null
+          routes:
+          - expr: attributes["k8s.container.name"] matches "^.*-foo$"
+            output: merge-multiline-logs-0
+          - expr: attributes["k8s.namespace.name"] == "bar"
+            output: merge-multiline-logs-1
+          - expr: attributes["k8s.namespace.name"] == "foo"
+            output: merge-multiline-logs-2
           type: router
+        - combine_field: body
+          combine_with: |2+
+
+          id: merge-multiline-logs-0
+          is_first_entry: body matches "@@@Log beginning"
+          output: clean-up-log-file-path
+          source_identifier: attributes["log.file.path"]
+          type: recombine
+        - combine_field: body
+          combine_with: |2+
+
+          id: merge-multiline-logs-1
+          is_first_entry: body matches "---Log beginning"
+          output: clean-up-log-file-path
+          source_identifier: attributes["log.file.path"]
+          type: recombine
+        - combine_field: body
+          combine_with: |2+
+
+          id: merge-multiline-logs-2
+          is_first_entry: 'body matches ": : : Log beginning"'
+          output: clean-up-log-file-path
+          source_identifier: attributes["log.file.path"]
+          type: recombine
         - combine_field: body
           combine_with: |2+
 

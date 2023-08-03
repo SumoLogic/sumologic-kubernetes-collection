@@ -1,0 +1,13 @@
+sumologic:
+  logs:
+    multiline:
+      enabled: true
+      first_line_regex: "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
+      ## Additional configuration takes precedence over first_line_regex and are executed only for first matching condition
+      additional:
+        - first_line_regex: "@@@Log beginning"
+          condition: attributes["k8s.container.name"] matches "^.*-foo$"
+        - first_line_regex: "---Log beginning"
+          condition: attributes["k8s.namespace.name"] == "bar"
+        - first_line_regex: ": : : Log beginning"
+          condition: attributes["k8s.namespace.name"] == "foo"

@@ -2,17 +2,7 @@
 
 <!-- TOC -->
 
-- [Configuration](#configuration)
-  - [Multiline log parsing](#multiline-log-parsing)
-  - [Setting source name and other built-in metadata](#setting-source-name-and-other-built-in-metadata)
-  - [Filtering](#filtering)
-  - [Modifying log records](#modifying-log-records)
-    - [Adding custom fields](#adding-custom-fields)
-  - [Persistence](#persistence)
-- [Advanced Configuration](#advanced-configuration)
-  - [Direct configuration](#direct-configuration)
-  - [Disabling container logs](#disabling-container-logs)
-  <!-- /TOC -->
+<!-- /TOC -->
 
 By default, log collection is enabled. This includes both container logs and systemd logs. This document covers container logs.
 
@@ -60,6 +50,66 @@ This feature is enabled by default and the default regex will catch logs startin
 ```
 
 This feature can rarely cause problems by merging together lines which are supposed to be separate. In that case, feel free to disable it.
+
+#### Conditional multiline log parsing
+
+Multiline log parsing can be also configured per specific conditions:
+
+```yaml
+sumologic:
+  logs:
+    multiline:
+      enabled: true
+      first_line_regex: "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
+      additional:
+        - first_line_regex: <regex 1>
+          condition: <condition 1>
+        - first_line_regex: <regex 2>
+          condition: <condition 2>
+        # ...
+```
+
+In that case `first_line_regex` of **first** matching condition is applied, and `sumologic.logs.multiline.first_line_regex` is used as
+expression for logs which don't match any of the condition.
+
+Conditions have to be valid [Open Telemetry Expression][expr].
+
+The following variables may be used in the condition:
+
+- `body` - body of a log
+- `attributes["k8s.namespace.name"]`
+- `attributes["k8s.pod.name"]`
+- `attributes["k8s.container.name"]`
+- `attributes["log.file.path"]` - log path on the node (`/var/log/pods/...`)
+- `attributes["stream"]` - may be either `stdout` or `stderr`
+
+Please consider the following example:
+
+```yaml
+sumologic:
+  logs:
+    multiline:
+      enabled: true
+      first_line_regex: "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
+      additional:
+        - first_line_regex: "^@@@@ First Line"
+          condition: 'attributes["k8s.namespace.name"] == "foo"'
+        - first_line_regex: "^--- First Line"
+          condition: 'attributes["k8s.container.name"] matches "^bar-.*'
+        - first_line_regex: "^Error"
+          condition: 'attributes["stream"] == "stderr" and attributes["k8s.namespace.name"] != "lorem"'
+```
+
+It is going to:
+
+- Use `^@@@@ First Line` expression for all logs from `foo` namespace
+- Use `^--- First Line` expression for all remaingin logs from containers, which names start with `bar-`
+- Use `^Error` expression for all remaining `stderr` logs which are not in `lorem` namespace
+- Use `^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}` expression for all remaining logs
+
+**Note: Log which matches multiple conditions is processed only by the first one.**
+
+[expr]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.82.0/pkg/stanza/docs/types/expression.md
 
 ### Log format
 
