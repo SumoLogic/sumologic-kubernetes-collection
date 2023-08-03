@@ -213,8 +213,6 @@ receivers:
         type: remove
 
 {{- if .Values.sumologic.logs.multiline.enabled }}
-      ## Detect the container runtime log format
-      ## Can be: docker-shim, CRI-O and containerd
       - id: multiline
         default: merge-multiline-logs
         routes:
