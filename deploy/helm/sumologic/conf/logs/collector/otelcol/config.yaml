@@ -51,7 +51,7 @@ processors:
 receivers:
 {{- if .Values.sumologic.logs.container.enabled }}
   filelog/containers:
-{{ if lt (int .Capabilities.KubeVersion.Minor) 24 }}
+{{ if lt (int (include "kubernetes.minor" .)) 24 }}
     ## sets fingerprint_size to 17kb in order to match the longest possible docker line (which by default is 16kb)
     ## we want to include timestamp, which is at the end of the line
     ## Not necessary in 1.24 and later, as docker-shim is not present anymore
