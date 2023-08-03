@@ -1680,30 +1680,11 @@ kube-prometheus-stack:
       probes: false
       ## Enable scraping /metrics/resource/v1alpha1 from kubelet's service
       resource: false
-      ## see docs/scraped_metrics.md
-      ## kubelet metrics:
-      ## kubelet_docker_operations_errors
-      ## kubelet_docker_operations_errors_total
-      ## kubelet_docker_operations_duration_seconds_count
-      ## kubelet_docker_operations_duration_seconds_sum
-      ## kubelet_runtime_operations_duration_seconds_count
-      ## kubelet_runtime_operations_duration_seconds_sum
-      ## kubelet_running_container_count
-      ## kubelet_running_containers
-      ## kubelet_running_pod_count
-      ## kubelet_running_pods
-      ## kubelet_docker_operations_latency_microseconds
-      ## kubelet_docker_operations_latency_microseconds_count
-      ## kubelet_docker_operations_latency_microseconds_sum
-      ## kubelet_runtime_operations_latency_microseconds
-      ## kubelet_runtime_operations_latency_microseconds_count
-      ## kubelet_runtime_operations_latency_microseconds_sum
+      ## Drop all metrics
       metricRelabelings:
         - action: keep
-          regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
+          regex: "^$"
           sourceLabels: [__name__]
-        - action: labeldrop
-          regex: id
       ## see docs/scraped_metrics.md
       ## cadvisor container metrics
       ## container_cpu_usage_seconds_total
@@ -1736,19 +1717,7 @@ kube-prometheus-stack:
           regex: (id|name)
   kubeControllerManager:
     serviceMonitor:
-      ## Scrape interval. If not set, the Prometheus default scrape interval is used.
-      interval:
-      ## see docs/scraped_metrics.md
-      ## controller manager metrics
-      ## https://kubernetes.io/docs/concepts/cluster-administration/monitoring/#kube-controller-manager-metrics
-      ## e.g.
-      ## cloudprovider_aws_api_request_duration_seconds_bucket
-      ## cloudprovider_aws_api_request_duration_seconds_count
-      ## cloudprovider_aws_api_request_duration_seconds_sum
-      metricRelabelings:
-        - action: keep
-          regex: (?:cloudprovider_.*_api_request_duration_seconds.*)
-          sourceLabels: [__name__]
+      enabled: false
   coreDns:
     serviceMonitor:
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
