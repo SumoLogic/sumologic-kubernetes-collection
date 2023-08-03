@@ -353,16 +353,6 @@ var (
 		// "node:node_inodes_free:",  // looks like we're not collecting node_filesystem_files_free which this requires
 		"instance:node_network_receive_bytes:rate:sum",
 	}
-	// The receiver-mock Pod used for tests has a "prometheus.io/scrape: true" annotation
-	// TODO: remove this once we have a better test for this behaviour
-	ReceiverMockMetrics = []string{
-		"receiver_mock_metrics_count",
-		"receiver_mock_logs_count",
-		"scrape_series_added",
-		"scrape_samples_scraped",
-		"scrape_samples_post_metric_relabeling",
-		"scrape_duration_seconds",
-	}
 	OtherMetrics = []string{
 		"up",
 	}
@@ -384,11 +374,6 @@ var (
 		"scheduler_scheduling_attempt_duration_seconds_sum",
 		"scheduler_scheduling_attempt_duration_seconds_bucket",
 		"cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile",
-		// TODO: Remove this once we have a better test for annotation metrics
-		"receiver_mock_logs_ip_count",
-		"receiver_mock_logs_bytes_count",
-		"receiver_mock_logs_bytes_ip_count",
-		"receiver_mock_metrics_ip_count",
 	}
 
 	NginxMetrics = []string{
@@ -422,7 +407,6 @@ var (
 		NodeExporterMetrics,
 		PrometheusMetrics,
 		RecordingRuleMetrics,
-		ReceiverMockMetrics,
 		OtherMetrics,
 	}
 	DefaultExpectedMetrics                 []string
