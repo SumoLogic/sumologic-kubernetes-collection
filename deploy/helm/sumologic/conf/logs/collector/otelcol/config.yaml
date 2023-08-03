@@ -219,7 +219,7 @@ receivers:
         default: merge-multiline-logs
         routes:
 {{- range $i, $config := .Values.sumologic.logs.multiline.additional }}
-          - expr: {{ $config.condition }}
+          - expr: {{ $config.condition | quote}}
             output: {{ printf "merge-multiline-logs-%d" $i }}
 {{- end }}
         type: router
@@ -228,7 +228,7 @@ receivers:
       - id: {{ printf "merge-multiline-logs-%d" $i }}
         combine_field: body
         combine_with: "\n"
-        is_first_entry: body matches {{ $config.first_line_regex | quote }}
+        is_first_entry: {{ printf "body matches %s" ($config.first_line_regex | quote) | quote }}
         source_identifier: attributes["log.file.path"]
         output: clean-up-log-file-path
         type: recombine
@@ -242,7 +242,7 @@ receivers:
       - id: merge-multiline-logs
         combine_field: body
         combine_with: "\n"
-        is_first_entry: body matches {{ .Values.sumologic.logs.multiline.first_line_regex | quote }}
+        is_first_entry: {{ printf "body matches %s" (.Values.sumologic.logs.multiline.first_line_regex | quote) | quote }}
         source_identifier: attributes["log.file.path"]
         output: clean-up-log-file-path
         type: recombine

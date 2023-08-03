@@ -9,3 +9,5 @@ sumologic:
           condition: attributes["k8s.container.name"] matches "^.*-foo$"
         - first_line_regex: "---Log beginning"
           condition: attributes["k8s.namespace.name"] == "bar"
+        - first_line_regex: ": : : Log beginning"
+          condition: attributes["k8s.namespace.name"] == "foo"
