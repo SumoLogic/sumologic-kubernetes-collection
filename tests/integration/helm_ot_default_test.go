@@ -33,7 +33,7 @@ func Test_Helm_Default_OT(t *testing.T) {
 
 	featLogs := GetLogsFeature()
 
-	featMultilineLogs := GetMultilineLogsFeature()
+	featMultilineLogs := GetMultipleMultilineLogsFeature()
 
 	featEvents := GetEventsFeature()
 

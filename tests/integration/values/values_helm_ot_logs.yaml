@@ -1,8 +1,0 @@
-telegraf-operator:
-  enabled: true
-metadata:
-  logs:
-    multiline:
-      additional:
-        - condition: attributes["k8s.container.name"] == "another-container-multiline-logs-long-lines"
-          first_line_regex: "^@@@"
