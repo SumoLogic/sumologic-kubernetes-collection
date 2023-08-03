@@ -63,9 +63,9 @@ sumologic:
       first_line_regex: "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
       additional:
         - first_line_regex: <regex 1>
-          condition: <consition 1>
+          condition: <condition 1>
         - first_line_regex: <regex 2>
-          condition: <consition 2>
+          condition: <condition 2>
         # ...
 ```
 
