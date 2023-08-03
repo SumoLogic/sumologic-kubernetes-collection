@@ -1822,6 +1822,11 @@ kube-prometheus-stack:
       enabled: false
     tls:
       enabled: false
+    serviceMonitor:
+      metricRelabelings:
+        - action: keep
+          regex: "^$"
+          sourceLabels: [__name__]
   ## Resource limits for kube-state-metrics
   kube-state-metrics:
     ## Put here the new name if you want to override the full name used for Kube State Metrics components.
