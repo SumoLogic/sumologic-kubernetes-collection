@@ -303,6 +303,15 @@ sumologic:
       enabled: true
       first_line_regex: "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
       ## Additional configuration takes precedence over first_line_regex and are executed only for first matching condition
+      ##
+      ## Example:
+      ## - first_line_regex: "^@@@@ First Line"
+      ##   condition: 'attributes["k8s.namespace.name"] == "foo"'
+      ## - first_line_regex: "^--- First Line"
+      ##   condition: 'attributes["k8s.container.name"] matches "^bar-.*'
+      ##
+      ## NOTE: See below link for full reference:
+      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/collecting-container-logs.md#conditional-multiline-log-parsing
       additional: []
 
     container:
