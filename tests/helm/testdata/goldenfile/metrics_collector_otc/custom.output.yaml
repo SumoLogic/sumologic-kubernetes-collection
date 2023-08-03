@@ -16,10 +16,6 @@ metadata:
     podLabelKey: podLabelValue
 
     podKey: podValue
-  annotations:
-    podAnnotationKey: podAnnotationValue
-
-    annotationKey: annotationValue
 spec:
   mode: statefulset
   replicas: 3
@@ -52,6 +48,11 @@ spec:
       valueFrom:
         fieldRef:
           fieldPath: metadata.namespace
+  podAnnotations:
+    ## The operator adds this annotation by default, but we use our own ServiceMonitor
+    prometheus.io/scrape: "false"
+    podAnnotationKey: podAnnotationValue
+    annotationKey: annotationValue
   podSecurityContext:
     fsGroup: 999
   ports:
