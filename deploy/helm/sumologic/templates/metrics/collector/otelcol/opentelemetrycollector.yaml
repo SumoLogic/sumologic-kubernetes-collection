@@ -14,15 +14,6 @@ metadata:
     {{- if .Values.sumologic.metrics.collector.otelcol.podLabels }}
     {{ toYaml .Values.sumologic.metrics.collector.otelcol.podLabels | nindent 4 }}
     {{- end }}
-{{- if or .Values.sumologic.podAnnotations .Values.sumologic.metrics.collector.otelcol.podAnnotations }}
-  annotations:
-    {{- if .Values.sumologic.podAnnotations }}
-    {{ toYaml .Values.sumologic.podAnnotations | nindent 4 }}
-    {{- end }}
-    {{- if .Values.sumologic.metrics.collector.otelcol.podAnnotations }}
-    {{ toYaml .Values.sumologic.metrics.collector.otelcol.podAnnotations | nindent 4 }}
-    {{- end }}
-{{- end }}
 spec:
   mode: statefulset
   replicas: {{ .Values.sumologic.metrics.collector.otelcol.replicaCount }}
@@ -63,6 +54,15 @@ spec:
     valueFrom:
       fieldRef:
         fieldPath: metadata.namespace
+  podAnnotations:
+    ## The operator adds this annotation by default, but we use our own ServiceMonitor
+    prometheus.io/scrape: "false"
+{{- if .Values.sumologic.podAnnotations -}}
+    {{ toYaml .Values.sumologic.podAnnotations | nindent 4 }}
+{{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.podAnnotations -}}
+    {{ toYaml .Values.sumologic.metrics.collector.otelcol.podAnnotations | nindent 4 }}
+{{- end }}
   podSecurityContext:
     {{ .Values.sumologic.metrics.collector.otelcol.securityContext | toYaml | nindent 4 }}
   ports:

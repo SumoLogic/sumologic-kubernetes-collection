@@ -30,6 +30,9 @@ spec:
       valueFrom:
         fieldRef:
           fieldPath: metadata.namespace
+  podAnnotations:
+    ## The operator adds this annotation by default, but we use our own ServiceMonitor
+    prometheus.io/scrape: "false"
   podSecurityContext:
     fsGroup: 999
   ports:
