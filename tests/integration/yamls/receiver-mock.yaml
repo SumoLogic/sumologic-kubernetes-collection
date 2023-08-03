@@ -21,11 +21,6 @@ spec:
       labels:
         service: receiver-mock
         app: receiver-mock
-      ## this is used for checking if we collect metrics from Pods with these annotations
-      ## TODO: remove this once we have a better test for this behaviour
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "3000"
     spec:
       containers:
         - ports:
