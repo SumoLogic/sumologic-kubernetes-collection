@@ -7,6 +7,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.12.0]
+
+### Released 2023-08-07
+
+### Added
+
+- feat(metrics/collector): allow disabling metrics from annotated Pods [#3190]
+
+### Changed
+
+- chore: update otelcol to 0.82.0-sumo-0 [#3176]
+- feat: add support for multiple multiline detection [#3181]
+
+### Fixed
+
+- fix(metrics): add job attribute to Prometheus annotation metrics [#3178]
+- fix(otellogs): fix configuration for filelog/container to use default settings for fingerprint_size on k8s >=1.24 [#3185]
+
+[#3190]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3190
+[#3176]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3176
+[#3181]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3181
+[#3178]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3178
+[#3185]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3185
+[v3.12.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.12.0
+
 ## [v3.11.0]
 
 ### Released 2023-07-28
