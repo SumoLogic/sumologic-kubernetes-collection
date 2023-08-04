@@ -1,3 +1,5 @@
+{{- $collectorConfig := .Values.sumologic.metrics.collector.otelcol -}}
+{{- $scrapeConfigsPresent := or $collectorConfig.kubelet.enabled $collectorConfig.cAdvisor.enabled $collectorConfig.annotatedPods.enabled -}}
 exporters:
   otlphttp:
     endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
@@ -45,7 +47,11 @@ receivers:
     config:
       global:
         scrape_interval: 30s
-      scrape_configs:
+      {{- /*
+      As of right now, if scrape_configs is empty, it needs to be an empty list, otherwise otel-operator rejects it 
+      */}}
+      scrape_configs: {{- not $scrapeConfigsPresent | ternary "[]" "" }}
+{{- if $collectorConfig.annotatedPods.enabled }}
         ## scraping metrics basing on annotations:
         ##   - prometheus.io/scrape: true - to scrape metrics from the pod
         ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
@@ -84,7 +90,8 @@ receivers:
               target_label: pod
               replacement: $1
               action: replace
-{{- if .Values.sumologic.metrics.collector.otelcol.kubelet.enabled }}
+{{- end }}
+{{- if $collectorConfig.kubelet.enabled }}
         ## These scrape configs are for kubelet metrics
         ## Prometheus operator does this by manually maintaining a Service with Endpoints for all Nodes
         ## We don't have that capability, so we need to use a static configuration
@@ -119,7 +126,7 @@ receivers:
               target_label: instance
               action: replace
 {{- end }}
-{{- if .Values.sumologic.metrics.collector.otelcol.cAdvisor.enabled }}
+{{- if $collectorConfig.cAdvisor.enabled }}
         - job_name: cadvisor
           scheme: https
           authorization:

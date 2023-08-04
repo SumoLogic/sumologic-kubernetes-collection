@@ -39,6 +39,8 @@ sumologic:
           enabled: false
         cAdvisor:
           enabled: false
+        annotatedPods:
+          enabled: false
 
   podAnnotations:
     podAnnotationKey: podAnnotationValue
