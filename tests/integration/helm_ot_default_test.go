@@ -29,7 +29,7 @@ func Test_Helm_Default_OT(t *testing.T) {
 
 	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
 
-	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.NginxMetrics, Prometheus, false)
+	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Prometheus, true)
 
 	featLogs := GetLogsFeature()
 
