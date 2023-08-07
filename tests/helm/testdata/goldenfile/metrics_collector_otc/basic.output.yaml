@@ -93,13 +93,21 @@ spec:
               # we drop them to make the rest of our pipeline easier to reason about
               # after the collector and metadata are merged, consider using them instead of k8sattributes processor
               - delete_matching_keys(attributes, "k8s.*")
-
+      transform/extract_sum_count_from_histograms:
+        error_mode: ignore
+        metric_statements:
+          - context: metric
+            statements:
+              - extract_sum_metric(true) where IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
+              - extract_count_metric(true) where IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
       filter/drop_unnecessary_metrics:
         error_mode: ignore
         metrics:
           metric:
             # we let the metrics from annotations ("kubernetes-pods") through as they are
             - resource.attributes["service.name"] != "pod-annotations" and IsMatch(name, "scrape_.*")
+            # drop histograms we've extracted sums and counts from, but don't want the full thing
+            - IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
 
     receivers:
       prometheus:
@@ -243,6 +251,7 @@ spec:
         metrics:
           exporters: [otlphttp]
           processors:
+            - transform/extract_sum_count_from_histograms
             - filter/drop_unnecessary_metrics
             - transform/drop_unnecessary_attributes
           receivers: [prometheus]
