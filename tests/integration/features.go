@@ -138,7 +138,7 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 		Assess("expected metrics are present",
 			stepfuncs.WaitUntilExpectedMetricsPresentWithFilters(
 				expectedMetrics,
-				receivermock.MetadataFilters{"deployment": "nginx", "endpoint": "/metrics"},
+				receivermock.MetadataFilters{"job": "pod-annotations"},
 				errOnExtra,
 				waitDuration,
 				tickDuration,
@@ -146,7 +146,7 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 		).
 		Assess("expected labels are present for annotation metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				metricFilters := receivermock.MetadataFilters{"__name__": "nginx_accepts", "endpoint": "/metrics"}
+				metricFilters := receivermock.MetadataFilters{"__name__": "nginx_accepts", "job": "pod-annotations"}
 				releaseName := ctxopts.HelmRelease(ctx)
 				namespace := ctxopts.Namespace(ctx)
 				expectedLabels := receivermock.Labels{
