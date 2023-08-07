@@ -527,6 +527,14 @@ sumologic:
         annotatedPods:
           enabled: true
 
+        ## By default, the Helm Chart collects some high-cardinality histogram metrics, as Sumo Apps make use of the sum and count components.
+        ## This setting causes the metrics collector to drop the actual histogram buckets, keeping only the sum and the count.
+        ## This affects the following metrics:
+        ## - apiserver_request_duration_seconds
+        ## - coredns_dns_request_duration_seconds
+        ## - kubelet_runtime_operations_duration_seconds
+        dropHistogramBuckets: true
+
     otelcol:
       ## Includes additional processors into pipelines.
       ## It can be used for filtering metrics, renaming, changing metadata and so on.

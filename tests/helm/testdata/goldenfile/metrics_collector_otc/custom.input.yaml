@@ -45,6 +45,8 @@ sumologic:
         annotatedPods:
           enabled: false
 
+        dropHistogramBuckets: false
+
   podAnnotations:
     podAnnotationKey: podAnnotationValue
   podLabels:

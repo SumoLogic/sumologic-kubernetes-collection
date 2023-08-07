@@ -4,7 +4,6 @@
 package integration
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
@@ -13,8 +12,7 @@ import (
 func Test_Helm_OT_Metrics(t *testing.T) {
 	expectedMetrics := []string{}
 
-	// drop histogram metrics for now, there's a couple problems with them
-	// don't check recording rule metrics, not supported yet
+	// don't check recording rule metrics, not supported
 	expectedMetricsGroups := [][]string{
 		internal.KubeStateMetrics,
 		internal.KubeDaemonSetMetrics,
@@ -38,11 +36,6 @@ func Test_Helm_OT_Metrics(t *testing.T) {
 	}
 	for _, metrics := range expectedMetricsGroups {
 		for _, metric := range metrics {
-			if strings.HasPrefix(metric, "apiserver_request_duration_seconds") ||
-				strings.HasPrefix(metric, "coredns_dns_request_duration_seconds") ||
-				strings.HasPrefix(metric, "kubelet_runtime_operations_duration_seconds") {
-				continue
-			}
 			expectedMetrics = append(expectedMetrics, metric)
 		}
 	}
