@@ -385,6 +385,14 @@ var (
 		"nginx_waiting",
 		"nginx_writing",
 	}
+
+	// By default we collect all metrics from annotated Pods, which include internal Prometheus metrics about scrapes
+	AdditionalAnnotatedPodMetrics = []string{
+		"scrape_series_added",
+		"scrape_samples_post_metric_relabeling",
+		"scrape_samples_scraped",
+		"scrape_duration_seconds",
+	}
 )
 
 var (
@@ -409,8 +417,14 @@ var (
 		RecordingRuleMetrics,
 		OtherMetrics,
 	}
+	DefaultExpectedNginxAnnotatedMetricsGroups = [][]string{
+		NginxMetrics,
+		AdditionalAnnotatedPodMetrics,
+		OtherMetrics,
+	}
 	DefaultExpectedMetrics                 []string
 	DefaultExpectedFluentdFluentbitMetrics []string
+	DefaultExpectedNginxAnnotatedMetrics   []string
 )
 
 type KindImagesSpec struct {
@@ -442,6 +456,11 @@ func InitializeConstants() error {
 	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics, LogsOtelcolMetrics)
 	for _, metrics := range metricsGroupsWithOtelcol {
 		DefaultExpectedMetrics = append(DefaultExpectedMetrics, metrics...)
+	}
+
+	DefaultExpectedNginxAnnotatedMetrics = []string{}
+	for _, metrics := range DefaultExpectedNginxAnnotatedMetricsGroups {
+		DefaultExpectedNginxAnnotatedMetrics = append(DefaultExpectedNginxAnnotatedMetrics, metrics...)
 	}
 
 	log.Printf("Successfully read kind images spec")

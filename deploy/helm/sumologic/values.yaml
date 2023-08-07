@@ -4408,6 +4408,11 @@ telegraf-operator:
           ## https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client#configuration
           listen = ":9273"
           metric_version = 2
+          ## Disable the default collectors
+          collectors_exclude = ["gocollector", "process"]
+          ## Telegraf operator adds the internal plugin by default, and the Helm Chart doesn't let us disable it
+          ## Instead, drop the metrics at the output
+          namedrop = ["internal*"]
   # imagePullSecrets: []
 
 ## Configure Falco
