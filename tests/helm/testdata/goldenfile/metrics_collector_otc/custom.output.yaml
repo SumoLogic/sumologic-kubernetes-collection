@@ -123,7 +123,7 @@ spec:
         config:
           global:
             scrape_interval: 30s
-          scrape_configs:[]
+          scrape_configs: []
         target_allocator:
           endpoint: http://RELEASE-NAME-sumologic-metrics-targetallocator
           interval: 30s
