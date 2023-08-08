@@ -118,6 +118,921 @@ spec:
             # we let the metrics from annotations ("kubernetes-pods") through as they are
             - resource.attributes["service.name"] != "pod-annotations" and IsMatch(name, "scrape_.*")
 
+      filter/app_metrics:
+        error_mode: ignore
+        metrics:
+          metric:
+          ## Nginx ingress controller metrics
+          ## rel: https://docs.nginx.com/nginx-ingress-controller/logging-and-monitoring/prometheus/#available-metrics
+          ## nginx_ingress_controller_ingress_resources_total
+          ## nginx_ingress_controller_nginx_last_reload_milliseconds
+          ## nginx_ingress_controller_nginx_last_reload_status
+          ## nginx_ingress_controller_nginx_reload_errors_total
+          ## nginx_ingress_controller_nginx_reloads_total
+          ## nginx_ingress_controller_virtualserver_resources_total
+          ## nginx_ingress_controller_virtualserverroute_resources_total
+          ## nginx_ingress_nginx_connections_accepted
+          ## nginx_ingress_nginx_connections_active
+          ## nginx_ingress_nginx_connections_handled
+          ## nginx_ingress_nginx_connections_reading
+          ## nginx_ingress_nginx_connections_waiting
+          ## nginx_ingress_nginx_connections_writing
+          ## nginx_ingress_nginx_http_requests_total
+          ## nginx_ingress_nginxplus_connections_accepted
+          ## nginx_ingress_nginxplus_connections_active
+          ## nginx_ingress_nginxplus_connections_dropped
+          ## nginx_ingress_nginxplus_connections_idle
+          ## nginx_ingress_nginxplus_http_requests_current
+          ## nginx_ingress_nginxplus_http_requests_total
+          ## nginx_ingress_nginxplus_resolver_addr
+          ## nginx_ingress_nginxplus_resolver_formerr
+          ## nginx_ingress_nginxplus_resolver_name
+          ## nginx_ingress_nginxplus_resolver_noerror
+          ## nginx_ingress_nginxplus_resolver_notimp
+          ## nginx_ingress_nginxplus_resolver_nxdomain
+          ## nginx_ingress_nginxplus_resolver_refused
+          ## nginx_ingress_nginxplus_resolver_servfail
+          ## nginx_ingress_nginxplus_resolver_srv
+          ## nginx_ingress_nginxplus_resolver_timedout
+          ## nginx_ingress_nginxplus_resolver_unknown
+          ## nginx_ingress_nginxplus_ssl_handshakes_failed
+          ## nginx_ingress_nginxplus_ssl_session_reuses
+          ## nginx_ingress_nginxplus_stream_server_zone_connections
+          ## nginx_ingress_nginxplus_stream_server_zone_received
+          ## nginx_ingress_nginxplus_stream_server_zone_sent
+          ## nginx_ingress_nginxplus_stream_upstream_server_active
+          ## nginx_ingress_nginxplus_stream_upstream_server_connect_time
+          ## nginx_ingress_nginxplus_stream_upstream_server_fails
+          ## nginx_ingress_nginxplus_stream_upstream_server_health_checks_fails
+          ## nginx_ingress_nginxplus_stream_upstream_server_health_checks_unhealthy
+          ## nginx_ingress_nginxplus_stream_upstream_server_received
+          ## nginx_ingress_nginxplus_stream_upstream_server_response_time
+          ## nginx_ingress_nginxplus_stream_upstream_server_sent
+          ## nginx_ingress_nginxplus_stream_upstream_server_unavail
+          ## nginx_ingress_nginxplus_stream_upstream_server_state
+          ## nginx_ingress_nginxplus_location_zone_discarded
+          ## nginx_ingress_nginxplus_location_zone_received
+          ## nginx_ingress_nginxplus_location_zone_requests
+          ## nginx_ingress_nginxplus_location_zone_responses
+          ## nginx_ingress_nginxplus_location_zone_sent
+          ## nginx_ingress_nginxplus_server_zone_discarded
+          ## nginx_ingress_nginxplus_server_zone_processing
+          ## nginx_ingress_nginxplus_server_zone_received
+          ## nginx_ingress_nginxplus_server_zone_requests
+          ## nginx_ingress_nginxplus_server_zone_responses
+          ## nginx_ingress_nginxplus_server_zone_sent
+          ## nginx_ingress_nginxplus_upstream_server_fails
+          ## nginx_ingress_nginxplus_upstream_server_header_time
+          ## nginx_ingress_nginxplus_upstream_server_health_checks_fails
+          ## nginx_ingress_nginxplus_upstream_server_health_checks_unhealthy
+          ## nginx_ingress_nginxplus_upstream_server_received
+          ## nginx_ingress_nginxplus_upstream_server_sent
+          ## nginx_ingress_nginxplus_upstream_server_unavail
+          ## nginx_ingress_nginxplus_upstream_server_response_time
+          ## nginx_ingress_nginxplus_upstream_server_responses
+          ## nginx_ingress_nginxplus_upstream_server_requests
+            - IsMatch(name, "nginx_ingress_.*") and not IsMatch(name, "(?:nginx_ingress_controller_ingress_resources_total|nginx_ingress_controller_nginx_(last_reload_(milliseconds|status)|reload(s|_errors)_total)|nginx_ingress_controller_virtualserver(|route)_resources_total|nginx_ingress_nginx_connections_(accepted|active|handled|reading|waiting|writing)|nginx_ingress_nginx_http_requests_total|nginx_ingress_nginxplus_(connections_(accepted|active|dropped|idle)|http_requests_(current|total)|resolver_(addr|formerr|name|noerror|notimp|nxdomain|refused|servfail|srv|timedout|unknown)|ssl_(handshakes_failed|session_reuses)|stream_server_zone_(connections|received|sent)|stream_upstream_server_(active|connect_time|fails|health_checks_fails|health_checks_unhealthy|received|response_time|sent|unavail|state)|(location|server)_zone_(discarded|received|requests|responses|sent|processing)|upstream_server_(fails|header_time|health_checks_fails|health_checks_unhealthy|received|sent|unavail|response_time|responses|requests)))")
+          ## Nginx telegraf metrics
+          ## nginx_accepts
+          ## nginx_active
+          ## nginx_handled
+          ## nginx_reading
+          ## nginx_requests
+          ## nginx_waiting
+          ## nginx_writing
+          ## **************** Nginx Plus telegraf metrics
+          ## nginx_plus_api_connections_accepted
+          ## nginx_plus_api_connections_active
+          ## nginx_plus_api_connections_dropped
+          ## nginx_plus_api_connections_idle
+          ## nginx_plus_api_http_caches_cold
+          ## nginx_plus_api_http_caches_hit_bytes
+          ## nginx_plus_api_http_caches_max_size
+          ## nginx_plus_api_http_caches_miss_bytes
+          ## nginx_plus_api_http_caches_size
+          ## nginx_plus_api_http_caches_updating_bytes
+          ## nginx_plus_api_http_location_zones_discarded
+          ## nginx_plus_api_http_location_zones_received
+          ## nginx_plus_api_http_location_zones_requests
+          ## nginx_plus_api_http_location_zones_responses_1xx
+          ## nginx_plus_api_http_location_zones_responses_2xx
+          ## nginx_plus_api_http_location_zones_responses_3xx
+          ## nginx_plus_api_http_location_zones_responses_4xx
+          ## nginx_plus_api_http_location_zones_responses_5xx
+          ## nginx_plus_api_http_location_zones_responses_total
+          ## nginx_plus_api_http_location_zones_sent
+          ## nginx_plus_api_http_requests_current
+          ## nginx_plus_api_http_requests_total
+          ## nginx_plus_api_http_server_zones_discarded
+          ## nginx_plus_api_http_server_zones_processing
+          ## nginx_plus_api_http_server_zones_received
+          ## nginx_plus_api_http_server_zones_requests
+          ## nginx_plus_api_http_server_zones_responses_1xx
+          ## nginx_plus_api_http_server_zones_responses_2xx
+          ## nginx_plus_api_http_server_zones_responses_3xx
+          ## nginx_plus_api_http_server_zones_responses_4xx
+          ## nginx_plus_api_http_server_zones_responses_5xx
+          ## nginx_plus_api_http_server_zones_responses_total
+          ## nginx_plus_api_http_server_zones_sent
+          ## nginx_plus_api_http_upstream_peers_backup
+          ## nginx_plus_api_http_upstream_peers_downtime
+          ## nginx_plus_api_http_upstream_peers_fails
+          ## nginx_plus_api_http_upstream_peers_healthchecks_fails
+          ## nginx_plus_api_http_upstream_peers_healthchecks_unhealthy
+          ## nginx_plus_api_http_upstream_peers_received
+          ## nginx_plus_api_http_upstream_peers_requests
+          ## nginx_plus_api_http_upstream_peers_response_time
+          ## nginx_plus_api_http_upstream_peers_responses_1xx
+          ## nginx_plus_api_http_upstream_peers_responses_2xx
+          ## nginx_plus_api_http_upstream_peers_responses_3xx
+          ## nginx_plus_api_http_upstream_peers_responses_4xx
+          ## nginx_plus_api_http_upstream_peers_responses_5xx
+          ## nginx_plus_api_http_upstream_peers_responses_total
+          ## nginx_plus_api_http_upstream_peers_sent
+          ## nginx_plus_api_http_upstream_peers_unavail
+          ## nginx_plus_api_resolver_zones_addr
+          ## nginx_plus_api_resolver_zones_formerr
+          ## nginx_plus_api_resolver_zones_name
+          ## nginx_plus_api_resolver_zones_noerror
+          ## nginx_plus_api_resolver_zones_notimp
+          ## nginx_plus_api_resolver_zones_nxdomain
+          ## nginx_plus_api_resolver_zones_refused
+          ## nginx_plus_api_resolver_zones_servfail
+          ## nginx_plus_api_resolver_zones_srv
+          ## nginx_plus_api_resolver_zones_timedout
+          ## nginx_plus_api_ssl_handshakes_failed
+          ## nginx_plus_api_ssl_session_reuses
+          ## nginx_plus_api_stream_server_zones_connections
+          ## nginx_plus_api_stream_server_zones_received
+          ## nginx_plus_api_stream_server_zones_sent
+          ## nginx_plus_api_stream_upstream_peers_active
+          ## nginx_plus_api_stream_upstream_peers_backup
+          ## nginx_plus_api_stream_upstream_peers_connect_time
+          ## nginx_plus_api_stream_upstream_peers_downtime
+          ## nginx_plus_api_stream_upstream_peers_fails
+          ## nginx_plus_api_stream_upstream_peers_healthchecks_fails
+          ## nginx_plus_api_stream_upstream_peers_healthchecks_last_passed
+          ## nginx_plus_api_stream_upstream_peers_healthchecks_unhealthy
+          ## nginx_plus_api_stream_upstream_peers_received
+          ## nginx_plus_api_stream_upstream_peers_response_time
+          ## nginx_plus_api_stream_upstream_peers_sent
+          ## nginx_plus_api_stream_upstream_peers_unavail
+            - IsMatch(name, "nginx_.*") and not IsMatch(name, "(?:nginx_(accepts|active|handled|reading|requests|waiting|writing)|nginx_plus_api_connections_(accepted|active|dropped|idle)|nginx_plus_api_http_caches_(cold|hit_bytes|max_size|miss_bytes|size|updating_bytes)|nginx_plus_api_http_location_zones_(discarded|received|requests|sent)|nginx_plus_api_http_location_zones_responses_(1xx|2xx|3xx|4xx|5xx|total)|nginx_plus_api_http_requests_(current|total)|nginx_plus_api_http_server_zones_(discarded|processing|received|requests|sent)|nginx_plus_api_http_server_zones_responses_(1xx|2xx|3xx|4xx|5xx|total)|nginx_plus_api_http_upstream_peers_(backup|downtime|fails|healthchecks_fails|healthchecks_unhealthy|received|requests|sent|unavail|response_time)|nginx_plus_api_http_upstream_peers_responses_(1xx|2xx|3xx|4xx|5xx|total)|nginx_plus_api_resolver_zones_(addr|formerr|name|noerror|notimp|nxdomain|refused|servfail|srv|timedout)|nginx_plus_api_ssl_(handshakes_failed|session_reuses)|nginx_plus_api_stream_server_zones_(connections|received|sent)|nginx_plus_api_stream_upstream_peers_(active|backup|connect_time|downtime|fails|healthchecks_fails|healthchecks_last_passed|healthchecks_unhealthy|received|response_time|sent|unavail))")
+          ## Redis metrics
+          ## redis_blocked_clients
+          ## redis_clients
+          ## redis_cluster_enabled
+          ## redis_cmdstat_calls
+          ## redis_connected_slaves
+          ## redis_evicted_keys
+          ## redis_expired_keys
+          ## redis_instantaneous_ops_per_sec
+          ## redis_keyspace_hitrate
+          ## redis_keyspace_hits
+          ## redis_keyspace_misses
+          ## redis_master_repl_offset
+          ## redis_maxmemory
+          ## redis_mem_fragmentation_bytes
+          ## redis_mem_fragmentation_ratio
+          ## redis_rdb_changes_since_last_save
+          ## redis_rejected_connections
+          ## redis_slave_repl_offset
+          ## redis_total_commands_processed
+          ## redis_total_net_input_bytes
+          ## redis_total_net_output_bytes
+          ## redis_tracking_total_keys
+          ## redis_uptime
+          ## redis_used_cpu_sys
+          ## redis_used_cpu_user
+          ## redis_used_memory
+          ## redis_used_memory_overhead
+          ## redis_used_memory_rss
+          ## redis_used_memory_startup
+            - IsMatch(name, "redis_.*") and not IsMatch(name, "(?:redis_((blocked_|)clients|cluster_enabled|cmdstat_calls|connected_slaves|(evicted|expired|tracking_total)_keys|instantaneous_ops_per_sec|keyspace_(hitrate|hits|misses)|(master|slave)_repl_offset|maxmemory|mem_fragmentation_(bytes|ratio)|rdb_changes_since_last_save|rejected_connections|total_commands_processed|total_net_(input|output)_bytes|uptime|used_(cpu_(sys|user)|memory(_overhead|_rss|_startup|))))")
+          ## JMX Metrics
+          ## java_lang_ClassLoading_LoadedClassCount
+          ## java_lang_ClassLoading_TotalLoadedClassCount
+          ## java_lang_ClassLoading_UnloadedClassCount
+          ## java_lang_Compilation_TotalCompilationTime
+          ## java_lang_GarbageCollector_CollectionCount
+          ## java_lang_GarbageCollector_CollectionTime
+          ## java_lang_GarbageCollector_LastGcInfo_GcThreadCount  # unavailable for adoptopenjdk-openj9
+          ## java_lang_GarbageCollector_LastGcInfo_duration  # unavailable for adoptopenjdk-openj9
+          ## java_lang_GarbageCollector_LastGcInfo_memoryUsageAfterGc_*_used
+          ## java_lang_GarbageCollector_LastGcInfo_memoryUsageBeforeGc_*_used
+          ## java_lang_GarbageCollector_LastGcInfo_usageAfterGc_*_used  # only for adoptopenjdk-openj9
+          ## java_lang_GarbageCollector_LastGcInfo_usageBeforeGc_*_used  # only for adoptopenjdk-openj9
+          ## java_lang_MemoryPool_CollectionUsageThresholdSupported
+          ## java_lang_MemoryPool_CollectionUsage_committed
+          ## java_lang_MemoryPool_CollectionUsage_max
+          ## java_lang_MemoryPool_CollectionUsage_used
+          ## java_lang_MemoryPool_PeakUsage_committed
+          ## java_lang_MemoryPool_PeakUsage_max
+          ## java_lang_MemoryPool_PeakUsage_used
+          ## java_lang_MemoryPool_UsageThresholdSupported
+          ## java_lang_MemoryPool_Usage_committed
+          ## java_lang_MemoryPool_Usage_max
+          ## java_lang_MemoryPool_Usage_used
+          ## java_lang_Memory_HeapMemoryUsage_committed
+          ## java_lang_Memory_HeapMemoryUsage_max
+          ## java_lang_Memory_HeapMemoryUsage_used
+          ## java_lang_Memory_NonHeapMemoryUsage_committed
+          ## java_lang_Memory_NonHeapMemoryUsage_max
+          ## java_lang_Memory_NonHeapMemoryUsage_used
+          ## java_lang_Memory_ObjectPendingFinalizationCount
+          ## java_lang_OperatingSystem_AvailableProcessors
+          ## java_lang_OperatingSystem_CommittedVirtualMemorySize
+          ## java_lang_OperatingSystem_FreeMemorySize  # Added in jdk14
+          ## java_lang_OperatingSystem_FreePhysicalMemorySize
+          ## java_lang_OperatingSystem_FreeSwapSpaceSize
+          ## java_lang_OperatingSystem_MaxFileDescriptorCount
+          ## java_lang_OperatingSystem_OpenFileDescriptorCount
+          ## java_lang_OperatingSystem_ProcessCpuLoad
+          ## java_lang_OperatingSystem_ProcessCpuTime
+          ## java_lang_OperatingSystem_SystemCpuLoad
+          ## java_lang_OperatingSystem_SystemLoadAverage
+          ## java_lang_OperatingSystem_TotalMemorySize  # Added in jdk14
+          ## java_lang_OperatingSystem_TotalPhysicalMemorySize
+          ## java_lang_OperatingSystem_TotalSwapSpaceSize
+          ## java_lang_Runtime_BootClassPathSupported
+          ## java_lang_Runtime_Pid  # not available for jdk8
+          ## java_lang_Runtime_Uptime
+          ## java_lang_Runtime_StartTime
+          ## java_lang_Threading_CurrentThreadAllocatedBytes  # Added in jdk14
+          ## java_lang_Threading_CurrentThreadCpuTime
+          ## java_lang_Threading_CurrentThreadUserTime
+          ## java_lang_Threading_DaemonThreadCount
+          ## java_lang_Threading_ObjectMonitorUsageSupported
+          ## java_lang_Threading_PeakThreadCount
+          ## java_lang_Threading_SynchronizerUsageSupported
+          ## java_lang_Threading_ThreadAllocatedMemory*  # Not available for adoptopenjdk-openj9
+          ## java_lang_Threading_ThreadContentionMonitoring*
+          ## java_lang_Threading_ThreadCount
+          ## java_lang_Threading_ThreadCpuTime*
+          ## java_lang_Threading_TotalStartedThreadCount
+            - IsMatch(name, "java_.*") and not IsMatch(name, "(?:java_lang_(ClassLoading_(TotalL|Unl|L)oadedClassCount|Compilation_TotalCompilationTime|GarbageCollector_(Collection(Count|Time)|LastGcInfo_(GcThreadCount|duration|(memoryU|u)sage(After|Before)Gc_.*_used))|MemoryPool_(CollectionUsage(ThresholdSupported|_committed|_max|_used)|(Peak|)Usage_(committed|max|used)|UsageThresholdSupported)|Memory_((Non|)HeapMemoryUsage_(committed|max|used)|ObjectPendingFinalizationCount)|OperatingSystem_(AvailableProcessors|(CommittedVirtual|(Free|Total)(Physical|))MemorySize|(Free|Total)SwapSpaceSize|(Max|Open)FileDescriptorCount|ProcessCpu(Load|Time)|System(CpuLoad|LoadAverage))|Runtime_(BootClassPathSupported|Pid|Uptime|StartTime)|Threading_(CurrentThread(AllocatedBytes|(Cpu|User)Time)|(Daemon|Peak|TotalStarted|)ThreadCount|(ObjectMonitor|Synchronizer)UsageSupported|Thread(AllocatedMemory.*|ContentionMonitoring.*|CpuTime.*))))")
+          ## Kafka Metrics
+          ## List of Metrics are on following dochub page:
+          ## https://help.sumologic.com/docs/integrations/containers-orchestration/kafka/#kafka-metrics
+          ## Metrics follow following format:
+          ## kafka_broker_*
+          ## kafka_controller_*
+          ## kafka_java_lang_*
+          ## kafka_partition_*
+          ## kafka_purgatory_*
+          ## kafka_network_*
+          ## kafka_replica_*
+          ## kafka_request_*
+          ## kafka_topic_*
+          ## kafka_topics_*
+          ## kafka_zookeeper_*
+            - IsMatch(name, "kafka_.*") and not IsMatch(name, "(?:kafka_(broker_.*|controller_.*|java_lang_.*|partition_.*|purgatory_.*|network_.*|replica_.*|request_.*|topic_.*|topics_.*|zookeeper_.*))")
+          ## MySQL Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/v1.18.1/plugins/inputs/mysql#metrics
+          ## Metrics follow following format:
+          ## mysql_uptime
+          ## mysql_connection_errors_*
+          ## mysql_queries
+          ## mysql_slow_queries
+          ## mysql_questions
+          ## mysql_table_open_cache_*
+          ## mysql_table_locks_*
+          ## mysql_commands_*
+          ## mysql_select_*
+          ## mysql_sort_*
+          ## mysql_mysqlx_connections_*
+          ## mysql_mysqlx_worker_*
+          ## mysql_connections
+          ## mysql_aborted_*
+          ## mysql_locked_connects
+          ## mysql_bytes_*
+          ## mysql_qcache_*
+          ## mysql_threads_*
+          ## mysql_opened_*
+          ## mysql_created_tmp_*
+          ## mysql_innodb_buffer_pool_*
+          ## mysql_innodb_data_*
+          ## mysql_innodb_rows_*
+          ## mysql_innodb_row_lock_*
+          ## mysql_innodb_log_waits
+          ## mysql_perf_schema_events_statements_*
+          ## mysql_perf_schema_table_io_waits_*
+          ## mysql_perf_schema_index_io_waits_*
+          ## mysql_perf_schema_read*
+          ## mysql_perf_schema_write*
+            - IsMatch(name, "mysql_.*") and not IsMatch(name, "(?:mysql_((uptime|connection_errors_.*|queries|slow_queries|questions|table_open_cache_.*|table_locks_.*|commands_.*|select_.*|sort_.*|mysqlx_connections_.*|mysqlx_worker_.*|connections|aborted_.*|locked_connects|bytes_.*|qcache_.*|threads_.*|opened_.*|created_tmp_.*)|innodb_(buffer_pool_.*|data_.*|rows_.*|row_lock_.*|log_waits)|perf_schema_(events_statements_.*|table_io_waits_.*|index_io_waits_.*|read.*|write.*)))")
+          ## PostgreSQL Telegraf Metrics
+          ## List of Metrics are on following dochub page:
+          ## https://help.sumologic.com/docs/integrations/databases/postgresql/#postgresql-metrics
+          ## Metrics follow following format:
+          ## postgresql_blks_hit
+          ## postgresql_blks_read
+          ## postgresql_buffers_backend
+          ## postgresql_buffers_checkpoint
+          ## postgresql_buffers_clean
+          ## postgresql_checkpoints_req
+          ## postgresql_checkpoints_timed
+          ## postgresql_db_size
+          ## postgresql_deadlocks
+          ## postgresql_flush_lag
+          ## postgresql_heap_blks_hit
+          ## postgresql_heap_blks_read
+          ## postgresql_idx_blks_hit
+          ## postgresql_idx_blks_read
+          ## postgresql_idx_scan
+          ## postgresql_idx_tup_fetch
+          ## postgresql_idx_tup_read
+          ## postgresql_index_size
+          ## postgresql_n_dead_tup
+          ## postgresql_n_live_tup
+          ## postgresql_n_tup_del
+          ## postgresql_n_tup_hot_upd
+          ## postgresql_n_tup_ins
+          ## postgresql_n_tup_upd
+          ## postgresql_num_locks
+          ## postgresql_numbackends
+          ## postgresql_replay_lag
+          ## postgresql_replication_delay
+          ## postgresql_replication_lag
+          ## postgresql_seq_scan
+          ## postgresql_seq_tup_read
+          ## postgresql_stat_ssl_compression_count
+          ## postgresql_table_size
+          ## postgresql_tup_deleted
+          ## postgresql_tup_fetched
+          ## postgresql_tup_inserted
+          ## postgresql_tup_returned
+          ## postgresql_tup_updated
+          ## postgresql_write_lag
+          ## postgresql_xact_commit
+          ## postgresql_xact_rollback
+          ## postgresql_toast_blks_read
+          ## postgresql_toast_blks_hit
+          ## postgresql_tidx_blks_read
+          ## postgresql_tidx_blks_hit
+            - IsMatch(name, "postgresql_.*") and not IsMatch(name, "(?:postgresql_(blks_(hit|read)|buffers_(backend|checkpoint|clean)|checkpoints_(req|timed)|db_size|deadlocks|flush_lag|heap_blks_(hit|read)|idx_blks_(hit|read)|idx_scan|idx_tup_(fetch|read)|index_size|n_dead_tup|n_live_tup|n_tup_(upd|ins|del|hot_upd)|num_locks|numbackends|replay_lag|replication_(delay|lag)|seq_scan|seq_tup_read|stat_ssl_compression_count|table_size|tidx_blks_(hit|read)|toast_blks_(hit|read)|tup_(deleted|fetched|inserted|returned|updated)|write_lag|xact_(commit|rollback)))")
+          ## Apache Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/apache
+          ## Metrics follow following format:
+          ## apache_BusyWorkers
+          ## apache_BytesPerReq
+          ## apache_BytesPerSec
+          ## apache_CPUChildrenSystem
+          ## apache_CPUChildrenUser
+          ## apache_CPULoad
+          ## apache_CPUSystem
+          ## apache_CPUUser
+          ## apache_DurationPerReq
+          ## apache_IdleWorkers
+          ## apache_Load1
+          ## apache_Load5
+          ## apache_Load15
+          ## apache_ParentServerConfigGeneration
+          ## apache_ParentServerMPMGeneration
+          ## apache_ReqPerSec
+          ## apache_ServerUptimeSeconds
+          ## apache_TotalAccesses
+          ## apache_TotalDuration
+          ## apache_TotalkBytes
+          ## apache_Uptime
+          ## apache_scboard_closing
+          ## apache_scboard_dnslookup
+          ## apache_scboard_finishing
+          ## apache_scboard_idle_cleanup
+          ## apache_scboard_keepalive
+          ## apache_scboard_logging
+          ## apache_scboard_open
+          ## apache_scboard_reading
+          ## apache_scboard_sending
+          ## apache_scboard_starting
+          ## apache_scboard_waiting
+            - IsMatch(name, "apache_.*") and not IsMatch(name, "(?:apache_((BusyWorkers|BytesPerReq|BytesPerSec|CPUChildrenSystem|CPUChildrenUser|CPULoad|CPUSystem|CPUUser|DurationPerReq|IdleWorkers|Load1|Load15|Load5|ParentServerConfigGeneration|ParentServerMPMGeneration|ReqPerSec|ServerUptimeSeconds|TotalAccesses|TotalDuration|TotalkBytes|Uptime)|(scboard_(closing|dnslookup|finishing|idle_cleanup|keepalive|logging|open|reading|sending|starting|waiting))))")
+          ## SQLServer Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/sqlserver
+          ## Metrics follow following format:
+          ## sqlserver_cpu_sqlserver_process_cpu
+          ## sqlserver_database_io_read_bytes
+          ## sqlserver_database_io_read_latency_ms
+          ## sqlserver_database_io_write_bytes
+          ## sqlserver_database_io_write_latency_ms
+          ## sqlserver_memory_clerks_size_kb
+          ## sqlserver_performance_value
+          ## sqlserver_server_properties_server_memory
+          ## sqlserver_volume_space_total_space_bytes
+          ## sqlserver_volume_space_used_space_bytes
+            - IsMatch(name, "sqlserver_.*") and not IsMatch(name, "(?:sqlserver_(cpu_sqlserver_process_cpu|database_io_(read_(bytes|latency_ms)|write_(bytes|latency_ms))|memory_clerks_size_kb|performance_value|server_properties_server_memory|volume_space_(total_space_bytes|used_space_bytes)))")
+          ## Haproxy Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/haproxy
+          ## Metrics follow following format:
+          ## haproxy_active_servers
+          ## haproxy_backup_servers
+          ## haproxy_bin
+          ## haproxy_bout
+          ## haproxy_chkfail
+          ## haproxy_ctime
+          ## haproxy_dreq
+          ## haproxy_dresp
+          ## haproxy_econ
+          ## haproxy_ereq
+          ## haproxy_eresp
+          ## haproxy_http_response_*
+          ## haproxy_qcur
+          ## haproxy_qmax
+          ## haproxy_qtime
+          ## haproxy_rate
+          ## haproxy_rtime
+          ## haproxy_scur
+          ## haproxy_slim
+          ## haproxy_smax
+          ## haproxy_ttime
+          ## haproxy_weight
+          ## haproxy_wredis
+          ## haproxy_wretr
+            - IsMatch(name, "haproxy_.*") and not IsMatch(name, "(?:haproxy_(active_servers|backup_servers|bin|bout|chkfail|ctime|dreq|dresp|econ|ereq|eresp|http_response_(1xx|2xx|3xx|4xx|5xx|other)|qcur|qmax|qtime|rate|rtime|scur|slim|smax|ttime|weight|wredis|wretr))")
+          ## Cassandra Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/v1.18.2/plugins/inputs/cassandra
+          ## cassandra_CacheMetrics_ChunkCache_OneMinuteRate
+          ## cassandra_ClientMetrics_connectedNativeClients_Value
+          ## cassandra_ClientMetrics_RequestDiscarded_OneMinuteRate
+          ## cassandra_CommitLogMetrics_CompletedTasks_Value
+          ## cassandra_CommitLogMetrics_PendingTasks_Value
+          ## cassandra_DroppedMessageMetrics_Dropped_OneMinuteRate
+          ## cassandra_java_GarbageCollector_*_CollectionCount
+          ## cassandra_java_GarbageCollector_*_CollectionTime
+          ## cassandra_java_GarbageCollector_*_LastGcInfo_duration
+          ## cassandra_java_GarbageCollector_*_LastGcInfo_GcThreadCount
+          ## cassandra_java_GarbageCollector_*_LastGcInfo_memoryUsageAfterGc_*_used
+          ## cassandra_java_GarbageCollector_*_LastGcInfo_memoryUsageBeforeGc_*_used
+          ## cassandra_java_Memory_HeapMemoryUsage_used
+          ## cassandra_java_OperatingSystem_AvailableProcessors
+          ## cassandra_java_OperatingSystem_FreePhysicalMemorySize
+          ## cassandra_java_OperatingSystem_SystemCpuLoad
+          ## cassandra_java_OperatingSystem_TotalPhysicalMemorySize
+          ## cassandra_java_OperatingSystem_TotalSwapSpaceSize
+          ## cassandra_Net_FailureDetector_DownEndpointCount
+          ## cassandra_Net_FailureDetector_UpEndpointCount
+          ## cassandra_TableMetrics_AllMemtablesHeapSize_Value
+          ## cassandra_TableMetrics_AllMemtablesLiveDataSize_Value
+          ## cassandra_TableMetrics_CompactionBytesWritten_Count
+          ## cassandra_TableMetrics_EstimatedPartitionCount_Value
+          ## cassandra_TableMetrics_KeyCacheHitRate_Value
+          ## cassandra_TableMetrics_LiveSSTableCount_Value
+          ## cassandra_TableMetrics_MemtableColumnsCount_Value
+          ## cassandra_TableMetrics_MemtableLiveDataSize_Value
+          ## cassandra_TableMetrics_MemtableOffHeapSize_Value
+          ## cassandra_TableMetrics_MemtableOnHeapSize_Value
+          ## cassandra_TableMetrics_MemtableSwitchCount_Count
+          ## cassandra_TableMetrics_PendingCompactions_Value
+          ## cassandra_TableMetrics_PendingFlushes_Count
+          ## cassandra_TableMetrics_PercentRepaired_Value
+          ## cassandra_TableMetrics_RangeLatency_Count
+          ## cassandra_TableMetrics_ReadLatency_50thPercentile
+          ## cassandra_TableMetrics_ReadLatency_Max
+          ## cassandra_TableMetrics_ReadLatency_OneMinuteRate
+          ## cassandra_TableMetrics_RowCacheHit_Count
+          ## cassandra_TableMetrics_RowCacheMiss_Count
+          ## cassandra_TableMetrics_SSTablesPerReadHistogram_50thPercentile
+          ## cassandra_TableMetrics_SSTablesPerReadHistogram_99thPercentile
+          ## cassandra_TableMetrics_SSTablesPerReadHistogram_Count
+          ## cassandra_TableMetrics_SSTablesPerReadHistogram_Max
+          ## cassandra_TableMetrics_TombstoneScannedHistogram_50thPercentile
+          ## cassandra_TableMetrics_TombstoneScannedHistogram_99thPercentile
+          ## cassandra_TableMetrics_TombstoneScannedHistogram_Max
+          ## cassandra_TableMetrics_TotalDiskSpaceUsed_Count
+          ## cassandra_TableMetrics_WaitingOnFreeMemtableSpace_Max
+          ## cassandra_TableMetrics_WriteLatency_50thPercentile
+          ## cassandra_TableMetrics_WriteLatency_99thPercentile
+          ## cassandra_TableMetrics_WriteLatency_Max
+          ## cassandra_TableMetrics_WriteLatency_OneMinuteRate
+          ## cassandra_ThreadPoolMetrics_internal_Count
+          ## cassandra_ThreadPoolMetrics_internal_Value
+          ## cassandra_ThreadPoolMetrics_request_Count
+          ## cassandra_ThreadPoolMetrics_request_Value
+          ## cassandra_ThreadPoolMetrics_transport_Count
+          ## cassandra_ThreadPoolMetrics_transport_Value
+            - IsMatch(name, "cassandra_.*") and not IsMatch(name, "(?:cassandra_(CacheMetrics_ChunkCache_OneMinuteRate|ClientMetrics_(connectedNativeClients_Value|RequestDiscarded_OneMinuteRate)|CommitLogMetrics_(CompletedTasks_Value|PendingTasks_Value)|DroppedMessageMetrics_Dropped_OneMinuteRate|java_(GarbageCollector_(ConcurrentMarkSweep|ParNew)_(CollectionCount|CollectionTime|LastGcInfo_duration|LastGcInfo_GcThreadCount|LastGcInfo_memoryUsageAfterGc_.*_used|LastGcInfo_memoryUsageBeforeGc_.*_used)|Memory_HeapMemoryUsage_used|OperatingSystem_(AvailableProcessors|FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize|TotalSwapSpaceSize))|Net_FailureDetector_(DownEndpointCount|UpEndpointCount)|TableMetrics_(AllMemtablesHeapSize_Value|AllMemtablesLiveDataSize_Value|CompactionBytesWritten_Count|EstimatedPartitionCount_Value|KeyCacheHitRate_Value|LiveSSTableCount_Value|MemtableColumnsCount_Value|MemtableLiveDataSize_Value|MemtableOffHeapSize_Value|MemtableOnHeapSize_Value|MemtableSwitchCount_Count|PendingCompactions_Value|PendingFlushes_Count|PercentRepaired_Value|RangeLatency_Count|ReadLatency_50thPercentile|ReadLatency_Max|ReadLatency_OneMinuteRate|RowCacheHit_Count|RowCacheMiss_Count|SSTablesPerReadHistogram_50thPercentile|SSTablesPerReadHistogram_99thPercentile|SSTablesPerReadHistogram_Count|SSTablesPerReadHistogram_Max|TombstoneScannedHistogram_50thPercentile|TombstoneScannedHistogram_99thPercentile|TombstoneScannedHistogram_Max|TotalDiskSpaceUsed_Count|WaitingOnFreeMemtableSpace_Max|WriteLatency_50thPercentile|WriteLatency_99thPercentile|WriteLatency_Max|WriteLatency_OneMinuteRate)|ThreadPoolMetrics_(internal_(Count|Value)|request_(Count|Value)|transport_(Count|Value))))")
+          ## MongoDB Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mongodb
+          ## Metrics follow following format:
+          ## mongodb_active_reads
+          ## mongodb_active_writes
+          ## mongodb_commands_per_sec
+          ## mongodb_connections_current
+          ## mongodb_db_stats_storage_size
+          ## mongodb_deletes_per_sec
+          ## mongodb_document_*
+          ## mongodb_flushes_per_sec
+          ## mongodb_getmores_per_sec
+          ## mongodb_inserts_per_sec
+          ## mongodb_net_*_bytes_count
+          ## mongodb_open_connections
+          ## mongodb_page_faults
+          ## mongodb_percent_cache_dirty
+          ## mongodb_percent_cache_used
+          ## mongodb_queries_per_sec
+          ## mongodb_queued_reads
+          ## mongodb_queued_writes
+          ## mongodb_repl_queries
+          ## mongodb_repl_commands_per_sec
+          ## mongodb_repl_deletes_per_sec
+          ## mongodb_repl_getmores_per_sec
+          ## mongodb_repl_inserts_per_sec
+          ## mongodb_repl_oplog_window_sec
+          ## mongodb_repl_queries_per_sec
+          ## mongodb_repl_updates_per_sec
+          ## mongodb_resident_megabytes
+          ## mongodb_updates_per_sec
+          ## mongodb_uptime_ns
+          ## mongodb_vsize_megabytes
+          ## mongodb_wtcache_bytes_read_into
+            - IsMatch(name, "mongodb_.*") and not IsMatch(name, "(?:mongodb_(active_(reads|writes)|commands_per_sec|connections_current|db_stats_storage_size|deletes_per_sec|document_.*|flushes_per_sec|getmores_per_sec|inserts_per_sec|net_.*_bytes_count|open_connections|page_faults|percent_cache_(dirty|used)|queries_per_sec|queued_(reads|writes)|repl_((commands|deletes|getmores|inserts|oplog|queries|updates)_per_sec|queries|oplog_window_sec)|resident_megabytes|updates_per_sec|uptime_ns|vsize_megabytes|wtcache_bytes_read_into))")
+          ## Rabbitmq Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/rabbitmq
+          ## Metrics follow following format:
+          ## rabbitmq_exchange_messages_publish_in
+          ## rabbitmq_exchange_messages_publish_in_rate
+          ## rabbitmq_exchange_messages_publish_out
+          ## rabbitmq_exchange_messages_publish_out_rate
+          ## rabbitmq_node_disk_free
+          ## rabbitmq_node_disk_free_limit
+          ## rabbitmq_node_fd_used
+          ## rabbitmq_node_gc_num_rate
+          ## rabbitmq_node_mem_limit
+          ## rabbitmq_node_mem_used
+          ## rabbitmq_node_mnesia_disk_tx_count
+          ## rabbitmq_node_mnesia_ram_tx_count
+          ## rabbitmq_node_uptime
+          ## rabbitmq_overview_clustering_listerners
+          ## rabbitmq_overview_connections
+          ## rabbitmq_overview_consumers
+          ## rabbitmq_overview_exchanges
+          ## rabbitmq_overview_messages_delivered
+          ## rabbitmq_overview_messages_published
+          ## rabbitmq_overview_messages_unacked
+          ## rabbitmq_overview_queues
+          ## rabbitmq_queue_consumers
+          ## rabbitmq_queue_memory
+          ## rabbitmq_queue_messages_deliver_rate
+          ## rabbitmq_queue_messages_max_time
+          ## rabbitmq_queue_messages_memory
+          ## rabbitmq_queue_messages_publish_rate
+          ## rabbitmq_queue_messages_unack
+          ## rabbitmq_queue_slave_nodes
+            - IsMatch(name, "rabbitmq_.*") and not IsMatch(name, "(?:rabbitmq_(exchange_messages_publish_(in_rate|in|out_rate|out)|node_(disk_free_limit|disk_free|mem_(limit|used)|uptime|fd_used|mnesia_(disk_tx_count|ram_tx_count)|gc_num_rate)|overview_(clustering_listerners|connections|exchanges|consumers|queues|messages_(delivered|published|unacked))|queue_(consumers|memory|slave_nodes|messages_(publish_rate|deliver_rate|memory|max_time|unack))))")
+          ## Tomcat Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/tomcat
+          ## Metrics follow following format:
+          ## tomcat_connector_bytes_received
+          ## tomcat_connector_bytes_sent
+          ## tomcat_connector_current_thread_busy
+          ## tomcat_connector_current_thread_count
+          ## tomcat_connector_current_threads_busy
+          ## tomcat_connector_error_count
+          ## tomcat_connector_max_threads
+          ## tomcat_connector_max_time
+          ## tomcat_connector_processing_time
+          ## tomcat_connector_request_count
+          ## tomcat_jmx_jvm_memory_HeapMemoryUsage_max
+          ## tomcat_jmx_jvm_memory_HeapMemoryUsage_used
+          ## tomcat_jmx_jvm_memory_NonHeapMemoryUsage_max
+          ## tomcat_jmx_jvm_memory_NonHeapMemoryUsage_used
+          ## tomcat_jmx_OperatingSystem_FreePhysicalMemorySize
+          ## tomcat_jmx_OperatingSystem_FreeSwapSpaceSize
+          ## tomcat_jmx_OperatingSystem_SystemCpuLoad
+          ## tomcat_jmx_OperatingSystem_TotalPhysicalMemorySize
+          ## tomcat_jmx_OperatingSystem_TotalSwapSpaceSize
+          ## tomcat_jmx_Servlet_processingTime
+          ## tomcat_jvm_memory_free
+          ## tomcat_jvm_memory_max
+          ## tomcat_jvm_memory_total
+          ## tomcat_jvm_memorypool_bytes_received
+          ## tomcat_jvm_memorypool_bytes_sent
+          ## tomcat_jvm_memorypool_current_thread_count
+          ## tomcat_jvm_memorypool_current_threads_busy
+          ## tomcat_jvm_memorypool_error_count
+          ## tomcat_jvm_memorypool_max
+          ## tomcat_jvm_memorypool_max_threads
+          ## tomcat_jvm_memorypool_max_time
+          ## tomcat_jvm_memorypool_processing_time
+          ## tomcat_jvm_memorypool_request_count
+          ## tomcat_jvm_memorypool_used
+            - IsMatch(name, "tomcat_.*") and not IsMatch(name, "(?:tomcat_(connector_(bytes_(received|sent)|current_(thread_(busy|count)|threads_busy)|error_count|max_threads|max_time|processing_time|request_count)|jmx_(jvm_memory_(HeapMemoryUsage_(max|used)|NonHeapMemoryUsage_(max|used))|OperatingSystem_(FreePhysicalMemorySize|FreeSwapSpaceSize|SystemCpuLoad|TotalPhysicalMemorySize|TotalSwapSpaceSize)|Servlet_processingTime)|jvm_memory_(free|max|total)|jvm_memorypool_(bytes_(received|sent)|current_thread_count|current_threads_busy|error_count|max_threads|max_time|max|processing_time|request_count|used)))")
+          ## Varnish Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/varnish
+          ## Metrics follow following format:
+          ## varnish_backend_busy
+          ## varnish_backend_conn
+          ## varnish_backend_fail
+          ## varnish_backend_recycle
+          ## varnish_backend_req
+          ## varnish_backend_retry
+          ## varnish_backend_reuse
+          ## varnish_backend_unhealthy
+          ## varnish_bans
+          ## varnish_bans_completed
+          ## varnish_bans_deleted
+          ## varnish_bans_dups
+          ## varnish_bans_lurker_contention
+          ## varnish_bans_lurker_obj_killed
+          ## varnish_bans_lurker_tested
+          ## varnish_bans_lurker_tests_tested
+          ## varnish_bans_obj
+          ## varnish_bans_obj_killed
+          ## varnish_bans_persisted_bytes
+          ## varnish_bans_persisted_fragmentation
+          ## varnish_boot_*_*_bodybytes
+          ## varnish_boot_*_*_hdrbytes
+          ## varnish_boot_*_bereq_bodybytes
+          ## varnish_boot_*_bereq_hdrbytes
+          ## varnish_cache_hit
+          ## varnish_cache_hit_grace
+          ## varnish_cache_hitpass
+          ## varnish_cache_miss
+          ## varnish_client_req
+          ## varnish_client_req_400
+          ## varnish_client_req_417
+          ## varnish_client_resp_500
+          ## varnish_n_backend
+          ## varnish_n_expired
+          ## varnish_n_lru_nuked
+          ## varnish_n_vcl_avail
+          ## varnish_pools
+          ## varnish_s0_g_bytes
+          ## varnish_s0_g_space
+          ## varnish_s_fetch
+          ## varnish_s_pipe_in
+          ## varnish_s_pipe_out
+          ## varnish_s_req_bodybytes
+          ## varnish_s_req_hdrbytes
+          ## varnish_s_resp_bodybytes
+          ## varnish_s_resp_hdrbytes
+          ## varnish_s_sess
+          ## varnish_sess_closed
+          ## varnish_sess_closed_err
+          ## varnish_sess_conn
+          ## varnish_sess_drop
+          ## varnish_sess_dropped
+          ## varnish_sess_fail
+          ## varnish_sess_queued
+          ## varnish_thread_queue_len
+          ## varnish_threads
+          ## varnish_threads_created
+          ## varnish_threads_destroyed
+          ## varnish_threads_failed
+          ## varnish_threads_limited
+          ## varnish_uptime
+          ## varnish_vmods
+            - IsMatch(name, "varnish_.*") and not IsMatch(name, "(?:varnish_(backend_(busy|conn|fail|recycle|req|retry|reuse|unhealthy)|bans_(completed|deleted|dups|lurker_(contention|obj_killed|tests_tested|tested|)|obj_killed|obj|persisted_(bytes|fragmentation))|bans|boot_.*_.*_(bodybytes|hdrbytes)|cache_(hit_grace|hitpass|miss|hit)|client_(req_400|req_417|req|resp_500)|n_(backend|expired|lru_nuked|vcl_avail)|pools|s0_g_(bytes|space)|s_(fetch|pipe_(in|out)|req_(bodybytes|hdrbytes)|resp_(bodybytes|hdrbytes)|sess)|sess_(closed_err|closed|conn|drop|dropped|fail|queued)|thread_queue_len|threads_(created|destroyed|failed|limited)|threads|uptime|vmods))")
+          ## Memcached Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/memcache
+          ## Metrics follow following format:
+          ## memcached_accepting_conns
+          ## memcached_auth_cmds
+          ## memcached_auth_errors
+          ## memcached_bytes
+          ## memcached_bytes_read
+          ## memcached_bytes_written
+          ## memcached_cas_*
+          ## memcached_cas_*
+          ## memcached_cmd_*
+          ## memcached_cmd_flush
+          ## memcached_cmd_get
+          ## memcached_cmd_set
+          ## memcached_cmd_touch
+          ## memcached_conn_yields
+          ## memcached_connection_structures
+          ## memcached_curr_connections
+          ## memcached_curr_items
+          ## memcached_decr_*
+          ## memcached_delete_*
+          ## memcached_evictions
+          ## memcached_get_hits
+          ## memcached_get_misses
+          ## memcached_hash_bytes
+          ## memcached_hash_is_expanding
+          ## memcached_incr_*
+          ## memcached_limit_maxbytes
+          ## memcached_listen_disabled_num
+          ## memcached_reclaimed
+          ## memcached_threads
+          ## memcached_total_connections
+          ## memcached_total_items
+          ## memcached_uptime
+            - IsMatch(name, "memcached_.*") and not IsMatch(name, "(?:memcached_(accepting_conns|auth_(cmds|errors)|bytes_(read|written)|bytes|cas_*|cmd_.*|conn_yields|connection_structures|curr_(connections|items)|decr_.*|delete_.*|evictions|get_(hits|misses)|hash_(bytes|is_expanding)|incr_.*|limit_maxbytes|listen_disabled_num|reclaimed|threads|total_(connections|items)|uptime))")
+          ## Elasticsearch Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/elasticsearch
+          ## elasticsearch_cluster_health_active_primary_shards
+          ## elasticsearch_cluster_health_active_shards
+          ## elasticsearch_cluster_health_delayed_unassigned_shards
+          ## elasticsearch_cluster_health_indices_status_code
+          ## elasticsearch_cluster_health_initializing_shards
+          ## elasticsearch_cluster_health_number_of_data_nodes
+          ## elasticsearch_cluster_health_number_of_nodes
+          ## elasticsearch_cluster_health_number_of_pending_tasks
+          ## elasticsearch_cluster_health_relocating_shards
+          ## elasticsearch_cluster_health_unassigned_shards
+          ## elasticsearch_clusterstats_indices_fielddata_evictions
+          ## elasticsearch_clusterstats_nodes_jvm_mem_heap_used_in_bytes
+          ## elasticsearch_fs_total_free_in_bytes
+          ## elasticsearch_fs_total_total_in_bytes
+          ## elasticsearch_indices_flush_total
+          ## elasticsearch_indices_flush_total_time_in_millis
+          ## elasticsearch_indices_get_exists_time_in_millis
+          ## elasticsearch_indices_get_exists_total
+          ## elasticsearch_indices_get_missing_time_in_millis
+          ## elasticsearch_indices_get_missing_total
+          ## elasticsearch_indices_get_time_in_millis
+          ## elasticsearch_indices_get_total
+          ## elasticsearch_indices_indexing_delete_time_in_millis
+          ## elasticsearch_indices_indexing_delete_total
+          ## elasticsearch_indices_indexing_index_time_in_millis
+          ## elasticsearch_indices_indexing_index_total
+          ## elasticsearch_indices_merges_total_time_in_millis
+          ## elasticsearch_indices_search_query_time_in_millis
+          ## elasticsearch_indices_search_query_total
+          ## elasticsearch_indices_segments_fixed_bit_set_memory_in_bytes
+          ## elasticsearch_indices_segments_terms_memory_in_bytes
+          ## elasticsearch_indices_stats_primaries_docs_count
+          ## elasticsearch_indices_stats_primaries_indexing_index_time_in_millis
+          ## elasticsearch_indices_stats_primaries_query_cache_cache_size
+          ## elasticsearch_indices_stats_primaries_query_cache_evictions
+          ## elasticsearch_indices_stats_primaries_segments_doc_values_memory_in_bytes
+          ## elasticsearch_indices_stats_primaries_segments_index_writer_memory_in_bytes
+          ## elasticsearch_indices_stats_primaries_segments_memory_in_bytes
+          ## elasticsearch_indices_stats_total___fielddata_memory_size_in_bytes
+          ## elasticsearch_indices_stats_total___indexing_index_total
+          ## elasticsearch_indices_stats_total___merges_total
+          ## elasticsearch_indices_stats_total_docs_count
+          ## elasticsearch_indices_stats_total_fielddata_memory_size_in_bytes
+          ## elasticsearch_indices_stats_total_flush_total_time_in_millis
+          ## elasticsearch_indices_stats_total_indexing_delete_total
+          ## elasticsearch_indices_stats_total_indexing_index_time_in_millis
+          ## elasticsearch_indices_stats_total_indexing_index_total
+          ## elasticsearch_indices_stats_total_merges_total_docs
+          ## elasticsearch_indices_stats_total_merges_total_size_in_bytes
+          ## elasticsearch_indices_stats_total_merges_total_time_in_millis
+          ## elasticsearch_indices_stats_total_query_cache_evictions
+          ## elasticsearch_indices_stats_total_refresh_total
+          ## elasticsearch_indices_stats_total_refresh_total_time_in_millis
+          ## elasticsearch_indices_stats_total_search_fetch_time_in_millis
+          ## elasticsearch_indices_stats_total_search_fetch_total
+          ## elasticsearch_indices_stats_total_search_query_time_in_millis
+          ## elasticsearch_indices_stats_total_search_query_total
+          ## elasticsearch_indices_stats_total_segments_fixed_bit_set_memory_in_bytes
+          ## elasticsearch_indices_stats_total_segments_index_writer_memory_in_bytes
+          ## elasticsearch_indices_stats_total_segments_memory_in_bytes
+          ## elasticsearch_indices_stats_total_segments_terms_memory_in_bytes
+          ## elasticsearch_indices_stats_total_store_size_in_bytes
+          ## elasticsearch_indices_stats_total_translog_operations
+          ## elasticsearch_indices_stats_total_translog_size_in_bytes
+          ## elasticsearch_jvm_gc_collectors_*_collection_time_in_millis
+          ## elasticsearch_jvm_mem_heap_committed_in_bytes
+          ## elasticsearch_jvm_mem_heap_used_in_bytes
+          ## elasticsearch_jvm_mem_heap_used_percent
+          ## elasticsearch_os_cpu_load_average_5m
+          ## elasticsearch_os_cpu_percent
+          ## elasticsearch_process_open_file_descriptors
+          ## elasticsearch_thread_pool_analyze_completed
+          ## elasticsearch_thread_pool_analyze_threads
+          ## elasticsearch_thread_pool_get_rejected
+          ## elasticsearch_thread_pool_search_queue
+          ## elasticsearch_transport_rx_size_in_bytes
+          ## elasticsearch_transport_tx_size_in_bytes
+            - IsMatch(name, "elasticsearch_.*") and not IsMatch(name, "(?:elasticsearch_(cluster_health_(active_(primary_shards|shards)|delayed_unassigned_shards|indices_status_code|initializing_shards|number_of_(data_nodes|nodes|pending_tasks)|relocating_shards|unassigned_shards)|clusterstats_(indices_fielddata_evictions|nodes_jvm_mem_heap_used_in_bytes)|fs_total_(free_in_bytes|total_in_bytes)|indices_(flush_(total|total_time_in_millis)|get_(exists_time_in_millis|exists_total|missing_time_in_millis|missing_total|time_in_millis|total)|indexing_delete_time_in_millis|indexing_delete_total|indexing_index_time_in_millis|indexing_index_total|merges_total_time_in_millis|search_query_time_in_millis|search_query_total|segments_fixed_bit_set_memory_in_bytes|segments_terms_memory_in_bytes|stats_primaries_(docs_count|indexing_index_time_in_millis|query_cache_cache_size|query_cache_evictions|segments_doc_values_memory_in_bytes|segments_index_writer_memory_in_bytes|segments_memory_in_bytes)|stats_total___(fielddata_memory_size_in_bytes|indexing_index_total|merges_total)|stats_total_(docs_count|fielddata_memory_size_in_bytes|flush_total_time_in_millis|indexing_delete_total|indexing_index_time_in_millis|indexing_index_total|merges_total_docs|merges_total_size_in_bytes|merges_total_time_in_millis|query_cache_evictions|refresh_total|refresh_total_time_in_millis|search_fetch_time_in_millis|search_fetch_total|search_query_time_in_millis|search_query_total|segments_fixed_bit_set_memory_in_bytes|segments_index_writer_memory_in_bytes|segments_memory_in_bytes|segments_terms_memory_in_bytes|store_size_in_bytes|translog_operations|translog_size_in_bytes))|jvm_(gc_collectors_.*_collection_time_in_millis|mem_heap_committed_in_bytes|mem_heap_used_in_bytes|mem_heap_used_percent)|os_cpu_(load_average_5m|percent)|process_open_file_descriptors|thread_pool_(analyze_completed|analyze_threads|get_rejected|search_queue)|transport_(rx_size_in_bytes|tx_size_in_bytes)))")
+          ## Activemq Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/activemq
+          ## activemq_queue_*
+          ## activemq_topic_*
+          ## activemq_*_QueueSize
+          ## activemq_broker_AverageMessageSize
+          ## activemq_broker_CurrentConnectionsCount
+          ## activemq_broker_MemoryLimit
+          ## activemq_broker_StoreLimit
+          ## activemq_broker_TempLimit
+          ## activemq_broker_TotalConnectionsCount
+          ## activemq_broker_TotalConsumerCount
+          ## activemq_broker_TotalDequeueCount
+          ## activemq_broker_TotalEnqueueCount
+          ## activemq_broker_TotalMessageCount
+          ## activemq_broker_TotalProducerCount
+          ## activemq_broker_UptimeMillis
+          ## activemq_jvm_memory_HeapMemoryUsage_max
+          ## activemq_jvm_memory_HeapMemoryUsage_used
+          ## activemq_jvm_memory_NonHeapMemoryUsage_used
+          ## activemq_jvm_runtime_Uptime
+          ## activemq_OperatingSystem_FreePhysicalMemorySize
+          ## activemq_OperatingSystem_SystemCpuLoad
+          ## activemq_OperatingSystem_TotalPhysicalMemorySize
+            - IsMatch(name, "activemq_.*") and not IsMatch(name, "(?:activemq_(topic_.*|queue_.*|.*_QueueSize|broker_(AverageMessageSize|CurrentConnectionsCount|MemoryLimit|StoreLimit|TempLimit|TotalConnectionsCount|TotalConsumerCount|TotalDequeueCount|TotalEnqueueCount|TotalMessageCount|TotalProducerCount|UptimeMillis)|jvm_memory_(HeapMemoryUsage_max|HeapMemoryUsage_used|NonHeapMemoryUsage_used)|jvm_runtime_Uptime|OperatingSystem_(FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize)))")
+          ## Couchbase Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://github.com/influxdata/telegraf/tree/master/plugins/inputs/couchbase
+          ## couchbase_node_memory_free
+          ## couchbase_node_memory_total
+          ## couchbase_bucket_item_count
+          ## couchbase_bucket_curr_connections
+          ## couchbase_bucket_ops_per_sec
+          ## couchbase_bucket_ep_num_value_ejects
+          ## couchbase_bucket_disk_write_queue
+          ## couchbase_bucket_ep_oom_errors
+          ## couchbase_bucket_delete_misses
+          ## couchbase_bucket_delete_hits
+          ## couchbase_bucket_bytes_read
+          ## couchbase_bucket_bytes_written
+          ## couchbase_bucket_cmd_get
+          ## couchbase_bucket_cmd_set
+          ## couchbase_bucket_cas_hits
+          ## couchbase_bucket_ops
+          ## couchbase_bucket_curr_items
+          ## couchbase_bucket_mem_actual_free
+          ## couchbase_bucket_cpu_utilization_rate
+          ## couchbase_bucket_swap_used
+          ## couchbase_bucket_disk_used
+          ## couchbase_bucket_rest_requests
+          ## couchbase_bucket_hibernated_waked
+          ## couchbase_bucket_mem_used
+          ## couchbase_bucket_xdc_ops
+          ## couchbase_bucket_ep_mem_low_wat
+          ## couchbase_bucket_ep_mem_high_wat
+          ## couchbase_bucket_ep_ops_update
+          ## couchbase_bucket_ep_tmp_oom_errors
+          ## couchbase_bucket_ep_dcp_replica_count
+          ## couchbase_bucket_ep_dcp_replica_producer_count
+          ## couchbase_bucket_ep_dcp_xdcr_producer_count
+          ## couchbase_bucket_ep_dcp_replica_items_remaining
+          ## couchbase_bucket_ep_dcp_xdcr_items_remaining
+          ## couchbase_bucket_ep_dcp_replica_items_sent
+          ## couchbase_bucket_ep_dcp_xdcr_items_sent
+          ## couchbase_bucket_ep_dcp_replica_total_bytes
+          ## couchbase_bucket_ep_dcp_xdcr_total_bytes
+          ## couchbase_bucket_ep_num_ops_get_meta
+          ## couchbase_bucket_ep_num_ops_set_meta
+          ## couchbase_bucket_ep_num_ops_del_meta
+          ## couchbase_bucket_ep_dcp_xdcr_count
+          ## couchbase_bucket_ep_resident_items_rate
+          ## couchbase_bucket_vb_active_queue_size
+          ## couchbase_bucket_vb_replica_queue_size
+          ## couchbase_bucket_vb_pending_queue_size
+          ## couchbase_bucket_vb_active_queue_fill
+          ## couchbase_bucket_vb_replica_queue_fill
+          ## couchbase_bucket_vb_pending_queue_fill
+          ## couchbase_bucket_vb_avg_active_queue_age
+          ## couchbase_bucket_vb_avg_replica_queue_age
+          ## couchbase_bucket_vb_avg_pending_queue_age
+          ## couchbase_bucket_vb_active_num
+          ## couchbase_bucket_vb_replica_num
+          ## couchbase_bucket_vb_pending_num
+          ## couchbase_bucket_vb_pending_curr_items
+          ## couchbase_bucket_vb_active_resident_items_ratio
+            - IsMatch(name, "couchbase_.*") and not IsMatch(name, "(?:couchbase_(node_.*|bucket_(ep_.*|vb_.*|delete_.*|cmd.*|bytes_.*|item_count|curr_connections|ops_per_sec|disk_write_queue|mem_.*|cas_hits|ops|curr_items|cpu_utilization_rate|swap_used|disk_used|rest_requests|hibernated_waked|xdc_ops)))")
+          ## SquidProxy Telegraf Metrics
+          ## List of Metrics are on following github page:
+          ## https://wiki.squid-cache.org/Features/Snmp
+          ## squid_cacheIpEntries
+          ## squid_cacheIpRequests
+          ## squid_cacheIpHits
+          ## squid_cacheFqdnEntries
+          ## squid_cacheFqdnRequests
+          ## squid_cacheFqdnMisses
+          ## squid_cacheFqdnNegativeHits
+          ## squid_cacheDnsRequests
+          ## squid_cacheDnsReplies
+          ## squid_cacheDnsSvcTime5
+          ## squid_cacheSysPageFaults
+          ## squid_cacheSysNumReads
+          ## squid_cacheCurrentFileDescrCnt
+          ## squid_cacheCurrentUnusedFDescrCnt
+          ## squid_cacheCurrentResFileDescrCnt
+          ## squid_cacheServerRequests
+          ## squid_cacheServerInKb
+          ## squid_cacheServerOutKb
+          ## squid_cacheHttpAllSvcTime5
+          ## squid_cacheHttpErrors
+          ## squid_cacheHttpInKb
+          ## squid_cacheHttpOutKb
+          ## squid_cacheHttpAllSvcTime1
+          ## squid_cacheMemMaxSize
+          ## squid_cacheMemUsage
+          ## squid_cacheNumObjCount
+          ## squid_cacheCpuTime
+          ## squid_cacheMaxResSize
+          ## squid_cacheProtoClientHttpRequests
+          ## squid_cacheClients
+          ## squid_uptime
+            - IsMatch(name, "squid_.*") and not IsMatch(name, "(?:squid_(uptime|cache(Ip(Entries|Requests|Hits)|Fqdn(Entries|Requests|Misses|NegativeHits)|Dns(Requests|Replies|SvcTime5)|Sys(PageFaults|NumReads)|Current(FileDescrCnt|UnusedFDescrCnt|ResFileDescrCnt)|Server(Requests|InKb|OutKb)|Http(AllSvcTime5|Errors|InKb|OutKb|AllSvcTime1)|Mem(MaxSize|Usage)|NumObjCount|CpuTime|MaxResSize|ProtoClientHttpRequests|Clients)))")
+      
     receivers:
       prometheus:
         config:
@@ -145,4 +1060,5 @@ spec:
           processors:
             - filter/drop_unnecessary_metrics
             - transform/drop_unnecessary_attributes
+            - filter/app_metrics
           receivers: [prometheus]
