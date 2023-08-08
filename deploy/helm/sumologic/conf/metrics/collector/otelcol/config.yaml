@@ -50,7 +50,7 @@ receivers:
       {{- /*
       As of right now, if scrape_configs is empty, it needs to be an empty list, otherwise otel-operator rejects it 
       */}}
-      scrape_configs: {{- not $scrapeConfigsPresent | ternary "[]" "" }}
+      scrape_configs: {{- not $scrapeConfigsPresent | ternary " []" "" }}
 {{- if $collectorConfig.annotatedPods.enabled }}
         ## scraping metrics basing on annotations:
         ##   - prometheus.io/scrape: true - to scrape metrics from the pod
