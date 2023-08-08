@@ -41,6 +41,10 @@ processors:
         # we let the metrics from annotations ("kubernetes-pods") through as they are
         - resource.attributes["service.name"] != "pod-annotations" and IsMatch(name, "scrape_.*")
 
+{{ if .Values.sumologic.metrics.collector.otelcol.enableDefaultFilters -}}
+{{ tpl (.Files.Get "conf/metrics/collector/otelcol/default-filters.yaml") . | indent 2 }}
+{{ end -}}
+
 receivers:
   prometheus:
     config:
@@ -194,5 +198,8 @@ service:
       processors:
         - filter/drop_unnecessary_metrics
         - transform/drop_unnecessary_attributes
+{{- if .Values.sumologic.metrics.collector.otelcol.enableDefaultFilters }}
+        - filter/app_metrics
+{{- end }}
       receivers: [prometheus]
 

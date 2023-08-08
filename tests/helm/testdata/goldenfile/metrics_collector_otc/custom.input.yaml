@@ -36,6 +36,8 @@ sumologic:
         securityContext:
           fsGroup: 999
 
+        enableDefaultFilters: true
+
         kubelet:
           enabled: false
         cAdvisor:

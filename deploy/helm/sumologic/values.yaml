@@ -507,6 +507,9 @@ sumologic:
           fsGroup: 999
         tolerations: []
 
+        ## Default metric filters for Sumo Apps
+        enableDefaultFilters: false
+
         ## Configuration for kubelet metrics
         kubelet:
           enabled: true
