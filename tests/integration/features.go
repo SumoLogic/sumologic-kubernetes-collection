@@ -140,7 +140,7 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 				expectedMetrics,
 				receivermock.MetadataFilters{"job": "pod-annotations"},
 				errOnExtra,
-				waitDuration,
+				waitDuration*2, // wait longer here, as it can take a bit of time for Nginx to start with the sidecar
 				tickDuration,
 			),
 		).
