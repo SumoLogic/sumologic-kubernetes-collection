@@ -7,10 +7,9 @@ following diagram provides an overview of the collection process.
 
 ![overview](/images/overview-v3.png)
 
-## Installation
+## Installation test
 
 Detailed instructions are available in our Installation Guides in documentation below.
-
 
 ## Documentation
 
