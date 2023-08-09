@@ -11,6 +11,7 @@ following diagram provides an overview of the collection process.
 
 Detailed instructions are available in our Installation Guides in documentation below.
 
+
 ## Documentation
 
 Sumo Logic Helm Chart Version
