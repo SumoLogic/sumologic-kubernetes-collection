@@ -311,7 +311,6 @@ otellogs:
       exporters:
         otlphttp/extrafiles:
           endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4319
-          compression: zstd
       service:
         pipelines:
           logs/extrafiles:
