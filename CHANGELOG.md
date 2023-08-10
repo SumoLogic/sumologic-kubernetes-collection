@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.11.1]
+
+### Released 2023-08-10
+
+### Fixed
+
+- fix: disable zstd compression internally [#3197]
+
+[#3197]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3197
+[v3.11.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.11.1
+
 ## [v3.11.0]
 
 ### Released 2023-07-28
