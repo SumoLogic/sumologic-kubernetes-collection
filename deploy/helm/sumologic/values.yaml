@@ -484,6 +484,7 @@ sumologic:
         ## Option to define priorityClassName to assign a priority class to pods.
         priorityClassName:
 
+        ## Number of metric collector replicas. Not used if autoscaling is enabled.
         replicaCount: 3
 
         resources:
