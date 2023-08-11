@@ -494,13 +494,14 @@ sumologic:
             memory: 768Mi
             cpu: 500m
 
-        ## Selector for ServiceMonitors used for target discovery.
+        ## Selector for ServiceMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
-        serviceMonitorSelector: {}
+        # serviceMonitorSelector:
 
-        ## Selector for PodMonitors used for target discovery.
+        ## Selector for PodMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
-        podMonitorSelector: {}
+        # podMonitorSelector:
+
         securityContext:
           ## The group ID of all processes in the statefulset containers. This can be anything, but it does need to be set.
           ## The default is 0 (root), and containers don't have write permissions for volumes in that case.
