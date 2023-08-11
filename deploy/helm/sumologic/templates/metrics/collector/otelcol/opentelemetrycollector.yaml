@@ -25,9 +25,17 @@ spec:
       enabled: true
       scrapeInterval: {{ .Values.sumologic.metrics.collector.otelcol.scrapeInterval }}
       serviceMonitorSelector:
+{{- if .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector }}
         {{ .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector | toYaml | nindent 8 }}
+{{- else }}
+        release: {{ .Release.Name }}
+{{- end }}
       podMonitorSelector:
+{{- if .Values.sumologic.metrics.collector.otelcol.podMonitorSelector }}
         {{ .Values.sumologic.metrics.collector.otelcol.podMonitorSelector | toYaml | nindent 8 }}
+{{- else }}
+        release: {{ .Release.Name }}
+{{- end }}
 {{- if .Values.sumologic.metrics.collector.otelcol.nodeSelector }}
   nodeSelector:
 {{ toYaml .Values.sumologic.metrics.collector.otelcol.nodeSelector | indent 4 }}

@@ -22,8 +22,10 @@ spec:
     prometheusCR:
       enabled: true
       scrapeInterval: 30s
-      serviceMonitorSelector: {}
-      podMonitorSelector: {}
+      serviceMonitorSelector:
+        release: RELEASE-NAME
+      podMonitorSelector:
+        release: RELEASE-NAME
   env:
     - name: METADATA_METRICS_SVC
       value: RELEASE-NAME-sumologic-metadata-metrics # no need for remote write proxy here
