@@ -21,6 +21,7 @@ spec:
   targetAllocator:
     serviceAccount: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
     enabled: true
+    filterStrategy: relabel-config
     prometheusCR:
       enabled: true
       scrapeInterval: {{ .Values.sumologic.metrics.collector.otelcol.scrapeInterval }}
