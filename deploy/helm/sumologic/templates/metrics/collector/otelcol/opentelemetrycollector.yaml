@@ -16,9 +16,7 @@ metadata:
     {{- end }}
 spec:
   mode: statefulset
-{{- if not .Values.sumologic.metrics.collector.otelcol.autoscaling.enabled }}
   replicas: {{ .Values.sumologic.metrics.collector.otelcol.replicaCount }}
-{{- end }}
   serviceAccount: {{ template "sumologic.metadata.name.metrics.collector.serviceaccount" . }}
   targetAllocator:
     serviceAccount: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
