@@ -741,7 +741,7 @@ kube-prometheus-stack:
       kubelet: false
       kubeProxy: false
       kubePrometheusGeneral: false
-      kubePrometheusNodeRecording: true
+      kubePrometheusNodeRecording: false
       kubernetesApps: false
       kubernetesResources: false
       kubernetesStorage: false
@@ -750,7 +750,7 @@ kube-prometheus-stack:
       kubeSchedulerRecording: false
       kubeStateMetrics: false
       network: false
-      node: true
+      node: false
       nodeExporterAlerting: false
       nodeExporterRecording: false
       prometheus: false
@@ -1220,26 +1220,9 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: node-exporter;(?:node_load1|node_load5|node_load15|node_cpu_seconds_total)
+              regex: node-exporter;(?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
               sourceLabels: [job, __name__]
-        ## prometheus operator rules
-        ## :kube_pod_info_node_count:
-        ## cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
-        ## cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
-        ## cluster_quantile:scheduler_framework_extension_point_duration_seconds:histogram_quantile
-        ## cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
-        ## cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
-        ## node:node_inodes_free:
-        ## node:node_inodes_total:
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.operator.rule
-          remoteTimeout: 5s
-          writeRelabelConfigs:
-            - action: drop
-              regex: ^true$
-              sourceLabels: [_sumo_forward_]
-            - action: keep
-              regex: "cluster_quantile:apiserver_request_duration_seconds:histogram_quantile|cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile|cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile|cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile|cluster_quantile:scheduler_framework_extension_point_duration_seconds:histogram_quantile|:kube_pod_info_node_count:|node:node_inodes_total:|node:node_inodes_free:"
-              sourceLabels: [__name__]
+
         ## Nginx ingress controller metrics
         ## rel: https://docs.nginx.com/nginx-ingress-controller/logging-and-monitoring/prometheus/#available-metrics
         ## nginx_ingress_controller_ingress_resources_total

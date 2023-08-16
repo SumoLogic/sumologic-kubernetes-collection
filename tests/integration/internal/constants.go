@@ -386,6 +386,7 @@ var (
 		NodeExporterMetrics,
 		PrometheusMetrics,
 		OtherMetrics,
+		AdditionalNodeExporterMetrics,
 	}
 	DefaultExpectedNginxAnnotatedMetricsGroups = [][]string{
 		NginxMetrics,
