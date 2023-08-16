@@ -569,12 +569,12 @@ service:
 {{- end }}
         - resource/remove_pod_name
         - resource/drop_annotations
+        - transform/add_timestamp
 {{- if eq .Values.sumologic.logs.container.format "text" }} 
         - transform/remove_attributes
 {{- else if eq .Values.sumologic.logs.container.format "json_merge" }} 
         - transform/flatten
 {{- end }}
-        - transform/add_timestamp
         - batch
       receivers:
         - otlp

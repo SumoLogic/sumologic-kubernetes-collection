@@ -261,6 +261,78 @@ sumologic:
 	}
 }
 
+func TestMetadataLogFormatOTLP(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/otelcol/configmap.yaml"
+
+	type OtelConfig struct {
+		Exporters struct {
+			SumoLogic struct {
+				LogFormat string `yaml:"log_format"`
+				JsonLogs  struct {
+					FlattenBody bool `yaml:"flatten_body"`
+				} `yaml:"json_logs"`
+			} `yaml:"sumologic"`
+		}
+		Processors map[string]interface{}
+		Service    struct {
+			Pipelines map[string]struct {
+				Receivers  []string
+				Processors []string
+				Exporters  []string
+			}
+		}
+	}
+
+	testCases := []struct {
+		logFormat                 string
+		expectedExporterLogFormat string
+		expectedProcessors        []string
+	}{
+		{
+			logFormat:                 "json",
+			expectedExporterLogFormat: "otlp",
+			expectedProcessors:        []string{"transform/add_timestamp"},
+		},
+		{
+			logFormat:                 "fields",
+			expectedExporterLogFormat: "otlp",
+			expectedProcessors:        []string{"transform/add_timestamp"},
+		},
+		{
+			logFormat:                 "json_merge",
+			expectedExporterLogFormat: "otlp",
+			expectedProcessors:        []string{"transform/add_timestamp", "transform/flatten"},
+		},
+		{
+			logFormat:                 "text",
+			expectedExporterLogFormat: "otlp",
+			expectedProcessors:        []string{"transform/add_timestamp", "transform/remove_attributes"},
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.logFormat, func(t *testing.T) {
+			t.Parallel()
+			var otelConfig OtelConfig
+			valuesYamlTemplate := `
+sumologic:
+  logs:
+    container:
+      format: %s
+    sourceType: otlp
+`
+			valuesYaml := fmt.Sprintf(valuesYamlTemplate, testCase.logFormat)
+			otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+			err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+			require.NoError(t, err)
+			require.Equal(t, testCase.expectedExporterLogFormat, otelConfig.Exporters.SumoLogic.LogFormat)
+			require.Subset(t, otelConfig.Service.Pipelines["logs/otlp/containers"].Processors, testCase.expectedProcessors)
+		})
+	}
+}
+
 func TestMetadataLogOtlpSource(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/logs/otelcol/configmap.yaml"
