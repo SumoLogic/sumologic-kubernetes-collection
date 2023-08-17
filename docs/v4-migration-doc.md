@@ -31,6 +31,11 @@ format. Please check [Solution Overview][solution-overview] and see below for de
 
 [solution-overview]: /docs/README.md#solution-overview
 
+### Drop Prometheus recording rule metrics
+
+OpenTelemetry can't collect Prometheus recording rule metrics. The new version therefore stops collecting recording rule metrics and updates
+will be made to the Kubernetes App to remove these metrics.
+
 ## How to upgrade
 
 ### Requirements
@@ -95,4 +100,59 @@ require additional action.
 
 ## Full list of changes
 
-:construction:
+- Drop Prometheus recording rule metrics
+
+  OpenTelemetry can't collect Prometheus recording rule metrics. The new version therefore stops collecting the following recording rule
+  metrics
+
+  - kube_pod_info_node_count
+  - node_cpu_saturation_load1
+  - node_cpu_utilisation:avg1m
+  - node_disk_saturation:avg_irate
+  - node_disk_utilisation:avg_irate
+  - node_memory_swap_io_bytes:sum_rate
+  - node_memory_utilisation
+  - node_net_saturation:sum_irate
+  - node_net_utilisation:sum_irate
+  - cluster_quantile:apiserver_request_duration_seconds:histogram_quantile
+  - cluster_quantile:scheduler_binding_duration_seconds:histogram_quantile
+  - cluster_quantile:scheduler_framework_extension_point_duration_seconds:histogram_quantile
+  - cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile
+  - cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile
+  - instance:node_network_receive_bytes:rate:sum
+  - node:cluster_cpu_utilisation:ratio
+  - node:cluster_memory_utilisation:ratio
+  - node:node_cpu_saturation_load1
+  - node:node_cpu_utilisation:avg1m
+  - node:node_disk_saturation:avg_irate
+  - node:node_disk_utilisation:avg_irate
+  - node:node_filesystem_avail
+  - node:node_filesystem_usage
+  - node:node_inodes_free
+  - node:node_inodes_total
+  - node:node_memory_bytes_total:sum
+  - node:node_memory_swap_io_bytes:sum_rate
+  - node:node_memory_utilisation
+  - node:node_memory_utilisation:ratio
+  - node:node_memory_utilisation_2
+  - node:node_net_saturation:sum_irate
+  - node:node_net_utilisation:sum_irate
+  - node:node_num_cpu:sum
+  - node_namespace_pod:kube_pod_info
+
+  Instead, the following new node metrics are now collected
+
+  - node_disk_io_time_weighted_seconds_total
+  - node_disk_io_time_seconds_total
+  - node_vmstat_pgpgin
+  - node_vmstat_pgpgout
+  - node_memory_MemFree_bytes
+  - node_memory_Cached_bytes
+  - node_memory_Buffers_bytes
+  - node_memory_MemTotal_bytes
+  - node_network_receive_drop_total
+  - node_network_transmit_drop_total
+  - node_network_receive_bytes_total
+  - node_network_transmit_bytes_total
+  - node_filesystem_avail_bytes
+  - node_filesystem_size_bytes
