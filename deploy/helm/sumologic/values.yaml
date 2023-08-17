@@ -253,6 +253,9 @@ sumologic:
     ## Source category for the Events source. Default: "" which is resolved to "{clusterName}/events"
     # sourceCategory: "kubernetes/events"
 
+    ## Used to replace '-' with another character.
+    sourceCategoryReplaceDash: "/"
+
     persistence:
       enabled: true
       size: 10Gi
