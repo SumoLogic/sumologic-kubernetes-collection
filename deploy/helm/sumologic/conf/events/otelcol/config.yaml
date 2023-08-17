@@ -36,6 +36,7 @@ processors:
     collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
     source_category: {{ .Values.sumologic.events.sourceCategory | default (printf "%s/%s"  (include "sumologic.clusterNameReplaceSpaceWithDash" .) (.Values.fluentd.events.sourceName )) | quote}}
     source_category_prefix: ""
+    source_category_replace_dash: {{ .Values.sumologic.events.sourceCategoryReplaceDash | quote}}
     source_name: {{ .Values.sumologic.events.sourceName | quote}}
   sumologic_schema:
     add_cloud_namespace: false

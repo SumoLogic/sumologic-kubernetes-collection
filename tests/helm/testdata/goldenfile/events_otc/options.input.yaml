@@ -8,5 +8,6 @@ sumologic:
     provider: otelcol
     sourceName: testSourceName
     sourceCategory: testSourceCategory
+    sourceCategoryReplaceDash: ";"
     persistence:
       enabled: false

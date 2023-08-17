@@ -44,6 +44,7 @@ data:
         collector: kubernetes
         source_category: kubernetes/events
         source_category_prefix: ""
+        source_category_replace_dash: /
         source_name: events
       sumologic_schema:
         add_cloud_namespace: false
