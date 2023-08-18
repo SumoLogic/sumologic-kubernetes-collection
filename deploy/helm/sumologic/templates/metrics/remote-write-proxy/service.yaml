@@ -9,9 +9,12 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   ports:
-    - name: http
+    - name: prometheus
       port: 9888
       targetPort: {{ .Values.sumologic.metrics.remoteWriteProxy.config.port }}
+    - name: otel
+      port: 4318
+      targetPort: 4318
   selector:
     app: {{ template "sumologic.labels.app.remoteWriteProxy.pod" . }}
 {{- end }}

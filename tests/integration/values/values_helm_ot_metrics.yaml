@@ -7,8 +7,6 @@ sumologic:
     enabled: false
   metrics:
     enabled: true
-    remoteWriteProxy:
-      enabled: false
     collector:
       otelcol:
         enabled: true

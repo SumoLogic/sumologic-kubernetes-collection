@@ -59,6 +59,7 @@ spec:
         imagePullPolicy: {{ .Values.sumologic.metrics.remoteWriteProxy.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.sumologic.metrics.remoteWriteProxy.config.port }}
+        - containerPort: 4318
         resources:
           {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.resources | nindent 10 }}
         livenessProbe:
