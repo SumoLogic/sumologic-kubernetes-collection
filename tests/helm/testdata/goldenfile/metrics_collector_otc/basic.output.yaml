@@ -14,7 +14,7 @@ metadata:
     sumologic.com/scrape: "true"
 spec:
   mode: statefulset
-  replicas: 3
+  replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
   targetAllocator:
     serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
@@ -45,9 +45,9 @@ spec:
   resources:
     limits:
       cpu: 1000m
-      memory: 1Gi
+      memory: 2Gi
     requests:
-      cpu: 500m
+      cpu: 100m
       memory: 768Mi
   volumes:
     - name: tmp
