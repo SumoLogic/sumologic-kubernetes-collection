@@ -18,7 +18,7 @@ metadata:
     podKey: podValue
 spec:
   mode: statefulset
-  replicas: 3
+  replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
   targetAllocator:
     serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator

@@ -474,8 +474,8 @@ sumologic:
           enabled: false
           minReplicas: 3
           maxReplicas: 10
-          targetCPUUtilizationPercentage: 100
-          # targetMemoryUtilizationPercentage: 50
+          targetCPUUtilizationPercentage: 70
+          targetMemoryUtilizationPercentage: 70
 
         nodeSelector: {}
 
@@ -487,15 +487,15 @@ sumologic:
         ## Option to define priorityClassName to assign a priority class to pods.
         priorityClassName:
 
-        replicaCount: 3
+        replicaCount: 1
 
         resources:
           limits:
-            memory: 1Gi
+            memory: 2Gi
             cpu: 1000m
           requests:
             memory: 768Mi
-            cpu: 500m
+            cpu: 100m
 
         ## Selector for ServiceMonitors used for target discovery. By default, this selects resources created by this Chart.
         ## See https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocatorprometheuscr
