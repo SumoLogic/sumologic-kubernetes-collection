@@ -4,7 +4,8 @@ OpenTelemetry Collector is a software to receive, process and export logs, metri
 Fluentd in our collection.
 
 - [Metrics](metrics.md)
-  - [Metrics Configuration](metrics.md#metrics-configuration)
+  - [Metrics metdata](metrics.md#metrics-metadata)
+  - [Metrics collector](metrics.md#metrics-collector)
 - [Logs](logs.md)
   - [Logs Configuration](logs.md#logs-configuration)
   - [Multiline Log Parsing](logs.md#multiline-log-parsing)
