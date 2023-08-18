@@ -59,7 +59,10 @@ spec:
 {{- end }}
   env:
   - name: METADATA_METRICS_SVC
-    value: {{ template "sumologic.metadata.name.metrics.service" . }} # no need for remote write proxy here
+    valueFrom:
+      configMapKeyRef:
+        name: sumologic-configmap
+        key: metadataMetrics
   - name: NAMESPACE
     valueFrom:
       fieldRef:

@@ -45,7 +45,10 @@ spec:
     targetMemoryUtilization: 90
   env:
     - name: METADATA_METRICS_SVC
-      value: RELEASE-NAME-sumologic-metadata-metrics # no need for remote write proxy here
+      valueFrom:
+        configMapKeyRef:
+          name: sumologic-configmap
+          key: metadataMetrics
     - name: NAMESPACE
       valueFrom:
         fieldRef:
