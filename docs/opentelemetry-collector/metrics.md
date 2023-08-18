@@ -1,8 +1,77 @@
 # Metrics
 
-We are using OpenTelemetry Collector like Fluentd to enrich metadata and to filter data.
+We use the OpenTelemetry Collector for metrics in two ways:
 
-To enable OpenTelemetry Collector for metrics, please use the following configuration:
+- For metadata enrichment, where it replaces Fluentd.
+- For metrics collection, where it replaces Prometheus.
+
+These functionalities are currently independent of each other, and can be configured individually.
+
+## Metrics collector
+
+> [!NOTE]  
+> This feature is currently in beta.
+
+It's possible to use the OpenTelemetry Collector as a Prometheus replacement. To enable the otel metrics collector and disable Prometheus,
+set:
+
+```yaml
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        enabled: true
+
+kube-prometheus-stack:
+  prometheus:
+    enabled: false
+  prometheusOperator:
+    enabled: false
+
+opentelemetry-operator:
+  enabled: true
+```
+
+This Otel metrics collector will function very similarly to Prometheus, and the change should be transparent for most configurations.
+
+### Compatibility with the Prometheus ecosystem
+
+The OpenTelemetry Collector is set up to be compatible with the Prometheus Kubernetes ecosystem. It supports ServiceMonitors and
+PodMonitors, as well as plain Prometheus scrape configs. It also honors `prometheus.io/scrape` and related Pod annotations. As such, it
+should be a drop-in replacement for Prometheus, with actual differences elaborated upon below.
+
+### Differences from Prometheus
+
+#### Horizontal scalability and autoscaling
+
+The Otel metrics collector can be scaled horizontally, and consequently can also be autoscaled.
+
+#### Improved performance
+
+OpenTelemetry Collector consumes less memory and CPU for equivalent workloads. One can expect a 2x reduction in memory usage.
+
+#### No recording rule metrics
+
+The Otel metrics collector doesn't support recording rules. As the collector doesn't actually maintain a database of time series the way
+Prometheus does, it cannot easily do aggregations over the whole dataset, or over longer time periods.
+
+> [!WARNING]  
+> Some of the Node-specific panels of the Sumo Kubernetes App will not work as a result of this. An update to the App will be released in
+> the near future.
+
+#### No extended features of the Prometheus ecosystem
+
+OpenTelemetry collector is just a collector - it scrapes metrics data, transforms it, and forwards it to Sumo. It does not maintain a
+database that can be queried and does not handle alerts.
+
+### Configuration
+
+Configuration keys for the Otel metrics collector live under the `sumologic.metrics.collector` section of the [values.yaml][values] file.
+Configuration for ServiceMonitors elsewhere in the Chart will still apply.
+
+## Metrics metadata
+
+To enable OpenTelemetry Collector for metrics metadata, please use the following configuration:
 
 ```yaml
 sumologic:
@@ -12,7 +81,7 @@ sumologic:
 ```
 
 As we are providing drop-in replacement, most of the configuration from [`values.yaml`][values] should work the same way for OpenTelemetry
-Collector like for Fluentd.
+Collector and for Fluentd.
 
 ## Metrics Configuration
 
