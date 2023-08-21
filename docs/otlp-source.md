@@ -64,5 +64,5 @@ features work without additional manual configuration:
 [http_source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source/logs-metrics/
 [otlp_source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source/otlp/
 [v3]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/tag/v3.0.0
-[otel]: ./opentelemetry-collector.md
+[otel]: ./opentelemetry-collector/README.md
 [otlp]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/otlp.md

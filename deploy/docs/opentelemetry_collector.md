@@ -1,3 +1,3 @@
 # OpenTelemetry Collector
 
-Moved to [/docs/opentelemetry-collector.md](/docs/opentelemetry-collector.md)
+Moved to [/docs/opentelemetry-collector/](/docs/opentelemetry-collector/)
