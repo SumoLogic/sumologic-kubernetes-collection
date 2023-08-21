@@ -459,9 +459,9 @@ sumologic:
       provider: otelcol
 
     collector:
-      ### Experimental otel Prometheus replacement
-      ## To enable, you need opentelemetry-operator enabled as well
-      ## Currently not feature complete, only intended for testing
+      ### Otel metrics collector. Replaces Prometheus.
+      ## To enable, you need opentelemetry-operator enabled as well.
+      ## Stability: Beta.
       otelcol:
         enabled: false
 
@@ -511,9 +511,6 @@ sumologic:
           fsGroup: 999
         tolerations: []
 
-        ## Default metric filters for Sumo Apps
-        enableDefaultFilters: false
-
         ## Configuration for kubelet metrics
         kubelet:
           enabled: true
@@ -527,13 +524,16 @@ sumologic:
         annotatedPods:
           enabled: true
 
-        ## By default, the Helm Chart collects some high-cardinality histogram metrics, as Sumo Apps make use of the sum and count components.
-        ## This setting causes the metrics collector to drop the actual histogram buckets, keeping only the sum and the count.
-        ## This affects the following metrics:
-        ## - apiserver_request_duration_seconds
-        ## - coredns_dns_request_duration_seconds
-        ## - kubelet_runtime_operations_duration_seconds
-        dropHistogramBuckets: true
+    ## Default metric filters for Sumo Apps
+    enableDefaultFilters: false
+
+    ## By default, the Helm Chart collects some high-cardinality histogram metrics, as Sumo Apps make use of the sum and count components.
+    ## This setting causes the metrics collector to drop the actual histogram buckets, keeping only the sum and the count.
+    ## This affects the following metrics:
+    ## - apiserver_request_duration_seconds
+    ## - coredns_dns_request_duration_seconds
+    ## - kubelet_runtime_operations_duration_seconds
+    dropHistogramBuckets: true
 
     otelcol:
       ## Includes additional processors into pipelines.
@@ -3370,7 +3370,7 @@ kube-prometheus-stack:
       selfMonitor: false
 
 ## Configure otelcol-instrumentation - Sumo OTel Distro Collector
-## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector.md#traces
+## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector/traces.md
 otelcolInstrumentation:
   enabled: true
   sourceMetadata:
@@ -3641,7 +3641,7 @@ otelcolInstrumentation:
           exporters: [sumologic/metrics]
 
 ## Configure traces-sampler
-## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector.md#traces
+## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector/traces.md
 tracesSampler:
   deployment:
     nodeSelector: {}
@@ -3993,7 +3993,7 @@ metadata:
       # maxUnavailable: 1
 
 ## Configure traces-gateway
-## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector.md#traces
+## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector/traces.md
 tracesGateway:
   enabled: true
 
