@@ -15,6 +15,7 @@ metadata:
     {{ toYaml .Values.sumologic.metrics.collector.otelcol.podLabels | nindent 4 }}
     {{- end }}
 spec:
+  image: {{ template "sumologic.metadata.image" . }}
   mode: statefulset
   replicas: {{ .Values.sumologic.metrics.collector.otelcol.replicaCount }}
   serviceAccount: {{ template "sumologic.metadata.name.metrics.collector.serviceaccount" . }}
