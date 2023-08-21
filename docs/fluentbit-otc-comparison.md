@@ -61,5 +61,5 @@ See [here][otel_config] for details and caveats.
 [transformprocessor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor
 [otel_distro_components]: https://github.com/SumoLogic/sumologic-otel-collector#components
 [otel_official_docs]: https://opentelemetry.io/docs/collector/
-[otel_multiline]: opentelemetry-collector.md#multiline-log-parsing
-[otel_config]: opentelemetry-collector.md#logs-configuration
+[otel_multiline]: opentelemetry-collector/logs.md#multiline-log-parsing
+[otel_config]: opentelemetry-collector/logs.md#logs-configuration
