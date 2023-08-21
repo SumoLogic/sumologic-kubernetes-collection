@@ -524,6 +524,10 @@ sumologic:
         annotatedPods:
           enabled: true
 
+        ## Allocation strategy for the scrape target allocator. Valid values are: least-weighted and consistent-hashing.
+        ## See: https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocator
+        # allocationStrategy: least-weighted
+
     ## Default metric filters for Sumo Apps
     enableDefaultFilters: false
 
