@@ -34,7 +34,7 @@ processors:
           # after the collector and metadata are merged, consider using them instead of k8sattributes processor
           - delete_matching_keys(attributes, "k8s.*")
 
-{{- if .Values.sumologic.metrics.collector.otelcol.dropHistogramBuckets }}
+{{- if .Values.sumologic.metrics.dropHistogramBuckets }}
   transform/extract_sum_count_from_histograms:
     error_mode: ignore
     metric_statements:
@@ -49,12 +49,12 @@ processors:
       metric:
         # we let the metrics from annotations ("kubernetes-pods") through as they are
         - resource.attributes["service.name"] != "pod-annotations" and IsMatch(name, "scrape_.*")
-{{- if .Values.sumologic.metrics.collector.otelcol.dropHistogramBuckets }}
+{{- if .Values.sumologic.metrics.dropHistogramBuckets }}
         # drop histograms we've extracted sums and counts from, but don't want the full thing
         - IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
 {{- end }}
 
-{{ if .Values.sumologic.metrics.collector.otelcol.enableDefaultFilters -}}
+{{ if .Values.sumologic.metrics.enableDefaultFilters -}}
 {{ tpl (.Files.Get "conf/metrics/collector/otelcol/default-filters.yaml") . | indent 2 }}
 {{ end -}}
 
@@ -209,12 +209,12 @@ service:
     metrics:
       exporters: [otlphttp]
       processors:
-{{- if .Values.sumologic.metrics.collector.otelcol.dropHistogramBuckets }}
+{{- if .Values.sumologic.metrics.dropHistogramBuckets }}
         - transform/extract_sum_count_from_histograms
 {{- end }}
         - filter/drop_unnecessary_metrics
         - transform/drop_unnecessary_attributes
-{{- if .Values.sumologic.metrics.collector.otelcol.enableDefaultFilters }}
+{{- if .Values.sumologic.metrics.enableDefaultFilters }}
         - filter/app_metrics
 {{- end }}
       receivers: [prometheus]

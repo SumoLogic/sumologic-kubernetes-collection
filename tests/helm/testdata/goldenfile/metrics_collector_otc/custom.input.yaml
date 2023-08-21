@@ -36,16 +36,14 @@ sumologic:
         securityContext:
           fsGroup: 999
 
-        enableDefaultFilters: true
-
         kubelet:
           enabled: false
         cAdvisor:
           enabled: false
         annotatedPods:
           enabled: false
-
-        dropHistogramBuckets: false
+    enableDefaultFilters: true
+    dropHistogramBuckets: false
 
   podAnnotations:
     podAnnotationKey: podAnnotationValue
