@@ -7,6 +7,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.13.0]
+
+### Released 2023-08-21
+
+### Added
+
+- feat(metrics/collector): support partial histograms [#3192]
+- feat(metrics/collector) allow setting global scrape interval [#3203]
+- feat(metrics/collector): add default App metric filters [#3204]
+- feat(events): add sourceCategoryReplaceDash [#3214]
+- feat(metrics/collector): support remote write proxy [#3221]
+- feat(metrics/collector): allow setting allocation strategy [#3226]
+
+### Changed
+
+- chore: upgrade opentelemetry-operator chart to 0.35.0 [#3203]
+- feat(metrics/collector): only select monitors from the release by default [#3207]
+- feat(metrics/collector): filter scrape configs in target allocator [#3208]
+- chore: drop support for AKS 1.24 [#3209]
+- chore: upgrade otel to 0.83.0-sumo-0 [#3215]
+- feat(metrics/collector): adjust resources and autoscaling [#3219]
+- feat(metrics/collector): set stability to Beta [#3223]
+
+### Fixed
+
+- fix(metrics): don't collect internal Telegraf metrics [#3193]
+- feat: fix fluentd hpa template generation [#3194]
+- fix(metrics/collector): scrape configs disabled [#3195]
+- fix(logs): fix text format for otlp source [#3212]
+- fix(metrics/collector): explicitly set OT image [#3225]
+
+[#3192]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3192
+[#3203]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3203
+[#3204]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3204
+[#3214]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3214
+[#3221]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3221
+[#3226]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3226
+[#3207]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3207
+[#3208]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3208
+[#3209]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3209
+[#3215]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3215
+[#3219]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3219
+[#3223]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3223
+[#3193]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3193
+[#3194]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3194
+[#3195]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3195
+[#3212]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3212
+[#3225]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3225
+[v3.13.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.13.0
+
 ## [v3.12.1]
 
 ### Released 2023-08-10
