@@ -42,6 +42,7 @@ sumologic:
           enabled: false
         annotatedPods:
           enabled: false
+        allocationStrategy: consistent-hashing
     enableDefaultFilters: true
     dropHistogramBuckets: false
 

@@ -20,6 +20,9 @@ spec:
   replicas: {{ .Values.sumologic.metrics.collector.otelcol.replicaCount }}
   serviceAccount: {{ template "sumologic.metadata.name.metrics.collector.serviceaccount" . }}
   targetAllocator:
+{{- if .Values.sumologic.metrics.collector.otelcol.allocationStrategy }}
+    allocationStrategy: {{ .Values.sumologic.metrics.collector.otelcol.allocationStrategy }}
+{{- end }}
     serviceAccount: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
     enabled: true
     filterStrategy: relabel-config
