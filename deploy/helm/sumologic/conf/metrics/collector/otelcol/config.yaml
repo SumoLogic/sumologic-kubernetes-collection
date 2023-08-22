@@ -20,6 +20,11 @@ extensions:
 
 
 processors:
+  batch:
+    send_batch_max_size: 2000
+    send_batch_size: 1000
+    timeout: 1s
+
   transform/drop_unnecessary_attributes:
     error_mode: ignore
     metric_statements:
@@ -64,7 +69,7 @@ receivers:
       global:
         scrape_interval: {{ .Values.sumologic.metrics.collector.otelcol.scrapeInterval }}
       {{- /*
-      As of right now, if scrape_configs is empty, it needs to be an empty list, otherwise otel-operator rejects it 
+      As of right now, if scrape_configs is empty, it needs to be an empty list, otherwise otel-operator rejects it
       */}}
       scrape_configs: {{- not $scrapeConfigsPresent | ternary " []" "" }}
 {{- if $collectorConfig.annotatedPods.enabled }}
@@ -209,6 +214,7 @@ service:
     metrics:
       exporters: [otlphttp]
       processors:
+        - batch
 {{- if .Values.sumologic.metrics.dropHistogramBuckets }}
         - transform/extract_sum_count_from_histograms
 {{- end }}
