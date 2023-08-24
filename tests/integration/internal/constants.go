@@ -83,6 +83,7 @@ var (
 		"kube_node_status_condition",
 	}
 	KubePodMetrics = []string{
+		"kube_pod_info",
 		"kube_pod_container_info",
 		"kube_pod_container_resource_requests",
 		"kube_pod_container_resource_limits",
@@ -92,11 +93,6 @@ var (
 		// "kube_pod_container_status_terminated_reason",
 		"kube_pod_container_status_restarts_total",
 		"kube_pod_status_phase",
-	}
-	// These metrics are collected by Prometheus, but only used for recording rules
-	// Otel actually sends these to the remote
-	AdditionalKubePodMetrics = []string{
-		"kube_pod_info",
 	}
 	KubeServiceMetrics = []string{
 		"kube_service_info",
