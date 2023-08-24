@@ -18,7 +18,6 @@ func Test_Helm_OT_Metrics(t *testing.T) {
 		internal.KubeDaemonSetMetrics,
 		internal.KubeDeploymentMetrics,
 		internal.KubeNodeMetrics,
-		internal.AdditionalKubePodMetrics,
 		internal.KubePodMetrics,
 		internal.KubeServiceMetrics,
 		internal.KubeletMetrics,
