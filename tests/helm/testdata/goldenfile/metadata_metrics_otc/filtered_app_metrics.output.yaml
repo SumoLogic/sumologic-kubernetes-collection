@@ -1,0 +1,371 @@
+---
+# Source: sumologic/templates/metrics/otelcol/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-metrics
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-metrics
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  config.yaml: |
+    exporters:
+      sumologic/apiserver:
+        endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
+        max_request_body_size: 16777216
+        metric_format: prometheus
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+        timeout: 30s
+      sumologic/control_plane:
+        endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
+        max_request_body_size: 16777216
+        metric_format: prometheus
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+        timeout: 30s
+      sumologic/controller:
+        endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
+        max_request_body_size: 16777216
+        metric_format: prometheus
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+        timeout: 30s
+      sumologic/default:
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+        max_request_body_size: 16777216
+        metric_format: prometheus
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+        timeout: 30s
+      sumologic/kubelet:
+        endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
+        max_request_body_size: 16777216
+        metric_format: prometheus
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+        timeout: 30s
+      sumologic/node:
+        endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
+        max_request_body_size: 16777216
+        metric_format: prometheus
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+        timeout: 30s
+      sumologic/scheduler:
+        endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
+        max_request_body_size: 16777216
+        metric_format: prometheus
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+        timeout: 30s
+      sumologic/state:
+        endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
+        max_request_body_size: 16777216
+        metric_format: prometheus
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+        timeout: 30s
+    extensions:
+      file_storage:
+        compaction:
+          directory: /tmp
+          on_rebound: true
+        directory: /var/lib/storage/otc
+        timeout: 10s
+      health_check: {}
+      pprof: {}
+    processors:
+      batch:
+        send_batch_max_size: 2048
+        send_batch_size: 1024
+        timeout: 1s
+      filter/app_metrics:
+        error_mode: ignore
+        metrics:
+          metric:
+          - IsMatch(name, "nginx_ingress_.*") and not IsMatch(name, "(?:nginx_ingress_controller_ingress_resources_total|nginx_ingress_controller_nginx_(last_reload_(milliseconds|status)|reload(s|_errors)_total)|nginx_ingress_controller_virtualserver(|route)_resources_total|nginx_ingress_nginx_connections_(accepted|active|handled|reading|waiting|writing)|nginx_ingress_nginx_http_requests_total|nginx_ingress_nginxplus_(connections_(accepted|active|dropped|idle)|http_requests_(current|total)|resolver_(addr|formerr|name|noerror|notimp|nxdomain|refused|servfail|srv|timedout|unknown)|ssl_(handshakes_failed|session_reuses)|stream_server_zone_(connections|received|sent)|stream_upstream_server_(active|connect_time|fails|health_checks_fails|health_checks_unhealthy|received|response_time|sent|unavail|state)|(location|server)_zone_(discarded|received|requests|responses|sent|processing)|upstream_server_(fails|header_time|health_checks_fails|health_checks_unhealthy|received|sent|unavail|response_time|responses|requests)))")
+          - IsMatch(name, "nginx_.*") and not IsMatch(name, "(?:nginx_(accepts|active|handled|reading|requests|waiting|writing)|nginx_plus_api_connections_(accepted|active|dropped|idle)|nginx_plus_api_http_caches_(cold|hit_bytes|max_size|miss_bytes|size|updating_bytes)|nginx_plus_api_http_location_zones_(discarded|received|requests|sent)|nginx_plus_api_http_location_zones_responses_(1xx|2xx|3xx|4xx|5xx|total)|nginx_plus_api_http_requests_(current|total)|nginx_plus_api_http_server_zones_(discarded|processing|received|requests|sent)|nginx_plus_api_http_server_zones_responses_(1xx|2xx|3xx|4xx|5xx|total)|nginx_plus_api_http_upstream_peers_(backup|downtime|fails|healthchecks_fails|healthchecks_unhealthy|received|requests|sent|unavail|response_time)|nginx_plus_api_http_upstream_peers_responses_(1xx|2xx|3xx|4xx|5xx|total)|nginx_plus_api_resolver_zones_(addr|formerr|name|noerror|notimp|nxdomain|refused|servfail|srv|timedout)|nginx_plus_api_ssl_(handshakes_failed|session_reuses)|nginx_plus_api_stream_server_zones_(connections|received|sent)|nginx_plus_api_stream_upstream_peers_(active|backup|connect_time|downtime|fails|healthchecks_fails|healthchecks_last_passed|healthchecks_unhealthy|received|response_time|sent|unavail))")
+          - IsMatch(name, "redis_.*") and not IsMatch(name, "(?:redis_((blocked_|)clients|cluster_enabled|cmdstat_calls|connected_slaves|(evicted|expired|tracking_total)_keys|instantaneous_ops_per_sec|keyspace_(hitrate|hits|misses)|(master|slave)_repl_offset|maxmemory|mem_fragmentation_(bytes|ratio)|rdb_changes_since_last_save|rejected_connections|total_commands_processed|total_net_(input|output)_bytes|uptime|used_(cpu_(sys|user)|memory(_overhead|_rss|_startup|))))")
+          - IsMatch(name, "java_.*") and not IsMatch(name, "(?:java_lang_(ClassLoading_(TotalL|Unl|L)oadedClassCount|Compilation_TotalCompilationTime|GarbageCollector_(Collection(Count|Time)|LastGcInfo_(GcThreadCount|duration|(memoryU|u)sage(After|Before)Gc_.*_used))|MemoryPool_(CollectionUsage(ThresholdSupported|_committed|_max|_used)|(Peak|)Usage_(committed|max|used)|UsageThresholdSupported)|Memory_((Non|)HeapMemoryUsage_(committed|max|used)|ObjectPendingFinalizationCount)|OperatingSystem_(AvailableProcessors|(CommittedVirtual|(Free|Total)(Physical|))MemorySize|(Free|Total)SwapSpaceSize|(Max|Open)FileDescriptorCount|ProcessCpu(Load|Time)|System(CpuLoad|LoadAverage))|Runtime_(BootClassPathSupported|Pid|Uptime|StartTime)|Threading_(CurrentThread(AllocatedBytes|(Cpu|User)Time)|(Daemon|Peak|TotalStarted|)ThreadCount|(ObjectMonitor|Synchronizer)UsageSupported|Thread(AllocatedMemory.*|ContentionMonitoring.*|CpuTime.*))))")
+          - IsMatch(name, "kafka_.*") and not IsMatch(name, "(?:kafka_(broker_.*|controller_.*|java_lang_.*|partition_.*|purgatory_.*|network_.*|replica_.*|request_.*|topic_.*|topics_.*|zookeeper_.*))")
+          - IsMatch(name, "mysql_.*") and not IsMatch(name, "(?:mysql_((uptime|connection_errors_.*|queries|slow_queries|questions|table_open_cache_.*|table_locks_.*|commands_.*|select_.*|sort_.*|mysqlx_connections_.*|mysqlx_worker_.*|connections|aborted_.*|locked_connects|bytes_.*|qcache_.*|threads_.*|opened_.*|created_tmp_.*)|innodb_(buffer_pool_.*|data_.*|rows_.*|row_lock_.*|log_waits)|perf_schema_(events_statements_.*|table_io_waits_.*|index_io_waits_.*|read.*|write.*)))")
+          - IsMatch(name, "postgresql_.*") and not IsMatch(name, "(?:postgresql_(blks_(hit|read)|buffers_(backend|checkpoint|clean)|checkpoints_(req|timed)|db_size|deadlocks|flush_lag|heap_blks_(hit|read)|idx_blks_(hit|read)|idx_scan|idx_tup_(fetch|read)|index_size|n_dead_tup|n_live_tup|n_tup_(upd|ins|del|hot_upd)|num_locks|numbackends|replay_lag|replication_(delay|lag)|seq_scan|seq_tup_read|stat_ssl_compression_count|table_size|tidx_blks_(hit|read)|toast_blks_(hit|read)|tup_(deleted|fetched|inserted|returned|updated)|write_lag|xact_(commit|rollback)))")
+          - IsMatch(name, "apache_.*") and not IsMatch(name, "(?:apache_((BusyWorkers|BytesPerReq|BytesPerSec|CPUChildrenSystem|CPUChildrenUser|CPULoad|CPUSystem|CPUUser|DurationPerReq|IdleWorkers|Load1|Load15|Load5|ParentServerConfigGeneration|ParentServerMPMGeneration|ReqPerSec|ServerUptimeSeconds|TotalAccesses|TotalDuration|TotalkBytes|Uptime)|(scboard_(closing|dnslookup|finishing|idle_cleanup|keepalive|logging|open|reading|sending|starting|waiting))))")
+          - IsMatch(name, "sqlserver_.*") and not IsMatch(name, "(?:sqlserver_(cpu_sqlserver_process_cpu|database_io_(read_(bytes|latency_ms)|write_(bytes|latency_ms))|memory_clerks_size_kb|performance_value|server_properties_server_memory|volume_space_(total_space_bytes|used_space_bytes)))")
+          - IsMatch(name, "haproxy_.*") and not IsMatch(name, "(?:haproxy_(active_servers|backup_servers|bin|bout|chkfail|ctime|dreq|dresp|econ|ereq|eresp|http_response_(1xx|2xx|3xx|4xx|5xx|other)|qcur|qmax|qtime|rate|rtime|scur|slim|smax|ttime|weight|wredis|wretr))")
+          - IsMatch(name, "cassandra_.*") and not IsMatch(name, "(?:cassandra_(CacheMetrics_ChunkCache_OneMinuteRate|ClientMetrics_(connectedNativeClients_Value|RequestDiscarded_OneMinuteRate)|CommitLogMetrics_(CompletedTasks_Value|PendingTasks_Value)|DroppedMessageMetrics_Dropped_OneMinuteRate|java_(GarbageCollector_(ConcurrentMarkSweep|ParNew)_(CollectionCount|CollectionTime|LastGcInfo_duration|LastGcInfo_GcThreadCount|LastGcInfo_memoryUsageAfterGc_.*_used|LastGcInfo_memoryUsageBeforeGc_.*_used)|Memory_HeapMemoryUsage_used|OperatingSystem_(AvailableProcessors|FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize|TotalSwapSpaceSize))|Net_FailureDetector_(DownEndpointCount|UpEndpointCount)|TableMetrics_(AllMemtablesHeapSize_Value|AllMemtablesLiveDataSize_Value|CompactionBytesWritten_Count|EstimatedPartitionCount_Value|KeyCacheHitRate_Value|LiveSSTableCount_Value|MemtableColumnsCount_Value|MemtableLiveDataSize_Value|MemtableOffHeapSize_Value|MemtableOnHeapSize_Value|MemtableSwitchCount_Count|PendingCompactions_Value|PendingFlushes_Count|PercentRepaired_Value|RangeLatency_Count|ReadLatency_50thPercentile|ReadLatency_Max|ReadLatency_OneMinuteRate|RowCacheHit_Count|RowCacheMiss_Count|SSTablesPerReadHistogram_50thPercentile|SSTablesPerReadHistogram_99thPercentile|SSTablesPerReadHistogram_Count|SSTablesPerReadHistogram_Max|TombstoneScannedHistogram_50thPercentile|TombstoneScannedHistogram_99thPercentile|TombstoneScannedHistogram_Max|TotalDiskSpaceUsed_Count|WaitingOnFreeMemtableSpace_Max|WriteLatency_50thPercentile|WriteLatency_99thPercentile|WriteLatency_Max|WriteLatency_OneMinuteRate)|ThreadPoolMetrics_(internal_(Count|Value)|request_(Count|Value)|transport_(Count|Value))))")
+          - IsMatch(name, "mongodb_.*") and not IsMatch(name, "(?:mongodb_(active_(reads|writes)|commands_per_sec|connections_current|db_stats_storage_size|deletes_per_sec|document_.*|flushes_per_sec|getmores_per_sec|inserts_per_sec|net_.*_bytes_count|open_connections|page_faults|percent_cache_(dirty|used)|queries_per_sec|queued_(reads|writes)|repl_((commands|deletes|getmores|inserts|oplog|queries|updates)_per_sec|queries|oplog_window_sec)|resident_megabytes|updates_per_sec|uptime_ns|vsize_megabytes|wtcache_bytes_read_into))")
+          - IsMatch(name, "rabbitmq_.*") and not IsMatch(name, "(?:rabbitmq_(exchange_messages_publish_(in_rate|in|out_rate|out)|node_(disk_free_limit|disk_free|mem_(limit|used)|uptime|fd_used|mnesia_(disk_tx_count|ram_tx_count)|gc_num_rate)|overview_(clustering_listerners|connections|exchanges|consumers|queues|messages_(delivered|published|unacked))|queue_(consumers|memory|slave_nodes|messages_(publish_rate|deliver_rate|memory|max_time|unack))))")
+          - IsMatch(name, "tomcat_.*") and not IsMatch(name, "(?:tomcat_(connector_(bytes_(received|sent)|current_(thread_(busy|count)|threads_busy)|error_count|max_threads|max_time|processing_time|request_count)|jmx_(jvm_memory_(HeapMemoryUsage_(max|used)|NonHeapMemoryUsage_(max|used))|OperatingSystem_(FreePhysicalMemorySize|FreeSwapSpaceSize|SystemCpuLoad|TotalPhysicalMemorySize|TotalSwapSpaceSize)|Servlet_processingTime)|jvm_memory_(free|max|total)|jvm_memorypool_(bytes_(received|sent)|current_thread_count|current_threads_busy|error_count|max_threads|max_time|max|processing_time|request_count|used)))")
+          - IsMatch(name, "varnish_.*") and not IsMatch(name, "(?:varnish_(backend_(busy|conn|fail|recycle|req|retry|reuse|unhealthy)|bans_(completed|deleted|dups|lurker_(contention|obj_killed|tests_tested|tested|)|obj_killed|obj|persisted_(bytes|fragmentation))|bans|boot_.*_.*_(bodybytes|hdrbytes)|cache_(hit_grace|hitpass|miss|hit)|client_(req_400|req_417|req|resp_500)|n_(backend|expired|lru_nuked|vcl_avail)|pools|s0_g_(bytes|space)|s_(fetch|pipe_(in|out)|req_(bodybytes|hdrbytes)|resp_(bodybytes|hdrbytes)|sess)|sess_(closed_err|closed|conn|drop|dropped|fail|queued)|thread_queue_len|threads_(created|destroyed|failed|limited)|threads|uptime|vmods))")
+          - IsMatch(name, "memcached_.*") and not IsMatch(name, "(?:memcached_(accepting_conns|auth_(cmds|errors)|bytes_(read|written)|bytes|cas_*|cmd_.*|conn_yields|connection_structures|curr_(connections|items)|decr_.*|delete_.*|evictions|get_(hits|misses)|hash_(bytes|is_expanding)|incr_.*|limit_maxbytes|listen_disabled_num|reclaimed|threads|total_(connections|items)|uptime))")
+          - IsMatch(name, "elasticsearch_.*") and not IsMatch(name, "(?:elasticsearch_(cluster_health_(active_(primary_shards|shards)|delayed_unassigned_shards|indices_status_code|initializing_shards|number_of_(data_nodes|nodes|pending_tasks)|relocating_shards|unassigned_shards)|clusterstats_(indices_fielddata_evictions|nodes_jvm_mem_heap_used_in_bytes)|fs_total_(free_in_bytes|total_in_bytes)|indices_(flush_(total|total_time_in_millis)|get_(exists_time_in_millis|exists_total|missing_time_in_millis|missing_total|time_in_millis|total)|indexing_delete_time_in_millis|indexing_delete_total|indexing_index_time_in_millis|indexing_index_total|merges_total_time_in_millis|search_query_time_in_millis|search_query_total|segments_fixed_bit_set_memory_in_bytes|segments_terms_memory_in_bytes|stats_primaries_(docs_count|indexing_index_time_in_millis|query_cache_cache_size|query_cache_evictions|segments_doc_values_memory_in_bytes|segments_index_writer_memory_in_bytes|segments_memory_in_bytes)|stats_total___(fielddata_memory_size_in_bytes|indexing_index_total|merges_total)|stats_total_(docs_count|fielddata_memory_size_in_bytes|flush_total_time_in_millis|indexing_delete_total|indexing_index_time_in_millis|indexing_index_total|merges_total_docs|merges_total_size_in_bytes|merges_total_time_in_millis|query_cache_evictions|refresh_total|refresh_total_time_in_millis|search_fetch_time_in_millis|search_fetch_total|search_query_time_in_millis|search_query_total|segments_fixed_bit_set_memory_in_bytes|segments_index_writer_memory_in_bytes|segments_memory_in_bytes|segments_terms_memory_in_bytes|store_size_in_bytes|translog_operations|translog_size_in_bytes))|jvm_(gc_collectors_.*_collection_time_in_millis|mem_heap_committed_in_bytes|mem_heap_used_in_bytes|mem_heap_used_percent)|os_cpu_(load_average_5m|percent)|process_open_file_descriptors|thread_pool_(analyze_completed|analyze_threads|get_rejected|search_queue)|transport_(rx_size_in_bytes|tx_size_in_bytes)))")
+          - IsMatch(name, "activemq_.*") and not IsMatch(name, "(?:activemq_(topic_.*|queue_.*|.*_QueueSize|broker_(AverageMessageSize|CurrentConnectionsCount|MemoryLimit|StoreLimit|TempLimit|TotalConnectionsCount|TotalConsumerCount|TotalDequeueCount|TotalEnqueueCount|TotalMessageCount|TotalProducerCount|UptimeMillis)|jvm_memory_(HeapMemoryUsage_max|HeapMemoryUsage_used|NonHeapMemoryUsage_used)|jvm_runtime_Uptime|OperatingSystem_(FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize)))")
+          - IsMatch(name, "couchbase_.*") and not IsMatch(name, "(?:couchbase_(node_.*|bucket_(ep_.*|vb_.*|delete_.*|cmd.*|bytes_.*|item_count|curr_connections|ops_per_sec|disk_write_queue|mem_.*|cas_hits|ops|curr_items|cpu_utilization_rate|swap_used|disk_used|rest_requests|hibernated_waked|xdc_ops)))")
+          - IsMatch(name, "squid_.*") and not IsMatch(name, "(?:squid_(uptime|cache(Ip(Entries|Requests|Hits)|Fqdn(Entries|Requests|Misses|NegativeHits)|Dns(Requests|Replies|SvcTime5)|Sys(PageFaults|NumReads)|Current(FileDescrCnt|UnusedFDescrCnt|ResFileDescrCnt)|Server(Requests|InKb|OutKb)|Http(AllSvcTime5|Errors|InKb|OutKb|AllSvcTime1)|Mem(MaxSize|Usage)|NumObjCount|CpuTime|MaxResSize|ProtoClientHttpRequests|Clients)))")
+      groupbyattrs:
+        keys:
+        - container
+        - namespace
+        - pod
+        - service
+      groupbyattrs/group_by_name:
+        keys:
+        - __name__
+        - job
+      k8s_tagger:
+        extract:
+          delimiter: _
+          labels:
+          - key: '*'
+            tag_name: pod_labels_%s
+          metadata:
+          - daemonSetName
+          - deploymentName
+          - nodeName
+          - replicaSetName
+          - serviceName
+          - statefulSetName
+        owner_lookup_enabled: true
+        passthrough: false
+        pod_association:
+        - from: build_hostname
+      memory_limiter:
+        check_interval: 5s
+        limit_percentage: 75
+        spike_limit_percentage: 20
+      metricstransform:
+        transforms:
+          action: update
+          include: ^prometheus_remote_write_(.*)$$
+          match_type: regexp
+          new_name: $$1
+      resource:
+        attributes:
+        - action: upsert
+          from_attribute: namespace
+          key: k8s.namespace.name
+        - action: delete
+          key: namespace
+        - action: upsert
+          from_attribute: pod
+          key: k8s.pod.name
+        - action: delete
+          key: pod
+        - action: upsert
+          from_attribute: container
+          key: k8s.container.name
+        - action: delete
+          key: container
+        - action: upsert
+          from_attribute: service
+          key: prometheus_service
+        - action: delete
+          key: service
+        - action: upsert
+          from_attribute: service.name
+          key: job
+        - action: delete
+          key: service.name
+        - action: upsert
+          key: _origin
+          value: kubernetes
+        - action: upsert
+          key: cluster
+          value: kubernetes
+      resource/delete_source_metadata:
+        attributes:
+        - action: delete
+          key: _sourceCategory
+        - action: delete
+          key: _sourceHost
+        - action: delete
+          key: _sourceName
+      resource/remove_k8s_pod_pod_name:
+        attributes:
+        - action: delete
+          key: k8s.pod.pod_name
+      routing:
+        attribute_source: resource
+        default_exporters:
+        - sumologic/default
+        drop_resource_routing_attribute: true
+        from_attribute: http_listener_v2_path
+        table:
+        - exporters:
+          - sumologic/apiserver
+          value: /prometheus.metrics.apiserver
+        - exporters:
+          - sumologic/control_plane
+          value: /prometheus.metrics.control-plane.coredns
+        - exporters:
+          - sumologic/control_plane
+          value: /prometheus.metrics.control-plane.kube-etcd
+        - exporters:
+          - sumologic/controller
+          value: /prometheus.metrics.controller-manager
+        - exporters:
+          - sumologic/kubelet
+          value: /prometheus.metrics.kubelet
+        - exporters:
+          - sumologic/node
+          value: /prometheus.metrics.node
+        - exporters:
+          - sumologic/scheduler
+          value: /prometheus.metrics.scheduler
+        - exporters:
+          - sumologic/state
+          value: /prometheus.metrics.state
+        - exporters:
+          - sumologic/default
+          value: /prometheus.metrics.applications.custom
+      source:
+        collector: kubernetes
+        exclude:
+          k8s.namespace.name: ""
+      sumologic_schema:
+        add_cloud_namespace: false
+      transform/prepare_routing:
+        error_mode: ignore
+        metric_statements:
+        - context: metric
+          statements:
+          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.apiserver")
+            where resource.attributes["job"] == "apiserver"
+          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.control-plane.coredns")
+            where resource.attributes["job"] == "coredns"
+          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.control-plane.kube-etcd")
+            where resource.attributes["job"] == "kube-etcd"
+          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.controller-manager")
+            where resource.attributes["job"] == "kubelet" and IsMatch(name, "^cloudprovider_.*")
+          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.kubelet")
+            where resource.attributes["job"] == "kubelet" and not IsMatch(name, "^cloudprovider_.*")
+          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.node")
+            where resource.attributes["job"] == "node-exporter"
+          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.scheduler")
+            where resource.attributes["job"] == "kube-scheduler"
+          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.state")
+            where resource.attributes["job"] == "kube-state-metrics"
+      transform/remove_name:
+        error_mode: ignore
+        metric_statements:
+        - context: resource
+          statements:
+          - delete_key(attributes, "__name__")
+      transform/set_name:
+        error_mode: ignore
+        metric_statements:
+        - context: datapoint
+          statements:
+          - set(attributes["__name__"], metric.name) where IsMatch(metric.name, "^cloudprovider_.*")
+    receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4318
+      telegraf:
+        agent_config: |
+          [agent]
+            interval = "30s"
+            flush_interval = "30s"
+            omit_hostname = true
+          [[inputs.http_listener_v2]]
+            # wait longer than prometheus
+            read_timeout = "30s"
+            write_timeout = "30s"
+            service_address = ":9888"
+            data_format = "prometheusremotewrite"
+            path_tag = true
+            paths = [
+              "/prometheus.metrics",
+              "/prometheus.metrics.applications.activemq",
+              "/prometheus.metrics.applications.apache",
+              "/prometheus.metrics.applications.cassandra",
+              "/prometheus.metrics.applications.couchbase",
+              "/prometheus.metrics.applications.custom",
+              "/prometheus.metrics.applications.elasticsearch",
+              "/prometheus.metrics.applications.haproxy",
+              "/prometheus.metrics.applications.jmx",
+              "/prometheus.metrics.applications.kafka",
+              "/prometheus.metrics.applications.memcached",
+              "/prometheus.metrics.applications.mongodb",
+              "/prometheus.metrics.applications.mysql",
+              "/prometheus.metrics.applications.nginx",
+              "/prometheus.metrics.applications.nginx-ingress",
+              "/prometheus.metrics.applications.postgresql",
+              "/prometheus.metrics.applications.rabbitmq",
+              "/prometheus.metrics.applications.redis",
+              "/prometheus.metrics.applications.sqlserver",
+              "/prometheus.metrics.applications.squidproxy",
+              "/prometheus.metrics.applications.tomcat",
+              "/prometheus.metrics.applications.varnish",
+              "/prometheus.metrics.node",
+              "/prometheus.metrics.operator.rule"
+            ]
+    service:
+      extensions:
+      - health_check
+      - file_storage
+      - pprof
+      pipelines:
+        metrics:
+          exporters:
+          - sumologic/default
+          - sumologic/apiserver
+          - sumologic/control_plane
+          - sumologic/controller
+          - sumologic/kubelet
+          - sumologic/node
+          - sumologic/scheduler
+          - sumologic/state
+          processors:
+          - memory_limiter
+          - metricstransform
+          - groupbyattrs
+          - resource
+          - k8s_tagger
+          - source
+          - resource/remove_k8s_pod_pod_name
+          - resource/delete_source_metadata
+          - sumologic_schema
+          - transform/set_name
+          - groupbyattrs/group_by_name
+          - transform/remove_name
+          - filter/app_metrics
+          - batch
+          - transform/prepare_routing
+          - routing
+          receivers:
+          - telegraf
+          - otlp
+      telemetry:
+        logs:
+          level: info

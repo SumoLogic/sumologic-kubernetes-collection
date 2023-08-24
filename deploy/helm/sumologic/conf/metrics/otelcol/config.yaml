@@ -16,6 +16,9 @@ extensions:
 
 processors:
 {{ tpl (.Files.Get "conf/metrics/otelcol/processors.yaml") . | indent 2 }}
+{{ if .Values.sumologic.metrics.enableDefaultFilters -}}
+{{ tpl (.Files.Get "conf/metrics/otelcol/default-filters.yaml") . | indent 2 }}
+{{ end -}}
 
 receivers:
   ## Configuration for Telegraf Receiver

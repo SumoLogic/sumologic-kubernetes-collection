@@ -27,6 +27,9 @@ processors:
   - transform/set_name
   - groupbyattrs/group_by_name
   - transform/remove_name
+{{- if .Values.sumologic.metrics.enableDefaultFilters }}
+  - filter/app_metrics
+{{- end }}
   - batch
 {{- if eq .Values.sumologic.metrics.sourceType "http" }}
   - transform/prepare_routing
