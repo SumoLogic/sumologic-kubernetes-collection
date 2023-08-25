@@ -189,6 +189,13 @@ receivers:
         to: attributes["stream"]
         type: move
 
+{{ if .Values.sumologic.logs.container.keep_time_attribute }}
+      - id: move-time-attribute
+        from: body.time
+        to: attributes["time"]
+        type: move
+{{ end }}
+
       - from: attributes.container_name
         to: attributes["k8s.container.name"]
         type: move
