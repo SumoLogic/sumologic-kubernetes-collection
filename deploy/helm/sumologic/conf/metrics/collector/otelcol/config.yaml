@@ -61,10 +61,6 @@ processors:
         - IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
 {{- end }}
 
-{{ if .Values.sumologic.metrics.enableDefaultFilters -}}
-{{ tpl (.Files.Get "conf/metrics/collector/otelcol/default-filters.yaml") . | indent 2 }}
-{{ end -}}
-
 receivers:
   prometheus:
     config:
@@ -222,8 +218,5 @@ service:
 {{- end }}
         - filter/drop_unnecessary_metrics
         - transform/drop_unnecessary_attributes
-{{- if .Values.sumologic.metrics.enableDefaultFilters }}
-        - filter/app_metrics
-{{- end }}
       receivers: [prometheus]
 

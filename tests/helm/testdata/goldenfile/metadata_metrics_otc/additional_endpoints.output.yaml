@@ -281,6 +281,7 @@ data:
             data_format = "prometheusremotewrite"
             path_tag = true
             paths = [
+              "/prometheus.metrics",
               "/prometheus.metrics.custom",
               "/prometheus.metrics.others"
             ]

@@ -1197,6 +1197,10 @@ kube-prometheus-stack:
               target_label: _sumo_forward_
               replacement: "true"
               action: replace
+      remoteWrite:
+        ## infrastructure metrics
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics
+          remoteTimeout: 5s
 
     serviceMonitor:
       selfMonitor: false
