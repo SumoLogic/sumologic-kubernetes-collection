@@ -528,3 +528,38 @@ sumologic:
 
 	require.Equal(t, []string{"test"}, otelConfig.Receivers.Journald.Units)
 }
+
+func TestKeepTimeAttribute(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/collector/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  logs:
+    container:
+      keep_time_attribute: true
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Receivers struct {
+			Filelog struct {
+				Operators []struct {
+					Id     string
+					Type   string
+					Output string
+				}
+			} `yaml:"filelog/containers"`
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	keepTimeOperatorFound := false
+	for _, operator := range otelConfig.Receivers.Filelog.Operators {
+		if operator.Id == "move-time-attribute" {
+			keepTimeOperatorFound = true
+			break
+		}
+	}
+	require.True(t, keepTimeOperatorFound)
+}
