@@ -325,6 +325,9 @@ sumologic:
       ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#using-text-format
       format: fields
 
+      ## When set to `true`, preserves the `time` attribute, which is a string representation of the `timestamp` attribute.
+      keep_time_attribute: false
+
       otelcol:
         ## Extra processors for container logs. See [/docs/collecting-container-logs.md](/docs/collecting-container-logs.md) for details.
         extraProcessors: []
