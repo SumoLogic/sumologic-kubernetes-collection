@@ -82,7 +82,7 @@ Afterwards, you can download the migration tool and run it directly. Set the OS 
 architecture.
 
 ```bash
-OS=linux ARCH=amd64; curl -L "https://github.com/SumoLogic/sumologic-kubernetes-tools/releases/download/v2.19.0/update-collection-v3-sumo-${OS}_${ARCH}" -o update-collection-v3
+OS=linux ARCH=amd64; curl -L "https://github.com/SumoLogic/sumologic-kubernetes-tools/releases/download/v2.21.0/update-collection-v3-sumo-${OS}_${ARCH}" -o update-collection-v3
 chmod +x update-collection-v3
 ./update-collection-v3 -in user-values.yaml -out new-values.yaml
 ```
@@ -93,7 +93,7 @@ You can also run it with Docker:
 docker run \
   --rm \
   -v $(pwd):/values \
-  -i sumologic/kubernetes-tools:2.19.0 \
+  -i sumologic/kubernetes-tools:2.21.0 \
   update-collection-v3 -in /values/user-values.yaml -out /values/new-values.yaml
 ```
 
