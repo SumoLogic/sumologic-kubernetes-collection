@@ -702,6 +702,38 @@ formulas:
 
 #### Example configuration
 
+Here is an example configuration to change `send_batch_size`, `send_batch_max_size`, and `timeout` for logs metadata otelcol, metrics
+metadata otelcol and logs collector otelcol
+
+```yaml
+metadata:
+  logs:
+    config:
+      merge:
+        processors:
+          batch:
+            timeout: 10s
+            send_batch_size: 1_024
+            send_batch_max_size: 2_048
+  metrics:
+    config:
+      merge:
+        processors:
+          batch:
+            timeout: 10s
+            send_batch_size: 1_024
+            send_batch_max_size: 2_048
+
+otellogs:
+  config:
+    merge:
+      processors:
+        batch:
+          timeout: 10s
+          send_batch_size: 1_024
+          send_batch_max_size: 2_048
+```
+
 Below there is example configuration to change `sending_queue` for metrics metadata otelcol, logs metadata otelcol and logs collector
 otelcol
 
