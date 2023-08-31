@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.14.0]
+
+### Released 2023-08-31
+
+### Added
+
+- feat(metrics/collector): add batching [#3229]
+- feat(logs): add option to preserve `time` attribute [#3234]
+
+[#3229]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3229
+[#3234]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3234
+[v3.14.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.14.0
+
 ## [v3.13.0]
 
 ### Released 2023-08-21
