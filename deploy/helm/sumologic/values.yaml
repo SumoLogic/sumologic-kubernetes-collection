@@ -322,7 +322,7 @@ sumologic:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: json is an alias for fields
       ## NOTE: Multiline log detection works differently for `text` format. See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#using-text-format
+      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/troubleshoot-collection.md#using-text-format
       format: fields
 
       ## When set to `true`, preserves the `time` attribute, which is a string representation of the `timestamp` attribute.
@@ -775,7 +775,7 @@ fluentd:
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
     ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluentd-persistence.md
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/fluentd-persistence.md
     enabled: true
 
     ## If defined, storageClassName: <storageClass>
@@ -895,7 +895,7 @@ fluentd:
         requests:
           memory: 768Mi
           ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/best-practices.md#cpu-resources-warning
+          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/best-practices.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -1091,7 +1091,7 @@ fluentd:
         requests:
           memory: 768Mi
           ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/best-practices.md#cpu-resources-warning
+          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/best-practices.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -1405,7 +1405,7 @@ fluent-bit:
           HTTP_Listen  0.0.0.0
           HTTP_Port    2020
     ## https://docs.fluentbit.io/manual/pipeline/inputs
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/container-logs.md
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/container-logs.md
     inputs: |
       [INPUT]
           Name                tail
@@ -4246,7 +4246,7 @@ otelcloudwatch:
       requests:
         memory: 768Mi
         ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-        ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/best-practices.md#cpu-resources-warning
+        ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/best-practices.md#cpu-resources-warning
         cpu: 500m
     ## Option to define priorityClassName to assign a priority class to pods.
     priorityClassName:
