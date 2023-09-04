@@ -27,6 +27,9 @@ Documentation links:
   - [Examples](/docs/configuration-examples.md)
   - Logs
     - [Collecting container logs](/docs/collecting-container-logs.md)
+  - Metrics
+    - [Collecting Kubernetes metrics](/docs/collecting-kubernetes-metrics.md)
+    - [Collecting application metrics](/docs/collecting-application-metrics.md)
   - [Advanced Configuration/Best Practices](/docs/best-practices.md)
   - [Advanced Configuration/Security best practices](/docs/security-best-practices.md)
   - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
