@@ -1,5 +1,5 @@
 ## Fluent Bit configuration described in:
-## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/container-logs.md#using-old-multiline-parser
+## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/container-logs.md#using-old-multiline-parser
 fluent-bit:
   enabled: true
   luaScripts:
@@ -69,7 +69,7 @@ fluent-bit:
           HTTP_Listen  0.0.0.0
           HTTP_Port    2020
     ## https://docs.fluentbit.io/manual/pipeline/inputs
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/container-logs.md
+    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/container-logs.md
     inputs: |
       [INPUT]
           Name                tail

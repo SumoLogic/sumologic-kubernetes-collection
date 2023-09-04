@@ -372,7 +372,7 @@ fluentd:
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
     ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluentd-persistence.md
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/fluentd-persistence.md
     enabled: true
 ```
 
@@ -418,7 +418,7 @@ fluentd:
   ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
   persistence:
     ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluentd-persistence.md
+    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/fluentd-persistence.md
     enabled: true
     size: 20Gi
   buffer:
