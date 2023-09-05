@@ -23,10 +23,7 @@ Example Usage:
 
 */}}
 {{- define "events.otelcol.enabled" -}}
-{{- $enabled := false -}}
-{{- if eq .Values.sumologic.events.provider "otelcol" -}}
 {{- $enabled = true -}}
-{{- end -}}
 {{- if hasKey .Values.sumologic.events "enabled" -}}
 {{- if eq .Values.sumologic.events.enabled false -}}
 {{- $enabled = false -}}
@@ -108,11 +105,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "sumologic.labels.events" -}}
-{{- if eq .Values.sumologic.events.provider "fluentd" -}}
-sumologic.com/app: fluentd-events
-{{- else -}}
 sumologic.com/app: otelcol-events
-{{- end }}
 sumologic.com/component: events
 {{- end -}}
 

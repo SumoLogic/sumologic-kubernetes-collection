@@ -298,10 +298,6 @@ sumologic:
         ##     names: [fluent-bit]
         logGroups: {}
 
-      ## Allow running otel and Fluent Bit side by side. This will result in duplicated
-      ## logs being ingested. Only enabled this if you're **certain** it's what you want.
-      allowSideBySide: false
-
     multiline:
       enabled: true
       first_line_regex: "^\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}"
@@ -3946,7 +3942,6 @@ tracesGateway:
           exporters: [loadbalancing]
 
 ## Configuration of the OpenTelemetry Collector that collects Kubernetes events.
-## It is used when the `sumologic.events.provider` is set to `otelcol`.
 ## See https://github.com/SumoLogic/sumologic-kubernetes-collection/deploy/docs/collecting-kubernetes-events.md.
 otelevents:
   ## Configure image for Opentelemetry Collector

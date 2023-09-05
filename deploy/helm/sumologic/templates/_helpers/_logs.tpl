@@ -26,10 +26,8 @@ Example Usage:
 */}}
 {{- define "logs.otelcol.enabled" -}}
 {{- $enabled := false -}}
-{{- if eq .Values.sumologic.logs.enabled true -}}
-{{- if and (eq .Values.sumologic.logs.metadata.provider "otelcol") (eq .Values.metadata.logs.enabled true) -}}
+{{- if and (eq .Values.sumologic.logs.enabled true) (eq .Values.metadata.logs.enabled true) -}}
 {{- $enabled = true -}}
-{{- end -}}
 {{- end -}}
 {{ $enabled }}
 {{- end -}}
@@ -161,11 +159,7 @@ Return the exporters for kubelet log pipeline.
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs" -}}
-{{- if eq .Values.sumologic.logs.metadata.provider "fluentd" -}}
-{{ template "sumologic.labels.app.fluentd" . }}-logs
-{{- else if eq .Values.sumologic.logs.metadata.provider "otelcol" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-logs
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.collector.configmap" -}}
@@ -257,11 +251,7 @@ Return the exporters for kubelet log pipeline.
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs" -}}
-{{- if eq .Values.sumologic.logs.metadata.provider "fluentd" -}}
-{{ template "sumologic.metadata.name.fluentd" . }}-logs
-{{- else if eq .Values.sumologic.logs.metadata.provider "otelcol" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}-logs
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service" -}}

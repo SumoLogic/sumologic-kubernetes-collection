@@ -89,26 +89,6 @@ Persistence can be disabled by setting `sumologic.events.persistence.enabled` to
 duplication or data loss whenever the collector is restarted. By default, the collector reads Events 1 minute into the past from its start
 time.
 
-### Configuring the event provider
-
-Event collection is performed by the provider specified in `sumologic.events.provider`. This can be either `otelcol` for OpenTelemetry
-Collector (which is the default) or `fluentd` for Fluentd. Note that Fluentd is deprecated and will be removed in the next major release.
-You can switch the provider by setting the property:
-
-```yaml
-sumologic:
-  events:
-    provider: fluentd
-```
-
-To change provider-specific configuration, see the following sections of the [values.yaml][values_yaml] file, depending on the provider
-used:
-
-- `otelevents` for OpenTelemetry Collector provider
-- `fluentd.events` for Fluentd provider
-
-Also see [OpenTelemetry Collector document][otelcol_config] for more details on configuring the Otelcol provider.
-
 ## Disabling Kubernetes events collection
 
 To disable the collection of Kuebrnetes events, set the `sumologic.events.enabled` property to `false`:
@@ -122,6 +102,5 @@ sumologic:
 [event_v1_core]: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#event-v1-core
 [event_events_k8s_io]: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#event-v1-events-k8s-io
 [values_yaml]: /deploy/helm/sumologic/values.yaml
-[otelcol_config]: ./opentelemetry-collector/events.md#kubernetes-events
 [source_category]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions/#Source_Categories
 [source_name]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions/#Source_Name

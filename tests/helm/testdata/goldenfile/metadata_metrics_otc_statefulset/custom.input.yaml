@@ -1,9 +1,5 @@
 sumologic:
-  metrics:
-    metadata:
-      provider: otelcol
-    sourceType: otlp
-
+  sourceType: otlp
 metadata:
   image:
     repository: my_repository

@@ -838,12 +838,13 @@ for below pods:
 | `pvcCleaner`                   | `pvcCleaner.job.nodeSelector.kubernetes.io/os`                                  |
 | `experimental metrics otelcol` | `sumologic.metrics.collector.otelcol.nodeSelector.kubernetes.io/os`             |
 
-Node selector can be changed via additional parameter in `user-values.yaml`, see an example for Fluent-Bit below:
+Node selector can be changed via additional parameter in `user-values.yaml`, see an example for PVC Cleaner below:
 
 ```yaml
-fluent-bit:
-  nodeSelector:
-    kubernetes.io/os: linux
+pvcCleaner:
+  job:
+    nodeSelector:
+      kubernetes.io/os: linux
 ```
 
 #### Setting different resources on different nodes for logs collector

@@ -1,8 +1,6 @@
 sumologic:
   collectorName: my_collectorName
   logs:
-    metadata:
-      provider: otelcol
     collector:
       otelcol:
         enabled: true
@@ -71,6 +69,3 @@ sumologic:
               attributes:
                 - action: delete
                   key: redundant-attribute
-
-fluent-bit:
-  enabled: false

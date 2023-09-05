@@ -71,17 +71,7 @@ Configuration for ServiceMonitors elsewhere in the Chart will still apply.
 
 ## Metrics metadata
 
-To enable OpenTelemetry Collector for metrics metadata, please use the following configuration:
-
-```yaml
-sumologic:
-  metrics:
-    metadata:
-      provider: otelcol
-```
-
-As we are providing drop-in replacement, most of the configuration from [`values.yaml`][values] should work the same way for OpenTelemetry
-Collector and for Fluentd.
+OpenTelemetry Collector is used for metrics metadata.
 
 ## Metrics Configuration
 

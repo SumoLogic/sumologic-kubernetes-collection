@@ -24,10 +24,8 @@ Example Usage:
 */}}
 {{- define "metrics.otelcol.enabled" -}}
 {{- $enabled := false -}}
-{{- if eq .Values.sumologic.metrics.enabled true -}}
-{{- if and (eq .Values.sumologic.metrics.metadata.provider "otelcol") (eq .Values.metadata.metrics.enabled true) -}}
+{{- if and (eq .Values.sumologic.metrics.enabled true) (eq .Values.metadata.metrics.enabled true) -}}
 {{- $enabled = true -}}
-{{- end -}}
 {{- end -}}
 {{ $enabled }}
 {{- end -}}
@@ -41,10 +39,8 @@ Example Usage:
 */}}
 {{- define "metrics.fluentd.enabled" -}}
 {{- $enabled := false -}}
-{{- if eq .Values.sumologic.metrics.enabled true -}}
-{{- if and (eq .Values.sumologic.metrics.metadata.provider "fluentd") (eq .Values.fluentd.metrics.enabled true) -}}
+{{- if and (eq .Values.sumologic.metrics.enabled true) (eq .Values.fluentd.metrics.enabled true) -}}
 {{- $enabled = true -}}
-{{- end -}}
 {{- end -}}
 {{ $enabled }}
 {{- end -}}
@@ -82,11 +78,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics" -}}
-{{- if eq .Values.sumologic.metrics.metadata.provider "fluentd" -}}
-{{ template "sumologic.labels.app.fluentd" . }}-metrics
-{{- else if eq .Values.sumologic.metrics.metadata.provider "otelcol" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-metrics
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics.pod" -}}
@@ -134,11 +126,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics" -}}
-{{- if eq .Values.sumologic.metrics.metadata.provider "fluentd" -}}
-{{ template "sumologic.metadata.name.fluentd" . }}-metrics
-{{- else if eq .Values.sumologic.metrics.metadata.provider "otelcol" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}-metrics
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metrics.metadata.endpoint" -}}

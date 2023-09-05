@@ -57,38 +57,6 @@ metadata:
 	require.Equal(t, expected, otelConfig)
 }
 
-func TestMetadataOtelConfigFluentBitEnabled(t *testing.T) {
-	t.Parallel()
-	templatePath := "templates/logs/otelcol/configmap.yaml"
-	valuesYaml := `
-sumologic:
-  logs:
-    collector:
-      otelcol:
-        enabled: false
-
-fluent-bit:
-  enabled: true
-`
-	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
-
-	var otelConfig struct {
-		Receivers map[string]interface{}
-		Service   struct {
-			Pipelines map[string]interface{}
-		}
-	}
-	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
-	require.NoError(t, err)
-
-	require.ElementsMatch(t, []string{"fluentforward"}, keys(otelConfig.Receivers))
-	require.ElementsMatch(t, []string{
-		"logs/fluent/containers",
-		"logs/fluent/kubelet",
-		"logs/fluent/systemd",
-	}, keys(otelConfig.Service.Pipelines))
-}
-
 func TestMetadataOtelConfigSystemdDisabled(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/logs/otelcol/configmap.yaml"
@@ -155,50 +123,6 @@ sumologic:
 	require.Contains(t, otelConfig.Processors, "filter/include-host")
 
 	containersPipeline := otelConfig.Service.Pipelines["logs/otlp/containers"]
-	require.Contains(t, containersPipeline.Processors, "filter/include-host")
-}
-
-func TestMetadataFluentBitExtraProcessors(t *testing.T) {
-	t.Parallel()
-	templatePath := "templates/logs/otelcol/configmap.yaml"
-	valuesYaml := `
-sumologic:
-  logs:
-    collector:
-      otelcol: 
-        enabled: false
-    container:
-      otelcol:
-        extraProcessors:
-        - filter/include-host:
-            logs:
-              include:
-                match_type: strict
-                resource_attributes:
-                - key: host.name
-                  value: just_this_one_hostname
-fluent-bit:
-  enabled: true
-`
-	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
-
-	var otelConfig struct {
-		Exporters  map[string]interface{}
-		Processors map[string]interface{}
-		Service    struct {
-			Pipelines map[string]struct {
-				Receivers  []string
-				Processors []string
-				Exporters  []string
-			}
-		}
-	}
-	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
-	require.NoError(t, err)
-
-	require.Contains(t, otelConfig.Processors, "filter/include-host")
-
-	containersPipeline := otelConfig.Service.Pipelines["logs/fluent/containers"]
 	require.Contains(t, containersPipeline.Processors, "filter/include-host")
 }
 
