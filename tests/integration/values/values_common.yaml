@@ -55,28 +55,6 @@ metadata:
       replicaCount: 1
 
 # Request less resources so that this fits on Github actions runners environment
-fluentd:
-  logs:
-    statefulset:
-      resources:
-        requests:
-          memory: 64Mi
-          cpu: 100m
-  metrics:
-    statefulset:
-      resources:
-        requests:
-          memory: 64Mi
-          cpu: 100m
-  events:
-    statefulset:
-      resources:
-        requests:
-          memory: 64Mi
-          cpu: 100m
-  persistence:
-    size: 100Mi
-
 otelevents:
   config:
     merge:

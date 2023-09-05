@@ -27,7 +27,7 @@ items:
           - sumologic
       selector:
         matchLabels:
-          sumologic.com/app: fluentd-logs
+          sumologic.com/app: otelcol-logs
           sumologic.com/scrape: "true"
   - apiVersion: monitoring.coreos.com/v1
     kind: ServiceMonitor
@@ -53,7 +53,7 @@ items:
           - sumologic
       selector:
         matchLabels:
-          sumologic.com/app: fluentd-metrics
+          sumologic.com/app: otelcol-metrics
           sumologic.com/scrape: "true"
   - apiVersion: monitoring.coreos.com/v1
     kind: ServiceMonitor
@@ -81,38 +81,6 @@ items:
         matchLabels:
           sumologic.com/app: otelcol
           sumologic.com/component: metrics
-          sumologic.com/scrape: "true"
-  - apiVersion: monitoring.coreos.com/v1
-    kind: ServiceMonitor
-    metadata:
-      name: collection-sumologic-fluent-bit
-      namespace: sumologic
-      labels:
-        app: sumologic-prometheus
-
-        app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/instance: RELEASE-NAME
-        app.kubernetes.io/version: "%CURRENT_CHART_VERSION%"
-        app.kubernetes.io/part-of: sumologic
-        chart: sumologic-%CURRENT_CHART_VERSION%
-        release: "RELEASE-NAME"
-        heritage: "Helm"
-        sumologic.com/app: collection-fluent-bit
-    spec:
-      endpoints:
-        - metricRelabelings:
-            - action: keep
-              regex: fluentbit_.*
-              sourceLabels:
-                - __name__
-          path: /api/v1/metrics/prometheus
-          port: http
-      namespaceSelector:
-        matchNames:
-          - sumologic
-      selector:
-        matchLabels:
-          app.kubernetes.io/name: fluent-bit
           sumologic.com/scrape: "true"
   - apiVersion: monitoring.coreos.com/v1
     kind: ServiceMonitor
