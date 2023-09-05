@@ -20,7 +20,7 @@ Example Usage:
 
 */}}
 {{- define "events.otelcol.enabled" -}}
-{{- $enabled = true -}}
+{{- $enabled := true -}}
 {{- if hasKey .Values.sumologic.events "enabled" -}}
 {{- if eq .Values.sumologic.events.enabled false -}}
 {{- $enabled = false -}}
