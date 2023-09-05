@@ -249,8 +249,6 @@ sumologic:
   ### Configuration for collection of Kubernetes events
   events:
     enabled: true
-    ## Defines which provider is used for Kubernetes events collection - `otelcol` or `fluentd`. `otelcol` is the default and is recommended. `fluentd` is deprecated.
-    provider: otelcol
 
     ## Source name for the Events source. Default: "events"
     sourceName: "events"
@@ -280,9 +278,6 @@ sumologic:
   ## Set the enabled flag to false for disabling logs ingestion altogether.
   logs:
     enabled: true
-    metadata:
-      ## Defines logs metadata enrichment provider - `otelcol` or `fluentd`. `otelcol` is the default and is recommended. `fluentd` is deprecated.
-      provider: otelcol
 
     collector:
       otelcol:
@@ -470,9 +465,6 @@ sumologic:
   ## Set the enabled flag to false for disabling metrics ingestion altogether.
   metrics:
     enabled: true
-    metadata:
-      ## Defines metrics metadata enrichment provider - `otelcol` or `fluentd`. `otelcol` is the default and is recommended. `fluentd` is deprecated.
-      provider: otelcol
 
     collector:
       ### Otel metrics collector. Replaces Prometheus.
@@ -1327,201 +1319,6 @@ metrics-server:
   ##
   #   pullSecrets:
   #     - imagepullsecret
-
-## Configure Fluent Bit
-## ref: https://github.com/fluent/helm-charts/blob/master/charts/fluent-bit/values.yaml
-fluent-bit:
-  enabled: false
-
-  ## Put here the new name if you want to override the full name used for Fluent Bit components.
-  # fullnameOverride: ""
-
-  ## If specified, use these secrets to access the image
-  # imagePullSecrets:
-  #   - name: "image-pull-secret"
-  image:
-    repository: public.ecr.aws/sumologic/fluent-bit
-    tag: 2.1.6
-    pullPolicy: IfNotPresent
-
-  ## Resource limits for Fluent Bit
-  resources:
-    {}
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 10m
-    #   memory: 8Mi
-
-  ## Uncomment the flag below to not install Fluent Bit helm chart as a dependency along with this helm chart.
-  ## Do not use this flag to disable logs collection.
-  ## Instead, set the `sumologic.logs.enabled: false` flag to disable logs collection.
-  ## Do not set this flag explicitly to `true` while at the same time setting `sumologic.logs.enabled: false`,
-  ## as this will make Fluent Bit try to write to an non-existent logs enrichment service.
-  # enabled: false
-
-  ## Configuration for Fluent Bit service
-  service:
-    ## Add custom labels to Fluent Bit service
-    labels:
-      sumologic.com/scrape: "true" # label used by Fluent Bit service monitor
-
-  ## Add custom pod labels to Fluent Bit daemonset pods
-  podLabels: {}
-
-  ## Add custom pod annotations to Fluent Bit daemonset pods
-  podAnnotations: {}
-
-  # nodeSelector: {}
-
-  # priorityClassName: ""
-
-  securityContext:
-    capabilities:
-      drop:
-        - ALL
-  ## Set securityContext of Fluent Bit daemonset containers as privileged for running in Openshift
-  #   privileged: true
-
-  env:
-    - name: METADATA_LOGS_SVC
-      valueFrom:
-        configMapKeyRef:
-          name: sumologic-configmap
-          key: metadataLogs
-    - name: NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
-
-  tolerations:
-    - effect: NoSchedule
-      operator: Exists
-
-  extraVolumeMounts:
-    - mountPath: /tail-db
-      name: tail-db
-  extraVolumes:
-    - hostPath:
-        path: /var/lib/fluent-bit
-        type: DirectoryOrCreate
-      name: tail-db
-
-  ## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit
-  config:
-    ## https://docs.fluentbit.io/manual/service
-    service: |
-      [SERVICE]
-          Flush        1
-          Daemon       Off
-          Log_Level    info
-          Parsers_File parsers.conf
-          Parsers_File custom_parsers.conf
-          HTTP_Server  On
-          HTTP_Listen  0.0.0.0
-          HTTP_Port    2020
-    ## https://docs.fluentbit.io/manual/pipeline/inputs
-    ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/container-logs.md
-    inputs: |
-      [INPUT]
-          Name                tail
-          Path                /var/log/containers/*.log
-          Docker_Mode         On
-          Docker_Mode_Parser  multi_line
-          Tag                 containers.*
-          Refresh_Interval    1
-          Rotate_Wait         60
-          Mem_Buf_Limit       5MB
-          Skip_Long_Lines     On
-          DB                  /tail-db/tail-containers-state-sumo.db
-          DB.Sync             Normal
-      [INPUT]
-          Name            systemd
-          Tag             host.*
-          DB              /tail-db/systemd-state-sumo.db
-          Systemd_Filter  _SYSTEMD_UNIT=addon-config.service
-          Systemd_Filter  _SYSTEMD_UNIT=addon-run.service
-          Systemd_Filter  _SYSTEMD_UNIT=cfn-etcd-environment.service
-          Systemd_Filter  _SYSTEMD_UNIT=cfn-signal.service
-          Systemd_Filter  _SYSTEMD_UNIT=clean-ca-certificates.service
-          Systemd_Filter  _SYSTEMD_UNIT=containerd.service
-          Systemd_Filter  _SYSTEMD_UNIT=coreos-metadata.service
-          Systemd_Filter  _SYSTEMD_UNIT=coreos-setup-environment.service
-          Systemd_Filter  _SYSTEMD_UNIT=coreos-tmpfiles.service
-          Systemd_Filter  _SYSTEMD_UNIT=dbus.service
-          Systemd_Filter  _SYSTEMD_UNIT=docker.service
-          Systemd_Filter  _SYSTEMD_UNIT=efs.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd-member.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd2.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcd3.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-check.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-reconfigure.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-save.service
-          Systemd_Filter  _SYSTEMD_UNIT=etcdadm-update-status.service
-          Systemd_Filter  _SYSTEMD_UNIT=flanneld.service
-          Systemd_Filter  _SYSTEMD_UNIT=format-etcd2-volume.service
-          Systemd_Filter  _SYSTEMD_UNIT=kube-node-taint-and-uncordon.service
-          Systemd_Filter  _SYSTEMD_UNIT=kubelet.service
-          Systemd_Filter  _SYSTEMD_UNIT=ldconfig.service
-          Systemd_Filter  _SYSTEMD_UNIT=locksmithd.service
-          Systemd_Filter  _SYSTEMD_UNIT=logrotate.service
-          Systemd_Filter  _SYSTEMD_UNIT=lvm2-monitor.service
-          Systemd_Filter  _SYSTEMD_UNIT=mdmon.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-idmapd.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-mountd.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-server.service
-          Systemd_Filter  _SYSTEMD_UNIT=nfs-utils.service
-          Systemd_Filter  _SYSTEMD_UNIT=node-problem-detector.service
-          Systemd_Filter  _SYSTEMD_UNIT=ntp.service
-          Systemd_Filter  _SYSTEMD_UNIT=oem-cloudinit.service
-          Systemd_Filter  _SYSTEMD_UNIT=rkt-gc.service
-          Systemd_Filter  _SYSTEMD_UNIT=rkt-metadata.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpc-idmapd.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpc-mountd.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpc-statd.service
-          Systemd_Filter  _SYSTEMD_UNIT=rpcbind.service
-          Systemd_Filter  _SYSTEMD_UNIT=set-aws-environment.service
-          Systemd_Filter  _SYSTEMD_UNIT=system-cloudinit.service
-          Systemd_Filter  _SYSTEMD_UNIT=systemd-timesyncd.service
-          Systemd_Filter  _SYSTEMD_UNIT=update-ca-certificates.service
-          Systemd_Filter  _SYSTEMD_UNIT=user-cloudinit.service
-          Systemd_Filter  _SYSTEMD_UNIT=var-lib-etcd2.service
-          Max_Entries     1000
-          Read_From_Tail  true
-    filters: ""
-    ## NOTE: Requires trailing "." for fully-qualified name resolution
-    outputs: |
-      [OUTPUT]
-          Name          forward
-          Match         *
-          Host          ${METADATA_LOGS_SVC}.${NAMESPACE}.svc.cluster.local.
-          Port          24321
-          Retry_Limit   False
-          tls           off
-          tls.verify    on
-          tls.debug     1
-          # Disable keepalive for better load balancing
-          net.keepalive off
-    customParsers: |
-      [PARSER]
-          Name        multi_line
-          Format      regex
-          Regex       (?<log>^{"log":"\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*)
-      [PARSER]
-          Name         crio
-          Format       regex
-          Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
-          Time_Key     time
-          Time_Format  %Y-%m-%dT%H:%M:%S.%L%z
-      [PARSER]
-          Name         containerd
-          Format       regex
-          Regex        ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
-          Time_Key     time
-          Time_Keep    On
-          Time_Format  %Y-%m-%dT%H:%M:%S.%LZ
 
 ## Configure kube-prometheus-stack
 ## ref: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
