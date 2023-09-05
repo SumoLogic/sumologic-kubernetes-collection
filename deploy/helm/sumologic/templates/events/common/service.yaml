@@ -8,8 +8,8 @@ metadata:
     app: {{ template "sumologic.labels.app.events.service" . }}
     {{- include "sumologic.labels.scrape.events" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
-{{- if .Values.otelcol.serviceLabels }}
-{{ toYaml .Values.otelcol.serviceLabels | indent 4 }}
+{{- if .Values.metadata.serviceLabels }}
+{{ toYaml .Values.metadata.serviceLabels | indent 4 }}
 {{- end }}
 spec:
   selector:
