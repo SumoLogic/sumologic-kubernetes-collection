@@ -27,7 +27,6 @@ fsGroup:
   ranges:
     - min: 65534
       max: 65534
-    - min: 999 # fluentd
       max: 1000 # prometheus
     - min: 2000 # prometheus
       max: 2000 # prometheus

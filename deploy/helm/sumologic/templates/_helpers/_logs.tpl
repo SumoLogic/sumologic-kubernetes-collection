@@ -32,7 +32,6 @@ Example Usage:
 {{/*
 Check if otelcol logs collector is enabled.
 It's enabled if both logs in general and the collector specifically are enabled.
-If both the collector and Fluent-Bit are enabled, we error.
 
 Example Usage:
 {{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
@@ -237,7 +236,7 @@ Return the exporters for kubelet log pipeline.
 {{- end -}}
 
 {{- define "sumologic.labels.logs" -}}
-sumologic.com/app: fluentd-logs
+sumologic.com/app: otelcol-logs
 sumologic.com/component: logs
 {{- end -}}
 

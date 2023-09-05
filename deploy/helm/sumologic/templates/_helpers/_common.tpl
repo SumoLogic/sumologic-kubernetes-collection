@@ -49,10 +49,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.fullname" . }}
 {{- end -}}
 
-{{- define "sumologic.labels.app.fluentd" -}}
-{{- template "sumologic.fullname" . }}-fluentd
-{{- end -}}
-
 {{- define "sumologic.labels.app.opentelemetry.operator" -}}
 {{- template "sumologic.fullname" . }}-ot-operator
 {{- end -}}
@@ -203,10 +199,6 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 
 {{- define "sumologic.metadata.name.securitycontextconstraints" -}}
 {{- template "sumologic.fullname" . }}-scc
-{{- end -}}
-
-{{- define "sumologic.metadata.name.fluentd" -}}
-{{ template "sumologic.fullname" . }}-fluentd
 {{- end -}}
 
 {{- define "sumologic.metadata.name.setup" -}}
@@ -381,7 +373,7 @@ It returns `.Value.key1.key2` if it exists otherwise `default_value`
 
 
 {{/*
-Generate fluentd envs for given source type:
+Generate envs for given source type:
 
 Example:
 
@@ -405,7 +397,7 @@ As a result, the user can upgrade without enabling setup until they actually ena
 {{- end -}}
 
 {{/*
-Generate fluentd envs for given source type:
+Generate envs for given source type:
 
 Example:
 
@@ -449,30 +441,6 @@ Example:
 */}}
 {{- define "kubernetes.minor" -}}
 {{- print (regexFind "^\\d+" .Capabilities.KubeVersion.Minor) -}}
-{{- end -}}
-
-{{- define "fluentd.metadata.annotations_match.quotes" -}}
-{{- $matches_with_quotes := list -}}
-{{- range $match := .Values.fluentd.metadata.annotation_match  }}
-{{- $match_with_quotes := printf "\"%s\"" $match }}
-{{- $matches_with_quotes = append $matches_with_quotes $match_with_quotes }}
-{{- end }}
-{{- $matches_with_quotes_with_commas := join "," $matches_with_quotes }}
-{{- $annotations_match := list $matches_with_quotes_with_commas }}
-{{- print $annotations_match }}
-{{- end -}}
-
-{{/*
-Add service labels
-
-Example Usage:
-{{- if eq (include "service.labels" dict("Provider" "fluentd" "Values" .Values)) "true" }}
-
-*/}}
-{{- define "service.labels" -}}
-{{- if (get (get .Values .Provider) "serviceLabels") }}
-{{ toYaml (get (get .Values .Provider) "serviceLabels") }}
-{{- end }}
 {{- end -}}
 
 {{/*

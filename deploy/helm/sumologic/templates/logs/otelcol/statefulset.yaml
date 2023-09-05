@@ -51,7 +51,7 @@ spec:
       tolerations:
 {{ toYaml .Values.metadata.logs.statefulset.tolerations | indent 8 }}
 {{- end }}
-{{- if or .Values.metadata.logs.statefulset.affinity  .Values.fluentd.logs.statefulset.podAntiAffinity }}
+{{- if .Values.metadata.logs.statefulset.affinity }}
       affinity:
 {{- if .Values.metadata.logs.statefulset.affinity }}
 {{ toYaml .Values.metadata.logs.statefulset.affinity | indent 8 }}

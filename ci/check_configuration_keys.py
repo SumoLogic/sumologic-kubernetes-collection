@@ -12,23 +12,6 @@ from yaml.loader import SafeLoader
 
 DESCRIPTION = 'This program verifies if all configuration from values.yaml has been documented.'
 SKIP_DEFAULTS = {
-    'fluent-bit.enabled',
-    'fluentd.events.extraEnvVars',
-    'fluentd.events.extraVolumeMounts',
-    'fluentd.events.extraVolumes',
-    'fluentd.events.statefulset.initContainers',
-    'fluentd.logs.autoscaling.targetMemoryUtilizationPercentage',
-    'fluentd.logs.extraEnvVars',
-    'fluentd.logs.extraVolumeMounts',
-    'fluentd.logs.extraVolumes',
-    'fluentd.logs.podDisruptionBudget',
-    'fluentd.logs.statefulset.initContainers',
-    'fluentd.metrics.autoscaling.targetMemoryUtilizationPercentage',
-    'fluentd.metrics.extraEnvVars',
-    'fluentd.metrics.extraVolumeMounts',
-    'fluentd.metrics.extraVolumes',
-    'fluentd.metrics.statefulset.initContainers',
-    'fluentd.persistence.storageClass',
     'kube-prometheus-stack.enabled',
     'kube-prometheus-stack.global.imagePullSecrets',
     'metadata.logs.autoscaling.targetMemoryUtilizationPercentage',

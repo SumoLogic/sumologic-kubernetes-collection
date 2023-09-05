@@ -318,7 +318,7 @@ sumologic:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: json is an alias for fields
       ## NOTE: Multiline log detection works differently for `text` format. See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/troubleshoot-collection.md#using-text-format
+      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/collecting-container-logs.md#text-log-format
       format: fields
 
       ## When set to `true`, preserves the `time` attribute, which is a string representation of the `timestamp` attribute.
@@ -340,16 +340,16 @@ sumologic:
       sourceCategoryReplaceDash: "/"
 
       ## A regular expression for containers.
-      ## Matching containers will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching containers will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludeContainerRegex: ""
       ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludeHostRegex: ""
       ## A regular expression for namespaces.
-      ## Matching namespaces will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching namespaces will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludeNamespaceRegex: ""
       ## A regular expression for pods.
-      ## Matching pods will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching pods will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludePodRegex: ""
 
       ## Defines whether container-level pod annotations are enabled.
@@ -377,16 +377,16 @@ sumologic:
       sourceCategoryReplaceDash: "/"
 
       ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludeFacilityRegex: ""
       ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludeHostRegex: ""
       ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludePriorityRegex: ""
       ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludeUnitRegex: ""
 
     kubelet:
@@ -404,40 +404,16 @@ sumologic:
       sourceCategoryReplaceDash: "/"
 
       ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludeFacilityRegex: ""
       ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludeHostRegex: ""
       ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludePriorityRegex: ""
       ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
-      excludeUnitRegex: ""
-
-    ## Only for Fluentd - default log configuration (catch-all)
-    defaultFluentd:
-      ## Set the _sourceName metadata field in Sumo Logic.
-      sourceName: "k8s_default"
-      ## Set the _sourceCategory metadata field in Sumo Logic.
-      sourceCategory: "default"
-      ## Set the prefix, for _sourceCategory metadata.
-      sourceCategoryPrefix: "kubernetes/"
-      ## Used to replace - with another character.
-      sourceCategoryReplaceDash: "/"
-
-      ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeFacilityRegex: ""
-      ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludeHostRegex: ""
-      ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to FluentD.
-      excludePriorityRegex: ""
-      ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to FluentD.
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
       excludeUnitRegex: ""
 
     ## Fields to be created at Sumo Logic to ensure logs are tagged with
@@ -472,7 +448,7 @@ sumologic:
         ## Default scrape interval
         scrapeInterval: 30s
 
-        ## Option to turn autoscaling on for fluentd and specify params for HPA.
+        ## Option to turn autoscaling on for otelcol and specify params for HPA.
         ## Autoscaling needs metrics-server to access cpu metrics.
         autoscaling:
           enabled: false
@@ -483,9 +459,9 @@ sumologic:
 
         nodeSelector: {}
 
-        ## Add custom annotations only to events fluentd sts pods
+        ## Add custom annotations only to merics otelcol sts pods
         podAnnotations: {}
-        ## Add custom labels only to events fluentd sts pods
+        ## Add custom labels only to metrics otelcol sts pods
         podLabels: {}
 
         ## Option to define priorityClassName to assign a priority class to pods.
@@ -615,15 +591,6 @@ sumologic:
     ## Prometheus serviceMonitors related to Sumo Logic services
     ## They are applied only if kube-prometheus-stack is enabled
     serviceMonitors:
-      - name: collection-sumologic-fluentd-logs
-        additionalLabels:
-          sumologic.com/app: fluentd-logs
-        endpoints:
-          - port: metrics
-        selector:
-          matchLabels:
-            sumologic.com/app: fluentd-logs
-            sumologic.com/scrape: "true"
       - name: collection-sumologic-otelcol-logs
         additionalLabels:
           sumologic.com/app: otelcol-logs
@@ -631,16 +598,7 @@ sumologic:
           - port: otelcol-metrics
         selector:
           matchLabels:
-            sumologic.com/app: fluentd-logs
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-fluentd-metrics
-        additionalLabels:
-          sumologic.com/app: fluentd-metrics
-        endpoints:
-          - port: metrics
-        selector:
-          matchLabels:
-            sumologic.com/app: fluentd-metrics
+            sumologic.com/app: otelcol-logs
             sumologic.com/scrape: "true"
       - name: collection-sumologic-otelcol-metrics
         additionalLabels:
@@ -649,7 +607,7 @@ sumologic:
           - port: otelcol-metrics
         selector:
           matchLabels:
-            sumologic.com/app: fluentd-metrics
+            sumologic.com/app: otelcol-metrics
             sumologic.com/scrape: "true"
       - name: collection-sumologic-metrics-collector
         additionalLabels:
@@ -660,29 +618,6 @@ sumologic:
           matchLabels:
             sumologic.com/app: otelcol
             sumologic.com/component: metrics
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-fluentd-events
-        additionalLabels:
-          sumologic.com/app: fluentd-events
-        endpoints:
-          - port: metrics
-        selector:
-          matchLabels:
-            sumologic.com/app: fluentd-events
-            sumologic.com/scrape: "true"
-      - name: collection-sumologic-fluent-bit
-        additionalLabels:
-          sumologic.com/app: collection-fluent-bit
-        endpoints:
-          - port: http
-            path: /api/v1/metrics/prometheus
-            metricRelabelings:
-              - action: keep
-                regex: fluentbit_.*
-                sourceLabels: [__name__]
-        selector:
-          matchLabels:
-            app.kubernetes.io/name: fluent-bit
             sumologic.com/scrape: "true"
       - name: collection-sumologic-otelcol-logs-collector
         additionalLabels:
@@ -736,547 +671,11 @@ sumologic:
 
     sourceType: http
 
-fluentd:
-  image:
-    repository: public.ecr.aws/sumologic/kubernetes-fluentd
-    tag: 1.16.2-sumo-0
-    pullPolicy: IfNotPresent
-
-  ## Sets the fluentd log level. The default log level, if not specified, is info.
-  ## Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs.
-  ## ref: https://docs.fluentd.org/deployment/logging
-  logLevel: "info"
-  ## to ingest all fluentd logs, turn the logLevelFilter to false
-  logLevelFilter: true
-
-  ## Verify SumoLogic HTTPS certificates
-  verifySsl: true
-  ## Proxy URI for sumologic output plugin
-  proxyUri: ""
-
-  ## Enable and set compression encoding for fluentd output plugin
-  compression:
-    enabled: true
-    encoding: gzip
-
-  securityContext:
-    ## The group ID of all processes in the statefulset containers. By default this needs to be fluent(999).
-    fsGroup: 999
-
-  ## Add custom labels to all fluentd sts pods(logs, metrics, events)
-  podLabels: {}
-
-  ## Add custom annotations to all fluentd sts pods(logs, metrics, events)
-  podAnnotations: {}
-
-  ## Add custom labels to all fluentd svc (logs, metrics, events)
-  serviceLabels: {}
-
-  ## Add custom labels to all fluentd statefulset PVC (logs, metrics, events)
-  pvcLabels: {}
-
-  buffer:
-    ## Option to specify the Fluentd buffer as file/memory.
-    ## If fluentd.persistence.enabled is true, this will be ignored.
-    type: "memory"
-
-    ## How frequently to push logs to SumoLogic
-    ## ref: https://github.com/SumoLogic/fluentd-kubernetes-sumologic#options
-    flushInterval: "5s"
-    ## Increase number of http threads to Sumo. May be required in heavy logging/high DPM clusters
-    numThreads: 8
-    chunkLimitSize: "1m"
-    queueChunkLimitSize: 128
-    totalLimitSize: "128m"
-    retryMaxInterval: "10m"
-    retryForever: true
-    compress: gzip
-
-    ## File paths to buffer to, if Fluentd buffer type is specified as file above.
-    ## Each sumologic output plugin buffers to its own unique file.
-    filePaths:
-      logs:
-        containers: /fluentd/buffer/logs.containers
-        kubelet: /fluentd/buffer/logs.kubelet
-        systemd: /fluentd/buffer/logs.systemd
-        default: /fluentd/buffer/logs.default
-      metrics:
-        apiserver: /fluentd/buffer/metrics.apiserver
-        kubelet: /fluentd/buffer/metrics.kubelet
-        container: /fluentd/buffer/metrics.container
-        controller: /fluentd/buffer/metrics.controller
-        scheduler: /fluentd/buffer/metrics.scheduler
-        state: /fluentd/buffer/metrics.state
-        node: /fluentd/buffer/metrics.node
-        control-plane: /fluentd/buffer/metrics.control_plane
-        default: /fluentd/buffer/metrics.default
-      traces: /fluentd/buffer/traces
-
-    ## Additional config for buffer settings
-    extraConf: |-
-
-  ## configuration of fluentd monitoring metrics
-  ## input -> fluentd_input_status_num_records_total (~5% DPM increase for empty cluster)
-  ## output -> fluentd_output_status_num_records_total (~25% DPM increase for empty cluster)
-  monitoring:
-    input: false
-    output: false
-
-  metadata:
-    ## Option to control capturing of annotations by metadata filter plugin.
-    annotation_match:
-      - 'sumologic\.com.*'
-    ## Option to control the enabling of metadata filter plugin cache_size.
-    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-    cacheSize: "10000"
-    ## Option to control the enabling of metadata filter plugin cache_ttl (in seconds).
-    ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-    cacheTtl: "7200"
-    ## Option to control the interval at which metadata cache is asynchronously refreshed (in seconds).
-    cacheRefresh: "3600"
-    ## Option to control the variation in seconds by which the cacheRefresh option is changed for each pod separately.
-    ## For example, if cache refresh is 1 hour and variation is 15 minutes, then actual cache refresh interval
-    ## will be a random value between 45 minutes and 1 hour 15 minutes, different for each pod. This helps spread
-    ## the load on API server that the cache refresh induces. Setting this to 0 disables cache refresh variation.
-    cacheRefreshVariation: "900"
-    ## Option to control the delay with which cache refresh calls hit the api server.
-    ## For example, if 0 then all metadata enrichment happen immediately. Setting this to a non-zero values ensures the
-    ## traffic to api server is much distributed.
-    ## Disclaimer: Not recommended for use, if your api server read latency is > 1s
-    cacheRefreshApiserverRequestDelay: "0"
-    ## Option to disable metadata cache refresh
-    cacheRefreshExcludePodRegex: ""
-    ## Option to give plugin specific log level
-    pluginLogLevel: "error"
-    ## Option to specify K8s API versions
-    coreApiVersions:
-      - v1
-    ## Option to specify K8s API groups
-    apiGroups:
-      - apps/v1
-    ## Option to control the enrichment of logs and metrics with pod owner metadata like `daemonset`, `deployment`,
-    ## `replicaset`, `statefulset`.
-    addOwners: true
-    ## Option to control the enrichment of logs and metrics with `service` metadata.
-    addService: true
-    ## Option to specify custom API server URL instead of the default,
-    ## that is taken from KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT environment variables.
-    ## Example: "https://kubernetes.default.svc:443".
-    apiServerUrl: ""
-
-  logs:
-    enabled: true
-    statefulset:
-      nodeSelector: {}
-      tolerations: []
-      topologySpreadConstraints: []
-      affinity: {}
-      ## Acceptable values for podAntiAffinity:
-      ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
-      ## hard: specifies rules that must be met for a pod to be scheduled onto a node
-      podAntiAffinity: "soft"
-      replicaCount: 3
-      resources:
-        limits:
-          memory: 1Gi
-          cpu: 1000m
-        requests:
-          memory: 768Mi
-          cpu: 500m
-      ## Option to define priorityClassName to assign a priority class to pods.
-      priorityClassName:
-
-      ## Add custom labels only to logs fluentd sts pods
-      podLabels: {}
-      ## Add custom annotations only to logs fluentd sts pods
-      podAnnotations: {}
-
-      ## Set securityContext for containers running in pods in logs statefulset.
-      containers:
-        fluentd:
-          securityContext: {}
-
-      ## This supports either a structured array or a templatable string
-      initContainers: []
-
-      ## Array mode
-      # initContainers:
-      #   - name: do-something
-      #     image: bitnami/kubectl:1.22
-      #     command: ['kubectl', 'version']
-
-      ## String mode
-      # initContainers: |-
-      #   - name: do-something
-      #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
-      #     command: ['kubectl', 'version']
-
-    ## Option to turn autoscaling on for fluentd and specify params for HPA.
-    ## Autoscaling needs metrics-server to access cpu metrics.
-    autoscaling:
-      enabled: false
-      minReplicas: 3
-      maxReplicas: 10
-      targetCPUUtilizationPercentage: 100
-      # targetMemoryUtilizationPercentage: 50
-
-    ## Option to specify PodDisrutionBudgets
-    ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
-    podDisruptionBudget:
-      minAvailable: 2
-    ## To use maxUnavailable, set minAvailable to null and uncomment the below:
-    #   maxUnavailable: 1
-
-    rawConfig: |-
-      @include common.conf
-      @include logs.conf
-
-    ## Configuration for the forward input plugin that receives logs from FluentBit
-    ## ref: https://docs.fluentd.org/input/forward
-    input:
-      ## Use to specify additional config, including transport or security options.
-      forwardExtraConf: |-
-
-    ## Configuration for sumologic output plugin
-    ## See below links for full reference:
-    ## https://github.com/SumoLogic/fluentd-output-sumologic
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/logs/fluentd/logs.output.conf
-    output:
-      ## Option to control adding timestamp to logs.
-      addTimestamp: true
-      ## Field name when add_timestamp is on.
-      timestampKey: "timestamp"
-      ## Option to give plugin specific log level
-      pluginLogLevel: "error"
-      ## Additional config parameters for sumologic output plugin
-      extraConf: |-
-
-    ## Additional config for custom log pipelines
-    ## ref: TODO: documentation for custom logs pipelines
-    extraLogs: |-
-
-    ## Container log configuration
-    containers:
-      ## To override the entire contents of logs.source.containers.conf file. Leave empty for the default pipeline
-      overrideRawConfig: |-
-
-      outputConf: |-
-        @include logs.output.conf
-
-      ## Override output section for container logs. Leave empty for the default output section
-      overrideOutputConf: |-
-
-      ## ref: https://github.com/fabric8io/fluent-plugin-kubernetes_metadata_filter#configuration
-      k8sMetadataFilter:
-        ## Option to control the enabling of metadata filter plugin watch.
-        watch: "true"
-        ## path to CA file for Kubernetes server certificate validation
-        caFile: ""
-        ## Validate SSL certificates
-        verifySsl: true
-        ## Path to a client cert file to authenticate to the API server
-        clientCert: ""
-        ## Path to a client key file to authenticate to the API server
-        clientKey: ""
-        ## Path to a file containing the bearer token to use for authentication
-        bearerTokenFile: ""
-        ## Regex to match containers tag to `pod_name`, `namespace`, `container_name` and `docker_id`. All of them are obligatory
-        ## See below links for reference:
-        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/blob/v1.15.3-sumo-0/fluent-plugin-kubernetes-metadata-filter/lib/fluent/plugin/filter_kubernetes_metadata.rb#L322-L325
-        ## https://github.com/SumoLogic/sumologic-kubernetes-fluentd/tree/v1.15.3-sumo-0/fluent-plugin-kubernetes-metadata-filter#configuration
-        tagToMetadataRegexp: '.+?\.containers\.(?<pod_name>[^_]+)_(?<namespace>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$'
-
-      ## To use additional filter plugins
-      extraFilterPluginConf: |-
-
-      ## To use additional output plugins
-      extraOutputPluginConf: |-
-
-      ## To enable stiching multiline logs in fluentd when Fluent Bit Multiline feature is On
-      multiline:
-        enabled: true
-
-    ## Kubelet log configuration
-    kubelet:
-      enabled: true
-      ## To use additional filter plugins
-      extraFilterPluginConf: |-
-
-      ## To use additional output plugins
-      extraOutputPluginConf: |-
-
-      outputConf: |-
-        @include logs.output.conf
-
-      ## Override output section for kubelet logs. Leave empty for the default output section.
-      overrideOutputConf: |-
-
-    ## Systemd log configuration
-    systemd:
-      enabled: true
-      ## To use additional filter plugins
-      extraFilterPluginConf: |-
-
-      ## To use additional output plugins
-      extraOutputPluginConf: |-
-
-      outputConf: |-
-        @include logs.output.conf
-
-      ## Override output section for systemd logs. Leave empty for the default output section.
-      overrideOutputConf: |-
-
-    ## Default log configuration (catch-all)
-    default:
-      ## To use additional filter plugins
-      extraFilterPluginConf: |-
-
-      ## To use additional output plugins
-      extraOutputPluginConf: |-
-
-      outputConf: |-
-        @include logs.output.conf
-
-      ## Override output section for untagged logs. Leave empty for the default output section.
-      overrideOutputConf: |-
-
-    ## Extra Environment Values - allows yaml definitions
-    # extraEnvVars:
-    #   - name: VALUE_FROM_SECRET
-    #     valueFrom:
-    #       secretKeyRef:
-    #         name: secret_name
-    #         key: secret_key
-
-    # extraVolumes:
-    #   - name: es-certs
-    #     secret:
-    #       defaultMode: 420
-    #       secretName: es-certs
-    # extraVolumeMounts:
-    #   - name: es-certs
-    #     mountPath: /certs
-    #     readOnly: true
-
-  metrics:
-    enabled: true
-    statefulset:
-      nodeSelector: {}
-      tolerations: []
-      topologySpreadConstraints: []
-      affinity: {}
-      ## Acceptable values for podAntiAffinity:
-      ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
-      ## hard: specifies rules that must be met for a pod to be scheduled onto a node
-      podAntiAffinity: "soft"
-      replicaCount: 3
-      resources:
-        limits:
-          memory: 1Gi
-          cpu: 1000m
-        requests:
-          memory: 768Mi
-          cpu: 500m
-      ## Option to define priorityClassName to assign a priority class to pods.
-      priorityClassName:
-
-      ## Add custom labels only to metrics fluentd sts pods
-      podLabels: {}
-      ## Add custom annotations only to metrics fluentd sts pods
-      podAnnotations: {}
-
-      ## Set securityContext for containers running in pods in metrics statefulset.
-      containers:
-        fluentd:
-          securityContext: {}
-
-      ## This supports either a structured array or a templatable string
-      initContainers: []
-
-      ## Array mode
-      # initContainers:
-      #   - name: do-something
-      #     image: bitnami/kubectl:1.22
-      #     command: ['kubectl', 'version']
-
-      ## String mode
-      # initContainers: |-
-      #   - name: do-something
-      #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
-      #     command: ['kubectl', 'version']
-
-    ## Option to turn autoscaling on for fluentd and specify params for HPA.
-    ## Autoscaling needs metrics-server to access cpu metrics.
-    autoscaling:
-      enabled: false
-      minReplicas: 3
-      maxReplicas: 10
-      targetCPUUtilizationPercentage: 100
-      # targetMemoryUtilizationPercentage: 50
-
-    ## Option to specify PodDisrutionBudgets
-    ## You can specify only one of maxUnavailable and minAvailable in a single PodDisruptionBudget
-    podDisruptionBudget:
-      minAvailable: 2
-
-    rawConfig: |-
-      @include common.conf
-      @include metrics.conf
-
-    ## Configuration for sumologic output plugin
-    ## See below links for full reference:
-    ## https://github.com/SumoLogic/fluentd-output-sumologic
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/deploy/helm/sumologic/conf/metrics/fluentd/metrics.output.conf
-    outputConf: |-
-      @include metrics.output.conf
-
-    ## Additional config parameters for sumologic output plugin
-    extraOutputConf: |-
-
-    ## Override output section for metrics. Leave empty for the default output section
-    overrideOutputConf: |-
-
-    ## To use additional filter plugins
-    extraFilterPluginConf: |-
-
-    ## To use additional output plugins
-    extraOutputPluginConf: |-
-
-    ## Extra Environment Values - allows yaml definitions
-    # extraEnvVars:
-    #   - name: VALUE_FROM_SECRET
-    #     valueFrom:
-    #       secretKeyRef:
-    #         name: secret_name
-    #         key: secret_key
-
-    # extraVolumes:
-    #   - name: es-certs
-    #     secret:
-    #       defaultMode: 420
-    #       secretName: es-certs
-    # extraVolumeMounts:
-    #   - name: es-certs
-    #     mountPath: /certs
-    #     readOnly: true
-
-    ## Output configuration
-    ## tag: tag for fluentd match
-    ## id: sumologic output @id
-    ## endpoint: [optional] [output key by default] It should match the sumologic.collector.sources.metrics[].endpoint
-    ## drop: [optional] [false by default] Change it to true to drop traffic for specific output
-    ## weight: [optional [0 by default] Order of fluentd output (lower means higher priority)
-    ## The weight has meaning in case of fluentd matches
-    output:
-      apiserver:
-        tag: prometheus.metrics.apiserver**
-        id: sumologic.endpoint.metrics.apiserver
-        weight: 90
-      kubelet:
-        tag: prometheus.metrics.kubelet**
-        id: sumologic.endpoint.metrics.kubelet
-        weight: 90
-      container:
-        tag: prometheus.metrics.container**
-        id: sumologic.endpoint.metrics.container
-        source: kubelet
-        weight: 90
-      controller:
-        tag: prometheus.metrics.controller-manager**
-        id: sumologic.endpoint.metrics.kube.controller.manager
-        weight: 90
-      scheduler:
-        tag: prometheus.metrics.scheduler**
-        id: sumologic.endpoint.metrics.kube.scheduler
-        weight: 90
-      state:
-        tag: prometheus.metrics.state**
-        id: sumologic.endpoint.metrics.kube.state
-        weight: 90
-      node:
-        tag: prometheus.metrics.node**
-        id: sumologic.endpoint.metrics.node.exporter
-        weight: 90
-      control-plane:
-        tag: prometheus.metrics.control-plane**
-        id: sumologic.endpoint.metrics.control.plane
-        weight: 90
-      default:
-        tag: prometheus.metrics**
-        id: sumologic.endpoint.metrics
-        weight: 100
-
-  events:
-    statefulset:
-      nodeSelector: {}
-      tolerations: []
-      affinity: {}
-      resources:
-        limits:
-          memory: 512Mi
-          cpu: 200m
-        requests:
-          memory: 256Mi
-          cpu: 100m
-      ## Option to define priorityClassName to assign a priority class to pods.
-      priorityClassName:
-
-      ## Add custom labels only to events fluentd sts pods
-      podLabels: {}
-      ## Add custom annotations only to events fluentd sts pods
-      podAnnotations: {}
-
-      ## Set securityContext for containers running in pods in events statefulset.
-      containers:
-        fluentd:
-          securityContext: {}
-
-      ## This supports either a structured array or a templatable string
-      initContainers: []
-
-      ## Array mode
-      # initContainers:
-      #   - name: do-something
-      #     image: bitnami/kubectl:1.22
-      #     command: ['kubectl', 'version']
-
-      ## String mode
-      # initContainers: |-
-      #   - name: do-something
-      #     image: bitnami/kubectl:{{ .Capabilities.KubeVersion.Major }}.{{ trimSuffix "+" .Capabilities.KubeVersion.Minor }}
-      #     command: ['kubectl', 'version']
-
-    ## Override output section for events. Leave empty for the default output section
-    overrideOutputConf: |-
-
-    ## Source name for the Events source. Default: "events"
-    sourceName: "events"
-    ## Source category for the Events source. Default: "{clusterName}/events"
-    # sourceCategory: "kubernetes/events"
-
-    ## Extra Environment Values - allows yaml definitions
-    # extraEnvVars:
-    #   - name: VALUE_FROM_SECRET
-    #     valueFrom:
-    #       secretKeyRef:
-    #         name: secret_name
-    #         key: secret_key
-
-    # extraVolumes:
-    #   - name: es-certs
-    #     secret:
-    #       defaultMode: 420
-    #       secretName: es-certs
-    # extraVolumeMounts:
-    #   - name: es-certs
-    #     mountPath: /certs
-    #     readOnly: true
-
 ## Configure metrics-server
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/metrics-server/values.yaml
 metrics-server:
   ## Set the enabled flag to true for enabling metrics-server.
-  ## This is required before enabling fluentd autoscaling unless you have an existing metrics-server in the cluster.
+  ## This is required before enabling autoscaling unless you have an existing metrics-server in the cluster.
   enabled: false
   ## Put here the new name if you want to override the full name used for metrics-server components.
   # fullnameOverride: ""
@@ -1997,7 +1396,7 @@ kube-prometheus-stack:
           remoteTimeout: 5s
           writeRelabelConfigs:
             - action: keep
-              regex: (?:kube-state-metrics|kubelet|kube-scheduler|apiserver|coredns|kube-etcd|.+-sumologic-.+|.+-prometheus|.+-fluent-bit)
+              regex: (?:kube-state-metrics|kubelet|kube-scheduler|apiserver|coredns|kube-etcd|.+-sumologic-.+|.+-prometheus)
               sourceLabels: [job]
             ## This is only used for recording rules
             - action: drop
@@ -3181,19 +2580,19 @@ otelcolInstrumentation:
     sourceCategoryReplaceDash: "/"
 
     ## A regular expression for containers.
-    ## Matching containers will be excluded from Sumo. The logs will still be sent to FluentD.
+    ## Matching containers will be excluded from Sumo. The logs will still be sent to otelcol.
     excludeContainerRegex: ""
     ## A regular expression for hosts.
-    ## Matching hosts will be excluded from Sumo. The logs will still be sent to FluentD.
+    ## Matching hosts will be excluded from Sumo. The logs will still be sent to otelcol.
     excludeHostRegex: ""
     ## A regular expression for namespaces.
-    ## Matching namespaces will be excluded from Sumo. The logs will still be sent to FluentD.
+    ## Matching namespaces will be excluded from Sumo. The logs will still be sent to otelcol.
     excludeNamespaceRegex: ""
     ## A regular expression for pods.
-    ## Matching pods will be excluded from Sumo. The logs will still be sent to FluentD.
+    ## Matching pods will be excluded from Sumo. The logs will still be sent to otelcol.
     excludePodRegex: ""
 
-  ## Option to turn autoscaling on for fluentd and specify params for HPA.
+  ## Option to turn autoscaling on for otelcol and specify params for HPA.
   ## Autoscaling needs metrics-server to access cpu metrics.
   autoscaling:
     enabled: false
@@ -3794,7 +3193,7 @@ metadata:
 tracesGateway:
   enabled: true
 
-  ## Option to turn autoscaling on for fluentd and specify params for HPA.
+  ## Option to turn autoscaling on for otelcol and specify params for HPA.
   ## Autoscaling needs metrics-server to access cpu metrics.
   autoscaling:
     enabled: false
@@ -4015,6 +3414,9 @@ otelevents:
     #   - name: es-certs
     #     mountPath: /certs
     #     readOnly: true
+
+  ## Add custom labels to otelevents svc (logs and metrics)
+  serviceLabels: {}
 
 ## Configure cloudwatch collection with Otelcol
 otelcloudwatch:
@@ -4300,7 +3702,6 @@ falco:
 
   customRules:
     ## Mark the following as known k8s api callers:
-    ## * fluentd and its plugins from sumologic/kubernetes-fluentd image
     ## * prometheus
     ## * prometheus operator
     ## * telegraf operator
@@ -4308,7 +3709,6 @@ falco:
     rules_user_known_k8s_api_callers.yaml: |-
       - macro: user_known_contact_k8s_api_server_activities
         condition: >
-          (container.image.repository = "sumologic/kubernetes-fluentd") or
           (container.image.repository = "quay.io/prometheus/prometheus") or
           (container.image.repository = "quay.io/coreos/prometheus-operator") or
           (container.image.repository = "quay.io/influxdb/telegraf-operator") or
