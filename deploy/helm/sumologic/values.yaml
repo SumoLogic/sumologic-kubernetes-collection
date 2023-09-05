@@ -742,8 +742,6 @@ fluentd:
     tag: 1.16.2-sumo-0
     pullPolicy: IfNotPresent
 
-  additionalPlugins: []
-
   ## Sets the fluentd log level. The default log level, if not specified, is info.
   ## Sumo will only ingest the error log level and some specific warnings, the info logs can be seen in kubectl logs.
   ## ref: https://docs.fluentd.org/deployment/logging
