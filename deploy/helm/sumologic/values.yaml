@@ -3415,9 +3415,6 @@ otelevents:
     #     mountPath: /certs
     #     readOnly: true
 
-  ## Add custom labels to otelevents svc (logs and metrics)
-  serviceLabels: {}
-
 ## Configure cloudwatch collection with Otelcol
 otelcloudwatch:
   statefulset:

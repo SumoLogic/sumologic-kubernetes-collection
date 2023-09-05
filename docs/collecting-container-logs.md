@@ -2,8 +2,6 @@
 
 <!-- TOC -->
 
-
-
 <!-- /TOC -->
 
 By default, log collection is enabled. This includes both container logs and systemd logs. This document covers container logs.
