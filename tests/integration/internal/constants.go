@@ -387,8 +387,8 @@ var (
 		AdditionalAnnotatedPodMetrics,
 		OtherMetrics,
 	}
-	DefaultExpectedMetrics                 []string
-	DefaultExpectedNginxAnnotatedMetrics   []string
+	DefaultExpectedMetrics               []string
+	DefaultExpectedNginxAnnotatedMetrics []string
 )
 
 type KindImagesSpec struct {

@@ -84,7 +84,6 @@ sumologic:
 				"collection-sumologic-otelcol-logs",
 				"collection-sumologic-otelcol-metrics",
 				"collection-sumologic-metrics-collector",
-				"collection-sumologic-fluent-bit",
 				"collection-sumologic-otelcol-logs-collector",
 				"collection-sumologic-otelcol-events",
 				"collection-sumologic-otelcol-traces",
