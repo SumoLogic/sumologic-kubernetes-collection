@@ -40,41 +40,11 @@ Example Usage:
 */}}
 {{- define "logs.collector.otelcol.enabled" -}}
 {{- $enabled := and (eq (include "logs.enabled" .) "true") (eq .Values.sumologic.logs.collector.otelcol.enabled true) -}}
-{{- $fluentBitEnabled := index .Values "fluent-bit" "enabled" -}}
-{{- if kindIs "invalid" $fluentBitEnabled -}}
-{{- $fluentBitEnabled = true -}}
-{{- end -}}
-{{- $sideBySideAllowed := .Values.sumologic.logs.collector.allowSideBySide -}}
-{{- if and $enabled $fluentBitEnabled (not $sideBySideAllowed) -}}
-{{- fail "Fluent-Bit and Otel log collector can't be enabled at the same time. Set either `fluent-bit.enabled` or `sumologic.logs.collector.otelcol.enabled` to false" -}}
-{{- end -}}
 {{ $enabled }}
 {{- end -}}
 
 {{- define "logs.collector.otelcloudwatch.enabled" -}}
 {{- $enabled := and (eq (include "logs.enabled" .) "true") (eq .Values.sumologic.logs.collector.otelcloudwatch.enabled true) -}}
-{{- end -}}
-
-{{/*
-Check if Fluent-Bit logs collector is enabled.
-It's enabled if logs in general are enabled and fluent-bit.enabled is set to true.
-
-Example Usage:
-{{- if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
-
-*/}}
-{{- define "logs.collector.fluentbit.enabled" -}}
-{{- $fluentBitEnabled := index .Values "fluent-bit" "enabled" -}}
-{{- if kindIs "invalid" $fluentBitEnabled -}}
-{{- $fluentBitEnabled = true -}}
-{{- end -}}
-{{- $enabled := and (eq (include "logs.enabled" .) "true") $fluentBitEnabled -}}
-{{- $otelLogCollectorEnabled := .Values.sumologic.logs.collector.otelcol.enabled -}}
-{{- $sideBySideAllowed := .Values.sumologic.logs.collector.allowSideBySide -}}
-{{- if and $enabled $otelLogCollectorEnabled (not $sideBySideAllowed) -}}
-{{- fail "Fluent-Bit and Otel log collector can't be enabled at the same time. Set either `fluent-bit.enabled` or `sumologic.logs.collector.otelcol.enabled` to false" -}}
-{{- end -}}
-{{ $enabled }}
 {{- end -}}
 
 {{/*
