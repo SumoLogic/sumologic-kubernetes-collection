@@ -12,7 +12,7 @@ jobs:
   markdown-link-check:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           config-file: ".markdown_link_check.json"
@@ -21,7 +21,7 @@ jobs:
   push-helm-chart:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Push dev helm chart
         run: make push-helm-chart
 

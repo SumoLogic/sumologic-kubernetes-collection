@@ -13,7 +13,7 @@ jobs:
     outputs:
       any_changed: ${{ steps.changed-files.outputs.any_changed }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Check if documentation related files changed
@@ -33,7 +33,7 @@ jobs:
     outputs:
       any_changed: ${{ steps.changed-files.outputs.any_changed }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Check if Helm Chart related files changed
@@ -59,7 +59,7 @@ jobs:
     env:
       PRETTIER_VERSION: 2.8.4
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: install markdownlint and prettier
         if: needs.docs-changed.outputs.any_changed == 'true'
         run: npm install -g markdownlint-cli prettier@${PRETTIER_VERSION}
@@ -73,7 +73,7 @@ jobs:
       YQ_VERSION: 4.33.2
       SHELLCHECK_VERSION: 0.9.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: install shellcheck
         run: |
           curl --retry 10 --retry-max-time 120 --retry-delay 5 -Lo- https://github.com/koalaman/shellcheck/releases/download/v${{ env.SHELLCHECK_VERSION }}/shellcheck-v${{ env.SHELLCHECK_VERSION }}.linux.x86_64.tar.xz | tar -xJf -
@@ -92,7 +92,7 @@ jobs:
     env:
       PRETTIER_VERSION: 2.8.4
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: install yamllint
         if: needs.chart-changed.outputs.any_changed == 'true'
         run: npm install -g prettier@${PRETTIER_VERSION}
@@ -104,7 +104,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [chart-changed]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Lint helm chart
         if: needs.chart-changed.outputs.any_changed == 'true'
         run: |
@@ -115,7 +115,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [docs-changed]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           config-file: ".markdown_link_check.json"
@@ -127,7 +127,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [docs-changed]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Lint markdown links
         if: needs.docs-changed.outputs.any_changed == 'true'
         run: |
@@ -136,7 +136,7 @@ jobs:
   check-configuration-keys:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
@@ -151,7 +151,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [chart-changed]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
         if: needs.chart-changed.outputs.any_changed == 'true'
         with:
@@ -172,7 +172,7 @@ jobs:
       - helmlint
       - chart-changed
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup go
         if: needs.chart-changed.outputs.any_changed == 'true'
         uses: actions/setup-go@v4

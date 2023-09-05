@@ -17,7 +17,7 @@ jobs:
       TOWNCRIER_VERSION: 22.12.0
       PR_NUMBER: ${{ github.event.number }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 50
       - name: Add PR base ref
