@@ -9,9 +9,6 @@ Example Usage:
 {{- if eq (include "metrics.otelcol.enabled" .) "true" }}
 {{- $enabled = true -}}
 {{- end -}}
-{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
-{{- $enabled = true -}}
-{{- end -}}
 {{ $enabled }}
 {{- end -}}
 
@@ -25,21 +22,6 @@ Example Usage:
 {{- define "metrics.otelcol.enabled" -}}
 {{- $enabled := false -}}
 {{- if and (eq .Values.sumologic.metrics.enabled true) (eq .Values.metadata.metrics.enabled true) -}}
-{{- $enabled = true -}}
-{{- end -}}
-{{ $enabled }}
-{{- end -}}
-
-
-{{/*
-Check if fluentd metrics provider is enabled
-Example Usage:
-{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
-
-*/}}
-{{- define "metrics.fluentd.enabled" -}}
-{{- $enabled := false -}}
-{{- if and (eq .Values.sumologic.metrics.enabled true) (eq .Values.fluentd.metrics.enabled true) -}}
 {{- $enabled = true -}}
 {{- end -}}
 {{ $enabled }}

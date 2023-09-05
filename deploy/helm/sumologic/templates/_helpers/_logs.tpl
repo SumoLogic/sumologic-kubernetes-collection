@@ -10,9 +10,6 @@ Example Usage:
 {{- if eq (include "logs.otelcol.enabled" .) "true" }}
 {{- $enabled = true -}}
 {{- end -}}
-{{- if eq (include "logs.fluentd.enabled" .) "true" }}
-{{- $enabled = true -}}
-{{- end -}}
 {{ $enabled }}
 {{- end -}}
 
@@ -28,23 +25,6 @@ Example Usage:
 {{- $enabled := false -}}
 {{- if and (eq .Values.sumologic.logs.enabled true) (eq .Values.metadata.logs.enabled true) -}}
 {{- $enabled = true -}}
-{{- end -}}
-{{ $enabled }}
-{{- end -}}
-
-{{/*
-Check if fluentd logs metadata provider is enabled
-
-Example Usage:
-{{- if eq (include "logs.fluentd.enabled" .) "true" }}
-
-*/}}
-{{- define "logs.fluentd.enabled" -}}
-{{- $enabled := false -}}
-{{- if eq .Values.sumologic.logs.enabled true -}}
-{{- if and (eq .Values.sumologic.logs.metadata.provider "fluentd") (eq .Values.fluentd.logs.enabled true) -}}
-{{- $enabled = true -}}
-{{- end -}}
 {{- end -}}
 {{ $enabled }}
 {{- end -}}
