@@ -30,11 +30,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "sumologic.labels.app.events" -}}
-{{- if eq (include "events.fluentd.enabled" .) "true"  -}}
-{{ template "sumologic.labels.app.fluentd" . }}-events
-{{- else if eq (include "events.otelcol.enabled" .) "true" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-events
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.labels.app.events.pod" -}}
