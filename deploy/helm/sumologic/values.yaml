@@ -775,21 +775,6 @@ fluentd:
   ## Add custom labels to all fluentd statefulset PVC (logs, metrics, events)
   pvcLabels: {}
 
-  ## Persist data to a persistent volume; When enabled, fluentd uses the file buffer instead of memory buffer.
-  persistence:
-    ## After changing this value please follow steps described in:
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/fluentd-persistence.md
-    enabled: true
-
-    ## If defined, storageClassName: <storageClass>
-    ## If undefined (the default) or set to an empty string, no storageClassName spec is
-    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-    ##   GKE, Azure & OpenStack)
-    ##
-    # storageClass: ""
-    accessMode: ReadWriteOnce
-    size: 10Gi
-
   buffer:
     ## Option to specify the Fluentd buffer as file/memory.
     ## If fluentd.persistence.enabled is true, this will be ignored.
@@ -897,8 +882,6 @@ fluentd:
           cpu: 1000m
         requests:
           memory: 768Mi
-          ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/best-practices.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -1093,8 +1076,6 @@ fluentd:
           cpu: 1000m
         requests:
           memory: 768Mi
-          ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-          ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/best-practices.md#cpu-resources-warning
           cpu: 500m
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -4053,8 +4034,6 @@ otelcloudwatch:
         cpu: 1000m
       requests:
         memory: 768Mi
-        ## Warning! Increasing the CPU requests for Fluentd above 1000m might result in broken autoscaling
-        ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/fluent/best-practices.md#cpu-resources-warning
         cpu: 500m
     ## Option to define priorityClassName to assign a priority class to pods.
     priorityClassName:
