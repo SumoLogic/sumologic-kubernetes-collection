@@ -2,6 +2,8 @@
 
 <!-- TOC -->
 
+
+
 <!-- /TOC -->
 
 By default, log collection is enabled. This includes both container logs and systemd logs. This document covers container logs.
@@ -256,7 +258,7 @@ sumologic:
 [infer-boundaries]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#infer-boundaries
 [http-source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source
 [boundary-regex]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#boundary-regex
-[sumologic-terraform-provider]: ../terraform.md#sumo-logic-terraform-provider
+[sumologic-terraform-provider]: ./terraform.md#sumo-logic-terraform-provider
 
 ### Setting source name and other built-in metadata
 
