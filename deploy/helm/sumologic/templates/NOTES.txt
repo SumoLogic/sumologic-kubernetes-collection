@@ -13,10 +13,6 @@ A Collector with the name {{ .Values.sumologic.collectorName | default (include 
 Check the release status by running:
   kubectl --namespace {{ template "sumologic.namespace" . }} get pods -l "release={{ .Release.Name }}"
 
-{{- if eq .Values.fluentd.persistence.enabled  false }}
-WARNING: File persistence for fluentd is disabled. This might lead to loss of data in case of memory buffer overflow. We recommend turning this property on for production environments by setting fluentd.persistence.enabled=true
-{{- end }}
-
 {{- if eq .Values.metadata.persistence.enabled false }}
 WARNING: Persistence for OpenTelemetry Collector is disabled.
 When persistence is enabled, the queue is being buffered to disk using file storage extension.
