@@ -3,17 +3,17 @@
 <!-- TOC -->
 
 - [Kubernetes Collection v4.0.0 - Breaking Changes](#kubernetes-collection-v400---breaking-changes)
-    - [Important changes](#important-changes)
-        - [OpenTelemetry Collector](#opentelemetry-collector)
-    - [How to upgrade](#how-to-upgrade)
-        - [Requirements](#requirements)
-        - [Metrics migration](#metrics-migration)
-        - [Removing support for Fluent Bit and Fluentd](#removing-support-for-fluent-bit-and-fluentd)
-            - [Migration of custom configuration](#migration-of-custom-configuration)
-        - [Switch to OTLP sources](#switch-to-otlp-sources)
-        - [Running the helm upgrade](#running-the-helm-upgrade)
-        - [Known issues](#known-issues)
-    - [Full list of changes](#full-list-of-changes)
+  - [Important changes](#important-changes)
+    - [OpenTelemetry Collector](#opentelemetry-collector)
+  - [How to upgrade](#how-to-upgrade)
+    - [Requirements](#requirements)
+    - [Metrics migration](#metrics-migration)
+    - [Removing support for Fluent Bit and Fluentd](#removing-support-for-fluent-bit-and-fluentd)
+      - [Configuration Migration](#configuration-migration)
+    - [Switch to OTLP sources](#switch-to-otlp-sources)
+    - [Running the helm upgrade](#running-the-helm-upgrade)
+    - [Known issues](#known-issues)
+  - [Full list of changes](#full-list-of-changes)
 
 <!-- /TOC -->
 
@@ -68,6 +68,11 @@ In order to migrate your custom configuration, please carefully read and apply t
 - [Collecting Application Metrics](./collecting-application-metrics.md)
 - [Collecting Kubernetes Events](./collecting-kubernetes-events.md)
 - [Collecting Kubernetes Metrics](./collecting-kubernetes-metrics.md)
+
+In addition the following changes has been done:
+
+- `otelevents.serviceLabels` has been introduced as replacement for `fluentd.serviceLabels` for events service
+- `sumologic.events.sourceName` is going to be used instead of `fluentd.events.sourceName` to build `_sourceCategory` for events
 
 ### Switch to OTLP sources
 
