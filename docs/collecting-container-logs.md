@@ -214,8 +214,11 @@ Whereas log line 2 will be displayed as JSON:
 }
 ```
 
-> **Warning** Setting the format to `text` has certain consequences for multiline detection. See [here][troubleshooting_text_format] for
+> **Warning** Setting the format to `text` with HTTP source has certain consequences for multiline detection. See [here][troubleshooting_text_format] for
 > more details.
+
+If you want to send metadata along wih log, you have to use reosurce level attributes, because record level attributes are going to be removed before sending log to Sumo.
+Please see [Mapping OpenTelemetry concepts to Sumo Logic][mapping] for more details.
 
 ### Setting source name and other built-in metadata
 
@@ -466,6 +469,13 @@ sumologic:
       enabled: false
 ```
 
+### Using OTLP Source
+
+OTLP source resolves some issues of `text` format, which affects HTTP source:
+
+- Multiline logs are respected, it means that every line of the same log is not treated as separate log
+- Timestamp is set correctly to time set by Kubernetes, because it is send separately, which is not possible in HTTP format
+
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/configuration.md
 [values]: /deploy/helm/sumologic/values.yaml
 [source_name]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions/#Source_Name
@@ -480,3 +490,4 @@ sumologic:
 [sumo_fields]: https://help.sumologic.com/docs/manage/fields/
 [sumo_add_fields]: https://help.sumologic.com/docs/manage/fields/#add-field
 [troubleshooting_text_format]: fluent/troubleshoot-collection.md#using-text-format
+[mapping]: https://help.sumologic.com/docs/send-data/opentelemetry-collector/data-source-configurations/additional-configurations-reference/#mapping-opentelemetry-concepts-to-sumo-logic
