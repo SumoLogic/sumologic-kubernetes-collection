@@ -474,7 +474,7 @@ sumologic:
 OTLP source resolves some issues of `text` format, which affects HTTP source:
 
 - Multiline logs are respected, it means that every line of the same log is not treated as separate log
-- Timestamp is set correctly to time set by Kubernetes, because it is send separately, which is not possible in HTTP format
+- Timestamp is set correctly to time set by Kubernetes, as OTLP contains a dedicated timestamp field.
 
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/configuration.md
 [values]: /deploy/helm/sumologic/values.yaml
