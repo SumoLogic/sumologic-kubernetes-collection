@@ -141,7 +141,7 @@ or
 make test TEST_NAME="Test_Helm_Default_OT_Metadata" TEST_ARGS="--feature '(installation)'"
 ```
 
-[sig_e2e_testing_harness]: https://github.com/kubernetes-sigs/e2e-framework/blob/main/docs/design/test-harness-framework.md
+[sig_e2e_testing_harness]: https://github.com/kubernetes-sigs/e2e-framework/blob/v0.1.0/docs/design/test-harness-framework.md
 [sig_e2e_testing_harness_filtering_tests]: https://github.com/kubernetes-sigs/e2e-framework/blob/fee1391aeccdc260069bd5e0b25c6b187c2293c4/docs/design/test-harness-framework.md#filtering-feature-tests
 
 ## K8s node images matrix
