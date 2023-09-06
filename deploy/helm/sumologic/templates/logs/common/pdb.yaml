@@ -11,6 +11,10 @@ spec:
   selector:
     matchLabels:
       app: {{ template "sumologic.labels.app.logs.statefulset" . }}
-{{ toYaml .Values.metadata.logs.podDisruptionBudget | indent 2 }}
+{{- if hasKey .Values.metadata.logs.podDisruptionBudget "maxUnavailable" }}
+  maxUnavailable: {{ .Values.metadata.logs.podDisruptionBudget.maxUnavailable }}
+{{- else }}
+  minAvailable: {{ .Values.metadata.logs.podDisruptionBudget.minAvailable }}
+{{- end -}}
 {{- end -}}
 {{- end -}}
