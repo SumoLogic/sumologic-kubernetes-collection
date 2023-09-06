@@ -217,7 +217,7 @@ Whereas log line 2 will be displayed as JSON:
 > **Warning** Setting the format to `text` with HTTP source has certain consequences for multiline detection. See [here][troubleshooting_text_format] for
 > more details.
 
-If you want to send metadata along wih log, you have to use reosurce level attributes, because record level attributes are going to be removed before sending log to Sumo.
+If you want to send metadata along wih log, you have to use reosurce level attributes, because record level attributes are going to be removed before sending log to Sumo Logic.
 Please see [Mapping OpenTelemetry concepts to Sumo Logic][mapping] for more details.
 
 ### Setting source name and other built-in metadata
