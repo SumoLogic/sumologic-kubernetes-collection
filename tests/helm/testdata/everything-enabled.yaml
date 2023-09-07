@@ -1,3 +1,10 @@
+sumologic:
+  logs:
+    collector:
+      allowSideBySide: true
+      otelcloudwatch:
+        enabled: true
+
 metadata:
   logs:
     autoscaling:

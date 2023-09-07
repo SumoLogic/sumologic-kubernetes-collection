@@ -7,14 +7,15 @@ Expand the name of the chart.
 
 {{/*
 Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+We truncate at 22 chars because some Kubernetes name fields are limited to 63 characters (by the DNS naming spec).
+In particular, some statefulsets will have too long names if the name is longer than 22 characters.
 */}}
 {{- define "sumologic.fullname" -}}
 {{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- .Values.fullnameOverride | trunc 22 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" .Release.Name $name | trunc 22 | trimSuffix "-" }}
 {{- end -}}
 {{- end -}}
 

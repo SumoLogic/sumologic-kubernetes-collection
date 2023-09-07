@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+const (
+	maxReleaseNameLength = 12
+)
+
 func NameFromT(t *testing.T) string {
 	return strings.ReplaceAll(strings.ToLower(t.Name()), "_", "-")
 }
@@ -29,5 +33,5 @@ func ValueFileFromT(t *testing.T) string {
 func ReleaseNameFromT(t *testing.T) string {
 	h := fnv.New32a()
 	h.Write([]byte(t.Name()))
-	return fmt.Sprintf("rel-%d", h.Sum32())
+	return fmt.Sprintf("rel-%d", h.Sum32())[:maxReleaseNameLength]
 }

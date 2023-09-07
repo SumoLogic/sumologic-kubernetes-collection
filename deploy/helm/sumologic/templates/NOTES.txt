@@ -4,10 +4,6 @@ Thank you for installing {{ .Chart.Name }}.
 WARNING: You defined sumologic.clusterName with spaces, which is not supported.  Spaces have been replaced with dashes.
 {{- end }}
 
-{{- if gt (len .Release.Name) 19 }}
-WARNING: Your release name is longer than 19 characters. Some features may not work due length limits on Kubernetes labels. This limit will be enforced explicitly in the next major release.
-{{- end }}
-
 A Collector with the name {{ .Values.sumologic.collectorName | default (include "sumologic.clusterNameReplaceSpaceWithDash" . ) | quote }} has been created in your Sumo Logic account.
 
 Check the release status by running:

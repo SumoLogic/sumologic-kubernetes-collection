@@ -2,9 +2,10 @@
 
 <!-- TOC -->
 
-- [Kubernetes Collection v4.0.0 - Breaking Changes](#kubernetes-collection-v400---breaking-changes)
+- [Kubernetes Collection `v4.0.0` - Breaking Changes](#kubernetes-collection-v400---breaking-changes)
   - [Important changes](#important-changes)
     - [OpenTelemetry Collector](#opentelemetry-collector)
+    - [Drop Prometheus recording rule metrics](#drop-prometheus-recording-rule-metrics)
   - [How to upgrade](#how-to-upgrade)
     - [Requirements](#requirements)
     - [Metrics migration](#metrics-migration)
@@ -156,3 +157,8 @@ require additional action.
   - node_network_transmit_bytes_total
   - node_filesystem_avail_bytes
   - node_filesystem_size_bytes
+
+- Truncating full name to 22 characters
+
+  Some Kubernetes objects, for example statefulsets, have a tight (63 characters) limit for their names. Because of that, we truncate the
+  prefix that is attached to the names. In particular, the value under key `fullnameOverride` will be truncated to 22 characters.
