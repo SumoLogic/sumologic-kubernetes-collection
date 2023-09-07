@@ -375,6 +375,7 @@ var (
 		"scheduler_scheduling_attempt_duration_seconds_sum",
 		"scheduler_scheduling_attempt_duration_seconds_bucket",
 		"cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile",
+		"cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile",
 	}
 
 	NginxMetrics = []string{
