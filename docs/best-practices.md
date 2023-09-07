@@ -359,23 +359,17 @@ change the parameters of these processors in any way, you can define your own an
 If you want to remove some attributes from Systemd logs, like for example `PRIORITY` and `SYSLOG_FACILITY`, you can do it the following way:
 
 ```yaml
-otellogs:
-  config:
-    merge:
-      processors:
-        transform/cleanup_systemd:
-          log_statements:
-            - context: log
-              statements:
-                - delete_key(body, "PRIORITY")
-                - delete_key(body, "SYSLOG_FACILITY")
-      service:
-        pipelines:
-          logs/systemd:
-            processors:
-              - logstransform/systemd
-              - transform/cleanup_systemd
-              - batch
+sumologic:
+  logs:
+    systemd:
+      otelcol:
+        extraProcessors:
+          - transform/cleanup_systemd:
+              log_statements:
+                - context: log
+                  statements:
+                    - delete_key(body, "PRIORITY")
+                    - delete_key(body, "SYSLOG_FACILITY")
 ```
 
 **Note: We do not guarantee that the structure of `otellogs.config.merge` will remain the same between minor helm chart versions**
