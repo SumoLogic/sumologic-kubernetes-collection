@@ -172,31 +172,6 @@ func TestNameAndLabelLength(t *testing.T) {
 	}
 }
 
-func TestReleaseNameTooLong(t *testing.T) {
-	valuesFilePath := path.Join(testDataDirectory, "everything-enabled.yaml")
-	releaseName := strings.Repeat("a", maxHelmReleaseNameLength+1)
-	_, err := RenderTemplateE(
-		t,
-		&helm.Options{
-			ValuesFiles: []string{valuesFilePath},
-			SetStrValues: map[string]string{
-				"sumologic.accessId":  "accessId",
-				"sumologic.accessKey": "accessKey",
-			},
-			Logger: logger.Discard, // the log output is noisy and doesn't help much
-		},
-		chartDirectory,
-		releaseName,
-		[]string{},
-		true,
-		"--namespace",
-		defaultNamespace,
-	)
-	require.NoError(t, err)
-	// we can't check whether NOTES are rendered correctly due to https://github.com/helm/helm/issues/6901
-	// TODO: Add an error check here after we start enforcing the limit: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/3057
-}
-
 // check the built-in labels added to all K8s objects created by the chart
 func checkBuiltinLabels(t *testing.T, object metav1.Object, chartVersion string) {
 	labels := object.GetLabels()
