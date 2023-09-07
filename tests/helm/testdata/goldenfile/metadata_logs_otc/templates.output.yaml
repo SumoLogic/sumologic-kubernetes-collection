@@ -223,6 +223,21 @@ data:
         check_interval: 5s
         limit_percentage: 75
         spike_limit_percentage: 20
+      resource/add-resource-attribute-container:
+        attributes:
+        - action: insert
+          key: environment
+          value: staging
+      resource/add-resource-attribute-kubelet:
+        attributes:
+        - action: insert
+          key: environment
+          value: staging
+      resource/add-resource-attribute-systemd:
+        attributes:
+        - action: insert
+          key: environment
+          value: staging
       resource/add_cluster:
         attributes:
         - action: upsert
@@ -237,6 +252,18 @@ data:
         attributes:
         - action: delete
           pattern: ^pod_annotations_.*
+      resource/remove-container:
+        attributes:
+        - action: delete
+          key: redundant-attribute
+      resource/remove-kubelet:
+        attributes:
+        - action: delete
+          key: redundant-attribute
+      resource/remove-systemd:
+        attributes:
+        - action: delete
+          key: redundant-attribute
       resource/remove_pod_name:
         attributes:
         - action: delete
@@ -335,6 +362,8 @@ data:
           - sumologic_schema
           - source/containers
           - transform/containers_parse_json
+          - resource/add-resource-attribute-container
+          - resource/remove-container
           - resource/remove_pod_name
           - resource/drop_annotations
           - transform/add_timestamp
@@ -360,6 +389,8 @@ data:
           - transform/remove_attributes
           - transform/flatten
           - transform/add_timestamp
+          - resource/add-resource-attribute-kubelet
+          - resource/remove-kubelet
           - batch
           receivers:
           - otlp
@@ -383,6 +414,8 @@ data:
           - transform/remove_attributes
           - transform/flatten
           - transform/add_timestamp
+          - resource/add-resource-attribute-systemd
+          - resource/remove-systemd
           - batch
           receivers:
           - otlp

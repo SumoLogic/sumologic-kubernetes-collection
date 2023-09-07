@@ -109,7 +109,15 @@ sumologic:
     systemd:
       otelcol:
         extraProcessors:
-          - filter/include-message-with-password:
+          - filter/include-message-with-password-systemd:
+              error_mode: ignore
+              logs:
+                log_record:
+                  - 'IsMatch(body.MESSAGE, ".*password.*")'
+    kubelet:
+      otelcol:
+        extraProcessors:
+          - filter/include-message-with-password-kubelet:
               error_mode: ignore
               logs:
                 log_record:
@@ -133,7 +141,7 @@ sumologic:
     systemd:
       otelcol:
         extraProcessors:
-          - transform/mask-card-numbers:
+          - transform/mask-card-numbers-systemd:
               log_statements:
                 - context: log
                   statements:
@@ -141,7 +149,7 @@ sumologic:
     kubelet:
       otelcol:
         extraProcessors:
-          - transform/mask-card-numbers:
+          - transform/mask-card-numbers-kubelet:
               log_statements:
                 - context: log
                   statements:
@@ -156,13 +164,13 @@ sumologic:
     container:
       systemd:
         extraProcessors:
-          - attributes/add-new:
+          - attributes/add-new-systemd:
               - action: insert
                 key: new_attribute
                 value: new_value
       kubelet:
         extraProcessors:
-          - attributes/add-new:
+          - attributes/add-new-kubelet:
               - action: insert
                 key: new_attribute
                 value: new_value
@@ -176,24 +184,24 @@ sumologic:
     systemd:
       otelcol:
         extraProcessors:
-          - resource/add-resource-attribute:
+          - resource/add-resource-attribute-systemd:
               attributes:
                 - action: insert
                   key: environment
                   value: staging
-          - resource/remove:
+          - resource/remove-systemd:
               attributes:
                 - action: delete
                   key: redundant-attribute
     kubelet:
       otelcol:
         extraProcessors:
-          - resource/add-resource-attribute:
+          - resource/add-resource-attribute-kubelet:
               attributes:
                 - action: insert
                   key: environment
                   value: staging
-          - resource/remove:
+          - resource/remove-kubelet:
               attributes:
                 - action: delete
                   key: redundant-attribute
@@ -209,7 +217,7 @@ sumologic:
     systemd:
       otelcol:
         extraProcessors:
-          - resource/add-static-field:
+          - resource/add-static-field-systemd:
               attributes:
                 - action: insert
                   key: static-field
@@ -217,7 +225,7 @@ sumologic:
     kubelet:
       otelcol:
         extraProcessors:
-          - resource/add-static-field:
+          - resource/add-static-field-kubelet:
               attributes:
                 - action: insert
                   key: static-field

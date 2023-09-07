@@ -439,6 +439,18 @@ processors:
 {{- end }}
 {{- end }}
 
+{{- if .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
+{{ toYaml $processor | indent 2}}
+{{- end }}
+{{- end }}
+
+{{- if .Values.sumologic.logs.kubelet.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.kubelet.otelcol.extraProcessors }}
+{{ toYaml $processor | indent 2}}
+{{- end }}
+{{- end }}
+
 receivers:
 {{ if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
   fluentforward:
