@@ -367,6 +367,10 @@ sumologic:
       # units:
       #   - docker.service
 
+      otelcol:
+        ## Extra processors for systemd logs. See [/docs/collecting-systemd-logs.md](/docs/collecting-systemd-logs.md) for details.
+        extraProcessors: []
+
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "%{_sourceName}"
       ## Set the _sourceCategory metadata field in Sumo Logic.
@@ -390,6 +394,10 @@ sumologic:
       excludeUnitRegex: ""
 
     kubelet:
+      otelcol:
+        ## Extra processors for kubelet logs. See [/docs/collecting-systemd-logs.md](/docs/collecting-systemd-logs.md) for details.
+        extraProcessors: []
+
       ## Set the _sourceName metadata field in Sumo Logic.
       sourceName: "k8s_kubelet"
       ## Set the _sourceCategory metadata field in Sumo Logic.
