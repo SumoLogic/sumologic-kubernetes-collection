@@ -31,7 +31,7 @@ Configuration specific to the log collector DaemonSet can be found under the `ot
 
 Finally, configuration specific to the metadata enrichment StatefulSet can be found under the `metadata.logs` key.
 
-Systemd logs are send in `json`` format.
+Systemd logs are sent in `json`` format.
 
 ### Setting source name and other built-in metadata
 
