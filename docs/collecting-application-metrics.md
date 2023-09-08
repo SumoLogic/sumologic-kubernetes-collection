@@ -253,7 +253,7 @@ sumologic:
               ## Definition of exclusion
               exclude:
                 ## Match type, can be regexp or strict
-                match_type
+                match_type: strict
                 ## Metric names for exclusion
                 metric_names:
                   - hello_world
