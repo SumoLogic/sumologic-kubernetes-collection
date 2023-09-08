@@ -372,8 +372,6 @@ sumologic:
                     - delete_key(body, "SYSLOG_FACILITY")
 ```
 
-**Note: We do not guarantee that the structure of `otellogs.config.merge` will remain the same between minor helm chart versions**
-
 ## Filtering Prometheus Metrics by Namespace
 
 If you want to filter metrics by namespace, it can be done in the prometheus remote write config. Here is an example of excluding kube-state
