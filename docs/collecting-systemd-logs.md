@@ -24,7 +24,7 @@ OpenTelemetry Collector.
 ## Configuration
 
 High level configuration for logs is located in [values.yaml][values] under the `sumologic.logs` key. Configuration specific to systemd and
-kubelet logs is located under the `sumologic.logs.systemd` and `sumologic.logs.kubelet` key. Kubelet logs are systemd logs, so they are
+kubelet logs is located under the `sumologic.logs.systemd` and `sumologic.logs.kubelet` keys. Kubelet logs are systemd logs, so they are
 covered together in this document.
 
 Configuration specific to the log collector DaemonSet can be found under the `otellogs` key.
