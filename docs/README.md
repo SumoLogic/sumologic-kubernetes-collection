@@ -27,6 +27,7 @@ Documentation links:
   - [Examples](/docs/configuration-examples.md)
   - Logs
     - [Collecting container logs](/docs/collecting-container-logs.md)
+    - [Collecting Systemd logs](/docs/collecting-systemd-logs.md)
   - Metrics
     - [Collecting Kubernetes metrics](/docs/collecting-kubernetes-metrics.md)
     - [Collecting application metrics](/docs/collecting-application-metrics.md)

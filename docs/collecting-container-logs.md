@@ -2,6 +2,23 @@
 
 <!-- TOC -->
 
+- [Collecting Container Logs](#collecting-container-logs)
+  - [Configuration](#configuration)
+    - [Multiline log parsing](#multiline-log-parsing)
+      - [Conditional multiline log parsing](#conditional-multiline-log-parsing)
+    - [Log format](#log-format)
+      - [fields log format](#fields-log-format)
+      - [json_merge log format](#json_merge-log-format)
+      - [text log format](#text-log-format)
+    - [Setting source name and other built-in metadata](#setting-source-name-and-other-built-in-metadata)
+    - [Filtering](#filtering)
+    - [Modifying log records](#modifying-log-records)
+      - [Adding custom fields](#adding-custom-fields)
+    - [Persistence](#persistence)
+  - [Advanced Configuration](#advanced-configuration)
+    - [Direct configuration](#direct-configuration)
+    - [Disabling container logs](#disabling-container-logs)
+
 <!-- /TOC -->
 
 By default, log collection is enabled. This includes both container logs and systemd logs. This document covers container logs.

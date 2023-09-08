@@ -18,6 +18,18 @@ sumologic:
       excludePodRegex: my_containers_excludePodRegex
       perContainerAnnotationsEnabled: false
       perContainerAnnotationPrefixes: []
+      otelcol:
+        extraProcessors:
+          - resource/add-resource-attribute-container:
+              attributes:
+                - action: insert
+                  key: environment
+                  value: staging
+          - resource/remove-container:
+              attributes:
+                - action: delete
+                  key: redundant-attribute
+
     kubelet:
       sourceName: my_kubelet_sourceName
       sourceCategory: my_kubelet_sourceCategory
@@ -27,6 +39,17 @@ sumologic:
       excludeHostRegex: my_kubelet_excludeHostRegex
       excludePriorityRegex: my_kubelet_excludePriorityRegex
       excludeUnitRegex: my_kubelet_excludeUnitRegex
+      otelcol:
+        extraProcessors:
+          - resource/add-resource-attribute-kubelet:
+              attributes:
+                - action: insert
+                  key: environment
+                  value: staging
+          - resource/remove-kubelet:
+              attributes:
+                - action: delete
+                  key: redundant-attribute
 
     systemd:
       sourceName: my_systemd_sourceName
@@ -37,6 +60,17 @@ sumologic:
       excludeHostRegex: my_systemd_excludeHostRegex
       excludePriorityRegex: my_systemd_excludePriorityRegex
       excludeUnitRegex: my_systemd_excludeUnitRegex
+      otelcol:
+        extraProcessors:
+          - resource/add-resource-attribute-systemd:
+              attributes:
+                - action: insert
+                  key: environment
+                  value: staging
+          - resource/remove-systemd:
+              attributes:
+                - action: delete
+                  key: redundant-attribute
 
 fluent-bit:
   enabled: false

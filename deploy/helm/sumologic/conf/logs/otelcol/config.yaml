@@ -439,6 +439,18 @@ processors:
 {{- end }}
 {{- end }}
 
+{{- if .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
+{{ toYaml $processor | indent 2}}
+{{- end }}
+{{- end }}
+
+{{- if .Values.sumologic.logs.kubelet.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.kubelet.otelcol.extraProcessors }}
+{{ toYaml $processor | indent 2}}
+{{- end }}
+{{- end }}
+
 receivers:
 {{ if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
   fluentforward:
@@ -514,6 +526,11 @@ service:
         - resource/add_cluster
         - source/kubelet
         - transform/add_timestamp
+{{- if .Values.sumologic.logs.kubelet.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.kubelet.otelcol.extraProcessors }}
+{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
+{{- end }}
+{{- end }}
         - batch
       receivers:
         - fluentforward
@@ -536,6 +553,11 @@ service:
         - resource/add_cluster
         - source/systemd
         - transform/add_timestamp
+{{- if .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
+{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
+{{- end }}
+{{- end }}
         - batch
       receivers:
         - fluentforward
@@ -603,6 +625,11 @@ service:
         - transform/remove_attributes
         - transform/flatten
         - transform/add_timestamp
+{{- if .Values.sumologic.logs.kubelet.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.kubelet.otelcol.extraProcessors }}
+{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
+{{- end }}
+{{- end }}
         - batch
       receivers:
         - otlp
@@ -630,6 +657,11 @@ service:
         - transform/remove_attributes
         - transform/flatten
         - transform/add_timestamp
+{{- if .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
+{{- range $processor := .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
+{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
+{{- end }}
+{{- end }}
         - batch
       receivers:
         - otlp
