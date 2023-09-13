@@ -5,7 +5,7 @@ leverages [CNCF](https://www.cncf.io) supported technology including [OpenTeleme
 [Prometheus](https://prometheus.io) and [Falco](https://www.falco.org/) to collect logs, metrics and traces from Kubernetes clusters. The
 following diagram provides an overview of the collection process.
 
-![overview](/images/overview-v3.png)
+![overview](/images/overview-v4.png)
 
 ## Installation
 
