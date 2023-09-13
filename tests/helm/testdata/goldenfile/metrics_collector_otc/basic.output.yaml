@@ -71,6 +71,8 @@ spec:
           queue_size: 10000
           num_consumers: 10
           storage: file_storage
+        # this improves load balancing at the cost of more network traffic
+        disable_keep_alives: true
 
     extensions:
       health_check: {}
