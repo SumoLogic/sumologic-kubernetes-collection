@@ -12,21 +12,13 @@ from yaml.loader import SafeLoader
 
 DESCRIPTION = 'This program verifies if all configuration from values.yaml has been documented.'
 SKIP_DEFAULTS = {
-    'kube-prometheus-stack.enabled',
-    'kube-prometheus-stack.global.imagePullSecrets',
-    'metadata.logs.autoscaling.targetMemoryUtilizationPercentage',
-    'metadata.logs.podDisruptionBudget',
     'metadata.logs.statefulset.extraEnvVars',
     'metadata.logs.statefulset.extraVolumeMounts',
     'metadata.logs.statefulset.extraVolumes',
     'metadata.logs.statefulset.extraPorts',
-    'metadata.metrics.podDisruptionBudget',
-    'metadata.metrics.autoscaling.targetMemoryUtilizationPercentage',
     'metadata.metrics.statefulset.extraEnvVars',
     'metadata.metrics.statefulset.extraVolumeMounts',
     'metadata.metrics.statefulset.extraVolumes',
-    'metadata.persistence.storageClass',
-    'otelcolInstrumentation.statefulset.priorityClassName',
     'otelcolInstrumentation.statefulset.extraEnvVars',
     'otelcolInstrumentation.statefulset.extraVolumeMounts',
     'otelcolInstrumentation.statefulset.extraVolumes',
@@ -37,12 +29,8 @@ SKIP_DEFAULTS = {
     'tracesSampler.deployment.extraVolumeMounts',
     'tracesSampler.deployment.extraVolumes',
     'sumologic.setup.job.tolerations',
-    'sumologic.setup.job.pullSecrets',
-    'sumologic.pullSecrets',
-    'sumologic.setup.force',
-    'sumologic.setup.debug',
-    'metrics-server.image.pullSecrets',
-    'sumologic.events.sourceCategory',
+    'kube-prometheus-stack.prometheus-node-exporter.resources',
+    'kube-prometheus-stack.prometheusOperator.resources',
 }
 
 def main(values_path: str, readme_path: str, full_diff=False) -> None:
@@ -241,6 +229,9 @@ def compare_values(readme: dict, values_keys: list[str], values: dict) -> dict:
             if compare_keys(this_key, other_key):
                 other_value = get_value(this_key, values)
                 if this_value != other_value:
+                    if this_value.replace("\\\\", "\\").replace("\\|", "|") == other_value:
+                        # yaml contains both `'` and `"` strings and readme is always `"` string
+                        continue
 
                     # Skip configuration linked to values.yaml
                     if this_value == 'See [values.yaml]':
@@ -270,7 +261,7 @@ def get_value(key: str, dictionary: dict) -> str:
         value = value[subkey]
 
     if isinstance(value, str):
-        return value
+        return value.replace("\n", "\\n")
 
     return json.dumps(value)
 
