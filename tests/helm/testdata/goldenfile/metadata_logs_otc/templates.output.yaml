@@ -51,31 +51,6 @@ data:
         - action: insert
           from_attribute: _HOSTNAME
           key: _sourceHost
-      attributes/fluent_containers:
-        actions:
-        - action: extract
-          key: fluent.tag
-          pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
-        - action: insert
-          from_attribute: container_id
-          key: k8s.container.id
-        - action: delete
-          key: container_id
-        - action: insert
-          from_attribute: k8s_pod_name
-          key: k8s.pod.name
-        - action: delete
-          key: k8s_pod_name
-        - action: insert
-          from_attribute: k8s_namespace
-          key: k8s.namespace.name
-        - action: delete
-          key: k8s_namespace
-        - action: insert
-          from_attribute: k8s_container_name
-          key: k8s.container.name
-        - action: delete
-          key: k8s_container_name
       attributes/remove_fluent_tag:
         actions:
         - action: delete
@@ -154,13 +129,6 @@ data:
             record_attributes:
             - key: k8s.container.name
               value: .+
-      filter/include_fluent_tag_containers:
-        logs:
-          include:
-            match_type: regexp
-            record_attributes:
-            - key: fluent.tag
-              value: containers\..+
       filter/include_fluent_tag_host:
         logs:
           include:

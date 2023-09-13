@@ -5,7 +5,6 @@ sumologic:
   clusterName: testCluster
   collectorName: testCollector
   events:
-    provider: otelcol
     sourceName: testSourceName
     sourceCategory: testSourceCategory
     sourceCategoryReplaceDash: ";"

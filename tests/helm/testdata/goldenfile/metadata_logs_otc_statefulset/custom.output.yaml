@@ -37,24 +37,6 @@ spec:
           key: worker
           operator: Equal
           value: worker
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - RELEASE-NAME-sumologic-otelcol-logs
-                      - RELEASE-NAME-sumologic-otelcol-metrics
-                      - RELEASE-NAME-sumologic-otelcol-events
-                      - RELEASE-NAME-sumologic-otelcol-instrumentation
-                  - key: app
-                    operator: In
-                    values:
-                      - prometheus-operator-prometheus
-              topologyKey: "kubernetes.io/hostname"
-
       volumes:
         - name: config-volume
           configMap:

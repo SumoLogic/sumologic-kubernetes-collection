@@ -226,16 +226,6 @@ sumologic:
   endpoint: http://receiver-mock.receiver-mock:3002/terraform/api/
 ```
 
-#### Adjust fluent-bit configuration
-
-The following change is required in order to fix fluent-bit's readiness and liveness probes:
-
-```
-fluent-bit:
-  podAnnotations:
-    sidecar.istio.io/rewriteAppHTTPProbers: "true"
-```
-
 ### Tips and tricks
 
 - In order to manually take fluentd metrics using receiver-mock, use the following command from receiver-mock container:

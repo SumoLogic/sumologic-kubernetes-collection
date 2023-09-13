@@ -69,33 +69,6 @@ processors:
         key: _sourceHost
 {{ end }}
 
-{{ if .Values.sumologic.logs.container.enabled }}
-  attributes/fluent_containers:
-    actions:
-      - action: extract
-        key: fluent.tag
-        pattern: ^containers\.var\.log\.containers\.(?P<k8s_pod_name>[^_]+)_(?P<k8s_namespace>[^_]+)_(?P<k8s_container_name>.+)-(?P<container_id>[a-f0-9]{64})\.log$
-      - action: insert
-        from_attribute: container_id
-        key: k8s.container.id
-      - action: delete
-        key: container_id
-      - action: insert
-        from_attribute: k8s_pod_name
-        key: k8s.pod.name
-      - action: delete
-        key: k8s_pod_name
-      - action: insert
-        from_attribute: k8s_namespace
-        key: k8s.namespace.name
-      - action: delete
-        key: k8s_namespace
-      - action: insert
-        from_attribute: k8s_container_name
-        key: k8s.container.name
-      - action: delete
-        key: k8s_container_name
-{{ end }}
   attributes/remove_fluent_tag:
     actions:
       - action: delete
@@ -208,16 +181,6 @@ processors:
         record_attributes:
           - key: k8s.container.name
             value: .+
-{{ end }}
-
-{{ if .Values.sumologic.logs.container.enabled }}
-  filter/include_fluent_tag_containers:
-    logs:
-      include:
-        match_type: regexp
-        record_attributes:
-          - key: fluent.tag
-            value: containers\..+
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
@@ -452,11 +415,6 @@ processors:
 {{- end }}
 
 receivers:
-{{ if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
-  fluentforward:
-    endpoint: 0.0.0.0:24321
-{{ end }}
-
 {{ if or .Values.sumologic.logs.collector.otelcol.enabled .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
   otlp:
     protocols:
@@ -472,104 +430,8 @@ service:
 {{ end }}
     - pprof
   pipelines:
-{{ if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
-{{ if .Values.sumologic.logs.container.enabled }}
-    logs/fluent/containers:
-      exporters:
-{{ include "logs.otelcol.container.exporters" . | indent 8 }}
-      processors:
-        - memory_limiter
-        - filter/include_fluent_tag_containers
-        - attributes/fluent_containers
-        - groupbyattrs/containers
-        - k8s_tagger
-        - resource/add_cluster
-        - resource/set_empty_source_metadata
-        - resource/containers_copy_node_to_host
-        - sumologic_schema
-        - source/containers
-        - transform/containers_parse_json
-{{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
-{{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
-{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
-{{- end }}
-{{- end }}
-        - resource/remove_pod_name
-        - resource/drop_annotations
-        - attributes/remove_fluent_tag
-{{- if eq .Values.sumologic.logs.container.format "text" }} 
-        - transform/remove_attributes
-{{- else if eq .Values.sumologic.logs.container.format "json_merge" }} 
-        - transform/flatten
-{{- end }}
-        - transform/add_timestamp
-        - batch
-      receivers:
-        - fluentforward
-{{ end }}
-
-{{ if .Values.sumologic.logs.systemd.enabled }}
-    logs/fluent/kubelet:
-      exporters:
-{{ include "logs.otelcol.kubelet.exporters" . | indent 8 }}
-      processors:
-        - memory_limiter
-        - filter/include_fluent_tag_host
-        - filter/include_kubelet
-        - filter/exclude_kubelet_syslog
-        - filter/exclude_kubelet_hostname
-        - filter/exclude_kubelet_priority
-        - filter/exclude_kubelet_unit
-        - attributes/extract_systemd_source_fields
-        - attributes/remove_fluent_tag
-        - groupbyattrs/systemd
-        - resource/add_cluster
-        - source/kubelet
-        - transform/add_timestamp
-{{- if .Values.sumologic.logs.kubelet.otelcol.extraProcessors }}
-{{- range $processor := .Values.sumologic.logs.kubelet.otelcol.extraProcessors }}
-{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
-{{- end }}
-{{- end }}
-        - batch
-      receivers:
-        - fluentforward
-
-    logs/fluent/systemd:
-      exporters:
-{{ include "logs.otelcol.systemd.exporters" . | indent 8 }}
-      processors:
-        - memory_limiter
-        - filter/include_fluent_tag_host
-        - filter/include_systemd
-        - filter/exclude_kubelet
-        - filter/exclude_systemd_syslog
-        - filter/exclude_systemd_hostname
-        - filter/exclude_systemd_priority
-        - filter/exclude_systemd_unit
-        - attributes/extract_systemd_source_fields
-        - attributes/remove_fluent_tag
-        - groupbyattrs/systemd
-        - resource/add_cluster
-        - source/systemd
-        - transform/add_timestamp
-{{- if .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
-{{- range $processor := .Values.sumologic.logs.systemd.otelcol.extraProcessors }}
-{{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
-{{- end }}
-{{- end }}
-        - batch
-      receivers:
-        - fluentforward
-{{ end }}
-{{ end }}
-
 {{ if or .Values.sumologic.logs.collector.otelcol.enabled .Values.sumologic.logs.collector.otelcloudwatch.enabled }}
 {{ if .Values.sumologic.logs.container.enabled }}
-    ## This is the same pipeline like for logs/fluent/containers with the following modifications:
-    ## - filter/include_fluent_tag_containers and attributes/remove_fluent_tag are being removed
-    ##   as only containers log are being provided to otlp receiver
-    ## - attributes/fluent_containers functionality is being replaced by otellogs operators
     logs/otlp/containers:
       exporters:
 {{ include "logs.otelcol.container.exporters" . | indent 8 }}
@@ -603,9 +465,6 @@ service:
 {{ end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
-    ## This is the same pipeline like logs/fluent/kubelet, but with the following changes:
-    ## - otlp receiver instead of fluentforward
-    ## - added transform/remove_attributes processor
     logs/otlp/kubelet:
       exporters:
 {{ include "logs.otelcol.kubelet.exporters" . | indent 8 }}
@@ -634,9 +493,6 @@ service:
       receivers:
         - otlp
 
-    ## This is the same pipeline like logs/fluent/systemd, but with the following changes:
-    ## - otlp receiver instead of fluentforward
-    ## - added transform/remove_attributes processor
     logs/otlp/systemd:
       exporters:
 {{ include "logs.otelcol.systemd.exporters" . | indent 8 }}

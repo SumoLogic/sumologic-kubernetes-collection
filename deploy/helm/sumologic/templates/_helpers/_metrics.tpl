@@ -9,9 +9,6 @@ Example Usage:
 {{- if eq (include "metrics.otelcol.enabled" .) "true" }}
 {{- $enabled = true -}}
 {{- end -}}
-{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
-{{- $enabled = true -}}
-{{- end -}}
 {{ $enabled }}
 {{- end -}}
 
@@ -24,27 +21,8 @@ Example Usage:
 */}}
 {{- define "metrics.otelcol.enabled" -}}
 {{- $enabled := false -}}
-{{- if eq .Values.sumologic.metrics.enabled true -}}
-{{- if and (eq .Values.sumologic.metrics.metadata.provider "otelcol") (eq .Values.metadata.metrics.enabled true) -}}
+{{- if and (eq .Values.sumologic.metrics.enabled true) (eq .Values.metadata.metrics.enabled true) -}}
 {{- $enabled = true -}}
-{{- end -}}
-{{- end -}}
-{{ $enabled }}
-{{- end -}}
-
-
-{{/*
-Check if fluentd metrics provider is enabled
-Example Usage:
-{{- if eq (include "metrics.fluentd.enabled" .) "true" }}
-
-*/}}
-{{- define "metrics.fluentd.enabled" -}}
-{{- $enabled := false -}}
-{{- if eq .Values.sumologic.metrics.enabled true -}}
-{{- if and (eq .Values.sumologic.metrics.metadata.provider "fluentd") (eq .Values.fluentd.metrics.enabled true) -}}
-{{- $enabled = true -}}
-{{- end -}}
 {{- end -}}
 {{ $enabled }}
 {{- end -}}
@@ -82,11 +60,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics" -}}
-{{- if eq .Values.sumologic.metrics.metadata.provider "fluentd" -}}
-{{ template "sumologic.labels.app.fluentd" . }}-metrics
-{{- else if eq .Values.sumologic.metrics.metadata.provider "otelcol" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-metrics
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.labels.app.metrics.pod" -}}
@@ -134,11 +108,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "sumologic.metadata.name.metrics" -}}
-{{- if eq .Values.sumologic.metrics.metadata.provider "fluentd" -}}
-{{ template "sumologic.metadata.name.fluentd" . }}-metrics
-{{- else if eq .Values.sumologic.metrics.metadata.provider "otelcol" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}-metrics
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metrics.metadata.endpoint" -}}
@@ -190,7 +160,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "sumologic.labels.metrics" -}}
-sumologic.com/app: fluentd-metrics
+sumologic.com/app: otelcol-metrics
 sumologic.com/component: metrics
 {{- end -}}
 
@@ -316,90 +286,4 @@ Return the endpoint for the default Sumologic exporter for metrics.
 {{- else -}}
 {{- fail "`sumologic.metrics.sourceType` can only be `http` or `otlp`" -}}
 {{- end -}}
-{{- end -}}
-
-{{/*
-Generate metrics match configuration
-
-Example usage (as one line):
-
-{{ include "utils.metrics.match" (dict
-  "Values" .
-  "Tag" "prometheus.metrics.kubelet"
-  "Endpoint" "SUMO_ENDPOINT_METRICS"
-  "Storage" .Values.fluentd.buffer.filePaths.metrics.default
-  "Id" sumologic.endpoint.metrics
-)}}
-*/}}
-{{- define "utils.metrics.match" -}}
-<match {{ .Tag }}>
-  @type copy
-  <store>
-{{- if .Drop }}
-    @type null
-{{- else }}
-    @type sumologic
-    @id {{ .Id }}
-    sumo_client {{ include "sumologic.sumo_client" .Context | quote }}
-    endpoint "#{ENV['{{ include "terraform.sources.endpoint" .Endpoint}}']}"
-{{- .Context.Values.fluentd.metrics.outputConf | nindent 2 }}
-    <buffer>
-      {{- if or .Context.Values.fluentd.persistence.enabled (eq .Context.Values.fluentd.buffer.type "file") }}
-      @type file
-      path {{ .Storage }}
-      {{- else }}
-      @type memory
-      {{- end }}
-      @include buffer.output.conf
-    </buffer>
-{{- end }}
-  </store>
-  {{- if .Context.Values.fluentd.monitoring.output }}
-  {{ include "fluentd.prometheus-metrics.output" . | nindent 2 }}
-  {{- end }}
-</match>
-{{ end -}}
-
-{{/*
-Generate fluentd prometheus filter configuration (input metrics)
-
-Example:
-
-{{ template "fluentd.prometheus-metrics.input" (dict "Tag" "kubernetes.**") }}
-*/}}
-{{- define "fluentd.prometheus-metrics.input" }}
-<filter {{ .Tag }}>
-  @type prometheus
-  <metric>
-    name fluentd_input_status_num_records_total
-    type counter
-    desc The total number of incoming records
-    <labels>
-      tag ${tag}
-      hostname ${hostname}
-    </labels>
-  </metric>
-</filter>
-{{- end -}}
-
-{{/*
-Generate fluentd prometheus store configuration (output metrics)
-
-Example:
-
-{{ template "fluentd.prometheus-metrics.output" . }}
-*/}}
-{{- define "fluentd.prometheus-metrics.output" -}}
-<store>
-  @type prometheus
-  <metric>
-    name fluentd_output_status_num_records_total
-    type counter
-    desc The total number of outgoing records
-    <labels>
-      tag ${tag}
-      hostname ${hostname}
-    </labels>
-  </metric>
-</store>
 {{- end -}}

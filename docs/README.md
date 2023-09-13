@@ -38,15 +38,9 @@ Documentation links:
   - [Collecting Kubernetes events](/docs/collecting-kubernetes-events.md)
   - Open Telemetry
     - [Open Telemetry with `sumologic-kubernetes-collection`](/docs/opentelemetry-collector/README.md)
-    - [Comparison of Fluentd and Opentelemetry Collector functionality](/docs/fluent/fluentd-otc-comparison.md)
-    - [Comparison of Fluent Bit and Opentelemetry Collector functionality](/docs/fluentbit-otc-comparison.md)
     - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)
     - [OTLP source](/docs/otlp-source.md)
   - Fluentd and Fluent-Bit
-    - [Adding Additional Fluentd Plugins](/docs/fluent/additional-fluentd-plugins.md)
-    - [Container log parsing with Fluent-Bit (Docker, CRI-O, containerd)](/docs/fluent/container-logs.md)
-    - [Performance estimates for running collection chart](/docs/fluent/performance.md)
-    - [Fluentd persistence](/docs/fluent/fluentd-persistence.md)
 
 - Upgrades
 

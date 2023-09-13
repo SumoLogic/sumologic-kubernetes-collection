@@ -1,34 +1,6 @@
 # Logs
 
-OpenTelemetry Collector can be used for both log collection and metadata enrichment. For these roles, it replaces respectively Fluent Bit
-and Fluentd.
-
-For log collection, it can be enabled by setting:
-
-```yaml
-sumologic:
-  logs:
-    collector:
-      otelcol:
-        enabled: true
-
-fluent-bit:
-  enabled: false
-```
-
-> **NOTE** Normally, Fluent Bit must be disabled for OpenTelemetry Collector to be enabled. This restriction can be lifted, see
-> [here](#running-otelcol-and-fluent-bit-side-by-side).
-
-For metadata enrichment, it can be enabled by setting:
-
-```yaml
-sumologic:
-  logs:
-    metadata:
-      provider: otelcol
-```
-
-If you haven't modified the Fluentd or Fluent Bit configuration, this should be a drop-in replacement with no further changes required.
+OpenTelemetry Collector is used for both log collection and metadata enrichment.
 
 ## Logs Configuration
 
@@ -97,29 +69,5 @@ sumologic:
       units:
         - docker.service
 ```
-
-### Running otelcol and Fluent Bit side by side
-
-Normally, enabling both Otelcol and Fluent-Bit for log collection will fail with an error. The reason for this is that doing so naively
-results in each log line being delivered twice to Sumo Logic, incurring twice the cost without any benefit. However, there are reasons to do
-this; for example it makes for a smoother and less risky migration. Advanced users may also want to pin the different collectors to
-different Node groups.
-
-Because of this, we've included a way to allow running otelcol and Fluent Bit side by side. The minimal configuration enabling this is:
-
-```yaml
-sumologic:
-  logs:
-    collector:
-      otelcol:
-        enabled: true
-      allowSideBySide: true
-
-fluent-bit:
-  enabled: true
-```
-
-> **WARNING** Without further modifications to Otelcol and Fluent Bit configuration, this will cause each log line to be ingested twice,
-> potentially doubling the cost of logs ingestion.
 
 [values]: /deploy/helm/sumologic/values.yaml

@@ -6,10 +6,8 @@
 - [OpenTelemetry Collector Persistent Buffer](#opentelemetry-collector-persistent-buffer)
 - [Excluding Metrics](#excluding-metrics)
   - [Prometheus](#prometheus)
-  - [Fluentd](#fluentd)
   - [OpenTelemetry Collector](#opentelemetry-collector)
 - [Excluding Dimensions](#excluding-dimensions)
-  - [Fluentd](#fluentd-1)
   - [OpenTelemetry Collector](#opentelemetry-collector-1)
 - [Collect logs from additional files on the Node](#collect-logs-from-additional-files-on-the-node)
 - [Remove attributes from systemd logs](#removing-attributes-from-systemd-logs)
@@ -220,10 +218,6 @@ For events, use the following properties:
 
 You can filter out metrics directly in Prometheus using [this documentation](collecting-application-metrics.md#filtering-metrics).
 
-### Fluentd
-
-See [the Fluentd section](fluent/best-practices.md#excluding-metrics)
-
 ### OpenTelemetry Collector
 
 See [the Filtering metrics](/docs/collecting-application-metrics.md#filtering-metrics)
@@ -266,10 +260,6 @@ sumologic:
 ```
 
 ## Excluding Dimensions
-
-### Fluentd
-
-See [the Fluentd section](fluent/best-practices.md#excluding-dimensions)
 
 ### OpenTelemetry Collector
 
@@ -821,10 +811,6 @@ for below pods:
 
 | component                      | key                                                                             |
 | ------------------------------ | ------------------------------------------------------------------------------- |
-| `fluent-bit`                   | `fluent-bit.nodeSelector.kubernetes.io/os`                                      |
-| `fluentd`                      | `fluentd.events.statefulset.nodeSelector.kubernetes.io/os`                      |
-| `fluentd`                      | `fluentd.logs.statefulset.nodeSelector.kubernetes.io/os`                        |
-| `fluentd`                      | `fluentd.metrics.statefulset.nodeSelector.kubernetes.io/os`                     |
 | `sumologic`                    | `sumologic.setup.job.nodeSelector.kubernetes.io/os`                             |
 | `kube-prometheus-stack`        | `kube-prometheus-stack.prometheus-node-exporter.nodeSelector.kubernetes.io/os`  |
 | `kube-state-metrics`           | `kube-prometheus-stack.kube-state-metrics.nodeSelector.kubernetes.io/os`        |
@@ -838,12 +824,13 @@ for below pods:
 | `pvcCleaner`                   | `pvcCleaner.job.nodeSelector.kubernetes.io/os`                                  |
 | `experimental metrics otelcol` | `sumologic.metrics.collector.otelcol.nodeSelector.kubernetes.io/os`             |
 
-Node selector can be changed via additional parameter in `user-values.yaml`, see an example for Fluent-Bit below:
+Node selector can be changed via additional parameter in `user-values.yaml`, see an example for PVC Cleaner below:
 
 ```yaml
-fluent-bit:
-  nodeSelector:
-    kubernetes.io/os: linux
+pvcCleaner:
+  job:
+    nodeSelector:
+      kubernetes.io/os: linux
 ```
 
 #### Setting different resources on different nodes for logs collector
@@ -891,7 +878,7 @@ otellogs:
 
 In order to parse and store log content as json following configuration has to be applied:
 
-:construction: _TODO_, see [the Fluentd section](fluent/best-practices.md#parsing-log-content-as-json)
+:construction: _TODO_
 
 [chart_readme]: ../deploy/helm/sumologic/README.md
 [values.yaml]: ../deploy/helm/sumologic/values.yaml

@@ -163,7 +163,7 @@ metadata:
   labels:
     app: RELEASE-NAME-sumologic-otelcol-logs
     sumologic.com/scrape: "true"
-    sumologic.com/app: fluentd-logs
+    sumologic.com/app: otelcol-logs
     sumologic.com/component: logs
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
@@ -204,7 +204,7 @@ metadata:
   labels:
     app: RELEASE-NAME-sumologic-otelcol-metrics
     sumologic.com/scrape: "true"
-    sumologic.com/app: fluentd-metrics
+    sumologic.com/app: otelcol-metrics
     sumologic.com/component: metrics
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"

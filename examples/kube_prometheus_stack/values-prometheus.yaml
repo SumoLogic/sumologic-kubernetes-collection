@@ -509,18 +509,6 @@ prometheus-node-exporter:
     #   memory: 30Mi
 prometheus:
   additionalServiceMonitors:
-    - name: collection-sumologic-fluentd-logs
-      additionalLabels:
-        sumologic.com/app: fluentd-logs
-      endpoints:
-        - port: metrics
-      namespaceSelector:
-        matchNames:
-          - $(NAMESPACE)
-      selector:
-        matchLabels:
-          sumologic.com/app: fluentd-logs
-          sumologic.com/scrape: "true"
     - name: collection-sumologic-otelcol-logs
       additionalLabels:
         sumologic.com/app: otelcol-logs
@@ -531,19 +519,7 @@ prometheus:
           - $(NAMESPACE)
       selector:
         matchLabels:
-          sumologic.com/app: fluentd-logs
-          sumologic.com/scrape: "true"
-    - name: collection-sumologic-fluentd-metrics
-      additionalLabels:
-        sumologic.com/app: fluentd-metrics
-      endpoints:
-        - port: metrics
-      namespaceSelector:
-        matchNames:
-          - $(NAMESPACE)
-      selector:
-        matchLabels:
-          sumologic.com/app: fluentd-metrics
+          sumologic.com/app: otelcol-logs
           sumologic.com/scrape: "true"
     - name: collection-sumologic-otelcol-metrics
       additionalLabels:
@@ -555,32 +531,7 @@ prometheus:
           - $(NAMESPACE)
       selector:
         matchLabels:
-          sumologic.com/app: fluentd-metrics
-          sumologic.com/scrape: "true"
-    - name: collection-sumologic-fluentd-events
-      additionalLabels:
-        sumologic.com/app: fluentd-events
-      endpoints:
-        - port: metrics
-      namespaceSelector:
-        matchNames:
-          - $(NAMESPACE)
-      selector:
-        matchLabels:
-          sumologic.com/app: fluentd-events
-          sumologic.com/scrape: "true"
-    - name: collection-fluent-bit
-      additionalLabels:
-        sumologic.com/app: collection-fluent-bit
-      endpoints:
-        - port: http
-          path: /api/v1/metrics/prometheus
-      namespaceSelector:
-        matchNames:
-          - $(NAMESPACE)
-      selector:
-        matchLabels:
-          app.kubernetes.io/name: fluent-bit
+          sumologic.com/app: otelcol-metrics
           sumologic.com/scrape: "true"
     - name: collection-sumologic-otelcol
       additionalLabels:

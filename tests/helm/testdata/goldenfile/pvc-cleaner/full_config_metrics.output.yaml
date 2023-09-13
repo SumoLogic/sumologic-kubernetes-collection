@@ -42,8 +42,8 @@ spec:
                       - key: app
                         operator: In
                         values:
-                          - RELEASE-NAME-sumologic-fluentd-logs
-                          - RELEASE-NAME-sumologic-fluentd-metrics
+                          - RELEASE-NAME-sumologic-otelcol-logs
+                          - RELEASE-NAME-sumologic-otelcol-metrics
                       - key: app
                         operator: In
                         values:

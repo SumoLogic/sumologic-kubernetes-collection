@@ -9,9 +9,6 @@ Example Usage:
 {{- if eq (include "events.otelcol.enabled" .) "true" }}
 {{- $enabled = true -}}
 {{- end -}}
-{{- if eq (include "events.fluentd.enabled" .) "true" }}
-{{- $enabled = true -}}
-{{- end -}}
 {{ $enabled }}
 {{- end -}}
 
@@ -23,30 +20,7 @@ Example Usage:
 
 */}}
 {{- define "events.otelcol.enabled" -}}
-{{- $enabled := false -}}
-{{- if eq .Values.sumologic.events.provider "otelcol" -}}
-{{- $enabled = true -}}
-{{- end -}}
-{{- if hasKey .Values.sumologic.events "enabled" -}}
-{{- if eq .Values.sumologic.events.enabled false -}}
-{{- $enabled = false -}}
-{{- end -}}
-{{- end -}}
-{{ $enabled }}
-{{- end -}}
-
-
-{{/*
-Check if fluentd events provider is enabled
-Example Usage:
-{{- if eq (include "events.fluentd.enabled" .) "true" }}
-
-*/}}
-{{- define "events.fluentd.enabled" -}}
-{{- $enabled := false -}}
-{{- if eq .Values.sumologic.events.provider "fluentd" -}}
-{{- $enabled = true -}}
-{{- end -}}
+{{- $enabled := true -}}
 {{- if hasKey .Values.sumologic.events "enabled" -}}
 {{- if eq .Values.sumologic.events.enabled false -}}
 {{- $enabled = false -}}
@@ -56,11 +30,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "sumologic.labels.app.events" -}}
-{{- if eq (include "events.fluentd.enabled" .) "true"  -}}
-{{ template "sumologic.labels.app.fluentd" . }}-events
-{{- else if eq (include "events.otelcol.enabled" .) "true" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-events
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.labels.app.events.pod" -}}
@@ -84,11 +54,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events" -}}
-{{- if eq (include "events.fluentd.enabled" .) "true" -}}
-{{ template "sumologic.metadata.name.fluentd" . }}-events
-{{- else if eq (include "events.otelcol.enabled" .) "true" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}-events
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.events.service" -}}
@@ -108,11 +74,7 @@ Example Usage:
 {{- end -}}
 
 {{- define "sumologic.labels.events" -}}
-{{- if eq .Values.sumologic.events.provider "fluentd" -}}
-sumologic.com/app: fluentd-events
-{{- else -}}
 sumologic.com/app: otelcol-events
-{{- end }}
 sumologic.com/component: events
 {{- end -}}
 

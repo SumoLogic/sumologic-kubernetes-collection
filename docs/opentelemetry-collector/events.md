@@ -1,16 +1,6 @@
 # Kubernetes Events
 
-OpenTelemetry Collector can be used to collect and enrich Kubernetes events instead of Fluentd. This is a drop-in replacement. To do this,
-set the `sumologic.events.provider` to `otelcol`:
-
-```yaml
-sumologic:
-  events:
-    provider: otelcol
-```
-
-For configurations that don't modify `sumologic.fluentd.events.overrideOutputConf`, this should be enough. See the configuration options
-under `otelevents` in [values.yaml](/deploy/helm/sumologic/values.yaml) for OT-specific configuration..
+OpenTelemetry Collector is used to collect and enrich Kubernetes events.
 
 ## Customizing OpenTelemetry Collector configuration
 

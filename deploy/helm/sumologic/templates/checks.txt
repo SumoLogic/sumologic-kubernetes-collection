@@ -5,12 +5,22 @@
 {{- end -}}
 {{- end -}}
 
-{{/* Check if metrics provider is set to either fluentd or otelcol */}}
-{{- if not (or (eq .Values.sumologic.metrics.metadata.provider "fluentd") (eq .Values.sumologic.metrics.metadata.provider "otelcol")) -}}
-{{- fail "\nsumologic.metrics.metadata.provider should be set to either fluentd or otelcol" -}}
+{{/* Check if metrics metadata provider is set to unsupported Fluentd */}}
+{{- if eq (dig "sumologic" "metrics" "metadata" "provider" "otelcol" .Values.AsMap) "fluentd" -}}
+{{- fail "\nFluentd for metrics metadata has been removed. Please follow migration document to use Open Telemetry Collector instead: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/v4-migration-doc.md#removing-support-for-fluent-bit-and-fluentd" -}}
 {{- end -}}
 
-{{/* Check if logs provider is set to either fluentd or otelcol */}}
-{{- if not (or (eq .Values.sumologic.logs.metadata.provider "fluentd") (eq .Values.sumologic.logs.metadata.provider "otelcol")) -}}
-{{- fail "\nsumologic.logs.metadata.provider should be set to either fluentd or otelcol" -}}
+{{/* Check if logs metadata provider is set to unsupported Fluentd */}}
+{{- if eq (dig "sumologic" "logs" "metadata" "provider" "otelcol" .Values.AsMap) "fluentd" -}}
+{{- fail "\nFluentd for logs metadata has been removed. Please follow migration document to use Open Telemetry Collector instead: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/v4-migration-doc.md#removing-support-for-fluent-bit-and-fluentd" -}}
+{{- end -}}
+
+{{/* Check if events metadata provider is set to unsupported Fluentd */}}
+{{- if eq (dig "sumologic" "events" "provider" "otelcol" .Values.AsMap) "fluentd" -}}
+{{- fail "\nFluentd for events has been removed. Please follow migration document to use Open Telemetry Collector instead: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/v4-migration-doc.md#removing-support-for-fluent-bit-and-fluentd" -}}
+{{- end -}}
+
+{{/* Check if Fluent Bit is enabled */}}
+{{- if eq (dig "fluent-bit" "enabled" false .Values.AsMap) true -}}
+{{- fail "\nFluent Bit has been removed. Please follow migration document to use Open Telemetry Collector instead: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/v4-migration-doc.md#removing-support-for-fluent-bit-and-fluentd" -}}
 {{- end -}}

@@ -2,23 +2,6 @@
 
 <!-- TOC -->
 
-- [Collecting Container Logs](#collecting-container-logs)
-  - [Configuration](#configuration)
-    - [Multiline log parsing](#multiline-log-parsing)
-      - [Conditional multiline log parsing](#conditional-multiline-log-parsing)
-    - [Log format](#log-format)
-      - [fields log format](#fields-log-format)
-      - [json_merge log format](#json_merge-log-format)
-      - [text log format](#text-log-format)
-    - [Setting source name and other built-in metadata](#setting-source-name-and-other-built-in-metadata)
-    - [Filtering](#filtering)
-    - [Modifying log records](#modifying-log-records)
-      - [Adding custom fields](#adding-custom-fields)
-    - [Persistence](#persistence)
-  - [Advanced Configuration](#advanced-configuration)
-    - [Direct configuration](#direct-configuration)
-    - [Disabling container logs](#disabling-container-logs)
-
 <!-- /TOC -->
 
 By default, log collection is enabled. This includes both container logs and systemd logs. This document covers container logs.
@@ -231,11 +214,49 @@ Whereas log line 2 will be displayed as JSON:
 }
 ```
 
-> **Warning** Setting the format to `text` with HTTP source has certain consequences for multiline detection. See
-> [here][troubleshooting_text_format] for more details.
-
 If you want to send metadata along wih log, you have to use reosurce level attributes, because record level attributes are going to be
 removed before sending log to Sumo Logic. Please see [Mapping OpenTelemetry concepts to Sumo Logic][mapping] for more details.
+
+##### Problem
+
+If you changed log format to `text`, you need to know that multiline detection performed on the collection side is not respected anymore. As
+we are sending logs as a wall of plain text, there is no way to inform Sumo Logic, which line belongs to which log. In such scenario,
+multiline detection is performed on Sumo Logic side. By default it uses [Infer Boundaries][infer-boundaries]. You can review the source
+configuration in [HTTP Source Settings][http-source].
+
+**Note**: Your source name is going to be taken from `sumologic.collectorName` or `sumologic.clusterName` (`kubernetes` by default).
+
+##### Resolution
+
+In order to change multiline detection to [Boundary Regex][boundary-regex], for example to `\[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*`,
+add the following configuration to your `user-values.yaml`:
+
+```yaml
+sumologic:
+  collector:
+    sources:
+      logs:
+        default:
+          properties:
+            ## Disable automatic multiline detection on collector side
+            use_autoline_matching: false
+            ## Set the following multiline detection regexes on collector side:
+            ## - \{".* - in order to match json lines
+            ## - \[?\d{4}-\d{1,2}-\d{1,2}.\d{2}:\d{2}:\d{2}.*
+            ## Note: `\` is translated to `\\` and `"` to `\"` as we pass to terraform script
+            manual_prefix_regexp: (\\{\".*|\\[?\\d{4}-\\d{1,2}-\\d{1,2}.\\d{2}:\\d{2}:\\d{2}.*)
+```
+
+**Note**: Double escape of `\` is needed, as well as escaping `"`, because value of `manual_prefix_regexp` is passed to terraform script.
+
+**Note**: If you use `json` format along with `text` format, you need to add regex for `json` as well (`\\{\".*`)
+
+**Note**: Details about `sumologic.collector.sources` configuration can be found [here][sumologic-terraform-provider]
+
+[infer-boundaries]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#infer-boundaries
+[http-source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source
+[boundary-regex]: https://help.sumologic.com/docs/send-data/reference-information/collect-multiline-logs#boundary-regex
+[sumologic-terraform-provider]: ./terraform.md#sumo-logic-terraform-provider
 
 ### Setting source name and other built-in metadata
 
@@ -506,6 +527,5 @@ OTLP source resolves some issues of `text` format, which affects HTTP source:
   https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/transformprocessor/README.md
 [sumo_fields]: https://help.sumologic.com/docs/manage/fields/
 [sumo_add_fields]: https://help.sumologic.com/docs/manage/fields/#add-field
-[troubleshooting_text_format]: fluent/troubleshoot-collection.md#using-text-format
 [mapping]:
   https://help.sumologic.com/docs/send-data/opentelemetry-collector/data-source-configurations/additional-configurations-reference/#mapping-opentelemetry-concepts-to-sumo-logic

@@ -10,9 +10,6 @@ Example Usage:
 {{- if eq (include "logs.otelcol.enabled" .) "true" }}
 {{- $enabled = true -}}
 {{- end -}}
-{{- if eq (include "logs.fluentd.enabled" .) "true" }}
-{{- $enabled = true -}}
-{{- end -}}
 {{ $enabled }}
 {{- end -}}
 
@@ -26,27 +23,8 @@ Example Usage:
 */}}
 {{- define "logs.otelcol.enabled" -}}
 {{- $enabled := false -}}
-{{- if eq .Values.sumologic.logs.enabled true -}}
-{{- if and (eq .Values.sumologic.logs.metadata.provider "otelcol") (eq .Values.metadata.logs.enabled true) -}}
+{{- if and (eq .Values.sumologic.logs.enabled true) (eq .Values.metadata.logs.enabled true) -}}
 {{- $enabled = true -}}
-{{- end -}}
-{{- end -}}
-{{ $enabled }}
-{{- end -}}
-
-{{/*
-Check if fluentd logs metadata provider is enabled
-
-Example Usage:
-{{- if eq (include "logs.fluentd.enabled" .) "true" }}
-
-*/}}
-{{- define "logs.fluentd.enabled" -}}
-{{- $enabled := false -}}
-{{- if eq .Values.sumologic.logs.enabled true -}}
-{{- if and (eq .Values.sumologic.logs.metadata.provider "fluentd") (eq .Values.fluentd.logs.enabled true) -}}
-{{- $enabled = true -}}
-{{- end -}}
 {{- end -}}
 {{ $enabled }}
 {{- end -}}
@@ -54,7 +32,6 @@ Example Usage:
 {{/*
 Check if otelcol logs collector is enabled.
 It's enabled if both logs in general and the collector specifically are enabled.
-If both the collector and Fluent-Bit are enabled, we error.
 
 Example Usage:
 {{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
@@ -62,41 +39,11 @@ Example Usage:
 */}}
 {{- define "logs.collector.otelcol.enabled" -}}
 {{- $enabled := and (eq (include "logs.enabled" .) "true") (eq .Values.sumologic.logs.collector.otelcol.enabled true) -}}
-{{- $fluentBitEnabled := index .Values "fluent-bit" "enabled" -}}
-{{- if kindIs "invalid" $fluentBitEnabled -}}
-{{- $fluentBitEnabled = true -}}
-{{- end -}}
-{{- $sideBySideAllowed := .Values.sumologic.logs.collector.allowSideBySide -}}
-{{- if and $enabled $fluentBitEnabled (not $sideBySideAllowed) -}}
-{{- fail "Fluent-Bit and Otel log collector can't be enabled at the same time. Set either `fluent-bit.enabled` or `sumologic.logs.collector.otelcol.enabled` to false" -}}
-{{- end -}}
 {{ $enabled }}
 {{- end -}}
 
 {{- define "logs.collector.otelcloudwatch.enabled" -}}
 {{- $enabled := and (eq (include "logs.enabled" .) "true") (eq .Values.sumologic.logs.collector.otelcloudwatch.enabled true) -}}
-{{- end -}}
-
-{{/*
-Check if Fluent-Bit logs collector is enabled.
-It's enabled if logs in general are enabled and fluent-bit.enabled is set to true.
-
-Example Usage:
-{{- if eq (include "logs.collector.fluentbit.enabled" .) "true" }}
-
-*/}}
-{{- define "logs.collector.fluentbit.enabled" -}}
-{{- $fluentBitEnabled := index .Values "fluent-bit" "enabled" -}}
-{{- if kindIs "invalid" $fluentBitEnabled -}}
-{{- $fluentBitEnabled = true -}}
-{{- end -}}
-{{- $enabled := and (eq (include "logs.enabled" .) "true") $fluentBitEnabled -}}
-{{- $otelLogCollectorEnabled := .Values.sumologic.logs.collector.otelcol.enabled -}}
-{{- $sideBySideAllowed := .Values.sumologic.logs.collector.allowSideBySide -}}
-{{- if and $enabled $otelLogCollectorEnabled (not $sideBySideAllowed) -}}
-{{- fail "Fluent-Bit and Otel log collector can't be enabled at the same time. Set either `fluent-bit.enabled` or `sumologic.logs.collector.otelcol.enabled` to false" -}}
-{{- end -}}
-{{ $enabled }}
 {{- end -}}
 
 {{/*
@@ -161,11 +108,7 @@ Return the exporters for kubelet log pipeline.
 {{- end -}}
 
 {{- define "sumologic.labels.app.logs" -}}
-{{- if eq .Values.sumologic.logs.metadata.provider "fluentd" -}}
-{{ template "sumologic.labels.app.fluentd" . }}-logs
-{{- else if eq .Values.sumologic.logs.metadata.provider "otelcol" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-logs
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.collector.configmap" -}}
@@ -257,11 +200,7 @@ Return the exporters for kubelet log pipeline.
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs" -}}
-{{- if eq .Values.sumologic.logs.metadata.provider "fluentd" -}}
-{{ template "sumologic.metadata.name.fluentd" . }}-logs
-{{- else if eq .Values.sumologic.logs.metadata.provider "otelcol" -}}
 {{ template "sumologic.metadata.name.otelcol" . }}-logs
-{{- end -}}
 {{- end -}}
 
 {{- define "sumologic.metadata.name.logs.service" -}}
@@ -297,7 +236,7 @@ Return the exporters for kubelet log pipeline.
 {{- end -}}
 
 {{- define "sumologic.labels.logs" -}}
-sumologic.com/app: fluentd-logs
+sumologic.com/app: otelcol-logs
 sumologic.com/component: logs
 {{- end -}}
 

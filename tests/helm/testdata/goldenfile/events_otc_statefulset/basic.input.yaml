@@ -52,7 +52,3 @@ otelevents:
       - name: es-certs
         mountPath: /certs
         readOnly: true
-
-sumologic:
-  events:
-    provider: otelcol
