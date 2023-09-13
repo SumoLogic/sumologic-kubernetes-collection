@@ -31,6 +31,7 @@ Documentation links:
   - Metrics
     - [Collecting Kubernetes metrics](/docs/collecting-kubernetes-metrics.md)
     - [Collecting application metrics](/docs/collecting-application-metrics.md)
+    - [Switching from Prometheus to Otelcol](/docs/opentelemetry-collector/metrics.md#metrics-collector) :new:
   - [Advanced Configuration/Best Practices](/docs/best-practices.md)
   - [Advanced Configuration/Security best practices](/docs/security-best-practices.md)
   - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
