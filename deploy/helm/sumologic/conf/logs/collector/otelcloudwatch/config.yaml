@@ -3,6 +3,8 @@ exporters:
     endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
     sending_queue:
       queue_size: 10
+    # this improves load balancing at the cost of more network traffic
+    disable_keep_alives: true
 
 extensions:
 {{ if .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled }}
