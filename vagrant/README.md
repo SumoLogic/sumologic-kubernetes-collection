@@ -226,6 +226,30 @@ sumologic:
   endpoint: http://receiver-mock.receiver-mock:3002/terraform/api/
 ```
 
+### Troubleshooting
+
+#### Replace Prometheus with Opentelemetry
+
+You could face the following error when replacing Prometheus with Opentelemetry on Vagrant
+
+```bash
+Error: UPGRADE FAILED: resource mapping not found for name: "collection-sumologic-metrics" namespace: "sumologic" from "": no matches for kind "OpenTelemetryCollector" in version "opentelemetry.io/v1alpha1"
+ensure CRDs are installed first
+make: *** [/sumologic/vagrant/Makefile:52: helm-upgrade] Error 1
+```
+
+To fix this issue, you need to remove the collectors by running
+
+```bash
+sumo-make clean
+```
+
+and then try upgrading the helm again by running
+
+```bash
+sumo-make upgrade
+```
+
 ### Tips and tricks
 
 - In order to manually take fluentd metrics using receiver-mock, use the following command from receiver-mock container:
