@@ -959,6 +959,9 @@ kube-prometheus-stack:
       # requests:
       #   cpu: 100m
       #   memory: 100Mi
+    ## ServiceMonitor for the Prometheus operator
+    serviceMonitor:
+      selfMonitor: false
     admissionWebhooks:
       enabled: false
     tls:
