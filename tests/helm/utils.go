@@ -17,6 +17,7 @@ import (
 	"github.com/gruntwork-io/go-commons/files"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/logger"
+	otoperator "github.com/open-telemetry/opentelemetry-operator/apis/v1alpha1"
 	prometheus "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
@@ -119,6 +120,11 @@ func UnmarshalMultipleK8sObjectsFromYaml(yamlDocs string) (objects []runtime.Obj
 	}
 
 	err = monitoringv1.AddToScheme(scheme)
+	if err != nil {
+		return objects, err
+	}
+
+	err = otoperator.AddToScheme(scheme)
 	if err != nil {
 		return objects, err
 	}

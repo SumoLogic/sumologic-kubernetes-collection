@@ -24,6 +24,7 @@ func TestServiceMonitors(t *testing.T) {
 			ValuesYaml: `
 kube-prometheus-stack:
   prometheus:
+    enabled: true
     additionalServiceMonitors:
       - name: collection-sumologic-fluentd-logs-test
         additionalLabels:
@@ -55,6 +56,7 @@ kube-prometheus-stack:
 			ValuesYaml: `
 kube-prometheus-stack:
   prometheus:
+    enabled: true
     additionalServiceMonitors:
       - name: collection-sumologic-fluentd-logs-test
         additionalLabels:

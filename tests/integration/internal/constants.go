@@ -380,7 +380,6 @@ var (
 		CoreDNSMetrics,
 		CAdvisorMetrics,
 		NodeExporterMetrics,
-		PrometheusMetrics,
 		OtherMetrics,
 		AdditionalNodeExporterMetrics,
 	}
@@ -414,7 +413,7 @@ func InitializeConstants() error {
 	}
 
 	DefaultExpectedMetrics = []string{}
-	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics, LogsOtelcolMetrics)
+	metricsGroupsWithOtelcol := append(DefaultExpectedMetricsGroups, DefaultOtelcolMetrics, LogsOtelcolMetrics, MetricsCollectorOtelcolMetrics)
 	for _, metrics := range metricsGroupsWithOtelcol {
 		DefaultExpectedMetrics = append(DefaultExpectedMetrics, metrics...)
 	}

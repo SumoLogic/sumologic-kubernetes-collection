@@ -1,0 +1,18 @@
+sumologic:
+  logs:
+    enabled: false
+  traces:
+    enabled: false
+  events:
+    enabled: false
+  metrics:
+    enabled: true
+    collector:
+      otelcol:
+        enabled: false
+
+kube-prometheus-stack:
+  prometheus:
+    enabled: true
+  prometheusOperator:
+    enabled: true

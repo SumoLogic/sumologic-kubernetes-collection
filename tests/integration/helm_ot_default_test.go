@@ -20,16 +20,16 @@ func Test_Helm_Default_OT(t *testing.T) {
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,
-		CheckPrometheusInstall,
+		CheckOtelcolMetricsCollectorInstall,
 		CheckOtelcolLogsCollectorInstall,
 		CheckTracesInstall,
 	}
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
+	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
 
-	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Prometheus, true)
+	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
 
 	featLogs := GetLogsFeature()
 

@@ -445,9 +445,8 @@ sumologic:
     collector:
       ### Otel metrics collector. Replaces Prometheus.
       ## To enable, you need opentelemetry-operator enabled as well.
-      ## Stability: Beta.
       otelcol:
-        enabled: false
+        enabled: true
 
         ## Default scrape interval
         scrapeInterval: 30s
@@ -543,7 +542,7 @@ sumologic:
     ## This is an advanced feature, enable only if you're experiencing performance
     ## issues with metrics metadata enrichment.
     remoteWriteProxy:
-      enabled: true
+      enabled: false
       config:
         ## Increase this if you've increased samples_per_send in Prometheus to prevent nginx
         ## from spilling proxied request bodies to disk
@@ -950,6 +949,7 @@ kube-prometheus-stack:
     enabled: false
     defaultDashboardsEnabled: false
   prometheusOperator:
+    enabled: false
     ## Labels to add to the operator pod
     podLabels: {}
     ## Annotations to add to the operator pod
@@ -1105,6 +1105,7 @@ kube-prometheus-stack:
             regex: (?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
             sourceLabels: [__name__]
   prometheus:
+    enabled: false
     additionalServiceMonitors: []
     prometheusSpec:
       ## Prometheus default scrape interval, default from upstream Kube Prometheus Stack Helm chart
@@ -2377,7 +2378,7 @@ tailing-sidecar-operator:
 ## Configure OpenTelemetry Operator - Instrumentation
 ## ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
 opentelemetry-operator:
-  enabled: false
+  enabled: true
 
   ## Specific for Sumo Logic chart - Instrumentation resource creation
   instrumentationJobImage:

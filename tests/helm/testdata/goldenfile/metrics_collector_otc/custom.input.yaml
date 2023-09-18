@@ -1,9 +1,7 @@
 sumologic:
   metrics:
-    enabled: true
     collector:
       otelcol:
-        enabled: true
         scrapeInterval: 60s
         autoscaling:
           enabled: true

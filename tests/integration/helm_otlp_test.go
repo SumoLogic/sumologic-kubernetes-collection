@@ -10,7 +10,6 @@ import (
 )
 
 func Test_Helm_OTLP(t *testing.T) {
-
 	expectedMetrics := internal.DefaultExpectedMetrics
 	// we have tracing enabled, so check tracing-specific metrics
 	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)
@@ -20,20 +19,24 @@ func Test_Helm_OTLP(t *testing.T) {
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,
-		CheckPrometheusInstall,
+		CheckOtelcolMetricsCollectorInstall,
 		CheckOtelcolLogsCollectorInstall,
 		CheckTracesInstall,
 	}
 
 	featInstall := GetInstallFeature(installChecks)
 
+	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
+
+	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
+
 	featLogs := GetLogsFeature()
 
-	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
-
-	featTraces := GetTracesFeature()
+	featMultilineLogs := GetMultipleMultilineLogsFeature()
 
 	featEvents := GetEventsFeature()
 
-	testenv.Test(t, featInstall, featLogs, featMetrics, featEvents, featTraces)
+	featTraces := GetTracesFeature()
+
+	testenv.Test(t, featInstall, featMetrics, featTelegrafMetrics, featLogs, featMultilineLogs, featEvents, featTraces)
 }

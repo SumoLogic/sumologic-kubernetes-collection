@@ -35,4 +35,4 @@ dependencies:
   - name: opentelemetry-operator
     version: 0.35.0
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
-    condition: opentelemetry-operator.enabled
+    condition: opentelemetry-operator.enabled,sumologic.metrics.collector.otelcol.enabled

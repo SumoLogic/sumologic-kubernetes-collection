@@ -6,9 +6,11 @@
   - [Important changes](#important-changes)
     - [OpenTelemetry Collector](#opentelemetry-collector)
     - [Drop Prometheus recording rule metrics](#drop-prometheus-recording-rule-metrics)
+    - [OpenTelemetry Collector for metrics collection](#opentelemetry-collector-for-metrics-collection)
   - [How to upgrade](#how-to-upgrade)
     - [Requirements](#requirements)
     - [Metrics migration](#metrics-migration)
+      - [Convert Prometheus remote writes to otel metrics filters](#convert-prometheus-remote-writes-to-otel-metrics-filters)
     - [Removing support for Fluent Bit and Fluentd](#removing-support-for-fluent-bit-and-fluentd)
       - [Configuration Migration](#configuration-migration)
     - [Switch to OTLP sources](#switch-to-otlp-sources)
@@ -37,6 +39,13 @@ format. Please check [Solution Overview][solution-overview] and see below for de
 OpenTelemetry can't collect Prometheus recording rule metrics. The new version therefore stops collecting recording rule metrics and updates
 will be made to the Kubernetes App to remove these metrics.
 
+### OpenTelemetry Collector for metrics collection
+
+By default, the OpenTelemetry Collector is now used for metrics collection instead of Prometheus. For the majority of use cases, this will
+be a transparent change without any need for manual configuration changes. OpenTelemetry Collector will continue to collect the same default
+metrics as Prometheus did previously, and will support the same mechanisms for collecting custom application metrics. Any exceptions will be
+called out in the migration guide below.
+
 ## How to upgrade
 
 ### Requirements
@@ -53,7 +62,35 @@ export HELM_RELEASE_NAME=...
 
 ### Metrics migration
 
-:construction:
+If you don't have metrics collection enabled, skip straight to the [next major section](#switch-to-otlp-sources).
+
+#### Convert Prometheus remote writes to otel metrics filters
+
+**When?**: If you have custom remote writes defined in `kube-prometheus-stack.prometheus.additionalServiceMonitors`
+
+When using Prometheus for metrics collection in v3, we relied on remote writes for filtering forwarded metrics. Otel, which is the default
+in v4, does not support remote writes, so we've moved this functionality to Otel processors, or ServiceMonitors if it can be done there.
+
+There are several scenarios here, depending on the exact use case:
+
+1. You're collecting different [Kubernetes metrics][kubernetes_metrics_v3] than what the Chart provides by default. You've modified the
+   existing ServiceMonitor for these metrics, and added a remote write as instructed by the documentation.
+
+You can safely delete the added remote write definition. No further action is required.
+
+1. As above, but you're also doing some additional data transformation via relabelling rules in the remote write definition.
+
+You'll need to either move the relabelling rules into the ServiceMonitor itself, or [add an equivalent filter
+processor][otel_metrics_filter] rule to Otel.
+
+1. You're collecting custom application metrics by adding a [`prometheus.io/scrape` annotation][application_metrics_annotation]. You don't
+   need to filter these metrics.
+
+No action is needed.
+
+1. As above, but you also have a remote write definition to filter these metrics.
+
+You'll need to delete the remote write definition and [add an equivalent filter processor][otel_metrics_filter] rule to Otel.
 
 ### Removing support for Fluent Bit and Fluentd
 
@@ -162,3 +199,8 @@ require additional action.
 
   Some Kubernetes objects, for example statefulsets, have a tight (63 characters) limit for their names. Because of that, we truncate the
   prefix that is attached to the names. In particular, the value under key `fullnameOverride` will be truncated to 22 characters.
+
+[application_metrics_annotation]: ./collecting-application-metrics.md#application-metrics-are-exposed-one-endpoint-scenario
+[kubernetes_metrics_v3]:
+  https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v3/docs/collecting-kubernetes-metrics.md#collecting-kubernetes-metrics
+[otel_metrics_filter]: ./collecting-application-metrics.md#filtering-metrics

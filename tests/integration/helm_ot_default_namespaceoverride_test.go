@@ -17,16 +17,21 @@ type ctxKey string
 
 func Test_Helm_Default_OT_NamespaceOverride(t *testing.T) {
 
-	expectedMetrics := internal.DefaultExpectedMetrics
-	// we have tracing enabled, so check tracing-specific metrics
-	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)
+	expectedMetrics := []string{}
+	// defaults without otel metrics collector metrics, but with Prometheus metrics
+	expectedMetricsGroups := make([][]string, len(internal.DefaultExpectedMetricsGroups))
+	copy(expectedMetricsGroups, internal.DefaultExpectedMetricsGroups)
+	expectedMetricsGroups = append(expectedMetricsGroups, internal.PrometheusMetrics, internal.DefaultOtelcolMetrics, internal.LogsOtelcolMetrics, internal.TracingOtelcolMetrics)
+	for _, metrics := range expectedMetricsGroups {
+		expectedMetrics = append(expectedMetrics, metrics...)
+	}
 
 	installChecks := []featureCheck{
 		CheckSumologicSecret(15),
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,
-		CheckPrometheusInstall,
+		CheckOtelcolMetricsCollectorInstall,
 		CheckOtelcolLogsCollectorInstall,
 		CheckTracesInstall,
 	}
