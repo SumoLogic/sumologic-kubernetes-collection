@@ -135,6 +135,7 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 		"transform/set_name",
 		"groupbyattrs/group_by_name",
 		"transform/remove_name",
+		"filter/drop_unnecessary_metrics",
 		"batch",
 		"transform/prepare_routing",
 		"routing",

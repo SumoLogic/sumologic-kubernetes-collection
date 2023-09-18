@@ -107,6 +107,12 @@ data:
         send_batch_max_size: 2048
         send_batch_size: 1024
         timeout: 1s
+      filter/drop_unnecessary_metrics:
+        error_mode: ignore
+        metrics:
+          metric:
+          - resource.attributes["job"] != "pod-annotations" and IsMatch(name, "scrape_.*")
+          - IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
       groupbyattrs:
         keys:
         - container
@@ -314,6 +320,7 @@ data:
           - transform/set_name
           - groupbyattrs/group_by_name
           - transform/remove_name
+          - filter/drop_unnecessary_metrics
           - batch
           - transform/prepare_routing
           - routing
