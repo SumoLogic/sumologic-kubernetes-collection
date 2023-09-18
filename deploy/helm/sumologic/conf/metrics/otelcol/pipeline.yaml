@@ -27,6 +27,7 @@ processors:
   - transform/set_name
   - groupbyattrs/group_by_name
   - transform/remove_name
+  - filter/drop_unnecessary_metrics
 {{- if .Values.sumologic.metrics.enableDefaultFilters }}
   - filter/app_metrics
 {{- end }}

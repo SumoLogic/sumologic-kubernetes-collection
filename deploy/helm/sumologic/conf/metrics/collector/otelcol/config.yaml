@@ -50,16 +50,6 @@ processors:
           - extract_sum_metric(true) where IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
           - extract_count_metric(true) where IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
 {{- end }}
-  filter/drop_unnecessary_metrics:
-    error_mode: ignore
-    metrics:
-      metric:
-        # we let the metrics from annotations ("kubernetes-pods") through as they are
-        - resource.attributes["service.name"] != "pod-annotations" and IsMatch(name, "scrape_.*")
-{{- if .Values.sumologic.metrics.dropHistogramBuckets }}
-        # drop histograms we've extracted sums and counts from, but don't want the full thing
-        - IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
-{{- end }}
 
 receivers:
   prometheus:
@@ -216,7 +206,6 @@ service:
 {{- if .Values.sumologic.metrics.dropHistogramBuckets }}
         - transform/extract_sum_count_from_histograms
 {{- end }}
-        - filter/drop_unnecessary_metrics
         - transform/drop_unnecessary_attributes
       receivers: [prometheus]
 

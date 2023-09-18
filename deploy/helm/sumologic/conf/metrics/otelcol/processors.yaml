@@ -8,6 +8,17 @@ batch:
   ## Time duration after which a batch will be sent regardless of size
   timeout: 1s
 
+filter/drop_unnecessary_metrics:
+  error_mode: ignore
+  metrics:
+    metric:
+      # we let the metrics from annotations ("kubernetes-pods") through as they are
+      - resource.attributes["job"] != "pod-annotations" and IsMatch(name, "scrape_.*")
+{{- if .Values.sumologic.metrics.dropHistogramBuckets }}
+      # drop histograms we've extracted sums and counts from, but don't want the full thing
+      - IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
+{{- end }}
+
 # Prometheus receiver puts all labels in record-level attributes, and we need them in resource
 groupbyattrs:
   keys:

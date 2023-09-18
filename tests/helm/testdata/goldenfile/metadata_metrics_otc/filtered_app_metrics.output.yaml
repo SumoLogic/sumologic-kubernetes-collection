@@ -131,6 +131,12 @@ data:
           - IsMatch(name, "activemq_.*") and not IsMatch(name, "(?:activemq_(topic_.*|queue_.*|.*_QueueSize|broker_(AverageMessageSize|CurrentConnectionsCount|MemoryLimit|StoreLimit|TempLimit|TotalConnectionsCount|TotalConsumerCount|TotalDequeueCount|TotalEnqueueCount|TotalMessageCount|TotalProducerCount|UptimeMillis)|jvm_memory_(HeapMemoryUsage_max|HeapMemoryUsage_used|NonHeapMemoryUsage_used)|jvm_runtime_Uptime|OperatingSystem_(FreePhysicalMemorySize|SystemCpuLoad|TotalPhysicalMemorySize)))")
           - IsMatch(name, "couchbase_.*") and not IsMatch(name, "(?:couchbase_(node_.*|bucket_(ep_.*|vb_.*|delete_.*|cmd.*|bytes_.*|item_count|curr_connections|ops_per_sec|disk_write_queue|mem_.*|cas_hits|ops|curr_items|cpu_utilization_rate|swap_used|disk_used|rest_requests|hibernated_waked|xdc_ops)))")
           - IsMatch(name, "squid_.*") and not IsMatch(name, "(?:squid_(uptime|cache(Ip(Entries|Requests|Hits)|Fqdn(Entries|Requests|Misses|NegativeHits)|Dns(Requests|Replies|SvcTime5)|Sys(PageFaults|NumReads)|Current(FileDescrCnt|UnusedFDescrCnt|ResFileDescrCnt)|Server(Requests|InKb|OutKb)|Http(AllSvcTime5|Errors|InKb|OutKb|AllSvcTime1)|Mem(MaxSize|Usage)|NumObjCount|CpuTime|MaxResSize|ProtoClientHttpRequests|Clients)))")
+      filter/drop_unnecessary_metrics:
+        error_mode: ignore
+        metrics:
+          metric:
+          - resource.attributes["job"] != "pod-annotations" and IsMatch(name, "scrape_.*")
+          - IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
       groupbyattrs:
         keys:
         - container
@@ -336,6 +342,7 @@ data:
           - transform/set_name
           - groupbyattrs/group_by_name
           - transform/remove_name
+          - filter/drop_unnecessary_metrics
           - filter/app_metrics
           - batch
           - transform/prepare_routing
