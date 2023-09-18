@@ -20,14 +20,16 @@ func Test_Helm_Default_OT_FIPS(t *testing.T) {
 		CheckOtelcolMetadataLogsInstall,
 		CheckOtelcolMetadataMetricsInstall,
 		CheckOtelcolEventsInstall,
-		CheckPrometheusInstall,
+		CheckOtelcolMetricsCollectorInstall,
 		CheckOtelcolLogsCollectorInstall,
 		CheckTracesInstall,
 	}
 
 	featInstall := GetInstallFeature(installChecks)
 
-	featMetrics := GetMetricsFeature(expectedMetrics, Prometheus)
+	featMetrics := GetMetricsFeature(expectedMetrics, Otelcol)
+
+	featTelegrafMetrics := GetTelegrafMetricsFeature(internal.DefaultExpectedNginxAnnotatedMetrics, Otelcol, true)
 
 	featLogs := GetLogsFeature()
 
@@ -37,5 +39,5 @@ func Test_Helm_Default_OT_FIPS(t *testing.T) {
 
 	featTraces := GetTracesFeature()
 
-	testenv.Test(t, featInstall, featMetrics, featLogs, featMultilineLogs, featEvents, featTraces)
+	testenv.Test(t, featInstall, featMetrics, featTelegrafMetrics, featLogs, featMultilineLogs, featEvents, featTraces)
 }

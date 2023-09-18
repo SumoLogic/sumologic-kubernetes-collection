@@ -1,3 +1,4 @@
+# This file uses Prometheus metrics, as the opentelemetry-operator Helm Chart doesn't support namespaceOverride
 namespaceOverride: "test-override"
 
 kube-prometheus-stack:
@@ -8,3 +9,14 @@ kube-prometheus-stack:
 
   prometheus-node-exporter:
     namespaceOverride: "test-override"
+
+  prometheus:
+    enabled: true
+  prometheusOperator:
+    enabled: true
+
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        enabled: false

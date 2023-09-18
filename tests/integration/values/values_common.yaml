@@ -12,6 +12,13 @@ sumologic:
   endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
 
   metrics:
+    collector:
+      otelcol:
+        scrapeInterval: 15s
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 50m
     remoteWriteProxy:
       resources:
         requests:
@@ -132,6 +139,7 @@ otellogs:
         name: run-log-journal
 
 telegraf-operator:
+  enabled: true
   resources:
     requests:
       cpu: 5m
