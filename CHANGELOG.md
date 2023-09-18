@@ -7,6 +7,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.15.0]
+
+### Released 2023-09-18
+
+### Added
+
+- feat(metrics): add ability to use OTLP source [#2949]
+- feat: add extraProcessor for kubelet and systemd [#3251]
+
+### Changed
+
+- chore: upgrade nginx iamge to `1.25.2-alpine` [#3252]
+- chore: update setup image to v3.10.0 [#3255]
+- chore: upgrade otel to 0.85.0-sumo-0 [#3262]
+
+### Fixed
+
+- fix(fluent-bit): set Time_Keep to On in containerd parser" [#3227]
+- feat: use either minAvailable or maxUnavailable for logs pdb [#3231]
+- fix: disable keep-alives for internal traffic [#3267]
+
+[#2949]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2949
+[#3251]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3251
+[#3252]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3252
+[#3255]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3255
+[#3262]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3262
+[#3227]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3227
+[#3231]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3231
+[#3267]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3267
+[v3.15.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.15.0
+
 ## [v3.14.0]
 
 ### Released 2023-09-01
