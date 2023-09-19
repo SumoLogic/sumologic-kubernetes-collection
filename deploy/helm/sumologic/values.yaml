@@ -1193,13 +1193,6 @@ kube-prometheus-stack:
               target_label: pod
               replacement: $1
               action: replace
-            ## Sets _sumo_forward_ label to true
-            - source_labels: [__name__]
-              separator: ;
-              regex: (.*)
-              target_label: _sumo_forward_
-              replacement: "true"
-              action: replace
       remoteWrite:
         ## infrastructure metrics
         - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics
