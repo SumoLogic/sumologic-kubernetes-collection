@@ -173,10 +173,6 @@ var (
 		"node_load5",
 		"node_load15",
 		"node_cpu_seconds_total",
-	}
-	// These metrics are collected by Prometheus, but only used for recording rules
-	// Otel actually sends these to the remote
-	AdditionalNodeExporterMetrics = []string{
 		"node_disk_io_time_weighted_seconds_total",
 		"node_disk_io_time_seconds_total",
 		"node_vmstat_pgpgin",
@@ -280,43 +276,6 @@ var (
 		"prometheus_remote_storage_shards_min",
 		"prometheus_remote_storage_string_interner_zero_reference_releases_total",
 	}
-	FluentBitMetrics = []string{
-		"fluentbit_build_info",
-		"fluentbit_filter_add_records_total",
-		"fluentbit_filter_bytes_total",
-		"fluentbit_filter_drop_records_total",
-		"fluentbit_filter_records_total",
-		"fluentbit_input_bytes_total",
-		"fluentbit_input_files_closed_total",
-		"fluentbit_input_files_opened_total",
-		"fluentbit_input_files_rotated_total",
-		"fluentbit_input_records_total",
-		"fluentbit_output_dropped_records_total",
-		"fluentbit_output_errors_total",
-		"fluentbit_output_proc_bytes_total",
-		"fluentbit_output_proc_records_total",
-		"fluentbit_output_retried_records_total",
-		"fluentbit_output_retries_failed_total",
-		"fluentbit_output_retries_total",
-		"fluentbit_uptime",
-	}
-	FluentDMetrics = []string{
-		"fluentd_output_status_buffer_available_space_ratio",
-		"fluentd_output_status_buffer_queue_length",
-		"fluentd_output_status_buffer_stage_byte_size",
-		"fluentd_output_status_buffer_stage_length",
-		"fluentd_output_status_buffer_total_bytes",
-		"fluentd_output_status_emit_count",
-		"fluentd_output_status_emit_records",
-		"fluentd_output_status_flush_time_count",
-		"fluentd_output_status_num_errors",
-		"fluentd_output_status_queue_byte_size",
-		"fluentd_output_status_retry_count",
-		"fluentd_output_status_retry_wait",
-		"fluentd_output_status_rollback_count",
-		"fluentd_output_status_slow_flush_count",
-		"fluentd_output_status_write_count",
-	}
 
 	OtherMetrics = []string{
 		"up",
@@ -382,7 +341,6 @@ var (
 		NodeExporterMetrics,
 		PrometheusMetrics,
 		OtherMetrics,
-		AdditionalNodeExporterMetrics,
 	}
 	DefaultExpectedNginxAnnotatedMetricsGroups = [][]string{
 		NginxMetrics,
