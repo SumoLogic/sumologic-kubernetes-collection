@@ -445,12 +445,12 @@ service:
         - resource/containers_copy_node_to_host
         - sumologic_schema
         - source/containers
-        - transform/containers_parse_json
 {{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{ printf "- %s" ( $processor | keys | first ) | indent 8 }}
 {{- end }}
 {{- end }}
+        - transform/containers_parse_json
         - resource/remove_pod_name
         - resource/drop_annotations
         - transform/add_timestamp
