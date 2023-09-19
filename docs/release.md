@@ -16,7 +16,7 @@ Perform the following steps in order to release new verions of helm chart.
 
    ```bash
    export TAG=x.y.z
-   git checkout main
+   git checkout release-v3
    git pull
    git tag -sm "v${TAG}" "v${TAG}"
    git push origin "v${TAG}"
@@ -37,7 +37,21 @@ Perform the following steps in order to release new verions of helm chart.
      git push -u origin "release-v${TAG%.*}"
      ```
 
-1. Create [new release][releases]
+1. Create [new release][releases]. Copy generated changelog to release notes.
+
+1. Cherrypick commit with changelog to main branch
+
+   - find SHA for commit with changes in changelog
+
+   - ```bash
+     git checkout main
+     git pull
+     git checkout -b <NEW_BRANCH_NAME>
+     git cherry-pick <COMMIT_SHA>
+     git push
+     ```
+
+   - create a PR
 
 [deploy_title]: /docs/README.md#deployment-guide-for-unreleased-version
 [changelog]: /CHANGELOG.md#unreleased
