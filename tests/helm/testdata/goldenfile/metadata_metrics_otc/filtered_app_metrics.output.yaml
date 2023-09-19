@@ -253,6 +253,9 @@ data:
         - exporters:
           - sumologic/default
           value: /prometheus.metrics.applications.custom
+        - exporters:
+          - sumologic/default
+          value: /prometheus.metrics
       source:
         collector: kubernetes
         exclude:

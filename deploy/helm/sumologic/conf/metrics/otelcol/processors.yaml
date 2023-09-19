@@ -169,12 +169,15 @@ routing:
         - sumologic/state
       value: /prometheus.metrics.state
     ## custom metrics
-    ## This entry is necessary due to a bug in routing processor that prevents the routing key from being deleted
+    ## These entries are necessary due to a bug in routing processor that prevents the routing key from being deleted
     ## if the default exporter is chosen
     ## See: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/24644
     - exporters:
         - sumologic/default
       value: /prometheus.metrics.applications.custom
+    - exporters:
+        - sumologic/default
+      value: /prometheus.metrics
 {{- end }}
 
 ## Configuration for Source Processor
