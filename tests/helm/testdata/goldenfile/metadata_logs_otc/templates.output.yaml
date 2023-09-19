@@ -361,9 +361,9 @@ data:
           - resource/containers_copy_node_to_host
           - sumologic_schema
           - source/containers
-          - transform/containers_parse_json
           - resource/add-resource-attribute-container
           - resource/remove-container
+          - transform/containers_parse_json
           - resource/remove_pod_name
           - resource/drop_annotations
           - transform/add_timestamp
