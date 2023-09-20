@@ -3,6 +3,8 @@
 sumologic/default:
   metric_format: {{ include "metrics.otelcol.exporter.format" . }}
   endpoint: {{ include "metrics.otelcol.exporter.endpoint" . }}
+  ## Sumo doesn't yet natively support OTLP Histograms
+  decompose_otlp_histograms: true
   ## Configuration for sending queue
   ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
   sending_queue:
