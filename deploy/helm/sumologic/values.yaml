@@ -431,6 +431,10 @@ sumologic:
       - service
       - statefulset
 
+    ## Additional fields to be created in Sumo Logic.
+    ## https://help.sumologic.com/docs/manage/fields/#manage-fields
+    additionalFields: []
+
     sourceType: http
 
   ### Metrics configuration
