@@ -14,6 +14,7 @@ data:
   config.yaml: |
     exporters:
       sumologic/default:
+        decompose_otlp_histograms: true
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         max_request_body_size: 16777216
         metric_format: otlp
