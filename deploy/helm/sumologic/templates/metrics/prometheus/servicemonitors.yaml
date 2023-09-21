@@ -1,11 +1,12 @@
 {{- $kps := get .Values "kube-prometheus-stack" -}}
 {{- if or (and (typeIs "<nil>" $kps.enabled) (.Values.sumologic.metrics.enabled)) (and (typeIs "bool" $kps.enabled) ($kps.enabled)) -}}
+{{- $serviceMonitors := concat .Values.sumologic.metrics.serviceMonitors .Values.sumologic.metrics.additionalServiceMonitors -}}
 ---
-{{- if .Values.sumologic.metrics.serviceMonitors }}
+{{- if $serviceMonitors }}
 apiVersion: v1
 kind: List
 items:
-{{- range .Values.sumologic.metrics.serviceMonitors }}
+{{- range $serviceMonitors }}
   - apiVersion: monitoring.coreos.com/v1
     kind: ServiceMonitor
     metadata:

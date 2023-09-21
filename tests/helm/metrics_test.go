@@ -187,3 +187,111 @@ sumologic:
 	assert.Contains(t, otelConfig.Service.Pipelines.Metrics.Processors, "transform/drop_routing_attribute")
 	assert.Equal(t, otelConfig.Service.Pipelines.Metrics.Exporters, []string{"sumologic/default"})
 }
+
+func TestNoPrometheusServiceMonitors(t *testing.T) {
+	t.Parallel()
+	allTemplatePaths := []string{
+		"templates/metrics/prometheus/servicemonitors.yaml",
+	}
+
+	testCases := []struct {
+		Name          string
+		ValuesYaml    string
+		ExpectedNames []string
+		TemplatePaths []string
+	}{
+		{
+			Name: "additionalServiceMonitor",
+			ValuesYaml: `
+sumologic:
+  metrics:
+    additionalServiceMonitors:
+      - name: collection-sumologic-fluentd-logs-test
+        additionalLabels:
+          sumologic.com/app: fluentd-logs
+        endpoints:
+          - port: metrics
+        namespaceSelector:
+          matchNames:
+            - $(NAMESPACE)
+        selector:
+          matchLabels:
+            sumologic.com/app: fluentd-logs
+            sumologic.com/scrape: "true"
+`,
+			ExpectedNames: []string{
+				"collection-sumologic-fluentd-logs",
+				"collection-sumologic-otelcol-logs",
+				"collection-sumologic-fluentd-metrics",
+				"collection-sumologic-otelcol-metrics",
+				"collection-sumologic-metrics-collector",
+				"collection-sumologic-fluentd-events",
+				"collection-sumologic-fluent-bit",
+				"collection-sumologic-otelcol-logs-collector",
+				"collection-sumologic-otelcol-events",
+				"collection-sumologic-otelcol-traces",
+				"collection-sumologic-prometheus",
+				"collection-sumologic-fluentd-logs-test",
+			},
+			TemplatePaths: allTemplatePaths,
+		},
+		{
+			Name: "onlyAdditionalServiceMonitor",
+			ValuesYaml: `
+sumologic:
+  metrics:
+    serviceMonitors: []
+    additionalServiceMonitors:
+    - name: collection-sumologic-fluentd-logs-test
+      additionalLabels:
+        sumologic.com/app: fluentd-logs
+      endpoints:
+        - port: metrics
+      namespaceSelector:
+        matchNames:
+          - $(NAMESPACE)
+      selector:
+        matchLabels:
+          sumologic.com/app: fluentd-logs
+          sumologic.com/scrape: "true"
+`,
+			ExpectedNames: []string{
+				"collection-sumologic-fluentd-logs-test",
+			},
+			TemplatePaths: allTemplatePaths,
+		},
+		{
+			Name:       "default",
+			ValuesYaml: "",
+			ExpectedNames: []string{
+				"collection-sumologic-fluentd-logs",
+				"collection-sumologic-otelcol-logs",
+				"collection-sumologic-fluentd-metrics",
+				"collection-sumologic-otelcol-metrics",
+				"collection-sumologic-metrics-collector",
+				"collection-sumologic-fluentd-events",
+				"collection-sumologic-fluent-bit",
+				"collection-sumologic-otelcol-logs-collector",
+				"collection-sumologic-otelcol-events",
+				"collection-sumologic-otelcol-traces",
+				"collection-sumologic-prometheus",
+			},
+			TemplatePaths: allTemplatePaths,
+		},
+	}
+
+	for _, tt := range testCases {
+		t.Run(tt.Name, func(t *testing.T) {
+			names := []string{}
+			for _, templatePath := range tt.TemplatePaths {
+				servicemonitors := GetServiceMonitors(t, tt.ValuesYaml, templatePath)
+				for _, sm := range servicemonitors {
+					names = append(names, sm.Name)
+				}
+			}
+
+			assert.Equal(t, tt.ExpectedNames, names)
+		})
+	}
+
+}
