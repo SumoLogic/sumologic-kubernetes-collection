@@ -122,7 +122,6 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 				// drop some unnecessary labels
 				delete(expectedLabels, "prometheus_service")
-				delete(expectedLabels, "k8s.node.name")
 
 				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
 			},
@@ -169,7 +168,6 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 
 				// drop some unnecessary labels
-				delete(expectedLabels, "k8s.node.name")
 				delete(expectedLabels, "prometheus_service")
 
 				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
@@ -187,7 +185,6 @@ func addCollectorSpecificMetricLabels(labels receivermock.Labels, releaseName st
 	}
 	prometheusLabels := receivermock.Labels{
 		"_collector":         "kubernetes",
-		"k8s.node.name":      internal.NodeNameRegex, // TODO: Remove this during the migration to v4
 		"instance":           internal.IpWithPortRegex,
 		"prometheus_replica": fmt.Sprintf("prometheus-%s-.*-0", releaseName),
 		"prometheus":         fmt.Sprintf("%s/%s-.*-prometheus", serviceMonitorNamespace, releaseName),

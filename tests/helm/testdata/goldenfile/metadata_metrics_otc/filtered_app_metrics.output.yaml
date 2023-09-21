@@ -193,6 +193,11 @@ data:
         - action: delete
           key: container
         - action: upsert
+          from_attribute: node
+          key: k8s.node.name
+        - action: delete
+          key: node
+        - action: upsert
           from_attribute: service
           key: prometheus_service
         - action: delete

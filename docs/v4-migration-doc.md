@@ -195,6 +195,10 @@ require additional action.
   - node_filesystem_avail_bytes
   - node_filesystem_size_bytes
 
+- Drop `k8s.node.name` attribute from metrics
+
+  The `node` attribute exists and has the same value, so this is superfluous.
+
 - Truncating full name to 22 characters
 
   Some Kubernetes objects, for example statefulsets, have a tight (63 characters) limit for their names. Because of that, we truncate the

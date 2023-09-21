@@ -94,6 +94,11 @@ resource:
     - action: delete
       key: container  # remove container to avoid duplication when attribute translation is enabled
     - action: upsert
+      from_attribute: node
+      key: k8s.node.name  # add container in OpenTelemetry convention to unify configuration for Source processor
+    - action: delete
+      key: node  # remove container to avoid duplication when attribute translation is enabled
+    - action: upsert
       from_attribute: service
       key: prometheus_service
     - action: delete
