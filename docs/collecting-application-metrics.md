@@ -32,12 +32,17 @@ annotations:
 
 ### Application metrics are exposed (multiple enpoints scenario)
 
+> [!NOTE]  
+> Use `sumologic.metrics.additionalServiceMonitors` instead of `kube-prometheus-stack.prometheus.additionalServiceMonitors`. They have
+> identical behaviour and can even be used in tandem, but the latter only works if Prometheus is enabled, and won't work with the Otel
+> metrics collector which is the default in v4 of the Chart.
+
 If you want to scrape metrics from multiple endpoints in a single Pod, you need a Service which points to the Pod and also to configure
-`kube-prometheus-stack.prometheus.additionalServiceMonitors` in your `user-values.yaml`:
+`sumologic.metrics.additionalServiceMonitors` in your `user-values.yaml`:
 
 ```yaml
-kube-prometheus-stack:
-  prometheus:
+sumologic:
+  metrics:
     additionalServiceMonitors:
       - name: <service monitor name>
         endpoints:
@@ -157,8 +162,8 @@ spec:
 In order to scrape metrics from the above objects, the following configuration should be applied to `user-values.yaml`:
 
 ```yaml
-kube-prometheus-stack:
-  prometheus:
+sumologic:
+  metrics:
     additionalServiceMonitors:
       - name: my-custom-app-service-monitor
         endpoints:
@@ -347,14 +352,24 @@ sumologic:
 
 If you do not see your metrics in Sumo Logic, please check the following stages:
 
-- [Check if metrics are in Prometheus](#check-if-metrics-are-in-prometheus)
-
-  - [Investigate Prometheus scrape configuration](#investigate-prometheus-scrape-configuration)
-  - [Pod is visible in Prometheus targets](#pod-is-visible-in-prometheus-targets)
-  - [There is no target for serviceMonitor](#there-is-no-target-for-servicemonitor)
-  - [Pod is not visible in target for custom serviceMonitor](#pod-is-not-visible-in-target-for-custom-servicemonitor)
-
-- [Check if Prometheus knows how to send metrics to Sumo Logic](#check-if-prometheus-knows-how-to-send-metrics-to-sumo-logic)
+- [Collecting Application Metrics](#collecting-application-metrics)
+  - [Scraping metrics](#scraping-metrics)
+    - [Application metrics are exposed (one endpoint scenario)](#application-metrics-are-exposed-one-endpoint-scenario)
+    - [Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
+      - [Example](#example)
+    - [Application metrics are not exposed](#application-metrics-are-not-exposed)
+  - [Metrics modifications](#metrics-modifications)
+    - [Filtering metrics](#filtering-metrics)
+      - [Default attributes](#default-attributes)
+    - [Renaming metric](#renaming-metric)
+    - [Adding or renaming metadata](#adding-or-renaming-metadata)
+  - [Investigation](#investigation)
+    - [Check if metrics are in Prometheus](#check-if-metrics-are-in-prometheus)
+      - [Investigate Prometheus scrape configuration](#investigate-prometheus-scrape-configuration)
+        - [Pod is visible in Prometheus targets](#pod-is-visible-in-prometheus-targets)
+        - [There is no target for serviceMonitor](#there-is-no-target-for-servicemonitor)
+        - [Pod is not visible in target for custom serviceMonitor](#pod-is-not-visible-in-target-for-custom-servicemonitor)
+    - [Check if Prometheus knows how to send metrics to Sumo Logic](#check-if-prometheus-knows-how-to-send-metrics-to-sumo-logic)
 
 ### Check if metrics are in Prometheus
 
