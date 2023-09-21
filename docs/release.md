@@ -39,7 +39,7 @@ Perform the following steps in order to release new verions of helm chart.
      git push -u origin "release-v${TAG%.*}"
      ```
 
-1. Create [new release][releases]
+1. Create [new release][releases]. Copy generated changelog to release notes.
 
 [deploy_title]: /docs/README.md#deployment-guide-for-unreleased-version
 [changelog]: /CHANGELOG.md#unreleased
