@@ -7,10 +7,15 @@ Perform the following steps in order to release new verions of helm chart.
 1. Prepare and merge PR with the following changes:
 
    - update [changelog][changelog] by running `make update-changelog VERSION=x.y.z` where `x.y.z` is the new version number.
-   - update [chart][chart]
    - update [README.md][documentation]
      - add link to minor version, if created
      - set "supported until" date for previous minor version to 6 months after today
+
+   Add `backport main` label to this PR.
+
+1. Prepare and merge PR with the following changes:
+
+   - update [chart][chart]
 
 1. Create and push new tag:
 
@@ -38,20 +43,6 @@ Perform the following steps in order to release new verions of helm chart.
      ```
 
 1. Create [new release][releases]. Copy generated changelog to release notes.
-
-1. Cherrypick commit with changelog to main branch
-
-   - find SHA for commit with changes in changelog
-
-   - ```bash
-     git checkout main
-     git pull
-     git checkout -b <NEW_BRANCH_NAME>
-     git cherry-pick <COMMIT_SHA>
-     git push
-     ```
-
-   - create a PR
 
 [deploy_title]: /docs/README.md#deployment-guide-for-unreleased-version
 [changelog]: /CHANGELOG.md#unreleased
