@@ -34,7 +34,6 @@ receivers:
         write_timeout = "30s"
         service_address = ":9888"
         data_format = "prometheusremotewrite"
-        path_tag = true
         paths = [
 {{ include "metric.endpoints" . | indent 10 }}
         ]

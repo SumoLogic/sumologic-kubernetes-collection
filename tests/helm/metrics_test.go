@@ -137,7 +137,6 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 		"transform/remove_name",
 		"filter/drop_unnecessary_metrics",
 		"batch",
-		"transform/prepare_routing",
 		"routing",
 	}
 
@@ -182,10 +181,8 @@ sumologic:
 	assert.Len(t, otelConfig.Exporters.Rest, 0)
 	assert.NotContains(t, otelConfig.Processors, "routing")
 	assert.NotContains(t, otelConfig.Processors, "transform/prepare_routing")
-	assert.Contains(t, otelConfig.Processors, "transform/drop_routing_attribute")
 	assert.NotContains(t, otelConfig.Service.Pipelines.Metrics.Processors, "routing")
 	assert.NotContains(t, otelConfig.Service.Pipelines.Metrics.Processors, "transform/prepare_routing")
-	assert.Contains(t, otelConfig.Service.Pipelines.Metrics.Processors, "transform/drop_routing_attribute")
 	assert.Equal(t, otelConfig.Service.Pipelines.Metrics.Exporters, []string{"sumologic/default"})
 }
 

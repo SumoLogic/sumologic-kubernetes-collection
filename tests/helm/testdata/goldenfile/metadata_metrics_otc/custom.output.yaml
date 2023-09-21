@@ -137,12 +137,6 @@ data:
           k8s.namespace.name: ""
       sumologic_schema:
         add_cloud_namespace: false
-      transform/drop_routing_attribute:
-        error_mode: ignore
-        metric_statements:
-        - context: resource
-          statements:
-          - delete_key(attributes, "http_listener_v2_path")
       transform/remove_name:
         error_mode: ignore
         metric_statements:
@@ -172,7 +166,6 @@ data:
             write_timeout = "30s"
             service_address = ":9888"
             data_format = "prometheusremotewrite"
-            path_tag = true
             paths = [
               "/prometheus.metrics"
             ]
@@ -200,7 +193,6 @@ data:
           - transform/remove_name
           - filter/drop_unnecessary_metrics
           - batch
-          - transform/drop_routing_attribute
           receivers:
           - telegraf
           - otlp

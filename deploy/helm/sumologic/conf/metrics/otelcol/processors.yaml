@@ -132,57 +132,42 @@ resource/remove_k8s_pod_pod_name:
       key: k8s.pod.pod_name
 
 {{- if eq .Values.sumologic.metrics.sourceType "http" }}
-## NOTE: below listed rules could be simplified if routingprocessor
-## supports regex matching. At this point we could group route entries
-## going to the same set of exporters.
 routing:
-  attribute_source: resource
   default_exporters:
     - sumologic/default
-  drop_resource_routing_attribute: true
-  from_attribute: http_listener_v2_path
+  error_mode: ignore
   table:
     ## apiserver metrics
     - exporters:
         - sumologic/apiserver
-      value: /prometheus.metrics.apiserver
+      statement: route() where resource.attributes["job"] == "apiserver"
     ## control-plane metrics
     - exporters:
         - sumologic/control_plane
-      value: /prometheus.metrics.control-plane.coredns
+      statement: route() where resource.attributes["job"] == "coredns"
     - exporters:
         - sumologic/control_plane
-      value: /prometheus.metrics.control-plane.kube-etcd
+      statement: route() where resource.attributes["job"] == "kube-etcd"
     ## controller metrics
     - exporters:
         - sumologic/controller
-      value: /prometheus.metrics.controller-manager
+      statement: route() where resource.attributes["job"] == "kube-controller-manager"
     ## kubelet metrics
     - exporters:
         - sumologic/kubelet
-      value: /prometheus.metrics.kubelet
+      statement: route() where resource.attributes["job"] == "kubelet"
     ## node metrics
     - exporters:
         - sumologic/node
-      value: /prometheus.metrics.node
+      statement: route() where resource.attributes["job"] == "node-exporter"
     ## scheduler metrics
     - exporters:
         - sumologic/scheduler
-      value: /prometheus.metrics.scheduler
+      statement: route() where resource.attributes["job"] == "kube-scheduler"
     ## state metrics
     - exporters:
         - sumologic/state
-      value: /prometheus.metrics.state
-    ## custom metrics
-    ## These entries are necessary due to a bug in routing processor that prevents the routing key from being deleted
-    ## if the default exporter is chosen
-    ## See: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/24644
-    - exporters:
-        - sumologic/default
-      value: /prometheus.metrics.applications.custom
-    - exporters:
-        - sumologic/default
-      value: /prometheus.metrics
+      statement: route() where resource.attributes["job"] == "kube-state-metrics"
 {{- end }}
 
 ## Configuration for Source Processor
@@ -196,29 +181,6 @@ source:
 ## so that the Sumo Logic apps can make full use of the ingested data.
 sumologic_schema:
   add_cloud_namespace: false
-
-{{- if eq .Values.sumologic.metrics.sourceType "http" }}
-transform/prepare_routing:
-  error_mode: ignore
-  metric_statements:
-    - context: metric
-      statements:
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.apiserver") where resource.attributes["job"] == "apiserver"
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.control-plane.coredns") where resource.attributes["job"] == "coredns"
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.control-plane.kube-etcd") where resource.attributes["job"] == "kube-etcd"
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.controller-manager") where resource.attributes["job"] == "kubelet" and IsMatch(name, "^cloudprovider_.*")
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.kubelet") where resource.attributes["job"] == "kubelet" and not IsMatch(name, "^cloudprovider_.*")
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.node") where resource.attributes["job"] == "node-exporter"
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.scheduler") where resource.attributes["job"] == "kube-scheduler"
-        - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.state") where resource.attributes["job"] == "kube-state-metrics"
-{{ else }}
-transform/drop_routing_attribute:
-  error_mode: ignore
-  metric_statements:
-    - context: resource
-      statements:
-        - delete_key(attributes, "http_listener_v2_path")
-{{- end }}
 
 transform/remove_name:
   error_mode: ignore

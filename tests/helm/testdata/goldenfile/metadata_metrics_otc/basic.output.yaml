@@ -202,69 +202,40 @@ data:
         - action: delete
           key: k8s.pod.pod_name
       routing:
-        attribute_source: resource
         default_exporters:
         - sumologic/default
-        drop_resource_routing_attribute: true
-        from_attribute: http_listener_v2_path
+        error_mode: ignore
         table:
         - exporters:
           - sumologic/apiserver
-          value: /prometheus.metrics.apiserver
+          statement: route() where resource.attributes["job"] == "apiserver"
         - exporters:
           - sumologic/control_plane
-          value: /prometheus.metrics.control-plane.coredns
+          statement: route() where resource.attributes["job"] == "coredns"
         - exporters:
           - sumologic/control_plane
-          value: /prometheus.metrics.control-plane.kube-etcd
+          statement: route() where resource.attributes["job"] == "kube-etcd"
         - exporters:
           - sumologic/controller
-          value: /prometheus.metrics.controller-manager
+          statement: route() where resource.attributes["job"] == "kube-controller-manager"
         - exporters:
           - sumologic/kubelet
-          value: /prometheus.metrics.kubelet
+          statement: route() where resource.attributes["job"] == "kubelet"
         - exporters:
           - sumologic/node
-          value: /prometheus.metrics.node
+          statement: route() where resource.attributes["job"] == "node-exporter"
         - exporters:
           - sumologic/scheduler
-          value: /prometheus.metrics.scheduler
+          statement: route() where resource.attributes["job"] == "kube-scheduler"
         - exporters:
           - sumologic/state
-          value: /prometheus.metrics.state
-        - exporters:
-          - sumologic/default
-          value: /prometheus.metrics.applications.custom
-        - exporters:
-          - sumologic/default
-          value: /prometheus.metrics
+          statement: route() where resource.attributes["job"] == "kube-state-metrics"
       source:
         collector: kubernetes
         exclude:
           k8s.namespace.name: ""
       sumologic_schema:
         add_cloud_namespace: false
-      transform/prepare_routing:
-        error_mode: ignore
-        metric_statements:
-        - context: metric
-          statements:
-          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.apiserver")
-            where resource.attributes["job"] == "apiserver"
-          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.control-plane.coredns")
-            where resource.attributes["job"] == "coredns"
-          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.control-plane.kube-etcd")
-            where resource.attributes["job"] == "kube-etcd"
-          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.controller-manager")
-            where resource.attributes["job"] == "kubelet" and IsMatch(name, "^cloudprovider_.*")
-          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.kubelet")
-            where resource.attributes["job"] == "kubelet" and not IsMatch(name, "^cloudprovider_.*")
-          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.node")
-            where resource.attributes["job"] == "node-exporter"
-          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.scheduler")
-            where resource.attributes["job"] == "kube-scheduler"
-          - set(resource.attributes["http_listener_v2_path"], "/prometheus.metrics.state")
-            where resource.attributes["job"] == "kube-state-metrics"
       transform/remove_name:
         error_mode: ignore
         metric_statements:
@@ -294,7 +265,6 @@ data:
             write_timeout = "30s"
             service_address = ":9888"
             data_format = "prometheusremotewrite"
-            path_tag = true
             paths = [
               "/prometheus.metrics"
             ]
@@ -329,7 +299,6 @@ data:
           - transform/remove_name
           - filter/drop_unnecessary_metrics
           - batch
-          - transform/prepare_routing
           - routing
           receivers:
           - telegraf
