@@ -2436,7 +2436,7 @@ opentelemetry-operator:
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
       tag: "0.85.0-sumo-0"
-    env:
+    env: {}
     resources:
       limits:
         cpu: 250m
