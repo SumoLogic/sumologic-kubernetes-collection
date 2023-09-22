@@ -13,21 +13,10 @@ metadata:
 data:
   config.yaml: |
     exporters:
-      sumologic/containers:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        json_logs:
-          add_timestamp: false
-        log_format: json
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-      sumologic/systemd:
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
-        json_logs:
-          add_timestamp: false
-        log_format: json
+      sumologic:
+        clear_logs_timestamp: false
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
+        log_format: otlp
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -318,7 +307,7 @@ data:
       pipelines:
         logs/otlp/containers:
           exporters:
-          - sumologic/containers
+          - sumologic
           processors:
           - memory_limiter
           - filter/include_containers
@@ -340,7 +329,7 @@ data:
           - otlp
         logs/otlp/kubelet:
           exporters:
-          - sumologic/systemd
+          - sumologic
           processors:
           - memory_limiter
           - filter/include_fluent_tag_host
@@ -364,7 +353,7 @@ data:
           - otlp
         logs/otlp/systemd:
           exporters:
-          - sumologic/systemd
+          - sumologic
           processors:
           - memory_limiter
           - filter/include_fluent_tag_host

@@ -7,6 +7,7 @@
     - [OpenTelemetry Collector](#opentelemetry-collector)
     - [Drop Prometheus recording rule metrics](#drop-prometheus-recording-rule-metrics)
     - [OpenTelemetry Collector for metrics collection](#opentelemetry-collector-for-metrics-collection)
+    - [Use OTLP sources by default](#use-otlp-sources-by-default)
   - [How to upgrade](#how-to-upgrade)
     - [Requirements](#requirements)
     - [Metrics migration](#metrics-migration)
@@ -45,6 +46,13 @@ By default, the OpenTelemetry Collector is now used for metrics collection inste
 be a transparent change without any need for manual configuration changes. OpenTelemetry Collector will continue to collect the same default
 metrics as Prometheus did previously, and will support the same mechanisms for collecting custom application metrics. Any exceptions will be
 called out in the migration guide below.
+
+### Use OTLP sources by default
+
+This Helm Chart automatically creates the necessary Collector and Sources in Sumo. Up until this point, these were generic HTTP sources
+accepting data in different formats. As Sumo now has native support for the OTLP protocol used by Open Telemetry, we've decided to switch to
+using these new sources by default. This is a completely transparent change **unless** you use the `_sourceName` or `_source` fields in your
+Sumo queries.
 
 ## How to upgrade
 
@@ -119,7 +127,35 @@ In addition the following changes has been done:
 
 ### Switch to OTLP sources
 
-:construction:
+> [!NOTE] Both source types will be created by the setup job. The settings discussed here affect which source is actually used.
+
+**When?**: You use the `_sourceName` or `_source` fields in your Sumo queries.
+
+The only solution is to change the queries in question. In general, it's an antipattern to write queries against specific sources, instead
+of semantic attributes of the data.
+
+You can switch back to the default v3 behaviour by setting:
+
+```yaml
+sumologic:
+  logs:
+    sourceType: http
+
+  metrics:
+    sourceType: http
+
+  traces:
+    sourceType: http
+
+  events:
+    sourceType: http
+
+tracesSampler:
+  config:
+    exporters:
+      otlphttp:
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}/v1/traces
+```
 
 ### Running the helm upgrade
 

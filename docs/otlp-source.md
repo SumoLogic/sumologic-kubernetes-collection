@@ -5,56 +5,7 @@ Historically, agents used by this Chart sent logs and metrics data to a [generic
 The data needed to be converted to the formats the generic HTTP source supports before being sent.
 
 Recently, we've added support for directly sending data using the OTLP protocol to Sumo Logic. This is achieved using the [OTLP
-source][otlp_source]. This document explains how to use this new source with the Helm Chart.
-
-## Enabling the OTLP source
-
-### For logs
-
-Add the following to your configuration:
-
-```yaml
-sumologic:
-  logs:
-    sourceType: otlp
-```
-
-### For metrics
-
-Add the following to your configuration:
-
-```yaml
-sumologic:
-  metricss:
-    sourceType: otlp
-```
-
-### For traces
-
-Add the following to your configuration:
-
-```yaml
-sumologic:
-  traces:
-    sourceType: otlp
-
-tracesSampler:
-  config:
-    exporters:
-      otlphttp:
-        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}
-```
-
-### For events
-
-```yaml
-sumologic:
-  events:
-    sourceType: otlp
-```
-
-**Note:** The source is automatically created during Chart installation. This setting simply makes the Chart start sending data to it. If
-you normally have setup disabled, you need to either enable it after enabling the otlp source, or create the source manually.
+source][otlp_source]. These sources are now used by default unless configured otherwise.
 
 ## Benefits
 
@@ -68,6 +19,55 @@ features work without additional manual configuration:
 
 - multiline parsing for the `text` log format
 - correct timestamps for the `text` log format
+
+## Switching back to HTTP sources
+
+### For logs
+
+Add the following to your configuration:
+
+```yaml
+sumologic:
+  logs:
+    sourceType: http
+```
+
+### For metrics
+
+Add the following to your configuration:
+
+```yaml
+sumologic:
+  metricss:
+    sourceType: http
+```
+
+### For traces
+
+Add the following to your configuration:
+
+```yaml
+sumologic:
+  traces:
+    sourceType: http
+
+tracesSampler:
+  config:
+    exporters:
+      otlphttp:
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}/v1/traces
+```
+
+### For events
+
+```yaml
+sumologic:
+  events:
+    sourceType: http
+```
+
+**Note:** The source is automatically created during Chart installation. This setting simply makes the Chart start sending data to it. If
+you normally have setup disabled, you need to either enable it after enabling the otlp source, or create the source manually.
 
 [http_source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source/logs-metrics/
 [otlp_source]: https://help.sumologic.com/docs/send-data/hosted-collectors/http-source/otlp/

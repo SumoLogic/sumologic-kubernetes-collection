@@ -114,11 +114,6 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-events
-            - name: SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-events-otlp
 
             - name: NO_PROXY
               value: kubernetes.default.svc

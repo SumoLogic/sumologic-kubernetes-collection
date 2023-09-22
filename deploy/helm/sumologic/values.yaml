@@ -272,7 +272,7 @@ sumologic:
         pvcLabels: {}
         # storageClass:
 
-    sourceType: http
+    sourceType: otlp
 
   ### Logs configuration
   ## Set the enabled flag to false for disabling logs ingestion altogether.
@@ -435,7 +435,7 @@ sumologic:
     ## https://help.sumologic.com/docs/manage/fields/#manage-fields
     additionalFields: []
 
-    sourceType: http
+    sourceType: otlp
 
   ### Metrics configuration
   ## Set the enabled flag to false for disabling metrics ingestion altogether.
@@ -666,7 +666,7 @@ sumologic:
 
     ## The type of source we send to in Sumo. The possible values are http and otlp.
     ## Consult the documentation for more information.
-    sourceType: http
+    sourceType: otlp
 
   ### Traces configuration
   ## Set the enabled flag to false to disable traces ingestion.
@@ -675,7 +675,7 @@ sumologic:
     ## How many spans per request should be send to receiver
     spans_per_request: 100
 
-    sourceType: http
+    sourceType: otlp
 
 ## Configure metrics-server
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/metrics-server/values.yaml
@@ -1583,7 +1583,7 @@ tracesSampler:
       # logging:
       #   loglevel: debug
       otlphttp:
-        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}/v1/traces
         compression: gzip
     service:
       extensions: [health_check, memory_ballast, pprof]
