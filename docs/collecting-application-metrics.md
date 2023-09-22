@@ -9,7 +9,7 @@ There are two major sections:
 
 ## Scraping metrics
 
-This section describes how to scrape metrics from your applications. Several scenarios has been covered:
+This section describes how to scrape metrics from your applications. The following scenarios are covered:
 
 - [Application metrics are exposed (one endpoint scenario)](#application-metrics-are-exposed-one-endpoint-scenario)
 - [Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario)
@@ -48,14 +48,6 @@ sumologic:
         endpoints:
           - port: "<port name or number>"
             path: <metrics path>
-            relabelings:
-              ## Sets _sumo_forward_ label to true
-              - sourceLabels: [__name__]
-                separator: ;
-                regex: (.*)
-                targetLabel: _sumo_forward_
-                replacement: "true"
-                action: replace
         namespaceSelector:
           matchNames:
             - <namespace>
@@ -67,35 +59,8 @@ sumologic:
 
 **Note** For advanced serviceMonitor configuration, please look at the [Prometheus documentation][prometheus_service_monitors]
 
-> **Note** If you not set `_sumo_forward_` label you will have to configure `additionalRemoteWrite`:
->
-> ```yaml
-> kube-prometheus-stack:
->   prometheus:
->     prometheusSpec:
->       additionalRemoteWrite:
->         ## This is required to keep default configuration. It's copy of values.yaml content
->         - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.custom
->           remoteTimeout: 5s
->           writeRelabelConfigs:
->             - action: keep
->               regex: ^true$
->               sourceLabels: [_sumo_forward_]
->             - action: labeldrop
->               regex: _sumo_forward_
->         ## This is your custom remoteWrite configuration
->         - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.<custom endpoint name>
->           writeRelabelConfigs:
->             - action: keep
->               regex: <metric1>|<metric2>|...
->               sourceLabels: [__name__]
-> ```
->
-> We recommend using a regex validator, for example [https://regex101.com/]
-
 [prometheus_service_monitors]:
   https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#monitoring.coreos.com/v1.ServiceMonitor
-[https://regex101.com/]: https://regex101.com/
 
 #### Example
 
@@ -169,24 +134,8 @@ sumologic:
         endpoints:
           - port: some-port
             path: /metrics
-            relabelings:
-              ## Sets _sumo_forward_ label to true
-              - sourceLabels: [__name__]
-                separator: ;
-                regex: (.*)
-                targetLabel: _sumo_forward_
-                replacement: "true"
-                action: replace
           - port: another-port
             path: /custom-endpoint
-            relabelings:
-              ## Sets _sumo_forward_ label to true
-              - sourceLabels: [__name__]
-                separator: ;
-                regex: (.*)
-                targetLabel: _sumo_forward_
-                replacement: "true"
-                action: replace
         namespaceSelector:
           matchNames:
             - my-custom-app-namespace
@@ -197,8 +146,8 @@ sumologic:
 
 ### Application metrics are not exposed
 
-In case you want to scrape metrics from application which do not expose them, you can use telegraf operator. It will scrape metrics
-according to configuration and expose them on port `9273` so Prometheus will be able to scrape them.
+In case you want to scrape metrics from an application which does not expose a Prometheus endpoint, you can use telegraf operator. It will
+scrape metrics according to configuration and expose them on port `9273` so Prometheus will be able to scrape them.
 
 For example to expose metrics from nginx Pod, you can use the following annotations:
 
@@ -214,10 +163,10 @@ annotations:
 `sumologic-prometheus` defines the way telegraf operator will expose the metrics. They are going to be exposed in prometheus format on port
 `9273` and `/metrics` path.
 
-**NOTE** If you apply annotations on Pod which is subject of other object, e.g. DaemonSet, it won't take affect. In such case, the
-annotation should be added to Pod specification in DeamonSet template.
+**NOTE** If you apply annotations on Pod which is owned by another object, e.g. DaemonSet, it won't take affect. In such case, the
+annotation should be added to Pod specification in DaemonSet template.
 
-After restart, the Pod should have additional `telegraf` container.
+After restart, the Pod should have an additional `telegraf` container.
 
 To scrape and forward exposed metrics to Sumo Logic, please follow one of the following scenarios:
 
@@ -369,7 +318,6 @@ If you do not see your metrics in Sumo Logic, please check the following stages:
         - [Pod is visible in Prometheus targets](#pod-is-visible-in-prometheus-targets)
         - [There is no target for serviceMonitor](#there-is-no-target-for-servicemonitor)
         - [Pod is not visible in target for custom serviceMonitor](#pod-is-not-visible-in-target-for-custom-servicemonitor)
-    - [Check if Prometheus knows how to send metrics to Sumo Logic](#check-if-prometheus-knows-how-to-send-metrics-to-sumo-logic)
 
 ### Check if metrics are in Prometheus
 
@@ -420,8 +368,7 @@ Type the metric name in the search bar and run `Execute`:
 ![Prometheus query results](/images/metrics/prometheus-query.png)
 
 If the metrics have been found, you can go to the
-[Check if Prometheus knows how to send metrics to Sumo Logic](#check-if-prometheus-knows-how-to-send-metrics-to-sumo-logic) section.
-Otherwise, please check [Investigate Prometheus scrape configuration](#investigate-prometheus-scrape-configuration) section.
+[Investigate Prometheus scrape configuration](#investigate-prometheus-scrape-configuration) section.
 
 #### Investigate Prometheus scrape configuration
 
@@ -514,34 +461,3 @@ $ kubectl -n "${NAMESPACE}" describe prometheus
 
 If you don't see Pod you are expecting to see for your serviceMonitor, but serviceMonitor is in the Prometheus targets, please verify if
 `selector` and `namespaceSelector` in `additionalServiceMonitors` configuration are matching your Pod's namespace and labels.
-
-### Check if Prometheus knows how to send metrics to Sumo Logic
-
-If metrics are visible in Prometheus, but you cannot see them in Sumo Logic, please check if Prometheus knows how to send it to Sumo Logic
-Metatada StatefulSet.
-
-Go to the [http://localhost:8000/config](http://localhost:8000/config) and verify if your metric definition is added to any `remote_write`
-section. It most likely will be covered by:
-
-```yaml
-- url: http://collection-sumologic-remote-write-proxy.sumologic.svc.cluster.local.:9888/prometheus.metrics.applications.custom
-  remote_timeout: 5s
-  write_relabel_configs:
-    - source_labels: [_sumo_forward_]
-      separator: ;
-      regex: ^true$
-      replacement: $1
-      action: keep
-    - separator: ;
-      regex: _sumo_forward_
-      replacement: $1
-      action: labeldrop
-```
-
-If there is no `remote_write` for your metric definition, you can add one using `additionalRemoteWrite` what has been described in
-[Application metrics are exposed (multiple enpoints scenario)](#application-metrics-are-exposed-multiple-enpoints-scenario) section.
-
-However if you can see `remote_write` which matches your metrics and metrics are in Prometheus, we recommend to look at the Prometheus,
-Prometheus Operator and OpenTelemetry Metrics Collector Pod logs.
-
-If the issue won't be solved, please create an issue or contact with our Customer Support.
