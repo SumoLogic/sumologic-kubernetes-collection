@@ -739,6 +739,9 @@ sumologic:
           matchLabels:
             app: kube-prometheus-stack-prometheus
 
+    ## User-defined ServiceMonitors go here
+    additionalServiceMonitors: []
+
     ## The type of source we send to in Sumo. The possible values are http and otlp.
     ## Consult the documentation for more information.
     sourceType: http
