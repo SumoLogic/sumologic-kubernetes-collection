@@ -13,81 +13,11 @@ metadata:
 data:
   config.yaml: |
     exporters:
-      sumologic/apiserver:
-        endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
-      sumologic/control_plane:
-        endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
-      sumologic/controller:
-        endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
       sumologic/default:
         decompose_otlp_histograms: true
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
-      sumologic/kubelet:
-        endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
-      sumologic/node:
-        endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
-      sumologic/scheduler:
-        endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
-      sumologic/state:
-        endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
+        metric_format: otlp
         sending_queue:
           enabled: true
           num_consumers: 10
@@ -225,35 +155,6 @@ data:
         attributes:
         - action: delete
           key: k8s.pod.pod_name
-      routing:
-        default_exporters:
-        - sumologic/default
-        error_mode: ignore
-        table:
-        - exporters:
-          - sumologic/apiserver
-          statement: route() where resource.attributes["job"] == "apiserver"
-        - exporters:
-          - sumologic/control_plane
-          statement: route() where resource.attributes["job"] == "coredns"
-        - exporters:
-          - sumologic/control_plane
-          statement: route() where resource.attributes["job"] == "kube-etcd"
-        - exporters:
-          - sumologic/controller
-          statement: route() where resource.attributes["job"] == "kube-controller-manager"
-        - exporters:
-          - sumologic/kubelet
-          statement: route() where resource.attributes["job"] == "kubelet"
-        - exporters:
-          - sumologic/node
-          statement: route() where resource.attributes["job"] == "node-exporter"
-        - exporters:
-          - sumologic/scheduler
-          statement: route() where resource.attributes["job"] == "kube-scheduler"
-        - exporters:
-          - sumologic/state
-          statement: route() where resource.attributes["job"] == "kube-state-metrics"
       source:
         collector: kubernetes
         exclude:
@@ -301,13 +202,6 @@ data:
         metrics:
           exporters:
           - sumologic/default
-          - sumologic/apiserver
-          - sumologic/control_plane
-          - sumologic/controller
-          - sumologic/kubelet
-          - sumologic/node
-          - sumologic/scheduler
-          - sumologic/state
           processors:
           - memory_limiter
           - metricstransform
@@ -324,7 +218,6 @@ data:
           - filter/drop_unnecessary_metrics
           - filter/app_metrics
           - batch
-          - routing
           receivers:
           - telegraf
           - otlp

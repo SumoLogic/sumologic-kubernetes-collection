@@ -1,6 +1,6 @@
 sumologic:
   events:
-    sourceType: otlp
+    sourceType: http
   podAnnotations:
     sumoAnnotation: sumoValue
   podLabels:

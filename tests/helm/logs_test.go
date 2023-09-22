@@ -78,7 +78,7 @@ sumologic:
 	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
 	require.NoError(t, err)
 
-	require.ElementsMatch(t, []string{"sumologic/containers"}, keys(otelConfig.Exporters))
+	require.ElementsMatch(t, []string{"sumologic"}, keys(otelConfig.Exporters))
 	require.ElementsMatch(t, []string{"logs/otlp/containers"}, keys(otelConfig.Service.Pipelines))
 	for processorName := range otelConfig.Processors {
 		require.NotContains(t, processorName, "systemd")
@@ -126,7 +126,7 @@ sumologic:
 	require.Contains(t, containersPipeline.Processors, "filter/include-host")
 }
 
-func TestMetadataLogFormat(t *testing.T) {
+func TestMetadataLogFormatHTTP(t *testing.T) {
 	t.Parallel()
 	templatePath := "templates/logs/otelcol/configmap.yaml"
 
@@ -174,6 +174,7 @@ sumologic:
   logs:
     container:
       format: %s
+    sourceType: http
 `
 			valuesYaml := fmt.Sprintf(valuesYamlTemplate, testCase.logFormat)
 			otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)

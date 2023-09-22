@@ -15,8 +15,8 @@ data:
     exporters:
       sumologic:
         clear_logs_timestamp: false
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_EVENTS_SOURCE}
-        log_format: json
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_EVENTS_SOURCE}
+        log_format: otlp
         sending_queue:
           enabled: true
           storage: file_storage

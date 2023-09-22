@@ -9,7 +9,7 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 )
 
-func Test_Helm_OTLP(t *testing.T) {
+func Test_Helm_Http_Source(t *testing.T) {
 	expectedMetrics := internal.DefaultExpectedMetrics
 	// we have tracing enabled, so check tracing-specific metrics
 	expectedMetrics = append(expectedMetrics, internal.TracingOtelcolMetrics...)

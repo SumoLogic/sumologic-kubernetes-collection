@@ -148,11 +148,6 @@ spec:
                 secretKeyRef:
                   name: sumologic
                   key: endpoint-metrics
-            - name: SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE
-              valueFrom:
-                secretKeyRef:
-                  name: sumologic
-                  key: endpoint-metrics-otlp
             - name: SUMO_ENDPOINT_KUBELET_METRICS_SOURCE
               valueFrom:
                 secretKeyRef:

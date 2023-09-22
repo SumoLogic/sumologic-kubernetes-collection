@@ -1,0 +1,15 @@
+sumologic:
+  metrics:
+    sourceType: http
+  events:
+    sourceType: http
+  logs:
+    sourceType: http
+  traces:
+    sourceType: http
+
+tracesSampler:
+  config:
+    exporters:
+      otlphttp:
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}/v1/traces

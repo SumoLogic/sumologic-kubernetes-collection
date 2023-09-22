@@ -15,7 +15,7 @@ data:
     exporters:
       otlphttp:
         compression: gzip
-        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}/v1/traces
     extensions:
       health_check: {}
       memory_ballast:

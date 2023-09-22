@@ -85,11 +85,6 @@ otelcol:
 
 # Request less resources so that this fits on Github actions runners environment
 tracesSampler:
-  config:
-    # Default otlp pipeline from values.yaml is used.
-    exporters:
-      otlphttp:
-        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}/v1/traces
   deployment:
     replicas: 1
     resources:
