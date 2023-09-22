@@ -7,16 +7,21 @@ Perform the following steps in order to release new verions of helm chart.
 1. Prepare and merge PR with the following changes:
 
    - update [changelog][changelog] by running `make update-changelog VERSION=x.y.z` where `x.y.z` is the new version number.
-   - update [chart][chart]
    - update [README.md][documentation]
      - add link to minor version, if created
      - set "supported until" date for previous minor version to 6 months after today
+
+   Add `backport main` label to this PR.
+
+1. Prepare and merge PR with the following changes:
+
+   - update [chart][chart]
 
 1. Create and push new tag:
 
    ```bash
    export TAG=x.y.z
-   git checkout main
+   git checkout release-v3
    git pull
    git tag -sm "v${TAG}" "v${TAG}"
    git push origin "v${TAG}"
@@ -37,7 +42,7 @@ Perform the following steps in order to release new verions of helm chart.
      git push -u origin "release-v${TAG%.*}"
      ```
 
-1. Create [new release][releases]
+1. Create [new release][releases]. Copy generated changelog to release notes.
 
 [deploy_title]: /docs/README.md#deployment-guide-for-unreleased-version
 [changelog]: /CHANGELOG.md#unreleased
