@@ -9,9 +9,6 @@ These functionalities are currently independent of each other, and can be config
 
 ## Metrics collector
 
-> [!NOTE]  
-> This feature is currently in beta.
-
 It's possible to use the OpenTelemetry Collector as a Prometheus replacement. To enable the otel metrics collector and disable Prometheus,
 set:
 
