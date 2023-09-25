@@ -37,7 +37,8 @@ to use Fluent Bit and/or Fluentd by changing the configuration. In version 4 thi
 ### Drop Prometheus recording rule metrics
 
 OpenTelemetry can't collect Prometheus recording rule metrics. The new version therefore stops collecting recording rule metrics and updates
-will be made to the Kubernetes App to remove these metrics.
+will be made to the Kubernetes App to remove these metrics. See the [scraped metrics reference][scraped_metrics_aggregations] for
+instructions on how to recover these recording rule metrics in Sumo.
 
 ### OpenTelemetry Collector for metrics collection
 
@@ -268,3 +269,4 @@ require additional action.
 [v3_migration_guide]: ./v3-migration-doc.md
 [attribute_translation]:
   https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.85.0-sumo-0/pkg/processor/sumologicschemaprocessor#attribute-translation
+[scraped_metrics_aggregations]: ./scraped-metrics.md#aggregations-removed

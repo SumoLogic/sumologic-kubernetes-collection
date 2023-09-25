@@ -1101,8 +1101,6 @@ kube-prometheus-stack:
         ## node_network_transmit_bytes_total
         ## node_filesystem_avail_bytes
         ## node_filesystem_size_bytes
-        ## node_filesystem_files_free
-        ## node_filesystem_files
         metricRelabelings:
           - action: keep
             regex: (?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
