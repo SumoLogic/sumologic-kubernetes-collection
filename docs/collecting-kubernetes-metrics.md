@@ -11,11 +11,8 @@ By default, we collect selected metrics from the following Kubernetes components
 - `Kube State Metrics` configured with `kube-prometheus-stack.kube-state-metrics.prometheus.monitor`
 - `Prometheus Node Exporter` configured with `kube-prometheus-stack.prometheus-node-exporter.prometheus.monitor`
 
-If you want to forward additional metric from one of these services, you need to make two configuration changes:
-
-- edit corresponding Service Monitor configuration. Service Monitor tells Prometheus which metrics it should take from the service
-- ensure that the new metric is forwarded to metadata Pod, by adding new (or editing existing) Remote Write to
-  `kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite`
+If you want to forward additional metric from one of these services, you need to edit the corresponding Service Monitor definition. Service
+Monitor tells Prometheus which metrics it should take from the service.
 
 ## Example
 
@@ -23,8 +20,7 @@ Let's consider the following example:
 
 In addition to all metrics we send by default from CAdvisor you also want to forward `container_blkio_device_usage_total`.
 
-You need to modify `kube-prometheus-stack.kubelet.serviceMonitor.cAdvisorMetricRelabelings` to include `container_blkio_device_usage_total`
-in regex, and also to add `container_blkio_device_usage_total` to `kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite`.
+You need to modify `kube-prometheus-stack.kubelet.serviceMonitor.cAdvisorMetricRelabelings` to include `container_blkio_device_usage_total`.
 
 ```yaml
 kube-prometheus-stack:
@@ -42,24 +38,6 @@ kube-prometheus-stack:
           regex: POD
         - action: labeldrop
           regex: (id|name)
-  prometheus:
-    prometheusSpec:
-      additionalRemoteWrite:
-        ## This is required to keep default configuration. It's copy of values.yaml content
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.applications.custom
-          remoteTimeout: 5s
-          writeRelabelConfigs:
-            - action: keep
-              regex: ^true$
-              sourceLabels: [_sumo_forward_]
-            - action: labeldrop
-              regex: _sumo_forward_
-        ## This is your custom remoteWrite configuration
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.custom_kubernetes_metrics
-          writeRelabelConfigs:
-            - action: keep
-              regex: container_blkio_device_usage_total
-              sourceLabels: [__name__]
 ```
 
 **Note:** You can use the method described in

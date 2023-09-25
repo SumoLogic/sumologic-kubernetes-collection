@@ -2,29 +2,28 @@
 
 Prometheus is crucial part of the metrics pipeline. It is also a complicated and powerful tool. In Kubernetes specifically, it's also often
 managed by Prometheus Operator and a set of custom resources. It's possible that you already have some part of the K8s Prometheus stack
-already installed, and would like to make use of it. This document describes how to deal with all the possible cases.
+installed, and would like to make use of it. This document describes how to deal with all the possible cases.
 
 **NOTE:** In this document we assume that `${NAMESPACE}` represents namespace in which the Sumo Logic Kubernetes Collection is going to be
 installed.
 
 <!-- TOC -->
 
-- [No Prometheus in the cluster](#no-prometheus-in-the-cluster)
-- [Prometheus Operator in the cluster](#prometheus-operator-in-the-cluster)
-  - [Custom Resource Definition compatibility](#custom-resource-definition-compatibility)
-  - [Installing Sumo Logic Prometheus Operator side by side with existing Operator](#installing-sumo-logic-prometheus-operator-side-by-side-with-existing-operator)
-    - [Set Sumo Logic Prometheus Operator to observe installation namespace](#set-sumo-logic-prometheus-operator-to-observe-installation-namespace)
-  - [Using existing Operator to create Sumo Logic Prometheus instance](#using-existing-operator-to-create-sumo-logic-prometheus-instance)
-    - [Disable Sumo Logic Prometheus Operator](#disable-sumo-logic-prometheus-operator)
-  - [Prepare Sumo Logic Configuration to work with existing Operator](#prepare-sumo-logic-configuration-to-work-with-existing-operator)
-  - [Using existing Kube Prometheus Stack](#using-existing-kube-prometheus-stack)
-    - [Build Prometheus Configuration](#build-prometheus-configuration)
-- [Using a load balancing proxy for Prometheus remote write](#using-a-load-balancing-proxy-for-prometheus-remote-write)
-- [Horizontal Scaling (Sharding)](#horizontal-scaling-sharding)
-- [Troubleshooting](#troubleshooting)
-  - [UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "prometheusrulemutate.monitoring.coreos.com"](#upgrade-failed-failed-to-create-resource-internal-error-occurred-failed-calling-webhook-prometheusrulemutatemonitoringcoreoscom)
-  - [Error: unable to build kubernetes objects from release manifest: error validating "": error validating data: ValidationError(Prometheus.spec)](#error-unable-to-build-kubernetes-objects-from-release-manifest-error-validating--error-validating-data-validationerrorprometheusspec)
-  <!-- /TOC -->
+- [Prometheus](#prometheus)
+  - [No Prometheus in the cluster](#no-prometheus-in-the-cluster)
+  - [Prometheus Operator in the cluster](#prometheus-operator-in-the-cluster)
+    - [Custom Resource Definition compatibility](#custom-resource-definition-compatibility)
+    - [Installing Sumo Logic Prometheus Operator side by side with existing Operator](#installing-sumo-logic-prometheus-operator-side-by-side-with-existing-operator)
+      - [Set Sumo Logic Prometheus Operator to observe installation namespace](#set-sumo-logic-prometheus-operator-to-observe-installation-namespace)
+    - [Using existing Operator to create Sumo Logic Prometheus instance](#using-existing-operator-to-create-sumo-logic-prometheus-instance)
+      - [Disable Sumo Logic Prometheus Operator](#disable-sumo-logic-prometheus-operator)
+    - [Prepare Sumo Logic Configuration to work with existing Operator](#prepare-sumo-logic-configuration-to-work-with-existing-operator)
+    - [Using existing Kube Prometheus Stack](#using-existing-kube-prometheus-stack)
+      - [Build Prometheus Configuration](#build-prometheus-configuration)
+  - [Horizontal Scaling (Sharding)](#horizontal-scaling-sharding)
+  - [Troubleshooting](#troubleshooting)
+    - [UPGRADE FAILED: failed to create resource: Internal error occurred: failed calling webhook "prometheusrulemutate.monitoring.coreos.com"](#upgrade-failed-failed-to-create-resource-internal-error-occurred-failed-calling-webhook-prometheusrulemutatemonitoringcoreoscom)
+    - [Error: unable to build kubernetes objects from release manifest: error validating "": error validating data: ValidationError(Prometheus.spec)](#error-unable-to-build-kubernetes-objects-from-release-manifest-error-validating--error-validating-data-validationerrorprometheusspec)
 
 ## No Prometheus in the cluster
 
@@ -235,13 +234,11 @@ are correctly added to your Kube Prometheus Stack configuration:
 
 - ServiceMonitors configuration:
 
-  - `sumologic.metrics.ServiceMonitors` to `prometheus.additionalServiceMonitors`
+  - `sumologic.metrics.ServiceMonitors` and `sumologic.metrics.additionalServiceMonitors` to `prometheus.additionalServiceMonitors`
 
 - RemoteWrite configuration:
 
   - `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` to `prometheus.prometheusSpec.remoteWrite` or
-    `prometheus.prometheusSpec.additionalRemoteWrite`
-  - `kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite` to `prometheus.prometheusSpec.remoteWrite` or
     `prometheus.prometheusSpec.additionalRemoteWrite`
 
   **Note:** `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite` and
@@ -249,7 +246,7 @@ are correctly added to your Kube Prometheus Stack configuration:
   ensure that:
 
   - they are always in sync with the current configuration and endpoints starts with.
-  - url is always starting with `http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`
+  - url always starts with `http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`
 
   Alternatively, you can list endpoints in `metadata.metrics.config.additionalEndpoints`:
 
@@ -258,8 +255,7 @@ are correctly added to your Kube Prometheus Stack configuration:
     metrics:
       config:
         additionalEndpoints:
-          - /prometheus.metrics.state
-          - /prometheus.metrics.controller-manager
+          - /prometheus.metrics
           # - ...
   ```
 
@@ -285,7 +281,7 @@ are correctly added to your Kube Prometheus Stack configuration:
     value: ${METADATA}
     ```
 
-    where `${METADATA}` is content of `metadataMetrics` key from `sumologic-configmap` Config Map within `${NAMESPACE}`:
+    where `${METADATA}` is content of `metadataMetrics` key from `sumologic-configmap` ConfigMap within `${NAMESPACE}`:
 
     ```yaml
     apiVersion: v1
@@ -338,19 +334,9 @@ prometheus:
       # values copied from kube-prometheus-stack.prometheus.prometheusSpec.containers
     additionalRemoteWrite:
       # values copied from kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite
-      # values copied from kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite
 ```
 
 Prometheus configuration is ready. Apply the changes on the cluster.
-
-## Using a load balancing proxy for Prometheus remote write
-
-In environments with a high volume of metrics (problems may start appearing around 30k samples per second), the above mitigations may not be
-sufficient. It is possible to remedy the problem by sharding Prometheus itself, but that can be complicated to set up and require manual
-intervention to scale.
-
-A simpler alternative is to put a HTTP load balancer between Prometheus and the metrics metadata Service. This is enabled in `values.yaml`
-via the `sumologic.metrics.remoteWriteProxy.enabled` key.
 
 ## Horizontal Scaling (Sharding)
 

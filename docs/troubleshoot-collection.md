@@ -2,33 +2,34 @@
 
 <!-- TOC -->
 
-- [Troubleshooting Installation](#troubleshooting-installation)
-- [Namespace configuration](#namespace-configuration)
-- [Collecting logs](#collecting-logs)
-  - [Check log throttling](#check-log-throttling)
-  - [Check ingest budget limits](#check-ingest-budget-limits)
-  - [Check if collection pods are in a healthy state](#check-if-collection-pods-are-in-a-healthy-state)
-  - [Prometheus Logs](#prometheus-logs)
-  - [OpenTelemetry Logs Collector is being CPU throttled](#opentelemetry-logs-collector-is-being-cpu-throttled)
-- [Collecting metrics](#collecting-metrics)
-  - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
-  - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
-  - [Check the Prometheus UI](#check-the-prometheus-ui)
-  - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
-- [Common Issues](#common-issues)
-  - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
-  - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
-  - [Missing `kubelet` metrics](#missing-kubelet-metrics)
-    - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
-    - [2. Disable the `kubelet.serviceMonitor.https` flag in Kube Prometheus Stack](#2-disable-the-kubeletservicemonitorhttps-flag-in-kube-prometheus-stack)
-  - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
-  - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
-  - [Rancher](#rancher)
-  - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
-  - [Falco and OpenShift](#falco-and-openshift)
-  - [Out of memory (OOM) failures for Prometheus Pod](#out-of-memory-oom-failures-for-prometheus-pod)
-  - [Prometheus: server returned HTTP status 404 Not Found: 404 page not found](#prometheus-server-returned-http-status-404-not-found-404-page-not-found)
-  - [OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy](#opentelemetry-dial-tcp-lookup-collection-sumologic-metadata-logssumologicsvcclusterlocal-device-or-resource-busy)
+- [Troubleshooting Collection](#troubleshooting-collection)
+  - [Troubleshooting Installation](#troubleshooting-installation)
+  - [Namespace configuration](#namespace-configuration)
+  - [Collecting logs](#collecting-logs)
+    - [Check log throttling](#check-log-throttling)
+    - [Check ingest budget limits](#check-ingest-budget-limits)
+    - [Check if collection pods are in a healthy state](#check-if-collection-pods-are-in-a-healthy-state)
+    - [Prometheus Logs](#prometheus-logs)
+    - [OpenTelemetry Logs Collector is being CPU throttled](#opentelemetry-logs-collector-is-being-cpu-throttled)
+  - [Collecting metrics](#collecting-metrics)
+    - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
+      - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
+    - [Check the Prometheus UI](#check-the-prometheus-ui)
+    - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+  - [Common Issues](#common-issues)
+    - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
+    - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
+    - [Missing `kubelet` metrics](#missing-kubelet-metrics)
+      - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
+      - [2. Disable the `kubelet.serviceMonitor.https` flag in Kube Prometheus Stack](#2-disable-the-kubeletservicemonitorhttps-flag-in-kube-prometheus-stack)
+    - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
+    - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
+    - [Rancher](#rancher)
+    - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
+    - [Falco and OpenShift](#falco-and-openshift)
+    - [Out of memory (OOM) failures for Prometheus Pod](#out-of-memory-oom-failures-for-prometheus-pod)
+    - [Prometheus: server returned HTTP status 404 Not Found: 404 page not found](#prometheus-server-returned-http-status-404-not-found-404-page-not-found)
+    - [OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy](#opentelemetry-dial-tcp-lookup-collection-sumologic-metadata-logssumologicsvcclusterlocal-device-or-resource-busy)
 
 <!-- /TOC -->
 
@@ -411,7 +412,7 @@ increase them then you may need to horizontally scale Prometheus. For details pl
 If you see the following error in Prometheus logs:
 
 ```text
-ts=2023-01-30T16:39:27.436Z caller=dedupe.go:112 component=remote level=error remote_name=2b2fa9 url=http://sumologic-sumologic-remote-write-proxy.sumologic.svc.cluster.local:9888/prometheus.metrics.kubelet msg="non-recoverable error" count=194 exemplarCount=0 err="server returned HTTP status 404 Not Found: 404 page not found"
+ts=2023-01-30T16:39:27.436Z caller=dedupe.go:112 component=remote level=error remote_name=2b2fa9 url=http://sumologic-sumologic-remote-write-proxy.sumologic.svc.cluster.local:9888/prometheus.metrics msg="non-recoverable error" count=194 exemplarCount=0 err="server returned HTTP status 404 Not Found: 404 page not found"
 ```
 
 please change the following configurations:
@@ -419,7 +420,7 @@ please change the following configurations:
 - `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite`
 - `kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite`
 
-so `url` start with `http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`.
+so `url` starts with `http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`.
 
 Please see the following example:
 
@@ -428,11 +429,11 @@ kube-prometheus-stack:
   prometheus:
     prometheusSpec:
       remoteWrite:
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.state
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics
           ...
 ```
 
-Alternatively you can add `/prometheus.metrics.kubelet` to `metadata.metrics.config.additionalEndpoints`
+Alternatively you can add `/prometheus.metrics` to `metadata.metrics.config.additionalEndpoints`
 
 Please see the following example:
 
