@@ -12,6 +12,7 @@
     - [Requirements](#requirements)
     - [Metrics migration](#metrics-migration)
       - [Convert Prometheus remote writes to otel metrics filters](#convert-prometheus-remote-writes-to-otel-metrics-filters)
+      - [How do I revert to the v3 defaults?](#how-do-i-revert-to-the-v3-defaults)
     - [Removing support for Fluent Bit and Fluentd](#removing-support-for-fluent-bit-and-fluentd)
       - [Configuration Migration](#configuration-migration)
     - [Switch to OTLP sources](#switch-to-otlp-sources)
@@ -74,7 +75,7 @@ If you don't have metrics collection enabled, skip straight to the [next major s
 
 #### Convert Prometheus remote writes to otel metrics filters
 
-**When?**: If you have custom remote writes defined in `kube-prometheus-stack.prometheus.additionalServiceMonitors`
+**When?**: If you have custom remote writes defined in `kube-prometheus-stack.prometheus.additionalRemoteWrites`
 
 When using Prometheus for metrics collection in v3, we relied on remote writes for filtering forwarded metrics. Otel, which is the default
 in v4, does not support remote writes, so we've moved this functionality to Otel processors, or ServiceMonitors if it can be done there.
@@ -99,6 +100,26 @@ No action is needed.
 1. As above, but you also have a remote write definition to filter these metrics.
 
 You'll need to delete the remote write definition and [add an equivalent filter processor][otel_metrics_filter] rule to Otel.
+
+#### How do I revert to the v3 defaults?
+
+Set the following in your configuration:
+
+```yaml
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        enabled: false
+    remoteWriteProxy:
+      enabled: true
+
+kube-prometheus-stack:
+  prometheus:
+    enabled: true
+  prometheusOperator:
+    enabled: true
+```
 
 ### Removing support for Fluent Bit and Fluentd
 
