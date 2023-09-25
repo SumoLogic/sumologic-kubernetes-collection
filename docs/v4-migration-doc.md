@@ -83,21 +83,21 @@ There are several scenarios here, depending on the exact use case:
 1. You're collecting different [Kubernetes metrics][kubernetes_metrics_v3] than what the Chart provides by default. You've modified the
    existing ServiceMonitor for these metrics, and added a remote write as instructed by the documentation.
 
-You can safely delete the added remote write definition. No further action is required.
+   You can safely delete the added remote write definition. No further action is required.
 
 1. As above, but you're also doing some additional data transformation via relabelling rules in the remote write definition.
 
-You'll need to either move the relabelling rules into the ServiceMonitor itself, or [add an equivalent filter
-processor][otel_metrics_filter] rule to Otel.
+   You'll need to either move the relabelling rules into the ServiceMonitor itself, or [add an equivalent filter
+   processor][otel_metrics_filter] rule to Otel.
 
 1. You're collecting custom application metrics by adding a [`prometheus.io/scrape` annotation][application_metrics_annotation]. You don't
    need to filter these metrics.
 
-No action is needed.
+   No action is needed.
 
 1. As above, but you also have a remote write definition to filter these metrics.
 
-You'll need to delete the remote write definition and [add an equivalent filter processor][otel_metrics_filter] rule to Otel.
+   You'll need to delete the remote write definition and [add an equivalent filter processor][otel_metrics_filter] rule to Otel.
 
 #### How do I revert to the v3 defaults?
 
