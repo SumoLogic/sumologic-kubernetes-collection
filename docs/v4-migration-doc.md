@@ -4,7 +4,7 @@
 
 - [Kubernetes Collection `v4.0.0` - Breaking Changes](#kubernetes-collection-v400---breaking-changes)
   - [Important changes](#important-changes)
-    - [OpenTelemetry Collector](#opentelemetry-collector)
+    - [Remove Fluent Bit and Fluentd](#remove-fluent-bit-and-fluentd)
     - [Drop Prometheus recording rule metrics](#drop-prometheus-recording-rule-metrics)
     - [OpenTelemetry Collector for metrics collection](#opentelemetry-collector-for-metrics-collection)
     - [Use OTLP sources by default](#use-otlp-sources-by-default)
@@ -27,13 +27,11 @@ This document describes the major changes and the necessary migration steps.
 
 ## Important changes
 
-### OpenTelemetry Collector
+### Remove Fluent Bit and Fluentd
 
-The new version replaces both Fluentd and Fluent Bit with the OpenTelemetry Collector. In the majority of cases, this doesn't require any
-manual intervention. However, custom processing in Fluentd or Fluent Bit will need to be ported to the OpenTelemetry Collector configuration
-format. Please check [Solution Overview][solution-overview] and see below for details.
-
-[solution-overview]: /docs/README.md#solution-overview
+As of version 3 of the Chart, Fluent Bit and Fluentd were replaced by the OpenTelemetry Collector by default. However, it was still possible
+to use Fluent Bit and/or Fluentd by changing the configuration. In version 4 this is no longer possible. For migration instructions, see the
+[v3 migration guide][v3_migration_guide].
 
 ### Drop Prometheus recording rule metrics
 
@@ -113,17 +111,14 @@ Te following changes are required in order to switch to OpenTelemetry:
 
 #### Configuration Migration
 
-In order to migrate your custom configuration, please carefully read and apply to your needs the following documents:
+Please see the [v3 migration guide][v3_migration_guide].
 
-- [Collecting Container Logs](./collecting-container-logs.md)
-- [Collecting Application Metrics](./collecting-application-metrics.md)
-- [Collecting Kubernetes Events](./collecting-kubernetes-events.md)
-- [Collecting Kubernetes Metrics](./collecting-kubernetes-metrics.md)
-
-In addition the following changes has been done:
+In addition the following changes have been made:
 
 - `otelevents.serviceLabels` has been introduced as replacement for `fluentd.serviceLabels` for events service
 - `sumologic.events.sourceName` is going to be used instead of `fluentd.events.sourceName` to build `_sourceCategory` for events
+
+If you've changed the values of either of these two options, please adjust your configuration accordingly.
 
 ### Switch to OTLP sources
 
@@ -244,3 +239,4 @@ require additional action.
 [kubernetes_metrics_v3]:
   https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v3/docs/collecting-kubernetes-metrics.md#collecting-kubernetes-metrics
 [otel_metrics_filter]: ./collecting-application-metrics.md#filtering-metrics
+[v3_migration_guide]: ./v3-migration-doc.md
