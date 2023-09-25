@@ -420,7 +420,7 @@ please change the following configurations:
 - `kube-prometheus-stack.prometheus.prometheusSpec.remoteWrite`
 - `kube-prometheus-stack.prometheus.prometheusSpec.additionalRemoteWrite`
 
-so `url` start withs `http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`.
+so `url` starts with `http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888`.
 
 Please see the following example:
 
