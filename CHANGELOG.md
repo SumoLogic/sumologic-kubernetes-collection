@@ -7,6 +7,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.0.0-rc.0]
+
+### Released 2023-09-26
+
+### Migration from v3
+
+See the [migration guide][v4_migration_guide] for details.
+
+### Breaking Changes
+
+- feat!: remove support for fluent-bit and fluentd [#3244]
+- feat!: truncate fullname after 22 characters [#3248]
+- feat(metrics)!: use otel by default [#3284]
+- feat!: use OTLP sources by default [#3297]
+- feat!(metrics): move extra processors after sumologic_schema [#3306]
+- fix(metrics)!: drop k8s.node.name attribute [#3295]
+- fix(logs)!: move JSON parsing after user-defined processors [#3281]
+
+  The log body will now always be a string if accessed in extra processors. Users who want to access specific fields in their parsed JSON
+  log should explicitly call ParseJSON in their processor definition.
+
+### Added
+
+- feat(logs): add `sumologic.logs.additionalFields` property [#3286]
+- feat(metrics): add additionalServiceMonitors setting [#3292]
+
+### Changed
+
+- feat(prometheus): Removing prometheus recording rules [#3211]
+- feat(metrics): move app metrics filtering to metadata layer [#3232]
+
+### Fixed
+
+- fix(metrics): decompose OTLP histograms [#3289]
+
+[#3244]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3244
+[#3248]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3248
+[#3284]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3284
+[#3286]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3286
+[#3292]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3292
+[#3211]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3211
+[#3232]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3232
+[#3297]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3297
+[#3306]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3306
+[#3281]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3281
+[#3289]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3289
+[#3295]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3295
+[v4_migration_guide]: /docs/v4-migration-doc.md
+[v4.0.0-rc.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.0.0-rc.0
+
 ## [v3.15.0]
 
 ### Released 2023-09-18
