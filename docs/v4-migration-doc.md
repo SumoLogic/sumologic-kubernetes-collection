@@ -256,8 +256,15 @@ require additional action.
   Some Kubernetes objects, for example statefulsets, have a tight (63 characters) limit for their names. Because of that, we truncate the
   prefix that is attached to the names. In particular, the value under key `fullnameOverride` will be truncated to 22 characters.
 
+- Moving extra processors in metrics pipeline after sumologic_schema processor
+
+  This has been changed in order to make the behaviour consistent with the logs pipeline. Now, the extra processors should use [translated
+  versions of some attributes][attribute_translation].
+
 [application_metrics_annotation]: ./collecting-application-metrics.md#application-metrics-are-exposed-one-endpoint-scenario
 [kubernetes_metrics_v3]:
   https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v3/docs/collecting-kubernetes-metrics.md#collecting-kubernetes-metrics
 [otel_metrics_filter]: ./collecting-application-metrics.md#filtering-metrics
 [v3_migration_guide]: ./v3-migration-doc.md
+[attribute_translation]:
+  https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.85.0-sumo-0/pkg/processor/sumologicschemaprocessor#attribute-translation
