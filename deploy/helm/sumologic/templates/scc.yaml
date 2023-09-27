@@ -25,6 +25,8 @@ defaultAddCapabilities: []
 fsGroup:
   type: MustRunAs
   ranges:
+    - min: 65532 # opentelemetry-operator
+      max: 65532 # opentelemetry-operator
     - min: 65534
       max: 65534
     - min: 999 # otelcol
