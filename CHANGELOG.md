@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.0.0-rc.1]
+
+### Released 2023-09-28
+
+### Fixed
+
+- fix(openshift): fix SecurityContextConstraints [#3308] [#3309] [#3310]
+
+[#3308]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3308
+[#3309]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3309
+[#3310]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3310
+[v4.0.0-rc.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.0.0-rc.1
+
 ## [v4.0.0-rc.0]
 
 ### Released 2023-09-26
