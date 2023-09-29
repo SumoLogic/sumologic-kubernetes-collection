@@ -36,6 +36,10 @@
 - [Parsing log content as json](#parsing-log-content-as-json)
 - [Keeping Source Category for metrics](#keeping-source-category-for-metrics)
 - [Using newer Kube Prometheus Stack](#using-newer-kube-prometheus-stack)
+- [Lowering default ingest](#lowering-default-ingest)
+  - [Excluding logs from specific sources](#excluding-logs-from-specific-sources)
+    - [Custom filtering](#custom-filtering)
+  - [Filter out app metrics](#filter-out-app-metrics)
 
 ## Overriding chart resource names with `fullnameOverride`
 
@@ -969,3 +973,70 @@ helm install kube-prometheus prometheus-community/kube-prometheus-stack \
 [kube-state-metrics-tag]:
   https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/3d5bf2855f0a5254007b7dfffa64b320cefadf53/deploy/helm/sumologic/values.yaml#L1941
 [kube-prometheus-stack-upgrade]: https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#upgrading-chart
+
+## Lowering default ingest
+
+By default, the Helm Chart collects some data necessary for Sumo Logic dashboards to work. If these dashboards are not used, we suggest to
+disable collection of this data in order to lower the ingest.
+
+### Excluding logs from specific sources
+
+You can specify regular expressions to exclude collecting logs from specific sources. The logs will be scraped and sent to the metadata
+layer, but not forwarded to Sumo Logic.
+
+To specify the expressions, use the following configuration:
+
+```yaml
+sumologic:
+  logs:
+    ## Exclude container logs
+    container:
+      excludeContainerRegex: "some-log-container-*"
+      excludeHostRegex: "some-log-host-*"
+      excludeNamespaceRegex: "some-log-namespace-*"
+      excludePodRegex: "some-log-pod-*"
+    ## Exclude systemd logs
+    systemd:
+      excludeFacilityRegex: "some-log-facility-*"
+      excludeHostRegex: "some-log-host-*"
+      excludePriorityRegex: "some-log-priority-*"
+      excludeUnitRegex: "some-log-unit-*"
+    ## Exclude kubelet logs
+    kubelet:
+      excludeFacilityRegex: "some-log-facility-*"
+      excludeHostRegex: "some-log-host-*"
+      excludePriorityRegex: "some-log-priority-*"
+      excludeUnitRegex: "some-log-unit-*"
+```
+
+#### Custom filtering
+
+You can also define custom filter processors for logs and metrics, [similarly as it is done for metrics](#excluding-metrics).
+
+```yaml
+sumologic:
+  logs:
+    kubelet:
+      otelcol:
+        extraProcessors:
+          - filter/exclude_sumo_logs:
+              logs:
+                log_record:
+                  - 'IsMatch(body, ".*password.*")'
+```
+
+Similarly you can use keys `sumologic.logs.systemd.extraProcessors` and `sumologic.logs.container.extraProcessors`.
+
+### Filter out app metrics
+
+We have defined some default filters to drop app metrics that are not relevant for Sumo Logic dashboards. To enable these filters, add the
+following config option to `user_values.yaml`:
+
+```yaml
+sumologic:
+  metrics:
+    enableDefaultFilters: true
+```
+
+Full list of metrics affected dropped is available [here](/deploy/helm/sumologic/conf/metrics/otelcol/default-filters.yaml). The metrics
+listed in the comments are the metrics that will not be dropped.
