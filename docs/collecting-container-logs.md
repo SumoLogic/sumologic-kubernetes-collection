@@ -2,6 +2,27 @@
 
 <!-- TOC -->
 
+- [Collecting Container Logs](#collecting-container-logs)
+  - [Configuration](#configuration)
+    - [Multiline log parsing](#multiline-log-parsing)
+      - [Conditional multiline log parsing](#conditional-multiline-log-parsing)
+    - [Log format](#log-format)
+      - [json log format](#json-log-format)
+      - [fields log format](#fields-log-format)
+      - [json_merge log format](#json_merge-log-format)
+      - [text log format](#text-log-format)
+        - [Problem](#problem)
+        - [Resolution](#resolution)
+    - [Setting source name and other built-in metadata](#setting-source-name-and-other-built-in-metadata)
+    - [Filtering](#filtering)
+    - [Modifying log records](#modifying-log-records)
+      - [Adding custom fields](#adding-custom-fields)
+    - [Persistence](#persistence)
+  - [Advanced Configuration](#advanced-configuration)
+    - [Direct configuration](#direct-configuration)
+    - [Disabling container logs](#disabling-container-logs)
+    - [Using OTLP Source](#using-otlp-source)
+
 <!-- /TOC -->
 
 By default, log collection is enabled. This includes both container logs and systemd logs. This document covers container logs.
@@ -137,6 +158,12 @@ We're going to demonstrate the differences between them on two example log lines
    ```json
    { "log_property": "value", "text": "I am a json log" }
    ```
+
+#### `json` log format
+
+`json` log format is an alias for `fields` log format.
+
+See [`fields` log format](#fields-log-format)
 
 #### `fields` log format
 
