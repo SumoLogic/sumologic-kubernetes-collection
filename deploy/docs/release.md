@@ -1,6 +1,6 @@
-# Releasing guide
+# Releasing guide for v2.x
 
-> **Note** For release v2 see [v2 releasing guide][release_v2]
+:warning: This guide is for releasing v2.x. Go to [current releasing guide][release_current].
 
 Perform the following steps in order to release new verions of helm chart.
 
@@ -51,4 +51,4 @@ Perform the following steps in order to release new verions of helm chart.
 [chart]: ../helm/sumologic/Chart.yaml
 [releases]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases
 [documentation]: ../../README.md#documentation
-[release_v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/release.md
+[release_current]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/release.md
