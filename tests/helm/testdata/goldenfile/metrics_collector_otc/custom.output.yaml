@@ -85,45 +85,36 @@ spec:
   config: |
     exporters:
       otlphttp:
+        disable_keep_alives: true
         endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
         sending_queue:
-          queue_size: 10000
           num_consumers: 10
+          queue_size: 10000
           storage: file_storage
-        # this improves load balancing at the cost of more network traffic
-        disable_keep_alives: true
-
     extensions:
-      health_check: {}
-      pprof: {}
       file_storage:
+        compaction:
+          directory: /tmp
+          on_rebound: true
         directory: /var/lib/storage/otc
         timeout: 10s
-        compaction:
-          on_rebound: true
-          directory: /tmp
-
-
+      health_check: {}
+      pprof: {}
     processors:
       batch:
         send_batch_max_size: 2000
-        send_batch_size: 1000
+        send_batch_size: 5000
         timeout: 1s
-
       transform/drop_unnecessary_attributes:
         error_mode: ignore
         metric_statements:
-          - context: resource
-            statements:
-              - delete_key(attributes, "http.scheme")
-              - delete_key(attributes, "net.host.name")
-              - delete_key(attributes, "net.host.port")
-              - delete_key(attributes, "service.instance.id")
-              # prometheus receiver adds these automatically
-              # we drop them to make the rest of our pipeline easier to reason about
-              # after the collector and metadata are merged, consider using them instead of k8sattributes processor
-              - delete_matching_keys(attributes, "k8s.*")
-
+        - context: resource
+          statements:
+          - delete_key(attributes, "http.scheme")
+          - delete_key(attributes, "net.host.name")
+          - delete_key(attributes, "net.host.port")
+          - delete_key(attributes, "service.instance.id")
+          - delete_matching_keys(attributes, "k8s.*")
     receivers:
       prometheus:
         config:
@@ -131,24 +122,25 @@ spec:
             scrape_interval: 60s
           scrape_configs: []
         target_allocator:
+          collector_id: ${POD_NAME}
           endpoint: http://RELEASE-NAME-sumologic-metrics-targetallocator
           interval: 30s
-          collector_id: ${POD_NAME}
-
     service:
+      extensions:
+      - health_check
+      - pprof
+      - file_storage
+      pipelines:
+        metrics:
+          exporters:
+          - otlphttp
+          processors:
+          - batch
+          - transform/drop_unnecessary_attributes
+          receivers:
+          - prometheus
       telemetry:
         logs:
           level: info
         metrics:
-          address: 0.0.0.0:8888 # this is the default, but setting it explicitly lets the operator add it automatically
-      extensions:
-        - health_check
-        - pprof
-        - file_storage
-      pipelines:
-        metrics:
-          exporters: [otlphttp]
-          processors:
-            - batch
-            - transform/drop_unnecessary_attributes
-          receivers: [prometheus]
+          address: 0.0.0.0:8888
