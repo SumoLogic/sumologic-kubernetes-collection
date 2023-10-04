@@ -1,4 +1,13 @@
 {{- if and (eq (include "metrics.otelcol.enabled" .) "true") .Values.sumologic.metrics.collector.otelcol.enabled }}
+{{ $baseConfig := (tpl (.Files.Get "conf/metrics/collector/otelcol/config.yaml") .) | fromYaml }}
+{{ $mergeConfig := .Values.sumologic.metrics.collector.otelcol.config.merge }}
+{{ $overrideConfig := .Values.sumologic.metrics.collector.otelcol.config.override }}
+{{ $finalConfig := "" }}
+{{ if $overrideConfig }}
+{{ $finalConfig = $overrideConfig }}
+{{ else }}
+{{ $finalConfig = mergeOverwrite $baseConfig $mergeConfig }}
+{{ end }}
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
@@ -98,5 +107,5 @@ spec:
   - name: file-storage
     mountPath: /var/lib/storage/otc
   config: |
-{{- (tpl (.Files.Get "conf/metrics/collector/otelcol/config.yaml") .) | nindent 4 }}
+{{- $finalConfig | toYaml | nindent 4 }}
 {{- end }}

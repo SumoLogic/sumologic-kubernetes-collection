@@ -41,6 +41,11 @@ sumologic:
         annotatedPods:
           enabled: false
         allocationStrategy: consistent-hashing
+        config:
+          merge:
+            processors:
+              batch:
+                send_batch_size: 5000
     enableDefaultFilters: true
     dropHistogramBuckets: false
 
