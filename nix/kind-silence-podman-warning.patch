@@ -1,0 +1,12 @@
+diff --git a/pkg/cluster/internal/providers/podman/provider.go b/pkg/cluster/internal/providers/podman/provider.go
+index 856b07b0..f63ad702 100644
+--- a/pkg/cluster/internal/providers/podman/provider.go
++++ b/pkg/cluster/internal/providers/podman/provider.go
+@@ -42,7 +42,6 @@ import (
+ 
+ // NewProvider returns a new provider based on executing `podman ...`
+ func NewProvider(logger log.Logger) providers.Provider {
+-	logger.Warn("enabling experimental podman provider")
+ 	return &provider{
+ 		logger: logger,
+ 	}

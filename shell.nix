@@ -7,9 +7,19 @@
       ref = "refs/heads/nixos-unstable";
       rev = "fe2ecaf706a5907b5e54d979fbde4924d84b65fc";
     }
-  ) {}
+    ) {
+      overlays = [(self: super: {
+        kind-podman = super.kind.overrideAttrs(final: prev: {
+          # The combination of e2e-framework v0.2.0 + kind + podman is broken
+          # until e2e-framework v0.3.0 due to a warning logged by kind about
+          # the podman provider. This patches kind to work with e2e framework
+          # until we upgrade.
+          # https://github.com/kubernetes-sigs/e2e-framework/pull/84
+          patches = prev.patches ++ [ ./nix/kind-silence-podman-warning.patch ];
+        });
+      })];
+    }
 }:
-
 pkgs.mkShell {
   packages = [
     pkgs.kubectl
@@ -25,7 +35,7 @@ pkgs.mkShell {
     pkgs.shellcheck
     pkgs.golangci-lint
     pkgs.go
-    pkgs.kind
+    pkgs.kind-podman
   ];
 }
 ## Output of `make tool-versions`:
