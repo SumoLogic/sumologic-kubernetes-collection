@@ -110,6 +110,12 @@ spec:
         send_batch_size: 1000
         timeout: 1s
 
+      # staleness markers may simply indicate targets being moved between collector Pods, so they do more harm than good
+      filter/drop_stale_datapoints:
+        metrics:
+          datapoint:
+          - 'flags == FLAG_NO_RECORDED_VALUE'
+
       transform/drop_unnecessary_attributes:
         error_mode: ignore
         metric_statements:
@@ -1071,6 +1077,7 @@ spec:
           exporters: [otlphttp]
           processors:
             - batch
+            - filter/drop_stale_datapoints
             - filter/drop_unnecessary_metrics
             - transform/drop_unnecessary_attributes
             - filter/app_metrics
