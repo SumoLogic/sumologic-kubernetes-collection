@@ -86,6 +86,10 @@ spec:
         send_batch_max_size: 2000
         send_batch_size: 1000
         timeout: 1s
+      filter/drop_stale_datapoints:
+        metrics:
+          datapoint:
+          - flags == FLAG_NO_RECORDED_VALUE
       transform/drop_unnecessary_attributes:
         error_mode: ignore
         metric_statements:
@@ -242,6 +246,7 @@ spec:
           - otlphttp
           processors:
           - batch
+          - filter/drop_stale_datapoints
           - transform/extract_sum_count_from_histograms
           - transform/drop_unnecessary_attributes
           receivers:
