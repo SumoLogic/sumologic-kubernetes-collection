@@ -238,6 +238,7 @@ require additional action.
   - node_vmstat_pgpgin
   - node_vmstat_pgpgout
   - node_memory_MemFree_bytes
+  - node_memory_MemAvailable_bytes
   - node_memory_Cached_bytes
   - node_memory_Buffers_bytes
   - node_memory_MemTotal_bytes
