@@ -103,7 +103,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
 			},
 		).
-		Assess("expected labels are present for kube-state-metrics",
+		Assess("expected labels are present for non-pod kube-state-metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				metricFilters := receivermock.MetadataFilters{
 					"__name__":   "kube_deployment_spec_replicas",
@@ -118,6 +118,48 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"endpoint":   "http",
 					"job":        "kube-state-metrics",
 					"namespace":  "receiver-mock",
+				}
+				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
+				// drop some unnecessary labels
+				delete(expectedLabels, "prometheus_service")
+
+				return stepfuncs.WaitUntilExpectedMetricLabelsPresent(metricFilters, expectedLabels, waitDuration, tickDuration)(ctx, t, envConf)
+			},
+		).
+		Assess("expected labels are present for pod kube-state-metrics",
+			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				releaseName := ctxopts.HelmRelease(ctx)
+				deployment := fmt.Sprintf("%s-kube-state-metrics", releaseName)
+				metricFilters := receivermock.MetadataFilters{
+					"__name__":   "kube_pod_status_phase",
+					"phase":      "Running",
+					"deployment": deployment,
+				}
+				namespace := ctxopts.Namespace(ctx)
+				expectedLabels := receivermock.Labels{
+					"cluster":                                "kubernetes",
+					"_origin":                                "kubernetes",
+					"container":                              "kube-state-metrics",
+					"deployment":                             deployment,
+					"endpoint":                               "http",
+					"job":                                    "kube-state-metrics",
+					"namespace":                              namespace,
+					"node":                                   internal.NodeNameRegex,
+					"phase":                                  "Running",
+					"pod_labels_app.kubernetes.io/component": "metrics",
+					"pod_labels_app.kubernetes.io/instance":  releaseName,
+					"pod_labels_app.kubernetes.io/managed-by": "Helm",
+					"pod_labels_app.kubernetes.io/name":       "kube-state-metrics",
+					"pod_labels_app.kubernetes.io/part-of":    "kube-state-metrics",
+					"pod_labels_app.kubernetes.io/version":    "\\d+\\.\\d+\\.\\d+",
+					"pod_labels_helm.sh/chart":                "kube-state-metrics-\\d+\\.\\d+\\.\\d+",
+					"pod_labels_release":                      releaseName,
+					"pod_labels_pod-template-hash":            ".+",
+					"pod":                                     fmt.Sprintf("%s-.+", deployment),
+					"replicaset":                              fmt.Sprintf("%s-.+", deployment),
+					"service":                                 deployment,
+					"service_discovery_pod":                   fmt.Sprintf("%s-.+", deployment),
+					"uid":                                     ".+",
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 				// drop some unnecessary labels

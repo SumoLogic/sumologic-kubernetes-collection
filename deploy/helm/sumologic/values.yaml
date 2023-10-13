@@ -1062,16 +1062,17 @@ kube-prometheus-stack:
             sourceLabels: [__name__]
           ## Drop unnecessary labels Prometheus adds to these metrics
           ## We don't want container=kube-state-metrics on everything
+          ## But we do want to keep these on pod metrics, which we check for via the `uid` attribute
           - action: labeldrop
             regex: service
           - action: replace
-            sourceLabels: [container]
-            regex: kube-state-metrics
+            sourceLabels: [container, uid]
+            regex: kube-state-metrics;
             targetLabel: container
             replacement: ""
           - action: replace
-            sourceLabels: [pod]
-            regex: ".*kube-state-metrics.*"
+            sourceLabels: [pod, uid]
+            regex: ".*kube-state-metrics.*;"
             targetLabel: pod
             replacement: ""
           - action: labelmap
