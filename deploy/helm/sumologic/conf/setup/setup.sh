@@ -4,7 +4,6 @@ readonly DEBUG_MODE=${DEBUG_MODE:="false"}
 readonly DEBUG_MODE_ENABLED_FLAG="true"
 readonly TEST_PVC_FILE="test-pvc-ss.yaml"
 readonly TEST_PVC_STATEFULSET="pvc-nginx"
-readonly TEST_PVC_NAMESPACE="test-pvc"
 readonly TEST_PVC_STATEFULSET_CONFIG="apiVersion: v1
 kind: Service
 metadata:
@@ -136,7 +135,6 @@ function should_create_fields() {
 }
 
 function pvc_test_create_statefulset() {
-    kubectl create namespace ${TEST_PVC_NAMESPACE}
     echo "${TEST_PVC_STATEFULSET_CONFIG}" > ${TEST_PVC_FILE}
 
     kubectl -n ${TEST_PVC_NAMESPACE} apply -f ${TEST_PVC_FILE}
@@ -163,8 +161,8 @@ function pvc_test_check() {
 }
 
 function pvc_test_cleanup() {
-    kubectl delete all --all -n ${TEST_PVC_NAMESPACE}
-    kubectl delete pvc --all -n ${TEST_PVC_NAMESPACE}
+    kubectl delete -n ${TEST_PVC_NAMESPACE} -f ${TEST_PVC_FILE}
+    kubectl delete -n ${TEST_PVC_NAMESPACE} pvc "www-web-0"
     rm ${TEST_PVC_FILE}
 }
 
@@ -179,6 +177,14 @@ function can_create_pvc() {
         echo "PVC can be created automatically"
         return 0
     fi
+}
+
+function install_kubectl() {
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x kubectl
+    mkdir -p ~/.local/bin
+    mv ./kubectl ~/.local/bin/kubectl
+    export PATH=$PATH:~/.local/bin
 }
 
 cp /etc/terraform/{locals,main,providers,resources,variables,fields}.tf /terraform/
@@ -276,6 +282,7 @@ export SUMOLOGIC_ACCESSID=
 bash /etc/terraform/custom.sh
 
 {{- if (or .Values.metadata.persistence.enabled (or .Values.sumologic.events.persistence.enabled .Values.sumologic.logs.collector.otelcloudwatch.persistence.enabled)) }}
+install_kubectl
 can_create_pvc
 pvc_test_cleanup > /dev/null
 {{- end }}

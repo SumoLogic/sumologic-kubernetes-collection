@@ -66,6 +66,8 @@ spec:
         - secretRef:
             name: {{ .Values.sumologic.envFromSecret | default (include "sumologic.metadata.name.setup.secret" .)}}
         env:
+        - name: TEST_PVC_NAMESPACE
+          value: {{ template "sumologic.namespace"  . }}
         - name: SUMOLOGIC_BASE_URL
           value: {{ .Values.sumologic.endpoint }}
         {{- include "proxy-env-variables" . | nindent 8 -}}
