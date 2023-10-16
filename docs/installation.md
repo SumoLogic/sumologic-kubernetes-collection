@@ -359,12 +359,6 @@ tailing-sidecar-operator:
     create: true
 ```
 
-**Notice:** Prometheus Operator is deployed by default on OpenShift platform, you may either limit scope for Prometheus Operator installed
-with Sumo Logic Kubernetes Collection using `kube-prometheus-stack.prometheusOperator.namespaces.additional` parameter in `user-values.yaml`
-or exclude namespaces for Prometheus Operator installed with Sumo Logic Kubernetes Collection using
-`kube-prometheus-stack.prometheusOperator.denyNamespaces` in `user-values.yaml`. For details see
-[Prometheus document](/docs/prometheus.md#prometheus-operator-in-the-cluster)
-
 ## Non-helm installation
 
 If you don't want to use Helm to manage the installation, please use `helm template` to generate Kubernetes templates and apply them using
