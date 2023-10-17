@@ -12,12 +12,14 @@
     - [Requirements](#requirements)
     - [Metrics migration](#metrics-migration)
       - [Convert Prometheus remote writes to otel metrics filters](#convert-prometheus-remote-writes-to-otel-metrics-filters)
+      - [Upgrade the Kubernetes App](#upgrade-the-kubernetes-app)
+        - [Using the new App with v3](#using-the-new-app-with-v3)
       - [How do I revert to the v3 defaults?](#how-do-i-revert-to-the-v3-defaults)
-    - [Removing support for Fluent Bit and Fluentd](#removing-support-for-fluent-bit-and-fluentd)
+    - [Remove remaining Fluent Bit and Fluentd configuration](#remove-remaining-fluent-bit-and-fluentd-configuration)
       - [Configuration Migration](#configuration-migration)
     - [Switch to OTLP sources](#switch-to-otlp-sources)
+      - [How do I revert to the v3 defaults?](#how-do-i-revert-to-the-v3-defaults-1)
     - [Running the helm upgrade](#running-the-helm-upgrade)
-    - [Known issues](#known-issues)
   - [Full list of changes](#full-list-of-changes)
 
 <!-- /TOC -->
@@ -70,7 +72,8 @@ export HELM_RELEASE_NAME=...
 
 ### Metrics migration
 
-If you don't have metrics collection enabled, skip straight to the [next major section](#switch-to-otlp-sources).
+If you don't have metrics collection enabled, skip straight to the
+[next major section](#remove-remaining-fluent-bit-and-fluentd-configuration).
 
 #### Convert Prometheus remote writes to otel metrics filters
 
@@ -100,6 +103,39 @@ There are several scenarios here, depending on the exact use case:
 
    You'll need to delete the remote write definition and [add an equivalent filter processor][otel_metrics_filter] rule to Otel.
 
+#### Upgrade the Kubernetes App
+
+**When?**: If you use the [Sumo Logic Kubernetes App](https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes/)
+
+Recording rule metrics removed in version 4 were used in the Sumo Kubernetes App. A new version of the App must be installed to ensure
+compatiblity with version 4 of Helm Chart. See [here][k8s_app_upgrade] for upgrade instructions.
+
+[k8s_app_upgrade]: https://help.sumologic.com/docs/integrations/containers-orchestration/kubernetes/#upgrading-the-kubernetes-app
+
+##### Using the new App with v3
+
+To make the migration simpler, it's possible to configure v3 to be compatible with the new App. This way, you can migrate to the new App
+before migrating to version 4. The configuration for version 3 is the following:
+
+```yaml
+kube-prometheus-stack:
+  prometheus:
+    additionalRemoteWrite:
+      - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics.node
+        remoteTimeout: 5s
+        writeRelabelConfigs:
+          - action: keep
+            regex: node-exporter;(?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_MemAvailable_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
+            sourceLabels: [job, __name__]
+  prometheus-node-exporter:
+    prometheus:
+      monitor:
+        metricRelabelings:
+          - action: keep
+            regex: (?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_MemAvailable_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
+            sourceLabels: [__name__]
+```
+
 #### How do I revert to the v3 defaults?
 
 Set the following in your configuration:
@@ -120,22 +156,24 @@ kube-prometheus-stack:
     enabled: true
 ```
 
-### Removing support for Fluent Bit and Fluentd
+### Remove remaining Fluent Bit and Fluentd configuration
 
-Te following changes are required in order to switch to OpenTelemetry:
+If you've already switched to Otel, skip straight to the [next major section](#switch-to-otlp-sources).
 
-- `fluent-bit.*` has to be removed from `user-values.yaml`
-- `sumologic.logs.collector.allowSideBySide` should be removed from `user-values.yaml`
-- `sumologic.logs.defaultFluentd.*` should be removed from `user-values.yaml`
-- `fluentd.*` should be removed from `user-values.yaml`
-- `sumologic.logs.metadata.provider` should be removed from `user-values.yaml`
-- `sumologic.metrics.metadata.provider` should be removed from `user-values.yaml`
+The following configuration options aren't used anymore, and should be removed from your `user-values.yaml`:
+
+- `fluent-bit.*`
+- `sumologic.logs.collector.allowSideBySide`
+- `sumologic.logs.defaultFluentd.*`
+- `fluentd.*`
+- `sumologic.logs.metadata.provider`
+- `sumologic.metrics.metadata.provider`
 
 #### Configuration Migration
 
 Please see the [v3 migration guide][v3_migration_guide].
 
-In addition the following changes have been made:
+In addition, the following changes have been made:
 
 - `otelevents.serviceLabels` has been introduced as replacement for `fluentd.serviceLabels` for events service
 - `sumologic.events.sourceName` is going to be used instead of `fluentd.events.sourceName` to build `_sourceCategory` for events
@@ -151,7 +189,9 @@ If you've changed the values of either of these two options, please adjust your 
 The only solution is to change the queries in question. In general, it's an antipattern to write queries against specific sources, instead
 of semantic attributes of the data.
 
-You can switch back to the default v3 behaviour by setting:
+#### How do I revert to the v3 defaults?
+
+Set the following in your configuration:
 
 ```yaml
 sumologic:
@@ -184,10 +224,6 @@ helm upgrade --namespace "${NAMESPACE}" "${HELM_RELEASE_NAME}" sumologic/sumolog
 
 After you're done, please review the [full list of changes](#full-list-of-changes), as some of them may impact you even if they don't
 require additional action.
-
-### Known issues
-
-:construction:
 
 ## Full list of changes
 
