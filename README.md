@@ -22,7 +22,8 @@ release.
 
 | version                                                                                                 | planned end of life date |
 | ------------------------------------------------------------------------------------------------------- | ------------------------ |
-| [v3.15](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.15/docs/README.md) | TBA                      |
+| [v3.16](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.16/docs/README.md) | TBA                      |
+| [v3.15](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.15/docs/README.md) | 2024-04-18               |
 | [v3.14](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.14/docs/README.md) | 2024-03-18               |
 | [v3.13](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.13/docs/README.md) | 2024-03-01               |
 | [v3.12](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.12/docs/README.md) | 2024-02-21               |
