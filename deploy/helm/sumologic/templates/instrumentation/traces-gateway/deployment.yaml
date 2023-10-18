@@ -12,7 +12,7 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 spec:
   minReadySeconds: 5
-{{- if not $tracesGateway.autoscaling.enabled }}
+{{- if eq (include "tracesGateway.autoscaling.enabled" .) "false" }}
   replicas: {{ $tracesGateway.deployment.replicas }}
 {{- end }}
   selector:

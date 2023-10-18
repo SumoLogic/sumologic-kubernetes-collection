@@ -288,3 +288,20 @@ Return the otelcol log collector image
 {{- define "sumologic.logs.collector.image" -}}
 {{ template "utils.getOtelImage" (dict "overrideImage" .Values.otellogs.image "defaultImage" .Values.sumologic.otelcolImage) }}
 {{- end -}}
+
+{{/*
+Check if autoscaling for metadata logs is enabled.
+
+Example Usage:
+{{- if eq (include "metadata.logs.autoscaling.enabled" .) "true" }}
+
+*/}}
+{{- define "metadata.logs.autoscaling.enabled" -}}
+{{- if kindIs "bool" .Values.metadata.logs.autoscaling.enabled -}}
+  {{- .Values.metadata.logs.autoscaling.enabled -}}
+{{- else }}
+  {{- .Values.sumologic.autoscaling.enabled -}}
+{{- end }}
+{{- end -}}
+
+

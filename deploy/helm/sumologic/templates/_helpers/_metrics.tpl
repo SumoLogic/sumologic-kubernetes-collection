@@ -287,3 +287,33 @@ Return the endpoint for the default Sumologic exporter for metrics.
 {{- fail "`sumologic.metrics.sourceType` can only be `http` or `otlp`" -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Check if autoscaling for metadata metrics is enabled.
+
+Example Usage:
+{{- if eq (include "metadata.metrics.autoscaling.enabled" .) "true" }}
+
+*/}}
+{{- define "metadata.metrics.autoscaling.enabled" -}}
+{{- if kindIs "bool" .Values.metadata.metrics.autoscaling.enabled -}}
+  {{- .Values.metadata.metrics.autoscaling.enabled -}}
+{{- else }}
+  {{- .Values.sumologic.autoscaling.enabled -}}
+{{- end }}
+{{- end -}}
+
+{{/*
+Check if autoscaling for metrics collector is enabled.
+
+Example Usage:
+{{- if eq (include "metrics.collector.autoscaling.enabled" .) "true" }}
+
+*/}}
+{{- define "metrics.collector.autoscaling.enabled" -}}
+{{- if kindIs "bool" .Values.sumologic.metrics.collector.otelcol.autoscaling.enabled -}}
+  {{- .Values.sumologic.metrics.collector.otelcol.autoscaling.enabled -}}
+{{- else }}
+  {{- .Values.sumologic.autoscaling.enabled -}}
+{{- end }}
+{{- end -}}

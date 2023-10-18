@@ -52,7 +52,7 @@ spec:
 {{- if .Values.sumologic.metrics.collector.otelcol.priorityClassName }}
   priorityClassName: {{ .Values.sumologic.metrics.collector.otelcol.priorityClassName | quote }}
 {{- end }}
-{{- if .Values.sumologic.metrics.collector.otelcol.autoscaling.enabled }}
+{{- if eq (include "metrics.collector.autoscaling.enabled" .) "true" }}
   autoscaler:
     maxReplicas: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.maxReplicas }}
     minReplicas: {{ .Values.sumologic.metrics.collector.otelcol.autoscaling.minReplicas }}

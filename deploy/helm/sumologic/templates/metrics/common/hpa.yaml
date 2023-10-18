@@ -1,4 +1,4 @@
-{{- if and (eq (include "metrics.otelcol.enabled" .) "true") ( .Values.metadata.metrics.autoscaling.enabled) }}
+{{- if and (eq (include "metrics.otelcol.enabled" .) "true") (eq (include "metadata.metrics.autoscaling.enabled" .) "true") }}
 {{- if and (eq .Capabilities.KubeVersion.Major "1") (lt (int (include "kubernetes.minor" .)) 23) }}
 apiVersion: autoscaling/v2beta2
 {{- else }}

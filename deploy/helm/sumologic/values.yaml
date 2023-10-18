@@ -63,6 +63,10 @@ sumologic:
     #   command:
     #   args: []
     #   env: {}
+  
+  ## Enable autoscaling for components that support it: logs metadata, metrics metadata, metrics collector, otelcol instrumentation, and traces gateway
+  autoscaling:
+    enabled: true
 
   ## If you set it to false, it would set EXCLUDE_NAMESPACE=<release-namespace>
   ## and not add the Otelcol logs and Prometheus remotestorage metrics.
@@ -454,7 +458,7 @@ sumologic:
         ## Option to turn autoscaling on for otelcol and specify params for HPA.
         ## Autoscaling needs metrics-server to access cpu metrics.
         autoscaling:
-          enabled: false
+          # enabled: true
           minReplicas: 3
           maxReplicas: 10
           targetCPUUtilizationPercentage: 70
@@ -1712,7 +1716,7 @@ metadata:
     ## Option to turn autoscaling on for metrics and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
     autoscaling:
-      enabled: false
+      # enabled: false
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
@@ -1817,7 +1821,7 @@ metadata:
     ## Option to turn autoscaling on for logs and specify params for HPA.
     ## Autoscaling needs metrics-server to access cpu metrics.
     autoscaling:
-      enabled: false
+      # enabled: false
       minReplicas: 3
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
@@ -1838,7 +1842,7 @@ tracesGateway:
   ## Option to turn autoscaling on for otelcol and specify params for HPA.
   ## Autoscaling needs metrics-server to access cpu metrics.
   autoscaling:
-    enabled: false
+    # enabled: false
     minReplicas: 3
     maxReplicas: 10
     targetCPUUtilizationPercentage: 100

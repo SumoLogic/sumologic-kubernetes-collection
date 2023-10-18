@@ -238,3 +238,33 @@ Return otlp or none for Instrumentation resource exporters configuration.
 {{- "none" -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Check if autoscaling for otelcol instrumentation is enabled.
+
+Example Usage:
+{{- if eq (include "otelcolInstrumentation.autoscaling.enabled" .) "true" }}
+
+*/}}
+{{- define "otelcolInstrumentation.autoscaling.enabled" -}}
+{{- if kindIs "bool" .Values.otelcolInstrumentation.autoscaling.enabled -}}
+  {{- .Values.otelcolInstrumentation.autoscaling.enabled -}}
+{{- else }}
+  {{- .Values.sumologic.autoscaling.enabled -}}
+{{- end }}
+{{- end -}}
+
+{{/*
+Check if autoscaling for traces gateway is enabled.
+
+Example Usage:
+{{- if eq (include "tracesGateway.autoscaling.enabled" .) "true" }}
+
+*/}}
+{{- define "tracesGateway.autoscaling.enabled" -}}
+{{- if kindIs "bool" .Values.tracesGateway.autoscaling.enabled -}}
+  {{- .Values.tracesGateway.autoscaling.enabled -}}
+{{- else }}
+  {{- .Values.sumologic.autoscaling.enabled -}}
+{{- end }}
+{{- end -}}
