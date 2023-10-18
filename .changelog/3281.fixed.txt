@@ -1,5 +1,0 @@
-fix(logs)!: move JSON parsing after user-defined processors
-
-The log body will now always be a string if accessed in extra processors.
-Users who want to access specific fields in their parsed JSON log
-should explicitly call ParseJSON in their processor definition.
