@@ -63,7 +63,7 @@ sumologic:
     #   command:
     #   args: []
     #   env: {}
-  
+
   ## Enable autoscaling for components that support it: logs metadata, metrics metadata, metrics collector, otelcol instrumentation, and traces gateway
   autoscaling:
     enabled: true
@@ -458,7 +458,7 @@ sumologic:
         ## Option to turn autoscaling on for otelcol and specify params for HPA.
         ## Autoscaling needs metrics-server to access cpu metrics.
         autoscaling:
-          # enabled: true
+          # enabled: false
           minReplicas: 3
           maxReplicas: 10
           targetCPUUtilizationPercentage: 70
@@ -1241,7 +1241,7 @@ otelcolInstrumentation:
   ## Option to turn autoscaling on for otelcol and specify params for HPA.
   ## Autoscaling needs metrics-server to access cpu metrics.
   autoscaling:
-    enabled: false
+    # enabled: false
     minReplicas: 3
     maxReplicas: 10
     targetCPUUtilizationPercentage: 100
