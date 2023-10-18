@@ -7,6 +7,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.16.0]
+
+### Released 2023-10-18
+
+- feat(metrics): allow overriding metrics collector configuration [#3314]
+
+### Changed
+
+- chore: update setup job to `v3.11.0` [#3320]
+
+### Fixed
+
+- fix(logs)!: move JSON parsing after user-defined processors [#3281]
+
+  The log body will now always be a string if accessed in extra processors. Users who want to access specific fields in their parsed JSON
+  log should explicitly call ParseJSON in their processor definition.
+
+- fix(metrics): decompose OTLP histograms [#3289]
+- fix(metrics): drop stale datapoints [#3318]
+- fix: fix Otel Operator installation with Helm 3.13 [#3321]
+- fix(metrics): kube-state-metrics pod metadata [#3323]
+
+[#3314]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3314
+[#3320]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3320
+[#3318]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3318
+[#3321]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3321
+[#3323]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3323
+[v3.16.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.16.0
+
 ## [v4.0.0-rc.1]
 
 ### Released 2023-09-28
