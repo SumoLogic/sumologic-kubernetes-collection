@@ -40,11 +40,6 @@ spec:
       key: null
       operator: Exists
   priorityClassName: "customPriority"
-  autoscaler:
-    maxReplicas: 30
-    minReplicas: 15
-    targetCPUUtilization: 95
-    targetMemoryUtilization: 90
   env:
     - name: METADATA_METRICS_SVC
       valueFrom:

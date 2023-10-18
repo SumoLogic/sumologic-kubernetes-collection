@@ -16,7 +16,6 @@ spec:
       app: RELEASE-NAME-sumologic-otelcol-logs
   serviceName: RELEASE-NAME-sumologic-otelcol-logs-headless
   podManagementPolicy: "Parallel"
-  replicas: 3
   template:
     metadata:
       annotations:

@@ -13,7 +13,6 @@ metadata:
     heritage: "Helm"
 spec:
   minReadySeconds: 5
-  replicas: 1
   selector:
     matchLabels:
       app: RELEASE-NAME-sumologic-traces-gateway
