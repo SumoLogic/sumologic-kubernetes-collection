@@ -459,7 +459,7 @@ sumologic:
         ## Autoscaling needs metrics-server to access cpu metrics.
         autoscaling:
           # enabled: false
-          minReplicas: 3
+          minReplicas: 1
           maxReplicas: 10
           targetCPUUtilizationPercentage: 70
           targetMemoryUtilizationPercentage: 70
@@ -1843,7 +1843,7 @@ tracesGateway:
   ## Autoscaling needs metrics-server to access cpu metrics.
   autoscaling:
     # enabled: false
-    minReplicas: 3
+    minReplicas: 1
     maxReplicas: 10
     targetCPUUtilizationPercentage: 100
     # targetMemoryUtilizationPercentage: 50
