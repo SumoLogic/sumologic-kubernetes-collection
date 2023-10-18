@@ -1,17 +1,13 @@
-# Deployment Guide for unreleased version
+# Deployment Guide for v3.16
 
 This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level
 metadata; and sending them to Sumo Logic. See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/) for
 details on our Kubernetes Solution.
 
-- [Solution overview](#solution-overview)
-  - [Log Collection](#log-collection)
-  - [Metrics Collection](#metrics-collection)
-  - [Kubernetes Events Collection](#kubernetes-events-collection)
-- [Minimum Requirements](#minimum-requirements)
-- [Support Matrix](#support-matrix)
-  - [ARM support](#arm-support)
-  - [Falco support](#falco-support)
+- [Deployment Guide for v3.16](#deployment-guide-for-v316)
+  - [Solution overview](#solution-overview)
+  - [Minimum Requirements](#minimum-requirements)
+  - [Support Matrix](#support-matrix)
 
 Documentation for other versions can be found in the
 [main README file](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/README.md#documentation).
