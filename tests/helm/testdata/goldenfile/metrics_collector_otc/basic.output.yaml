@@ -13,7 +13,7 @@ metadata:
     heritage: "Helm"
     sumologic.com/scrape: "true"
 spec:
-  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.85.0-sumo-0"
+  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.87.0-sumo-0"
   mode: statefulset
   replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
@@ -71,195 +71,193 @@ spec:
   config: |
     exporters:
       otlphttp:
+        disable_keep_alives: true
         endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
         sending_queue:
-          queue_size: 10000
           num_consumers: 10
+          queue_size: 10000
           storage: file_storage
-        # this improves load balancing at the cost of more network traffic
-        disable_keep_alives: true
-
     extensions:
-      health_check: {}
-      pprof: {}
       file_storage:
+        compaction:
+          directory: /tmp
+          on_rebound: true
         directory: /var/lib/storage/otc
         timeout: 10s
-        compaction:
-          on_rebound: true
-          directory: /tmp
-
-
+      health_check: {}
+      pprof: {}
     processors:
       batch:
         send_batch_max_size: 2000
         send_batch_size: 1000
         timeout: 1s
-
+      filter/drop_stale_datapoints:
+        metrics:
+          datapoint:
+          - flags == FLAG_NO_RECORDED_VALUE
       transform/drop_unnecessary_attributes:
         error_mode: ignore
         metric_statements:
-          - context: resource
-            statements:
-              - delete_key(attributes, "http.scheme")
-              - delete_key(attributes, "net.host.name")
-              - delete_key(attributes, "net.host.port")
-              - delete_key(attributes, "service.instance.id")
-              # prometheus receiver adds these automatically
-              # we drop them to make the rest of our pipeline easier to reason about
-              # after the collector and metadata are merged, consider using them instead of k8sattributes processor
-              - delete_matching_keys(attributes, "k8s.*")
+        - context: resource
+          statements:
+          - delete_key(attributes, "http.scheme")
+          - delete_key(attributes, "net.host.name")
+          - delete_key(attributes, "net.host.port")
+          - delete_key(attributes, "service.instance.id")
+          - delete_matching_keys(attributes, "k8s.*")
       transform/extract_sum_count_from_histograms:
         error_mode: ignore
         metric_statements:
-          - context: metric
-            statements:
-              - extract_sum_metric(true) where IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
-              - extract_count_metric(true) where IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
-
+        - context: metric
+          statements:
+          - extract_sum_metric(true) where IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
+          - extract_count_metric(true) where IsMatch(name, "^(apiserver_request_duration_seconds|coredns_dns_request_duration_seconds|kubelet_runtime_operations_duration_seconds)$")
     receivers:
       prometheus:
         config:
           global:
             scrape_interval: 30s
           scrape_configs:
-            ## scraping metrics basing on annotations:
-            ##   - prometheus.io/scrape: true - to scrape metrics from the pod
-            ##   - prometheus.io/path: /metrics - path which the metric should be scrape from
-            ##   - prometheus.io/port: 9113 - port which the metric should be scrape from
-            ## rel: https://github.com/prometheus-operator/kube-prometheus/pull/16#issuecomment-424318647
-            - job_name: "pod-annotations"
-              kubernetes_sd_configs:
-                - role: pod
-              relabel_configs:
-                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-                  action: keep
-                  regex: true
-                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
-                  action: replace
-                  target_label: __metrics_path__
-                  regex: (.+)
-                - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-                  action: replace
-                  regex: ([^:]+)(?::\d+)?;(\d+)
-                  replacement: $1:$2
-                  target_label: __address__
-                - source_labels: [__metrics_path__]
-                  separator: ;
-                  regex: (.*)
-                  target_label: endpoint
-                  replacement: $1
-                  action: replace
-                - source_labels: [__meta_kubernetes_namespace]
-                  action: replace
-                  target_label: namespace
-                - action: labelmap
-                  regex: __meta_kubernetes_pod_label_(.+)
-                - source_labels: [__meta_kubernetes_pod_name]
-                  separator: ;
-                  regex: (.*)
-                  target_label: pod
-                  replacement: $1
-                  action: replace
-            ## These scrape configs are for kubelet metrics
-            ## Prometheus operator does this by manually maintaining a Service with Endpoints for all Nodes
-            ## We don't have that capability, so we need to use a static configuration
-            - job_name: kubelet
-              scheme: https
-              authorization:
-                credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-              tls_config:
-                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-                insecure_skip_verify: true
-              honor_labels: true
-              kubernetes_sd_configs:
-                - role: node
-              metric_relabel_configs:
-                - action: keep
-                  regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
-                  source_labels: [__name__]
-                - action: labeldrop
-                  regex: id
-              relabel_configs:
-                - source_labels:
-                  - __meta_kubernetes_node_name
-                  target_label: node
-                - target_label: endpoint
-                  replacement: https-metrics
-                - source_labels:
-                  - __metrics_path__
-                  target_label: metrics_path
-                  action: replace
-                - source_labels:
-                  - __address__
-                  target_label: instance
-                  action: replace
-            - job_name: cadvisor
-              scheme: https
-              authorization:
-                credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-              tls_config:
-                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-                insecure_skip_verify: true
-              honor_labels: true
-              metrics_path: /metrics/cadvisor
-              kubernetes_sd_configs:
-                - role: node
-              metric_relabel_configs:
-                - action: replace
-                  regex: .*
-                  replacement: kubelet
-                  source_labels: [__name__]
-                  target_label: job
-                - action: keep
-                  regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
-                  source_labels: [__name__]
-                ## Drop container metrics with container tag set to an empty string:
-                ## these are the pod aggregated container metrics which can be aggregated
-                ## in Sumo anyway. There's also some cgroup-specific time series we also
-                ## do not need.
-                - action: drop
-                  source_labels: [__name__, container]
-                  regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes);$
-                - action: labelmap
-                  regex: container_name
-                  replacement: container
-                - action: drop
-                  source_labels: [container] # partially copied from what operator generates
-                  regex: POD
-                - action: labeldrop
-                  regex: (id|name)
-              relabel_configs:
-                - target_label: endpoint
-                  replacement: https-metrics
-                - source_labels:
-                  - __metrics_path__
-                  target_label: metrics_path
-                  action: replace
-                - source_labels:
-                  - __address__
-                  target_label: instance
-                  action: replace
+          - job_name: pod-annotations
+            kubernetes_sd_configs:
+            - role: pod
+            relabel_configs:
+            - action: keep
+              regex: true
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+            - action: replace
+              regex: (.+)
+              source_labels:
+              - __meta_kubernetes_pod_annotation_prometheus_io_path
+              target_label: __metrics_path__
+            - action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              source_labels:
+              - __address__
+              - __meta_kubernetes_pod_annotation_prometheus_io_port
+              target_label: __address__
+            - action: replace
+              regex: (.*)
+              replacement: $1
+              separator: ;
+              source_labels:
+              - __metrics_path__
+              target_label: endpoint
+            - action: replace
+              source_labels:
+              - __meta_kubernetes_namespace
+              target_label: namespace
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
+            - action: replace
+              regex: (.*)
+              replacement: $1
+              separator: ;
+              source_labels:
+              - __meta_kubernetes_pod_name
+              target_label: pod
+          - authorization:
+              credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+            honor_labels: true
+            job_name: kubelet
+            kubernetes_sd_configs:
+            - role: node
+            metric_relabel_configs:
+            - action: keep
+              regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
+              source_labels:
+              - __name__
+            - action: labeldrop
+              regex: id
+            relabel_configs:
+            - source_labels:
+              - __meta_kubernetes_node_name
+              target_label: node
+            - replacement: https-metrics
+              target_label: endpoint
+            - action: replace
+              source_labels:
+              - __metrics_path__
+              target_label: metrics_path
+            - action: replace
+              source_labels:
+              - __address__
+              target_label: instance
+            scheme: https
+            tls_config:
+              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              insecure_skip_verify: true
+          - authorization:
+              credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+            honor_labels: true
+            job_name: cadvisor
+            kubernetes_sd_configs:
+            - role: node
+            metric_relabel_configs:
+            - action: replace
+              regex: .*
+              replacement: kubelet
+              source_labels:
+              - __name__
+              target_label: job
+            - action: keep
+              regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
+              source_labels:
+              - __name__
+            - action: drop
+              regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes);$
+              source_labels:
+              - __name__
+              - container
+            - action: labelmap
+              regex: container_name
+              replacement: container
+            - action: drop
+              regex: POD
+              source_labels:
+              - container
+            - action: labeldrop
+              regex: (id|name)
+            metrics_path: /metrics/cadvisor
+            relabel_configs:
+            - replacement: https-metrics
+              target_label: endpoint
+            - action: replace
+              source_labels:
+              - __metrics_path__
+              target_label: metrics_path
+            - action: replace
+              source_labels:
+              - __address__
+              target_label: instance
+            scheme: https
+            tls_config:
+              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              insecure_skip_verify: true
         target_allocator:
+          collector_id: ${POD_NAME}
           endpoint: http://RELEASE-NAME-sumologic-metrics-targetallocator
           interval: 30s
-          collector_id: ${POD_NAME}
-
     service:
+      extensions:
+      - health_check
+      - pprof
+      - file_storage
+      pipelines:
+        metrics:
+          exporters:
+          - otlphttp
+          processors:
+          - batch
+          - filter/drop_stale_datapoints
+          - transform/extract_sum_count_from_histograms
+          - transform/drop_unnecessary_attributes
+          receivers:
+          - prometheus
       telemetry:
         logs:
           level: info
         metrics:
-          address: 0.0.0.0:8888 # this is the default, but setting it explicitly lets the operator add it automatically
-      extensions:
-        - health_check
-        - pprof
-        - file_storage
-      pipelines:
-        metrics:
-          exporters: [otlphttp]
-          processors:
-            - batch
-            - transform/extract_sum_count_from_histograms
-            - transform/drop_unnecessary_attributes
-          receivers: [prometheus]
+          address: 0.0.0.0:8888

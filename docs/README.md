@@ -4,14 +4,15 @@ This page has instructions for collecting Kubernetes logs, metrics, and events; 
 metadata; and sending them to Sumo Logic. See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/) for
 details on our Kubernetes Solution.
 
-- [Solution overview](#solution-overview)
-  - [Log Collection](#log-collection)
-  - [Metrics Collection](#metrics-collection)
-  - [Kubernetes Events Collection](#kubernetes-events-collection)
-- [Minimum Requirements](#minimum-requirements)
-- [Support Matrix](#support-matrix)
-  - [ARM support](#arm-support)
-  - [Falco support](#falco-support)
+- [Deployment Guide for unreleased version](#deployment-guide-for-unreleased-version)
+  - [Solution overview](#solution-overview)
+    - [Log Collection](#log-collection)
+    - [Metrics Collection](#metrics-collection)
+    - [Kubernetes Events Collection](#kubernetes-events-collection)
+  - [Minimum Requirements](#minimum-requirements)
+  - [Support Matrix](#support-matrix)
+    - [ARM support](#arm-support)
+    - [Falco support](#falco-support)
 
 Documentation for other versions can be found in the
 [main README file](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/README.md#documentation).
@@ -102,7 +103,7 @@ The following table displays the currently used software versions for our Helm c
 
 | Name                                      | Version |
 | ----------------------------------------- | ------- |
-| OpenTelemetry Collector                   | 0.82.0  |
+| OpenTelemetry Collector                   | 0.87.0  |
 | OpenTelemetry Operator                    | 0.33.0  |
 | kube-prometheus-stack/Prometheus Operator | 40.5.0  |
 | Falco                                     | 3.3.0   |

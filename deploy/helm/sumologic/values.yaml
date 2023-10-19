@@ -102,7 +102,7 @@ sumologic:
     job:
       image:
         repository: public.ecr.aws/sumologic/kubernetes-setup
-        tag: 3.10.0
+        tag: 3.11.0
         pullPolicy: IfNotPresent
       ## Optionally specify an array of pullSecrets.
       ## They will be added to serviceaccount that is used for Sumo Logic's
@@ -244,7 +244,7 @@ sumologic:
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.85.0-sumo-0"
+    tag: "0.87.0-sumo-0"
 
     ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
     ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
@@ -514,6 +514,25 @@ sumologic:
         ## Allocation strategy for the scrape target allocator. Valid values are: least-weighted and consistent-hashing.
         ## See: https://github.com/open-telemetry/opentelemetry-operator/blob/main/docs/api.md#opentelemetrycollectorspectargetallocator
         # allocationStrategy: least-weighted
+
+        config:
+          ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
+          ## be directly merged with the generated configuration, overriding existing values.
+          ## For example:
+          # override:
+          #   processors:
+          #     batch:
+          #       send_batch_size: 512
+          ## will change the batch size of the pipeline.
+          ##
+          ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
+          ## of this chart. It involves implementation details that may change even in minor versions.
+          ## Use with caution, and consider opening an issue, so your customization can be added in a safer way.
+          merge: {}
+          ## Completely override existing config and replace it with the contents of this value.
+          ## The value of this key should be a dictionary, that will replace the normal configuration.
+          ## This is an advanced feature, use with caution, and review the generated configuration first.
+          override: {}
 
     ## Default metric filters for Sumo Apps
     enableDefaultFilters: false
@@ -1047,16 +1066,17 @@ kube-prometheus-stack:
             sourceLabels: [__name__]
           ## Drop unnecessary labels Prometheus adds to these metrics
           ## We don't want container=kube-state-metrics on everything
+          ## But we do want to keep these on pod metrics, which we check for via the `uid` attribute
           - action: labeldrop
             regex: service
           - action: replace
-            sourceLabels: [container]
-            regex: kube-state-metrics
+            sourceLabels: [container, uid]
+            regex: kube-state-metrics;
             targetLabel: container
             replacement: ""
           - action: replace
-            sourceLabels: [pod]
-            regex: ".*kube-state-metrics.*"
+            sourceLabels: [pod, uid]
+            regex: ".*kube-state-metrics.*;"
             targetLabel: pod
             replacement: ""
           - action: labelmap
@@ -1096,6 +1116,7 @@ kube-prometheus-stack:
         ## node_vmstat_pgpgin
         ## node_vmstat_pgpgout
         ## node_memory_MemFree_bytes
+        ## node_memory_MemAvailable_bytes
         ## node_memory_Cached_bytes
         ## node_memory_Buffers_bytes
         ## node_memory_MemTotal_bytes
@@ -1107,7 +1128,7 @@ kube-prometheus-stack:
         ## node_filesystem_size_bytes
         metricRelabelings:
           - action: keep
-            regex: (?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
+            regex: (?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_MemAvailable_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
             sourceLabels: [__name__]
   prometheus:
     enabled: false
@@ -1556,7 +1577,7 @@ tracesSampler:
         spike_limit_percentage: 20
 
       ## Smart cascading filtering rules with preset limits.
-      ## Please see https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.85.0-sumo-0/pkg/processor/cascadingfilterprocessor
+      ## Please see https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.87.0-sumo-0/pkg/processor/cascadingfilterprocessor
       ## for details.
       cascading_filter:
         ## Max number of traces for which decisions are kept in memory
@@ -2437,8 +2458,10 @@ opentelemetry-operator:
   manager:
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.85.0-sumo-0"
+      tag: "0.87.0-sumo-0"
     env:
+      {}
+      # ENABLE_WEBHOOKS: "true"
     resources:
       limits:
         cpu: 250m

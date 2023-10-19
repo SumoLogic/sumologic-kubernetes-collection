@@ -174,6 +174,7 @@ The following table contains information about metrics scraped by Sumo Logic's P
 | `node_vmstat_pgpgin`                                     | node-exporter      | yes       |
 | `node_vmstat_pgpgout`                                    | node-exporter      | yes       |
 | `node_memory_MemFree_bytes`                              | node-exporter      | yes       |
+| `node_memory_MemAvailable_bytes`                         | node-exporter      | yes       |
 | `node_memory_Cached_bytes`                               | node-exporter      | yes       |
 | `node_memory_Buffers_bytes`                              | node-exporter      | yes       |
 | `node_memory_MemTotal_bytes`                             | node-exporter      | yes       |
