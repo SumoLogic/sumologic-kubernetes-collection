@@ -247,11 +247,7 @@ Example Usage:
 
 */}}
 {{- define "otelcolInstrumentation.autoscaling.enabled" -}}
-{{- if kindIs "bool" .Values.otelcolInstrumentation.autoscaling.enabled -}}
-  {{- .Values.otelcolInstrumentation.autoscaling.enabled -}}
-{{- else }}
-  {{- .Values.sumologic.autoscaling.enabled -}}
-{{- end }}
+{{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.otelcolInstrumentation.autoscaling.enabled "Values" .Values) }}
 {{- end -}}
 
 {{/*
@@ -262,9 +258,5 @@ Example Usage:
 
 */}}
 {{- define "tracesGateway.autoscaling.enabled" -}}
-{{- if kindIs "bool" .Values.tracesGateway.autoscaling.enabled -}}
-  {{- .Values.tracesGateway.autoscaling.enabled -}}
-{{- else }}
-  {{- .Values.sumologic.autoscaling.enabled -}}
-{{- end }}
+{{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.tracesGateway.autoscaling.enabled "Values" .Values) }}
 {{- end -}}

@@ -297,11 +297,5 @@ Example Usage:
 
 */}}
 {{- define "metadata.logs.autoscaling.enabled" -}}
-{{- if kindIs "bool" .Values.metadata.logs.autoscaling.enabled -}}
-  {{- .Values.metadata.logs.autoscaling.enabled -}}
-{{- else }}
-  {{- .Values.sumologic.autoscaling.enabled -}}
-{{- end }}
+{{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.metadata.logs.autoscaling.enabled "Values" .Values) }}
 {{- end -}}
-
-

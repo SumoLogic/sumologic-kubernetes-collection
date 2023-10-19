@@ -296,11 +296,7 @@ Example Usage:
 
 */}}
 {{- define "metadata.metrics.autoscaling.enabled" -}}
-{{- if kindIs "bool" .Values.metadata.metrics.autoscaling.enabled -}}
-  {{- .Values.metadata.metrics.autoscaling.enabled -}}
-{{- else }}
-  {{- .Values.sumologic.autoscaling.enabled -}}
-{{- end }}
+{{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.metadata.metrics.autoscaling.enabled "Values" .Values) -}}
 {{- end -}}
 
 {{/*
@@ -311,9 +307,5 @@ Example Usage:
 
 */}}
 {{- define "metrics.collector.autoscaling.enabled" -}}
-{{- if kindIs "bool" .Values.sumologic.metrics.collector.otelcol.autoscaling.enabled -}}
-  {{- .Values.sumologic.metrics.collector.otelcol.autoscaling.enabled -}}
-{{- else }}
-  {{- .Values.sumologic.autoscaling.enabled -}}
-{{- end }}
+{{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.sumologic.metrics.collector.otelcol.autoscaling.enabled "Values" .Values) -}}
 {{- end -}}
