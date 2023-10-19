@@ -305,5 +305,5 @@ require additional action.
 [otel_metrics_filter]: ./collecting-application-metrics.md#filtering-metrics
 [v3_migration_guide]: ./v3-migration-doc.md
 [attribute_translation]:
-  https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.85.0-sumo-0/pkg/processor/sumologicschemaprocessor#attribute-translation
+  https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.87.0-sumo-0/pkg/processor/sumologicschemaprocessor#attribute-translation
 [scraped_metrics_aggregations]: ./scraped-metrics.md#aggregations-removed

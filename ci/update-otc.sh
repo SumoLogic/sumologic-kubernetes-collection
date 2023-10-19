@@ -27,3 +27,4 @@ sed -i "s/${upstream_current_version}/${upstream_new_version}/" ./deploy/helm/su
 sed -i "s/${upstream_current_version}/${upstream_new_version}/" ./deploy/helm/sumologic/conf/logs/otelcol/config.yaml
 sed -i "s/${upstream_current_version}/${upstream_new_version}/" ./deploy/helm/sumologic/conf/metrics/otelcol/*.yaml
 sed -i "s/${upstream_current_version}/${upstream_new_version}/" ./docs/*.md
+sed -i "s/${upstream_current_version}/${upstream_new_version}/" ./README.md
