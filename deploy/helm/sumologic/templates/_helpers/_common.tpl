@@ -534,7 +534,7 @@ Returns value of received parameter (.autoscalingEnabled) if defined,
 otherwise returns value of global flag (.Values.sumologic.autoscaling.enabled).
 
 Example usage:
-{{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.metadata.logs.autoscaling.enabled) }}
+{{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.metadata.logs.autoscaling.enabled "Values" .Values) }}
 */}}
 {{- define "is.autoscaling.enabled" -}}
 {{- if kindIs "bool" .autoscalingEnabled -}}
