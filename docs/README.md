@@ -1,10 +1,10 @@
-# Deployment Guide for unreleased version
+# Deployment Guide for version 4.0.0
 
 This page has instructions for collecting Kubernetes logs, metrics, and events; enriching them with deployment, pod, and service level
 metadata; and sending them to Sumo Logic. See our [documentation guide](https://help.sumologic.com/docs/observability/kubernetes/) for
 details on our Kubernetes Solution.
 
-- [Deployment Guide for unreleased version](#deployment-guide-for-unreleased-version)
+- [Deployment Guide for version 4.0.0](#deployment-guide-for-version-400)
   - [Solution overview](#solution-overview)
     - [Log Collection](#log-collection)
     - [Metrics Collection](#metrics-collection)
@@ -45,6 +45,7 @@ Documentation links:
 
 - Upgrades
 
+  - [Upgrade from v3 to v4][migration-doc-v4]
   - [Upgrade from v2 to v3][migration-doc-v3]
   - [Upgrade from v2.17 to v2.18][migration-doc-v2.18]
   - [Upgrade from v1.3 to v2.0][migration-doc-v2]
@@ -55,6 +56,7 @@ Documentation links:
 - [Monitoring the Monitoring](/docs/monitoring-lag.md)
 - [Dev Releases](/docs/dev.md)
 
+[migration-doc-v4]: ./v4-migration-doc.md
 [migration-doc-v3]: ./v3-migration-doc.md
 [migration-doc-v2.18]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2-18-migration.md
 [migration-doc-v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2_migration_doc.md
