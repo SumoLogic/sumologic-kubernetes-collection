@@ -28,6 +28,11 @@ spec:
         release: RELEASE-NAME
       podMonitorSelector:
         release: RELEASE-NAME
+  autoscaler:
+    maxReplicas: 10
+    minReplicas: 1
+    targetCPUUtilization: 70
+    targetMemoryUtilization: 70
   env:
     - name: METADATA_METRICS_SVC
       valueFrom:

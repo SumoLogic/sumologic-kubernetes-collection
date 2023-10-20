@@ -1,6 +1,6 @@
 {{ $otelcolInstrumentation := .Values.otelcolInstrumentation }}
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
-{{- if and $tracesEnabled $otelcolInstrumentation.enabled $otelcolInstrumentation.autoscaling.enabled }}
+{{- if and $tracesEnabled $otelcolInstrumentation.enabled (eq (include "otelcolInstrumentation.autoscaling.enabled" .) "true") }}
 {{- if and (eq .Capabilities.KubeVersion.Major "1") (lt (int (include "kubernetes.minor" .)) 23) }}
 apiVersion: autoscaling/v2beta2
 {{- else }}

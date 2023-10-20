@@ -17,7 +17,6 @@ spec:
       app: RELEASE-NAME-sumologic-otelcol-instrumentation
   serviceName: RELEASE-NAME-sumologic-otelcol-instrumentation
   podManagementPolicy: "Parallel"
-  replicas: 3
   template:
     metadata:
       annotations:

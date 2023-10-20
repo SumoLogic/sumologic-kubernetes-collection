@@ -1,13 +1,11 @@
 metadata:
   metrics:
     autoscaling:
-      enabled: true
       minReplicas: 2
       maxReplicas: 2
 
   logs:
     autoscaling:
-      enabled: true
       minReplicas: 2
       maxReplicas: 2
 

@@ -299,6 +299,9 @@ require additional action.
   This has been changed in order to make the behaviour consistent with the logs pipeline. Now, the extra processors should use [translated
   versions of some attributes][attribute_translation].
 
+- Enabling autoscaling for logs metadata, metrics metadata, metrics collector, otelcol instrumentation,and traces gateway by default. It is
+  done by adding the `sumologic.autoscaling.enabled` parameter.
+
 [application_metrics_annotation]: ./collecting-application-metrics.md#application-metrics-are-exposed-one-endpoint-scenario
 [kubernetes_metrics_v3]:
   https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v3/docs/collecting-kubernetes-metrics.md#collecting-kubernetes-metrics

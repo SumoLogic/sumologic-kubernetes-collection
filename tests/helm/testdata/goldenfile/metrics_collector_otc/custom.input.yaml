@@ -4,7 +4,7 @@ sumologic:
       otelcol:
         scrapeInterval: 60s
         autoscaling:
-          enabled: true
+          enabled: false
           minReplicas: 15
           maxReplicas: 30
           targetCPUUtilizationPercentage: 95

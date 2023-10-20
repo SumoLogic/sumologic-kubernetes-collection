@@ -527,3 +527,19 @@ podAntiAffinity:
           - prometheus-operator-prometheus
       topologyKey: "kubernetes.io/hostname"
 {{- end -}}
+
+{{/*
+Returns whether autoscaling is enabled. 
+Returns value of received parameter (.autoscalingEnabled) if defined, 
+otherwise returns value of global flag (.Values.sumologic.autoscaling.enabled).
+
+Example usage:
+{{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.metadata.logs.autoscaling.enabled "Values" .Values) }}
+*/}}
+{{- define "is.autoscaling.enabled" -}}
+{{- if kindIs "bool" .autoscalingEnabled -}}
+  {{- .autoscalingEnabled -}}
+{{- else }}
+  {{- .Values.sumologic.autoscaling.enabled -}}
+{{- end }}
+{{- end -}}

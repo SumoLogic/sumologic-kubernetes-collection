@@ -5,14 +5,6 @@ sumologic:
       otelcloudwatch:
         enabled: true
 
-metadata:
-  logs:
-    autoscaling:
-      enabled: true
-  metrics:
-    autoscaling:
-      enabled: true
-
 metrics-server:
   enabled: true
 

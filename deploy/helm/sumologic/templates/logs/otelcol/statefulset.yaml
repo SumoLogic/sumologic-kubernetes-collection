@@ -13,7 +13,7 @@ spec:
       app: {{ template "sumologic.labels.app.logs.pod" . }}
   serviceName: {{ template "sumologic.metadata.name.logs.service-headless" . }}
   podManagementPolicy: "Parallel"
-{{- if not .Values.metadata.logs.autoscaling.enabled }}
+{{- if eq (include "metadata.logs.autoscaling.enabled" .) "false" }}
   replicas: {{ .Values.metadata.logs.statefulset.replicaCount }}
 {{- end }}
   template:
