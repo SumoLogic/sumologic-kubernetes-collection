@@ -99,48 +99,75 @@ kubectl -n <namespace> rollout restart statefulset <prometheus_statefulset_name>
 
 ## OpenTelemetry Collector Autoscaling
 
-OpenTelemetry Collector StatefulSets used for metadata enrichment can be autoscaled. This is disabled by default, for reasons outlined in
-[#2751].
+Autoscaling for logs metadata, metrics metadata, metrics collector, otelcol instrumentation, and traces gateway is enabled by default.
 
-Whenever your OpenTelemetry Collector pods CPU consumption is close to the limit, you could experience a
-[delay in data ingestion or even data loss](/docs/monitoring-lag.md) under higher-than-normal load. In such cases you should enable
-autoscaling.
+Disabling autoscaling for all components can be done by overriding the `sumologic.autoscaling.enabled` parameter.
 
-To enable autoscaling for OpenTelemetry Collector:
+```yaml
+sumologic:
+  autoscaling:
+    enabled: false
+```
 
-- Enable metrics-server dependency
+Furthermore, you can disable autoscaling for individual components. Keep in mind that the 'autoscaling.enabled' parameter always takes
+precedence over the global 'sumologic.autoscaling.enabled' parameter. Use the following configuration to accomplish this:
 
-  Note: If metrics-server is already installed, this step is not required.
-
-  ```yaml
-  ## Configure metrics-server
-  ## ref: https://github.com/bitnami/charts/tree/master/bitnami/metrics-server/values.yaml
-  metrics-server:
-    enabled: true
-  ```
-
-- Enable autoscaling for log metadata enrichment
+- Disable autoscaling for log metadata enrichment
 
   ```yaml
   metadata:
     logs:
       autoscaling:
-        enabled: true
+        enabled: false
   ```
 
-- Enable autoscaling for metrics metadata enrichment
+- Disable autoscaling for metrics metadata enrichment
 
   ```yaml
   metadata:
     metrics:
       autoscaling:
-        enabled: true
+        enabled: false
+  ```
+
+- Disable autoscaling for metrics collector
+
+  ```yaml
+  sumologic:
+    metrics:
+      collector:
+        otelcol:
+          autoscaling:
+            enabled: false
+  ```
+
+- Disable autoscaling for otelcol instrumentation
+
+  ```yaml
+  otelcolInstrumentation:
+    autoscaling:
+      enabled: false
+  ```
+
+- Disable autoscaling for traces gateway
+
+  ```yaml
+  tracesGateway:
+    autoscaling:
+      enabled: false
   ```
 
 It's also possible to adjust other autoscaling configuration options, like the maximum number of replicas or the average CPU utilization.
 Please refer to the [chart readme][chart_readme] and [default values.yaml][values.yaml] for details.
 
-[#2751]: https://github.com/SumoLogic/sumologic-kubernetes-collection/issues/2751
+If metrics-server is not already installed in your cluster, it is required to enable metrics-server.
+
+```yaml
+## Configure metrics-server
+## ref: https://github.com/bitnami/charts/tree/master/bitnami/metrics-server/values.yaml
+metrics-server:
+  enabled: true
+```
 
 ### Cleaning unused PVCs
 
