@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.16.1]
+
+### Released 2023-10-20
+
+### Changed
+
+- chore: upgrade otel to 0.87.0-sumo-0 [#3334]
+
+[#3334]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3334
+[v3.16.1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.16.1
+
 ## [v3.16.0]
 
 ### Released 2023-10-18
