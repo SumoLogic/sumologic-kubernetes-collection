@@ -11,6 +11,14 @@
 There is a prepared Vagrant environment with [microk8s](https://microk8s.io/) set up for collection tests, for details see
 [here](vagrant/README.md).
 
+#### ARM hosts (Apple M1, and so on)
+
+You'll need to use QEMU instead of VirtualBox to use Vagrant on ARM. The following instructions will assume an M1 Mac as the host:
+
+1. Install QEMU: `brew install qemu`
+2. Install the QEMU vagrant provider: `vagrant plugin install vagrant-qemu`
+3. Provision the VM with the provider: `vagrant up --provider=qemu`
+
 ### Using nix
 
 1. [Install nix](https://nixos.org/download.html)
