@@ -56,7 +56,7 @@ Sumo Logic collection requires CRD version of `v0.59.2` or newer. If you are usi
 to do anything. Otherwise, ensure that the Custom Resource Definitions won't break your existing Prometheus Operators and then apply them
 using the following commands:
 
-```yaml
+```bash
 kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
 kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
 kubectl apply --server-side --force-conflicts -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.59.2/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
