@@ -16,7 +16,6 @@ tests-lint: template-tests-lint integration-tests-lint
 markdown-lint:
 	prettier --check "**/*.md"
 	markdownlint --config .markdownlint.jsonc \
-		deploy/docs \
 		docs \
 		CHANGELOG.md
 
