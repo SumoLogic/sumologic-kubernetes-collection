@@ -4408,7 +4408,9 @@ otellogs:
               - CAP_CHOWN
 
     nodeSelector: {}
-    tolerations: []
+    tolerations:
+      - effect: NoSchedule
+        operator: Exists
     affinity: {}
 
     ## Extra Environment Values - allows yaml definitions
