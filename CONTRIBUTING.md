@@ -40,7 +40,7 @@ You'll need to use QEMU instead of VirtualBox to use Vagrant on ARM. The followi
 
 In order to relase, please follow [the releasing guide][release].
 
-[release]: ./deploy/docs/release.md
+[release]: /docs/release.md
 
 ## Updating OpenTelemetry Collector image
 
