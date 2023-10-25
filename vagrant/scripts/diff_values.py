@@ -39,7 +39,10 @@ def remove_duplicates(obj1, obj2):
         continue
 
       obj1[key] = remove_duplicates(value, obj2.get(key))
-    
+
+      if obj1[key] == {}:
+        to_remove.append(key)
+
     for key in to_remove:
       del obj1[key]
   elif isinstance(obj1, list):
