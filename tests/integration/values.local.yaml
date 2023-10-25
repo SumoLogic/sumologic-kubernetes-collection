@@ -1,0 +1,22 @@
+sumologic:
+  traces:
+    enabled: false
+  metrics:
+    collector:
+      otelcol:
+        enabled: false
+    remoteWriteProxy:
+      enabled: true
+
+kube-prometheus-stack:
+  prometheus:
+    enabled: true
+  prometheusOperator:
+    enabled: true
+
+otellogs:
+  config:
+    merge:
+      receivers:
+        journald:
+          directory: /var/log/journal
