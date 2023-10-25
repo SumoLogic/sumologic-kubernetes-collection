@@ -126,7 +126,7 @@ It is going to:
 
 **Note: Log which matches multiple conditions is processed only by the first one.**
 
-[expr]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.87.0/pkg/stanza/docs/types/expression.md
+[expr]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.86.0/pkg/stanza/docs/types/expression.md
 
 ### Log format
 

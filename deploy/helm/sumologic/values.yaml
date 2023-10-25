@@ -240,7 +240,7 @@ sumologic:
   ### Global configuration for OpenTelemetry Collector
   otelcolImage:
     repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-    tag: "0.87.0-sumo-0"
+    tag: "0.86.0-sumo-1"
 
     ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
     ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
@@ -3766,7 +3766,7 @@ tracesSampler:
         spike_limit_percentage: 20
 
       ## Smart cascading filtering rules with preset limits.
-      ## Please see https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.87.0-sumo-0/pkg/processor/cascadingfilterprocessor
+      ## Please see https://github.com/SumoLogic/sumologic-otel-collector/tree/v0.86.0-sumo-1/pkg/processor/cascadingfilterprocessor
       ## for details.
       cascading_filter:
         ## Max number of traces for which decisions are kept in memory
@@ -4654,7 +4654,7 @@ opentelemetry-operator:
   manager:
     collectorImage:
       repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
-      tag: "0.87.0-sumo-0"
+      tag: "0.86.0-sumo-1"
     env: {}
     resources:
       limits:
