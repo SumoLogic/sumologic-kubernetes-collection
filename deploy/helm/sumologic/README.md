@@ -2,8 +2,8 @@
 
 To see all available configuration for our sub-charts, please refer to their documentation.
 
-- [Falco](https://github.com/falcosecurity/charts/tree/master/falco#configuration) - All Falco properties should be prefixed with `falco.`
-  in our values.yaml to override a property not listed below.
+- [Falco](https://github.com/falcosecurity/charts/tree/master/charts/falco#configuration) - All Falco properties should be prefixed with
+  `falco.` in our values.yaml to override a property not listed below.
 - [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#configuration) - All
   Kube Prometheus Stack properties should be prefixed with `kube-prometheus-stack.` in our values.yaml to override a property not listed
   below.
