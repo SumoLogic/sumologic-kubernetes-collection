@@ -11,6 +11,9 @@ sumologic:
   accessKey: "dummy"
   endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
 
+  # This is set in yamls/cluster.yaml to check if we work correctly with a custom domain
+  clusterDNSDomain: "my.cluster"
+
   metrics:
     collector:
       otelcol:
