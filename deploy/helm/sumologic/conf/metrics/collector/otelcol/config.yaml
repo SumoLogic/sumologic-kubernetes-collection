@@ -2,7 +2,7 @@
 {{- $scrapeConfigsPresent := or $collectorConfig.kubelet.enabled $collectorConfig.cAdvisor.enabled $collectorConfig.annotatedPods.enabled -}}
 exporters:
   otlphttp:
-    endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.cluster.local.:4318
+    endpoint: http://${METADATA_METRICS_SVC}.${NAMESPACE}.svc.{{ .Values.sumologic.clusterDNSDomain }}.:4318
     sending_queue:
       queue_size: 10000
       num_consumers: 10

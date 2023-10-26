@@ -42,6 +42,11 @@ sumologic:
   ## Cluster name: Note spaces are not allowed and will be replaced with dashes.
   clusterName: "kubernetes"
 
+  ## Cluster DNS Domain
+  ## We use the DNS domain in internal urls to speed up DNS resolution, see https://github.com/kubernetes/kubernetes/issues/56903
+  ## Change this if you have set a non-default DNS domain in your cluster
+  clusterDNSDomain: "cluster.local"
+
   ## Configuration of Kubernetes for Terraform client
   ## https://www.terraform.io/docs/providers/kubernetes/index.html#argument-reference
   ## All double quotes should be escaped here regarding Terraform syntax
@@ -1226,7 +1231,7 @@ kube-prometheus-stack:
               action: replace
       remoteWrite:
         ## infrastructure metrics
-        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE).svc.cluster.local.:9888/prometheus.metrics
+        - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE):9888/prometheus.metrics
           remoteTimeout: 5s
 
     serviceMonitor:

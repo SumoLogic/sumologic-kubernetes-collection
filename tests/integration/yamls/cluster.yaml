@@ -6,6 +6,7 @@ nodes:
       # these changes allow us to scrape control plane metrics
       # see kind docs on customizing kubeadm: https://kind.sigs.k8s.io/docs/user/configuration/#kubeadm-config-patches
       # and kubeadm docs on configuring control plane components: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/control-plane-flags/
+      # The DNS domain is changed to verify we work correctly in that environment
       - |
         kind: ClusterConfiguration
         scheduler:
@@ -19,3 +20,5 @@ nodes:
             dataDir: /tmp/etcd
             extraArgs:
               listen-metrics-urls: http://0.0.0.0:2381
+        networking:
+          dnsDomain: "my.cluster"
