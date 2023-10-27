@@ -6,14 +6,12 @@ Please install the following:
 
 - [VirtualBox](https://www.oracle.com/virtualization/technologies/vm/downloads/virtualbox-downloads.html)
 - [Vagrant](https://www.vagrantup.com/)
-- [vagrant-disksize](https://github.com/sprotheroe/vagrant-disksize) plugin
 
 ### MacOS
 
 ```bash
 brew install --cask virtualbox
 brew install --cask vagrant
-vagrant plugin install vagrant-disksize
 ```
 
 ## Setting up
