@@ -84,6 +84,15 @@ test-templates:
 	make helm-dependency-update
 	make -C ./tests/helm test
 
+## Test python scripts
+.PHONY: test-python-scripts
+test-python-scripts: test-diff-values
+
+## Diff values test
+.PHONY: test-diff-values
+test-diff-values:
+	./vagrant/scripts/test_diff_values.py
+
 ### Regenerate golden files for template tests
 ### Be sure the output is what you expect before committing!
 .PHONY: regenerate-goldenfiles
