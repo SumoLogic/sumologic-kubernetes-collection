@@ -53,6 +53,10 @@ markdown-links-lint:
 check-configuration-keys:
 	./ci/check_configuration_keys.py --values deploy/helm/sumologic/values.yaml --readme deploy/helm/sumologic/README.md
 
+.PHONY: check-dependencies
+check-dependencies:
+	@python ./ci/check_dependencies/main.py
+
 .PHONY: template-tests-lint
 template-tests-lint:
 	make -C ./tests/helm golint
