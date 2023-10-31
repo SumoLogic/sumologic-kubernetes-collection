@@ -21,6 +21,10 @@ pkgs.mkShell {
     pkgs.nodePackages.prettier
     pkgs.python311
     pkgs.python311Packages.pyyaml
+    pkgs.python311Packages.requests
+    pkgs.python311Packages.lxml
+    pkgs.python311Packages.pandas
+    pkgs.python311Packages.beautifulsoup4
     pkgs.python311Packages.towncrier
     pkgs.shellcheck
     pkgs.golangci-lint
