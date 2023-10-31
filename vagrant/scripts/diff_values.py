@@ -29,7 +29,7 @@ def main():
 
 
 def remove_duplicates(override, defaults):
-    if isinstance(override, type(defaults)):
+    if not isinstance(override, type(defaults)):
         return override
 
     if isinstance(override, dict):
