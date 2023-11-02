@@ -26,26 +26,17 @@ spec:
           - name: instrumentation-cr-configmap
             mountPath: /tmp/instrumentation-cr.yaml
             subPath: instrumentation.cr.yaml
-        command: ["/bin/bash", "-c"]
+        command: ["/usr/local/bin/bash", "-c"]
         args:
           - |
             max_wait=180
             sleep_interval=5
             counter=0
-            ready=false
-            while [[ ready != "false" ]]
+            while ! kubectl apply -f /tmp/instrumentation-cr.yaml
             do
-              is_ready=$(curl -s -o /dev/null -m 3 -L -w ''%{http_code}'' {{ template "opentelemetry-operator.controller.manager.metrics.service.url" . }})
-
-              if [[ is_ready -eq "200" ]]
-              then
-                ready=true
-                break
-              else
-                echo "Waiting for {{ .Release.Name }}-opentelemetry-operator"
-                sleep $sleep_interval
-                counter=$(($counter + $sleep_interval))
-              fi
+              echo "Waiting for {{ .Release.Name }}-opentelemetry-operator"
+              sleep $sleep_interval
+              counter=$(($counter + $sleep_interval))
 
               if [[ "$counter" -gt "$max_wait" ]]
               then
@@ -55,12 +46,9 @@ spec:
               fi
             done
 
-            if [[ $ready == true ]]
-            then
-              echo "Applying Instrumentation resources"
-              kubectl apply -f /tmp/instrumentation-cr.yaml
-              exit $?
-            fi
+            kubectl apply -f /tmp/instrumentation-cr.yaml || exit 1
+            echo "Successfully applied Instrumentation resources"
+            exit $?
       volumes:
         - name: instrumentation-cr-configmap
           configMap:

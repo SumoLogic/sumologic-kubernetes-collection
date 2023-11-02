@@ -2416,8 +2416,8 @@ opentelemetry-operator:
   ## Specific for Sumo Logic chart - Instrumentation resource creation
   instrumentationJobImage:
     image:
-      repository: sumologic/kubernetes-tools
-      tag: 2.14.0
+      repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
+      tag: 2.20.0
 
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""
