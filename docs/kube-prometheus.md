@@ -8,12 +8,12 @@ add the correct remote_write configs and add the `cluster` external_label. You c
  kubectl run tools \
   -it --quiet --rm \
   --restart=Never -n sumologic \
-  --image sumologic/kubernetes-tools:2.13.0 \
+  --image sumologic/kubernetes-tools:2.22.0 \
   -- template-prometheus-mixin > kube-prometheus-sumo-logic-mixin.libsonnet
 
  # or using docker
  docker run -it --rm \
-  sumologic/kubernetes-tools:2.13.0 \
+  sumologic/kubernetes-tools:2.22.0 \
   template-prometheus-mixin > kube-prometheus-sumo-logic-mixin.libsonnet
 ```
 
