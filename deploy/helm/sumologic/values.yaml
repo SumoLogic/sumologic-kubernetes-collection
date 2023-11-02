@@ -2419,7 +2419,7 @@ opentelemetry-operator:
   instrumentationJobImage:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.20.0
+      tag: 2.22.0
 
   createDefaultInstrumentation: false
   instrumentationNamespaces: ""
@@ -2489,7 +2489,7 @@ pvcCleaner:
   job:
     image:
       repository: public.ecr.aws/sumologic/kubernetes-tools-kubectl
-      tag: 2.20.0
+      tag: 2.22.0
       pullPolicy: IfNotPresent
 
     resources:
