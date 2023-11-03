@@ -7,6 +7,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v3.17.0]
+
+### Released 2023-11-03
+
+### Added
+
+- Add new service account for the otel cloudwatch collector statefulset [#3374]
+
+### Changed
+
+- chore: drop support for GKE with k8s 1.23 [#3342]
+- chore: upgrade nginx image to 1.25.2-alpine-sumo-1 [#3375]
+
+### Fixed
+
+- fix(otel-collector): deploy collector by default on all nodes [#3348]
+- use autoscaling/v2 if available on the cluster [#3367]
+- fix(instrumentation): replace tools image with kubectl [#3373]
+
+[#3342]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3342
+[#3375]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3375
+[#3348]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3348
+[#3367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3367
+[#3373]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3373
+[#3374]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3374
+[v3.17.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.17.0
+
 ## [v3.16.2]
 
 ### Released 2023-10-25
