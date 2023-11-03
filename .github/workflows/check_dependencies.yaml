@@ -1,0 +1,38 @@
+name: Check dependencies
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-dependencies:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install -r ci/check_dependencies/requirements.txt
+      - name: Generate dependency report
+        id: dependency-report
+        run: |
+          cp ci/check_dependencies/issue_header.md issue.md
+          make check-dependencies >issue_content.md
+          cat issue_content.md >> issue.md
+          [ -s issue_content.md ] && EMPTY=false || EMPTY=true
+          echo "issue-file=issue.md" >> "$GITHUB_OUTPUT"
+          echo "empty=$empty" >> "$GITHUB_OUTPUT"
+      - uses: JasonEtco/create-an-issue@v2
+        if: ${{ ! steps.dependency-report.outputs.empty }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          filename: ${{ steps.dependency-report.outputs.issue-file }}
+          update_existing: true
+          search_existing: all
