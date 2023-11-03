@@ -28,7 +28,7 @@ spec:
       securityContext: {}
       containers:
         - name: nginx
-          image: public.ecr.aws/sumologic/nginx-unprivileged:1.25.2-alpine
+          image: public.ecr.aws/sumologic/nginx-unprivileged:1.25.2-alpine-sumo-1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
