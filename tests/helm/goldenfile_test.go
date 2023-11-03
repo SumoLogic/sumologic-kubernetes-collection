@@ -132,10 +132,9 @@ func runGoldenFileTest(t *testing.T, valuesFileName string, outputFileName strin
 // expected templates
 func fixupRenderedYaml(yaml string, chartVersion string) string {
 	checksumRegex := regexp.MustCompile("checksum/config: [a-z0-9]{64}")
-	chartsRegex := regexp.MustCompile("([^kubernetes-setup:])" + chartVersion)
 	output := yaml
 	output = strings.ReplaceAll(output, releaseName, "RELEASE-NAME")
-	output = chartsRegex.ReplaceAllString(output, "$1%CURRENT_CHART_VERSION%")
+	output = strings.ReplaceAll(output, chartVersion, "%CURRENT_CHART_VERSION%")
 	output = checksumRegex.ReplaceAllLiteralString(output, "checksum/config: '%CONFIG_CHECKSUM%'")
 	output = strings.TrimSuffix(output, "\n")
 	return output
