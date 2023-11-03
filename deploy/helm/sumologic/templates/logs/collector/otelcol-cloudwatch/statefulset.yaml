@@ -32,7 +32,7 @@ spec:
 {{ toYaml .Values.otelcloudwatch.statefulset.podLabels | indent 8 }}
 {{- end }}
     spec:
-      serviceAccountName: {{ template "sumologic.metadata.name.logs.collector.serviceaccount" . }}
+      serviceAccountName: {{ template "sumologic.metadata.name.logs.collector.cloudwatch.serviceaccount" . }}
 {{- if .Values.otelcloudwatch.statefulset.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.otelcloudwatch.statefulset.nodeSelector | indent 8 }}
