@@ -176,6 +176,10 @@ Return the exporters for kubelet log pipeline.
 {{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
 
+{{- define "sumologic.metadata.name.logs.collector.cloudwatch.serviceaccount" -}}
+{{- template "sumologic.metadata.name.logs.collector" . }}
+{{- end -}}
+
 {{- define "sumologic.metadata.name.logs.collector.daemonset" -}}
 {{- template "sumologic.metadata.name.logs.collector" . }}
 {{- end -}}
