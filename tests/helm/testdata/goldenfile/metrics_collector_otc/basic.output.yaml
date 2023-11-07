@@ -236,10 +236,6 @@ spec:
             tls_config:
               ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
               insecure_skip_verify: true
-        target_allocator:
-          collector_id: ${POD_NAME}
-          endpoint: http://RELEASE-NAME-sumologic-metrics-targetallocator
-          interval: 30s
     service:
       extensions:
       - health_check
