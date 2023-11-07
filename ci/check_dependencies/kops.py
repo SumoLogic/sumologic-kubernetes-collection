@@ -3,6 +3,7 @@ import traceback
 import os
 import json
 import kubernetes_collection
+import common
 
 kops_line_pattern = "K8s with Kops"
 
@@ -46,30 +47,7 @@ def get_expected_supported_kops(kops_releases):
 
 
 def get_info():
-    print("kOps latest versions from https://github.com/kubernetes/kops/releases")
+    # Figure out which versions we need to add/remove 
     kops_minor_releases = get_minor_releases("kubernetes", "kops")
-    print(kops_minor_releases)
-
-    print(
-        "Currently supported kOps versions for Sumologic Kubernetes Collection Helm Chart"
-    )
-    kops_now_suppported = kubernetes_collection.get_supported_versions(
-        kops_line_pattern
-    )
-    print(kops_now_suppported)
-
-    print(
-        "Expected supported kOps versions for Sumologic Kubernetes Collection Helm Chart"
-    )
-    kops_expected_supported = get_expected_supported_kops(kops_minor_releases)
-    print(kops_expected_supported)
-
-    versions_to_add = sorted(set(kops_expected_supported) - set(kops_now_suppported))
-    if len(versions_to_add) != 0:
-        print("\nPlease add support to following kOps versions:")
-        print(versions_to_add)
-
-    versions_to_remove = sorted(set(kops_now_suppported) - set(kops_expected_supported))
-    if len(versions_to_remove) != 0:
-        print("Please remove support to following kOps versions:")
-        print(versions_to_remove)
+    officially_supported = get_expected_supported_kops(kops_minor_releases)
+    common.get_info("Kops", officially_supported)
