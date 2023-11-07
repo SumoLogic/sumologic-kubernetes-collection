@@ -120,10 +120,6 @@ spec:
           global:
             scrape_interval: 60s
           scrape_configs: []
-        target_allocator:
-          collector_id: ${POD_NAME}
-          endpoint: http://RELEASE-NAME-sumologic-metrics-targetallocator
-          interval: 30s
     service:
       extensions:
       - health_check
