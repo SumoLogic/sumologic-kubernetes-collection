@@ -11,6 +11,8 @@ time_formate_with_zone = "%Y-%m-%dT%H:%M:%S.%f%z"
 VERSION_IDX = 0
 CREATED_IDX = 1
 
+# We ignore Prometheus here, as we're locked to whatever version is CRD-compatible with OpenShift
+DEPENDENCIES_TO_IGNORE=("kube-prometheus-stack")
 
 def get_info():
     cache_file = "cache/Chart.yaml"
@@ -20,6 +22,8 @@ def get_info():
     deps = chart_yaml["dependencies"]
 
     for dep in deps:
+        if dep["name"] in DEPENDENCIES_TO_IGNORE:
+            continue
         index_page = "{}/{}".format(dep["repository"], "index.yaml")
         cache_file = "{}/{}.yaml".format("cache", dep["name"])
         current_version = dep["version"]
