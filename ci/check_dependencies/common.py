@@ -48,6 +48,15 @@ def get_info(platform, officially_supported):
     else:
         line_pattern = "K8s with {}".format(platform)
 
+    now_suppported = kubernetes_collection.get_supported_versions(line_pattern)
+    versions_to_add = sorted(set(officially_supported) - set(now_suppported))
+    versions_to_remove = sorted(set(now_suppported) - set(officially_supported))
+
+    if len(versions_to_add) == 0 and len(versions_to_remove) == 0:
+        return
+
+    print(f"")
+    print(f"#### {platform} ####")
     print("{} officially supported versions".format(platform))
     print(officially_supported)
 
@@ -56,16 +65,16 @@ def get_info(platform, officially_supported):
             platform
         )
     )
-    now_suppported = kubernetes_collection.get_supported_versions(line_pattern)
+    
     print(now_suppported)
     print("\n")
 
-    versions_to_add = sorted(set(officially_supported) - set(now_suppported))
+    
     if len(versions_to_add) != 0:
         print("Please add support to following {} versions:".format(platform))
         print(versions_to_add)
 
-    versions_to_remove = sorted(set(now_suppported) - set(officially_supported))
+    
     if len(versions_to_remove) != 0:
         print("Please remove support to following {} versions:".format(platform))
         print(versions_to_remove)
