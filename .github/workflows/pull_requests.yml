@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [docs-changed]
     env:
-      PRETTIER_VERSION: 2.8.4
+      PRETTIER_VERSION: 2.8.8
     steps:
       - uses: actions/checkout@v4
       - name: install markdownlint and prettier
@@ -70,7 +70,7 @@ jobs:
   shellcheck:
     runs-on: ubuntu-22.04
     env:
-      YQ_VERSION: 4.33.2
+      YQ_VERSION: 4.34.1
       SHELLCHECK_VERSION: 0.9.0
     steps:
       - uses: actions/checkout@v4
@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [chart-changed]
     env:
-      PRETTIER_VERSION: 2.8.4
+      PRETTIER_VERSION: 2.8.8
     steps:
       - uses: actions/checkout@v4
       - name: install yamllint
@@ -161,7 +161,7 @@ jobs:
         if: needs.chart-changed.outputs.any_changed == 'true'
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.52.2
+          version: v1.53.3
           working-directory: ./tests/helm/
           # Optional: golangci-lint command line arguments.
           args: --timeout=10m --verbose
