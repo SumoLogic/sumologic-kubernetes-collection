@@ -42,7 +42,8 @@ def get_page(web_page, cache_file):
     return calendar
 
 
-def get_info(platform, officially_supported):
+def get_info(platform, officially_supported) -> list[str]:
+    output_lines = []
     if platform == "OpenShift":
         line_pattern = platform
     else:
@@ -53,28 +54,30 @@ def get_info(platform, officially_supported):
     versions_to_remove = sorted(set(now_suppported) - set(officially_supported))
 
     if len(versions_to_add) == 0 and len(versions_to_remove) == 0:
-        return
+        return []
 
-    print(f"")
-    print(f"#### {platform} ####")
-    print("{} officially supported versions".format(platform))
-    print(officially_supported)
+    output_lines.append(f"")
+    output_lines.append(f"#### {platform} ####")
+    output_lines.append("{} officially supported versions".format(platform))
+    output_lines.append(officially_supported)
 
-    print(
+    output_lines.append(
         "Currently supported {} versions for Sumologic Kubernetes Collection Helm Chart".format(
             platform
         )
     )
     
-    print(now_suppported)
-    print("\n")
+    output_lines.append(now_suppported)
+    output_lines.append("\n")
 
     
     if len(versions_to_add) != 0:
-        print("Please add support to following {} versions:".format(platform))
-        print(versions_to_add)
+        output_lines.append("Please add support to following {} versions:".format(platform))
+        output_lines.append(versions_to_add)
 
     
     if len(versions_to_remove) != 0:
-        print("Please remove support to following {} versions:".format(platform))
-        print(versions_to_remove)
+        output_lines.append("Please remove support to following {} versions:".format(platform))
+        output_lines.append(versions_to_remove)
+    
+    return output_lines
