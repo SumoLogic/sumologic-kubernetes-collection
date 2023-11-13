@@ -64,6 +64,6 @@ def get_eks_officially_supported_releases():
     return sorted(eks_supported_releases)
 
 
-def get_info():
+def get_info() -> list[str]:
     officially_supported = get_eks_officially_supported_releases()
-    common.get_info("EKS", officially_supported)
+    return common.get_info("EKS", officially_supported)

@@ -44,10 +44,10 @@ def get_supported_releases(html_calendar):
     return sorted(supported_versions)
 
 
-def get_info():
+def get_info() -> str:
     cache_file = "cache/openshift_calendar.html"
     # template for https://docs.openshift.com/container-platform/4.11/welcome/index.html
     calendar_web_page = "https://raw.githubusercontent.com/openshift/openshift-docs/main/_templates/_page_openshift.html.erb"
     html_calendar = common.get_page(calendar_web_page, cache_file)
     officially_supported = get_supported_releases(html_calendar)
-    common.get_info("OpenShift", officially_supported)
+    return common.get_info("OpenShift", officially_supported)

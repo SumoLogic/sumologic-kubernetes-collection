@@ -55,7 +55,7 @@ check-configuration-keys:
 
 .PHONY: check-dependencies
 check-dependencies:
-	@python ./ci/check_dependencies/main.py
+	@python ./ci/check_dependencies/main.py --quiet
 
 .PHONY: template-tests-lint
 template-tests-lint:

@@ -14,7 +14,8 @@ CREATED_IDX = 1
 # We ignore Prometheus here, as we're locked to whatever version is CRD-compatible with OpenShift
 DEPENDENCIES_TO_IGNORE=("kube-prometheus-stack")
 
-def get_info():
+def get_info() -> list[str]:
+    output_lines = []
     cache_file = "cache/Chart.yaml"
     chart_yaml_url = "https://raw.githubusercontent.com/SumoLogic/sumologic-kubernetes-collection/main/deploy/helm/sumologic/Chart.yaml"
     collection_chart_yaml_str = common.get_page(chart_yaml_url, cache_file)
@@ -52,18 +53,23 @@ def get_info():
         )
 
         if current_release[VERSION_IDX] != latest_release[VERSION_IDX]:
-            print(
+            output_lines.append(
                 "Please check newer version of {} subchart, version: {}, created: {}".format(
                     dep["name"].upper(),
                     latest_release[VERSION_IDX],
                     latest_release[CREATED_IDX],
                 )
             )
-            print(
+            output_lines.append(
                 "Currently used {} subchart, version: {}, created: {}".format(
                     dep["name"].upper(),
                     current_release[VERSION_IDX],
                     current_release[CREATED_IDX],
                 )
             )
-            print("")
+            output_lines.append("")
+    
+    if len(output_lines) > 0:
+        output_lines = ["#### Subcharts in Sumologic Kubernetes Collection Helm Chart ####", ""] + output_lines
+
+    return output_lines

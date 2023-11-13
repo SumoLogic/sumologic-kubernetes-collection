@@ -89,9 +89,9 @@ def get_supported_releases(html_calendar):
     return supported_releases
 
 
-def get_info():
+def get_info() -> list[str]:
     cache_file = "cache/gke_calendar.html"
     calendar_web_page = "https://cloud.google.com/kubernetes-engine/docs/release-schedule#schedule_for_release_channels"
     html_calendar = common.get_page(calendar_web_page, cache_file)
     officially_supported = get_supported_releases(html_calendar)
-    common.get_info("GKE", officially_supported)
+    return common.get_info("GKE", officially_supported)

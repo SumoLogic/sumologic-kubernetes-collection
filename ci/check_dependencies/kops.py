@@ -46,8 +46,8 @@ def get_expected_supported_kops(kops_releases):
     return kops_releases[-5:]
 
 
-def get_info():
+def get_info() -> list[str]:
     # Figure out which versions we need to add/remove 
     kops_minor_releases = get_minor_releases("kubernetes", "kops")
     officially_supported = get_expected_supported_kops(kops_minor_releases)
-    common.get_info("Kops", officially_supported)
+    return common.get_info("Kops", officially_supported)

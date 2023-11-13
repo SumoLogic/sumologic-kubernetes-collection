@@ -63,9 +63,9 @@ def get_supported_releases(html_calendar):
     return supported_releases
 
 
-def get_info():
+def get_info() -> list[str]:
     cache_file = "cache/aks_calendar.html"
     calendar_web_page = "https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli#aks-kubernetes-release-calendar"
     html_calendar = common.get_page(calendar_web_page, cache_file)
     officially_supported = get_supported_releases(html_calendar)
-    common.get_info("AKS", officially_supported)
+    return common.get_info("AKS", officially_supported)
