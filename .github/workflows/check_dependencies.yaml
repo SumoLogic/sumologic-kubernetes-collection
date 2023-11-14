@@ -25,14 +25,30 @@ jobs:
           cp ci/check_dependencies/issue_header.md issue.md
           make check-dependencies >issue_content.md
           cat issue_content.md >> issue.md
-          [ -s issue_content.md ] && EMPTY=false || EMPTY=true
           echo "issue-file=issue.md" >> "$GITHUB_OUTPUT"
-          echo "empty=$empty" >> "$GITHUB_OUTPUT"
+          echo "empty=$(test -s issue_content.md && echo 'false' || echo 'true')" >> "$GITHUB_OUTPUT"
       - uses: JasonEtco/create-an-issue@v2
-        if: ${{ ! steps.dependency-report.outputs.empty }}
+        name: Create Github issue
+        id: create-issue
+        if: ${{ steps.dependency-report.outputs.empty == 'false' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           filename: ${{ steps.dependency-report.outputs.issue-file }}
           update_existing: true
           search_existing: all
+      - name: Create Jira issue
+        id: create-jira-issue
+        if: ${{ steps.dependency-report.outputs.empty == 'false' }}
+        uses: tomhjp/gh-action-jira-create@v0.2.1
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+        with:
+          project: OSC
+          issuetype: "Task"
+          summary: "Update Helm Chart dependencies"
+          description: "See ${{ steps.create-issue.outputs.url }}"
+          extraFields:
+            '{"labels": ["opensource_gardener"], "priority": {"name": "Highest"}, "assignee": {"id": "${{ secrets.JIRA_USER_ID }}"}}'
