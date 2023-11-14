@@ -503,6 +503,8 @@ sumologic:
           fsGroup: 999
         tolerations: []
 
+        affinity: {}
+
         ## Configuration for kubelet metrics
         kubelet:
           enabled: true

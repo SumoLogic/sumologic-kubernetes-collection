@@ -31,6 +31,15 @@ sumologic:
           - key: null
             operator: Exists
             effect: "NoSchedule"
+        affinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - sumo-east1
+                      - sumo-west1
         securityContext:
           fsGroup: 999
 
