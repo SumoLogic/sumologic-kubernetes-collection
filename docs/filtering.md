@@ -1,7 +1,7 @@
 # Filtering
 
-One of the easiest way to lower your ingest is to filter out data you do not need.
-In this guide you will learn how to do this for logs, metrics and their metadata.
+One of the easiest way to lower your ingest is to filter out data you do not need. In this guide you will learn how to do this for logs,
+metrics and their metadata.
 
 - [OpenTelemetry Collector processors](#opentelemetry-collector-processors)
   - [Filter processor](#filter-processor)
@@ -41,7 +41,7 @@ sumologic:
       otelcol:
         extraProcessors:
           - filter/drop_something:
-              ## <filter processor config>
+            ## <filter processor config>
           - filter/drop_something_else:
               ## <filter processor config>
 ```
@@ -54,16 +54,16 @@ sumologic:
     otelcol:
       extraProcessors:
         - filter/drop_something:
-            ## <filter processor config>
+          ## <filter processor config>
         - filter/drop_something_else:
             ## <filter processor config>
 ```
 
 ### Filter processor
 
-Filter processor is used to drop telemetry that fulfils specified conditions.
-Detailed information can be found in the [processors documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.89.0/processor/filterprocessor).
-Here we present some example configs.
+Filter processor is used to drop telemetry that fulfils specified conditions. Detailed information can be found in the
+[processors documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.89.0/processor/filterprocessor). Here
+we present some example configs.
 
 Drop logs on debug level:
 
@@ -71,7 +71,7 @@ Drop logs on debug level:
 filter/drop_debug:
   logs:
     log_record:
-      - 'severity_number >= SEVERITY_NUMBER_DEBUG and severity_number <= SEVERITY_NUMBER_DEBUG4'
+      - "severity_number >= SEVERITY_NUMBER_DEBUG and severity_number <= SEVERITY_NUMBER_DEBUG4"
 ```
 
 Drop metric datapoints with unspecified type:
@@ -80,13 +80,13 @@ Drop metric datapoints with unspecified type:
 filter/drop_attr:
   metrics:
     datapoint:
-      - 'type == METRIC_DATA_TYPE_NONE'
+      - "type == METRIC_DATA_TYPE_NONE"
 ```
 
 ### Transform processor
 
-Transform processor is used to modify telemetry and metadata.
-Detailed information can be found in the [processors documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.89.0/processor/transformprocessor).
+Transform processor is used to modify telemetry and metadata. Detailed information can be found in the
+[processors documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.89.0/processor/transformprocessor).
 Here we present some example configs.
 
 Truncate too long attributes:
@@ -123,8 +123,8 @@ This section is common for both logs and metrics.
 
 ### Removing unnecessary metadata
 
-To remove metadata you do not want to be sent to Sumo Logic, use [transform processor](#transform-processor)
-with function `delete_key` or `delete_matching_keys`:
+To remove metadata you do not want to be sent to Sumo Logic, use [transform processor](#transform-processor) with function `delete_key` or
+`delete_matching_keys`:
 
 ```yaml
 transform/delete_db_endpoint:
@@ -141,8 +141,8 @@ transform/delete_db_endpoint:
 
 ### Truncating too long attributes
 
-If you know that one of the attributes can be very long, you can truncate it using [transform processor](#transform-processor)
-with function `set` or `truncate_all`:
+If you know that one of the attributes can be very long, you can truncate it using [transform processor](#transform-processor) with function
+`set` or `truncate_all`:
 
 ```yaml
 transform/truncate:
@@ -159,8 +159,8 @@ transform/truncate:
 
 ### Replacing long substrings in attributes
 
-Long substrings can be replaced using [transform processor](#transform-processor) with functions
-such as `replace_all_matches`, `replace_all_patterns`, `replace_match`, `replace_pattern`:
+Long substrings can be replaced using [transform processor](#transform-processor) with functions such as `replace_all_matches`,
+`replace_all_patterns`, `replace_match`, `replace_pattern`:
 
 ```yaml
 transform/truncate:
@@ -209,14 +209,13 @@ sumologic:
 
 ### Custom filtering
 
-As [mentioned before](#opentelemetry-collector-processors), you can add custom filtering using
-OpenTelemetry Collector's processors. Below are few common examples. Here we present only configs
-for container logs, but it works the same way for systemd and kubelet logs.
+As [mentioned before](#opentelemetry-collector-processors), you can add custom filtering using OpenTelemetry Collector's processors. Below
+are few common examples. Here we present only configs for container logs, but it works the same way for systemd and kubelet logs.
 
 #### Shorten log body
 
-Similarly to [too long attributes](#truncating-too-long-attributes), you can use [transform processor](#transform-processor)
-to shorten log body by either truncating it or replacing too long substrings:
+Similarly to [too long attributes](#truncating-too-long-attributes), you can use [transform processor](#transform-processor) to shorten log
+body by either truncating it or replacing too long substrings:
 
 ```yaml
 sumologic:
@@ -225,13 +224,13 @@ sumologic:
       otelcol:
         extraProcessors:
           - transform/shorten_body:
-                log_statements:
-                  - context: log
-                    statements:
-                      ## Replace long substring
-                      - replace_pattern(body.string, "very_long_key:[0-9A-Za-z]+ENDKEY", "very_long_key:<key>")
-                      ## Truncate the body
-                      - set(body.string, Substring(body.string, 0, 65535)) where Len(body.string) > 65535
+              log_statements:
+                - context: log
+                  statements:
+                    ## Replace long substring
+                    - replace_pattern(body.string, "very_long_key:[0-9A-Za-z]+ENDKEY", "very_long_key:<key>")
+                    ## Truncate the body
+                    - set(body.string, Substring(body.string, 0, 65535)) where Len(body.string) > 65535
 ```
 
 #### Drop unnecessary logs
@@ -257,8 +256,8 @@ sumologic:
 
 You can filter out metrics directly in Prometheus using [this documentation](/docs/collecting-application-metrics.md#filtering-metrics).
 
-**Note**: This works only for the deprecated pipeline where Prometheus is used to collect the metrics.
-If you are using OpenTelemetry Collector, use other methods to filter out metrics.
+**Note**: This works only for the deprecated pipeline where Prometheus is used to collect the metrics. If you are using OpenTelemetry
+Collector, use other methods to filter out metrics.
 
 #### Filtering Prometheus Metrics by Namespace
 
@@ -300,13 +299,13 @@ sumologic:
     enableDefaultFilters: true
 ```
 
-Full list of metrics affected is available [here](/deploy/helm/sumologic/conf/metrics/otelcol/default-filters.yaml). The metrics
-listed in the comments are the metrics that will **not** be dropped.
+Full list of metrics affected is available [here](/deploy/helm/sumologic/conf/metrics/otelcol/default-filters.yaml). The metrics listed in
+the comments are the metrics that will **not** be dropped.
 
 ### Custom filtering
 
-As [mentioned before](#opentelemetry-collector-processors), you can add custom filtering using
-OpenTelemetry Collector's processors. Below are few common examples.
+As [mentioned before](#opentelemetry-collector-processors), you can add custom filtering using OpenTelemetry Collector's processors. Below
+are few common examples.
 
 #### Drop unnecessary metrics
 
