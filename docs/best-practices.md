@@ -40,6 +40,7 @@
   - [Excluding logs from specific sources](#excluding-logs-from-specific-sources)
     - [Custom filtering](#custom-filtering)
   - [Filter out app metrics](#filter-out-app-metrics)
+- [Telemetry and metadata filtering](#telemetry-and-metadata-filtering)
 
 ## Overriding chart resource names with `fullnameOverride`
 
@@ -1067,3 +1068,7 @@ sumologic:
 
 Full list of metrics affected dropped is available [here](/deploy/helm/sumologic/conf/metrics/otelcol/default-filters.yaml). The metrics
 listed in the comments are the metrics that will not be dropped.
+
+## Telemetry and metadata filtering
+
+You can drop logs/metrics you do not need, as well as metadata related to them. A detailed guide how to do it is [here](/docs/filtering.md).
