@@ -11,6 +11,8 @@ In this guide you will learn how to do this for logs, metrics and their metadata
   - [Truncating too long attributes](#truncating-too-long-attributes)
   - [Replacing long substring in attributes](#replacing-long-substrings-in-attributes)
 - [Logs](#logs)
+  - [Excluding logs from specific sources](#excluding-logs-from-specific-sources)
+  - [Custom filtering](#custom-filtering)
 - [Metrics](#metrics)
 
 ## OpenTelemetry Collector processors
@@ -168,9 +170,79 @@ transform/truncate:
 
 ## Logs
 
-<!-- todo: existing ways to filter -->
+### Excluding logs from specific sources
 
-<!-- todo: custom filtering -->
+You can specify regular expressions to exclude collecting logs from specific sources. The logs will be scraped and sent to the metadata
+layer, but not forwarded to Sumo Logic.
+
+To specify the expressions, use the following configuration:
+
+```yaml
+sumologic:
+  logs:
+    ## Exclude container logs
+    container:
+      excludeContainerRegex: "some-log-container-*"
+      excludeHostRegex: "some-log-host-*"
+      excludeNamespaceRegex: "some-log-namespace-*"
+      excludePodRegex: "some-log-pod-*"
+    ## Exclude systemd logs
+    systemd:
+      excludeFacilityRegex: "some-log-facility-*"
+      excludeHostRegex: "some-log-host-*"
+      excludePriorityRegex: "some-log-priority-*"
+      excludeUnitRegex: "some-log-unit-*"
+    ## Exclude kubelet logs
+    kubelet:
+      excludeFacilityRegex: "some-log-facility-*"
+      excludeHostRegex: "some-log-host-*"
+      excludePriorityRegex: "some-log-priority-*"
+      excludeUnitRegex: "some-log-unit-*"
+```
+
+### Custom filtering
+
+As [mentioned before](#opentelemetry-collector-processors), you can add custom filtering using
+OpenTelemetry Collector's processors. Below are few common examples. Here we present only configs
+for container logs, but it works the same way for systemd and kubelet logs.
+
+#### Shorten log body
+
+Similarly to [too long attributes](#truncating-too-long-attributes), you can use [transform processor](#transform-processor)
+to shorten log body by either truncating it or replacing too long substrings:
+
+```yaml
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+          - transform/shorten_body:
+                log_statements:
+                  - context: log
+                    statements:
+                      ## Replace long substring
+                      - replace_pattern(body.string, "very_long_key:[0-9A-Za-z]+ENDKEY", "very_long_key:<key>")
+                      ## Truncate the body
+                      - set(body.string, Substring(body.string, 0, 65535)) where Len(body.string) > 65535]
+```
+
+#### Drop unnecessary logs
+
+You can use the [filter processor](#filter-processor) to drop logs you don't want to be sent to Sumo Logic:
+
+```yaml
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+          - filter/postgres_logs:
+              logs:
+                log_record:
+                  ## Drop logs that come from database with name "postgres"
+                  - resource.attributes["db.name"] == "postgres"
+```
 
 ## Metrics
 
