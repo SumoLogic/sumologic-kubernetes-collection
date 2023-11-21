@@ -203,10 +203,6 @@ receivers:
               target_label: instance
               action: replace
 {{- end }}
-    target_allocator:
-      endpoint: http://{{ template "sumologic.metadata.name.metrics.targetallocator.name" . }}
-      interval: 30s
-      collector_id: ${POD_NAME}
 
 service:
   telemetry:
