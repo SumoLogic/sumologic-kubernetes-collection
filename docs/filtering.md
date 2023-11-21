@@ -16,6 +16,8 @@ In this guide you will learn how to do this for logs, metrics and their metadata
     - [Shorten log body](#shorten-log-body)
     - [Drop unnecessary logs](#drop-unnecessary-logs)
 - [Metrics](#metrics)
+  - [Prometheus](#prometheus)
+    - [Filtering Prometheus metrics by namespace](#filtering-prometheus-metrics-by-namespace)
   - [Filter out app metrics](#filter-out-app-metrics)
   - [Custom filtering](#custom-filtering-1)
     - [Drop unnecessary metrics](#drop-unnecessary-metrics)
@@ -257,6 +259,35 @@ You can filter out metrics directly in Prometheus using [this documentation](/do
 
 **Note**: This works only for the deprecated pipeline where Prometheus is used to collect the metrics.
 If you are using OpenTelemetry Collector, use other methods to filter out metrics.
+
+#### Filtering Prometheus Metrics by Namespace
+
+If you want to filter metrics by namespace, it can be done in the prometheus remote write config. Here is an example of excluding kube-state
+metrics for namespace1 and namespace2:
+
+```yaml
+- action: drop
+  regex: kube-state-metrics;(namespace1|namespace2)
+  sourceLabels: [job, namespace]
+```
+
+The section above should be added in each of the kube-state remote write blocks.
+
+Here is another example of excluding up metrics in the sumologic namespace while still collecting up metrics for all other namespaces:
+
+```yaml
+# up metrics
+- url: http://collection-sumologic.sumologic.svc.cluster.local.:9888/prometheus.metrics
+  writeRelabelConfigs:
+    - action: keep
+      regex: up
+      sourceLabels: [__name__]
+    - action: drop
+      regex: up;sumologic
+      sourceLabels: [__name__, namespace]
+```
+
+The section above should be added in each of the kube-state remote write blocks.
 
 ### Filter out app metrics
 
