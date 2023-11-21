@@ -72,29 +72,29 @@ sumologic:
   logs:
     systemd:
       ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
       excludeFacilityRegex: ""
       ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
       excludeHostRegex: ""
       ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
       excludePriorityRegex: ""
       ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
       excludeUnitRegex: ""
     kubelet:
       ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
       excludeFacilityRegex: ""
       ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
       excludeHostRegex: ""
       ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
       excludePriorityRegex: ""
       ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (FluentD/otelcol).
+      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
       excludeUnitRegex: ""
 ```
 

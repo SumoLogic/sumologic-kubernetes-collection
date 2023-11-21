@@ -65,9 +65,6 @@ spec:
               cpu: 100m
               memory: 777Mi
           ports:
-            - name: fluent-bit
-              containerPort: 24321
-              protocol: TCP
             - name: metrics
               containerPort: 8888
               protocol: TCP

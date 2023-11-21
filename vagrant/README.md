@@ -135,7 +135,6 @@ Prepare sumologic configuration (in `vagrant/values.local.yaml`):
 - [Adjust kube-prometheus-stack configuration](#adjust-kube-prometheus-stack-configuration)
 - [Adjust receiver-mock configuration](#adjust-receiver-mock-configuration)
 - [Adjust setup job configuration](#adjust-setup-job-configuration)
-- [Adjust fluent-bit configuration](#adjust-fluent-bit-configuration)
 
 And then upgrade the collection with the following command:
 
