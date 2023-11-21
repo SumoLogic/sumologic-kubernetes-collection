@@ -7,6 +7,9 @@ In this guide you will learn how to do this for logs, metrics and their metadata
   - [Filter processor](#filter-processor)
   - [Transform processor](#transform-processor)
 - [Metadata](#metadata)
+  - [Removing unnecessary metadata](#removing-unnecessary-metadata)
+  - [Truncating too long attributes](#truncating-too-long-attributes)
+  - [Replacing long substring in attributes](#replacing-long-substrings-in-attributes)
 - [Logs](#logs)
 - [Metrics](#metrics)
 
@@ -111,7 +114,57 @@ This section is common for both logs and metrics.
 
 ### Removing unnecessary metadata
 
-<!-- todo: transform processors and others -->
+To remove metadata you do not want to be sent to Sumo Logic, use [transform processor](#transform-processor)
+with function `delete_key` or `delete_matching_keys`:
+
+```yaml
+transform/delete_db_endpoint:
+  metric_statements:
+    ## Delete one resource attribute.
+    - context: resource
+      statements:
+        - delete_key("db.endpoint", attributes)
+    ## Delete one metric-level attribute.
+    - context: metric
+      statements:
+        - delete_matching_keys(attributes, "(?i).*password.*")
+```
+
+### Truncating too long attributes
+
+If you know that one of the attributes can be very long, you can truncate it using [transform processor](#transform-processor)
+with function `set` or `truncate_all`:
+
+```yaml
+transform/truncate:
+  metric_statements:
+    ## Truncate one resource attribute.
+    - context: resource
+      statements:
+        - set(attributes["public_key"], Substring(attributes["public_key"], 0, 255)) where Len(attributes["public_key"]) > 255
+    ## Truncate all metric-level attributes.
+   - context: metric
+     statements:
+        - truncate_all(attributes, 255)
+```
+
+### Replacing long substrings in attributes
+
+Long substrings can be replaced using [transform processor](#transform-processor) with functions
+such as `replace_all_matches`, `replace_all_patterns`, `replace_match`, `replace_pattern`:
+
+```yaml
+transform/truncate:
+  metric_statements:
+    ## Replace regexp pattern in one resource attribute.
+    - context: resource
+      statements:
+        - replace_pattern(attributes["user.password"], "password\\=[^\\s]*(\\s?)", "password=***")
+    ## Replace match (https://pkg.go.dev/path/filepath#Match) in all metric-level attributes.
+   - context: metric
+      statements:
+        - replace_all_matches(attributes, "/user/*/list/*", "/user/{userId}/list/{listId}")
+```
 
 ## Logs
 
