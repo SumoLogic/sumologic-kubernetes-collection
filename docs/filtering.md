@@ -13,7 +13,12 @@ In this guide you will learn how to do this for logs, metrics and their metadata
 - [Logs](#logs)
   - [Excluding logs from specific sources](#excluding-logs-from-specific-sources)
   - [Custom filtering](#custom-filtering)
+    - [Shorten log body](#shorten-log-body)
+    - [Drop unnecessary logs](#drop-unnecessary-logs)
 - [Metrics](#metrics)
+  - [Filter out app metrics](#filter-out-app-metrics)
+  - [Custom filtering](#custom-filtering-1)
+    - [Drop unnecessary metrics](#drop-unnecessary-metrics)
 
 ## OpenTelemetry Collector processors
 
@@ -224,7 +229,7 @@ sumologic:
                       ## Replace long substring
                       - replace_pattern(body.string, "very_long_key:[0-9A-Za-z]+ENDKEY", "very_long_key:<key>")
                       ## Truncate the body
-                      - set(body.string, Substring(body.string, 0, 65535)) where Len(body.string) > 65535]
+                      - set(body.string, Substring(body.string, 0, 65535)) where Len(body.string) > 65535
 ```
 
 #### Drop unnecessary logs
@@ -241,11 +246,49 @@ sumologic:
               logs:
                 log_record:
                   ## Drop logs that come from database with name "postgres"
-                  - resource.attributes["db.name"] == "postgres"
+                  - `resource.attributes["db.name"] == "postgres"`
 ```
 
 ## Metrics
 
-<!-- todo: existing ways to filter -->
+### Prometheus
 
-<!-- todo: custom filtering -->
+You can filter out metrics directly in Prometheus using [this documentation](/docs/collecting-application-metrics.md#filtering-metrics).
+
+**Note**: This works only for the deprecated pipeline where Prometheus is used to collect the metrics.
+If you are using OpenTelemetry Collector, use other methods to filter out metrics.
+
+### Filter out app metrics
+
+We have defined some default filters to drop app metrics that are not relevant for Sumo Logic dashboards. To enable these filters, add the
+following config option to `user_values.yaml`:
+
+```yaml
+sumologic:
+  metrics:
+    enableDefaultFilters: true
+```
+
+Full list of metrics affected is available [here](/deploy/helm/sumologic/conf/metrics/otelcol/default-filters.yaml). The metrics
+listed in the comments are the metrics that will **not** be dropped.
+
+### Custom filtering
+
+As [mentioned before](#opentelemetry-collector-processors), you can add custom filtering using
+OpenTelemetry Collector's processors. Below are few common examples.
+
+#### Drop unnecessary metrics
+
+You can use the [filter processor](#filter-processor) to drop logs you don't want to be sent to Sumo Logic:
+
+```yaml
+sumologic:
+  metrics:
+    otelcol:
+      extraProcessors:
+        - filter/exclude_sumo_metrics:
+            metrics:
+              metric:
+                ## Exclude all metrics from "sumologic" namespace
+                - `resource.attributes["k8s.namespace.name"] == "sumologic"`
+```
