@@ -96,9 +96,6 @@ spec:
           {{- toYaml .Values.metadata.logs.statefulset.containers.otelcol.securityContext | nindent 10 }}
         {{- end }}
         ports:
-        - name: fluent-bit
-          containerPort: 24321
-          protocol: TCP
         - name: metrics
           containerPort: 8888
           protocol: TCP

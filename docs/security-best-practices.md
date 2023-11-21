@@ -416,10 +416,6 @@ otelgateway:
       tag: 0.88.0-sumo-0-fips
 ```
 
-### FIPS compliant images for Fluent Bit and Fluentd
-
-This Helm Chart does not provide FIPS compliant binaries for **Fluent Bit** nor **Fluentd**.
-
 ### Troubleshooting
 
 #### OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy

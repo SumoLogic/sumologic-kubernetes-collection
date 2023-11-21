@@ -7,8 +7,6 @@ sumologic.httpProxy
 sumologic.httpsProxy
 ```
 
-If you're using Fluentd as the metadata provider, you should also set `fluentd.proxyUri`.
-
 You should set these properties to the URL for your proxy environment.
 
 ## TLS interception via a transparent proxy

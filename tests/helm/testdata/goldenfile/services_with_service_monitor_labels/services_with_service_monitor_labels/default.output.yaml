@@ -176,10 +176,6 @@ spec:
       port: 4318
       targetPort: 4318
       protocol: TCP
-    - name: fluent-bit
-      port: 24321
-      targetPort: 24321
-      protocol: TCP
     - name: otelcol-metrics
       port: 8888
       targetPort: 8888
