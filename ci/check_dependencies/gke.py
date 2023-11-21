@@ -83,8 +83,8 @@ def get_supported_releases(html_calendar):
     supported_releases = []
     for index, row in pd_data.iterrows():
         end_of_life_date = parse_gke_dates(row["End of life"])
-        regular_release_date = parse_gke_dates(row["Regular available"])
-        if regular_release_date < today and today < end_of_life_date:
+        available_date = parse_gke_dates(row["Rapid available"])
+        if available_date < today and today < end_of_life_date:
             supported_releases.append(row["Kubernetes version"])
     return supported_releases
 
