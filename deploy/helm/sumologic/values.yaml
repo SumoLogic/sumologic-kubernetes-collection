@@ -1369,7 +1369,7 @@ fluent-bit:
   #   - name: "image-pull-secret"
   image:
     repository: public.ecr.aws/sumologic/fluent-bit
-    tag: 2.1.6
+    tag: 2.2.0
     pullPolicy: IfNotPresent
 
   ## Resource limits for Fluent Bit
@@ -4650,8 +4650,6 @@ opentelemetry-operator:
     certManager:
       enabled: false
       issuerRef: {}
-
-    autoGenerateCert: true
 
   manager:
     collectorImage:
