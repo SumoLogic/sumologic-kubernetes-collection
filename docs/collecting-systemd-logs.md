@@ -65,66 +65,7 @@ resource attribute.
 
 ### Filtering
 
-Logs can be excluded based on their facility, host, priority and unit. This is done by providing a matching regular expression:
-
-```yaml
-sumologic:
-  logs:
-    systemd:
-      ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
-      excludeFacilityRegex: ""
-      ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
-      excludeHostRegex: ""
-      ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
-      excludePriorityRegex: ""
-      ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
-      excludeUnitRegex: ""
-    kubelet:
-      ## A regular expression for facility.
-      ## Matching facility will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
-      excludeFacilityRegex: ""
-      ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
-      excludeHostRegex: ""
-      ## A regular expression for priority.
-      ## Matching priority will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
-      excludePriorityRegex: ""
-      ## A regular expression for unit.
-      ## Matching unit will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol-logs).
-      excludeUnitRegex: ""
-```
-
-For more advanced scenarios, use [OpenTelemetry processors][opentelemetry_processors]. Add them to
-`sumologic.logs.systemd.otelcol.extraProcessors` or `sumologic.logs.kubelet.otelcol.extraProcessors`.
-
-Here are some examples:
-
-```yaml
-sumologic:
-  logs:
-    systemd:
-      otelcol:
-        extraProcessors:
-          - filter/include-message-with-password-systemd:
-              error_mode: ignore
-              logs:
-                log_record:
-                  - 'IsMatch(body.MESSAGE, ".*password.*")'
-    kubelet:
-      otelcol:
-        extraProcessors:
-          - filter/include-message-with-password-kubelet:
-              error_mode: ignore
-              logs:
-                log_record:
-                  - 'IsMatch(body.MESSAGE, ".*password.*")'
-```
-
-For more examples and detailed documentation, see [Filter processor docs][filter_processor_docs].
+Please see [the doc about filtering data](/docs/filtering.md).
 
 ### Modifying log records
 
