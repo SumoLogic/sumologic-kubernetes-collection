@@ -491,7 +491,6 @@ OTLP source resolves some issues of `text` format, which affects HTTP source:
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/configuration.md
 [values]: /deploy/helm/sumologic/values.yaml
 [source_name]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions/#Source_Name
-[filter_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/filterprocessor/README.md
 [opentelemetry_processors]: https://opentelemetry.io/docs/collector/configuration/#processors
 [attributes_processor_docs]:
   https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/attributesprocessor/README.md

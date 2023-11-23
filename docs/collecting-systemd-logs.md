@@ -203,7 +203,6 @@ It also disables kubelet logs, as they are subset of systemd logs.
 
 [values]: /deploy/helm/sumologic/values.yaml
 [source_name]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions/#Source_Name
-[filter_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/filterprocessor/README.md
 [opentelemetry_processors]: https://opentelemetry.io/docs/collector/configuration/#processors
 [attributes_processor_docs]:
   https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/attributesprocessor/README.md
