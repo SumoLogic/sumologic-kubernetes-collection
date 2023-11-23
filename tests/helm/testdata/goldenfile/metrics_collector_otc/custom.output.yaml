@@ -39,6 +39,15 @@ spec:
       - effect: NoSchedule
         key: null
         operator: Exists
+    affinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                  - sumo-east1
+                  - sumo-west1
   nodeSelector:
     workingGroup: production
   tolerations:
