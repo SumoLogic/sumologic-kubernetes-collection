@@ -58,6 +58,10 @@ spec:
     tolerations:
 {{ toYaml .Values.sumologic.metrics.collector.otelcol.tolerations | indent 6 }}
 {{- end }}
+{{- if .Values.sumologic.metrics.collector.otelcol.affinity }}
+    affinity:
+{{ toYaml .Values.sumologic.metrics.collector.otelcol.affinity | indent 6 }}
+{{- end }}
 {{- if .Values.sumologic.metrics.collector.otelcol.nodeSelector }}
   nodeSelector:
 {{ toYaml .Values.sumologic.metrics.collector.otelcol.nodeSelector | indent 4 }}
