@@ -33,6 +33,12 @@ spec:
         smkey: smvalue
       podMonitorSelector:
         pmkey: pmvalue
+    nodeSelector:
+      workingGroup: production
+    tolerations:
+      - effect: NoSchedule
+        key: null
+        operator: Exists
   nodeSelector:
     workingGroup: production
   tolerations:
