@@ -390,30 +390,30 @@ For Helm Chart v2 please
 
 When you use **OpenTelemetry Collector** you need set the fips compliant images.
 
-For example, to use `0.88.0-sumo-0-fips` image with Helm Chart v2 use the following configuration:
+For example, to use `0.89.0-sumo-2-fips` image with Helm Chart v2 use the following configuration:
 
 ```yaml
 metadata:
   image:
-    tag: 0.88.0-sumo-0-fips
+    tag: 0.89.0-sumo-2-fips
 otellogs:
   image:
-    tag: 0.88.0-sumo-0-fips
+    tag: 0.89.0-sumo-2-fips
 otelevents:
   image:
-    tag: 0.88.0-sumo-0-fips
+    tag: 0.89.0-sumo-2-fips
 otelcol:
   deployment:
     image:
-      tag: 0.88.0-sumo-0-fips
+      tag: 0.89.0-sumo-2-fips
 otelagent:
   daemonset:
     image:
-      tag: 0.88.0-sumo-0-fips
+      tag: 0.89.0-sumo-2-fips
 otelgateway:
   deployment:
     image:
-      tag: 0.88.0-sumo-0-fips
+      tag: 0.89.0-sumo-2-fips
 ```
 
 ### Troubleshooting
