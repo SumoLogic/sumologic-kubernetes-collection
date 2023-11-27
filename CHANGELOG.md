@@ -7,6 +7,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.2.0]
+
+### Released 2023-11-27
+
+### Breaking Changes
+
+- chore!: upgrade otel to 0.89.0-sumo-2 [#3368] [#3414]
+
+  Otelcol enqueue failure metrics are now only reported if they're non-zero. If you have monitors set based on the assumption that they're
+  always present, you'll need to update them. Monitors installed by this Chart are unaffected.
+
+### Added
+
+- feat(metrics): add setting affinity for metrics collector [#3400]
+
+### Changed
+
+- chore: add support for:
+  - EKS 1.28 [#3387]
+  - EKS Fargate 1.28 [#3387]
+  - OpenShift 4.14 [#3387]
+  - kops 1.28 [#3387]
+  - AKS 1.28 [#3387]
+  - GKE v1.28 [#3403]
+- chore: drop support for:
+  - EKS 1.23 [#3387]
+  - kops 1.23 [#3387]
+  - OpenShift 4.10 [#3387]
+- deps: update tailing-sidecar to 0.9.0 [#3391]
+- deps: update metrics-server to `6.6.3` [#3392], [#3405], [#3416]
+- deps: update falco to `v3.8.5` [#3393], [#3415]
+- deps: update opentelemetry-operator to `v0.43.0` [#3394], [#3404], [#3418]
+- deps: upgrade otel to 0.89.0-sumo-2 [#3414]
+- deps: update telegraf operator to `v1.3.12` [#3417]
+
+### Fixed
+
+- fix(metrics): set nodeSelector and tolerations for target allocator [#3411]
+- fix(metrics): set affinity for target allocator [#3412]
+
+[#3368]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3368
+[#3400]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3400
+[#3403]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3403
+[#3387]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3387
+[#3391]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3391
+[#3392]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3392
+[#3405]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3405
+[#3416]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3416
+[#3393]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3393
+[#3415]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3415
+[#3394]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3394
+[#3404]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3404
+[#3418]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3418
+[#3414]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3414
+[#3417]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3417
+[#3411]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3411
+[#3412]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3412
+[v4.2.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.2.0
+
 ## [v4.1.0]
 
 ### Released 2023-11-03

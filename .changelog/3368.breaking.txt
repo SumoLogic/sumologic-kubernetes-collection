@@ -1,5 +1,0 @@
-chore!: upgrade otel to 0.88.0-sumo-0
-
-Otelcol enqueue failure metrics are now only reported if they're non-zero.
-If you have monitors set based on the assumption that they're always present,
-you'll need to update them. Monitors installed by this Chart are unaffected.
