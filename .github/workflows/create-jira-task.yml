@@ -1,0 +1,26 @@
+name: Create Jira task
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  create-jira-issue:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Create Jira task
+        id: create-jira-task
+        uses: tomhjp/gh-action-jira-create@v0.2.1
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+        with:
+          project: OSC
+          issuetype: "Task"
+          summary: "[sumologic-kubernetes-collection] ${{ github.event.issue.title }} #${{ github.event.issue.number }}"
+          description: "${{ github.event.issue.body }}\n\nSee: ${{github.event.issue.html_url}}"
+          extraFields:
+            '{"labels": ["github_issue", "opensource_gardener"], "priority": {"name": "High"}, "assignee": {"id": "${{ secrets.JIRA_USER_ID
+            }}"}}'
