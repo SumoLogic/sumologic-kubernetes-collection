@@ -1,41 +1,140 @@
 # Troubleshooting Collection
 
-<!-- TOC -->
+<details><summary>Table of Contents</summary>
 
-- [Troubleshooting Collection](#troubleshooting-collection)
-  - [Troubleshooting Installation](#troubleshooting-installation)
-  - [Namespace configuration](#namespace-configuration)
-  - [Collecting logs](#collecting-logs)
-    - [Check log throttling](#check-log-throttling)
-    - [Check ingest budget limits](#check-ingest-budget-limits)
-    - [Check if collection pods are in a healthy state](#check-if-collection-pods-are-in-a-healthy-state)
-    - [Prometheus Logs](#prometheus-logs)
-    - [OpenTelemetry Logs Collector is being CPU throttled](#opentelemetry-logs-collector-is-being-cpu-throttled)
-  - [Collecting metrics](#collecting-metrics)
-    - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
-      - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
-    - [Check the Prometheus UI](#check-the-prometheus-ui)
-    - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
-  - [Common Issues](#common-issues)
-    - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
-    - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
-    - [Missing `kubelet` metrics](#missing-kubelet-metrics)
-      - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
-      - [2. Disable the `kubelet.serviceMonitor.https` flag in Kube Prometheus Stack](#2-disable-the-kubeletservicemonitorhttps-flag-in-kube-prometheus-stack)
-    - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
-    - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
-    - [Rancher](#rancher)
-    - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
-    - [Falco and OpenShift](#falco-and-openshift)
-    - [Out of memory (OOM) failures for Prometheus Pod](#out-of-memory-oom-failures-for-prometheus-pod)
-    - [Prometheus: server returned HTTP status 404 Not Found: 404 page not found](#prometheus-server-returned-http-status-404-not-found-404-page-not-found)
-    - [OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy](#opentelemetry-dial-tcp-lookup-collection-sumologic-metadata-logssumologicsvcclusterlocal-device-or-resource-busy)
+- [Troubleshooting Installation](#troubleshooting-installation)
+  - [Installation fails with error `function "dig" not defined`](#installation-fails-with-error-function-dig-not-defined)
+  - [Sumo Logic fields](#sumo-logic-fields)
+  - [Error: timed out waiting for the condition](#error-timed-out-waiting-for-the-condition)
+    - [Error: collector with name 'sumologic' does not exist](#error-collector-with-name-sumologic-does-not-exist)
+    - [Secret 'sumologic::sumologic' exists, abort](#secret-sumologicsumologic-exists-abort)
+  - [OpenTelemetry Collector Pods Stuck in CreateContainerConfigError](#opentelemetry-collector-pods-stuck-in-createcontainerconfigerror)
+- [Namespace configuration](#namespace-configuration)
+- [Collecting logs](#collecting-logs)
+  - [Check log throttling](#check-log-throttling)
+  - [Check ingest budget limits](#check-ingest-budget-limits)
+  - [Check if collection pods are in a healthy state](#check-if-collection-pods-are-in-a-healthy-state)
+  - [Prometheus Logs](#prometheus-logs)
+  - [OpenTelemetry Logs Collector is being CPU throttled](#opentelemetry-logs-collector-is-being-cpu-throttled)
+- [Collecting metrics](#collecting-metrics)
+  - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
+    - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
+  - [Check the Prometheus UI](#check-the-prometheus-ui)
+  - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+- [Common Issues](#common-issues)
+  - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
+  - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
+  - [Missing `kubelet` metrics](#missing-kubelet-metrics)
+    - [1. Enable the `authenticationTokenWebhook` flag in the cluster](#1-enable-the-authenticationtokenwebhook-flag-in-the-cluster)
+    - [2. Disable the `kubelet.serviceMonitor.https` flag in Kube Prometheus Stack](#2-disable-the-kubeletservicemonitorhttps-flag-in-kube-prometheus-stack)
+  - [Missing `kube-controller-manager` or `kube-scheduler` metrics](#missing-kube-controller-manager-or-kube-scheduler-metrics)
+  - [Prometheus stuck in `Terminating` state after running `helm del collection`](#prometheus-stuck-in-terminating-state-after-running-helm-del-collection)
+  - [Rancher](#rancher)
+  - [Falco and Google Kubernetes Engine (GKE)](#falco-and-google-kubernetes-engine-gke)
+  - [Falco and OpenShift](#falco-and-openshift)
+  - [Out of memory (OOM) failures for Prometheus Pod](#out-of-memory-oom-failures-for-prometheus-pod)
+  - [Prometheus: server returned HTTP status 404 Not Found: 404 page not found](#prometheus-server-returned-http-status-404-not-found-404-page-not-found)
+  - [OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy](#opentelemetry-dial-tcp-lookup-collection-sumologic-metadata-logssumologicsvcclusterlocal-device-or-resource-busy)
 
-<!-- /TOC -->
+</details>
 
 ## Troubleshooting Installation
 
-Please refer to [the Troubleshooting Installation section in Installation document](/docs/installation.md#troubleshooting-installation)
+### Installation fails with error `function "dig" not defined`
+
+You need to use a more recent version of Helm. See [Minimum Requirements](/docs/README.md#minimum-requirements).
+
+If you are using ArgoCD or another tool that uses Helm under the hood, make sure that tool uses the required version of Helm.
+
+### Sumo Logic fields
+
+Sumo Logic Apps for Kubernetes and Explore require below listed fields to be added in Sumo Logic UI to your Fields table schema.
+
+- `cluster`
+- `container`
+- `daemonset`
+- `deployment`
+- `host`
+- `namespace`
+- `node`
+- `pod`
+- `service`
+- `statefulset`
+
+This is normally done in the setup job when `sumologic.setupEnabled` is set to `true` (default behavior).
+
+In an unlikely scenario that this fails please create them manually by visiting
+[Fields#Manage_fields](https://help.sumologic.com/docs/manage/fields/#manage-fields) in Sumo Logic UI.
+
+This is to ensure your logs are tagged with relevant metadata.
+
+This is a one time setup per Sumo Logic account.
+
+### Error: timed out waiting for the condition
+
+If `helm upgrade --install` hangs, it usually means the pre-install setup job is failing and is in a retry loop. Due to a Helm limitation,
+errors from the setup job cannot be fed back to the `helm upgrade --install` command. Kubernetes schedules the job in a pod, so you can look
+at logs from the pod to see why the job is failing. First find the pod name in the namespace where the Helm chart was deployed. The pod name
+will contain `-setup` in the name.
+
+```sh
+kubectl get pods
+```
+
+> **Tip**: If the pod does not exist, it is possible it has been evicted. Re-run the `helm upgrade --install` to recreate it and while that
+> command is running, use another shell to get the name of the pod.
+
+Get the logs from that pod:
+
+```
+kubectl logs POD_NAME -f
+```
+
+#### Error: collector with name 'sumologic' does not exist
+
+If you get
+
+```
+Error: collector with name 'sumologic' does not exist
+sumologic_http_source.default_metrics_source: Importing from ID
+```
+
+you can safely ignore it and the installation should complete successfully. The installation process creates new
+[HTTP endpoints](https://help.sumologic.com/docs/send-data/hosted-collectors/http-source) in your Sumo Logic account, that are used to send
+data to Sumo. This error occurs if the endpoints had already been created by an earlier run of the installation process.
+
+You can find more information in our [troubleshooting documentation](troubleshoot-collection.md).
+
+#### Secret 'sumologic::sumologic' exists, abort
+
+If you see `Secret 'sumologic::sumologic' exists, abort.` from the logs, delete the existing secret:
+
+```bash
+kubectl delete secret sumologic -n ${NAMESPACE}
+```
+
+`helm install` should proceed after the existing secret is deleted before exhausting retries. If it did time out after exhausting retries,
+rerun the `helm install` command.
+
+### OpenTelemetry Collector Pods Stuck in CreateContainerConfigError
+
+If the OpenTelemetry Collector Pods are in `CreateContainerConfigError` it can mean the setup job has not been completed yet. Make sure that
+the `sumologic.setupEnable` parameter is set to `true`. Then wait for the setup pod to complete and the issue should resolve itself. The
+setup job creates a secret and the error simply means the secret is not there yet. This usually resolves itself automatically.
+
+If the issue does not solve resolve automatically, you will need to look at the logs for the setup pod. Kubernetes schedules the job in a
+pod, so you can look at logs from the pod to see why the job is failing. First find the pod name in the namespace where you installed the
+rendered YAML. The pod name will contain `-setup` in the name.
+
+```sh
+kubectl get pods
+```
+
+Get the logs from that pod:
+
+```
+kubectl logs POD_NAME -f
+```
 
 ## Namespace configuration
 
