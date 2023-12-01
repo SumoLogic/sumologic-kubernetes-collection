@@ -5,7 +5,11 @@ metrics and their metadata.
 
 - [OpenTelemetry Collector processors](#opentelemetry-collector-processors)
   - [Filter processor](#filter-processor)
+    - [Drop logs on debug level](#drop-logs-on-debug-level)
+    - [Drop metric datapoints with unspecified type](#drop-metric-datapoints-with-unspecified-type)
   - [Transform processor](#transform-processor)
+    - [Truncate too long attributes](#truncate-too-long-attributes)
+    - [Limit to `32` the number of fields sent to Sumo Logic](#limit-to-32-the-number-of-fields-sent-to-sumo-logic)
 - [Metadata](#metadata)
   - [Removing unnecessary metadata](#removing-unnecessary-metadata)
   - [Truncating too long attributes](#truncating-too-long-attributes)
@@ -15,22 +19,29 @@ metrics and their metadata.
   - [Custom filtering](#custom-filtering)
     - [Shorten log body](#shorten-log-body)
     - [Drop unnecessary logs](#drop-unnecessary-logs)
+    - [Drop logs on debug level](#drop-logs-on-debug-level-1)
 - [Metrics](#metrics)
-  - [Prometheus](#prometheus)
-    - [Filtering Prometheus metrics by namespace](#filtering-prometheus-metrics-by-namespace)
   - [Filter out app metrics](#filter-out-app-metrics)
   - [Custom filtering](#custom-filtering-1)
     - [Drop unnecessary metrics](#drop-unnecessary-metrics)
+    - [Drop metric datapoints with unspecified type](#drop-metric-datapoints-with-unspecified-type-1)
+  - [Prometheus](#prometheus)
+    - [Filtering Prometheus metrics by namespace](#filtering-prometheus-metrics-by-namespace)
 
 ## OpenTelemetry Collector processors
 
-Basic way to perform any custom filtering is adding additional processors to the pipeline in the metadata layer.
+This Helm Chart uses the OpenTelemetry Collector for data collection and processing. Filtering is accomplished via appropriate Otel
+processors such as [Filter processor](#filter-processor) and [Transform processor](#transform-processor).
 
 For logs, you can specify a list of config under the following keys:
 
 - `sumologic.logs.container.otelcol.extraProcessors` for container logs
 - `sumologic.logs.systemd.otelcol.extraProcessors` for systemd logs
 - `sumologic.logs.kubelet.otelcol.extraProcessors` for kubelet logs
+
+For metrics, there is a single key:
+
+- `sumologic.metrics.otelcol.extraProcessors`
 
 For example, with this config you can specify two `filter` processors to filter out container logs:
 
@@ -46,7 +57,7 @@ sumologic:
               ## <filter processor config>
 ```
 
-For metrics, there is a single key `sumologic.metrics.otelcol.extraProcessors`:
+And analogously for metrics:
 
 ```yaml
 sumologic:
@@ -65,7 +76,7 @@ Filter processor is used to drop telemetry that fulfils specified conditions. De
 [processors documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.89.0/processor/filterprocessor). Here
 we present some example configs.
 
-Drop logs on debug level:
+#### Drop logs on debug level
 
 ```yaml
 filter/drop_debug:
@@ -74,7 +85,7 @@ filter/drop_debug:
       - "severity_number >= SEVERITY_NUMBER_DEBUG and severity_number <= SEVERITY_NUMBER_DEBUG4"
 ```
 
-Drop metric datapoints with unspecified type:
+#### Drop metric datapoints with unspecified type
 
 ```yaml
 filter/drop_attr:
@@ -89,7 +100,7 @@ Transform processor is used to modify telemetry and metadata. Detailed informati
 [processors documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.89.0/processor/transformprocessor).
 Here we present some example configs.
 
-Truncate too long attributes:
+#### Truncate too long attributes
 
 ```yaml
 transform/truncate:
@@ -99,7 +110,7 @@ transform/truncate:
         - truncate_all(attributes, 4096)
 ```
 
-Limit to `32` the number of fields sent to Sumo Logic:
+#### Limit to `32` the number of fields sent to Sumo Logic
 
 ```yaml
 ## Note: in the Helm Chart we use separate otelcol instances for logs and metrics,
@@ -247,10 +258,71 @@ sumologic:
               logs:
                 log_record:
                   ## Drop logs that come from database with name "postgres"
-                  - `resource.attributes["db.name"] == "postgres"`
+                  - 'resource.attributes["db.name"] == "postgres"'
+```
+
+#### Drop logs on debug level
+
+```yaml
+sumologic:
+  logs:
+    container:
+      otelcol:
+        extraProcessors:
+          - filter/drop_debug:
+              logs:
+                log_record:
+                  ## Dropping based on severity number
+                  - "severity_number >= SEVERITY_NUMBER_DEBUG and severity_number <= SEVERITY_NUMBER_DEBUG4"
+                  ## Dropping based on log body
+                  - 'IsMatch(body, ".*DEBUG.*")'
 ```
 
 ## Metrics
+
+### Filter out app metrics
+
+We have defined some default filters to drop app metrics that are not relevant for Sumo Logic dashboards. To enable these filters, add the
+following config option to `user_values.yaml`:
+
+```yaml
+sumologic:
+  metrics:
+    enableDefaultFilters: true
+```
+
+Full list of metrics affected is available [here](/deploy/helm/sumologic/conf/metrics/otelcol/default-filters.yaml). The metrics listed in
+the comments are the metrics that will **not** be dropped.
+
+### Custom filtering
+
+As [mentioned before](#opentelemetry-collector-processors), you can add custom filtering using OpenTelemetry Collector's processors. Below
+are few common examples.
+
+#### Drop unnecessary metrics
+
+You can use the [filter processor](#filter-processor) to drop logs you don't want to be sent to Sumo Logic:
+
+```yaml
+sumologic:
+  metrics:
+    otelcol:
+      extraProcessors:
+        - filter/exclude_sumo_metrics:
+            metrics:
+              metric:
+                ## Exclude all metrics from "sumologic" namespace
+                - `resource.attributes["k8s.namespace.name"] == "sumologic"`
+```
+
+#### Drop metric datapoints with unspecified type
+
+```yaml
+filter/drop_attr:
+  metrics:
+    datapoint:
+      - "type == METRIC_DATA_TYPE_NONE"
+```
 
 ### Prometheus
 
@@ -287,38 +359,3 @@ Here is another example of excluding up metrics in the sumologic namespace while
 ```
 
 The section above should be added in each of the kube-state remote write blocks.
-
-### Filter out app metrics
-
-We have defined some default filters to drop app metrics that are not relevant for Sumo Logic dashboards. To enable these filters, add the
-following config option to `user_values.yaml`:
-
-```yaml
-sumologic:
-  metrics:
-    enableDefaultFilters: true
-```
-
-Full list of metrics affected is available [here](/deploy/helm/sumologic/conf/metrics/otelcol/default-filters.yaml). The metrics listed in
-the comments are the metrics that will **not** be dropped.
-
-### Custom filtering
-
-As [mentioned before](#opentelemetry-collector-processors), you can add custom filtering using OpenTelemetry Collector's processors. Below
-are few common examples.
-
-#### Drop unnecessary metrics
-
-You can use the [filter processor](#filter-processor) to drop logs you don't want to be sent to Sumo Logic:
-
-```yaml
-sumologic:
-  metrics:
-    otelcol:
-      extraProcessors:
-        - filter/exclude_sumo_metrics:
-            metrics:
-              metric:
-                ## Exclude all metrics from "sumologic" namespace
-                - `resource.attributes["k8s.namespace.name"] == "sumologic"`
-```
