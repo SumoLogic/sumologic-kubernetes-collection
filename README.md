@@ -9,7 +9,7 @@ following diagram provides an overview of the collection process.
 
 ## Installation
 
-Detailed instructions are available in our Installation Guides in documentation below.
+Detailed instructions are available in our [Installation Guides](/docs/installation.md).
 
 ## Documentation
 
