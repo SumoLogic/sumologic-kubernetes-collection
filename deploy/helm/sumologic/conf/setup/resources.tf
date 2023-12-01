@@ -1,5 +1,6 @@
 resource "sumologic_collector" "collector" {
     name  = var.collector_name
+    description = {{ printf "Sumo Logic Kubernetes Collection\nversion: %s" .Chart.Version | quote }}
     fields  = {
       {{- $fields := .Values.sumologic.collector.fields }}
       {{- range $name, $value := $fields }}
