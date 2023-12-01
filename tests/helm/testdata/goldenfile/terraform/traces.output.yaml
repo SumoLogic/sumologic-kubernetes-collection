@@ -453,6 +453,7 @@ data:
   resources.tf: |
     resource "sumologic_collector" "collector" {
         name  = var.collector_name
+        description = "Sumo Logic Kubernetes Collection\nversion: %CURRENT_CHART_VERSION%"
         fields  = {
         }
     }
