@@ -29,9 +29,9 @@ spec:
     spec:
       restartPolicy: OnFailure
       serviceAccountName: {{ template "sumologic.metadata.name.setup.roles.serviceaccount" . }}
-{{- if .Values.sumologic.setup.job.nodeSelector }}
+{{- if not (empty (include "setup.job.nodeSelector" .)) }}
       nodeSelector:
-{{ toYaml .Values.sumologic.setup.job.nodeSelector | indent 8 }}
+{{ include "setup.job.nodeSelector" . | indent 8 }}
 {{- end }}
 {{- if .Values.sumologic.setup.job.tolerations }}
       tolerations:
