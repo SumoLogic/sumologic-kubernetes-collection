@@ -93,6 +93,9 @@ sumologic:
   ## Add custom annotations to the following sumologic resources(otelcol sts, setup job, otelcol deployment)
   podAnnotations: {}
 
+  ## Global configuration of node selectors
+  nodeSelector: {}
+
   ## Add custom annotations to sumologic serviceAccounts
   serviceAccount:
     annotations: {}

@@ -4,7 +4,3 @@ sumologic:
   metrics:
     remoteWriteProxy:
       enabled: true
-      config:
-        clientBodyBufferSize: "32k"
-        port: 80
-        enableAccessLogs: true

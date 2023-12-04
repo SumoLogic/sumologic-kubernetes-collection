@@ -445,6 +445,19 @@ Example:
 {{- end -}}
 
 {{/*
+Returns default node selector for all objects.
+
+Example:
+
+{{ include "kubernetes.defaultNodeSelector" . }}
+*/}}
+{{- define "kubernetes.defaultNodeSelector" -}}
+{{- if .Values.sumologic.nodeSelector -}}
+{{- toYaml .Values.sumologic.nodeSelector -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Environment variables used to configure the HTTP proxy for programs using
 Go's net/http. See: https://pkg.go.dev/net/http#RoundTripper
 

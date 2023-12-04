@@ -59,6 +59,14 @@ Example Usage:
 {{ and (eq (include "metrics.enabled" .) "true") (eq .Values.sumologic.metrics.remoteWriteProxy.enabled true) }}
 {{- end -}}
 
+{{- define "metrics.remoteWriteProxy.nodeSelector" -}}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.nodeSelector -}}
+{{- toYaml .Values.sumologic.metrics.remoteWriteProxy.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic.labels.app.metrics" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-metrics
 {{- end -}}

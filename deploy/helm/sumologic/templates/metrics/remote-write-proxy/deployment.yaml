@@ -36,9 +36,9 @@ spec:
       imagePullSecrets:
 {{ toYaml .Values.sumologic.pullSecrets | indent 8 }}
 {{- end }}
-{{- if .Values.sumologic.metrics.remoteWriteProxy.nodeSelector }}
+{{- if not (empty (include "metrics.remoteWriteProxy.nodeSelector" .)) }}
       nodeSelector:
-{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.nodeSelector | indent 8 }}
+{{ include "metrics.remoteWriteProxy.nodeSelector" . | nindent 8 }}
 {{- end }}
 {{- if or .Values.sumologic.metrics.remoteWriteProxy.affinity }}
       affinity:
