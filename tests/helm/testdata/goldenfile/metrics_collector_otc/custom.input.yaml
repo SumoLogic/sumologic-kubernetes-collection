@@ -1,4 +1,6 @@
 sumologic:
+  nodeSelector:
+    workingGroup: testing
   metrics:
     collector:
       otelcol:

@@ -67,6 +67,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "metrics.collector.otelcol.nodeSelector" -}}
+{{- if .Values.sumologic.metrics.collector.otelcol.nodeSelector -}}
+{{- toYaml .Values.sumologic.metrics.collector.otelcol.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic.labels.app.metrics" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-metrics
 {{- end -}}
