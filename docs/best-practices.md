@@ -840,20 +840,22 @@ pod will end up on specific node according your requirements like operating syst
 Using this feature we can bind them to linux nodes. In order to do that `nodeSelector` has to be used. By default node selectors can be set
 for below pods:
 
-| component               | key                                                                             |
-| ----------------------- | ------------------------------------------------------------------------------- |
-| `sumologic`             | `sumologic.setup.job.nodeSelector.kubernetes.io/os`                             |
-| `kube-prometheus-stack` | `kube-prometheus-stack.prometheus-node-exporter.nodeSelector.kubernetes.io/os`  |
-| `kube-state-metrics`    | `kube-prometheus-stack.kube-state-metrics.nodeSelector.kubernetes.io/os`        |
-| `prometheus`            | `kube-prometheus-stack.prometheus.prometheusSpec.nodeSelector.kubernetes.io/os` |
-| `otelagent`             | `otelagent.daemonset.nodeSelector.kubernetes.io/os`                             |
-| `otelcol`               | `otelcol.deployment.nodeSelector.kubernetes.io/os`                              |
-| `otelgateway`           | `otelgateway.deployment.nodeSelector.kubernetes.io/os`                          |
-| `otellogs`              | `otellogs.daemonset.nodeSelector.kubernetes.io/os`                              |
-| `metadata`              | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`                    |
-| `metadata`              | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`                       |
-| `pvcCleaner`            | `pvcCleaner.job.nodeSelector.kubernetes.io/os`                                  |
-| `metrics otelcol`       | `sumologic.metrics.collector.otelcol.nodeSelector.kubernetes.io/os`             |
+| component                | key                                                                             |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| `sumologic`              | `sumologic.setup.job.nodeSelector.kubernetes.io/os`                             |
+| `kube-prometheus-stack`  | `kube-prometheus-stack.prometheus-node-exporter.nodeSelector.kubernetes.io/os`  |
+| `kube-state-metrics`     | `kube-prometheus-stack.kube-state-metrics.nodeSelector.kubernetes.io/os`        |
+| `prometheus`             | `kube-prometheus-stack.prometheus.prometheusSpec.nodeSelector.kubernetes.io/os` |
+| `remoteWriteProxy`       | `sumologic.metrics.remoteWriteProxy.nodeSelector.kubernetes.io/os`              |
+| `otelcolInstrumentation` | `otelcolInstrumentation.statefulset.nodeSelector.kubernetes.io/os`              |
+| `tracesGateway`          | `tracesGateway.deployment.nodeSelector.kubernetes.io/os`                        |
+| `otellogs`               | `otellogs.daemonset.nodeSelector.kubernetes.io/os`                              |
+| `setupJob`               | `sumologic.setup.job.nodeSelector.kubernetes.io/os`                             |
+| `tracesSampler`          | `tracesSampler.deployment.nodeSelector.kubernetes.io/os`                        |
+| `metadata`               | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`                    |
+| `metadata`               | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`                       |
+| `pvcCleaner`             | `pvcCleaner.job.nodeSelector.kubernetes.io/os`                                  |
+| `metrics otelcol`        | `sumologic.metrics.collector.otelcol.nodeSelector.kubernetes.io/os`             |
 
 Node selector can be changed via additional parameter in `user-values.yaml`, see an example for PVC Cleaner below:
 
@@ -863,6 +865,29 @@ pvcCleaner:
     nodeSelector:
       kubernetes.io/os: linux
 ```
+
+You can also specify a global nodeSelector option that will be used for all components above except for `otellogs`, `kube-prometheus-stack`,
+`kube-state-metrics` and `prometheus`. The option for a component has a higher priority than the global one.
+
+To specify the global option, use key `sumologic.nodeSelector`:
+
+```yaml
+sumologic:
+  nodeSelector:
+    kubernetes.io/os: linux
+
+metadata:
+  metrics:
+    statefulset:
+      nodeSelector:
+        kubernetes.io/os: metricOS
+```
+
+The above config will set:
+
+- `nodeSelector.kubernetes.io/os` to `metricOS` for metadata metrics statefulset
+- nothing for `otellogs`, `kube-prometheus-stack`, `kube-state-metrics` and `prometheus`
+- `nodeSelector.kubernetes.io/os` to `linux` for other components
 
 #### Setting different resources on different nodes for logs collector
 
