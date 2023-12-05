@@ -276,3 +276,11 @@ Example Usage:
 {{- template "kubernetes.defaultNodeSelector" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "tracesSampler.deployment.nodeSelector" -}}
+{{- if .Values.tracesSampler.deployment.nodeSelector -}}
+{{- toYaml .Values.tracesSampler.deployment.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
