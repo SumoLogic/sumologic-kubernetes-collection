@@ -1,0 +1,172 @@
+---
+# Source: sumologic/templates/metrics/otelcol/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-metrics
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-metrics
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+      app: RELEASE-NAME-sumologic-otelcol-metrics
+  serviceName: RELEASE-NAME-sumologic-otelcol-metrics-headless
+  podManagementPolicy: "Parallel"
+  template:
+    metadata:
+      annotations:
+        checksum/config: "%CONFIG_CHECKSUM%"
+      labels:
+        app: RELEASE-NAME-sumologic-otelcol-metrics
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      serviceAccountName: RELEASE-NAME-sumologic
+      nodeSelector:
+        sumologic.com/kind: co-worker
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - RELEASE-NAME-sumologic-otelcol-logs
+                        - RELEASE-NAME-sumologic-otelcol-metrics
+                        - RELEASE-NAME-sumologic-otelcol-events
+                        - RELEASE-NAME-sumologic-otelcol-instrumentation
+                    - key: app
+                      operator: In
+                      values:
+                        - prometheus-operator-prometheus
+                topologyKey: "kubernetes.io/hostname"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: RELEASE-NAME-sumologic-otelcol-metrics
+        - name: tmp
+          emptyDir: {}
+      securityContext:
+        fsGroup: 999
+      containers:
+        - name: otelcol
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.89.0-sumo-2"
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config=/etc/otel/config.yaml
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 768Mi
+          ports:
+            - name: otlphttp
+              containerPort: 4318
+              protocol: TCP
+            - name: prom-write
+              containerPort: 9888
+              protocol: TCP
+            - name: metrics
+              containerPort: 8888
+              protocol: TCP
+            - name: pprof
+              containerPort: 1777
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /
+              port: 13133 # Health Check extension default port.
+            failureThreshold: 60
+            periodSeconds: 3
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/otel/config.yaml
+              subPath: config.yaml
+            - name: tmp
+              mountPath: /tmp
+            - name: file-storage
+              mountPath: /var/lib/storage/otc
+          env:
+            - name: SUMO_ENDPOINT_APISERVER_METRICS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-metrics-apiserver
+            - name: SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-control_plane_metrics_source
+            - name: SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-metrics-kube-controller-manager
+            - name: SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-metrics
+            - name: SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-metrics-otlp
+            - name: SUMO_ENDPOINT_KUBELET_METRICS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-metrics-kubelet
+            - name: SUMO_ENDPOINT_NODE_METRICS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-metrics-node-exporter
+            - name: SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-metrics-kube-scheduler
+            - name: SUMO_ENDPOINT_STATE_METRICS_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: sumologic
+                  key: endpoint-metrics-kube-state
+
+            - name: NO_PROXY
+              value: kubernetes.default.svc
+  volumeClaimTemplates:
+    - metadata:
+        name: file-storage
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName:
+        resources:
+          requests:
+            storage: 10Gi

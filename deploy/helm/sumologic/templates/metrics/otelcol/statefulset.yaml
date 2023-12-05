@@ -43,9 +43,9 @@ spec:
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
-{{- if .Values.metadata.metrics.statefulset.nodeSelector }}
+{{- if not (empty (include "metadata.metrics.statefulset.nodeSelector" .)) }}
       nodeSelector:
-{{ toYaml .Values.metadata.metrics.statefulset.nodeSelector | indent 8 }}
+{{ include "metadata.metrics.statefulset.nodeSelector" . | indent 8 }}
 {{- end }}
 {{- if .Values.metadata.metrics.statefulset.tolerations }}
       tolerations:

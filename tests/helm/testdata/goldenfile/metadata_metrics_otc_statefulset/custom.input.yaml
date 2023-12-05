@@ -1,6 +1,8 @@
 sumologic:
   metrics:
     sourceType: http
+  nodeSelector:
+    sumologic.com/kind: co-worker
 metadata:
   image:
     repository: my_repository

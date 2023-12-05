@@ -75,6 +75,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "metadata.metrics.statefulset.nodeSelector" -}}
+{{- if .Values.metadata.metrics.statefulset.nodeSelector -}}
+{{- toYaml .Values.metadata.metrics.statefulset.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic.labels.app.metrics" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-metrics
 {{- end -}}
