@@ -250,6 +250,14 @@ Example Usage:
 {{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.otelcolInstrumentation.autoscaling.enabled "Values" .Values) }}
 {{- end -}}
 
+{{- define "otelcolInstrumentation.statefulset.nodeSelector" -}}
+{{- if .Values.otelcolInstrumentation.statefulset.nodeSelector -}}
+{{- toYaml .Values.otelcolInstrumentation.statefulset.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Check if autoscaling for traces gateway is enabled.
 

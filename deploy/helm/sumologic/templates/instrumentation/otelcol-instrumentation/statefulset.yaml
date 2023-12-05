@@ -46,9 +46,9 @@ spec:
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
-{{- if $otelcolInstrumentation.statefulset.nodeSelector }}
+{{- if not (empty (include "otelcolInstrumentation.statefulset.nodeSelector" .)) }}
       nodeSelector:
-{{ toYaml $otelcolInstrumentation.statefulset.nodeSelector | indent 8 }}
+{{ include "otelcolInstrumentation.statefulset.nodeSelector" . | indent 8 }}
 {{- end }}
 {{- if $otelcolInstrumentation.statefulset.tolerations }}
       tolerations:
