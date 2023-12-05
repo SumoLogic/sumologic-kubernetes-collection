@@ -556,3 +556,11 @@ Example usage:
   {{- .Values.sumologic.autoscaling.enabled -}}
 {{- end }}
 {{- end -}}
+
+{{- define "pvcCleaner.job.nodeSelector" -}}
+{{- if .Values.pvcCleaner.job.nodeSelector -}}
+{{- toYaml .Values.pvcCleaner.job.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
