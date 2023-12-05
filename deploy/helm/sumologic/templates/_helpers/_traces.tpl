@@ -268,3 +268,11 @@ Example Usage:
 {{- define "tracesGateway.autoscaling.enabled" -}}
 {{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.tracesGateway.autoscaling.enabled "Values" .Values) }}
 {{- end -}}
+
+{{- define "tracesGateway.deployment.nodeSelector" -}}
+{{- if .Values.tracesGateway.deployment.nodeSelector -}}
+{{- toYaml .Values.tracesGateway.deployment.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
