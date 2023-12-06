@@ -183,8 +183,21 @@ jobs:
         if: needs.chart-changed.outputs.any_changed == 'true'
         run: make test-templates
 
-  integration-tests:
-    name: Integration Tests
+  run-integration-tests:
+    name: Run Integration Tests
     needs: [chart-changed]
     if: needs.chart-changed.outputs.any_changed == 'true'
     uses: ./.github/workflows/workflow-integration-tests.yaml
+
+  integration-tests-success:
+    name: Integration tests succeded
+    runs-on: ubuntu-22.04
+    needs: [run-integration-tests]
+    if: ${{ always() }}
+    steps:
+      - name: Success
+        if: ${{ always() && (needs.run-integration-tests.result == 'success' || needs.run-integration-tests.result == 'skipped') }}
+        run: exit 0
+      - name: Failure
+        if: ${{ always() && !(needs.run-integration-tests.result == 'success' || needs.run-integration-tests.result == 'skipped') }}
+        run: exit 1
