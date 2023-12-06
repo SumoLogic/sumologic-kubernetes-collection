@@ -175,7 +175,7 @@ routing:
 source:
   collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
   exclude:
-    k8s.namespace.name: {{ include "logs.excludeNamespaces" . }}
+    k8s.namespace.name: {{ include "metrics.excludeNamespaces" . }}
 
 ## The Sumo Logic Schema processor modifies the metadata on logs, metrics and traces sent to Sumo Logic
 ## so that the Sumo Logic apps can make full use of the ingested data.
