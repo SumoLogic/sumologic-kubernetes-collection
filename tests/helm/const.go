@@ -12,6 +12,8 @@ const (
 	otelConfigFileName       = "config.yaml"
 	otelImageFIPSSuffix      = "-fips"
 	otelContainerName        = "otelcol"
+	nodeSelectorKey          = "disktype"
+	nodeSelectorValue        = "hdd"
 	maxHelmReleaseNameLength = 22  // Helm allows up to 53, but for a name longer than 22 some statefulset names will be too long
 	k8sMaxNameLength         = 253 // see https://kubernetes.io/docs/concepts/overview/working-with-objects/names/
 	k8sMaxLabelLength        = 63  // see https://kubernetes.io/docs/concepts/overview/working-with-objects/names/
