@@ -276,6 +276,7 @@ data:
         - context: log
           statements:
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
+          - set(attributes["timestamp"], UnixMilli(Now())) where attributes["timestamp"] == 0
       transform/containers_parse_json:
         error_mode: ignore
         log_statements:

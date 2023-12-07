@@ -377,6 +377,7 @@ processors:
       - context: log
         statements:
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
+          - set(attributes["timestamp"], UnixMilli(Now())) where attributes["timestamp"] == 0
 
   ## Move attributes from the body to the record and drop the body if it's a map
   ## The map check isn't perfect, as there's no way to check for this explicitly in OTTL
