@@ -303,3 +303,11 @@ Example Usage:
 {{- define "metadata.logs.autoscaling.enabled" -}}
 {{- template "is.autoscaling.enabled" (dict "autoscalingEnabled" .Values.metadata.logs.autoscaling.enabled "Values" .Values) }}
 {{- end -}}
+
+{{- define "metadata.logs.statefulset.nodeSelector" -}}
+{{- if .Values.metadata.logs.statefulset.nodeSelector -}}
+{{- toYaml .Values.metadata.logs.statefulset.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}

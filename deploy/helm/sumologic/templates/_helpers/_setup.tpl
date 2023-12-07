@@ -294,3 +294,11 @@ Example Usage:
 {{- end -}}
 {{ $value }}
 {{- end -}}
+
+{{- define "setup.job.nodeSelector" -}}
+{{- if .Values.sumologic.setup.job.nodeSelector -}}
+{{- toYaml .Values.sumologic.setup.job.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}

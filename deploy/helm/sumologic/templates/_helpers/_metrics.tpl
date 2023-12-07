@@ -59,6 +59,30 @@ Example Usage:
 {{ and (eq (include "metrics.enabled" .) "true") (eq .Values.sumologic.metrics.remoteWriteProxy.enabled true) }}
 {{- end -}}
 
+{{- define "metrics.remoteWriteProxy.nodeSelector" -}}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.nodeSelector -}}
+{{- toYaml .Values.sumologic.metrics.remoteWriteProxy.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "metrics.collector.otelcol.nodeSelector" -}}
+{{- if .Values.sumologic.metrics.collector.otelcol.nodeSelector -}}
+{{- toYaml .Values.sumologic.metrics.collector.otelcol.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "metadata.metrics.statefulset.nodeSelector" -}}
+{{- if .Values.metadata.metrics.statefulset.nodeSelector -}}
+{{- toYaml .Values.metadata.metrics.statefulset.nodeSelector -}}
+{{- else -}}
+{{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic.labels.app.metrics" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-metrics
 {{- end -}}

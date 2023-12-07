@@ -3,6 +3,8 @@ sumologic:
     someSumo: label
   podAnnotations:
     someSumo: annotation
+  nodeSelector:
+    notMy: node
 
 pvcCleaner:
   metrics:

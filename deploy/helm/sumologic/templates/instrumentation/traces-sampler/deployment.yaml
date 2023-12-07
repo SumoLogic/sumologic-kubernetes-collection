@@ -43,10 +43,10 @@ spec:
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
-      {{- if $tracesSampler.deployment.nodeSelector }}
+{{- if not (empty (include "tracesSampler.deployment.nodeSelector" .)) }}
       nodeSelector:
-{{ toYaml $tracesSampler.deployment.nodeSelector | indent 8 }}
-      {{- end }}
+{{ include "tracesSampler.deployment.nodeSelector" . | indent 8 }}
+{{- end }}
       {{- if $tracesSampler.deployment.tolerations }}
       tolerations:
 {{ toYaml $tracesSampler.deployment.tolerations | indent 8 }}

@@ -8,9 +8,12 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/logger"
+
+	otelv1alpha1 "github.com/open-telemetry/opentelemetry-operator/apis/v1alpha1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
+	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -118,6 +121,59 @@ func TestOtelImageFIPSSuffix(t *testing.T) {
 					)
 				}
 			}
+		}
+	}
+}
+
+func TestNodeSelector(t *testing.T) {
+	t.Parallel()
+	valuesFilePath := path.Join(testDataDirectory, "node-selector.yaml")
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+
+	// split the rendered Yaml into individual documents and unmarshal them into K8s objects
+	// we could use the yaml decoder directly, but we'd have to implement our own unmarshaling logic then
+	renderedObjects := UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
+
+	for _, renderedObject := range renderedObjects {
+		nodeSelector, err := GetNodeSelector(renderedObject)
+		require.NoError(t, err)
+		// If we ever set some default nodeSelector anywhere, this might stop working,
+		// as this assumes that the only nodeSelector will be the one in node-selector.yaml
+		if nodeSelector != nil {
+			nsv, ok := nodeSelector[nodeSelectorKey]
+			assert.True(
+				t,
+				ok,
+				"%s should have %s nodeSelector",
+				renderedObject.GetName(),
+				nodeSelectorKey,
+			)
+
+			assert.True(
+				t,
+				nsv == nodeSelectorValue,
+				"%s should have nodeSelector %s set to %s, found %s instead",
+				renderedObject.GetName(),
+				nodeSelectorKey,
+				nodeSelectorValue,
+				nsv,
+			)
 		}
 	}
 }
@@ -237,9 +293,43 @@ func GetPodSpec(object unstructured.Unstructured) (*corev1.PodSpec, error) {
 			return nil, err
 		}
 		return &daemonset.Spec.Template.Spec, nil
+	case "Job":
+		jobs := &batchv1.Job{}
+		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &jobs)
+		if err != nil {
+			return nil, err
+		}
+		return &jobs.Spec.Template.Spec, nil
+	case "CronJob":
+		jobs := &batchv1.CronJob{}
+		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &jobs)
+		if err != nil {
+			return nil, err
+		}
+		return &jobs.Spec.JobTemplate.Spec.Template.Spec, nil
 	default:
 		return nil, nil
 	}
+}
+
+func GetNodeSelector(object unstructured.Unstructured) (map[string]string, error) {
+	podSpec, err := GetPodSpec(object)
+	if err != nil {
+		return nil, err
+	} else if podSpec != nil {
+		return podSpec.NodeSelector, nil
+	}
+
+	if object.GetKind() == "OpenTelemetryCollector" {
+		otelcol := &otelv1alpha1.OpenTelemetryCollector{}
+		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &otelcol)
+		if err != nil {
+			return nil, err
+		}
+		return otelcol.Spec.NodeSelector, nil
+	}
+
+	return nil, nil
 }
 
 func TestNamespaceOverride(t *testing.T) {

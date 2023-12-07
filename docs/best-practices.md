@@ -837,25 +837,8 @@ pod will end up on specific node according your requirements like operating syst
 
 #### Binding pods to linux nodes
 
-Using this feature we can bind them to linux nodes. In order to do that `nodeSelector` has to be used. By default node selectors can be set
-for below pods:
-
-| component               | key                                                                             |
-| ----------------------- | ------------------------------------------------------------------------------- |
-| `sumologic`             | `sumologic.setup.job.nodeSelector.kubernetes.io/os`                             |
-| `kube-prometheus-stack` | `kube-prometheus-stack.prometheus-node-exporter.nodeSelector.kubernetes.io/os`  |
-| `kube-state-metrics`    | `kube-prometheus-stack.kube-state-metrics.nodeSelector.kubernetes.io/os`        |
-| `prometheus`            | `kube-prometheus-stack.prometheus.prometheusSpec.nodeSelector.kubernetes.io/os` |
-| `otelagent`             | `otelagent.daemonset.nodeSelector.kubernetes.io/os`                             |
-| `otelcol`               | `otelcol.deployment.nodeSelector.kubernetes.io/os`                              |
-| `otelgateway`           | `otelgateway.deployment.nodeSelector.kubernetes.io/os`                          |
-| `otellogs`              | `otellogs.daemonset.nodeSelector.kubernetes.io/os`                              |
-| `metadata`              | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`                    |
-| `metadata`              | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`                       |
-| `pvcCleaner`            | `pvcCleaner.job.nodeSelector.kubernetes.io/os`                                  |
-| `metrics otelcol`       | `sumologic.metrics.collector.otelcol.nodeSelector.kubernetes.io/os`             |
-
-Node selector can be changed via additional parameter in `user-values.yaml`, see an example for PVC Cleaner below:
+Using this feature we can bind them to linux nodes. In order to do that `nodeSelector` has to be used. Node selector can be changed via
+additional parameter in `user-values.yaml`, see an example for PVC Cleaner below:
 
 ```yaml
 pvcCleaner:
@@ -863,6 +846,56 @@ pvcCleaner:
     nodeSelector:
       kubernetes.io/os: linux
 ```
+
+You can also specify a global nodeSelector option that will be used for all components except for the subcharts. The option for a component
+has a higher priority than the global one.
+
+To specify the global option, use key `sumologic.nodeSelector`:
+
+```yaml
+sumologic:
+  nodeSelector:
+    kubernetes.io/os: linux
+
+metadata:
+  metrics:
+    statefulset:
+      nodeSelector:
+        kubernetes.io/os: metricOS
+```
+
+The above config will set:
+
+- `nodeSelector.kubernetes.io/os` to `metricOS` for metadata metrics statefulset
+- nothing for subcharts
+- `nodeSelector.kubernetes.io/os` to `linux` for other components
+
+By default node selectors can be set for whole subcharts:
+
+| subchart                 | key                                                                             |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| `sumologic`              | `sumologic.nodeSelector.kubernetes.io/os`                                       |
+| `kube-prometheus-stack`  | `kube-prometheus-stack.prometheus-node-exporter.nodeSelector.kubernetes.io/os`  |
+| `kube-state-metrics`     | `kube-prometheus-stack.kube-state-metrics.nodeSelector.kubernetes.io/os`        |
+| `prometheus`             | `kube-prometheus-stack.prometheus.prometheusSpec.nodeSelector.kubernetes.io/os` |
+| `opentelemetry-operator` | `opentelemetry-operator.nodeSelector.kubernetes.io/os`                          |
+| `falco`                  | `falco.nodeSelector.kubernetes.io/os`                                           |
+| `telegraf-operator`      | `telegraf-operator.nodeSelector.kubernetes.io/os`                               |
+
+In the main `sumologic` chart, value specified in `sumologic.nodeSelector.kubernetes.io/os` can be overriden for the following pods:
+
+| component                | key                                                                 |
+| ------------------------ | ------------------------------------------------------------------- |
+| `remoteWriteProxy`       | `sumologic.metrics.remoteWriteProxy.nodeSelector.kubernetes.io/os`  |
+| `otelcolInstrumentation` | `otelcolInstrumentation.statefulset.nodeSelector.kubernetes.io/os`  |
+| `tracesGateway`          | `tracesGateway.deployment.nodeSelector.kubernetes.io/os`            |
+| `otellogs`               | `otellogs.daemonset.nodeSelector.kubernetes.io/os`                  |
+| `setupJob`               | `sumologic.setup.job.nodeSelector.kubernetes.io/os`                 |
+| `tracesSampler`          | `tracesSampler.deployment.nodeSelector.kubernetes.io/os`            |
+| `metadata`               | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`        |
+| `metadata`               | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`           |
+| `pvcCleaner`             | `pvcCleaner.job.nodeSelector.kubernetes.io/os`                      |
+| `metrics otelcol`        | `sumologic.metrics.collector.otelcol.nodeSelector.kubernetes.io/os` |
 
 #### Setting different resources on different nodes for logs collector
 

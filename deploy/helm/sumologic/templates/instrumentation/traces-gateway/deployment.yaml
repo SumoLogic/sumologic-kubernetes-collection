@@ -47,10 +47,10 @@ spec:
 {{- end }}
     spec:
       serviceAccountName: {{ template "sumologic.metadata.name.roles.serviceaccount" . }}
-      {{- if $tracesGateway.deployment.nodeSelector }}
+{{- if not (empty (include "tracesGateway.deployment.nodeSelector" .)) }}
       nodeSelector:
-{{ toYaml $tracesGateway.deployment.nodeSelector | indent 8 }}
-      {{- end }}
+{{ include "tracesGateway.deployment.nodeSelector" . | indent 8 }}
+{{- end }}
       {{- if $tracesGateway.deployment.tolerations }}
       tolerations:
 {{ toYaml $tracesGateway.deployment.tolerations | indent 8 }}

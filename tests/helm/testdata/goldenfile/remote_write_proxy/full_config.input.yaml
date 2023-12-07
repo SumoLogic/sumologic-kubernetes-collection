@@ -1,4 +1,6 @@
 sumologic:
+  nodeSelector:
+    disktype: hdd
   pullSecrets:
     - name: sumo-pull
   podLabels:

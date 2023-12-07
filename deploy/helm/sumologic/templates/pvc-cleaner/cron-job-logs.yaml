@@ -32,8 +32,8 @@ spec:
 {{- end }}
         spec:
           nodeSelector:
-{{- with .Values.pvcCleaner.job.nodeSelector }}
-{{ toYaml . | indent 12 }}
+{{- if not (empty (include "pvcCleaner.job.nodeSelector" .)) }}
+{{ include "pvcCleaner.job.nodeSelector" . | indent 12 }}
 {{- end }}
 {{- with .Values.pvcCleaner.job.tolerations }}
           tolerations:
