@@ -48,9 +48,8 @@ data:
         log_statements:
         - context: log
           statements:
+          - set(time, Now()) where time_unix_nano == 0
           - set(attributes["timestamp"], Int(time_unix_nano / 1000000))
-          - set(attributes["timestamp"], UnixMilli(Now())) where attributes["timestamp"]
-            == 0
     receivers:
       raw_k8s_events: {}
     service:
