@@ -13,8 +13,10 @@ To see all available configuration for our sub-charts, please refer to their doc
   Tailing Sidecar Operator properties should be prefixed with `tailing-sidecar-operator` in our values.yaml to override a property not
   listed below.
 - [OpenTelemetry Operator](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator#opentelemetry-operator-helm-chart) -
-  All OpenTelemetry Operator properties should be prefixed with `opentelemetry-operator` in our values.yaml to override a property listed
-  below.
+  All OpenTelemetry Operator properties should be prefixed with `opentelemetry-operator` in our values.yaml to override a property not
+  listed below.
+- [Telegraf Operator](https://github.com/influxdata/helm-charts/tree/master/charts/telegraf-operator#configure-the-chart) - Telegraf
+  Operator properties should be prefixed with `telegraf-operator` in our values.yaml to override a property not listed below.
 
 The following table lists the configurable parameters of the Sumo Logic chart and their default values.
 
