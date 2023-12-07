@@ -1,6 +1,7 @@
 {{- if eq (include "logs.collector.otelcol.enabled" .) "true" }}
 {{- $ctx := . }}
 {{- $instance := "" -}}
+{{- $defaultNodeSelector := (include "kubernetes.defaultNodeSelector" .) }}
 {{- $daemonsets := dict "" $.Values.otellogs.daemonset  -}}
 {{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogs.additionalDaemonSets -}}
 {{- range $name, $value := $daemonsets }}
@@ -8,6 +9,12 @@
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
 {{- $resources := deepCopy $.Values.otellogs.daemonset.resources | merge .resources }}
+{{- $nodeSelector := "" }}
+{{- if .nodeSelector }}
+{{- $nodeSelector = (toYaml .nodeSelector) }}
+{{- else if $defaultNodeSelector }}
+{{- $nodeSelector = $defaultNodeSelector }}
+{{- end }}
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -49,9 +56,9 @@ spec:
 {{ toYaml $.Values.otellogs.daemonset.podLabels | indent 8 }}
 {{- end }}
     spec:
-{{- if .nodeSelector }}
+{{- if $nodeSelector }}
       nodeSelector:
-{{ toYaml .nodeSelector | indent 8 }}
+{{ $nodeSelector | indent 8 }}
 {{- end }}
 {{- if or .affinity }}
       affinity:

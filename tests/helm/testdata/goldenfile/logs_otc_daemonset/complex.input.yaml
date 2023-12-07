@@ -1,5 +1,7 @@
 namespaceOverride: "sumologic"
 sumologic:
+  nodeSelector:
+    sumologic.com/kind: worker
   logs:
     collector:
       otelcol:
@@ -63,8 +65,6 @@ otellogs:
             add:
               - CAP_CHOWN
           privileged: true
-    nodeSelector:
-      sumologic.com/kind: worker
 
     tolerations:
       - key: "worker"
