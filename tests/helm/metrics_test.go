@@ -293,5 +293,79 @@ sumologic:
 			assert.Equal(t, tt.ExpectedNames, names)
 		})
 	}
+}
 
+func TestMetricsCollectionMonitoring(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/metrics/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  collectionMonitoring: false
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Processors struct {
+			Source struct {
+				Exclude struct {
+					K8sNamespaceName string `yaml:"k8s.namespace.name"`
+				}
+			}
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	require.Equal(t, "sumologic", otelConfig.Processors.Source.Exclude.K8sNamespaceName)
+}
+
+func TestMetricsExcludeNamespaceRegex(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/metrics/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  metrics:
+    excludeNamespaceRegex: my_metrics_namespace
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Processors struct {
+			Source struct {
+				Exclude struct {
+					K8sNamespaceName string `yaml:"k8s.namespace.name"`
+				}
+			}
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	require.Equal(t, "my_metrics_namespace", otelConfig.Processors.Source.Exclude.K8sNamespaceName)
+}
+
+func TestMetricsExcludeNamespaceRegexWithCollectionMonitoring(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/metrics/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  collectionMonitoring: false
+  metrics:
+    excludeNamespaceRegex: my_metrics_namespace
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Processors struct {
+			Source struct {
+				Exclude struct {
+					K8sNamespaceName string `yaml:"k8s.namespace.name"`
+				}
+			}
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	require.Equal(t, "sumologic|my_metrics_namespace", otelConfig.Processors.Source.Exclude.K8sNamespaceName)
 }

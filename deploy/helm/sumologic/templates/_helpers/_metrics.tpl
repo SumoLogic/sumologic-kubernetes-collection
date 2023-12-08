@@ -403,3 +403,22 @@ Example:
   </metric>
 </store>
 {{- end -}}
+
+{{/*
+Returns list of namespaces to exclude
+
+Example:
+
+{{ include "metrics.excludeNamespaces" . }}
+*/}}
+{{- define "metrics.excludeNamespaces" -}}
+{{- $excludeNamespaceRegex := .Values.sumologic.metrics.excludeNamespaceRegex | quote -}}
+{{- if eq .Values.sumologic.collectionMonitoring false -}}
+  {{- if .Values.sumologic.metrics.excludeNamespaceRegex -}}
+  {{- $excludeNamespaceRegex = printf "%s|%s" ( include "sumologic.namespace" .  ) .Values.sumologic.metrics.excludeNamespaceRegex | quote -}}
+  {{- else -}}
+  {{- $excludeNamespaceRegex = printf "%s" ( include "sumologic.namespace" .  ) | quote -}}
+  {{- end -}}
+{{- end -}}
+{{ print $excludeNamespaceRegex }}
+{{- end -}}
