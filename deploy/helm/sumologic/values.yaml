@@ -578,6 +578,10 @@ sumologic:
     ## - kubelet_runtime_operations_duration_seconds
     dropHistogramBuckets: true
 
+    ## A regular expression for namespaces.
+    ## Metrics that match these namespaces will be excluded from Sumo.
+    excludeNamespaceRegex: ""
+
     otelcol:
       ## Includes additional processors into pipelines.
       ## It can be used for filtering metrics, renaming, changing metadata and so on.
