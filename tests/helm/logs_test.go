@@ -488,3 +488,80 @@ sumologic:
 	}
 	require.True(t, keepTimeOperatorFound)
 }
+
+func TestLogsCollectionMonitoring(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  collectionMonitoring: false
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Processors struct {
+			SourceContainers struct {
+				Exclude struct {
+					Namespace string
+				}
+			} `yaml:"source/containers"`
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	require.Equal(t, "sumologic", otelConfig.Processors.SourceContainers.Exclude.Namespace)
+}
+
+func TestLogsExcludeNamespaceRegex(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  logs:
+    container:
+      excludeNamespaceRegex: my_logs_namespace
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Processors struct {
+			SourceContainers struct {
+				Exclude struct {
+					Namespace string
+				}
+			} `yaml:"source/containers"`
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	require.Equal(t, "my_logs_namespace", otelConfig.Processors.SourceContainers.Exclude.Namespace)
+}
+
+func TestLogsExcludeNamespaceRegexWithCollectionMonitoring(t *testing.T) {
+	t.Parallel()
+	templatePath := "templates/logs/otelcol/configmap.yaml"
+	valuesYaml := `
+sumologic:
+  collectionMonitoring: false
+  logs:
+    container:
+      excludeNamespaceRegex: my_logs_namespace
+`
+	otelConfigYaml := GetOtelConfigYaml(t, valuesYaml, templatePath)
+
+	var otelConfig struct {
+		Processors struct {
+			SourceContainers struct {
+				Exclude struct {
+					Namespace string
+				}
+			} `yaml:"source/containers"`
+		}
+	}
+	err := yaml.Unmarshal([]byte(otelConfigYaml), &otelConfig)
+	require.NoError(t, err)
+
+	require.Equal(t, "sumologic|my_logs_namespace", otelConfig.Processors.SourceContainers.Exclude.Namespace)
+}
