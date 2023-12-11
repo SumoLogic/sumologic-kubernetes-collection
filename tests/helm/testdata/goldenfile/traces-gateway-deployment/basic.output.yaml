@@ -35,7 +35,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: otelcol
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.89.0-sumo-2"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.90.1-sumo-0"
           imagePullPolicy: IfNotPresent
           args:
             - "--config=/conf/traces.gateway.conf.yaml"

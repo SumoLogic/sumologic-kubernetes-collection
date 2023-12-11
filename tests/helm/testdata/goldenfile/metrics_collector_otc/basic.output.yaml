@@ -13,7 +13,7 @@ metadata:
     heritage: "Helm"
     sumologic.com/scrape: "true"
 spec:
-  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.89.0-sumo-2"
+  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.90.1-sumo-0"
   mode: statefulset
   replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
