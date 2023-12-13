@@ -7,6 +7,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.3.0]
+
+### Released 2023-12-13
+
+### Added
+
+- feat: add description including helm version to collector [#3423]
+- feat(chart): add global nodeSelector option [#3427]
+
+### Changed
+
+- chore: update OpenTelemetry Collector to v0.90.1-sumo-0 [#3438]
+- chore: update OpenTelemetry Operator to v0.44.0 [#3441]
+
+### Fixed
+
+- fix(metrics): use `sumologic.metrics.excludeNamespaceRegex` instead of `sumologic.logs.container.excludeNamespaceRegex` [#3428]
+- fix: fix add_timestamp behavior [#3434]
+
+[#3423]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3423
+[#3427]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3427
+[#3438]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3438
+[#3441]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3441
+[#3428]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3428
+[#3434]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3434
+[v4.3.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.3.0
+
 ## [v4.2.0]
 
 ### Released 2023-11-27
