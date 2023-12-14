@@ -18,6 +18,8 @@ spec:
   replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
   targetAllocator:
+    # we set serviceAccount to work around https://github.com/open-telemetry/opentelemetry-operator/issues/2443
+    # TODO: drop this after the above is fixed
     serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
     enabled: true
     filterStrategy: relabel-config
