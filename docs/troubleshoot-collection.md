@@ -20,6 +20,7 @@
   - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
     - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
+  - [Check Scrape Configs for Open Telemetry Operator](#check-scrape-configs-for-open-telemetry-operator)
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
 - [Common Issues](#common-issues)
   - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
@@ -329,6 +330,62 @@ If you can't find the expected metrics, ensure that prometheus configuration is 
 
 Next, you can check if Prometheus is successfully scraping the `/metrics` endpoints. In the top menu, navigate to section `Status > Targets`
 or go to the `http://localhost:8080/targets`. Check if any targets are down or have errors.
+
+### Check Scrape Configs for Open Telemetry Operator
+
+First expose the target allocator on local port 9090:
+
+```sh
+kubectl port-forward -n sumologic services/collection-sumologic-metrics-targetallocator 9090:80
+```
+
+Check if expected Service Monitor is on the list:
+
+```sh
+> curl http://localhost:9090/scrape_configs -s | jq '. | keys'
+[
+  "cadvisor",
+  "kubelet",
+  "pod-annotations",
+  "serviceMonitor/sumologic/avalanche/0",
+  "serviceMonitor/sumologic/collection-kube-prometheus-apiserver/0",
+  "serviceMonitor/sumologic/collection-kube-prometheus-coredns/0",
+  "serviceMonitor/sumologic/collection-kube-prometheus-kube-controller-manager/0",
+  "serviceMonitor/sumologic/collection-kube-prometheus-kube-etcd/0",
+  "serviceMonitor/sumologic/collection-kube-prometheus-kube-proxy/0",
+  "serviceMonitor/sumologic/collection-kube-prometheus-kube-scheduler/0",
+  "serviceMonitor/sumologic/collection-kube-prometheus-kubelet/0",
+  "serviceMonitor/sumologic/collection-kube-prometheus-kubelet/1",
+  "serviceMonitor/sumologic/collection-kube-state-metrics/0",
+  "serviceMonitor/sumologic/collection-prometheus-node-exporter/0",
+  "serviceMonitor/sumologic/collection-sumologic-metrics-collector/0",
+  "serviceMonitor/sumologic/collection-sumologic-otelcol-events/0",
+  "serviceMonitor/sumologic/collection-sumologic-otelcol-logs-collector/0",
+  "serviceMonitor/sumologic/collection-sumologic-otelcol-logs/0",
+  "serviceMonitor/sumologic/collection-sumologic-otelcol-metrics/0",
+  "serviceMonitor/sumologic/collection-sumologic-otelcol-traces/0",
+  "serviceMonitor/sumologic/collection-sumologic-prometheus/0",
+  "serviceMonitor/sumologic/receiver-mock/0"
+]
+```
+
+Now you can list all target associated with this Service Monitor. Built URL using the following template:
+`http://localhost:9090/jobs/<HTML encoded service monitor name>/targets`.
+
+Let's assume that you are looking for `serviceMonitor/sumologic/receiver-mock/0`. In that case you need to check the following endpoint:
+`http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets`
+
+```sh
+> curl -s 'http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets' | jq '.[].targets[].labels |.__meta_kubernetes_namespace + "/" + .__meta_kubernetes_pod_name'
+"sumologic/collection-sumologic-otelcol-logs-2"
+"sumologic/collection-sumologic-otelcol-logs-1"
+"sumologic/collection-sumologic-otelcol-logs-0"
+```
+
+If all informations are correct, please refer to the following sections to continue investigation:
+
+- [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
+- [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
 
 ### Check Prometheus Remote Storage
 
