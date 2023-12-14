@@ -188,6 +188,71 @@ See the [migration guide][v4_migration_guide] for details.
 [v4.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.0.0
 [v4_migration_guide]: /docs/v4-migration-doc.md
 
+## [v3.18.0]
+
+### Released 2023-12-14
+
+### Added
+
+- feat: add description including helm version to collector [#3425]
+
+### Changed
+
+- chore: upgrade `fluent-bit` image from `v2.1.6` to `v2.2.0` [#3408]
+- deps: upgrade `opentelemetry-operator` subchart from `v0.35.0` to `v0.44.0` [#3408] [#3439]
+- deps: upgrade `falco` subchart from `v3.3.0` to `v3.8.5` [#3408] [#3445]
+- deps: upgrade `fluent-bit` subchart from `v0.34.2` to `v0.40.0` [#3408]
+- deps: upgrade `metrics-server` subchart from `v6.4.3` to `v6.6.3` [#3408] [#3444]
+- deps: upgrade `tailing-sidecar` subchart from `v0.8.0` to `v0.9.0` [#3408]
+- chore: update OpenTelemetry Collector to v0.90.1-sumo-0 [#3439]
+- deps: update telegraf operator to `v1.3.12` [#3443]
+
+### Fixed
+
+- fix(metrics): use `sumologic.metrics.excludeNamespaceRegex` instead of `sumologic.logs.container.excludeNamespaceRegex` [#3436]
+
+[#3425]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3425
+[#3408]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3408
+[#3439]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3439
+[#3443]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3443
+[#3444]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3444
+[#3445]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3445
+[#3436]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3436
+[v3.18.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.18.0
+
+## [v3.17.0]
+
+### Released 2023-11-03
+
+### Added
+
+- Add new service account for the otel cloudwatch collector statefulset [#3374]
+
+### Changed
+
+- chore: drop support for GKE with k8s 1.23 [#3342]
+- chore: upgrade nginx image to 1.25.2-alpine-sumo-1 [#3375]
+
+### Fixed
+
+- fix(otel-collector): deploy collector by default on all nodes [#3348]
+- use autoscaling/v2 if available on the cluster [#3367]
+- fix(instrumentation): replace tools image with kubectl [#3373]
+
+[#3342]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3342
+[#3367]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3367
+[v3.17.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.17.0
+
+## [v3.16.2]
+
+### Released 2023-10-25
+
+### Fixed
+
+- fix: downgrade otel to 0.86.0-sumo-1 [#3352]
+
+[v3.16.2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.16.2
+
 ## [v3.16.1]
 
 ### Released 2023-10-20
