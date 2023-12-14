@@ -18,15 +18,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - chore: upgrade `fluent-bit` image from `v2.1.6` to `v2.2.0` [#3408]
-- deps: upgrade `opentelemetry-operator` subchart from `v0.35.0` to `v0.42.3` [#3408]
-- deps: upgrade `falco` subchart from `v3.3.0` to `v3.8.4` [#3408]
+- deps: upgrade `opentelemetry-operator` subchart from `v0.35.0` to `v0.44.0` [#3408] [#3439]
+- deps: upgrade `falco` subchart from `v3.3.0` to `v3.8.5` [#3408] [#3445]
 - deps: upgrade `fluent-bit` subchart from `v0.34.2` to `v0.40.0` [#3408]
-- deps: upgrade `metrics-server` subchart from `v6.4.3` to `v6.6.2` [#3408]
+- deps: upgrade `metrics-server` subchart from `v6.4.3` to `v6.6.3` [#3408] [#3444]
 - deps: upgrade `tailing-sidecar` subchart from `v0.8.0` to `v0.9.0` [#3408]
 - chore: update OpenTelemetry Collector to v0.90.1-sumo-0 [#3439]
 - deps: update telegraf operator to `v1.3.12` [#3443]
-- deps: update metrics-server to `6.6.3` [#3444]
-- deps: update falco to `v3.8.5` [#3445]
 
 ### Fixed
 
