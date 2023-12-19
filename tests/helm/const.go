@@ -1,5 +1,7 @@
 package helm
 
+import corev1 "k8s.io/api/core/v1"
+
 const (
 	configFileName           = "config.sh"
 	yamlDirectory            = "static"
@@ -28,4 +30,15 @@ var subChartNames []string = []string{
 	"tailing-sidecar",
 	"falco",
 	"opentelemetry-operator",
+}
+
+var toleration = corev1.Toleration{
+	Key:      "key",
+	Value:    "value",
+	Operator: corev1.TolerationOpExists,
+	Effect:   corev1.TaintEffectNoSchedule,
+	// - key: "key"
+	// value: "value"
+	// operator: Exists
+	// effect: "NoSchedule"
 }

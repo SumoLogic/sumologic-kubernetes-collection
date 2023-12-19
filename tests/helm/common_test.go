@@ -177,6 +177,59 @@ func TestNodeSelector(t *testing.T) {
 		}
 	}
 }
+
+func TestTolerations(t *testing.T) {
+	t.Parallel()
+	valuesFilePath := path.Join(testDataDirectory, "node-selector.yaml")
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+
+	// split the rendered Yaml into individual documents and unmarshal them into K8s objects
+	// we could use the yaml decoder directly, but we'd have to implement our own unmarshaling logic then
+	renderedObjects := UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
+
+	for _, renderedObject := range renderedObjects {
+		tolerations, err := GetTolerations(renderedObject)
+		require.NoError(t, err)
+		// If we ever set some default nodeSelector anywhere, this might stop working,
+		// as this assumes that the only nodeSelector will be the one in node-selector.yaml
+		if tolerations != nil {
+			assert.True(
+				t,
+				len(tolerations) == 1,
+				"%s has tolerations of length %s, should be 1",
+				renderedObject.GetName(),
+				len(tolerations),
+			)
+			tol := tolerations[0]
+
+			assert.True(
+				t,
+				tol == toleration,
+				"%s should have toleration set to %s, found %s instead",
+				renderedObject.GetName(),
+				toleration,
+				tol,
+			)
+		}
+	}
+}
+
 func TestNameAndLabelLength(t *testing.T) {
 	// object kinds whose names are limited to 63 characters instead of K8s default of 253
 	// not all of these are strictly required, but it's a good practice to limit them regardless
@@ -327,6 +380,26 @@ func GetNodeSelector(object unstructured.Unstructured) (map[string]string, error
 			return nil, err
 		}
 		return otelcol.Spec.NodeSelector, nil
+	}
+
+	return nil, nil
+}
+
+func GetTolerations(object unstructured.Unstructured) ([]corev1.Toleration, error) {
+	podSpec, err := GetPodSpec(object)
+	if err != nil {
+		return nil, err
+	} else if podSpec != nil {
+		return podSpec.Tolerations, nil
+	}
+
+	if object.GetKind() == "OpenTelemetryCollector" {
+		otelcol := &otelv1alpha1.OpenTelemetryCollector{}
+		err := runtime.DefaultUnstructuredConverter.FromUnstructured(object.Object, &otelcol)
+		if err != nil {
+			return nil, err
+		}
+		return otelcol.Spec.Tolerations, nil
 	}
 
 	return nil, nil

@@ -1,3 +1,8 @@
 sumologic:
   nodeSelector:
     disktype: hdd
+  tolerations:
+    - key: "key"
+      value: "value"
+      operator: Exists
+      effect: "NoSchedule"

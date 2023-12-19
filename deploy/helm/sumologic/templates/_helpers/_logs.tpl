@@ -316,6 +316,6 @@ Example Usage:
 {{- if .Values.metadata.logs.statefulset.tolerations -}}
 {{- toYaml .Values.metadata.logs.statefulset.tolerations -}}
 {{- else -}}
-{{- template "kubernetes.tolerations" . -}}
+{{- template "kubernetes.defaultTolerations" . -}}
 {{- end -}}
 {{- end -}}
