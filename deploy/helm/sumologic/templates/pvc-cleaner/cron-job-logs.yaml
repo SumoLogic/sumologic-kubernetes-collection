@@ -35,9 +35,9 @@ spec:
 {{- if not (empty (include "pvcCleaner.job.nodeSelector" .)) }}
 {{ include "pvcCleaner.job.nodeSelector" . | indent 12 }}
 {{- end }}
-{{- with .Values.pvcCleaner.job.tolerations }}
+{{- if not (empty (include "pvcCleaner.job.tolerations" .)) }}
           tolerations:
-{{ toYaml . | indent 12 }}
+{{ include "pvcCleaner.job.tolerations" . | indent 12 }}
 {{- end }}
 {{- with .Values.pvcCleaner.job.affinity }}
           affinity:

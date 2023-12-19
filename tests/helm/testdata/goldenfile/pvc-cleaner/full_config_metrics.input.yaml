@@ -5,6 +5,10 @@ sumologic:
     someSumo: annotation
   nodeSelector:
     notMy: node
+  tolerations:
+    - key: null
+      operator: NotExists
+      effect: "TestFail"
 
 pvcCleaner:
   metrics:

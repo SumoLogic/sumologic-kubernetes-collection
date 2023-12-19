@@ -577,3 +577,11 @@ Example usage:
 {{- template "kubernetes.defaultNodeSelector" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "pvcCleaner.job.tolerations" -}}
+{{- if .Values.pvcCleaner.job.tolerations -}}
+{{- toYaml .Values.pvcCleaner.job.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
