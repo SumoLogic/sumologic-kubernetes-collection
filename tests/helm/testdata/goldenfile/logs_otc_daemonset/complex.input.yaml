@@ -2,6 +2,11 @@ namespaceOverride: "sumologic"
 sumologic:
   nodeSelector:
     sumologic.com/kind: worker
+  tolerations:
+    - key: "arbeiter"
+      operator: "NotEqual"
+      value: arbeiter
+      effect: "FailTest"
   logs:
     collector:
       otelcol:

@@ -2,6 +2,7 @@
 {{- $ctx := . }}
 {{- $instance := "" -}}
 {{- $defaultNodeSelector := (include "kubernetes.defaultNodeSelector" .) }}
+{{- $defaultTolerations := (include "kubernetes.defaultTolerations" .) }}
 {{- $daemonsets := dict "" $.Values.otellogs.daemonset  -}}
 {{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogs.additionalDaemonSets -}}
 {{- range $name, $value := $daemonsets }}
@@ -14,6 +15,12 @@
 {{- $nodeSelector = (toYaml .nodeSelector) }}
 {{- else if $defaultNodeSelector }}
 {{- $nodeSelector = $defaultNodeSelector }}
+{{- end }}
+{{- $tolerations := "" }}
+{{- if .tolerations }}
+{{- $tolerations = (toYaml .tolerations) }}
+{{- else if $defaultTolerations }}
+{{- $tolerations = $defaultTolerations }}
 {{- end }}
 ---
 apiVersion: apps/v1
@@ -64,9 +71,9 @@ spec:
       affinity:
 {{ toYaml .affinity | indent 8 }}
 {{- end }}
-{{- if $.Values.otellogs.daemonset.tolerations }}
+{{- if $tolerations }}
       tolerations:
-{{ toYaml $.Values.otellogs.daemonset.tolerations | indent 8 }}
+{{ $tolerations | indent 8 }}
 {{- end }}
       securityContext:
         {{- toYaml $.Values.otellogs.daemonset.securityContext | nindent 8 }}

@@ -6,3 +6,15 @@ sumologic:
       value: "value"
       operator: Exists
       effect: "NoSchedule"
+
+# Override these to satisfy the tests
+otellogs:
+  daemonset:
+    tolerations: []
+kube-prometheus-stack:
+  prometheus-node-exporter:
+    tolerations:
+      - key: "key"
+        value: "value"
+        operator: Exists
+        effect: "NoSchedule"
