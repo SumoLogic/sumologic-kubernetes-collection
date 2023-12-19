@@ -2,6 +2,7 @@ exporters:
 {{- if eq .Values.sumologic.logs.sourceType "http" }}
 {{ if .Values.sumologic.logs.container.enabled }}
   sumologic/containers:
+    client: {{ include "sumologic.sumo_client" . }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_LOGS_SOURCE}
     json_logs:
       add_timestamp: false
