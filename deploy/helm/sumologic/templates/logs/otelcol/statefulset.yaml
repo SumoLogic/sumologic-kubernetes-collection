@@ -47,9 +47,9 @@ spec:
       nodeSelector:
 {{ include "metadata.logs.statefulset.nodeSelector" . | indent 8 }}
 {{- end }}
-{{- if .Values.metadata.logs.statefulset.tolerations }}
+{{- if not (empty (include "metadata.logs.statefulset.tolerations" .)) }}
       tolerations:
-{{ toYaml .Values.metadata.logs.statefulset.tolerations | indent 8 }}
+{{ include "metadata.logs.statefulset.tolerations" . | indent 8 }}
 {{- end }}
 {{- if .Values.metadata.logs.statefulset.affinity }}
       affinity:
