@@ -50,9 +50,9 @@ spec:
       nodeSelector:
 {{ include "otelcolInstrumentation.statefulset.nodeSelector" . | indent 8 }}
 {{- end }}
-{{- if $otelcolInstrumentation.statefulset.tolerations }}
-      tolerations:
-{{ toYaml $otelcolInstrumentation.statefulset.tolerations | indent 8 }}
+{{- if not (empty (include "otelcolInstrumentation.statefulset.tolerations" .)) }}
+      nodeSelector:
+{{ include "otelcolInstrumentation.statefulset.tolerations" . | indent 8 }}
 {{- end }}
 {{- if or $otelcolInstrumentation.statefulset.affinity  $otelcolInstrumentation.statefulset.podAntiAffinity }}
       affinity:

@@ -258,6 +258,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "otelcolInstrumentation.statefulset.tolerations" -}}
+{{- if .Values.otelcolInstrumentation.statefulset.tolerations -}}
+{{- toYaml .Values.otelcolInstrumentation.statefulset.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Check if autoscaling for traces gateway is enabled.
 
