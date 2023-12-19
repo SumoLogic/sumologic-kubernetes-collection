@@ -67,6 +67,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "metrics.remoteWriteProxy.tolerations" -}}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.tolerations -}}
+{{- toYaml .Values.sumologic.metrics.remoteWriteProxy.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "metrics.collector.otelcol.nodeSelector" -}}
 {{- if .Values.sumologic.metrics.collector.otelcol.nodeSelector -}}
 {{- toYaml .Values.sumologic.metrics.collector.otelcol.nodeSelector -}}

@@ -44,9 +44,9 @@ spec:
       affinity:
 {{ toYaml .Values.sumologic.metrics.remoteWriteProxy.affinity | indent 8 }}
 {{- end }}
-{{- if .Values.sumologic.metrics.remoteWriteProxy.tolerations }}
+{{- if not (empty (include "metrics.remoteWriteProxy.nodeSelector" .)) }}
       tolerations:
-{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.tolerations | indent 8 }}
+{{ include "metrics.remoteWriteProxy.tolerations" . | nindent 8 }}
 {{- end }}
       securityContext:
         {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.securityContext | nindent 8 }}
