@@ -458,6 +458,19 @@ Example:
 {{- end -}}
 
 {{/*
+Returns default tolerations for all objects.
+
+Example:
+
+{{ include "kubernetes.defaultTolerations" . }}
+*/}}
+{{- define "kubernetes.defaultTolerations" -}}
+{{- if .Values.sumologic.tolerations -}}
+{{- toYaml .Values.sumologic.tolerations -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Environment variables used to configure the HTTP proxy for programs using
 Go's net/http. See: https://pkg.go.dev/net/http#RoundTripper
 
