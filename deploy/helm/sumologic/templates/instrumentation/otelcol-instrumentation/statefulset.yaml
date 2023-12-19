@@ -51,7 +51,7 @@ spec:
 {{ include "otelcolInstrumentation.statefulset.nodeSelector" . | indent 8 }}
 {{- end }}
 {{- if not (empty (include "otelcolInstrumentation.statefulset.tolerations" .)) }}
-      nodeSelector:
+      tolerations:
 {{ include "otelcolInstrumentation.statefulset.tolerations" . | indent 8 }}
 {{- end }}
 {{- if or $otelcolInstrumentation.statefulset.affinity  $otelcolInstrumentation.statefulset.podAntiAffinity }}

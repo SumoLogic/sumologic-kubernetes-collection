@@ -285,6 +285,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "tracesGateway.deployment.tolerations" -}}
+{{- if .Values.tracesGateway.deployment.tolerations -}}
+{{- toYaml .Values.tracesGateway.deployment.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "tracesSampler.deployment.nodeSelector" -}}
 {{- if .Values.tracesSampler.deployment.nodeSelector -}}
 {{- toYaml .Values.tracesSampler.deployment.nodeSelector -}}
