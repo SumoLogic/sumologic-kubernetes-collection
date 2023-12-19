@@ -99,6 +99,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "metadata.metrics.statefulset.tolerations" -}}
+{{- if .Values.metadata.metrics.statefulset.tolerations -}}
+{{- toYaml .Values.metadata.metrics.statefulset.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic.labels.app.metrics" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-metrics
 {{- end -}}
