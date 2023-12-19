@@ -300,3 +300,11 @@ Example Usage:
 {{- template "kubernetes.defaultNodeSelector" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "tracesSampler.deployment.tolerations" -}}
+{{- if .Values.tracesSampler.deployment.tolerations -}}
+{{- toYaml .Values.tracesSampler.deployment.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
