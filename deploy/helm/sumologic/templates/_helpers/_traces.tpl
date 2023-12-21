@@ -266,6 +266,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "otelcolInstrumentation.statefulset.affinity" -}}
+{{- if .Values.otelcolInstrumentation.statefulset.affinity -}}
+{{- toYaml .Values.otelcolInstrumentation.statefulset.affinity -}}
+{{- else -}}
+{{- template "kubernetes.defaultAffinity" . -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Check if autoscaling for traces gateway is enabled.
 
