@@ -3,7 +3,7 @@ entries:
   sumologic:
   - apiVersion: v2
     appVersion: 4.3.1-0-g1c4c9abf58
-    created: "2023-12-21T11:41:47.100229299Z"
+    created: "2023-12-21T13:05:27.390591383Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -46,7 +46,7 @@ entries:
     version: 4.3.1-0-g1c4c9abf58
   - apiVersion: v2
     appVersion: 4.3.0-9-gaefa731cbd
-    created: "2023-12-21T11:41:47.063860004Z"
+    created: "2023-12-21T13:05:27.352856243Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -89,7 +89,7 @@ entries:
     version: 4.3.0-9-gaefa731cbd
   - apiVersion: v2
     appVersion: 4.3.0-8-g98ea6a8139
-    created: "2023-12-21T11:41:47.02749072Z"
+    created: "2023-12-21T13:05:27.315121437Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -132,7 +132,7 @@ entries:
     version: 4.3.0-8-g98ea6a8139
   - apiVersion: v2
     appVersion: 4.3.0-7-g2f12c5aac0
-    created: "2023-12-21T11:41:46.990248413Z"
+    created: "2023-12-21T13:05:27.277883408Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -175,7 +175,7 @@ entries:
     version: 4.3.0-7-g2f12c5aac0
   - apiVersion: v2
     appVersion: 4.3.0-6-g6cf9eb3b55
-    created: "2023-12-21T11:41:46.952828535Z"
+    created: "2023-12-21T13:05:27.23938652Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -218,7 +218,7 @@ entries:
     version: 4.3.0-6-g6cf9eb3b55
   - apiVersion: v2
     appVersion: 4.3.0-5-gd031733110
-    created: "2023-12-21T11:41:46.916834484Z"
+    created: "2023-12-21T13:05:27.202279305Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -261,7 +261,7 @@ entries:
     version: 4.3.0-5-gd031733110
   - apiVersion: v2
     appVersion: 4.3.0-4-g53a01110c4
-    created: "2023-12-21T11:41:46.879505766Z"
+    created: "2023-12-21T13:05:27.164155646Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -304,7 +304,7 @@ entries:
     version: 4.3.0-4-g53a01110c4
   - apiVersion: v2
     appVersion: 4.3.0-3-g371e9603db
-    created: "2023-12-21T11:41:46.841899568Z"
+    created: "2023-12-21T13:05:27.1263064Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -347,7 +347,7 @@ entries:
     version: 4.3.0-3-g371e9603db
   - apiVersion: v2
     appVersion: 4.3.0-3-g1c4c9abf58
-    created: "2023-12-21T11:41:46.804955603Z"
+    created: "2023-12-21T13:05:27.089330315Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -390,7 +390,7 @@ entries:
     version: 4.3.0-3-g1c4c9abf58
   - apiVersion: v2
     appVersion: 4.3.0-2-gd5d472f0be
-    created: "2023-12-21T11:41:46.767307844Z"
+    created: "2023-12-21T13:05:27.050091904Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -433,7 +433,7 @@ entries:
     version: 4.3.0-2-gd5d472f0be
   - apiVersion: v2
     appVersion: 4.3.0-2-g938e530f49
-    created: "2023-12-21T11:41:46.730046241Z"
+    created: "2023-12-21T13:05:27.012000557Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -476,7 +476,7 @@ entries:
     version: 4.3.0-2-g938e530f49
   - apiVersion: v2
     appVersion: 4.3.0-11-gb96e6ee1a5
-    created: "2023-12-21T13:05:03.173919271Z"
+    created: "2023-12-21T13:05:26.973632376Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -519,7 +519,7 @@ entries:
     version: 4.3.0-11-gb96e6ee1a5
   - apiVersion: v2
     appVersion: 4.3.0-10-g3ff661e193
-    created: "2023-12-21T11:41:46.693392956Z"
+    created: "2023-12-21T13:05:26.935971441Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -562,7 +562,7 @@ entries:
     version: 4.3.0-10-g3ff661e193
   - apiVersion: v2
     appVersion: 4.3.0-1-g3b84fa0d2e
-    created: "2023-12-21T11:41:46.656809874Z"
+    created: "2023-12-21T13:05:26.89872443Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -605,7 +605,7 @@ entries:
     version: 4.3.0-1-g3b84fa0d2e
   - apiVersion: v2
     appVersion: 4.3.0-1-g38b9c3ab1f
-    created: "2023-12-21T11:41:46.619823346Z"
+    created: "2023-12-21T13:05:26.860697927Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -648,7 +648,7 @@ entries:
     version: 4.3.0-1-g38b9c3ab1f
   - apiVersion: v2
     appVersion: 4.3.0-0-g4c193e1cab
-    created: "2023-12-21T11:41:46.58167252Z"
+    created: "2023-12-21T13:05:26.822452245Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -691,7 +691,7 @@ entries:
     version: 4.3.0-0-g4c193e1cab
   - apiVersion: v2
     appVersion: 4.2.0-9-gd9dc65e587
-    created: "2023-12-21T11:41:46.545203008Z"
+    created: "2023-12-21T13:05:26.784472357Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -734,7 +734,7 @@ entries:
     version: 4.2.0-9-gd9dc65e587
   - apiVersion: v2
     appVersion: 4.2.0-8-gf10045e29b
-    created: "2023-12-21T11:41:46.507545914Z"
+    created: "2023-12-21T13:05:26.745461894Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -777,7 +777,7 @@ entries:
     version: 4.2.0-8-gf10045e29b
   - apiVersion: v2
     appVersion: 4.2.0-7-gc9dddc879f
-    created: "2023-12-21T11:41:46.469387307Z"
+    created: "2023-12-21T13:05:26.70734265Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -820,7 +820,7 @@ entries:
     version: 4.2.0-7-gc9dddc879f
   - apiVersion: v2
     appVersion: 4.2.0-6-g4b3ab11174
-    created: "2023-12-21T11:41:46.432467461Z"
+    created: "2023-12-21T13:05:26.668758765Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -863,7 +863,7 @@ entries:
     version: 4.2.0-6-g4b3ab11174
   - apiVersion: v2
     appVersion: 4.2.0-5-gc1964af9c5
-    created: "2023-12-21T11:41:46.396066877Z"
+    created: "2023-12-21T13:05:26.631645453Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -906,7 +906,7 @@ entries:
     version: 4.2.0-5-gc1964af9c5
   - apiVersion: v2
     appVersion: 4.2.0-4-gad6ed7bbc3
-    created: "2023-12-21T11:41:46.35996993Z"
+    created: "2023-12-21T13:05:26.593151829Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -949,7 +949,7 @@ entries:
     version: 4.2.0-4-gad6ed7bbc3
   - apiVersion: v2
     appVersion: 4.2.0-3-geb4a6c0191
-    created: "2023-12-21T11:41:46.323153371Z"
+    created: "2023-12-21T13:05:26.555316846Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -992,7 +992,7 @@ entries:
     version: 4.2.0-3-geb4a6c0191
   - apiVersion: v2
     appVersion: 4.2.0-2-g5a9da07bec
-    created: "2023-12-21T11:41:46.285251438Z"
+    created: "2023-12-21T13:05:26.51570122Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1035,7 +1035,7 @@ entries:
     version: 4.2.0-2-g5a9da07bec
   - apiVersion: v2
     appVersion: 4.2.0-15-g4c193e1cab
-    created: "2023-12-21T11:41:46.248853346Z"
+    created: "2023-12-21T13:05:26.476160253Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1078,7 +1078,7 @@ entries:
     version: 4.2.0-15-g4c193e1cab
   - apiVersion: v2
     appVersion: 4.2.0-14-ga72dca8095
-    created: "2023-12-21T11:41:46.212343974Z"
+    created: "2023-12-21T13:05:26.437871886Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1121,7 +1121,7 @@ entries:
     version: 4.2.0-14-ga72dca8095
   - apiVersion: v2
     appVersion: 4.2.0-13-gf1ef566449
-    created: "2023-12-21T11:41:46.17563628Z"
+    created: "2023-12-21T13:05:26.399687568Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1164,7 +1164,7 @@ entries:
     version: 4.2.0-13-gf1ef566449
   - apiVersion: v2
     appVersion: 4.2.0-12-gde51b52647
-    created: "2023-12-21T11:41:46.138201122Z"
+    created: "2023-12-21T13:05:26.361020214Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1207,7 +1207,7 @@ entries:
     version: 4.2.0-12-gde51b52647
   - apiVersion: v2
     appVersion: 4.2.0-11-g765f8c730f
-    created: "2023-12-21T11:41:46.099784139Z"
+    created: "2023-12-21T13:05:26.322707475Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1250,7 +1250,7 @@ entries:
     version: 4.2.0-11-g765f8c730f
   - apiVersion: v2
     appVersion: 4.2.0-10-g8e575fe512
-    created: "2023-12-21T11:41:46.063036364Z"
+    created: "2023-12-21T13:05:26.285399881Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1293,7 +1293,7 @@ entries:
     version: 4.2.0-10-g8e575fe512
   - apiVersion: v2
     appVersion: 4.2.0-1-g9a9bea00bc
-    created: "2023-12-21T11:41:46.026510461Z"
+    created: "2023-12-21T13:05:26.247328607Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1336,7 +1336,7 @@ entries:
     version: 4.2.0-1-g9a9bea00bc
   - apiVersion: v2
     appVersion: 4.2.0-1-g3b0e5e6fb2
-    created: "2023-12-21T11:41:45.990255686Z"
+    created: "2023-12-21T13:05:26.209289875Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1379,7 +1379,7 @@ entries:
     version: 4.2.0-1-g3b0e5e6fb2
   - apiVersion: v2
     appVersion: 4.2.0-0-g3ba76572d3
-    created: "2023-12-21T11:41:45.95223904Z"
+    created: "2023-12-21T13:05:26.171345438Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1422,7 +1422,7 @@ entries:
     version: 4.2.0-0-g3ba76572d3
   - apiVersion: v2
     appVersion: 4.1.0-41-g3ba76572d3
-    created: "2023-12-21T11:41:45.914910665Z"
+    created: "2023-12-21T13:05:26.132008677Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1465,7 +1465,7 @@ entries:
     version: 4.1.0-41-g3ba76572d3
   - apiVersion: v2
     appVersion: 4.1.0-40-g741a83ba8a
-    created: "2023-12-21T11:41:45.878755686Z"
+    created: "2023-12-21T13:05:26.094639727Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1508,7 +1508,7 @@ entries:
     version: 4.1.0-40-g741a83ba8a
   - apiVersion: v2
     appVersion: 4.1.0-39-gf198f4d11d
-    created: "2023-12-21T11:41:45.841475151Z"
+    created: "2023-12-21T13:05:26.057251111Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1551,7 +1551,7 @@ entries:
     version: 4.1.0-39-gf198f4d11d
   - apiVersion: v2
     appVersion: 4.1.0-38-gd9a02692a6
-    created: "2023-12-21T11:41:45.804678931Z"
+    created: "2023-12-21T13:05:26.019718027Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1594,7 +1594,7 @@ entries:
     version: 4.1.0-38-gd9a02692a6
   - apiVersion: v2
     appVersion: 4.1.0-37-g0b8b29b3f7
-    created: "2023-12-21T11:41:45.767741517Z"
+    created: "2023-12-21T13:05:25.982772333Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1637,7 +1637,7 @@ entries:
     version: 4.1.0-37-g0b8b29b3f7
   - apiVersion: v2
     appVersion: 4.1.0-36-g2d6d1c6c05
-    created: "2023-12-21T11:41:45.73102991Z"
+    created: "2023-12-21T13:05:25.944835749Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1680,7 +1680,7 @@ entries:
     version: 4.1.0-36-g2d6d1c6c05
   - apiVersion: v2
     appVersion: 4.1.0-35-ga267e789f7
-    created: "2023-12-21T11:41:45.694262561Z"
+    created: "2023-12-21T13:05:25.905880362Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1723,7 +1723,7 @@ entries:
     version: 4.1.0-35-ga267e789f7
   - apiVersion: v2
     appVersion: 4.1.0-35-g7cb148a592
-    created: "2023-12-21T11:41:45.657749914Z"
+    created: "2023-12-21T13:05:25.868324359Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1766,7 +1766,7 @@ entries:
     version: 4.1.0-35-g7cb148a592
   - apiVersion: v2
     appVersion: 4.1.0-34-g5c38882ad5
-    created: "2023-12-21T11:41:45.620667459Z"
+    created: "2023-12-21T13:05:25.831416407Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1809,7 +1809,7 @@ entries:
     version: 4.1.0-34-g5c38882ad5
   - apiVersion: v2
     appVersion: 4.1.0-33-g6de9eebcc9
-    created: "2023-12-21T11:41:45.583149173Z"
+    created: "2023-12-21T13:05:25.793402706Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1852,7 +1852,7 @@ entries:
     version: 4.1.0-33-g6de9eebcc9
   - apiVersion: v2
     appVersion: 4.1.0-32-gdaa7982174
-    created: "2023-12-21T11:41:45.545567903Z"
+    created: "2023-12-21T13:05:25.756175657Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1895,7 +1895,7 @@ entries:
     version: 4.1.0-32-gdaa7982174
   - apiVersion: v2
     appVersion: 4.1.0-31-gb85f04de48
-    created: "2023-12-21T11:41:45.508631355Z"
+    created: "2023-12-21T13:05:25.718596788Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1938,7 +1938,7 @@ entries:
     version: 4.1.0-31-gb85f04de48
   - apiVersion: v2
     appVersion: 4.1.0-30-g1d0919789f
-    created: "2023-12-21T11:41:45.471328715Z"
+    created: "2023-12-21T13:05:25.680436379Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -1981,7 +1981,7 @@ entries:
     version: 4.1.0-30-g1d0919789f
   - apiVersion: v2
     appVersion: 4.1.0-3-gef33b54fdd
-    created: "2023-12-21T11:41:45.434159925Z"
+    created: "2023-12-21T13:05:25.642384777Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2024,7 +2024,7 @@ entries:
     version: 4.1.0-3-gef33b54fdd
   - apiVersion: v2
     appVersion: 4.1.0-29-g2837426f0a
-    created: "2023-12-21T11:41:45.397695619Z"
+    created: "2023-12-21T13:05:25.604527365Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2067,7 +2067,7 @@ entries:
     version: 4.1.0-29-g2837426f0a
   - apiVersion: v2
     appVersion: 4.1.0-28-ge52007141d
-    created: "2023-12-21T11:41:45.360745424Z"
+    created: "2023-12-21T13:05:25.567867677Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2110,7 +2110,7 @@ entries:
     version: 4.1.0-28-ge52007141d
   - apiVersion: v2
     appVersion: 4.1.0-27-gd9d7e5c1bc
-    created: "2023-12-21T11:41:45.324136578Z"
+    created: "2023-12-21T13:05:25.531279021Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2153,7 +2153,7 @@ entries:
     version: 4.1.0-27-gd9d7e5c1bc
   - apiVersion: v2
     appVersion: 4.1.0-26-gd0676bcc8a
-    created: "2023-12-21T11:41:45.286373314Z"
+    created: "2023-12-21T13:05:25.494554339Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2196,7 +2196,7 @@ entries:
     version: 4.1.0-26-gd0676bcc8a
   - apiVersion: v2
     appVersion: 4.1.0-25-g659046b912
-    created: "2023-12-21T11:41:45.250235242Z"
+    created: "2023-12-21T13:05:25.456866204Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2239,7 +2239,7 @@ entries:
     version: 4.1.0-25-g659046b912
   - apiVersion: v2
     appVersion: 4.1.0-24-g9ae9e4981b
-    created: "2023-12-21T11:41:45.213542212Z"
+    created: "2023-12-21T13:05:25.4191323Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2282,7 +2282,7 @@ entries:
     version: 4.1.0-24-g9ae9e4981b
   - apiVersion: v2
     appVersion: 4.1.0-23-ga2eeb943ef
-    created: "2023-12-21T11:41:45.177524695Z"
+    created: "2023-12-21T13:05:25.38183862Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2325,7 +2325,7 @@ entries:
     version: 4.1.0-23-ga2eeb943ef
   - apiVersion: v2
     appVersion: 4.1.0-22-gb789654697
-    created: "2023-12-21T11:41:45.141673389Z"
+    created: "2023-12-21T13:05:25.343748289Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2368,7 +2368,7 @@ entries:
     version: 4.1.0-22-gb789654697
   - apiVersion: v2
     appVersion: 4.1.0-21-g78e21569af
-    created: "2023-12-21T11:41:45.105566144Z"
+    created: "2023-12-21T13:05:25.306537746Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2411,7 +2411,7 @@ entries:
     version: 4.1.0-21-g78e21569af
   - apiVersion: v2
     appVersion: 4.1.0-20-g7aa4d1c1af
-    created: "2023-12-21T11:41:45.068370279Z"
+    created: "2023-12-21T13:05:25.269805937Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2454,7 +2454,7 @@ entries:
     version: 4.1.0-20-g7aa4d1c1af
   - apiVersion: v2
     appVersion: 4.1.0-19-gff59b51b02
-    created: "2023-12-21T11:41:45.030094763Z"
+    created: "2023-12-21T13:05:25.233084385Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2497,7 +2497,7 @@ entries:
     version: 4.1.0-19-gff59b51b02
   - apiVersion: v2
     appVersion: 4.1.0-18-gb8512fe3d6
-    created: "2023-12-21T11:41:44.993660904Z"
+    created: "2023-12-21T13:05:25.196429909Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2540,7 +2540,7 @@ entries:
     version: 4.1.0-18-gb8512fe3d6
   - apiVersion: v2
     appVersion: 4.1.0-17-g1e6b69eddb
-    created: "2023-12-21T11:41:44.956497533Z"
+    created: "2023-12-21T13:05:25.158971926Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2583,7 +2583,7 @@ entries:
     version: 4.1.0-17-g1e6b69eddb
   - apiVersion: v2
     appVersion: 4.1.0-16-gaa897f5103
-    created: "2023-12-21T11:41:44.920156776Z"
+    created: "2023-12-21T13:05:25.122578457Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2626,7 +2626,7 @@ entries:
     version: 4.1.0-16-gaa897f5103
   - apiVersion: v2
     appVersion: 4.1.0-15-g7360119d2a
-    created: "2023-12-21T11:41:44.884985346Z"
+    created: "2023-12-21T13:05:25.084203075Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2669,7 +2669,7 @@ entries:
     version: 4.1.0-15-g7360119d2a
   - apiVersion: v2
     appVersion: 4.1.0-14-gca28f7b59e
-    created: "2023-12-21T11:41:44.849233819Z"
+    created: "2023-12-21T13:05:25.048094296Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2712,7 +2712,7 @@ entries:
     version: 4.1.0-14-gca28f7b59e
   - apiVersion: v2
     appVersion: 4.1.0-13-gec3d44b082
-    created: "2023-12-21T11:41:44.813438512Z"
+    created: "2023-12-21T13:05:25.011444779Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2755,7 +2755,7 @@ entries:
     version: 4.1.0-13-gec3d44b082
   - apiVersion: v2
     appVersion: 4.1.0-12-g335b561b3f
-    created: "2023-12-21T11:41:44.777154251Z"
+    created: "2023-12-21T13:05:24.975345144Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2798,7 +2798,7 @@ entries:
     version: 4.1.0-12-g335b561b3f
   - apiVersion: v2
     appVersion: 4.1.0-1-gddfbeedde5
-    created: "2023-12-21T11:41:44.741649826Z"
+    created: "2023-12-21T13:05:24.93854896Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2841,7 +2841,7 @@ entries:
     version: 4.1.0-1-gddfbeedde5
   - apiVersion: v2
     appVersion: 4.1.0-1-g377989f4be
-    created: "2023-12-21T11:41:44.70568082Z"
+    created: "2023-12-21T13:05:24.902753406Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2884,7 +2884,7 @@ entries:
     version: 4.1.0-1-g377989f4be
   - apiVersion: v2
     appVersion: 4.1.0-0-g64a4815ba0
-    created: "2023-12-21T11:41:44.669728359Z"
+    created: "2023-12-21T13:05:24.865636602Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2927,7 +2927,7 @@ entries:
     version: 4.1.0-0-g64a4815ba0
   - apiVersion: v2
     appVersion: 4.0.1-0-gf1aeb39701
-    created: "2023-12-21T11:41:44.632425183Z"
+    created: "2023-12-21T13:05:24.828245517Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -2970,7 +2970,7 @@ entries:
     version: 4.0.1-0-gf1aeb39701
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-9-gf187347819
-    created: "2023-12-21T11:41:44.597363227Z"
+    created: "2023-12-21T13:05:24.792336788Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3013,7 +3013,7 @@ entries:
     version: 4.0.0-rc.1-9-gf187347819
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-8-gdccd4b31e2
-    created: "2023-12-21T11:41:44.562479096Z"
+    created: "2023-12-21T13:05:24.756497445Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3056,7 +3056,7 @@ entries:
     version: 4.0.0-rc.1-8-gdccd4b31e2
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-7-g70af83f69e
-    created: "2023-12-21T11:41:44.527336855Z"
+    created: "2023-12-21T13:05:24.720538082Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3099,7 +3099,7 @@ entries:
     version: 4.0.0-rc.1-7-g70af83f69e
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-6-g1f73a0d0ac
-    created: "2023-12-21T11:41:44.491247851Z"
+    created: "2023-12-21T13:05:24.684209655Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3142,7 +3142,7 @@ entries:
     version: 4.0.0-rc.1-6-g1f73a0d0ac
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-5-g5dc06a5ef0
-    created: "2023-12-21T11:41:44.454902459Z"
+    created: "2023-12-21T13:05:24.647606684Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3185,7 +3185,7 @@ entries:
     version: 4.0.0-rc.1-5-g5dc06a5ef0
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-4-ga7e8fe99b6
-    created: "2023-12-21T11:41:44.418629014Z"
+    created: "2023-12-21T13:05:24.611718247Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3228,7 +3228,7 @@ entries:
     version: 4.0.0-rc.1-4-ga7e8fe99b6
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-3-g8cc9cb9087
-    created: "2023-12-21T11:41:44.383638536Z"
+    created: "2023-12-21T13:05:24.574287393Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3271,7 +3271,7 @@ entries:
     version: 4.0.0-rc.1-3-g8cc9cb9087
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-20-gce354f4741
-    created: "2023-12-21T11:41:44.347657052Z"
+    created: "2023-12-21T13:05:24.5385518Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3314,7 +3314,7 @@ entries:
     version: 4.0.0-rc.1-20-gce354f4741
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-2-gfd13a9066a
-    created: "2023-12-21T11:41:44.310756841Z"
+    created: "2023-12-21T13:05:24.501910293Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3357,7 +3357,7 @@ entries:
     version: 4.0.0-rc.1-2-gfd13a9066a
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-19-gea9be72468
-    created: "2023-12-21T11:41:44.275053203Z"
+    created: "2023-12-21T13:05:24.465528631Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3400,7 +3400,7 @@ entries:
     version: 4.0.0-rc.1-19-gea9be72468
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-18-g19ef8a9b19
-    created: "2023-12-21T11:41:44.239803898Z"
+    created: "2023-12-21T13:05:24.429422567Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3443,7 +3443,7 @@ entries:
     version: 4.0.0-rc.1-18-g19ef8a9b19
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-17-gab947e5798
-    created: "2023-12-21T11:41:44.203829711Z"
+    created: "2023-12-21T13:05:24.391361644Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3486,7 +3486,7 @@ entries:
     version: 4.0.0-rc.1-17-gab947e5798
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-16-g5ed28cafad
-    created: "2023-12-21T11:41:44.167703174Z"
+    created: "2023-12-21T13:05:24.35451236Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3529,7 +3529,7 @@ entries:
     version: 4.0.0-rc.1-16-g5ed28cafad
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-15-ga41dd2065b
-    created: "2023-12-21T11:41:44.130686354Z"
+    created: "2023-12-21T13:05:24.318576269Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3572,7 +3572,7 @@ entries:
     version: 4.0.0-rc.1-15-ga41dd2065b
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-14-g163f11c94c
-    created: "2023-12-21T11:41:44.094721238Z"
+    created: "2023-12-21T13:05:24.280891039Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3615,7 +3615,7 @@ entries:
     version: 4.0.0-rc.1-14-g163f11c94c
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-13-gb8530786d2
-    created: "2023-12-21T11:41:44.05851628Z"
+    created: "2023-12-21T13:05:24.243312912Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3658,7 +3658,7 @@ entries:
     version: 4.0.0-rc.1-13-gb8530786d2
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-12-g435687bc28
-    created: "2023-12-21T11:41:44.023796333Z"
+    created: "2023-12-21T13:05:24.205311539Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3701,7 +3701,7 @@ entries:
     version: 4.0.0-rc.1-12-g435687bc28
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-11-gc4eef8cc43
-    created: "2023-12-21T11:41:43.987368378Z"
+    created: "2023-12-21T13:05:24.169743572Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3744,7 +3744,7 @@ entries:
     version: 4.0.0-rc.1-11-gc4eef8cc43
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-10-g5bcc43c07f
-    created: "2023-12-21T11:41:43.950792484Z"
+    created: "2023-12-21T13:05:24.133280235Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3787,7 +3787,7 @@ entries:
     version: 4.0.0-rc.1-10-g5bcc43c07f
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-1-g2c2f920902
-    created: "2023-12-21T11:41:43.915587973Z"
+    created: "2023-12-21T13:05:24.096597762Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3830,7 +3830,7 @@ entries:
     version: 4.0.0-rc.1-1-g2c2f920902
   - apiVersion: v2
     appVersion: 4.0.0-rc.1-0-g35e73e3656
-    created: "2023-12-21T11:41:43.880674433Z"
+    created: "2023-12-21T13:05:24.06056735Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3873,7 +3873,7 @@ entries:
     version: 4.0.0-rc.1-0-g35e73e3656
   - apiVersion: v2
     appVersion: 4.0.0-rc.0-5-g35e73e3656
-    created: "2023-12-21T11:41:43.844775259Z"
+    created: "2023-12-21T13:05:24.023537652Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3916,7 +3916,7 @@ entries:
     version: 4.0.0-rc.0-5-g35e73e3656
   - apiVersion: v2
     appVersion: 4.0.0-rc.0-4-g670e0c025e
-    created: "2023-12-21T11:41:43.808625014Z"
+    created: "2023-12-21T13:05:23.986350512Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -3959,7 +3959,7 @@ entries:
     version: 4.0.0-rc.0-4-g670e0c025e
   - apiVersion: v2
     appVersion: 4.0.0-rc.0-3-ge490afe0a4
-    created: "2023-12-21T11:41:43.773370272Z"
+    created: "2023-12-21T13:05:23.949289327Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4002,7 +4002,7 @@ entries:
     version: 4.0.0-rc.0-3-ge490afe0a4
   - apiVersion: v2
     appVersion: 4.0.0-rc.0-2-g57af4c66d1
-    created: "2023-12-21T11:41:43.737409215Z"
+    created: "2023-12-21T13:05:23.912429053Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4045,7 +4045,7 @@ entries:
     version: 4.0.0-rc.0-2-g57af4c66d1
   - apiVersion: v2
     appVersion: 4.0.0-rc.0-1-g607828e906
-    created: "2023-12-21T11:41:43.702762639Z"
+    created: "2023-12-21T13:05:23.873468032Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4088,7 +4088,7 @@ entries:
     version: 4.0.0-rc.0-1-g607828e906
   - apiVersion: v2
     appVersion: 4.0.0-rc.0-0-gc0301ae5b9
-    created: "2023-12-21T11:41:43.66620853Z"
+    created: "2023-12-21T13:05:23.826670991Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4131,7 +4131,7 @@ entries:
     version: 4.0.0-rc.0-0-gc0301ae5b9
   - apiVersion: v2
     appVersion: 4.0.0-9-g5bdd96635c
-    created: "2023-12-21T11:41:43.630835648Z"
+    created: "2023-12-21T13:05:23.79010517Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4174,7 +4174,7 @@ entries:
     version: 4.0.0-9-g5bdd96635c
   - apiVersion: v2
     appVersion: 4.0.0-8-g6e16e1459e
-    created: "2023-12-21T11:41:43.595220803Z"
+    created: "2023-12-21T13:05:23.752566211Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4217,7 +4217,7 @@ entries:
     version: 4.0.0-8-g6e16e1459e
   - apiVersion: v2
     appVersion: 4.0.0-7-gc9b36db163
-    created: "2023-12-21T11:41:43.559307241Z"
+    created: "2023-12-21T13:05:23.717198639Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4260,7 +4260,7 @@ entries:
     version: 4.0.0-7-gc9b36db163
   - apiVersion: v2
     appVersion: 4.0.0-6-g5eb480b83b
-    created: "2023-12-21T11:41:43.52303568Z"
+    created: "2023-12-21T13:05:23.681279933Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4303,7 +4303,7 @@ entries:
     version: 4.0.0-6-g5eb480b83b
   - apiVersion: v2
     appVersion: 4.0.0-5-g789dfb94a4
-    created: "2023-12-21T11:41:43.487330038Z"
+    created: "2023-12-21T13:05:23.645229587Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4346,7 +4346,7 @@ entries:
     version: 4.0.0-5-g789dfb94a4
   - apiVersion: v2
     appVersion: 4.0.0-4-gf1aeb39701
-    created: "2023-12-21T11:41:43.450208133Z"
+    created: "2023-12-21T13:05:23.607708825Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4389,7 +4389,7 @@ entries:
     version: 4.0.0-4-gf1aeb39701
   - apiVersion: v2
     appVersion: 4.0.0-4-gc90374d836
-    created: "2023-12-21T11:41:43.41382153Z"
+    created: "2023-12-21T13:05:23.570704512Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4432,7 +4432,7 @@ entries:
     version: 4.0.0-4-gc90374d836
   - apiVersion: v2
     appVersion: 4.0.0-3-gfe64f332f0
-    created: "2023-12-21T11:41:43.376102895Z"
+    created: "2023-12-21T13:05:23.533796286Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4475,7 +4475,7 @@ entries:
     version: 4.0.0-3-gfe64f332f0
   - apiVersion: v2
     appVersion: 4.0.0-3-gd3487d4c16
-    created: "2023-12-21T11:41:43.340870025Z"
+    created: "2023-12-21T13:05:23.496784389Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4518,7 +4518,7 @@ entries:
     version: 4.0.0-3-gd3487d4c16
   - apiVersion: v2
     appVersion: 4.0.0-2-g5b6700ab8e
-    created: "2023-12-21T11:41:43.304936859Z"
+    created: "2023-12-21T13:05:23.460396239Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4561,7 +4561,7 @@ entries:
     version: 4.0.0-2-g5b6700ab8e
   - apiVersion: v2
     appVersion: 4.0.0-2-g595654c89e
-    created: "2023-12-21T11:41:43.269233261Z"
+    created: "2023-12-21T13:05:23.42309463Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4604,7 +4604,7 @@ entries:
     version: 4.0.0-2-g595654c89e
   - apiVersion: v2
     appVersion: 4.0.0-18-g64a4815ba0
-    created: "2023-12-21T11:41:43.233946992Z"
+    created: "2023-12-21T13:05:23.386373638Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4647,7 +4647,7 @@ entries:
     version: 4.0.0-18-g64a4815ba0
   - apiVersion: v2
     appVersion: 4.0.0-17-g507b4acf70
-    created: "2023-12-21T11:41:43.198183016Z"
+    created: "2023-12-21T13:05:23.349514564Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4690,7 +4690,7 @@ entries:
     version: 4.0.0-17-g507b4acf70
   - apiVersion: v2
     appVersion: 4.0.0-16-g0ca279ca8f
-    created: "2023-12-21T11:41:43.163147405Z"
+    created: "2023-12-21T13:05:23.311670328Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4733,7 +4733,7 @@ entries:
     version: 4.0.0-16-g0ca279ca8f
   - apiVersion: v2
     appVersion: 4.0.0-15-gf12509e7d6
-    created: "2023-12-21T11:41:43.12776777Z"
+    created: "2023-12-21T13:05:23.275762079Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4776,7 +4776,7 @@ entries:
     version: 4.0.0-15-gf12509e7d6
   - apiVersion: v2
     appVersion: 4.0.0-14-ge92634e13b
-    created: "2023-12-21T11:41:43.091551633Z"
+    created: "2023-12-21T13:05:23.239706279Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4819,7 +4819,7 @@ entries:
     version: 4.0.0-14-ge92634e13b
   - apiVersion: v2
     appVersion: 4.0.0-14-gd20f0801ea
-    created: "2023-12-21T11:41:43.055425167Z"
+    created: "2023-12-21T13:05:23.203788927Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4862,7 +4862,7 @@ entries:
     version: 4.0.0-14-gd20f0801ea
   - apiVersion: v2
     appVersion: 4.0.0-13-g090e42e123
-    created: "2023-12-21T11:41:43.020314124Z"
+    created: "2023-12-21T13:05:23.166595967Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4905,7 +4905,7 @@ entries:
     version: 4.0.0-13-g090e42e123
   - apiVersion: v2
     appVersion: 4.0.0-12-ga6fb970367
-    created: "2023-12-21T11:41:42.984590813Z"
+    created: "2023-12-21T13:05:23.129093192Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4948,7 +4948,7 @@ entries:
     version: 4.0.0-12-ga6fb970367
   - apiVersion: v2
     appVersion: 4.0.0-11-ga1605ace9d
-    created: "2023-12-21T11:41:42.949383706Z"
+    created: "2023-12-21T13:05:23.093385309Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -4991,7 +4991,7 @@ entries:
     version: 4.0.0-11-ga1605ace9d
   - apiVersion: v2
     appVersion: 4.0.0-10-g9eae57821a
-    created: "2023-12-21T11:41:42.91374844Z"
+    created: "2023-12-21T13:05:23.056159298Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -5034,7 +5034,7 @@ entries:
     version: 4.0.0-10-g9eae57821a
   - apiVersion: v2
     appVersion: 4.0.0-1-gdfa899b7aa
-    created: "2023-12-21T11:41:42.878167221Z"
+    created: "2023-12-21T13:05:23.019135157Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -5077,7 +5077,7 @@ entries:
     version: 4.0.0-1-gdfa899b7aa
   - apiVersion: v2
     appVersion: 4.0.0-1-g4b17d85fc7
-    created: "2023-12-21T11:41:42.84235156Z"
+    created: "2023-12-21T13:05:22.982427475Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -5120,7 +5120,7 @@ entries:
     version: 4.0.0-1-g4b17d85fc7
   - apiVersion: v2
     appVersion: 4.0.0-0-gce354f4741
-    created: "2023-12-21T11:41:42.802868135Z"
+    created: "2023-12-21T13:05:22.946379597Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -5163,7 +5163,7 @@ entries:
     version: 4.0.0-0-gce354f4741
   - apiVersion: v2
     appVersion: 3.18.0-2-gbc82a53b04
-    created: "2023-12-21T11:41:36.939929164Z"
+    created: "2023-12-21T13:05:16.928080465Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5210,7 +5210,7 @@ entries:
     version: 3.18.0-2-gbc82a53b04
   - apiVersion: v2
     appVersion: 3.18.0-1-gbd776001db
-    created: "2023-12-21T11:41:36.898084503Z"
+    created: "2023-12-21T13:05:16.885772084Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5257,7 +5257,7 @@ entries:
     version: 3.18.0-1-gbd776001db
   - apiVersion: v2
     appVersion: 3.18.0-1-g362d31bf09
-    created: "2023-12-21T11:41:36.856821607Z"
+    created: "2023-12-21T13:05:16.842276783Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5304,7 +5304,7 @@ entries:
     version: 3.18.0-1-g362d31bf09
   - apiVersion: v2
     appVersion: 3.18.0-0-g72795c49d8
-    created: "2023-12-21T11:41:36.815814957Z"
+    created: "2023-12-21T13:05:16.7997167Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5351,7 +5351,7 @@ entries:
     version: 3.18.0-0-g72795c49d8
   - apiVersion: v2
     appVersion: 3.17.0-8-g72795c49d8
-    created: "2023-12-21T11:41:36.773498724Z"
+    created: "2023-12-21T13:05:16.757855799Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5398,7 +5398,7 @@ entries:
     version: 3.17.0-8-g72795c49d8
   - apiVersion: v2
     appVersion: 3.17.0-7-g83043b3de2
-    created: "2023-12-21T11:41:36.731800046Z"
+    created: "2023-12-21T13:05:16.715209748Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5445,7 +5445,7 @@ entries:
     version: 3.17.0-7-g83043b3de2
   - apiVersion: v2
     appVersion: 3.17.0-6-g067337acf9
-    created: "2023-12-21T11:41:36.690592591Z"
+    created: "2023-12-21T13:05:16.670774266Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5492,7 +5492,7 @@ entries:
     version: 3.17.0-6-g067337acf9
   - apiVersion: v2
     appVersion: 3.17.0-5-g6e25310a69
-    created: "2023-12-21T11:41:36.648035346Z"
+    created: "2023-12-21T13:05:16.629104126Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5539,7 +5539,7 @@ entries:
     version: 3.17.0-5-g6e25310a69
   - apiVersion: v2
     appVersion: 3.17.0-4-g4c9a3ac2ad
-    created: "2023-12-21T11:41:36.607008592Z"
+    created: "2023-12-21T13:05:16.586546475Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5586,7 +5586,7 @@ entries:
     version: 3.17.0-4-g4c9a3ac2ad
   - apiVersion: v2
     appVersion: 3.17.0-3-g0f20318f80
-    created: "2023-12-21T11:41:36.565441805Z"
+    created: "2023-12-21T13:05:16.545036155Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5633,7 +5633,7 @@ entries:
     version: 3.17.0-3-g0f20318f80
   - apiVersion: v2
     appVersion: 3.17.0-2-g5bea7e493f
-    created: "2023-12-21T11:41:36.52465491Z"
+    created: "2023-12-21T13:05:16.501931403Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5680,7 +5680,7 @@ entries:
     version: 3.17.0-2-g5bea7e493f
   - apiVersion: v2
     appVersion: 3.17.0-1-gd24315fbfb
-    created: "2023-12-21T11:41:36.482272665Z"
+    created: "2023-12-21T13:05:16.460653442Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5727,7 +5727,7 @@ entries:
     version: 3.17.0-1-gd24315fbfb
   - apiVersion: v2
     appVersion: 3.17.0-1-g58907a8635
-    created: "2023-12-21T11:41:36.441236593Z"
+    created: "2023-12-21T13:05:16.419960463Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5774,7 +5774,7 @@ entries:
     version: 3.17.0-1-g58907a8635
   - apiVersion: v2
     appVersion: 3.17.0-0-g9c86d425a3
-    created: "2023-12-21T11:41:36.399412072Z"
+    created: "2023-12-21T13:05:16.375911734Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5821,7 +5821,7 @@ entries:
     version: 3.17.0-0-g9c86d425a3
   - apiVersion: v2
     appVersion: 3.16.2-0-g6bf9b71649
-    created: "2023-12-21T11:41:36.359683916Z"
+    created: "2023-12-21T13:05:16.333969675Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5868,7 +5868,7 @@ entries:
     version: 3.16.2-0-g6bf9b71649
   - apiVersion: v2
     appVersion: 3.16.1-4-g6bf9b71649
-    created: "2023-12-21T11:41:36.318992736Z"
+    created: "2023-12-21T13:05:16.293185286Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5915,7 +5915,7 @@ entries:
     version: 3.16.1-4-g6bf9b71649
   - apiVersion: v2
     appVersion: 3.16.1-3-g0aacb4ec7c
-    created: "2023-12-21T11:41:36.279355435Z"
+    created: "2023-12-21T13:05:16.251972479Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -5962,7 +5962,7 @@ entries:
     version: 3.16.1-3-g0aacb4ec7c
   - apiVersion: v2
     appVersion: 3.16.1-2-g7b5047d913
-    created: "2023-12-21T11:41:36.238544975Z"
+    created: "2023-12-21T13:05:16.210683872Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6009,7 +6009,7 @@ entries:
     version: 3.16.1-2-g7b5047d913
   - apiVersion: v2
     appVersion: 3.16.1-0-g0409bbc198
-    created: "2023-12-21T11:41:36.199061463Z"
+    created: "2023-12-21T13:05:16.168260788Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6056,7 +6056,7 @@ entries:
     version: 3.16.1-0-g0409bbc198
   - apiVersion: v2
     appVersion: 3.16.0-9-gb953af9207
-    created: "2023-12-21T11:41:36.158279683Z"
+    created: "2023-12-21T13:05:16.127593356Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6103,7 +6103,7 @@ entries:
     version: 3.16.0-9-gb953af9207
   - apiVersion: v2
     appVersion: 3.16.0-8-gbd0998be1c
-    created: "2023-12-21T11:41:36.118394139Z"
+    created: "2023-12-21T13:05:16.086316429Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6150,7 +6150,7 @@ entries:
     version: 3.16.0-8-gbd0998be1c
   - apiVersion: v2
     appVersion: 3.16.0-7-g23cac46563
-    created: "2023-12-21T11:41:36.077145403Z"
+    created: "2023-12-21T13:05:16.043418389Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6197,7 +6197,7 @@ entries:
     version: 3.16.0-7-g23cac46563
   - apiVersion: v2
     appVersion: 3.16.0-6-g0ffb1708cb
-    created: "2023-12-21T11:41:36.036315762Z"
+    created: "2023-12-21T13:05:16.002166755Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6244,7 +6244,7 @@ entries:
     version: 3.16.0-6-g0ffb1708cb
   - apiVersion: v2
     appVersion: 3.16.0-5-g942aa6440b
-    created: "2023-12-21T11:41:35.994751837Z"
+    created: "2023-12-21T13:05:15.960504376Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6291,7 +6291,7 @@ entries:
     version: 3.16.0-5-g942aa6440b
   - apiVersion: v2
     appVersion: 3.16.0-4-g371b691852
-    created: "2023-12-21T11:41:35.953230812Z"
+    created: "2023-12-21T13:05:15.918353877Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6338,7 +6338,7 @@ entries:
     version: 3.16.0-4-g371b691852
   - apiVersion: v2
     appVersion: 3.16.0-3-g6b30d9d12c
-    created: "2023-12-21T11:41:35.912490738Z"
+    created: "2023-12-21T13:05:15.87559271Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6385,7 +6385,7 @@ entries:
     version: 3.16.0-3-g6b30d9d12c
   - apiVersion: v2
     appVersion: 3.16.0-3-g0409bbc198
-    created: "2023-12-21T11:41:35.872719174Z"
+    created: "2023-12-21T13:05:15.835020924Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6432,7 +6432,7 @@ entries:
     version: 3.16.0-3-g0409bbc198
   - apiVersion: v2
     appVersion: 3.16.0-2-ged2ad2deae
-    created: "2023-12-21T11:41:35.832119065Z"
+    created: "2023-12-21T13:05:15.792713657Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6479,7 +6479,7 @@ entries:
     version: 3.16.0-2-ged2ad2deae
   - apiVersion: v2
     appVersion: 3.16.0-2-g2f16ae5d10
-    created: "2023-12-21T11:41:35.790367845Z"
+    created: "2023-12-21T13:05:15.751854753Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6526,7 +6526,7 @@ entries:
     version: 3.16.0-2-g2f16ae5d10
   - apiVersion: v2
     appVersion: 3.16.0-16-g9c86d425a3
-    created: "2023-12-21T11:41:35.749699679Z"
+    created: "2023-12-21T13:05:15.71060746Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6573,7 +6573,7 @@ entries:
     version: 3.16.0-16-g9c86d425a3
   - apiVersion: v2
     appVersion: 3.16.0-14-gc960687aac
-    created: "2023-12-21T11:41:35.70890831Z"
+    created: "2023-12-21T13:05:15.666879857Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6620,7 +6620,7 @@ entries:
     version: 3.16.0-14-gc960687aac
   - apiVersion: v2
     appVersion: 3.16.0-13-gf36a8dae93
-    created: "2023-12-21T11:41:35.668258837Z"
+    created: "2023-12-21T13:05:15.625654645Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6667,7 +6667,7 @@ entries:
     version: 3.16.0-13-gf36a8dae93
   - apiVersion: v2
     appVersion: 3.16.0-12-gbdd9eb710e
-    created: "2023-12-21T11:41:35.627470514Z"
+    created: "2023-12-21T13:05:15.583788998Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6714,7 +6714,7 @@ entries:
     version: 3.16.0-12-gbdd9eb710e
   - apiVersion: v2
     appVersion: 3.16.0-11-gf69ad7d0d7
-    created: "2023-12-21T11:41:35.586641576Z"
+    created: "2023-12-21T13:05:15.542186659Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6761,7 +6761,7 @@ entries:
     version: 3.16.0-11-gf69ad7d0d7
   - apiVersion: v2
     appVersion: 3.16.0-10-g022833753b
-    created: "2023-12-21T11:41:35.544472405Z"
+    created: "2023-12-21T13:05:15.500293398Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6808,7 +6808,7 @@ entries:
     version: 3.16.0-10-g022833753b
   - apiVersion: v2
     appVersion: 3.16.0-1-gd3a1d34fb9
-    created: "2023-12-21T11:41:35.504441424Z"
+    created: "2023-12-21T13:05:15.459263512Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6855,7 +6855,7 @@ entries:
     version: 3.16.0-1-gd3a1d34fb9
   - apiVersion: v2
     appVersion: 3.16.0-1-g8bbfce5b1a
-    created: "2023-12-21T11:41:35.463710962Z"
+    created: "2023-12-21T13:05:15.416552655Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6902,7 +6902,7 @@ entries:
     version: 3.16.0-1-g8bbfce5b1a
   - apiVersion: v2
     appVersion: 3.16.0-0-gbc72d762ed
-    created: "2023-12-21T11:41:35.421640467Z"
+    created: "2023-12-21T13:05:15.37461204Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6949,7 +6949,7 @@ entries:
     version: 3.16.0-0-gbc72d762ed
   - apiVersion: v2
     appVersion: 3.15.0-rc.0-1-g4cd88029ed
-    created: "2023-12-21T11:41:35.381767221Z"
+    created: "2023-12-21T13:05:15.333318357Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -6996,7 +6996,7 @@ entries:
     version: 3.15.0-rc.0-1-g4cd88029ed
   - apiVersion: v2
     appVersion: 3.15.0-rc.0-0-g95602713c4
-    created: "2023-12-21T11:41:35.341290128Z"
+    created: "2023-12-21T13:05:15.292194837Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7043,7 +7043,7 @@ entries:
     version: 3.15.0-rc.0-0-g95602713c4
   - apiVersion: v2
     appVersion: 3.15.0-9-g04a6dd52d8
-    created: "2023-12-21T11:41:35.299359649Z"
+    created: "2023-12-21T13:05:15.250247252Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7090,7 +7090,7 @@ entries:
     version: 3.15.0-9-g04a6dd52d8
   - apiVersion: v2
     appVersion: 3.15.0-8-g4dc600ce60
-    created: "2023-12-21T11:41:35.259750898Z"
+    created: "2023-12-21T13:05:15.208896581Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7137,7 +7137,7 @@ entries:
     version: 3.15.0-8-g4dc600ce60
   - apiVersion: v2
     appVersion: 3.15.0-7-g0405cd6e38
-    created: "2023-12-21T11:41:35.219572747Z"
+    created: "2023-12-21T13:05:15.167477579Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7184,7 +7184,7 @@ entries:
     version: 3.15.0-7-g0405cd6e38
   - apiVersion: v2
     appVersion: 3.15.0-6-g81d0bc6eb3
-    created: "2023-12-21T11:41:35.179082136Z"
+    created: "2023-12-21T13:05:15.124914376Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7231,7 +7231,7 @@ entries:
     version: 3.15.0-6-g81d0bc6eb3
   - apiVersion: v2
     appVersion: 3.15.0-5-gec199ad388
-    created: "2023-12-21T11:41:35.138024446Z"
+    created: "2023-12-21T13:05:15.082134936Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7278,7 +7278,7 @@ entries:
     version: 3.15.0-5-gec199ad388
   - apiVersion: v2
     appVersion: 3.15.0-4-ge0990fca7d
-    created: "2023-12-21T11:41:35.096870351Z"
+    created: "2023-12-21T13:05:15.039784721Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7325,7 +7325,7 @@ entries:
     version: 3.15.0-4-ge0990fca7d
   - apiVersion: v2
     appVersion: 3.15.0-3-g279470a8f7
-    created: "2023-12-21T11:41:35.056468501Z"
+    created: "2023-12-21T13:05:14.998779016Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7372,7 +7372,7 @@ entries:
     version: 3.15.0-3-g279470a8f7
   - apiVersion: v2
     appVersion: 3.15.0-2-g098249ee47
-    created: "2023-12-21T11:41:35.015909249Z"
+    created: "2023-12-21T13:05:14.957233323Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7419,7 +7419,7 @@ entries:
     version: 3.15.0-2-g098249ee47
   - apiVersion: v2
     appVersion: 3.15.0-14-gbc72d762ed
-    created: "2023-12-21T11:41:34.966919914Z"
+    created: "2023-12-21T13:05:14.916744426Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7466,7 +7466,7 @@ entries:
     version: 3.15.0-14-gbc72d762ed
   - apiVersion: v2
     appVersion: 3.15.0-12-g0e3e3f8fa4
-    created: "2023-12-21T11:41:34.92013825Z"
+    created: "2023-12-21T13:05:14.875696407Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7513,7 +7513,7 @@ entries:
     version: 3.15.0-12-g0e3e3f8fa4
   - apiVersion: v2
     appVersion: 3.15.0-11-g01aedc9940
-    created: "2023-12-21T11:41:34.878691336Z"
+    created: "2023-12-21T13:05:14.834222808Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7560,7 +7560,7 @@ entries:
     version: 3.15.0-11-g01aedc9940
   - apiVersion: v2
     appVersion: 3.15.0-10-gbeb29a78d4
-    created: "2023-12-21T11:41:34.837805492Z"
+    created: "2023-12-21T13:05:14.793956469Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7607,7 +7607,7 @@ entries:
     version: 3.15.0-10-gbeb29a78d4
   - apiVersion: v2
     appVersion: 3.15.0-1-gcde921223e
-    created: "2023-12-21T11:41:34.797181852Z"
+    created: "2023-12-21T13:05:14.752262816Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7654,7 +7654,7 @@ entries:
     version: 3.15.0-1-gcde921223e
   - apiVersion: v2
     appVersion: 3.15.0-1-g15bf43c615
-    created: "2023-12-21T11:41:34.75658442Z"
+    created: "2023-12-21T13:05:14.709740331Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7701,7 +7701,7 @@ entries:
     version: 3.15.0-1-g15bf43c615
   - apiVersion: v2
     appVersion: 3.15.0-0-g4cd88029ed
-    created: "2023-12-21T11:41:34.716379421Z"
+    created: "2023-12-21T13:05:14.669091339Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7748,7 +7748,7 @@ entries:
     version: 3.15.0-0-g4cd88029ed
   - apiVersion: v2
     appVersion: 3.14.0-9-g55b7ab04c8
-    created: "2023-12-21T11:41:34.676833349Z"
+    created: "2023-12-21T13:05:14.62772196Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7795,7 +7795,7 @@ entries:
     version: 3.14.0-9-g55b7ab04c8
   - apiVersion: v2
     appVersion: 3.14.0-8-g5b27dd1e2c
-    created: "2023-12-21T11:41:34.63630285Z"
+    created: "2023-12-21T13:05:14.585404605Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7842,7 +7842,7 @@ entries:
     version: 3.14.0-8-g5b27dd1e2c
   - apiVersion: v2
     appVersion: 3.14.0-7-g8964ea5fa2
-    created: "2023-12-21T11:41:34.594448247Z"
+    created: "2023-12-21T13:05:14.544660367Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7889,7 +7889,7 @@ entries:
     version: 3.14.0-7-g8964ea5fa2
   - apiVersion: v2
     appVersion: 3.14.0-6-g6f3792955a
-    created: "2023-12-21T11:41:34.554816625Z"
+    created: "2023-12-21T13:05:14.502581097Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -7936,7 +7936,7 @@ entries:
     version: 3.14.0-6-g6f3792955a
   - apiVersion: v2
     appVersion: 3.14.0-57-gc0301ae5b9
-    created: "2023-12-21T11:41:34.514157777Z"
+    created: "2023-12-21T13:05:14.46077335Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -7979,7 +7979,7 @@ entries:
     version: 3.14.0-57-gc0301ae5b9
   - apiVersion: v2
     appVersion: 3.14.0-56-g349f8c9001
-    created: "2023-12-21T11:41:34.478630106Z"
+    created: "2023-12-21T13:05:14.424048089Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8022,7 +8022,7 @@ entries:
     version: 3.14.0-56-g349f8c9001
   - apiVersion: v2
     appVersion: 3.14.0-55-g94ac55aa91
-    created: "2023-12-21T11:41:34.443912556Z"
+    created: "2023-12-21T13:05:14.388264364Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8065,7 +8065,7 @@ entries:
     version: 3.14.0-55-g94ac55aa91
   - apiVersion: v2
     appVersion: 3.14.0-54-gf423bfb816
-    created: "2023-12-21T11:41:34.408440695Z"
+    created: "2023-12-21T13:05:14.352096143Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8108,7 +8108,7 @@ entries:
     version: 3.14.0-54-gf423bfb816
   - apiVersion: v2
     appVersion: 3.14.0-53-g7d7f2e2087
-    created: "2023-12-21T11:41:34.374206777Z"
+    created: "2023-12-21T13:05:14.316693976Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8151,7 +8151,7 @@ entries:
     version: 3.14.0-53-g7d7f2e2087
   - apiVersion: v2
     appVersion: 3.14.0-52-ge30ba2e1ab
-    created: "2023-12-21T11:41:34.339377105Z"
+    created: "2023-12-21T13:05:14.280652843Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8194,7 +8194,7 @@ entries:
     version: 3.14.0-52-ge30ba2e1ab
   - apiVersion: v2
     appVersion: 3.14.0-51-g8b109d2e8d
-    created: "2023-12-21T11:41:34.303655471Z"
+    created: "2023-12-21T13:05:14.243363677Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8237,7 +8237,7 @@ entries:
     version: 3.14.0-51-g8b109d2e8d
   - apiVersion: v2
     appVersion: 3.14.0-50-gf4679bd7fb
-    created: "2023-12-21T11:41:34.268181071Z"
+    created: "2023-12-21T13:05:14.207198324Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8280,7 +8280,7 @@ entries:
     version: 3.14.0-50-gf4679bd7fb
   - apiVersion: v2
     appVersion: 3.14.0-5-g8d8a3b97d3
-    created: "2023-12-21T11:41:34.232636166Z"
+    created: "2023-12-21T13:05:14.170583821Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -8327,7 +8327,7 @@ entries:
     version: 3.14.0-5-g8d8a3b97d3
   - apiVersion: v2
     appVersion: 3.14.0-49-gb65f03e3a9
-    created: "2023-12-21T11:41:34.192385331Z"
+    created: "2023-12-21T13:05:14.129358622Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8370,7 +8370,7 @@ entries:
     version: 3.14.0-49-gb65f03e3a9
   - apiVersion: v2
     appVersion: 3.14.0-48-gc04f4a6d77
-    created: "2023-12-21T11:41:34.157832518Z"
+    created: "2023-12-21T13:05:14.093232601Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8413,7 +8413,7 @@ entries:
     version: 3.14.0-48-gc04f4a6d77
   - apiVersion: v2
     appVersion: 3.14.0-47-g20516028f1
-    created: "2023-12-21T11:41:34.122033857Z"
+    created: "2023-12-21T13:05:14.056069606Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8456,7 +8456,7 @@ entries:
     version: 3.14.0-47-g20516028f1
   - apiVersion: v2
     appVersion: 3.14.0-46-g543a433e2f
-    created: "2023-12-21T11:41:34.086729674Z"
+    created: "2023-12-21T13:05:14.019605335Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8499,7 +8499,7 @@ entries:
     version: 3.14.0-46-g543a433e2f
   - apiVersion: v2
     appVersion: 3.14.0-45-gd71a1da563
-    created: "2023-12-21T11:41:34.052091658Z"
+    created: "2023-12-21T13:05:13.983089771Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8542,7 +8542,7 @@ entries:
     version: 3.14.0-45-gd71a1da563
   - apiVersion: v2
     appVersion: 3.14.0-44-gf419cb9eee
-    created: "2023-12-21T11:41:34.017406156Z"
+    created: "2023-12-21T13:05:13.946594005Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8585,7 +8585,7 @@ entries:
     version: 3.14.0-44-gf419cb9eee
   - apiVersion: v2
     appVersion: 3.14.0-43-ga8f22f7e07
-    created: "2023-12-21T11:41:33.981430428Z"
+    created: "2023-12-21T13:05:13.909910286Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8628,7 +8628,7 @@ entries:
     version: 3.14.0-43-ga8f22f7e07
   - apiVersion: v2
     appVersion: 3.14.0-42-g5e37987da9
-    created: "2023-12-21T11:41:33.945681306Z"
+    created: "2023-12-21T13:05:13.872969826Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8671,7 +8671,7 @@ entries:
     version: 3.14.0-42-g5e37987da9
   - apiVersion: v2
     appVersion: 3.14.0-41-g51cab85f94
-    created: "2023-12-21T11:41:33.910581124Z"
+    created: "2023-12-21T13:05:13.836435253Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8714,7 +8714,7 @@ entries:
     version: 3.14.0-41-g51cab85f94
   - apiVersion: v2
     appVersion: 3.14.0-40-gd4064769c8
-    created: "2023-12-21T11:41:33.875390771Z"
+    created: "2023-12-21T13:05:13.80031809Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8757,7 +8757,7 @@ entries:
     version: 3.14.0-40-gd4064769c8
   - apiVersion: v2
     appVersion: 3.14.0-4-g0945aa04aa
-    created: "2023-12-21T11:41:33.839501064Z"
+    created: "2023-12-21T13:05:13.76384644Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -8804,7 +8804,7 @@ entries:
     version: 3.14.0-4-g0945aa04aa
   - apiVersion: v2
     appVersion: 3.14.0-34-gc9b83d01ff
-    created: "2023-12-21T11:41:33.799828181Z"
+    created: "2023-12-21T13:05:13.723454214Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8847,7 +8847,7 @@ entries:
     version: 3.14.0-34-gc9b83d01ff
   - apiVersion: v2
     appVersion: 3.14.0-33-g203bef9b85
-    created: "2023-12-21T11:41:33.762793191Z"
+    created: "2023-12-21T13:05:13.68573568Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8890,7 +8890,7 @@ entries:
     version: 3.14.0-33-g203bef9b85
   - apiVersion: v2
     appVersion: 3.14.0-30-g576e00b00f
-    created: "2023-12-21T11:41:33.725364565Z"
+    created: "2023-12-21T13:05:13.648594345Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -8933,7 +8933,7 @@ entries:
     version: 3.14.0-30-g576e00b00f
   - apiVersion: v2
     appVersion: 3.14.0-3-g17461fced4
-    created: "2023-12-21T11:41:33.687485751Z"
+    created: "2023-12-21T13:05:13.60972811Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -8980,7 +8980,7 @@ entries:
     version: 3.14.0-3-g17461fced4
   - apiVersion: v2
     appVersion: 3.14.0-29-gd7f769117c
-    created: "2023-12-21T11:41:33.645329808Z"
+    created: "2023-12-21T13:05:13.567688914Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -9023,7 +9023,7 @@ entries:
     version: 3.14.0-29-gd7f769117c
   - apiVersion: v2
     appVersion: 3.14.0-26-g95602713c4
-    created: "2023-12-21T11:41:33.608297298Z"
+    created: "2023-12-21T13:05:13.530344494Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9070,7 +9070,7 @@ entries:
     version: 3.14.0-26-g95602713c4
   - apiVersion: v2
     appVersion: 3.14.0-26-g0da8322d4f
-    created: "2023-12-21T11:41:33.567227897Z"
+    created: "2023-12-21T13:05:13.488062826Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -9113,7 +9113,7 @@ entries:
     version: 3.14.0-26-g0da8322d4f
   - apiVersion: v2
     appVersion: 3.14.0-25-g8f0ef5e8ed
-    created: "2023-12-21T11:41:33.530470283Z"
+    created: "2023-12-21T13:05:13.450152984Z"
     dependencies:
     - condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
       name: kube-prometheus-stack
@@ -9156,7 +9156,7 @@ entries:
     version: 3.14.0-25-g8f0ef5e8ed
   - apiVersion: v2
     appVersion: 3.14.0-24-gc49768750a
-    created: "2023-12-21T11:41:33.493750208Z"
+    created: "2023-12-21T13:05:13.41226234Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9203,7 +9203,7 @@ entries:
     version: 3.14.0-24-gc49768750a
   - apiVersion: v2
     appVersion: 3.14.0-23-g18efc97787
-    created: "2023-12-21T11:41:33.452643895Z"
+    created: "2023-12-21T13:05:13.369974009Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9250,7 +9250,7 @@ entries:
     version: 3.14.0-23-g18efc97787
   - apiVersion: v2
     appVersion: 3.14.0-23-g09022e5958
-    created: "2023-12-21T11:41:33.413306352Z"
+    created: "2023-12-21T13:05:13.329710929Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9297,7 +9297,7 @@ entries:
     version: 3.14.0-23-g09022e5958
   - apiVersion: v2
     appVersion: 3.14.0-22-gfa09167e2d
-    created: "2023-12-21T11:41:33.372224988Z"
+    created: "2023-12-21T13:05:13.287989702Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9344,7 +9344,7 @@ entries:
     version: 3.14.0-22-gfa09167e2d
   - apiVersion: v2
     appVersion: 3.14.0-22-g8ed03f0c79
-    created: "2023-12-21T11:41:33.330859536Z"
+    created: "2023-12-21T13:05:13.245954074Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9391,7 +9391,7 @@ entries:
     version: 3.14.0-22-g8ed03f0c79
   - apiVersion: v2
     appVersion: 3.14.0-21-g28153ab50a
-    created: "2023-12-21T11:41:33.291325127Z"
+    created: "2023-12-21T13:05:13.204602713Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9438,7 +9438,7 @@ entries:
     version: 3.14.0-21-g28153ab50a
   - apiVersion: v2
     appVersion: 3.14.0-20-g6426e2c2f6
-    created: "2023-12-21T11:41:33.250730594Z"
+    created: "2023-12-21T13:05:13.163648572Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9485,7 +9485,7 @@ entries:
     version: 3.14.0-20-g6426e2c2f6
   - apiVersion: v2
     appVersion: 3.14.0-2-g0f574b0cac
-    created: "2023-12-21T11:41:33.209603424Z"
+    created: "2023-12-21T13:05:13.122716974Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9532,7 +9532,7 @@ entries:
     version: 3.14.0-2-g0f574b0cac
   - apiVersion: v2
     appVersion: 3.14.0-19-g92623268fb
-    created: "2023-12-21T11:41:33.168689317Z"
+    created: "2023-12-21T13:05:13.081614369Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9579,7 +9579,7 @@ entries:
     version: 3.14.0-19-g92623268fb
   - apiVersion: v2
     appVersion: 3.14.0-18-gfc40217b16
-    created: "2023-12-21T11:41:33.128294895Z"
+    created: "2023-12-21T13:05:13.040152671Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9626,7 +9626,7 @@ entries:
     version: 3.14.0-18-gfc40217b16
   - apiVersion: v2
     appVersion: 3.14.0-17-gdff1784c2b
-    created: "2023-12-21T11:41:33.087993266Z"
+    created: "2023-12-21T13:05:12.999390406Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9673,7 +9673,7 @@ entries:
     version: 3.14.0-17-gdff1784c2b
   - apiVersion: v2
     appVersion: 3.14.0-16-g2fa51e0cf5
-    created: "2023-12-21T11:41:33.047989664Z"
+    created: "2023-12-21T13:05:12.95688814Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9720,7 +9720,7 @@ entries:
     version: 3.14.0-16-g2fa51e0cf5
   - apiVersion: v2
     appVersion: 3.14.0-15-g9cb3ab416d
-    created: "2023-12-21T11:41:33.0072142Z"
+    created: "2023-12-21T13:05:12.915757952Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9767,7 +9767,7 @@ entries:
     version: 3.14.0-15-g9cb3ab416d
   - apiVersion: v2
     appVersion: 3.14.0-14-g0d9e58bdcc
-    created: "2023-12-21T11:41:32.966134169Z"
+    created: "2023-12-21T13:05:12.874558948Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9814,7 +9814,7 @@ entries:
     version: 3.14.0-14-g0d9e58bdcc
   - apiVersion: v2
     appVersion: 3.14.0-13-g76f4eaee40
-    created: "2023-12-21T11:41:32.925793233Z"
+    created: "2023-12-21T13:05:12.832530908Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9861,7 +9861,7 @@ entries:
     version: 3.14.0-13-g76f4eaee40
   - apiVersion: v2
     appVersion: 3.14.0-12-g06a8b30d00
-    created: "2023-12-21T11:41:32.885028542Z"
+    created: "2023-12-21T13:05:12.790810963Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9908,7 +9908,7 @@ entries:
     version: 3.14.0-12-g06a8b30d00
   - apiVersion: v2
     appVersion: 3.14.0-11-g23b845e2af
-    created: "2023-12-21T11:41:32.844974591Z"
+    created: "2023-12-21T13:05:12.749917332Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -9955,7 +9955,7 @@ entries:
     version: 3.14.0-11-g23b845e2af
   - apiVersion: v2
     appVersion: 3.14.0-10-g991bb25def
-    created: "2023-12-21T11:41:32.805568452Z"
+    created: "2023-12-21T13:05:12.70745164Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10002,7 +10002,7 @@ entries:
     version: 3.14.0-10-g991bb25def
   - apiVersion: v2
     appVersion: 3.14.0-1-g885769e352
-    created: "2023-12-21T11:41:32.764456276Z"
+    created: "2023-12-21T13:05:12.666741011Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10049,7 +10049,7 @@ entries:
     version: 3.14.0-1-g885769e352
   - apiVersion: v2
     appVersion: 3.14.0-0-g912ecbf7eb
-    created: "2023-12-21T11:41:32.725015832Z"
+    created: "2023-12-21T13:05:12.624859192Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10096,7 +10096,7 @@ entries:
     version: 3.14.0-0-g912ecbf7eb
   - apiVersion: v2
     appVersion: 3.13.0-4-g912ecbf7eb
-    created: "2023-12-21T11:41:32.683844672Z"
+    created: "2023-12-21T13:05:12.584041411Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10143,7 +10143,7 @@ entries:
     version: 3.13.0-4-g912ecbf7eb
   - apiVersion: v2
     appVersion: 3.13.0-3-g63f64e1c6f
-    created: "2023-12-21T11:41:32.644040179Z"
+    created: "2023-12-21T13:05:12.542116371Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10190,7 +10190,7 @@ entries:
     version: 3.13.0-3-g63f64e1c6f
   - apiVersion: v2
     appVersion: 3.13.0-2-g791a7a76df
-    created: "2023-12-21T11:41:32.601854419Z"
+    created: "2023-12-21T13:05:12.499459161Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10237,7 +10237,7 @@ entries:
     version: 3.13.0-2-g791a7a76df
   - apiVersion: v2
     appVersion: 3.13.0-1-gf887cfc06e
-    created: "2023-12-21T11:41:32.561797745Z"
+    created: "2023-12-21T13:05:12.458743611Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10284,7 +10284,7 @@ entries:
     version: 3.13.0-1-gf887cfc06e
   - apiVersion: v2
     appVersion: 3.13.0-1-g9a4aad8030
-    created: "2023-12-21T11:41:32.521153922Z"
+    created: "2023-12-21T13:05:12.416213044Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10331,7 +10331,7 @@ entries:
     version: 3.13.0-1-g9a4aad8030
   - apiVersion: v2
     appVersion: 3.13.0-0-gd7f94d9810
-    created: "2023-12-21T11:41:32.480905125Z"
+    created: "2023-12-21T13:05:12.374772923Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10378,7 +10378,7 @@ entries:
     version: 3.13.0-0-gd7f94d9810
   - apiVersion: v2
     appVersion: 3.12.1-0-ga66874a76e
-    created: "2023-12-21T11:41:32.44064084Z"
+    created: "2023-12-21T13:05:12.334340783Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10425,7 +10425,7 @@ entries:
     version: 3.12.1-0-ga66874a76e
   - apiVersion: v2
     appVersion: 3.12.0-9-g310eea0468
-    created: "2023-12-21T11:41:32.400701039Z"
+    created: "2023-12-21T13:05:12.293175922Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10472,7 +10472,7 @@ entries:
     version: 3.12.0-9-g310eea0468
   - apiVersion: v2
     appVersion: 3.12.0-7-g589e1b882d
-    created: "2023-12-21T11:41:32.360195871Z"
+    created: "2023-12-21T13:05:12.251868843Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10519,7 +10519,7 @@ entries:
     version: 3.12.0-7-g589e1b882d
   - apiVersion: v2
     appVersion: 3.12.0-6-g1461346704
-    created: "2023-12-21T11:41:32.319675045Z"
+    created: "2023-12-21T13:05:12.210162899Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10566,7 +10566,7 @@ entries:
     version: 3.12.0-6-g1461346704
   - apiVersion: v2
     appVersion: 3.12.0-5-g8e67b3095a
-    created: "2023-12-21T11:41:32.279369252Z"
+    created: "2023-12-21T13:05:12.168670726Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10613,7 +10613,7 @@ entries:
     version: 3.12.0-5-g8e67b3095a
   - apiVersion: v2
     appVersion: 3.12.0-4-g4298fec5d5
-    created: "2023-12-21T11:41:32.239500595Z"
+    created: "2023-12-21T13:05:12.126968246Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10660,7 +10660,7 @@ entries:
     version: 3.12.0-4-g4298fec5d5
   - apiVersion: v2
     appVersion: 3.12.0-31-gd7f94d9810
-    created: "2023-12-21T11:41:32.198708481Z"
+    created: "2023-12-21T13:05:12.085687698Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10707,7 +10707,7 @@ entries:
     version: 3.12.0-31-gd7f94d9810
   - apiVersion: v2
     appVersion: 3.12.0-30-g0ad2419f22
-    created: "2023-12-21T11:41:32.156530484Z"
+    created: "2023-12-21T13:05:12.045193969Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10754,7 +10754,7 @@ entries:
     version: 3.12.0-30-g0ad2419f22
   - apiVersion: v2
     appVersion: 3.12.0-3-g8f951a5a97
-    created: "2023-12-21T11:41:32.115472521Z"
+    created: "2023-12-21T13:05:12.001926224Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10801,7 +10801,7 @@ entries:
     version: 3.12.0-3-g8f951a5a97
   - apiVersion: v2
     appVersion: 3.12.0-29-gd2a54768a2
-    created: "2023-12-21T11:41:32.075822236Z"
+    created: "2023-12-21T13:05:11.960822189Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10848,7 +10848,7 @@ entries:
     version: 3.12.0-29-gd2a54768a2
   - apiVersion: v2
     appVersion: 3.12.0-28-gd7e002eab5
-    created: "2023-12-21T11:41:32.034639545Z"
+    created: "2023-12-21T13:05:11.920660024Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10895,7 +10895,7 @@ entries:
     version: 3.12.0-28-gd7e002eab5
   - apiVersion: v2
     appVersion: 3.12.0-27-gd9750a0115
-    created: "2023-12-21T11:41:31.99526758Z"
+    created: "2023-12-21T13:05:11.878523574Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10942,7 +10942,7 @@ entries:
     version: 3.12.0-27-gd9750a0115
   - apiVersion: v2
     appVersion: 3.12.0-26-gf794438514
-    created: "2023-12-21T11:41:31.954669452Z"
+    created: "2023-12-21T13:05:11.837398185Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -10989,7 +10989,7 @@ entries:
     version: 3.12.0-26-gf794438514
   - apiVersion: v2
     appVersion: 3.12.0-25-g9ae09e6b4e
-    created: "2023-12-21T11:41:31.91336643Z"
+    created: "2023-12-21T13:05:11.795532537Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11036,7 +11036,7 @@ entries:
     version: 3.12.0-25-g9ae09e6b4e
   - apiVersion: v2
     appVersion: 3.12.0-24-gcc295f22cd
-    created: "2023-12-21T11:41:31.873581901Z"
+    created: "2023-12-21T13:05:11.754692183Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11083,7 +11083,7 @@ entries:
     version: 3.12.0-24-gcc295f22cd
   - apiVersion: v2
     appVersion: 3.12.0-23-g5701accada
-    created: "2023-12-21T11:41:31.833119008Z"
+    created: "2023-12-21T13:05:11.714503733Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11130,7 +11130,7 @@ entries:
     version: 3.12.0-23-g5701accada
   - apiVersion: v2
     appVersion: 3.12.0-22-g5bcac2f384
-    created: "2023-12-21T11:41:31.791839727Z"
+    created: "2023-12-21T13:05:11.673315048Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11177,7 +11177,7 @@ entries:
     version: 3.12.0-22-g5bcac2f384
   - apiVersion: v2
     appVersion: 3.12.0-21-g291ee6cd3b
-    created: "2023-12-21T11:41:31.750296633Z"
+    created: "2023-12-21T13:05:11.632413659Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11224,7 +11224,7 @@ entries:
     version: 3.12.0-21-g291ee6cd3b
   - apiVersion: v2
     appVersion: 3.12.0-20-g8cd8a8cdbe
-    created: "2023-12-21T11:41:31.709195192Z"
+    created: "2023-12-21T13:05:11.592104209Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11271,7 +11271,7 @@ entries:
     version: 3.12.0-20-g8cd8a8cdbe
   - apiVersion: v2
     appVersion: 3.12.0-19-ga21066a454
-    created: "2023-12-21T11:41:31.66895776Z"
+    created: "2023-12-21T13:05:11.550162074Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11318,7 +11318,7 @@ entries:
     version: 3.12.0-19-ga21066a454
   - apiVersion: v2
     appVersion: 3.12.0-18-g692d97c6fc
-    created: "2023-12-21T11:41:31.628694736Z"
+    created: "2023-12-21T13:05:11.508513985Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11365,7 +11365,7 @@ entries:
     version: 3.12.0-18-g692d97c6fc
   - apiVersion: v2
     appVersion: 3.12.0-17-gd1d63eff20
-    created: "2023-12-21T11:41:31.587024031Z"
+    created: "2023-12-21T13:05:11.467678758Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11412,7 +11412,7 @@ entries:
     version: 3.12.0-17-gd1d63eff20
   - apiVersion: v2
     appVersion: 3.12.0-16-g9a75b81f09
-    created: "2023-12-21T11:41:31.547076951Z"
+    created: "2023-12-21T13:05:11.41855815Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11459,7 +11459,7 @@ entries:
     version: 3.12.0-16-g9a75b81f09
   - apiVersion: v2
     appVersion: 3.12.0-15-g70032194c8
-    created: "2023-12-21T11:41:31.50724035Z"
+    created: "2023-12-21T13:05:11.374329269Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11506,7 +11506,7 @@ entries:
     version: 3.12.0-15-g70032194c8
   - apiVersion: v2
     appVersion: 3.12.0-14-g291e5d8692
-    created: "2023-12-21T11:41:31.466853216Z"
+    created: "2023-12-21T13:05:11.321560914Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11553,7 +11553,7 @@ entries:
     version: 3.12.0-14-g291e5d8692
   - apiVersion: v2
     appVersion: 3.12.0-13-g206bedaaf1
-    created: "2023-12-21T11:41:31.426040538Z"
+    created: "2023-12-21T13:05:11.28095894Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11600,7 +11600,7 @@ entries:
     version: 3.12.0-13-g206bedaaf1
   - apiVersion: v2
     appVersion: 3.12.0-12-gd278c2f7a4
-    created: "2023-12-21T11:41:31.383427776Z"
+    created: "2023-12-21T13:05:11.239253563Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11647,7 +11647,7 @@ entries:
     version: 3.12.0-12-gd278c2f7a4
   - apiVersion: v2
     appVersion: 3.12.0-11-g0f067c0448
-    created: "2023-12-21T11:41:31.343340749Z"
+    created: "2023-12-21T13:05:11.199302437Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11694,7 +11694,7 @@ entries:
     version: 3.12.0-11-g0f067c0448
   - apiVersion: v2
     appVersion: 3.12.0-10-g2ffaead956
-    created: "2023-12-21T11:41:31.302963465Z"
+    created: "2023-12-21T13:05:11.157135294Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11741,7 +11741,7 @@ entries:
     version: 3.12.0-10-g2ffaead956
   - apiVersion: v2
     appVersion: 3.12.0-0-g01583079ed
-    created: "2023-12-21T11:41:31.262216725Z"
+    created: "2023-12-21T13:05:11.116039944Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11788,7 +11788,7 @@ entries:
     version: 3.12.0-0-g01583079ed
   - apiVersion: v2
     appVersion: 3.11.1-0-g6859d54737
-    created: "2023-12-21T11:41:31.222041129Z"
+    created: "2023-12-21T13:05:11.075655177Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11835,7 +11835,7 @@ entries:
     version: 3.11.1-0-g6859d54737
   - apiVersion: v2
     appVersion: 3.11.1-0-g2742a80c2d
-    created: "2023-12-21T11:41:31.182202351Z"
+    created: "2023-12-21T13:05:11.033635703Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11882,7 +11882,7 @@ entries:
     version: 3.11.1-0-g2742a80c2d
   - apiVersion: v2
     appVersion: 3.11.0-9-g96951d6bf0
-    created: "2023-12-21T11:41:31.141548819Z"
+    created: "2023-12-21T13:05:10.992404682Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11929,7 +11929,7 @@ entries:
     version: 3.11.0-9-g96951d6bf0
   - apiVersion: v2
     appVersion: 3.11.0-7-g07311cb329
-    created: "2023-12-21T11:41:31.101462477Z"
+    created: "2023-12-21T13:05:10.952426476Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -11976,7 +11976,7 @@ entries:
     version: 3.11.0-7-g07311cb329
   - apiVersion: v2
     appVersion: 3.11.0-6-g98924db78d
-    created: "2023-12-21T11:41:31.060705758Z"
+    created: "2023-12-21T13:05:10.912500884Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12023,7 +12023,7 @@ entries:
     version: 3.11.0-6-g98924db78d
   - apiVersion: v2
     appVersion: 3.11.0-5-ga4e7a65d3b
-    created: "2023-12-21T11:41:31.01909114Z"
+    created: "2023-12-21T13:05:10.871201459Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12070,7 +12070,7 @@ entries:
     version: 3.11.0-5-ga4e7a65d3b
   - apiVersion: v2
     appVersion: 3.11.0-4-gfcac957b08
-    created: "2023-12-21T11:41:30.978961999Z"
+    created: "2023-12-21T13:05:10.830742966Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12117,7 +12117,7 @@ entries:
     version: 3.11.0-4-gfcac957b08
   - apiVersion: v2
     appVersion: 3.11.0-3-gf8d4a65bc3
-    created: "2023-12-21T11:41:30.939599911Z"
+    created: "2023-12-21T13:05:10.787753365Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12164,7 +12164,7 @@ entries:
     version: 3.11.0-3-gf8d4a65bc3
   - apiVersion: v2
     appVersion: 3.11.0-3-g2742a80c2d
-    created: "2023-12-21T11:41:30.899709208Z"
+    created: "2023-12-21T13:05:10.74629243Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12211,7 +12211,7 @@ entries:
     version: 3.11.0-3-g2742a80c2d
   - apiVersion: v2
     appVersion: 3.11.0-2-g9d52ccd987
-    created: "2023-12-21T11:41:30.858370664Z"
+    created: "2023-12-21T13:05:10.705529545Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12258,7 +12258,7 @@ entries:
     version: 3.11.0-2-g9d52ccd987
   - apiVersion: v2
     appVersion: 3.11.0-2-g7e53403535
-    created: "2023-12-21T11:41:30.81893703Z"
+    created: "2023-12-21T13:05:10.663204459Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12305,7 +12305,7 @@ entries:
     version: 3.11.0-2-g7e53403535
   - apiVersion: v2
     appVersion: 3.11.0-14-ga66874a76e
-    created: "2023-12-21T11:41:30.778517425Z"
+    created: "2023-12-21T13:05:10.62263008Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12352,7 +12352,7 @@ entries:
     version: 3.11.0-14-ga66874a76e
   - apiVersion: v2
     appVersion: 3.11.0-13-g17aab6f9a2
-    created: "2023-12-21T11:41:30.739271102Z"
+    created: "2023-12-21T13:05:10.581665724Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12399,7 +12399,7 @@ entries:
     version: 3.11.0-13-g17aab6f9a2
   - apiVersion: v2
     appVersion: 3.11.0-12-ge377ae7e5d
-    created: "2023-12-21T11:41:30.698563792Z"
+    created: "2023-12-21T13:05:10.539715114Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12446,7 +12446,7 @@ entries:
     version: 3.11.0-12-ge377ae7e5d
   - apiVersion: v2
     appVersion: 3.11.0-11-g92ca941e38
-    created: "2023-12-21T11:41:30.658408113Z"
+    created: "2023-12-21T13:05:10.497873668Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12493,7 +12493,7 @@ entries:
     version: 3.11.0-11-g92ca941e38
   - apiVersion: v2
     appVersion: 3.11.0-11-g01583079ed
-    created: "2023-12-21T11:41:30.618633826Z"
+    created: "2023-12-21T13:05:10.456341187Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12540,7 +12540,7 @@ entries:
     version: 3.11.0-11-g01583079ed
   - apiVersion: v2
     appVersion: 3.11.0-10-gc50961cb99
-    created: "2023-12-21T11:41:30.579107009Z"
+    created: "2023-12-21T13:05:10.415744072Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12587,7 +12587,7 @@ entries:
     version: 3.11.0-10-gc50961cb99
   - apiVersion: v2
     appVersion: 3.11.0-1-gde8024b563
-    created: "2023-12-21T11:41:30.539213594Z"
+    created: "2023-12-21T13:05:10.374245305Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12634,7 +12634,7 @@ entries:
     version: 3.11.0-1-gde8024b563
   - apiVersion: v2
     appVersion: 3.11.0-1-g2b5e2db829
-    created: "2023-12-21T11:41:30.498427909Z"
+    created: "2023-12-21T13:05:10.331914731Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12681,7 +12681,7 @@ entries:
     version: 3.11.0-1-g2b5e2db829
   - apiVersion: v2
     appVersion: 3.11.0-0-gfa2d2211f8
-    created: "2023-12-21T11:41:30.458484058Z"
+    created: "2023-12-21T13:05:10.289658288Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12728,7 +12728,7 @@ entries:
     version: 3.11.0-0-gfa2d2211f8
   - apiVersion: v2
     appVersion: 3.10.0-9-g8099f56a8b
-    created: "2023-12-21T11:41:30.41776683Z"
+    created: "2023-12-21T13:05:10.24582416Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12775,7 +12775,7 @@ entries:
     version: 3.10.0-9-g8099f56a8b
   - apiVersion: v2
     appVersion: 3.10.0-8-g3a3ab63ee6
-    created: "2023-12-21T11:41:30.377724476Z"
+    created: "2023-12-21T13:05:10.204232036Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12822,7 +12822,7 @@ entries:
     version: 3.10.0-8-g3a3ab63ee6
   - apiVersion: v2
     appVersion: 3.10.0-7-g12ad84564d
-    created: "2023-12-21T11:41:30.338214241Z"
+    created: "2023-12-21T13:05:10.163240025Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12869,7 +12869,7 @@ entries:
     version: 3.10.0-7-g12ad84564d
   - apiVersion: v2
     appVersion: 3.10.0-6-ga813360531
-    created: "2023-12-21T11:41:30.297555275Z"
+    created: "2023-12-21T13:05:10.12203513Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12916,7 +12916,7 @@ entries:
     version: 3.10.0-6-ga813360531
   - apiVersion: v2
     appVersion: 3.10.0-5-g30cccd9dcf
-    created: "2023-12-21T11:41:30.256904609Z"
+    created: "2023-12-21T13:05:10.080004839Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -12963,7 +12963,7 @@ entries:
     version: 3.10.0-5-g30cccd9dcf
   - apiVersion: v2
     appVersion: 3.10.0-3-g662f9befee
-    created: "2023-12-21T11:41:30.217566346Z"
+    created: "2023-12-21T13:05:10.038982258Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13010,7 +13010,7 @@ entries:
     version: 3.10.0-3-g662f9befee
   - apiVersion: v2
     appVersion: 3.10.0-28-gfa2d2211f8
-    created: "2023-12-21T11:41:30.178759491Z"
+    created: "2023-12-21T13:05:09.99878839Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13057,7 +13057,7 @@ entries:
     version: 3.10.0-28-gfa2d2211f8
   - apiVersion: v2
     appVersion: 3.10.0-27-g5408da5251
-    created: "2023-12-21T11:41:30.138608822Z"
+    created: "2023-12-21T13:05:09.956932178Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13104,7 +13104,7 @@ entries:
     version: 3.10.0-27-g5408da5251
   - apiVersion: v2
     appVersion: 3.10.0-26-gb9d433d232
-    created: "2023-12-21T11:41:30.098931013Z"
+    created: "2023-12-21T13:05:09.916580574Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13151,7 +13151,7 @@ entries:
     version: 3.10.0-26-gb9d433d232
   - apiVersion: v2
     appVersion: 3.10.0-25-g6d3d3c6c73
-    created: "2023-12-21T11:41:30.058346716Z"
+    created: "2023-12-21T13:05:09.874768979Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13198,7 +13198,7 @@ entries:
     version: 3.10.0-25-g6d3d3c6c73
   - apiVersion: v2
     appVersion: 3.10.0-24-ge11ca3b5e2
-    created: "2023-12-21T11:41:30.018022138Z"
+    created: "2023-12-21T13:05:09.834267461Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13245,7 +13245,7 @@ entries:
     version: 3.10.0-24-ge11ca3b5e2
   - apiVersion: v2
     appVersion: 3.10.0-23-g33177abddb
-    created: "2023-12-21T11:41:29.97866071Z"
+    created: "2023-12-21T13:05:09.793609449Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13292,7 +13292,7 @@ entries:
     version: 3.10.0-23-g33177abddb
   - apiVersion: v2
     appVersion: 3.10.0-22-g68af9de96c
-    created: "2023-12-21T11:41:29.939162725Z"
+    created: "2023-12-21T13:05:09.752544318Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13339,7 +13339,7 @@ entries:
     version: 3.10.0-22-g68af9de96c
   - apiVersion: v2
     appVersion: 3.10.0-21-g7c1008b7e8
-    created: "2023-12-21T11:41:29.899376368Z"
+    created: "2023-12-21T13:05:09.711623628Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13386,7 +13386,7 @@ entries:
     version: 3.10.0-21-g7c1008b7e8
   - apiVersion: v2
     appVersion: 3.10.0-20-ge761743666
-    created: "2023-12-21T11:41:29.860068227Z"
+    created: "2023-12-21T13:05:09.671163063Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13433,7 +13433,7 @@ entries:
     version: 3.10.0-20-ge761743666
   - apiVersion: v2
     appVersion: 3.10.0-2-ge4afdb5a69
-    created: "2023-12-21T11:41:29.819884556Z"
+    created: "2023-12-21T13:05:09.630563381Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13480,7 +13480,7 @@ entries:
     version: 3.10.0-2-ge4afdb5a69
   - apiVersion: v2
     appVersion: 3.10.0-19-g5d7a307534
-    created: "2023-12-21T11:41:29.780727617Z"
+    created: "2023-12-21T13:05:09.589392711Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13527,7 +13527,7 @@ entries:
     version: 3.10.0-19-g5d7a307534
   - apiVersion: v2
     appVersion: 3.10.0-17-gc4506af6d1
-    created: "2023-12-21T11:41:29.740059345Z"
+    created: "2023-12-21T13:05:09.548299573Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13574,7 +13574,7 @@ entries:
     version: 3.10.0-17-gc4506af6d1
   - apiVersion: v2
     appVersion: 3.10.0-17-gc374998862
-    created: "2023-12-21T11:41:29.699928642Z"
+    created: "2023-12-21T13:05:09.506984295Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13621,7 +13621,7 @@ entries:
     version: 3.10.0-17-gc374998862
   - apiVersion: v2
     appVersion: 3.10.0-17-gaeea630d69
-    created: "2023-12-21T11:41:29.658730179Z"
+    created: "2023-12-21T13:05:09.463505126Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13668,7 +13668,7 @@ entries:
     version: 3.10.0-17-gaeea630d69
   - apiVersion: v2
     appVersion: 3.10.0-17-g847d18980a
-    created: "2023-12-21T11:41:29.618559118Z"
+    created: "2023-12-21T13:05:09.420107631Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13715,7 +13715,7 @@ entries:
     version: 3.10.0-17-g847d18980a
   - apiVersion: v2
     appVersion: 3.10.0-16-gd92a00ce82
-    created: "2023-12-21T11:41:29.579108293Z"
+    created: "2023-12-21T13:05:09.379955686Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13762,7 +13762,7 @@ entries:
     version: 3.10.0-16-gd92a00ce82
   - apiVersion: v2
     appVersion: 3.10.0-15-g4aa00098e9
-    created: "2023-12-21T11:41:29.538334323Z"
+    created: "2023-12-21T13:05:09.338536841Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13809,7 +13809,7 @@ entries:
     version: 3.10.0-15-g4aa00098e9
   - apiVersion: v2
     appVersion: 3.10.0-14-g98640d5fa4
-    created: "2023-12-21T11:41:29.498096288Z"
+    created: "2023-12-21T13:05:09.297789259Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13856,7 +13856,7 @@ entries:
     version: 3.10.0-14-g98640d5fa4
   - apiVersion: v2
     appVersion: 3.10.0-13-gc18580380e
-    created: "2023-12-21T11:41:29.458279474Z"
+    created: "2023-12-21T13:05:09.255085211Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13903,7 +13903,7 @@ entries:
     version: 3.10.0-13-gc18580380e
   - apiVersion: v2
     appVersion: 3.10.0-12-g73c55b30a2
-    created: "2023-12-21T11:41:29.417949377Z"
+    created: "2023-12-21T13:05:09.213003891Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13950,7 +13950,7 @@ entries:
     version: 3.10.0-12-g73c55b30a2
   - apiVersion: v2
     appVersion: 3.10.0-11-g5e99817539
-    created: "2023-12-21T11:41:29.375891825Z"
+    created: "2023-12-21T13:05:09.17130124Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -13997,7 +13997,7 @@ entries:
     version: 3.10.0-11-g5e99817539
   - apiVersion: v2
     appVersion: 3.10.0-10-gb1b28ac203
-    created: "2023-12-21T11:41:29.335951868Z"
+    created: "2023-12-21T13:05:09.129449044Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14044,7 +14044,7 @@ entries:
     version: 3.10.0-10-gb1b28ac203
   - apiVersion: v2
     appVersion: 3.10.0-1-g796b460e92
-    created: "2023-12-21T11:41:29.296143085Z"
+    created: "2023-12-21T13:05:09.087627899Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14091,7 +14091,7 @@ entries:
     version: 3.10.0-1-g796b460e92
   - apiVersion: v2
     appVersion: 3.10.0-1-g45e96fb843
-    created: "2023-12-21T11:41:29.255465474Z"
+    created: "2023-12-21T13:05:09.044964718Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14138,7 +14138,7 @@ entries:
     version: 3.10.0-1-g45e96fb843
   - apiVersion: v2
     appVersion: 3.10.0-1-g3cffa104e3
-    created: "2023-12-21T11:41:29.215243151Z"
+    created: "2023-12-21T13:05:09.00429686Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14185,7 +14185,7 @@ entries:
     version: 3.10.0-1-g3cffa104e3
   - apiVersion: v2
     appVersion: 3.10.0-0-g0dcccbfbbb
-    created: "2023-12-21T11:41:29.176440439Z"
+    created: "2023-12-21T13:05:08.962924539Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14232,7 +14232,7 @@ entries:
     version: 3.10.0-0-g0dcccbfbbb
   - apiVersion: v2
     appVersion: 3.9.1-2-g2353304285
-    created: "2023-12-21T11:41:42.764663268Z"
+    created: "2023-12-21T13:05:22.910483226Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14279,7 +14279,7 @@ entries:
     version: 3.9.1-2-g2353304285
   - apiVersion: v2
     appVersion: 3.9.1-1-g8e87a5779e
-    created: "2023-12-21T11:41:42.723898786Z"
+    created: "2023-12-21T13:05:22.870204853Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14326,7 +14326,7 @@ entries:
     version: 3.9.1-1-g8e87a5779e
   - apiVersion: v2
     appVersion: 3.9.1-0-gf3128c0012
-    created: "2023-12-21T11:41:42.684864935Z"
+    created: "2023-12-21T13:05:22.829888026Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14373,7 +14373,7 @@ entries:
     version: 3.9.1-0-gf3128c0012
   - apiVersion: v2
     appVersion: 3.9.1-0-g3d5bf2855f
-    created: "2023-12-21T11:41:42.646145796Z"
+    created: "2023-12-21T13:05:22.788755695Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14420,7 +14420,7 @@ entries:
     version: 3.9.1-0-g3d5bf2855f
   - apiVersion: v2
     appVersion: 3.9.0-9-g8c1752c3c1
-    created: "2023-12-21T11:41:42.607707022Z"
+    created: "2023-12-21T13:05:22.74951119Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14467,7 +14467,7 @@ entries:
     version: 3.9.0-9-g8c1752c3c1
   - apiVersion: v2
     appVersion: 3.9.0-8-g5dcf5a8441
-    created: "2023-12-21T11:41:42.568362857Z"
+    created: "2023-12-21T13:05:22.708964811Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14514,7 +14514,7 @@ entries:
     version: 3.9.0-8-g5dcf5a8441
   - apiVersion: v2
     appVersion: 3.9.0-6-gc3079ed461
-    created: "2023-12-21T11:41:42.528793188Z"
+    created: "2023-12-21T13:05:22.669117351Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14561,7 +14561,7 @@ entries:
     version: 3.9.0-6-gc3079ed461
   - apiVersion: v2
     appVersion: 3.9.0-5-g73fb2554cf
-    created: "2023-12-21T11:41:42.488308066Z"
+    created: "2023-12-21T13:05:22.629556886Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14608,7 +14608,7 @@ entries:
     version: 3.9.0-5-g73fb2554cf
   - apiVersion: v2
     appVersion: 3.9.0-46-g0dcccbfbbb
-    created: "2023-12-21T11:41:42.449162796Z"
+    created: "2023-12-21T13:05:22.581881992Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14655,7 +14655,7 @@ entries:
     version: 3.9.0-46-g0dcccbfbbb
   - apiVersion: v2
     appVersion: 3.9.0-45-gd9489c0bc8
-    created: "2023-12-21T11:41:42.408797363Z"
+    created: "2023-12-21T13:05:22.537882745Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14702,7 +14702,7 @@ entries:
     version: 3.9.0-45-gd9489c0bc8
   - apiVersion: v2
     appVersion: 3.9.0-44-g4ee26028ae
-    created: "2023-12-21T11:41:42.368451149Z"
+    created: "2023-12-21T13:05:22.496677816Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14749,7 +14749,7 @@ entries:
     version: 3.9.0-44-g4ee26028ae
   - apiVersion: v2
     appVersion: 3.9.0-42-g1767f8cca3
-    created: "2023-12-21T11:41:42.328701137Z"
+    created: "2023-12-21T13:05:22.455191165Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14796,7 +14796,7 @@ entries:
     version: 3.9.0-42-g1767f8cca3
   - apiVersion: v2
     appVersion: 3.9.0-41-gf4e7ce37b3
-    created: "2023-12-21T11:41:42.287818423Z"
+    created: "2023-12-21T13:05:22.414715569Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14843,7 +14843,7 @@ entries:
     version: 3.9.0-41-gf4e7ce37b3
   - apiVersion: v2
     appVersion: 3.9.0-40-g5c2962506a
-    created: "2023-12-21T11:41:42.248851321Z"
+    created: "2023-12-21T13:05:22.37517251Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14890,7 +14890,7 @@ entries:
     version: 3.9.0-40-g5c2962506a
   - apiVersion: v2
     appVersion: 3.9.0-4-g633231c5b0
-    created: "2023-12-21T11:41:42.209552352Z"
+    created: "2023-12-21T13:05:22.335526907Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14937,7 +14937,7 @@ entries:
     version: 3.9.0-4-g633231c5b0
   - apiVersion: v2
     appVersion: 3.9.0-4-g3d5bf2855f
-    created: "2023-12-21T11:41:42.169680357Z"
+    created: "2023-12-21T13:05:22.295325214Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -14984,7 +14984,7 @@ entries:
     version: 3.9.0-4-g3d5bf2855f
   - apiVersion: v2
     appVersion: 3.9.0-39-gd1af2139bd
-    created: "2023-12-21T11:41:42.130842716Z"
+    created: "2023-12-21T13:05:22.255485811Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15031,7 +15031,7 @@ entries:
     version: 3.9.0-39-gd1af2139bd
   - apiVersion: v2
     appVersion: 3.9.0-38-gf24c896dc3
-    created: "2023-12-21T11:41:42.091655078Z"
+    created: "2023-12-21T13:05:22.215186086Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15078,7 +15078,7 @@ entries:
     version: 3.9.0-38-gf24c896dc3
   - apiVersion: v2
     appVersion: 3.9.0-37-gcab976bd97
-    created: "2023-12-21T11:41:42.051649364Z"
+    created: "2023-12-21T13:05:22.174315378Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15125,7 +15125,7 @@ entries:
     version: 3.9.0-37-gcab976bd97
   - apiVersion: v2
     appVersion: 3.9.0-36-gfd0455fb54
-    created: "2023-12-21T11:41:42.013285712Z"
+    created: "2023-12-21T13:05:22.133292922Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15172,7 +15172,7 @@ entries:
     version: 3.9.0-36-gfd0455fb54
   - apiVersion: v2
     appVersion: 3.9.0-33-g29eb48940a
-    created: "2023-12-21T11:41:41.973380897Z"
+    created: "2023-12-21T13:05:22.093251093Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15219,7 +15219,7 @@ entries:
     version: 3.9.0-33-g29eb48940a
   - apiVersion: v2
     appVersion: 3.9.0-32-gcb716a579f
-    created: "2023-12-21T11:41:41.934290897Z"
+    created: "2023-12-21T13:05:22.05150651Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15266,7 +15266,7 @@ entries:
     version: 3.9.0-32-gcb716a579f
   - apiVersion: v2
     appVersion: 3.9.0-31-gca67ae6a29
-    created: "2023-12-21T11:41:41.895404467Z"
+    created: "2023-12-21T13:05:22.011054936Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15313,7 +15313,7 @@ entries:
     version: 3.9.0-31-gca67ae6a29
   - apiVersion: v2
     appVersion: 3.9.0-30-g85c4d6d742
-    created: "2023-12-21T11:41:41.856137891Z"
+    created: "2023-12-21T13:05:21.970388206Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15360,7 +15360,7 @@ entries:
     version: 3.9.0-30-g85c4d6d742
   - apiVersion: v2
     appVersion: 3.9.0-3-gfb879b3cf6
-    created: "2023-12-21T11:41:41.816996253Z"
+    created: "2023-12-21T13:05:21.930194527Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15407,7 +15407,7 @@ entries:
     version: 3.9.0-3-gfb879b3cf6
   - apiVersion: v2
     appVersion: 3.9.0-3-g5893bd1025
-    created: "2023-12-21T11:41:41.777061237Z"
+    created: "2023-12-21T13:05:21.889137865Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15454,7 +15454,7 @@ entries:
     version: 3.9.0-3-g5893bd1025
   - apiVersion: v2
     appVersion: 3.9.0-29-gb25e6729c5
-    created: "2023-12-21T11:41:41.737890154Z"
+    created: "2023-12-21T13:05:21.848620002Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15501,7 +15501,7 @@ entries:
     version: 3.9.0-29-gb25e6729c5
   - apiVersion: v2
     appVersion: 3.9.0-26-gf3128c0012
-    created: "2023-12-21T11:41:41.699679631Z"
+    created: "2023-12-21T13:05:21.809319117Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15548,7 +15548,7 @@ entries:
     version: 3.9.0-26-gf3128c0012
   - apiVersion: v2
     appVersion: 3.9.0-25-g9fe687528f
-    created: "2023-12-21T11:41:41.660158083Z"
+    created: "2023-12-21T13:05:21.768367928Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15595,7 +15595,7 @@ entries:
     version: 3.9.0-25-g9fe687528f
   - apiVersion: v2
     appVersion: 3.9.0-25-g35b267ce8a
-    created: "2023-12-21T11:41:41.621382813Z"
+    created: "2023-12-21T13:05:21.728744456Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15642,7 +15642,7 @@ entries:
     version: 3.9.0-25-g35b267ce8a
   - apiVersion: v2
     appVersion: 3.9.0-24-g54f55a5a82
-    created: "2023-12-21T11:41:41.582491852Z"
+    created: "2023-12-21T13:05:21.689032025Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15689,7 +15689,7 @@ entries:
     version: 3.9.0-24-g54f55a5a82
   - apiVersion: v2
     appVersion: 3.9.0-23-gd6c8582c34
-    created: "2023-12-21T11:41:41.543507083Z"
+    created: "2023-12-21T13:05:21.64884815Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15736,7 +15736,7 @@ entries:
     version: 3.9.0-23-gd6c8582c34
   - apiVersion: v2
     appVersion: 3.9.0-22-g694137977c
-    created: "2023-12-21T11:41:41.50367428Z"
+    created: "2023-12-21T13:05:21.607461463Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15783,7 +15783,7 @@ entries:
     version: 3.9.0-22-g694137977c
   - apiVersion: v2
     appVersion: 3.9.0-22-g4bfac2f975
-    created: "2023-12-21T11:41:41.465159814Z"
+    created: "2023-12-21T13:05:21.568304483Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15830,7 +15830,7 @@ entries:
     version: 3.9.0-22-g4bfac2f975
   - apiVersion: v2
     appVersion: 3.9.0-21-ge437b13e86
-    created: "2023-12-21T11:41:41.426392303Z"
+    created: "2023-12-21T13:05:21.527397571Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15877,7 +15877,7 @@ entries:
     version: 3.9.0-21-ge437b13e86
   - apiVersion: v2
     appVersion: 3.9.0-21-g92a17bf16c
-    created: "2023-12-21T11:41:41.387331612Z"
+    created: "2023-12-21T13:05:21.486693957Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15924,7 +15924,7 @@ entries:
     version: 3.9.0-21-g92a17bf16c
   - apiVersion: v2
     appVersion: 3.9.0-21-g6cb8bcde7e
-    created: "2023-12-21T11:41:41.346545864Z"
+    created: "2023-12-21T13:05:21.446457729Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -15971,7 +15971,7 @@ entries:
     version: 3.9.0-21-g6cb8bcde7e
   - apiVersion: v2
     appVersion: 3.9.0-20-g5f358b1095
-    created: "2023-12-21T11:41:41.307107469Z"
+    created: "2023-12-21T13:05:21.406963538Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16018,7 +16018,7 @@ entries:
     version: 3.9.0-20-g5f358b1095
   - apiVersion: v2
     appVersion: 3.9.0-2-g764d7d8f5e
-    created: "2023-12-21T11:41:41.268870958Z"
+    created: "2023-12-21T13:05:21.366036262Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16065,7 +16065,7 @@ entries:
     version: 3.9.0-2-g764d7d8f5e
   - apiVersion: v2
     appVersion: 3.9.0-2-g63061a1bd6
-    created: "2023-12-21T11:41:41.230115922Z"
+    created: "2023-12-21T13:05:21.325947305Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16112,7 +16112,7 @@ entries:
     version: 3.9.0-2-g63061a1bd6
   - apiVersion: v2
     appVersion: 3.9.0-18-g9e6da367c3
-    created: "2023-12-21T11:41:41.190454797Z"
+    created: "2023-12-21T13:05:21.285540255Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16159,7 +16159,7 @@ entries:
     version: 3.9.0-18-g9e6da367c3
   - apiVersion: v2
     appVersion: 3.9.0-17-gf6e9329b54
-    created: "2023-12-21T11:41:41.151208309Z"
+    created: "2023-12-21T13:05:21.246093332Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16206,7 +16206,7 @@ entries:
     version: 3.9.0-17-gf6e9329b54
   - apiVersion: v2
     appVersion: 3.9.0-16-gb16b38a3f5
-    created: "2023-12-21T11:41:41.113050194Z"
+    created: "2023-12-21T13:05:21.205474357Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16253,7 +16253,7 @@ entries:
     version: 3.9.0-16-gb16b38a3f5
   - apiVersion: v2
     appVersion: 3.9.0-16-g9977e8375d
-    created: "2023-12-21T11:41:41.074081009Z"
+    created: "2023-12-21T13:05:21.163734551Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16300,7 +16300,7 @@ entries:
     version: 3.9.0-16-g9977e8375d
   - apiVersion: v2
     appVersion: 3.9.0-16-g7c21cdbac4
-    created: "2023-12-21T11:41:41.035027756Z"
+    created: "2023-12-21T13:05:21.12481346Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16347,7 +16347,7 @@ entries:
     version: 3.9.0-16-g7c21cdbac4
   - apiVersion: v2
     appVersion: 3.9.0-15-gedecb7d8db
-    created: "2023-12-21T11:41:40.996151888Z"
+    created: "2023-12-21T13:05:21.08304126Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16394,7 +16394,7 @@ entries:
     version: 3.9.0-15-gedecb7d8db
   - apiVersion: v2
     appVersion: 3.9.0-14-gd634072b06
-    created: "2023-12-21T11:41:40.956014068Z"
+    created: "2023-12-21T13:05:21.043670894Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16441,7 +16441,7 @@ entries:
     version: 3.9.0-14-gd634072b06
   - apiVersion: v2
     appVersion: 3.9.0-14-gaf030464dc
-    created: "2023-12-21T11:41:40.917680327Z"
+    created: "2023-12-21T13:05:21.003626895Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16488,7 +16488,7 @@ entries:
     version: 3.9.0-14-gaf030464dc
   - apiVersion: v2
     appVersion: 3.9.0-13-gffc574c37b
-    created: "2023-12-21T11:41:40.878872702Z"
+    created: "2023-12-21T13:05:20.963385106Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16535,7 +16535,7 @@ entries:
     version: 3.9.0-13-gffc574c37b
   - apiVersion: v2
     appVersion: 3.9.0-13-gca20607926
-    created: "2023-12-21T11:41:40.83962907Z"
+    created: "2023-12-21T13:05:20.922678186Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16582,7 +16582,7 @@ entries:
     version: 3.9.0-13-gca20607926
   - apiVersion: v2
     appVersion: 3.9.0-13-ga3481b413e
-    created: "2023-12-21T11:41:40.800129246Z"
+    created: "2023-12-21T13:05:20.881185641Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16629,7 +16629,7 @@ entries:
     version: 3.9.0-13-ga3481b413e
   - apiVersion: v2
     appVersion: 3.9.0-13-g5902fa29bd
-    created: "2023-12-21T11:41:40.760100644Z"
+    created: "2023-12-21T13:05:20.841984702Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16676,7 +16676,7 @@ entries:
     version: 3.9.0-13-g5902fa29bd
   - apiVersion: v2
     appVersion: 3.9.0-12-ga310a6cabb
-    created: "2023-12-21T11:41:40.721164805Z"
+    created: "2023-12-21T13:05:20.800330659Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16723,7 +16723,7 @@ entries:
     version: 3.9.0-12-ga310a6cabb
   - apiVersion: v2
     appVersion: 3.9.0-11-g397500b6ac
-    created: "2023-12-21T11:41:40.681578007Z"
+    created: "2023-12-21T13:05:20.759153319Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16770,7 +16770,7 @@ entries:
     version: 3.9.0-11-g397500b6ac
   - apiVersion: v2
     appVersion: 3.9.0-10-g09a1c42720
-    created: "2023-12-21T11:41:40.643224175Z"
+    created: "2023-12-21T13:05:20.719992274Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16817,7 +16817,7 @@ entries:
     version: 3.9.0-10-g09a1c42720
   - apiVersion: v2
     appVersion: 3.9.0-1-gf502cc7277
-    created: "2023-12-21T11:41:40.603456238Z"
+    created: "2023-12-21T13:05:20.675143106Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16864,7 +16864,7 @@ entries:
     version: 3.9.0-1-gf502cc7277
   - apiVersion: v2
     appVersion: 3.8.0-9-gd41825fc21
-    created: "2023-12-21T11:41:40.565248993Z"
+    created: "2023-12-21T13:05:20.635468693Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16911,7 +16911,7 @@ entries:
     version: 3.8.0-9-gd41825fc21
   - apiVersion: v2
     appVersion: 3.8.0-9-g72b057e5af
-    created: "2023-12-21T11:41:40.526636357Z"
+    created: "2023-12-21T13:05:20.594924358Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -16958,7 +16958,7 @@ entries:
     version: 3.8.0-9-g72b057e5af
   - apiVersion: v2
     appVersion: 3.8.0-9-g51d3acfde6
-    created: "2023-12-21T11:41:40.486682216Z"
+    created: "2023-12-21T13:05:20.554426192Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17005,7 +17005,7 @@ entries:
     version: 3.8.0-9-g51d3acfde6
   - apiVersion: v2
     appVersion: 3.8.0-9-g0723468aef
-    created: "2023-12-21T11:41:40.447744883Z"
+    created: "2023-12-21T13:05:20.514042037Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17052,7 +17052,7 @@ entries:
     version: 3.8.0-9-g0723468aef
   - apiVersion: v2
     appVersion: 3.8.0-8-g8c703deff9
-    created: "2023-12-21T11:41:40.409029971Z"
+    created: "2023-12-21T13:05:20.474154367Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17099,7 +17099,7 @@ entries:
     version: 3.8.0-8-g8c703deff9
   - apiVersion: v2
     appVersion: 3.8.0-7-g736a4cf5d5
-    created: "2023-12-21T11:41:40.369588626Z"
+    created: "2023-12-21T13:05:20.433919297Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17146,7 +17146,7 @@ entries:
     version: 3.8.0-7-g736a4cf5d5
   - apiVersion: v2
     appVersion: 3.8.0-6-g25efe9b35c
-    created: "2023-12-21T11:41:40.329194555Z"
+    created: "2023-12-21T13:05:20.393580506Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17193,7 +17193,7 @@ entries:
     version: 3.8.0-6-g25efe9b35c
   - apiVersion: v2
     appVersion: 3.8.0-5-g9c5c4b4df5
-    created: "2023-12-21T11:41:40.29073573Z"
+    created: "2023-12-21T13:05:20.352078578Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17240,7 +17240,7 @@ entries:
     version: 3.8.0-5-g9c5c4b4df5
   - apiVersion: v2
     appVersion: 3.8.0-4-g7b4980c0b3
-    created: "2023-12-21T11:41:40.251968495Z"
+    created: "2023-12-21T13:05:20.312071365Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17287,7 +17287,7 @@ entries:
     version: 3.8.0-4-g7b4980c0b3
   - apiVersion: v2
     appVersion: 3.8.0-3-ga6f2eb3153
-    created: "2023-12-21T11:41:40.21148122Z"
+    created: "2023-12-21T13:05:20.271581193Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17334,7 +17334,7 @@ entries:
     version: 3.8.0-3-ga6f2eb3153
   - apiVersion: v2
     appVersion: 3.8.0-2-gaec9bfa33c
-    created: "2023-12-21T11:41:40.172638227Z"
+    created: "2023-12-21T13:05:20.232035929Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17381,7 +17381,7 @@ entries:
     version: 3.8.0-2-gaec9bfa33c
   - apiVersion: v2
     appVersion: 3.8.0-16-g9a195dbc69
-    created: "2023-12-21T11:41:40.131995241Z"
+    created: "2023-12-21T13:05:20.190218332Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17428,7 +17428,7 @@ entries:
     version: 3.8.0-16-g9a195dbc69
   - apiVersion: v2
     appVersion: 3.8.0-15-g2c7a268757
-    created: "2023-12-21T11:41:40.093366851Z"
+    created: "2023-12-21T13:05:20.149774429Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17475,7 +17475,7 @@ entries:
     version: 3.8.0-15-g2c7a268757
   - apiVersion: v2
     appVersion: 3.8.0-14-g39bdc9abe4
-    created: "2023-12-21T11:41:40.054540062Z"
+    created: "2023-12-21T13:05:20.108308354Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17522,7 +17522,7 @@ entries:
     version: 3.8.0-14-g39bdc9abe4
   - apiVersion: v2
     appVersion: 3.8.0-13-gcfa840f7ad
-    created: "2023-12-21T11:41:40.014710757Z"
+    created: "2023-12-21T13:05:20.068368906Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17569,7 +17569,7 @@ entries:
     version: 3.8.0-13-gcfa840f7ad
   - apiVersion: v2
     appVersion: 3.8.0-12-g7e6d1c142f
-    created: "2023-12-21T11:41:39.976261981Z"
+    created: "2023-12-21T13:05:20.027641846Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17616,7 +17616,7 @@ entries:
     version: 3.8.0-12-g7e6d1c142f
   - apiVersion: v2
     appVersion: 3.8.0-11-g9ceeaf0efe
-    created: "2023-12-21T11:41:39.937653933Z"
+    created: "2023-12-21T13:05:19.987305444Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17663,7 +17663,7 @@ entries:
     version: 3.8.0-11-g9ceeaf0efe
   - apiVersion: v2
     appVersion: 3.8.0-10-g7134ef42bf
-    created: "2023-12-21T11:41:39.898124697Z"
+    created: "2023-12-21T13:05:19.947539976Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17710,7 +17710,7 @@ entries:
     version: 3.8.0-10-g7134ef42bf
   - apiVersion: v2
     appVersion: 3.8.0-1-g3d6ca8ff12
-    created: "2023-12-21T11:41:39.859850202Z"
+    created: "2023-12-21T13:05:19.906762943Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17757,7 +17757,7 @@ entries:
     version: 3.8.0-1-g3d6ca8ff12
   - apiVersion: v2
     appVersion: 3.8.0-0-g14349f8371
-    created: "2023-12-21T11:41:39.820296758Z"
+    created: "2023-12-21T13:05:19.86614393Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17804,7 +17804,7 @@ entries:
     version: 3.8.0-0-g14349f8371
   - apiVersion: v2
     appVersion: 3.7.0-9-ga737107d6b
-    created: "2023-12-21T11:41:39.78176998Z"
+    created: "2023-12-21T13:05:19.825887141Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17851,7 +17851,7 @@ entries:
     version: 3.7.0-9-ga737107d6b
   - apiVersion: v2
     appVersion: 3.7.0-7-gb575bf6437
-    created: "2023-12-21T11:41:39.742995619Z"
+    created: "2023-12-21T13:05:19.785744938Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17898,7 +17898,7 @@ entries:
     version: 3.7.0-7-gb575bf6437
   - apiVersion: v2
     appVersion: 3.7.0-6-gd061f5948d
-    created: "2023-12-21T11:41:39.703440792Z"
+    created: "2023-12-21T13:05:19.744982343Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17945,7 +17945,7 @@ entries:
     version: 3.7.0-6-gd061f5948d
   - apiVersion: v2
     appVersion: 3.7.0-5-g7e9748dea8
-    created: "2023-12-21T11:41:39.664864177Z"
+    created: "2023-12-21T13:05:19.704632541Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -17992,7 +17992,7 @@ entries:
     version: 3.7.0-5-g7e9748dea8
   - apiVersion: v2
     appVersion: 3.7.0-4-g82ecb90e35
-    created: "2023-12-21T11:41:39.626724021Z"
+    created: "2023-12-21T13:05:19.665433646Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18039,7 +18039,7 @@ entries:
     version: 3.7.0-4-g82ecb90e35
   - apiVersion: v2
     appVersion: 3.7.0-3-g82d6096386
-    created: "2023-12-21T11:41:39.586894447Z"
+    created: "2023-12-21T13:05:19.625224539Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18086,7 +18086,7 @@ entries:
     version: 3.7.0-3-g82d6096386
   - apiVersion: v2
     appVersion: 3.7.0-2-g6a9b55bff4
-    created: "2023-12-21T11:41:39.548568268Z"
+    created: "2023-12-21T13:05:19.586221772Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18133,7 +18133,7 @@ entries:
     version: 3.7.0-2-g6a9b55bff4
   - apiVersion: v2
     appVersion: 3.7.0-15-g14349f8371
-    created: "2023-12-21T11:41:39.509688359Z"
+    created: "2023-12-21T13:05:19.546808267Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18180,7 +18180,7 @@ entries:
     version: 3.7.0-15-g14349f8371
   - apiVersion: v2
     appVersion: 3.7.0-14-g69cf3420fc
-    created: "2023-12-21T11:41:39.469692153Z"
+    created: "2023-12-21T13:05:19.505940653Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18227,7 +18227,7 @@ entries:
     version: 3.7.0-14-g69cf3420fc
   - apiVersion: v2
     appVersion: 3.7.0-13-g26a77d00a6
-    created: "2023-12-21T11:41:39.430307843Z"
+    created: "2023-12-21T13:05:19.465300006Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18274,7 +18274,7 @@ entries:
     version: 3.7.0-13-g26a77d00a6
   - apiVersion: v2
     appVersion: 3.7.0-12-geee8fe6c16
-    created: "2023-12-21T11:41:39.390195884Z"
+    created: "2023-12-21T13:05:19.425362514Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18321,7 +18321,7 @@ entries:
     version: 3.7.0-12-geee8fe6c16
   - apiVersion: v2
     appVersion: 3.7.0-10-ge2e0a7f3b4
-    created: "2023-12-21T11:41:39.351083499Z"
+    created: "2023-12-21T13:05:19.385612536Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18368,7 +18368,7 @@ entries:
     version: 3.7.0-10-ge2e0a7f3b4
   - apiVersion: v2
     appVersion: 3.7.0-1-g7ce6331ddc
-    created: "2023-12-21T11:41:39.312621094Z"
+    created: "2023-12-21T13:05:19.345538837Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18415,7 +18415,7 @@ entries:
     version: 3.7.0-1-g7ce6331ddc
   - apiVersion: v2
     appVersion: 3.7.0-0-g36f42e24bb
-    created: "2023-12-21T11:41:39.27396193Z"
+    created: "2023-12-21T13:05:19.306707288Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18462,7 +18462,7 @@ entries:
     version: 3.7.0-0-g36f42e24bb
   - apiVersion: v2
     appVersion: 3.6.1-9-gad104a1e06
-    created: "2023-12-21T11:41:39.235076039Z"
+    created: "2023-12-21T13:05:19.266829675Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18509,7 +18509,7 @@ entries:
     version: 3.6.1-9-gad104a1e06
   - apiVersion: v2
     appVersion: 3.6.1-8-ga88d7b319b
-    created: "2023-12-21T11:41:39.195002204Z"
+    created: "2023-12-21T13:05:19.227594817Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18556,7 +18556,7 @@ entries:
     version: 3.6.1-8-ga88d7b319b
   - apiVersion: v2
     appVersion: 3.6.1-7-ge996fd5779
-    created: "2023-12-21T11:41:39.155868462Z"
+    created: "2023-12-21T13:05:19.188520481Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18603,7 +18603,7 @@ entries:
     version: 3.6.1-7-ge996fd5779
   - apiVersion: v2
     appVersion: 3.6.1-5-gd24f01529c
-    created: "2023-12-21T11:41:39.11643766Z"
+    created: "2023-12-21T13:05:19.148057631Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18650,7 +18650,7 @@ entries:
     version: 3.6.1-5-gd24f01529c
   - apiVersion: v2
     appVersion: 3.6.1-4-g59873c5d5a
-    created: "2023-12-21T11:41:39.077114506Z"
+    created: "2023-12-21T13:05:19.108281862Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18697,7 +18697,7 @@ entries:
     version: 3.6.1-4-g59873c5d5a
   - apiVersion: v2
     appVersion: 3.6.1-3-g6d66b24faf
-    created: "2023-12-21T11:41:39.037538171Z"
+    created: "2023-12-21T13:05:19.067830244Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18744,7 +18744,7 @@ entries:
     version: 3.6.1-3-g6d66b24faf
   - apiVersion: v2
     appVersion: 3.6.1-11-g36f42e24bb
-    created: "2023-12-21T11:41:38.998960305Z"
+    created: "2023-12-21T13:05:19.027269302Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18791,7 +18791,7 @@ entries:
     version: 3.6.1-11-g36f42e24bb
   - apiVersion: v2
     appVersion: 3.6.1-10-g9ae27869b2
-    created: "2023-12-21T11:41:38.960434257Z"
+    created: "2023-12-21T13:05:18.987884367Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18838,7 +18838,7 @@ entries:
     version: 3.6.1-10-g9ae27869b2
   - apiVersion: v2
     appVersion: 3.6.1-1-g3703632c6c
-    created: "2023-12-21T11:41:38.921362478Z"
+    created: "2023-12-21T13:05:18.94796201Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18885,7 +18885,7 @@ entries:
     version: 3.6.1-1-g3703632c6c
   - apiVersion: v2
     appVersion: 3.6.1-0-gad0e2b5f2d
-    created: "2023-12-21T11:41:38.882655691Z"
+    created: "2023-12-21T13:05:18.908492919Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18932,7 +18932,7 @@ entries:
     version: 3.6.1-0-gad0e2b5f2d
   - apiVersion: v2
     appVersion: 3.6.0-3-gebb5f6f72d
-    created: "2023-12-21T11:41:38.842305009Z"
+    created: "2023-12-21T13:05:18.868553688Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -18979,7 +18979,7 @@ entries:
     version: 3.6.0-3-gebb5f6f72d
   - apiVersion: v2
     appVersion: 3.6.0-3-gad0e2b5f2d
-    created: "2023-12-21T11:41:38.803881816Z"
+    created: "2023-12-21T13:05:18.829210777Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19026,7 +19026,7 @@ entries:
     version: 3.6.0-3-gad0e2b5f2d
   - apiVersion: v2
     appVersion: 3.6.0-2-gbd0beed496
-    created: "2023-12-21T11:41:38.765233504Z"
+    created: "2023-12-21T13:05:18.789468398Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19073,7 +19073,7 @@ entries:
     version: 3.6.0-2-gbd0beed496
   - apiVersion: v2
     appVersion: 3.6.0-2-g7c68dc2c7a
-    created: "2023-12-21T11:41:38.726195512Z"
+    created: "2023-12-21T13:05:18.749264592Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19120,7 +19120,7 @@ entries:
     version: 3.6.0-2-g7c68dc2c7a
   - apiVersion: v2
     appVersion: 3.6.0-1-gf3fc5eb0a6
-    created: "2023-12-21T11:41:38.688047459Z"
+    created: "2023-12-21T13:05:18.709854856Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19167,7 +19167,7 @@ entries:
     version: 3.6.0-1-gf3fc5eb0a6
   - apiVersion: v2
     appVersion: 3.6.0-1-g6124cb0eca
-    created: "2023-12-21T11:41:38.649479557Z"
+    created: "2023-12-21T13:05:18.669944328Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19214,7 +19214,7 @@ entries:
     version: 3.6.0-1-g6124cb0eca
   - apiVersion: v2
     appVersion: 3.6.0-0-g0045a2df5a
-    created: "2023-12-21T11:41:38.610635742Z"
+    created: "2023-12-21T13:05:18.630081734Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19261,7 +19261,7 @@ entries:
     version: 3.6.0-0-g0045a2df5a
   - apiVersion: v2
     appVersion: 3.5.0-9-g44f7c34c90
-    created: "2023-12-21T11:41:38.570662657Z"
+    created: "2023-12-21T13:05:18.589253599Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19308,7 +19308,7 @@ entries:
     version: 3.5.0-9-g44f7c34c90
   - apiVersion: v2
     appVersion: 3.5.0-8-g4e33e05716
-    created: "2023-12-21T11:41:38.531787373Z"
+    created: "2023-12-21T13:05:18.550669517Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19355,7 +19355,7 @@ entries:
     version: 3.5.0-8-g4e33e05716
   - apiVersion: v2
     appVersion: 3.5.0-7-g5793d41fc1
-    created: "2023-12-21T11:41:38.493290756Z"
+    created: "2023-12-21T13:05:18.51029928Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19402,7 +19402,7 @@ entries:
     version: 3.5.0-7-g5793d41fc1
   - apiVersion: v2
     appVersion: 3.5.0-6-gb249970946
-    created: "2023-12-21T11:41:38.454911205Z"
+    created: "2023-12-21T13:05:18.47052013Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19449,7 +19449,7 @@ entries:
     version: 3.5.0-6-gb249970946
   - apiVersion: v2
     appVersion: 3.5.0-5-ga9f093b9c1
-    created: "2023-12-21T11:41:38.416259751Z"
+    created: "2023-12-21T13:05:18.431435465Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19496,7 +19496,7 @@ entries:
     version: 3.5.0-5-ga9f093b9c1
   - apiVersion: v2
     appVersion: 3.5.0-3-g3b9be130b3
-    created: "2023-12-21T11:41:38.376805448Z"
+    created: "2023-12-21T13:05:18.391368397Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19543,7 +19543,7 @@ entries:
     version: 3.5.0-3-g3b9be130b3
   - apiVersion: v2
     appVersion: 3.5.0-3-g0465999722
-    created: "2023-12-21T11:41:38.338244047Z"
+    created: "2023-12-21T13:05:18.352236594Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19590,7 +19590,7 @@ entries:
     version: 3.5.0-3-g0465999722
   - apiVersion: v2
     appVersion: 3.5.0-27-g0045a2df5a
-    created: "2023-12-21T11:41:38.30045028Z"
+    created: "2023-12-21T13:05:18.312729057Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19637,7 +19637,7 @@ entries:
     version: 3.5.0-27-g0045a2df5a
   - apiVersion: v2
     appVersion: 3.5.0-26-ge965d2107b
-    created: "2023-12-21T11:41:38.261689055Z"
+    created: "2023-12-21T13:05:18.271286139Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19684,7 +19684,7 @@ entries:
     version: 3.5.0-26-ge965d2107b
   - apiVersion: v2
     appVersion: 3.5.0-23-g4dfc9f19e3
-    created: "2023-12-21T11:41:38.222171961Z"
+    created: "2023-12-21T13:05:18.231166656Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19731,7 +19731,7 @@ entries:
     version: 3.5.0-23-g4dfc9f19e3
   - apiVersion: v2
     appVersion: 3.5.0-21-g6d655c12fa
-    created: "2023-12-21T11:41:38.183281047Z"
+    created: "2023-12-21T13:05:18.192294131Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19778,7 +19778,7 @@ entries:
     version: 3.5.0-21-g6d655c12fa
   - apiVersion: v2
     appVersion: 3.5.0-20-g498b19061b
-    created: "2023-12-21T11:41:38.143888215Z"
+    created: "2023-12-21T13:05:18.1528786Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19825,7 +19825,7 @@ entries:
     version: 3.5.0-20-g498b19061b
   - apiVersion: v2
     appVersion: 3.5.0-2-g02d88cafb2
-    created: "2023-12-21T11:41:38.10566267Z"
+    created: "2023-12-21T13:05:18.112765709Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19872,7 +19872,7 @@ entries:
     version: 3.5.0-2-g02d88cafb2
   - apiVersion: v2
     appVersion: 3.5.0-19-g937fe25326
-    created: "2023-12-21T11:41:38.067083729Z"
+    created: "2023-12-21T13:05:18.072267487Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19919,7 +19919,7 @@ entries:
     version: 3.5.0-19-g937fe25326
   - apiVersion: v2
     appVersion: 3.5.0-18-gc3b08ab28e
-    created: "2023-12-21T11:41:38.027514989Z"
+    created: "2023-12-21T13:05:18.032541873Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -19966,7 +19966,7 @@ entries:
     version: 3.5.0-18-gc3b08ab28e
   - apiVersion: v2
     appVersion: 3.5.0-15-g6fcd9d7469
-    created: "2023-12-21T11:41:37.987976418Z"
+    created: "2023-12-21T13:05:17.993606029Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20013,7 +20013,7 @@ entries:
     version: 3.5.0-15-g6fcd9d7469
   - apiVersion: v2
     appVersion: 3.5.0-14-geb2c013976
-    created: "2023-12-21T11:41:37.948912939Z"
+    created: "2023-12-21T13:05:17.953792602Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20060,7 +20060,7 @@ entries:
     version: 3.5.0-14-geb2c013976
   - apiVersion: v2
     appVersion: 3.5.0-13-g5920413c2b
-    created: "2023-12-21T11:41:37.909413031Z"
+    created: "2023-12-21T13:05:17.914580325Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20107,7 +20107,7 @@ entries:
     version: 3.5.0-13-g5920413c2b
   - apiVersion: v2
     appVersion: 3.5.0-12-g9b5d1b7d9d
-    created: "2023-12-21T11:41:37.870967586Z"
+    created: "2023-12-21T13:05:17.874574031Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20154,7 +20154,7 @@ entries:
     version: 3.5.0-12-g9b5d1b7d9d
   - apiVersion: v2
     appVersion: 3.5.0-11-g1564213dd3
-    created: "2023-12-21T11:41:37.831993355Z"
+    created: "2023-12-21T13:05:17.835525863Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20201,7 +20201,7 @@ entries:
     version: 3.5.0-11-g1564213dd3
   - apiVersion: v2
     appVersion: 3.5.0-10-gc645b18a66
-    created: "2023-12-21T11:41:37.793847449Z"
+    created: "2023-12-21T13:05:17.795224083Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20248,7 +20248,7 @@ entries:
     version: 3.5.0-10-gc645b18a66
   - apiVersion: v2
     appVersion: 3.5.0-1-gf9b724c134
-    created: "2023-12-21T11:41:37.755162622Z"
+    created: "2023-12-21T13:05:17.755964605Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20295,7 +20295,7 @@ entries:
     version: 3.5.0-1-gf9b724c134
   - apiVersion: v2
     appVersion: 3.5.0-1-g2d7c87c4ae
-    created: "2023-12-21T11:41:37.716577955Z"
+    created: "2023-12-21T13:05:17.716618475Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20342,7 +20342,7 @@ entries:
     version: 3.5.0-1-g2d7c87c4ae
   - apiVersion: v2
     appVersion: 3.5.0-0-g236e945ba2
-    created: "2023-12-21T11:41:37.676932702Z"
+    created: "2023-12-21T13:05:17.676395899Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20389,7 +20389,7 @@ entries:
     version: 3.5.0-0-g236e945ba2
   - apiVersion: v2
     appVersion: 3.4.0-9-g6896ddff66
-    created: "2023-12-21T11:41:37.637415393Z"
+    created: "2023-12-21T13:05:17.636843834Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20436,7 +20436,7 @@ entries:
     version: 3.4.0-9-g6896ddff66
   - apiVersion: v2
     appVersion: 3.4.0-8-g4a5ef87a16
-    created: "2023-12-21T11:41:37.599439234Z"
+    created: "2023-12-21T13:05:17.597816524Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20483,7 +20483,7 @@ entries:
     version: 3.4.0-8-g4a5ef87a16
   - apiVersion: v2
     appVersion: 3.4.0-7-gc6110c5827
-    created: "2023-12-21T11:41:37.561033003Z"
+    created: "2023-12-21T13:05:17.559258341Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20530,7 +20530,7 @@ entries:
     version: 3.4.0-7-gc6110c5827
   - apiVersion: v2
     appVersion: 3.4.0-6-g16db0f0cf3
-    created: "2023-12-21T11:41:37.521408317Z"
+    created: "2023-12-21T13:05:17.518616124Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20577,7 +20577,7 @@ entries:
     version: 3.4.0-6-g16db0f0cf3
   - apiVersion: v2
     appVersion: 3.4.0-24-g236e945ba2
-    created: "2023-12-21T11:41:37.482399465Z"
+    created: "2023-12-21T13:05:17.478840667Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20624,7 +20624,7 @@ entries:
     version: 3.4.0-24-g236e945ba2
   - apiVersion: v2
     appVersion: 3.4.0-23-g5c896dcd6e
-    created: "2023-12-21T11:41:37.444023416Z"
+    created: "2023-12-21T13:05:17.439696336Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20671,7 +20671,7 @@ entries:
     version: 3.4.0-23-g5c896dcd6e
   - apiVersion: v2
     appVersion: 3.4.0-22-g0cb180b3f2
-    created: "2023-12-21T11:41:37.404596525Z"
+    created: "2023-12-21T13:05:17.399763654Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20718,7 +20718,7 @@ entries:
     version: 3.4.0-22-g0cb180b3f2
   - apiVersion: v2
     appVersion: 3.4.0-20-ga6194baa61
-    created: "2023-12-21T11:41:37.364776534Z"
+    created: "2023-12-21T13:05:17.360511034Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20765,7 +20765,7 @@ entries:
     version: 3.4.0-20-ga6194baa61
   - apiVersion: v2
     appVersion: 3.4.0-2-g3cab281206
-    created: "2023-12-21T11:41:37.326479738Z"
+    created: "2023-12-21T13:05:17.321738235Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20812,7 +20812,7 @@ entries:
     version: 3.4.0-2-g3cab281206
   - apiVersion: v2
     appVersion: 3.4.0-19-g644e0eca16
-    created: "2023-12-21T11:41:37.287957139Z"
+    created: "2023-12-21T13:05:17.283064781Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20859,7 +20859,7 @@ entries:
     version: 3.4.0-19-g644e0eca16
   - apiVersion: v2
     appVersion: 3.4.0-18-gd851d04bd9
-    created: "2023-12-21T11:41:37.247993455Z"
+    created: "2023-12-21T13:05:17.243350468Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20906,7 +20906,7 @@ entries:
     version: 3.4.0-18-gd851d04bd9
   - apiVersion: v2
     appVersion: 3.4.0-17-g7e12fcd846
-    created: "2023-12-21T11:41:37.208630138Z"
+    created: "2023-12-21T13:05:17.203848322Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -20953,7 +20953,7 @@ entries:
     version: 3.4.0-17-g7e12fcd846
   - apiVersion: v2
     appVersion: 3.4.0-16-g1c919100ee
-    created: "2023-12-21T11:41:37.170723318Z"
+    created: "2023-12-21T13:05:17.163562647Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21000,7 +21000,7 @@ entries:
     version: 3.4.0-16-g1c919100ee
   - apiVersion: v2
     appVersion: 3.4.0-15-gc1e3e3730e
-    created: "2023-12-21T11:41:37.132758037Z"
+    created: "2023-12-21T13:05:17.123783074Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21047,7 +21047,7 @@ entries:
     version: 3.4.0-15-gc1e3e3730e
   - apiVersion: v2
     appVersion: 3.4.0-14-gd6b1da97ed
-    created: "2023-12-21T11:41:37.093202403Z"
+    created: "2023-12-21T13:05:17.083619886Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21094,7 +21094,7 @@ entries:
     version: 3.4.0-14-gd6b1da97ed
   - apiVersion: v2
     appVersion: 3.4.0-13-gdb7adc8619
-    created: "2023-12-21T11:41:37.055018371Z"
+    created: "2023-12-21T13:05:17.044438744Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21141,7 +21141,7 @@ entries:
     version: 3.4.0-13-gdb7adc8619
   - apiVersion: v2
     appVersion: 3.4.0-11-gff2b80c3d7
-    created: "2023-12-21T11:41:37.016069768Z"
+    created: "2023-12-21T13:05:17.004778768Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21188,7 +21188,7 @@ entries:
     version: 3.4.0-11-gff2b80c3d7
   - apiVersion: v2
     appVersion: 3.4.0-10-g90f1fef90f
-    created: "2023-12-21T11:41:36.977830054Z"
+    created: "2023-12-21T13:05:16.966189587Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21235,7 +21235,7 @@ entries:
     version: 3.4.0-10-g90f1fef90f
   - apiVersion: v2
     appVersion: 3.1.1-2-ga1c6efd50c
-    created: "2023-12-21T11:41:29.136629173Z"
+    created: "2023-12-21T13:05:08.922062132Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21282,7 +21282,7 @@ entries:
     version: 3.1.1-2-ga1c6efd50c
   - apiVersion: v2
     appVersion: 3.0.1-3-g8f5462d86c
-    created: "2023-12-21T11:41:29.097017634Z"
+    created: "2023-12-21T13:05:08.883187334Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21329,7 +21329,7 @@ entries:
     version: 3.0.1-3-g8f5462d86c
   - apiVersion: v2
     appVersion: 2.19.1-6-g3772539d1a
-    created: "2023-12-21T11:41:29.059330247Z"
+    created: "2023-12-21T13:05:08.843183796Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21376,7 +21376,7 @@ entries:
     version: 2.19.1-6-g3772539d1a
   - apiVersion: v2
     appVersion: 2.19.1-12-gc84f6961ea
-    created: "2023-12-21T11:41:29.023968939Z"
+    created: "2023-12-21T13:05:08.807625669Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21423,7 +21423,7 @@ entries:
     version: 2.19.1-12-gc84f6961ea
   - apiVersion: v2
     appVersion: 2.19.1-11-gbdabb244ab
-    created: "2023-12-21T11:41:28.988690981Z"
+    created: "2023-12-21T13:05:08.770881622Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21470,7 +21470,7 @@ entries:
     version: 2.19.1-11-gbdabb244ab
   - apiVersion: v2
     appVersion: 2.19.1-10-g1857f34416
-    created: "2023-12-21T11:41:28.953057061Z"
+    created: "2023-12-21T13:05:08.734691399Z"
     dependencies:
     - condition: fluent-bit.enabled,sumologic.logs.enabled
       name: fluent-bit
@@ -21515,4 +21515,4 @@ entries:
     urls:
     - https://sumologic.github.io/sumologic-kubernetes-collection/dev/sumologic-2.19.1-10-g1857f34416.tgz
     version: 2.19.1-10-g1857f34416
-generated: "2023-12-21T13:05:03.134123633Z"
+generated: "2023-12-21T13:05:08.696530194Z"
