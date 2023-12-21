@@ -471,6 +471,19 @@ Example:
 {{- end -}}
 
 {{/*
+Returns default affinity for all objects.
+
+Example:
+
+{{ include "kubernetes.defaultAffinity" . }}
+*/}}
+{{- define "kubernetes.defaultAffinity" -}}
+{{- if .Values.sumologic.affinity -}}
+{{- toYaml .Values.sumologic.affinity -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Environment variables used to configure the HTTP proxy for programs using
 Go's net/http. See: https://pkg.go.dev/net/http#RoundTripper
 

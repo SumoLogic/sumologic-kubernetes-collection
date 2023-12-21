@@ -99,6 +99,9 @@ sumologic:
   ## Global configuration of tolerations
   tolerations: []
 
+  ## Global configuration of affinity
+  affinity: {}
+
   ## Add custom annotations to sumologic serviceAccounts
   serviceAccount:
     annotations: {}
