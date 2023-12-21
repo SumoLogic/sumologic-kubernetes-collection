@@ -56,9 +56,9 @@ spec:
     nodeSelector:
 {{ include "metrics.collector.otelcol.nodeSelector" . | indent 6 }}
 {{- end }}
-{{- if .Values.sumologic.metrics.collector.otelcol.tolerations }}
+{{- if not (empty (include "metrics.collector.otelcol.tolerations" .)) }}
     tolerations:
-{{ toYaml .Values.sumologic.metrics.collector.otelcol.tolerations | indent 6 }}
+{{ include "metrics.collector.otelcol.tolerations" . | indent 6 }}
 {{- end }}
 {{- if .Values.sumologic.metrics.collector.otelcol.affinity }}
     affinity:
@@ -68,9 +68,9 @@ spec:
   nodeSelector:
 {{ include "metrics.collector.otelcol.nodeSelector" . | indent 4 }}
 {{- end }}
-{{- if .Values.sumologic.metrics.collector.otelcol.tolerations }}
+{{- if not (empty (include "metrics.collector.otelcol.tolerations" .)) }}
   tolerations:
-{{ toYaml .Values.sumologic.metrics.collector.otelcol.tolerations | indent 4 }}
+{{ include "metrics.collector.otelcol.tolerations" . | indent 6 }}
 {{- end }}
 {{- if .Values.sumologic.metrics.collector.otelcol.affinity }}
   affinity:

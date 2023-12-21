@@ -3,6 +3,11 @@ sumologic:
     sourceType: http
   nodeSelector:
     sumologic.com/kind: co-worker
+  tolerations:
+    - key: "arbeiter"
+      operator: "NotEqual"
+      value: arbeiter
+      effect: "TestFail"
 
 metadata:
   image:

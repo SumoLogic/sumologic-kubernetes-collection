@@ -311,3 +311,11 @@ Example Usage:
 {{- template "kubernetes.defaultNodeSelector" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "metadata.logs.statefulset.tolerations" -}}
+{{- if .Values.metadata.logs.statefulset.tolerations -}}
+{{- toYaml .Values.metadata.logs.statefulset.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}

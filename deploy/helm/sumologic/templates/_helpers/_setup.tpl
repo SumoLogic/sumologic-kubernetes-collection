@@ -302,3 +302,11 @@ Example Usage:
 {{- template "kubernetes.defaultNodeSelector" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "setup.job.tolerations" -}}
+{{- if .Values.sumologic.setup.job.tolerations -}}
+{{- toYaml .Values.sumologic.setup.job.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}

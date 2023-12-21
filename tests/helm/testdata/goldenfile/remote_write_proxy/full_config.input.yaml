@@ -1,6 +1,11 @@
 sumologic:
   nodeSelector:
     disktype: hdd
+  tolerations:
+    - key: "key2"
+      operator: "NotEqual"
+      value: "value5"
+      effect: "FailTest"
   pullSecrets:
     - name: sumo-pull
   podLabels:

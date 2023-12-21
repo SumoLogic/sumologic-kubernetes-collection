@@ -1,6 +1,10 @@
 sumologic:
   nodeSelector:
     workingGroup: testing
+  tolerations:
+    - key: null
+      operator: NotExists
+      effect: "FailTest"
   metrics:
     collector:
       otelcol:

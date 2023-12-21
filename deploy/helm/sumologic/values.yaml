@@ -96,6 +96,9 @@ sumologic:
   ## Global configuration of node selectors
   nodeSelector: {}
 
+  ## Global configuration of tolerations
+  tolerations: []
+
   ## Add custom annotations to sumologic serviceAccounts
   serviceAccount:
     annotations: {}

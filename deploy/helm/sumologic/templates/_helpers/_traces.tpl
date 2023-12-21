@@ -258,6 +258,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "otelcolInstrumentation.statefulset.tolerations" -}}
+{{- if .Values.otelcolInstrumentation.statefulset.tolerations -}}
+{{- toYaml .Values.otelcolInstrumentation.statefulset.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Check if autoscaling for traces gateway is enabled.
 
@@ -277,10 +285,26 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "tracesGateway.deployment.tolerations" -}}
+{{- if .Values.tracesGateway.deployment.tolerations -}}
+{{- toYaml .Values.tracesGateway.deployment.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "tracesSampler.deployment.nodeSelector" -}}
 {{- if .Values.tracesSampler.deployment.nodeSelector -}}
 {{- toYaml .Values.tracesSampler.deployment.nodeSelector -}}
 {{- else -}}
 {{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "tracesSampler.deployment.tolerations" -}}
+{{- if .Values.tracesSampler.deployment.tolerations -}}
+{{- toYaml .Values.tracesSampler.deployment.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
 {{- end -}}
 {{- end -}}

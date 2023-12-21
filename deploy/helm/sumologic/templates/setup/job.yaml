@@ -33,9 +33,9 @@ spec:
       nodeSelector:
 {{ include "setup.job.nodeSelector" . | indent 8 }}
 {{- end }}
-{{- if .Values.sumologic.setup.job.tolerations }}
+{{- if not (empty (include "setup.job.tolerations" .)) }}
       tolerations:
-{{ toYaml .Values.sumologic.setup.job.tolerations | indent 8 }}
+{{ include "setup.job.tolerations" . | indent 8 }}
 {{- end }}
 {{- if .Values.sumologic.setup.job.affinity }}
       affinity:

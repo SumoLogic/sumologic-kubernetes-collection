@@ -67,6 +67,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "metrics.remoteWriteProxy.tolerations" -}}
+{{- if .Values.sumologic.metrics.remoteWriteProxy.tolerations -}}
+{{- toYaml .Values.sumologic.metrics.remoteWriteProxy.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "metrics.collector.otelcol.nodeSelector" -}}
 {{- if .Values.sumologic.metrics.collector.otelcol.nodeSelector -}}
 {{- toYaml .Values.sumologic.metrics.collector.otelcol.nodeSelector -}}
@@ -75,11 +83,27 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "metrics.collector.otelcol.tolerations" -}}
+{{- if .Values.sumologic.metrics.collector.otelcol.tolerations -}}
+{{- toYaml .Values.sumologic.metrics.collector.otelcol.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "metadata.metrics.statefulset.nodeSelector" -}}
 {{- if .Values.metadata.metrics.statefulset.nodeSelector -}}
 {{- toYaml .Values.metadata.metrics.statefulset.nodeSelector -}}
 {{- else -}}
 {{- template "kubernetes.defaultNodeSelector" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "metadata.metrics.statefulset.tolerations" -}}
+{{- if .Values.metadata.metrics.statefulset.tolerations -}}
+{{- toYaml .Values.metadata.metrics.statefulset.tolerations -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
 {{- end -}}
 {{- end -}}
 

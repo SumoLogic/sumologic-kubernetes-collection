@@ -47,10 +47,10 @@ spec:
       nodeSelector:
 {{ include "tracesSampler.deployment.nodeSelector" . | indent 8 }}
 {{- end }}
-      {{- if $tracesSampler.deployment.tolerations }}
+{{- if not (empty (include "tracesSampler.deployment.tolerations" .)) }}
       tolerations:
-{{ toYaml $tracesSampler.deployment.tolerations | indent 8 }}
-      {{- end }}
+{{ include "tracesSampler.deployment.tolerations" . | indent 8 }}
+{{- end }}
       {{- if $tracesSampler.deployment.priorityClassName }}
       priorityClassName: {{ $tracesSampler.deployment.priorityClassName | quote }}
       {{- end }}
