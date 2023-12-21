@@ -9,6 +9,15 @@ sumologic:
     - key: null
       operator: NotExists
       effect: "TestFail"
+  affinity:
+    nodeAffinity:
+      requiredSomethingDuringSomethingElse:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: definitely_not
+                operator: In
+                values:
+                  - a-correct-affinity
 
 pvcCleaner:
   metrics:

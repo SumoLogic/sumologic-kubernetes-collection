@@ -598,3 +598,11 @@ Example usage:
 {{- template "kubernetes.defaultTolerations" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "pvcCleaner.job.affinity" -}}
+{{- if .Values.pvcCleaner.job.affinity -}}
+{{- toYaml .Values.pvcCleaner.job.affinity -}}
+{{- else -}}
+{{- template "kubernetes.defaultAffinity" . -}}
+{{- end -}}
+{{- end -}}
