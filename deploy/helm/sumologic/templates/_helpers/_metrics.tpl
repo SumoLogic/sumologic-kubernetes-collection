@@ -123,6 +123,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "metadata.metrics.statefulset.affinity" -}}
+{{- if .Values.metadata.metrics.statefulset.affinity -}}
+{{- toYaml .Values.metadata.metrics.statefulset.affinity -}}
+{{- else -}}
+{{- template "kubernetes.defaultAffinity" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic.labels.app.metrics" -}}
 {{ template "sumologic.labels.app.otelcol" . }}-metrics
 {{- end -}}

@@ -51,10 +51,10 @@ spec:
       tolerations:
 {{ include "metadata.metrics.statefulset.tolerations" . | indent 8 }}
 {{- end }}
-{{- if or .Values.metadata.metrics.statefulset.affinity  .Values.metadata.metrics.statefulset.podAntiAffinity }}
+{{- if or (not (empty (include "metadata.metrics.statefulset.affinity" .)))  .Values.metadata.metrics.statefulset.podAntiAffinity }}
       affinity:
-{{- if .Values.metadata.metrics.statefulset.affinity }}
-{{ toYaml .Values.metadata.metrics.statefulset.affinity | indent 8 }}
+{{- if not (empty (include "metadata.metrics.statefulset.affinity" .)) }}
+{{ include "metadata.metrics.statefulset.affinity" . | indent 8 }}
 {{- end }}
 {{- if eq .Values.metadata.metrics.statefulset.podAntiAffinity "hard"}}
 {{ include "pod-anti-affinity-hard" . | indent 8 }}
