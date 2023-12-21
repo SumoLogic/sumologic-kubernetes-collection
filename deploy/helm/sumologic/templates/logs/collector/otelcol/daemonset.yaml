@@ -22,6 +22,12 @@
 {{- else if $defaultTolerations }}
 {{- $tolerations = $defaultTolerations }}
 {{- end }}
+{{- $affinity := "" }}
+{{- if .affinity }}
+{{- $affinity = (toYaml .affinity) }}
+{{- else if $defaultAffinity }}
+{{- $affinity = $defaultAffinity }}
+{{- end }}
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -67,9 +73,9 @@ spec:
       nodeSelector:
 {{ $nodeSelector | indent 8 }}
 {{- end }}
-{{- if or .affinity }}
+{{- if $affinity }}
       affinity:
-{{ toYaml .affinity | indent 8 }}
+{{ toYaml $affinity | indent 8 }}
 {{- end }}
 {{- if $tolerations }}
       tolerations:
