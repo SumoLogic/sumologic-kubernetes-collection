@@ -54,7 +54,7 @@ spec:
       tolerations:
 {{ include "otelcolInstrumentation.statefulset.tolerations" . | indent 8 }}
 {{- end }}
-{{- if or (not (empty (include "otelcolInstrumentation.statefulset.tolerations" .))) $otelcolInstrumentation.statefulset.podAntiAffinity }}
+{{- if or (not (empty (include "otelcolInstrumentation.statefulset.affinity" .))) $otelcolInstrumentation.statefulset.podAntiAffinity }}
       affinity:
 {{- if not (empty (include "otelcolInstrumentation.statefulset.affinity" .)) }}
 {{ include "otelcolInstrumentation.statefulset.affinity" . | indent 8 }}
