@@ -3,6 +3,7 @@ package helm
 import (
 	"fmt"
 	"path"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -230,6 +231,53 @@ func TestTolerations(t *testing.T) {
 	}
 }
 
+func TestAffinities(t *testing.T) {
+	t.Parallel()
+	valuesFilePath := path.Join(testDataDirectory, "node-selector.yaml")
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+
+	// split the rendered Yaml into individual documents and unmarshal them into K8s objects
+	// we could use the yaml decoder directly, but we'd have to implement our own unmarshaling logic then
+	renderedObjects := UnmarshalMultipleFromYaml[unstructured.Unstructured](t, renderedYamlString)
+
+	for _, renderedObject := range renderedObjects {
+		aff, err := GetAffinity(renderedObject)
+		require.NoError(t, err)
+		// Objects that are not subject to global settings:
+		excluded := map[string]bool{
+			"col-test-sumologic-otelcol-events": true,
+		}
+		// Check only node affinity, to avoid checking anti affinities
+		if _, ok := excluded[renderedObject.GetName()]; !ok && aff != nil {
+			assert.NotNil(t, aff.NodeAffinity, "%s", renderedObject.GetName())
+			assert.True(
+				t,
+				reflect.DeepEqual(*aff.NodeAffinity, *affinity.NodeAffinity),
+				"%s should have node affinity set to %s, found %s instead",
+				renderedObject.GetName(),
+				affinity,
+				aff,
+			)
+		}
+	}
+}
+
 func TestNameAndLabelLength(t *testing.T) {
 	// object kinds whose names are limited to 63 characters instead of K8s default of 253
 	// not all of these are strictly required, but it's a good practice to limit them regardless
@@ -380,6 +428,16 @@ func GetNodeSelector(object unstructured.Unstructured) (map[string]string, error
 			return nil, err
 		}
 		return otelcol.Spec.NodeSelector, nil
+	}
+
+	return nil, nil
+}
+func GetAffinity(object unstructured.Unstructured) (*corev1.Affinity, error) {
+	podSpec, err := GetPodSpec(object)
+	if err != nil {
+		return nil, err
+	} else if podSpec != nil {
+		return podSpec.Affinity, nil
 	}
 
 	return nil, nil

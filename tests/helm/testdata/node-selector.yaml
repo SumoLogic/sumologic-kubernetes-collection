@@ -6,6 +6,15 @@ sumologic:
       value: "value"
       operator: Exists
       effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/os
+                operator: NotIn
+                values:
+                  - linux
 
 # Override these to satisfy the tests
 otellogs:

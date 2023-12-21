@@ -3,6 +3,7 @@
 {{- $instance := "" -}}
 {{- $defaultNodeSelector := (include "kubernetes.defaultNodeSelector" .) }}
 {{- $defaultTolerations := (include "kubernetes.defaultTolerations" .) }}
+{{- $defaultAffinity := (include "kubernetes.defaultAffinity" .) }}
 {{- $daemonsets := dict "" $.Values.otellogs.daemonset  -}}
 {{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogs.additionalDaemonSets -}}
 {{- range $name, $value := $daemonsets }}
@@ -75,7 +76,7 @@ spec:
 {{- end }}
 {{- if $affinity }}
       affinity:
-{{ toYaml $affinity | indent 8 }}
+{{ $affinity | indent 8 }}
 {{- end }}
 {{- if $tolerations }}
       tolerations:
