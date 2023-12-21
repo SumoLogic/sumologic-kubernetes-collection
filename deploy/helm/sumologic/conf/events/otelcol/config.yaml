@@ -1,5 +1,6 @@
 exporters:
   sumologic:
+    client: {{ include "sumologic.sumo_client" . }}
     endpoint: {{ include "sumologic.events.exporter.endpoint" . }}
     log_format: {{ include "sumologic.events.exporter.format" . }}
     clear_logs_timestamp: false # this only affects the otlp format
