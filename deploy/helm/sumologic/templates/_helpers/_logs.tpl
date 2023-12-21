@@ -319,3 +319,11 @@ Example Usage:
 {{- template "kubernetes.defaultTolerations" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "metadata.logs.statefulset.affinity" -}}
+{{- if .Values.metadata.logs.statefulset.affinity -}}
+{{- toYaml .Values.metadata.logs.statefulset.affinity -}}
+{{- else -}}
+{{- template "kubernetes.defaultAffinity" . -}}
+{{- end -}}
+{{- end -}}

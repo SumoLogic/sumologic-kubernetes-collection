@@ -39,9 +39,9 @@ spec:
           tolerations:
 {{ include "pvcCleaner.job.tolerations" . | indent 12 }}
 {{- end }}
-{{- with .Values.pvcCleaner.job.affinity }}
+{{- if not (empty (include "pvcCleaner.job.affinity" .)) }}
           affinity:
-{{ toYaml . | indent 12 }}
+{{ include "pvcCleaner.job.affinity" . | indent 12 }}
 {{- end }}
 {{- with .Values.pvcCleaner.job.securityContext }}
           securityContext:

@@ -42,3 +42,33 @@ var toleration = corev1.Toleration{
 	// operator: Exists
 	// effect: "NoSchedule"
 }
+
+var affinity = corev1.Affinity{
+	//   affinity:
+	//     nodeAffinity:
+	//       requiredDuringSchedulingIgnoredDuringExecution:
+	//         nodeSelectorTerms:
+	//           - matchExpressions:
+	//               - key: kubernetes.io/os
+	//                 operator: NotIn
+	//                 values:
+	//                   - linux
+	NodeAffinity: &corev1.NodeAffinity{
+		RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
+			NodeSelectorTerms: []corev1.NodeSelectorTerm{
+				{
+					MatchExpressions: []corev1.NodeSelectorRequirement{
+						{
+							Key:      "kubernetes.io/os",
+							Operator: corev1.NodeSelectorOpNotIn,
+							Values:   []string{"linux"},
+						},
+					},
+					MatchFields: nil,
+				},
+			},
+		},
+	},
+	PodAffinity:     nil,
+	PodAntiAffinity: nil,
+}

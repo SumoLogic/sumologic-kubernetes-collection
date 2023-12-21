@@ -471,6 +471,19 @@ Example:
 {{- end -}}
 
 {{/*
+Returns default affinity for all objects.
+
+Example:
+
+{{ include "kubernetes.defaultAffinity" . }}
+*/}}
+{{- define "kubernetes.defaultAffinity" -}}
+{{- if .Values.sumologic.affinity -}}
+{{- toYaml .Values.sumologic.affinity -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Environment variables used to configure the HTTP proxy for programs using
 Go's net/http. See: https://pkg.go.dev/net/http#RoundTripper
 
@@ -583,5 +596,13 @@ Example usage:
 {{- toYaml .Values.pvcCleaner.job.tolerations -}}
 {{- else -}}
 {{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "pvcCleaner.job.affinity" -}}
+{{- if .Values.pvcCleaner.job.affinity -}}
+{{- toYaml .Values.pvcCleaner.job.affinity -}}
+{{- else -}}
+{{- template "kubernetes.defaultAffinity" . -}}
 {{- end -}}
 {{- end -}}

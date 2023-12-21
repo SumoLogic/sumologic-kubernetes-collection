@@ -54,10 +54,10 @@ spec:
       tolerations:
 {{ include "otelcolInstrumentation.statefulset.tolerations" . | indent 8 }}
 {{- end }}
-{{- if or $otelcolInstrumentation.statefulset.affinity  $otelcolInstrumentation.statefulset.podAntiAffinity }}
+{{- if or (not (empty (include "otelcolInstrumentation.statefulset.affinity" .))) $otelcolInstrumentation.statefulset.podAntiAffinity }}
       affinity:
-{{- if $otelcolInstrumentation.statefulset.affinity }}
-{{ toYaml $otelcolInstrumentation.statefulset.affinity | indent 8 }}
+{{- if not (empty (include "otelcolInstrumentation.statefulset.affinity" .)) }}
+{{ include "otelcolInstrumentation.statefulset.affinity" . | indent 8 }}
 {{- end }}
 {{- if eq $otelcolInstrumentation.statefulset.podAntiAffinity "hard"}}
 {{ include "pod-anti-affinity-hard" . | indent 8 }}
