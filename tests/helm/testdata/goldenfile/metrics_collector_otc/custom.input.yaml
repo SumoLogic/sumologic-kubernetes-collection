@@ -5,6 +5,15 @@ sumologic:
     - key: null
       operator: NotExists
       effect: "FailTest"
+  affinity:
+    nodeAffinity:
+      requiredSomethingDuringSomethingElse:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: definitely_not
+                operator: In
+                values:
+                  - a-correct-affinity
   metrics:
     collector:
       otelcol:

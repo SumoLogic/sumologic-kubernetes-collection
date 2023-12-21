@@ -99,6 +99,14 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "metrics.collector.otelcol.affinity" -}}
+{{- if .Values.sumologic.metrics.collector.otelcol.affinity -}}
+{{- toYaml .Values.sumologic.metrics.collector.otelcol.affinity -}}
+{{- else -}}
+{{- template "kubernetes.defaultAffinity" . -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "metadata.metrics.statefulset.nodeSelector" -}}
 {{- if .Values.metadata.metrics.statefulset.nodeSelector -}}
 {{- toYaml .Values.metadata.metrics.statefulset.nodeSelector -}}
