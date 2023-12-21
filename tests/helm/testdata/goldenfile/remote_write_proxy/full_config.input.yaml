@@ -6,6 +6,15 @@ sumologic:
       operator: "NotEqual"
       value: "value5"
       effect: "FailTest"
+  affinity:
+    nodeAffinity:
+      requiredSomethingDuringSomethingElse:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: definitely_not
+                operator: In
+                values:
+                  - a-correct-affinity
   pullSecrets:
     - name: sumo-pull
   podLabels:

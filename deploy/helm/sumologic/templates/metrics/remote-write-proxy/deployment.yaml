@@ -40,11 +40,11 @@ spec:
       nodeSelector:
 {{ include "metrics.remoteWriteProxy.nodeSelector" . | nindent 8 }}
 {{- end }}
-{{- if or .Values.sumologic.metrics.remoteWriteProxy.affinity }}
+{{- if not (empty (include "metrics.remoteWriteProxy.affinity" .)) }}
       affinity:
-{{ toYaml .Values.sumologic.metrics.remoteWriteProxy.affinity | indent 8 }}
+{{ include "metrics.remoteWriteProxy.affinity" . | nindent 8 }}
 {{- end }}
-{{- if not (empty (include "metrics.remoteWriteProxy.nodeSelector" .)) }}
+{{- if not (empty (include "metrics.remoteWriteProxy.tolerations" .)) }}
       tolerations:
 {{ include "metrics.remoteWriteProxy.tolerations" . | nindent 8 }}
 {{- end }}
