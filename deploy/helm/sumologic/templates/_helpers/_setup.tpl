@@ -310,3 +310,11 @@ Example Usage:
 {{- template "kubernetes.defaultTolerations" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "setup.job.affinity" -}}
+{{- if .Values.sumologic.setup.job.affinity -}}
+{{- toYaml .Values.sumologic.setup.job.affinity -}}
+{{- else -}}
+{{- template "kubernetes.defaultAffinity" . -}}
+{{- end -}}
+{{- end -}}

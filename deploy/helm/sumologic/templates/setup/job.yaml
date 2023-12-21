@@ -37,9 +37,9 @@ spec:
       tolerations:
 {{ include "setup.job.tolerations" . | indent 8 }}
 {{- end }}
-{{- if .Values.sumologic.setup.job.affinity }}
+{{- if not (empty (include "setup.job.affinity" .)) }}
       affinity:
-{{ toYaml .Values.sumologic.setup.job.affinity | indent 8 }}
+{{ include "setup.job.affinity" . | indent 8 }}
 {{- end }}
       volumes:
       - name: setup
