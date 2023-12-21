@@ -79,7 +79,7 @@ Example Usage:
 {{- if .Values.sumologic.metrics.remoteWriteProxy.affinity -}}
 {{- toYaml .Values.sumologic.metrics.remoteWriteProxy.affinity -}}
 {{- else -}}
-{{- template "kubernetes.defaultTolerations" . -}}
+{{- template "kubernetes.defaultAffinity" . -}}
 {{- end -}}
 {{- end -}}
 
