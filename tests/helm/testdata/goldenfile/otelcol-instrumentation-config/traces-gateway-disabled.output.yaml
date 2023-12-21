@@ -16,6 +16,7 @@ data:
       otlphttp/traces:
         endpoint: http://RELEASE-NAME-sumologic-traces-sampler.sumologic:4318
       sumologic/metrics:
+        client: k8s_%CURRENT_CHART_VERSION%
         compress_encoding: gzip
         endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
         log_format: text
