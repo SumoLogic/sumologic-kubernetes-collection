@@ -3654,6 +3654,7 @@ otelcolInstrumentation:
       pprof: {}
     exporters:
       sumologic/metrics:
+        client: '{{ include "sumologic.sumo_client" . }}'
         endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
         ## Compression encoding format, either empty string (""), gzip or deflate (default gzip).
         ## Empty string means no compression

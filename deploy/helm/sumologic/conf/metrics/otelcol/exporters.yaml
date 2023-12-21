@@ -1,6 +1,7 @@
 ## Configuration for Sumo Logic Exporter
 ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
 sumologic/default:
+  client: {{ include "sumologic.sumo_client" . }}
   metric_format: {{ include "metrics.otelcol.exporter.format" . }}
   endpoint: {{ include "metrics.otelcol.exporter.endpoint" . }}
   ## Sumo doesn't yet natively support OTLP Histograms
@@ -21,6 +22,7 @@ sumologic/default:
   timeout: 30s
 {{- if eq .Values.sumologic.metrics.sourceType "http" }}
 sumologic/apiserver:
+  client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
   sending_queue:
@@ -34,6 +36,7 @@ sumologic/apiserver:
   ## set timeout to 30s due to big requests
   timeout: 30s
 sumologic/control_plane:
+  client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
   sending_queue:
@@ -47,6 +50,7 @@ sumologic/control_plane:
   ## set timeout to 30s due to big requests
   timeout: 30s
 sumologic/controller:
+  client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
   sending_queue:
@@ -60,6 +64,7 @@ sumologic/controller:
   ## set timeout to 30s due to big requests
   timeout: 30s
 sumologic/kubelet:
+  client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
   sending_queue:
@@ -73,6 +78,7 @@ sumologic/kubelet:
   ## set timeout to 30s due to big requests
   timeout: 30s
 sumologic/node:
+  client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
   sending_queue:
@@ -86,6 +92,7 @@ sumologic/node:
   ## set timeout to 30s due to big requests
   timeout: 30s
 sumologic/scheduler:
+  client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
   sending_queue:
@@ -99,6 +106,7 @@ sumologic/scheduler:
   ## set timeout to 30s due to big requests
   timeout: 30s
 sumologic/state:
+  client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
   endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
   sending_queue:

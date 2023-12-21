@@ -32,6 +32,7 @@ exporters:
 
 {{ else }}
   sumologic:
+    client: {{ include "sumologic.sumo_client" . }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_LOGS_SOURCE}
     log_format: otlp
     clear_logs_timestamp: false
