@@ -183,42 +183,7 @@ This section coverts the following metrics modifications:
 
 ### Filtering metrics
 
-In order to filter in or out the metrics, you can add [filterprocessor] to metric's extraProcessors. Please see the following example:
-
-```yaml
-sumologic:
-  metrics:
-    otelcol:
-      extraProcessors:
-        - filter/1:
-            metrics:
-              ## Definition of inclusion
-              include:
-                ## Match type, can be regexp or strict
-                match_type: regexp
-                ## metric names to match for inclusion
-                metric_names:
-                  - prefix/.*
-                  - prefix_.*
-                ## Metadata to match for inclusion
-                resource_attributes:
-                  - key: container.name
-                    value: app_container_1
-              ## Definition of exclusion
-              exclude:
-                ## Match type, can be regexp or strict
-                match_type: strict
-                ## Metric names for exclusion
-                metric_names:
-                  - hello_world
-                  - hello/world
-                ## Metadata to match for exclusion
-                resource_attributes:
-                  - key: container.name
-                    value: app_container_7
-```
-
-[filterprocessor]: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor
+Please see [the doc about filtering data](/docs/filtering.md#metrics).
 
 #### Default attributes
 

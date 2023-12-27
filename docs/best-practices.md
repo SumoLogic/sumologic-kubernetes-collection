@@ -5,10 +5,7 @@
   - [Cleaning unused PVCs](#cleaning-unused-pvcs)
 - [OpenTelemetry Collector Persistent Buffer](#opentelemetry-collector-persistent-buffer)
 - [Excluding Metrics](#excluding-metrics)
-  - [Prometheus](#prometheus)
-  - [OpenTelemetry Collector](#opentelemetry-collector)
 - [Excluding Dimensions](#excluding-dimensions)
-  - [OpenTelemetry Collector](#opentelemetry-collector-1)
 - [Collect logs from additional files on the Node](#collect-logs-from-additional-files-on-the-node)
 - [Remove attributes from systemd logs](#removing-attributes-from-systemd-logs)
 - [Filtering Prometheus Metrics by Namespace](#filtering-prometheus-metrics-by-namespace)
@@ -37,9 +34,6 @@
 - [Keeping Source Category for metrics](#keeping-source-category-for-metrics)
 - [Using newer Kube Prometheus Stack](#using-newer-kube-prometheus-stack)
 - [Lowering default ingest](#lowering-default-ingest)
-  - [Excluding logs from specific sources](#excluding-logs-from-specific-sources)
-    - [Custom filtering](#custom-filtering)
-  - [Filter out app metrics](#filter-out-app-metrics)
 
 ## Overriding chart resource names with `fullnameOverride`
 
@@ -245,73 +239,11 @@ For events, use the following properties:
 
 ## Excluding Metrics
 
-### Prometheus
-
-You can filter out metrics directly in Prometheus using [this documentation](collecting-application-metrics.md#filtering-metrics).
-
-### OpenTelemetry Collector
-
-See [the Filtering metrics](/docs/collecting-application-metrics.md#filtering-metrics)
-
-For example to filter out all metrics from `sumologic` namespace, you can use the following configuration:
-
-```yaml
-sumologic:
-  metrics:
-    otelcol:
-      extraProcessors:
-        - filter/exclude_sumo_metrics:
-            metrics:
-              ## Definition of exclusion
-              exclude:
-                ## Match type, can be regexp or strict
-                match_type: strict
-                ## Metadata to match for exclusion
-                resource_attributes:
-                  - key: k8s.namespace.name
-                    value: sumologic
-```
-
-To exclude all metrics starting with `kube_`, you can use the following configuration:
-
-```yaml
-sumologic:
-  metrics:
-    otelcol:
-      extraProcessors:
-        - filter/exclude_sumo_metrics:
-            metrics:
-              ## Definition of exclusion
-              exclude:
-                ## Match type, can be regexp or strict
-                match_type: regexp
-                ## metric names to match for inclusion
-                metric_names:
-                  - kube.*
-```
+Please see [the doc about filtering data](/docs/filtering.md#metrics).
 
 ## Excluding Dimensions
 
-### OpenTelemetry Collector
-
-See [the Filtering metrics](/docs/collecting-application-metrics.md#adding-or-renaming-metadata)
-
-For example to remove `namespace` and `deployment` dimensions, you can use the following configuration:
-
-```yaml
-sumologic:
-  metrics:
-    otelcol:
-      extraProcessors:
-        - transform/remove_dimensions:
-            metric_statements:
-              - context: resource
-                statements:
-                  ## removes namespace metadata
-                  - delete_key(attributes, "namespace")
-                  ## removes deployment metadata
-                  - delete_key(attributes, "deployment")
-```
+Please see [the doc about filtering data](/docs/filtering.md#metadata).
 
 ## Collect logs from additional files on the Node
 
@@ -398,32 +330,7 @@ sumologic:
 
 ## Filtering Prometheus Metrics by Namespace
 
-If you want to filter metrics by namespace, it can be done in the prometheus remote write config. Here is an example of excluding kube-state
-metrics for namespace1 and namespace2:
-
-```yaml
-- action: drop
-  regex: kube-state-metrics;(namespace1|namespace2)
-  sourceLabels: [job, namespace]
-```
-
-The section above should be added in each of the kube-state remote write blocks.
-
-Here is another example of excluding up metrics in the sumologic namespace while still collecting up metrics for all other namespaces:
-
-```yaml
-# up metrics
-- url: http://collection-sumologic.sumologic.svc.cluster.local.:9888/prometheus.metrics
-  writeRelabelConfigs:
-    - action: keep
-      regex: up
-      sourceLabels: [__name__]
-    - action: drop
-      regex: up;sumologic
-      sourceLabels: [__name__, namespace]
-```
-
-The section above should be added in each of the kube-state remote write blocks.
+Please see [the doc about filtering data](/docs/filtering.md#filtering-prometheus-metrics-by-namespace).
 
 ## Modify the Log Level for Falco
 
@@ -1039,64 +946,4 @@ helm install kube-prometheus prometheus-community/kube-prometheus-stack \
 By default, the Helm Chart collects some data necessary for Sumo Logic dashboards to work. If these dashboards are not used, we suggest to
 disable collection of this data in order to lower the ingest.
 
-### Excluding logs from specific sources
-
-You can specify regular expressions to exclude collecting logs from specific sources. The logs will be scraped and sent to the metadata
-layer, but not forwarded to Sumo Logic.
-
-To specify the expressions, use the following configuration:
-
-```yaml
-sumologic:
-  logs:
-    ## Exclude container logs
-    container:
-      excludeContainerRegex: "some-log-container-*"
-      excludeHostRegex: "some-log-host-*"
-      excludeNamespaceRegex: "some-log-namespace-*"
-      excludePodRegex: "some-log-pod-*"
-    ## Exclude systemd logs
-    systemd:
-      excludeFacilityRegex: "some-log-facility-*"
-      excludeHostRegex: "some-log-host-*"
-      excludePriorityRegex: "some-log-priority-*"
-      excludeUnitRegex: "some-log-unit-*"
-    ## Exclude kubelet logs
-    kubelet:
-      excludeFacilityRegex: "some-log-facility-*"
-      excludeHostRegex: "some-log-host-*"
-      excludePriorityRegex: "some-log-priority-*"
-      excludeUnitRegex: "some-log-unit-*"
-```
-
-#### Custom filtering
-
-You can also define custom filter processors for logs and metrics, [similarly as it is done for metrics](#excluding-metrics).
-
-```yaml
-sumologic:
-  logs:
-    kubelet:
-      otelcol:
-        extraProcessors:
-          - filter/exclude_sumo_logs:
-              logs:
-                log_record:
-                  - 'IsMatch(body, ".*password.*")'
-```
-
-Similarly you can use keys `sumologic.logs.systemd.extraProcessors` and `sumologic.logs.container.extraProcessors`.
-
-### Filter out app metrics
-
-We have defined some default filters to drop app metrics that are not relevant for Sumo Logic dashboards. To enable these filters, add the
-following config option to `user_values.yaml`:
-
-```yaml
-sumologic:
-  metrics:
-    enableDefaultFilters: true
-```
-
-Full list of metrics affected dropped is available [here](/deploy/helm/sumologic/conf/metrics/otelcol/default-filters.yaml). The metrics
-listed in the comments are the metrics that will not be dropped.
+In order to learn more about filtering out data please see [the doc about filtering data](/docs/filtering.md).

@@ -326,60 +326,7 @@ in addition to the following:
 
 ### Filtering
 
-Logs can be excluded based on their container name, pod name, host, and namespace. This is done by providing a matching regular expression:
-
-```yaml
-sumologic:
-  logs:
-    container:
-      ## A regular expression for containers.
-      ## Matching containers will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
-      excludeContainerRegex: ""
-      ## A regular expression for hosts.
-      ## Matching hosts will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
-      excludeHostRegex: ""
-      ## A regular expression for namespaces.
-      ## Matching namespaces will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
-      excludeNamespaceRegex: ""
-      ## A regular expression for pods.
-      ## Matching pods will be excluded from Sumo. The logs will still be sent to logs metadata provider (otelcol).
-      excludePodRegex: ""
-```
-
-For more advanced scenarios, use [OpenTelemetry processors][opentelemetry_processors]. Add them to
-`sumologic.logs.container.otelcol.extraProcessors`.
-
-Here are some examples:
-
-```yaml
-sumologic:
-  logs:
-    container:
-      otelcol:
-        extraProcessors:
-          - filter/include-logs-based-on-resource-attribute:
-              logs:
-                include:
-                  match_type: strict
-                  resource_attributes:
-                    - key: host.name
-                      value: just_this_one_hostname
-          - filter/include-logs-based-on-resource-attribute-regex:
-              logs:
-                include:
-                  match_type: regexp
-                  resource_attributes:
-                    - key: host.name
-                      value: prefix.*
-          - filter/exclude-healthcheck-logs:
-              logs:
-                exclude:
-                  match_type: regexp
-                  bodies:
-                    - /healthcheck
-```
-
-For more examples and detailed documentation, see [Filter processor docs][filter_processor_docs].
+Please see [the doc about filtering data](/docs/filtering.md).
 
 ### Modifying log records
 
@@ -544,7 +491,6 @@ OTLP source resolves some issues of `text` format, which affects HTTP source:
 [configuration]: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/configuration.md
 [values]: /deploy/helm/sumologic/values.yaml
 [source_name]: https://help.sumologic.com/docs/send-data/reference-information/metadata-naming-conventions/#Source_Name
-[filter_processor_docs]: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/filterprocessor/README.md
 [opentelemetry_processors]: https://opentelemetry.io/docs/collector/configuration/#processors
 [attributes_processor_docs]:
   https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.69.0/processor/attributesprocessor/README.md
