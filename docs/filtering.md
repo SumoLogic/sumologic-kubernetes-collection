@@ -1,6 +1,6 @@
 # Filtering
 
-One of the easiest way to lower your ingest is to filter out data you do not need. In this guide you will learn how to do this for logs,
+One of the easiest ways to lower your ingest is to filter out data you do not need. In this guide you will learn how to do this for logs,
 metrics and their metadata.
 
 - [OpenTelemetry Collector processors](#opentelemetry-collector-processors)
@@ -9,7 +9,7 @@ metrics and their metadata.
     - [Drop metric datapoints with unspecified type](#drop-metric-datapoints-with-unspecified-type)
   - [Transform processor](#transform-processor)
     - [Truncate too long attributes](#truncate-too-long-attributes)
-    - [Limit to `32` the number of fields sent to Sumo Logic](#limit-to-32-the-number-of-fields-sent-to-sumo-logic)
+    - [Limit to `32` the number of fields sent to Sumo Logic](#limit-the-number-of-fields-sent-to-sumo-logic-to-32)
 - [Metadata](#metadata)
   - [Removing unnecessary metadata](#removing-unnecessary-metadata)
   - [Truncating too long attributes](#truncating-too-long-attributes)
@@ -33,7 +33,7 @@ metrics and their metadata.
 This Helm Chart uses the OpenTelemetry Collector for data collection and processing. Filtering is accomplished via appropriate Otel
 processors such as [Filter processor](#filter-processor) and [Transform processor](#transform-processor).
 
-For logs, you can specify a list of config under the following keys:
+For logs, you can specify a list of processor definitions under the following keys:
 
 - `sumologic.logs.container.otelcol.extraProcessors` for container logs
 - `sumologic.logs.systemd.otelcol.extraProcessors` for systemd logs
@@ -110,7 +110,7 @@ transform/truncate:
         - truncate_all(attributes, 4096)
 ```
 
-#### Limit to `32` the number of fields sent to Sumo Logic
+#### Limit the number of fields sent to Sumo Logic to `32`
 
 ```yaml
 ## Note: in the Helm Chart we use separate otelcol instances for logs and metrics,
