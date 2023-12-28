@@ -91,7 +91,7 @@ time.
 
 ## Disabling Kubernetes events collection
 
-To disable the collection of Kuebrnetes events, set the `sumologic.events.enabled` property to `false`:
+To disable the collection of Kubernetes events, set the `sumologic.events.enabled` property to `false`:
 
 ```yaml
 sumologic:
