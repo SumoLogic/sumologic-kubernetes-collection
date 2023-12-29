@@ -777,32 +777,7 @@ The above config will set:
 - nothing for subcharts
 - `nodeSelector.kubernetes.io/os` to `linux` for other components
 
-By default node selectors can be set for whole subcharts:
-
-| subchart                 | key                                                                             |
-| ------------------------ | ------------------------------------------------------------------------------- |
-| `sumologic`              | `sumologic.nodeSelector.kubernetes.io/os`                                       |
-| `kube-prometheus-stack`  | `kube-prometheus-stack.prometheus-node-exporter.nodeSelector.kubernetes.io/os`  |
-| `kube-state-metrics`     | `kube-prometheus-stack.kube-state-metrics.nodeSelector.kubernetes.io/os`        |
-| `prometheus`             | `kube-prometheus-stack.prometheus.prometheusSpec.nodeSelector.kubernetes.io/os` |
-| `opentelemetry-operator` | `opentelemetry-operator.nodeSelector.kubernetes.io/os`                          |
-| `falco`                  | `falco.nodeSelector.kubernetes.io/os`                                           |
-| `telegraf-operator`      | `telegraf-operator.nodeSelector.kubernetes.io/os`                               |
-
-In the main `sumologic` chart, value specified in `sumologic.nodeSelector.kubernetes.io/os` can be overriden for the following pods:
-
-| component                | key                                                                 |
-| ------------------------ | ------------------------------------------------------------------- |
-| `remoteWriteProxy`       | `sumologic.metrics.remoteWriteProxy.nodeSelector.kubernetes.io/os`  |
-| `otelcolInstrumentation` | `otelcolInstrumentation.statefulset.nodeSelector.kubernetes.io/os`  |
-| `tracesGateway`          | `tracesGateway.deployment.nodeSelector.kubernetes.io/os`            |
-| `otellogs`               | `otellogs.daemonset.nodeSelector.kubernetes.io/os`                  |
-| `setupJob`               | `sumologic.setup.job.nodeSelector.kubernetes.io/os`                 |
-| `tracesSampler`          | `tracesSampler.deployment.nodeSelector.kubernetes.io/os`            |
-| `metadata`               | `metadata.metrics.statefulset.nodeSelector.kubernetes.io/os`        |
-| `metadata`               | `metadata.logs.statefulset.nodeSelector.kubernetes.io/os`           |
-| `pvcCleaner`             | `pvcCleaner.job.nodeSelector.kubernetes.io/os`                      |
-| `metrics otelcol`        | `sumologic.metrics.collector.otelcol.nodeSelector.kubernetes.io/os` |
+See [the section about global customizations](#node-selectors) for information about setting nodeSelectors for subchart resources.
 
 #### Setting different resources on different nodes for logs collector
 
@@ -947,3 +922,217 @@ By default, the Helm Chart collects some data necessary for Sumo Logic dashboard
 disable collection of this data in order to lower the ingest.
 
 In order to learn more about filtering out data please see [the doc about filtering data](/docs/filtering.md).
+
+## Global customizations
+
+Some common Kubernetes resource attributes can be set globally for all resources managed by the Helm Chart. Due to Helm's limitations, they
+need to be separately set for subchart resources. This section lists the relevant attributes and configuration values.
+
+**Note:** Each subchart can be independently configured. To make sure you don't miss anything you want to change, make sure to check their
+documentation. Links to documentations of subcharts can be found [here][subcharts-docs].
+
+[subcharts-docs]: ../deploy/helm/sumologic/README.md#configuration
+
+### Node selectors
+
+These options allow you to set node selectors for whole subcharts. The values under these keys must be a map of node selectors. [More
+information about node selectors can be found here][k8s-node-selector].
+
+| subchart                 | key                                                            |
+| ------------------------ | -------------------------------------------------------------- |
+| `sumologic`              | `sumologic.nodeSelector`                                       |
+| `kube-prometheus-stack`  | `kube-prometheus-stack.prometheus-node-exporter.nodeSelector`  |
+| `kube-state-metrics`     | `kube-prometheus-stack.kube-state-metrics.nodeSelector`        |
+| `prometheus`             | `kube-prometheus-stack.prometheus.prometheusSpec.nodeSelector` |
+| `opentelemetry-operator` | `opentelemetry-operator.nodeSelector`                          |
+| `falco`                  | `falco.nodeSelector`                                           |
+| `telegraf-operator`      | `telegraf-operator.nodeSelector`                               |
+
+In the main `sumologic` chart, value specified in `sumologic.nodeSelector` can be overriden for the following pods:
+
+| component                | key                                                |
+| ------------------------ | -------------------------------------------------- |
+| `remoteWriteProxy`       | `sumologic.metrics.remoteWriteProxy.nodeSelector`  |
+| `otelcolInstrumentation` | `otelcolInstrumentation.statefulset.nodeSelector`  |
+| `tracesGateway`          | `tracesGateway.deployment.nodeSelector`            |
+| `otellogs`               | `otellogs.daemonset.nodeSelector`                  |
+| `setupJob`               | `sumologic.setup.job.nodeSelector`                 |
+| `tracesSampler`          | `tracesSampler.deployment.nodeSelector`            |
+| `metadata`               | `metadata.metrics.statefulset.nodeSelector`        |
+| `metadata`               | `metadata.logs.statefulset.nodeSelector`           |
+| `pvcCleaner`             | `pvcCleaner.job.nodeSelector`                      |
+| `metrics otelcol`        | `sumologic.metrics.collector.otelcol.nodeSelector` |
+
+[k8s-node-selector]: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+
+### Tolerations
+
+These options allow you to set tolerations for whole subcharts. The values under these keys must be a list of tolerations. [More information
+about node selectors can be found here][k8s-tolerations].
+
+| subchart                 | key                                                           |
+| ------------------------ | ------------------------------------------------------------- |
+| `sumologic`              | `sumologic.tolerations`                                       |
+| `kube-prometheus-stack`  | `kube-prometheus-stack.prometheus-node-exporter.tolerations`  |
+| `kube-state-metrics`     | `kube-prometheus-stack.kube-state-metrics.tolerations`        |
+| `prometheus`             | `kube-prometheus-stack.prometheus.prometheusSpec.tolerations` |
+| `opentelemetry-operator` | `opentelemetry-operator.tolerations`                          |
+| `falco`                  | `falco.tolerations`                                           |
+| `telegraf-operator`      | `telegraf-operator.tolerations`                               |
+
+In the main `sumologic` chart, value specified in `sumologic.tolerations` can be overriden for the following pods:
+
+| component                | key                                               |
+| ------------------------ | ------------------------------------------------- |
+| `remoteWriteProxy`       | `sumologic.metrics.remoteWriteProxy.tolerations`  |
+| `otelcolInstrumentation` | `otelcolInstrumentation.statefulset.tolerations`  |
+| `tracesGateway`          | `tracesGateway.deployment.tolerations`            |
+| `otellogs`               | `otellogs.daemonset.tolerations`                  |
+| `setupJob`               | `sumologic.setup.job.tolerations`                 |
+| `tracesSampler`          | `tracesSampler.deployment.tolerations`            |
+| `metadata`               | `metadata.metrics.statefulset.tolerations`        |
+| `metadata`               | `metadata.logs.statefulset.tolerations`           |
+| `pvcCleaner`             | `pvcCleaner.job.tolerations`                      |
+| `metrics otelcol`        | `sumologic.metrics.collector.otelcol.tolerations` |
+
+[k8s-tolerations]: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+
+### Affinity
+
+These options allow you to set affinity for whole subcharts. The values under these keys must be a map of affinities and anti-affinities.
+[More information about affinity and anti-affinity can be found here][k8s-affinity].
+
+| subchart                 | key                                                        |
+| ------------------------ | ---------------------------------------------------------- |
+| `sumologic`              | `sumologic.affinity`                                       |
+| `kube-prometheus-stack`  | `kube-prometheus-stack.prometheus-node-exporter.affinity`  |
+| `kube-state-metrics`     | `kube-prometheus-stack.kube-state-metrics.affinity`        |
+| `prometheus`             | `kube-prometheus-stack.prometheus.prometheusSpec.affinity` |
+| `opentelemetry-operator` | `opentelemetry-operator.affinity`                          |
+| `falco`                  | `falco.affinity`                                           |
+| `telegraf-operator`      | `telegraf-operator.affinity`                               |
+
+In the main `sumologic` chart, value specified in `sumologic.affinity` can be overriden for the following pods:
+
+| component                | key                                            |
+| ------------------------ | ---------------------------------------------- |
+| `remoteWriteProxy`       | `sumologic.metrics.remoteWriteProxy.affinity`  |
+| `otelcolInstrumentation` | `otelcolInstrumentation.statefulset.affinity`  |
+| `tracesGateway`          | `tracesGateway.deployment.affinity`            |
+| `otellogs`               | `otellogs.daemonset.affinity`                  |
+| `setupJob`               | `sumologic.setup.job.affinity`                 |
+| `tracesSampler`          | `tracesSampler.deployment.affinity`            |
+| `metadata`               | `metadata.metrics.statefulset.affinity`        |
+| `metadata`               | `metadata.logs.statefulset.affinity`           |
+| `pvcCleaner`             | `pvcCleaner.job.affinity`                      |
+| `metrics otelcol`        | `sumologic.metrics.collector.otelcol.affinity` |
+
+[k8s-affinity]: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+
+### Pod labels
+
+These options allow you to set pod labels for whole subcharts. The values under these keys must be a map of pod labels. [More information
+about labels can be found here][k8s-labels].
+
+| subchart                 | key                                                                  |
+| ------------------------ | -------------------------------------------------------------------- |
+| `sumologic`              | `sumologic.podLabels`                                                |
+| `kube-prometheus-stack`  | `kube-prometheus-stack.prometheus-node-exporter.podLabels`           |
+| `prometheus`             | `kube-prometheus-stack.prometheus.prometheusSpec.podMetadata.labels` |
+| `opentelemetry-operator` | `opentelemetry-operator.manager.podLabels`                           |
+| `falco`                  | `falco.podLabels`                                                    |
+| `metrics-server`         | `metrics-server.podLabels`                                           |
+
+In the main `sumologic` chart, you can specify additional pod labels for these pods:
+
+| component                | key                                             |
+| ------------------------ | ----------------------------------------------- |
+| `remoteWriteProxy`       | `sumologic.metrics.remoteWriteProxy.podLabels`  |
+| `otelcolInstrumentation` | `otelcolInstrumentation.statefulset.podLabels`  |
+| `tracesGateway`          | `tracesGateway.deployment.podLabels`            |
+| `otellogs`               | `otellogs.daemonset.podLabels`                  |
+| `setupJob`               | `sumologic.setup.job.podLabels`                 |
+| `tracesSampler`          | `tracesSampler.deployment.podLabels`            |
+| `metadata (all)`         | `metadata.podLabels`                            |
+| `metadata (metrics)`     | `metadata.metrics.statefulset.podLabels`        |
+| `metadata (logs)`        | `metadata.logs.statefulset.podLabels`           |
+| `pvcCleaner`             | `pvcCleaner.job.podLabels`                      |
+| `metrics otelcol`        | `sumologic.metrics.collector.otelcol.podLabels` |
+
+[k8s-labels]: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+
+### Pod annotations
+
+These options allow you to set pod annotations for whole subcharts. The values under these keys must be a map of pod annotations. [More
+information about annotations can be found here][k8s-annotations].
+
+| subchart                 | key                                                                       |
+| ------------------------ | ------------------------------------------------------------------------- |
+| `sumologic`              | `sumologic.podAnnotations`                                                |
+| `kube-prometheus-stack`  | `kube-prometheus-stack.prometheus-node-exporter.podAnnotations`           |
+| `kube-state-metrics`     | `kube-prometheus-stack.kube-state-metrics.podAnnotations`                 |
+| `prometheus`             | `kube-prometheus-stack.prometheus.prometheusSpec.podMetadata.annotations` |
+| `opentelemetry-operator` | `opentelemetry-operator.manager.podAnnotations`                           |
+| `falco`                  | `falco.podAnnotations`                                                    |
+| `metrics-server`         | `metrics-server.podAnnotations`                                           |
+
+In the main `sumologic` chart, you can specify additional pod annotations for these pods:
+
+| component                | key                                                  |
+| ------------------------ | ---------------------------------------------------- |
+| `remoteWriteProxy`       | `sumologic.metrics.remoteWriteProxy.podAnnotations`  |
+| `otelcolInstrumentation` | `otelcolInstrumentation.statefulset.podAnnotations`  |
+| `tracesGateway`          | `tracesGateway.deployment.podAnnotations`            |
+| `otellogs`               | `otellogs.daemonset.podAnnotations`                  |
+| `setupJob`               | `sumologic.setup.job.podAnnotations`                 |
+| `tracesSampler`          | `tracesSampler.deployment.podAnnotations`            |
+| `metadata (all)`         | `metadata.podAnnotations`                            |
+| `metadata (metrics)`     | `metadata.metrics.statefulset.podAnnotations`        |
+| `metadata (logs)`        | `metadata.logs.statefulset.podAnnotations`           |
+| `pvcCleaner`             | `pvcCleaner.job.podAnnotations`                      |
+| `metrics otelcol`        | `sumologic.metrics.collector.otelcol.podAnnotations` |
+
+[k8s-annotations]: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+
+### Images
+
+Every image configuration is a map that consists of two elements: `repository` and `tag`. Images defined in this helm chart also have
+`pullPolicy` key. For subcharts, use the following keys to override main images:
+
+| subchart                 | key                                                     |
+| ------------------------ | ------------------------------------------------------- |
+| `kube-prometheus-stack`  | `kube-prometheus-stack.prometheus-node-exporter.image`  |
+| `kube-state-metrics`     | `kube-prometheus-stack.kube-state-metrics.image`        |
+| `prometheus`             | `kube-prometheus-stack.prometheus.prometheusSpec.image` |
+| `opentelemetry-operator` | `opentelemetry-operator.manager.image`                  |
+| `falco`                  | `falco.image`                                           |
+| `metrics-server`         | `metrics-server.image`                                  |
+| `telegraf-operator`      | `telegraf-operator.image`                               |
+
+In the main `sumologic` chart, you can specify additional pod annotations for these pods:
+
+| component                | key                                         |
+| ------------------------ | ------------------------------------------- |
+| `remoteWriteProxy`       | `sumologic.metrics.remoteWriteProxy.image`  |
+| `otelcolInstrumentation` | `otelcolInstrumentation.statefulset.image`  |
+| `tracesGateway`          | `tracesGateway.deployment.image`            |
+| `otellogs`               | `otellogs.daemonset.image`                  |
+| `setupJob`               | `sumologic.setup.job.image`                 |
+| `tracesSampler`          | `tracesSampler.deployment.image`            |
+| `metadata (all)`         | `metadata.image`                            |
+| `pvcCleaner`             | `pvcCleaner.job.image`                      |
+| `metrics otelcol`        | `sumologic.metrics.collector.otelcol.image` |
+| `otelevents`             | `otelevents.image`                          |
+
+You can also set a default image for every OpenTelemetry collector instance. To do so, use key `sumologic.otelcolImage`:
+
+```yaml
+sumologic:
+  otelcolImage:
+    repository: "public.ecr.aws/sumologic/sumologic-otel-collector"
+    tag: "0.90.1-sumo-0"
+
+    ## Add a -fips suffix to all image tags. With default tags, this results in FIPS-compliant otel images.
+    ## See https://github.com/SumoLogic/sumologic-otel-collector/blob/main/docs/fips.md for more information.
+    addFipsSuffix: false
+```
