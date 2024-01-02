@@ -463,9 +463,9 @@ metadata:
 
   - moved `fluentd.logs.containers.sourceHost` to `sumologic.logs.container.sourceHost`
   - moved `fluentd.logs.containers.sourceName` to `sumologic.logs.container.sourceName`
-  - moved `fluentd.logs.contianers.sourceCategory` to `sumologic.logs.container.sourceCategory`
+  - moved `fluentd.logs.containers.sourceCategory` to `sumologic.logs.container.sourceCategory`
   - moved `fluentd.logs.containers.sourceCategoryPrefix` to `sumologic.logs.container.sourceCategoryPrefix`
-  - moved `fluentd.logs.contianers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
+  - moved `fluentd.logs.containers.sourceCategoryReplaceDash` to `sumologic.logs.container.sourceCategoryReplaceDash`
   - moved `fluentd.logs.containers.excludeContainerRegex` to `sumologic.logs.container.excludeContainerRegex`
   - moved `fluentd.logs.containers.excludeHostRegex` to `sumologic.logs.container.excludeHostRegex`
   - moved `fluentd.logs.containers.excludeNamespaceRegex` to `sumologic.logs.container.excludeNamespaceRegex`
