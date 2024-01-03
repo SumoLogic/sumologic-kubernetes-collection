@@ -2,7 +2,7 @@ name: PRs labels check
 
 on:
   pull_request_target:
-    types: [opened, reopened, ready_for_review, labeled, unlabeled, synchronize]
+    types: [opened, edited, reopened, ready_for_review, labeled, unlabeled, synchronize]
 
 jobs:
   label:
@@ -13,3 +13,11 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           invalid-labels: "do-not-merge/hold"
           pull-request-number: "${{ github.event.pull_request.number }}"
+
+  pr-name:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: thehanimo/pr-title-checker@v1.4.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pass_on_octokit_error: false
