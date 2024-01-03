@@ -53,6 +53,16 @@ jobs:
             .*
             tests/integration/kind_images.json
 
+  pr-name:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dylanvann/check-pull-request-title@v1
+        with:
+          # Match pull request titles in the form of conventional commit.
+          # rel: https://gist.github.com/marcojahn/482410b728c31b221b70ea6d2c433f0c
+          pattern: '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test){1}(\([\w\-\.]+\))?(!)?: ([\w ])+([\s\S]*)'
+
   markdownlint:
     runs-on: ubuntu-22.04
     needs: [docs-changed]
