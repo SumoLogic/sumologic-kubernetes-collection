@@ -51,6 +51,7 @@ markdown-links-lint:
 
 .PHONY: check-configuration-keys
 check-configuration-keys:
+	python -m unittest ./ci/check_configuration_keys_test.py
 	./ci/check_configuration_keys.py --values deploy/helm/sumologic/values.yaml --readme deploy/helm/sumologic/README.md
 
 .PHONY: check-dependencies
