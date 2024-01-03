@@ -4,14 +4,14 @@
     "color": "EEEEEE"
   },
   "CHECKS": {
-    "prefixes": ["fix: ", "feat: "],
-    "regexp": "docs\\(v[0-9]\\): ",
+    "prefixes": [],
+    "regexp": "^(Revert \"|)(docs|fix|feat|test|deps|chore|ci)(\\(.+\\)|)(\\!|): ",
     "regexpFlags": "i",
-    "ignoreLabels" : ["dont-check-PRs-with-this-label", "meta"]
+    "ignoreLabels" : []
   },
   "MESSAGES": {
     "success": "All OK",
-    "failure": "Failing CI test",
+    "failure": "Please rename PR to be compliant with conventional commits",
     "notice": ""
   }
 }
