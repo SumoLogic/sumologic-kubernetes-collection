@@ -1,0 +1,13 @@
+name: PRs name check
+
+on:
+  pull_request_target:
+    types: [opened, edited, reopened, ready_for_review, labeled, unlabeled, synchronize]
+
+  pr-name:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: thehanimo/pr-title-checker@v1.4.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pass_on_octokit_error: false
