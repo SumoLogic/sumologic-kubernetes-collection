@@ -144,7 +144,7 @@ def extract_keys_from_readme(path: str) -> dict:
         if match and match.group('key'):
             value = match.group('value').strip('`').strip('"')
             keys[match.group('key')] = value
-        elif line.startswith('|') and not line[:5] in {'|----', '| Par'}:
+        elif line.startswith('|') and not line[:5] in {'| ---', '| Par'}:
             print(line)
 
     return keys
