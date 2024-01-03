@@ -1,0 +1,112 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: http-server
+spec:
+  finalizers:
+    - kubernetes
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: http-server
+  namespace: http-server
+data:
+  metrics.txt: |-
+    http_requests_total{method="GET", status="200", endpoint="/api"} 1567
+    drosiek_test{method="GET", status="200", endpoint="/api"} 1567
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: http-server
+  namespace: http-server
+  labels:
+    app: http-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: http-server
+  template:
+    metadata:
+      labels:
+        service: http-server
+        app: http-server
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics.txt
+        prometheus.io/port: "3000"
+    spec:
+      containers:
+        - ports:
+            - containerPort: 3000
+          image: python
+          workingDir: /data
+          name: http-server
+          args:
+            - python3
+            - -m
+            - http.server
+            - "3000"
+          resources: {}
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /data
+              name: data
+      hostname: http-server
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: data
+          configMap:
+            name: http-server
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-server
+  namespace: http-server
+  labels:
+    app: http-server
+spec:
+  ports:
+    # Receiver port
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+  selector:
+    service: http-server
+status:
+  loadBalancer: {}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: http-server
+  namespace: sumologic
+  labels:
+    release: sumologic # Ensure this matches the `release` label on your Prometheus pod
+spec:
+  selector:
+    matchLabels:
+      app: http-server
+  namespaceSelector:
+    matchNames:
+      - http-server
+  endpoints:
+    - port: "3000" # Same as service's port name
+      interval: 10s
+      # https://istio.io/latest/docs/ops/integrations/prometheus/#tls-settings
+      scheme: http
+      path: /metrics.txt
