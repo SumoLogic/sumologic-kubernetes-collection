@@ -83,6 +83,13 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{/*
+Return the otelcol metrics collector image
+*/}}
+{{- define "sumologic.metrics.collector.image" -}}
+{{ template "utils.getOtelImage" (dict "overrideImage" .Values.sumologic.metrics.collector.otelcol.image "defaultImage" .Values.sumologic.otelcolImage) }}
+{{- end -}}
+
 {{- define "metrics.collector.otelcol.nodeSelector" -}}
 {{- if .Values.sumologic.metrics.collector.otelcol.nodeSelector -}}
 {{- toYaml .Values.sumologic.metrics.collector.otelcol.nodeSelector -}}

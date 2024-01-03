@@ -466,6 +466,12 @@ sumologic:
       otelcol:
         enabled: true
 
+        ## Configure image for Opentelemetry Collector
+        image:
+          # repository: ""
+          # tag: ""
+          pullPolicy: IfNotPresent
+
         ## Default scrape interval
         scrapeInterval: 30s
 
