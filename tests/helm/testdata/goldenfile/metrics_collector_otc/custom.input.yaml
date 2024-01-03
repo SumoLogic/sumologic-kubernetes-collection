@@ -17,6 +17,9 @@ sumologic:
   metrics:
     collector:
       otelcol:
+        image:
+          repository: my_repository
+          tag: my_tag
         scrapeInterval: 60s
         autoscaling:
           enabled: false

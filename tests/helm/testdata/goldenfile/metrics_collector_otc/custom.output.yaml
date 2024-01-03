@@ -17,7 +17,7 @@ metadata:
 
     podKey: podValue
 spec:
-  image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.90.1-sumo-0"
+  image: "my_repository:my_tag"
   mode: statefulset
   replicas: 1
   serviceAccount: RELEASE-NAME-sumologic-metrics
