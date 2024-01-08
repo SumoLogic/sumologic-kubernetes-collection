@@ -197,7 +197,7 @@ See the [migration guide][v4_migration_guide] for details.
 [#3332]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3332
 [#3340]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3340
 [v4.0.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.0.0
-[v4_migration_guide]: /docs/v4-migration-doc.md
+[v4_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v4/important-changes/
 
 ## [v3.18.0]
 
