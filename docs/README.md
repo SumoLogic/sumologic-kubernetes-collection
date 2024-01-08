@@ -54,7 +54,7 @@ Documentation links:
 - [Monitoring the Monitoring](/docs/monitoring-lag.md)
 - [Dev Releases](/docs/dev.md)
 
-[migration-doc-v3]: ./v3-migration-doc.md
+[migration-doc-v3]: https://help.sumologic.com/docs/send-data/kubernetes/v3/important-changes/
 [migration-doc-v2.18]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2-18-migration.md
 [migration-doc-v2]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v2_migration_doc.md
 [migration-doc-v1]: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/v1_migration_doc.md
