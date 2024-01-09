@@ -367,7 +367,7 @@ We provide FIPS compliant **OpenTelemetry Collector** binaries for your data col
 You can find them in our [ECR Public Gallery](https://gallery.ecr.aws/sumologic/sumologic-otel-collector). FIPS compliant image tags end
 with `-fips`.
 
-### Helm Chart v3
+### Helm Chart v3 and newer versions
 
 Starting with Helm Chart v3 **OpenTelemetry Collector** is a default method of collecting data (except for Prometheus) but still you need
 set the FIPS compliant images.
