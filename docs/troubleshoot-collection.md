@@ -35,6 +35,7 @@
   - [Out of memory (OOM) failures for Prometheus Pod](#out-of-memory-oom-failures-for-prometheus-pod)
   - [Prometheus: server returned HTTP status 404 Not Found: 404 page not found](#prometheus-server-returned-http-status-404-not-found-404-page-not-found)
   - [OpenTelemetry: dial tcp: lookup collection-sumologic-metadata-logs.sumologic.svc.cluster.local.: device or resource busy](#opentelemetry-dial-tcp-lookup-collection-sumologic-metadata-logssumologicsvcclusterlocal-device-or-resource-busy)
+  - [OpenTelemetry Operator is Restarting after collection upgrade](#opentelemetry-operator-is-restarting-after-collection-upgrade)
 
 </details>
 
@@ -569,3 +570,19 @@ otellogs:
       - name: GODEBUG
         value: netdns=go
 ```
+
+### OpenTelemetry Operator is Restarting after collection upgrade
+
+If the OpenTelemetry Operator is restarting after upgrade, and the following error can be found in the previous run logs:
+
+```text
+{"level":"error","ts":"2024-01-10T09:32:24Z","logger":"controller-runtime.source.EventHandler","msg":"if kind is a CRD, it should be installed before calling Start","kind":"OpAMPBridge.opentelemetry.io","error":"no matches for kind \"OpAMPBridge\" in version \"opentelemetry.io/v1alpha1\"","stacktrace":"sigs.k8s.io/controller-runtime/pkg/internal/source.(*Kind).Start.func1.1\n\t/home/runner/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.16.3/pkg/internal/source/kind.go:63\nk8s.io/apimachinery/pkg/util/wait.loopConditionUntilContext.func2\n\t/home/runner/go/pkg/mod/k8s.io/apimachinery@v0.28.4/pkg/util/wait/loop.go:73\nk8s.io/apimachinery/pkg/util/wait.loopConditionUntilContext\n\t/home/runner/go/pkg/mod/k8s.io/apimachinery@v0.28.4/pkg/util/wait/loop.go:74\nk8s.io/apimachinery/pkg/util/wait.PollUntilContextCancel\n\t/home/runner/go/pkg/mod/k8s.io/apimachinery@v0.28.4/pkg/util/wait/poll.go:33\nsigs.k8s.io/controller-runtime/pkg/internal/source.(*Kind).Start.func1\n\t/home/runner/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.16.3/pkg/internal/source/kind.go:56"}
+```
+
+It means that Custom Resource Definition has not been applied by Helm. It is [Helm known issue], and it has to be applied manually:
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/open-telemetry/opentelemetry-helm-charts/opentelemetry-operator-0.44.0/charts/opentelemetry-operator/crds/crd-opentelemetry.io_opampbridges.yaml
+```
+
+[Helm known issue]: https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#some-caveats-and-explanations

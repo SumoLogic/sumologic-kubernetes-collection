@@ -2,26 +2,6 @@
 
 <!-- TOC -->
 
-- [Kubernetes Collection `v4.0.0` - Breaking Changes](#kubernetes-collection-v400---breaking-changes)
-  - [Important changes](#important-changes)
-    - [Remove Fluent Bit and Fluentd](#remove-fluent-bit-and-fluentd)
-    - [Drop Prometheus recording rule metrics](#drop-prometheus-recording-rule-metrics)
-    - [OpenTelemetry Collector for metrics collection](#opentelemetry-collector-for-metrics-collection)
-    - [Use OTLP sources by default](#use-otlp-sources-by-default)
-  - [How to upgrade](#how-to-upgrade)
-    - [Requirements](#requirements)
-    - [Metrics migration](#metrics-migration)
-      - [Convert Prometheus remote writes to otel metrics filters](#convert-prometheus-remote-writes-to-otel-metrics-filters)
-      - [Upgrade the Kubernetes App](#upgrade-the-kubernetes-app)
-        - [Using the new App with v3](#using-the-new-app-with-v3)
-      - [How do I revert to the v3 defaults?](#how-do-i-revert-to-the-v3-defaults)
-    - [Remove remaining Fluent Bit and Fluentd configuration](#remove-remaining-fluent-bit-and-fluentd-configuration)
-      - [Configuration Migration](#configuration-migration)
-    - [Switch to OTLP sources](#switch-to-otlp-sources)
-      - [How do I revert to the v3 defaults?](#how-do-i-revert-to-the-v3-defaults-1)
-    - [Running the helm upgrade](#running-the-helm-upgrade)
-  - [Full list of changes](#full-list-of-changes)
-
 <!-- /TOC -->
 
 Based on feedback from our users, we will be introducing several changes to the Sumo Logic Kubernetes Collection solution.
@@ -134,6 +114,16 @@ kube-prometheus-stack:
           - action: keep
             regex: (?:node_load1|node_load5|node_load15|node_cpu_seconds_total|node_disk_io_time_weighted_seconds_total|node_disk_io_time_seconds_total|node_vmstat_pgpgin|node_vmstat_pgpgout|node_memory_MemFree_bytes|node_memory_MemAvailable_bytes|node_memory_Cached_bytes|node_memory_Buffers_bytes|node_memory_MemTotal_bytes|node_network_receive_drop_total|node_network_transmit_drop_total|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_filesystem_avail_bytes|node_filesystem_size_bytes)
             sourceLabels: [__name__]
+```
+
+#### Apply missing Custom Resource Definition for OpenTelemetry Operator
+
+**When??** If you already uses OpenTelemetry Operator, and it is in version before `0.42.0`
+
+Please apply the following command on your cluster:
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/open-telemetry/opentelemetry-helm-charts/opentelemetry-operator-0.44.0/charts/opentelemetry-operator/crds/crd-opentelemetry.io_opampbridges.yaml
 ```
 
 #### How do I revert to the v3 defaults?
