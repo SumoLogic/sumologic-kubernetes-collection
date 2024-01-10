@@ -6,12 +6,13 @@ metadata:
     app: {{ template "sumologic.labels.app.roles.clusterrole" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 rules:
-- apiGroups: ["", "apps", "extensions", "events.k8s.io"]
+- apiGroups: ["", "apps", "extensions", "batch", "events.k8s.io", "discovery.k8s.io"]
   resources:
   - configmaps
   - daemonsets
   - deployments
   - endpoints
+  - endpointslices
   - events
   - namespaces
   - nodes
@@ -19,9 +20,6 @@ rules:
   - replicasets
   - services
   - statefulsets
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["batch"]
-  resources:
   - cronjobs
   - jobs
   verbs: ["get", "list", "watch"]

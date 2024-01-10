@@ -1,0 +1,37 @@
+---
+# Source: sumologic/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: RELEASE-NAME-sumologic
+  labels:
+    app: RELEASE-NAME-sumologic
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+rules:
+  - apiGroups: ["", "apps", "extensions", "batch", "events.k8s.io", "discovery.k8s.io"]
+    resources:
+      - configmaps
+      - daemonsets
+      - deployments
+      - endpoints
+      - endpointslices
+      - events
+      - namespaces
+      - nodes
+      - pods
+      - replicasets
+      - services
+      - statefulsets
+      - cronjobs
+      - jobs
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources:
+      - configmaps
+    verbs: ["create", "patch"]
+  - apiGroups: ["opentelemetry.io"]
+    resources:
+      - instrumentations
+    verbs: ["patch", "get", "create"]
