@@ -978,7 +978,7 @@ See the [migration guide][v3_migration_guide] for details.
 [#2794]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2794
 [#2807]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/2807
 [v1.15.3-sumo-0]: https://github.com/SumoLogic/sumologic-kubernetes-fluentd/releases/tag/v1.15.3-sumo-0
-[v3_migration_guide]: /docs/v3-migration-doc.md
+[v3_migration_guide]: https://help.sumologic.com/docs/send-data/kubernetes/v3/important-changes/
 [v3.0.0-rc.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/compare/v3.0.0-beta.0...v3.0.0-rc.0
 
 ## [v3.0.0-beta.1]
