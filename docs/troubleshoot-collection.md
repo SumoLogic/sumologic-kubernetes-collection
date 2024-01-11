@@ -21,6 +21,7 @@
     - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
+  - [Missing metrics for ArgoCD installation](#missing-metrics-for-argocd-installation)
 - [Common Issues](#common-issues)
   - [Missing metrics - cannot see cluster in Explore](#missing-metrics---cannot-see-cluster-in-explore)
   - [Pod stuck in `ContainerCreating` state](#pod-stuck-in-containercreating-state)
@@ -339,6 +340,34 @@ Prometheus to the metadata enrichment service.
 You [check Prometheus logs](#prometheus-logs) to verify there are no errors during remote write.
 
 You can also check `prometheus_remote_storage_.*` metrics to look for success/failure attempts.
+
+### Missing metrics for ArgoCD installation
+
+There is known issue with Argo CD and metrics collection. If you override `spec.source.helm.releaseName` in the `Application` or
+`ApplicationSet`, which are used to configure your application in Argo CD, then Kube State and Node metrics are not collected due to the
+following:
+
+Service Monitor is looking for service labeled with `app.kubernetes.io/instance: <spec.source.helm.releaseName>`, but the label is actually
+`app.kubernetes.io/instance: <metadata.name>`.
+
+In order to fix it, you need to ensure that the labels are matching and you can do it by adding the following to `user-values.yaml`:
+
+```
+kube-prometheus-stack:
+  kube-state-metrics:
+    prometheus:
+      monitor:
+        selectorOverride:
+          app.kubernetes.io/instance: <metadata.name>
+          app.kubernetes.io/name: kube-state-metrics
+  prometheus-node-exporter:
+    prometheus:
+      monitor:
+        selectorOverride:
+          app.kubernetes.io/name: prometheus-node-exporter
+```
+
+where `metadata.name` is value from Argo Application manifest
 
 ## Common Issues
 

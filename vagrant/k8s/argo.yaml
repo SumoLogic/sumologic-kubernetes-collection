@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: collection
+  namespace: argocd
+spec:
+  destination:
+    namespace: sumologic
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: sumologic
+    helm:
+      releaseName: collection2
+      values:
+        '{"sumologic": {"accessId": "dummy", "accessKey": "dummy", "endpoint": "http://receiver-mock.receiver-mock:3000/terraform/api/"}}'
+    repoURL: https://sumologic.github.io/sumologic-kubernetes-collection
+    targetRevision: 4.3.1
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
