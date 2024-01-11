@@ -299,3 +299,19 @@ istio-disable:
 
 restart-pods:
 	kubectl -n sumologic delete pod --all --force --grace-period=0
+
+install-argocd-binary:
+	curl -LO https://github.com/argoproj/argo-cd/releases/download/v2.9.3/argocd-linux-amd64
+	chmod +x argocd-linux-amd64
+	sudo mv argocd-linux-amd64 /usr/local/bin/argocd
+
+install-argocd:
+	${mkfile_path} \
+		apply-receiver-mock
+	kubectl create namespace argocd
+	kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+	kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+	argocd admin initial-password -n argocd
+
+expose-argocd:
+	kubectl port-forward svc/argocd-server -n argocd 8080:443 --address 0.0.0.0
