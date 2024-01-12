@@ -112,7 +112,7 @@ needs to collect metadata from over the network. This includes the metrics enric
 The metrics metadata enrichment service needs to be able to talk to the Sumo Logic backend receiver endpoints. It also needs to be able to
 access the Kubernetes API Server to obtain metadata.
 
-Example Kubernetes Network Policies restricting all but the necessary traffic for the traces pipeline:
+Example Kubernetes Network Policies restricting all but the necessary traffic for the metrics pipeline:
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -382,39 +382,6 @@ sumologic:
 
 > **Note** This only adds a `-fips` suffix to the image tag. If you're customizing the tag and repository (for example by using a custom
 > registry), please make sure to preserve this naming convention if you want to use this feature.
-
-### Helm Chart v2
-
-For Helm Chart v2 please
-[see here how to switch to OpenTelemetry Collector](https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/release-v2/deploy/docs/opentelemetry_collector.md).
-
-When you use **OpenTelemetry Collector** you need set the fips compliant images.
-
-For example, to use `0.90.1-sumo-0-fips` image with Helm Chart v2 use the following configuration:
-
-```yaml
-metadata:
-  image:
-    tag: 0.90.1-sumo-0-fips
-otellogs:
-  image:
-    tag: 0.90.1-sumo-0-fips
-otelevents:
-  image:
-    tag: 0.90.1-sumo-0-fips
-otelcol:
-  deployment:
-    image:
-      tag: 0.90.1-sumo-0-fips
-otelagent:
-  daemonset:
-    image:
-      tag: 0.90.1-sumo-0-fips
-otelgateway:
-  deployment:
-    image:
-      tag: 0.90.1-sumo-0-fips
-```
 
 ### Troubleshooting
 
