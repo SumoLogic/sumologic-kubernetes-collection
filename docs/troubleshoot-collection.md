@@ -401,7 +401,7 @@ otellogs:
       receivers:
         filelog/containers:
           exclude:
-            - /var/log/pods/*metrics*/*/*.log
+            - /var/log/pods/*sumologic-otelcol-metrics*/*/*.log
 metadata:
   metrics:
     config:
