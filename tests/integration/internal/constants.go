@@ -5,6 +5,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"testing"
+
+	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -324,6 +328,22 @@ var (
 		"scrape_samples_scraped",
 		"scrape_duration_seconds",
 	}
+
+	// Some metrics might change over k8s versions
+	// It is assumed that
+	versionDependentMetrics = map[string](struct {
+		before []string
+		after  []string
+	}){
+		"1.29": {
+			before: []string{
+				"coredns_forward_requests_total",
+			},
+			after: []string{
+				"coredns_proxy_request_duration_seconds_count",
+			},
+		},
+	}
 )
 
 var (
@@ -391,4 +411,27 @@ func InitializeConstants() error {
 	log.Printf("Default kind image: %v", KindImages.Default)
 	log.Printf("Supported kind images: %v", KindImages.Supported)
 	return nil
+}
+
+func getKubernetesVersion(
+	t *testing.T,
+) string {
+	v, err := k8s.GetKubernetesClusterVersionE(t)
+	require.NoError(t, err)
+	return v
+}
+
+func GetVersionDependentMetrics(t *testing.T) []string {
+	res := []string{}
+	currVersion := getKubernetesVersion(t)
+
+	for version, ms := range versionDependentMetrics {
+		if currVersion < version {
+			res = append(res, ms.before...)
+		} else {
+			res = append(res, ms.after...)
+		}
+	}
+
+	return res
 }

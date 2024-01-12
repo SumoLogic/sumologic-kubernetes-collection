@@ -928,7 +928,7 @@ kube-prometheus-stack:
       ## process_resident_memory_bytes
       metricRelabelings:
         - action: keep
-          regex: (?:coredns_cache_(entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+          regex: (?:coredns_cache_(entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes)|coredns_proxy_request_duration_seconds_count)
           sourceLabels: [__name__]
   kubeEtcd:
     serviceMonitor:

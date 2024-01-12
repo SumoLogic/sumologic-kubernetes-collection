@@ -14,7 +14,7 @@ func Test_Helm_Prometheus_Metrics(t *testing.T) {
 	// defaults without otel metrics collector metrics, but with Prometheus metrics
 	expectedMetricsGroups := make([][]string, len(internal.DefaultExpectedMetricsGroups))
 	copy(expectedMetricsGroups, internal.DefaultExpectedMetricsGroups)
-	expectedMetricsGroups = append(expectedMetricsGroups, internal.PrometheusMetrics, internal.DefaultOtelcolMetrics)
+	expectedMetricsGroups = append(expectedMetricsGroups, internal.PrometheusMetrics, internal.DefaultOtelcolMetrics, internal.GetVersionDependentMetrics(t))
 	for _, metrics := range expectedMetricsGroups {
 		expectedMetrics = append(expectedMetrics, metrics...)
 	}
