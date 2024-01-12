@@ -389,6 +389,35 @@ If all informations are correct, please refer to the following sections to conti
 - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
 - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
 
+### Print metrics on stdout
+
+In order to print metrics and their labels on stdout, the following configuration has to be applied:
+
+```
+otellogs:
+  config:
+    merge:
+      receivers:
+        filelog/containers:
+          exclude:
+            - /var/log/pods/*metrics*/*/*.log
+metadata:
+  metrics:
+    config:
+      merge:
+        exporters:
+          logging:
+            verbosity: detailed
+        service:
+          pipelines:
+            metrics:
+              exporters:
+                - sumologic/default
+                - logging
+```
+
+This configuration 
+
 ### Check Prometheus Remote Storage
 
 We rely on the Prometheus [Remote Storage](https://prometheus.io/docs/prometheus/latest/storage/) integration to send metrics from
