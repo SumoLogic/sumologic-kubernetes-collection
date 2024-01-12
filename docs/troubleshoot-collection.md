@@ -21,6 +21,7 @@
     - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
   - [Check the Prometheus UI](#check-the-prometheus-ui)
   - [Check Scrape Configs for Open Telemetry Operator](#check-scrape-configs-for-open-telemetry-operator)
+  - [Print metrics on stdout for OTLP source](#print-metrics-on-stdout-for-otlp-source)
   - [Check Prometheus Remote Storage](#check-prometheus-remote-storage)
   - [Missing metrics for ArgoCD installation](#missing-metrics-for-argocd-installation)
 - [Common Issues](#common-issues)
@@ -388,6 +389,37 @@ If all informations are correct, please refer to the following sections to conti
 
 - [Check the `/metrics` endpoint](#check-the-metrics-endpoint)
 - [Check the `/metrics` endpoint for Kubernetes services](#check-the-metrics-endpoint-for-kubernetes-services)
+
+### Print metrics on stdout for OTLP source
+
+In order to print metrics and their labels on stdout, the following configuration has to be applied:
+
+```
+otellogs:
+  config:
+    merge:
+      receivers:
+        filelog/containers:
+          exclude:
+            - /var/log/pods/*metrics*/*/*.log
+metadata:
+  metrics:
+    config:
+      merge:
+        exporters:
+          logging:
+            verbosity: detailed
+        service:
+          pipelines:
+            metrics:
+              exporters:
+                - sumologic/default
+                - logging
+```
+
+This configuration ensures that all metrics are printed to stdout and they are not collected by logs collector to keep your ingest low.
+
+**NOTE:** This configuration is prepared for OTLP source, as it doesn't use routing processor and multiple exporters in the pipeline
 
 ### Check Prometheus Remote Storage
 
