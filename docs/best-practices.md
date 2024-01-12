@@ -4,11 +4,8 @@
 - [OpenTelemetry Collector Autoscaling](#opentelemetry-collector-autoscaling)
   - [Cleaning unused PVCs](#cleaning-unused-pvcs)
 - [OpenTelemetry Collector Persistent Buffer](#opentelemetry-collector-persistent-buffer)
-- [Excluding Metrics](#excluding-metrics)
-- [Excluding Dimensions](#excluding-dimensions)
 - [Collect logs from additional files on the Node](#collect-logs-from-additional-files-on-the-node)
 - [Remove attributes from systemd logs](#removing-attributes-from-systemd-logs)
-- [Filtering Prometheus Metrics by Namespace](#filtering-prometheus-metrics-by-namespace)
 - [Modify the Log Level for Falco](#modify-the-log-level-for-falco)
 - [Overriding metadata using annotations](#overriding-metadata-using-annotations)
   - [Overriding source category with pod annotations](#overriding-source-category-with-pod-annotations)
@@ -30,7 +27,6 @@
   - [Using NodeSelectors](#using-nodeselectors)
     - [Binding pods to linux nodes](#binding-pods-to-linux-nodes)
     - [Setting different resources on different nodes for logs collector](#setting-different-resources-on-different-nodes-for-logs-collector)
-- [Parsing log content as json](#parsing-log-content-as-json)
 - [Keeping Source Category for metrics](#keeping-source-category-for-metrics)
 - [Using newer Kube Prometheus Stack](#using-newer-kube-prometheus-stack)
 - [Lowering default ingest](#lowering-default-ingest)
@@ -237,14 +233,6 @@ For events, use the following properties:
 - `sumologic.events.persistence.persistentVolume.storageClass: null`
 - `sumologic.events.persistence.size: 10Gi`
 
-## Excluding Metrics
-
-Please see [the doc about filtering data](/docs/filtering.md#metrics).
-
-## Excluding Dimensions
-
-Please see [the doc about filtering data](/docs/filtering.md#metadata).
-
 ## Collect logs from additional files on the Node
 
 To collect logs from additional files on Node, it is necessary to:
@@ -327,10 +315,6 @@ sumologic:
                     - delete_key(body, "PRIORITY")
                     - delete_key(body, "SYSLOG_FACILITY")
 ```
-
-## Filtering Prometheus Metrics by Namespace
-
-Please see [the doc about filtering data](/docs/filtering.md#filtering-prometheus-metrics-by-namespace).
 
 ## Modify the Log Level for Falco
 
@@ -819,12 +803,6 @@ otellogs:
                   values:
                     - IntenseLogGeneration
 ```
-
-## Parsing log content as json
-
-In order to parse and store log content as json following configuration has to be applied:
-
-:construction: _TODO_
 
 [chart_readme]: ../deploy/helm/sumologic/README.md
 [values.yaml]: ../deploy/helm/sumologic/values.yaml
