@@ -375,8 +375,8 @@ Check if expected Service Monitor is on the list:
 Now you can list all target associated with this Service Monitor. Built URL using the following template:
 `http://localhost:9090/jobs/<HTML encoded service monitor name>/targets`.
 
-Let's assume that you are looking for `serviceMonitor/sumologic/collection-sumologic-otelcol-logs/0`. In that case you need to check the following endpoint:
-`http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets`
+Let's assume that you are looking for `serviceMonitor/sumologic/collection-sumologic-otelcol-logs/0`. In that case you need to check the
+following endpoint: `http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets`
 
 ```sh
 > curl -s 'http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets' | jq '.[].targets[].labels |.__meta_kubernetes_namespace + "/" + .__meta_kubernetes_pod_name'
@@ -388,7 +388,8 @@ Let's assume that you are looking for `serviceMonitor/sumologic/collection-sumol
 Next, please ensure that the `serviceMonitor` has been picked up by any metrics collector, by using one of the following method:
 
 ```yaml
-kubectl logs -n sumologic -l "app.kubernetes.io/name=collection-sumologic-metrics-collector" | grep 'serviceMonitor/sumologic/collection-sumologic-otelcol-logs/0'
+kubectl logs -n sumologic -l "app.kubernetes.io/name=collection-sumologic-metrics-collector" | grep
+'serviceMonitor/sumologic/collection-sumologic-otelcol-logs/0'
 ```
 
 or
@@ -399,18 +400,24 @@ kubectl -n sumologic logs collection-sumologic-metrics-collector-1 | grep 'servi
 kubectl -n sumologic logs collection-sumologic-metrics-collector-<...> | grep 'serviceMonitor/sumologic/collection-sumologic-otelcol-logs/0'
 ```
 
-Also ensure that all targets has been exposed by Target Allocator properly:
+Also ensure that all targets have been exposed by the Target Allocator properly:
 
 ```yaml
-curl 'http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets?collector_id=collection-sumologic-metrics-collector-0 | jq '.[].labels |.__meta_kubernetes_namespace + "/" + .__meta_kubernetes_pod_name'
-curl 'http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets?collector_id=collection-sumologic-metrics-collector-1 | jq '.[].labels |.__meta_kubernetes_namespace + "/" + .__meta_kubernetes_pod_name'
-curl 'http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets?collector_id=collection-sumologic-metrics-collector-<...> | jq '.[].labels |.__meta_kubernetes_namespace + "/" + .__meta_kubernetes_pod_name'
+curl
+'http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets?collector_id=collection-sumologic-metrics-collector-0
+| jq '.[].labels |.__meta_kubernetes_namespace + "/" + .__meta_kubernetes_pod_name' curl
+'http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets?collector_id=collection-sumologic-metrics-collector-1
+| jq '.[].labels |.__meta_kubernetes_namespace + "/" + .__meta_kubernetes_pod_name' curl
+'http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets?collector_id=collection-sumologic-metrics-collector-<...>
+| jq '.[].labels |.__meta_kubernetes_namespace + "/" + .__meta_kubernetes_pod_name'
 ```
 
 or
 
 ```yaml
-curl 'http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets?collector_id=collection-sumologic-metrics-collector-'{0..x}' | jq '.[].labels |.__meta_kubernetes_namespace + "/" + .__meta_kubernetes_pod_name
+curl
+'http://localhost:9090/jobs/serviceMonitor%2Fsumologic%2Fcollection-sumologic-otelcol-logs%2F0/targets?collector_id=collection-sumologic-metrics-collector-'{0..x}'
+| jq '.[].labels |.__meta_kubernetes_namespace + "/" + .__meta_kubernetes_pod_name
 ```
 
 where `x` is number of the last metrics collector pod
