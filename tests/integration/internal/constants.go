@@ -341,6 +341,8 @@ var (
 			},
 			after: []string{
 				"coredns_proxy_request_duration_seconds_count",
+				"coredns_proxy_request_duration_seconds_bucket",
+				"coredns_proxy_request_duration_seconds_sum",
 			},
 		},
 	}
