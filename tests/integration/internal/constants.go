@@ -2,6 +2,7 @@ package internal
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -156,7 +157,6 @@ var (
 		"coredns_dns_request_duration_seconds_sum",
 		"coredns_dns_requests_total",
 		"coredns_dns_responses_total",
-		"coredns_forward_requests_total",
 		"process_cpu_seconds_total",
 		"process_open_fds",
 		"process_resident_memory_bytes",
@@ -424,6 +424,8 @@ func getKubernetesVersion(
 func GetVersionDependentMetrics(t *testing.T) []string {
 	res := []string{}
 	currVersion := getKubernetesVersion(t)
+
+	fmt.Printf("found version %s\n", currVersion)
 
 	for version, ms := range versionDependentMetrics {
 		if currVersion < version {
