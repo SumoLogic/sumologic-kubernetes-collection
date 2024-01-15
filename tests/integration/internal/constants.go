@@ -2,7 +2,6 @@ package internal
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
+	"k8s.io/apimachinery/pkg/util/version"
 )
 
 const (
@@ -331,11 +331,11 @@ var (
 
 	// Some metrics might change over k8s versions
 	// It is assumed that
-	versionDependentMetrics = map[string](struct {
+	versionDependentMetrics = map[*version.Version](struct {
 		before []string
 		after  []string
 	}){
-		"v1.29.0": {
+		version.MustParseSemantic("v1.29.0"): {
 			before: []string{
 				"coredns_forward_requests_total",
 			},
@@ -427,10 +427,10 @@ func GetVersionDependentMetrics(t *testing.T) []string {
 	res := []string{}
 	currVersion := getKubernetesVersion(t)
 
-	fmt.Fprintf(os.Stderr, "found version %s\n", currVersion)
-
 	for version, ms := range versionDependentMetrics {
-		if currVersion < version {
+		cmp, err := version.Compare(currVersion)
+		require.NoError(t, err)
+		if cmp > 0 {
 			res = append(res, ms.before...)
 		} else {
 			res = append(res, ms.after...)
