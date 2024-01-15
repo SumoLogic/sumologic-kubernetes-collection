@@ -920,6 +920,9 @@ kube-prometheus-stack:
       ## coredns_dns_requests_total
       ## coredns_dns_responses_total
       ## coredns_forward_requests_total
+      ## coredns_proxy_request_duration_seconds_count
+      ## coredns_proxy_request_duration_seconds_sum
+      ## coredns_proxy_request_duration_seconds_bucket
       ## process_cpu_seconds_total
       ## process_open_fds
       ## process_resident_memory_bytes

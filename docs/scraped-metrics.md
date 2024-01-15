@@ -88,6 +88,9 @@ The following table contains information about metrics scraped by Sumo Logic's P
 | `coredns_dns_responses_total`                            | coredns            | yes       |
 | `coredns_forward_request_count_total`                    | coredns            | yes       |
 | `coredns_forward_requests_total`                         | coredns            | yes       |
+| `coredns_proxy_request_duration_seconds_sum`             | coredns            | yes       |
+| `coredns_proxy_request_duration_seconds_count`           | coredns            | yes       |
+| `coredns_proxy_request_duration_seconds_bucket`          | coredns            | yes       |
 | `process_cpu_seconds_total`                              | coredns            | yes       |
 | `process_open_fds`                                       | coredns            | yes       |
 | `process_resident_memory_bytes`                          | coredns            | yes       |
