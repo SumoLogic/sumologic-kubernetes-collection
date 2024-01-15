@@ -21,7 +21,7 @@ func Test_Helm_Default_OT_NamespaceOverride(t *testing.T) {
 	// defaults without otel metrics collector metrics, but with Prometheus metrics
 	expectedMetricsGroups := make([][]string, len(internal.DefaultExpectedMetricsGroups))
 	copy(expectedMetricsGroups, internal.DefaultExpectedMetricsGroups)
-	expectedMetricsGroups = append(expectedMetricsGroups, internal.PrometheusMetrics, internal.DefaultOtelcolMetrics, internal.LogsOtelcolMetrics, internal.TracingOtelcolMetrics, internal.GetVersionDependentMetrics(t))
+	expectedMetricsGroups = append(expectedMetricsGroups, internal.PrometheusMetrics, internal.DefaultOtelcolMetrics, internal.LogsOtelcolMetrics, internal.TracingOtelcolMetrics)
 	for _, metrics := range expectedMetricsGroups {
 		expectedMetrics = append(expectedMetrics, metrics...)
 	}
