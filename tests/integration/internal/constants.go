@@ -330,7 +330,6 @@ var (
 	}
 
 	// Some metrics might change over k8s versions
-	// It is assumed that
 	versionDependentMetrics = map[*version.Version](struct {
 		before []string
 		after  []string
