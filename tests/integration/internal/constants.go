@@ -335,7 +335,7 @@ var (
 		before []string
 		after  []string
 	}){
-		"1.29": {
+		"v1.29.0": {
 			before: []string{
 				"coredns_forward_requests_total",
 			},
@@ -425,7 +425,7 @@ func GetVersionDependentMetrics(t *testing.T) []string {
 	res := []string{}
 	currVersion := getKubernetesVersion(t)
 
-	fmt.Printf("found version %s\n", currVersion)
+	fmt.Fprintf(os.Stderr, "found version %s\n", currVersion)
 
 	for version, ms := range versionDependentMetrics {
 		if currVersion < version {
