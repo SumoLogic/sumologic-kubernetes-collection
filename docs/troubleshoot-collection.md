@@ -439,6 +439,7 @@ otellogs:
         filelog/containers:
           exclude:
             - /var/log/pods/*sumologic-otelcol-metrics*/*/*.log
+            - /var/log/pods/*sumologic-metrics-collector*/*/*.log
 metadata:
   metrics:
     config:
@@ -452,6 +453,21 @@ metadata:
               exporters:
                 - sumologic/default
                 - logging
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        config:
+          merge:
+            exporters:
+              logging:
+                verbosity: detailed
+            service:
+              pipelines:
+                metrics:
+                  exporters:
+                    - otlphttp
+                    - logging
 ```
 
 This configuration ensures that all metrics are printed to stdout and they are not collected by logs collector to keep your ingest low.
