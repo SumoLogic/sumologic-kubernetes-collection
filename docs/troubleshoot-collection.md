@@ -107,8 +107,6 @@ you can safely ignore it and the installation should complete successfully. The 
 [HTTP endpoints](https://help.sumologic.com/docs/send-data/hosted-collectors/http-source) in your Sumo Logic account, that are used to send
 data to Sumo. This error occurs if the endpoints had already been created by an earlier run of the installation process.
 
-You can find more information in our [troubleshooting documentation](troubleshoot-collection.md).
-
 #### Secret 'sumologic::sumologic' exists, abort
 
 If you see `Secret 'sumologic::sumologic' exists, abort.` from the logs, delete the existing secret:
