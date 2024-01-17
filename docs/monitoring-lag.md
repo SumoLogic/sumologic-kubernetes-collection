@@ -16,8 +16,9 @@ Here are some tips on how to judge if you're seeing lag in your Sumo Logic colle
 
    Whenever your OpenTelemetry Collector Pods' CPU consumption is near the limit you could experience a delay in data ingestion or even a
    data loss in extreme situations. Usually this is caused by insufficient amount of OpenTelemetry Collector instances being available. In
-   that case, consider [enabling autoscaling](./best-practices.md#opentelemetry-collector-autoscaling). If autoscaling is already enabled,
-   increase `maxReplicas` until the average CPU usage normalizes.
+   that case, consider
+   [enabling autoscaling](https://help.sumologic.com/docs/send-data/kubernetes/best-practices/#opentelemetry-collector-autoscaling). If
+   autoscaling is already enabled, increase `maxReplicas` until the average CPU usage normalizes.
 
 1. OpenTelemetry Collector Queue Length
 
@@ -27,7 +28,7 @@ Here are some tips on how to judge if you're seeing lag in your Sumo Logic colle
    throttled and need to contact Sumo Logic to increase your base plan or increase the throttling limit. If you aren't seeing `429` then you
    likely are in a situation where the incoming traffic into OpenTelemetry Collector is higher than the current replica count can handle.
    This is a good indication that you should scale up. Please see also
-   [OpenTelemetry Collector queueing and batching](./best-practices.md#opentelemetry-collector-queueing-and-batching).
+   [OpenTelemetry Collector queueing and batching](https://help.sumologic.com/docs/send-data/kubernetes/best-practices/#opentelemetry-collector-queueing-and-batching).
 
 1. Check Prometheus Remote Write Metrics
 

@@ -257,7 +257,7 @@ otellogs:
 ```
 
 For more information look at the `Setting different resources on different nodes for logs collector` section in
-[Advanced Configuration / Best Practices](/docs/best-practices.md#setting-different-resources-on-different-nodes-for-logs-collector)
+[Advanced Configuration / Best Practices](https://help.sumologic.com/docs/send-data/kubernetes/best-practices/#setting-different-resources-on-different-nodes-for-logs-collector)
 document.
 
 ## Collecting metrics
