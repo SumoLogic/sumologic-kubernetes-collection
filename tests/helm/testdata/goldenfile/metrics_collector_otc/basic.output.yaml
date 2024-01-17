@@ -30,6 +30,7 @@ spec:
         release: RELEASE-NAME
       podMonitorSelector:
         release: RELEASE-NAME
+    resources: {}
   autoscaler:
     maxReplicas: 10
     minReplicas: 1

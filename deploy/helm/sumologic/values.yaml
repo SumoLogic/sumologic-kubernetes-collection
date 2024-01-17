@@ -556,6 +556,10 @@ sumologic:
           ## This is an advanced feature, use with caution, and review the generated configuration first.
           override: {}
 
+        ## Configuraton specific for target allocator
+        targetAllocator:
+          resources: {}
+
     ## Default metric filters for Sumo Apps
     enableDefaultFilters: false
 

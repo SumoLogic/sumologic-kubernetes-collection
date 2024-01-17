@@ -56,6 +56,8 @@ spec:
     nodeSelector:
 {{ include "metrics.collector.otelcol.nodeSelector" . | indent 6 }}
 {{- end }}
+    resources:
+      {{ .Values.sumologic.metrics.collector.otelcol.targetAllocator.resources | toYaml | nindent 6 }}
 {{- if not (empty (include "metrics.collector.otelcol.tolerations" .)) }}
     tolerations:
 {{ include "metrics.collector.otelcol.tolerations" . | indent 6 }}

@@ -37,6 +37,13 @@ spec:
         pmkey: pmvalue
     nodeSelector:
       workingGroup: production
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 3Gi
+      requests:
+        cpu: 500m
+        memory: 2Gi
     tolerations:
       - effect: NoSchedule
         key: null

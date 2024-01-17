@@ -73,6 +73,14 @@ sumologic:
             processors:
               batch:
                 send_batch_size: 5000
+        targetAllocator:
+          resources:
+            limits:
+              memory: 3Gi
+              cpu: 2000m
+            requests:
+              memory: 2Gi
+              cpu: 500m
     enableDefaultFilters: true
     dropHistogramBuckets: false
 
