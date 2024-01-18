@@ -32,8 +32,8 @@ Documentation links:
   - Metrics
     - [Collecting Kubernetes metrics](/docs/collecting-kubernetes-metrics.md)
     - [Collecting application metrics](/docs/collecting-application-metrics.md)
-  - [Advanced Configuration/Best Practices](/docs/best-practices.md)
-  - [Advanced Configuration/Security best practices](/docs/security-best-practices.md)
+  - [Advanced Configuration/Best Practices](https://help.sumologic.com/docs/send-data/kubernetes/best-practices/)
+  - [Advanced Configuration/Security best practices](https://help.sumologic.com/docs/send-data/kubernetes/security-best-practices/)
   - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
     - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](/docs/working-with-container-registries.md#authenticating-with-container-registry)
   - [Collecting Kubernetes events](/docs/collecting-kubernetes-events.md)

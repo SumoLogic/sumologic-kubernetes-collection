@@ -20,7 +20,8 @@ There are two ways of dealing with this:
 - Disabling the setup job and creating the necessary resources manually: [see here][manual]
 - Injecting the custom root CA into the setup image: [see here][rebuilding]
 
-[rebuilding]: ./security-best-practices.md#adding-a-custom-root-ca-certificate-by-rebuilding-container-images
+[rebuilding]:
+  https://help.sumologic.com/docs/send-data/kubernetes/security-best-practices/#adding-a-custom-root-ca-certificate-by-rebuilding-container-images
 [manual]: ./installation.md#prerequisite
 
 ## Troubleshooting
