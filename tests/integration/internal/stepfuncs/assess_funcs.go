@@ -145,6 +145,10 @@ func WaitUntilExpectedMetricsPresent(
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
 
+		// We can't do it earlier, because we run the tests for different k8s versions
+		// and we can't fetch current version earlier
+		expectedMetrics = append(expectedMetrics, internal.GetVersionDependentMetrics(t)...)
+
 		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()
 
@@ -217,6 +221,9 @@ func WaitUntilExpectedMetricsPresentWithFilters(
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
+
+		// We don't add version-dependent metrics here,
+		// because for now they are not expected in this assess func.
 
 		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()

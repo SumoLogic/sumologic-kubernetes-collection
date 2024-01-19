@@ -5,6 +5,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"testing"
+
+	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/stretchr/testify/require"
+	"k8s.io/apimachinery/pkg/util/version"
 )
 
 const (
@@ -152,7 +157,6 @@ var (
 		"coredns_dns_request_duration_seconds_sum",
 		"coredns_dns_requests_total",
 		"coredns_dns_responses_total",
-		"coredns_forward_requests_total",
 		"process_cpu_seconds_total",
 		"process_open_fds",
 		"process_resident_memory_bytes",
@@ -324,6 +328,23 @@ var (
 		"scrape_samples_scraped",
 		"scrape_duration_seconds",
 	}
+
+	// Some metrics might change over k8s versions
+	versionDependentMetrics = map[*version.Version](struct {
+		before []string
+		after  []string
+	}){
+		version.MustParseSemantic("v1.29.0"): {
+			before: []string{
+				"coredns_forward_requests_total",
+			},
+			after: []string{
+				"coredns_proxy_request_duration_seconds_count",
+				"coredns_proxy_request_duration_seconds_bucket",
+				"coredns_proxy_request_duration_seconds_sum",
+			},
+		},
+	}
 )
 
 var (
@@ -391,4 +412,29 @@ func InitializeConstants() error {
 	log.Printf("Default kind image: %v", KindImages.Default)
 	log.Printf("Supported kind images: %v", KindImages.Supported)
 	return nil
+}
+
+func getKubernetesVersion(
+	t *testing.T,
+) string {
+	v, err := k8s.GetKubernetesClusterVersionE(t)
+	require.NoError(t, err)
+	return v
+}
+
+func GetVersionDependentMetrics(t *testing.T) []string {
+	res := []string{}
+	currVersion := getKubernetesVersion(t)
+
+	for version, ms := range versionDependentMetrics {
+		cmp, err := version.Compare(currVersion)
+		require.NoError(t, err)
+		if cmp > 0 {
+			res = append(res, ms.before...)
+		} else {
+			res = append(res, ms.after...)
+		}
+	}
+
+	return res
 }

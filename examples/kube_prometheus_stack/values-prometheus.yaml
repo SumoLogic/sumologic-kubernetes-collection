@@ -125,12 +125,15 @@ coreDns:
     ## coredns_dns_responses_total
     ## coredns_forward_request_count_total
     ## coredns_forward_requests_total
+    ## coredns_proxy_request_duration_seconds_count
+    ## coredns_proxy_request_duration_seconds_sum
+    ## coredns_proxy_request_duration_seconds_bucket
     ## process_cpu_seconds_total
     ## process_open_fds
     ## process_resident_memory_bytes
     metricRelabelings:
       - action: keep
-        regex: (?:coredns_cache_(size|entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+        regex: (?:coredns_cache_(size|entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes)|coredns_proxy_request_duration_seconds_(sum|count|bucket))
         sourceLabels: [__name__]
 kubeEtcd:
   serviceMonitor:
@@ -751,6 +754,9 @@ prometheus:
       ## coredns_dns_responses_total
       ## coredns_forward_request_count_total
       ## coredns_forward_requests_total
+      ## coredns_proxy_request_duration_seconds_count
+      ## coredns_proxy_request_duration_seconds_sum
+      ## coredns_proxy_request_duration_seconds_bucket
       ## process_cpu_seconds_total
       ## process_open_fds
       ## process_resident_memory_bytes
@@ -758,7 +764,7 @@ prometheus:
         remoteTimeout: 5s
         writeRelabelConfigs:
           - action: keep
-            regex: coredns;(?:coredns_cache_(size|entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes))
+            regex: coredns;(?:coredns_cache_(size|entries|(hits|misses)_total)|coredns_dns_request_duration_seconds_(count|sum)|coredns_(dns_request|dns_response_rcode|forward_request)_count_total|coredns_(forward_requests|dns_requests|dns_responses)_total|process_(cpu_seconds_total|open_fds|resident_memory_bytes)|coredns_proxy_request_duration_seconds_(sum|count|bucket))
             sourceLabels: [job, __name__]
       ## etcd server:
       ## etcd_debugging_mvcc_db_total_size_in_bytes
