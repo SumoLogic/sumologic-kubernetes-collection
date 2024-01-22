@@ -2372,7 +2372,7 @@ falco:
 
   driver:
     ## Set to epbf to enable eBPF support for Falco instead of falco-probe kernel module.
-    ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md#falco-and-google-kubernetes-engine-gke
+    ## https://help.sumologic.com/docs/send-data/kubernetes/troubleshoot-collection#falco-and-google-kubernetes-engine-gke
     kind: module
     loader:
       initContainer:

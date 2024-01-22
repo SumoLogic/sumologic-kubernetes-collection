@@ -1,9 +1,11 @@
 # Customer Issues Playbook
 
-In case you encounter any issues try looking into the [troubleshooting doc](troubleshoot-collection.md) first.
+In case you encounter any issues try looking into the
+[troubleshooting doc](https://help.sumologic.com/docs/send-data/kubernetes/troubleshoot-collection/) first.
 
-If you are unable to fix your issue using [troubleshooting doc](troubleshoot-collection.md) and would like to raise a customer issue, Sumo
-Logic needs to receive information mentioned in [Basic information](#basic-information) section.
+If you are unable to fix your issue using
+[troubleshooting doc](https://help.sumologic.com/docs/send-data/kubernetes/troubleshoot-collection/) and would like to raise a customer
+issue, Sumo Logic needs to receive information mentioned in [Basic information](#basic-information) section.
 [Additional information](#additional-information-specific-for-type-of-customer-issue) may be needed for specific types of customer issues.
 
 - [Basic information](#basic-information)

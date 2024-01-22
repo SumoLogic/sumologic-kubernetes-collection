@@ -41,8 +41,8 @@ kube-prometheus-stack:
 ```
 
 **Note:** You can use the method described in
-[Troubleshooting Collection document](/docs/troubleshoot-collection.md#check-the-metrics-endpoint-for-kubernetes-services) to troubleshoot
-this process.
+[Troubleshooting Collection document](https://help.sumologic.com/docs/send-data/kubernetes/troubleshoot-collection#check-the-metrics-endpoint-for-kubernetes-services)
+to troubleshoot this process.
 
 ## Metrics modifications
 
@@ -52,4 +52,4 @@ See the relevant section in [Collecting application metrics](/docs/collecting-ap
 
 For investigation you may want to look at the
 [Collecting application metrics](/docs/collecting-application-metrics.md#metrics-modifications) and
-[Troubleshooting Collection document](/docs/troubleshoot-collection.md#collecting-metrics)
+[Troubleshooting Collection document](https://help.sumologic.com/docs/send-data/kubernetes/troubleshoot-collection#collecting-metrics)

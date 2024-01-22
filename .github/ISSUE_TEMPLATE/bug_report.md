@@ -10,7 +10,7 @@ assignees: ""
 Thanks for filing an issue!
 
 If you notice any issue with Collection, please see our troubleshooting guide:
-https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/troubleshoot-collection.md
+https://help.sumologic.com/docs/send-data/kubernetes/troubleshoot-collection/
 
 If you did not find a solution in troubleshooting guide please check that we do not have any issue describing your case already open.
 
