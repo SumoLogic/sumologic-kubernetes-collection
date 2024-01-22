@@ -51,7 +51,7 @@ Documentation links:
   - [Upgrade from v0.17 to v1.0][migration-doc-v1]
   - [Migrate from `SumoLogic/fluentd-kubernetes-sumologic`][migration-steps]
 
-- [Troubleshooting Collection](/docs/troubleshoot-collection.md)
+- [Troubleshooting Collection](https://help.sumologic.com/docs/send-data/kubernetes/troubleshoot-collection/)
 - [Monitoring the Monitoring](/docs/monitoring-lag.md)
 - [Dev Releases](/docs/dev.md)
 
