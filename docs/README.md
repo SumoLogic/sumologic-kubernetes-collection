@@ -30,8 +30,8 @@ Documentation links:
     - [Collecting container logs](/docs/collecting-container-logs.md)
     - [Collecting Systemd logs](/docs/collecting-systemd-logs.md)
   - Metrics
-    - [Collecting Kubernetes metrics](/docs/collecting-kubernetes-metrics.md)
-    - [Collecting application metrics](/docs/collecting-application-metrics.md)
+    - [Collecting Kubernetes metrics](https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics/#kubernetes-metrics)
+    - [Collecting application metrics](https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics#filtering-metrics)
   - [Advanced Configuration/Best Practices](https://help.sumologic.com/docs/send-data/kubernetes/best-practices/)
   - [Advanced Configuration/Security best practices](https://help.sumologic.com/docs/send-data/kubernetes/security-best-practices/)
   - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
