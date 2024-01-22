@@ -529,7 +529,7 @@ sumologic:
           enabled: true
 
         ## Enable collection of metrics from Pods annotated with prometheus.io/* keys.
-        ## See https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/collecting-application-metrics.md#application-metrics-are-exposed-one-endpoint-scenario for more information.
+        ## See https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics#application-metrics-are-exposed-one-endpoint-scenario for more information.
         annotatedPods:
           enabled: true
 

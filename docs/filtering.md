@@ -326,7 +326,8 @@ filter/drop_attr:
 
 ### Prometheus
 
-You can filter out metrics directly in Prometheus using [this documentation](/docs/collecting-application-metrics.md#filtering-metrics).
+You can filter out metrics directly in Prometheus using
+[this documentation](https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics#filtering-metrics).
 
 **Note**: This works only for the deprecated pipeline where Prometheus is used to collect the metrics. If you are using OpenTelemetry
 Collector, use other methods to filter out metrics.
