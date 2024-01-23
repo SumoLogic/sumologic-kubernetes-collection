@@ -67,7 +67,7 @@ One can then use `${REGISTRY_REPO_URL}:${TAG}` in `user-values.yaml` as such:
 sumologic:
   otelcol:
     defaultImage:
-      tag: 0.90.1-sumo-0-fips
+      tag: 0.92.0-sumo-0-fips
 ```
 
 ## Upgrading while rehosting images
