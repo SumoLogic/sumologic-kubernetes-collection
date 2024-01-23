@@ -32,9 +32,6 @@ spec:
 {{- if .Values.sumologic.metrics.collector.otelcol.allocationStrategy }}
     allocationStrategy: {{ .Values.sumologic.metrics.collector.otelcol.allocationStrategy }}
 {{- end }}
-    # we set serviceAccount to work around https://github.com/open-telemetry/opentelemetry-operator/issues/2443
-    # TODO: drop this after the above is fixed
-    serviceAccount: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
     enabled: true
     filterStrategy: relabel-config
     prometheusCR:
