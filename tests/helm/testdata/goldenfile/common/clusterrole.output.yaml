@@ -31,7 +31,3 @@ rules:
     resources:
       - configmaps
     verbs: ["create", "patch"]
-  - apiGroups: ["opentelemetry.io"]
-    resources:
-      - instrumentations
-    verbs: ["patch", "get", "create"]

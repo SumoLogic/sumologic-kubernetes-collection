@@ -9,7 +9,7 @@ changed in the [.changelog] directory. The contents of this directory are consum
 
 ### Adding a changelog entry
 
-If you want to add a changelog entry for your PR, run:
+If you want to add a changelog entry for your PR, run
 
 ```bash
 make add-changelog-entry
