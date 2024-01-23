@@ -227,9 +227,20 @@ var (
 		"otelcol_processor_groupbyattrs_metric_groups_sum",
 		"otelcol_processor_groupbyattrs_num_non_grouped_metrics",
 		"otelcol_processor_refused_metric_points",
+		"otelcol_http_server_request_content_length",
+		"otelcol_processor_batch_metadata_cardinality",
+		"otelcol_http_server_duration_count",
+		"otelcol_http_server_duration_sum",
+		"otelcol_otelsvc_k8s_service_table_size",
+		"otelcol_http_server_duration_bucket",
+		"otelcol_http_server_response_content_length",
+		"otelcol_otelsvc_k8s_owner_table_size",
+		"otelcol_exporter_send_failed_metric_points",
 	}
 	LogsOtelcolMetrics = []string{
 		"otelcol_exporter_sent_log_records",
+		"otelcol_exporter_send_failed_log_records",
+		"otelcol_processor_filter_logs_filtered",
 		"otelcol_receiver_accepted_log_records",
 		"otelcol_processor_accepted_log_records",
 		"otelcol_receiver_refused_log_records",
@@ -291,11 +302,13 @@ var (
 	FlakyMetrics = []string{
 		"otelcol_otelsvc_k8s_pod_deleted",
 		"otelcol_processor_batch_batch_size_trigger_send",
+		"otelcol_processor_filter_datapoints_filtered",
 		"otelcol_otelsvc_k8s_ip_lookup_miss",
 		"otelcol_otelsvc_k8s_other_deleted",
 		"otelcol_exporter_enqueue_failed_metric_points",
 		"otelcol_exporter_enqueue_failed_spans",
 		"otelcol_exporter_enqueue_failed_log_records",
+		"otelcol_routing_processor_non_routed_metric_points",
 		"kube_pod_container_status_waiting_reason",
 		"kube_pod_container_status_terminated_reason",
 		// TODO: check different metrics depending on K8s version
@@ -309,6 +322,7 @@ var (
 		"scheduler_scheduling_attempt_duration_seconds_bucket",
 		"cluster_quantile:scheduler_e2e_scheduling_duration_seconds:histogram_quantile",
 		"cluster_quantile:scheduler_scheduling_algorithm_duration_seconds:histogram_quantile",
+		"target_info",
 	}
 
 	NginxMetrics = []string{
