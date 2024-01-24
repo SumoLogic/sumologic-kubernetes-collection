@@ -201,11 +201,12 @@ See the [migration guide][v4_migration_guide] for details.
 
 ## [v3.18.0]
 
-### Released 2023-12-14
+### Released 2024-01-24
 
 ### Added
 
 - feat: add description including helm version to collector [#3425]
+- feat: add endpointslices RBAC permission [#3491]
 
 ### Changed
 
@@ -215,8 +216,9 @@ See the [migration guide][v4_migration_guide] for details.
 - deps: upgrade `fluent-bit` subchart from `v0.34.2` to `v0.40.0` [#3408]
 - deps: upgrade `metrics-server` subchart from `v6.4.3` to `v6.6.3` [#3408] [#3444]
 - deps: upgrade `tailing-sidecar` subchart from `v0.8.0` to `v0.9.0` [#3408]
-- chore: update OpenTelemetry Collector to v0.90.1-sumo-0 [#3439]
 - deps: update telegraf operator to `v1.3.12` [#3443]
+- feat(opentelemetry): send information about k8s version [#3463]
+- chore: update OpenTelemetry Collector to v0.92.0-sumo-0 [#3510]
 
 ### Fixed
 
@@ -224,11 +226,13 @@ See the [migration guide][v4_migration_guide] for details.
 
 [#3425]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3425
 [#3408]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3408
-[#3439]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3439
 [#3443]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3443
 [#3444]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3444
 [#3445]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3445
 [#3436]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3436
+[#3491]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3491
+[#3463]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3463
+[#3510]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3510
 [v3.18.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v3.18.0
 
 ## [v3.17.0]
