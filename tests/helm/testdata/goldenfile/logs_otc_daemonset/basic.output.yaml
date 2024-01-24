@@ -36,7 +36,7 @@ spec:
       containers:
         - args:
             - --config=/etc/otelcol/config.yaml
-          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.90.1-sumo-0"
+          image: "public.ecr.aws/sumologic/sumologic-otel-collector:0.92.0-sumo-0"
           imagePullPolicy: IfNotPresent
           name: otelcol
           livenessProbe:
