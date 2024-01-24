@@ -7,6 +7,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!-- towncrier release notes start -->
 
+## [v4.4.0]
+
+### Released 2024-01-24
+
+### Added
+
+- feat: add global tolerations option [#3459]
+- feat: add global affinity option [#3462]
+- feat(chart): run integration tests on k8s 1.29" [#3490]
+- feat: add endpointslices RBAC permission [#3491]
+
+### Changed
+
+- deps: update falco to 3.8.6 [#3455]
+- deps: update metrics server to 6.6.5 [#3456]
+- deps: update opentelemetry operator to 0.46.0 [#3457], [#3515]
+- feat(opentelemetry): send information about k8s version [#3460]
+- chore: drop support for GKE 1.24 [#3478]
+- chore: add support for GKE 1.29 [#3478]
+- feat(targetallocator): expose resource configuration [#3505]
+- deps: update Metrics Server to 6.8.0 [#3507]
+- deps: update Falco to 3.8.7 [#3507]
+- chore: update OpenTelemetry Collector to v0.92.0-sumo-0 [#3517]
+
+### Fixed
+
+- fix(metrics): use targetallocator serviceaccount created by the operator [#3447]
+- fix(metrics/collector): add separate image for metrics collector [#3469]
+
+[#3459]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3459
+[#3462]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3462
+[#3490]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3490
+[#3491]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3491
+[#3455]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3455
+[#3456]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3456
+[#3457]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3457
+[#3515]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3515
+[#3460]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3460
+[#3478]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3478
+[#3505]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3505
+[#3507]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3507
+[#3517]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3517
+[#3447]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3447
+[#3469]: https://github.com/SumoLogic/sumologic-kubernetes-collection/pull/3469
+[v4.4.0]: https://github.com/SumoLogic/sumologic-kubernetes-collection/releases/v4.4.0
+
 ## [v4.3.1]
 
 ### Released 2023-12-14
