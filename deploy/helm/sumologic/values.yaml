@@ -2023,7 +2023,7 @@ tracesGateway:
           exporters: [loadbalancing]
 
 ## Configuration of the OpenTelemetry Collector that collects Kubernetes events.
-## See https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/collecting-kubernetes-events.md.
+## See https://help.sumologic.com/docs/send-data/kubernetes/collecting-kubernetes-events/.
 otelevents:
   ## Configure image for Opentelemetry Collector
   image:
