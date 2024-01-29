@@ -1,3 +1,46 @@
+{{- if eq .Values.debug.metrics.metadata.print true }}
+debug:
+  verbosity: detailed
+{{- end }}
+
+{{- if eq .Values.debug.metrics.metadata.forwardToSumologicMock true }}
+sumologic/sumologic-mock-default:
+  client: {{ include "sumologic.sumo_client" . }}
+  metric_format: {{ include "metrics.otelcol.exporter.format" . }}
+  endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
+  ## Sumo doesn't yet natively support OTLP Histograms
+  decompose_otlp_histograms: true
+  ## Configuration for sending queue
+  ## ref: https://github.com/open-telemetry/opentelemetry-collector/tree/release/v0.37.x/exporter/exporterhelper#configuration
+  sending_queue:
+    enabled: true
+{{- if .Values.metadata.persistence.enabled }}
+    storage: file_storage
+{{- end }}
+    num_consumers: 10
+    ## setting queue_size a high number, so we always use maximum space of the storage
+    ## minimal alert non-triggering queue size (if only one exporter is being used): 10GB/16MB = 640
+    queue_size: 10_000
+  max_request_body_size: 16_777_216  # 16 MB before compression
+  ## set timeout to 30s due to big requests
+  timeout: 30s
+
+sumologic/sumologic-mock-http:
+  client: {{ include "sumologic.sumo_client" . }}
+  metric_format: prometheus
+  endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
+  sending_queue:
+    enabled: true
+{{- if .Values.metadata.persistence.enabled }}
+    storage: file_storage
+{{- end }}
+    num_consumers: 10
+    queue_size: 10_000
+  max_request_body_size: 16_777_216  # 16 MB before compression
+  ## set timeout to 30s due to big requests
+  timeout: 30s
+{{- end }}
+
 ## Configuration for Sumo Logic Exporter
 ## ref: https://github.com/SumoLogic/sumologic-otel-collector/blob/main/pkg/exporter/sumologicexporter
 sumologic/default:

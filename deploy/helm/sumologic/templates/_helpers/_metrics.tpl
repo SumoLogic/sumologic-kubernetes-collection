@@ -407,3 +407,11 @@ Example:
 {{- end -}}
 {{ print $excludeNamespaceRegex }}
 {{- end -}}
+
+{{- define "metrics.collector.files.list" -}}
+- /var/log/pods/{{ template "sumologic.namespace" . }}-{{ template "sumologic.metadata.name.metrics.collector" . }}*/*/*.log
+{{- end -}}
+
+{{- define "metrics.metadata.files.list" -}}
+- /var/log/pods/{{ template "sumologic.namespace" . }}-{{ template "sumologic.metadata.name.metrics.statefulset" . }}*/*/*.log
+{{- end -}}

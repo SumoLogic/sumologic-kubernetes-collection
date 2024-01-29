@@ -2582,10 +2582,14 @@ debug:
       forwardToSumologicMock: false
       stopLogsIngestion: false
     collector:
+      print: false
+      forwardToSumologicMock: false
       stopLogsIngestion: false
 
   metrics:
     metadata:
+      print: false
+      forwardToSumologicMock: false
       stopLogsIngestion: false
     collector:
       print: false
