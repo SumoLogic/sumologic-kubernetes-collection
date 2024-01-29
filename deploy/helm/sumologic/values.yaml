@@ -2578,6 +2578,8 @@ debug:
 
   logs:
     metadata:
+      print: false
+      forwardToSumologicMock: false
       stopLogsIngestion: false
     collector:
       stopLogsIngestion: false
