@@ -606,3 +606,7 @@ Example usage:
 {{- template "kubernetes.defaultAffinity" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "sumologic.sumologic-mock.name.roles.serviceaccount" -}}
+{{- template "sumologic.fullname" . }}
+{{- end -}}
