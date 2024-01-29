@@ -1,0 +1,18 @@
+{{- if eq .Values.debug.sumologicMock.enabled true }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sumologic.sumologic-mock.name.service" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
+  labels:
+    app: {{ template "sumologic.labels.app.sumologic-mock.service" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ template "sumologic.labels.app.sumologic-mock.pod" . }}
+  ports:
+  - name: port
+    port: {{ template "sumologic-mock.port" . }}
+    targetPort: {{ template "sumologic-mock.port" . }}
+    protocol: TCP
+{{- end }}

@@ -2550,3 +2550,28 @@ pvcCleaner:
     ## securityContext for pvcCleaner pods
     securityContext:
       runAsUser: 1000
+
+debug:
+  sumologicMock:
+    enabled: false
+    deployment:
+      nodeSelector: {}
+      tolerations: {}
+      topologySpreadConstraints: []
+      securityContext: {}
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+
+      ## Acceptable values for podAntiAffinity:
+      ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
+      ## hard: specifies rules that must be met for a pod to be scheduled onto a node
+      podAntiAffinity: "soft"
+      affinity: {}
+
+      resources:
+        limits:
+          memory: 2Gi
+          cpu: 1000m
+        requests:
+          memory: 768Mi
+          cpu: 100m

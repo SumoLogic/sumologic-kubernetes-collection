@@ -1,0 +1,82 @@
+{{- if eq .Values.debug.sumologicMock.enabled true }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "sumologic.sumologic-mock.name.deployment" . }}
+  namespace: {{ template "sumologic.namespace"  . }}
+  labels:
+    app: {{ template "sumologic.labels.app.sumologic-mock.deployment" . }}
+    {{- include "sumologic.labels.common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "sumologic.labels.app.sumologic-mock.pod" . }}
+  template:
+    metadata:
+      annotations:
+{{- if .Values.sumologic.podAnnotations }}
+{{ toYaml .Values.sumologic.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+        app: {{ template "sumologic.labels.app.sumologic-mock.pod" . }}
+        {{- include "sumologic.labels.common" . | nindent 8 }}
+{{- if .Values.sumologic.podLabels }}
+{{ toYaml .Values.sumologic.podLabels | indent 8 }}
+{{- end }}
+    spec:
+      serviceAccountName: {{ template "sumologic.sumologic-mock.name.roles.serviceaccount" . }}
+{{- if not (empty (include "metadata.logs.statefulset.nodeSelector" .)) }}
+      nodeSelector:
+{{ include "metadata.logs.statefulset.nodeSelector" . | indent 8 }}
+{{- end }}
+{{- if not (empty (include "sumologic-mock.deployment.tolerations" .)) }}
+      tolerations:
+{{ include "sumologic-mock.deployment.tolerations" . | indent 8 }}
+{{- end }}
+{{- if .Values.debug.sumologicMock.deployment.affinity }}
+      affinity:
+{{- if not (empty (include "sumologic-mock.deployment.affinity" .)) }}
+{{ include "sumologic-mock.deployment.affinity" . | indent 8 }}
+{{- end }}
+{{- if eq .Values.debug.sumologicMock.deployment.podAntiAffinity "hard"}}
+{{ include "pod-anti-affinity-hard" . | indent 8 }}
+{{else if eq .Values.debug.sumologicMock.deployment.podAntiAffinity "soft"}}
+{{ include "pod-anti-affinity-soft" . | indent 8 }}
+{{- end }}
+{{- end }}
+{{- if .Values.debug.sumologicMock.deployment.topologySpreadConstraints }}
+      topologySpreadConstraints:
+{{ toYaml .Values.debug.sumologicMock.deployment.topologySpreadConstraints | indent 6 }}
+{{- end }}
+      securityContext:
+        {{- toYaml .Values.debug.sumologicMock.deployment.securityContext | nindent 8 }}
+      {{- if .Values.debug.sumologicMock.deployment.priorityClassName }}
+      priorityClassName: {{ .Values.debug.sumologicMock.deployment.priorityClassName | quote }}
+      {{- end }}
+      containers:
+      - ports:
+          - containerPort: {{ template "sumologic-mock.port" . }}
+        image: sumologic/kubernetes-tools:2.22.0
+        name: sumologic-mock
+        args:
+          - receiver-mock
+          - --hostname={{ template "sumologic-mock.hostname" . }}
+        resources: {}
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: {{ template "sumologic-mock.port" . }}
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          {{- toYaml .Values.debug.sumologicMock.deployment.resources | nindent 10 }}
+      hostname: receiver-mock
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+{{- end }}
