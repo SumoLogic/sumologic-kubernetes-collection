@@ -2575,3 +2575,15 @@ debug:
         requests:
           memory: 768Mi
           cpu: 100m
+
+  logs:
+    metadata:
+      stopLogsIngestion: false
+    collector:
+      stopLogsIngestion: false
+
+  metrics:
+    metadata:
+      stopLogsIngestion: false
+    collector:
+      stopLogsIngestion: false

@@ -52,6 +52,21 @@ processors:
 receivers:
 {{- if .Values.sumologic.logs.container.enabled }}
   filelog/containers:
+    exclude:
+      - /var/log/pods/{{ template "sumologic.namespace" . }}-{{ template "sumologic.labels.app.sumologic-mock.pod" . }}*/*/*.log
+      {{ if eq .Values.debug.logs.metadata.stopLogsIngestion true }}
+      {{ include "logs.metadata.files.list" . }}
+      {{ end }}
+      {{ if eq .Values.debug.logs.collector.stopLogsIngestion true }}
+      {{ include "logs.collector.files.list" . | nindent 6 }}
+      {{ end }}
+      {{ if eq .Values.debug.metrics.metadata.stopLogsIngestion true }}
+      {{ include "metrics.metadata.files.list" . }}
+      {{ end }}
+      {{ if eq .Values.debug.metrics.collector.stopLogsIngestion true }}
+      {{ include "metrics.collector.files.list" . }}
+      {{ end }}
+
 {{ if lt (int (include "kubernetes.minor" .)) 24 }}
     ## sets fingerprint_size to 17kb in order to match the longest possible docker line (which by default is 16kb)
     ## we want to include timestamp, which is at the end of the line
