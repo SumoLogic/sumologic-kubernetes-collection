@@ -5,6 +5,10 @@ exporters:
       queue_size: 10
     # this improves load balancing at the cost of more network traffic
     disable_keep_alives: true
+{{- if eq .Values.debug.logs.collector.print true }}
+  debug:
+    verbosity: detailed
+{{- end }}
 
 extensions:
   file_storage:
@@ -346,6 +350,9 @@ service:
     logs/containers:
       exporters:
         - otlphttp
+{{- if eq .Values.debug.logs.collector.print true }}
+        - debug
+{{- end }}
       processors:
         - batch
       receivers:
@@ -355,6 +362,9 @@ service:
     logs/systemd:
       exporters:
         - otlphttp
+{{- if eq .Values.debug.logs.collector.print true }}
+        - debug
+{{- end }}
       processors:
         - logstransform/systemd
         - batch
