@@ -31,8 +31,6 @@ debug:
       securityContext:
         allowPrivilegeEscalation: false
       priorityClassName: "high-priority"
-      topologySpreadConstraints:
-        - maxSkew: 4
       resources:
         limits:
           memory: 3Gi

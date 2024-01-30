@@ -65,8 +65,6 @@ spec:
                       values:
                         - prometheus-operator-prometheus
                 topologyKey: "kubernetes.io/hostname"
-      topologySpreadConstraints:
-        - maxSkew: 4
       securityContext:
         allowPrivilegeEscalation: false
       priorityClassName: "high-priority"

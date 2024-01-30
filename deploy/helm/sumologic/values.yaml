@@ -2557,7 +2557,6 @@ debug:
     deployment:
       nodeSelector: {}
       tolerations: {}
-      topologySpreadConstraints: []
       securityContext: {}
       ## Option to define priorityClassName to assign a priority class to pods.
       priorityClassName:
@@ -2576,6 +2575,8 @@ debug:
           memory: 768Mi
           cpu: 100m
 
+      extraArgs: []
+
   logs:
     metadata:
       print: false
@@ -2583,7 +2584,6 @@ debug:
       stopLogsIngestion: false
     collector:
       print: false
-      forwardToSumologicMock: false
       stopLogsIngestion: false
 
   metrics:

@@ -44,10 +44,6 @@ spec:
 {{ include "pod-anti-affinity-soft" . | indent 8 }}
 {{- end }}
 {{- end }}
-{{- if .Values.debug.sumologicMock.deployment.topologySpreadConstraints }}
-      topologySpreadConstraints:
-{{ toYaml .Values.debug.sumologicMock.deployment.topologySpreadConstraints | indent 6 }}
-{{- end }}
       securityContext:
         {{- toYaml .Values.debug.sumologicMock.deployment.securityContext | nindent 8 }}
       {{- if .Values.debug.sumologicMock.deployment.priorityClassName }}
@@ -61,6 +57,9 @@ spec:
         args:
           - receiver-mock
           - --hostname={{ template "sumologic-mock.hostname" . }}
+          {{- if .Values.debug.sumologicMock.deployment.extraArgs }}
+          {{- toYaml .Values.debug.sumologicMock.deployment.extraArgs | nindent 10 }}
+          {{- end }}
         securityContext:
           capabilities:
             drop:
