@@ -7,7 +7,7 @@ exporters:
   - sumologic/sumologic-mock-default
 {{- end }}
 {{- if eq .Values.sumologic.metrics.sourceType "http" }}
-  - sumologic/apiserverreceiver
+  - sumologic/apiserver
   - sumologic/control_plane
   - sumologic/controller
   - sumologic/kubelet

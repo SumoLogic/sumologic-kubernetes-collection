@@ -285,7 +285,7 @@ data:
         metrics:
           exporters:
           - sumologic/default
-          - sumologic/apiserverreceiver
+          - sumologic/apiserver
           - sumologic/control_plane
           - sumologic/controller
           - sumologic/kubelet
