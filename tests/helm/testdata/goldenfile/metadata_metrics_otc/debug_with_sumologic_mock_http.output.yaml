@@ -13,6 +13,8 @@ metadata:
 data:
   config.yaml: |
     exporters:
+      debug:
+        verbosity: detailed
       sumologic/apiserver:
         client: k8s_%CURRENT_CHART_VERSION%
         endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
@@ -94,6 +96,29 @@ data:
       sumologic/state:
         client: k8s_%CURRENT_CHART_VERSION%
         endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
+        max_request_body_size: 16777216
+        metric_format: prometheus
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+        timeout: 30s
+      sumologic/sumologic-mock-default:
+        client: k8s_%CURRENT_CHART_VERSION%
+        decompose_otlp_histograms: true
+        endpoint: http://RELEASE-NAME-sumologic-sumologic-mock.sumologic:3000/receiver
+        max_request_body_size: 16777216
+        metric_format: prometheus
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          storage: file_storage
+        timeout: 30s
+      sumologic/sumologic-mock-http:
+        client: k8s_%CURRENT_CHART_VERSION%
+        endpoint: http://RELEASE-NAME-sumologic-sumologic-mock.sumologic:3000/receiver
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
@@ -212,31 +237,49 @@ data:
       routing:
         default_exporters:
         - sumologic/default
+        - debug
+        - sumologic/sumologic-mock/prometheus
         error_mode: ignore
         table:
         - exporters:
           - sumologic/apiserver
+          - debug
+          - sumologic/sumologic-mock-http
           statement: route() where resource.attributes["job"] == "apiserver"
         - exporters:
           - sumologic/control_plane
+          - debug
+          - sumologic/sumologic-mock-http
           statement: route() where resource.attributes["job"] == "coredns"
         - exporters:
           - sumologic/control_plane
+          - debug
+          - sumologic/sumologic-mock-http
           statement: route() where resource.attributes["job"] == "kube-etcd"
         - exporters:
           - sumologic/controller
+          - debug
+          - sumologic/sumologic-mock-http
           statement: route() where resource.attributes["job"] == "kube-controller-manager"
         - exporters:
           - sumologic/kubelet
+          - debug
+          - sumologic/sumologic-mock-http
           statement: route() where resource.attributes["job"] == "kubelet"
         - exporters:
           - sumologic/node
+          - debug
+          - sumologic/sumologic-mock-http
           statement: route() where resource.attributes["job"] == "node-exporter"
         - exporters:
           - sumologic/scheduler
+          - debug
+          - sumologic/sumologic-mock-http
           statement: route() where resource.attributes["job"] == "kube-scheduler"
         - exporters:
           - sumologic/state
+          - debug
+          - sumologic/sumologic-mock-http
           statement: route() where resource.attributes["job"] == "kube-state-metrics"
       source:
         collector: kubernetes
@@ -285,6 +328,8 @@ data:
         metrics:
           exporters:
           - sumologic/default
+          - debug
+          - sumologic/sumologic-mock-default
           - sumologic/apiserverreceiver
           - sumologic/control_plane
           - sumologic/controller
@@ -292,6 +337,7 @@ data:
           - sumologic/node
           - sumologic/scheduler
           - sumologic/state
+          - sumologic/sumologic-mock-http
           processors:
           - memory_limiter
           - metricstransform

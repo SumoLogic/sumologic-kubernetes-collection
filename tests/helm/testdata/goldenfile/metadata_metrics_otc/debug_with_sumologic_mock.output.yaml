@@ -13,87 +13,35 @@ metadata:
 data:
   config.yaml: |
     exporters:
-      sumologic/apiserver:
-        client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: ${SUMO_ENDPOINT_APISERVER_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
-      sumologic/control_plane:
-        client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: ${SUMO_ENDPOINT_CONTROL_PLANE_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
-      sumologic/controller:
-        client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: ${SUMO_ENDPOINT_CONTROLLER_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
+      debug:
+        verbosity: detailed
       sumologic/default:
         client: k8s_%CURRENT_CHART_VERSION%
         decompose_otlp_histograms: true
-        endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_METRICS_SOURCE}
         max_request_body_size: 16777216
-        metric_format: prometheus
+        metric_format: otlp
         sending_queue:
           enabled: true
           num_consumers: 10
           queue_size: 10000
           storage: file_storage
         timeout: 30s
-      sumologic/kubelet:
+      sumologic/sumologic-mock-default:
         client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: ${SUMO_ENDPOINT_KUBELET_METRICS_SOURCE}
+        decompose_otlp_histograms: true
+        endpoint: http://RELEASE-NAME-sumologic-sumologic-mock.sumologic:3000/receiver
         max_request_body_size: 16777216
-        metric_format: prometheus
+        metric_format: otlp
         sending_queue:
           enabled: true
           num_consumers: 10
           queue_size: 10000
           storage: file_storage
         timeout: 30s
-      sumologic/node:
+      sumologic/sumologic-mock-http:
         client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: ${SUMO_ENDPOINT_NODE_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
-      sumologic/scheduler:
-        client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: ${SUMO_ENDPOINT_SCHEDULER_METRICS_SOURCE}
-        max_request_body_size: 16777216
-        metric_format: prometheus
-        sending_queue:
-          enabled: true
-          num_consumers: 10
-          queue_size: 10000
-          storage: file_storage
-        timeout: 30s
-      sumologic/state:
-        client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: ${SUMO_ENDPOINT_STATE_METRICS_SOURCE}
+        endpoint: http://RELEASE-NAME-sumologic-sumologic-mock.sumologic:3000/receiver
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
@@ -209,35 +157,6 @@ data:
         attributes:
         - action: delete
           key: k8s.pod.pod_name
-      routing:
-        default_exporters:
-        - sumologic/default
-        error_mode: ignore
-        table:
-        - exporters:
-          - sumologic/apiserver
-          statement: route() where resource.attributes["job"] == "apiserver"
-        - exporters:
-          - sumologic/control_plane
-          statement: route() where resource.attributes["job"] == "coredns"
-        - exporters:
-          - sumologic/control_plane
-          statement: route() where resource.attributes["job"] == "kube-etcd"
-        - exporters:
-          - sumologic/controller
-          statement: route() where resource.attributes["job"] == "kube-controller-manager"
-        - exporters:
-          - sumologic/kubelet
-          statement: route() where resource.attributes["job"] == "kubelet"
-        - exporters:
-          - sumologic/node
-          statement: route() where resource.attributes["job"] == "node-exporter"
-        - exporters:
-          - sumologic/scheduler
-          statement: route() where resource.attributes["job"] == "kube-scheduler"
-        - exporters:
-          - sumologic/state
-          statement: route() where resource.attributes["job"] == "kube-state-metrics"
       source:
         collector: kubernetes
         exclude:
@@ -285,13 +204,8 @@ data:
         metrics:
           exporters:
           - sumologic/default
-          - sumologic/apiserverreceiver
-          - sumologic/control_plane
-          - sumologic/controller
-          - sumologic/kubelet
-          - sumologic/node
-          - sumologic/scheduler
-          - sumologic/state
+          - debug
+          - sumologic/sumologic-mock-default
           processors:
           - memory_limiter
           - metricstransform
@@ -307,7 +221,6 @@ data:
           - transform/remove_name
           - filter/drop_unnecessary_metrics
           - batch
-          - routing
           receivers:
           - telegraf
           - otlp
