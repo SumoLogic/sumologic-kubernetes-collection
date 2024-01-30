@@ -1,0 +1,106 @@
+---
+# Source: sumologic/templates/sumologic-mock/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-sumologic-sumologic-mock
+  namespace: collection
+  labels:
+    app: RELEASE-NAME-sumologic-sumologic-mock
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+      app: RELEASE-NAME-sumologic-sumologic-mock
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: RELEASE-NAME-sumologic-sumologic-mock
+        chart: "sumologic-%CURRENT_CHART_VERSION%"
+        release: "RELEASE-NAME"
+        heritage: "Helm"
+    spec:
+      serviceAccountName: RELEASE-NAME-sumologic
+      tolerations:
+        - effect: NoSchedule
+          key: key1
+          operator: Equal
+          value: value1
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                  - key: another-node-label-key
+                    operator: In
+                    values:
+                      - another-node-label-value
+              weight: 1
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/e2e-az-name
+                    operator: In
+                    values:
+                      - e2e-az1
+                      - e2e-az2
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - RELEASE-NAME-sumologic-otelcol-logs
+                        - RELEASE-NAME-sumologic-otelcol-metrics
+                        - RELEASE-NAME-sumologic-otelcol-events
+                        - RELEASE-NAME-sumologic-otelcol-instrumentation
+                    - key: app
+                      operator: In
+                      values:
+                        - prometheus-operator-prometheus
+                topologyKey: "kubernetes.io/hostname"
+      topologySpreadConstraints:
+        - maxSkew: 4
+      securityContext:
+        allowPrivilegeEscalation: false
+      priorityClassName: "high-priority"
+      containers:
+        - ports:
+            - containerPort: 3000
+          image: sumologic/kubernetes-tools:2.22.0
+          name: sumologic-mock
+          args:
+            - receiver-mock
+            - --hostname=RELEASE-NAME-sumologic-sumologic-mock.collection
+
+            - --print-logs
+            - --print-metrics
+            - --print-headers
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 3Gi
+            requests:
+              cpu: 1000m
+              memory: 1Gi
+      hostname: receiver-mock
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: regcred
