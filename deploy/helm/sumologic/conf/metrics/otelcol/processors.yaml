@@ -139,7 +139,7 @@ routing:
     - debug
 {{- end }}
 {{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
-    - sumologic/sumologic-mock/prometheus
+    - sumologic/sumologic-mock-default
 {{- end }}
   error_mode: ignore
   table:

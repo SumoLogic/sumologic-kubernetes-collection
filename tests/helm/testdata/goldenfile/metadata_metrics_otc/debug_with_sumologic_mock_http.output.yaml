@@ -238,7 +238,7 @@ data:
         default_exporters:
         - sumologic/default
         - debug
-        - sumologic/sumologic-mock/prometheus
+        - sumologic/sumologic-mock-default
         error_mode: ignore
         table:
         - exporters:
