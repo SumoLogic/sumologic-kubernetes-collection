@@ -19,7 +19,7 @@ exporters:
       storage: file_storage
 {{- end }}
 
-{{- if eq .Values.debug.logs.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock-containers:
     endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
     json_logs:
@@ -50,7 +50,7 @@ exporters:
       storage: file_storage
 {{- end }}
 
-{{- if eq .Values.debug.logs.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock-systemd:
     endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
     json_logs:
@@ -81,7 +81,7 @@ exporters:
       storage: file_storage
 {{- end }}
 
-{{- if eq .Values.debug.logs.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock:
     client: {{ include "sumologic.sumo_client" . }}
     endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver

@@ -3,7 +3,7 @@ debug:
   verbosity: detailed
 {{- end }}
 
-{{- if eq .Values.debug.metrics.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
 sumologic/sumologic-mock-default:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: {{ include "metrics.otelcol.exporter.format" . }}

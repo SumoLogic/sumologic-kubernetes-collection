@@ -70,12 +70,12 @@ Return the exporters for container log pipeline.
 {{- define "logs.otelcol.container.exporters" -}}
 {{- if eq .Values.sumologic.logs.sourceType "http" -}}
 - sumologic/containers
-{{- if eq .Values.debug.logs.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
 - sumologic/sumologic-mock-containers
 {{- end }}
 {{- else if eq .Values.sumologic.logs.sourceType "otlp" }}
 - sumologic
-{{- if eq .Values.debug.logs.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
 - sumologic/sumologic-mock
 {{- end }}
 {{- else -}}
@@ -94,12 +94,12 @@ Return the exporters for systemd log pipeline.
 {{- define "logs.otelcol.systemd.exporters" -}}
 {{- if eq .Values.sumologic.logs.sourceType "http" -}}
 - sumologic/systemd
-{{- if eq .Values.debug.logs.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
 - sumologic/sumologic-mock-systemd
 {{- end }}
 {{- else if eq .Values.sumologic.logs.sourceType "otlp" }}
 - sumologic
-{{- if eq .Values.debug.logs.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
 - sumologic/sumologic-mock
 {{- end }}
 {{- else -}}
@@ -118,12 +118,12 @@ Return the exporters for kubelet log pipeline.
 {{- define "logs.otelcol.kubelet.exporters" -}}
 {{- if eq .Values.sumologic.logs.sourceType "http" }}
 - sumologic/systemd
-{{- if eq .Values.debug.logs.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
 - sumologic/sumologic-mock-systemd
 {{- end }}
 {{- else if eq .Values.sumologic.logs.sourceType "otlp" }}
 - sumologic
-{{- if eq .Values.debug.logs.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
 - sumologic/sumologic-mock
 {{- end }}
 {{- else }}

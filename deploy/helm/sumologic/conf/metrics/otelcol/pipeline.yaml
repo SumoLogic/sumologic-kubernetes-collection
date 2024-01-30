@@ -3,7 +3,7 @@ exporters:
 {{- if eq .Values.debug.metrics.metadata.print true }}
   - debug
 {{- end }}
-{{- if eq .Values.debug.metrics.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
   - sumologic/sumologic-mock-default
 {{- end }}
 {{- if eq .Values.sumologic.metrics.sourceType "http" }}
@@ -14,7 +14,7 @@ exporters:
   - sumologic/node
   - sumologic/scheduler
   - sumologic/state
-{{- if eq .Values.debug.metrics.metadata.forwardToSumologicMock true }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
   - sumologic/sumologic-mock-http
 {{- end }}
 {{- end }}
