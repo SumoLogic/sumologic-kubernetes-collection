@@ -1,0 +1,8 @@
+debug:
+  sumologicMock:
+    enabled: true
+  metrics:
+    metadata:
+      print: true
+      forwardToSumologicMock: true
+      stopLogsIngestion: true

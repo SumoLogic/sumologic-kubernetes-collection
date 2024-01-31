@@ -1,0 +1,11 @@
+debug:
+  sumologicMock:
+    enabled: true
+  logs:
+    metadata:
+      print: true
+      forwardToSumologicMock: true
+      stopLogsIngestion: true
+sumologic:
+  logs:
+    sourceType: http

@@ -1,0 +1,17 @@
+sumologic:
+  logs:
+    collector:
+      otelcol:
+        enabled: true
+debug:
+  logs:
+    collector:
+      print: true
+      stopLogsIngestion: true
+    metadata:
+      stopLogsIngestion: true
+  metrics:
+    collector:
+      stopLogsIngestion: true
+    metadata:
+      stopLogsIngestion: true

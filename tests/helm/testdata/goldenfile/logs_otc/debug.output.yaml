@@ -13,6 +13,8 @@ metadata:
 data:
   config.yaml: |
     exporters:
+      debug:
+        verbosity: detailed
       otlphttp:
         disable_keep_alives: true
         endpoint: http://${LOGS_METADATA_SVC}.${NAMESPACE}.svc.cluster.local.:4318
@@ -57,6 +59,10 @@ data:
       filelog/containers:
         exclude:
         - /var/log/pods/sumologic-RELEASE-NAME-sumologic-sumologic-mock*/*/*.log
+        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-otelcol-logs*/*/*.log
+        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-otelcol-logs-collector*/*/*.log
+        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-otelcol-metrics*/*/*.log
+        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-metrics*/*/*.log
         include:
         - /var/log/pods/*/*/*.log
         include_file_name: false
@@ -144,38 +150,8 @@ data:
           type: remove
         - default: merge-multiline-logs
           id: multiline
-          routes:
-          - expr: attributes["k8s.container.name"] matches "^.*-foo$"
-            output: merge-multiline-logs-0
-          - expr: attributes["k8s.namespace.name"] == "bar"
-            output: merge-multiline-logs-1
-          - expr: attributes["k8s.namespace.name"] == "foo"
-            output: merge-multiline-logs-2
+          routes: null
           type: router
-        - combine_field: body
-          combine_with: |2+
-
-          id: merge-multiline-logs-0
-          is_first_entry: body matches "@@@Log beginning"
-          output: clean-up-log-file-path
-          source_identifier: attributes["log.file.path"]
-          type: recombine
-        - combine_field: body
-          combine_with: |2+
-
-          id: merge-multiline-logs-1
-          is_first_entry: body matches "---Log beginning"
-          output: clean-up-log-file-path
-          source_identifier: attributes["log.file.path"]
-          type: recombine
-        - combine_field: body
-          combine_with: |2+
-
-          id: merge-multiline-logs-2
-          is_first_entry: 'body matches ": : : Log beginning"'
-          output: clean-up-log-file-path
-          source_identifier: attributes["log.file.path"]
-          type: recombine
         - combine_field: body
           combine_with: |2+
 
@@ -248,6 +224,7 @@ data:
         logs/containers:
           exporters:
           - otlphttp
+          - debug
           processors:
           - batch
           receivers:
@@ -255,6 +232,7 @@ data:
         logs/systemd:
           exporters:
           - otlphttp
+          - debug
           processors:
           - logstransform/systemd
           - batch

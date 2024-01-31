@@ -1,5 +1,11 @@
 exporters:
   - sumologic/default
+{{- if eq .Values.debug.metrics.metadata.print true }}
+  - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+  - sumologic/sumologic-mock-default
+{{- end }}
 {{- if eq .Values.sumologic.metrics.sourceType "http" }}
   - sumologic/apiserver
   - sumologic/control_plane
@@ -8,6 +14,9 @@ exporters:
   - sumologic/node
   - sumologic/scheduler
   - sumologic/state
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+  - sumologic/sumologic-mock-http
+{{- end }}
 {{- end }}
 processors:
   - memory_limiter

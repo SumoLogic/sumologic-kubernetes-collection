@@ -1,4 +1,9 @@
 exporters:
+{{- if eq .Values.debug.logs.metadata.print true }}
+  debug:
+    verbosity: detailed
+{{- end }}
+
 {{- if eq .Values.sumologic.logs.sourceType "http" }}
 {{ if .Values.sumologic.logs.container.enabled }}
   sumologic/containers:
@@ -13,6 +18,22 @@ exporters:
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
+
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
+  sumologic/sumologic-mock-containers:
+    endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
+    json_logs:
+      add_timestamp: false
+    log_format: {{ include "logs.otelcol.container.exporter.format" . }}
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10_000
+{{- if .Values.metadata.persistence.enabled }}
+      storage: file_storage
+{{- end }}
+{{- end }}
+
 {{- end }}
 
 {{ if .Values.sumologic.logs.systemd.enabled }}
@@ -28,6 +49,22 @@ exporters:
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
 {{- end }}
+
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
+  sumologic/sumologic-mock-systemd:
+    endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
+    json_logs:
+      add_timestamp: false
+    log_format: json
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10_000
+{{- if .Values.metadata.persistence.enabled }}
+      storage: file_storage
+{{- end }}
+{{- end }}
+
 {{- end }}
 
 {{ else }}
@@ -42,6 +79,21 @@ exporters:
       queue_size: 10_000
 {{- if .Values.metadata.persistence.enabled }}
       storage: file_storage
+{{- end }}
+
+{{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
+  sumologic/sumologic-mock:
+    client: {{ include "sumologic.sumo_client" . }}
+    endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
+    log_format: otlp
+    clear_logs_timestamp: false
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10_000
+{{- if .Values.metadata.persistence.enabled }}
+      storage: file_storage
+{{- end }}
 {{- end }}
 {{- end }}
 

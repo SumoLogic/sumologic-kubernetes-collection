@@ -55,6 +55,8 @@ data:
           type: remove
     receivers:
       filelog/containers:
+        exclude:
+        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-sumologic-mock*/*/*.log
         include:
         - /var/log/pods/*/*/*.log
         include_file_name: false

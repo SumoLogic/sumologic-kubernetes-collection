@@ -135,38 +135,92 @@ resource/remove_k8s_pod_pod_name:
 routing:
   default_exporters:
     - sumologic/default
+{{- if eq .Values.debug.metrics.metadata.print true }}
+    - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+    - sumologic/sumologic-mock-default
+{{- end }}
   error_mode: ignore
   table:
     ## apiserver metrics
     - exporters:
         - sumologic/apiserver
+{{- if eq .Values.debug.metrics.metadata.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+        - sumologic/sumologic-mock-http
+{{- end }}
       statement: route() where resource.attributes["job"] == "apiserver"
     ## control-plane metrics
     - exporters:
         - sumologic/control_plane
+{{- if eq .Values.debug.metrics.metadata.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+        - sumologic/sumologic-mock-http
+{{- end }}
       statement: route() where resource.attributes["job"] == "coredns"
     - exporters:
         - sumologic/control_plane
+{{- if eq .Values.debug.metrics.metadata.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+        - sumologic/sumologic-mock-http
+{{- end }}
       statement: route() where resource.attributes["job"] == "kube-etcd"
     ## controller metrics
     - exporters:
         - sumologic/controller
+{{- if eq .Values.debug.metrics.metadata.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+        - sumologic/sumologic-mock-http
+{{- end }}
       statement: route() where resource.attributes["job"] == "kube-controller-manager"
     ## kubelet metrics
     - exporters:
         - sumologic/kubelet
+{{- if eq .Values.debug.metrics.metadata.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+        - sumologic/sumologic-mock-http
+{{- end }}
       statement: route() where resource.attributes["job"] == "kubelet"
     ## node metrics
     - exporters:
         - sumologic/node
+{{- if eq .Values.debug.metrics.metadata.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+        - sumologic/sumologic-mock-http
+{{- end }}
       statement: route() where resource.attributes["job"] == "node-exporter"
     ## scheduler metrics
     - exporters:
         - sumologic/scheduler
+{{- if eq .Values.debug.metrics.metadata.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+        - sumologic/sumologic-mock-http
+{{- end }}
       statement: route() where resource.attributes["job"] == "kube-scheduler"
     ## state metrics
     - exporters:
         - sumologic/state
+{{- if eq .Values.debug.metrics.metadata.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-metrics-metadata" .) "true" }}
+        - sumologic/sumologic-mock-http
+{{- end }}
       statement: route() where resource.attributes["job"] == "kube-state-metrics"
 {{- end }}
 

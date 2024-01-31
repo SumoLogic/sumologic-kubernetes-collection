@@ -2550,3 +2550,51 @@ pvcCleaner:
     ## securityContext for pvcCleaner pods
     securityContext:
       runAsUser: 1000
+
+debug:
+  sumologicMock:
+    enabled: false
+    image:
+      repository: public.ecr.aws/sumologic/sumlogic-mock
+      tag: 2.22.0-59-g245ae92
+      pullPolicy: IfNotPresent
+    deployment:
+      nodeSelector: {}
+      tolerations: {}
+      securityContext: {}
+      ## Option to define priorityClassName to assign a priority class to pods.
+      priorityClassName:
+
+      ## Acceptable values for podAntiAffinity:
+      ## soft: specifies preferences that the scheduler will try to enforce but will not guarantee (Default)
+      ## hard: specifies rules that must be met for a pod to be scheduled onto a node
+      podAntiAffinity: "soft"
+      affinity: {}
+
+      resources:
+        limits:
+          memory: 2Gi
+          cpu: 1000m
+        requests:
+          memory: 768Mi
+          cpu: 100m
+
+      extraArgs: []
+
+  logs:
+    metadata:
+      print: false
+      forwardToSumologicMock: false
+      stopLogsIngestion: false
+    collector:
+      print: false
+      stopLogsIngestion: false
+
+  metrics:
+    metadata:
+      print: false
+      forwardToSumologicMock: false
+      stopLogsIngestion: false
+    collector:
+      print: false
+      stopLogsIngestion: false

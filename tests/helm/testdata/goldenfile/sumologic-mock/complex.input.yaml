@@ -1,0 +1,45 @@
+namespaceOverride: "collection"
+debug:
+  sumologicMock:
+    enabled: true
+    deployment:
+      nodeSelector:
+        disktype: ssd
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                  - key: another-node-label-key
+                    operator: In
+                    values:
+                      - another-node-label-value
+              weight: 1
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/e2e-az-name
+                    operator: In
+                    values:
+                      - e2e-az1
+                      - e2e-az2
+      tolerations:
+        - effect: NoSchedule
+          key: key1
+          operator: Equal
+          value: value1
+      securityContext:
+        allowPrivilegeEscalation: false
+      priorityClassName: "high-priority"
+      resources:
+        limits:
+          memory: 3Gi
+          cpu: 2000m
+        requests:
+          memory: 1Gi
+          cpu: 1000m
+
+      extraArgs:
+        - --print-logs
+        - --print-metrics
+        - --print-headers
