@@ -52,7 +52,7 @@ spec:
       containers:
       - ports:
           - containerPort: {{ template "sumologic-mock.port" . }}
-        image: sumologic/sumologic-mock:2.22.0-59-g245ae92
+        image: {{ .Values.debug.sumologicMock.image.repository }}:{{ .Values.debug.sumologicMock.image.tag }}
         name: sumologic-mock
         args:
           - sumologic-mock

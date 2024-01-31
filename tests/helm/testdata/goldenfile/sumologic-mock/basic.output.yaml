@@ -28,10 +28,10 @@ spec:
       containers:
         - ports:
             - containerPort: 3000
-          image: sumologic/kubernetes-tools:2.22.0
+          image: public.ecr.aws/sumologic/sumlogic-mock:2.22.0-59-g245ae92
           name: sumologic-mock
           args:
-            - receiver-mock
+            - sumologic-mock
             - --hostname=RELEASE-NAME-sumologic-sumologic-mock.sumologic
           securityContext:
             capabilities:
