@@ -52,10 +52,10 @@ spec:
       containers:
       - ports:
           - containerPort: {{ template "sumologic-mock.port" . }}
-        image: sumologic/kubernetes-tools:2.22.0
+        image: sumologic/sumologic-mock:2.22.0-59-g245ae92
         name: sumologic-mock
         args:
-          - receiver-mock
+          - sumologic-mock
           - --hostname={{ template "sumologic-mock.hostname" . }}
           {{- if .Values.debug.sumologicMock.deployment.extraArgs }}
           {{- toYaml .Values.debug.sumologicMock.deployment.extraArgs | nindent 10 }}
