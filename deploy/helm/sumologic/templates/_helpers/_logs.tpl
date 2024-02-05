@@ -320,6 +320,14 @@ Return the otelcol log collector image
 {{ template "utils.getOtelImage" (dict "overrideImage" .Values.otellogs.image "defaultImage" .Values.sumologic.otelcolImage) }}
 {{- end -}}
 
+{{- define "sumologic.logs.collector.tolerations" -}}
+{{- if .Values.otellogs.daemonset.tolerations  -}}
+{{- toYaml .Values.otellogs.daemonset.tolerations  -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Check if autoscaling for metadata logs is enabled.
 
