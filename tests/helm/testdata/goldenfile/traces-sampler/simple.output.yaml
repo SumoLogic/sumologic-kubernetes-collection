@@ -54,3 +54,6 @@ data:
           - batch
           receivers:
           - otlp
+      telemetry:
+        logs:
+          level: info
