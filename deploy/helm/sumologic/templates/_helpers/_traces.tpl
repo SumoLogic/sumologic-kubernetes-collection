@@ -316,3 +316,7 @@ Example Usage:
 {{- template "kubernetes.defaultTolerations" . -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "tracesGateway.collector.files.list" -}}
+- /var/log/pods/{{ template "sumologic.namespace" . }}-{{ template "sumologic.metadata.name.tracesgateway" . }}*/*/*.log
+{{- end -}}

@@ -63,6 +63,7 @@ data:
         - /var/log/pods/sumologic-RELEASE-NAME-sumologic-otelcol-logs-collector*/*/*.log
         - /var/log/pods/sumologic-RELEASE-NAME-sumologic-otelcol-metrics*/*/*.log
         - /var/log/pods/sumologic-RELEASE-NAME-sumologic-metrics*/*/*.log
+        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-traces-gateway*/*/*.log
         include:
         - /var/log/pods/*/*/*.log
         include_file_name: false
