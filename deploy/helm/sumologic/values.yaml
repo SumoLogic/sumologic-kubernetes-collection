@@ -523,10 +523,12 @@ sumologic:
         ## Configuration for kubelet metrics
         kubelet:
           enabled: true
+          metricRegex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
 
         ## Configuration for cAdvisor metrics
         cAdvisor:
           enabled: true
+          metricRegex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
 
         ## Enable collection of metrics from Pods annotated with prometheus.io/* keys.
         ## See https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics#application-metrics-are-exposed-one-endpoint-scenario for more information.
