@@ -126,7 +126,7 @@ receivers:
             - role: node
           metric_relabel_configs:
             - action: keep
-              regex: (?:kubelet_docker_operations_errors(?:|_total)|kubelet_(?:docker|runtime)_operations_duration_seconds_(?:count|sum)|kubelet_running_(?:container|pod)(?:_count|s)|kubelet_(:?docker|runtime)_operations_latency_microseconds(?:|_count|_sum))
+              regex: {{ $collectorConfig.kubelet.metricRegex }}
               source_labels: [__name__]
             - action: labeldrop
               regex: id
@@ -164,7 +164,7 @@ receivers:
               source_labels: [__name__]
               target_label: job
             - action: keep
-              regex: (?:container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_fs_usage_bytes|container_fs_limit_bytes|container_cpu_cfs_throttled_seconds_total|container_network_receive_bytes_total|container_network_transmit_bytes_total)
+              regex: {{ $collectorConfig.cAdvisor.metricRegex }}
               source_labels: [__name__]
             ## Drop container metrics with container tag set to an empty string:
             ## these are the pod aggregated container metrics which can be aggregated

@@ -1,0 +1,8 @@
+sumologic:
+  metrics:
+    collector:
+      otelcol:
+        kubelet:
+          metricRegex: kubelet_running_pods
+        cAdvisor:
+          metricRegex: container_cpu_usage_total
