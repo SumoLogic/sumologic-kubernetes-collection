@@ -70,6 +70,9 @@ receivers:
       {{ if eq .Values.debug.metrics.collector.stopLogsIngestion true }}
       {{ include "metrics.collector.files.list" . }}
       {{ end }}
+      {{ if eq .Values.debug.instrumentation.otelcolInstrumentation.stopLogsIngestion true }}
+      {{ include "otelcolInstrumentation.collector.files.list" . }}
+      {{ end }}
 
 {{ if lt (int (include "kubernetes.minor" .)) 24 }}
     ## sets fingerprint_size to 17kb in order to match the longest possible docker line (which by default is 16kb)
