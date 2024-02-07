@@ -9,6 +9,11 @@
 {{ else }}
 {{ $finalConfig = mergeOverwrite $baseConfig $mergeConfig }}
 {{ end }}
+{{ $valuesYamlConfig := .Values.tracesSampler.config }}
+{{ $useValuesYamlConfig := include "useDefaultConfig" $valuesYamlConfig | trim }}
+{{ if eq $useValuesYamlConfig "true" }}
+{{ $finalConfig = include "removeMergeAndOverrideKeys" .Values.tracesSampler.config }}
+{{ end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -19,5 +24,9 @@ metadata:
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
   traces.sampler.conf.yaml: |
+  {{- if eq $useValuesYamlConfig "true" }}
+  {{- $finalConfig | nindent 4 }}
+  {{- else }}
   {{- $finalConfig | toYaml | nindent 4 }}
+  {{- end }}
 {{- end }}
