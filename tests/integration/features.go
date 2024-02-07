@@ -18,13 +18,14 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
 	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/receivermock"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/stepfuncs"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/sumologicmock"
 )
 
 type MetricsCollector string
@@ -60,7 +61,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		Assess("expected labels are present for container metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				// Get the receiver mock pod as metrics source
-				res := envConf.Client().Resources(internal.ReceiverMockNamespace)
+				res := envConf.Client().Resources(internal.OverrideNamespace)
 				podList := corev1.PodList{}
 				require.NoError(t,
 					wait.For(
@@ -68,35 +69,35 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 							ResourceListN(
 								&podList,
 								1,
-								resources.WithLabelSelector("app=receiver-mock"),
+								resources.WithLabelSelector("app=sumologic-mock"),
 							),
 						wait.WithTimeout(waitDuration),
 						wait.WithInterval(tickDuration),
 					),
 				)
-				metricFilters := receivermock.MetadataFilters{
+				metricFilters := sumologicmock.MetadataFilters{
 					"__name__": "container_memory_working_set_bytes",
 					"pod":      podList.Items[0].Name,
 				}
 				releaseName := ctxopts.HelmRelease(ctx)
 				namespace := ctxopts.Namespace(ctx)
-				expectedLabels := receivermock.Labels{
+				expectedLabels := sumologicmock.Labels{
 					"cluster":                      "kubernetes",
 					"_origin":                      "kubernetes",
-					"container":                    "receiver-mock",
-					"deployment":                   "receiver-mock",
+					"container":                    "sumologic-mock",
+					"deployment":                   ".*sumologic-mock.*",
 					"endpoint":                     "https-metrics",
-					"image":                        "sumologic/kubernetes-tools:.*",
+					"image":                        "sumologic/sumologic-mock:.*",
 					"job":                          "kubelet",
 					"metrics_path":                 "/metrics/cadvisor",
-					"namespace":                    "receiver-mock",
+					"namespace":                    ctxopts.Namespace(ctx),
 					"node":                         internal.NodeNameRegex,
-					"pod_labels_app":               "receiver-mock",
+					"pod_labels_app":               "sumologic-mock",
 					"pod_labels_pod-template-hash": ".+",
-					"pod_labels_service":           "receiver-mock",
+					"pod_labels_service":           "sumologic-mock",
 					"pod":                          podList.Items[0].Name,
-					"replicaset":                   "receiver-mock-.*",
-					"service":                      "receiver-mock",
+					"replicaset":                   ".*sumologic-mock.*",
+					"service":                      ".*sumologic-mock.*",
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 
@@ -105,19 +106,19 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		).
 		Assess("expected labels are present for non-pod kube-state-metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				metricFilters := receivermock.MetadataFilters{
+				metricFilters := sumologicmock.MetadataFilters{
 					"__name__":   "kube_deployment_spec_replicas",
-					"deployment": "receiver-mock",
+					"deployment": ".*sumologic-mock-.*",
 				}
 				releaseName := ctxopts.HelmRelease(ctx)
 				namespace := ctxopts.Namespace(ctx)
-				expectedLabels := receivermock.Labels{
+				expectedLabels := sumologicmock.Labels{
 					"cluster":    "kubernetes",
 					"_origin":    "kubernetes",
-					"deployment": "receiver-mock",
+					"deployment": ".*sumologic-mock.*",
 					"endpoint":   "http",
 					"job":        "kube-state-metrics",
-					"namespace":  "receiver-mock",
+					"namespace":  ctxopts.Namespace(ctx),
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 				// drop some unnecessary labels
@@ -130,13 +131,13 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				releaseName := ctxopts.HelmRelease(ctx)
 				deployment := fmt.Sprintf("%s-kube-state-metrics", releaseName)
-				metricFilters := receivermock.MetadataFilters{
+				metricFilters := sumologicmock.MetadataFilters{
 					"__name__":   "kube_pod_status_phase",
 					"phase":      "Running",
 					"deployment": deployment,
 				}
 				namespace := ctxopts.Namespace(ctx)
-				expectedLabels := receivermock.Labels{
+				expectedLabels := sumologicmock.Labels{
 					"cluster":                                "kubernetes",
 					"_origin":                                "kubernetes",
 					"container":                              "kube-state-metrics",
@@ -177,7 +178,7 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 		Assess("expected metrics are present",
 			stepfuncs.WaitUntilExpectedMetricsPresentWithFilters(
 				expectedMetrics,
-				receivermock.MetadataFilters{"job": "pod-annotations"},
+				sumologicmock.MetadataFilters{"job": "pod-annotations"},
 				errOnExtra,
 				waitDuration*2, // wait longer here, as it can take a bit of time for Nginx to start with the sidecar
 				tickDuration,
@@ -185,10 +186,10 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 		).
 		Assess("expected labels are present for annotation metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				metricFilters := receivermock.MetadataFilters{"__name__": "nginx_accepts", "job": "pod-annotations"}
+				metricFilters := sumologicmock.MetadataFilters{"__name__": "nginx_accepts", "job": "pod-annotations"}
 				releaseName := ctxopts.HelmRelease(ctx)
 				namespace := ctxopts.Namespace(ctx)
-				expectedLabels := receivermock.Labels{
+				expectedLabels := sumologicmock.Labels{
 					"cluster":                      "kubernetes",
 					"_origin":                      "kubernetes",
 					"deployment":                   "nginx",
@@ -220,19 +221,19 @@ func GetTelegrafMetricsFeature(expectedMetrics []string, metricsCollector Metric
 }
 
 // addCollectorSpecificMetricLabels adds labels which are present only for the specific metric collector or metadata Service
-func addCollectorSpecificMetricLabels(labels receivermock.Labels, releaseName string, serviceMonitorNamespace string, collector MetricsCollector) receivermock.Labels {
-	outputLabels := make(receivermock.Labels, len(labels))
+func addCollectorSpecificMetricLabels(labels sumologicmock.Labels, releaseName string, serviceMonitorNamespace string, collector MetricsCollector) sumologicmock.Labels {
+	outputLabels := make(sumologicmock.Labels, len(labels))
 	for key, value := range labels {
 		outputLabels[key] = value
 	}
-	prometheusLabels := receivermock.Labels{
+	prometheusLabels := sumologicmock.Labels{
 		"_collector":         "kubernetes",
 		"instance":           internal.IpWithPortRegex,
 		"prometheus_replica": fmt.Sprintf("prometheus-%s-.*-0", releaseName),
 		"prometheus":         fmt.Sprintf("%s/%s-.*-prometheus", serviceMonitorNamespace, releaseName),
 		"prometheus_service": fmt.Sprintf("%s-.*-kubelet", releaseName),
 	}
-	otelcolLabels := receivermock.Labels{
+	otelcolLabels := sumologicmock.Labels{
 		"_collector": "kubernetes",
 	}
 
@@ -568,6 +569,7 @@ func CheckSumologicSecret(endpointCount int) featureCheck {
 	return func(builder *features.FeatureBuilder) *features.FeatureBuilder {
 		return builder.Assess("sumologic secret is created with endpoints",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				logger.Logf(t, fmt.Sprintf("%s:%v\n", "sumologic", ctxopts.KubectlOptions(ctx)))
 				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
 				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
 				require.Len(t, secret.Data, endpointCount, "Secret has incorrect number of endpoints")

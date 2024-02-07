@@ -1,4 +1,4 @@
-package receivermock
+package sumologicmock
 
 import (
 	"context"
@@ -22,31 +22,31 @@ type MetricCounts map[string]int
 type SpanId string
 type TraceId string
 
-// A HTTP client for the receiver-mock API
-type ReceiverMockClient struct {
+// A HTTP client for the sumologic-mock API
+type SumologicMockClient struct {
 	baseUrl   url.URL
 	tlsConfig tls.Config
 }
 
-func NewClient(t *testing.T, baseUrl url.URL) *ReceiverMockClient {
-	return &ReceiverMockClient{baseUrl: baseUrl, tlsConfig: tls.Config{}}
+func NewClient(t *testing.T, baseUrl url.URL) *SumologicMockClient {
+	return &SumologicMockClient{baseUrl: baseUrl, tlsConfig: tls.Config{}}
 }
 
-// NewClientWithK8sTunnel creates a client for receiver-mock.
+// NewClientWithK8sTunnel creates a client for sumologic-mock.
 // It return the client itself and a tunnel teardown func which should be called
 // by the caller when they're done with it.
 func NewClientWithK8sTunnel(
 	ctx context.Context,
 	t *testing.T,
-) (*ReceiverMockClient, func()) {
-	tunnel := k8s.TunnelForReceiverMock(ctx, t)
+) (*SumologicMockClient, func()) {
+	tunnel := k8s.TunnelForSumologicMock(ctx, t)
 	baseUrl := url.URL{
 		Scheme: "http",
 		Host:   tunnel.Endpoint(),
 		Path:   "/",
 	}
 
-	return &ReceiverMockClient{
+	return &SumologicMockClient{
 			baseUrl:   baseUrl,
 			tlsConfig: tls.Config{},
 		}, func() {
@@ -54,8 +54,8 @@ func NewClientWithK8sTunnel(
 		}
 }
 
-// GetMetricCounts returns the number of times each metric was received by receiver-mock
-func (client *ReceiverMockClient) GetMetricCounts(t *testing.T) (MetricCounts, error) {
+// GetMetricCounts returns the number of times each metric was received by sumologic-mock
+func (client *SumologicMockClient) GetMetricCounts(t *testing.T) (MetricCounts, error) {
 	path := parseUrl(t, "metrics-list")
 	url := client.baseUrl.ResolveReference(path)
 
@@ -89,10 +89,10 @@ func (m MetricsSamplesByTime) Less(i, j int) bool { return m[i].Timestamp > m[j]
 
 type MetadataFilters map[string]string
 
-// GetMetricSamples returns metric samples received by receiver-mock that pass
+// GetMetricSamples returns metric samples received by sumologic-mock that pass
 // the provided metadata filter.
 // Note that in the filter semantics, empty strings match any value
-func (client *ReceiverMockClient) GetMetricsSamples(
+func (client *SumologicMockClient) GetMetricsSamples(
 	metadataFilters MetadataFilters,
 ) ([]MetricSample, error) {
 	path, err := url.Parse("metrics-samples")
@@ -130,10 +130,10 @@ type LogsCountResponse struct {
 	Count uint
 }
 
-// GetLogsCount returns the numbers of logs received by receiver-mock that pass
+// GetLogsCount returns the numbers of logs received by sumologic-mock that pass
 // the provided metadata filter.
 // Note that in the filter semantics, empty strings match any value
-func (client *ReceiverMockClient) GetLogsCount(t *testing.T, metadataFilters MetadataFilters) (uint, error) {
+func (client *SumologicMockClient) GetLogsCount(t *testing.T, metadataFilters MetadataFilters) (uint, error) {
 	path := parseUrl(t, "logs/count")
 
 	queryParams := url.Values{}
@@ -172,7 +172,7 @@ type Span struct {
 	Labels       Labels  `json:"attributes,omitempty"`
 }
 
-func (client *ReceiverMockClient) GetSpansCount(t *testing.T, metadataFilters MetadataFilters) (uint, error) {
+func (client *SumologicMockClient) GetSpansCount(t *testing.T, metadataFilters MetadataFilters) (uint, error) {
 	path := parseUrl(t, "spans-list")
 
 	queryParams := url.Values{}
@@ -202,7 +202,7 @@ func (client *ReceiverMockClient) GetSpansCount(t *testing.T, metadataFilters Me
 	return uint(len(spans)), nil
 }
 
-func (client *ReceiverMockClient) GetTracesCounts(t *testing.T, metadataFilters MetadataFilters) ([]uint, error) {
+func (client *SumologicMockClient) GetTracesCounts(t *testing.T, metadataFilters MetadataFilters) ([]uint, error) {
 	path := parseUrl(t, "traces-list")
 
 	queryParams := url.Values{}
@@ -238,7 +238,7 @@ func (client *ReceiverMockClient) GetTracesCounts(t *testing.T, metadataFilters 
 }
 
 // parse metrics list returned by /metrics-list
-// https://github.com/SumoLogic/sumologic-kubernetes-tools/tree/main/src/rust/receiver-mock#statistics
+// https://github.com/SumoLogic/sumologic-kubernetes-tools/tree/main/src/rust/sumologic-mock#statistics
 func parseMetricList(rawMetricsValues string) (map[string]int, error) {
 	metricNameToCount := make(map[string]int)
 	lines := strings.Split(rawMetricsValues, "\n")

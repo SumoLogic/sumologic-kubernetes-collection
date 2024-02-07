@@ -75,15 +75,13 @@ func WaitUntilPodsAvailableE(
 	return nil
 }
 
-func WaitUntilReceiverMockAvailable(
+func WaitUntilSumologicMockAvailable(
 	ctx context.Context,
 	t *testing.T,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) {
-	kubectlOpts := *ctxopts.KubectlOptions(ctx)
-	kubectlOpts.Namespace = internal.ReceiverMockNamespace
-	k8s.WaitUntilServiceAvailable(t, &kubectlOpts, internal.ReceiverMockServiceName, int(waitDuration), tickDuration)
+	k8s.WaitUntilServiceAvailable(t, ctxopts.KubectlOptions(ctx), fmt.Sprintf("%s-%s", ctxopts.HelmRelease(ctx), internal.SumologicMockServiceName), int(waitDuration), tickDuration)
 }
 
 func formatSelectors(listOptions v1.ListOptions) string {
