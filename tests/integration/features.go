@@ -18,7 +18,6 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
 	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
-	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -569,7 +568,6 @@ func CheckSumologicSecret(endpointCount int) featureCheck {
 	return func(builder *features.FeatureBuilder) *features.FeatureBuilder {
 		return builder.Assess("sumologic secret is created with endpoints",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-				logger.Logf(t, fmt.Sprintf("%s:%v\n", "sumologic", ctxopts.KubectlOptions(ctx)))
 				terrak8s.WaitUntilSecretAvailable(t, ctxopts.KubectlOptions(ctx), "sumologic", 60, tickDuration)
 				secret := terrak8s.GetSecret(t, ctxopts.KubectlOptions(ctx), "sumologic")
 				require.Len(t, secret.Data, endpointCount, "Secret has incorrect number of endpoints")
