@@ -608,5 +608,5 @@ Example usage:
 {{- end -}}
 
 {{- define "sumologic.sumologic-mock.name.roles.serviceaccount" -}}
-{{- template "sumologic.fullname" . }}
+{{- template "sumologic.fullname" . }}-sumologic-mock
 {{- end -}}
