@@ -67,7 +67,7 @@ spec:
             name: {{ .Values.sumologic.envFromSecret | default (include "sumologic.metadata.name.setup.secret" .)}}
         env:
         - name: SUMOLOGIC_BASE_URL
-{{- if eq (include "sumologic-mock.sumologic-mock.local-mode-enabled" .) "true" }}
+{{- if eq (include "sumologic-mock.local-mode-enabled" .) "true" }}
           value: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/terraform/api/
 {{- else }}
           value: {{ .Values.sumologic.endpoint }}
