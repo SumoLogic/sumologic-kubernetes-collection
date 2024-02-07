@@ -1,0 +1,59 @@
+---
+# Source: sumologic/templates/cleanup/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: RELEASE-NAME-sumologic-cleanup
+  namespace: sumologic
+  annotations:
+    helm.sh/hook: pre-delete
+    helm.sh/hook-weight: "3"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app: RELEASE-NAME-sumologic-cleanup
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+spec:
+  template:
+    metadata:
+      annotations:
+      labels:
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: RELEASE-NAME-sumologic-cleanup
+      volumes:
+        - name: configmap
+          configMap:
+            name: RELEASE-NAME-sumologic-cleanup
+            defaultMode: 0777
+        - name: cleanup
+          emptyDir: {}
+      initContainers:
+        - name: copy-files
+          image: public.ecr.aws/docker/library/busybox:latest
+          command: ["sh", "-c", "cp /configmap/* /etc/terraform"]
+          volumeMounts:
+            - name: configmap
+              mountPath: /configmap
+            - name: cleanup
+              mountPath: /etc/terraform
+      containers:
+        - name: cleanup
+          image: public.ecr.aws/sumologic/kubernetes-setup:3.11.0
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: cleanup
+              mountPath: /etc/terraform
+          command: ["/etc/terraform/cleanup.sh"]
+          envFrom:
+            - secretRef:
+                name: RELEASE-NAME-sumologic-setup
+          env:
+            - name: SUMOLOGIC_BASE_URL
+              value:
+
+            - name: NO_PROXY
+              value: kubernetes.default.svc
+      securityContext:
+        runAsUser: 999
