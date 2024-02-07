@@ -2553,7 +2553,7 @@ pvcCleaner:
 
 debug:
   ## Use it along with `debug.sumologicMock.enabled` in order to install collection locally without accessId, accessKey
-  localModeEnabled: false
+  enableLocalMode: false
   sumologicMock:
     enabled: false
     image:

@@ -75,7 +75,7 @@ helm.sh/hook-weight: {{ printf "\"%s\"" . }}
 {{- end -}}
 
 {{- define "sumologic-mock.local-mode-enabled" }}
-{{- if and (eq .Values.debug.sumologicMock.enabled true) (eq .Values.debug.localModeEnabled true) -}}
+{{- if and (eq .Values.debug.sumologicMock.enabled true) (eq .Values.debug.enableLocalMode true) -}}
 true
 {{- end -}}
 {{- end -}}
