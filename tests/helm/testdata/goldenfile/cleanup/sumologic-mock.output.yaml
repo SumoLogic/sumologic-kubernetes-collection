@@ -1,16 +1,16 @@
 ---
-# Source: sumologic/templates/setup/job.yaml
+# Source: sumologic/templates/cleanup/job.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: RELEASE-NAME-sumologic-cleanup
   namespace: sumologic
   annotations:
-    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook: pre-delete
     helm.sh/hook-weight: "3"
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
   labels:
-    app: RELEASE-NAME-sumologic
+    app: RELEASE-NAME-sumologic-cleanup
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
@@ -21,33 +21,31 @@ spec:
       labels:
     spec:
       restartPolicy: OnFailure
-      serviceAccountName: RELEASE-NAME-sumologic-setup
+      serviceAccountName: RELEASE-NAME-sumologic-cleanup
       volumes:
-        - name: setup
+        - name: configmap
           configMap:
-            name: RELEASE-NAME-sumologic-setup
+            name: RELEASE-NAME-sumologic-cleanup
             defaultMode: 0777
-        - name: custom
-          configMap:
-            name: RELEASE-NAME-sumologic-setup-custom
-            defaultMode: 0777
+        - name: cleanup
+          emptyDir: {}
+      initContainers:
+        - name: copy-files
+          image: public.ecr.aws/docker/library/busybox:latest
+          command: ["sh", "-c", "cp /configmap/* /etc/terraform"]
+          volumeMounts:
+            - name: configmap
+              mountPath: /configmap
+            - name: cleanup
+              mountPath: /etc/terraform
       containers:
-        - name: setup
+        - name: cleanup
           image: public.ecr.aws/sumologic/kubernetes-setup:3.11.0
           imagePullPolicy: IfNotPresent
-          command: ["/etc/terraform/setup.sh"]
-          resources:
-            limits:
-              cpu: 2000m
-              memory: 256Mi
-            requests:
-              cpu: 200m
-              memory: 64Mi
           volumeMounts:
-            - name: setup
+            - name: cleanup
               mountPath: /etc/terraform
-            - name: custom
-              mountPath: /customer-scripts
+          command: ["/etc/terraform/cleanup.sh"]
           envFrom:
             - secretRef:
                 name: RELEASE-NAME-sumologic-setup
