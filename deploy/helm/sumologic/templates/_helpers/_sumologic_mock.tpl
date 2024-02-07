@@ -74,8 +74,8 @@ helm.sh/hook: pre-install,pre-upgrade
 helm.sh/hook-weight: {{ printf "\"%s\"" . }}
 {{- end -}}
 
-{{- define "sumologic-mock.local-mode-enabled" -}}
-{{- if and (eq .Values.debug.sumologicMock.enabled true) (eq .Values.debug.localModeEnabled true) }}
+{{- define "sumologic-mock.local-mode-enabled" }}
+{{- if and (eq .Values.debug.sumologicMock.enabled true) (eq .Values.debug.localModeEnabled true) -}}
 true
-{{- end }}
+{{- end -}}
 {{- end -}}
