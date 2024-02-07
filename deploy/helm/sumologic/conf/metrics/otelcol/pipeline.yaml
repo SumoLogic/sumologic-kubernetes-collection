@@ -25,7 +25,7 @@ processors:
   - resource
   - k8s_tagger
   - source
-  - sumologic_schema
+  - sumologic
 {{- if .Values.sumologic.metrics.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.metrics.otelcol.extraProcessors }}
 {{ printf "- %s" ( $processor | keys | first ) | indent 2 }}
