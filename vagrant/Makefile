@@ -28,7 +28,6 @@ upgrade:
 		patch-context \
 		remove-tmp \
 		apply-namespace \
-		apply-receiver-mock \
 		grafana-dashboards \
 		helm-dependencies \
 		helm-upgrade \
@@ -301,7 +300,6 @@ install-argocd-binary:
 
 install-argocd:
 	${mkfile_path} \
-		apply-receiver-mock
 	kubectl create namespace argocd
 	kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 	kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
