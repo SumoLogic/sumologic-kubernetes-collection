@@ -420,7 +420,7 @@ processors:
 {{ end }}
 
 {{ if .Values.sumologic.logs.container.enabled }}
-  sumologic_schema:
+  sumologic:
     add_cloud_namespace: false
 {{ end }}
 
@@ -497,7 +497,7 @@ service:
         - resource/add_cluster
         - resource/set_empty_source_metadata
         - resource/containers_copy_node_to_host
-        - sumologic_schema
+        - sumologic
         - source/containers
 {{- if .Values.sumologic.logs.container.otelcol.extraProcessors }}
 {{- range $processor := .Values.sumologic.logs.container.otelcol.extraProcessors }}

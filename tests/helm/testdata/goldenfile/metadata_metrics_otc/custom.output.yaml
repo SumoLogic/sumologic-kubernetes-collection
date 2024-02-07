@@ -242,7 +242,7 @@ data:
         collector: kubernetes
         exclude:
           k8s.namespace.name: ""
-      sumologic_schema:
+      sumologic:
         add_cloud_namespace: false
       transform/remove_name:
         error_mode: ignore
@@ -299,7 +299,7 @@ data:
           - resource
           - k8s_tagger
           - source
-          - sumologic_schema
+          - sumologic
           - resource/remove_k8s_pod_pod_name
           - resource/delete_source_metadata
           - transform/set_name

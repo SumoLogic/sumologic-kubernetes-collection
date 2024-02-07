@@ -243,7 +243,7 @@ data:
         source_category_replace_dash: /
         source_host: '%{_sourceHost}'
         source_name: '%{_sourceName}'
-      sumologic_schema:
+      sumologic:
         add_cloud_namespace: false
       transform/add_timestamp:
         log_statements:
@@ -291,7 +291,7 @@ data:
           - resource/add_cluster
           - resource/set_empty_source_metadata
           - resource/containers_copy_node_to_host
-          - sumologic_schema
+          - sumologic
           - source/containers
           - transform/containers_parse_json
           - resource/remove_pod_name
