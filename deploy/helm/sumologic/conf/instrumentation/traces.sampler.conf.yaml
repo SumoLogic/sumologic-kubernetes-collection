@@ -11,7 +11,11 @@ exporters:
   # logging:
   #   loglevel: debug
   otlphttp:
-    traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}/v1/traces
+{{- if eq .Values.sumologic.traces.sourceType "http" }}
+    traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+{{- else }}
+    endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}
+{{- end}}
     compression: gzip
 receivers:
   otlp:
