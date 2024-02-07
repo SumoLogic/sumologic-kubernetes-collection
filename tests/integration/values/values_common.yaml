@@ -163,5 +163,5 @@ debug:
         - --print-spans
       resources:
         limits:
-          memory: 0
+          memory: 5Gi # unlimited
   enableLocalMode: true
