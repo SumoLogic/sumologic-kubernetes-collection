@@ -47,7 +47,7 @@ data:
         source_category_prefix: ""
         source_category_replace_dash: /
         source_name: events
-      sumologic_schema:
+      sumologic:
         add_cloud_namespace: false
       transform/add_timestamp:
         log_statements:
@@ -70,7 +70,7 @@ data:
           - memory_limiter
           - resource/add_cluster
           - source
-          - sumologic_schema
+          - sumologic
           - transform/add_timestamp
           - batch
           receivers:

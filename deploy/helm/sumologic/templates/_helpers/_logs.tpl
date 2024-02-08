@@ -320,6 +320,14 @@ Return the otelcol log collector image
 {{ template "utils.getOtelImage" (dict "overrideImage" .Values.otellogs.image "defaultImage" .Values.sumologic.otelcolImage) }}
 {{- end -}}
 
+{{- define "sumologic.logs.collector.tolerations" -}}
+{{- if .Values.otellogs.daemonset.tolerations  -}}
+{{- toYaml .Values.otellogs.daemonset.tolerations  -}}
+{{- else -}}
+{{- template "kubernetes.defaultTolerations" . -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Check if autoscaling for metadata logs is enabled.
 
@@ -365,11 +373,11 @@ Example Usage:
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
-- /var/log/pods/{{ template "sumologic.namespace"  $ctx }}-{{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}*/*/*.log
+- /var/log/pods/{{ template "sumologic.namespace"  $ctx }}_{{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}*/*/*.log
 {{- end }}
 {{- end }}
 {{- end }}
 
 {{- define "logs.metadata.files.list" -}}
-- /var/log/pods/{{ template "sumologic.namespace" . }}-{{ template "sumologic.metadata.name.logs.statefulset" . }}*/*/*.log
+- /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.metadata.name.logs.statefulset" . }}*/*/*.log
 {{- end -}}

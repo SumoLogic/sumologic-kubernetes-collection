@@ -231,9 +231,9 @@ source:
   exclude:
     k8s.namespace.name: {{ include "metrics.excludeNamespaces" . }}
 
-## The Sumo Logic Schema processor modifies the metadata on logs, metrics and traces sent to Sumo Logic
+## The Sumo Logic processor modifies the metadata on logs, metrics and traces sent to Sumo Logic
 ## so that the Sumo Logic apps can make full use of the ingested data.
-sumologic_schema:
+sumologic:
   add_cloud_namespace: false
 
 transform/remove_name:

@@ -409,9 +409,9 @@ Example:
 {{- end -}}
 
 {{- define "metrics.collector.files.list" -}}
-- /var/log/pods/{{ template "sumologic.namespace" . }}-{{ template "sumologic.metadata.name.metrics.collector" . }}*/*/*.log
+- /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.metadata.name.metrics.collector" . }}*/*/*.log
 {{- end -}}
 
 {{- define "metrics.metadata.files.list" -}}
-- /var/log/pods/{{ template "sumologic.namespace" . }}-{{ template "sumologic.metadata.name.metrics.statefulset" . }}*/*/*.log
+- /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.metadata.name.metrics.statefulset" . }}*/*/*.log
 {{- end -}}
