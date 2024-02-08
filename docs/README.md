@@ -36,7 +36,7 @@ Documentation links:
   - [Advanced Configuration/Security best practices](https://help.sumologic.com/docs/send-data/kubernetes/security-best-practices/)
   - [Authenticating with container registry](/docs/working-with-container-registries.md#authenticating-with-container-registry)
     - [Using pull secrets with `sumologic-kubernetes-collection` helm chart](/docs/working-with-container-registries.md#authenticating-with-container-registry)
-  - [Collecting Kubernetes events](https://help.sumologic.com/docs/send-data/kubernetes/collecting-kubernetes-events/)
+  - [Collecting Kubernetes events](https://help.sumologic.com/docs/send-data/kubernetes/collecting-events/)
   - Open Telemetry
     - [Open Telemetry with `sumologic-kubernetes-collection`](/docs/opentelemetry-collector/README.md)
     - [Traces - auto-instrumentation in Kubernetes](https://help.sumologic.com/docs/apm/traces/get-started-transaction-tracing/opentelemetry-instrumentation/kubernetes)

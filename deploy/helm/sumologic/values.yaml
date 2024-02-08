@@ -1985,7 +1985,7 @@ tracesGateway:
     override: {}
 
 ## Configuration of the OpenTelemetry Collector that collects Kubernetes events.
-## See https://help.sumologic.com/docs/send-data/kubernetes/collecting-kubernetes-events/.
+## See https://help.sumologic.com/docs/send-data/kubernetes/collecting-events/.
 otelevents:
   ## Configure image for Opentelemetry Collector
   image:
@@ -2517,7 +2517,7 @@ debug:
   sumologicMock:
     enabled: false
     image:
-      repository: public.ecr.aws/sumologic/sumlogic-mock
+      repository: public.ecr.aws/sumologic/sumologic-mock
       tag: 2.22.0-59-g245ae92
       pullPolicy: IfNotPresent
     deployment:

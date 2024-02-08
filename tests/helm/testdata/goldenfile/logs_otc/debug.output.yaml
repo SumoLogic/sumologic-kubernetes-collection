@@ -58,12 +58,12 @@ data:
     receivers:
       filelog/containers:
         exclude:
-        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-sumologic-mock*/*/*.log
-        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-otelcol-logs*/*/*.log
-        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-otelcol-logs-collector*/*/*.log
-        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-otelcol-metrics*/*/*.log
-        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-metrics*/*/*.log
-        - /var/log/pods/sumologic-RELEASE-NAME-sumologic-traces-gateway*/*/*.log
+        - /var/log/pods/sumologic_RELEASE-NAME-sumologic-sumologic-mock*/*/*.log
+        - /var/log/pods/sumologic_RELEASE-NAME-sumologic-otelcol-logs*/*/*.log
+        - /var/log/pods/sumologic_RELEASE-NAME-sumologic-otelcol-logs-collector*/*/*.log
+        - /var/log/pods/sumologic_RELEASE-NAME-sumologic-otelcol-metrics*/*/*.log
+        - /var/log/pods/sumologic_RELEASE-NAME-sumologic-metrics*/*/*.log
+        - /var/log/pods/sumologic_RELEASE-NAME-sumologic-traces-gateway*/*/*.log
         include:
         - /var/log/pods/*/*/*.log
         include_file_name: false

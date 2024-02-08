@@ -126,7 +126,7 @@ func TestMetadataMetricsOtelConfigExtraProcessors(t *testing.T) {
 		"resource",
 		"k8s_tagger",
 		"source",
-		"sumologic_schema",
+		"sumologic",
 		"filter/1",
 		"transform/rename_metric",
 		"transform/rename_metadata",
