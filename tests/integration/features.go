@@ -60,7 +60,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		Assess("expected labels are present for container metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				// Get the receiver mock pod as metrics source
-				res := envConf.Client().Resources(internal.OverrideNamespace)
+				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
 				podList := corev1.PodList{}
 				releaseName := ctxopts.HelmRelease(ctx)
 				deployment := fmt.Sprintf("%s-sumologic-sumologic-mock", releaseName)
