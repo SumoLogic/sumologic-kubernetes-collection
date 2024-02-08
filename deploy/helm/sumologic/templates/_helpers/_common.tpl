@@ -610,3 +610,43 @@ Example usage:
 {{- define "sumologic.sumologic-mock.name.roles.serviceaccount" -}}
 {{- template "sumologic.fullname" . }}
 {{- end -}}
+
+{{- define "useDefaultConfig" }}
+{{/*
+This function checks if any keys other than 'merge' and 'override' exist in a given map.
+It takes a map as an argument and returns true if extra keys are found, else false.
+
+Example usage:
+{{ $useValuesYamlConfig := include "useDefaultConfig" .Values.tracesSampler.config | trim }}
+*/}}
+{{- $map := . -}}
+{{- $extraKeysExist := false -}}
+{{- range $key, $_ := $map }}
+  {{- if and (ne $key "merge") (ne $key "override") }}
+    {{- $extraKeysExist = true -}}
+  {{- end }}
+{{- end }}
+{{- if $extraKeysExist }}
+true
+{{- else }}
+false
+{{- end }}
+{{- end }}
+
+{{- define "removeMergeAndOverrideKeys" -}}
+{{/*
+This function removes keys 'merge' and 'override' in a given map.
+It takes a map as an argument and returns new map without 'merge' and 'override' keys.
+
+Example usage:
+{{ $finalConfig = include "removeMergeAndOverrideKeys" .Values.tracesSampler.config }}
+*/}}
+{{- $originalMap := . -}}
+{{- $newMap := dict -}}
+{{- range $key, $value := $originalMap -}}
+  {{- if and (ne $key "merge") (ne $key "override") -}}
+    {{- $_ := set $newMap $key $value -}}
+  {{- end -}}
+{{- end -}}
+{{ toYaml $newMap }}
+{{- end -}}

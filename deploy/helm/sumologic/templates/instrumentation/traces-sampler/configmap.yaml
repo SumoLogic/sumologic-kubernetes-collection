@@ -1,5 +1,19 @@
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
 {{- if $tracesEnabled }}
+{{ $baseConfig := (tpl (.Files.Get "conf/instrumentation/traces.sampler.conf.yaml") .) | fromYaml }}
+{{ $mergeConfig := .Values.tracesSampler.config.merge }}
+{{ $overrideConfig := .Values.tracesSampler.config.override }}
+{{ $finalConfig := "" }}
+{{ if $overrideConfig }}
+{{ $finalConfig = $overrideConfig }}
+{{ else }}
+{{ $finalConfig = mergeOverwrite $baseConfig $mergeConfig }}
+{{ end }}
+{{ $valuesYamlConfig := .Values.tracesSampler.config }}
+{{ $useValuesYamlConfig := include "useDefaultConfig" $valuesYamlConfig | trim }}
+{{ if eq $useValuesYamlConfig "true" }}
+{{ $finalConfig = include "removeMergeAndOverrideKeys" .Values.tracesSampler.config }}
+{{ end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,5 +23,10 @@ metadata:
     app: {{ template "sumologic.labels.app.tracessampler.configmap" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
-  {{- (tpl (.Files.Glob "conf/instrumentation/traces.sampler.conf.yaml").AsConfig .) | nindent 2 }}
+  traces.sampler.conf.yaml: |
+  {{- if eq $useValuesYamlConfig "true" }}
+  {{- $finalConfig | nindent 4 }}
+  {{- else }}
+  {{- $finalConfig | toYaml | nindent 4 }}
+  {{- end }}
 {{- end }}
