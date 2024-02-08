@@ -122,10 +122,6 @@ otellogs:
       receivers:
         journald:
           directory: /run/log/journal
-        # Prevent snowball effect by filtering out receiver mock logs
-        filelog/containers:
-          exclude:
-            - /var/log/pods/*sumologic-mock_*/*/*.log
   daemonset:
     extraVolumeMounts:
       - mountPath: /run/log/journal
@@ -137,7 +133,6 @@ otellogs:
           path: /run/log/journal
           type: DirectoryOrCreate
         name: run-log-journal
-
 telegraf-operator:
   enabled: true
   resources:
