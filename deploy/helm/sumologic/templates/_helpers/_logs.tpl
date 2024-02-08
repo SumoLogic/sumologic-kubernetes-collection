@@ -373,11 +373,11 @@ Example Usage:
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
-- /var/log/pods/{{ template "sumologic.namespace"  $ctx }}-{{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}*/*/*.log
+- /var/log/pods/{{ template "sumologic.namespace"  $ctx }}_{{ printf "%s%s" (include "sumologic.metadata.name.logs.collector.daemonset" $ctx) $instance | trunc 63 | trimSuffix "-" }}*/*/*.log
 {{- end }}
 {{- end }}
 {{- end }}
 
 {{- define "logs.metadata.files.list" -}}
-- /var/log/pods/{{ template "sumologic.namespace" . }}-{{ template "sumologic.metadata.name.logs.statefulset" . }}*/*/*.log
+- /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.metadata.name.logs.statefulset" . }}*/*/*.log
 {{- end -}}
