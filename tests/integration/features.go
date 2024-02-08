@@ -62,13 +62,15 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 				// Get the receiver mock pod as metrics source
 				res := envConf.Client().Resources(internal.OverrideNamespace)
 				podList := corev1.PodList{}
+				releaseName := ctxopts.HelmRelease(ctx)
+				deployment := fmt.Sprintf("%s-sumologic-sumologic-mock", releaseName)
 				require.NoError(t,
 					wait.For(
 						conditions.New(res).
 							ResourceListN(
 								&podList,
 								1,
-								resources.WithLabelSelector("app=sumologic-mock"),
+								resources.WithLabelSelector(fmt.Sprintf("app=%s", deployment)),
 							),
 						wait.WithTimeout(waitDuration),
 						wait.WithInterval(tickDuration),
@@ -78,25 +80,23 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 					"__name__": "container_memory_working_set_bytes",
 					"pod":      podList.Items[0].Name,
 				}
-				releaseName := ctxopts.HelmRelease(ctx)
 				namespace := ctxopts.Namespace(ctx)
 				expectedLabels := sumologicmock.Labels{
 					"cluster":                      "kubernetes",
 					"_origin":                      "kubernetes",
 					"container":                    "sumologic-mock",
-					"deployment":                   ".*sumologic-mock.*",
+					"deployment":                   deployment,
 					"endpoint":                     "https-metrics",
 					"image":                        "sumologic/sumologic-mock:.*",
 					"job":                          "kubelet",
 					"metrics_path":                 "/metrics/cadvisor",
 					"namespace":                    ctxopts.Namespace(ctx),
 					"node":                         internal.NodeNameRegex,
-					"pod_labels_app":               "sumologic-mock",
+					"pod_labels_app":               deployment,
 					"pod_labels_pod-template-hash": ".+",
-					"pod_labels_service":           "sumologic-mock",
 					"pod":                          podList.Items[0].Name,
-					"replicaset":                   ".*sumologic-mock.*",
-					"service":                      ".*sumologic-mock.*",
+					"replicaset":                   fmt.Sprintf("%s-.*", deployment),
+					"service":                      deployment,
 				}
 				expectedLabels = addCollectorSpecificMetricLabels(expectedLabels, releaseName, namespace, metricsCollector)
 
@@ -105,16 +105,17 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		).
 		Assess("expected labels are present for non-pod kube-state-metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
+				releaseName := ctxopts.HelmRelease(ctx)
+				deployment := fmt.Sprintf("%s-sumologic-sumologic-mock", releaseName)
 				metricFilters := sumologicmock.MetadataFilters{
 					"__name__":   "kube_deployment_spec_replicas",
-					"deployment": ".*sumologic-mock.*",
+					"deployment": deployment,
 				}
-				releaseName := ctxopts.HelmRelease(ctx)
 				namespace := ctxopts.Namespace(ctx)
 				expectedLabels := sumologicmock.Labels{
 					"cluster":    "kubernetes",
 					"_origin":    "kubernetes",
-					"deployment": ".*sumologic-mock.*",
+					"deployment": deployment,
 					"endpoint":   "http",
 					"job":        "kube-state-metrics",
 					"namespace":  ctxopts.Namespace(ctx),
