@@ -58,7 +58,7 @@ data:
     receivers:
       filelog/containers:
         exclude:
-        - /var/log/pods/sumologic_RELEASE-NAME-sumologic-sumologic-mock*/*/*.log
+        - /var/log/pods/sumologic_RELEASE-NAME-sumologic-mock*/*/*.log
         - /var/log/pods/sumologic_RELEASE-NAME-sumologic-otelcol-logs*/*/*.log
         - /var/log/pods/sumologic_RELEASE-NAME-sumologic-otelcol-logs-collector*/*/*.log
         - /var/log/pods/sumologic_RELEASE-NAME-sumologic-otelcol-metrics*/*/*.log
