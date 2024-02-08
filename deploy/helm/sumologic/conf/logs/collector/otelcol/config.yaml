@@ -57,7 +57,7 @@ receivers:
 {{- if .Values.sumologic.logs.container.enabled }}
   filelog/containers:
     exclude:
-      - /var/log/pods/{{ template "sumologic.namespace" . }}-{{ template "sumologic.labels.app.sumologic-mock.pod" . }}*/*/*.log
+      - /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.labels.app.sumologic-mock.pod" . }}*/*/*.log
       {{ if eq .Values.debug.logs.metadata.stopLogsIngestion true }}
       {{ include "logs.metadata.files.list" . }}
       {{ end }}
