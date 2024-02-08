@@ -107,7 +107,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				metricFilters := sumologicmock.MetadataFilters{
 					"__name__":   "kube_deployment_spec_replicas",
-					"deployment": ".*sumologic-mock-.*",
+					"deployment": ".*sumologic-mock.*",
 				}
 				releaseName := ctxopts.HelmRelease(ctx)
 				namespace := ctxopts.Namespace(ctx)
