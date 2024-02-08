@@ -39,7 +39,7 @@ processors:
     source_category_prefix: ""
     source_category_replace_dash: {{ .Values.sumologic.events.sourceCategoryReplaceDash | quote}}
     source_name: {{ .Values.sumologic.events.sourceName | quote}}
-  sumologic_schema:
+  sumologic:
     add_cloud_namespace: false
 
   ## Add timestamp to attributes
@@ -68,7 +68,7 @@ service:
         - memory_limiter
         - resource/add_cluster
         - source
-        - sumologic_schema
+        - sumologic
         - transform/add_timestamp
         - batch
       receivers:

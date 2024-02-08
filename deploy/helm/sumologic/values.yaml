@@ -2410,7 +2410,7 @@ debug:
   sumologicMock:
     enabled: false
     image:
-      repository: public.ecr.aws/sumologic/sumlogic-mock
+      repository: public.ecr.aws/sumologic/sumologic-mock
       tag: 2.22.0-59-g245ae92
       pullPolicy: IfNotPresent
     deployment:

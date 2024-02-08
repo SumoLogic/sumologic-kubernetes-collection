@@ -2,7 +2,7 @@
 {{- $ctx := . }}
 {{- $instance := "" -}}
 {{- $defaultNodeSelector := (include "kubernetes.defaultNodeSelector" .) }}
-{{- $defaultTolerations := (include "kubernetes.defaultTolerations" .) }}
+{{- $defaultTolerations := (include "sumologic.logs.collector.tolerations" .) }}
 {{- $defaultAffinity := (include "kubernetes.defaultAffinity" .) }}
 {{- $daemonsets := dict "" $.Values.otellogs.daemonset  -}}
 {{- $daemonsets = deepCopy $daemonsets | merge $.Values.otellogs.additionalDaemonSets -}}
