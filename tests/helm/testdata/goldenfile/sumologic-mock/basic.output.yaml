@@ -3,10 +3,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: RELEASE-NAME-sumologic-mock
+  name: RELEASE-NAME-mock
   namespace: sumologic
   labels:
-    app: RELEASE-NAME-sumologic-mock
+    app: RELEASE-NAME-mock
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
@@ -16,17 +16,17 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: RELEASE-NAME-sumologic-mock
+      app: RELEASE-NAME-mock
   template:
     metadata:
       annotations:
       labels:
-        app: RELEASE-NAME-sumologic-mock
+        app: RELEASE-NAME-mock
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
     spec:
-      serviceAccountName: RELEASE-NAME-sumologic-sumologic-mock
+      serviceAccountName: RELEASE-NAME-sumologic-mock
       securityContext: {}
       containers:
         - ports:
@@ -35,7 +35,7 @@ spec:
           name: sumologic-mock
           args:
             - sumologic-mock
-            - --hostname=RELEASE-NAME-sumologic-mock.sumologic
+            - --hostname=RELEASE-NAME-mock.sumologic
           securityContext:
             capabilities:
               drop:
