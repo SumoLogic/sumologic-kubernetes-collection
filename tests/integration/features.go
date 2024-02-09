@@ -805,6 +805,38 @@ func CheckTracesInstall(builder *features.FeatureBuilder) *features.FeatureBuild
 
 }
 
+func CheckTracesWithoutGatewayInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("traces-sampler deployment is ready",
+			stepfuncs.WaitUntilDeploymentIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+				),
+				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
+					K: "app",
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+				},
+				),
+			)).
+		Assess("otelcol-instrumentation statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
+					},
+				),
+			),
+		)
+}
+
 func CheckTailingSidecarOperatorInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
 	return builder.
 		Assess("tailing sidecar deployment is ready",
