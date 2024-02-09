@@ -1,4 +1,10 @@
 sumologic:
+  pullSecrets:
+    - name: pullSecret
+  setup:
+    job:
+      pullSecrets:
+        - name: pullSecret
   logs:
     collector:
       allowSideBySide: true
