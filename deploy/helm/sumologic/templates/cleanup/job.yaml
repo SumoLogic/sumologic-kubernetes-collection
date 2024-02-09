@@ -47,25 +47,17 @@ spec:
           - name: cleanup
             mountPath: /etc/terraform
           command: ["/etc/terraform/cleanup.sh"]
-          {{- if .Values.sumologic.envFromSecret }}
           envFrom:
           - secretRef:
-              name: {{ .Values.sumologic.envFromSecret }}
-          {{ else }}
+              name: {{ .Values.sumologic.envFromSecret | default (include "sumologic.metadata.name.setup.secret" .)}}
           env:
-          - name: SUMOLOGIC_ACCESSID
-            value: {{ required "A valid .Values.sumologic.accessId entry required!" .Values.sumologic.accessId }}
-          - name: SUMOLOGIC_ACCESSKEY
-            value: {{ required "A valid .Values.sumologic.accessKey entry required!" .Values.sumologic.accessKey }}
           - name: SUMOLOGIC_BASE_URL
+{{- if eq (include "sumologic-mock.local-mode-enabled" .) "true" }}
+            value: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/terraform/api/
+{{- else }}
             value: {{ .Values.sumologic.endpoint }}
-          - name: HTTP_PROXY
-            value: {{ .Values.sumologic.httpProxy }}
-          - name: HTTPS_PROXY
-            value: {{ .Values.sumologic.httpsProxy }}
-          - name: NO_PROXY
-            value: {{ .Values.sumologic.noProxy }}
-          {{ end }}
+{{- end }}
+          {{- include "proxy-env-variables" . | nindent 10 }}
       securityContext:
         runAsUser: 999
 {{- end }}

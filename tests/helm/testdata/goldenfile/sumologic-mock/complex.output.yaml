@@ -10,6 +10,9 @@ metadata:
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "1"
 spec:
   selector:
     matchLabels:
@@ -23,7 +26,7 @@ spec:
         release: "RELEASE-NAME"
         heritage: "Helm"
     spec:
-      serviceAccountName: RELEASE-NAME-sumologic
+      serviceAccountName: RELEASE-NAME-sumologic-mock
       tolerations:
         - effect: NoSchedule
           key: key1
@@ -97,7 +100,7 @@ spec:
             requests:
               cpu: 1000m
               memory: 1Gi
-      hostname: receiver-mock
+      hostname: sumologic-mock
       restartPolicy: Always
       imagePullSecrets:
         - name: regcred

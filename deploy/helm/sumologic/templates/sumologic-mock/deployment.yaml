@@ -7,6 +7,8 @@ metadata:
   labels:
     app: {{ template "sumologic.labels.app.sumologic-mock.deployment" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
+  annotations:
+{{ include "sumologic.annotations.app.sumologic-mock.helmsh" "1" | indent 4 }}
 spec:
   selector:
     matchLabels:
@@ -73,7 +75,7 @@ spec:
           periodSeconds: 20
         resources:
           {{- toYaml .Values.debug.sumologicMock.deployment.resources | nindent 10 }}
-      hostname: receiver-mock
+      hostname: sumologic-mock
       restartPolicy: Always
       imagePullSecrets:
         - name: regcred

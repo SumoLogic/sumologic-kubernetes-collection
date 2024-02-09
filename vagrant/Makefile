@@ -28,7 +28,6 @@ upgrade:
 		patch-context \
 		remove-tmp \
 		apply-namespace \
-		apply-receiver-mock \
 		grafana-dashboards \
 		helm-dependencies \
 		helm-upgrade \
@@ -40,9 +39,6 @@ remove-tmp:
 
 apply-namespace:
 	kubectl apply -f ${k8s_path}/sumologic.yaml
-
-apply-receiver-mock:
-	kubectl apply -f ${k8s_path}/receiver-mock.yaml
 
 helm-dependencies:
 	helm dependency update "${helm_path}"
@@ -93,9 +89,6 @@ remove-prometheus-crds:
 	for crd in alertmanagers alertmanagerconfigs podmonitors probes prometheuses prometheusrules servicemonitors thanosrulers; do \
 		kubectl delete customresourcedefinitions.apiextensions.k8s.io --ignore-not-found=true $$crd.monitoring.coreos.com; \
 	done
-
-remove-receiver-mock:
-	kubectl delete -f ${k8s_path}/receiver-mock.yaml --ignore-not-found=true
 
 remove-collector:
 	helm delete -n "${namespace}" "${name}"
@@ -307,7 +300,6 @@ install-argocd-binary:
 
 install-argocd:
 	${mkfile_path} \
-		apply-receiver-mock
 	kubectl create namespace argocd
 	kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 	kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'

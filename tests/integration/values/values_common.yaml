@@ -1,15 +1,12 @@
 ## This file is used as a shared values.yaml file across tests where some configuration
 ## options are defined that allow collection chart to be installed e.g. on CI runners.
 ## It most notably:
-## * sets the endpoint for receiver-mock's URL
+## * sets the endpoint for sumologic-mock's URL
 ## * sets lower resource requests for numerous pods that we ran so that they fit
 ##   on CI runners' machines
 
 sumologic:
   setupEnabled: true
-  accessId: "dummy"
-  accessKey: "dummy"
-  endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
 
   # This is set in yamls/cluster.yaml to check if we work correctly with a custom domain
   clusterDNSDomain: "my.cluster"
@@ -125,10 +122,6 @@ otellogs:
       receivers:
         journald:
           directory: /run/log/journal
-        # Prevent snowball effect by filtering out receiver mock logs
-        filelog/containers:
-          exclude:
-            - /var/log/pods/receiver-mock_*/*/*.log
   daemonset:
     extraVolumeMounts:
       - mountPath: /run/log/journal
@@ -140,7 +133,6 @@ otellogs:
           path: /run/log/journal
           type: DirectoryOrCreate
         name: run-log-journal
-
 telegraf-operator:
   enabled: true
   resources:
@@ -151,3 +143,20 @@ telegraf-operator:
     requests:
       cpu: 5m
       memory: 10Mi
+
+debug:
+  sumologicMock:
+    enabled: true
+    deployment:
+      extraArgs:
+        - --print-headers
+        - --print-logs
+        - --print-metrics
+        - --store-traces
+        - --store-logs
+        - --store-metrics
+        - --print-spans
+      resources:
+        limits:
+          memory: 5Gi # unlimited
+  enableLocalMode: true

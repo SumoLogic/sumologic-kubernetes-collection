@@ -31,9 +31,6 @@ kube-prometheus-stack:
           memory: 512Mi
 
 sumologic:
-  accessId: dummy
-  accessKey: dummy
-  endpoint: http://receiver-mock.receiver-mock:3000/terraform/api/
   cleanupEnabled: false
 
   logs:
@@ -95,3 +92,8 @@ otellogs:
       filelog/containers:
         exclude:
           - /var/log/pods/receiver-mock_*/*/*.log
+
+debug:
+  sumologicMock:
+    enabled: true
+  enableLocalMode: true

@@ -1,4 +1,4 @@
-package receivermock
+package sumologicmock
 
 import (
 	"regexp"

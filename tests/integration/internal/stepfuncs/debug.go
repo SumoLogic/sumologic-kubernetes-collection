@@ -11,7 +11,6 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 )
 
@@ -25,9 +24,9 @@ func PrintClusterStateOpt(force ...bool) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 		if (len(force) == 1 && force[0]) || t.Failed() {
 			kubectlOptions := *ctxopts.KubectlOptions(ctx)
-			kubectlOptions.Namespace = internal.ReceiverMockNamespace
+			kubectlOptions.Namespace = ctxopts.Namespace(ctx)
 			k8s.RunKubectl(t, &kubectlOptions,
-				"logs", "-lapp=receiver-mock", "--tail=1000",
+				"logs", "-lapp=sumoloigic-mock", "--tail=1000",
 			)
 
 			k8s.RunKubectl(t, ctxopts.KubectlOptions(ctx), "get", "all")

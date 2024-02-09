@@ -18,15 +18,12 @@ const (
 
 	EnvNameKindImage = "KIND_NODE_IMAGE"
 
-	YamlPathReceiverMock = "yamls/receiver-mock.yaml"
-
 	// default cluster name in Helm chart Config
 	// TODO: read this from values.yaml used for the test directly
 	ClusterName = "kubernetes"
 
-	ReceiverMockServicePort = 3000
-	ReceiverMockServiceName = "receiver-mock"
-	ReceiverMockNamespace   = "receiver-mock"
+	SumologicMockServicePort = 3000
+	SumologicMockServiceName = "sumologic-mock"
 
 	LogsGeneratorNamespace = "logs-generator"
 	LogsGeneratorName      = "logs-generator"

@@ -2325,7 +2325,11 @@ pvcCleaner:
     securityContext:
       runAsUser: 1000
 
+## The following section is not a subject of standard support scope and should be considered experimental
+## All of them are meant for debugging purposed and shouldn't be used on production environments
 debug:
+  ## Use it along with `debug.sumologicMock.enabled` in order to install collection locally without accessId, accessKey
+  enableLocalMode: false
   sumologicMock:
     enabled: false
     image:
