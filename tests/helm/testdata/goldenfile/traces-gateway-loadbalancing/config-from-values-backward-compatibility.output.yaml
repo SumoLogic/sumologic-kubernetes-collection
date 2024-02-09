@@ -1,0 +1,30 @@
+---
+# Source: sumologic/templates/instrumentation/traces-gateway/configmap.yaml
+# Just a part of the config is present here for test purposes. In practice whole config from values.yaml should be a content.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-traces-gateway
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-traces-gateway
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  traces.gateway.conf.yaml: |
+    exporters:
+      loadbalancing:
+        protocol:
+          otlp:
+            sending_queue:
+              enabled: true
+              num_consumers: 10
+              queue_size: 10000
+            timeout: 10s
+            tls:
+              insecure: true
+        resolver:
+          dns:
+            hostname: RELEASE-NAME-sumologic-traces-sampler-headless.sumologic
+            port: 4317
