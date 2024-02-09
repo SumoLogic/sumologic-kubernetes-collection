@@ -1,0 +1,6 @@
+otelcolInstrumentation:
+  config:
+    override:
+      exporters:
+        otlphttp/traces:
+          endpoint: http://RELEASE-NAME-sumologic-traces-gateway.sumologic:4318

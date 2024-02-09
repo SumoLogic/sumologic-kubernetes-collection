@@ -1,0 +1,6 @@
+otelcolInstrumentation:
+  config:
+    merge:
+      processors:
+        batch:
+          timeout: 10s
