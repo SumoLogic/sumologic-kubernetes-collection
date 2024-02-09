@@ -1,32 +1,21 @@
 ---
-# Source: sumologic/templates/instrumentation/traces-gateway/configmap.yaml
+# Source: sumologic/templates/instrumentation/traces-sampler/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: RELEASE-NAME-sumologic-traces-gateway
+  name: RELEASE-NAME-sumologic-traces-sampler
   namespace: sumologic
   labels:
-    app: RELEASE-NAME-sumologic-traces-gateway
+    app: RELEASE-NAME-sumologic-traces-sampler
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
 data:
-  traces.gateway.conf.yaml: |
+  traces.sampler.conf.yaml: |
     exporters:
-      loadbalancing:
-        protocol:
-          otlp:
-            sending_queue:
-              enabled: true
-              num_consumers: 10
-              queue_size: 10000
-            timeout: 10s
-            tls:
-              insecure: true
-        resolver:
-          dns:
-            hostname: RELEASE-NAME-sumologic-traces-sampler-headless.sumologic
-            port: 4317
+      otlphttp:
+        compression: gzip
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}
     extensions:
       health_check: {}
       memory_ballast:
@@ -37,6 +26,8 @@ data:
         send_batch_max_size: 512
         send_batch_size: 256
         timeout: 5s
+      cascading_filter:
+        num_traces: 200000
       memory_limiter:
         check_interval: 5s
         limit_percentage: 75
@@ -56,9 +47,10 @@ data:
       pipelines:
         traces:
           exporters:
-          - loadbalancing
+          - otlphttp
           processors:
           - memory_limiter
+          - cascading_filter
           - batch
           receivers:
           - otlp

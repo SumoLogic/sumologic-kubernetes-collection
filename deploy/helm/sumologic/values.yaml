@@ -724,12 +724,11 @@ sumologic:
     sourceType: otlp
 
   ### Traces configuration
-  ## Set the enabled flag to false to disable traces ingestion.
+  ## Set the enabled flag to false to disable traces from instrumentation ingestion.
   traces:
     enabled: true
     ## How many spans per request should be send to receiver
     spans_per_request: 100
-
     sourceType: otlp
 
 ## Configure metrics-server
@@ -1774,65 +1773,28 @@ tracesGateway:
   ## To enable collecting all logs, set to false
   logLevelFilter: false
 
+  ## Log Level
+  logLevel: info
+
+  ## Customize the Opentelemetry Collector configuration beyond the exposed options
   config:
-    receivers:
-      otlp:
-        protocols:
-          grpc:
-            endpoint: "0.0.0.0:4317"
-          http:
-            endpoint: "0.0.0.0:4318"
-    processors:
-      ## The memory_limiter processor is used to prevent out of memory situations on the collector.
-      memory_limiter:
-        ## check_interval is the time between measurements of memory usage for the
-        ## purposes of avoiding going over the limits. Defaults to zero, so no
-        ## checks will be performed. Values below 1 second are not recommended since
-        ## it can result in unnecessary CPU consumption.
-        check_interval: 5s
-
-        ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
-        ## Note that typically the total memory usage of process will be about 50MiB higher
-        ## than this value.
-        limit_percentage: 75
-
-        ## Maximum spike expected between the measurements of memory usage, in %.
-        spike_limit_percentage: 20
-
-      ## The batch processor accepts spans and places them into batches grouped by node and resource
-      batch:
-        ## Number of spans after which a batch will be sent regardless of time
-        send_batch_size: 256
-        ## Maximum number of spans sent at once
-        send_batch_max_size: 512
-        ## Time duration after which a batch will be sent regardless of size
-        timeout: 5s
-        ## Never more than this many spans are being sent in a batch
-        # send_batch_max_size: 512
-    extensions:
-      health_check: {}
-      memory_ballast:
-        ## Memory Ballast size should be max 1/3 to 1/2 of memory.
-        size_mib: 250
-      pprof: {}
-    exporters:
-      loadbalancing:
-        protocol:
-          otlp:
-            timeout: 10s
-            tls:
-              insecure: true
-        resolver:
-          dns:
-            hostname: '{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'
-            port: 4317
-    service:
-      extensions: [health_check, memory_ballast, pprof]
-      pipelines:
-        traces:
-          receivers: [otlp]
-          processors: [memory_limiter, batch]
-          exporters: [loadbalancing]
+    ## Directly alter the OT configuration. The value of this key should be a dictionary, that will
+    ## be directly merged with the generated configuration, overriding existing values.
+    ## For example:
+    # override:
+    #   processors:
+    #     batch:
+    #       send_batch_size: 512
+    ## will change the batch size of the pipeline.
+    ##
+    ## WARNING: This field is not subject to backwards-compatibility guarantees offered by the rest
+    ## of this chart. It involves implementation details that may change even in minor versions.
+    ## Use with caution, and consider opening an issue, so your customization can be added in a safer way.
+    merge: {}
+    ## Completely override existing config and replace it with the contents of this value.
+    ## The value of this key should be a dictionary, that will replace the normal configuration.
+    ## This is an advanced feature, use with caution, and review the generated configuration first.
+    override: {}
 
 ## Configuration of the OpenTelemetry Collector that collects Kubernetes events.
 ## See https://help.sumologic.com/docs/send-data/kubernetes/collecting-events/.
@@ -2417,6 +2379,9 @@ debug:
 
   instrumentation:
     otelcolInstrumentation:
+      print: false
+      stopLogsIngestion: false
+    tracesGateway:
       print: false
       stopLogsIngestion: false
     tracesSampler:

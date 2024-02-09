@@ -18,5 +18,7 @@ debug:
   instrumentation:
     otelcolInstrumentation:
       stopLogsIngestion: true
+    tracesGateway:
+      stopLogsIngestion: true
     tracesSampler:
       stopLogsIngestion: true

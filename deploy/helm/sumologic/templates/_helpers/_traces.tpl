@@ -321,6 +321,10 @@ Example Usage:
 - /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.metadata.name.otelcolinstrumentation" . }}*/*/*.log
 {{- end -}}
 
+{{- define "tracesGateway.collector.files.list" -}}
+- /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.metadata.name.tracesgateway" . }}*/*/*.log
+{{- end -}}
+
 {{- define "tracesSampler.collector.files.list" -}}
 - /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.metadata.name.tracessampler" . }}*/*/*.log
 {{- end -}}

@@ -1,0 +1,17 @@
+---
+# Source: sumologic/templates/instrumentation/otelcol-instrumentation/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-instrumentation
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-instrumentation
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  otelcol.instrumentation.conf.yaml: |
+    exporters:
+      otlphttp/traces:
+        endpoint: http://RELEASE-NAME-sumologic-traces-gateway.sumologic:4318

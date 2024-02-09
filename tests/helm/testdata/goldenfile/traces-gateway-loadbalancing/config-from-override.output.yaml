@@ -1,0 +1,29 @@
+---
+# Source: sumologic/templates/instrumentation/traces-gateway/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-traces-gateway
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-traces-gateway
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  traces.gateway.conf.yaml: |
+    exporters:
+      loadbalancing:
+        protocol:
+          otlp:
+            sending_queue:
+              enabled: false
+              num_consumers: 10
+              queue_size: 10000
+            timeout: 10s
+            tls:
+              insecure: true
+        resolver:
+          dns:
+            hostname: RELEASE-NAME-sumologic-traces-sampler-headless.sumologic
+            port: 4317

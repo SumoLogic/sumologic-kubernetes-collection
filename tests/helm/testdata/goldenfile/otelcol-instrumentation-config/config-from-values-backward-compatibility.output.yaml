@@ -1,0 +1,22 @@
+---
+# Source: sumologic/templates/instrumentation/otelcol-instrumentation/configmap.yaml
+# Just a part of the config is present here for test purposes. In practice whole config from values.yaml should be a content.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-otelcol-instrumentation
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-otelcol-instrumentation
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  otelcol.instrumentation.conf.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
