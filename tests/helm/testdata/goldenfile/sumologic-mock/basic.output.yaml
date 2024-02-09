@@ -26,7 +26,7 @@ spec:
         release: "RELEASE-NAME"
         heritage: "Helm"
     spec:
-      serviceAccountName: RELEASE-NAME-sumologic-sumologic-mock
+      serviceAccountName: RELEASE-NAME-sumologic-mock
       securityContext: {}
       containers:
         - ports:
