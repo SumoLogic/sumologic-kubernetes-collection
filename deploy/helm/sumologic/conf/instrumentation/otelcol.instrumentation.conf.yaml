@@ -39,8 +39,25 @@ exporters:
       ## num_seconds is the number of seconds to buffer in case of a backend outage
       ## requests_per_second is the average number of requests per seconds.
       queue_size: 5000
+{{- if eq .Values.tracesGateway.enabled true }}
   otlphttp/traces:
     endpoint: 'http://{{ include "otelcolinstrumentation.exporter.endpoint" . }}:4318'
+{{- else }}
+  loadbalancing:
+    protocol:
+      otlp:
+        timeout: 10s
+        tls:
+          insecure: true
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10_000
+    resolver:
+      dns:
+        hostname: '{{ include "tracesgateway.exporter.loadbalancing.endpoint" . }}'
+        port: 4317
+{{- end }}
 receivers:
   jaeger:
     protocols:
@@ -167,7 +184,11 @@ service:
     traces:
       receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
       processors: [memory_limiter, k8s_tagger, source, resource, batch]
+{{- if eq .Values.tracesGateway.enabled true }}
       exporters: [otlphttp/traces]
+{{- else }}
+      exporters: [loadbalancing]
+{{- end}}
     metrics:
       receivers: [otlp, otlp/deprecated]
       processors: [memory_limiter, k8s_tagger, source, resource, batch]
