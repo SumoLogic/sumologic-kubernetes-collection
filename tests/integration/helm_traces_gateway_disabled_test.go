@@ -10,7 +10,7 @@ import (
 func Test_Helm_Traces_Gateway_Disabled(t *testing.T) {
 
 	installChecks := []featureCheck{
-		CheckSumologicSecret(15),
+		CheckSumologicSecret(3),
 		CheckTracesWithoutGatewayInstall,
 	}
 
