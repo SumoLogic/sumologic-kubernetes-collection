@@ -502,3 +502,48 @@ func TestNamespaceOverride(t *testing.T) {
 		}
 	}
 }
+
+func TestServiceAccountPullSecrets(t *testing.T) {
+	expectedPullSecrets := []string{"pullSecret"}
+	valuesFilePath := path.Join(testDataDirectory, "everything-enabled.yaml")
+	renderedYamlString := RenderTemplate(
+		t,
+		&helm.Options{
+			ValuesFiles: []string{valuesFilePath},
+			SetStrValues: map[string]string{
+				"sumologic.accessId":  "accessId",
+				"sumologic.accessKey": "accessKey",
+			},
+			Logger: logger.Discard, // the log output is noisy and doesn't help much
+		},
+		chartDirectory,
+		releaseName,
+		[]string{},
+		true,
+		"--namespace",
+		defaultNamespace,
+	)
+
+	objects, err := UnmarshalMultipleK8sObjectsFromYaml(renderedYamlString)
+	require.NoError(t, err)
+
+	for _, object := range objects {
+		kind := object.GetObjectKind().GroupVersionKind().Kind
+		if kind != "ServiceAccount" {
+			continue
+		}
+		serviceAccount := object.(*corev1.ServiceAccount)
+		if isSubchartObject(serviceAccount) {
+			continue
+		}
+
+		objectName := fmt.Sprintf("%s/%s", "ServiceAccount", serviceAccount.GetName())
+		t.Run(objectName, func(t *testing.T) {
+			actualPullSecrets := []string{}
+			for _, pullSecretRef := range serviceAccount.ImagePullSecrets {
+				actualPullSecrets = append(actualPullSecrets, pullSecretRef.Name)
+			}
+			assert.Equal(t, expectedPullSecrets, actualPullSecrets)
+		})
+	}
+}
