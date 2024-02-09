@@ -1,0 +1,17 @@
+---
+# Source: sumologic/templates/instrumentation/traces-sampler/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-sumologic-traces-sampler
+  namespace: sumologic
+  labels:
+    app: RELEASE-NAME-sumologic-traces-sampler
+    chart: "sumologic-%CURRENT_CHART_VERSION%"
+    release: "RELEASE-NAME"
+    heritage: "Helm"
+data:
+  traces.sampler.conf.yaml: |
+    extensions:
+      memory_ballast:
+        size_mib: 512
