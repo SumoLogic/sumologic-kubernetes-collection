@@ -1,0 +1,14 @@
+# Request less resources so that this fits on Github actions runners environment
+sumologic:
+  events:
+    enabled: false
+  logs:
+    enabled: false
+  metrics:
+    enabled: false
+
+tracesGateway:
+  enabled: false
+
+opentelemetry-operator:
+  enabled: false

@@ -766,11 +766,11 @@ func CheckTracesInstall(builder *features.FeatureBuilder) *features.FeatureBuild
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				),
 				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
 					K: "app",
-					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				},
 				),
 			)).
@@ -803,6 +803,38 @@ func CheckTracesInstall(builder *features.FeatureBuilder) *features.FeatureBuild
 				),
 			))
 
+}
+
+func CheckTracesWithoutGatewayInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {
+	return builder.
+		Assess("traces-sampler deployment is ready",
+			stepfuncs.WaitUntilDeploymentIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
+				),
+				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
+					K: "app",
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
+				},
+				),
+			)).
+		Assess("otelcol-instrumentation statefulset is ready",
+			stepfuncs.WaitUntilStatefulSetIsReady(
+				waitDuration,
+				tickDuration,
+				stepfuncs.WithNameF(
+					stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
+				),
+				stepfuncs.WithLabelsF(
+					stepfuncs.LabelFormatterKV{
+						K: "app",
+						V: stepfuncs.ReleaseFormatter("%s-sumologic-otelcol-instrumentation"),
+					},
+				),
+			),
+		)
 }
 
 func CheckTailingSidecarOperatorInstall(builder *features.FeatureBuilder) *features.FeatureBuilder {

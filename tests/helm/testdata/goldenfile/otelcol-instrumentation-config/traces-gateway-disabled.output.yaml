@@ -13,8 +13,20 @@ metadata:
 data:
   otelcol.instrumentation.conf.yaml: |
     exporters:
-      otlphttp/traces:
-        endpoint: http://RELEASE-NAME-sumologic-traces-sampler.sumologic:4318
+      loadbalancing:
+        protocol:
+          otlp:
+            sending_queue:
+              enabled: true
+              num_consumers: 10
+              queue_size: 10000
+            timeout: 10s
+            tls:
+              insecure: true
+        resolver:
+          dns:
+            hostname: RELEASE-NAME-sumologic-traces-sampler-headless.sumologic
+            port: 4317
       sumologic/metrics:
         client: k8s_%CURRENT_CHART_VERSION%
         compress_encoding: gzip
@@ -143,7 +155,7 @@ data:
           - otlp/deprecated
         traces:
           exporters:
-          - otlphttp/traces
+          - loadbalancing
           processors:
           - memory_limiter
           - k8s_tagger
