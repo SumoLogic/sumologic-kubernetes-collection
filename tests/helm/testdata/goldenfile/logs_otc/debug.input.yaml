@@ -16,5 +16,7 @@ debug:
     metadata:
       stopLogsIngestion: true
   instrumentation:
+    otelcolInstrumentation:
+      stopLogsIngestion: true
     tracesSampler:
       stopLogsIngestion: true

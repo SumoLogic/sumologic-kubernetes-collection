@@ -317,6 +317,10 @@ Example Usage:
 {{- end -}}
 {{- end -}}
 
+{{- define "otelcolInstrumentation.collector.files.list" -}}
+- /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.metadata.name.otelcolinstrumentation" . }}*/*/*.log
+{{- end -}}
+
 {{- define "tracesSampler.collector.files.list" -}}
 - /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.metadata.name.tracessampler" . }}*/*/*.log
 {{- end -}}

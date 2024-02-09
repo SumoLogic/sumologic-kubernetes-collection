@@ -1,6 +1,20 @@
 {{ $otelcolInstrumentationEnabled := .Values.otelcolInstrumentation.enabled }}
 {{ $tracesEnabled := .Values.sumologic.traces.enabled }}
 {{- if and $tracesEnabled $otelcolInstrumentationEnabled }}
+{{ $baseConfig := (tpl (.Files.Get "conf/instrumentation/otelcol.instrumentation.conf.yaml") .) | fromYaml }}
+{{ $mergeConfig := .Values.otelcolInstrumentation.config.merge }}
+{{ $overrideConfig := .Values.otelcolInstrumentation.config.override }}
+{{ $finalConfig := "" }}
+{{ if $overrideConfig }}
+{{ $finalConfig = $overrideConfig }}
+{{ else }}
+{{ $finalConfig = mergeOverwrite $baseConfig $mergeConfig }}
+{{ end }}
+{{ $valuesYamlConfig := .Values.otelcolInstrumentation.config }}
+{{ $useValuesYamlConfig := include "useDefaultConfig" $valuesYamlConfig | trim }}
+{{ if eq $useValuesYamlConfig "true" }}
+{{ $finalConfig = include "removeMergeAndOverrideKeys" .Values.otelcolInstrumentation.config }}
+{{ end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,5 +24,10 @@ metadata:
     app: {{ template "sumologic.labels.app.otelcolinstrumentation.configmap" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
 data:
-  {{- (tpl (.Files.Glob "conf/instrumentation/otelcol.instrumentation.conf.yaml").AsConfig .) | nindent 2 }}
+  otelcol.instrumentation.conf.yaml: |
+  {{- if eq $useValuesYamlConfig "true" }}
+  {{- $finalConfig | nindent 4 }}
+  {{- else }}
+  {{- $finalConfig | toYaml | nindent 4 }}
+  {{- end }}
 {{- end }}
