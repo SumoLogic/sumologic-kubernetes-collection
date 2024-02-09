@@ -118,6 +118,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- template "sumologic.labels.app.setup" . }}
 {{- end -}}
 
+{{- define "sumologic.labels.app.cleanup.secret" -}}
+{{- template "sumologic.labels.app.cleanup" . }}
+{{- end -}}
+
 {{- define "sumologic.labels.app.securitycontextconstraints" -}}
 {{- template "sumologic.fullname" . }}-scc
 {{- end -}}
@@ -255,6 +259,10 @@ helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 {{- end -}}
 
 {{- define "sumologic.metadata.name.cleanup.roles.serviceaccount" -}}
+{{ template "sumologic.metadata.name.cleanup" . }}
+{{- end -}}
+
+{{- define "sumologic.metadata.name.cleanup.secret" -}}
 {{ template "sumologic.metadata.name.cleanup" . }}
 {{- end -}}
 
@@ -608,7 +616,7 @@ Example usage:
 {{- end -}}
 
 {{- define "sumologic.sumologic-mock.name.roles.serviceaccount" -}}
-{{- template "sumologic.fullname" . }}
+{{- template "sumologic.fullname" . }}-sumologic-mock
 {{- end -}}
 
 {{- define "useDefaultConfig" }}

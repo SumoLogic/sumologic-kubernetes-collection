@@ -2,6 +2,7 @@ package k8s
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
@@ -10,20 +11,20 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 )
 
-// TunnelForReceiverMock creates a tunnel with port forward to receiver-mock service.
-func TunnelForReceiverMock(
+// TunnelForSumologicMock creates a tunnel with port forward to sumologic-mock service.
+func TunnelForSumologicMock(
 	ctx context.Context,
 	t *testing.T,
 ) *terrak8s.Tunnel {
 	kubectlOptions := *ctxopts.KubectlOptions(ctx)
-	kubectlOptions.Namespace = internal.ReceiverMockNamespace
+	kubectlOptions.Namespace = ctxopts.Namespace(ctx)
 
 	tunnel := terrak8s.NewTunnel(
 		&kubectlOptions,
 		terrak8s.ResourceTypeService,
-		internal.ReceiverMockServiceName,
+		fmt.Sprintf("%s-%s", ctxopts.HelmRelease(ctx), internal.SumologicMockServiceName),
 		0,
-		internal.ReceiverMockServicePort,
+		internal.SumologicMockServicePort,
 	)
 	tunnel.ForwardPort(t)
 	return tunnel

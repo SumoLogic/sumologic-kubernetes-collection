@@ -66,15 +66,12 @@ func TestMain(m *testing.M) {
 }
 
 func ConfigureTestEnv(testenv env.Environment) {
-	const receiverMockNamespace = "receiver-mock"
-
 	// List of the namespaces must match values/values_helm_opentelemetry_operator_enabled.yaml
 	// opentelemetry-operator.manager.env.WATCH_NAMESPACE value
 	var openTelemetryOperatorNamespaces = [...]string{"ot-operator1", "ot-operator2"}
 
 	// Before
 	for _, f := range stepfuncs.IntoTestEnvFuncs(
-		stepfuncs.KubectlApplyFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
 		// Needed for OpenTelemetry Operator test
 		// TODO: Create namespaces only for specific tests
 		stepfuncs.KubectlCreateNamespaceOpt(openTelemetryOperatorNamespaces[0]),
@@ -108,7 +105,6 @@ func ConfigureTestEnv(testenv env.Environment) {
 		stepfuncs.KubectlDeleteNamespaceOpt(openTelemetryOperatorNamespaces[1]),
 		stepfuncs.KubectlDeleteNamespaceOpt(internal.OverrideNamespace),
 		stepfuncs.KubectlDeleteNamespaceTestOpt(),
-		stepfuncs.KubectlDeleteFOpt(internal.YamlPathReceiverMock, receiverMockNamespace),
 	) {
 		testenv.AfterEachTest(f)
 	}
@@ -117,7 +113,6 @@ func ConfigureTestEnv(testenv env.Environment) {
 	// TODO: Uninstall the Helm Chart here as well
 	testenv.Finish(envfuncs.DeleteNamespace(openTelemetryOperatorNamespaces[0]))
 	testenv.Finish(envfuncs.DeleteNamespace(openTelemetryOperatorNamespaces[1]))
-	testenv.Finish(envfuncs.DeleteNamespace(receiverMockNamespace))
 	testenv.Finish(func(ctx context.Context, envConf *envconf.Config) (context.Context, error) {
 		namespace := ctxopts.Namespace(ctx)
 		return envfuncs.DeleteNamespace(namespace)(ctx, envConf)

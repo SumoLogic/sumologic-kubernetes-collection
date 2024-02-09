@@ -29,7 +29,7 @@ import (
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal"
 	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/ctxopts"
 	k8s_internal "github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/k8s"
-	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/receivermock"
+	"github.com/SumoLogic/sumologic-kubernetes-collection/tests/integration/internal/sumologicmock"
 )
 
 // WaitUntilPodsAvailable returns a features.Func that can be used in `Assess` calls.
@@ -51,14 +51,14 @@ func WaitUntilExpectedSpansPresent(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
-		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()
 
 		assert.Eventually(t, func() bool {
 			spansCount, err := client.GetSpansCount(t, expectedSpansMetadata)
 			if err != nil {
-				log.ErrorS(err, "failed getting spans counts from receiver-mock")
+				log.ErrorS(err, "failed getting spans counts from sumologic-mock")
 				return false
 			}
 			if spansCount < expectedSpansCount {
@@ -89,16 +89,16 @@ func WaitUntilExpectedTracesPresent(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
 
-		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()
 
 		assert.Eventually(t, func() bool {
 			tracesLengths, err := client.GetTracesCounts(t, expectedTracesMetadata)
 			tracesCount := uint(len(tracesLengths))
 			if err != nil {
-				log.ErrorS(err, "failed getting trace counts from receiver-mock")
+				log.ErrorS(err, "failed getting trace counts from sumologic-mock")
 				return false
 			}
 
@@ -136,20 +136,20 @@ func WaitUntilExpectedTracesPresent(
 }
 
 // WaitUntilExpectedMetricsPresent returns a features.Func that can be used in `Assess` calls.
-// It will wait until all the expected metrics are present in receiver-mock's metrics store
+// It will wait until all the expected metrics are present in sumologic-mock's metrics store
 func WaitUntilExpectedMetricsPresent(
 	expectedMetrics []string,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
 
 		// We can't do it earlier, because we run the tests for different k8s versions
 		// and we can't fetch current version earlier
 		expectedMetrics = append(expectedMetrics, internal.GetVersionDependentMetrics(t)...)
 
-		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()
 
 		retries := int(waitDuration / tickDuration)
@@ -211,21 +211,21 @@ func WaitUntilExpectedMetricsPresent(
 }
 
 // WaitUntilExpectedMetricsPresent returns a features.Func that can be used in `Assess` calls.
-// It will wait until all the expected metrics are present in receiver-mock's metrics store, for the provided filters
+// It will wait until all the expected metrics are present in sumologic-mock's metrics store, for the provided filters
 func WaitUntilExpectedMetricsPresentWithFilters(
 	expectedMetrics []string,
-	metricFilters receivermock.MetadataFilters,
+	metricFilters sumologicmock.MetadataFilters,
 	errOnExtra bool,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
 
 		// We don't add version-dependent metrics here,
 		// because for now they are not expected in this assess func.
 
-		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()
 
 		retries := int(waitDuration / tickDuration)
@@ -237,7 +237,7 @@ func WaitUntilExpectedMetricsPresentWithFilters(
 			func() (string, error) {
 				metricsSamples, err := client.GetMetricsSamples(metricFilters)
 				if err != nil {
-					return "", fmt.Errorf("failed getting samples from receiver-mock: %v", err)
+					return "", fmt.Errorf("failed getting samples from sumologic-mock: %v", err)
 				}
 
 				expectedMetricsMap := map[string]bool{}
@@ -295,22 +295,22 @@ func WaitUntilExpectedMetricsPresentWithFilters(
 // WaitUntilExpectedMetricsPresent returns a features.Func that can be used in `Assess` calls.
 // It will wait until metrics selected by the provided filters have the expected labels
 func WaitUntilExpectedMetricLabelsPresent(
-	metricFilters receivermock.MetadataFilters,
-	expectedLabels receivermock.Labels,
+	metricFilters sumologicmock.MetadataFilters,
+	expectedLabels sumologicmock.Labels,
 	waitDuration time.Duration,
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
 
-		// Get the receiver mock pod as metrics source
-		rClient, tunnelCloseFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		// Get the sumologic mock pod as metrics source
+		rClient, tunnelCloseFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
 		defer tunnelCloseFunc()
 
 		assert.Eventually(t, func() bool {
 			metricsSamples, err := rClient.GetMetricsSamples(metricFilters)
 			if err != nil {
-				log.ErrorS(err, "failed getting samples from receiver-mock")
+				log.ErrorS(err, "failed getting samples from sumologic-mock")
 				return false
 			}
 
@@ -319,7 +319,7 @@ func WaitUntilExpectedMetricLabelsPresent(
 				return false
 			}
 
-			sort.Sort(receivermock.MetricsSamplesByTime(metricsSamples))
+			sort.Sort(sumologicmock.MetricsSamplesByTime(metricsSamples))
 			// For now let's take the newest metric sample only because it will have the most
 			// accurate labels and the most labels attached (for instance service/deployment
 			// labels might not be attached at the very first record).
@@ -337,7 +337,7 @@ func WaitUntilExpectedMetricLabelsPresent(
 }
 
 // WaitUntilExpectedMetricsPresent returns a features.Func that can be used in `Assess` calls.
-// It will wait until the provided number of logs with the provided labels are returned by receiver-mock's HTTP API on
+// It will wait until the provided number of logs with the provided labels are returned by sumologic-mock's HTTP API on
 // the provided Service and port, until it succeeds or waitDuration passes.
 func WaitUntilExpectedLogsPresent(
 	expectedLogsCount uint,
@@ -346,15 +346,15 @@ func WaitUntilExpectedLogsPresent(
 	tickDuration time.Duration,
 ) features.Func {
 	return func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
-		k8s_internal.WaitUntilReceiverMockAvailable(ctx, t, waitDuration, tickDuration)
+		k8s_internal.WaitUntilSumologicMockAvailable(ctx, t, waitDuration, tickDuration)
 
-		client, closeTunnelFunc := receivermock.NewClientWithK8sTunnel(ctx, t)
+		client, closeTunnelFunc := sumologicmock.NewClientWithK8sTunnel(ctx, t)
 		defer closeTunnelFunc()
 
 		assert.Eventually(t, func() bool {
 			logsCount, err := client.GetLogsCount(t, expectedLogsMetadata)
 			if err != nil {
-				log.ErrorS(err, "failed getting log counts from receiver-mock")
+				log.ErrorS(err, "failed getting log counts from sumologic-mock")
 				return false
 			}
 			if logsCount < expectedLogsCount {

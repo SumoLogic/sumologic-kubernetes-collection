@@ -7,6 +7,8 @@ metadata:
   labels:
     app: {{ template "sumologic.labels.app.sumologic-mock.service" . }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
+  annotations:
+{{ include "sumologic.annotations.app.sumologic-mock.helmsh" "1" | indent 4 }}
 spec:
   selector:
     app: {{ template "sumologic.labels.app.sumologic-mock.pod" . }}
