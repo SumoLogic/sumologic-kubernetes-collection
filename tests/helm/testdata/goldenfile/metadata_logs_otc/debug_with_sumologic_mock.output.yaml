@@ -28,7 +28,7 @@ data:
       sumologic/sumologic-mock:
         clear_logs_timestamp: false
         client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: http://RELEASE-NAME-sumologic-sumologic-mock.sumologic:3000/receiver
+        endpoint: http://RELEASE-NAME-sumologic-mock.sumologic:3000/receiver
         log_format: otlp
         sending_queue:
           enabled: true

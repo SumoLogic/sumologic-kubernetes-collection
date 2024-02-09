@@ -1,1 +1,178 @@
-{{- tpl (toYaml .Values.otelcolInstrumentation.config | replace ": '{{" ": {{" | replace "}}'" "}}") . | nindent 2 }}
+{{ $otelcolInstrumentationEnabled := .Values.otelcolInstrumentation.enabled }}
+{{ $tracesEnabled := .Values.sumologic.traces.enabled }}
+{{- if and $tracesEnabled $otelcolInstrumentationEnabled }}
+exporters:
+{{- if eq .Values.debug.instrumentation.otelcolInstrumentation.print true }}
+  debug:
+    verbosity: detailed
+{{- end }}
+
+  sumologic/metrics:
+    client: '{{ include "sumologic.sumo_client" . }}'
+    endpoint: ${SUMO_ENDPOINT_DEFAULT_METRICS_SOURCE}
+    ## Compression encoding format, either empty string (""), gzip or deflate (default gzip).
+    ## Empty string means no compression
+    compress_encoding: gzip
+    ## Max HTTP request body size in bytes before compression (if applied). By default 1_048_576 (1MB) is used.
+    max_request_body_size: 1_048_576 # 1MB
+    ## Format to use when sending logs to Sumo. (default json) (possible values: json, text)
+    log_format: text
+    ## Format of the metrics to be sent (default is prometheus) (possible values: carbon2, prometheus)
+    ## carbon2 and graphite are going to be supported soon.
+    metric_format: prometheus
+    ## Timeout for every attempt to send data to Sumo Logic backend. Maximum connection timeout is 55s.
+    timeout: 5s
+    retry_on_failure:
+      enabled: true
+      ## Time to wait after the first failure before retrying
+      initial_interval: 5s
+      ## Upper bound on backoff
+      max_interval: 30s
+      ## Maximum amount of time spent trying to send a batch
+      max_elapsed_time: 120s
+    sending_queue:
+      enabled: false
+      ## Number of consumers that dequeue batches
+      num_consumers: 10
+      ## Maximum number of batches kept in memory before data
+      ## User should calculate this as num_seconds * requests_per_second where:
+      ## num_seconds is the number of seconds to buffer in case of a backend outage
+      ## requests_per_second is the average number of requests per seconds.
+      queue_size: 5000
+  otlphttp/traces:
+    endpoint: 'http://{{ include "otelcolinstrumentation.exporter.endpoint" . }}:4318'
+receivers:
+  jaeger:
+    protocols:
+      thrift_compact:
+        endpoint: "0.0.0.0:6831"
+      thrift_binary:
+        endpoint: "0.0.0.0:6832"
+      grpc:
+        endpoint: "0.0.0.0:14250"
+      thrift_http:
+        endpoint: "0.0.0.0:14268"
+  opencensus:
+    endpoint: "0.0.0.0:55678"
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+  otlp/deprecated:
+    protocols:
+      http:
+        endpoint: "0.0.0.0:55681"
+  zipkin:
+    endpoint: "0.0.0.0:9411"
+
+processors:
+  ## Source processor adds Sumo Logic related metadata
+  source:
+    annotation_prefix: "k8s.pod.annotation."
+    collector: {{ .Values.sumologic.collectorName | default .Values.sumologic.clusterName | quote }}
+    exclude:
+      k8s.container.name: {{ .Values.otelcolInstrumentation.sourceMetadata.excludeContainerRegex  | quote }}
+      k8s.host.name: {{ .Values.otelcolInstrumentation.sourceMetadata.excludeHostRegex | quote }}
+      k8s.namespace.name: {{ .Values.otelcolInstrumentation.sourceMetadata.excludeNamespaceRegex | quote }}
+      k8s.pod.name: {{  .Values.otelcolInstrumentation.sourceMetadata.excludePodRegex | quote }}
+    pod_key: "k8s.pod.name"
+    pod_name_key: "k8s.pod.pod_name"
+    pod_template_hash_key: "k8s.pod.label.pod-template-hash"
+    source_category: {{ .Values.otelcolInstrumentation.sourceMetadata.sourceCategory | quote }}
+    source_category_prefix: {{ .Values.otelcolInstrumentation.sourceMetadata.sourceCategoryPrefix | quote }}
+    source_category_replace_dash: {{ .Values.otelcolInstrumentation.sourceMetadata.sourceCategoryReplaceDash | quote }}
+    source_host: "%{k8s.pod.hostname}"
+    source_name: {{ .Values.otelcolInstrumentation.sourceMetadata.sourceName | quote }}
+
+  ## Resource processor sets the associted cluster attribute
+  resource:
+    attributes:
+      - key: k8s.cluster.name
+        value: '{{ include "sumologic.clusterNameReplaceSpaceWithDash" . }}'
+        action: upsert
+
+  resourcedetection:
+    detectors:
+      - system
+    override: false
+    timeout: 10s
+
+  ## Tags spans with K8S metadata, basing on the context IP
+  k8s_tagger:
+    ## When true, only IP is assigned and passed (so it could be tagged on another collector)
+    passthrough: false
+    ## When true, additional fields, such as serviceName are being also extracted
+    owner_lookup_enabled: true
+    ## Extracted fields and assigned names
+    extract:
+      metadata:
+        ## extract the following well-known metadata fields
+        - containerId
+        - containerName
+        - daemonSetName
+        - deploymentName
+        - hostName
+        - namespace
+        - nodeName
+        - podId
+        - podName
+        - replicaSetName
+        - serviceName
+        - statefulSetName
+      annotations:
+        - tag_name: "k8s.pod.annotation.%s"
+          key: "*"
+      namespace_labels:
+        - tag_name: "k8s.namespace.label.%s"
+          key: "*"
+      labels:
+        - tag_name: "k8s.pod.label.%s"
+          key: "*"
+
+  ## The memory_limiter processor is used to prevent out of memory situations on the collector.
+  memory_limiter:
+    ## check_interval is the time between measurements of memory usage for the
+    ## purposes of avoiding going over the limits. Defaults to zero, so no
+    ## checks will be performed. Values below 1 second are not recommended since
+    ## it can result in unnecessary CPU consumption.
+    check_interval: 5s
+
+    ## Maximum amount of memory, in %, targeted to be allocated by the process heap.
+    ## Note that typically the total memory usage of process will be about 50MiB higher
+    ## than this value.
+    limit_percentage: 75
+
+    ## Maximum spike expected between the measurements of memory usage, in %.
+    spike_limit_percentage: 20
+
+  ## The batch processor accepts spans and places them into batches grouped by node and resource
+  batch:
+    ## Number of spans after which a batch will be sent regardless of time
+    send_batch_size: 256
+    ## Never more than this many spans are being sent in a batch
+    send_batch_max_size: 512
+    ## Time duration after which a batch will be sent regardless of size
+    timeout: 5s
+extensions:
+  health_check: {}
+  memory_ballast:
+    ## Memory Ballast size should be max 1/3 to 1/2 of memory.
+    size_mib: 512
+  pprof: {}
+service:
+  extensions: [health_check, memory_ballast, pprof]
+  pipelines:
+    traces:
+      receivers: [jaeger, opencensus, otlp, otlp/deprecated, zipkin]
+      processors: [memory_limiter, k8s_tagger, source, resource, batch]
+      exporters: [otlphttp/traces]
+    metrics:
+      receivers: [otlp, otlp/deprecated]
+      processors: [memory_limiter, k8s_tagger, source, resource, batch]
+      exporters: [sumologic/metrics]
+  telemetry:
+    logs:
+      level: {{ .Values.otelcolInstrumentation.logLevel }}
+{{- end }}

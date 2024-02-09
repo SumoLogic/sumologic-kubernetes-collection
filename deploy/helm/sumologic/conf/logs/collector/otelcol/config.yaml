@@ -70,8 +70,14 @@ receivers:
       {{ if eq .Values.debug.metrics.collector.stopLogsIngestion true }}
       {{ include "metrics.collector.files.list" . }}
       {{ end }}
+      {{ if eq .Values.debug.instrumentation.otelcolInstrumentation.stopLogsIngestion true }}
+      {{ include "otelcolInstrumentation.collector.files.list" . }}
+      {{ end }}
       {{ if eq .Values.debug.instrumentation.tracesGateway.stopLogsIngestion true }}
       {{ include "tracesGateway.collector.files.list" . }}
+      {{ end }}
+      {{ if eq .Values.debug.instrumentation.tracesSampler.stopLogsIngestion true }}
+      {{ include "tracesSampler.collector.files.list" . }}
       {{ end }}
 
 {{ if lt (int (include "kubernetes.minor" .)) 24 }}

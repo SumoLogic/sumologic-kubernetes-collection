@@ -1,12 +1,12 @@
 {{- define "sumologic.sumologic-mock.name.deployment" -}}
-{{- template "sumologic.fullname" . }}-sumologic-mock
+{{- template "sumologic.fullname" . }}-mock
 
 {{- end -}}{{- define "sumologic.sumologic-mock.name.service" -}}
-{{- template "sumologic.fullname" . }}-sumologic-mock
+{{- template "sumologic.fullname" . }}-mock
 {{- end -}}
 
 {{- define "sumologic.labels.app.sumologic-mock" -}}
-{{- template "sumologic.fullname" . }}-sumologic-mock
+{{- template "sumologic.fullname" . }}-mock
 {{- end -}}
 
 {{- define "sumologic.labels.app.sumologic-mock.deployment" -}}
@@ -22,7 +22,7 @@
 {{- end -}}
 
 {{- define "sumologic.metadata.name.sumologic-mock" -}}
-{{- template "sumologic.fullname" . }}-sumologic-mock
+{{- template "sumologic.fullname" . }}-mock
 {{- end -}}
 
 {{- define "sumologic-mock.deployment.nodeSelector" -}}

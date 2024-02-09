@@ -30,7 +30,7 @@ data:
       sumologic/sumologic-mock-default:
         client: k8s_%CURRENT_CHART_VERSION%
         decompose_otlp_histograms: true
-        endpoint: http://RELEASE-NAME-sumologic-sumologic-mock.sumologic:3000/receiver
+        endpoint: http://RELEASE-NAME-sumologic-mock.sumologic:3000/receiver
         max_request_body_size: 16777216
         metric_format: otlp
         sending_queue:
@@ -41,7 +41,7 @@ data:
         timeout: 30s
       sumologic/sumologic-mock-http:
         client: k8s_%CURRENT_CHART_VERSION%
-        endpoint: http://RELEASE-NAME-sumologic-sumologic-mock.sumologic:3000/receiver
+        endpoint: http://RELEASE-NAME-sumologic-mock.sumologic:3000/receiver
         max_request_body_size: 16777216
         metric_format: prometheus
         sending_queue:
