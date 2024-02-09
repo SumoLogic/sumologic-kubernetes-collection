@@ -63,7 +63,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 				res := envConf.Client().Resources(ctxopts.Namespace(ctx))
 				podList := corev1.PodList{}
 				releaseName := ctxopts.HelmRelease(ctx)
-				deployment := fmt.Sprintf("%s-sumologic-sumologic-mock", releaseName)
+				deployment := fmt.Sprintf("%s-sumologic-mock", releaseName)
 				require.NoError(t,
 					wait.For(
 						conditions.New(res).
@@ -106,7 +106,7 @@ func GetMetricsFeature(expectedMetrics []string, metricsCollector MetricsCollect
 		Assess("expected labels are present for non-pod kube-state-metrics",
 			func(ctx context.Context, t *testing.T, envConf *envconf.Config) context.Context {
 				releaseName := ctxopts.HelmRelease(ctx)
-				deployment := fmt.Sprintf("%s-sumologic-sumologic-mock", releaseName)
+				deployment := fmt.Sprintf("%s-sumologic-mock", releaseName)
 				metricFilters := sumologicmock.MetadataFilters{
 					"__name__":   "kube_deployment_spec_replicas",
 					"deployment": deployment,

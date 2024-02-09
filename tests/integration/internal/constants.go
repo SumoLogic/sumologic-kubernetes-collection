@@ -23,7 +23,7 @@ const (
 	ClusterName = "kubernetes"
 
 	SumologicMockServicePort = 3000
-	SumologicMockServiceName = "sumologic-sumologic-mock"
+	SumologicMockServiceName = "sumologic-mock"
 
 	LogsGeneratorNamespace = "logs-generator"
 	LogsGeneratorName      = "logs-generator"
