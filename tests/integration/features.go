@@ -766,11 +766,11 @@ func CheckTracesInstall(builder *features.FeatureBuilder) *features.FeatureBuild
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				),
 				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
 					K: "app",
-					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				},
 				),
 			)).
@@ -812,11 +812,11 @@ func CheckTracesWithoutGatewayInstall(builder *features.FeatureBuilder) *feature
 				waitDuration,
 				tickDuration,
 				stepfuncs.WithNameF(
-					stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+					stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				),
 				stepfuncs.WithLabelsF(stepfuncs.LabelFormatterKV{
 					K: "app",
-					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-gateway"),
+					V: stepfuncs.ReleaseFormatter("%s-sumologic-traces-sampler"),
 				},
 				),
 			)).
