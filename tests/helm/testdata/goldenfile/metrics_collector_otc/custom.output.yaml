@@ -27,12 +27,12 @@ spec:
     filterStrategy: relabel-config
     prometheusCR:
       enabled: true
-      serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
       scrapeInterval: 60s
       serviceMonitorSelector:
         smkey: smvalue
       podMonitorSelector:
         pmkey: pmvalue
+    serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
     nodeSelector:
       workingGroup: production
     resources:
