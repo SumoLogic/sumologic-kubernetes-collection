@@ -6,6 +6,7 @@ metadata:
   namespace: {{ template "sumologic.namespace"  . }}
   labels:
     app: {{ template "sumologic.labels.app.sumologic-mock.deployment" . }}
+    {{- include "sumologic.labels.sumologic-mock" . | nindent 4 }}
     {{- include "sumologic.labels.common" . | nindent 4 }}
   annotations:
 {{ include "sumologic.annotations.app.sumologic-mock.helmsh" "1" | indent 4 }}
@@ -22,6 +23,7 @@ spec:
       labels:
         app: {{ template "sumologic.labels.app.sumologic-mock.pod" . }}
         {{- include "sumologic.labels.common" . | nindent 8 }}
+        {{- include "sumologic.labels.sumologic-mock" . | nindent 8 }}
 {{- if .Values.sumologic.podLabels }}
 {{ toYaml .Values.sumologic.podLabels | indent 8 }}
 {{- end }}

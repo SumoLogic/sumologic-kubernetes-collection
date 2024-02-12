@@ -79,3 +79,7 @@ helm.sh/hook-weight: {{ printf "\"%s\"" . }}
 true
 {{- end -}}
 {{- end -}}
+
+{{- define "sumologic.labels.sumologic-mock" -}}
+sumologic.com/app: sumologic-mock
+{{- end -}}
