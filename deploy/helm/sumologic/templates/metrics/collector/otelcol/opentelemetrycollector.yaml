@@ -36,7 +36,6 @@ spec:
     filterStrategy: relabel-config
     prometheusCR:
       enabled: true
-      serviceAccount: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
       scrapeInterval: {{ .Values.sumologic.metrics.collector.otelcol.scrapeInterval }}
       serviceMonitorSelector:
 {{- if .Values.sumologic.metrics.collector.otelcol.serviceMonitorSelector }}
@@ -50,6 +49,7 @@ spec:
 {{- else }}
         release: {{ .Release.Name }}
 {{- end }}
+    serviceAccount: {{ template "sumologic.metadata.name.metrics.targetallocator.serviceaccount" . }}
 {{- if not (empty (include "metrics.collector.otelcol.nodeSelector" .)) }}
     nodeSelector:
 {{ include "metrics.collector.otelcol.nodeSelector" . | indent 6 }}

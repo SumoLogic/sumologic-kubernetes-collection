@@ -22,12 +22,12 @@ spec:
     filterStrategy: relabel-config
     prometheusCR:
       enabled: true
-      serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
       scrapeInterval: 30s
       serviceMonitorSelector:
         release: RELEASE-NAME
       podMonitorSelector:
         release: RELEASE-NAME
+    serviceAccount: RELEASE-NAME-sumologic-metrics-targetallocator
     resources: {}
   autoscaler:
     maxReplicas: 10
