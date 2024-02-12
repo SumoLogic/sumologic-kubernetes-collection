@@ -7,6 +7,7 @@ metadata:
   namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-mock
+    sumologic.com/app: sumologic-mock
     chart: "sumologic-%CURRENT_CHART_VERSION%"
     release: "RELEASE-NAME"
     heritage: "Helm"
@@ -25,6 +26,7 @@ spec:
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
+        sumologic.com/app: sumologic-mock
     spec:
       serviceAccountName: RELEASE-NAME-sumologic-mock
       securityContext: {}
