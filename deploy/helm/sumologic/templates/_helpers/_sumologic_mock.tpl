@@ -61,7 +61,7 @@ true
 {{- end -}}
 {{- end -}}
 
-{{- define "sumologic-mock.forward-instrumentation-metadata"}}
+{{- define "sumologic-mock.forward-instrumentation"}}
 {{- if and (eq .Values.debug.sumologicMock.enabled true) (eq .Values.debug.instrumentation.tracesSampler.forwardToSumologicMock true) -}}
 true
 {{- end -}}

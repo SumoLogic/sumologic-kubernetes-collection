@@ -5,7 +5,7 @@ exporters:
     verbosity: detailed
 {{- end }}
 
-{{- if eq (include "sumologic-mock.forward-instrumentation-metadata" .) "true" }}
+{{- if eq (include "sumologic-mock.forward-instrumentation" .) "true" }}
   otlphttp/sumologic-mock:
 {{- if eq .Values.sumologic.traces.sourceType "http" }}
     traces_endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
@@ -82,7 +82,7 @@ service:
       processors: [memory_limiter, cascading_filter, batch]
       exporters:
         - otlphttp
-{{- if eq (include "sumologic-mock.forward-instrumentation-metadata" .) "true" }}
+{{- if eq (include "sumologic-mock.forward-instrumentation" .) "true" }}
         - otlphttp/sumologic-mock
 {{- end }}
 {{- if eq .Values.debug.instrumentation.tracesSampler.print true }}
