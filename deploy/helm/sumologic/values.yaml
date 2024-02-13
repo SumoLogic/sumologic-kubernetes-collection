@@ -2389,3 +2389,8 @@ debug:
     tracesSampler:
       print: false
       stopLogsIngestion: false
+
+  events:
+    print: false
+    stopLogsIngestion: false
+    forwardToSumologicMock: false

@@ -10,6 +10,21 @@ exporters:
       storage: file_storage
 {{- end }}
 
+{{- if eq .Values.debug.events.print true }}
+  debug:
+    verbosity: detailed
+{{- end }}
+
+{{- if eq (include "sumologic-mock.forward-events" .) "true" }}
+  sumologic/sumologic-mock:
+    client: {{ include "sumologic.sumo_client" . }}
+    endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
+    log_format: {{ include "sumologic.events.exporter.format" . }}
+    clear_logs_timestamp: false # this only affects the otlp format
+    sending_queue:
+      enabled: true
+{{- end }}
+
 extensions:
 {{- if .Values.sumologic.events.persistence.enabled }}
   file_storage:
@@ -64,6 +79,12 @@ service:
     logs/events:
       exporters:
         - sumologic
+{{- if eq .Values.debug.events.print true }}
+        - debug
+{{- end }}
+{{- if eq (include "sumologic-mock.forward-events" .) "true" }}
+        - sumologic/sumologic-mock
+{{- end }}
       processors:
         - memory_limiter
         - resource/add_cluster

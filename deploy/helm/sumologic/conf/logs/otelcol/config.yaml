@@ -21,7 +21,7 @@ exporters:
 
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock-containers:
-    endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
+    endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
     json_logs:
       add_timestamp: false
     log_format: {{ include "logs.otelcol.container.exporter.format" . }}
@@ -52,7 +52,7 @@ exporters:
 
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock-systemd:
-    endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
+    endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
     json_logs:
       add_timestamp: false
     log_format: json
@@ -84,7 +84,7 @@ exporters:
 {{- if eq (include "sumologic-mock.forward-logs-metadata" .) "true" }}
   sumologic/sumologic-mock:
     client: {{ include "sumologic.sumo_client" . }}
-    endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
+    endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
     log_format: otlp
     clear_logs_timestamp: false
     sending_queue:

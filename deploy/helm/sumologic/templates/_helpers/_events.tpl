@@ -115,3 +115,7 @@ otlp
 {{- fail "`sumologic.events.sourceType` can only be `http` or `otlp`" -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "events.collector.files.list" -}}
+- /var/log/pods/{{ template "sumologic.namespace" . }}_{{ template "sumologic.metadata.name.events" . }}*/*/*.log
+{{- end -}}
