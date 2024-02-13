@@ -1,0 +1,14 @@
+otelcolInstrumentation:
+  sourceMetadata:
+    excludeNamespaceRegex: "kube\\s+"
+    excludePodRegex: "^foo.*"
+    excludeContainerRegex: "[123+]bar$|xyz"
+    excludeHostRegex: hhh123
+
+tracesGateway:
+  enabled: false
+
+debug:
+  instrumentation:
+    otelcolInstrumentation:
+      print: true

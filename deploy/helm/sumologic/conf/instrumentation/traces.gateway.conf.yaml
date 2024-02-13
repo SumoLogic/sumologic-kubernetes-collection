@@ -67,7 +67,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [loadbalancing]
+      exporters:
+        - loadbalancing
+{{- if eq .Values.debug.instrumentation.tracesGateway.print true }}
+        - debug
+{{- end }}
   telemetry:
     logs:
       level: {{ .Values.tracesGateway.logLevel }}

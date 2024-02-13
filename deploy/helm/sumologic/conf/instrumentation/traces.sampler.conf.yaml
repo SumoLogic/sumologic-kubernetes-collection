@@ -4,6 +4,17 @@ exporters:
   debug:
     verbosity: detailed
 {{- end }}
+
+{{- if eq (include "sumologic-mock.forward-instrumentation-metadata" .) "true" }}
+  otlphttp/sumologic-mock:
+{{- if eq .Values.sumologic.traces.sourceType "http" }}
+    traces_endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
+{{- else }}
+    endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
+{{- end }}
+    compression: gzip
+{{- end }}
+
   ## Following generates verbose logs with span content, useful to verify what
   ## metadata is being tagged. To enable, uncomment and add "logging" to exporters below.
   ## There are two levels that could be used: `debug` and `info` with the former
@@ -69,7 +80,14 @@ service:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, cascading_filter, batch]
-      exporters: [otlphttp]
+      exporters:
+        - otlphttp
+{{- if eq (include "sumologic-mock.forward-instrumentation-metadata" .) "true" }}
+        - otlphttp/sumologic-mock
+{{- end }}
+{{- if eq .Values.debug.instrumentation.tracesSampler.print true }}
+        - debug
+{{- end }}
   telemetry:
     logs:
       level: {{ .Values.tracesSampler.logLevel }}

@@ -1,0 +1,8 @@
+debug:
+  sumologicMock:
+    enabled: true
+  instrumentation:
+    tracesSampler:
+      print: true
+      # enable metrics forwarding
+      forwardToSumologicMock: true
