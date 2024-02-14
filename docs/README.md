@@ -21,14 +21,14 @@ Documentation for other versions can be found in the
 
 Documentation links:
 
-- [Installation](/docs/installation.md)
+- [Installation](https://help.sumologic.com/docs/send-data/kubernetes/install-helm-chart/)
 
 - Configuration
 
   - [Examples](/docs/configuration-examples.md)
   - Logs
-    - [Collecting container logs](/docs/collecting-container-logs.md)
-    - [Collecting Systemd logs](/docs/collecting-systemd-logs.md)
+    - [Collecting container logs](https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/)
+    - [Collecting Systemd logs](https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/)
   - Metrics
     - [Collecting Kubernetes metrics](https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics/#kubernetes-metrics)
     - [Collecting application metrics](https://help.sumologic.com/docs/send-data/kubernetes/collecting-metrics#filtering-metrics)
