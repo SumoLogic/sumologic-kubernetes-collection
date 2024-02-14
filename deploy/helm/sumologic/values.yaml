@@ -328,7 +328,7 @@ sumologic:
       ##   condition: 'attributes["k8s.container.name"] matches "^bar-.*'
       ##
       ## NOTE: See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/collecting-container-logs.md#conditional-multiline-log-parsing
+      ## https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/#conditional-multiline-log-parsing
       additional: []
 
     container:
@@ -336,14 +336,14 @@ sumologic:
       ## Format to post logs into Sumo: fields, json, json_merge, or text.
       ## NOTE: json is an alias for fields
       ## NOTE: Multiline log detection works differently for `text` format. See below link for full reference:
-      ## https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/collecting-container-logs.md#text-log-format
+      ## https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/#text-log-format
       format: fields
 
       ## When set to `true`, preserves the `time` attribute, which is a string representation of the `timestamp` attribute.
       keep_time_attribute: false
 
       otelcol:
-        ## Extra processors for container logs. See [/docs/collecting-container-logs.md](/docs/collecting-container-logs.md) for details.
+        ## Extra processors for container logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
 
       ## Set the _sourceHost metadata field in Sumo Logic.
@@ -382,7 +382,7 @@ sumologic:
       #   - docker.service
 
       otelcol:
-        ## Extra processors for systemd logs. See [/docs/collecting-systemd-logs.md](/docs/collecting-systemd-logs.md) for details.
+        ## Extra processors for systemd logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
 
       ## Set the _sourceName metadata field in Sumo Logic.
@@ -409,7 +409,7 @@ sumologic:
 
     kubelet:
       otelcol:
-        ## Extra processors for kubelet logs. See [/docs/collecting-systemd-logs.md](/docs/collecting-systemd-logs.md) for details.
+        ## Extra processors for kubelet logs. See https://help.sumologic.com/docs/send-data/kubernetes/collecting-logs/ for details.
         extraProcessors: []
 
       ## Set the _sourceName metadata field in Sumo Logic.

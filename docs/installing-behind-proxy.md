@@ -15,14 +15,10 @@ If the proxy in question is transparent and does TLS interception with a custom 
 Installation involves the setup job using the Sumologic API in order to create some necessary resources, like collectors and fields. This
 will fail if the Sumologic API TLS certificate cannot be verified.
 
-There are two ways of dealing with this:
-
-- Disabling the setup job and creating the necessary resources manually: [see here][manual]
-- Injecting the custom root CA into the setup image: [see here][rebuilding]
+The recommended way is to inject the custom root CA into the setup image: [see here][rebuilding]
 
 [rebuilding]:
   https://help.sumologic.com/docs/send-data/kubernetes/security-best-practices/#adding-a-custom-root-ca-certificate-by-rebuilding-container-images
-[manual]: ./installation.md#prerequisite
 
 ## Troubleshooting
 
