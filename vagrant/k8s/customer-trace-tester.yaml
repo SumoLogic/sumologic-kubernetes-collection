@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: customer-trace-tester
+spec:
+  finalizers:
+    - kubernetes
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: customer-trace-tester
+  namespace: customer-trace-tester
+spec:
+  containers:
+    - args:
+        - bash
+        - -c
+        - while true; do customer-trace-tester; sleep 60; done
+      env:
+        - name: COLLECTOR_HOSTNAME
+          value: collection-sumologic-otelcol.sumologic
+        - name: TOTAL_TRACES
+          value: "1"
+        - name: SPANS_PER_TRACE
+          value: "10"
+        - name: OTLP_HTTP
+          value: "true"
+        - name: OTLP_GRPC
+          value: "true"
+        - name: ZIPKIN
+          value: "true"
+        - name: JAEGER_THRIFT_HTTP
+          value: "true"
+      image: sumologic/kubernetes-tools
+      name: customer-trace-tester

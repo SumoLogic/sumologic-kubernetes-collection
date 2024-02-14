@@ -67,6 +67,12 @@ true
 {{- end -}}
 {{- end -}}
 
+{{- define "sumologic-mock.forward-instrumentation"}}
+{{- if and (eq .Values.debug.sumologicMock.enabled true) (eq .Values.debug.instrumentation.tracesSampler.forwardToSumologicMock true) -}}
+true
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic-mock.hostname" -}}
 {{ template "sumologic.sumologic-mock.name.service" . }}.{{ template "sumologic.namespace"  . }}
 {{- end -}}
