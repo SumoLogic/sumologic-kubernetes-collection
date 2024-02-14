@@ -7,7 +7,7 @@ debug:
 sumologic/sumologic-mock-default:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: {{ include "metrics.otelcol.exporter.format" . }}
-  endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
+  endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
   ## Sumo doesn't yet natively support OTLP Histograms
   decompose_otlp_histograms: true
   ## Configuration for sending queue
@@ -28,7 +28,7 @@ sumologic/sumologic-mock-default:
 sumologic/sumologic-mock-http:
   client: {{ include "sumologic.sumo_client" . }}
   metric_format: prometheus
-  endpoint: http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
+  endpoint: {{ include "sumologic-mock.receiver-endpoint" . }}
   sending_queue:
     enabled: true
 {{- if .Values.metadata.persistence.enabled }}

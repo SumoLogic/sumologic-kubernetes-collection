@@ -55,6 +55,12 @@ true
 {{- end -}}
 {{- end -}}
 
+{{- define "sumologic-mock.forward-events"}}
+{{- if and (eq .Values.debug.sumologicMock.enabled true) (eq .Values.debug.events.forwardToSumologicMock true) -}}
+true
+{{- end -}}
+{{- end -}}
+
 {{- define "sumologic-mock.forward-metrics-metadata"}}
 {{- if and (eq .Values.debug.sumologicMock.enabled true) (eq .Values.debug.metrics.metadata.forwardToSumologicMock true) -}}
 true
@@ -82,4 +88,8 @@ true
 
 {{- define "sumologic.labels.sumologic-mock" -}}
 sumologic.com/app: sumologic-mock
+{{- end -}}
+
+{{- define "sumologic-mock.receiver-endpoint" -}}
+http://{{ template "sumologic-mock.hostname" . }}:{{ template "sumologic-mock.port" . }}/receiver
 {{- end -}}

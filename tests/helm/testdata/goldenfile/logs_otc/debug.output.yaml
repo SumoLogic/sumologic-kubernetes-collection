@@ -66,6 +66,7 @@ data:
         - /var/log/pods/sumologic_RELEASE-NAME-sumologic-otelcol-instrumentation*/*/*.log
         - /var/log/pods/sumologic_RELEASE-NAME-sumologic-traces-gateway*/*/*.log
         - /var/log/pods/sumologic_RELEASE-NAME-sumologic-traces-sampler*/*/*.log
+        - /var/log/pods/sumologic_RELEASE-NAME-sumologic-otelcol-events*/*/*.log
         include:
         - /var/log/pods/*/*/*.log
         include_file_name: false
