@@ -38,7 +38,7 @@ release.
 ### Unsupported versions
 
 | version                                                                                                   | end of life date |
-|-----------------------------------------------------------------------------------------------------------|------------------|
+| --------------------------------------------------------------------------------------------------------- | ---------------- |
 | [v3.11](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.11/docs/README.md)   | 2024-02-07       |
 | [v3.10](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.10/docs/README.md)   | 2024-01-28       |
 | [v3.9](https://github.com/SumoLogic/sumologic-kubernetes-collection/tree/release-v3.9/docs/README.md)     | 2024-01-06       |
