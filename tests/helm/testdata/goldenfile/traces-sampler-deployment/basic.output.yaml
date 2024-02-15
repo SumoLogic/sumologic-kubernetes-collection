@@ -79,6 +79,8 @@ spec:
           volumeMounts:
             - name: otel-collector-config-vol
               mountPath: /conf
+            - name: tmp
+              mountPath: /tmp
           livenessProbe:
             httpGet:
               path: /
@@ -91,3 +93,5 @@ spec:
         - configMap:
             name: RELEASE-NAME-sumologic-traces-sampler
           name: otel-collector-config-vol
+        - name: tmp
+          emptyDir: {}
