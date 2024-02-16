@@ -36,14 +36,14 @@ spec:
         timeout: 10s
 
     exporters:
-      logging:
+      debug:
 
     service:
       pipelines:
         metrics:
           receivers: [prometheus]
           processors: []
-          exporters: [logging]
+          exporters: [debug]
 ---
 apiVersion: v1
 kind: ServiceAccount
