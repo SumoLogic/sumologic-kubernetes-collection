@@ -18,6 +18,10 @@ data:
       otlphttp:
         compression: gzip
         endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
       otlphttp/sumologic-mock:
         compression: gzip
         endpoint: http://RELEASE-NAME-sumologic-mock.sumologic:3000/receiver

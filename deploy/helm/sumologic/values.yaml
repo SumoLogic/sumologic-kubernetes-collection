@@ -1465,6 +1465,20 @@ tracesSampler:
     ## This is an advanced feature, use with caution, and review the generated configuration first.
     override: {}
 
+  ## Configure persistence for Opentelemetry Collector
+  persistence:
+    enabled: false
+    # storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    ## Add custom labels to all traces-sampler deployment  PVC
+    pvcLabels: {}
+
+    ## Configuration for the Persistent Volume and Persistent Volume Claim
+    ## where the storage is kept
+    persistentVolume:
+      path: /var/lib/storage/tracessampler
+
 metadata:
   ## Configure image for Opentelemetry Collector (for logs and metrics)
   image:

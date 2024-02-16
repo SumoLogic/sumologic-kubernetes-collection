@@ -20,8 +20,15 @@ exporters:
     traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
 {{- else }}
     endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}
-{{- end}}
+{{- end }}
     compression: gzip
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10_000
+{{- if .Values.tracesSampler.persistence.enabled }}
+      storage: file_storage
+{{- end }}
 receivers:
   otlp:
     protocols:
@@ -64,12 +71,27 @@ processors:
 
 extensions:
   health_check: {}
+{{- if .Values.tracesSampler.persistence.enabled }}
+  ## Configuration for File Storage extension
+  file_storage:
+    directory: /var/lib/storage/tracessampler
+    timeout: 10s
+    compaction:
+      on_rebound: true
+      directory: /tmp
+{{- end }}
   memory_ballast:
     ## Memory Ballast size should be max 1/3 to 1/2 of memory.
     size_mib: 683
   pprof: {}
 service:
-  extensions: [health_check, memory_ballast, pprof]
+  extensions:
+    - health_check
+{{- if .Values.tracesSampler.persistence.enabled }}
+    - file_storage
+{{- end }}
+    - memory_ballast
+    - pprof
   pipelines:
     traces:
       receivers: [otlp]

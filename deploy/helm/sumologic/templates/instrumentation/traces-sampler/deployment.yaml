@@ -93,6 +93,12 @@ spec:
         volumeMounts:
         - name: otel-collector-config-vol
           mountPath: /conf
+        - name: tmp
+          mountPath: /tmp
+{{- if $tracesSampler.persistence.enabled }}
+        - name: file-storage
+          mountPath: {{ $tracesSampler.persistence.persistentVolume.path }}
+{{- end}}
 {{- if $tracesSampler.deployment.extraVolumeMounts }}
 {{- toYaml $tracesSampler.deployment.extraVolumeMounts | nindent 8 }}
 {{- end }}
@@ -108,7 +114,28 @@ spec:
         - configMap:
             name: {{ template "sumologic.metadata.name.tracessampler.configmap" . }}
           name: otel-collector-config-vol
+        - name: tmp
+          emptyDir: {}
+{{- if $tracesSampler.persistence.enabled }}
+        - name: file-storage
+          mountPath: {{ $tracesSampler.persistence.persistentVolume.path }}
+{{- end }}
 {{- if $tracesSampler.deployment.extraVolumes }}
 {{- toYaml $tracesSampler.deployment.extraVolumes | nindent 8 }}
+{{- end }}
+{{- if $tracesSampler.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: file-storage
+{{- if $tracesSampler.persistence.pvcLabels }}
+      labels:
+{{ toYaml $tracesSampler.persistence.pvcLabels | indent 8 }}
+{{- end }}
+    spec:
+      accessModes: [{{ $tracesSampler.persistence.accessMode }}]
+      storageClassName: {{ $tracesSampler.persistence.storageClass }}
+      resources:
+        requests:
+          storage: {{ $tracesSampler.persistence.size }}
 {{- end }}
 {{- end }}

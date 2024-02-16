@@ -15,12 +15,19 @@ data:
     exporters:
       otlphttp:
         compression: gzip
+        endpoint: ${SUMO_ENDPOINT_DEFAULT_OTLP_TRACES_SOURCE}
         sending_queue:
           enabled: true
           num_consumers: 10
           queue_size: 10000
-        traces_endpoint: ${SUMO_ENDPOINT_DEFAULT_TRACES_SOURCE}
+          storage: file_storage
     extensions:
+      file_storage:
+        compaction:
+          directory: /tmp
+          on_rebound: true
+        directory: /var/lib/storage/tracessampler
+        timeout: 10s
       health_check: {}
       memory_ballast:
         size_mib: 683
@@ -46,6 +53,7 @@ data:
     service:
       extensions:
       - health_check
+      - file_storage
       - memory_ballast
       - pprof
       pipelines:
