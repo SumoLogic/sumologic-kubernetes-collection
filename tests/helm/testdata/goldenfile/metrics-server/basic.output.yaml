@@ -9,8 +9,8 @@ metadata:
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: metrics-server
-    app.kubernetes.io/version: 0.6.4
-    helm.sh/chart: metrics-server-6.8.0
+    app.kubernetes.io/version: 0.7.0
+    helm.sh/chart: metrics-server-6.10.0
 spec:
   replicas: 1
   selector:
@@ -25,8 +25,8 @@ spec:
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: metrics-server
-        app.kubernetes.io/version: 0.6.4
-        helm.sh/chart: metrics-server-6.8.0
+        app.kubernetes.io/version: 0.7.0
+        helm.sh/chart: metrics-server-6.10.0
     spec:
       automountServiceAccountToken: true
       serviceAccountName: RELEASE-NAME-metrics-server
@@ -47,7 +47,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: metrics-server
-          image: docker.io/bitnami/metrics-server:0.6.4-debian-11-r75
+          image: docker.io/bitnami/metrics-server:0.7.0-debian-11-r4
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
@@ -60,7 +60,6 @@ spec:
             runAsUser: 1001
             seccompProfile:
               type: RuntimeDefault
-            seLinuxOptions: {}
           command:
             - metrics-server
           args:
@@ -69,9 +68,6 @@ spec:
             - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
           env:
           envFrom:
-          resources:
-            limits: {}
-            requests: {}
           ports:
             - name: https
               containerPort: 8443
