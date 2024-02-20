@@ -10,7 +10,7 @@
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
-{{- $res := .resources }}
+{{- $res := $value.resources }}
 {{- if not $res }}
 {{- $res = dict }}
 {{- end }}

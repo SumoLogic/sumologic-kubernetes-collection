@@ -8,6 +8,15 @@ otellogs:
           cpu: 2
         limits:
           cpu: 6
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: NotIn
+                    values:
+                      - windows
   daemonset:
     affinity:
       nodeAffinity:
