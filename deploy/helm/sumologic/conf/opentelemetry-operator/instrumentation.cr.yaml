@@ -19,10 +19,6 @@ spec:
     - baggage
   resource:
     addK8sUIDAttributes: false
-  sampler:
-    # work around https://github.com/open-telemetry/opentelemetry-operator/issues/1886
-    # TODO: remove this after upgrading past 0.33.0
-    type: always_on
   env:
     - name: OTEL_APPLICATION_NAMESPACE_NAME
       value: {{ $ns }}
