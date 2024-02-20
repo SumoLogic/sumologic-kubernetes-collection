@@ -10,7 +10,11 @@
 {{- if not (eq $name "") }}
 {{- $instance = (printf "-%s" $name ) }}
 {{- end }}
-{{- $resources := deepCopy $.Values.otellogs.daemonset.resources | merge .resources }}
+{{- $res := .resources }}
+{{- if not $res }}
+{{- $res = dict }}
+{{- end }}
+{{- $resources := deepCopy $.Values.otellogs.daemonset.resources | merge $res }}
 {{- $nodeSelector := "" }}
 {{- if .nodeSelector }}
 {{- $nodeSelector = (toYaml .nodeSelector) }}

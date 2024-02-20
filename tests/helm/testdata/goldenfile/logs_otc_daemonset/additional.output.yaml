@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: RELEASE-NAME-sumologic-otelcol-logs-collector
+  name: RELEASE-NAME-sumologic-otelcol-logs-collector-linux
   namespace: sumologic
   labels:
     app: RELEASE-NAME-sumologic-otelcol-logs-collector
@@ -13,18 +13,20 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+      app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector-linux
   template:
     metadata:
       annotations:
         checksum/config: "%CONFIG_CHECKSUM%"
       labels:
-        app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector
+        app.kubernetes.io/name: RELEASE-NAME-sumologic-otelcol-logs-collector-linux
         app.kubernetes.io/app-name: RELEASE-NAME-sumologic-otelcol-logs-collector
         chart: "sumologic-%CURRENT_CHART_VERSION%"
         release: "RELEASE-NAME"
         heritage: "Helm"
     spec:
+      nodeSelector:
+        kubernetes.io/os: linux
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -33,7 +35,7 @@ spec:
                   - key: kubernetes.io/os
                     operator: NotIn
                     values:
-                      - linux
+                      - windows
       tolerations:
         - effect: NoSchedule
           operator: Exists
@@ -58,10 +60,10 @@ spec:
               port: 13133 # Health Check extension default port.
           resources:
             limits:
-              cpu: 1000m
+              cpu: 6
               memory: 1Gi
             requests:
-              cpu: 100m
+              cpu: 2
               memory: 32Mi
           volumeMounts:
             - mountPath: /etc/otelcol
