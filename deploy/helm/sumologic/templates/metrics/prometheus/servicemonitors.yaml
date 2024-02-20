@@ -1,5 +1,4 @@
-{{- $kps := get .Values "kube-prometheus-stack" -}}
-{{- if or (and (typeIs "<nil>" $kps.enabled) (.Values.sumologic.metrics.enabled)) (and (typeIs "bool" $kps.enabled) ($kps.enabled)) -}}
+{{- if .Values.sumologic.metrics.enabled -}}
 {{- $serviceMonitors := concat .Values.sumologic.metrics.serviceMonitors .Values.sumologic.metrics.additionalServiceMonitors -}}
 ---
 {{- if $serviceMonitors }}

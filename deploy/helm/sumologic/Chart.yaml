@@ -12,10 +12,6 @@ home: https://github.com/SumoLogic/sumologic-kubernetes-collection
 sources:
   - https://github.com/SumoLogic/sumologic-kubernetes-collection
 dependencies:
-  - name: kube-prometheus-stack
-    version: 40.5.0
-    repository: https://prometheus-community.github.io/helm-charts
-    condition: kube-prometheus-stack.enabled,sumologic.metrics.enabled
   - name: falco
     version: 3.8.7
     repository: https://falcosecurity.github.io/charts

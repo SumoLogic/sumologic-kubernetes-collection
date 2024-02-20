@@ -1265,8 +1265,6 @@ kube-prometheus-stack:
         - url: http://$(METADATA_METRICS_SVC).$(NAMESPACE):9888/prometheus.metrics
           remoteTimeout: 5s
 
-    serviceMonitor:
-      selfMonitor: false
 
 ## Configure otelcol-instrumentation - Sumo OTel Distro Collector
 ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector/traces.md
