@@ -1271,6 +1271,32 @@ kube-prometheus-stack:
     serviceMonitor:
       selfMonitor: false
 
+## Configuration for prometheus-windows-exporter
+## ref: https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-windows-exporter
+## This is an experimental feature
+prometheus-windows-exporter:
+  enabled: false
+
+  ## Enable ServiceMonitor and set Kubernetes label to use as a job label
+  ##
+  prometheus:
+    monitor:
+      enabled: true
+      jobLabel: jobLabel
+
+  releaseLabel: true
+
+  ## Set job label to 'windows-exporter' as required by the default Prometheus rules and Grafana dashboards
+  ##
+  podLabels:
+    jobLabel: windows-exporter
+
+  ## Enable memory and container metrics as required by the default Prometheus rules and Grafana dashboards
+  ##
+  config: |-
+    collectors:
+      enabled: '[defaults],memory,container'
+
 ## Configure otelcol-instrumentation - Sumo OTel Distro Collector
 ## ref: https://github.com/SumoLogic/sumologic-kubernetes-collection/blob/main/docs/opentelemetry-collector/traces.md
 otelcolInstrumentation:

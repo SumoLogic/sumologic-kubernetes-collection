@@ -123,3 +123,16 @@ environment, don't hesitate to open an [issue][issues] describing them.
 ### Falco support
 
 Falco is embedded in this Helm Chart for user convenience only - Sumo Logic does not provide production support for it.
+
+### Windows nodes support
+
+Windows nodes are supported only for metrics collection. To enable it, add the following configuration to your `user-values.yaml`
+
+```yaml
+prometheus-windows-exporter:
+  enabled: true
+```
+
+It will send `windows_` prefixed metrics to Sumo Logic.
+
+**Note: We currently do not have dashboard which is using those metrics.**
