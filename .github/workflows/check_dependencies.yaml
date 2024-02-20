@@ -3,6 +3,7 @@ name: Check dependencies
 on:
   schedule:
     - cron: "0 9 * * 1"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -19,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install -r ci/check_dependencies/requirements.txt
+      - name: Get issue title
+        run: |
+          echo "ISSUE_TITLE=$(date +%d-%m-%Y) Update Chart dependencies" >> "$GITHUB_ENV"
       - name: Generate dependency report
         id: dependency-report
         run: |
@@ -33,6 +37,7 @@ jobs:
         if: ${{ steps.dependency-report.outputs.empty == 'false' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
         with:
           filename: ${{ steps.dependency-report.outputs.issue-file }}
           update_existing: true
@@ -48,7 +53,7 @@ jobs:
         with:
           project: OSC
           issuetype: "Task"
-          summary: "Update Helm Chart dependencies"
+          summary: ${{ env.ISSUE_TITLE }}
           description: "See ${{ steps.create-issue.outputs.url }}"
           extraFields:
             '{"labels": ["opensource_gardener"], "priority": {"name": "Highest"}, "assignee": {"id": "${{ secrets.JIRA_USER_ID }}"}}'

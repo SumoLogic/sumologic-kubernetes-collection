@@ -1,5 +1,5 @@
 ---
-title: Update Chart dependencies
+title: "{{ env.ISSUE_TITLE }}"
 labels: dependencies
 ---
 
